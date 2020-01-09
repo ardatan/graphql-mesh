@@ -1,0 +1,24 @@
+{
+  "name": "@graphql-mesh/swagger",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "ts-jest": "24.2.0",
+    "@types/jest": "24.0.25",
+    "@types/node": "13.1.4",
+    "jest": "24.9.0",
+    "graphql": "14.5.8",
+    "typescript": "3.7.4",
+    "ts-node-dev": "1.0.0-pre.44"
+  },
+  "dependencies": {
+    "openapi-to-graphql": "1.7.0"
+  }
+}

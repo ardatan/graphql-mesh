@@ -1,0 +1,16 @@
+{
+  "name": "@graphql-mesh/grpc",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "graphql": "14.5.8",
+    "typescript": "3.7.4",
+    "ts-node-dev": "1.0.0-pre.44"
+  },
+  "dependencies": {
+  }
+}
