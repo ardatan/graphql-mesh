@@ -1,6 +1,9 @@
-- output: ./src/generated/sdk.ts
-  language: typescript
+- output: ./src/merged-schema.generated.graphql
+  language: schema
   sources:
     - name: Cities
       source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
+      parser: swagger
+    - name: Weather
+      source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
       parser: swagger

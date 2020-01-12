@@ -7,6 +7,7 @@ import {
 } from './config';
 import { resolve } from 'path';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
+import { generate } from './generate';
 
 export type ParserFn = (input: string) => Promise<GraphQLSchema>;
 export type SchemaTransformationFn = (
@@ -65,7 +66,7 @@ export async function executeMesh(config: MeshConfig): Promise<any> {
       );
     }
 
-    console.log(resultSchema);
+    await generate(outputPath, resultSchema);
   }
 }
 
