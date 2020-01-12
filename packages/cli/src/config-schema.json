@@ -1,0 +1,132 @@
+  {
+    "definitions": {
+      "OutputTransformation": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "format": "link",
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "from",
+              "to"
+            ]
+          }
+        ]
+      },
+      "SchemaTransformation": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "format": "prefix",
+                "type": "string"
+              },
+              "prefix": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "prefix"
+            ]
+          }
+        ]
+      }
+    },
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "title": "MeshConfig",
+    "items": {
+      "type": "object",
+      "title": "Output",
+      "required": [
+        "output",
+        "language",
+        "sources"
+      ],
+      "properties": {
+        "output": {
+          "type": "string",
+          "title": "OutputFile",
+          "pattern": "^(.*)$"
+        },
+        "language": {
+          "type": "string",
+          "title": "Code generator plugin to use",
+          "default": "",
+          "examples": [
+            "typescript"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "sources": {
+          "type": "array",
+          "title": "APISources",
+          "items": {
+            "type": "object",
+            "title": "APISource",
+            "required": [
+              "name",
+              "source",
+              "parser"
+            ],
+            "properties": {
+              "transformations": {
+                "type": "array",
+                "title": "SchemaTransformations",
+                "items": {
+                  "$ref": "#/definitions/SchemaTransformation"
+                }
+              },
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "examples": [
+                  "MyApi"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "source": {
+                "type": "string",
+                "title": "Path",
+                "default": "",
+                "examples": [
+                  "my-schema.yaml"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "parser": {
+                "type": "string",
+                "title": "Parser",
+                "default": "",
+                "examples": [
+                  "swagger",
+                  "grpc"
+                ],
+                "pattern": "^(.*)$"
+              }
+            }
+          }
+        },
+        "transformations": {
+          "type": "array",
+          "title": "Transformations",
+          "items": {
+            "$ref": "#/definitions/OutputTransformation"
+          }
+        }
+      }
+    }
+  }

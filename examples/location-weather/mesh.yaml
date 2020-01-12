@@ -1,0 +1,6 @@
+- output: ./src/generated/sdk.ts
+  language: typescript
+  sources:
+    - name: Cities
+      source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
+      parser: swagger

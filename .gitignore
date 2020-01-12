@@ -3,3 +3,6 @@ temp
 dist
 out
 build
+generated
+yarn-error.log
+temp
