@@ -1,5 +1,5 @@
-- output: ./src/merged-schema.generated.graphql
-  language: schema
+- output: ./src/generated-sdk/
+  language: typescript
   sources:
     - name: Cities
       source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json

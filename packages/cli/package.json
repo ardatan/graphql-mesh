@@ -23,7 +23,8 @@
     "jest": "24.9.0",
     "graphql": "14.5.8",
     "typescript": "3.7.4",
-    "ts-node-dev": "1.0.0-pre.44"
+    "ts-node-dev": "1.0.0-pre.44",
+    "@types/mkdirp": "0.5.2"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -32,6 +33,8 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
+    "apollo-server": "2.9.16",
+    "mkdirp": "0.5.1",
     "@graphql-codegen/core": "1.11.2",
     "@graphql-codegen/typescript": "1.11.2",
     "@graphql-codegen/schema-ast": "1.11.2",

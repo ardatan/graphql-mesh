@@ -8,6 +8,7 @@ import {
 import { resolve } from 'path';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 import { generate } from './generate';
+import { ApolloServer } from 'apollo-server';
 
 export type ParserFn = (input: string) => Promise<GraphQLSchema>;
 export type SchemaTransformationFn = (
@@ -33,7 +34,7 @@ export async function getSchemaFromSource(source: APISource): Promise<any> {
   return await parserFn(schemaSourceFilePath);
 }
 
-export async function executeMesh(config: MeshConfig): Promise<any> {
+export async function executeMesh(config: MeshConfig): Promise<void> {
   // TODO: Improve and run in parallel // Dotan
   // TODO: Report nice CLI output (listr?) // Dotan
   for (const output of config) {
@@ -66,7 +67,16 @@ export async function executeMesh(config: MeshConfig): Promise<any> {
       );
     }
 
-    await generate(outputPath, resultSchema);
+    const server = new ApolloServer({
+      cors: true,
+      schema:  resultSchema
+    });
+
+    server.listen().then(s => {
+      console.log(s.port)
+    });
+
+    // await generate(outputPath, resultSchema);
   }
 }
 
