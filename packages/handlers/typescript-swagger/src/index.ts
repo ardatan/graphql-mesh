@@ -1,8 +1,9 @@
-import { extname, resolve } from 'path';
+import { extname, resolve, join } from 'path';
 import SwaggerParser from 'swagger-parser';
 import isUrl from 'is-url';
 import request from 'request-promise-native';
 import { spawnSync } from 'child_process';
+import { createGraphQlSchema } from 'openapi-to-graphql';
 
 export default async function(
   apiName: string,
@@ -25,16 +26,19 @@ export default async function(
   }
 
   const api = await SwaggerParser.validate(spec);
-  generate(
-    `generate -i ${filePathOrUrl} -p supportsES6=true -g typescript-node -o ${outputPath}/${apiName}`.split(
-      ' '
-    )
-  );
+  const baseSdkDir = join(outputPath, `./${apiName}/`);
+  generateOpenApiSdk(filePathOrUrl, baseSdkDir);
+  const { schema } = await createGraphQlSchema(spec);
 
-  return null;
+  console.log(api, schema.getQueryType()?.getFields());
+
+  return schema;
 }
 
-function generate(args: string[]) {
+function generateOpenApiSdk(inputFile: string, outputDir: string) {
+  const args = `generate -i ${inputFile} -p supportsES6=true -g typescript-node -o ${outputDir}`.split(
+    ' '
+  );
   const binPath = require.resolve(
     '@openapitools/openapi-generator-cli/bin/openapi-generator.jar'
   );

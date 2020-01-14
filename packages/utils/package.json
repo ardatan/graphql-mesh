@@ -1,0 +1,23 @@
+{
+  "name": "@graphql-mesh/utils",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "@types/node": "13.1.6",
+    "graphql": "14.5.8",
+    "typescript": "3.7.4",
+    "ts-node-dev": "1.0.0-pre.44"
+  },
+  "dependencies": {
+    "@graphql-codegen/core": "1.11.2",
+    "@graphql-codegen/schema-ast": "1.11.2"
+  }
+}
