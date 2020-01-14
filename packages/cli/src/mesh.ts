@@ -7,10 +7,12 @@ import {
 } from './config';
 import { resolve } from 'path';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
-import { generate } from './generate';
-import { ApolloServer } from 'apollo-server';
 
-export type ParserFn = (input: string) => Promise<GraphQLSchema>;
+export type HandlerFn = (
+  name: string,
+  outputPath: string,
+  source: string
+) => Promise<{ schema: GraphQLSchema }>;
 export type SchemaTransformationFn = (
   name: string,
   schema: GraphQLSchema
@@ -19,19 +21,19 @@ export type OutputTransformationFn = (
   schema: GraphQLSchema
 ) => Promise<GraphQLSchema>;
 
-export async function getSchemaFromSource(source: APISource): Promise<any> {
+export async function executeHandler(outDir: string, source: APISource): Promise<any> {
   const {
     name: sourceName,
-    parser: schemaParserName,
+    handler: schemaHandlerName,
     source: schemaSourceFilePath
   } = source;
   console.info(
-    `\tLoading API schema ${sourceName} from source "${schemaSourceFilePath}"  using parser ${schemaParserName}...`
+    `\tLoading API schema ${sourceName} from source "${schemaSourceFilePath}" using handler ${schemaHandlerName}...`
   );
 
-  const parserFn = await getPackage<ParserFn>(schemaParserName, 'parser');
+  const handlerFn = await getPackage<HandlerFn>(schemaHandlerName, 'handler');
 
-  return await parserFn(schemaSourceFilePath);
+  return await handlerFn(sourceName, outDir, schemaSourceFilePath);
 }
 
 export async function executeMesh(config: MeshConfig): Promise<void> {
@@ -43,7 +45,7 @@ export async function executeMesh(config: MeshConfig): Promise<void> {
     console.info(`Generating output to ${outputPath}...`);
 
     for (const source of output.sources) {
-      let schema = await getSchemaFromSource(source);
+      let schema = await executeHandler(outputPath, source);
 
       if (source.transformations && source.transformations.length > 0) {
         schema = await applySchemaTransformations(
@@ -67,14 +69,14 @@ export async function executeMesh(config: MeshConfig): Promise<void> {
       );
     }
 
-    const server = new ApolloServer({
-      cors: true,
-      schema:  resultSchema
-    });
+    // const server = new ApolloServer({
+    //   cors: true,
+    //   schema: resultSchema
+    // });
 
-    server.listen().then(s => {
-      console.log(s.port)
-    });
+    // server.listen().then(s => {
+    //   console.log(s.port);
+    // });
 
     // await generate(outputPath, resultSchema);
   }

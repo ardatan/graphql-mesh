@@ -1,9 +1,8 @@
 - output: ./src/generated-sdk/
-  language: typescript
   sources:
     - name: Cities
       source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
-      parser: swagger
+      handler: typescript-swagger
     - name: Weather
       source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
-      parser: swagger
+      handler: typescript-swagger

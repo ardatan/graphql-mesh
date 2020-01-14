@@ -53,22 +53,12 @@
       "title": "Output",
       "required": [
         "output",
-        "language",
         "sources"
       ],
       "properties": {
         "output": {
           "type": "string",
           "title": "OutputFile",
-          "pattern": "^(.*)$"
-        },
-        "language": {
-          "type": "string",
-          "title": "Code generator plugin to use",
-          "default": "",
-          "examples": [
-            "typescript"
-          ],
           "pattern": "^(.*)$"
         },
         "sources": {
@@ -80,7 +70,7 @@
             "required": [
               "name",
               "source",
-              "parser"
+              "handler"
             ],
             "properties": {
               "transformations": {
@@ -107,13 +97,13 @@
                 ],
                 "pattern": "^(.*)$"
               },
-              "parser": {
+              "handler": {
                 "type": "string",
-                "title": "Parser",
+                "title": "Handler",
                 "default": "",
                 "examples": [
-                  "swagger",
-                  "grpc"
+                  "typescript-swagger",
+                  "typescript-grpc"
                 ],
                 "pattern": "^(.*)$"
               }

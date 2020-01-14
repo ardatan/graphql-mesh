@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-mesh/swagger",
+  "name": "@graphql-mesh/typescript-swagger",
   "version": "0.0.1",
   "main": "dist/index.js",
   "license": "MIT",
@@ -23,9 +23,10 @@
     "ts-node-dev": "1.0.0-pre.44"
   },
   "dependencies": {
+    "@openapitools/openapi-generator-cli": "1.0.8-4.2.2",
     "request": "2.88.0",
     "request-promise-native": "1.0.8",
     "is-url": "1.2.4",
-    "openapi-to-graphql": "1.7.0"
+    "swagger-parser": "8.0.4"
   }
 }
