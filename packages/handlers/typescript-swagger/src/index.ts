@@ -1,3 +1,4 @@
+import { writeFileSync } from 'fs';
 import { extname, resolve, join } from 'path';
 import isUrl from 'is-url';
 import request from 'request-promise-native';
@@ -8,15 +9,22 @@ import { PreprocessingData } from 'openapi-to-graphql/lib/types/preprocessing_da
 import { preprocessOas } from 'openapi-to-graphql/lib/preprocessor';
 import * as Oas3Tools from 'openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
-import { generateResolversFile } from './resolvers-generator';
+import { isObjectType, isScalarType } from 'graphql';
 
-export type ApiServiceMapping = Record<
-  string,
-  { filePath: string; importName: string }
->;
+export type ApiServiceResult = {
+  apiTypesPath: string;
+};
 
-const handler: MeshHandlerLibrary<PreprocessingData, ApiServiceMapping> = {
-  async buildGraphQLSchema({ filePathOrUrl }) {
+export type BuildGraphQLSchemaPayload = {
+  schemaPreprocessingData: PreprocessingData;
+  oas3: Oas3;
+};
+
+const handler: MeshHandlerLibrary<
+  BuildGraphQLSchemaPayload,
+  ApiServiceResult
+> = {
+  async buildGraphQLSchema({ filePathOrUrl, outputPath }) {
     let spec = null;
 
     if (isUrl(filePathOrUrl)) {
@@ -32,29 +40,30 @@ const handler: MeshHandlerLibrary<PreprocessingData, ApiServiceMapping> = {
       }
     }
 
-    let oass: Oas3[];
-
-    if (Array.isArray(spec)) {
-      oass = await Promise.all(
-        spec.map(ele => {
-          return Oas3Tools.getValidOAS3(ele);
-        })
-      );
-    } else {
-      oass = [await Oas3Tools.getValidOAS3(spec)];
-    }
-
-    const data = preprocessOas(oass, { report: { warnings: [] } } as any);
+    // TODO: `spec` might be an array?
+    const oass: Oas3 = await Oas3Tools.getValidOAS3(spec);
+    const data = preprocessOas([oass], { report: { warnings: [] } } as any);
     const { schema } = await createGraphQlSchema(spec, { viewer: false });
 
     return {
-      payload: data,
+      payload: {
+        schemaPreprocessingData: data,
+        oas3: oass
+      },
       schema
     };
   },
-  async generateApiServices({ schema, payload, apiName, outputPath }) {
-    console.log(payload);
-    return { payload: {} };
+  async generateApiServices({ payload: { oas3 }, outputPath }) {
+    const oasFilePath = join(outputPath, './oas3-schema.json');
+    const apiTypesPath = join(outputPath, './types');
+    writeFileSync(oasFilePath, JSON.stringify(oas3, null, 2));
+    generateOpenApiSdk(oasFilePath, apiTypesPath);
+
+    return {
+      payload: {
+        apiTypesPath
+      }
+    };
   },
   async generateResolvers({
     apiName,
@@ -63,12 +72,47 @@ const handler: MeshHandlerLibrary<PreprocessingData, ApiServiceMapping> = {
     schema,
     outputPath
   }) {
-    return;
+    const outputFile = join(outputPath, './resolvers.ts');
+    const types = schema.getTypeMap();
+    const output = ([
+      schema.getQueryType()?.name,
+      schema.getMutationType()?.name,
+      schema.getSubscriptionType()?.name
+    ].filter(Boolean) as string[]).map(typeName => {
+      const type = types[typeName];
+
+      if (isScalarType(type) || typeName.startsWith('__')) {
+        return null;
+      }
+
+      if (isObjectType(type)) {
+        const fields = type.getFields();
+        const fieldsResolvers = Object.keys(fields).map(fieldName => {
+          return `    ${fieldName}: (root, args, context, info) => { console.log('called resolver ${typeName}.${fieldName}') },`;
+        });
+
+        return `  ${type.name}: {
+${fieldsResolvers.join('\n')}
+  },`;
+      }
+
+      return null;
+    });
+
+    const result = `export const resolvers = {
+${output.filter(Boolean).join('\n')}
+};`;
+
+    writeFileSync(outputFile, result);
+
+    return {
+      payload: outputFile,
+    };
   }
 };
 
 function generateOpenApiSdk(inputFile: string, outputDir: string) {
-  const args = `generate -i ${inputFile} -p supportsES6=true -g typescript-node -o ${outputDir}`.split(
+  const args = `generate -i ${inputFile} -p supportsES6=true -g typescript-fetch -o ${outputDir}`.split(
     ' '
   );
   const binPath = require.resolve(
@@ -83,7 +127,7 @@ function generateOpenApiSdk(inputFile: string, outputDir: string) {
   }
 
   spawnSync(command, {
-    //stdio: 'inherit',
+    // stdio: 'inherit',
     shell: true
   });
 }

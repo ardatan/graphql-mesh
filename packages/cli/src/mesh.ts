@@ -1,5 +1,5 @@
 import { generateSchemaAstFile } from '@graphql-mesh/utils';
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, printSchema } from 'graphql';
 import {
   MeshConfig,
   APISource,
@@ -14,6 +14,7 @@ import {
   MeshHandlerLibrary
 } from '@graphql-mesh/types';
 import { sync as mkdirp } from 'mkdirp';
+import { ApolloServer } from 'apollo-server';
 
 export async function getHandler(
   source: APISource
@@ -28,7 +29,10 @@ export async function getHandler(
   return handlerFn;
 }
 
-export async function executeMesh(config: MeshConfig): Promise<void> {
+export async function executeMesh(
+  config: MeshConfig,
+  serve = false
+): Promise<void> {
   // TODO: Improve and run in parallel // Dotan
   // TODO: Report nice CLI output (listr?) // Dotan
   for (const output of config) {
@@ -111,16 +115,36 @@ export async function executeMesh(config: MeshConfig): Promise<void> {
     //   mappers
     // );
 
+    const resolversFiles = [];
+
     for (const source of output.sources) {
       const handlerFn = await getHandler(source);
-      await handlerFn.generateResolvers({
+      const sourceOutputPath = join(outputPath, `./${source.name}/`);
+
+      const { payload } = await handlerFn.generateResolvers({
         apiName: source.name,
-        outputPath: outputPath,
+        outputPath: sourceOutputPath,
         buildSchemaPayload: handlersResults[source.name].buildSchemaPayload,
         apiServicesPayload:
           handlersResults[source.name].generateServicesPayload,
         schema: handlersResults[source.name].schema
       });
+
+      resolversFiles.push(payload);
+    }
+
+    if (serve) {
+      const resolvers = resolversFiles.map(p => require(p).resolvers);
+      const server = new ApolloServer({
+        typeDefs: printSchema(unifiedSchema),
+        resolvers
+      });
+
+      server.listen().then(({ url }) => {
+        console.log(`🚀 Serving GraphQL Mesh in: ${url}`);
+      });
+    } else {
+      console.log('Mesh Done')
     }
   }
 }

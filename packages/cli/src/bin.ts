@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node -r ts-node/register/transpile-only
 
 import { MeshConfig } from './config';
 import { safeLoad } from 'js-yaml';
@@ -11,11 +11,11 @@ export async function graphqlMesh() {
     readFileSync(resolve(process.cwd(), './mesh.yaml'), 'utf8')
   ) as MeshConfig;
 
-  await executeMesh(config);
+  await executeMesh(config, process.argv[2] === 'serve');
 }
 
-graphqlMesh().then(() => {
-  console.log('Done')
-}).catch(e => {
-  console.error(e);
-})
+graphqlMesh()
+  .then(() => {})
+  .catch(e => {
+    console.error(e);
+  });

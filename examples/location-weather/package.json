@@ -5,7 +5,8 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "generate": "graphql-mesh"
+    "mesh": "graphql-mesh",
+    "serve-mesh": "graphql-mesh serve"
   },
   "devDependencies": {
     "ts-jest": "24.3.0",

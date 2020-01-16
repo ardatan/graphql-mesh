@@ -3,7 +3,8 @@ import { GraphQLSchema } from 'graphql';
 // Handlers
 export type MeshHandlerLibrary<
   BuildSchemaPayload = any,
-  GenerateApiServicesPayload = any
+  GenerateApiServicesPayload = any,
+  GenerateResolversPayload = any
 > = {
   buildGraphQLSchema: (options: {
     apiName: string;
@@ -22,7 +23,7 @@ export type MeshHandlerLibrary<
     apiServicesPayload: GenerateApiServicesPayload;
     apiName: string;
     outputPath: string;
-  }) => Promise<void>;
+  }) => Promise<GenerateResolversFnResult<GenerateResolversPayload>>;
 };
 
 export type MeshHandlerFnResult<SdkPayload = any> = {
@@ -32,6 +33,10 @@ export type MeshHandlerFnResult<SdkPayload = any> = {
 
 export type GenerateApiServicesFnResult<GenerateApiServicesPayload = any> = {
   payload: GenerateApiServicesPayload;
+};
+
+export type GenerateResolversFnResult<GenerateResolversPayload = any> = {
+  payload: GenerateResolversPayload;
 };
 
 // Transformations
