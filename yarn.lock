@@ -728,6 +728,17 @@
     "@graphql-toolkit/common" "0.9.0"
     tslib "1.10.0"
 
+"@graphql-codegen/typescript-resolvers@1.11.2":
+  version "1.11.2"
+  resolved "https://registry.npmjs.org/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-1.11.2.tgz#a75fe80c3f828bf2fa154d2329008c13c85b0f4e"
+  integrity sha512-lO7K2g78OD1EIPB9yRbc/yW1xS1nYbTOlv5klOlUIj6XPUQHNWA3VNEUTxR7rRbxfypTab+EOSd1Ut1YN2d62A==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.11.2"
+    "@graphql-codegen/typescript" "1.11.2"
+    "@graphql-codegen/visitor-plugin-common" "1.11.2"
+    "@graphql-toolkit/common" "0.9.0"
+    tslib "1.10.0"
+
 "@graphql-codegen/typescript@1.11.2":
   version "1.11.2"
   resolved "https://registry.npmjs.org/@graphql-codegen/typescript/-/typescript-1.11.2.tgz#983fd24f71a991838347b7fcdc42249d1366d642"

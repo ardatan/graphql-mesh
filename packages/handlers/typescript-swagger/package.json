@@ -23,6 +23,7 @@
     "ts-node-dev": "1.0.0-pre.44"
   },
   "dependencies": {
+    "@graphql-mesh/types": "0.0.1",
     "@graphql-mesh/utils": "0.0.1",
     "@openapitools/openapi-generator-cli": "1.0.8-4.2.2",
     "request": "2.88.0",

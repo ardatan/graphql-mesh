@@ -1,16 +1,22 @@
 {
-  "name": "@graphql-mesh/typescript-grpc",
+  "name": "@graphql-mesh/types",
   "version": "0.0.1",
   "main": "dist/index.js",
   "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
+    "@types/node": "13.1.6",
     "graphql": "14.5.8",
     "typescript": "3.7.4",
     "ts-node-dev": "1.0.0-pre.44"
   },
   "dependencies": {
+    "@graphql-codegen/visitor-plugin-common": "1.11.2"
   }
 }

@@ -1,3 +1,4 @@
+import { generateSchemaAstFile } from '@graphql-mesh/utils';
 import { GraphQLSchema } from 'graphql';
 import {
   MeshConfig,
@@ -5,47 +6,56 @@ import {
   SchemaTransformation,
   OutputTransformation
 } from './config';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
+import {
+  OutputTransformationFn,
+  SchemaTransformationFn,
+  MeshHandlerLibrary
+} from '@graphql-mesh/types';
+import { sync as mkdirp } from 'mkdirp';
 
-export type HandlerFn = (
-  name: string,
-  outputPath: string,
-  source: string
-) => Promise<{ schema: GraphQLSchema }>;
-export type SchemaTransformationFn = (
-  name: string,
-  schema: GraphQLSchema
-) => Promise<GraphQLSchema>;
-export type OutputTransformationFn = (
-  schema: GraphQLSchema
-) => Promise<GraphQLSchema>;
+export async function getHandler(
+  source: APISource
+): Promise<MeshHandlerLibrary> {
+  console.info(`\tLoading handler ${source.handler}...`);
 
-export async function executeHandler(outDir: string, source: APISource): Promise<any> {
-  const {
-    name: sourceName,
-    handler: schemaHandlerName,
-    source: schemaSourceFilePath
-  } = source;
-  console.info(
-    `\tLoading API schema ${sourceName} from source "${schemaSourceFilePath}" using handler ${schemaHandlerName}...`
+  const handlerFn = await getPackage<MeshHandlerLibrary>(
+    source.handler,
+    'handler'
   );
 
-  const handlerFn = await getPackage<HandlerFn>(schemaHandlerName, 'handler');
-
-  return await handlerFn(sourceName, outDir, schemaSourceFilePath);
+  return handlerFn;
 }
 
 export async function executeMesh(config: MeshConfig): Promise<void> {
   // TODO: Improve and run in parallel // Dotan
   // TODO: Report nice CLI output (listr?) // Dotan
   for (const output of config) {
-    const schemas: Record<string, GraphQLSchema> = {};
-    const outputPath = output.output;
+    const handlersResults: Record<
+      string,
+      {
+        buildSchemaPayload: any;
+        generateServicesPayload: any;
+        schema: GraphQLSchema;
+      }
+    > = {};
+    const outputPath = resolve(process.cwd(), output.output);
     console.info(`Generating output to ${outputPath}...`);
 
     for (const source of output.sources) {
-      let schema = await executeHandler(outputPath, source);
+      const sourceOutputPath = join(outputPath, `./${source.name}/`);
+      mkdirp(sourceOutputPath);
+      const handlerFn = await getHandler(source);
+
+      let {
+        schema,
+        payload: buildSchemaPayload
+      } = await handlerFn.buildGraphQLSchema({
+        apiName: source.name,
+        filePathOrUrl: source.source,
+        outputPath: sourceOutputPath
+      });
 
       if (source.transformations && source.transformations.length > 0) {
         schema = await applySchemaTransformations(
@@ -55,30 +65,63 @@ export async function executeMesh(config: MeshConfig): Promise<void> {
         );
       }
 
-      schemas[source.name] = schema;
+      await generateSchemaAstFile(
+        schema,
+        join(sourceOutputPath, `./schema.graphql`)
+      );
+
+      let {
+        payload: generateServicesPayload
+      } = await handlerFn.generateApiServices({
+        apiName: source.name,
+        outputPath: sourceOutputPath,
+        schema,
+        payload: buildSchemaPayload
+      });
+
+      handlersResults[source.name] = {
+        schema,
+        buildSchemaPayload,
+        generateServicesPayload
+      };
     }
 
-    let resultSchema = mergeSchemas({
-      schemas: Object.keys(schemas).map(key => schemas[key])
+    let unifiedSchema = mergeSchemas({
+      schemas: Object.keys(handlersResults).map(
+        key => handlersResults[key].schema
+      )
     });
 
     if (output.transformations && output.transformations.length > 0) {
-      resultSchema = await applyOutputTransformations(
-        resultSchema,
+      unifiedSchema = await applyOutputTransformations(
+        unifiedSchema,
         output.transformations
       );
     }
 
-    // const server = new ApolloServer({
-    //   cors: true,
-    //   schema: resultSchema
-    // });
+    await generateSchemaAstFile(
+      unifiedSchema,
+      join(outputPath, './unified-schema.graphql')
+    );
 
-    // server.listen().then(s => {
-    //   console.log(s.port);
-    // });
+    // TODO: Generate resolvers signature somewhere, and the use it for the resolvers
+    // await generateUnifiedResolversSignature(
+    //   unifiedSchema,
+    //   join(outputPath, './resolvers-types.ts'),
+    //   mappers
+    // );
 
-    // await generate(outputPath, resultSchema);
+    for (const source of output.sources) {
+      const handlerFn = await getHandler(source);
+      await handlerFn.generateResolvers({
+        apiName: source.name,
+        outputPath: outputPath,
+        buildSchemaPayload: handlersResults[source.name].buildSchemaPayload,
+        apiServicesPayload:
+          handlersResults[source.name].generateServicesPayload,
+        schema: handlersResults[source.name].schema
+      });
+    }
   }
 }
 
@@ -134,7 +177,9 @@ async function getPackage<T>(name: string, type: string): Promise<T> {
       return (exported.default || exported.parser || exported) as T;
     } catch (err) {
       if (err.message.indexOf(`Cannot find module '${moduleName}'`) === -1) {
-        throw new Error(`Unable to load ${type} matching ${name}`);
+        throw new Error(
+          `Unable to load ${type} matching ${name}: ${err.message}`
+        );
       }
     }
   }
