@@ -4,14 +4,14 @@ import isUrl from 'is-url';
 import request from 'request-promise-native';
 import { spawnSync } from 'child_process';
 import { createGraphQlSchema } from '@dotansimha/openapi-to-graphql';
-import { Oas3 } from '@dotansimha/openapi-to-graphql/lib/types/oas3';
-import { Operation } from '@dotansimha/openapi-to-graphql/lib/types/operation';
+import {
+  Oas3,
+  OperationObject
+} from '@dotansimha/openapi-to-graphql/lib/types/oas3';
 import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/preprocessing_data';
-import { preprocessOas } from '@dotansimha/openapi-to-graphql/lib/preprocessor';
 import * as Oas3Tools from '@dotansimha/openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { isObjectType, isScalarType } from 'graphql';
-import * as changeCase from 'change-case';
 
 export type ApiServiceResult = {
   apiTypesPath: string;
@@ -29,6 +29,8 @@ const handler: MeshHandlerLibrary<
   async buildGraphQLSchema({ filePathOrUrl, outputPath }) {
     let spec = null;
 
+    // Load from a url or from a local file. only json supported at the moment.
+    // I think `getValidOAS3` should support loading YAML files easily
     if (isUrl(filePathOrUrl)) {
       spec = JSON.parse(await request(filePathOrUrl));
     } else {
@@ -43,9 +45,17 @@ const handler: MeshHandlerLibrary<
     }
 
     // TODO: `spec` might be an array?
-
-    const transformOptions = { viewer: false, operationIdFieldNames: true };
     const oass: Oas3 = await Oas3Tools.getValidOAS3(spec);
+    // This will make sure to generate only a single SDK service called `DefaultApi` instead of
+    // the default behaviour of `openapi-codegen` to create a SDK file per tag value.
+    // We prefer to use a single API service because it's easier to manage and pull later from
+    // the context on runtime
+    removeApiTags(oass);
+    // We are passing `viewer: false` because we don't need authentication wrapper, because we are not
+    // using the runtime of `openapi-to-graphql`, just the schema definition.
+    // `operationIdFieldNames` is set to `true` in order to make sure the names on the GraphQL schema
+    // will match the API SDK method names.
+    const transformOptions = { viewer: false, operationIdFieldNames: true };
     const { schema, data } = await createGraphQlSchema(spec, transformOptions);
 
     return {
@@ -75,8 +85,26 @@ const handler: MeshHandlerLibrary<
     schema,
     outputPath
   }) {
+    // Build `context.ts` content with type a type definition for the context
+    const contextOutputFile = join(outputPath, './context.ts');
+    const contextTypeName = `${apiName}Context`;
+    const contextInstanceName = `${apiName}Api`;
+    const contextContent = `export type ${contextTypeName} = {
+  ${contextInstanceName}: DefaultApi,
+}`;
+    writeFileSync(
+      contextOutputFile,
+      buildFileContextWithImports(
+        new Set<string>().add(`import { DefaultApi } from './types';`),
+        contextContent
+      )
+    );
+
+    // Build resolvers file
     const outputFile = join(outputPath, './resolvers.ts');
     const types = schema.getTypeMap();
+    const resolversFileImports = new Set<string>();
+    resolversFileImports.add(`import { ${contextTypeName} } from './context';`);
 
     const output = ([
       schema.getQueryType()?.name,
@@ -92,11 +120,7 @@ const handler: MeshHandlerLibrary<
       if (isObjectType(type)) {
         const fields = type.getFields();
         const fieldsResolvers = Object.keys(fields).map(fieldName => {
-          const serviceOperation =
-            buildSchemaPayload.schemaPreprocessingData.operations[fieldName];
-          const apiServiceName = 
-
-          return `    ${fieldName}: (root, args, context, info) => { console.log('called resolver ${typeName}.${fieldName}') },`;
+          return `    ${fieldName}: (root, args, { ${contextInstanceName} }: ${contextTypeName}) => ${contextInstanceName}.${fieldName}(args),`;
         });
 
         return `  ${type.name}: {
@@ -111,7 +135,10 @@ ${fieldsResolvers.join('\n')}
 ${output.filter(Boolean).join('\n')}
 };`;
 
-    writeFileSync(outputFile, result);
+    writeFileSync(
+      outputFile,
+      buildFileContextWithImports(resolversFileImports, result)
+    );
 
     return {
       payload: outputFile
@@ -140,28 +167,22 @@ function generateOpenApiSdk(inputFile: string, outputDir: string) {
   });
 }
 
-export default handler;
-
-function sortOperations(op1: any, op2: any) {
-  // Sort by object/array type
-  if (
-    op1.responseDefinition.schema.type === 'array' &&
-    op2.responseDefinition.schema.type !== 'array'
-  ) {
-    return 1;
-  } else if (
-    op1.responseDefinition.schema.type !== 'array' &&
-    op2.responseDefinition.schema.type === 'array'
-  ) {
-    return -1;
-  } else {
-    // Sort by GET/non-GET method
-    if (op1.method === 'get' && op2.method !== 'get') {
-      return -1;
-    } else if (op1.method !== 'get' && op2.method === 'get') {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
+function removeApiTags(oas3: Oas3): void {
+  Object.entries(oas3.paths).forEach(([path, pathData]) => {
+    Object.keys(pathData).forEach(method => {
+      const operation: OperationObject = pathData[method];
+      operation.tags = [];
+    });
+  });
 }
+
+function buildFileContextWithImports(
+  imports: Set<string>,
+  content: string
+): string {
+  return `${Array.from(imports).join('\n')}
+
+${content}`;
+}
+
+export default handler;
