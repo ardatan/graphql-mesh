@@ -3,13 +3,15 @@ import { extname, resolve, join } from 'path';
 import isUrl from 'is-url';
 import request from 'request-promise-native';
 import { spawnSync } from 'child_process';
-import { createGraphQlSchema } from 'openapi-to-graphql';
-import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
-import { PreprocessingData } from 'openapi-to-graphql/lib/types/preprocessing_data';
-import { preprocessOas } from 'openapi-to-graphql/lib/preprocessor';
-import * as Oas3Tools from 'openapi-to-graphql/lib/oas_3_tools';
+import { createGraphQlSchema } from '@dotansimha/openapi-to-graphql';
+import { Oas3 } from '@dotansimha/openapi-to-graphql/lib/types/oas3';
+import { Operation } from '@dotansimha/openapi-to-graphql/lib/types/operation';
+import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/preprocessing_data';
+import { preprocessOas } from '@dotansimha/openapi-to-graphql/lib/preprocessor';
+import * as Oas3Tools from '@dotansimha/openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { isObjectType, isScalarType } from 'graphql';
+import * as changeCase from 'change-case';
 
 export type ApiServiceResult = {
   apiTypesPath: string;
@@ -41,9 +43,10 @@ const handler: MeshHandlerLibrary<
     }
 
     // TODO: `spec` might be an array?
+
+    const transformOptions = { viewer: false, operationIdFieldNames: true };
     const oass: Oas3 = await Oas3Tools.getValidOAS3(spec);
-    const data = preprocessOas([oass], { report: { warnings: [] } } as any);
-    const { schema } = await createGraphQlSchema(spec, { viewer: false });
+    const { schema, data } = await createGraphQlSchema(spec, transformOptions);
 
     return {
       payload: {
@@ -74,6 +77,7 @@ const handler: MeshHandlerLibrary<
   }) {
     const outputFile = join(outputPath, './resolvers.ts');
     const types = schema.getTypeMap();
+
     const output = ([
       schema.getQueryType()?.name,
       schema.getMutationType()?.name,
@@ -88,6 +92,10 @@ const handler: MeshHandlerLibrary<
       if (isObjectType(type)) {
         const fields = type.getFields();
         const fieldsResolvers = Object.keys(fields).map(fieldName => {
+          const serviceOperation =
+            buildSchemaPayload.schemaPreprocessingData.operations[fieldName];
+          const apiServiceName = 
+
           return `    ${fieldName}: (root, args, context, info) => { console.log('called resolver ${typeName}.${fieldName}') },`;
         });
 
@@ -106,13 +114,13 @@ ${output.filter(Boolean).join('\n')}
     writeFileSync(outputFile, result);
 
     return {
-      payload: outputFile,
+      payload: outputFile
     };
   }
 };
 
 function generateOpenApiSdk(inputFile: string, outputDir: string) {
-  const args = `generate -i ${inputFile} -p supportsES6=true -g typescript-fetch -o ${outputDir}`.split(
+  const args = `generate -i ${inputFile} -p supportsES6=true -p typescriptThreePlus=true -g typescript-fetch -o ${outputDir}`.split(
     ' '
   );
   const binPath = require.resolve(
@@ -133,3 +141,27 @@ function generateOpenApiSdk(inputFile: string, outputDir: string) {
 }
 
 export default handler;
+
+function sortOperations(op1: any, op2: any) {
+  // Sort by object/array type
+  if (
+    op1.responseDefinition.schema.type === 'array' &&
+    op2.responseDefinition.schema.type !== 'array'
+  ) {
+    return 1;
+  } else if (
+    op1.responseDefinition.schema.type !== 'array' &&
+    op2.responseDefinition.schema.type === 'array'
+  ) {
+    return -1;
+  } else {
+    // Sort by GET/non-GET method
+    if (op1.method === 'get' && op2.method !== 'get') {
+      return -1;
+    } else if (op1.method !== 'get' && op2.method === 'get') {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+}
