@@ -12,7 +12,7 @@ import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/prep
 import * as Oas3Tools from '@dotansimha/openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { isObjectType, isScalarType } from 'graphql';
-import { camelCase, pascalCase } from 'change-case';
+import { camelCase, pascalCase, camelCaseTransformMerge } from 'change-case';
 
 export type ApiServiceResult = {
   apiTypesPath: string;
@@ -207,14 +207,16 @@ function buildSdkMethodForAnonOperation(path: string, method: string): string {
     paramsStr = (params?.map(t => camelCase(t)) || []).join('');
   }
 
-  const mergedPath = camelCase(pathsParts.join(' '));
-  const result = (mergedPath.replace(/_+/, '')) + paramsStr + pascalCase(method);
+  const mergedPath = camelCase(pathsParts.join(' '), {
+    transform: camelCaseTransformMerge
+  });
+  const result = mergedPath + paramsStr + pascalCase(method);
 
   return result;
 }
 
 function generateOpenApiSdk(inputFile: string, outputDir: string) {
-  const args = `generate -i ${inputFile} -p supportsES6=true -p typescriptThreePlus=true -g typescript-node -o ${outputDir}`.split(
+  const args = `generate -i ${inputFile} -p supportsES6=true -g typescript-node -o ${outputDir}`.split(
     ' '
   );
   const binPath = require.resolve(
