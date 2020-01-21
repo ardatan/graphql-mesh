@@ -619,10 +619,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@dotansimha/openapi-to-graphql@1.7.1-alpha.491":
-  version "1.7.1-alpha.491"
-  resolved "https://registry.npmjs.org/@dotansimha/openapi-to-graphql/-/openapi-to-graphql-1.7.1-alpha.491.tgz#8150f2eb167a95c4c315801b41e9c209f8283fe6"
-  integrity sha512-UwjYShdXEXG8A9pf+03ue09PQbOvPAFe9iN9SBe19OIh6deacXVhT5DflKNIZpkNeHm2M5amovrmA+z5QOLs5w==
+"@dotansimha/openapi-to-graphql@1.7.1-alpha.492":
+  version "1.7.1-alpha.492"
+  resolved "https://registry.npmjs.org/@dotansimha/openapi-to-graphql/-/openapi-to-graphql-1.7.1-alpha.492.tgz#a2ad25073cec4cbbacc0f1dcad615daa8fead096"
+  integrity sha512-6B32aJpIMuYOwj/UskP41WqftneL7haSsU1ejyqx81JpPLdqWNevFbQJyF7aSR4hhVLu6yKgPVLYtzsY4UFH7w==
   dependencies:
     "@types/request" "^2.48.1"
     debug "^4.1.0"

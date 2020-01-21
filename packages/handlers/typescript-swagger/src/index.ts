@@ -12,6 +12,7 @@ import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/prep
 import * as Oas3Tools from '@dotansimha/openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { isObjectType, isScalarType } from 'graphql';
+import { camelCase, pascalCase } from 'change-case';
 
 export type ApiServiceResult = {
   apiTypesPath: string;
@@ -78,30 +79,48 @@ const handler: MeshHandlerLibrary<
       }
     };
   },
-  async generateResolvers({
+  async generateGqlWrapper({
     apiName,
-    apiServicesPayload,
-    buildSchemaPayload,
+    handlerConfig,
     schema,
-    outputPath
+    outputPath,
+    buildSchemaPayload
   }) {
+    const indexFilePath = join(outputPath, './index.ts');
     // Build `context.ts` content with type a type definition for the context
     const contextOutputFile = join(outputPath, './context.ts');
     const contextTypeName = `${apiName}Context`;
     const contextInstanceName = `${apiName}Api`;
     const contextContent = `export type ${contextTypeName} = {
   ${contextInstanceName}: DefaultApi,
-}`;
+}
+
+export function createContext(config: Record<any, any> = ${JSON.stringify(
+      handlerConfig,
+      null,
+      2
+    )}): ${contextTypeName} {
+  const api = new DefaultApi();
+  
+  if (config && config.apiKey) {
+    api.setApiKey(0, config.apiKey);
+  }
+
+  return {
+    ${contextInstanceName}: api,
+  };
+}
+`;
     writeFileSync(
       contextOutputFile,
-      buildFileContextWithImports(
-        new Set<string>().add(`import { DefaultApi } from './types';`),
+      buildFileContentWithImports(
+        new Set<string>().add(`import { DefaultApi } from './types/api';`),
         contextContent
       )
     );
 
     // Build resolvers file
-    const outputFile = join(outputPath, './resolvers.ts');
+    const resolversFilePath = join(outputPath, './resolvers.ts');
     const types = schema.getTypeMap();
     const resolversFileImports = new Set<string>();
     resolversFileImports.add(`import { ${contextTypeName} } from './context';`);
@@ -120,7 +139,30 @@ const handler: MeshHandlerLibrary<
       if (isObjectType(type)) {
         const fields = type.getFields();
         const fieldsResolvers = Object.keys(fields).map(fieldName => {
-          return `    ${fieldName}: (root, args, { ${contextInstanceName} }: ${contextTypeName}) => ${contextInstanceName}.${fieldName}(args),`;
+          const oas3Operation =
+            buildSchemaPayload.schemaPreprocessingData.operations[fieldName];
+
+          let argsVarName = 'args';
+          let argsCall = '';
+
+          if (oas3Operation.parameters.length > 0) {
+            const sorted = oas3Operation.parameters.sort((x, y) =>
+              x.required === y.required ? 0 : x.required ? -1 : 1
+            );
+            argsCall = sorted.map(arg => arg.name).join(', ');
+            argsVarName = `{ ${argsCall} }`;
+          }
+
+          let sdkMethodName = oas3Operation.operationId;
+
+          if (!oas3Operation.object.operationId) {
+            sdkMethodName = buildSdkMethodForAnonOperation(
+              oas3Operation.path,
+              oas3Operation.method
+            );
+          }
+
+          return `    ${fieldName}: (root, ${argsVarName}, { ${contextInstanceName} }: ${contextTypeName}) => ${contextInstanceName}.${sdkMethodName}(${argsCall}).then(r => r.body),`;
         });
 
         return `  ${type.name}: {
@@ -136,18 +178,43 @@ ${output.filter(Boolean).join('\n')}
 };`;
 
     writeFileSync(
-      outputFile,
-      buildFileContextWithImports(resolversFileImports, result)
+      resolversFilePath,
+      buildFileContentWithImports(resolversFileImports, result)
+    );
+
+    writeFileSync(
+      indexFilePath,
+      buildFileContentWithImports(
+        new Set<string>()
+          .add(`export * from './resolvers';`)
+          .add(`export * from './context';`)
+      )
     );
 
     return {
-      payload: outputFile
+      payload: indexFilePath
     };
   }
 };
 
+function buildSdkMethodForAnonOperation(path: string, method: string): string {
+  const [, ...pathsParts] = path.split(/[/?]+/);
+  let paramsStr = '';
+
+  if (pathsParts[pathsParts.length - 1].includes('=')) {
+    const params = pathsParts.pop()?.split(/[&=]+/);
+
+    paramsStr = (params?.map(t => camelCase(t)) || []).join('');
+  }
+
+  const mergedPath = camelCase(pathsParts.join(' '));
+  const result = (mergedPath.replace(/_+/, '')) + paramsStr + pascalCase(method);
+
+  return result;
+}
+
 function generateOpenApiSdk(inputFile: string, outputDir: string) {
-  const args = `generate -i ${inputFile} -p supportsES6=true -p typescriptThreePlus=true -g typescript-fetch -o ${outputDir}`.split(
+  const args = `generate -i ${inputFile} -p supportsES6=true -p typescriptThreePlus=true -g typescript-node -o ${outputDir}`.split(
     ' '
   );
   const binPath = require.resolve(
@@ -176,9 +243,9 @@ function removeApiTags(oas3: Oas3): void {
   });
 }
 
-function buildFileContextWithImports(
+function buildFileContentWithImports(
   imports: Set<string>,
-  content: string
+  content: string = ''
 ): string {
   return `${Array.from(imports).join('\n')}
 

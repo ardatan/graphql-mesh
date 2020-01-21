@@ -17,7 +17,8 @@ export type MeshHandlerLibrary<
     apiName: string;
     outputPath: string;
   }) => Promise<GenerateApiServicesFnResult<GenerateApiServicesPayload>>;
-  generateResolvers: (options: {
+  generateGqlWrapper: (options: {
+    handlerConfig: Record<any, any>;
     schema: GraphQLSchema;
     buildSchemaPayload: BuildSchemaPayload;
     apiServicesPayload: GenerateApiServicesPayload;

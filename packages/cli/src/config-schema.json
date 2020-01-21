@@ -98,14 +98,23 @@
                 "pattern": "^(.*)$"
               },
               "handler": {
-                "type": "string",
+                "type": "object",
                 "title": "Handler",
-                "default": "",
-                "examples": [
-                  "typescript-swagger",
-                  "typescript-grpc"
+                "required": [
+                  "name"
                 ],
-                "pattern": "^(.*)$"
+                "properties": {
+                  "name": {
+                    "description": "NPM package to handle, load, and generate code for this API source",
+                    "title": "HandlerPackageName",
+                    "type": "string"
+                  },
+                  "config": {
+                    "title": "HandlerConfig",
+                    "description": "Configuration object to pass to the API method",
+                    "type": "object"
+                  }
+                }
               }
             }
           }

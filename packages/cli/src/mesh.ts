@@ -19,10 +19,8 @@ import { ApolloServer } from 'apollo-server';
 export async function getHandler(
   source: APISource
 ): Promise<MeshHandlerLibrary> {
-  console.info(`\tLoading handler ${source.handler}...`);
-
   const handlerFn = await getPackage<MeshHandlerLibrary>(
-    source.handler,
+    source.handler.name,
     'handler'
   );
 
@@ -115,13 +113,15 @@ export async function executeMesh(
     //   mappers
     // );
 
-    const resolversFiles = [];
+    const generatedIndexFiles = [];
 
     for (const source of output.sources) {
       const handlerFn = await getHandler(source);
       const sourceOutputPath = join(outputPath, `./${source.name}/`);
+      const handlerConfig = source.handler.config || {};
 
-      const { payload } = await handlerFn.generateResolvers({
+      const { payload } = await handlerFn.generateGqlWrapper({
+        handlerConfig,
         apiName: source.name,
         outputPath: sourceOutputPath,
         buildSchemaPayload: handlersResults[source.name].buildSchemaPayload,
@@ -130,21 +130,35 @@ export async function executeMesh(
         schema: handlersResults[source.name].schema
       });
 
-      resolversFiles.push(payload);
+      generatedIndexFiles.push(payload);
     }
 
     if (serve) {
-      const resolvers = resolversFiles.map(p => require(p).resolvers);
+      const loadedResolversPackages = generatedIndexFiles.map(p => require(p));
+      const resolvers = loadedResolversPackages
+        .map(p => p.resolvers)
+        .filter(Boolean);
+      const context = loadedResolversPackages
+        .map(p => p.createContext)
+        .filter(Boolean)
+        .reduce((prev, contextFn) => {
+          return {
+            ...prev,
+            ...contextFn()
+          };
+        }, {});
+
       const server = new ApolloServer({
         typeDefs: printSchema(unifiedSchema),
-        resolvers
+        resolvers,
+        context
       });
 
       server.listen().then(({ url }) => {
         console.log(`🚀 Serving GraphQL Mesh in: ${url}`);
       });
     } else {
-      console.log('Mesh Done')
+      console.log('Mesh Done');
     }
   }
 }
