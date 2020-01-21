@@ -11,3 +11,9 @@
       source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
       handler:
         name: typescript-swagger
+  transformations:
+    - type: link
+      from: PopulatedPlaceSummary.dailyForecast
+      to: "[Forecast!]!"
+  additionalResolvers:
+    - ./src/my-resolvers.ts

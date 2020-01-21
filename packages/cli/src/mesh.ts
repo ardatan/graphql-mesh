@@ -134,6 +134,14 @@ export async function executeMesh(
     }
 
     if (serve) {
+      if (output.additionalResolvers && output.additionalResolvers.length > 0) {
+        generatedIndexFiles.push(
+          ...output.additionalResolvers.map(relative =>
+            resolve(process.cwd(), relative)
+          )
+        );
+      }
+
       const loadedResolversPackages = generatedIndexFiles.map(p => require(p));
       const resolvers = loadedResolversPackages
         .map(p => p.resolvers)
@@ -171,12 +179,16 @@ async function applySchemaTransformations(
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    const transformationFn = await getPackage<SchemaTransformationFn>(
+    const transformationFn = await getPackage<SchemaTransformationFn<any>>(
       transformation.type,
       'transformation'
     );
 
-    resultSchema = await transformationFn(name, schema);
+    resultSchema = await transformationFn({
+      apiName: name,
+      schema: schema,
+      config: transformation
+    });
   }
 
   return resultSchema;
@@ -189,12 +201,15 @@ async function applyOutputTransformations(
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    const transformationFn = await getPackage<OutputTransformationFn>(
+    const transformationFn = await getPackage<OutputTransformationFn<any>>(
       transformation.type,
       'transformation'
     );
 
-    resultSchema = await transformationFn(schema);
+    resultSchema = await transformationFn({
+      schema,
+      config: transformation
+    });
   }
 
   return resultSchema;

@@ -1,0 +1,25 @@
+query {
+  findCitiesUsingGET(namePrefix: "Tel Aviv") {
+    data {
+      city
+      country
+      latitude
+      longitude
+      name
+      region
+      id
+      regionCode
+      dailyForecast {
+        clouds
+        maxTemp
+        minTemp
+        precip
+        snow
+        weather {
+          code
+          description
+        }
+      }
+    }
+  }
+}

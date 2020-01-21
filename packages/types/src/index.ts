@@ -41,11 +41,13 @@ export type GenerateResolversFnResult<GenerateResolversPayload = any> = {
 };
 
 // Transformations
-export type SchemaTransformationFn = (
-  name: string,
-  schema: GraphQLSchema
-) => Promise<GraphQLSchema>;
+export type SchemaTransformationFn<Config extends { type: string }> = (options: {
+  apiName: string;
+  schema: GraphQLSchema;
+  config: Config;
+}) => Promise<GraphQLSchema>;
 
-export type OutputTransformationFn = (
-  schema: GraphQLSchema
-) => Promise<GraphQLSchema>;
+export type OutputTransformationFn<Config extends { type: string }> = (options: {
+  schema: GraphQLSchema;
+  config: Config;
+}) => Promise<GraphQLSchema>;

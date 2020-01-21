@@ -61,6 +61,14 @@
           "title": "OutputFile",
           "pattern": "^(.*)$"
         },
+        "additionalResolvers": {
+          "type": "array",
+          "title": "AdditionalResolvers",
+          "items": {
+            "type": "string",
+            "title": "ResolversFilePath"
+          }
+        },
         "sources": {
           "type": "array",
           "title": "APISources",
