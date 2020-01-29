@@ -17,6 +17,6 @@
     "ts-node-dev": "1.0.0-pre.44"
   },
   "dependencies": {
-    "@graphql-codegen/visitor-plugin-common": "1.11.2"
+    "@graphql-codegen/visitor-plugin-common": "1.12.1"
   }
 }
