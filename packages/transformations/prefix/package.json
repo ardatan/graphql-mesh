@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/prefix",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.2-alpha.0",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -20,7 +20,7 @@
     "typescript": "3.7.5"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.1-alpha.0",
+    "@graphql-mesh/types": "0.0.2-alpha.0",
     "graphql-compose": "7.9.0"
   },
   "gitHead": "e5eb0c1d766551d233edc213f581ceeb3eaaaa73"
