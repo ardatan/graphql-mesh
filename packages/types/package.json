@@ -18,5 +18,8 @@
   },
   "dependencies": {
     "@graphql-codegen/visitor-plugin-common": "1.12.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

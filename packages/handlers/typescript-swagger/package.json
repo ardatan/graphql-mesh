@@ -32,5 +32,8 @@
     "is-url": "1.2.4",
     "swagger-parser": "8.0.4",
     "@dotansimha/openapi-to-graphql": "1.7.1-alpha.492"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

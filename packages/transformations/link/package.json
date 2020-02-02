@@ -22,5 +22,8 @@
   "dependencies": {
     "graphql-compose": "7.9.0",
     "@graphql-mesh/types": "0.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

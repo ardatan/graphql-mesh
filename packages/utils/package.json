@@ -19,5 +19,8 @@
   "dependencies": {
     "@graphql-codegen/core": "1.12.1",
     "@graphql-codegen/schema-ast": "1.12.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
