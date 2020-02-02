@@ -37,10 +37,10 @@
     "apollo-server": "2.9.16",
     "mkdirp": "1.0.3",
     "@graphql-mesh/utils": "0.0.1",
-    "@graphql-codegen/core": "1.11.2",
-    "@graphql-codegen/typescript": "1.11.2",
-    "@graphql-codegen/typescript-resolvers": "1.11.2",
-    "@graphql-codegen/schema-ast": "1.11.2",
+    "@graphql-codegen/core": "1.12.1",
+    "@graphql-codegen/typescript": "1.12.1",
+    "@graphql-codegen/typescript-resolvers": "1.12.1",
+    "@graphql-codegen/schema-ast": "1.12.1",
     "@graphql-toolkit/schema-merging": "0.9.7",
     "js-yaml": "3.13.1"
   }
