@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "license": "MIT",
   "scripts": {
     "test": "jest",
@@ -15,6 +15,7 @@
     "graphql-mesh": "dist/bin.js"
   },
   "devDependencies": {
+    "@types/cosmiconfig": "6.0.0",
     "@types/jest": "25.1.1",
     "@types/js-yaml": "3.12.2",
     "@types/mkdirp": "0.5.2",
@@ -24,8 +25,7 @@
     "json-schema-to-typescript": "8.0.1",
     "ts-jest": "25.1.0",
     "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.7.5",
-    "@types/cosmiconfig": "6.0.0"
+    "typescript": "3.7.5"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -34,15 +34,15 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "cosmiconfig": "6.0.0",
     "@graphql-codegen/core": "1.12.1",
     "@graphql-codegen/schema-ast": "1.12.1",
     "@graphql-codegen/typescript": "1.12.1",
     "@graphql-codegen/typescript-resolvers": "1.12.1",
-    "@graphql-mesh/types": "0.0.1",
-    "@graphql-mesh/utils": "0.0.1",
+    "@graphql-mesh/types": "0.0.2-alpha.0",
+    "@graphql-mesh/utils": "0.0.2-alpha.0",
     "@graphql-toolkit/schema-merging": "0.9.7",
     "apollo-server": "2.9.16",
+    "cosmiconfig": "6.0.0",
     "js-yaml": "3.13.1",
     "mkdirp": "1.0.3"
   },
