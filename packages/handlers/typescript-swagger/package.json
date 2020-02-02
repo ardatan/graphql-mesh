@@ -15,7 +15,7 @@
     "@types/request-promise-native": "1.0.17",
     "ts-jest": "24.3.0",
     "@types/jest": "24.9.1",
-    "@types/node": "13.1.6",
+    "@types/node": "13.7.0",
     "@types/is-url": "1.2.28",
     "jest": "24.9.0",
     "graphql": "14.6.0",
