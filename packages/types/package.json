@@ -18,5 +18,6 @@
   },
   "dependencies": {
     "@graphql-codegen/visitor-plugin-common": "1.12.1"
-  }
+  },
+  "gitHead": "e5eb0c1d766551d233edc213f581ceeb3eaaaa73"
 }

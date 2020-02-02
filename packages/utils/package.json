@@ -19,5 +19,6 @@
   "dependencies": {
     "@graphql-codegen/core": "1.12.1",
     "@graphql-codegen/schema-ast": "1.12.1"
-  }
+  },
+  "gitHead": "e5eb0c1d766551d233edc213f581ceeb3eaaaa73"
 }

@@ -43,5 +43,6 @@
     "apollo-server": "2.9.16",
     "js-yaml": "3.13.1",
     "mkdirp": "1.0.3"
-  }
+  },
+  "gitHead": "e5eb0c1d766551d233edc213f581ceeb3eaaaa73"
 }

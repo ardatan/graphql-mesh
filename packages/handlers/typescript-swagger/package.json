@@ -32,5 +32,6 @@
     "request": "2.88.0",
     "request-promise-native": "1.0.8",
     "swagger-parser": "8.0.4"
-  }
+  },
+  "gitHead": "e5eb0c1d766551d233edc213f581ceeb3eaaaa73"
 }

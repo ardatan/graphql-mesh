@@ -22,5 +22,6 @@
   "dependencies": {
     "@graphql-mesh/types": "0.0.1-alpha.0",
     "graphql-compose": "7.9.0"
-  }
+  },
+  "gitHead": "e5eb0c1d766551d233edc213f581ceeb3eaaaa73"
 }
