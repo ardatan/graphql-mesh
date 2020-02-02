@@ -718,31 +718,15 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
-"@graphql-codegen/core@1.11.2":
-  version "1.11.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/core/-/core-1.11.2.tgz#aa3e0ad60b8ccf72d73ec6f16198ee6ef02e7b56"
-  integrity sha512-ZEHbCtivUQXXPkTd+vrb6sSmCss45Z7YjeyC1mf0kStcEeAKygs6XM2k7F5a9wUQn3mxnyJRAnqfqNIdoagoUg==
+"@graphql-codegen/core@1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/core/-/core-1.12.1.tgz#fd6ee38ff5ee1665051051f115d4a4ab0b3718f3"
+  integrity sha512-tlGVaqbJ6sWCC28wrNaLGigw7SXPti1lEse0In5+sePZRjbNof8AbNQIICBOgaNxvt9TVfZ80VVM/pCFNCU2vA==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.11.2"
-    "@graphql-toolkit/common" "0.9.0"
-    "@graphql-toolkit/schema-merging" "0.9.0"
+    "@graphql-codegen/plugin-helpers" "1.12.1"
+    "@graphql-toolkit/common" "0.9.7"
+    "@graphql-toolkit/schema-merging" "0.9.7"
     tslib "1.10.0"
-
-"@graphql-codegen/plugin-helpers@1.11.2":
-  version "1.11.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.11.2.tgz#16aaf31be620eb1b1758f1237168bb8fbf7519ae"
-  integrity sha512-jggDX2ykLU8EOdP8bpArkMtPTvJ72XYWa44f0GFIdhfSfZtK8PO/gMaSY8iPbV5DqD4HnYvMc3mXCoJTAPT8VQ==
-  dependencies:
-    "@graphql-toolkit/common" "0.9.0"
-    camel-case "4.1.1"
-    common-tags "1.8.0"
-    constant-case "3.0.3"
-    import-from "3.0.0"
-    lower-case "2.0.1"
-    param-case "3.0.3"
-    pascal-case "3.1.1"
-    tslib "1.10.0"
-    upper-case "2.0.1"
 
 "@graphql-codegen/plugin-helpers@1.12.1":
   version "1.12.1"
@@ -760,46 +744,35 @@
     tslib "1.10.0"
     upper-case "2.0.1"
 
-"@graphql-codegen/schema-ast@1.11.2":
-  version "1.11.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/schema-ast/-/schema-ast-1.11.2.tgz#4ed4ed99d814aa3e40bb8c558ed3b096056791ba"
-  integrity sha512-VMjyQDC9cuNj2+ff87IOiOd/3Z9pG52mty1Ei9gYHmZm/yxjmbyKrHdEbp0DA+jQr0OGKow4QdekNaQmBTvEXg==
+"@graphql-codegen/schema-ast@1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/schema-ast/-/schema-ast-1.12.1.tgz#5d2f2d26368e0f68e56bf588e07df25d10fe4a65"
+  integrity sha512-7uB0p2TnKJ0aUJamW13A/RtHd9vMjOfaI9siNNo/pwLr8HKCFywzgmwYApTzy8yeBWogPhK5iIFZfgkIibnjbA==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.11.2"
-    "@graphql-toolkit/common" "0.9.0"
+    "@graphql-codegen/plugin-helpers" "1.12.1"
+    "@graphql-toolkit/common" "0.9.7"
     tslib "1.10.0"
 
-"@graphql-codegen/typescript-resolvers@1.11.2":
-  version "1.11.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-1.11.2.tgz#a75fe80c3f828bf2fa154d2329008c13c85b0f4e"
-  integrity sha512-lO7K2g78OD1EIPB9yRbc/yW1xS1nYbTOlv5klOlUIj6XPUQHNWA3VNEUTxR7rRbxfypTab+EOSd1Ut1YN2d62A==
+"@graphql-codegen/typescript-resolvers@1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-1.12.1.tgz#fd0053b284e5d2975eefa4aff8e57a2cb65e957a"
+  integrity sha512-C6fPVeCUqrys4FVptn4pE9U3hlbsufjS5XnREPDs65P+o2CK1ouYJvK/nj2YEUFQ1WjXSYpoGCqLZeR4eibLPA==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.11.2"
-    "@graphql-codegen/typescript" "1.11.2"
-    "@graphql-codegen/visitor-plugin-common" "1.11.2"
-    "@graphql-toolkit/common" "0.9.0"
-    tslib "1.10.0"
-
-"@graphql-codegen/typescript@1.11.2":
-  version "1.11.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/typescript/-/typescript-1.11.2.tgz#983fd24f71a991838347b7fcdc42249d1366d642"
-  integrity sha512-kOEVCqFnoHnMzjlHfquy8J226nUw9u7zS0ugTIJaYcmfOLuCGN4tysZgwGgp8HXh1kNb9ARTxewQV4VfZr6uBA==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "1.11.2"
-    "@graphql-codegen/visitor-plugin-common" "1.11.2"
+    "@graphql-codegen/plugin-helpers" "1.12.1"
+    "@graphql-codegen/typescript" "1.12.1"
+    "@graphql-codegen/visitor-plugin-common" "1.12.1"
+    "@graphql-toolkit/common" "0.9.7"
     auto-bind "4.0.0"
     tslib "1.10.0"
 
-"@graphql-codegen/visitor-plugin-common@1.11.2":
-  version "1.11.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-1.11.2.tgz#10789c94c19a89080e0c56067a381dab997b3760"
-  integrity sha512-pKakwkX1eLUExCIv1CUYtJtDVqyr0LGe6HKoILylsPupYSVc1GKF8YwPArMEhwkNdvNdtv+PtYeqnyuhfMcyzw==
+"@graphql-codegen/typescript@1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-1.12.1.tgz#051f191e127f9f28e03821dcc87dfc124abda1d5"
+  integrity sha512-j2iQrxSIMxF6MlzJ5OvnawRyewfEHlC21It+Z6Md2z7yJK5T2bYLs4jd0RkzDGVezodnpd0TzV/Yv+jGxdMjSQ==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.11.2"
+    "@graphql-codegen/plugin-helpers" "1.12.1"
+    "@graphql-codegen/visitor-plugin-common" "1.12.1"
     auto-bind "4.0.0"
-    dependency-graph "0.8.1"
-    graphql-tag "2.10.1"
-    relay-compiler "8.0.0"
     tslib "1.10.0"
 
 "@graphql-codegen/visitor-plugin-common@1.12.1":
@@ -814,15 +787,6 @@
     graphql-tag "2.10.1"
     pascal-case "3.1.1"
     tslib "1.10.0"
-
-"@graphql-toolkit/common@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.npmjs.org/@graphql-toolkit/common/-/common-0.9.0.tgz#24d1744fa0d6b9331e8032097fcebb74390bad92"
-  integrity sha512-bLuyt4yV/XIHUS+gP4aF5xjnb5M2K+uuB35Hojw0er+tkNhWiOuWQzRMWPovds/4WN2C9PuknQby/+ntgBOm/g==
-  dependencies:
-    "@kamilkisiela/graphql-tools" "4.0.6"
-    aggregate-error "3.0.1"
-    lodash "4.17.15"
 
 "@graphql-toolkit/common@0.9.7":
   version "0.9.7"
@@ -840,16 +804,6 @@
   dependencies:
     "@graphql-toolkit/common" "0.9.7"
     relay-compiler "8.0.0"
-
-"@graphql-toolkit/schema-merging@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.npmjs.org/@graphql-toolkit/schema-merging/-/schema-merging-0.9.0.tgz#f4fb380e6be57e0235c25a77fc0aec842414c27e"
-  integrity sha512-vrzkqkFXxZ4dXQrHeNGDDWONbOAVDeJmGPwK0cRu2aVszftvkYVJXBrmkMYzZJHwk+tGVkNywf1r00GR6prpOw==
-  dependencies:
-    "@graphql-toolkit/common" "0.9.0"
-    "@kamilkisiela/graphql-tools" "4.0.6"
-    deepmerge "4.2.2"
-    tslib "1.10.0"
 
 "@graphql-toolkit/schema-merging@0.9.7":
   version "0.9.7"
@@ -1008,17 +962,6 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
-
-"@kamilkisiela/graphql-tools@4.0.6":
-  version "4.0.6"
-  resolved "https://registry.npmjs.org/@kamilkisiela/graphql-tools/-/graphql-tools-4.0.6.tgz#6dcf4d18bedaf34f6ab1d5bad2414e530d0875d1"
-  integrity sha512-IPWa+dOFCE4zaCsrJrAMp7yWXnfOZLNhqoMEOmn958WkLM0mmsDc/W/Rh7/7xopIT6P0oizb6/N1iH5HnNXOUA==
-  dependencies:
-    apollo-link "^1.2.3"
-    apollo-utilities "^1.0.1"
-    deprecated-decorator "^0.1.6"
-    iterall "^1.1.3"
-    uuid "^3.1.0"
 
 "@kyleshockey/object-assign-deep@^0.4.0":
   version "0.4.2"

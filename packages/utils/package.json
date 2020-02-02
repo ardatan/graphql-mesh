@@ -17,7 +17,7 @@
     "ts-node-dev": "1.0.0-pre.44"
   },
   "dependencies": {
-    "@graphql-codegen/core": "1.11.2",
-    "@graphql-codegen/schema-ast": "1.11.2"
+    "@graphql-codegen/core": "1.12.1",
+    "@graphql-codegen/schema-ast": "1.12.1"
   }
 }
