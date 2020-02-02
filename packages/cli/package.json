@@ -35,7 +35,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.0.1",
     "apollo-server": "2.9.16",
-    "mkdirp": "0.5.1",
+    "mkdirp": "1.0.3",
     "@graphql-mesh/utils": "0.0.1",
     "@graphql-codegen/core": "1.11.2",
     "@graphql-codegen/typescript": "1.11.2",
