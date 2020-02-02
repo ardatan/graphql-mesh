@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+import { writeFileSync, readFileSync } from 'fs';
 import { extname, resolve, join } from 'path';
 import isUrl from 'is-url';
 import request from 'request-promise-native';
@@ -13,6 +13,7 @@ import * as Oas3Tools from '@dotansimha/openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { isObjectType, isScalarType } from 'graphql';
 import { camelCase, pascalCase, camelCaseTransformMerge } from 'change-case';
+import * as yaml from 'js-yaml';
 
 export type ApiServiceResult = {
   apiTypesPath: string;
@@ -38,11 +39,8 @@ const handler: MeshHandlerLibrary<
       const actualPath = filePathOrUrl.startsWith('/')
         ? filePathOrUrl
         : resolve(process.cwd(), filePathOrUrl);
-      const fileExt = extname(actualPath).toLowerCase();
 
-      if (fileExt === '.json') {
-        spec = require(actualPath);
-      }
+      spec = readFile(actualPath);
     }
 
     // TODO: `spec` might be an array?
@@ -252,6 +250,19 @@ function buildFileContentWithImports(
   return `${Array.from(imports).join('\n')}
 
 ${content}`;
+}
+
+function readFile(path: string): Oas3 {
+  if (/json$/.test(path)) {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } else if (/yaml$/.test(path) || /yml$/.test(path)) {
+    return yaml.safeLoad(readFileSync(path, 'utf8'));
+  } else {
+    throw new Error(
+      `Failed to parse JSON/YAML. Ensure file '${path}' has ` +
+        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+    );
+  }
 }
 
 export default handler;

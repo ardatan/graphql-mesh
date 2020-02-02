@@ -20,7 +20,8 @@
     "jest": "25.1.0",
     "ts-jest": "25.1.0",
     "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.7.5"
+    "typescript": "3.7.5",
+    "@types/js-yaml": "3.12.2"
   },
   "dependencies": {
     "@dotansimha/openapi-to-graphql": "1.7.1-alpha.492",
@@ -30,6 +31,7 @@
     "change-case": "4.1.1",
     "is-url": "1.2.4",
     "request": "2.88.0",
+    "js-yaml": "3.13.1",
     "request-promise-native": "1.0.8",
     "swagger-parser": "8.0.4"
   },
