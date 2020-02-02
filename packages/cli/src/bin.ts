@@ -1,15 +1,17 @@
 #!/usr/bin/env node -r ts-node/register/transpile-only
 
 import { MeshConfig } from './config';
-import { safeLoad } from 'js-yaml';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
 import { executeMesh } from './mesh';
+import { cosmiconfig } from 'cosmiconfig';
 
 export async function graphqlMesh() {
-  const config = safeLoad(
-    readFileSync(resolve(process.cwd(), './mesh.yaml'), 'utf8')
-  ) as MeshConfig;
+  const explorer = await cosmiconfig('mesh');
+  const results = await explorer.search(process.cwd());
+  const config = results?.config as MeshConfig;
+
+  if (!config) {
+    throw new Error(`Unable to find GraphQL Mesh configuration file!`);
+  }
 
   await executeMesh(config, process.argv[2] === 'serve');
 }

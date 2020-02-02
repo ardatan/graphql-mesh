@@ -24,7 +24,8 @@
     "json-schema-to-typescript": "8.0.1",
     "ts-jest": "25.1.0",
     "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.7.5"
+    "typescript": "3.7.5",
+    "@types/cosmiconfig": "6.0.0"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -33,6 +34,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
+    "cosmiconfig": "6.0.0",
     "@graphql-codegen/core": "1.12.1",
     "@graphql-codegen/schema-ast": "1.12.1",
     "@graphql-codegen/typescript": "1.12.1",
