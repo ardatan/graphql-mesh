@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/js-yaml": "3.12.2",
     "json-schema-to-typescript": "8.0.1",
-    "ts-jest": "24.3.0",
+    "ts-jest": "25.1.0",
     "@types/jest": "24.9.1",
     "@types/node": "13.7.0",
     "jest": "25.1.0",
