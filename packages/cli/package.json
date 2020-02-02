@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.3-alpha.0",
   "license": "MIT",
   "scripts": {
     "test": "jest",
@@ -37,8 +37,8 @@
     "@graphql-codegen/schema-ast": "1.12.1",
     "@graphql-codegen/typescript": "1.12.1",
     "@graphql-codegen/typescript-resolvers": "1.12.1",
-    "@graphql-mesh/types": "0.0.2-alpha.0",
-    "@graphql-mesh/utils": "0.0.2-alpha.0",
+    "@graphql-mesh/types": "0.0.3-alpha.0",
+    "@graphql-mesh/utils": "0.0.3-alpha.0",
     "@graphql-toolkit/schema-merging": "0.9.7",
     "apollo-server": "2.9.16",
     "js-yaml": "3.13.1",
