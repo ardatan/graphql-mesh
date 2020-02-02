@@ -22,7 +22,7 @@
     "@types/node": "13.7.0",
     "jest": "25.1.0",
     "graphql": "14.6.0",
-    "typescript": "3.7.4",
+    "typescript": "3.7.5",
     "ts-node-dev": "1.0.0-pre.44",
     "@types/mkdirp": "0.5.2"
   },
