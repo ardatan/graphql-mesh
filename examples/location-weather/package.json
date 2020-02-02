@@ -2,6 +2,7 @@
   "name": "location-weather-example",
   "version": "0.0.1",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "test": "jest",
     "build": "tsc",
