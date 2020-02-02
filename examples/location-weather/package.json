@@ -1,6 +1,6 @@
 {
   "name": "location-weather-example",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,17 +10,17 @@
     "serve-mesh": "graphql-mesh serve"
   },
   "devDependencies": {
-    "ts-jest": "24.3.0",
     "@types/node": "13.1.6",
-    "typescript": "3.7.4",
-    "ts-node-dev": "1.0.0-pre.44"
+    "ts-jest": "24.3.0",
+    "ts-node-dev": "1.0.0-pre.44",
+    "typescript": "3.7.4"
   },
   "dependencies": {
-    "swagger-client": "3.9.6",
-    "@graphql-mesh/cli": "0.0.1",
-    "@graphql-mesh/typescript-swagger": "0.0.1",
-    "@graphql-mesh/prefix": "0.0.1",
+    "@graphql-mesh/cli": "0.0.1-alpha.0",
+    "@graphql-mesh/prefix": "0.0.1-alpha.0",
+    "@graphql-mesh/typescript-swagger": "0.0.1-alpha.0",
+    "apollo-server": "2.9.16",
     "graphql": "14.5.8",
-    "apollo-server": "2.9.16"
+    "swagger-client": "3.9.6"
   }
 }

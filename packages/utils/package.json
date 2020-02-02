@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.0",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -13,8 +13,8 @@
   "devDependencies": {
     "@types/node": "13.7.0",
     "graphql": "14.6.0",
-    "typescript": "3.7.5",
-    "ts-node-dev": "1.0.0-pre.44"
+    "ts-node-dev": "1.0.0-pre.44",
+    "typescript": "3.7.5"
   },
   "dependencies": {
     "@graphql-codegen/core": "1.12.1",
