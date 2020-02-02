@@ -11,17 +11,17 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "ts-jest": "25.1.0",
     "@types/jest": "25.1.1",
     "@types/node": "13.7.0",
-    "jest": "25.1.0",
     "graphql": "14.6.0",
-    "typescript": "3.7.5",
-    "ts-node-dev": "1.0.0-pre.44"
+    "jest": "25.1.0",
+    "ts-jest": "25.1.0",
+    "ts-node-dev": "1.0.0-pre.44",
+    "typescript": "3.7.5"
   },
   "dependencies": {
-    "graphql-compose": "7.9.0",
-    "@graphql-mesh/types": "0.0.1"
+    "@graphql-mesh/types": "0.0.1",
+    "graphql-compose": "7.9.0"
   },
   "publishConfig": {
     "access": "public"
