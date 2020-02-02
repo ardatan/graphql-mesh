@@ -41,7 +41,7 @@
     "@graphql-codegen/typescript": "1.11.2",
     "@graphql-codegen/typescript-resolvers": "1.11.2",
     "@graphql-codegen/schema-ast": "1.11.2",
-    "@graphql-toolkit/schema-merging": "0.9.0",
+    "@graphql-toolkit/schema-merging": "0.9.7",
     "js-yaml": "3.13.1"
   }
 }
