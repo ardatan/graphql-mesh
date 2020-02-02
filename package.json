@@ -3,10 +3,8 @@
   "private": true,
   "scripts": {
     "build": "lerna run build",
-    "test": "lerna run test",
-    "test-and-build": " yarn build && yarn test",
-    "prerelease": "yarn test-and-build",
-    "prerelease:canary": "yarn test-and-build",
+    "prerelease": "yarn build",
+    "prerelease:canary": "yarn build",
     "release": "lerna publish --exact --force-publish=\"*\"",
     "release:canary": "lerna publish --force-publish=\"*\" --canary --exact"
   },
