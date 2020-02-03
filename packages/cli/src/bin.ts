@@ -3,9 +3,21 @@
 import { MeshConfig } from './config';
 import { executeMesh } from './mesh';
 import { cosmiconfig } from 'cosmiconfig';
+import * as yargs from 'yargs';
+import { createLogger, format, transports } from 'winston';
+
+const logger = createLogger({
+  level: 'info',
+  format: format.prettyPrint(),
+  transports: [
+    new transports.Console({
+      format: format.simple()
+    })
+  ]
+});
 
 export async function graphqlMesh() {
-  const explorer = await cosmiconfig('mesh');
+  const explorer = cosmiconfig('mesh');
   const results = await explorer.search(process.cwd());
   const config = results?.config as MeshConfig;
 
@@ -13,11 +25,41 @@ export async function graphqlMesh() {
     throw new Error(`Unable to find GraphQL Mesh configuration file!`);
   }
 
-  await executeMesh(config, process.argv[2] === 'serve');
+  logger.debug(`Loaded configuration file from ${results?.filepath}`);
+
+  yargs
+    .command<{ serve: boolean; verbose: boolean }>(
+      'build-mesh',
+      'Generates unified GraphQL schema based on external APIs',
+      builder => {
+        builder.option('serve', {
+          alias: 's',
+          type: 'boolean',
+          description:
+            'Serves the generated unified GraphQL schema using GraphiQL'
+        });
+      },
+      async args => {
+        if (args.verbose) {
+          logger.level = 'debug';
+        }
+
+        await executeMesh({
+          config,
+          serve: args.serve,
+          logger
+        });
+      }
+    )
+    .option('verbose', {
+      alias: 'v',
+      type: 'boolean',
+      description: 'Run with verbose logging'
+    }).argv;
 }
 
 graphqlMesh()
   .then(() => {})
   .catch(e => {
-    console.error(e);
+    logger.error(e);
   });

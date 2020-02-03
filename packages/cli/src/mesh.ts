@@ -15,10 +15,15 @@ import {
 } from '@graphql-mesh/types';
 import { sync as mkdirp } from 'mkdirp';
 import { ApolloServer } from 'apollo-server';
+import chalk from 'chalk';
+import { Logger } from 'winston';
 
 export async function getHandler(
+  logger: Logger,
   source: APISource
 ): Promise<MeshHandlerLibrary> {
+  logger.debug(`Loading Mesh handler by name: ${source.handler.name}`);
+
   const handlerFn = await getPackage<MeshHandlerLibrary>(
     source.handler.name,
     'handler'
@@ -27,10 +32,17 @@ export async function getHandler(
   return handlerFn;
 }
 
-export async function executeMesh(
-  config: MeshConfig,
-  serve = false
-): Promise<void> {
+export interface ExecuteMeshOptions {
+  config: MeshConfig;
+  serve: boolean;
+  logger: Logger;
+}
+
+export async function executeMesh({
+  config,
+  serve = false,
+  logger
+}: ExecuteMeshOptions): Promise<void> {
   // TODO: Improve and run in parallel // Dotan
   // TODO: Report nice CLI output (listr?) // Dotan
   for (const output of config) {
@@ -43,12 +55,17 @@ export async function executeMesh(
       }
     > = {};
     const outputPath = resolve(process.cwd(), output.output);
-    console.info(`Generating output to ${outputPath}...`);
+    logger.info(
+      chalk.blueBright(`Generating GraphQL Mesh to directory: ${output.output}`)
+    );
+    logger.debug(`Resolved output path: ${outputPath}`);
 
     for (const source of output.sources) {
+      logger.info(`[${source.name}] Building GraphQL schema...`);
       const sourceOutputPath = join(outputPath, `./${source.name}/`);
       mkdirp(sourceOutputPath);
-      const handlerFn = await getHandler(source);
+      const handlerFn = await getHandler(logger, source);
+      logger.debug(`Got handler by name, trying to execute schema builder...`);
 
       let {
         schema,
@@ -59,27 +76,47 @@ export async function executeMesh(
         outputPath: sourceOutputPath
       });
 
+      logger.debug(`Build GraphQL done:\n${printSchema(schema)}`);
+      logger.debug(`Build GraphQL payload:`, buildSchemaPayload);
+
       if (source.transformations && source.transformations.length > 0) {
+        logger.info(`[${source.name}] Executing schema tranformations...`);
+
         schema = await applySchemaTransformations(
           source.name,
           schema,
           source.transformations
         );
+
+        logger.debug(
+          `Done with schema transformatiosn, modified schema is:\n${printSchema(
+            schema
+          )}`
+        );
       }
 
-      await generateSchemaAstFile(
-        schema,
-        join(sourceOutputPath, `./schema.graphql`)
+      const schemaPath = join(sourceOutputPath, `./schema.graphql`);
+      logger.debug(
+        `Writing schema file for ${source.name} to: ${schemaPath}...`
       );
+      await generateSchemaAstFile(schema, schemaPath);
 
-      let {
-        payload: generateServicesPayload
-      } = await handlerFn.generateApiServices({
+      logger.info(`[${source.name}] Executing API services builder...`);
+      const apiServicesArgs = {
         apiName: source.name,
         outputPath: sourceOutputPath,
         schema,
         payload: buildSchemaPayload
-      });
+      };
+      logger.debug(`Generating API services args:`, apiServicesArgs);
+
+      let {
+        payload: generateServicesPayload
+      } = await handlerFn.generateApiServices(apiServicesArgs);
+      logger.debug(
+        `Done with API services generation, result payload is: `,
+        generateServicesPayload
+      );
 
       handlersResults[source.name] = {
         schema,
@@ -88,23 +125,38 @@ export async function executeMesh(
       };
     }
 
+    logger.info(`Creating a GraphQL Mesh unified schema...`);
+
     let unifiedSchema = mergeSchemas({
       schemas: Object.keys(handlersResults).map(
         key => handlersResults[key].schema
       )
     });
 
+    logger.debug(
+      `Done with schema merging, result schema is:\n${printSchema(
+        unifiedSchema
+      )}`
+    );
+
     if (output.transformations && output.transformations.length > 0) {
+      logger.info(`Applying unified schema transformations...`);
+
       unifiedSchema = await applyOutputTransformations(
         unifiedSchema,
         output.transformations
       );
+      logger.debug(
+        `Done with unified schema transformations, modified schema is:\n${printSchema(
+          unifiedSchema
+        )}`
+      );
     }
 
-    await generateSchemaAstFile(
-      unifiedSchema,
-      join(outputPath, './unified-schema.graphql')
-    );
+    const unifiedSchemaPath = join(outputPath, './unified-schema.graphql');
+    logger.info(`Saving unified schema file to: ${unifiedSchemaPath}`);
+
+    await generateSchemaAstFile(unifiedSchema, unifiedSchemaPath);
 
     // TODO: Generate resolvers signature somewhere, and the use it for the resolvers
     // await generateUnifiedResolversSignature(
@@ -116,11 +168,12 @@ export async function executeMesh(
     const generatedIndexFiles = [];
 
     for (const source of output.sources) {
-      const handlerFn = await getHandler(source);
+      const handlerFn = await getHandler(logger, source);
       const sourceOutputPath = join(outputPath, `./${source.name}/`);
       const handlerConfig = source.handler.config || {};
 
-      const { payload } = await handlerFn.generateGqlWrapper({
+      logger.info(`[${source.name}] Generating resolvers...`);
+      const gqlWrapperOptions = {
         handlerConfig,
         apiName: source.name,
         outputPath: sourceOutputPath,
@@ -128,12 +181,22 @@ export async function executeMesh(
         apiServicesPayload:
           handlersResults[source.name].generateServicesPayload,
         schema: handlersResults[source.name].schema
-      });
-
+      };
+      logger.debug(`generateGqlWrapper options:`, gqlWrapperOptions);
+      const { payload } = await handlerFn.generateGqlWrapper(gqlWrapperOptions);
+      logger.debug(`generateGqlWrapper result payload:`, payload);
       generatedIndexFiles.push(payload);
     }
 
     if (serve) {
+      logger.debug(
+        `Serve flag is set, so trying to load generated resolvers and run GraphiQL...`,
+        generatedIndexFiles
+      );
+      logger.info(
+        `Loading generated schema and resolvers, and starting GraphiQL...`
+      );
+
       if (output.additionalResolvers && output.additionalResolvers.length > 0) {
         generatedIndexFiles.push(
           ...output.additionalResolvers.map(relative =>
@@ -163,10 +226,10 @@ export async function executeMesh(
       });
 
       server.listen().then(({ url }) => {
-        console.log(`🚀 Serving GraphQL Mesh in: ${url}`);
+        logger.info(`🚀  Serving GraphQL Mesh in: ${url}`);
       });
     } else {
-      console.log('Mesh Done');
+      logger.info(`Mesh done!`);
     }
   }
 }
