@@ -19,7 +19,7 @@
     "@types/request-promise-native": "1.0.17",
     "graphql": "14.6.0",
     "jest": "25.1.0",
-    "ts-jest": "25.1.0",
+    "ts-jest": "25.2.0",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.7.5"
   },
