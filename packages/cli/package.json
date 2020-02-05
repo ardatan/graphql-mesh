@@ -37,9 +37,14 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
+    "@graphql-toolkit/core": "0.9.7",
+    "@graphql-toolkit/code-file-loader": "0.9.7",
+    "@graphql-toolkit/graphql-file-loader": "0.9.7",
     "@graphql-codegen/core": "1.12.2-alpha-085fe906.18",
+    "@graphql-codegen/add": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/schema-ast": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/typescript": "1.12.2-alpha-085fe906.18",
+    "@graphql-codegen/typescript-operations": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/typescript-generic-sdk": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/typescript-resolvers": "1.12.2-alpha-085fe906.18",
     "@graphql-mesh/types": "0.0.3",

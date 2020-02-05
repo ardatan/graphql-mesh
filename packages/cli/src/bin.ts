@@ -46,7 +46,7 @@ export async function graphqlMesh() {
         }
 
         await executeMesh({
-          config,
+          output: config,
           serve: args.serve,
           logger
         });

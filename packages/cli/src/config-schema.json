@@ -46,101 +46,97 @@
       }
     },
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "array",
     "title": "MeshConfig",
-    "items": {
-      "type": "object",
-      "title": "Output",
-      "required": [
-        "output",
-        "sources"
-      ],
-      "properties": {
-        "output": {
+    "type": "object",
+    "required": [
+      "output",
+      "sources"
+    ],
+    "properties": {
+      "output": {
+        "type": "string",
+        "title": "OutputFile",
+        "pattern": "^(.*)$"
+      },
+      "operations": {
+        "type": "array",
+        "title": "Operations",
+        "items": {
           "type": "string",
-          "title": "OutputFile",
-          "pattern": "^(.*)$"
-        },
-        "operations": {
-          "type": "array",
-          "title": "Operations",
-          "items": {
-            "type": "string",
-            "title": "OperationsPath"
-          }
-        },
-        "additionalResolvers": {
-          "type": "array",
-          "title": "AdditionalResolvers",
-          "items": {
-            "type": "string",
-            "title": "ResolversFilePath"
-          }
-        },
-        "sources": {
-          "type": "array",
-          "title": "APISources",
-          "items": {
-            "type": "object",
-            "title": "APISource",
-            "required": [
-              "name",
-              "source",
-              "handler"
-            ],
-            "properties": {
-              "transformations": {
-                "type": "array",
-                "title": "SchemaTransformations",
-                "items": {
-                  "$ref": "#/definitions/SchemaTransformation"
-                }
-              },
-              "name": {
-                "type": "string",
-                "title": "Name",
-                "examples": [
-                  "MyApi"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "source": {
-                "type": "string",
-                "title": "Path",
-                "default": "",
-                "examples": [
-                  "my-schema.yaml"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "handler": {
-                "type": "object",
-                "title": "Handler",
-                "required": [
-                  "name"
-                ],
-                "properties": {
-                  "name": {
-                    "description": "NPM package to handle, load, and generate code for this API source",
-                    "title": "HandlerPackageName",
-                    "type": "string"
-                  },
-                  "config": {
-                    "title": "HandlerConfig",
-                    "description": "Configuration object to pass to the API method",
-                    "type": "object"
-                  }
+          "title": "OperationsPath"
+        }
+      },
+      "additionalResolvers": {
+        "type": "array",
+        "title": "AdditionalResolvers",
+        "items": {
+          "type": "string",
+          "title": "ResolversFilePath"
+        }
+      },
+      "sources": {
+        "type": "array",
+        "title": "APISources",
+        "items": {
+          "type": "object",
+          "title": "APISource",
+          "required": [
+            "name",
+            "source",
+            "handler"
+          ],
+          "properties": {
+            "transformations": {
+              "type": "array",
+              "title": "SchemaTransformations",
+              "items": {
+                "$ref": "#/definitions/SchemaTransformation"
+              }
+            },
+            "name": {
+              "type": "string",
+              "title": "Name",
+              "examples": [
+                "MyApi"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "source": {
+              "type": "string",
+              "title": "Path",
+              "default": "",
+              "examples": [
+                "my-schema.yaml"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "handler": {
+              "type": "object",
+              "title": "Handler",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "description": "NPM package to handle, load, and generate code for this API source",
+                  "title": "HandlerPackageName",
+                  "type": "string"
+                },
+                "config": {
+                  "title": "HandlerConfig",
+                  "description": "Configuration object to pass to the API method",
+                  "type": "object"
                 }
               }
             }
           }
-        },
-        "transformations": {
-          "type": "array",
-          "title": "Transformations",
-          "items": {
-            "$ref": "#/definitions/OutputTransformation"
-          }
+        }
+      },
+      "transformations": {
+        "type": "array",
+        "title": "Transformations",
+        "items": {
+          "$ref": "#/definitions/OutputTransformation"
         }
       }
     }
