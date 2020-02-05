@@ -51,7 +51,7 @@ export async function generateSdk({
   const context = await contextBuilderFn();
   const executionResult = await execute<R>({schema, document, variableValues: variables, contextValue: context, rootValue: {}});
 
-  return executionResult.data;
+  return executionResult.data as R;
 };
 
 export const sdk = getSdk(requester);
