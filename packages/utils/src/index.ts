@@ -25,3 +25,12 @@ export async function generateSchemaAstFile(
 
   writeFileSync(outputPath, output);
 }
+
+export function buildFileContentWithImports(
+  imports: Set<string>,
+  content: string = ''
+): string {
+  return `${Array.from(imports).join('\n')}
+
+${content}`;
+}

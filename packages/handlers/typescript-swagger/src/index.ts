@@ -1,6 +1,7 @@
-import { writeFileSync, readFileSync } from 'fs';
-import { extname, resolve, join } from 'path';
+import { writeFileSync, readFileSync, unlinkSync } from 'fs';
+import { resolve, join } from 'path';
 import isUrl from 'is-url';
+import * as yaml from 'js-yaml';
 import request from 'request-promise-native';
 import { spawnSync } from 'child_process';
 import { createGraphQlSchema } from '@dotansimha/openapi-to-graphql';
@@ -11,9 +12,9 @@ import {
 import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/preprocessing_data';
 import * as Oas3Tools from '@dotansimha/openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
+import { buildFileContentWithImports } from '@graphql-mesh/utils';
 import { isObjectType, isScalarType } from 'graphql';
 import { camelCase, pascalCase, camelCaseTransformMerge } from 'change-case';
-import * as yaml from 'js-yaml';
 
 export type ApiServiceResult = {
   apiTypesPath: string;
@@ -67,9 +68,10 @@ const handler: MeshHandlerLibrary<
   },
   async generateApiServices({ payload: { oas3 }, outputPath }) {
     const oasFilePath = join(outputPath, './oas3-schema.json');
-    const apiTypesPath = join(outputPath, './types');
     writeFileSync(oasFilePath, JSON.stringify(oas3, null, 2));
+    const apiTypesPath = join(outputPath, './api');
     generateOpenApiSdk(oasFilePath, apiTypesPath);
+    unlinkSync(oasFilePath);
 
     return {
       payload: {
@@ -112,7 +114,7 @@ export function createContext(config: Record<any, any> = ${JSON.stringify(
     writeFileSync(
       contextOutputFile,
       buildFileContentWithImports(
-        new Set<string>().add(`import { DefaultApi } from './types/api';`),
+        new Set<string>().add(`import { DefaultApi } from './api/api';`),
         contextContent
       )
     );
@@ -190,7 +192,8 @@ ${output.filter(Boolean).join('\n')}
     );
 
     return {
-      payload: indexFilePath
+      filePath: indexFilePath,
+      payload: {}
     };
   }
 };
@@ -214,6 +217,9 @@ function buildSdkMethodForAnonOperation(path: string, method: string): string {
 }
 
 function generateOpenApiSdk(inputFile: string, outputDir: string) {
+  // TODO: Maybe use the NodeJS version of this codegen? output might be a bit different, but it
+  // will be simpler to maintain.
+  // TOOD: Find a way to reduce the amount of generated files.
   const args = `generate -i ${inputFile} -p supportsES6=true -g typescript-node -o ${outputDir}`.split(
     ' '
   );
@@ -241,15 +247,6 @@ function removeApiTags(oas3: Oas3): void {
       operation.tags = [];
     });
   });
-}
-
-function buildFileContentWithImports(
-  imports: Set<string>,
-  content: string = ''
-): string {
-  return `${Array.from(imports).join('\n')}
-
-${content}`;
 }
 
 function readFile(path: string): Oas3 {

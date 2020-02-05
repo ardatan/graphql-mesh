@@ -2,6 +2,7 @@
 
 import { MeshConfig } from './config';
 import { executeMesh } from './mesh';
+import { generateSdk } from './generate-sdk';
 import { cosmiconfig } from 'cosmiconfig';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
@@ -48,6 +49,21 @@ export async function graphqlMesh() {
           config,
           serve: args.serve,
           logger
+        });
+      }
+    )
+    .command<{ verbose: boolean }>(
+      'generate-sdk',
+      'Generates fully type-safe SDK based on unifid GraphQL schema and GraphQL operations',
+      () => null,
+      async args => {
+        if (args.verbose) {
+          logger.level = 'debug';
+        }
+
+        await generateSdk({
+          config,
+          logger,
         });
       }
     )

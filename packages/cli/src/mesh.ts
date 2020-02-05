@@ -1,36 +1,18 @@
-import { generateSchemaAstFile } from '@graphql-mesh/utils';
 import { GraphQLSchema, printSchema } from 'graphql';
-import {
-  MeshConfig,
-  APISource,
-  SchemaTransformation,
-  OutputTransformation
-} from './config';
+import { MeshConfig } from './config';
 import { resolve, join } from 'path';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
-import {
-  OutputTransformationFn,
-  SchemaTransformationFn,
-  MeshHandlerLibrary
-} from '@graphql-mesh/types';
 import { sync as mkdirp } from 'mkdirp';
 import { ApolloServer } from 'apollo-server';
 import chalk from 'chalk';
 import { Logger } from 'winston';
-
-export async function getHandler(
-  logger: Logger,
-  source: APISource
-): Promise<MeshHandlerLibrary> {
-  logger.debug(`Loading Mesh handler by name: ${source.handler.name}`);
-
-  const handlerFn = await getPackage<MeshHandlerLibrary>(
-    source.handler.name,
-    'handler'
-  );
-
-  return handlerFn;
-}
+import { generateRootExecutableSchemaFile } from './generate-executable-schema';
+import {
+  applySchemaTransformations,
+  getHandler,
+  applyOutputTransformations
+} from './utils';
+import { writeFileSync } from 'fs';
 
 export interface ExecuteMeshOptions {
   config: MeshConfig;
@@ -52,9 +34,10 @@ export async function executeMesh({
         buildSchemaPayload: any;
         generateServicesPayload: any;
         schema: GraphQLSchema;
+        indexFile?: string;
       }
     > = {};
-    const outputPath = resolve(process.cwd(), output.output);
+    const outputPath = resolve(process.cwd(), join(output.output, './schema/'));
     logger.info(
       chalk.blueBright(`Generating GraphQL Mesh to directory: ${output.output}`)
     );
@@ -94,12 +77,6 @@ export async function executeMesh({
           )}`
         );
       }
-
-      const schemaPath = join(sourceOutputPath, `./schema.graphql`);
-      logger.debug(
-        `Writing schema file for ${source.name} to: ${schemaPath}...`
-      );
-      await generateSchemaAstFile(schema, schemaPath);
 
       logger.info(`[${source.name}] Executing API services builder...`);
       const apiServicesArgs = {
@@ -153,19 +130,8 @@ export async function executeMesh({
       );
     }
 
-    const unifiedSchemaPath = join(outputPath, './unified-schema.graphql');
-    logger.info(`Saving unified schema file to: ${unifiedSchemaPath}`);
-
-    await generateSchemaAstFile(unifiedSchema, unifiedSchemaPath);
-
-    // TODO: Generate resolvers signature somewhere, and the use it for the resolvers
-    // await generateUnifiedResolversSignature(
-    //   unifiedSchema,
-    //   join(outputPath, './resolvers-types.ts'),
-    //   mappers
-    // );
-
-    const generatedIndexFiles = [];
+    const unifiedSchemaPath = join(outputPath, `./schema.graphql`);
+    writeFileSync(unifiedSchemaPath, printSchema(unifiedSchema));
 
     for (const source of output.sources) {
       const handlerFn = await getHandler(logger, source);
@@ -183,45 +149,48 @@ export async function executeMesh({
         schema: handlersResults[source.name].schema
       };
       logger.debug(`generateGqlWrapper options:`, gqlWrapperOptions);
-      const { payload } = await handlerFn.generateGqlWrapper(gqlWrapperOptions);
-      logger.debug(`generateGqlWrapper result payload:`, payload);
-      generatedIndexFiles.push(payload);
+      const { payload, filePath } = await handlerFn.generateGqlWrapper(
+        gqlWrapperOptions
+      );
+      logger.debug(
+        `generateGqlWrapper result path: ${filePath}, payload:`,
+        payload
+      );
+      handlersResults[source.name].indexFile = filePath;
     }
 
+    const additionalImports = new Set<string>();
+
+    if (output.additionalResolvers && output.additionalResolvers.length > 0) {
+      output.additionalResolvers.forEach(relative => {
+        additionalImports.add(resolve(process.cwd(), relative));
+      });
+    }
+
+    const executableSchemaFilePath = join(outputPath, './index.ts');
+
+    generateRootExecutableSchemaFile({
+      apisRootFiles: Object.keys(handlersResults).reduce((prev, apiName) => {
+        return {
+          ...prev,
+          [apiName]: handlersResults[apiName].indexFile
+        };
+      }, {}),
+      basePath: outputPath,
+      additionalImports,
+      schemaFilePath: unifiedSchemaPath,
+      outputFile: executableSchemaFilePath
+    });
+
     if (serve) {
-      logger.debug(
-        `Serve flag is set, so trying to load generated resolvers and run GraphiQL...`,
-        generatedIndexFiles
-      );
       logger.info(
         `Loading generated schema and resolvers, and starting GraphiQL...`
       );
 
-      if (output.additionalResolvers && output.additionalResolvers.length > 0) {
-        generatedIndexFiles.push(
-          ...output.additionalResolvers.map(relative =>
-            resolve(process.cwd(), relative)
-          )
-        );
-      }
-
-      const loadedResolversPackages = generatedIndexFiles.map(p => require(p));
-      const resolvers = loadedResolversPackages
-        .map(p => p.resolvers)
-        .filter(Boolean);
-      const context = loadedResolversPackages
-        .map(p => p.createContext)
-        .filter(Boolean)
-        .reduce((prev, contextFn) => {
-          return {
-            ...prev,
-            ...contextFn()
-          };
-        }, {});
+      const { schema, contextBuilderFn: context } = await import(executableSchemaFilePath);
 
       const server = new ApolloServer({
-        typeDefs: printSchema(unifiedSchema),
-        resolvers,
+        schema,
         context
       });
 
@@ -232,73 +201,4 @@ export async function executeMesh({
       logger.info(`Mesh done!`);
     }
   }
-}
-
-async function applySchemaTransformations(
-  name: string,
-  schema: GraphQLSchema,
-  transformations: SchemaTransformation[]
-): Promise<GraphQLSchema> {
-  let resultSchema: GraphQLSchema = schema;
-
-  for (const transformation of transformations) {
-    const transformationFn = await getPackage<SchemaTransformationFn<any>>(
-      transformation.type,
-      'transformation'
-    );
-
-    resultSchema = await transformationFn({
-      apiName: name,
-      schema: schema,
-      config: transformation
-    });
-  }
-
-  return resultSchema;
-}
-
-async function applyOutputTransformations(
-  schema: GraphQLSchema,
-  transformations: OutputTransformation[]
-): Promise<GraphQLSchema> {
-  let resultSchema: GraphQLSchema = schema;
-
-  for (const transformation of transformations) {
-    const transformationFn = await getPackage<OutputTransformationFn<any>>(
-      transformation.type,
-      'transformation'
-    );
-
-    resultSchema = await transformationFn({
-      schema,
-      config: transformation
-    });
-  }
-
-  return resultSchema;
-}
-
-async function getPackage<T>(name: string, type: string): Promise<T> {
-  const possibleNames = [
-    `@graphql-mesh/${name}`,
-    `@graphql-mesh/${name}-${type}`,
-    name
-  ];
-  const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
-
-  for (const moduleName of possibleModules) {
-    try {
-      const exported = await import(moduleName);
-
-      return (exported.default || exported.parser || exported) as T;
-    } catch (err) {
-      if (err.message.indexOf(`Cannot find module '${moduleName}'`) === -1) {
-        throw new Error(
-          `Unable to load ${type} matching ${name}: ${err.message}`
-        );
-      }
-    }
-  }
-
-  throw new Error(`Unable to find ${type} matching ${name}`);
 }

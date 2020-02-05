@@ -1,7 +1,8 @@
-- output: ./src/generated-sdk/
+- output: ./src/mesh/
+  operations:
+    - "./src/mesh/operations/*.graphql"
   sources:
     - name: Cities
-      # Docs: https://wirefreethought.github.io/geodb-cities-api-docs/
       source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
       handler:
         name: typescript-swagger
@@ -16,4 +17,4 @@
       from: PopulatedPlaceSummary.dailyForecast
       to: "[Forecast!]!"
   additionalResolvers:
-    - ./src/my-resolvers.ts
+    - ./src/mesh/additional-resolvers.ts

@@ -1,14 +1,10 @@
-query {
-  findCitiesUsingGET(namePrefix: "Tel Aviv") {
+query findCityAndWeather($namePrefix: String!) {
+  findCitiesUsingGET(namePrefix: $namePrefix) {
     data {
       city
       country
-      latitude
-      longitude
       name
       region
-      id
-      regionCode
       dailyForecast {
         clouds
         maxTemp

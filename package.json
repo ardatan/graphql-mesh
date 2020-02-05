@@ -15,5 +15,8 @@
     "./packages/**/*",
     "./examples/*"
   ],
-  "name": "graphql-mesh"
+  "name": "graphql-mesh",
+  "resolutions": {
+    "graphql": "14.6.0"
+  }
 }

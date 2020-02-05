@@ -38,6 +38,7 @@ export type GenerateApiServicesFnResult<GenerateApiServicesPayload = any> = {
 
 export type GenerateResolversFnResult<GenerateResolversPayload = any> = {
   payload: GenerateResolversPayload;
+  filePath: string;
 };
 
 // Transformations

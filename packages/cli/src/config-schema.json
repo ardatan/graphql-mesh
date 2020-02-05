@@ -61,6 +61,14 @@
           "title": "OutputFile",
           "pattern": "^(.*)$"
         },
+        "operations": {
+          "type": "array",
+          "title": "Operations",
+          "items": {
+            "type": "string",
+            "title": "OperationsPath"
+          }
+        },
         "additionalResolvers": {
           "type": "array",
           "title": "AdditionalResolvers",

@@ -1,1 +1,2 @@
-src/generated-sdk
+src/mesh/schema/
+src/mesh/sdk/
