@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "scripts": {
     "test": "jest",
@@ -37,18 +37,18 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-toolkit/core": "0.9.7",
-    "@graphql-toolkit/code-file-loader": "0.9.7",
-    "@graphql-toolkit/graphql-file-loader": "0.9.7",
-    "@graphql-codegen/core": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/add": "1.12.2-alpha-085fe906.18",
+    "@graphql-codegen/core": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/schema-ast": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/typescript": "1.12.2-alpha-085fe906.18",
-    "@graphql-codegen/typescript-operations": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/typescript-generic-sdk": "1.12.2-alpha-085fe906.18",
+    "@graphql-codegen/typescript-operations": "1.12.2-alpha-085fe906.18",
     "@graphql-codegen/typescript-resolvers": "1.12.2-alpha-085fe906.18",
-    "@graphql-mesh/types": "0.0.3",
-    "@graphql-mesh/utils": "0.0.3",
+    "@graphql-mesh/types": "0.0.4",
+    "@graphql-mesh/utils": "0.0.4",
+    "@graphql-toolkit/code-file-loader": "0.9.7",
+    "@graphql-toolkit/core": "0.9.7",
+    "@graphql-toolkit/graphql-file-loader": "0.9.7",
     "@graphql-toolkit/schema-merging": "0.9.7",
     "apollo-server": "2.9.16",
     "chalk": "3.0.0",
