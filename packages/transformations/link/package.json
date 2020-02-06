@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/link",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -20,7 +20,7 @@
     "typescript": "3.7.5"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.5",
+    "@graphql-mesh/types": "0.0.6",
     "graphql-compose": "7.9.0"
   },
   "publishConfig": {
