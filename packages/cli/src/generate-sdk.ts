@@ -47,21 +47,37 @@ export async function generateSdk({
       typescriptGenericSdk: tsGenericSdkPlugin,
       meshSdk: {
         plugin: () => {
-          const requester = `const requester: Requester = async <R>(document, variables) => {
+          const requester = `
+export class GraphQLMeshSdkError<Data = {}, Variables = {}> extends Error {
+  constructor(
+    public errors: ReadonlyArray<GraphQLError>,
+    public document: DocumentNode,
+    public variables: Variables,
+    public data: Data
+  ) {
+      super(\`GraphQL Mesh SDK Failed (\${errors.length} errors): \${errors.map(e => e.message).join('\\n\\t')}\`);
+  }
+}
+          
+const localRequester: Requester = async <R, V>(document, variables) => {
   const context = await contextBuilderFn();
   const executionResult = await execute<R>({schema, document, variableValues: variables, contextValue: context, rootValue: {}});
 
-  return executionResult.data as R;
+  if (executionResult.data && !executionResult.errors) {
+    return executionResult.data as R;
+  } else {
+    throw new GraphQLMeshSdkError(executionResult.errors, document, variables, executionResult.data)
+  }
 };
 
-export const sdk = getSdk(requester);
+export const sdk = getSdk(localRequester);
 
 export default sdk;`;
           
           return {
             prepend: [
               `import { schema, contextBuilderFn } from './schema';`,
-              `import { execute } from 'graphql';`
+              `import { execute, GraphQLError } from 'graphql';`
             ],
             content: [requester].join('\n\n')
           };
