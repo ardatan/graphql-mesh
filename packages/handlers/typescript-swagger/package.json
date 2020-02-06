@@ -21,10 +21,11 @@
     "jest": "25.1.0",
     "ts-jest": "25.2.0",
     "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.7.5"
+    "typescript": "3.7.5",
+    "@types/graphql-type-json": "0.3.2"
   },
   "dependencies": {
-    "@dotansimha/openapi-to-graphql": "1.7.1-alpha.492",
+    "@dotansimha/openapi-to-graphql": "2.0.1",
     "@graphql-mesh/types": "0.0.7",
     "@graphql-mesh/utils": "0.0.7",
     "@openapitools/openapi-generator-cli": "1.0.8-4.2.2",

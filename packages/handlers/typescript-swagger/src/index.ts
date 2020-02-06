@@ -4,7 +4,7 @@ import isUrl from 'is-url';
 import * as yaml from 'js-yaml';
 import request from 'request-promise-native';
 import { spawnSync } from 'child_process';
-import { createGraphQlSchema } from '@dotansimha/openapi-to-graphql';
+import { createGraphQLSchema } from '@dotansimha/openapi-to-graphql';
 import {
   Oas3,
   OperationObject
@@ -56,7 +56,7 @@ const handler: MeshHandlerLibrary<
     // `operationIdFieldNames` is set to `true` in order to make sure the names on the GraphQL schema
     // will match the API SDK method names.
     const transformOptions = { viewer: false, operationIdFieldNames: true };
-    const { schema, data } = await createGraphQlSchema(spec, transformOptions);
+    const { schema, data } = await createGraphQLSchema(spec, transformOptions);
 
     return {
       payload: {
