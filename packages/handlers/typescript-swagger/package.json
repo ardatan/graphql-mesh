@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/typescript-swagger",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,6 +11,7 @@
     "graphql": "*"
   },
   "devDependencies": {
+    "@types/graphql-type-json": "0.3.2",
     "@types/is-url": "1.2.28",
     "@types/jest": "25.1.1",
     "@types/js-yaml": "3.12.2",
@@ -21,13 +22,12 @@
     "jest": "25.1.0",
     "ts-jest": "25.2.0",
     "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.7.5",
-    "@types/graphql-type-json": "0.3.2"
+    "typescript": "3.7.5"
   },
   "dependencies": {
     "@dotansimha/openapi-to-graphql": "2.0.1",
-    "@graphql-mesh/types": "0.0.7",
-    "@graphql-mesh/utils": "0.0.7",
+    "@graphql-mesh/types": "0.0.8",
+    "@graphql-mesh/utils": "0.0.8",
     "@openapitools/openapi-generator-cli": "1.0.8-4.2.2",
     "change-case": "4.1.1",
     "is-url": "1.2.4",
