@@ -66,7 +66,7 @@ const localRequester: Requester = async <R, V>(document, variables) => {
   if (executionResult.data && !executionResult.errors) {
     return executionResult.data as R;
   } else {
-    throw new GraphQLMeshSdkError(executionResult.errors, document, variables, executionResult.data)
+    throw new GraphQLMeshSdkError(executionResult.errors as ReadonlyArray<GraphQLError>, document, variables, executionResult.data)
   }
 };
 
