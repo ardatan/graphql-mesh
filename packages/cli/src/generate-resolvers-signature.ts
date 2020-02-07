@@ -35,6 +35,7 @@ export async function generateUnifiedResolversSignature({
       },
       {
         typescriptResolvers: {
+          useIndexSignature: true,
           noSchemaStitching: true,
           contextType: `${makeCleanImportRelative(context.path, basePath)}#${context.identifier}`
         }
