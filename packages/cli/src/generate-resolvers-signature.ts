@@ -29,7 +29,9 @@ export async function generateUnifiedResolversSignature({
     documents: [],
     plugins: [
       {
-        typescript: {},
+        typescript: {
+          maybeValue: `T | undefined`
+        },
       },
       {
         typescriptResolvers: {
