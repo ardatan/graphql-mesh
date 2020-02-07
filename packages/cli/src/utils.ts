@@ -10,7 +10,7 @@ import {
   SchemaTransformationFn,
   MeshHandlerLibrary
 } from '@graphql-mesh/types';
-import { resolve, relative, sep } from 'path';
+import { resolve } from 'path';
 
 export async function applySchemaTransformations(
   name: string,
@@ -91,21 +91,3 @@ export async function getHandler(
 
   return handlerFn;
 }
-
-export function makeCleanImportRelative(path: string, basePath: string, keepExtension = false): string {
-  const relativePath = relative(basePath, path);
-  const relativeWithoutExtension = keepExtension ? relativePath : relativePath.split('.').slice(0, -1).join('.');
-  const splitted = relativeWithoutExtension.split(sep);
-
-  if (splitted[splitted.length - 1] === 'index') {
-    splitted.pop();
-  }
-
-  let clearFileImport = splitted.join(sep);
-
-  if (!clearFileImport.startsWith('.')) {
-    clearFileImport = `./${clearFileImport}`;
-  }
-
-  return clearFileImport;
-} 

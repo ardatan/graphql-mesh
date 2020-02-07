@@ -1,31 +1,29 @@
 import { join } from 'path';
 import { writeFileSync } from 'fs';
-import { buildFileContentWithImports } from '@graphql-mesh/utils';
-import { makeCleanImportRelative } from './utils';
+import { makeCleanImportRelative, buildFileContentWithImports } from '@graphql-mesh/utils';
 
 export interface GenerateRootExecutableSchemaFileOptions {
   apisRootFiles: Record<string, string>;
   additionalImports: Set<string>;
   schemaFilePath: string;
   basePath: string;
+  unifiedContext: { path: string, identifier: string };
 }
 
 export function generateRootExecutableSchemaFile({
   apisRootFiles,
   schemaFilePath,
   additionalImports,
-  basePath
+  basePath,
+  unifiedContext
 }: GenerateRootExecutableSchemaFileOptions): {
-  executableSchemaFilePath: string;
-  unifiedContextFilePath: string;
+  filePath: string;
 } {
   const outputFile = join(basePath, './index.ts');
-  const contextFile = join(basePath, './context.ts');
   const imports = new Set<string>();
   imports.add(`import { makeExecutableSchema } from 'graphql-tools-fork';`);
   imports.add(`import { readFileSync } from 'fs';`);
   const contextIdentifiers: string[] = [];
-  const contextTypesIdentifiers: { identifier: string; file: string }[] = [];
   const resolversIdentifiers: string[] = [];
 
   for (const additionalFilePath of additionalImports) {
@@ -43,25 +41,19 @@ export function generateRootExecutableSchemaFile({
     const importPath = makeCleanImportRelative(indexFilePath, basePath);
     const contextIdentifier = `createContext${apiName}`;
     const resolversIdentifier = `resolvers${apiName}`;
-    const contextTypeIdentifier = `${apiName}Context`;
 
     resolversIdentifiers.push(resolversIdentifier);
     contextIdentifiers.push(contextIdentifier);
-
-    contextTypesIdentifiers.push({
-      identifier: contextTypeIdentifier,
-      file: importPath
-    });
 
     imports.add(
       `import { createContext as ${contextIdentifier}, resolvers as ${resolversIdentifier} } from '${importPath}';`
     );
   }
 
-  imports.add(`import { UnifiedMeshContext } from './context';`);
+  imports.add(`import { ${unifiedContext.identifier} } from '${makeCleanImportRelative(unifiedContext.path, basePath)}';`);
 
   const schemaString = `export const schemaAst = readFileSync('${schemaFilePath}', 'utf-8')`;
-  const content = `export const schema = makeExecutableSchema<UnifiedMeshContext>({
+  const content = `export const schema = makeExecutableSchema<${unifiedContext.identifier}>({
   typeDefs: schemaAst,
   resolvers: [${resolversIdentifiers.join(', ')}]
 });`;
@@ -81,23 +73,7 @@ export function generateRootExecutableSchemaFile({
 
   writeFileSync(outputFile, result);
 
-  const contextImports = new Set<string>(
-    contextTypesIdentifiers.map(
-      t => `import { ${t.identifier} } from '${t.file}';`
-    )
-  );
-  writeFileSync(
-    contextFile,
-    buildFileContentWithImports(
-      contextImports,
-      `export type UnifiedMeshContext = ${contextTypesIdentifiers
-        .map(t => t.identifier)
-        .join(' & ')};`
-    )
-  );
-
   return {
-    executableSchemaFilePath: outputFile,
-    unifiedContextFilePath: contextFile
+    filePath: outputFile
   };
 }

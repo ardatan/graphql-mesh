@@ -13,6 +13,11 @@ import {
   applyOutputTransformations
 } from './utils';
 import { writeFileSync } from 'fs';
+import {
+  generateUnifiedContext,
+  DEFAULT_IDENTIFIER
+} from './generate-unified-context';
+import { generateUnifiedResolversSignature } from './generate-resolvers-signature';
 
 export interface ExecuteMeshOptions {
   output: MeshConfig;
@@ -128,6 +133,10 @@ export async function executeMesh({
   const unifiedSchemaPath = join(outputPath, `./schema.graphql`);
   writeFileSync(unifiedSchemaPath, printSchema(unifiedSchema));
 
+  const unifiedContextIdentifier = DEFAULT_IDENTIFIER;
+  const unifiedContextFilePath = join(outputPath, './context.ts');
+  const resolversSignaturePath = join(outputPath, `./resolvers.types.ts`);
+
   for (const source of output.sources) {
     const handlerFn = await getHandler(logger, source);
     const sourceOutputPath = join(outputPath, `./${source.name}/`);
@@ -140,7 +149,11 @@ export async function executeMesh({
       outputPath: sourceOutputPath,
       buildSchemaPayload: handlersResults[source.name].buildSchemaPayload,
       apiServicesPayload: handlersResults[source.name].generateServicesPayload,
-      schema: handlersResults[source.name].schema
+      schema: handlersResults[source.name].schema,
+      signature: {
+        identifier: 'Resolvers',
+        filePath: resolversSignaturePath
+      }
     };
     logger.debug(`generateGqlWrapper options:`, gqlWrapperOptions);
     const { payload, filePath } = await handlerFn.generateGqlWrapper(
@@ -153,6 +166,34 @@ export async function executeMesh({
     handlersResults[source.name].indexFile = filePath;
   }
 
+  logger.info(`Generating a unified resolvers signature...`);
+
+  await generateUnifiedResolversSignature({
+    outputPath: resolversSignaturePath,
+    schema: unifiedSchema,
+    basePath: outputPath,
+    context: {
+      identifier: unifiedContextIdentifier,
+      path: unifiedContextFilePath
+    }
+  });
+
+  const apisRootFiles = Object.keys(handlersResults).reduce((prev, apiName) => {
+    return {
+      ...prev,
+      [apiName]: handlersResults[apiName].indexFile
+    };
+  }, {});
+
+  logger.info(`Generating a unified context object for all APIs...`);
+
+  generateUnifiedContext({
+    basePath: outputPath,
+    apisRootFiles,
+    identifier: unifiedContextIdentifier,
+    outputPath: unifiedContextFilePath
+  });
+
   const additionalImports = new Set<string>();
 
   if (output.additionalResolvers && output.additionalResolvers.length > 0) {
@@ -161,16 +202,17 @@ export async function executeMesh({
     });
   }
 
-  const { executableSchemaFilePath } = generateRootExecutableSchemaFile({
-    apisRootFiles: Object.keys(handlersResults).reduce((prev, apiName) => {
-      return {
-        ...prev,
-        [apiName]: handlersResults[apiName].indexFile
-      };
-    }, {}),
+  const {
+    filePath: executableSchemaFilePath
+  } = generateRootExecutableSchemaFile({
+    apisRootFiles,
     basePath: outputPath,
     additionalImports,
     schemaFilePath: unifiedSchemaPath,
+    unifiedContext: {
+      path: unifiedContextFilePath,
+      identifier: unifiedContextIdentifier
+    }
   });
 
   if (serve) {

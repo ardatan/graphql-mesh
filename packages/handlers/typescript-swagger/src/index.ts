@@ -12,7 +12,7 @@ import {
 import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/preprocessing_data';
 import * as Oas3Tools from '@dotansimha/openapi-to-graphql/lib/oas_3_tools';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
-import { buildFileContentWithImports } from '@graphql-mesh/utils';
+import { buildFileContentWithImports, makeCleanImportRelative } from '@graphql-mesh/utils';
 import { isObjectType, isScalarType } from 'graphql';
 import { camelCase, pascalCase, camelCaseTransformMerge } from 'change-case';
 
@@ -84,7 +84,8 @@ const handler: MeshHandlerLibrary<
     handlerConfig,
     schema,
     outputPath,
-    buildSchemaPayload
+    buildSchemaPayload,
+    signature
   }) {
     const indexFilePath = join(outputPath, './index.ts');
     // Build `context.ts` content with type a type definition for the context
@@ -123,7 +124,9 @@ export function createContext(config: Record<any, any> = ${JSON.stringify(
     const resolversFilePath = join(outputPath, './resolvers.ts');
     const types = schema.getTypeMap();
     const resolversFileImports = new Set<string>();
-    resolversFileImports.add(`import { ${contextTypeName} } from './context';`);
+    resolversFileImports.add(
+      `import { ${signature.identifier} } from '${makeCleanImportRelative(signature.filePath, outputPath)}';`
+    );
 
     const output = ([
       schema.getQueryType()?.name,
@@ -149,7 +152,7 @@ export function createContext(config: Record<any, any> = ${JSON.stringify(
             const sorted = oas3Operation.parameters.sort((x, y) =>
               x.required === y.required ? 0 : x.required ? -1 : 1
             );
-            argsCall = sorted.map(arg => arg.name).join(', ');
+            argsCall = sorted.map(arg => camelCase(arg.name)).join(', ');
             argsVarName = `{ ${argsCall} }`;
           }
 
@@ -162,7 +165,7 @@ export function createContext(config: Record<any, any> = ${JSON.stringify(
             );
           }
 
-          return `    ${fieldName}: (root, ${argsVarName}, { ${contextInstanceName} }: ${contextTypeName}) => ${contextInstanceName}.${sdkMethodName}(${argsCall}).then(r => r.body),`;
+          return `    ${fieldName}: (root, ${argsVarName}, { ${contextInstanceName} }) => ${contextInstanceName}.${sdkMethodName}(${argsCall}).then(r => r.body),`;
         });
 
         return `  ${type.name}: {
@@ -173,7 +176,7 @@ ${fieldsResolvers.join('\n')}
       return null;
     });
 
-    const result = `export const resolvers = {
+    const result = `export const resolvers: ${signature.identifier} = {
 ${output.filter(Boolean).join('\n')}
 };`;
 

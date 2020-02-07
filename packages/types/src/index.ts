@@ -24,6 +24,10 @@ export type MeshHandlerLibrary<
     apiServicesPayload: GenerateApiServicesPayload;
     apiName: string;
     outputPath: string;
+    signature: {
+      identifier: string,
+      filePath: string
+    }
   }) => Promise<GenerateResolversFnResult<GenerateResolversPayload>>;
 };
 
