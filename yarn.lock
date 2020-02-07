@@ -2281,10 +2281,10 @@
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@25.1.1":
-  version "25.1.1"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-25.1.1.tgz#dcf65a8ee315b91ad39c0d358ae0ddc5602ab0e9"
-  integrity sha512-bKSZJYZJLzwaoVYNN4W3A0RvKNYsrLm5tsuXaMlfYDxKf4gY2sFrMYneCugNQWGg1gjPW+FHBwNrwPzEi4sIsw==
+"@types/jest@25.1.2":
+  version "25.1.2"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-25.1.2.tgz#1c4c8770c27906c7d8def5d2033df9dbd39f60da"
+  integrity sha512-EsPIgEsonlXmYV7GzUqcvORsSS9Gqxw/OvkGwHfAdpjduNRxMlhsav0O5Kb0zijc/eXSO/uW6SJt9nwull8AUQ==
   dependencies:
     jest-diff "^25.1.0"
     pretty-format "^25.1.0"
@@ -2649,6 +2649,14 @@ apollo-datasource@^0.6.4:
     apollo-server-caching "^0.5.1"
     apollo-server-env "^2.4.3"
 
+apollo-datasource@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/apollo-datasource/-/apollo-datasource-0.7.0.tgz#2a6d82edb2eba21b4ddf21877009ba39ff821945"
+  integrity sha512-Yja12BgNQhzuFGG/5Nw2MQe0hkuQy2+9er09HxeEyAf2rUDIPnhPrn1MDoZTB8MU7UGfjwITC+1ofzKkkrZobA==
+  dependencies:
+    apollo-server-caching "^0.5.1"
+    apollo-server-env "^2.4.3"
+
 apollo-engine-reporting-protobuf@^0.4.4:
   version "0.4.4"
   resolved "https://registry.npmjs.org/apollo-engine-reporting-protobuf/-/apollo-engine-reporting-protobuf-0.4.4.tgz#73a064f8c9f2d6605192d1673729c66ec47d9cb7"
@@ -2670,6 +2678,20 @@ apollo-engine-reporting@^1.4.14:
     async-retry "^1.2.1"
     graphql-extensions "^0.10.10"
 
+apollo-engine-reporting@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/apollo-engine-reporting/-/apollo-engine-reporting-1.5.0.tgz#6e3746de14fc87e14c289c0776a2d350e6f50918"
+  integrity sha512-Pe2DelijZ2QHqkqv8E97iOb32l+FIMT2nxpQsuH+nWi+96cCFJJJHjm3RLAPEUuvGOgW9dFYQP3J91EyC5O0tQ==
+  dependencies:
+    apollo-engine-reporting-protobuf "^0.4.4"
+    apollo-graphql "^0.4.0"
+    apollo-server-caching "^0.5.1"
+    apollo-server-env "^2.4.3"
+    apollo-server-errors "^2.3.4"
+    apollo-server-types "^0.2.10"
+    async-retry "^1.2.1"
+    graphql-extensions "^0.10.10"
+
 apollo-env@^0.6.1:
   version "0.6.1"
   resolved "https://registry.npmjs.org/apollo-env/-/apollo-env-0.6.1.tgz#12cc869c4276a5f794edf5e5f243676038d4fb07"
@@ -2684,6 +2706,14 @@ apollo-graphql@^0.3.7:
   version "0.3.7"
   resolved "https://registry.npmjs.org/apollo-graphql/-/apollo-graphql-0.3.7.tgz#533232ed48b0b6dbcf5635f65e66cf8677a5b768"
   integrity sha512-ghW16xx9tRcyL38Pw6G5OidMnYn+CNUGZWmvqQgEO2nRy4T0ONPZZBOvGrIMtJQ70oEykNMKGm0zm6PdHdxd8Q==
+  dependencies:
+    apollo-env "^0.6.1"
+    lodash.sortby "^4.7.0"
+
+apollo-graphql@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/apollo-graphql/-/apollo-graphql-0.4.0.tgz#dd0afe31a6241b8e2ded20b906c9ee8dfbe03497"
+  integrity sha512-abCHcKln1EGbzSItW087EjBI5wnluikyUqEn4VsdeWHCtdENWpHCn/MnM0+jJa1prNasxN7tCukp4nMpJYYVqg==
   dependencies:
     apollo-env "^0.6.1"
     lodash.sortby "^4.7.0"
@@ -2713,6 +2743,33 @@ apollo-server-caching@^0.5.1:
   integrity sha512-L7LHZ3k9Ao5OSf2WStvQhxdsNVplRQi7kCAPfqf9Z3GBEnQ2uaL0EgO0hSmtVHfXTbk5CTRziMT1Pe87bXrFIw==
   dependencies:
     lru-cache "^5.0.0"
+
+apollo-server-core@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-2.10.0.tgz#b8d51bdffe6529f0e3ca670ee8f1238765cfade4"
+  integrity sha512-x/UK6XvU307W8D/pzTclU04JIjRarcbg5mFPe0nVmO4OTc26uQgKi1WlZkcewXsAUnn+nDwKVn2c2G3dHEgXzQ==
+  dependencies:
+    "@apollographql/apollo-tools" "^0.4.3"
+    "@apollographql/graphql-playground-html" "1.6.24"
+    "@types/graphql-upload" "^8.0.0"
+    "@types/ws" "^6.0.0"
+    apollo-cache-control "^0.8.11"
+    apollo-datasource "^0.7.0"
+    apollo-engine-reporting "^1.5.0"
+    apollo-server-caching "^0.5.1"
+    apollo-server-env "^2.4.3"
+    apollo-server-errors "^2.3.4"
+    apollo-server-plugin-base "^0.6.10"
+    apollo-server-types "^0.2.10"
+    apollo-tracing "^0.8.11"
+    fast-json-stable-stringify "^2.0.0"
+    graphql-extensions "^0.10.10"
+    graphql-tag "^2.9.2"
+    graphql-tools "^4.0.0"
+    graphql-upload "^8.0.2"
+    sha.js "^2.4.11"
+    subscriptions-transport-ws "^0.9.11"
+    ws "^6.0.0"
 
 apollo-server-core@^2.9.16:
   version "2.9.16"
@@ -2754,6 +2811,28 @@ apollo-server-errors@^2.3.4:
   resolved "https://registry.npmjs.org/apollo-server-errors/-/apollo-server-errors-2.3.4.tgz#b70ef01322f616cbcd876f3e0168a1a86b82db34"
   integrity sha512-Y0PKQvkrb2Kd18d1NPlHdSqmlr8TgqJ7JQcNIfhNDgdb45CnqZlxL1abuIRhr8tiw8OhVOcFxz2KyglBi8TKdA==
 
+apollo-server-express@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-2.10.0.tgz#7d87ff54e378cdcb135eb3d093f20fca7fc0d1bc"
+  integrity sha512-adDQts4QmkX2ENU7JibV1EwRl3ESnpnpImXIMvg8Cm7kX2wSbzwm8LecQNujwWJtkAPTCEAcnPBDyKwWjTQ6/g==
+  dependencies:
+    "@apollographql/graphql-playground-html" "1.6.24"
+    "@types/accepts" "^1.3.5"
+    "@types/body-parser" "1.17.1"
+    "@types/cors" "^2.8.4"
+    "@types/express" "4.17.2"
+    accepts "^1.3.5"
+    apollo-server-core "^2.10.0"
+    apollo-server-types "^0.2.10"
+    body-parser "^1.18.3"
+    cors "^2.8.4"
+    express "^4.17.1"
+    graphql-subscriptions "^1.0.0"
+    graphql-tools "^4.0.0"
+    parseurl "^1.3.2"
+    subscriptions-transport-ws "^0.9.16"
+    type-is "^1.6.16"
+
 apollo-server-express@^2.9.16:
   version "2.9.16"
   resolved "https://registry.npmjs.org/apollo-server-express/-/apollo-server-express-2.9.16.tgz#4c30b1769426c010b37943c0fb7766e5825973a0"
@@ -2791,6 +2870,17 @@ apollo-server-types@^0.2.10:
     apollo-engine-reporting-protobuf "^0.4.4"
     apollo-server-caching "^0.5.1"
     apollo-server-env "^2.4.3"
+
+apollo-server@2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/apollo-server/-/apollo-server-2.10.0.tgz#93b924b089f7c4070e88aa29a8b9472c1d5d0f82"
+  integrity sha512-ITXkklSgrNfohFh4juvHWrtLz/82iw9CkBUW+G5T8NxHaqxm1Lpus1Ck2VsXmCgNplYi6mODRjUl087qdlU2Rw==
+  dependencies:
+    apollo-server-core "^2.10.0"
+    apollo-server-express "^2.10.0"
+    express "^4.0.0"
+    graphql-subscriptions "^1.0.0"
+    graphql-tools "^4.0.0"
 
 apollo-server@2.9.16:
   version "2.9.16"
@@ -5126,10 +5216,10 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-graphql-compose@7.9.0:
-  version "7.9.0"
-  resolved "https://registry.npmjs.org/graphql-compose/-/graphql-compose-7.9.0.tgz#d5e730572ac49bfd8c1e0dda80ac42a351553ae0"
-  integrity sha512-0kqHDnBNDPEyuFRHnDTb41BqPbr4mtAtz6jWAded+bFGuFPKB7ZbejbytqYiunWyywelvVUzsdm4GYtLYBiPgQ==
+graphql-compose@7.11.0:
+  version "7.11.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.11.0.tgz#77e7435918f7f9a186ae9e939fa2c92c3bb85cdd"
+  integrity sha512-vmAaNA4BUM7PBe1PpujLRIsAlx1qjaoAsol1IvGQKBIi8TwdrLnFZEza0O7+AalqbmcP2eqZ5On/pALP/88ZiA==
   dependencies:
     graphql-type-json "^0.3.1"
     object-path "^0.11.4"

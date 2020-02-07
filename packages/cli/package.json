@@ -18,7 +18,7 @@
   "devDependencies": {
     "@types/chalk": "2.2.0",
     "@types/cosmiconfig": "6.0.0",
-    "@types/jest": "25.1.1",
+    "@types/jest": "25.1.2",
     "@types/js-yaml": "3.12.2",
     "@types/mkdirp": "0.5.2",
     "@types/node": "13.7.0",
@@ -50,7 +50,7 @@
     "@graphql-toolkit/core": "0.9.7",
     "@graphql-toolkit/graphql-file-loader": "0.9.7",
     "@graphql-toolkit/schema-merging": "0.9.7",
-    "apollo-server": "2.9.16",
+    "apollo-server": "2.10.0",
     "chalk": "3.0.0",
     "cosmiconfig": "6.0.0",
     "js-yaml": "3.13.1",

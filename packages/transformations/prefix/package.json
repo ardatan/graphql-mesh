@@ -11,7 +11,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/jest": "25.1.1",
+    "@types/jest": "25.1.2",
     "@types/node": "13.7.0",
     "graphql": "14.6.0",
     "jest": "25.1.0",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.8",
-    "graphql-compose": "7.9.0"
+    "graphql-compose": "7.11.0"
   },
   "publishConfig": {
     "access": "public"
