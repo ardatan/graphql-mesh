@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/typescript-swagger",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -26,8 +26,8 @@
   },
   "dependencies": {
     "@dotansimha/openapi-to-graphql": "2.0.1",
-    "@graphql-mesh/types": "0.0.9",
-    "@graphql-mesh/utils": "0.0.9",
+    "@graphql-mesh/types": "0.0.10",
+    "@graphql-mesh/utils": "0.0.10",
     "@openapitools/openapi-generator-cli": "1.0.8-4.2.2",
     "change-case": "4.1.1",
     "is-url": "1.2.4",
