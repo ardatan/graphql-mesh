@@ -17,7 +17,7 @@
     "typescript": "3.7.5"
   },
   "dependencies": {
-    "@graphql-codegen/visitor-plugin-common": "1.12.1"
+    "@graphql-codegen/visitor-plugin-common": "1.12.2"
   },
   "publishConfig": {
     "access": "public"
