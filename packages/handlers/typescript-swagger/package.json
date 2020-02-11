@@ -32,7 +32,7 @@
     "change-case": "4.1.1",
     "is-url": "1.2.4",
     "js-yaml": "3.13.1",
-    "request": "2.88.0",
+    "request": "2.88.2",
     "request-promise-native": "1.0.8",
     "swagger-parser": "8.0.4"
   },
