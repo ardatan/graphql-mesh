@@ -2,7 +2,6 @@
 
 import { MeshConfig } from './config';
 import { executeMesh } from './mesh';
-import { generateSdk } from './generate-sdk';
 import { cosmiconfig } from 'cosmiconfig';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
@@ -61,10 +60,10 @@ export async function graphqlMesh() {
           logger.level = 'debug';
         }
 
-        await generateSdk({
-          config,
-          logger,
-        });
+        // await generateSdk({
+        //   config,
+        //   logger,
+        // });
       }
     )
     .option('verbose', {

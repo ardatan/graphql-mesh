@@ -1,39 +1,42 @@
 {
-  "name": "@graphql-mesh/typescript-swagger",
+  "name": "@graphql-mesh/runtime",
   "version": "0.0.11",
-  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "prebuild": "json2ts src/config-schema.json > src/config.ts",
     "build": "tsc"
   },
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/graphql-type-json": "0.3.2",
-    "@types/is-url": "1.2.28",
+    "json-schema-to-typescript": "8.0.1",
     "@types/jest": "25.1.2",
-    "@types/js-yaml": "3.12.2",
     "@types/node": "13.7.1",
-    "@types/request": "2.48.4",
-    "@types/request-promise-native": "1.0.17",
     "graphql": "14.6.0",
     "jest": "25.1.0",
     "ts-jest": "25.2.0",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.7.5"
   },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
   "dependencies": {
-    "openapi-to-graphql": "2.0.0",
+    "cosmiconfig": "6.0.0",
     "@graphql-mesh/types": "0.0.11",
     "@graphql-mesh/utils": "0.0.11",
-    "change-case": "4.1.1",
-    "is-url": "1.2.4",
+    "apollo-server": "2.10.1",
+    "chalk": "3.0.0",
+    "cosmiconfig": "6.0.0",
     "js-yaml": "3.13.1",
-    "request": "2.88.2",
-    "request-promise-native": "1.0.8",
-    "swagger-parser": "8.0.4"
+    "mkdirp": "1.0.3",
+    "winston": "3.2.1",
+    "yargs": "15.1.0"
   },
   "publishConfig": {
     "access": "public"
