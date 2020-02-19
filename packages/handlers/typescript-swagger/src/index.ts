@@ -5,10 +5,11 @@ import * as yaml from 'js-yaml';
 import request from 'request-promise-native';
 import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
+import { Options } from 'openapi-to-graphql/lib/types/options';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 
-const handler: MeshHandlerLibrary = {
-  async getMeshSource({ filePathOrUrl, name }) {
+const handler: MeshHandlerLibrary<Options> = {
+  async getMeshSource({ filePathOrUrl, name, config }) {
     let spec = null;
 
     // Load from a url or from a local file. only json supported at the moment.
@@ -23,7 +24,7 @@ const handler: MeshHandlerLibrary = {
       spec = readFile(actualPath);
     }
 
-    const { schema } = await createGraphQLSchema(spec);
+    const { schema } = await createGraphQLSchema(spec, config || {});
 
     return {
       schema,

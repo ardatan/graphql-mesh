@@ -11,6 +11,7 @@ export type MeshSource = {
   source: string;
   handler: MeshHandlerLibrary;
   config?: Record<string, any>;
+  context?: Record<string, any>;
 };
 
 export type GraphQLOperation = DocumentNode | string;

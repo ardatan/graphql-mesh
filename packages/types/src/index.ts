@@ -7,14 +7,15 @@ export type MeshSource = {
   sdk: Record<string, any>;
 };
 
-export type GetMeshSourceOptions = {
+export type GetMeshSourceOptions<TConfig> = {
   filePathOrUrl: string;
   name: string;
-}
+  config?: TConfig;
+};
 
 // Handlers
-export type MeshHandlerLibrary = {
-  getMeshSource: (options: GetMeshSourceOptions) => Promise<MeshSource>;
+export type MeshHandlerLibrary<TConfig = any> = {
+  getMeshSource: (options: GetMeshSourceOptions<TConfig>) => Promise<MeshSource>;
 };
 
 export type MeshHandlerFnResult<SdkPayload = any> = {

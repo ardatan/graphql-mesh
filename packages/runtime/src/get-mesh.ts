@@ -1,19 +1,24 @@
 import { GraphQLSchema, execute, DocumentNode, parse } from 'graphql';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
-import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types'
+import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
 
 export async function getMesh(
   options: GetMeshOptions
 ): Promise<{
   execute: ExecuteMeshFn;
   schema: GraphQLSchema;
+  contextBuilder: () => Record<string, any>;
 }> {
-  const results: Record<string, { sdk: any; schema: GraphQLSchema }> = {};
+  const results: Record<
+    string,
+    { sdk: any; schema: GraphQLSchema; context: Record<string, any> }
+  > = {};
 
   for (const apiSource of options.sources) {
     const handlerResult = await apiSource.handler.getMeshSource({
       name: apiSource.name,
-      filePathOrUrl: apiSource.source
+      filePathOrUrl: apiSource.source,
+      config: apiSource.config
     });
 
     let apiSchema = handlerResult.schema;
@@ -21,13 +26,25 @@ export async function getMesh(
 
     results[apiSource.name] = {
       sdk: handlerResult.sdk,
-      schema: apiSchema
+      schema: apiSchema,
+      context: apiSource.context || {}
     };
   }
 
   let unifiedSchema = mergeSchemas({
     schemas: Object.keys(results).map(key => results[key].schema)
   });
+
+  function buildMeshContext(): Record<string, any> {
+    const context = Object.keys(results).reduce((prev, apiName) => {
+      return {
+        ...prev,
+        [apiName]: results[apiName].context
+      };
+    }, {});
+
+    return context;
+  }
 
   // TODO: Do tranformations on unified schema
   // TODO: Apply custom resolvers over the unified schema
@@ -37,9 +54,10 @@ export async function getMesh(
     document: GraphQLOperation,
     variables: TVariables
   ): Promise<TData | null | undefined> {
+    const context = buildMeshContext();
     const r = await execute<TData>({
       document: ensureDocumentNode(document),
-      contextValue: {}, // TODO: Build real context with SDK from all sources, just to make sure custom resolver are able to access it
+      contextValue: context,
       rootValue: {},
       variableValues: variables,
       schema: unifiedSchema
@@ -49,9 +67,9 @@ export async function getMesh(
   }
 
   return {
-    // TODO: Do we need to return SDKs here as well? to make it acessible outside GraphQL context?
     execute: meshExecute,
     schema: unifiedSchema,
+    contextBuilder: buildMeshContext
   };
 }
 

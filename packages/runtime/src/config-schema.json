@@ -110,6 +110,11 @@
               ],
               "pattern": "^(.*)$"
             },
+            "context": {
+              "title": "ContextProperties",
+              "description": "Properties to include in the GraphQL Context",
+              "type": "object"
+            },
             "handler": {
               "type": "object",
               "title": "Handler",
