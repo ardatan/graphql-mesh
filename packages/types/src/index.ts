@@ -4,7 +4,7 @@ export type MeshSource = {
   name: string;
   source: string;
   schema: GraphQLSchema;
-  sdk: Record<string, any>;
+  sdk: Record<string, any> | ((context: any) => Record<string, any>);
 };
 
 export type GetMeshSourceOptions<TConfig> = {

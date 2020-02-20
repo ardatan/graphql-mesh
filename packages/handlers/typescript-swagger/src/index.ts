@@ -24,7 +24,22 @@ const handler: MeshHandlerLibrary<Options> = {
       spec = readFile(actualPath);
     }
 
-    const { schema } = await createGraphQLSchema(spec, config || {});
+    const { schema } = await createGraphQLSchema(spec, {
+      ...(config || {}),
+      viewer: false, // TODO: Support viewer: true use case
+    });
+
+    const queryType = schema.getQueryType();
+    const sdk: Record<string, Function> = {};
+
+    // TODO: Handle a use case where `viewer: true`
+    // TODO: API
+    // if (queryType) {
+    //   const fields = queryType.getFields();
+    //   Object.keys(fields).forEach(fieldName => {
+
+    //   });
+    // }
 
     return {
       schema,

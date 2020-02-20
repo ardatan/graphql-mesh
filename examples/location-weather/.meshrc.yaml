@@ -7,7 +7,6 @@ sources:
     handler:
       name: typescript-swagger
       config: # Specific connfiguration for the this handler, passing it to openapi-to-graphql
-        viewer: false
         headers:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
   - name: Weather
