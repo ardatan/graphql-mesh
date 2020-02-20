@@ -19,5 +19,8 @@ transformations:
   - type: link
     from: PopulatedPlaceSummary.dailyForecast
     to: '[Forecast!]!'
+  - type: link
+    from: PopulatedPlaceSummary.todayForecast
+    to: 'Forecast!'
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts
