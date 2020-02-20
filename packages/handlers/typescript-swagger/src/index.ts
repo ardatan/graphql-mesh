@@ -7,6 +7,8 @@ import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
 import { Options } from 'openapi-to-graphql/lib/types/options';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
+import { GraphQLObjectType } from 'graphql';
+import Maybe from 'graphql/tsutils/Maybe';
 
 const handler: MeshHandlerLibrary<Options> = {
   async getMeshSource({ filePathOrUrl, name, config }) {
@@ -26,24 +28,18 @@ const handler: MeshHandlerLibrary<Options> = {
 
     const { schema } = await createGraphQLSchema(spec, {
       ...(config || {}),
-      viewer: false, // TODO: Support viewer: true use case
+      viewer: false // TODO: Support viewer: true use case
     });
-
-    const queryType = schema.getQueryType();
-    const sdk: Record<string, Function> = {};
-
-    // TODO: Handle a use case where `viewer: true`
-    // TODO: API
-    // if (queryType) {
-    //   const fields = queryType.getFields();
-    //   Object.keys(fields).forEach(fieldName => {
-
-    //   });
-    // }
 
     return {
       schema,
-      sdk: {}, // TODO: Extract SDK methods from buitl Query type and expose it as is.
+      sdk: context => {
+        // This is not so-nice way to 
+        const queryType = schema.getQueryType();
+        const mutationType = schema.getMutationType();
+
+        return extractSdkFromResolvers(context, [queryType, mutationType])
+      },
       name,
       source: filePathOrUrl
     };
@@ -61,6 +57,33 @@ function readFile(path: string): Oas3 {
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
+}
+
+// Dotan: This is a workaround, because `openapi-to-graphql` doesn't export the resolvers implementation as-is, as 
+// pure JS functions, so we need to extract it from the schema types, and allow it to run as standalone SDK.
+// This is needed in order to allow custom resolvers later to implement their own logic and links
+// between types
+function extractSdkFromResolvers(context: any, types: Maybe<GraphQLObjectType>[]) {
+  const sdk: Record<string, Function> = {};
+
+  for (const type of types) {
+    if (type) {
+      const fields = type.getFields();
+  
+      Object.keys(fields).forEach(fieldName => {
+        if (fields[fieldName]) {
+          const resolveFn = fields[fieldName].resolve;
+  
+          if (resolveFn) {
+            sdk[fieldName] = (args: any) =>
+              resolveFn(null, args, context, { path: { prev: '' } } as any);
+          }
+        }
+      });
+    }
+  }
+
+  return sdk;
 }
 
 export default handler;

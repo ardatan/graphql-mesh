@@ -5,6 +5,7 @@ import {
   applySchemaTransformations,
   applyOutputTransformations
 } from './utils';
+import { MeshSource } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
 export async function getMesh(
@@ -16,7 +17,11 @@ export async function getMesh(
 }> {
   const results: Record<
     string,
-    { sdk: any; schema: GraphQLSchema; context: Record<string, any> }
+    {
+      sdk: MeshSource['sdk'];
+      schema: GraphQLSchema;
+      context: Record<string, any>;
+    }
   > = {};
 
   for (const apiSource of options.sources) {
@@ -62,11 +67,28 @@ export async function getMesh(
   }
 
   function buildMeshContext(): Record<string, any> {
-    const context = Object.keys(results).reduce((prev, apiName) => {
-      return {
-        ...prev,
-        [apiName]: results[apiName].context
-      };
+    const context: Record<string, any> = Object.keys(results).reduce(
+      (prev, apiName) => {
+        return {
+          ...prev,
+          [apiName]: {
+            config: results[apiName].context || {}
+          }
+        };
+      },
+      {}
+    );
+
+    Object.keys(results).forEach(apiName => {
+      const handlerRes = results[apiName];
+
+      if (handlerRes.sdk) {
+        if (typeof handlerRes.sdk === 'function') {
+          context[apiName].api = handlerRes.sdk(context);
+        } else if (typeof handlerRes.sdk === 'object') {
+          context[apiName].api = handlerRes.sdk;
+        }
+      }
     }, {});
 
     return context;

@@ -5,7 +5,7 @@ import { IResolvers } from 'graphql-tools-fork';
 
 // TOOD: Additional resolvers should be part of this options, and loaded by the CLI
 export type GetMeshOptions = {
-  sources: MeshSource[];
+  sources: MeshResolvedSource[];
   transformations?: Transformation<OutputTransformationFn>[];
   additionalResolvers?: IResolvers;
 };
@@ -15,7 +15,7 @@ export type Transformation<T = OutputTransformationFn | SchemaTransformationFn> 
   config: any;
 }
 
-export type MeshSource = {
+export type MeshResolvedSource = {
   name: string;
   source: string;
   handler: MeshHandlerLibrary;
