@@ -1,8 +1,8 @@
+import 'ts-node/register/transpile-only';
+import { IResolvers } from 'graphql-tools-fork';
+import { AdditionalResolvers } from './config';
+import { Transformation } from './types';
 import { GraphQLSchema } from 'graphql';
-import {
-  OutputTransformation,
-  SchemaTransformation,
-} from './config';
 import {
   OutputTransformationFn,
   SchemaTransformationFn,
@@ -13,18 +13,14 @@ import { resolve } from 'path';
 export async function applySchemaTransformations(
   name: string,
   schema: GraphQLSchema,
-  transformations: SchemaTransformation[]
+  transformations: Transformation<SchemaTransformationFn>[]
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
   for (const transformation of transformations) {
-    const transformationFn = await getPackage<SchemaTransformationFn<any>>(
-      transformation.type,
-      'transformation'
-    );
-    resultSchema = await transformationFn({
+    resultSchema = await transformation.transformer({
       apiName: name,
       schema: schema,
-      config: transformation
+      config: transformation.config
     });
   }
   return resultSchema;
@@ -32,19 +28,14 @@ export async function applySchemaTransformations(
 
 export async function applyOutputTransformations(
   schema: GraphQLSchema,
-  transformations: OutputTransformation[]
+  transformations: Transformation<OutputTransformationFn>[]
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    const transformationFn = await getPackage<OutputTransformationFn<any>>(
-      transformation.type,
-      'transformation'
-    );
-
-    resultSchema = await transformationFn({
+    resultSchema = await transformation.transformer({
       schema,
-      config: transformation
+      config: transformation.config
     });
   }
 
@@ -80,4 +71,41 @@ export async function getHandler(name: string): Promise<MeshHandlerLibrary> {
   const handlerFn = await getPackage<MeshHandlerLibrary>(name, 'handler');
 
   return handlerFn;
+}
+
+export async function resolveAdditionalResolvers(
+  baseDir: string,
+  additionalResolvers: AdditionalResolvers
+): Promise<IResolvers> {
+  const loaded = await Promise.all(
+    (additionalResolvers || []).map(async filePath => {
+      const exported = require(resolve(baseDir, filePath));
+      let resolvers = null;
+
+      if (exported.default) {
+        if (exported.default.resolvers) {
+          resolvers = exported.default.resolvers;
+        } else if (typeof exported.default === 'object') {
+          resolvers = exported.default;
+        }
+      } else if (exported.resolvers) {
+        resolvers = exported.resolvers;
+      }
+
+      if (!resolvers) {
+        console.warn(`Unable to load resolvers from file: ${filePath}`);
+
+        return {};
+      }
+
+      return resolvers;
+    })
+  );
+
+  return loaded.reduce((prev, t) => {
+    return {
+      ...prev,
+      ...t
+    };
+  }, {} as IResolvers);
 }

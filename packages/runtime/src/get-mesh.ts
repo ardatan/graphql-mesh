@@ -1,6 +1,11 @@
 import { GraphQLSchema, execute, DocumentNode, parse } from 'graphql';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
+import {
+  applySchemaTransformations,
+  applyOutputTransformations
+} from './utils';
+import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -22,7 +27,14 @@ export async function getMesh(
     });
 
     let apiSchema = handlerResult.schema;
-    // TODO: Apply transformations over `apiSchema`
+
+    if (apiSource.transformations && apiSource.transformations.length > 0) {
+      apiSchema = await applySchemaTransformations(
+        apiSource.name,
+        apiSchema,
+        apiSource.transformations
+      );
+    }
 
     results[apiSource.name] = {
       sdk: handlerResult.sdk,
@@ -35,6 +47,20 @@ export async function getMesh(
     schemas: Object.keys(results).map(key => results[key].schema)
   });
 
+  if (options.transformations && options.transformations.length > 0) {
+    unifiedSchema = await applyOutputTransformations(
+      unifiedSchema,
+      options.transformations
+    );
+  }
+
+  if (options.additionalResolvers) {
+    unifiedSchema = addResolveFunctionsToSchema({
+      resolvers: options.additionalResolvers,
+      schema: unifiedSchema
+    });
+  }
+
   function buildMeshContext(): Record<string, any> {
     const context = Object.keys(results).reduce((prev, apiName) => {
       return {
@@ -46,10 +72,6 @@ export async function getMesh(
     return context;
   }
 
-  // TODO: Do tranformations on unified schema
-  // TODO: Apply custom resolvers over the unified schema
-  // TOOD: Make sure graphql-compose knows how to preserve the resolve function
-  // when modifying the schema with it.
   async function meshExecute<TData = any, TVariables = any>(
     document: GraphQLOperation,
     variables: TVariables

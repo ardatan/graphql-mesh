@@ -15,7 +15,9 @@ export type GetMeshSourceOptions<TConfig> = {
 
 // Handlers
 export type MeshHandlerLibrary<TConfig = any> = {
-  getMeshSource: (options: GetMeshSourceOptions<TConfig>) => Promise<MeshSource>;
+  getMeshSource: (
+    options: GetMeshSourceOptions<TConfig>
+  ) => Promise<MeshSource>;
 };
 
 export type MeshHandlerFnResult<SdkPayload = any> = {
@@ -34,7 +36,7 @@ export type GenerateResolversFnResult<GenerateResolversPayload = any> = {
 
 // Transformations
 export type SchemaTransformationFn<
-  Config extends { type: string }
+  Config extends { type: string } = any
 > = (options: {
   apiName: string;
   schema: GraphQLSchema;
@@ -42,7 +44,7 @@ export type SchemaTransformationFn<
 }) => Promise<GraphQLSchema>;
 
 export type OutputTransformationFn<
-  Config extends { type: string }
+  Config extends { type: string } = any
 > = (options: {
   schema: GraphQLSchema;
   config: Config;
