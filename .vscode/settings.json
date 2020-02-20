@@ -1,5 +1,5 @@
 {
   "yaml.schemas": {
-    "./packages/cli/src/config-schema.json": "*",
+    "./packages/runtime/src/config-schema.json": "*",
   }
 }

@@ -1,34 +1,23 @@
 import { GraphQLSchema } from 'graphql';
 
+export type MeshSource = {
+  name: string;
+  source: string;
+  schema: GraphQLSchema;
+  sdk: Record<string, any> | ((context: any) => Record<string, any>);
+};
+
+export type GetMeshSourceOptions<TConfig> = {
+  filePathOrUrl: string;
+  name: string;
+  config?: TConfig;
+};
+
 // Handlers
-export type MeshHandlerLibrary<
-  BuildSchemaPayload = any,
-  GenerateApiServicesPayload = any,
-  GenerateResolversPayload = any
-> = {
-  buildGraphQLSchema: (options: {
-    apiName: string;
-    outputPath: string;
-    filePathOrUrl: string;
-  }) => Promise<MeshHandlerFnResult<BuildSchemaPayload>>;
-  generateApiServices: (options: {
-    schema: GraphQLSchema;
-    payload: BuildSchemaPayload;
-    apiName: string;
-    outputPath: string;
-  }) => Promise<GenerateApiServicesFnResult<GenerateApiServicesPayload>>;
-  generateGqlWrapper: (options: {
-    handlerConfig: Record<any, any>;
-    schema: GraphQLSchema;
-    buildSchemaPayload: BuildSchemaPayload;
-    apiServicesPayload: GenerateApiServicesPayload;
-    apiName: string;
-    outputPath: string;
-    signature: {
-      identifier: string,
-      filePath: string
-    }
-  }) => Promise<GenerateResolversFnResult<GenerateResolversPayload>>;
+export type MeshHandlerLibrary<TConfig = any> = {
+  getMeshSource: (
+    options: GetMeshSourceOptions<TConfig>
+  ) => Promise<MeshSource>;
 };
 
 export type MeshHandlerFnResult<SdkPayload = any> = {
@@ -46,13 +35,17 @@ export type GenerateResolversFnResult<GenerateResolversPayload = any> = {
 };
 
 // Transformations
-export type SchemaTransformationFn<Config extends { type: string }> = (options: {
+export type SchemaTransformationFn<
+  Config extends { type: string } = any
+> = (options: {
   apiName: string;
   schema: GraphQLSchema;
   config: Config;
 }) => Promise<GraphQLSchema>;
 
-export type OutputTransformationFn<Config extends { type: string }> = (options: {
+export type OutputTransformationFn<
+  Config extends { type: string } = any
+> = (options: {
   schema: GraphQLSchema;
   config: Config;
 }) => Promise<GraphQLSchema>;

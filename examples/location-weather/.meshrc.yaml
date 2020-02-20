@@ -6,8 +6,9 @@ sources:
     source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
     handler:
       name: typescript-swagger
-      config:
-        apiKey: f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
+      config: # Specific connfiguration for the this handler, passing it to openapi-to-graphql
+        headers:
+          'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
   - name: Weather
     source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
     handler:

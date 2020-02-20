@@ -1,8 +1,6 @@
-import { Resolvers } from './schema/resolvers.types';
-
-export const resolvers: Resolvers = {
+export const resolvers = {
   PopulatedPlaceSummary: {
-    dailyForecast: async (placeSummary, args: never, { WeatherApi }) => {
+    dailyForecast: async (placeSummary: any, args: never, { WeatherApi }: any) => {
       const forecast = await WeatherApi.forecastDailylatlatlonlonGet(
         placeSummary.latitude,
         placeSummary.longitude,
