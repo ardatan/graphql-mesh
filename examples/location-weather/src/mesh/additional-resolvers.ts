@@ -13,7 +13,7 @@ export const resolvers = {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon({
         lat: placeSummary.latitude,
         lon: placeSummary.longitude,
-        key: Weather.config.apiKey
+        key: Weather.config.apiKey,
       });
 
       return forecast.data[0];
