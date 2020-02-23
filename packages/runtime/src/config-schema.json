@@ -49,15 +49,9 @@
     "title": "MeshConfig",
     "type": "object",
     "required": [
-      "output",
       "sources"
     ],
     "properties": {
-      "output": {
-        "type": "string",
-        "title": "OutputFile",
-        "pattern": "^(.*)$"
-      },
       "operations": {
         "type": "array",
         "title": "Operations",
