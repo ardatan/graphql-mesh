@@ -1,12 +1,9 @@
-output: ./src/mesh/
-operations:
-  - './src/mesh/operations/*.graphql'
 sources:
   - name: Cities
     source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
     handler:
       name: openapi
-      config: # Specific connfiguration for the this handler, passing it to openapi-to-graphql
+      config:
         headers:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
   - name: Weather
