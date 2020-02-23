@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@graphql-mesh/runtime": "0.0.11",
-    "@graphql-mesh/typescript-swagger": "0.0.11",
+    "@graphql-mesh/openapi": "0.0.11",
     "apollo-server": "2.10.1",
     "graphql": "14.6.0",
     "graphql-tools-fork": "8.6.1"

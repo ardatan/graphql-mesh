@@ -5,7 +5,7 @@ sources:
   - name: Cities
     source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
     handler:
-      name: typescript-swagger
+      name: openapi
       config: # Specific connfiguration for the this handler, passing it to openapi-to-graphql
         headers:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
@@ -14,7 +14,7 @@ sources:
     context:
       apiKey: 971a693de7ff47a89127664547988be5
     handler:
-      name: typescript-swagger
+      name: openapi
 transformations:
   - type: link
     from: PopulatedPlaceSummary.dailyForecast
