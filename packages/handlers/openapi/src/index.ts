@@ -10,7 +10,12 @@ import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { GraphQLObjectType } from 'graphql';
 import Maybe from 'graphql/tsutils/Maybe';
 
-const handler: MeshHandlerLibrary<Options> = {
+const handler: MeshHandlerLibrary<Options, Oas3> = {
+  async tsSupport(options) {
+    console.log(options.getMeshSourcePayload);
+
+    return {};
+  },
   async getMeshSource({ filePathOrUrl, name, config }) {
     let spec = null;
 
@@ -28,20 +33,24 @@ const handler: MeshHandlerLibrary<Options> = {
 
     const { schema } = await createGraphQLSchema(spec, {
       ...(config || {}),
-      viewer: false // TODO: Support viewer: true use case
+      viewer: false // Viewer set to false in order to force users to specify auth via config file
     });
 
     return {
-      schema,
-      sdk: context => {
-        // This is not so-nice way to 
-        const queryType = schema.getQueryType();
-        const mutationType = schema.getMutationType();
+      source: {
+        schema,
+        sdk: context => {
+          // This is not so-nice way to expose SDK, but currenty `openapi-to-graphql` doesn't
+          // export pure SDK functions.
+          const queryType = schema.getQueryType();
+          const mutationType = schema.getMutationType();
 
-        return extractSdkFromResolvers(context, [queryType, mutationType])
+          return extractSdkFromResolvers(context, [queryType, mutationType]);
+        },
+        name,
+        source: filePathOrUrl
       },
-      name,
-      source: filePathOrUrl
+      payload: spec
     };
   }
 };
@@ -59,21 +68,24 @@ function readFile(path: string): Oas3 {
   }
 }
 
-// Dotan: This is a workaround, because `openapi-to-graphql` doesn't export the resolvers implementation as-is, as 
+// Dotan: This is a workaround, because `openapi-to-graphql` doesn't export the resolvers implementation as-is, as
 // pure JS functions, so we need to extract it from the schema types, and allow it to run as standalone SDK.
 // This is needed in order to allow custom resolvers later to implement their own logic and links
 // between types
-function extractSdkFromResolvers(context: any, types: Maybe<GraphQLObjectType>[]) {
+function extractSdkFromResolvers(
+  context: any,
+  types: Maybe<GraphQLObjectType>[]
+) {
   const sdk: Record<string, Function> = {};
 
   for (const type of types) {
     if (type) {
       const fields = type.getFields();
-  
+
       Object.keys(fields).forEach(fieldName => {
         if (fields[fieldName]) {
           const resolveFn = fields[fieldName].resolve;
-  
+
           if (resolveFn) {
             sdk[fieldName] = (args: any) =>
               resolveFn(null, args, context, { path: { prev: '' } } as any);

@@ -8,30 +8,34 @@ import {
 import { MeshSource } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
+export type RawSourcesOutput = Record<
+  string,
+  {
+    sdk: MeshSource['sdk'];
+    schema: GraphQLSchema;
+    context: Record<string, any>;
+    meshSourcePayload: any;
+  }
+>;
+
 export async function getMesh(
   options: GetMeshOptions
 ): Promise<{
   execute: ExecuteMeshFn;
   schema: GraphQLSchema;
+  rawSources: RawSourcesOutput;
   contextBuilder: () => Record<string, any>;
 }> {
-  const results: Record<
-    string,
-    {
-      sdk: MeshSource['sdk'];
-      schema: GraphQLSchema;
-      context: Record<string, any>;
-    }
-  > = {};
+  const results: RawSourcesOutput = {};
 
   for (const apiSource of options.sources) {
-    const handlerResult = await apiSource.handler.getMeshSource({
+    const { payload, source } = await apiSource.handler.getMeshSource({
       name: apiSource.name,
       filePathOrUrl: apiSource.source,
       config: apiSource.config
     });
 
-    let apiSchema = handlerResult.schema;
+    let apiSchema = source.schema;
 
     if (apiSource.transformations && apiSource.transformations.length > 0) {
       apiSchema = await applySchemaTransformations(
@@ -42,9 +46,10 @@ export async function getMesh(
     }
 
     results[apiSource.name] = {
-      sdk: handlerResult.sdk,
+      sdk: source.sdk,
       schema: apiSchema,
-      context: apiSource.context || {}
+      context: apiSource.context || {},
+      meshSourcePayload: payload
     };
   }
 
@@ -113,7 +118,8 @@ export async function getMesh(
   return {
     execute: meshExecute,
     schema: unifiedSchema,
-    contextBuilder: buildMeshContext
+    contextBuilder: buildMeshContext,
+    rawSources: results
   };
 }
 

@@ -6,15 +6,17 @@
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "serve:mesh": "graphql-mesh serve"
   },
   "devDependencies": {
-    "@types/node": "13.7.1",
-    "ts-jest": "25.2.0",
+    "@types/node": "13.7.4",
+    "ts-jest": "25.2.1",
     "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.7.5"
+    "typescript": "3.8.2"
   },
   "dependencies": {
+    "@graphql-mesh/cli": "0.0.11",
     "@graphql-mesh/runtime": "0.0.11",
     "@graphql-mesh/openapi": "0.0.11",
     "apollo-server": "2.10.1",

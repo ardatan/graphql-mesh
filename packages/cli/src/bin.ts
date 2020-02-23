@@ -1,8 +1,7 @@
 #!/usr/bin/env node -r ts-node/register/transpile-only
 
-import { MeshConfig } from './config';
-import { executeMesh } from './mesh';
-import { cosmiconfig } from 'cosmiconfig';
+import { ApolloServer } from 'apollo-server';
+import { parseConfig, getMesh } from '@graphql-mesh/runtime';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
 
@@ -17,37 +16,26 @@ const logger = createLogger({
 });
 
 export async function graphqlMesh() {
-  const explorer = cosmiconfig('mesh');
-  const results = await explorer.search(process.cwd());
-  const config = results?.config as MeshConfig;
-
-  if (!config) {
-    throw new Error(`Unable to find GraphQL Mesh configuration file!`);
-  }
-
-  logger.debug(`Loaded configuration file from ${results?.filepath}`);
+  // TODO: Add flag for fetching specific config file and not from default path
+  const meshConfig = await parseConfig();
+  const { schema, contextBuilder } = await getMesh(meshConfig);
 
   yargs
-    .command<{ serve: boolean; verbose: boolean }>(
-      'build-mesh',
-      'Generates unified GraphQL schema based on external APIs',
-      builder => {
-        builder.option('serve', {
-          alias: 's',
-          type: 'boolean',
-          description:
-            'Serves the generated unified GraphQL schema using GraphiQL'
+    .command<{ verbose: boolean }>(
+      'serve',
+      'Serves a GraphiQLApolloServer interface to test your Mesh API',
+      () => null,
+      async () => {
+        const server = new ApolloServer({
+          schema,
+          context: () => {
+            const context = contextBuilder();
+            return context;
+          }
         });
-      },
-      async args => {
-        if (args.verbose) {
-          logger.level = 'debug';
-        }
-
-        await executeMesh({
-          output: config,
-          serve: args.serve,
-          logger
+      
+        server.listen().then(({ url }) => {
+          console.log(`🕸️ Serving GraphQL Mesh GraphiQL: ${url}`);
         });
       }
     )
@@ -56,14 +44,15 @@ export async function graphqlMesh() {
       'Generates fully type-safe SDK based on unifid GraphQL schema and GraphQL operations',
       () => null,
       async args => {
-        if (args.verbose) {
-          logger.level = 'debug';
-        }
-
-        // await generateSdk({
-        //   config,
-        //   logger,
-        // });
+        // TODO
+      }
+    )
+    .command<{ verbose: boolean }>(
+      'typescript',
+      'Generates TypeScript typings for the generated mesh',
+      () => null,
+      async args => {
+        // TODO
       }
     )
     .option('verbose', {

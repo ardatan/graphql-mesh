@@ -7,6 +7,24 @@ export type MeshSource = {
   sdk: Record<string, any> | ((context: any) => Record<string, any>);
 };
 
+/* TS Support */
+export declare type TsSupportOptions<TPayload> = {
+  filePathOrUrl: string;
+  name: string;
+  getMeshSourcePayload: TPayload;
+};
+
+export type TsSupportOutput = {
+  sdk?: ExportedTSType;
+  context?: ExportedTSType;
+  models?: Record<string, ExportedTSType>;
+};
+
+export type ExportedTSType = {
+  identifier: string;
+  codeAst: string;
+};
+
 export type GetMeshSourceOptions<TConfig> = {
   filePathOrUrl: string;
   name: string;
@@ -14,12 +32,12 @@ export type GetMeshSourceOptions<TConfig> = {
 };
 
 // Handlers
-export type MeshHandlerLibrary<TConfig = any> = {
+export declare type MeshHandlerLibrary<TConfig = any, TPayload = any> = {
   getMeshSource: (
     options: GetMeshSourceOptions<TConfig>
-  ) => Promise<MeshSource>;
+  ) => Promise<{ source: MeshSource; payload: TPayload }>;
+  tsSupport?: (options: TsSupportOptions<TPayload>) => Promise<TsSupportOutput>;
 };
-
 export type MeshHandlerFnResult<SdkPayload = any> = {
   payload: SdkPayload;
   schema: GraphQLSchema;
