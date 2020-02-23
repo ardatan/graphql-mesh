@@ -5,7 +5,7 @@ import {
   applySchemaTransformations,
   applyOutputTransformations
 } from './utils';
-import { MeshSource } from '@graphql-mesh/types';
+import { MeshSource, MeshHandlerLibrary } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
 export type RawSourcesOutput = Record<
@@ -15,6 +15,7 @@ export type RawSourcesOutput = Record<
     schema: GraphQLSchema;
     context: Record<string, any>;
     meshSourcePayload: any;
+    handler: MeshHandlerLibrary;
   }
 >;
 
@@ -49,7 +50,8 @@ export async function getMesh(
       sdk: source.sdk,
       schema: apiSchema,
       context: apiSource.context || {},
-      meshSourcePayload: payload
+      meshSourcePayload: payload,
+      handler: apiSource.handler
     };
   }
 

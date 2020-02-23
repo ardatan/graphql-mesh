@@ -3,21 +3,52 @@ import { resolve } from 'path';
 import isUrl from 'is-url';
 import * as yaml from 'js-yaml';
 import request from 'request-promise-native';
-import { createGraphQLSchema } from 'openapi-to-graphql';
-import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
-import { Options } from 'openapi-to-graphql/lib/types/options';
+import { createGraphQLSchema } from '@dotansimha/openapi-to-graphql';
+import { Oas3 } from '@dotansimha/openapi-to-graphql/lib/types/oas3';
+import { Options } from '@dotansimha/openapi-to-graphql/lib/types/options';
+import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/preprocessing_data';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { GraphQLObjectType } from 'graphql';
 import Maybe from 'graphql/tsutils/Maybe';
+import { pascalCase } from 'change-case';
 
-const handler: MeshHandlerLibrary<Options, Oas3> = {
+const handler: MeshHandlerLibrary<
+  Options,
+  { oas: Oas3; preprocessingData: PreprocessingData }
+> = {
   async tsSupport(options) {
-    console.log(options.getMeshSourcePayload);
+    const sdkIdentifier = `${options.name}Sdk`;
+    const contextIdentifier = `${options.name}Context`;
+    const operations =
+      options.getMeshSourcePayload.preprocessingData.operations;
 
-    return {};
+    const sdk = {
+      identifier: sdkIdentifier,
+      codeAst: `export type ${sdkIdentifier} = {
+${Object.keys(operations)
+  .map(operationName => {
+    const operation = operations[operationName];
+    const operationGqlBaseType = operation.method === 'get' ? options.schema.getQueryType()?.name : options.schema.getMutationType()?.name;
+    const argsName = `${operationGqlBaseType}${pascalCase(operation.operationId)}Args`;
+    
+    return `  ${operation.operationId}: (args: ${argsName}) => Promise<${pascalCase(operation.responseDefinition.graphQLTypeName)}>`;
+  })
+  .join(',\n')}
+};`
+    };
+
+    const context = {
+      identifier: contextIdentifier,
+      codeAst: `export type ${contextIdentifier} = { ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} } };`
+    };
+
+    return {
+      sdk,
+      context
+    };
   },
   async getMeshSource({ filePathOrUrl, name, config }) {
-    let spec = null;
+    let spec: Oas3;
 
     // Load from a url or from a local file. only json supported at the moment.
     // I think `getValidOAS3` should support loading YAML files easily
@@ -31,8 +62,9 @@ const handler: MeshHandlerLibrary<Options, Oas3> = {
       spec = readFile(actualPath);
     }
 
-    const { schema } = await createGraphQLSchema(spec, {
+    const { schema, data } = await createGraphQLSchema(spec, {
       ...(config || {}),
+      operationIdFieldNames: true,
       viewer: false // Viewer set to false in order to force users to specify auth via config file
     });
 
@@ -50,7 +82,10 @@ const handler: MeshHandlerLibrary<Options, Oas3> = {
         name,
         source: filePathOrUrl
       },
-      payload: spec
+      payload: {
+        oas: spec,
+        preprocessingData: data
+      }
     };
   }
 };

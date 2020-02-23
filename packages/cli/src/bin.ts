@@ -1,9 +1,13 @@
 #!/usr/bin/env node -r ts-node/register/transpile-only
 
-import { ApolloServer } from 'apollo-server';
+import { writeFileSync } from 'fs';
 import { parseConfig, getMesh } from '@graphql-mesh/runtime';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
+import { generateTsTypes } from './commands/typescript';
+import { serveMesh } from './commands/serve';
+import { resolve, dirname } from 'path';
+import * as mkdirp from 'mkdirp';
 
 const logger = createLogger({
   level: 'info',
@@ -18,7 +22,7 @@ const logger = createLogger({
 export async function graphqlMesh() {
   // TODO: Add flag for fetching specific config file and not from default path
   const meshConfig = await parseConfig();
-  const { schema, contextBuilder } = await getMesh(meshConfig);
+  const { schema, contextBuilder, rawSources } = await getMesh(meshConfig);
 
   yargs
     .command<{ verbose: boolean }>(
@@ -26,17 +30,7 @@ export async function graphqlMesh() {
       'Serves a GraphiQLApolloServer interface to test your Mesh API',
       () => null,
       async () => {
-        const server = new ApolloServer({
-          schema,
-          context: () => {
-            const context = contextBuilder();
-            return context;
-          }
-        });
-      
-        server.listen().then(({ url }) => {
-          console.log(`🕸️ Serving GraphQL Mesh GraphiQL: ${url}`);
-        });
+        await serveMesh(logger, schema, contextBuilder);
       }
     )
     .command<{ verbose: boolean }>(
@@ -44,15 +38,19 @@ export async function graphqlMesh() {
       'Generates fully type-safe SDK based on unifid GraphQL schema and GraphQL operations',
       () => null,
       async args => {
-        // TODO
+        // TODO: Generate SDK based on operations
       }
     )
-    .command<{ verbose: boolean }>(
+    .command<{ verbose: boolean, output: string }>(
       'typescript',
       'Generates TypeScript typings for the generated mesh',
       () => null,
-      async args => {
-        // TODO
+      async (args) => {
+        const result = await generateTsTypes(logger, schema, rawSources);
+        const outFile = resolve(process.cwd(), args.output);
+        const dirName = dirname(outFile);
+        mkdirp.sync(dirName);
+        writeFileSync(outFile, result);
       }
     )
     .option('verbose', {

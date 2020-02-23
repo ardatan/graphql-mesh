@@ -1,6 +1,8 @@
-export const resolvers = {
+import { Resolvers } from '../__generated__/mesh';
+
+export const resolvers: Resolvers = {
   PopulatedPlaceSummary: {
-    dailyForecast: async (placeSummary: any, args: never, { Weather }: any) => {
+    dailyForecast: async (placeSummary, args: never, { Weather }) => {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon({
         lat: placeSummary.latitude,
         lon: placeSummary.longitude,
@@ -9,11 +11,11 @@ export const resolvers = {
 
       return forecast.data;
     },
-    todayForecast: async (placeSummary: any, args: never, { Weather }: any) => {
+    todayForecast: async (placeSummary, args: never, { Weather }) => {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon({
         lat: placeSummary.latitude,
         lon: placeSummary.longitude,
-        key: Weather.config.apiKey,
+        key: Weather.config.apiKey
       });
 
       return forecast.data[0];

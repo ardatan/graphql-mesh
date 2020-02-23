@@ -9,15 +9,15 @@ export type MeshSource = {
 
 /* TS Support */
 export declare type TsSupportOptions<TPayload> = {
-  filePathOrUrl: string;
   name: string;
+  schema: GraphQLSchema,
   getMeshSourcePayload: TPayload;
 };
 
 export type TsSupportOutput = {
   sdk?: ExportedTSType;
   context?: ExportedTSType;
-  models?: Record<string, ExportedTSType>;
+  models?: string;
 };
 
 export type ExportedTSType = {

@@ -751,6 +751,21 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@dotansimha/openapi-to-graphql@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/@dotansimha/openapi-to-graphql/-/openapi-to-graphql-2.0.1.tgz#a3a5af5e30b3e02dcff615333d4d3338c0ce7de3"
+  integrity sha512-mfvB51Ivn/L7yiLjYrtjwtCi0xvbxA92KyVU1CD/vYszNYhg6f2Js72lycwriKGkRUy18fe0jyKj2ZVYSmrwcg==
+  dependencies:
+    debug "^4.1.0"
+    deep-equal "^2.0.1"
+    form-urlencoded "^4.1.1"
+    graphql-type-json "^0.2.1"
+    jsonpath-plus "^3.0.0"
+    oas-validator "^3.1.0"
+    pluralize "^8.0.0"
+    request "^2.88.0"
+    swagger2openapi "^5.1.0"
+
 "@evocateur/libnpmaccess@^3.1.2":
   version "3.1.2"
   resolved "https://registry.npmjs.org/@evocateur/libnpmaccess/-/libnpmaccess-3.1.2.tgz#ecf7f6ce6b004e9f942b098d92200be4a4b1c845"
@@ -858,6 +873,28 @@
   dependencies:
     "@graphql-codegen/plugin-helpers" "1.12.2"
     "@graphql-toolkit/common" "0.9.7"
+    tslib "1.10.0"
+
+"@graphql-codegen/typescript-resolvers@1.12.2":
+  version "1.12.2"
+  resolved "https://registry.npmjs.org/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-1.12.2.tgz#17ed56be4d249ce961f5e6135d1c1ba5461ccfe9"
+  integrity sha512-+YJIAMck3X4DPC4Bwt8Ht4mlHxdYzMemHtRZjur0V6+WnxMxjE1NDylZ0bynhbbHd6bM1yoA3JpU5jCBcxF1Gw==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.12.2"
+    "@graphql-codegen/typescript" "1.12.2"
+    "@graphql-codegen/visitor-plugin-common" "1.12.2"
+    "@graphql-toolkit/common" "0.9.7"
+    auto-bind "4.0.0"
+    tslib "1.10.0"
+
+"@graphql-codegen/typescript@1.12.2":
+  version "1.12.2"
+  resolved "https://registry.npmjs.org/@graphql-codegen/typescript/-/typescript-1.12.2.tgz#4b63ab80dcac7624711459e776201c6a5d0f7373"
+  integrity sha512-G2H91ocAEcZ86TFNQWV2HZUdXSR7v/Ntjq0ChqDvz/a7PTJxa5Pe5j4sQ9q13vGR5CedAMbBZkZ8zTKLAqY5sg==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.12.2"
+    "@graphql-codegen/visitor-plugin-common" "1.12.2"
+    auto-bind "4.0.0"
     tslib "1.10.0"
 
 "@graphql-codegen/visitor-plugin-common@1.12.2":
@@ -7307,21 +7344,6 @@ openapi-schemas@^1.0.2:
   version "1.0.3"
   resolved "https://registry.npmjs.org/openapi-schemas/-/openapi-schemas-1.0.3.tgz#0fa2f19e44ce8a1cdab9c9f616df4babe1aa026b"
   integrity sha512-KtMWcK2VtOS+nD8RKSIyScJsj8JrmVWcIX7Kjx4xEHijFYuvMTDON8WfeKOgeSb4uNG6UsqLj5Na7nKbSav9RQ==
-
-openapi-to-graphql@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/openapi-to-graphql/-/openapi-to-graphql-2.0.0.tgz#72c123e1a609dc3a06995dbcd85b3e71cb22dc75"
-  integrity sha512-XBlhpXvbDBOTxkm8ygwGm3cLL6wTaKtgRzii/SK1M6AHnyVP1WJ7/OCZ2DF/GvtsYzwulvaEVOiZT9XmuyEcaQ==
-  dependencies:
-    debug "^4.1.0"
-    deep-equal "^2.0.1"
-    form-urlencoded "^4.1.1"
-    graphql-type-json "^0.2.1"
-    jsonpath-plus "^3.0.0"
-    oas-validator "^3.1.0"
-    pluralize "^8.0.0"
-    request "^2.88.0"
-    swagger2openapi "^5.1.0"
 
 openapi-types@^1.3.5:
   version "1.3.5"

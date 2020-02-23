@@ -7,7 +7,11 @@
     "dev": "ts-node-dev src/index.ts",
     "test": "jest",
     "build": "tsc",
-    "serve:mesh": "graphql-mesh serve"
+    "prestart": "yarn mesh:ts",
+    "predev": "yarn mesh:ts",
+    "premesh:serve": "yarn mesh:ts",
+    "mesh:serve": "graphql-mesh serve",
+    "mesh:ts": "graphql-mesh typescript --output ./src/__generated__/mesh.ts"
   },
   "devDependencies": {
     "@types/node": "13.7.4",

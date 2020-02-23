@@ -25,7 +25,7 @@
     "typescript": "3.8.2"
   },
   "dependencies": {
-    "openapi-to-graphql": "2.0.0",
+    "@dotansimha/openapi-to-graphql": "2.0.1",
     "@graphql-mesh/types": "0.0.11",
     "@graphql-mesh/utils": "0.0.11",
     "change-case": "4.1.1",
