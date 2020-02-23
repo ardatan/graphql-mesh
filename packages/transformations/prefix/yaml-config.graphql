@@ -1,0 +1,6 @@
+type Prefix implements Transformation {
+  type: String!
+  prefix: String
+  includeOperations: Boolean
+}
+

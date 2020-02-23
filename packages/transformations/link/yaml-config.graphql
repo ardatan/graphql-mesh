@@ -1,0 +1,6 @@
+type Link implements Transformation {
+  type: String!
+  from: String!
+  to: String!
+}
+

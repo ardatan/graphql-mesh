@@ -1,142 +1,140 @@
-  {
-    "definitions": {
-      "OutputTransformation": {
-        "anyOf": [
-          {
-            "type": "object",
-            "properties": {
-              "type": {
-                "format": "link",
-                "type": "string"
-              },
-              "from": {
-                "type": "string"
-              },
-              "to": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "type",
-              "from",
-              "to"
-            ]
-          }
-        ]
-      },
-      "SchemaTransformation": {
-        "anyOf": [
-          {
-            "type": "object",
-            "properties": {
-              "type": {
-                "format": "prefix",
-                "type": "string"
-              },
-              "prefix": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "type",
-              "prefix"
-            ]
-          }
-        ]
+{
+  "definitions": {
+    "Openapi": {
+      "additionalItems": false,
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Openapi",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "additionalItems": false,
+        "additionalProperties": false,
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/OpenapiConfig"
+        }
       }
     },
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "MeshConfig",
-    "type": "object",
-    "required": [
-      "sources"
-    ],
-    "properties": {
-      "operations": {
-        "type": "array",
-        "title": "Operations",
-        "items": {
-          "type": "string",
-          "title": "OperationsPath"
+    "OpenapiConfig": {
+      "additionalItems": false,
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OpenapiConfig",
+      "required": [],
+      "properties": {
+        "additionalItems": false,
+        "additionalProperties": false,
+        "headers": {
+          "type": "object"
         }
-      },
-      "additionalResolvers": {
-        "type": "array",
-        "title": "AdditionalResolvers",
-        "items": {
-          "type": "string",
-          "title": "ResolversFilePath"
+      }
+    },
+    "Prefix": {
+      "additionalItems": false,
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Prefix",
+      "required": [
+        "type",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "additionalItems": false,
+        "additionalProperties": false,
+        "type": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "includeOperations": {
+          "type": "boolean"
         }
-      },
-      "sources": {
-        "type": "array",
-        "title": "APISources",
-        "items": {
-          "type": "object",
-          "title": "APISource",
-          "required": [
-            "name",
-            "source",
-            "handler"
-          ],
-          "properties": {
-            "transformations": {
-              "type": "array",
-              "title": "SchemaTransformations",
-              "items": {
-                "$ref": "#/definitions/SchemaTransformation"
-              }
-            },
-            "name": {
-              "type": "string",
-              "title": "Name",
-              "examples": [
-                "MyApi"
-              ],
-              "pattern": "^(.*)$"
-            },
-            "source": {
-              "type": "string",
-              "title": "Path",
-              "default": "",
-              "examples": [
-                "my-schema.yaml"
-              ],
-              "pattern": "^(.*)$"
-            },
-            "context": {
-              "title": "ContextProperties",
-              "description": "Properties to include in the GraphQL Context",
-              "type": "object"
-            },
-            "handler": {
-              "type": "object",
-              "title": "Handler",
-              "required": [
-                "name"
-              ],
-              "properties": {
-                "name": {
-                  "description": "NPM package to handle, load, and generate code for this API source",
-                  "title": "HandlerPackageName",
-                  "type": "string"
-                },
-                "config": {
-                  "title": "HandlerConfig",
-                  "description": "Configuration object to pass to the API method",
-                  "type": "object"
-                }
-              }
+      }
+    },
+    "Source": {
+      "additionalItems": false,
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Source",
+      "required": [
+        "name",
+        "source",
+        "handler"
+      ],
+      "properties": {
+        "additionalItems": false,
+        "additionalProperties": false,
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "context": {
+          "type": "object"
+        },
+        "handler": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Openapi"
             }
+          ]
+        },
+        "transformations": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Prefix"
+              }
+            ]
           }
-        }
-      },
-      "transformations": {
-        "type": "array",
-        "title": "Transformations",
-        "items": {
-          "$ref": "#/definitions/OutputTransformation"
         }
       }
     }
+  },
+  "title": "Config",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "required": [
+    "sources"
+  ],
+  "properties": {
+    "additionalItems": false,
+    "additionalProperties": false,
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Source"
+      }
+    },
+    "additionalResolvers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transformations": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/Prefix"
+          }
+        ]
+      }
+    }
   }
+}

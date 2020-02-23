@@ -1,0 +1,23 @@
+type Query {
+  sources: [Source!]!
+  additionalResolvers: [String]
+  transformations: [Transformation]
+}
+
+scalar JSON
+
+type Source {
+  name: String!
+  source: String!
+  context: JSON
+  handler: Handler!
+  transformations: [Transformation]
+}
+
+interface Transformation {
+  type: String!
+}
+
+interface Handler {
+  name: String!
+}

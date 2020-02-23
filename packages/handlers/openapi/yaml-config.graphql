@@ -1,0 +1,8 @@
+type Openapi implements Handler {
+  name: String!
+  config: OpenapiConfig
+}
+
+type OpenapiConfig {
+  headers: JSON
+}
