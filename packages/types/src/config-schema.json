@@ -95,6 +95,29 @@
         }
       }
     },
+    "Rename": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Rename",
+      "required": [
+        "type",
+        "to"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to apply rename of a GraphQL type"
+        },
+        "from": {
+          "type": "string",
+          "description": "The GraphQL type to rename"
+        },
+        "to": {
+          "type": "string",
+          "description": "The new name"
+        }
+      }
+    },
     "Source": {
       "additionalProperties": false,
       "type": "object",
@@ -118,17 +141,21 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: Openapi)",
           "anyOf": [
             {
               "$ref": "#/definitions/Openapi"
             }
-          ],
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification"
+          ]
         },
         "transformations": {
           "type": "array",
           "items": {
+            "description": "Any of: Extend, Link, Prefix, Rename",
             "anyOf": [
+              {
+                "$ref": "#/definitions/Extend"
+              },
               {
                 "$ref": "#/definitions/Link"
               },
@@ -136,12 +163,12 @@
                 "$ref": "#/definitions/Prefix"
               },
               {
-                "$ref": "#/definitions/Extend"
+                "$ref": "#/definitions/Rename"
               }
             ]
           },
           "additionalItems": false,
-          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources"
+          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources (Any of: Extend, Link, Prefix, Rename)"
         }
       }
     }
@@ -164,7 +191,11 @@
     "transformations": {
       "type": "array",
       "items": {
+        "description": "Any of: Extend, Link, Prefix, Rename",
         "anyOf": [
+          {
+            "$ref": "#/definitions/Extend"
+          },
           {
             "$ref": "#/definitions/Link"
           },
@@ -172,12 +203,12 @@
             "$ref": "#/definitions/Prefix"
           },
           {
-            "$ref": "#/definitions/Extend"
+            "$ref": "#/definitions/Rename"
           }
         ]
       },
       "additionalItems": false,
-      "description": "Transformations to apply to the unified mesh schema"
+      "description": "Transformations to apply to the unified mesh schema (Any of: Extend, Link, Prefix, Rename)"
     },
     "additionalResolvers": {
       "type": "array",

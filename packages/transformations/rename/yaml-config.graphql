@@ -1,0 +1,14 @@
+type Rename implements Transformation {
+  """
+  Transformer to apply rename of a GraphQL type
+  """
+  type: String!
+  """
+  The GraphQL type to rename
+  """
+  from: String
+  """
+  The new name
+  """
+  to: String!
+}
