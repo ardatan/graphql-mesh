@@ -1,16 +1,40 @@
 type Query {
+  """
+  Defines the list of your external data sources for your API mesh
+  """
   sources: [Source!]!
-  additionalResolvers: [String]
+  """
+  Transformations to apply to the unified mesh schema
+  """
   transformations: [Transformation]
+  """
+  Additional resolvers, or resolvers overrides you wish to add to the schema mesh
+  """
+  additionalResolvers: [String]
 }
 
 scalar JSON
 
 type Source {
+  """
+  The name you wish to set to your remote API, this will be used for building the GraphQL context
+  """
   name: String!
+  """
+  A pointer to your API source - could be a local file, remote file or url endpoint
+  """
   source: String!
+  """
+  Custom JSON object to add to the GraphQL context, use this to inject custom fields and later use it in your custom resolver. This object will be located in the context, under an object named as the API
+  """
   context: JSON
+  """
+  A path to a local file, or a node module name, that handles the conversion of the API source specification
+  """
   handler: Handler!
+  """
+  List of transformations to apply to the current API source, before unifying it with the rest of the sources
+  """
   transformations: [Transformation]
 }
 

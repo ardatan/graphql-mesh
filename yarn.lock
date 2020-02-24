@@ -5053,10 +5053,10 @@ graphql-tag@2.10.1, graphql-tag@^2.9.2:
   resolved "https://registry.npmjs.org/graphql-tag/-/graphql-tag-2.10.1.tgz#10aa41f1cd8fae5373eaf11f1f67260a3cad5e02"
   integrity sha512-jApXqWBzNXQ8jYa/HLkZJaVw9jgwNqZkywa2zfFn16Iv1Zb7ELNHkJaXHR7Quvd5SIGsy6Ny7SUKATgnu05uEg==
 
-graphql-to-config-schema@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/graphql-to-config-schema/-/graphql-to-config-schema-0.0.3.tgz#67bf430adac21739bb24551a855377fcfd0f6799"
-  integrity sha512-ZwAVpyEHnLCl5JqZWjJaunl98eHVnvMsxoPYNRV+JBMSlHXBhczD0skr6Pg1HmmCncemDGW4aGTUQAh/U8ZIEQ==
+graphql-to-config-schema@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.npmjs.org/graphql-to-config-schema/-/graphql-to-config-schema-0.0.5.tgz#c3f1c53290ad0cc654bfaae51cec2f083ec5bb60"
+  integrity sha512-UDm3iVUKHQlxq2G0hYWBj0v2MZjfX63PQVQgzGnzR+Fcx1A4Q11R7MxgeUHlypZFirCXHfNTKjqvV5NiDFFJYA==
   dependencies:
     "@graphql-toolkit/core" "0.9.7"
     "@graphql-toolkit/graphql-file-loader" "0.9.7"

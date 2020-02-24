@@ -1,4 +1,7 @@
 import { GraphQLSchema } from 'graphql';
+import * as YamlConfig from './config';
+
+export { YamlConfig };
 
 export type MeshSource = {
   name: string;
@@ -10,7 +13,7 @@ export type MeshSource = {
 /* TS Support */
 export declare type TsSupportOptions<TPayload> = {
   name: string;
-  schema: GraphQLSchema,
+  schema: GraphQLSchema;
   getMeshSourcePayload: TPayload;
 };
 

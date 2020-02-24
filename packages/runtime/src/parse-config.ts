@@ -1,10 +1,10 @@
-import { MeshConfig } from './config';
 import { cosmiconfig } from 'cosmiconfig';
 import { GetMeshOptions, Transformation } from './types';
 import { getHandler, getPackage, resolveAdditionalResolvers } from './utils';
 import {
   OutputTransformationFn,
-  SchemaTransformationFn
+  SchemaTransformationFn,
+  YamlConfig
 } from '@graphql-mesh/types';
 
 export async function parseConfig(
@@ -14,7 +14,7 @@ export async function parseConfig(
 
   const explorer = cosmiconfig(name);
   const results = await explorer.search(dir);
-  const config = results?.config as MeshConfig;
+  const config = results?.config as YamlConfig.Config;
 
   const sources = await Promise.all(
     config.sources.map(async source => {

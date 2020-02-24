@@ -1,0 +1,167 @@
+{
+  "definitions": {
+    "Link": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Link",
+      "required": [
+        "type",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to apply links between types, you'll need to provide a custom resolver for the newly created link"
+        },
+        "from": {
+          "type": "string",
+          "description": "The name of the type and field to add: `MyType.myField`"
+        },
+        "to": {
+          "type": "string",
+          "description": "The type you wish to use for the link, you can also add array or non-nullable symbols, for example: `[User!]!`"
+        }
+      }
+    },
+    "Openapi": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Openapi",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
+        },
+        "config": {
+          "$ref": "#/definitions/OpenapiConfig",
+          "description": "Configuration to pass to `openapi-to-graphql`"
+        }
+      }
+    },
+    "OpenapiConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OpenapiConfig",
+      "required": [],
+      "properties": {
+        "headers": {
+          "type": "object",
+          "description": "JSON object representing the Headers to add to the runtime of the API calls"
+        }
+      }
+    },
+    "Prefix": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Prefix",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to add prefix to the GraphQL types and operations."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "The prefix to apply to the schema types. By default it's the API name."
+        },
+        "includeOperations": {
+          "type": "boolean",
+          "description": "Set to true in order to prefix the operations names"
+        }
+      }
+    },
+    "Source": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Source",
+      "required": [
+        "name",
+        "source",
+        "handler"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
+        },
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
+        },
+        "context": {
+          "type": "object",
+          "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
+        },
+        "handler": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Openapi"
+            }
+          ],
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification"
+        },
+        "transformations": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Link"
+              },
+              {
+                "$ref": "#/definitions/Prefix"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources"
+        }
+      }
+    }
+  },
+  "title": "Config",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "required": [
+    "sources"
+  ],
+  "properties": {
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Source"
+      },
+      "additionalItems": false,
+      "description": "Defines the list of your external data sources for your API mesh"
+    },
+    "transformations": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/Link"
+          },
+          {
+            "$ref": "#/definitions/Prefix"
+          }
+        ]
+      },
+      "additionalItems": false,
+      "description": "Transformations to apply to the unified mesh schema"
+    },
+    "additionalResolvers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false,
+      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
+    }
+  },
+  "additionalProperties": false
+}

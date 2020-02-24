@@ -1,6 +1,14 @@
 type Link implements Transformation {
+  """
+  Transformer to apply links between types, you'll need to provide a custom resolver for the newly created link
+  """
   type: String!
+  """
+  The name of the type and field to add: `MyType.myField`
+  """
   from: String!
+  """
+  The type you wish to use for the link, you can also add array or non-nullable symbols, for example: `[User!]!`
+  """
   to: String!
 }
-

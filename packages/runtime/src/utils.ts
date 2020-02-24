@@ -1,6 +1,5 @@
 import 'ts-node/register/transpile-only';
 import { IResolvers } from 'graphql-tools-fork';
-import { AdditionalResolvers } from './config';
 import { Transformation } from './types';
 import { GraphQLSchema } from 'graphql';
 import {
@@ -75,7 +74,7 @@ export async function getHandler(name: string): Promise<MeshHandlerLibrary> {
 
 export async function resolveAdditionalResolvers(
   baseDir: string,
-  additionalResolvers: AdditionalResolvers
+  additionalResolvers: string[]
 ): Promise<IResolvers> {
   const loaded = await Promise.all(
     (additionalResolvers || []).map(async filePath => {

@@ -4,6 +4,7 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
+    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts",
     "test": "jest",
     "build": "tsc"
   },
@@ -11,6 +12,7 @@
     "graphql": "*"
   },
   "devDependencies": {
+    "graphql-to-config-schema": "0.0.6",
     "@types/node": "13.7.4",
     "graphql": "14.6.0",
     "ts-node-dev": "1.0.0-pre.44",
