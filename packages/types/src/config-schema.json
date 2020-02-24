@@ -1,5 +1,24 @@
 {
   "definitions": {
+    "Extend": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Extend",
+      "required": [
+        "type",
+        "sdl"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to add custom SDL to the schema"
+        },
+        "sdl": {
+          "type": "string",
+          "description": "GraphQL SDL and apply to the schema"
+        }
+      }
+    },
     "Link": {
       "additionalProperties": false,
       "type": "object",
@@ -115,6 +134,9 @@
               },
               {
                 "$ref": "#/definitions/Prefix"
+              },
+              {
+                "$ref": "#/definitions/Extend"
               }
             ]
           },
@@ -148,6 +170,9 @@
           },
           {
             "$ref": "#/definitions/Prefix"
+          },
+          {
+            "$ref": "#/definitions/Extend"
           }
         ]
       },

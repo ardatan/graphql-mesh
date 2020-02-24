@@ -1,0 +1,10 @@
+type Extend implements Transformation {
+  """
+  Transformer to add custom SDL to the schema
+  """
+  type: String!
+  """
+  GraphQL SDL and apply to the schema
+  """
+  sdl: String!
+}
