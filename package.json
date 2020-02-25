@@ -3,10 +3,13 @@
   "private": true,
   "scripts": {
     "build": "lerna run build",
-    "prerelease": "yarn build",
-    "prerelease:canary": "yarn build",
-    "release": "lerna publish --exact --force-publish=\"*\"",
-    "release:canary": "lerna publish --force-publish=\"*\" --canary --exact"
+    "test": "lerna run test",
+    "test-and-build": "yarn build && yarn test",
+    "prerelease": "yarn test-and-build",
+    "prerelease:canary": "yarn test-and-build",
+    "release": "lerna publish --contents dist --exact --force-publish=\"*\"",
+    "release:canary": "lerna publish --contents dist --force-publish=\"*\" --canary --exact",
+    "ci:release:canary": "lerna publish --contents dist --force-publish=\"*\" --preid \"alpha-`git rev-parse --short HEAD`\" --canary --exact --yes"
   },
   "devDependencies": {
     "lerna": "3.20.2"

@@ -1,5 +1,5 @@
 {
   "yaml.schemas": {
-    "./packages/types/src/config-schema.json": "*",
+    "./packages/types/src/config-schema.json": ".meshrc.yaml",
   }
 }
