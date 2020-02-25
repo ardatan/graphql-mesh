@@ -13,11 +13,11 @@ sources:
     handler:
       name: openapi
 transformations:
-  - type: link
-    from: PopulatedPlaceSummary.dailyForecast
-    to: '[Forecast!]!'
-  - type: link
-    from: PopulatedPlaceSummary.todayForecast
-    to: 'Forecast!'
+  - type: extend
+    sdl: |
+      extend type PopulatedPlaceSummary {
+        dailyForecast: [Forecast!]!
+        todayForecast: Forecast!
+      }
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts

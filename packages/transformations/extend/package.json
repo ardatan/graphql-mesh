@@ -20,8 +20,7 @@
     "typescript": "3.8.2"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.11",
-    "graphql-compose": "7.12.3"
+    "@graphql-mesh/types": "0.0.11"
   },
   "publishConfig": {
     "access": "public"

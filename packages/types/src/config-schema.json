@@ -19,30 +19,6 @@
         }
       }
     },
-    "Link": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Link",
-      "required": [
-        "type",
-        "from",
-        "to"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "Transformer to apply links between types, you'll need to provide a custom resolver for the newly created link"
-        },
-        "from": {
-          "type": "string",
-          "description": "The name of the type and field to add: `MyType.myField`"
-        },
-        "to": {
-          "type": "string",
-          "description": "The type you wish to use for the link, you can also add array or non-nullable symbols, for example: `[User!]!`"
-        }
-      }
-    },
     "Openapi": {
       "additionalProperties": false,
       "type": "object",
@@ -151,13 +127,10 @@
         "transformations": {
           "type": "array",
           "items": {
-            "description": "Any of: Extend, Link, Prefix, Rename",
+            "description": "Any of: Extend, Prefix, Rename",
             "anyOf": [
               {
                 "$ref": "#/definitions/Extend"
-              },
-              {
-                "$ref": "#/definitions/Link"
               },
               {
                 "$ref": "#/definitions/Prefix"
@@ -168,7 +141,7 @@
             ]
           },
           "additionalItems": false,
-          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources (Any of: Extend, Link, Prefix, Rename)"
+          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources (Any of: Extend, Prefix, Rename)"
         }
       }
     }
@@ -191,13 +164,10 @@
     "transformations": {
       "type": "array",
       "items": {
-        "description": "Any of: Extend, Link, Prefix, Rename",
+        "description": "Any of: Extend, Prefix, Rename",
         "anyOf": [
           {
             "$ref": "#/definitions/Extend"
-          },
-          {
-            "$ref": "#/definitions/Link"
           },
           {
             "$ref": "#/definitions/Prefix"
@@ -208,7 +178,7 @@
         ]
       },
       "additionalItems": false,
-      "description": "Transformations to apply to the unified mesh schema (Any of: Extend, Link, Prefix, Rename)"
+      "description": "Transformations to apply to the unified mesh schema (Any of: Extend, Prefix, Rename)"
     },
     "additionalResolvers": {
       "type": "array",
