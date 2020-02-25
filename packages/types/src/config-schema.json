@@ -49,6 +49,70 @@
         }
       }
     },
+    "PostGraphile": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphile",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Handler for Postgres, based on PostGraphile."
+        },
+        "config": {
+          "$ref": "#/definitions/PostGraphileConfig",
+          "description": "Configuration to pass to PostGraphile"
+        }
+      }
+    },
+    "PostGraphileConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphileConfig",
+      "required": [],
+      "properties": {
+        "schemaName": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "An array of strings which specifies the PostgreSQL schemas that PostGraphile\nwill use to create a GraphQL schema. The default schema is the public schema."
+        },
+        "pool": {
+          "$ref": "#/definitions/PostGraphilePool",
+          "description": "Connection Pool settings"
+        }
+      }
+    },
+    "PostGraphilePool": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphilePool",
+      "required": [],
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "database": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "connectionString": {
+          "type": "string"
+        }
+      }
+    },
     "Prefix": {
       "additionalProperties": false,
       "type": "object",
@@ -121,10 +185,13 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: Openapi)",
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: Openapi, PostGraphile)",
           "anyOf": [
             {
               "$ref": "#/definitions/Openapi"
+            },
+            {
+              "$ref": "#/definitions/PostGraphile"
             }
           ]
         },

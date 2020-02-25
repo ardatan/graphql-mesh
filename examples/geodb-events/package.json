@@ -1,0 +1,30 @@
+{
+  "name": "geodb-events-example",
+  "version": "0.0.11",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node-dev src/index.ts",
+    "test": "jest",
+    "build": "tsc",
+    "prestart": "yarn mesh:ts",
+    "predev": "yarn mesh:ts",
+    "premesh:serve": "yarn mesh:ts",
+    "mesh:serve": "graphql-mesh serve",
+    "mesh:ts": "graphql-mesh typescript --output ./src/__generated__/mesh.ts"
+  },
+  "devDependencies": {
+    "@types/node": "13.7.4",
+    "ts-jest": "25.2.1",
+    "ts-node-dev": "1.0.0-pre.44",
+    "typescript": "3.8.2"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.0.11",
+    "@graphql-mesh/runtime": "0.0.11",
+    "@graphql-mesh/openapi": "0.0.11",
+    "apollo-server": "2.10.1",
+    "graphql": "14.6.0",
+    "graphql-tools-fork": "8.6.1"
+  }
+}

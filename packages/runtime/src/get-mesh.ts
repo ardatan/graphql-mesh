@@ -11,6 +11,7 @@ import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 export type RawSourcesOutput = Record<
   string,
   {
+    globalContextBuilder: null | (() => Promise<any>);
     sdk: MeshSource['sdk'];
     schema: GraphQLSchema;
     context: Record<string, any>;
@@ -47,6 +48,7 @@ export async function getMesh(
     }
 
     results[apiSource.name] = {
+      globalContextBuilder: source.contextBuilder || null,
       sdk: source.sdk,
       schema: apiSchema,
       context: apiSource.context || {},
@@ -55,9 +57,7 @@ export async function getMesh(
     };
   }
 
-  let unifiedSchema = mergeSchemas({
-    schemas: Object.keys(results).map(key => results[key].schema)
-  });
+  let unifiedSchema = results['Geo'].schema
 
   if (options.transformations && options.transformations.length > 0) {
     unifiedSchema = await applyOutputTransformations(
@@ -73,18 +73,33 @@ export async function getMesh(
     });
   }
 
-  function buildMeshContext(): Record<string, any> {
-    const context: Record<string, any> = Object.keys(results).reduce(
-      (prev, apiName) => {
+  async function buildMeshContext(): Promise<Record<string, any>> {
+    const childContextObjects = await Promise.all(
+      Object.keys(results).map(async apiName => {
+        let globalContext = {};
+        const globalContextBuilder = results[apiName].globalContextBuilder;
+
+        if (globalContextBuilder) {
+          globalContext = await globalContextBuilder();
+        }
+
         return {
-          ...prev,
+          ...(globalContext || {}),
           [apiName]: {
             config: results[apiName].context || {}
           }
         };
-      },
-      {}
+      }, {})
     );
+
+    const context: Record<string, any> = childContextObjects
+      .filter(Boolean)
+      .reduce((prev, obj) => {
+        return {
+          ...prev,
+          ...obj
+        };
+      }, {});
 
     Object.keys(results).forEach(apiName => {
       const handlerRes = results[apiName];
@@ -98,6 +113,8 @@ export async function getMesh(
       }
     }, {});
 
+    console.log('context: ', context);
+
     return context;
   }
 
@@ -105,7 +122,7 @@ export async function getMesh(
     document: GraphQLOperation,
     variables: TVariables
   ) {
-    const context = buildMeshContext();
+    const context = await buildMeshContext();
     
     return execute<TData>({
       document: ensureDocumentNode(document),

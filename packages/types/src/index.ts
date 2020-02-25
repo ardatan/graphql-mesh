@@ -3,11 +3,12 @@ import * as YamlConfig from './config';
 
 export { YamlConfig };
 
-export type MeshSource = {
+export type MeshSource<ContextType = any> = {
   name: string;
   source: string;
   schema: GraphQLSchema;
-  sdk: Record<string, any> | ((context: any) => Record<string, any>);
+  contextBuilder?: () => Promise<ContextType>;
+  sdk?: Record<string, any> | ((context: any) => Record<string, any>);
 };
 
 /* Temporary TS Support */
@@ -35,10 +36,10 @@ export type GetMeshSourceOptions<TConfig> = {
 };
 
 // Handlers
-export declare type MeshHandlerLibrary<TConfig = any, TPayload = any> = {
+export declare type MeshHandlerLibrary<TConfig = any, TPayload = any, TContext = any> = {
   getMeshSource: (
     options: GetMeshSourceOptions<TConfig>
-  ) => Promise<{ source: MeshSource; payload: TPayload }>;
+  ) => Promise<{ source: MeshSource<TContext>; payload: TPayload }>;
   tsSupport?: (options: TsSupportOptions<TPayload>) => Promise<TsSupportOutput>;
 };
 
