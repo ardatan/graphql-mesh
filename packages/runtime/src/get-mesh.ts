@@ -104,17 +104,16 @@ export async function getMesh(
   async function meshExecute<TData = any, TVariables = any>(
     document: GraphQLOperation,
     variables: TVariables
-  ): Promise<TData | null | undefined> {
+  ) {
     const context = buildMeshContext();
-    const r = await execute<TData>({
+    
+    return execute<TData>({
       document: ensureDocumentNode(document),
       contextValue: context,
       rootValue: {},
       variableValues: variables,
       schema: unifiedSchema
     });
-
-    return r.data;
   }
 
   return {

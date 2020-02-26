@@ -1,0 +1,13 @@
+sources:
+  - name: Wiki
+    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+    handler:
+      name: openapi
+transformations:
+  - type: extend
+    sdl: |
+      extend type Query {
+        viewsInPastMonth(project: String!): Float!
+      }
+additionalResolvers:
+  - ./src/mesh/additional-resolvers.js

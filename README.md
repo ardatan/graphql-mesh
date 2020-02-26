@@ -35,12 +35,14 @@ To get started with the basics, install the following:
 $ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
 ```
 
+### Getting Started
+
 Now, create the initial GraphQL Mesh configuration file - `.meshrc.yaml`, under your project root, and fill in your sources, for example:
 
 ```yaml
 sources:
-  - name: ApiGuru
-    source: https://api.apis.guru/v2/swagger.yaml
+  - name: Wiki
+    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
     handler:
       name: openapi
 ```
@@ -53,14 +55,23 @@ Now, to test your new GraphQL API based on your API specs, you can run:
 $ yarn graphql-mesh serve
 ```
 
-This will server a GraphiQL interface with your schema, so you'll be able to test it right away, before intergrating it to your application, you can try to run a test query, like that:
+This will server a GraphiQL interface with your schema, so you'll be able to test it right away, before intergrating it to your application, you can try to run a test query.
+
+This following will fetch all page views for Wikipedia.org on the past month:
 
 ```graphql
-query apiGuruStats {
-  getMetrics {
-    numAPIs
-    numEndpoints
-    numSpecs
+query wikipediaMetrics {
+  getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
+    access: ALL_ACCESS
+    agent: USER
+    start: "20200101"
+    end: "20200226"
+    project: "en.wikipedia.org"
+    granularity: DAILY
+  ) {
+    items {
+      views
+    }
   }
 }
 ```
@@ -77,12 +88,19 @@ async function test() {
   const { execute, schema, contextBuilder } = await getMesh(meshConfig);
 
   // Use `execute` to run a query directly and fetch data from your APIs
-  const result = await execute(/* GraphQL */ `
-    query apiGuruStats {
-      getMetrics {
-        numAPIs
-        numEndpoints
-        numSpecs
+  const { data, errors } = await execute(/* GraphQL */ `
+    query wikipediaMetrics {
+      getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
+        access: ALL_ACCESS
+        agent: USER
+        start: "20200101"
+        end: "20200226"
+        project: "en.wikipedia.org"
+        granularity: MONTHLY
+      ) {
+        items {
+          views
+        }
       }
     }
   `);
@@ -90,18 +108,93 @@ async function test() {
   // Or, if you wish to make this schema publicly available, expose it using any GraphQL server with the correct context, for example:
   const server = new ApolloServer({
     schema,
-    context: contextBuilder,
+    context: contextBuilder
   });
 }
 ```
 
-### APIs Support
+### Schema Transformations
+
+You can also add custom resolvers and custom GraphQL schema SDL, and use the API SDK to fetch the data and manipulate it. So the query above could be simplified with custom logic.
+
+To add a new field, that just returns the amount of views for the past month, you can wrap it as following in your GraphQL config file, and add custom resolvers file:
+
+```yaml
+sources:
+  - name: Wiki
+    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+    handler:
+      name: openapi
+transformations:
+  - type: extend
+    sdl: |
+      extend type Query {
+        viewsInPastMonth(project: String!): Float!
+      }
+additionalResolvers:
+  - ./src/mesh/additional-resolvers.js
+```
+
+And implement `src/mesh/additional-resolvers.js` with code that fetches and manipulate the data:
+
+```js
+const moment = require('moment');
+
+const resolvers = {
+  Query: {
+    async viewsInPastMonth(root, args, { Wiki }) {
+      const { items } = await Wiki.api.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
+        {
+          access: 'all-access',
+          agent: 'user',
+          end: moment().format('YYYYMMDD'),
+          start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
+          project: args.project,
+          granularity: 'monthly'
+        }
+      );
+
+      if (!items || items.length === 0) {
+        return 0;
+      }
+
+      return items[0].views;
+    }
+  }
+};
+
+module.exports = { resolvers };
+```
+
+### Linking Schemas
 
 TODO
+
+
+### Supported APIs
+
+The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
+
+| Package                      | Status    | Supported Spec                             |
+| ---------------------------- | --------- | ------------------------------------------ |
+| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3                       |
+| `@graphql-mesh/graphql`      | TODO      | GraphQL endpoint (schema-stitching)        |
+| `@graphql-mesh/json-schema`  | TODO      | JSON schema structure for request/response |
+| `@graphql-mesh/postgraphile` | TODO      | Postgres database schema                   |
+| `@graphql-mesh/odata`        | TODO      | OData specification                        |
+| `@graphql-mesh/grpc`         | TODO      | gRPC and protobuf schemas                  |
 
 ### TypeScript
 
-TODO
+GraphQL Mesh allow API handler packages to provide TypeScript typings in order to have types support in your code.
+
+In order to use the TypeScript support, use the CLI to generate typings file based on your unified GraphQL schema:
+
+```
+
+graphql-mesh typescript --output ./src/**generated**/mesh.ts
+
+```
 
 ## Packages in this repo
 
@@ -110,3 +203,4 @@ TODO
 ## Write your own transformations and handlers
 
 TODO
+```
