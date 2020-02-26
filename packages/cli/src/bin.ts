@@ -20,17 +20,19 @@ const logger = createLogger({
 });
 
 export async function graphqlMesh() {
-  // TODO: Add flag for fetching specific config file and not from default path
-  const meshConfig = await parseConfig();
-  const { schema, contextBuilder, rawSources } = await getMesh(meshConfig);
-
   yargs
     .command<{ verbose: boolean }>(
       'serve',
       'Serves a GraphiQLApolloServer interface to test your Mesh API',
       () => null,
       async () => {
-        await serveMesh(logger, schema, contextBuilder);
+        try {
+          const meshConfig = await parseConfig();
+          const { schema, contextBuilder } = await getMesh(meshConfig);
+          serveMesh(logger, schema, contextBuilder);
+        } catch (e) {
+          logger.error('Unable to serve mesh: ', e)
+        }
       }
     )
     .command<{ verbose: boolean }>(
@@ -46,6 +48,8 @@ export async function graphqlMesh() {
       'Generates TypeScript typings for the generated mesh',
       () => null,
       async (args) => {
+        const meshConfig = await parseConfig();
+        const { schema, rawSources } = await getMesh(meshConfig);
         const result = await generateTsTypes(logger, schema, rawSources);
         const outFile = resolve(process.cwd(), args.output);
         const dirName = dirname(outFile);

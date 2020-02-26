@@ -6,7 +6,7 @@
   "scripts": {
     "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts",
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc && cp src/config-schema.json ./dist/"
   },
   "peerDependencies": {
     "graphql": "*"

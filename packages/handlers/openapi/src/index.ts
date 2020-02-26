@@ -50,10 +50,8 @@ ${Object.keys(operations)
   async getMeshSource({ filePathOrUrl, name, config }) {
     let spec: Oas3;
 
-    // Load from a url or from a local file. only json supported at the moment.
-    // I think `getValidOAS3` should support loading YAML files easily
     if (isUrl(filePathOrUrl)) {
-      spec = JSON.parse(await request(filePathOrUrl));
+      spec = await readUrl(filePathOrUrl);
     } else {
       const actualPath = filePathOrUrl.startsWith('/')
         ? filePathOrUrl
@@ -98,6 +96,19 @@ function readFile(path: string): Oas3 {
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${path}' has ` +
+        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+    );
+  }
+}
+
+async function readUrl(path: string): Promise<Oas3> {
+  if (/json$/.test(path)) {
+    return JSON.parse(await request(path));
+  } else if (/yaml$/.test(path) || /yml$/.test(path)) {
+    return yaml.safeLoad(await request(path));
+  } else {
+    throw new Error(
+      `Failed to parse JSON/YAML. Ensure endpoint '${path}' has ` +
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
