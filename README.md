@@ -11,21 +11,15 @@ GraphQL Mesh gives the developer the ability to modify the output schemas, link 
 
 It allows developers to control the way they fetch data, and overcome issues related to backend implementation, legacy API services, chosen schema specification and non-typed APIs.
 
-The way GraphQL Mesh works is:
-
-1. Collect API schema specifications from services
-2. Create a runtime instance of fully-typed SDK for the services.
-3. Convert API specs to GraphQL schema
-4. Applies custom schema transformations and schema extensions
-5. Creates fully-typed, single schema, GraphQL SDK to fetch data from your services.
-
 GraphQL Mesh is acting as a proxy to your data, and uses common libraries to wrap your existing API services. You can use this proxy locally in your service or application by running the GraphQL schema locally (with GraphQL `execute`), or you can deploy this as a gateway layer to your internal service.
 
 > Note: GraphQL Mesh doesn’t aim to magically create your utopic public GraphQL schema - it’s just an easy-to-use proxy to your data, and you should consider implementing another layer that exposes your public data the way you need it to be.
 
 ## Getting Started
 
-### Installation
+<details>
+<summary><strong>Installation</strong></summary>
+<p>
 
 GraphQL Mesh comes in multiple packages, which you should install according to your needs.
 
@@ -35,7 +29,12 @@ To get started with the basics, install the following:
 $ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
 ```
 
-### Getting Started
+</p>
+</details>
+
+<details>
+<summary><strong>Basic Usage</strong></summary>
+<p>
 
 Now, create the initial GraphQL Mesh configuration file - `.meshrc.yaml`, under your project root, and fill in your sources, for example:
 
@@ -113,11 +112,18 @@ async function test() {
 }
 ```
 
-### Schema Transformations
+</p>
+</details>
 
-You can also add custom resolvers and custom GraphQL schema SDL, and use the API SDK to fetch the data and manipulate it. So the query above could be simplified with custom logic.
+<details>
+<summary><strong>Schema Transformations</strong></summary>
+<p>
 
-To add a new field, that just returns the amount of views for the past month, you can wrap it as following in your GraphQL config file, and add custom resolvers file:
+You can add custom resolvers and custom GraphQL schema SDL, and use the API SDK to fetch the data and manipulate it. So the query above could be simplified with custom logic.
+
+This is possible because GraphQL Mesh will make sure to expose all available services in each API in your `context` object. It's named the same as the API name, so to access the API of `Wiki` source, we can do `context.Wiki.api` and use the methods we need. It's useful when you need add custom behaviours, fields and types, and also for linking types between schemas.
+
+To add a new simple field, that just returns the amount of views for the past month, you can wrap it as following in your GraphQL config file, and add custom resolvers file:
 
 ```yaml
 sources:
@@ -143,12 +149,17 @@ const moment = require('moment');
 const resolvers = {
   Query: {
     async viewsInPastMonth(root, args, { Wiki }) {
-      const { items } = await Wiki.api.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
+      const {
+        items
+      } = await Wiki.api.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
         {
           access: 'all-access',
           agent: 'user',
           end: moment().format('YYYYMMDD'),
-          start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
+          start: moment()
+            .startOf('month')
+            .subtract(1, 'month')
+            .format('YYYYMMDD'),
           project: args.project,
           granularity: 'monthly'
         }
@@ -166,12 +177,31 @@ const resolvers = {
 module.exports = { resolvers };
 ```
 
-### Linking Schemas
+Now running `graphql-mesh serve` will show you this field, and you'll be able to query for it.
 
+And the code that fetches the data could now just do:
+
+```graphql
+query viewsInPastMonth {
+  viewsInPastMonth(project: "en.wikipedia.org")
+}
+```
+
+> You can find the complete example under `./examples/javascript-wiki` in this repo.
+
+</p>
+</details>
+
+<details>
+<summary><strong>Linking Schemas</strong></summary>
+<p>
 TODO
+</p>
+</details>
 
-
-### Supported APIs
+<details>
+<summary><strong>Supported APIs</strong></summary>
+<p>
 
 The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
 
@@ -184,23 +214,83 @@ The following APIs are supported/planned at the moment. You can easily add custo
 | `@graphql-mesh/odata`        | TODO      | OData specification                        |
 | `@graphql-mesh/grpc`         | TODO      | gRPC and protobuf schemas                  |
 
-### TypeScript
+</p>
+</details>
+
+<details>
+<summary><strong>TypeScript Support</strong></summary>
+<p>
+
+### Type safety for custom resolvers
 
 GraphQL Mesh allow API handler packages to provide TypeScript typings in order to have types support in your code.
 
 In order to use the TypeScript support, use the CLI to generate typings file based on your unified GraphQL schema:
 
 ```
-
-graphql-mesh typescript --output ./src/**generated**/mesh.ts
-
+graphql-mesh typescript --output ./src/generated/mesh.ts
 ```
 
-## Packages in this repo
+Now, you can import `Resolvers` interface from the generated file, and use it as the type for your custom resolvers. It will make sure that your parent value, arguments, context type and return value are fully compatible with the implementation. It will also provide fully typed SDK from the context:
 
-TODO
+```ts
+import { Resolvers } from './generated/mesh';
 
-## Write your own transformations and handlers
-
-TODO
+export const resolvers: Resolvers = {
+  // Your custom resolvers here
+};
 ```
+
+### Type safety for fetched data
+
+Instead of using GraphQL operations as string with `execute` - you can use GraphQL Mesh and generate a ready-to-use TypeScript SDK to fetch your data. It will make sure to have type-safety and auto-complete for variables and returned data.
+
+To generate this SDK, start by creating your GraphQL operations in a `.graphql` file, for example:
+
+```graphql
+query myQuery($someVar: String!) {
+  getSomething(var: $someVar) {
+    fieldA
+    fieldB
+  }
+}
+```
+
+Now, use GraphQL Mesh CLI and point it to the list of your `.graphql` files, and specify the output path for the TypeScript SDK:
+
+```
+graphql-mesh generate-sdk --operations "./src/**/*.graphql" --output ./src/generated/sdk.ts
+```
+
+Now, instead of using `execute` manually, you can use the generated `getSdk` method with your a GraphQL Mesh client, and use the functions that are generated based on your operations:
+
+```ts
+import { getSdk } from './generated/sdk';
+import { getMesh, parseConfig } from '@graphql-mesh/runtime';
+import { ApolloServer } from 'apollo-server';
+
+async function test() {
+  // Load mesh config and get the sdkClient from it
+  const meshConfig = await parseConfig();
+  const { sdkClient } = await getMesh(meshConfig);
+  // Get fully-typed SDK using the Mesh client and based on your GraphQL operations
+  const sdk = getSdk(sdkClient);
+
+  // Execute `myQuery` and get a type-safe result
+  // Variables and result are typed: { data?: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] } }
+  const { data, errors } = await sdk.myQuery({ someVar: 'foo' }); 
+}
+```
+
+</p>
+</details>
+
+## How it works?
+
+The way GraphQL Mesh works is:
+
+1. Collect API schema specifications from services
+2. Create a runtime instance of fully-typed SDK for the services.
+3. Convert API specs to GraphQL schema
+4. Applies custom schema transformations and schema extensions
+5. Creates fully-typed, single schema, GraphQL SDK to fetch data from your services.
