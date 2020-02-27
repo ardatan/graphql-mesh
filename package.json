@@ -7,9 +7,8 @@
     "test-and-build": "yarn build && yarn test",
     "prerelease": "yarn test-and-build",
     "prerelease:canary": "yarn test-and-build",
-    "release": "lerna publish --contents dist --exact --force-publish=\"*\"",
-    "release:canary": "lerna publish --contents dist --force-publish=\"*\" --canary --exact",
-    "ci:release:canary": "lerna publish --contents dist --force-publish=\"*\" --preid \"alpha-`git rev-parse --short HEAD`\" --canary --exact --yes"
+    "release": "lerna publish --exact --force-publish=\"*\"",
+    "ci:release:canary": "lerna publish --force-publish=\"*\" --preid \"alpha-`git rev-parse --short HEAD`\" --canary --exact --yes"
   },
   "devDependencies": {
     "lerna": "3.20.2"
