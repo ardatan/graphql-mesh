@@ -1,19 +1,17 @@
-import { MeshHandlerLibrary, OutputTransformationFn, SchemaTransformationFn } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, TransformFn } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
 
-
-// TOOD: Additional resolvers should be part of this options, and loaded by the CLI
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
-  transformations?: Transformation<OutputTransformationFn>[];
+  transformations?: Transformation[];
   additionalResolvers?: IResolvers;
 };
 
-export type Transformation<T = OutputTransformationFn | SchemaTransformationFn> = {
-  transformer: T;
+export type Transformation<> = {
+  transformer: TransformFn;
   config: any;
-}
+};
 
 export type MeshResolvedSource = {
   name: string;
@@ -21,10 +19,11 @@ export type MeshResolvedSource = {
   handler: MeshHandlerLibrary;
   config?: Record<string, any>;
   context?: Record<string, any>;
-  transformations?: Transformation<SchemaTransformationFn>[];
+  transformations?: Transformation[];
 };
 
 export type GraphQLOperation = DocumentNode | string;
+
 export type ExecuteMeshFn<TData = any, TVariables = any> = (
   document: GraphQLOperation,
   variables: TVariables

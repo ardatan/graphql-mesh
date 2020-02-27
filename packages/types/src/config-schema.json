@@ -65,9 +65,13 @@
           "type": "string",
           "description": "The prefix to apply to the schema types. By default it's the API name."
         },
-        "includeOperations": {
-          "type": "boolean",
-          "description": "Set to true in order to prefix the operations names"
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "List of ignored types"
         }
       }
     },

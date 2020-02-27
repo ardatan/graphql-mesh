@@ -10,7 +10,7 @@ export type MeshSource = {
   sdk: Record<string, any> | ((context: any) => Record<string, any>);
 };
 
-/* TS Support */
+/* Temporary TS Support */
 export declare type TsSupportOptions<TPayload> = {
   name: string;
   schema: GraphQLSchema;
@@ -41,32 +41,12 @@ export declare type MeshHandlerLibrary<TConfig = any, TPayload = any> = {
   ) => Promise<{ source: MeshSource; payload: TPayload }>;
   tsSupport?: (options: TsSupportOptions<TPayload>) => Promise<TsSupportOutput>;
 };
-export type MeshHandlerFnResult<SdkPayload = any> = {
-  payload: SdkPayload;
-  schema: GraphQLSchema;
-};
 
-export type GenerateApiServicesFnResult<GenerateApiServicesPayload = any> = {
-  payload: GenerateApiServicesPayload;
-};
-
-export type GenerateResolversFnResult<GenerateResolversPayload = any> = {
-  payload: GenerateResolversPayload;
-  filePath: string;
-};
-
-// Transformations
-export type SchemaTransformationFn<
-  Config extends { type: string } = any
-> = (options: {
-  apiName: string;
-  schema: GraphQLSchema;
-  config: Config;
-}) => Promise<GraphQLSchema>;
-
-export type OutputTransformationFn<
+// Transform
+export type TransformFn<
   Config extends { type: string } = any
 > = (options: {
   schema: GraphQLSchema;
   config: Config;
-}) => Promise<GraphQLSchema>;
+  apiName?: string;
+}) => Promise<GraphQLSchema> | GraphQLSchema;

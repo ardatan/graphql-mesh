@@ -1,33 +1,23 @@
 import { cosmiconfig } from 'cosmiconfig';
 import { GetMeshOptions, Transformation } from './types';
 import { getHandler, getPackage, resolveAdditionalResolvers } from './utils';
-import {
-  OutputTransformationFn,
-  SchemaTransformationFn,
-  YamlConfig
-} from '@graphql-mesh/types';
+import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 
 export async function parseConfig(
   name = 'mesh',
   dir = process.cwd()
 ): Promise<GetMeshOptions> {
-
   const explorer = cosmiconfig(name);
   const results = await explorer.search(dir);
   const config = results?.config as YamlConfig.Config;
 
   const sources = await Promise.all(
     config.sources.map(async source => {
-      const transformations: Transformation<
-        SchemaTransformationFn
-      >[] = await Promise.all(
+      const transformations: Transformation[] = await Promise.all(
         (source.transformations || []).map(async t => {
           return {
             config: t,
-            transformer: await getPackage<SchemaTransformationFn>(
-              t.type,
-              'source-transfomer'
-            )
+            transformer: await getPackage<TransformFn>(t.type, 'transform')
           };
         })
       );
@@ -43,21 +33,19 @@ export async function parseConfig(
     })
   );
 
-  const transformations: Transformation<
-    OutputTransformationFn
-  >[] = await Promise.all(
+  const transformations: Transformation[] = await Promise.all(
     (config.transformations || []).map(async t => {
       return {
         config: t,
-        transformer: await getPackage<OutputTransformationFn>(
-          t.type,
-          'output-transfomer'
-        )
+        transformer: await getPackage<TransformFn>(t.type, 'transform')
       };
     })
   );
 
-  const additionalResolvers = await resolveAdditionalResolvers(dir, config.additionalResolvers || []);
+  const additionalResolvers = await resolveAdditionalResolvers(
+    dir,
+    config.additionalResolvers || []
+  );
 
   return {
     sources,

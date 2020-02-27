@@ -1,0 +1,14 @@
+type Prefix implements Transformation {
+  """
+  Transformer to add prefix to the GraphQL types and operations.
+  """
+  type: String!
+  """
+  The prefix to apply to the schema types. By default it's the API name.
+  """
+  prefix: String
+  """
+  List of ignored types
+  """
+  ignore: [String]
+}

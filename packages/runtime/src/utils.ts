@@ -2,17 +2,13 @@ import 'ts-node/register/transpile-only';
 import { IResolvers } from 'graphql-tools-fork';
 import { Transformation } from './types';
 import { GraphQLSchema } from 'graphql';
-import {
-  OutputTransformationFn,
-  SchemaTransformationFn,
-  MeshHandlerLibrary
-} from '@graphql-mesh/types';
+import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { resolve } from 'path';
 
 export async function applySchemaTransformations(
   name: string,
   schema: GraphQLSchema,
-  transformations: Transformation<SchemaTransformationFn>[]
+  transformations: Transformation[]
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
   for (const transformation of transformations) {
@@ -27,7 +23,7 @@ export async function applySchemaTransformations(
 
 export async function applyOutputTransformations(
   schema: GraphQLSchema,
-  transformations: Transformation<OutputTransformationFn>[]
+  transformations: Transformation[]
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 

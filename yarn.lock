@@ -840,16 +840,6 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
-"@graphql-codegen/core@1.12.2":
-  version "1.12.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/core/-/core-1.12.2.tgz#85dcef3a9205f11aa910f0527c272967ed5c4427"
-  integrity sha512-n7OENe0lXIg40AGokO0W5v/OKo+bd4gjdKCRVp8N9Pu0o0uYm11rtCoL1JESJqUSt/LESbq+FH14fUqdXU048Q==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "1.12.2"
-    "@graphql-toolkit/common" "0.9.7"
-    "@graphql-toolkit/schema-merging" "0.9.7"
-    tslib "1.10.0"
-
 "@graphql-codegen/plugin-helpers@1.12.2":
   version "1.12.2"
   resolved "https://registry.npmjs.org/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.12.2.tgz#44ffeefb21515b021f99c6e5be28699d740af560"
@@ -865,15 +855,6 @@
     pascal-case "3.1.1"
     tslib "1.10.0"
     upper-case "2.0.1"
-
-"@graphql-codegen/schema-ast@1.12.2":
-  version "1.12.2"
-  resolved "https://registry.npmjs.org/@graphql-codegen/schema-ast/-/schema-ast-1.12.2.tgz#6b61a46e6350ae4a3e077638749bc6ec554d9385"
-  integrity sha512-fgMzn68rtYyFtkzYe58mA0lubxUPrO5iU6zORxUkvmocSgH3KbbgZUO7HEiyjjDgzkESjiHNJ7u3xWVF7wxM7w==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "1.12.2"
-    "@graphql-toolkit/common" "0.9.7"
-    tslib "1.10.0"
 
 "@graphql-codegen/typescript-resolvers@1.12.2":
   version "1.12.2"
