@@ -5017,10 +5017,10 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-graphql-compose@7.12.3:
-  version "7.12.3"
-  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.12.3.tgz#70197b288667770a92b9f0046d13105da1aaa1a9"
-  integrity sha512-fgsVhL5eePcwIgQra70jYQErxQ+z3LBz9WIKhcn05XN/FNF5vbIZ/hj8UAWYu8UShsM5434u0wDONuGClsxg+A==
+graphql-compose@7.12.4:
+  version "7.12.4"
+  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.12.4.tgz#8b2b0bf35aa8ca2670ee591327cfea13a9b97a9d"
+  integrity sha512-dsqKIU+xV4tqIzNM7kODhCePAzg3OHfNfXgv6hqRpGEmnjHvSBLzcgFJgWqwh9AN7KCr7Si8wDyGLfebR2T+pg==
   dependencies:
     graphql-type-json "^0.3.1"
     object-path "^0.11.4"
