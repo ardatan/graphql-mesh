@@ -5,7 +5,7 @@ import {
   applySchemaTransformations,
   applyOutputTransformations
 } from './utils';
-import { MeshSource, MeshHandlerLibrary } from '@graphql-mesh/types';
+import { MeshSource, MeshHandlerLibrary, Hooks } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
 export type RawSourcesOutput = Record<
@@ -29,12 +29,14 @@ export async function getMesh(
   contextBuilder: () => Record<string, any>;
 }> {
   const results: RawSourcesOutput = {};
+  const hooks = new Hooks();
 
   for (const apiSource of options.sources) {
     const { payload, source } = await apiSource.handler.getMeshSource({
       name: apiSource.name,
       filePathOrUrl: apiSource.source,
-      config: apiSource.config
+      config: apiSource.config,
+      hooks
     });
 
     let apiSchema = source.schema;
@@ -60,7 +62,7 @@ export async function getMesh(
   let unifiedSchema = mergeSchemas({
     schemas: Object.keys(results).map(key => results[key].schema)
   });
-  
+
   if (options.transformations && options.transformations.length > 0) {
     unifiedSchema = await applyOutputTransformations(
       unifiedSchema,
@@ -74,6 +76,8 @@ export async function getMesh(
       schema: unifiedSchema
     });
   }
+
+  hooks.emit('schemaReady', unifiedSchema);
 
   async function buildMeshContext(): Promise<Record<string, any>> {
     const childContextObjects = await Promise.all(
@@ -115,8 +119,6 @@ export async function getMesh(
       }
     }, {});
 
-    console.log('context: ', context);
-
     return context;
   }
 
@@ -125,7 +127,7 @@ export async function getMesh(
     variables: TVariables
   ) {
     const context = await buildMeshContext();
-    
+
     return execute<TData>({
       document: ensureDocumentNode(document),
       contextValue: context,
