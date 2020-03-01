@@ -5073,6 +5073,20 @@ graphql-tools-fork@8.6.1:
     node-fetch "^2.6.0"
     uuid "^3.4.0"
 
+graphql-tools-fork@8.6.4:
+  version "8.6.4"
+  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-8.6.4.tgz#b625aa577e3bc99583234f2b5800562ee27d553c"
+  integrity sha512-Ik6TdKhQXTy2fJ2zPM9NEEigGWuPAVQZ8eq67wOF3yAdNfhCZ+U64i90OUH5KathDRrnY3w4Gou74sSlk5zY7w==
+  dependencies:
+    apollo-link "^1.2.13"
+    apollo-link-http-common "^0.2.15"
+    deprecated-decorator "^0.1.6"
+    extract-files "^7.0.0"
+    form-data "^3.0.0"
+    iterall "^1.3.0"
+    node-fetch "^2.6.0"
+    uuid "^7.0.1"
+
 graphql-tools@^4.0.0:
   version "4.0.6"
   resolved "https://registry.npmjs.org/graphql-tools/-/graphql-tools-4.0.6.tgz#0e729e73db05ade3df10a2f92511be544972a844"
@@ -9698,6 +9712,11 @@ uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.npmjs.org/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
+
+uuid@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-7.0.1.tgz#95ed6ff3d8c881cbf85f0f05cc3915ef994818ef"
+  integrity sha512-yqjRXZzSJm9Dbl84H2VDHpM3zMjzSJQ+hn6C4zqd5ilW+7P4ZmLEEqwho9LjP+tGuZlF4xrHQXT0h9QZUS/pWA==
 
 v8-to-istanbul@^4.0.1:
   version "4.0.1"
