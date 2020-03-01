@@ -11,24 +11,6 @@ export type MeshSource<ContextType = any> = {
   contextBuilder?: () => Promise<ContextType>;
 };
 
-/* Temporary TS Support */
-export declare type TsSupportOptions<TPayload> = {
-  name: string;
-  schema: GraphQLSchema;
-  getMeshSourcePayload: TPayload;
-};
-
-export type TsSupportOutput = {
-  sdk?: ExportedTSType;
-  context?: ExportedTSType;
-  models?: string;
-};
-
-export type ExportedTSType = {
-  identifier: string;
-  codeAst: string;
-};
-
 export type GetMeshSourceOptions<TConfig> = {
   filePathOrUrl: string;
   name: string;
@@ -48,7 +30,6 @@ export declare type MeshHandlerLibrary<
     source: MeshSource<TContext>;
     payload: TPayload;
   }>;
-  tsSupport?: (options: TsSupportOptions<TPayload>) => Promise<TsSupportOutput>;
 };
 
 // Hooks

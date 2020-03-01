@@ -36,6 +36,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
+    "change-case": "4.1.1",
     "@graphql-codegen/typescript": "1.12.2",
     "@graphql-codegen/typescript-resolvers": "1.12.2",
     "apollo-server": "2.10.1",

@@ -8,45 +8,11 @@ import { Oas3 } from '@dotansimha/openapi-to-graphql/lib/types/oas3';
 import { Options } from '@dotansimha/openapi-to-graphql/lib/types/options';
 import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/preprocessing_data';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
-import { GraphQLObjectType } from 'graphql';
-import Maybe from 'graphql/tsutils/Maybe';
-import { pascalCase } from 'change-case';
 
 const handler: MeshHandlerLibrary<
   Options,
   { oas: Oas3; preprocessingData: PreprocessingData }
 > = {
-  async tsSupport(options) {
-    const sdkIdentifier = `${options.name}Sdk`;
-    const contextIdentifier = `${options.name}Context`;
-    const operations =
-      options.getMeshSourcePayload.preprocessingData.operations;
-
-    const sdk = {
-      identifier: sdkIdentifier,
-      codeAst: `export type ${sdkIdentifier} = {
-${Object.keys(operations)
-  .map(operationName => {
-    const operation = operations[operationName];
-    const operationGqlBaseType = operation.method === 'get' ? options.schema.getQueryType()?.name : options.schema.getMutationType()?.name;
-    const argsName = `${operationGqlBaseType}${pascalCase(operation.operationId)}Args`;
-    
-    return `  ${operation.operationId}: (args: ${argsName}) => Promise<${pascalCase(operation.responseDefinition.graphQLTypeName)}>`;
-  })
-  .join(',\n')}
-};`
-    };
-
-    const context = {
-      identifier: contextIdentifier,
-      codeAst: `export type ${contextIdentifier} = { ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} } };`
-    };
-
-    return {
-      sdk,
-      context
-    };
-  },
   async getMeshSource({ filePathOrUrl, name, config }) {
     let spec: Oas3;
 
