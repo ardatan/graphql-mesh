@@ -27,7 +27,7 @@
   "dependencies": {
     "tsee": "1.3.0",
     "graphql-tools-fork": "8.6.4",
-    "@graphql-toolkit/schema-merging": "0.9.8-alpha-bd17f3b.17",
+    "@graphql-toolkit/schema-merging": "0.9.7",
     "@graphql-mesh/types": "0.0.11",
     "@graphql-mesh/extend": "0.0.11",
     "@graphql-mesh/rename": "0.0.11",
