@@ -932,10 +932,10 @@
     aggregate-error "3.0.1"
     lodash "4.17.15"
 
-"@graphql-toolkit/common@0.9.8-alpha-bd17f3b.17+bd17f3b":
-  version "0.9.8-alpha-bd17f3b.17"
-  resolved "https://registry.npmjs.org/@graphql-toolkit/common/-/common-0.9.8-alpha-bd17f3b.17.tgz#03e0cc1860ffa0e6988e956f04f89bd7ac4e03f1"
-  integrity sha512-vMoyld6X3tltloY+hOxg51a59I6YdL7A40kW5gemvKiX9hhYZtB0XdTJBtzvn/nIZnxrq49k/g2JJERfEdUBnw==
+"@graphql-toolkit/common@0.9.8-alpha-f6f243b.10+f6f243b":
+  version "0.9.8-alpha-f6f243b.10"
+  resolved "https://registry.yarnpkg.com/@graphql-toolkit/common/-/common-0.9.8-alpha-f6f243b.10.tgz#51f1688bd989530c31e725b3c8594caf735917ea"
+  integrity sha512-oV2dYGRcVn0XvvDCQMWGpEBYBpF7ECuQEhehxXmt1tvBhBDBIqFJsx4oYnDe29toEdZJawCWe6uAsbT/jvuc3A==
   dependencies:
     "@ardatan/graphql-tools" "4.1.0"
     aggregate-error "3.0.1"
@@ -992,13 +992,13 @@
     deepmerge "4.2.2"
     tslib "1.10.0"
 
-"@graphql-toolkit/schema-merging@0.9.8-alpha-bd17f3b.17":
-  version "0.9.8-alpha-bd17f3b.17"
-  resolved "https://registry.npmjs.org/@graphql-toolkit/schema-merging/-/schema-merging-0.9.8-alpha-bd17f3b.17.tgz#3c90ef35cd7b81aaeedc811cbac1d5a4b24f414c"
-  integrity sha512-xh5CF1bzpWiDuKIxpN2uJt8hvVQzVqXqGtT/NUcvV903iMQgauBfKXBrSklzvhBdJIcqEB2RoUicij7gfAeYLg==
+"@graphql-toolkit/schema-merging@0.9.8-alpha-f6f243b.10":
+  version "0.9.8-alpha-f6f243b.10"
+  resolved "https://registry.yarnpkg.com/@graphql-toolkit/schema-merging/-/schema-merging-0.9.8-alpha-f6f243b.10.tgz#8904918c5b4664727bb14f726b8f51b5fbb57785"
+  integrity sha512-r5Ksc8OnGsy8hfKDRjRLEzUNxahYjbgnI76WgHSO04J0yaEKtcaoCAnPAB6wlZVax4b9SxFq2oXrx7ddZBiPIw==
   dependencies:
     "@ardatan/graphql-tools" "4.1.0"
-    "@graphql-toolkit/common" "0.9.8-alpha-bd17f3b.17+bd17f3b"
+    "@graphql-toolkit/common" "0.9.8-alpha-f6f243b.10+f6f243b"
     deepmerge "4.2.2"
     tslib "1.10.0"
 
