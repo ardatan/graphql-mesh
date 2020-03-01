@@ -69,14 +69,6 @@ ${Object.keys(operations)
     return {
       source: {
         schema,
-        sdk: context => {
-          // This is not so-nice way to expose SDK, but currenty `openapi-to-graphql` doesn't
-          // export pure SDK functions.
-          const queryType = schema.getQueryType();
-          const mutationType = schema.getMutationType();
-
-          return extractSdkFromResolvers(context, [queryType, mutationType]);
-        },
         name,
         source: filePathOrUrl
       },
@@ -112,36 +104,6 @@ async function readUrl(path: string): Promise<Oas3> {
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
-}
-
-// Dotan: This is a workaround, because `openapi-to-graphql` doesn't export the resolvers implementation as-is, as
-// pure JS functions, so we need to extract it from the schema types, and allow it to run as standalone SDK.
-// This is needed in order to allow custom resolvers later to implement their own logic and links
-// between types
-function extractSdkFromResolvers(
-  context: any,
-  types: Maybe<GraphQLObjectType>[]
-) {
-  const sdk: Record<string, Function> = {};
-
-  for (const type of types) {
-    if (type) {
-      const fields = type.getFields();
-
-      Object.keys(fields).forEach(fieldName => {
-        if (fields[fieldName]) {
-          const resolveFn = fields[fieldName].resolve;
-
-          if (resolveFn) {
-            sdk[fieldName] = (args: any) =>
-              resolveFn(null, args, context, { path: { prev: '' } } as any);
-          }
-        }
-      });
-    }
-  }
-
-  return sdk;
 }
 
 export default handler;

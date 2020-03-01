@@ -1,6 +1,5 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { GraphQLObjectType, GraphQLNamedType } from 'graphql';
-import Maybe from 'graphql/tsutils/Maybe';
+import { GraphQLNamedType } from 'graphql';
 import { createPostGraphileSchema } from 'postgraphile';
 import { Pool, PoolClient } from 'pg';
 
@@ -9,12 +8,6 @@ const handler: MeshHandlerLibrary<
   any,
   { pgClient: PoolClient }
 > = {
-  async tsSupport(options) {
-    const sdkIdentifier = `${options.name}Sdk`;
-    const contextIdentifier = `${options.name}Context`;
-
-    return {};
-  },
   async getMeshSource({ filePathOrUrl, name, config, hooks }) {
     const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
     const graphileSchema = await createPostGraphileSchema(
@@ -74,12 +67,6 @@ const handler: MeshHandlerLibrary<
             });
           });
         },
-        sdk: context => {
-          const queryType = graphileSchema.getQueryType();
-          const mutationType = graphileSchema.getMutationType();
-
-          return extractSdkFromResolvers(context, [queryType, mutationType]);
-        },
         name,
         source: filePathOrUrl
       },
@@ -87,31 +74,5 @@ const handler: MeshHandlerLibrary<
     };
   }
 };
-
-function extractSdkFromResolvers(
-  context: any,
-  types: Maybe<GraphQLObjectType>[]
-) {
-  const sdk: Record<string, Function> = {};
-
-  for (const type of types) {
-    if (type) {
-      const fields = type.getFields();
-
-      Object.keys(fields).forEach(fieldName => {
-        if (fields[fieldName]) {
-          const resolveFn = fields[fieldName].resolve;
-
-          if (resolveFn) {
-            sdk[fieldName] = (args: any) =>
-              resolveFn(null, args, context, { path: { prev: '' } } as any);
-          }
-        }
-      });
-    }
-  }
-
-  return sdk;
-}
 
 export default handler;

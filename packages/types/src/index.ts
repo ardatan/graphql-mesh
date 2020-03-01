@@ -9,7 +9,6 @@ export type MeshSource<ContextType = any> = {
   source: string;
   schema: GraphQLSchema;
   contextBuilder?: () => Promise<ContextType>;
-  sdk?: Record<string, any> | ((context: any) => Record<string, any>);
 };
 
 /* Temporary TS Support */
