@@ -840,6 +840,21 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
+"@graphile/lru@4.5.0":
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/@graphile/lru/-/lru-4.5.0.tgz#e8fe036d322dfe1715675aab171979981e28ac9e"
+  integrity sha512-OoIgewLowjegJzz3tpcRE5LpQKqsap1ETFaZtC1r9p36h5ieUJnWTxCTpB7XIsU9muMTt7MMt8x0E5apS47QIQ==
+
+"@graphql-codegen/core@1.12.2":
+  version "1.12.2"
+  resolved "https://registry.npmjs.org/@graphql-codegen/core/-/core-1.12.2.tgz#85dcef3a9205f11aa910f0527c272967ed5c4427"
+  integrity sha512-n7OENe0lXIg40AGokO0W5v/OKo+bd4gjdKCRVp8N9Pu0o0uYm11rtCoL1JESJqUSt/LESbq+FH14fUqdXU048Q==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.12.2"
+    "@graphql-toolkit/common" "0.9.7"
+    "@graphql-toolkit/schema-merging" "0.9.7"
+    tslib "1.10.0"
+
 "@graphql-codegen/plugin-helpers@1.12.2":
   version "1.12.2"
   resolved "https://registry.npmjs.org/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.12.2.tgz#44ffeefb21515b021f99c6e5be28699d740af560"
@@ -855,6 +870,15 @@
     pascal-case "3.1.1"
     tslib "1.10.0"
     upper-case "2.0.1"
+
+"@graphql-codegen/schema-ast@1.12.2":
+  version "1.12.2"
+  resolved "https://registry.npmjs.org/@graphql-codegen/schema-ast/-/schema-ast-1.12.2.tgz#6b61a46e6350ae4a3e077638749bc6ec554d9385"
+  integrity sha512-fgMzn68rtYyFtkzYe58mA0lubxUPrO5iU6zORxUkvmocSgH3KbbgZUO7HEiyjjDgzkESjiHNJ7u3xWVF7wxM7w==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.12.2"
+    "@graphql-toolkit/common" "0.9.7"
+    tslib "1.10.0"
 
 "@graphql-codegen/typescript-resolvers@1.12.2":
   version "1.12.2"
@@ -890,6 +914,14 @@
     graphql-tag "2.10.1"
     pascal-case "3.1.1"
     tslib "1.10.0"
+
+"@graphql-mesh/utils@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.npmjs.org/@graphql-mesh/utils/-/utils-0.0.11.tgz#536185693c61799d7c5f33fe7643d149ce5d0460"
+  integrity sha512-ij/Nme30csFYXyisfDYBwN+QfUHCkxH4+UsUEC/TpdaiuD+aF+0EgS/9EHt7FtEbcvOzKDMmFRhwrof020IIRA==
+  dependencies:
+    "@graphql-codegen/core" "1.12.2"
+    "@graphql-codegen/schema-ast" "1.12.2"
 
 "@graphql-toolkit/common@0.9.7":
   version "0.9.7"
@@ -5070,6 +5102,45 @@ grapheme-splitter@^1.0.4:
   version "1.0.4"
   resolved "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
+
+graphile-build-pg@4.5.3:
+  version "4.5.3"
+  resolved "https://registry.npmjs.org/graphile-build-pg/-/graphile-build-pg-4.5.3.tgz#13a584fb737b3a638d73cea1cfa4cca88dcf22a4"
+  integrity sha512-Sp3DC/PC9c8+dQkQ6FM5F2TwByWQIMX3TKpxm63SePFJfPdq2Lbl4mOjBxJykYf4Fh094MVAIz4Alz5a1yRBKw==
+  dependencies:
+    "@graphile/lru" "4.5.0"
+    chalk "^2.4.2"
+    debug "^4.1.1"
+    graphile-build "4.5.0"
+    graphql-iso-date "^3.6.0"
+    jsonwebtoken "^8.5.1"
+    lodash ">=4 <5"
+    lru-cache ">=4 <5"
+    pg-sql2 "4.5.0"
+    postgres-interval "^1.2.0"
+
+graphile-build@4.5.0:
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/graphile-build/-/graphile-build-4.5.0.tgz#f7c627c146e051f454c4f19116231e9d8b653e04"
+  integrity sha512-U/1K4nHWp3MGJ7kwTwIYBZnO3ZDlufmHHpdd1t4uFA46OtxdP7RG7KnXyol/XB8hfTfqSVGabaZP8lr+NVyQPA==
+  dependencies:
+    "@graphile/lru" "4.5.0"
+    chalk "^2.4.2"
+    debug "^4.1.1"
+    graphql-parse-resolve-info "4.5.0"
+    iterall "^1.2.2"
+    lodash ">=4 <5"
+    lru-cache "^5.0.0"
+    pluralize "^7.0.0"
+    semver "^6.0.0"
+
+graphile-utils@4.5.6:
+  version "4.5.6"
+  resolved "https://registry.npmjs.org/graphile-utils/-/graphile-utils-4.5.6.tgz#f95f6dcbfc63263a59ad4f2d733311cba7fee725"
+  integrity sha512-Tt4SBVxfS3wbewUhQiN1oXg4KjPVi2a9GOjD8AXWlQfKin25TH2dDRyJRALM/blVuSyBlzn9OqPnvsbM3NqXpQ==
+  dependencies:
+    debug "^4.1.1"
+    graphql ">=0.9 <0.14 || ^14.0.2"
 
 graphql-compose@7.12.4:
   version "7.12.4"

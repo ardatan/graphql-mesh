@@ -57,8 +57,10 @@ export async function getMesh(
     };
   }
 
-  let unifiedSchema = results['Geo'].schema
-
+  let unifiedSchema = mergeSchemas({
+    schemas: Object.keys(results).map(key => results[key].schema)
+  });
+  
   if (options.transformations && options.transformations.length > 0) {
     unifiedSchema = await applyOutputTransformations(
       unifiedSchema,

@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "test": "jest",
     "build": "tsc",
     "prestart": "yarn mesh:ts",
     "predev": "yarn mesh:ts",
@@ -14,8 +13,7 @@
     "mesh:ts": "graphql-mesh typescript --output ./src/__generated__/mesh.ts"
   },
   "devDependencies": {
-    "@types/node": "13.7.4",
-    "ts-jest": "25.2.1",
+    "@types/node": "13.7.7",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.2"
   },
@@ -25,6 +23,6 @@
     "@graphql-mesh/openapi": "0.0.11",
     "apollo-server": "2.10.1",
     "graphql": "14.6.0",
-    "graphql-tools-fork": "8.6.1"
+    "graphql-tools-fork": "8.6.4"
   }
 }
