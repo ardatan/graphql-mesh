@@ -1,0 +1,20 @@
+sources:
+  - name: Geo
+    source: postgres://postgres:docker@localhost/postgres 
+    handler:
+      name: postgraphile
+  # - name: Events
+  #   source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+  #   context:
+  #     apiKey: 971a693de7ff47a89127664547988be5
+  #   handler:
+  #     name: openapi
+# transformations:
+#   - type: link
+#     from: PopulatedPlaceSummary.dailyForecast
+#     to: '[Forecast!]!'
+#   - type: link
+#     from: PopulatedPlaceSummary.todayForecast
+#     to: 'Forecast!'
+# additionalResolvers:
+#   - ./src/mesh/additional-resolvers.ts

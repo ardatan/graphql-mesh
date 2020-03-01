@@ -5,12 +5,13 @@ import {
   applySchemaTransformations,
   applyOutputTransformations
 } from './utils';
-import { MeshSource, MeshHandlerLibrary } from '@graphql-mesh/types';
+import { MeshSource, MeshHandlerLibrary, Hooks } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
 export type RawSourcesOutput = Record<
   string,
   {
+    globalContextBuilder: null | (() => Promise<any>);
     sdk: MeshSource['sdk'];
     schema: GraphQLSchema;
     context: Record<string, any>;
@@ -28,12 +29,14 @@ export async function getMesh(
   contextBuilder: () => Record<string, any>;
 }> {
   const results: RawSourcesOutput = {};
+  const hooks = new Hooks();
 
   for (const apiSource of options.sources) {
     const { payload, source } = await apiSource.handler.getMeshSource({
       name: apiSource.name,
       filePathOrUrl: apiSource.source,
-      config: apiSource.config
+      config: apiSource.config,
+      hooks
     });
 
     let apiSchema = source.schema;
@@ -47,6 +50,7 @@ export async function getMesh(
     }
 
     results[apiSource.name] = {
+      globalContextBuilder: source.contextBuilder || null,
       sdk: source.sdk,
       schema: apiSchema,
       context: apiSource.context || {},
@@ -73,18 +77,35 @@ export async function getMesh(
     });
   }
 
-  function buildMeshContext(): Record<string, any> {
-    const context: Record<string, any> = Object.keys(results).reduce(
-      (prev, apiName) => {
+  hooks.emit('schemaReady', unifiedSchema);
+
+  async function buildMeshContext(): Promise<Record<string, any>> {
+    const childContextObjects = await Promise.all(
+      Object.keys(results).map(async apiName => {
+        let globalContext = {};
+        const globalContextBuilder = results[apiName].globalContextBuilder;
+
+        if (globalContextBuilder) {
+          globalContext = await globalContextBuilder();
+        }
+
         return {
-          ...prev,
+          ...(globalContext || {}),
           [apiName]: {
             config: results[apiName].context || {}
           }
         };
-      },
-      {}
+      }, {})
     );
+
+    const context: Record<string, any> = childContextObjects
+      .filter(Boolean)
+      .reduce((prev, obj) => {
+        return {
+          ...prev,
+          ...obj
+        };
+      }, {});
 
     Object.keys(results).forEach(apiName => {
       const handlerRes = results[apiName];
@@ -105,8 +126,8 @@ export async function getMesh(
     document: GraphQLOperation,
     variables: TVariables
   ) {
-    const context = buildMeshContext();
-    
+    const context = await buildMeshContext();
+
     return execute<TData>({
       document: ensureDocumentNode(document),
       contextValue: context,
