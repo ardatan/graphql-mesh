@@ -1,9 +1,10 @@
 import 'ts-node/register/transpile-only';
 import { IResolvers } from 'graphql-tools-fork';
-import { Transformation } from './types';
-import { GraphQLSchema } from 'graphql';
+import { Transformation, GraphQLOperation } from './types';
+import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse } from 'graphql';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { resolve } from 'path';
+import Maybe from 'graphql/tsutils/Maybe';
 
 export async function applySchemaTransformations(
   name: string,
@@ -103,4 +104,34 @@ export async function resolveAdditionalResolvers(
       ...t
     };
   }, {} as IResolvers);
+}
+
+export function extractSdkFromResolvers(types: Maybe<GraphQLObjectType>[]) {
+  const sdk: Record<string, Function> = {};
+
+  for (const type of types) {
+    if (type) {
+      const fields = type.getFields();
+
+      Object.keys(fields).forEach(fieldName => {
+        if (fields[fieldName]) {
+          const resolveFn = fields[fieldName].resolve;
+
+          if (resolveFn) {
+            sdk[fieldName] = (
+              args: any,
+              context: any,
+              info: GraphQLResolveInfo
+            ) => resolveFn(null, args, context, info);
+          }
+        }
+      });
+    }
+  }
+
+  return sdk;
+}
+
+export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
+  return typeof document === 'string' ? parse(document) : document;
 }

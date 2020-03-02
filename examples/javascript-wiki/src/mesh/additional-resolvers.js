@@ -2,7 +2,8 @@ const moment = require('moment');
 
 const resolvers = {
   Query: {
-    async viewsInPastMonth(root, args, { Wiki }) {
+    async viewsInPastMonth(root, args, context, info) {
+      const { Wiki } = context;
       const { items } = await Wiki.api.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
         {
           access: 'all-access',
@@ -11,7 +12,9 @@ const resolvers = {
           start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
           project: args.project,
           granularity: 'monthly'
-        }
+        },
+        context,
+        info
       );
 
       if (!items || items.length === 0) {

@@ -1,16 +1,60 @@
-import { Logger } from 'winston';
 import { RawSourcesOutput } from '@graphql-mesh/runtime';
 import { plugin as tsBasePlugin } from '@graphql-codegen/typescript';
 import { plugin as tsResolversPlugin } from '@graphql-codegen/typescript-resolvers';
 import { Types } from '@graphql-codegen/plugin-helpers';
 import { GraphQLSchema } from 'graphql';
+import { pascalCase } from 'change-case';
+
+const unifiedContextIdentifier = 'MeshContext';
+
+function generateTypesForApi(options: {
+  schema: GraphQLSchema;
+  name: string;
+  getMeshSourcePayload: any;
+}) {
+  const sdkIdentifier = `${options.name}Sdk`;
+  const contextIdentifier = `${options.name}Context`;
+  const operations = options.getMeshSourcePayload.preprocessingData.operations;
+
+  const sdk = {
+    identifier: sdkIdentifier,
+    codeAst: `export type ${sdkIdentifier} = {
+${Object.keys(operations)
+  .map(operationName => {
+    const operation = operations[operationName];
+    const operationGqlBaseType =
+      operation.method === 'get'
+        ? options.schema.getQueryType()?.name
+        : options.schema.getMutationType()?.name;
+    const argsName = `${operationGqlBaseType}${pascalCase(
+      operation.operationId
+    )}Args`;
+
+    return `  ${
+      operation.operationId
+    }: (args: ${argsName}, context: ${unifiedContextIdentifier}, info: GraphQLResolveInfo) => Promise<${pascalCase(
+      operation.responseDefinition.graphQLTypeName
+    )}>`;
+  })
+  .join(',\n')}
+};`
+  };
+
+  const context = {
+    identifier: contextIdentifier,
+    codeAst: `export type ${contextIdentifier} = { ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} } };`
+  };
+
+  return {
+    sdk,
+    context
+  };
+}
 
 export async function generateTsTypes(
-  logger: Logger,
   unifiedSchema: GraphQLSchema,
   rawSources: RawSourcesOutput
 ): Promise<string> {
-  const unifiedContextIdentifier = 'MeshContext';
 
   const tsTypes = (await tsBasePlugin(
     unifiedSchema,
@@ -28,23 +72,16 @@ export async function generateTsTypes(
     Object.keys(rawSources).map(async apiName => {
       const source = rawSources[apiName];
 
-      if (source.handler.tsSupport) {
-        return await source.handler.tsSupport({
-          schema: source.schema,
-          getMeshSourcePayload: source.meshSourcePayload,
-          name: apiName
-        });
-      } else {
-        logger.warn(
-          `Mesh source ${apiName} doesn't support TypeScript, ignoring...`
-        );
-      }
+      return generateTypesForApi({
+        schema: source.schema,
+        getMeshSourcePayload: source.meshSourcePayload,
+        name: apiName
+      });
     })
   );
 
   let sdkItems: string[] = [];
   let contextItems: string[] = [];
-  let models: string[] = [];
 
   for (const item of results) {
     if (item) {
@@ -53,9 +90,6 @@ export async function generateTsTypes(
       }
       if (item.context) {
         contextItems.push(item.context.codeAst);
-      }
-      if (item.models) {
-        contextItems.push(item.models);
       }
     }
   }
@@ -66,11 +100,11 @@ export async function generateTsTypes(
     .join(' & ')};`;
 
   return [
+    `import { GraphQLResolveInfo } from 'graphql';`,
     ...(tsTypes.prepend || []),
     ...(tsResolversTypes.prepend || []),
     tsTypes.content,
     tsResolversTypes.content,
-    ...models,
     ...sdkItems,
     ...contextItems,
     contextType,

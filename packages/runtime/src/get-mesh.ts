@@ -2,17 +2,19 @@ import { GraphQLSchema, execute, DocumentNode, parse } from 'graphql';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
 import {
+  extractSdkFromResolvers,
   applySchemaTransformations,
-  applyOutputTransformations
+  applyOutputTransformations,
+  ensureDocumentNode
 } from './utils';
-import { MeshSource, MeshHandlerLibrary, Hooks } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, Hooks } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
 export type RawSourcesOutput = Record<
   string,
   {
     globalContextBuilder: null | (() => Promise<any>);
-    sdk: MeshSource['sdk'];
+    sdk: Record<string, any>;
     schema: GraphQLSchema;
     context: Record<string, any>;
     meshSourcePayload: any;
@@ -51,7 +53,11 @@ export async function getMesh(
 
     results[apiSource.name] = {
       globalContextBuilder: source.contextBuilder || null,
-      sdk: source.sdk,
+      sdk: extractSdkFromResolvers([
+        apiSchema.getQueryType(),
+        apiSchema.getMutationType(),
+        apiSchema.getSubscriptionType()
+      ]),
       schema: apiSchema,
       context: apiSource.context || {},
       meshSourcePayload: payload,
@@ -143,8 +149,4 @@ export async function getMesh(
     contextBuilder: buildMeshContext,
     rawSources: results
   };
-}
-
-function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
-  return typeof document === 'string' ? parse(document) : document;
 }

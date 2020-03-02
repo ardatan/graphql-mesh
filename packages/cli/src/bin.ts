@@ -50,7 +50,7 @@ export async function graphqlMesh() {
       async (args) => {
         const meshConfig = await parseConfig();
         const { schema, rawSources } = await getMesh(meshConfig);
-        const result = await generateTsTypes(logger, schema, rawSources);
+        const result = await generateTsTypes(schema, rawSources);
         const outFile = resolve(process.cwd(), args.output);
         const dirName = dirname(outFile);
         mkdirp.sync(dirName);
