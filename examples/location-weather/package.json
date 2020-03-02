@@ -10,7 +10,7 @@
     "predev": "yarn mesh:ts",
     "premesh:serve": "yarn mesh:ts",
     "mesh:serve": "graphql-mesh serve",
-    "mesh:ts": "graphql-mesh typescript --output ./src/__generated__/mesh.ts"
+    "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
   },
   "devDependencies": {
     "@types/node": "13.7.4",

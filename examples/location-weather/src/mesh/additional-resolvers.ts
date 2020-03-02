@@ -1,4 +1,4 @@
-import { Resolvers } from '../__generated__/mesh';
+import { Resolvers } from './__generated__/types';
 
 export const resolvers: Resolvers = {
   PopulatedPlaceSummary: {
