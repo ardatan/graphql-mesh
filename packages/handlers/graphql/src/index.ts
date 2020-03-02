@@ -1,11 +1,22 @@
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
+import { UrlLoader } from '@graphql-toolkit/url-loader';
+import { loadSchema, LoadSchemaOptions } from '@graphql-toolkit/core';
 
-const handler: MeshHandlerLibrary<{}> = {
-  async getMeshSource({ filePathOrUrl, name, config }) {
+const loaders = [new UrlLoader()];
+
+const handler: MeshHandlerLibrary<LoadSchemaOptions> = {
+  async getMeshSource({ filePathOrUrl, config }) {
+    const remoteSchema = await loadSchema(filePathOrUrl, {
+      assumeValidSDL: true,
+      loaders,
+      sort: true,
+      convertExtensions: true,
+      commentDescriptions: true,
+      ...config
+    });
+
     return {
-      schema: null as any,
-      name,
-      source: filePathOrUrl
+      schema: remoteSchema
     };
   }
 };

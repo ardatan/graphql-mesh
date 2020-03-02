@@ -30,8 +30,6 @@ const handler: MeshHandlerLibrary<Options> = {
 
     return {
       schema,
-      name,
-      source: filePathOrUrl
     };
   }
 };
