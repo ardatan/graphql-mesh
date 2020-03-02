@@ -11,4 +11,8 @@ type Prefix implements Transformation {
   List of ignored types
   """
   ignore: [String]
+  """
+  Changes root types and changes the field names
+  """
+  includeRootOperations: Boolean
 }

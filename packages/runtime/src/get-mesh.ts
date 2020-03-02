@@ -1,4 +1,5 @@
-import { GraphQLSchema, execute } from 'graphql';
+import { writeFileSync } from 'fs';
+import { GraphQLSchema, execute, printSchema } from 'graphql';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
 import {
@@ -64,8 +65,10 @@ export async function getMesh(
     };
   }
 
+  const schemas = Object.keys(results).map(key => results[key].schema);
+
   let unifiedSchema = mergeSchemas({
-    schemas: Object.keys(results).map(key => results[key].schema)
+    schemas
   });
 
   if (options.transformations && options.transformations.length > 0) {

@@ -283,6 +283,10 @@
           },
           "additionalItems": false,
           "description": "List of ignored types"
+        },
+        "includeRootOperations": {
+          "type": "boolean",
+          "description": "Changes root types and changes the field names"
         }
       }
     },

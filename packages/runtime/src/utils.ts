@@ -1,7 +1,13 @@
 import 'ts-node/register/transpile-only';
 import { IResolvers } from 'graphql-tools-fork';
 import { Transformation, GraphQLOperation } from './types';
-import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLResolveInfo,
+  DocumentNode,
+  parse
+} from 'graphql';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
@@ -12,13 +18,15 @@ export async function applySchemaTransformations(
   transformations: Transformation[]
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
+
   for (const transformation of transformations) {
     resultSchema = await transformation.transformer({
       apiName: name,
-      schema: schema,
+      schema: resultSchema,
       config: transformation.config
     });
   }
+
   return resultSchema;
 }
 
@@ -30,7 +38,7 @@ export async function applyOutputTransformations(
 
   for (const transformation of transformations) {
     resultSchema = await transformation.transformer({
-      schema,
+      schema: resultSchema,
       config: transformation.config
     });
   }
