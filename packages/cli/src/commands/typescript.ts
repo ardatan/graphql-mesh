@@ -124,7 +124,6 @@ export async function generateTsTypes(
     .join(' & ')};`;
 
   return [
-    `import { GraphQLResolveInfo } from 'graphql';`,
     ...(tsTypes.prepend || []),
     ...(tsResolversTypes.prepend || []),
     tsTypes.content,
