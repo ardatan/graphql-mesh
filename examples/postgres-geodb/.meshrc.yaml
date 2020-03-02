@@ -1,0 +1,5 @@
+sources:
+  - name: Geo
+    source: postgres://postgres:docker@localhost/postgres
+    handler:
+      name: postgraphile

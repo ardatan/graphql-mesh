@@ -2,7 +2,7 @@ import { Resolvers } from '../__generated__/mesh';
 
 export const resolvers: Resolvers = {
   PopulatedPlaceSummary: {
-    dailyForecast: async (placeSummary, args: never, context, info) => {
+    dailyForecast: async (placeSummary, args, context, info) => {
       const { Weather } = context;
       const forecast = await Weather.api.getForecastDailyLatLatLonLon(
         {
