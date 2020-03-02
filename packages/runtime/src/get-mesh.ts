@@ -1,4 +1,4 @@
-import { GraphQLSchema, execute, DocumentNode, parse } from 'graphql';
+import { GraphQLSchema, execute } from 'graphql';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
 import {
@@ -13,11 +13,11 @@ import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 export type RawSourcesOutput = Record<
   string,
   {
+    // TOOD: Remove globalContextBuilder and use hooks for that
     globalContextBuilder: null | (() => Promise<any>);
     sdk: Record<string, any>;
     schema: GraphQLSchema;
     context: Record<string, any>;
-    meshSourcePayload: any;
     handler: MeshHandlerLibrary;
   }
 >;
@@ -34,7 +34,7 @@ export async function getMesh(
   const hooks = new Hooks();
 
   for (const apiSource of options.sources) {
-    const { payload, source } = await apiSource.handler.getMeshSource({
+    const source = await apiSource.handler.getMeshSource({
       name: apiSource.name,
       filePathOrUrl: apiSource.source,
       config: apiSource.config,
@@ -60,7 +60,6 @@ export async function getMesh(
       ]),
       schema: apiSchema,
       context: apiSource.context || {},
-      meshSourcePayload: payload,
       handler: apiSource.handler
     };
   }

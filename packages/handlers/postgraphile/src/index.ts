@@ -5,7 +5,6 @@ import { Pool, PoolClient } from 'pg';
 
 const handler: MeshHandlerLibrary<
   YamlConfig.PostGraphileConfig,
-  any,
   { pgClient: PoolClient }
 > = {
   async getMeshSource({ filePathOrUrl, name, config, hooks }) {
@@ -48,29 +47,27 @@ const handler: MeshHandlerLibrary<
     });
 
     return {
-      source: {
-        schema: graphileSchema,
-        contextBuilder: async () => {
-          return new Promise((resolve, reject) => {
-            const pool = new Pool(
-              config?.pool
-                ? { ...config?.pool }
-                : { connectionString: filePathOrUrl }
-            );
+      schema: graphileSchema,
+      contextBuilder: async () => {
+        return new Promise((resolve, reject) => {
+          // TOOD: Clean this pool after context is no longer relevant, probably we'll do it with a hook
+          const pool = new Pool(
+            config?.pool
+              ? { ...config?.pool }
+              : { connectionString: filePathOrUrl }
+          );
 
-            pool.connect((err, client) => {
-              if (err) {
-                return reject(err);
-              }
+          pool.connect((err, client) => {
+            if (err) {
+              return reject(err);
+            }
 
-              return resolve({ pgClient: client });
-            });
+            return resolve({ pgClient: client });
           });
-        },
-        name,
-        source: filePathOrUrl
+        });
       },
-      payload: {}
+      name,
+      source: filePathOrUrl
     };
   }
 };
