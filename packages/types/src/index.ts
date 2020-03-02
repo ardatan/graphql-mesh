@@ -19,20 +19,14 @@ export type GetMeshSourceOptions<TConfig> = {
 };
 
 // Handlers
-export declare type MeshHandlerLibrary<
-  TConfig = any,
-  TPayload = any,
-  TContext = any
-> = {
+export declare type MeshHandlerLibrary<TConfig = any, TContext = any> = {
   getMeshSource: (
     options: GetMeshSourceOptions<TConfig>
-  ) => Promise<{
-    source: MeshSource<TContext>;
-    payload: TPayload;
-  }>;
+  ) => Promise<MeshSource<TContext>>;
 };
 
 // Hooks
+// TODO: Add more hooks: on execute, on execute done, on transform, on context build
 export type AllHooks = {
   schemaReady: (schema: GraphQLSchema) => void;
 };

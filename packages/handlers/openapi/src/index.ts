@@ -3,16 +3,12 @@ import { resolve } from 'path';
 import isUrl from 'is-url';
 import * as yaml from 'js-yaml';
 import request from 'request-promise-native';
-import { createGraphQLSchema } from '@dotansimha/openapi-to-graphql';
-import { Oas3 } from '@dotansimha/openapi-to-graphql/lib/types/oas3';
-import { Options } from '@dotansimha/openapi-to-graphql/lib/types/options';
-import { PreprocessingData } from '@dotansimha/openapi-to-graphql/lib/types/preprocessing_data';
+import { createGraphQLSchema } from 'openapi-to-graphql';
+import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
+import { Options } from 'openapi-to-graphql/lib/types/options';
 import { MeshHandlerLibrary } from '@graphql-mesh/types';
 
-const handler: MeshHandlerLibrary<
-  Options,
-  { oas: Oas3; preprocessingData: PreprocessingData }
-> = {
+const handler: MeshHandlerLibrary<Options> = {
   async getMeshSource({ filePathOrUrl, name, config }) {
     let spec: Oas3;
 
@@ -26,22 +22,16 @@ const handler: MeshHandlerLibrary<
       spec = readFile(actualPath);
     }
 
-    const { schema, data } = await createGraphQLSchema(spec, {
+    const { schema } = await createGraphQLSchema(spec, {
       ...(config || {}),
       operationIdFieldNames: true,
       viewer: false // Viewer set to false in order to force users to specify auth via config file
     });
 
     return {
-      source: {
-        schema,
-        name,
-        source: filePathOrUrl
-      },
-      payload: {
-        oas: spec,
-        preprocessingData: data
-      }
+      schema,
+      name,
+      source: filePathOrUrl
     };
   }
 };

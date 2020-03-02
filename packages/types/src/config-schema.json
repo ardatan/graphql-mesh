@@ -19,6 +19,36 @@
         }
       }
     },
+    "GraphQL": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQL",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Handler for remote/local/third-party GraphQL schema"
+        },
+        "config": {
+          "$ref": "#/definitions/GraphQLConfig",
+          "description": "Configuration to pass to `openapi-to-graphql`"
+        }
+      }
+    },
+    "GraphQLConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLConfig",
+      "required": [],
+      "properties": {
+        "headers": {
+          "type": "object",
+          "description": "JSON object representing the Headers to add to the runtime of the API calls"
+        }
+      }
+    },
     "Openapi": {
       "additionalProperties": false,
       "type": "object",
@@ -185,8 +215,11 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: Openapi, PostGraphile)",
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQL, Openapi, PostGraphile)",
           "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQL"
+            },
             {
               "$ref": "#/definitions/Openapi"
             },
