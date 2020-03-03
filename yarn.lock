@@ -5132,10 +5132,10 @@ graphile-utils@4.5.6:
     debug "^4.1.1"
     graphql ">=0.9 <0.14 || ^14.0.2"
 
-graphql-compose@7.12.4:
-  version "7.12.4"
-  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.12.4.tgz#8b2b0bf35aa8ca2670ee591327cfea13a9b97a9d"
-  integrity sha512-dsqKIU+xV4tqIzNM7kODhCePAzg3OHfNfXgv6hqRpGEmnjHvSBLzcgFJgWqwh9AN7KCr7Si8wDyGLfebR2T+pg==
+graphql-compose@7.12.5:
+  version "7.12.5"
+  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.12.5.tgz#9a41f95e3ea146debc0547cdae9a6a36eb45ce5c"
+  integrity sha512-HX/ynuwbSjyUcg7wvm0X/xZGcnK5+JptBZ7nTBtv1REzVyXaJ/N8PEQyN/Cz+1gtu1+WMFx3zPjSaDlPqW2aMQ==
   dependencies:
     graphql-type-json "^0.3.1"
     object-path "^0.11.4"
