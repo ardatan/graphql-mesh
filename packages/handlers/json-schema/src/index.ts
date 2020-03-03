@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLSchema, GraphQLObjectType, GraphQLFieldConfigMap, GraphQLType, GraphQLOutputType, GraphQLInputType, GraphQLBoolean } from 'graphql';
 import { JSONSchemaVisitor } from './json-schema-visitor';
 import { pascalCase } from 'pascal-case';
@@ -8,34 +8,12 @@ import { join } from 'path';
 import isUrl from 'is-url';
 import { JSONSchemaDefinition } from './json-schema-types';
 
-interface Config {
-    baseUrl: string;
-    operationHeaders?: {[name: string]: string};
-    schemaHeaders?: {[name: string]: string}; 
-    typeReferences?: TypeReference[];
-    operations: OperationConfig[]
-}
-
-interface OperationConfig {
-    field: string;
-    path: string;
-    description: string;
-    type: 'Query' | 'Mutation';
-    method: 'GET' | 'POST';
-    headers?: {[name: string]: string};
-    requestSchema: string;
-    responseSchema: string;
-}
-
-interface TypeReference {
-    reference: string;
-    type: string;
-}
-
 async function importModule(filePathOrUrl: string) {
     const m = await import(filePathOrUrl);
     return 'default' in m ? m.default : m;
 }
+
+type Config = YamlConfig.JsonSchema['config'];
 
 async function loadJsonSchema(filePathOrUrl: string, config: Config){
     if (isUrl(filePathOrUrl)) {
@@ -84,7 +62,7 @@ const handler: MeshHandlerLibrary<Config> = {
                         }
                     },
                     resolve: async (_, { input }) => {
-                        const fullPath = urlJoin(config.baseUrl,operationConfig.path); 
+                        const fullPath = urlJoin(config.baseUrl, operationConfig.path); 
                         const res = await fetch(fullPath, {
                                 method: operationConfig.method,
                                 body: JSON.stringify(input),

@@ -10,7 +10,7 @@ type JsonSchema implements Handler {
 }
 
 type JsonSchemaConfig {
-  baseUrl: String
+  baseUrl: String!
   typeReferences: [JsonSchemaTypeReference]
   operationHeaders: JSON
   schemaHeaders: JSON
@@ -18,8 +18,8 @@ type JsonSchemaConfig {
 }
 
 type JsonSchemaTypeReference {
-  reference: String
-  type: String
+  reference: String!
+  type: String!
 }
 
 enum JsonSchemaOperationType {
@@ -33,12 +33,13 @@ enum JsonSchemaOperationMethod {
 }
 
 type JsonSchemaOperation {
-  field: string;
-  path: String
-  description: string;
-  type: JsonSchemaOperationType
-  method: JsonSchemaOperationMethod
-  requestSchema: String
-  responseSchema: String
+  field: String!
+  path: String!
+  description: String
+  type: JsonSchemaOperationType!
+  method: JsonSchemaOperationMethod!
+  requestSchema: String!
+  responseSchema: String!
+  headers: JSON
 }
 

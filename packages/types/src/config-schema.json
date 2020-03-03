@@ -62,7 +62,7 @@
           "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
         },
         "config": {
-          "$ref": "#/definitions/OpenapiConfig",
+          "$ref": "#/definitions/JsonSchemaConfig",
           "description": "Configuration"
         }
       }
@@ -71,17 +71,32 @@
       "additionalProperties": false,
       "type": "object",
       "title": "JsonSchemaConfig",
-      "required": [],
+      "required": [
+        "baseUrl"
+      ],
       "properties": {
-        "headers": {
-          "type": "object",
-          "description": "JSON object representing the Headers to add to the runtime of the API calls"
-        },
         "baseUrl": {
           "type": "string"
         },
+        "typeReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JsonSchemaTypeReference"
+          },
+          "additionalItems": false
+        },
+        "operationHeaders": {
+          "type": "object"
+        },
+        "schemaHeaders": {
+          "type": "object"
+        },
         "operations": {
-          "$ref": "#/definitions/JsonSchemaOperation"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JsonSchemaOperation"
+          },
+          "additionalItems": false
         }
       }
     },
@@ -89,9 +104,22 @@
       "additionalProperties": false,
       "type": "object",
       "title": "JsonSchemaOperation",
-      "required": [],
+      "required": [
+        "field",
+        "path",
+        "type",
+        "method",
+        "requestSchema",
+        "responseSchema"
+      ],
       "properties": {
+        "field": {
+          "type": "string"
+        },
         "path": {
+          "type": "string"
+        },
+        "description": {
           "type": "string"
         },
         "type": {
@@ -114,6 +142,26 @@
           "type": "string"
         },
         "responseSchema": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "object"
+        }
+      }
+    },
+    "JsonSchemaTypeReference": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaTypeReference",
+      "required": [
+        "reference",
+        "type"
+      ],
+      "properties": {
+        "reference": {
+          "type": "string"
+        },
+        "type": {
           "type": "string"
         }
       }
