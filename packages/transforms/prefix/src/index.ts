@@ -50,22 +50,7 @@ export const prefixTransform: TransformFn<YamlConfig.Prefix> = async ({
     renameRootTypeFields(composer, schema.getSubscriptionType(), prefix);
   }
 
-  const resultSchema = composer.buildSchema();
-
-  // Workaround for https://github.com/graphql-compose/graphql-compose/issues/238
-  // Needed because `astNode` of unions still points to the old types, removing it will ensure graphql-toolkit
-  // will use `union.getTypes()` instead of `union.astNode.types`.
-  const updatedTypeMap = resultSchema.getTypeMap();
-
-  Object.keys(updatedTypeMap).forEach(typeName => {
-    const type = updatedTypeMap[typeName];
-
-    if (isUnionType(type) && type.astNode) {
-      delete type.astNode;
-    }
-  });
-
-  return resultSchema;
+  return composer.buildSchema();
 };
 
 function renameRootTypeFields(
