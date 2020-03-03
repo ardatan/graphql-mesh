@@ -32,7 +32,7 @@
     "@graphql-mesh/extend": "0.0.11",
     "@graphql-mesh/rename": "0.0.11",
     "@graphql-mesh/prefix": "0.0.11",
-    "apollo-server": "2.10.1",
+    "apollo-server": "2.11.0",
     "chalk": "3.0.0",
     "cosmiconfig": "6.0.0",
     "js-yaml": "3.13.1",
