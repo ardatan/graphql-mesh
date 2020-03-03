@@ -2268,6 +2268,11 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-13.1.4.tgz#4cfd90175a200ee9b02bd6b1cd19bc349741607e"
   integrity sha512-Lue/mlp2egZJoHXZr4LndxDAd7i/7SQYhV0EjWfb/a4/OZ6tuVwMCVPiwkU5nsEipxEf7hmkSU7Em5VQ8P5NGA==
 
+"@types/node@12.12.24":
+  version "12.12.24"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.24.tgz#d4606afd8cf6c609036b854360367d1b2c78931f"
+  integrity sha512-1Ciqv9pqwVtW6FsIUKSZNB82E5Cu1I2bBTj1xuIHXLe/1zYLl3956Nbhg2MzSYHVfl9/rmanjbQIb7LibfCnug==
+
 "@types/node@13.7.4":
   version "13.7.4"
   resolved "https://registry.npmjs.org/@types/node/-/node-13.7.4.tgz#76c3cb3a12909510f52e5dc04a6298cdf9504ffd"
@@ -2370,6 +2375,11 @@
   version "2.3.6"
   resolved "https://registry.npmjs.org/@types/tough-cookie/-/tough-cookie-2.3.6.tgz#c880579e087d7a0db13777ff8af689f4ffc7b0d5"
   integrity sha512-wHNBMnkoEBiRAd3s8KTKwIuO9biFtTf0LehITzBhSco+HQI0xkXZbLOD55SW3Aqw3oUkHstkm5SPv58yaAdFPQ==
+
+"@types/url-join@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/url-join/-/url-join-4.0.0.tgz#72eff71648a429c7d4acf94e03780e06671369bd"
+  integrity sha512-awrJu8yML4E/xTwr2EMatC+HBnHGoDxc2+ImA9QyeUELI1S7dOCIZcyjki1rkwoA8P2D2NVgLAJLjnclkdLtAw==
 
 "@types/ws@^6.0.0", "@types/ws@^6.0.1":
   version "6.0.4"
@@ -5160,6 +5170,13 @@ graphql-parse-resolve-info@4.5.0:
   integrity sha512-51eKipZcj9AQWKLtstAmqys3GmOHUoUwFN/ALe1s4k2his0sP4ASri/ZdqcweLRnno4cDPqp2dcWnJ/Pe2a2rQ==
   dependencies:
     debug "^4.1.1"
+
+graphql-scalars@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.0.6.tgz#7fd9bcc51116f9cebb03a27508d8e5b605675f92"
+  integrity sha512-HrXDZyC1dxp858TaNBNEDhUnwT5C4LwStZOXwSAQ+1h2Xl8aPrCy9M4ASu/ymBpo97sFAjSuNAJklfZedLABJg==
+  dependencies:
+    "@types/node" "12.12.24"
 
 graphql-subscriptions@^1.0.0:
   version "1.1.0"
@@ -9623,6 +9640,13 @@ timers-ext@^0.1.5:
     es5-ext "~0.10.46"
     next-tick "1"
 
+title-case@3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/title-case/-/title-case-3.0.2.tgz#9f926a0a42071366f85470572f312c4b647773ab"
+  integrity sha512-1P5hyjEhJ9Ab0AT8Xbm0z1avwPSgRR6XtFSNCdfo6B7111TTTja+456UZ2ZPkbTbzqBwIpQxp/tazh5UvpJ+fA==
+  dependencies:
+    tslib "^1.10.0"
+
 tmp@^0.0.33:
   version "0.0.33"
   resolved "https://registry.npmjs.org/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -10013,6 +10037,11 @@ urix@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
+
+url-join@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/url-join/-/url-join-4.0.1.tgz#b642e21a2646808ffa178c4c5fda39844e12cde7"
+  integrity sha512-jk1+QP6ZJqyOiuEI9AEWQfju/nB2Pw466kbA0LEZljHwKeMgd9WrAEgEGxjPDD2+TNbbb37rTyhEfrCXfuKXnA==
 
 use@^3.1.0:
   version "3.1.1"

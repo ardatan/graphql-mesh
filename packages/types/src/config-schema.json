@@ -49,6 +49,123 @@
         }
       }
     },
+    "JsonSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchema",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
+        },
+        "config": {
+          "$ref": "#/definitions/JsonSchemaConfig",
+          "description": "Configuration"
+        }
+      }
+    },
+    "JsonSchemaConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaConfig",
+      "required": [
+        "baseUrl"
+      ],
+      "properties": {
+        "baseUrl": {
+          "type": "string"
+        },
+        "typeReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JsonSchemaTypeReference"
+          },
+          "additionalItems": false
+        },
+        "operationHeaders": {
+          "type": "object"
+        },
+        "schemaHeaders": {
+          "type": "object"
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JsonSchemaOperation"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "JsonSchemaOperation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaOperation",
+      "required": [
+        "field",
+        "path",
+        "type",
+        "method",
+        "requestSchema",
+        "responseSchema"
+      ],
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Query",
+            "Mutation"
+          ],
+          "description": "Allowed values: Query, Mutation"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "description": "Allowed values: GET, POST"
+        },
+        "requestSchema": {
+          "type": "string"
+        },
+        "responseSchema": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "object"
+        }
+      }
+    },
+    "JsonSchemaTypeReference": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaTypeReference",
+      "required": [
+        "reference",
+        "type"
+      ],
+      "properties": {
+        "reference": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
     "Openapi": {
       "additionalProperties": false,
       "type": "object",
@@ -215,10 +332,13 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQL, Openapi, PostGraphile)",
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQL, JsonSchema, Openapi, PostGraphile)",
           "anyOf": [
             {
               "$ref": "#/definitions/GraphQL"
+            },
+            {
+              "$ref": "#/definitions/JsonSchema"
             },
             {
               "$ref": "#/definitions/Openapi"

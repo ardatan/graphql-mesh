@@ -1,0 +1,45 @@
+type JsonSchema implements Handler {
+  """
+  Handler for JSON Schema specification. Source could be a local json file, or a url to it.
+  """
+  name: String!
+  """
+  Configuration
+  """
+  config: JsonSchemaConfig
+}
+
+type JsonSchemaConfig {
+  baseUrl: String!
+  typeReferences: [JsonSchemaTypeReference]
+  operationHeaders: JSON
+  schemaHeaders: JSON
+  operations: [JsonSchemaOperation]
+}
+
+type JsonSchemaTypeReference {
+  reference: String!
+  type: String!
+}
+
+enum JsonSchemaOperationType {
+  Query
+  Mutation
+}
+
+enum JsonSchemaOperationMethod {
+  GET
+  POST
+}
+
+type JsonSchemaOperation {
+  field: String!
+  path: String!
+  description: String
+  type: JsonSchemaOperationType!
+  method: JsonSchemaOperationMethod!
+  requestSchema: String!
+  responseSchema: String!
+  headers: JSON
+}
+
