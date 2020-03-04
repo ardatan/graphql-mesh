@@ -62,16 +62,10 @@ const handler: MeshHandlerLibrary<Config> = {
                 const destination = operationConfig.type === 'Query' ? queryFields : mutationFields;
                 destination[operationConfig.field] = {
                     description: operationConfig.description || responseSchema.description || `${operationConfig.method} ${operationConfig.path}`,
-                    type: schemaVisitor.visit(responseSchema, operationConfig.field, {
-                        isInput: false,
-                        prefix: operationConfig.field,
-                    }) as GraphQLOutputType,
+                    type: schemaVisitor.visit(responseSchema, operationConfig.field, operationConfig.field, false) as GraphQLOutputType,
                     args: {
                         input: {
-                            type: schemaVisitor.visit(requestSchema, operationConfig.field, {
-                                isInput: true,
-                                prefix: operationConfig.field,
-                            }) as GraphQLInputType,
+                            type: schemaVisitor.visit(requestSchema, operationConfig.field, operationConfig.field, true) as GraphQLInputType,
                         }
                     },
                     resolve: async (_, { input }) => {

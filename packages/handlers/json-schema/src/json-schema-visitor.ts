@@ -14,11 +14,6 @@ export class JSONSchemaVisitorCache {
     public readonly potentialPrefixes = new WeakMap<GraphQLInputType | GraphQLOutputType, string>();
 }
 
-export interface JSONSchemaVisitOptions {
-    isInput: boolean;
-    prefix: string;
-}
-
 export class JSONSchemaVisitor {
     constructor(
         private cache = new JSONSchemaVisitorCache(),
@@ -36,22 +31,22 @@ export class JSONSchemaVisitor {
         }
         return pascalCase(finalTypeName);
     }
-    visit(def: JSONSchemaDefinition, propertyName: string, options: JSONSchemaVisitOptions): GraphQLType {
+    visit(def: JSONSchemaDefinition, propertyName: string, prefix: string, isInput: boolean): GraphQLType {
         if ('definitions' in def) {
             for (const propertyName in def.definitions) {
                 const definition = def.definitions[propertyName];
-                this.visit(definition, propertyName, options);
+                this.visit(definition, propertyName, prefix, isInput);
             }
         }
         if ('$defs' in def) {
             for (const propertyName in def.$defs) {
                 const definition = def.$defs[propertyName];
-                this.visit(definition, propertyName, options);
+                this.visit(definition, propertyName, prefix, isInput);
             }
         }
         switch (def.type) {
             case 'array':
-                return this.visitArray(def, propertyName, options);
+                return this.visitArray(def, propertyName, prefix, isInput);
             case 'boolean':
                 return this.visitBoolean();
             case 'integer':
@@ -60,7 +55,7 @@ export class JSONSchemaVisitor {
                 return this.visitNumber();
             case 'string':
                 if ('enum' in def) {
-                    return this.visitEnum(def, propertyName, options)
+                    return this.visitEnum(def, propertyName, prefix)
                 } else {
                     return this.visitString();
                 }
@@ -68,11 +63,11 @@ export class JSONSchemaVisitor {
                 return this.visitAny();
             case 'object':
                 if ('$ref' in def) {
-                    return this.visitObjectReference(def, propertyName, options);
+                    return this.visitObjectReference(def, propertyName, prefix, isInput);
                 } else if ('name' in def) {
-                    return this.visitTypedNamedObjectDefinition(def, options);
+                    return this.visitTypedNamedObjectDefinition(def, prefix, isInput);
                 } else if ('id' in def || '$id' in def) {
-                    return this.visitTypedUnnamedObjectDefinition(def, options);
+                    return this.visitTypedUnnamedObjectDefinition(def, prefix, isInput);
                 } else if ('additionalProperties' in def) {
                     return this.visitAny();
                 }
@@ -80,8 +75,8 @@ export class JSONSchemaVisitor {
         throw new Error(`Unexpected schema definition:
         ${JSON.stringify(def, null, 2)}`);
     }
-    visitArray(arrayDef: JSONSchemaArrayDefinition, propertyName: string, options: JSONSchemaVisitOptions) {
-        return new GraphQLList(this.visit(arrayDef.items, propertyName, options));
+    visitArray(arrayDef: JSONSchemaArrayDefinition, propertyName: string, prefix: string, isInput: boolean) {
+        return new GraphQLList(this.visit(arrayDef.items, propertyName, prefix, isInput));
     }
     visitBoolean() {
         return GraphQLBoolean;
@@ -98,7 +93,7 @@ export class JSONSchemaVisitor {
     visitEnum(
         enumDef: JSONSchemaEnumDefinition, 
         propertyName: string, 
-        options: JSONSchemaVisitOptions
+        prefix: string,
     ) {
         const enumIdentifier = JSON.stringify(enumDef);
         if (!this.cache.sharedTypesByIdentifier.has(enumIdentifier)) {
@@ -117,24 +112,24 @@ export class JSONSchemaVisitor {
                 }
             }
             if (this.cache.prefixedNames.has(name)) {
-                name = pascalCase(options.prefix + '_' + name);
+                name = pascalCase(prefix + '_' + name);
             }
             const type = new GraphQLEnumType({
                 name,
                 description: enumDef.description,
                 values: enumDef.enum.reduce((values, enumValue) => ({ ...values, [enumValue]: {} }), {}),
             });
-            this.cache.potentialPrefixes.set(type, options.prefix);
+            this.cache.potentialPrefixes.set(type, prefix);
             this.cache.sharedTypesByIdentifier.set(enumIdentifier, type);
             this.cache.typesByNames.set(name, type);
         }
         return this.cache.sharedTypesByIdentifier.get(enumIdentifier)!;
     }
-    private createFieldsMapFromProperties(objectDef: JSONSchemaTypedObjectDefinition, options: JSONSchemaVisitOptions) {
+    private createFieldsMapFromProperties(objectDef: JSONSchemaTypedObjectDefinition, prefix: string, isInput: boolean) {
         const fieldMap: GraphQLInputFieldConfigMap & GraphQLFieldConfigMap<any, any> = {};
         for (const propertyName in objectDef.properties) {
             const property = objectDef.properties[propertyName];
-            const type = this.visit(property, propertyName, options) as GraphQLSharedType;
+            const type = this.visit(property, propertyName, prefix, isInput) as GraphQLSharedType;
             const isRequired = 'required' in objectDef && objectDef.required?.includes(propertyName);
             fieldMap[propertyName] = {
                 type: isRequired ? new GraphQLNonNull(type) : type,
@@ -143,17 +138,18 @@ export class JSONSchemaVisitor {
         }
         return fieldMap;
     }
-    private getSpecificTypeByIdentifier(identifier: string, options: JSONSchemaVisitOptions) {
+    private getSpecificTypeByIdentifier(identifier: string, prefix: string, isInput: boolean) {
         return this.cache.sharedTypesByIdentifier.get(identifier) ||
-        (options.isInput ? this.cache.inputSpecificTypesByIdentifier.get(identifier) : this.cache.outputSpecificTypesByIdentifier.get(identifier));
+        (isInput ? this.cache.inputSpecificTypesByIdentifier.get(identifier) : this.cache.outputSpecificTypesByIdentifier.get(identifier));
     }
     private getGraphQLObjectTypeWithTypedObjectDef(
         objectDef: JSONSchemaTypedObjectDefinition,
         objectIdentifier: string,
-        rawName: string,
-        options: JSONSchemaVisitOptions
+        rawName: string, 
+        prefix: string, 
+        isInput: boolean
     ) {
-        const specificType = this.getSpecificTypeByIdentifier(objectIdentifier, options);
+        const specificType = this.getSpecificTypeByIdentifier(objectIdentifier, prefix, isInput);
         if (!specificType) {
             let name = rawName;
             // If there is a different object but with the same name,
@@ -171,51 +167,45 @@ export class JSONSchemaVisitor {
             }
             // If this name should be prefixed
             if (this.cache.prefixedNames.has(name)) {
-                name = pascalCase(options.prefix + '_' + name);
+                name = pascalCase(prefix + '_' + name);
             }
 
             const outputType = new GraphQLObjectType({
                 name,
                 description: objectDef.description,
-                fields: this.createFieldsMapFromProperties(objectDef, {
-                    ...options,
-                    isInput: false,
-                }),
+                fields: this.createFieldsMapFromProperties(objectDef, name, false),
             });
             this.cache.outputSpecificTypesByIdentifier.set(objectIdentifier, outputType);
             this.cache.typesByNames.set(outputType.name, outputType);
-            this.cache.potentialPrefixes.set(outputType, options.prefix);
+            this.cache.potentialPrefixes.set(outputType, prefix);
 
             const inputType = new GraphQLInputObjectType({
                 name: pascalCase(name + '_Input'),
                 description: objectDef.description,
-                fields: this.createFieldsMapFromProperties(objectDef, {
-                    ...options,
-                    isInput: true,
-                }),
+                fields: this.createFieldsMapFromProperties(objectDef, name, true),
             });
             this.cache.inputSpecificTypesByIdentifier.set(objectIdentifier, inputType);
             this.cache.typesByNames.set(inputType.name, inputType);
-            this.cache.potentialPrefixes.set(inputType, options.prefix);
-            return options.isInput ? inputType : outputType;
+            this.cache.potentialPrefixes.set(inputType, prefix);
+            return isInput ? inputType : outputType;
         }
         return specificType;
     }
-    visitTypedUnnamedObjectDefinition(typedUnnamedObjectDef: JSONSchemaTypedUnnamedObjectDefinition, options: JSONSchemaVisitOptions) {
+    visitTypedUnnamedObjectDefinition(typedUnnamedObjectDef: JSONSchemaTypedUnnamedObjectDefinition, prefix: string, isInput: boolean) {
         const objectIdentifier = 'id' in typedUnnamedObjectDef ? typedUnnamedObjectDef.id : typedUnnamedObjectDef.$id;
         const name = this.getNameFromId(objectIdentifier);
-        return this.getGraphQLObjectTypeWithTypedObjectDef(typedUnnamedObjectDef, objectIdentifier, name, options);
+        return this.getGraphQLObjectTypeWithTypedObjectDef(typedUnnamedObjectDef, objectIdentifier, name, prefix, isInput);
     }
-    visitTypedNamedObjectDefinition(typedNamedObjectDef: JSONSchemaTypedNamedObjectDefinition, options: JSONSchemaVisitOptions) {
+    visitTypedNamedObjectDefinition(typedNamedObjectDef: JSONSchemaTypedNamedObjectDefinition, prefix: string, isInput: boolean) {
         const objectIdentifier = typedNamedObjectDef.name;
         const name = pascalCase(objectIdentifier);
-        return this.getGraphQLObjectTypeWithTypedObjectDef(typedNamedObjectDef, objectIdentifier, name, options);
+        return this.getGraphQLObjectTypeWithTypedObjectDef(typedNamedObjectDef, objectIdentifier, name, prefix, isInput);
     }
     private warnedReferences = new Set<string>();
-    visitObjectReference(objectRef: JSONSchemaObjectReference, propertyName: string, options: JSONSchemaVisitOptions) {
+    visitObjectReference(objectRef: JSONSchemaObjectReference, propertyName: string, prefix: string, isInput: boolean) {
         const referenceParts = objectRef.$ref.split('/');
         const reference = referenceParts[referenceParts.length - 1];
-        const specificType = this.getSpecificTypeByIdentifier(reference, options);
+        const specificType = this.getSpecificTypeByIdentifier(reference, prefix, isInput);
         if (!specificType) {
             if (!this.warnedReferences.has(reference) && !this.warnedReferences.has(reference)) {
                 console.warn(`Missing JSON Schema reference: ${reference}. GraphQLJSON will be used instead!`);
