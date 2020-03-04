@@ -108,6 +108,9 @@ export class JSONSchemaVisitor {
                     existingType.name = pascalCase(prefix + '_' + name);
                     this.cache.prefixedNames.add(name);
                     this.cache.typesByNames.delete(name);
+                    if (this.cache.typesByNames.has(existingType.name)) {
+                        throw existingType.name;
+                    }
                     this.cache.typesByNames.set(existingType.name, existingType);
                 }
             }
@@ -121,6 +124,9 @@ export class JSONSchemaVisitor {
             });
             this.cache.potentialPrefixes.set(type, prefix);
             this.cache.sharedTypesByIdentifier.set(enumIdentifier, type);
+            if (this.cache.typesByNames.has(name)) {
+                throw name;
+            }
             this.cache.typesByNames.set(name, type);
         }
         return this.cache.sharedTypesByIdentifier.get(enumIdentifier)!;
@@ -162,6 +168,9 @@ export class JSONSchemaVisitor {
                     existingType.name = pascalCase(existingTypePrefix + '_' + name);
                     this.cache.prefixedNames.add(name);
                     this.cache.typesByNames.delete(name);
+                    if (this.cache.typesByNames.has(existingType.name)) {
+                        throw existingType.name;
+                    }
                     this.cache.typesByNames.set(existingType.name, existingType);
                 }
             }
@@ -170,24 +179,32 @@ export class JSONSchemaVisitor {
                 name = pascalCase(prefix + '_' + name);
             }
 
-            const outputType = new GraphQLObjectType({
-                name,
-                description: objectDef.description,
-                fields: this.createFieldsMapFromProperties(objectDef, name, false),
-            });
-            this.cache.outputSpecificTypesByIdentifier.set(objectIdentifier, outputType);
-            this.cache.typesByNames.set(outputType.name, outputType);
-            this.cache.potentialPrefixes.set(outputType, prefix);
+            if (this.cache.typesByNames.has(name)) {
+                const suffix = isInput ? 'Input' : 'Output';
+                name = pascalCase(name + '_' + suffix);
+            }
 
-            const inputType = new GraphQLInputObjectType({
-                name: pascalCase(name + '_Input'),
-                description: objectDef.description,
-                fields: this.createFieldsMapFromProperties(objectDef, name, true),
-            });
-            this.cache.inputSpecificTypesByIdentifier.set(objectIdentifier, inputType);
-            this.cache.typesByNames.set(inputType.name, inputType);
-            this.cache.potentialPrefixes.set(inputType, prefix);
-            return isInput ? inputType : outputType;
+            if (isInput) {
+                const inputType = new GraphQLInputObjectType({
+                    name,
+                    description: objectDef.description,
+                    fields: this.createFieldsMapFromProperties(objectDef, name, true),
+                });
+                this.cache.inputSpecificTypesByIdentifier.set(objectIdentifier, inputType);
+                this.cache.typesByNames.set(inputType.name, inputType);
+                this.cache.potentialPrefixes.set(inputType, prefix);
+                return inputType;
+            } else {
+                const outputType = new GraphQLObjectType({
+                    name,
+                    description: objectDef.description,
+                    fields: this.createFieldsMapFromProperties(objectDef, name, false),
+                });
+                this.cache.outputSpecificTypesByIdentifier.set(objectIdentifier, outputType);
+                this.cache.typesByNames.set(outputType.name, outputType);
+                this.cache.potentialPrefixes.set(outputType, prefix);
+                return outputType;
+            }
         }
         return specificType;
     }
