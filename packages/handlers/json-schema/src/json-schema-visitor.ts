@@ -63,7 +63,7 @@ export class JSONSchemaVisitor {
                 return this.visitAny();
             case 'object':
                 if ('$ref' in def) {
-                    return this.visitObjectReference(def, propertyName, prefix, isInput);
+                    return this.visitObjectReference(def, isInput);
                 } else if ('name' in def) {
                     return this.visitTypedNamedObjectDefinition(def, prefix, isInput);
                 } else if ('id' in def || '$id' in def) {
@@ -138,7 +138,7 @@ export class JSONSchemaVisitor {
         }
         return fieldMap;
     }
-    private getSpecificTypeByIdentifier(identifier: string, prefix: string, isInput: boolean) {
+    private getSpecificTypeByIdentifier(identifier: string, isInput: boolean) {
         return this.cache.sharedTypesByIdentifier.get(identifier) ||
         (isInput ? this.cache.inputSpecificTypesByIdentifier.get(identifier) : this.cache.outputSpecificTypesByIdentifier.get(identifier));
     }
@@ -149,7 +149,7 @@ export class JSONSchemaVisitor {
         prefix: string, 
         isInput: boolean
     ) {
-        const specificType = this.getSpecificTypeByIdentifier(objectIdentifier, prefix, isInput);
+        const specificType = this.getSpecificTypeByIdentifier(objectIdentifier, isInput);
         if (!specificType) {
             let name = rawName;
             // If there is a different object but with the same name,
@@ -202,10 +202,10 @@ export class JSONSchemaVisitor {
         return this.getGraphQLObjectTypeWithTypedObjectDef(typedNamedObjectDef, objectIdentifier, name, prefix, isInput);
     }
     private warnedReferences = new Set<string>();
-    visitObjectReference(objectRef: JSONSchemaObjectReference, propertyName: string, prefix: string, isInput: boolean) {
+    visitObjectReference(objectRef: JSONSchemaObjectReference, isInput: boolean) {
         const referenceParts = objectRef.$ref.split('/');
         const reference = referenceParts[referenceParts.length - 1];
-        const specificType = this.getSpecificTypeByIdentifier(reference, prefix, isInput);
+        const specificType = this.getSpecificTypeByIdentifier(reference, isInput);
         if (!specificType) {
             if (!this.warnedReferences.has(reference) && !this.warnedReferences.has(reference)) {
                 console.warn(`Missing JSON Schema reference: ${reference}. GraphQLJSON will be used instead!`);
