@@ -1,12 +1,9 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { GraphQLSchema, GraphQLObjectType, GraphQLFieldConfigMap, GraphQLType, GraphQLOutputType, GraphQLInputType, GraphQLBoolean } from 'graphql';
+import { GraphQLSchema, GraphQLObjectType, GraphQLFieldConfigMap, GraphQLOutputType, GraphQLInputType, GraphQLBoolean } from 'graphql';
 import { JSONSchemaVisitor, JSONSchemaVisitorCache } from './json-schema-visitor';
-import { pascalCase } from 'pascal-case';
 import { fetch } from 'cross-fetch';
 import urlJoin from 'url-join';
-import { join } from 'path';
 import isUrl from 'is-url';
-import { JSONSchemaDefinition } from './json-schema-types';
 
 async function importModule(filePathOrUrl: string) {
     const m = await import(filePathOrUrl);
@@ -96,13 +93,11 @@ const handler: MeshHandlerLibrary<Config> = {
         const schema: GraphQLSchema = new GraphQLSchema({
             query: new GraphQLObjectType({
                 name: 'Query',
-                fields: queryFields,
-                description: `${name} Query`
+                fields: Object.keys(queryFields).length > 0 ? queryFields : { ping: { type: GraphQLBoolean, resolve: () => true } },
             }),
             mutation: Object.keys(mutationFields).length > 0 ? new GraphQLObjectType({
                 name: 'Mutation',
                 fields: mutationFields,
-                description: `${name} Mutation`
             }) : undefined,
         });
 

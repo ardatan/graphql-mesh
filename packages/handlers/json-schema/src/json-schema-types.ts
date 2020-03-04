@@ -53,14 +53,15 @@ export interface JSONSchemaEnumDefinition {
 export type JSONSchemaTypedUnnamedObjectDefinition = {
     type: 'object';
     description?: string;
-    properties: { [propertyName: string]: JSONSchemaDefinition };
+    properties?: { [propertyName: string]: JSONSchemaDefinition };
+    required?: string[];
 } & ({ $id: string; } | { id: string })
 
 export interface JSONSchemaTypedNamedObjectDefinition {
     type: 'object';
     name: string;
     description?: string;
-    properties: { [propertyName: string]: JSONSchemaDefinition };
+    properties?: { [propertyName: string]: JSONSchemaDefinition };
 }
 
 export interface JSONSchemaUntypedUnnamedObjectDefinition {

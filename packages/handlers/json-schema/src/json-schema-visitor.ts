@@ -1,4 +1,4 @@
-import { GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLEnumType, GraphQLString, GraphQLInputObjectType, GraphQLObjectType, GraphQLType, GraphQLFloat, GraphQLFieldConfigMap, GraphQLInputFieldConfigMap, GraphQLInputType, GraphQLOutputType } from "graphql";
+import { GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLEnumType, GraphQLString, GraphQLInputObjectType, GraphQLObjectType, GraphQLType, GraphQLFloat, GraphQLFieldConfigMap, GraphQLInputFieldConfigMap, GraphQLInputType, GraphQLOutputType, GraphQLNonNull } from "graphql";
 import { JSONSchemaDefinition, JSONSchemaArrayDefinition, JSONSchemaObjectReference, JSONSchemaEnumDefinition, JSONSchemaTypedUnnamedObjectDefinition, JSONSchemaTypedNamedObjectDefinition, JSONSchemaTypedObjectDefinition } from "./json-schema-types";
 import { pascalCase } from 'pascal-case';
 import GraphQLJSON from "graphql-type-json";
@@ -130,12 +130,14 @@ export class JSONSchemaVisitor {
         }
         return this.cache.sharedTypesByIdentifier.get(enumIdentifier)!;
     }
-    private createFieldsMapFromProperties(properties: { [propertyName: string]: JSONSchemaDefinition }, options: JSONSchemaVisitOptions) {
+    private createFieldsMapFromProperties(objectDef: JSONSchemaTypedObjectDefinition, options: JSONSchemaVisitOptions) {
         const fieldMap: GraphQLInputFieldConfigMap & GraphQLFieldConfigMap<any, any> = {};
-        for (const propertyName in properties) {
-            const property = properties[propertyName];
+        for (const propertyName in objectDef.properties) {
+            const property = objectDef.properties[propertyName];
+            const type = this.visit(property, propertyName, options) as GraphQLSharedType;
+            const isRequired = 'required' in objectDef && objectDef.required?.includes(propertyName);
             fieldMap[propertyName] = {
-                type: this.visit(property, propertyName, options) as GraphQLSharedType,
+                type: isRequired ? new GraphQLNonNull(type) : type,
                 description: property.description,
             }
         }
@@ -175,7 +177,7 @@ export class JSONSchemaVisitor {
             const outputType = new GraphQLObjectType({
                 name,
                 description: objectDef.description,
-                fields: this.createFieldsMapFromProperties(objectDef.properties, {
+                fields: this.createFieldsMapFromProperties(objectDef, {
                     ...options,
                     isInput: false,
                 }),
@@ -187,7 +189,7 @@ export class JSONSchemaVisitor {
             const inputType = new GraphQLInputObjectType({
                 name: pascalCase(name + '_Input'),
                 description: objectDef.description,
-                fields: this.createFieldsMapFromProperties(objectDef.properties, {
+                fields: this.createFieldsMapFromProperties(objectDef, {
                     ...options,
                     isInput: true,
                 }),
@@ -209,12 +211,16 @@ export class JSONSchemaVisitor {
         const name = pascalCase(objectIdentifier);
         return this.getGraphQLObjectTypeWithTypedObjectDef(typedNamedObjectDef, objectIdentifier, name, options);
     }
+    private warnedReferences = new Set<string>();
     visitObjectReference(objectRef: JSONSchemaObjectReference, propertyName: string, options: JSONSchemaVisitOptions) {
         const referenceParts = objectRef.$ref.split('/');
         const reference = referenceParts[referenceParts.length - 1];
         const specificType = this.getSpecificTypeByIdentifier(reference, options);
         if (!specificType) {
-            console.warn(`${reference} Not Found in JSON Schema!`);
+            if (!this.warnedReferences.has(reference) && !this.warnedReferences.has(reference)) {
+                console.warn(`Missing JSON Schema reference: ${reference}. GraphQLJSON will be used instead!`);
+                this.warnedReferences.add(reference);
+            }
             return this.visitAny();
         }
         return specificType;
