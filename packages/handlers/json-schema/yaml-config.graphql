@@ -19,7 +19,9 @@ type JsonSchemaConfig {
 
 type JsonSchemaTypeReference {
   reference: String!
-  type: String!
+  sharedType: String!
+  inputType: String!
+  outputType: String!
 }
 
 enum JsonSchemaOperationType {

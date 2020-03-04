@@ -1,15 +1,22 @@
 export type JSONSchemaDefinition
-    = JSONSchemaArrayDefinition |
-    JSONSchemaBooleanDefinition |
-    JSONSchemaIntegerDefinition |
-    JSONSchemaNumberDefinition |
-    JSONSchemaStringDefinition |
-    JSONSchemaEnumDefinition |
-    JSONSchemaUntypedUnnamedObjectDefinition |
-    JSONSchemaTypedNamedObjectDefinition |
-    JSONSchemaTypedUnnamedObjectDefinition |
-    JSONSchemaObjectReference |
-    JSONSchemaAnyDefinition;
+    = JSONSchemaRootDefinition | JSONSchemaNonRootDefinition;
+
+export type JSONSchemaNonRootDefinition = 
+JSONSchemaArrayDefinition |
+JSONSchemaBooleanDefinition |
+JSONSchemaIntegerDefinition |
+JSONSchemaNumberDefinition |
+JSONSchemaStringDefinition |
+JSONSchemaEnumDefinition |
+JSONSchemaUntypedUnnamedObjectDefinition |
+JSONSchemaTypedNamedObjectDefinition |
+JSONSchemaTypedUnnamedObjectDefinition |
+JSONSchemaObjectReference |
+JSONSchemaAnyDefinition;
+
+export type JSONSchemaRootDefinition = ({
+    definitions: {[name :string]: JSONSchemaDefinition};
+} | { $defs: {[name :string]: JSONSchemaDefinition} }) & JSONSchemaNonRootDefinition;
 
 export interface JSONSchemaArrayDefinition {
     type: 'array';
@@ -43,12 +50,11 @@ export interface JSONSchemaEnumDefinition {
     enum: string[];
 }
 
-export interface JSONSchemaTypedUnnamedObjectDefinition {
+export type JSONSchemaTypedUnnamedObjectDefinition = {
     type: 'object';
-    id: string;
     description?: string;
     properties: { [propertyName: string]: JSONSchemaDefinition };
-}
+} & ({ $id: string; } | { id: string })
 
 export interface JSONSchemaTypedNamedObjectDefinition {
     type: 'object';
@@ -62,6 +68,8 @@ export interface JSONSchemaUntypedUnnamedObjectDefinition {
     description?: string;
     additionalProperties?: JSONSchemaDefinition;
 }
+
+export type JSONSchemaTypedObjectDefinition = JSONSchemaTypedUnnamedObjectDefinition | JSONSchemaTypedNamedObjectDefinition;
 
 export interface JSONSchemaObjectReference {
     type: 'object';

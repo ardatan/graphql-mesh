@@ -1,6 +1,6 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLSchema, GraphQLObjectType, GraphQLFieldConfigMap, GraphQLType, GraphQLOutputType, GraphQLInputType, GraphQLBoolean } from 'graphql';
-import { JSONSchemaVisitor } from './json-schema-visitor';
+import { JSONSchemaVisitor, JSONSchemaVisitorCache } from './json-schema-visitor';
 import { pascalCase } from 'pascal-case';
 import { fetch } from 'cross-fetch';
 import urlJoin from 'url-join';
@@ -31,23 +31,33 @@ async function loadJsonSchema(filePathOrUrl: string, config: Config){
 const handler: MeshHandlerLibrary<Config> = {
     async getMeshSource({ name, config }) {
 
-        const references = new Map<string, GraphQLType>();
+        const visitorCache = new JSONSchemaVisitorCache();
         await Promise.all(config?.typeReferences?.map(async typeReference => {
-            const [moduleName, exportName] = typeReference.type.split('#');
-            const m = await importModule(moduleName);
-            const type = m[exportName];
-            references.set(typeReference.reference, type);
+            if (typeReference.sharedType) {
+                const [moduleName, exportName] = typeReference.sharedType.split('#');
+                const m = await importModule(moduleName);
+                const type = m[exportName];
+                visitorCache.sharedTypesByIdentifier.set(typeReference.reference, type);
+            }
+            if (typeReference.inputType) {
+                const [moduleName, exportName] = typeReference.inputType.split('#');
+                const m = await importModule(moduleName);
+                const type = m[exportName];
+                visitorCache.inputSpecificTypesByIdentifier.set(typeReference.reference, type);
+            }
+            if (typeReference.outputType) {
+                const [moduleName, exportName] = typeReference.outputType.split('#');
+                const m = await importModule(moduleName);
+                const type = m[exportName];
+                visitorCache.outputSpecificTypesByIdentifier.set(typeReference.reference, type);
+            }
         }) || []);
 
-        const queryFields: GraphQLFieldConfigMap<any, any> = {
-            ping: { type: GraphQLBoolean, resolve: () => true },
-        };
+        const queryFields: GraphQLFieldConfigMap<any, any> = {};
         const mutationFields: GraphQLFieldConfigMap<any, any> = {};
-        const defCache = new Map<string, JSONSchemaDefinition>();
+        const schemaVisitor = new JSONSchemaVisitor(visitorCache);
         await Promise.all(
             config?.operations?.map(async operationConfig => {
-                const requestSchemaVisitor = new JSONSchemaVisitor(operationConfig.field, true, references, defCache);
-                const responseSchemaVisitor = new JSONSchemaVisitor(operationConfig.field, false, references, defCache);
                 const [requestSchema, responseSchema] = await Promise.all([
                     loadJsonSchema(operationConfig.requestSchema, config),
                     loadJsonSchema(operationConfig.responseSchema, config),
@@ -55,10 +65,16 @@ const handler: MeshHandlerLibrary<Config> = {
                 const destination = operationConfig.type === 'Query' ? queryFields : mutationFields;
                 destination[operationConfig.field] = {
                     description: operationConfig.description || responseSchema.description || `${operationConfig.method} ${operationConfig.path}`,
-                    type: responseSchemaVisitor.visit(responseSchema, pascalCase(operationConfig.field)) as GraphQLOutputType,
+                    type: schemaVisitor.visit(responseSchema, operationConfig.field, {
+                        isInput: false,
+                        prefix: operationConfig.field,
+                    }) as GraphQLOutputType,
                     args: {
                         input: {
-                            type: requestSchemaVisitor.visit(requestSchema, pascalCase(operationConfig.field + 'Input')) as GraphQLInputType,
+                            type: schemaVisitor.visit(requestSchema, operationConfig.field, {
+                                isInput: true,
+                                prefix: operationConfig.field,
+                            }) as GraphQLInputType,
                         }
                     },
                     resolve: async (_, { input }) => {

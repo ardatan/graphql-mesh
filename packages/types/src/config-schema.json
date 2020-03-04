@@ -155,13 +155,21 @@
       "title": "JsonSchemaTypeReference",
       "required": [
         "reference",
-        "type"
+        "sharedType",
+        "inputType",
+        "outputType"
       ],
       "properties": {
         "reference": {
           "type": "string"
         },
-        "type": {
+        "sharedType": {
+          "type": "string"
+        },
+        "inputType": {
+          "type": "string"
+        },
+        "outputType": {
           "type": "string"
         }
       }
