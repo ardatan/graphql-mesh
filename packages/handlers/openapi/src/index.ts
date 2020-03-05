@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import isUrl from 'is-url';
 import * as yaml from 'js-yaml';
-import request from 'request-promise-native';
+import { fetch } from 'cross-fetch';
 import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
 import { Options } from 'openapi-to-graphql/lib/types/options';
@@ -50,10 +50,11 @@ function readFile(path: string): Oas3 {
 }
 
 async function readUrl(path: string): Promise<Oas3> {
+  const response = await fetch(path);
   if (/json$/.test(path)) {
-    return JSON.parse(await request(path));
+    return response.json();
   } else if (/yaml$/.test(path) || /yml$/.test(path)) {
-    return yaml.safeLoad(await request(path));
+    return yaml.safeLoad(await response.text());
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure endpoint '${path}' has ` +
