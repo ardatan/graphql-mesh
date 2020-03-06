@@ -5142,10 +5142,10 @@ graphile-utils@4.5.6:
     debug "^4.1.1"
     graphql ">=0.9 <0.14 || ^14.0.2"
 
-graphql-compose@7.12.4:
-  version "7.12.4"
-  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.12.4.tgz#8b2b0bf35aa8ca2670ee591327cfea13a9b97a9d"
-  integrity sha512-dsqKIU+xV4tqIzNM7kODhCePAzg3OHfNfXgv6hqRpGEmnjHvSBLzcgFJgWqwh9AN7KCr7Si8wDyGLfebR2T+pg==
+graphql-compose@7.14.0:
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.14.0.tgz#b811f3b5ea73014eeac2239eba4949869d9166e9"
+  integrity sha512-DFcz6FIbsgg0t9mhtRwCgJwWIcCc/ZzWsCAkwXNURTMsxjPNJkR5V2l7qja1/BAAUzCgynWlDoYhZ4L3UpXefw==
   dependencies:
     graphql-type-json "^0.3.1"
     object-path "^0.11.4"
@@ -9639,13 +9639,6 @@ timers-ext@^0.1.5:
   dependencies:
     es5-ext "~0.10.46"
     next-tick "1"
-
-title-case@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/title-case/-/title-case-3.0.2.tgz#9f926a0a42071366f85470572f312c4b647773ab"
-  integrity sha512-1P5hyjEhJ9Ab0AT8Xbm0z1avwPSgRR6XtFSNCdfo6B7111TTTja+456UZ2ZPkbTbzqBwIpQxp/tazh5UvpJ+fA==
-  dependencies:
-    tslib "^1.10.0"
 
 tmp@^0.0.33:
   version "0.0.33"
