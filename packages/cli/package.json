@@ -44,7 +44,7 @@
     "js-yaml": "3.13.1",
     "mkdirp": "1.0.3",
     "winston": "3.2.1",
-    "yargs": "15.2.0"
+    "yargs": "15.3.0"
   },
   "publishConfig": {
     "access": "public"
