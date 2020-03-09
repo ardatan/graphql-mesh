@@ -44,21 +44,27 @@ function readFile(path: string): Oas3 {
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${path}' has ` +
-        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+      `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
 }
 
 async function readUrl(path: string): Promise<Oas3> {
   const response = await fetch(path);
-  if (/json$/.test(path)) {
+  const contentType = response.headers.get('content-type') || '';
+  if (/json$/.test(path) || /json$/.test(contentType)) {
     return response.json();
-  } else if (/yaml$/.test(path) || /yml$/.test(path)) {
+  } else if (
+    /yaml$/.test(path) ||
+    /yml$/.test(path) ||
+    /yaml$/.test(contentType) ||
+    /yml$/.test(contentType)
+  ) {
     return yaml.safeLoad(await response.text());
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure endpoint '${path}' has ` +
-        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+      `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`
     );
   }
 }
