@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "change-case": "4.1.1",
-    "@graphql-codegen/typescript": "1.12.2",
-    "@graphql-codegen/typescript-resolvers": "1.12.2",
+    "@graphql-codegen/typescript": "1.13.0",
+    "@graphql-codegen/typescript-resolvers": "1.13.0",
     "apollo-server": "2.10.1",
     "chalk": "3.0.0",
     "js-yaml": "3.13.1",
