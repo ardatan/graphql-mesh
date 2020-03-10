@@ -5103,15 +5103,15 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-graphile-build-pg@4.5.3:
-  version "4.5.3"
-  resolved "https://registry.npmjs.org/graphile-build-pg/-/graphile-build-pg-4.5.3.tgz#13a584fb737b3a638d73cea1cfa4cca88dcf22a4"
-  integrity sha512-Sp3DC/PC9c8+dQkQ6FM5F2TwByWQIMX3TKpxm63SePFJfPdq2Lbl4mOjBxJykYf4Fh094MVAIz4Alz5a1yRBKw==
+graphile-build-pg@4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-4.6.0.tgz#4a3dd5bf730e4751b79ef7e60beb5a5663948fd6"
+  integrity sha512-bty7ZkuCUutYRFZhqHCaWwgRXK8qfZ/n1z/f1puFBmG5q5UB9lwma2mAq2h7DqXRYAXBNQl3WukQ8RJlVRFP0Q==
   dependencies:
     "@graphile/lru" "4.5.0"
     chalk "^2.4.2"
     debug "^4.1.1"
-    graphile-build "4.5.0"
+    graphile-build "4.6.0"
     graphql-iso-date "^3.6.0"
     jsonwebtoken "^8.5.1"
     lodash ">=4 <5"
@@ -5119,10 +5119,10 @@ graphile-build-pg@4.5.3:
     pg-sql2 "4.5.0"
     postgres-interval "^1.2.0"
 
-graphile-build@4.5.0:
-  version "4.5.0"
-  resolved "https://registry.npmjs.org/graphile-build/-/graphile-build-4.5.0.tgz#f7c627c146e051f454c4f19116231e9d8b653e04"
-  integrity sha512-U/1K4nHWp3MGJ7kwTwIYBZnO3ZDlufmHHpdd1t4uFA46OtxdP7RG7KnXyol/XB8hfTfqSVGabaZP8lr+NVyQPA==
+graphile-build@4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-4.6.0.tgz#04480c86779be2070deeaceea245cb6acf65f716"
+  integrity sha512-M7G7MxmLKoBGbP3Qk1iPuqMKIV1f4HjSBOLm/uS9aSMY2YGrGg1Va8yHdkJaY/6iubTPzqmhcJaIx7wkvaIpYg==
   dependencies:
     "@graphile/lru" "4.5.0"
     chalk "^2.4.2"
@@ -5134,10 +5134,10 @@ graphile-build@4.5.0:
     pluralize "^7.0.0"
     semver "^6.0.0"
 
-graphile-utils@4.5.6:
-  version "4.5.6"
-  resolved "https://registry.npmjs.org/graphile-utils/-/graphile-utils-4.5.6.tgz#f95f6dcbfc63263a59ad4f2d733311cba7fee725"
-  integrity sha512-Tt4SBVxfS3wbewUhQiN1oXg4KjPVi2a9GOjD8AXWlQfKin25TH2dDRyJRALM/blVuSyBlzn9OqPnvsbM3NqXpQ==
+graphile-utils@4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/graphile-utils/-/graphile-utils-4.6.0.tgz#349afe3f8540fd190507148594a280f8d0f9a26b"
+  integrity sha512-h4C7+LCOJ4hRlGDwwN5K1Sc5yEwFJEXmDWCnTzV1vpC0nvef53her9IpttZsjGWFwy+cn1nURH+00T6ZzBFCfA==
   dependencies:
     debug "^4.1.1"
     graphql ">=0.9 <0.14 || ^14.0.2"
@@ -8183,18 +8183,18 @@ posix-character-classes@^0.1.0:
   resolved "https://registry.npmjs.org/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
 
-postgraphile-core@4.5.3:
-  version "4.5.3"
-  resolved "https://registry.npmjs.org/postgraphile-core/-/postgraphile-core-4.5.3.tgz#60e7dfb50b9e958fb0a64a5b6b73091c3992da1e"
-  integrity sha512-DmE9JdQEMMJH0W+FVRGL/pO9zZzanuXE49+V+s2agLNjNlDFRFCNKnlUI2sA0PKTNJXilVAPQFpBifn1t74moA==
+postgraphile-core@4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-4.6.0.tgz#0a0e422879639c5352c5287871a1e5d579a221d9"
+  integrity sha512-dmO7Ju16QadUj7mhTzZ8U4itcO1U5RTt5hQe3XQ3w1RvkkZuBNMWRZVo/AZIUyZDp2y2eHfBo/+I6xz9InFYew==
   dependencies:
-    graphile-build "4.5.0"
-    graphile-build-pg "4.5.3"
+    graphile-build "4.6.0"
+    graphile-build-pg "4.6.0"
 
-postgraphile@4.5.5:
-  version "4.5.5"
-  resolved "https://registry.npmjs.org/postgraphile/-/postgraphile-4.5.5.tgz#06f44f3366162929543b257aca920367ba7a3317"
-  integrity sha512-JjUcZIabf8rMUwBlvDCp2VOciJcrT/AnE4ksOiYDiv//sWj4twt6QR1T7+Zw7+jA8x1DxCKeIdCKCk7EO5H/4Q==
+postgraphile@4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.6.0.tgz#b564f5b13222f58516dfcbd3ffc2a504532ed03a"
+  integrity sha512-396yETXafT2G/+Z7zqUEcuMyKk9j2m/7al/yzfH8zr5rSM0V45z7ikgnGweLHvLbSFudbcYNqs8UdKb/jaXE0A==
   dependencies:
     "@graphile/lru" "4.5.0"
     "@types/json5" "^0.0.30"
@@ -8207,7 +8207,7 @@ postgraphile@4.5.5:
     commander "^2.19.0"
     debug "^4.1.1"
     finalhandler "^1.0.6"
-    graphile-utils "4.5.6"
+    graphile-utils "4.6.0"
     graphql "^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2"
     http-errors "^1.5.1"
     iterall "^1.0.2"
@@ -8217,7 +8217,7 @@ postgraphile@4.5.5:
     pg ">=6.1.0 <8"
     pg-connection-string "^2.0.0"
     pg-sql2 "4.5.0"
-    postgraphile-core "4.5.3"
+    postgraphile-core "4.6.0"
     subscriptions-transport-ws "^0.9.15"
     tslib "^1.5.0"
     ws "^6.1.3"
@@ -9639,13 +9639,6 @@ timers-ext@^0.1.5:
   dependencies:
     es5-ext "~0.10.46"
     next-tick "1"
-
-title-case@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/title-case/-/title-case-3.0.2.tgz#9f926a0a42071366f85470572f312c4b647773ab"
-  integrity sha512-1P5hyjEhJ9Ab0AT8Xbm0z1avwPSgRR6XtFSNCdfo6B7111TTTja+456UZ2ZPkbTbzqBwIpQxp/tazh5UvpJ+fA==
-  dependencies:
-    tslib "^1.10.0"
 
 tmp@^0.0.33:
   version "0.0.33"
