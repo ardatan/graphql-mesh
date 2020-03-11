@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "pg": "7.18.2",
-    "postgraphile": "4.5.5",
+    "postgraphile": "4.6.0",
     "@graphql-mesh/types": "0.0.11",
     "@graphql-mesh/utils": "0.0.11",
     "change-case": "4.1.1"
