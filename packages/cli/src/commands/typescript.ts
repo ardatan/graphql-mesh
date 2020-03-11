@@ -1,8 +1,8 @@
 import Maybe from 'graphql/tsutils/Maybe';
 import { RawSourcesOutput } from '@graphql-mesh/runtime';
-import { plugin as tsBasePlugin } from '@graphql-codegen/typescript';
-import { plugin as tsResolversPlugin } from '@graphql-codegen/typescript-resolvers';
-import { Types } from '@graphql-codegen/plugin-helpers';
+import * as tsBasePlugin from '@graphql-codegen/typescript';
+import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
+import { BaseVisitor } from '@graphql-codegen/visitor-plugin-common';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -11,11 +11,14 @@ import {
   GraphQLList,
   isListType,
   isNonNullType,
-  GraphQLNamedType
+  GraphQLNamedType,
+  parse,
+  printSchema
 } from 'graphql';
-import { pascalCase } from 'change-case';
+import { codegen } from '@graphql-codegen/core';
 
 const unifiedContextIdentifier = 'MeshContext';
+const baseVisitor = new BaseVisitor({}, {});
 
 function isWrapperType(
   t: GraphQLOutputType
@@ -30,7 +33,9 @@ function getBaseType(type: GraphQLOutputType): GraphQLNamedType {
     return type;
   }
 }
-function buildSignatureBasedOnRootFields(type: Maybe<GraphQLObjectType>): string[] {
+function buildSignatureBasedOnRootFields(
+  type: Maybe<GraphQLObjectType>
+): string[] {
   if (!type) {
     return [];
   }
@@ -40,11 +45,11 @@ function buildSignatureBasedOnRootFields(type: Maybe<GraphQLObjectType>): string
   return Object.keys(fields).map(fieldName => {
     const field = fields[fieldName];
     const baseType = getBaseType(field.type);
-    const argsName = `${type.name}${pascalCase(field.name)}Args`;
+    const argsName = `${type.name}${baseVisitor.convertName(field.name)}Args`;
 
     return `  ${
       field.name
-    }: (args: ${argsName}, context: ${unifiedContextIdentifier}, info: GraphQLResolveInfo) => Promise<${pascalCase(
+    }: (args: ${argsName}, context: ${unifiedContextIdentifier}, info: GraphQLResolveInfo) => Promise<${baseVisitor.convertName(
       baseType.name
     )}>`;
   });
@@ -81,59 +86,68 @@ export async function generateTsTypes(
   unifiedSchema: GraphQLSchema,
   rawSources: RawSourcesOutput
 ): Promise<string> {
-  const tsTypes = (await tsBasePlugin(
-    unifiedSchema,
-    [],
-    {}
-  )) as Types.ComplexPluginOutput;
-  const tsResolversTypes = (await tsResolversPlugin(unifiedSchema, [], {
-    useIndexSignature: true,
-    noSchemaStitching: true,
-    contextType: unifiedContextIdentifier,
-    federation: false
-  })) as Types.ComplexPluginOutput;
+  return codegen({
+    filename: 'types.ts',
+    documents: [],
+    config: {},
+    schemaAst: unifiedSchema,
+    schema: parse(printSchema(unifiedSchema)),
+    pluginMap: {
+      typescript: tsBasePlugin,
+      resolvers: tsResolversPlugin,
+      contextSdk: {
+        plugin: async () => {
+          const results = await Promise.all(
+            Object.keys(rawSources).map(async apiName => {
+              const source = rawSources[apiName];
 
-  const results = await Promise.all(
-    Object.keys(rawSources).map(async apiName => {
-      const source = rawSources[apiName];
+              return generateTypesForApi({
+                schema: source.schema,
+                name: apiName
+              });
+            })
+          );
 
-      return generateTypesForApi({
-        schema: source.schema,
-        name: apiName
-      });
-    })
-  );
+          let sdkItems: string[] = [];
+          let contextItems: string[] = [];
 
-  let sdkItems: string[] = [];
-  let contextItems: string[] = [];
+          for (const item of results) {
+            if (item) {
+              if (item.sdk) {
+                sdkItems.push(item.sdk.codeAst);
+              }
+              if (item.context) {
+                contextItems.push(item.context.codeAst);
+              }
+            }
+          }
 
-  for (const item of results) {
-    if (item) {
-      if (item.sdk) {
-        sdkItems.push(item.sdk.codeAst);
+          const contextType = `export type ${unifiedContextIdentifier} = ${results
+            .filter(r => r && r.context)
+            .map(r => r?.context?.identifier)
+            .join(' & ')};`;
+
+          return {
+            content: [...sdkItems, ...contextItems, contextType].join('\n\n')
+          };
+        }
       }
-      if (item.context) {
-        contextItems.push(item.context.codeAst);
+    },
+    plugins: [
+      {
+        typescript: {}
+      },
+      {
+        resolvers: {
+          useIndexSignature: true,
+          noSchemaStitching: true,
+          contextType: unifiedContextIdentifier,
+          federation: false
+        }
+      },
+      {
+        contextSdk: {}
       }
-    }
-  }
-
-  const contextType = `export type ${unifiedContextIdentifier} = ${results
-    .filter(r => r && r.context)
-    .map(r => r?.context?.identifier)
-    .join(' & ')};`;
-
-  return [
-    ...(tsTypes.prepend || []),
-    ...(tsResolversTypes.prepend || []),
-    tsTypes.content,
-    tsResolversTypes.content,
-    ...sdkItems,
-    ...contextItems,
-    contextType,
-    ...(tsTypes.append || []),
-    ...(tsResolversTypes.append || [])
-  ]
-    .filter(Boolean)
-    .join('\n\n');
+    ]
+  });
 }

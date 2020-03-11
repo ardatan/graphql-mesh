@@ -4,7 +4,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "mesh:serve": "graphql-mesh serve"
+    "mesh:serve": "graphql-mesh serve",
+    "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
   },
   "devDependencies": {
     "@types/node": "13.9.0",

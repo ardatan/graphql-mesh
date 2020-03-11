@@ -840,6 +840,16 @@
     "@graphql-toolkit/schema-merging" "0.9.7"
     tslib "1.10.0"
 
+"@graphql-codegen/core@1.13.0":
+  version "1.13.0"
+  resolved "https://registry.npmjs.org/@graphql-codegen/core/-/core-1.13.0.tgz#a897adee020d5f244a7edd05f8988e979721423b"
+  integrity sha512-8A4UV+n5PHHFWex0y7zuXLQgvRoKy4Y6lKHLvNx72dkqkWNIYBK5Za+AG2NZysDJffCON6L5c30hQUPmvfTssg==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.13.0"
+    "@graphql-toolkit/common" "0.9.7"
+    "@graphql-toolkit/schema-merging" "0.9.7"
+    tslib "1.11.1"
+
 "@graphql-codegen/plugin-helpers@1.12.2":
   version "1.12.2"
   resolved "https://registry.npmjs.org/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.12.2.tgz#44ffeefb21515b021f99c6e5be28699d740af560"

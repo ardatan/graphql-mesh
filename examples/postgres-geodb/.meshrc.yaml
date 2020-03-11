@@ -5,7 +5,6 @@ sources:
       name: postgraphile
     transformations:
       - type: prefix
-        includeRootOperations: true
   - name: Github
     source: https://api.github.com/graphql
     handler:
@@ -16,3 +15,11 @@ sources:
     transformations:
       - type: prefix
         includeRootOperations: true
+transformations:
+  - type: extend
+    sdl: |
+      extend type Geo_City {
+        developers(limit: Int = 10): [Github_User!]!
+      }
+additionalResolvers:
+  - ./src/mesh/additional-resolvers.ts
