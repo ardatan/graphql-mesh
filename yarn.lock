@@ -5178,14 +5178,6 @@ graphile-utils@4.6.0:
     debug "^4.1.1"
     graphql ">=0.9 <0.14 || ^14.0.2"
 
-graphql-compose@7.14.0:
-  version "7.14.0"
-  resolved "https://registry.npmjs.org/graphql-compose/-/graphql-compose-7.14.0.tgz#b811f3b5ea73014eeac2239eba4949869d9166e9"
-  integrity sha512-DFcz6FIbsgg0t9mhtRwCgJwWIcCc/ZzWsCAkwXNURTMsxjPNJkR5V2l7qja1/BAAUzCgynWlDoYhZ4L3UpXefw==
-  dependencies:
-    graphql-type-json "^0.3.1"
-    object-path "^0.11.4"
-
 graphql-extensions@^0.11.0:
   version "0.11.0"
   resolved "https://registry.npmjs.org/graphql-extensions/-/graphql-extensions-0.11.0.tgz#2923b06f7452dad186d835327974b6c3ebb9c58f"
@@ -5273,11 +5265,6 @@ graphql-type-json@^0.2.1:
   version "0.2.4"
   resolved "https://registry.npmjs.org/graphql-type-json/-/graphql-type-json-0.2.4.tgz#545af27903e40c061edd30840a272ea0a49992f9"
   integrity sha512-/tq02ayMQjrG4oDFDRLLrPk0KvJXue0nVXoItBe7uAdbNXjQUu+HYCBdAmPLQoseVzUKKMzrhq2P/sfI76ON6w==
-
-graphql-type-json@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.npmjs.org/graphql-type-json/-/graphql-type-json-0.3.1.tgz#47fca2b1fa7adc0758d165b33580d7be7a6cf548"
-  integrity sha512-1lPkUXQ2L8o+ERLzVAuc3rzc/E6pGF+6HnjihCVTK0VzR0jCuUd92FqNxoHdfILXqOn2L6b4y47TBxiPyieUVA==
 
 graphql-upload@^8.0.2:
   version "8.1.0"

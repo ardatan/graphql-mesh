@@ -8,3 +8,5 @@ sources:
           Authorization: bearer edbb871d79e845107185ccbaba142fd7e2b9c33f
     transformations:
       - type: prefix
+        includeRootOperations: true
+        
