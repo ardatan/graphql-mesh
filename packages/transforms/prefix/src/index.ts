@@ -3,9 +3,7 @@ import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 import {
   Transform,
   RenameTypes,
-  RenameObjectFields,
   RenameRootFields,
-  RenameRootTypes,
   transformSchema
 } from 'graphql-tools-fork';
 export const prefixTransform: TransformFn<YamlConfig.Prefix> = async ({
