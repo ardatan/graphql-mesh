@@ -1,18 +1,16 @@
-import { MeshHandlerLibrary } from '@graphql-mesh/types';
-import { UrlLoader } from '@graphql-toolkit/url-loader';
-import { loadSchema, LoadSchemaOptions } from '@graphql-toolkit/core';
+import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools-fork';
+import fetch from 'cross-fetch';
+import { HttpLink } from 'apollo-link-http';
 
-const loaders = [new UrlLoader()];
-
-const handler: MeshHandlerLibrary<LoadSchemaOptions> = {
+const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandlerConfig> = {
   async getMeshSource({ filePathOrUrl, config }) {
-    const remoteSchema = await loadSchema(filePathOrUrl, {
-      assumeValidSDL: true,
-      loaders,
-      sort: true,
-      convertExtensions: true,
-      commentDescriptions: true,
-      ...config
+    const link = new HttpLink({ uri: filePathOrUrl, fetch, headers: config?.headers || {} });
+    const introspection = await introspectSchema(link);
+
+    const remoteSchema = makeRemoteExecutableSchema({
+      schema: introspection,
+      link,
     });
 
     return {
