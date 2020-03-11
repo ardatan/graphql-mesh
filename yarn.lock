@@ -2300,6 +2300,11 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-13.1.4.tgz#4cfd90175a200ee9b02bd6b1cd19bc349741607e"
   integrity sha512-Lue/mlp2egZJoHXZr4LndxDAd7i/7SQYhV0EjWfb/a4/OZ6tuVwMCVPiwkU5nsEipxEf7hmkSU7Em5VQ8P5NGA==
 
+"@types/node@12.12.24":
+  version "12.12.24"
+  resolved "https://registry.npmjs.org/@types/node/-/node-12.12.24.tgz#d4606afd8cf6c609036b854360367d1b2c78931f"
+  integrity sha512-1Ciqv9pqwVtW6FsIUKSZNB82E5Cu1I2bBTj1xuIHXLe/1zYLl3956Nbhg2MzSYHVfl9/rmanjbQIb7LibfCnug==
+
 "@types/node@13.7.7":
   version "13.7.7"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.7.7.tgz#1628e6461ba8cc9b53196dfeaeec7b07fa6eea99"
@@ -9666,13 +9671,6 @@ timers-ext@^0.1.5:
   dependencies:
     es5-ext "~0.10.46"
     next-tick "1"
-
-title-case@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/title-case/-/title-case-3.0.2.tgz#9f926a0a42071366f85470572f312c4b647773ab"
-  integrity sha512-1P5hyjEhJ9Ab0AT8Xbm0z1avwPSgRR6XtFSNCdfo6B7111TTTja+456UZ2ZPkbTbzqBwIpQxp/tazh5UvpJ+fA==
-  dependencies:
-    tslib "^1.10.0"
 
 tmp@^0.0.33:
   version "0.0.33"
