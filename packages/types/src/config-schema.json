@@ -19,10 +19,10 @@
         }
       }
     },
-    "GraphQL": {
+    "GraphQLHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "GraphQL",
+      "title": "GraphQLHandler",
       "required": [
         "name"
       ],
@@ -32,15 +32,15 @@
           "description": "Handler for remote/local/third-party GraphQL schema"
         },
         "config": {
-          "$ref": "#/definitions/GraphQLConfig",
-          "description": "Configuration to pass to `openapi-to-graphql`"
+          "$ref": "#/definitions/GraphQLHandlerConfig",
+          "description": "Configuration to pass to `graphql-tools-fork`"
         }
       }
     },
-    "GraphQLConfig": {
+    "GraphQLHandlerConfig": {
       "additionalProperties": false,
       "type": "object",
-      "title": "GraphQLConfig",
+      "title": "GraphQLHandlerConfig",
       "required": [],
       "properties": {
         "headers": {
@@ -283,6 +283,10 @@
           },
           "additionalItems": false,
           "description": "List of ignored types"
+        },
+        "includeRootOperations": {
+          "type": "boolean",
+          "description": "Changes root types and changes the field names"
         }
       }
     },
@@ -332,10 +336,10 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQL, JsonSchema, Openapi, PostGraphile)",
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, JsonSchema, Openapi, PostGraphile)",
           "anyOf": [
             {
-              "$ref": "#/definitions/GraphQL"
+              "$ref": "#/definitions/GraphQLHandler"
             },
             {
               "$ref": "#/definitions/JsonSchema"

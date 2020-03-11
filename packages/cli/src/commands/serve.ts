@@ -16,6 +16,6 @@ export function serveMesh(
   });
 
   server.listen().then(({ url }) => {
-    logger.info(`🕸️ Serving GraphQL Mesh GraphiQL: ${url}`);
+    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: ${url}`);
   });
 }

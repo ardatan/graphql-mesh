@@ -19,6 +19,9 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
+    "cross-fetch": "3.0.4",
+    "apollo-link-http": "1.5.16",
+    "graphql-tools-fork": "8.9.4",
     "@graphql-mesh/types": "0.0.11"
   },
   "publishConfig": {
