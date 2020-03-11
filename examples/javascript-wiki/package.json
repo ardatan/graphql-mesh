@@ -1,17 +1,17 @@
 {
   "name": "javascript-wiki",
-  "version": "0.0.11",
+  "version": "0.0.13",
   "license": "MIT",
   "private": true,
   "scripts": {
     "mesh:serve": "graphql-mesh serve"
   },
   "dependencies": {
-    "moment": "2.24.0",
-    "@graphql-mesh/cli": "0.0.11",
-    "@graphql-mesh/runtime": "0.0.11",
-    "@graphql-mesh/extend": "0.0.11",
-    "@graphql-mesh/openapi": "0.0.11",
-    "graphql": "14.6.0"
+    "@graphql-mesh/cli": "0.0.13",
+    "@graphql-mesh/extend": "0.0.13",
+    "@graphql-mesh/openapi": "0.0.13",
+    "@graphql-mesh/runtime": "0.0.13",
+    "graphql": "14.6.0",
+    "moment": "2.24.0"
   }
 }

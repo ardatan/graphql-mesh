@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.0.11",
+  "version": "0.0.13",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -21,11 +21,11 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "pg": "7.18.2",
-    "postgraphile": "4.6.0",
-    "@graphql-mesh/types": "0.0.11",
+    "@graphql-mesh/types": "0.0.13",
     "@graphql-mesh/utils": "0.0.11",
-    "change-case": "4.1.1"
+    "change-case": "4.1.1",
+    "pg": "7.18.2",
+    "postgraphile": "4.6.0"
   },
   "publishConfig": {
     "access": "public"

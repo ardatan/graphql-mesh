@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/graphql",
-  "version": "0.0.11",
+  "version": "0.0.13",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -19,10 +19,10 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "cross-fetch": "3.0.4",
+    "@graphql-mesh/types": "0.0.13",
     "apollo-link-http": "1.5.16",
-    "graphql-tools-fork": "8.9.4",
-    "@graphql-mesh/types": "0.0.11"
+    "cross-fetch": "3.0.4",
+    "graphql-tools-fork": "8.9.4"
   },
   "publishConfig": {
     "access": "public"
