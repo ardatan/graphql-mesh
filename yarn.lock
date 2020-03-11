@@ -5217,10 +5217,10 @@ graphql-tools-fork@8.6.1:
     node-fetch "^2.6.0"
     uuid "^3.4.0"
 
-graphql-tools-fork@8.6.4:
-  version "8.6.4"
-  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-8.6.4.tgz#b625aa577e3bc99583234f2b5800562ee27d553c"
-  integrity sha512-Ik6TdKhQXTy2fJ2zPM9NEEigGWuPAVQZ8eq67wOF3yAdNfhCZ+U64i90OUH5KathDRrnY3w4Gou74sSlk5zY7w==
+graphql-tools-fork@8.9.4:
+  version "8.9.4"
+  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-8.9.4.tgz#7f1e7ab403f02f514650e2e0cfe4428e1e20c616"
+  integrity sha512-EZWoB/7+YKJTXB1YTCyzbROXnm4hYopJr2BYVLfxbKwHM87/jHN71GuIh8iBzubhldVPr4s7yCb2qDVEaXpSdA==
   dependencies:
     apollo-link "^1.2.13"
     apollo-link-http-common "^0.2.15"
@@ -9639,13 +9639,6 @@ timers-ext@^0.1.5:
   dependencies:
     es5-ext "~0.10.46"
     next-tick "1"
-
-title-case@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/title-case/-/title-case-3.0.2.tgz#9f926a0a42071366f85470572f312c4b647773ab"
-  integrity sha512-1P5hyjEhJ9Ab0AT8Xbm0z1avwPSgRR6XtFSNCdfo6B7111TTTja+456UZ2ZPkbTbzqBwIpQxp/tazh5UvpJ+fA==
-  dependencies:
-    tslib "^1.10.0"
 
 tmp@^0.0.33:
   version "0.0.33"
