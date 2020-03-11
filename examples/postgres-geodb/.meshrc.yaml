@@ -3,3 +3,23 @@ sources:
     source: postgres://postgres:docker@localhost/postgres
     handler:
       name: postgraphile
+    transformations:
+      - type: prefix
+  - name: Github
+    source: https://api.github.com/graphql
+    handler:
+      name: graphql
+      config:
+        headers:
+          Authorization: bearer edbb871d79e845107185ccbaba142fd7e2b9c33f
+    transformations:
+      - type: prefix
+        includeRootOperations: true
+transformations:
+  - type: extend
+    sdl: |
+      extend type Geo_City {
+        developers(limit: Int = 10): [Github_User!]!
+      }
+additionalResolvers:
+  - ./src/mesh/additional-resolvers.ts
