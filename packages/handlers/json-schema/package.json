@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -23,7 +23,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.13",
+    "@graphql-mesh/types": "0.0.14",
     "aggregate-error": "3.0.1",
     "change-case": "4.1.1",
     "cross-fetch": "3.0.4",
