@@ -14,12 +14,14 @@ type JsonSchemaConfig {
   typeReferences: [JsonSchemaTypeReference]
   operationHeaders: JSON
   schemaHeaders: JSON
-  operations: [JsonSchemaOperation]
+  operations: [JsonSchemaOperation!]!
 }
 
 type JsonSchemaTypeReference {
   reference: String!
-  type: String!
+  sharedType: String!
+  inputType: String!
+  outputType: String!
 }
 
 enum JsonSchemaOperationType {
@@ -29,7 +31,9 @@ enum JsonSchemaOperationType {
 
 enum JsonSchemaOperationMethod {
   GET
+  DELETE
   POST
+  PUT
 }
 
 type JsonSchemaOperation {

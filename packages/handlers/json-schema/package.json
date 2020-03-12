@@ -11,13 +11,10 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/graphql-type-json": "0.3.2",
     "@types/is-url": "1.2.28",
     "@types/jest": "25.1.4",
     "@types/js-yaml": "3.12.2",
     "@types/node": "13.9.0",
-    "@types/request": "2.48.4",
-    "@types/request-promise-native": "1.0.17",
     "@types/url-join": "4.0.0",
     "graphql": "14.6.0",
     "jest": "25.1.0",
@@ -27,14 +24,14 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.13",
+    "aggregate-error": "3.0.1",
     "change-case": "4.1.1",
     "cross-fetch": "3.0.4",
     "graphql-scalars": "1.0.6",
     "is-url": "1.2.4",
     "js-yaml": "3.13.1",
     "pascal-case": "3.1.1",
-    "request": "2.88.2",
-    "request-promise-native": "1.0.8",
+    "string-interpolation": "1.2.5",
     "url-join": "4.0.1"
   },
   "publishConfig": {

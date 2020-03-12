@@ -72,7 +72,8 @@
       "type": "object",
       "title": "JsonSchemaConfig",
       "required": [
-        "baseUrl"
+        "baseUrl",
+        "operations"
       ],
       "properties": {
         "baseUrl": {
@@ -134,9 +135,11 @@
           "type": "string",
           "enum": [
             "GET",
-            "POST"
+            "DELETE",
+            "POST",
+            "PUT"
           ],
-          "description": "Allowed values: GET, POST"
+          "description": "Allowed values: GET, DELETE, POST, PUT"
         },
         "requestSchema": {
           "type": "string"
@@ -155,13 +158,21 @@
       "title": "JsonSchemaTypeReference",
       "required": [
         "reference",
-        "type"
+        "sharedType",
+        "inputType",
+        "outputType"
       ],
       "properties": {
         "reference": {
           "type": "string"
         },
-        "type": {
+        "sharedType": {
+          "type": "string"
+        },
+        "inputType": {
+          "type": "string"
+        },
+        "outputType": {
           "type": "string"
         }
       }

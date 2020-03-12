@@ -6,6 +6,7 @@ export { YamlConfig };
 
 export type MeshSource<ContextType = any> = {
   schema: GraphQLSchema;
+  contextVariables?: string[];
   contextBuilder?: () => Promise<ContextType>;
 };
 
@@ -13,7 +14,7 @@ export type GetMeshSourceOptions<TConfig> = {
   filePathOrUrl: string;
   name: string;
   hooks: Hooks;
-  config?: TConfig;
+  config: TConfig;
 };
 
 // Handlers
