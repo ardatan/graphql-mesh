@@ -22,7 +22,7 @@
     "@graphql-mesh/types": "0.0.13",
     "apollo-link-http": "1.5.16",
     "cross-fetch": "3.0.4",
-    "graphql-tools-fork": "8.9.4"
+    "graphql-tools-fork": "8.9.6"
   },
   "publishConfig": {
     "access": "public"
