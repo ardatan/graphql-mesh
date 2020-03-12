@@ -30,7 +30,7 @@ export async function getMesh(
   execute: ExecuteMeshFn;
   schema: GraphQLSchema;
   rawSources: RawSourcesOutput;
-  contextBuilder: () => Record<string, any>;
+  contextBuilder: () => Promise<Record<string, any>>;
 }> {
   const results: RawSourcesOutput = {};
   const hooks = new Hooks();

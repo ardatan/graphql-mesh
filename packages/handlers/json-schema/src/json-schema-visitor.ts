@@ -135,15 +135,16 @@ export class JSONSchemaVisitor {
     private createFieldsMapFromProperties(objectDef: JSONSchemaTypedObjectDefinition, prefix: string, isInput: boolean) {
         const fieldMap: GraphQLInputFieldConfigMap & GraphQLFieldConfigMap<any, any> = {};
         for (const propertyName in objectDef.properties) {
-            if (propertyName.includes(':')){
-                continue;
-            }
+            const fieldName = propertyName.split(':').join('_');
             const property = objectDef.properties[propertyName];
             const type = this.visit(property, propertyName, prefix, isInput) as GraphQLSharedType;
             const isRequired = 'required' in objectDef && objectDef.required?.includes(propertyName);
-            fieldMap[propertyName] = {
+            fieldMap[fieldName] = {
                 type: isRequired ? new GraphQLNonNull(type) : type,
                 description: property.description,
+            }
+            if (fieldName !== propertyName) {
+                fieldMap[fieldName].resolve = (root: any) => root[propertyName];
             }
         }
         return fieldMap;

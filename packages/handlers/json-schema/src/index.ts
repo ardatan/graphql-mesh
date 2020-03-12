@@ -83,7 +83,7 @@ const handler: MeshHandlerLibrary<Config> = {
                 const args: GraphQLFieldConfigArgumentMap = {};
 
                 const interpolationStrings = [
-                    ...config.operationHeaders ? Object.keys(operationConfig.headers).map(headerName => config.operationHeaders![headerName]) : [],
+                    ...config.operationHeaders ? Object.keys(config.operationHeaders).map(headerName => config.operationHeaders![headerName]) : [],
                     ...operationConfig.headers ? Object.keys(operationConfig.headers).map(headerName => operationConfig.headers![headerName]) : [],
                     operationConfig.path
                 ];
