@@ -6,7 +6,7 @@ exports[`prefix should prefix all schema types when prefix is specified explicit
 }
 
 type T_User {
-  id: T_ID!
+  id: ID!
 }
 "
 `;

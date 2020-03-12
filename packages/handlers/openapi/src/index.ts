@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import isUrl from 'is-url';
 import * as yaml from 'js-yaml';
-import request from 'request-promise-native';
+import { fetch } from 'cross-fetch';
 import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
 import { Options } from 'openapi-to-graphql/lib/types/options';
@@ -30,8 +30,6 @@ const handler: MeshHandlerLibrary<Options> = {
 
     return {
       schema,
-      name,
-      source: filePathOrUrl
     };
   }
 };
@@ -44,20 +42,27 @@ function readFile(path: string): Oas3 {
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${path}' has ` +
-        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+      `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
 }
 
 async function readUrl(path: string): Promise<Oas3> {
-  if (/json$/.test(path)) {
-    return JSON.parse(await request(path));
-  } else if (/yaml$/.test(path) || /yml$/.test(path)) {
-    return yaml.safeLoad(await request(path));
+  const response = await fetch(path);
+  const contentType = response.headers.get('content-type') || '';
+  if (/json$/.test(path) || /json$/.test(contentType)) {
+    return response.json();
+  } else if (
+    /yaml$/.test(path) ||
+    /yml$/.test(path) ||
+    /yaml$/.test(contentType) ||
+    /yml$/.test(contentType)
+  ) {
+    return yaml.safeLoad(await response.text());
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure endpoint '${path}' has ` +
-        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+      `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`
     );
   }
 }

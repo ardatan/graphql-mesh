@@ -1,7 +1,11 @@
 import { GraphQLSchema } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import { SchemaComposer } from 'graphql-compose';
-
+import {
+  Transform,
+  RenameTypes,
+  RenameRootFields,
+  transformSchema
+} from 'graphql-tools-fork';
 export const prefixTransform: TransformFn<YamlConfig.Prefix> = async ({
   apiName,
   schema,
@@ -19,22 +23,27 @@ export const prefixTransform: TransformFn<YamlConfig.Prefix> = async ({
     throw new Error(`Transform 'prefix' has missing config: prefix`);
   }
 
-  const composer = new SchemaComposer(schema);
-  const excluded: string[] = [
-    schema.getQueryType()?.name,
-    schema.getMutationType()?.name,
-    schema.getSubscriptionType()?.name,
-    ...(config.ignore || [])
-  ].filter(Boolean) as string[];
-  const typeMap = schema.getTypeMap();
+  const ignoreList = config.ignore || [];
+  const transforms: Transform[] = [];
 
-  for (const typeName of Object.keys(typeMap)) {
-    if (!excluded.includes(typeName) && !typeName.startsWith('__')) {
-      composer.get(typeName).setTypeName(`${prefix}${typeName}`);
-    }
+  transforms.push(
+    new RenameTypes(typeName =>
+      ignoreList.includes(typeName) ? typeName : `${prefix}${typeName}`
+    )
+  );
+
+  if (config.includeRootOperations) {
+    transforms.push(
+      new RenameRootFields((typeName, fieldName) =>
+        ignoreList.includes(typeName) ||
+        ignoreList.includes(`${typeName}.${fieldName}`)
+          ? fieldName
+          : `${prefix}${fieldName}`
+      )
+    );
   }
 
-  return composer.buildSchema();
+  return transformSchema(schema, transforms);
 };
 
 export default prefixTransform;

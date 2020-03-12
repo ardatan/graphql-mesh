@@ -5,8 +5,6 @@ import * as YamlConfig from './config';
 export { YamlConfig };
 
 export type MeshSource<ContextType = any> = {
-  name: string;
-  source: string;
   schema: GraphQLSchema;
   contextVariables?: string[];
   contextBuilder?: () => Promise<ContextType>;

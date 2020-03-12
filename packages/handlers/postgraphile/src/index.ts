@@ -66,8 +66,6 @@ const handler: MeshHandlerLibrary<
           });
         });
       },
-      name,
-      source: filePathOrUrl
     };
   }
 };
