@@ -2,7 +2,6 @@ import Maybe from 'graphql/tsutils/Maybe';
 import { RawSourcesOutput } from '@graphql-mesh/runtime';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
-import { BaseVisitor } from '@graphql-codegen/visitor-plugin-common';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -13,12 +12,13 @@ import {
   isNonNullType,
   GraphQLNamedType,
   parse,
-  printSchema
+  printSchema,
+  NamedTypeNode,
+  Kind
 } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 
 const unifiedContextIdentifier = 'MeshContext';
-const baseVisitor = new BaseVisitor({}, {});
 
 function isWrapperType(
   t: GraphQLOutputType
@@ -33,7 +33,19 @@ function getBaseType(type: GraphQLOutputType): GraphQLNamedType {
     return type;
   }
 }
+
+class CodegenHelpers extends tsBasePlugin.TsVisitor {
+  public getTypeToUse(namedType: NamedTypeNode): string {
+    if (this.scalars[namedType.name.value]) {
+      return this._getScalar(namedType.name.value);
+    }
+
+    return this._getTypeForNode(namedType);
+  }
+}
+
 function buildSignatureBasedOnRootFields(
+  codegenHelpers: CodegenHelpers,
   type: Maybe<GraphQLObjectType>
 ): string[] {
   if (!type) {
@@ -45,23 +57,46 @@ function buildSignatureBasedOnRootFields(
   return Object.keys(fields).map(fieldName => {
     const field = fields[fieldName];
     const baseType = getBaseType(field.type);
-    const argsName = field.args && field.args.length > 0 ? `${type.name}${baseVisitor.convertName(field.name)}Args` : 'never';
+    const argsName =
+      field.args && field.args.length > 0
+        ? `${type.name}${codegenHelpers.convertName(field.name)}Args`
+        : 'never';
 
     return `  ${
       field.name
-    }: (args: ${argsName}, context: ${unifiedContextIdentifier}, info: GraphQLResolveInfo) => Promise<${baseVisitor.convertName(
-      baseType.name
+    }: (args: ${argsName}, context: ${unifiedContextIdentifier}, info: GraphQLResolveInfo) => Promise<${codegenHelpers.getTypeToUse(
+      {
+        kind: Kind.NAMED_TYPE,
+        name: {
+          kind: Kind.NAME,
+          value: baseType.name
+        }
+      }
     )}>`;
   });
 }
 
-function generateTypesForApi(options: { schema: GraphQLSchema; name: string; contextVariables: string[] }) {
+function generateTypesForApi(options: {
+  schema: GraphQLSchema;
+  name: string;
+  contextVariables: string[];
+}) {
+  const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
   const sdkIdentifier = `${options.name}Sdk`;
   const contextIdentifier = `${options.name}Context`;
   const operations = [
-    ...buildSignatureBasedOnRootFields(options.schema.getQueryType()),
-    ...buildSignatureBasedOnRootFields(options.schema.getMutationType()),
-    ...buildSignatureBasedOnRootFields(options.schema.getSubscriptionType())
+    ...buildSignatureBasedOnRootFields(
+      codegenHelpers,
+      options.schema.getQueryType()
+    ),
+    ...buildSignatureBasedOnRootFields(
+      codegenHelpers,
+      options.schema.getMutationType()
+    ),
+    ...buildSignatureBasedOnRootFields(
+      codegenHelpers,
+      options.schema.getSubscriptionType()
+    )
   ];
 
   const sdk = {
@@ -107,7 +142,7 @@ export async function generateTsTypes(
               return generateTypesForApi({
                 schema: source.schema,
                 name: apiName,
-                contextVariables: source.contextVariables || [],
+                contextVariables: source.contextVariables || []
               });
             })
           );
