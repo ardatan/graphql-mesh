@@ -32,6 +32,7 @@ export async function getMesh(
   rawSources: RawSourcesOutput;
   contextBuilder: () => Promise<Record<string, any>>;
 }> {
+  console.log('boop');
   const results: RawSourcesOutput = {};
   const hooks = new Hooks();
 
