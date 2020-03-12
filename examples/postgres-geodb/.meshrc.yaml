@@ -11,7 +11,7 @@ sources:
       name: graphql
       config:
         headers:
-          Authorization: bearer edbb871d79e845107185ccbaba142fd7e2b9c33f
+          Authorization: bearer ${GH_ACCESS_TOKEN}
     transformations:
       - type: prefix
         includeRootOperations: true

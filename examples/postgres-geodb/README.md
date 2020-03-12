@@ -1,8 +1,30 @@
-## GeoDB-Events Example
+#  ! ! ! WIP ! ! ! 
 
-This example takes two API sources based on Openapi 3 (events) and Postgres DB (GeoDB), and links between them.
+## Locations/Developers Examples
 
-It allow you to query for cities / locations, and include fields for asking for events in that place.
+This example takes two API sources and merges them together:
+
+1. Postgres GeoDB - a seed database of geo locations and their metadata (uses `postgraphile` handler)
+2. GitHub GraphQL API - to fetch information about users and developers ((uses `graphql` handler))
+
+The two schemas are connected and let you search for locations, and then fetch developers that are located in that location according to their GitHub account.
+
+You should be able to run the following query and get the linked data:
+
+```graphql
+query locationsAndDevelopers {
+  allCities(orderBy: ID_ASC, first: 10) {
+    nodes {
+      name
+      developers {
+        ... on Github_User {
+          login
+        }
+      }
+    }
+  }
+}
+```
 
 ## Getting Started
 
@@ -14,4 +36,11 @@ To do that, run the following:
 2. Install Postgres CLI: `brew upgrade postgresql` (or, you can use any of your favorite tool)
 3. Seed the DB with data: `curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql | psql -h localhost -d postgres -U postgres`
 
-Now, you can run `yarn mesh:serve` and use GraphQL language to query for your data.
+Now, to have access to the GitHub GraphQL API, start by creating a personal access token here: https://github.com/settings/tokens , and put it in an environment variable called `GH_ACCESS_TOKEN`.
+
+Then you should be able to use the `mesh:serve` script to run it:
+
+```
+GH_ACCESS_TOKEN="your token here" yarn mesh:serve
+```
+
