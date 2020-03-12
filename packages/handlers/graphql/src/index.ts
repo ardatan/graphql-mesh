@@ -23,7 +23,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandlerConfig> = {
       link,
     });
 
-    hooks.on('buildBindingFn', ({ fieldName, typeName, replaceFn, schema }) => {
+    hooks.on('buildSdkFn', ({ fieldName, typeName, replaceFn, schema }) => {
       replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
         const delegationOptions = {
           operation: typeName.toLowerCase() as any,

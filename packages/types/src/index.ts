@@ -27,17 +27,12 @@ export declare type MeshHandlerLibrary<TConfig = any, TContext = any> = {
 // Hooks
 export type AllHooks = {
   schemaReady: (schema: GraphQLSchema) => void;
-  buildBindingFn: (options: {
+  buildSdkFn: (options: {
     schema: GraphQLSchema;
     typeName: string;
     fieldName: string;
-    resolveFn: GraphQLFieldResolver<any, any>;
+    originalResolveFn?: GraphQLFieldResolver<any, any>;
     replaceFn: (fn: Function) => void;
-  }) => void;
-  generateBindingSignature: (options: {
-    schema: GraphQLSchema;
-    typeName: string;
-    fieldName: string;
   }) => void;
 };
 export class Hooks extends EventEmitter<AllHooks> {}

@@ -126,19 +126,19 @@ export function extractSdkFromResolvers(
       const fields = type.getFields();
 
       for (const [fieldName, field] of Object.entries(fields)) {
-        const resolveFn = field.resolve || (() => null);
+        const resolveFn = field.resolve;
 
-        let fn: Function = (
+        let fn: Function = resolveFn ? (
           args: any,
           context: any,
           info: GraphQLResolveInfo
-        ) => resolveFn(null, args, context, info);
+        ) => resolveFn(null, args, context, info) : () => null;
 
-        hooks.emit('buildBindingFn', {
+        hooks.emit('buildSdkFn', {
           schema,
           typeName: type.name,
           fieldName: fieldName,
-          resolveFn,
+          originalResolveFn: resolveFn,
           replaceFn: newFn => {
             if (newFn) {
               fn = newFn;
