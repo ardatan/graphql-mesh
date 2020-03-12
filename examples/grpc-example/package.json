@@ -1,0 +1,16 @@
+{
+  "name": "grpc-graphql-schema-example",
+  "version": "1.0.0",
+  "author": "Simon Liang",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "mesh:serve": "graphql-mesh serve"
+  },
+  "dependencies": {
+    "graphql": "^14.0.2",
+    "graphql-tools": "^4.0.3",
+    "graphql-yoga": "^1.16.9",
+    "grpc-graphql-schema": "^0.0.7"
+  }
+}

@@ -1,0 +1,9 @@
+sources:
+    - name: GRPC_Example
+      handler:
+        name: grpc
+        config:
+            endpoint: 'localhost:50051',
+            protoFilePath: ./grpc/proto/Example.proto
+            serviceName: 'Example',
+            packageName: 'io.xtech.example',
