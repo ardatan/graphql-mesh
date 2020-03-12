@@ -73,7 +73,7 @@ const handler: MeshHandlerLibrary<Config> = {
         await Promise.all(
             config?.operations?.map(async operationConfig => {
                 const [requestSchema, responseSchema] = await Promise.all([
-                    loadJsonSchema(operationConfig.requestSchema, config),
+                    operationConfig.requestSchema && loadJsonSchema(operationConfig.requestSchema, config),
                     loadJsonSchema(operationConfig.responseSchema, config),
                 ]);
                 operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
