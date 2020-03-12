@@ -19,7 +19,7 @@ transformations:
   - type: extend
     sdl: |
       extend type Geo_City {
-        developers(limit: Int = 10): [Github_User!]!
+        developers(limit: Int = 10): Github_SearchResultItemConnection!
       }
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts

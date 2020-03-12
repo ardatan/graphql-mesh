@@ -8,7 +8,7 @@ import {
   DocumentNode,
   parse
 } from 'graphql';
-import { MeshHandlerLibrary } from '@graphql-mesh/types';
+import { Hooks, MeshHandlerLibrary } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 
@@ -114,26 +114,40 @@ export async function resolveAdditionalResolvers(
   }, {} as IResolvers);
 }
 
-export function extractSdkFromResolvers(types: Maybe<GraphQLObjectType>[]) {
+export function extractSdkFromResolvers(
+  schema: GraphQLSchema,
+  hooks: Hooks,
+  types: Maybe<GraphQLObjectType>[]
+) {
   const sdk: Record<string, Function> = {};
 
   for (const type of types) {
     if (type) {
       const fields = type.getFields();
 
-      Object.keys(fields).forEach(fieldName => {
-        if (fields[fieldName]) {
-          const resolveFn = fields[fieldName].resolve;
+      for (const [fieldName, field] of Object.entries(fields)) {
+        const resolveFn = field.resolve || (() => null);
 
-          if (resolveFn) {
-            sdk[fieldName] = (
-              args: any,
-              context: any,
-              info: GraphQLResolveInfo
-            ) => resolveFn(null, args, context, info);
+        let fn: Function = (
+          args: any,
+          context: any,
+          info: GraphQLResolveInfo
+        ) => resolveFn(null, args, context, info);
+
+        hooks.emit('buildBindingFn', {
+          schema,
+          typeName: type.name,
+          fieldName: fieldName,
+          resolveFn,
+          replaceFn: newFn => {
+            if (newFn) {
+              fn = newFn;
+            }
           }
-        }
-      });
+        });
+
+        sdk[fieldName] = fn;
+      }
     }
   }
 

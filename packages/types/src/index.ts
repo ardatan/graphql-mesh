@@ -1,5 +1,5 @@
 import { EventEmitter } from 'tsee';
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
 import * as YamlConfig from './config';
 
 export { YamlConfig };
@@ -25,9 +25,20 @@ export declare type MeshHandlerLibrary<TConfig = any, TContext = any> = {
 };
 
 // Hooks
-// TODO: Add more hooks: on execute, on execute done, on transform, on context build
 export type AllHooks = {
   schemaReady: (schema: GraphQLSchema) => void;
+  buildBindingFn: (options: {
+    schema: GraphQLSchema;
+    typeName: string;
+    fieldName: string;
+    resolveFn: GraphQLFieldResolver<any, any>;
+    replaceFn: (fn: Function) => void;
+  }) => void;
+  generateBindingSignature: (options: {
+    schema: GraphQLSchema;
+    typeName: string;
+    fieldName: string;
+  }) => void;
 };
 export class Hooks extends EventEmitter<AllHooks> {}
 export type HooksKeys = keyof AllHooks;

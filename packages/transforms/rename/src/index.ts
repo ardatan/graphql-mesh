@@ -26,8 +26,6 @@ export const renameTransform: TransformFn<YamlConfig.Rename> = async ({
     const isRootType = rootTypes.includes(fromTypeName);
 
     if (fromTypeName !== toTypeName) {
-      console.log(`Changing type name ${fromTypeName} to ${toTypeName}`);
-
       if (isRootType) {
         transforms.push(
           new RenameRootTypes(t => (t === fromTypeName ? toTypeName : t))
@@ -40,10 +38,6 @@ export const renameTransform: TransformFn<YamlConfig.Rename> = async ({
     }
 
     if (fromFieldName && toFieldName && fromFieldName !== toFieldName) {
-      console.log(
-        `Changing field name ${fromTypeName}.${fromFieldName} to ${toFieldName}`
-      );
-
       if (isRootType) {
         transforms.push(
           new RenameRootFields((typeName, fieldName) =>
