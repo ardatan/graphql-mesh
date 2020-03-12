@@ -44,3 +44,19 @@ Then you should be able to use the `mesh:serve` script to run it:
 GH_ACCESS_TOKEN="your token here" yarn mesh:serve
 ```
 
+## Using the Generated SDK
+
+This example also generates SDK based on operations (located under `./src/test.query.graphql`). 
+
+The following command will generate the fully type-safe SDK for you:
+
+```
+GH_ACCESS_TOKEN="your token here" yarn mesh:sdk
+```
+
+You can find the code that uses the generates SDK under `./src/test.ts`, it imports for the generated code and prints the result nicely to the console. You can run it with:
+
+```
+GH_ACCESS_TOKEN="your token here" yarn test:sdk
+```
+

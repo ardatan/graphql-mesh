@@ -1,5 +1,4 @@
-import { writeFileSync } from 'fs';
-import { GraphQLSchema, execute, printSchema } from 'graphql';
+import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
 import {
@@ -10,6 +9,12 @@ import {
 } from './utils';
 import { MeshHandlerLibrary, Hooks } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
+
+export type Requester<C = {}> = <R, V>(
+  doc: DocumentNode,
+  vars?: V,
+  options?: C
+) => Promise<R>;
 
 export type RawSourcesOutput = Record<
   string,
@@ -30,6 +35,7 @@ export async function getMesh(
   execute: ExecuteMeshFn;
   schema: GraphQLSchema;
   rawSources: RawSourcesOutput;
+  sdkRequester: Requester;
   contextBuilder: () => Promise<Record<string, any>>;
 }> {
   const results: RawSourcesOutput = {};
@@ -132,7 +138,12 @@ export async function getMesh(
     return context;
   }
 
-  async function meshExecute<TData = any, TVariables = any, TContext = any, TRootValue = any>(
+  async function meshExecute<
+    TData = any,
+    TVariables = any,
+    TContext = any,
+    TRootValue = any
+  >(
     document: GraphQLOperation,
     variables: TVariables,
     context?: TContext,
@@ -144,7 +155,7 @@ export async function getMesh(
       document: ensureDocumentNode(document),
       contextValue: {
         ...meshContext,
-        ...context,
+        ...context
       },
       rootValue: rootValue || {},
       variableValues: variables,
@@ -152,10 +163,42 @@ export async function getMesh(
     });
   }
 
+  const localRequester: Requester = async <R, V>(
+    document: DocumentNode,
+    variables: V
+  ) => {
+    const executionResult = await meshExecute<R, V>(document, variables, {});
+
+    if (executionResult.data && !executionResult.errors) {
+      return executionResult.data as R;
+    } else {
+      throw new GraphQLMeshSdkError(
+        executionResult.errors as ReadonlyArray<GraphQLError>,
+        document,
+        variables,
+        executionResult.data
+      );
+    }
+  };
+
   return {
     execute: meshExecute,
     schema: unifiedSchema,
     contextBuilder: buildMeshContext,
-    rawSources: results
+    rawSources: results,
+    sdkRequester: localRequester
   };
+}
+
+export class GraphQLMeshSdkError<Data = {}, Variables = {}> extends Error {
+  constructor(
+    public errors: ReadonlyArray<GraphQLError>,
+    public document: DocumentNode,
+    public variables: Variables,
+    public data: Data
+  ) {
+    super(
+      `GraphQL Mesh SDK Failed (\${errors.length} errors): \${errors.map(e => e.message).join('\\n\\t')}`
+    );
+  }
 }

@@ -5,6 +5,7 @@ import { parseConfig, getMesh } from '@graphql-mesh/runtime';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
 import { generateTsTypes } from './commands/typescript';
+import { generateSdk } from './commands/generate-sdk';
 import { serveMesh } from './commands/serve';
 import { resolve, dirname } from 'path';
 import * as mkdirp from 'mkdirp';
@@ -21,7 +22,7 @@ const logger = createLogger({
 
 export async function graphqlMesh() {
   yargs
-    .command<{ verbose: boolean }>(
+    .command<{}>(
       'serve',
       'Serves a GraphiQLApolloServer interface to test your Mesh API',
       () => null,
@@ -29,25 +30,46 @@ export async function graphqlMesh() {
         try {
           const meshConfig = await parseConfig();
           const { schema, contextBuilder } = await getMesh(meshConfig);
-          serveMesh(logger, schema, contextBuilder);
+          await serveMesh(logger, schema, contextBuilder);
         } catch (e) {
-          logger.error('Unable to serve mesh: ', e)
+          logger.error('Unable to serve mesh: ', e);
         }
       }
     )
-    .command<{ verbose: boolean }>(
+    .command<{ operations: string[]; output: string }>(
       'generate-sdk',
       'Generates fully type-safe SDK based on unifid GraphQL schema and GraphQL operations',
-      () => null,
+      builder => {
+        builder
+          .option('operations', {
+            required: true,
+            type: 'array'
+          })
+          .option('output', {
+            required: true,
+            type: 'string'
+          });
+      },
       async args => {
-        // TODO: Generate SDK based on operations
+        const meshConfig = await parseConfig();
+        const { schema } = await getMesh(meshConfig);
+        const result = await generateSdk(schema, args.operations);
+        const outFile = resolve(process.cwd(), args.output);
+        const dirName = dirname(outFile);
+        mkdirp.sync(dirName);
+        writeFileSync(outFile, result);
       }
     )
-    .command<{ verbose: boolean, output: string }>(
+    .command<{ output: string }>(
       'typescript',
       'Generates TypeScript typings for the generated mesh',
-      () => null,
-      async (args) => {
+      builder => {
+        builder.option('output', {
+          required: true,
+          type: 'string'
+        });
+      },
+      async args => {
         const meshConfig = await parseConfig();
         const { schema, rawSources } = await getMesh(meshConfig);
         const result = await generateTsTypes(schema, rawSources);
@@ -56,12 +78,7 @@ export async function graphqlMesh() {
         mkdirp.sync(dirName);
         writeFileSync(outFile, result);
       }
-    )
-    .option('verbose', {
-      alias: 'v',
-      type: 'boolean',
-      description: 'Run with verbose logging'
-    }).argv;
+    ).argv;
 }
 
 graphqlMesh()

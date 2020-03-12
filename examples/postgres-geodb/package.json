@@ -4,10 +4,14 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "pretest-sdk": "yarn mesh:sdk",
+    "test-sdk": "ts-node src/test.ts London",
     "mesh:serve": "graphql-mesh serve",
+    "mesh:sdk": "graphql-mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
     "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
   },
   "devDependencies": {
+    "ts-node": "8.6.2",
     "@types/node": "13.9.0",
     "typescript": "3.8.3"
   },

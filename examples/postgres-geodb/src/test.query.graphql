@@ -1,0 +1,17 @@
+query citiesAndDevelopers($city: String!) {
+  allCities(orderBy: ID_ASC, first: 1, condition: { name: $city }) {
+    nodes {
+      name
+      countrycode
+      district
+      developers {
+        nodes {
+          ... on Github_User {
+            login
+            avatarUrl
+          }
+        }
+      }
+    }
+  }
+}
