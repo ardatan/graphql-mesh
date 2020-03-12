@@ -45,7 +45,7 @@ function buildSignatureBasedOnRootFields(
   return Object.keys(fields).map(fieldName => {
     const field = fields[fieldName];
     const baseType = getBaseType(field.type);
-    const argsName = `${type.name}${baseVisitor.convertName(field.name)}Args`;
+    const argsName = field.args && field.args.length > 0 ? `${type.name}${baseVisitor.convertName(field.name)}Args` : 'never';
 
     return `  ${
       field.name
