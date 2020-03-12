@@ -196,7 +196,7 @@ proto.io.xtech.example.Movie.prototype.getName = function() {
 
 /** @param {string} value */
 proto.io.xtech.example.Movie.prototype.setName = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -211,7 +211,7 @@ proto.io.xtech.example.Movie.prototype.getYear = function() {
 
 /** @param {number} value */
 proto.io.xtech.example.Movie.prototype.setYear = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -226,27 +226,27 @@ proto.io.xtech.example.Movie.prototype.getRating = function() {
 
 /** @param {number} value */
 proto.io.xtech.example.Movie.prototype.setRating = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3FloatField(this, 3, value);
 };
 
 
 /**
  * repeated string cast = 4;
- * @return {!Array.<string>}
+ * @return {!Array<string>}
  */
 proto.io.xtech.example.Movie.prototype.getCastList = function() {
-  return /** @type {!Array.<string>} */ (jspb.Message.getRepeatedField(this, 4));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
 };
 
 
-/** @param {!Array.<string>} value */
+/** @param {!Array<string>} value */
 proto.io.xtech.example.Movie.prototype.setCastList = function(value) {
   jspb.Message.setField(this, 4, value || []);
 };
 
 
 /**
- * @param {!string} value
+ * @param {string} value
  * @param {number=} opt_index
  */
 proto.io.xtech.example.Movie.prototype.addCast = function(value, opt_index) {
@@ -513,7 +513,7 @@ proto.io.xtech.example.SearchByCastInput.prototype.getCastname = function() {
 
 /** @param {string} value */
 proto.io.xtech.example.SearchByCastInput.prototype.setCastname = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -656,15 +656,15 @@ proto.io.xtech.example.MoviesResult.serializeBinaryToWriter = function(message, 
 
 /**
  * repeated Movie result = 1;
- * @return {!Array.<!proto.io.xtech.example.Movie>}
+ * @return {!Array<!proto.io.xtech.example.Movie>}
  */
 proto.io.xtech.example.MoviesResult.prototype.getResultList = function() {
-  return /** @type{!Array.<!proto.io.xtech.example.Movie>} */ (
+  return /** @type{!Array<!proto.io.xtech.example.Movie>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.io.xtech.example.Movie, 1));
 };
 
 
-/** @param {!Array.<!proto.io.xtech.example.Movie>} value */
+/** @param {!Array<!proto.io.xtech.example.Movie>} value */
 proto.io.xtech.example.MoviesResult.prototype.setResultList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 1, value);
 };

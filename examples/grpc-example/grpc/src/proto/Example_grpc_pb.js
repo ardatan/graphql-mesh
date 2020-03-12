@@ -8,7 +8,7 @@ function serialize_io_xtech_example_EmptyRequest(arg) {
   if (!(arg instanceof Example_pb.EmptyRequest)) {
     throw new Error('Expected argument of type io.xtech.example.EmptyRequest');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_io_xtech_example_EmptyRequest(buffer_arg) {
@@ -19,7 +19,7 @@ function serialize_io_xtech_example_Movie(arg) {
   if (!(arg instanceof Example_pb.Movie)) {
     throw new Error('Expected argument of type io.xtech.example.Movie');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_io_xtech_example_Movie(buffer_arg) {
@@ -30,7 +30,7 @@ function serialize_io_xtech_example_MoviesResult(arg) {
   if (!(arg instanceof Example_pb.MoviesResult)) {
     throw new Error('Expected argument of type io.xtech.example.MoviesResult');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_io_xtech_example_MoviesResult(buffer_arg) {
@@ -41,7 +41,7 @@ function serialize_io_xtech_example_SearchByCastInput(arg) {
   if (!(arg instanceof Example_pb.SearchByCastInput)) {
     throw new Error('Expected argument of type io.xtech.example.SearchByCastInput');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_io_xtech_example_SearchByCastInput(buffer_arg) {
@@ -50,8 +50,10 @@ function deserialize_io_xtech_example_SearchByCastInput(buffer_arg) {
 
 
 var ExampleService = exports.ExampleService = {
-  setMovies: {
-    path: '/io.xtech.example.Example/SetMovies',
+  // *
+// get all movies
+getMovies: {
+    path: '/io.xtech.example.Example/GetMovies',
     requestStream: false,
     responseStream: false,
     requestType: Example_pb.EmptyRequest,
@@ -61,7 +63,9 @@ var ExampleService = exports.ExampleService = {
     responseSerialize: serialize_io_xtech_example_MoviesResult,
     responseDeserialize: deserialize_io_xtech_example_MoviesResult,
   },
-  searchMoviesByCast: {
+  // *
+// search movies by the name of the cast
+searchMoviesByCast: {
     path: '/io.xtech.example.Example/SearchMoviesByCast',
     requestStream: false,
     responseStream: true,
