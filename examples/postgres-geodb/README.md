@@ -1,5 +1,3 @@
-#  ! ! ! WIP ! ! ! 
-
 ## Locations/Developers Examples
 
 This example takes two API sources and merges them together:

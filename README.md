@@ -207,14 +207,14 @@ TODO
 
 The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
 
-| Package                      | Status    | Supported Spec                             |
-| ---------------------------- | --------- | ------------------------------------------ |
-| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3                       |
-| `@graphql-mesh/graphql`      | TODO      | GraphQL endpoint (schema-stitching)        |
-| `@graphql-mesh/json-schema`  | TODO      | JSON schema structure for request/response |
-| `@graphql-mesh/postgraphile` | TODO      | Postgres database schema                   |
-| `@graphql-mesh/odata`        | TODO      | OData specification                        |
-| `@graphql-mesh/grpc`         | TODO      | gRPC and protobuf schemas                  |
+| Package                      | Status    | Supported Spec                                                     |
+| ---------------------------- | --------- | ------------------------------------------------------------------ |
+| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) |
+| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               |
+| `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
+| `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
+| `@graphql-mesh/odata`        | TODO      | OData specification                                                |
+| `@graphql-mesh/grpc`         | WIP       | gRPC and protobuf schemas                                          |
 
 </p>
 </details>
@@ -274,15 +274,17 @@ import { ApolloServer } from 'apollo-server';
 async function test() {
   // Load mesh config and get the sdkClient from it
   const meshConfig = await parseConfig();
-  const { sdkClient } = await getMesh(meshConfig);
+  const { sdkRequester } = await getMesh(meshConfig);
   // Get fully-typed SDK using the Mesh client and based on your GraphQL operations
-  const sdk = getSdk(sdkClient);
+  const sdk = getSdk(sdkRequester);
 
   // Execute `myQuery` and get a type-safe result
   // Variables and result are typed: { data?: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] } }
-  const { data, errors } = await sdk.myQuery({ someVar: 'foo' }); 
+  const { data, errors } = await sdk.myQuery({ someVar: 'foo' });
 }
 ```
+
+> You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb#using-the-generated-sdk)
 
 </p>
 </details>
