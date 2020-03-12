@@ -18,6 +18,7 @@ export type RawSourcesOutput = Record<
     sdk: Record<string, any>;
     schema: GraphQLSchema;
     context: Record<string, any>;
+    contextVariables: string[];
     handler: MeshHandlerLibrary;
   }
 >;
@@ -60,6 +61,7 @@ export async function getMesh(
       ]),
       schema: apiSchema,
       context: apiSource.context || {},
+      contextVariables: source.contextVariables || [],
       handler: apiSource.handler
     };
   }
@@ -127,16 +129,21 @@ export async function getMesh(
     return context;
   }
 
-  async function meshExecute<TData = any, TVariables = any>(
+  async function meshExecute<TData = any, TVariables = any, TContext = any, TRootValue = any>(
     document: GraphQLOperation,
-    variables: TVariables
+    variables: TVariables,
+    context?: TContext,
+    rootValue?: TRootValue
   ) {
-    const context = await buildMeshContext();
+    const meshContext = await buildMeshContext();
 
     return execute<TData>({
       document: ensureDocumentNode(document),
-      contextValue: context,
-      rootValue: {},
+      contextValue: {
+        ...meshContext,
+        ...context,
+      },
+      rootValue: rootValue || {},
       variableValues: variables,
       schema: unifiedSchema
     });

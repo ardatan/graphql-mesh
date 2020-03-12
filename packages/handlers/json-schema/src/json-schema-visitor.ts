@@ -66,11 +66,12 @@ export class JSONSchemaVisitor {
                     return this.visitObjectReference(def, isInput);
                 } else if ('name' in def) {
                     return this.visitTypedNamedObjectDefinition(def, prefix, isInput);
-                } else if ('id' in def || '$id' in def) {
-                    return this.visitTypedUnnamedObjectDefinition(def, prefix, isInput);
-                } else if ('additionalProperties' in def) {
+                }  else if ('properties' in def){
+                    return this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix, isInput);
+                } else if ('additionalProperties' in def && def.additionalProperties) {
                     return this.visitAny();
                 }
+            break;
         }
         throw new Error(`Unexpected schema definition:
         ${JSON.stringify(def, null, 2)}`);
@@ -134,6 +135,9 @@ export class JSONSchemaVisitor {
     private createFieldsMapFromProperties(objectDef: JSONSchemaTypedObjectDefinition, prefix: string, isInput: boolean) {
         const fieldMap: GraphQLInputFieldConfigMap & GraphQLFieldConfigMap<any, any> = {};
         for (const propertyName in objectDef.properties) {
+            if (propertyName.includes(':')){
+                continue;
+            }
             const property = objectDef.properties[propertyName];
             const type = this.visit(property, propertyName, prefix, isInput) as GraphQLSharedType;
             const isRequired = 'required' in objectDef && objectDef.required?.includes(propertyName);
@@ -208,8 +212,8 @@ export class JSONSchemaVisitor {
         }
         return specificType;
     }
-    visitTypedUnnamedObjectDefinition(typedUnnamedObjectDef: JSONSchemaTypedUnnamedObjectDefinition, prefix: string, isInput: boolean) {
-        const objectIdentifier = 'id' in typedUnnamedObjectDef ? typedUnnamedObjectDef.id : typedUnnamedObjectDef.$id;
+    visitTypedUnnamedObjectDefinition(typedUnnamedObjectDef: JSONSchemaTypedUnnamedObjectDefinition, propertyName: string, prefix: string, isInput: boolean) {
+        const objectIdentifier = 'id' in typedUnnamedObjectDef ? typedUnnamedObjectDef.id : '$id' in typedUnnamedObjectDef ? typedUnnamedObjectDef.$id : `${prefix}_${propertyName}`;
         const name = this.getNameFromId(objectIdentifier);
         return this.getGraphQLObjectTypeWithTypedObjectDef(typedUnnamedObjectDef, objectIdentifier, name, prefix, isInput);
     }

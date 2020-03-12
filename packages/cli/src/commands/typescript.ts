@@ -13,7 +13,7 @@ import {
   isNonNullType,
   GraphQLNamedType
 } from 'graphql';
-import { pascalCase } from 'change-case';
+import { pascalCase } from 'pascal-case';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -50,7 +50,7 @@ function buildSignatureBasedOnRootFields(type: Maybe<GraphQLObjectType>): string
   });
 }
 
-function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
+function generateTypesForApi(options: { schema: GraphQLSchema; name: string; contextVariables: string[] }) {
   const sdkIdentifier = `${options.name}Sdk`;
   const contextIdentifier = `${options.name}Context`;
   const operations = [
@@ -68,7 +68,10 @@ ${operations.join(',\n')}
 
   const context = {
     identifier: contextIdentifier,
-    codeAst: `export type ${contextIdentifier} = { ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} } };`
+    codeAst: `export type ${contextIdentifier} = { 
+      ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} }, 
+      ${options.contextVariables.map(val => `${val}?: string | number,`)}
+    };`
   };
 
   return {
@@ -99,7 +102,8 @@ export async function generateTsTypes(
 
       return generateTypesForApi({
         schema: source.schema,
-        name: apiName
+        name: apiName,
+        contextVariables: source.contextVariables || [],
       });
     })
   );
