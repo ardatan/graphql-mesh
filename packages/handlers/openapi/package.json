@@ -15,7 +15,7 @@
     "@types/is-url": "1.2.28",
     "@types/jest": "25.1.4",
     "@types/js-yaml": "3.12.2",
-    "@types/node": "13.9.0",
+    "@types/node": "13.9.1",
     "@types/request": "2.48.4",
     "@types/request-promise-native": "1.0.17",
     "graphql": "14.6.0",
