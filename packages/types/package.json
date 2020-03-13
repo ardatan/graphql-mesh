@@ -11,7 +11,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/node": "13.9.0",
+    "@types/node": "13.9.1",
     "graphql": "14.6.0",
     "graphql-to-config-schema": "0.0.6",
     "typescript": "3.8.3"
