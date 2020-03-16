@@ -200,16 +200,12 @@
       "title": "JsonSchemaTypeReference",
       "required": [
         "reference",
-        "type",
         "sharedType",
         "inputType",
         "outputType"
       ],
       "properties": {
         "reference": {
-          "type": "string"
-        },
-        "type": {
           "type": "string"
         },
         "sharedType": {
@@ -399,6 +395,9 @@
       "properties": {
         "name": {
           "type": "string"
+        },
+        "config": {
+          "type": "object"
         }
       }
     },
@@ -425,13 +424,10 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, Grpc, JsonSchema, Openapi, PostGraphile)",
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, JsonSchema, Openapi, PostGraphile, Soap)",
           "anyOf": [
             {
-              "$ref": "#/definitions/JsonSchema"
-            },
-            {
-              "$ref": "#/definitions/Grpc"
+              "$ref": "#/definitions/GraphQLHandler"
             },
             {
               "$ref": "#/definitions/JsonSchema"
