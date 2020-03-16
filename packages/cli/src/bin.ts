@@ -30,7 +30,7 @@ export async function graphqlMesh() {
         try {
           const meshConfig = await parseConfig();
           const { schema, contextBuilder } = await getMesh(meshConfig);
-          await serveMesh(logger, schema, contextBuilder);
+          await serveMesh(logger, schema, contextBuilder, meshConfig.cache);
         } catch (e) {
           logger.error('Unable to serve mesh: ', e);
         }

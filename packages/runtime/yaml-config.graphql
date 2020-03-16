@@ -11,6 +11,10 @@ type Query {
   Additional resolvers, or resolvers overrides you wish to add to the schema mesh
   """
   additionalResolvers: [String]
+  """
+  Backend cache
+  """
+  cache: Cache
 }
 
 scalar JSON
@@ -43,5 +47,9 @@ interface Transformation {
 }
 
 interface Handler {
+  name: String!
+}
+
+interface Cache {
   name: String!
 }

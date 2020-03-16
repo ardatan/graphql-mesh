@@ -7,8 +7,9 @@ import {
   applyOutputTransformations,
   ensureDocumentNode
 } from './utils';
-import { MeshHandlerLibrary, Hooks } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, Hooks, KeyValueCache } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru'
 
 export type Requester<C = {}> = <R, V>(
   doc: DocumentNode,
@@ -20,7 +21,7 @@ export type RawSourcesOutput = Record<
   string,
   {
     // TOOD: Remove globalContextBuilder and use hooks for that
-    globalContextBuilder: null | (() => Promise<any>);
+    globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
     sdk: Record<string, any>;
     schema: GraphQLSchema;
     context: Record<string, any>;
@@ -36,17 +37,19 @@ export async function getMesh(
   schema: GraphQLSchema;
   rawSources: RawSourcesOutput;
   sdkRequester: Requester;
-  contextBuilder: () => Promise<Record<string, any>>;
+  contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
+  cache?: KeyValueCache;
 }> {
   const results: RawSourcesOutput = {};
   const hooks = new Hooks();
 
-  for (const apiSource of options.sources) {
+  await Promise.all(options.sources.map(async apiSource => {
     const source = await apiSource.handler.getMeshSource({
       name: apiSource.name,
       filePathOrUrl: apiSource.source,
       config: apiSource.config,
-      hooks
+      hooks,
+      cache: options.cache || new InMemoryLRUCache(),
     });
 
     let apiSchema = source.schema;
@@ -71,7 +74,7 @@ export async function getMesh(
       contextVariables: source.contextVariables || [],
       handler: apiSource.handler
     };
-  }
+  }));
 
   const schemas = Object.keys(results).map(key => results[key].schema);
 
@@ -95,45 +98,44 @@ export async function getMesh(
 
   hooks.emit('schemaReady', unifiedSchema);
 
-  async function buildMeshContext(): Promise<Record<string, any>> {
-    const childContextObjects = await Promise.all(
+  async function buildMeshContext(initialContextValue?: any): Promise<Record<string, any>> {
+    const context: Record<string, any> = {
+      ...(initialContextValue || {}),
+    };
+    
+    await Promise.all(
       Object.keys(results).map(async apiName => {
         let globalContext = {};
-        const globalContextBuilder = results[apiName].globalContextBuilder;
+
+        const handlerRes = results[apiName];
+
+        const globalContextBuilder = handlerRes.globalContextBuilder;
 
         if (globalContextBuilder) {
-          globalContext = await globalContextBuilder();
+          globalContext = await globalContextBuilder(initialContextValue);
         }
 
-        return {
-          ...(globalContext || {}),
-          [apiName]: {
-            config: results[apiName].context || {}
+        if (globalContext) {
+          Object.assign(context, globalContext);
+        }
+
+        if (handlerRes.context) {
+          Object.assign(context, {
+            [apiName]: {
+              config: handlerRes.context || {}
+            }
+          });
+        }
+
+        if (handlerRes.sdk) {
+          if (typeof handlerRes.sdk === 'function') {
+            context[apiName].api = handlerRes.sdk(context);
+          } else if (typeof handlerRes.sdk === 'object') {
+            context[apiName].api = handlerRes.sdk;
           }
-        };
-      }, {})
-    );
-
-    const context: Record<string, any> = childContextObjects
-      .filter(Boolean)
-      .reduce((prev, obj) => {
-        return {
-          ...prev,
-          ...obj
-        };
-      }, {});
-
-    Object.keys(results).forEach(apiName => {
-      const handlerRes = results[apiName];
-
-      if (handlerRes.sdk) {
-        if (typeof handlerRes.sdk === 'function') {
-          context[apiName].api = handlerRes.sdk(context);
-        } else if (typeof handlerRes.sdk === 'object') {
-          context[apiName].api = handlerRes.sdk;
         }
-      }
-    }, {});
+      })
+    );
 
     return context;
   }
@@ -149,14 +151,11 @@ export async function getMesh(
     context?: TContext,
     rootValue?: TRootValue
   ) {
-    const meshContext = await buildMeshContext();
+    const contextValue = await buildMeshContext(context);
 
     return execute<TData>({
       document: ensureDocumentNode(document),
-      contextValue: {
-        ...meshContext,
-        ...context
-      },
+      contextValue,
       rootValue: rootValue || {},
       variableValues: variables,
       schema: unifiedSchema
@@ -186,7 +185,7 @@ export async function getMesh(
     schema: unifiedSchema,
     contextBuilder: buildMeshContext,
     rawSources: results,
-    sdkRequester: localRequester
+    sdkRequester: localRequester,
   };
 }
 

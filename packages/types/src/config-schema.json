@@ -506,6 +506,14 @@
       },
       "additionalItems": false,
       "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
+    },
+    "cache": {
+      "description": "Backend cache (Any of: InMemoryLRU)",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/InMemoryLRU"
+        }
+      ]
     }
   },
   "additionalProperties": false

@@ -7,6 +7,7 @@ import isUrl from 'is-url';
 import Interpolator from 'string-interpolation';
 import { join } from 'path';
 import AggregateError from 'aggregate-error';
+import { fetchWithCache } from './fetch-with-cache';
 
 type Config = YamlConfig.JsonSchema['config'];
 
@@ -37,7 +38,7 @@ declare global {
 }
 
 const handler: MeshHandlerLibrary<Config> = {
-    async getMeshSource({ name, config }) {
+    async getMeshSource({ name, config, cache }) {
 
         const interpolator = new Interpolator();
         const visitorCache = new JSONSchemaVisitorCache();
@@ -153,7 +154,8 @@ const handler: MeshHandlerLibrary<Config> = {
                                     throw `Unknown method ${operationConfig.method}`;
                             }
                         }
-                        const response = await fetch(urlObj.toString(), requestInit);
+                        const request = new Request(urlObj.toString(), requestInit);
+                        const response = await fetchWithCache(request, cache);
                         const responseText = await response.text();
                         let responseJson: any;
                         try {

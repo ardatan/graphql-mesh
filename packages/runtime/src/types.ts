@@ -1,11 +1,13 @@
 import { MeshHandlerLibrary, TransformFn } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
+import { KeyValueCache } from '@graphql-mesh/types';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
   transformations?: Transformation[];
   additionalResolvers?: IResolvers;
+  cache?: KeyValueCache;
 };
 
 export type Transformation<> = {
