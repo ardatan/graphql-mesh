@@ -1,0 +1,37 @@
+{
+    "name": "@graphql-mesh/cache-inmemory-lru",
+    "version": "0.0.14",
+    "license": "MIT",
+    "scripts": {
+      "test": "jest --config=../../jest.config.js",
+      "build": "tsc"
+    },
+    "peerDependencies": {
+      "graphql": "*"
+    },
+    "devDependencies": {
+      "@types/jest": "25.1.4",
+      "@types/node": "13.9.1",
+      "graphql": "14.6.0",
+      "jest": "25.1.0",
+      "ts-jest": "25.2.1",
+      "ts-node-dev": "1.0.0-pre.44",
+      "typescript": "3.8.3"
+    },
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "typescript": {
+      "definition": "dist/index.d.ts"
+    },
+    "dependencies": {
+      "@graphql-mesh/types": "0.0.14",
+      "@types/lru-cache": "5.1.0",
+      "lru-cache": "5.1.1",
+      "ts-node": "8.6.2"
+    },
+    "publishConfig": {
+      "access": "public"
+    }
+  }
+  

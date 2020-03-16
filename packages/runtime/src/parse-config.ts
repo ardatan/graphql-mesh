@@ -1,7 +1,8 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { GetMeshOptions, Transformation } from './types';
-import { getHandler, getPackage, resolveAdditionalResolvers } from './utils';
+import { GetMeshOptions } from './types';
+import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache } from './utils';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 
 export async function parseConfig(
   name = 'mesh',
@@ -19,46 +20,57 @@ export async function parseConfig(
   const results = await explorer.search(dir);
   const config = results?.config as YamlConfig.Config;
 
-  const sources = await Promise.all(
-    config.sources.map(async source => {
-      const transformations: Transformation[] = await Promise.all(
-        (source.transformations || []).map(async t => {
-          return {
-            config: t,
-            transformer: await getPackage<TransformFn>(t.type, 'transform')
-          };
-        })
-      );
-
-      return {
-        name: source.name,
-        handler: await getHandler(source.handler.name),
-        config: source.handler.config || {},
-        source: source.source,
-        context: source.context || {},
-        transformations
-      };
-    })
-  );
-
-  const transformations: Transformation[] = await Promise.all(
-    (config.transformations || []).map(async t => {
-      return {
-        config: t,
-        transformer: await getPackage<TransformFn>(t.type, 'transform')
-      };
-    })
-  );
-
-  const additionalResolvers = await resolveAdditionalResolvers(
-    dir,
-    config.additionalResolvers || []
-  );
+  const [
+    sources,
+    transformations,
+    additionalResolvers,
+    cache,
+  ] = await Promise.all([
+    Promise.all(
+      config.sources.map(async source => {
+    
+        const [
+          handler,
+          transformations
+        ] = await Promise.all([
+          getHandler(source.handler.name),
+          Promise.all((source.transformations || []).map(async t => ({
+              config: t,
+              transformer: await getPackage<TransformFn>(t.type, 'transform')
+            })))
+          ]
+        );
+  
+        return {
+          name: source.name,
+          handler,
+          config: ('config' in source.handler ? source.handler.config : {}),
+          source: source.source,
+          context: source.context || {},
+          transformations
+        };
+      })
+    ),
+    Promise.all(
+      (config.transformations || []).map(async t => {
+        return {
+          config: t,
+          transformer: await getPackage<TransformFn>(t.type, 'transform')
+        };
+      })
+    ),
+    resolveAdditionalResolvers(
+      dir,
+      config.additionalResolvers || []
+    ),
+    config.cache ? resolveCache(config.cache).then(Cache => new Cache(config.cache?.config)) : new InMemoryLRUCache(),
+  ]);
 
   return {
     sources,
     transformations,
-    additionalResolvers
+    additionalResolvers,
+    cache
   };
 }
 

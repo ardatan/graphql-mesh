@@ -49,6 +49,33 @@
         }
       }
     },
+    "InMemoryLRU": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "InMemoryLRU",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/InMemoryLRUConfig"
+        }
+      }
+    },
+    "InMemoryLRUConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "InMemoryLRUConfig",
+      "required": [],
+      "properties": {
+        "max": {
+          "type": "integer"
+        }
+      }
+    },
     "JsonSchema": {
       "additionalProperties": false,
       "type": "object",
@@ -445,6 +472,14 @@
       },
       "additionalItems": false,
       "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
+    },
+    "cache": {
+      "description": "Backend cache (Any of: InMemoryLRU)",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/InMemoryLRU"
+        }
+      ]
     }
   },
   "additionalProperties": false

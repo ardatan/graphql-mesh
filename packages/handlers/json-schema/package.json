@@ -11,6 +11,7 @@
     "graphql": "*"
   },
   "devDependencies": {
+    "@types/http-cache-semantics": "4.0.0",
     "@types/is-url": "1.2.28",
     "@types/jest": "25.1.4",
     "@types/js-yaml": "3.12.2",
@@ -28,6 +29,7 @@
     "change-case": "4.1.1",
     "cross-fetch": "3.0.4",
     "graphql-scalars": "1.0.7",
+    "http-cache-semantics": "4.1.0",
     "is-url": "1.2.4",
     "js-yaml": "3.13.1",
     "pascal-case": "3.1.1",

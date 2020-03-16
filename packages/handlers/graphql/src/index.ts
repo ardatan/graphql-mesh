@@ -2,12 +2,11 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import {
   introspectSchema,
   makeRemoteExecutableSchema,
-  defaultCreateRemoteResolver,
   delegateToSchema
 } from 'graphql-tools-fork';
 import fetch from 'cross-fetch';
 import { HttpLink } from 'apollo-link-http';
-import { SelectionSetNode, GraphQLResolveInfo, execute } from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandlerConfig> = {
   async getMeshSource({ filePathOrUrl, config, hooks }) {
