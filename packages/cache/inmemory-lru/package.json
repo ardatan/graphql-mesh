@@ -3,7 +3,7 @@
     "version": "0.0.14",
     "license": "MIT",
     "scripts": {
-      "test": "jest --config=../../jest.config.js",
+      "test": "jest --config=../../../jest.config.js",
       "build": "tsc"
     },
     "peerDependencies": {
