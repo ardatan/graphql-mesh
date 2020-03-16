@@ -200,12 +200,16 @@
       "title": "JsonSchemaTypeReference",
       "required": [
         "reference",
+        "type",
         "sharedType",
         "inputType",
         "outputType"
       ],
       "properties": {
         "reference": {
+          "type": "string"
+        },
+        "type": {
           "type": "string"
         },
         "sharedType": {
@@ -385,6 +389,19 @@
         }
       }
     },
+    "Soap": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Soap",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "Source": {
       "additionalProperties": false,
       "type": "object",
@@ -411,7 +428,7 @@
           "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, Grpc, JsonSchema, Openapi, PostGraphile)",
           "anyOf": [
             {
-              "$ref": "#/definitions/GraphQLHandler"
+              "$ref": "#/definitions/JsonSchema"
             },
             {
               "$ref": "#/definitions/Grpc"
@@ -424,6 +441,9 @@
             },
             {
               "$ref": "#/definitions/PostGraphile"
+            },
+            {
+              "$ref": "#/definitions/Soap"
             }
           ]
         },

@@ -1,0 +1,4 @@
+type Soap implements Handler {
+  name: String!
+}
+
