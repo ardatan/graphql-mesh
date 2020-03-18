@@ -1,3 +1,3 @@
-describe('graphql', () => {
+describe('grpc', () => {
   it('dummy', async () => {});
 });

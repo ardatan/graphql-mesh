@@ -5,20 +5,21 @@ import { isAbsolute, join } from 'path';
 type Options = YamlConfig.Grpc['config'];
 
 const handler: MeshHandlerLibrary<Options> = {
-    async getMeshSource({ name, config }) {
-
-        if (!config) {
-            throw new Error('Config not specified!');
-        }
-
-        config.protoFilePath = isAbsolute(config.protoFilePath) ? config.protoFilePath : join(process.cwd(), config.protoFilePath);
-        
-        const schema = await getGraphqlSchemaFromGrpc(config);
-
-        return {
-            name,
-            source: name,
-            schema,
-        };
+  async getMeshSource({ config }) {
+    if (!config) {
+      throw new Error('Config not specified!');
     }
-}
+
+    config.protoFilePath = isAbsolute(config.protoFilePath)
+      ? config.protoFilePath
+      : join(process.cwd(), config.protoFilePath);
+
+    const schema = await getGraphqlSchemaFromGrpc(config);
+
+    return {
+      schema
+    };
+  }
+};
+
+export default handler;
