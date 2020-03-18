@@ -5,8 +5,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "preserver": "yarn build",
-    "build": "bash bash/build.sh",
+    "preserver": "yarn build-server",
+    "build-server": "bash bash/build.sh",
     "server": "bash bash/server.sh",
     "mesh": "graphql-mesh serve",
     "start": "concurrently -c 'bgBlue.bold,bgMagenta.bold' 'npm:server' 'npm:mesh'"
