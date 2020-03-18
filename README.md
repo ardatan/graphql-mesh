@@ -213,8 +213,9 @@ The following APIs are supported/planned at the moment. You can easily add custo
 | `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               |
 | `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
 | `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
-| `@graphql-mesh/odata`        | TODO      | OData specification                                                |
-| `@graphql-mesh/grpc`         | WIP       | gRPC and protobuf schemas                                          |
+| `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          |
+| `@graphql-mesh/odata`        | WIP       | OData specification                                                |
+| `@graphql-mesh/soap`         | WIP       | SOAP specification                                                |
 
 </p>
 </details>
