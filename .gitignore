@@ -8,3 +8,4 @@ yarn-error.log
 temp
 *.generated.graphql
 config.ts
+ignored-demo
