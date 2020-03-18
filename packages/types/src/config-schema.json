@@ -838,13 +838,6 @@
     "sources"
   ],
   "properties": {
-    "require": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "additionalItems": false
-    },
     "sources": {
       "type": "array",
       "items": {
