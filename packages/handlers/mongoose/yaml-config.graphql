@@ -1,0 +1,10 @@
+type MongooseHandler implements Handler {
+  """
+  Handler for JSON Schema specification. Source could be a local json file, or a url to it.
+  """
+  name: String!
+  """
+  Configuration
+  """
+  config: JsonSchemaConfig
+}

@@ -5701,6 +5701,34 @@ graphile-utils@4.6.0:
     debug "^4.1.1"
     graphql ">=0.9 <0.14 || ^14.0.2"
 
+graphql-compose-connection@6.0.4:
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-6.0.4.tgz#857356e5fc4e7335bc6da62bd3bbfe9a257f00db"
+  integrity sha512-LSIdv3pqFbf+71xD3fAMRZq4GFtqHAYkLFE3RDdWWgsDaOWLuw/+5Dcva0+Di82VI0z9J98il9192bH5L4GNdw==
+
+graphql-compose-mongoose@7.3.4:
+  version "7.3.4"
+  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-7.3.4.tgz#52b7bb15730bf7151cd4a9b987402f7773410638"
+  integrity sha512-l/rnKRo3+esDOTdn10ilujvWpdmZnIH/q/lwcHjlvBfLOIAQxpi1MIL/6OMXp3cjFAFpgZxmCHDcCgJVsSn5nA==
+  dependencies:
+    object-path "^0.11.4"
+  optionalDependencies:
+    graphql-compose-connection "6.0.4"
+    graphql-compose-pagination "^6.0.3"
+
+graphql-compose-pagination@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-6.0.3.tgz#58a50c07226d055ecf01fdd5ab3f300f58598beb"
+  integrity sha512-XMiDSzLc/R13RXz2tpzWOQFTmkDZqVg6zSn3RBpoK2k9Ocg1JgfnIW3VeRw6vOG/Fm8dlWKzyBvQiicG33h8oQ==
+
+graphql-compose@7.14.0:
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.14.0.tgz#b811f3b5ea73014eeac2239eba4949869d9166e9"
+  integrity sha512-DFcz6FIbsgg0t9mhtRwCgJwWIcCc/ZzWsCAkwXNURTMsxjPNJkR5V2l7qja1/BAAUzCgynWlDoYhZ4L3UpXefw==
+  dependencies:
+    graphql-type-json "^0.3.1"
+    object-path "^0.11.4"
+
 graphql-extensions@^0.11.0:
   version "0.11.0"
   resolved "https://registry.npmjs.org/graphql-extensions/-/graphql-extensions-0.11.0.tgz#2923b06f7452dad186d835327974b6c3ebb9c58f"
@@ -5805,6 +5833,11 @@ graphql-type-json@^0.2.1:
   version "0.2.4"
   resolved "https://registry.npmjs.org/graphql-type-json/-/graphql-type-json-0.2.4.tgz#545af27903e40c061edd30840a272ea0a49992f9"
   integrity sha512-/tq02ayMQjrG4oDFDRLLrPk0KvJXue0nVXoItBe7uAdbNXjQUu+HYCBdAmPLQoseVzUKKMzrhq2P/sfI76ON6w==
+
+graphql-type-json@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.3.1.tgz#47fca2b1fa7adc0758d165b33580d7be7a6cf548"
+  integrity sha512-1lPkUXQ2L8o+ERLzVAuc3rzc/E6pGF+6HnjihCVTK0VzR0jCuUd92FqNxoHdfILXqOn2L6b4y47TBxiPyieUVA==
 
 graphql-upload@^8.0.2:
   version "8.1.0"
