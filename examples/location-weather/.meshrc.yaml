@@ -1,16 +1,16 @@
 sources:
   - name: Cities
-    source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
     handler:
       name: openapi
+      source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
       config:
         headers:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
   - name: Weather
-    source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
     context:
       apiKey: 971a693de7ff47a89127664547988be5
     handler:
+      source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
       name: openapi
 transformations:
   - type: extend

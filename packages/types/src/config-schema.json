@@ -24,7 +24,8 @@
       "type": "object",
       "title": "GraphQLHandler",
       "required": [
-        "name"
+        "name",
+        "source"
       ],
       "properties": {
         "name": {
@@ -34,6 +35,10 @@
         "config": {
           "$ref": "#/definitions/GraphQLHandlerConfig",
           "description": "Configuration to pass to `graphql-tools-fork`"
+        },
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - url endpoint"
         }
       }
     },
@@ -49,10 +54,10 @@
         }
       }
     },
-    "Grpc": {
+    "GrpcHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Grpc",
+      "title": "GrpcHandler",
       "required": [
         "name",
         "config"
@@ -62,14 +67,14 @@
           "type": "string"
         },
         "config": {
-          "$ref": "#/definitions/GrpcConfig"
+          "$ref": "#/definitions/GrpcHandlerConfig"
         }
       }
     },
-    "GrpcConfig": {
+    "GrpcHandlerConfig": {
       "additionalProperties": false,
       "type": "object",
-      "title": "GrpcConfig",
+      "title": "GrpcHandlerConfig",
       "required": [
         "endpoint",
         "protoFilePath",
@@ -96,7 +101,8 @@
       "type": "object",
       "title": "JsonSchema",
       "required": [
-        "name"
+        "name",
+        "config"
       ],
       "properties": {
         "name": {
@@ -224,7 +230,9 @@
       "type": "object",
       "title": "Openapi",
       "required": [
-        "name"
+        "name",
+        "config",
+        "source"
       ],
       "properties": {
         "name": {
@@ -234,6 +242,10 @@
         "config": {
           "$ref": "#/definitions/OpenapiConfig",
           "description": "Configuration to pass to `openapi-to-graphql`"
+        },
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         }
       }
     },
@@ -254,7 +266,8 @@
       "type": "object",
       "title": "PostGraphile",
       "required": [
-        "name"
+        "name",
+        "source"
       ],
       "properties": {
         "name": {
@@ -264,6 +277,10 @@
         "config": {
           "$ref": "#/definitions/PostGraphileConfig",
           "description": "Configuration to pass to PostGraphile"
+        },
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         }
       }
     },
@@ -385,12 +402,13 @@
         }
       }
     },
-    "Soap": {
+    "SoapHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Soap",
+      "title": "SoapHandler",
       "required": [
-        "name"
+        "name",
+        "source"
       ],
       "properties": {
         "name": {
@@ -398,6 +416,10 @@
         },
         "config": {
           "type": "object"
+        },
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         }
       }
     },
@@ -407,7 +429,6 @@
       "title": "Source",
       "required": [
         "name",
-        "source",
         "handler"
       ],
       "properties": {
@@ -415,22 +436,21 @@
           "type": "string",
           "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
         },
-        "source": {
-          "type": "string",
-          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
-        },
         "context": {
           "type": "object",
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, Grpc, JsonSchema, Openapi, PostGraphile, Soap)",
+          "discriminator": {
+            "propertyName": "name"
+          },
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, GrpcHandler, JsonSchema, Openapi, PostGraphile, SoapHandler)",
           "anyOf": [
             {
               "$ref": "#/definitions/GraphQLHandler"
             },
             {
-              "$ref": "#/definitions/Grpc"
+              "$ref": "#/definitions/GrpcHandler"
             },
             {
               "$ref": "#/definitions/JsonSchema"
@@ -442,13 +462,16 @@
               "$ref": "#/definitions/PostGraphile"
             },
             {
-              "$ref": "#/definitions/Soap"
+              "$ref": "#/definitions/SoapHandler"
             }
           ]
         },
         "transformations": {
           "type": "array",
           "items": {
+            "discriminator": {
+              "propertyName": "type"
+            },
             "description": "Any of: Extend, Prefix, Rename",
             "anyOf": [
               {
@@ -486,6 +509,9 @@
     "transformations": {
       "type": "array",
       "items": {
+        "discriminator": {
+          "propertyName": "type"
+        },
         "description": "Any of: Extend, Prefix, Rename",
         "anyOf": [
           {

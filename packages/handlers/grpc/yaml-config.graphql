@@ -1,9 +1,9 @@
-type Grpc implements Handler {
+type GrpcHandler implements Handler {
   name: String!
-  config: GrpcConfig!
+  config: GrpcHandlerConfig!
 }
 
-type GrpcConfig {
+type GrpcHandlerConfig {
   endpoint: String!
   protoFilePath: String!
   serviceName: String!

@@ -6,7 +6,7 @@ type JsonSchema implements Handler {
   """
   Configuration
   """
-  config: JsonSchemaConfig
+  config: JsonSchemaConfig!
 }
 
 type JsonSchemaConfig {

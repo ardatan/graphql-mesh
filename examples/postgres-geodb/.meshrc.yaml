@@ -1,14 +1,14 @@
 sources:
   - name: Geo
-    source: postgres://postgres:docker@localhost/postgres
     handler:
       name: postgraphile
+      source: postgres://postgres:docker@localhost/postgres
     transformations:
       - type: prefix
   - name: Github
-    source: https://api.github.com/graphql
     handler:
       name: graphql
+      source: https://api.github.com/graphql
       config:
         headers:
           Authorization: bearer ${GH_ACCESS_TOKEN}

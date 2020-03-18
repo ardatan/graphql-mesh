@@ -7,6 +7,10 @@ type GraphQLHandler implements Handler {
   Configuration to pass to `graphql-tools-fork`
   """
   config: GraphQLHandlerConfig
+  """
+  A pointer to your API source - url endpoint
+  """
+  source: String!
 }
 
 type GraphQLHandlerConfig {
