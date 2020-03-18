@@ -1,5 +1,8 @@
-type Soap implements Handler {
+type SoapHandler implements Handler {
   name: String!
   config: JSON
+  """
+  A pointer to your API source - could be a local file, remote file or url endpoint
+  """
+  source: String!
 }
-

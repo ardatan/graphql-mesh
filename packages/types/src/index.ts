@@ -10,17 +10,16 @@ export type MeshSource<ContextType = any> = {
   contextBuilder?: () => Promise<ContextType>;
 };
 
-export type GetMeshSourceOptions<TConfig> = {
-  filePathOrUrl: string;
+export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   hooks: Hooks;
-  config: TConfig;
+  handler: THandlerConfig;
 };
 
 // Handlers
-export declare type MeshHandlerLibrary<TConfig = any, TContext = any> = {
+export declare type MeshHandlerLibrary<THandlerConfig = any, TContext = any> = {
   getMeshSource: (
-    options: GetMeshSourceOptions<TConfig>
+    options: GetMeshSourceOptions<THandlerConfig>
   ) => Promise<MeshSource<TContext>>;
 };
 

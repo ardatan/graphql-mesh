@@ -7,6 +7,10 @@ type Openapi implements Handler {
   Configuration to pass to `openapi-to-graphql`
   """
   config: OpenapiConfig
+  """
+  A pointer to your API source - could be a local file, remote file or url endpoint
+  """
+  source: String!
 }
 
 type OpenapiConfig {

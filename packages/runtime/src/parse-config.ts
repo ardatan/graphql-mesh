@@ -1,5 +1,5 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { GetMeshOptions, Transformation } from './types';
+import { GetMeshOptions, Transformation, MeshResolvedSource } from './types';
 import { getHandler, getPackage, resolveAdditionalResolvers } from './utils';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 
@@ -20,7 +20,7 @@ export async function parseConfig(
   const config = results?.config as YamlConfig.Config;
 
   const sources = await Promise.all(
-    config.sources.map(async source => {
+    config.sources.map<Promise<MeshResolvedSource>>(async source => {
       const transformations: Transformation[] = await Promise.all(
         (source.transformations || []).map(async t => {
           return {
@@ -33,8 +33,7 @@ export async function parseConfig(
       return {
         name: source.name,
         handler: await getHandler(source.handler.name),
-        config: source.handler.config || {},
-        source: source.source,
+        handlerSourceObject: source.handler,
         context: source.context || {},
         transformations
       };

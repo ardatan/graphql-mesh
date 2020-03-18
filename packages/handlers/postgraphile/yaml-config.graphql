@@ -7,6 +7,10 @@ type PostGraphile implements Handler {
   Configuration to pass to PostGraphile
   """
   config: PostGraphileConfig
+  """
+  A pointer to your API source - could be a local file, remote file or url endpoint
+  """
+  source: String!
 }
 
 type PostGraphileConfig {

@@ -44,8 +44,7 @@ export async function getMesh(
   for (const apiSource of options.sources) {
     const source = await apiSource.handler.getMeshSource({
       name: apiSource.name,
-      filePathOrUrl: apiSource.source,
-      config: apiSource.config,
+      handler: apiSource.handlerSourceObject || {},
       hooks
     });
 

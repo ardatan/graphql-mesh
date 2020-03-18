@@ -5,31 +5,30 @@ import * as yaml from 'js-yaml';
 import { fetch } from 'cross-fetch';
 import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
-import { Options } from 'openapi-to-graphql/lib/types/options';
-import { MeshHandlerLibrary } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 
-const handler: MeshHandlerLibrary<Options> = {
-  async getMeshSource({ filePathOrUrl, name, config }) {
+const handler: MeshHandlerLibrary<YamlConfig.Openapi> = {
+  async getMeshSource({ handler }) {
     let spec: Oas3;
 
-    if (isUrl(filePathOrUrl)) {
-      spec = await readUrl(filePathOrUrl);
+    if (isUrl(handler.source)) {
+      spec = await readUrl(handler.source);
     } else {
-      const actualPath = filePathOrUrl.startsWith('/')
-        ? filePathOrUrl
-        : resolve(process.cwd(), filePathOrUrl);
+      const actualPath = handler.source.startsWith('/')
+        ? handler.source
+        : resolve(process.cwd(), handler.source);
 
       spec = readFile(actualPath);
     }
 
     const { schema } = await createGraphQLSchema(spec, {
-      ...(config || {}),
+      ...(handler.config || {}),
       operationIdFieldNames: true,
       viewer: false // Viewer set to false in order to force users to specify auth via config file
     });
 
     return {
-      schema,
+      schema
     };
   }
 };
@@ -42,7 +41,7 @@ function readFile(path: string): Oas3 {
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${path}' has ` +
-      `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
 }
@@ -62,7 +61,7 @@ async function readUrl(path: string): Promise<Oas3> {
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure endpoint '${path}' has ` +
-      `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`
+        `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`
     );
   }
 }

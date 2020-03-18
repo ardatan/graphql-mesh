@@ -1,4 +1,8 @@
-import { MeshHandlerLibrary, TransformFn } from '@graphql-mesh/types';
+import {
+  MeshHandlerLibrary,
+  YamlConfig,
+  TransformFn
+} from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
 
@@ -15,9 +19,8 @@ export type Transformation<> = {
 
 export type MeshResolvedSource = {
   name: string;
-  source: string;
   handler: MeshHandlerLibrary;
-  config?: Record<string, any>;
+  handlerSourceObject: YamlConfig.Source['handler'];
   context?: Record<string, any>;
   transformations?: Transformation[];
 };

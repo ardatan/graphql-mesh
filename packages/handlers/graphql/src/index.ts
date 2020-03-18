@@ -8,12 +8,12 @@ import fetch from 'cross-fetch';
 import { HttpLink } from 'apollo-link-http';
 import { GraphQLResolveInfo } from 'graphql';
 
-const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandlerConfig> = {
-  async getMeshSource({ filePathOrUrl, config, hooks }) {
+const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
+  async getMeshSource({ handler, hooks }) {
     const link = new HttpLink({
-      uri: filePathOrUrl,
+      uri: handler.source,
       fetch,
-      headers: config?.headers || {}
+      headers: handler?.config?.headers || {}
     });
     const introspection = await introspectSchema(link);
 

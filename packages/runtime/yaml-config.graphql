@@ -21,10 +21,6 @@ type Source {
   """
   name: String!
   """
-  A pointer to your API source - could be a local file, remote file or url endpoint
-  """
-  source: String!
-  """
   Custom JSON object to add to the GraphQL context, use this to inject custom fields and later use it in your custom resolver. This object will be located in the context, under an object named as the API
   """
   context: JSON
@@ -38,10 +34,10 @@ type Source {
   transformations: [Transformation]
 }
 
-interface Transformation {
+interface Transformation @discriminator(field: "type") {
   type: String!
 }
 
-interface Handler {
+interface Handler @discriminator(field: "name") {
   name: String!
 }
