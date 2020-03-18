@@ -1,5 +1,141 @@
 {
   "definitions": {
+    "ComposeWithMongooseFieldsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseFieldsOpts",
+      "required": [],
+      "properties": {
+        "only": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "remove": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "ComposeWithMongooseOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseOpts",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
+        },
+        "inputType": {
+          "$ref": "#/definitions/ComposeWithMongooseOpts"
+        },
+        "resolvers": {
+          "$ref": "#/definitions/TypeConverterResolversOpts"
+        }
+      }
+    },
+    "ComposeWithMongooseResolverOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseResolverOpts",
+      "required": [],
+      "properties": {
+        "filter": {
+          "$ref": "#/definitions/FilterHelperArgsOpts"
+        },
+        "sort": {
+          "$ref": "#/definitions/SortHelperArgsOpts"
+        },
+        "limit": {
+          "$ref": "#/definitions/LimitHelperArgsOpts"
+        },
+        "record": {
+          "$ref": "#/definitions/RecordHelperArgsOpts"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Extend": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Extend",
+      "required": [
+        "type",
+        "sdl"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to add custom SDL to the schema"
+        },
+        "sdl": {
+          "type": "string",
+          "description": "GraphQL SDL and apply to the schema"
+        }
+      }
+    },
+    "FilterHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FilterHelperArgsOpts",
+      "required": [],
+      "properties": {
+        "filterTypeName": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "onlyIndexed": {
+          "type": "boolean"
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "operators": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "removeFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
     "GraphQLHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -185,7 +321,79 @@
         }
       }
     },
-    "OpenapiHandler": {
+    "LimitHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LimitHelperArgsOpts",
+      "required": [],
+      "properties": {
+        "defaultValue": {
+          "type": "integer"
+        }
+      }
+    },
+    "MongooseConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseConfig",
+      "required": [],
+      "properties": {
+        "models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        },
+        "discriminators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "MongooseHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseHandler",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/MongooseConfig"
+        }
+      }
+    },
+    "MongooseModel": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseModel",
+      "required": [
+        "name",
+        "path"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/ComposeWithMongooseOpts"
+        }
+      }
+    },
+    "Openapi": {
       "additionalProperties": false,
       "type": "object",
       "title": "OpenapiHandler",
@@ -203,7 +411,18 @@
         }
       }
     },
-    "PostGraphileHandler": {
+    "PaginationResolverOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PaginationResolverOpts",
+      "required": [],
+      "properties": {
+        "perPage": {
+          "type": "integer"
+        }
+      }
+    },
+    "PostGraphile": {
       "additionalProperties": false,
       "type": "object",
       "title": "PostGraphileHandler",
@@ -279,6 +498,57 @@
         }
       }
     },
+    "RecordHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RecordHelperArgsOpts",
+      "required": [],
+      "properties": {
+        "recordTypeName": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "removeFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "Rename": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Rename",
+      "required": [
+        "type",
+        "config"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to apply rename of a GraphQL type"
+        },
+        "config": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "List of changes to apply"
+        }
+      }
+    },
     "RenameTransformObject": {
       "additionalProperties": false,
       "type": "object",
@@ -315,6 +585,17 @@
         }
       }
     },
+    "SortHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SortHelperArgsOpts",
+      "required": [],
+      "properties": {
+        "sortTypeName": {
+          "type": "string"
+        }
+      }
+    },
     "Source": {
       "additionalProperties": false,
       "type": "object",
@@ -341,32 +622,211 @@
           "items": {
             "$ref": "#/definitions/Transform"
           },
-          "additionalItems": false,
-          "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
-        }
-      }
-    },
-    "Transform": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Transform",
-      "required": [],
-      "properties": {
-        "extend": {
-          "type": "string",
-          "description": "GraphQL SDL and apply to the schema"
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, GrpcHandler, JsonSchema, MongooseHandler, Openapi, PostGraphile, SoapHandler)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQLHandler"
+            },
+            {
+              "$ref": "#/definitions/GrpcHandler"
+            },
+            {
+              "$ref": "#/definitions/JsonSchema"
+            },
+            {
+              "$ref": "#/definitions/MongooseHandler"
+            },
+            {
+              "$ref": "#/definitions/Openapi"
+            },
+            {
+              "$ref": "#/definitions/PostGraphile"
+            },
+            {
+              "$ref": "#/definitions/SoapHandler"
+            }
+          ]
         },
-        "prefix": {
-          "$ref": "#/definitions/PrefixTransformConfig",
-          "description": "Prefix transform"
-        },
-        "rename": {
+        "transformations": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/RenameTransformObject"
           },
           "additionalItems": false,
           "description": "Transformer to apply rename of a GraphQL type"
+        }
+      }
+    },
+    "TypeConverterResolversOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TypeConverterResolversOpts",
+      "required": [],
+      "properties": {
+        "findById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findByIds": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "count": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "connection": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "pagination": {
+          "description": "Any of: Boolean, PaginationResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/PaginationResolverOpts"
+            }
+          ]
         }
       }
     }
@@ -378,6 +838,13 @@
     "sources"
   ],
   "properties": {
+    "require": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false
+    },
     "sources": {
       "type": "array",
       "items": {
