@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package io.xtech.example;
+
+/**
+ * movie message payload
+ */
+message Movie {
+    string name = 1;
+    int32 year = 2;
+    float rating = 3;
+
+    /**
+     * list of cast
+     */
+    repeated string cast = 4;
+}
+
+message EmptyRequest {}
+
+message SearchByCastInput {
+    string castName = 1;
+}
+
+/**
+ * movie result message, contains list of movies
+ */
+message MoviesResult {
+    /**
+     * list of movies
+     */
+    repeated Movie result = 1;
+}
+
+service Example {
+    /**
+    * get all movies
+    */
+    rpc GetMovies (EmptyRequest) returns (MoviesResult) {}
+
+    /**
+    * search movies by the name of the cast
+    */
+    rpc SearchMoviesByCast (SearchByCastInput) returns (stream Movie) {}
+}
