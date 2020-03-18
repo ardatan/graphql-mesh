@@ -995,13 +995,6 @@
     pascal-case "3.1.1"
     tslib "1.11.1"
 
-"@graphql-mesh/types@0.0.13":
-  version "0.0.13"
-  resolved "https://registry.npmjs.org/@graphql-mesh/types/-/types-0.0.13.tgz#c100559388f9ac56d9fcd0dad23a3c7a9a431182"
-  integrity sha512-0eynqWnerCTs5qNHRDafV2zha8qN77lMlve8leCtwd0Nr/wFsDYbQAvmd29XawNRfs75fNbZRlbD2nYJTyLRhA==
-  dependencies:
-    tsee "1.3.0"
-
 "@graphql-mesh/utils@0.0.11":
   version "0.0.11"
   resolved "https://registry.npmjs.org/@graphql-mesh/utils/-/utils-0.0.11.tgz#536185693c61799d7c5f33fe7643d149ce5d0460"

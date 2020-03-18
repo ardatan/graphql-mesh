@@ -1,6 +1,6 @@
 {
     "name": "@graphql-mesh/grpc",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "main": "dist/index.js",
     "license": "MIT",
     "scripts": {
@@ -11,7 +11,7 @@
       "graphql": "*"
     },
     "devDependencies": {
-      "@types/node": "13.9.0",
+      "@types/node": "13.9.1",
       "graphql": "14.6.0",
       "jest": "25.1.0",
       "ts-jest": "25.2.1",
@@ -19,7 +19,7 @@
       "typescript": "3.8.3"
     },
     "dependencies": {
-      "@graphql-mesh/types": "0.0.13",
+      "@graphql-mesh/types": "0.0.14",
       "grpc-graphql-schema": "0.0.9"
     },
     "publishConfig": {
