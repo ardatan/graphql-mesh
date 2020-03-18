@@ -231,7 +231,6 @@
       "title": "Openapi",
       "required": [
         "name",
-        "config",
         "source"
       ],
       "properties": {
