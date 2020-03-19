@@ -1,9 +1,11 @@
-type Grpc implements Handler {
-  name: String!
-  config: GrpcConfig!
+extend type Handler {
+  """
+  Handler for gRPC and Protobuf schemas
+  """
+  grpc: GrpcHandler
 }
 
-type GrpcConfig {
+type GrpcHandler implements Handler {
   endpoint: String!
   protoFilePath: String!
   serviceName: String!

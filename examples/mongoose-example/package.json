@@ -1,0 +1,22 @@
+{
+    "name": "mongoose-example",
+    "version": "0.0.14",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "mesh:serve": "graphql-mesh serve"
+    },
+    "devDependencies": {
+        "@types/mongoose": "5.7.6",
+        "@types/node": "13.9.0",
+        "typescript": "3.8.3"
+    },
+    "dependencies": {
+        "@graphql-mesh/cli": "0.0.14",
+        "@graphql-mesh/mongoose": "0.0.14",
+        "@graphql-mesh/runtime": "0.0.14",
+        "mongoose": "5.9.5",
+        "graphql": "14.6.0",
+        "ts-node": "8.7.0"
+    }
+}

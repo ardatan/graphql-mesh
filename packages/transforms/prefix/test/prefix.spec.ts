@@ -20,8 +20,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        type: 'prefix',
-        prefix: 'T_'
+        value: 'T_'
       }
     });
 
@@ -34,8 +33,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        type: 'prefix',
-        prefix: 'T_'
+        value: 'T_'
       }
     });
 
@@ -48,7 +46,6 @@ describe('prefix', () => {
       schema,
       apiName: 'MyApi',
       config: {
-        type: 'prefix'
       }
     });
 
@@ -61,9 +58,8 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        prefix: 'T_',
+        value: 'T_',
         ignore: ['User'],
-        type: 'prefix'
       }
     });
 

@@ -10,18 +10,17 @@ export type MeshSource<ContextType = any> = {
   contextBuilder?: () => Promise<ContextType>;
 };
 
-export type GetMeshSourceOptions<TConfig> = {
-  filePathOrUrl: string;
+export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   hooks: Hooks;
-  config: TConfig;
+  config: THandlerConfig;
   cache: KeyValueCache;
 };
 
 // Handlers
-export declare type MeshHandlerLibrary<TConfig = any, TContext = any> = {
+export declare type MeshHandlerLibrary<THandlerConfig = any, TContext = any> = {
   getMeshSource: (
-    options: GetMeshSourceOptions<TConfig>
+    options: GetMeshSourceOptions<THandlerConfig>
   ) => Promise<MeshSource<TContext>>;
 };
 
@@ -40,7 +39,7 @@ export class Hooks extends EventEmitter<AllHooks> {}
 export type HooksKeys = keyof AllHooks;
 
 // Transform
-export type TransformFn<Config extends { type: string } = any> = (options: {
+export type TransformFn<Config = any> = (options: {
   schema: GraphQLSchema;
   config: Config;
   apiName?: string;

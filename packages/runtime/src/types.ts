@@ -1,27 +1,32 @@
-import { MeshHandlerLibrary, TransformFn } from '@graphql-mesh/types';
+import {
+  MeshHandlerLibrary,
+  YamlConfig,
+  TransformFn
+} from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
 import { KeyValueCache } from '@graphql-mesh/types';
 
+type ValuesOf<T> = T[keyof T];
+
+export type ResolvedTransform = {
+  transformFn: TransformFn;
+  config: ValuesOf<YamlConfig.Transform>;
+};
+
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
-  transformations?: Transformation[];
+  transforms?: ResolvedTransform[];
   additionalResolvers?: IResolvers;
   cache?: KeyValueCache;
 };
 
-export type Transformation<> = {
-  transformer: TransformFn;
-  config: any;
-};
-
 export type MeshResolvedSource = {
   name: string;
-  source: string;
-  handler: MeshHandlerLibrary;
-  config?: Record<string, any>;
+  handlerLibrary: MeshHandlerLibrary;
+  handlerConfig: ValuesOf<YamlConfig.Handler>;
   context?: Record<string, any>;
-  transformations?: Transformation[];
+  transforms?: ResolvedTransform[];
 };
 
 export type GraphQLOperation = DocumentNode | string;

@@ -6,15 +6,15 @@ import {
   RenameRootFields,
   transformSchema
 } from 'graphql-tools-fork';
-export const prefixTransform: TransformFn<YamlConfig.Prefix> = async ({
+export const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = async ({
   apiName,
   schema,
   config
 }): Promise<GraphQLSchema> => {
   let prefix: string | null = null;
 
-  if (config.prefix) {
-    prefix = config.prefix;
+  if (config.value) {
+    prefix = config.value;
   } else if (apiName) {
     prefix = `${apiName}_`;
   }

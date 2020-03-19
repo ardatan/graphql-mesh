@@ -4,14 +4,14 @@ import { createPostGraphileSchema } from 'postgraphile';
 import { Pool, PoolClient } from 'pg';
 
 const handler: MeshHandlerLibrary<
-  YamlConfig.PostGraphileConfig,
+  YamlConfig.PostGraphileHandler,
   { pgClient: PoolClient }
 > = {
-  async getMeshSource({ filePathOrUrl, name, config, hooks }) {
+  async getMeshSource({ config, hooks }) {
     const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
     const graphileSchema = await createPostGraphileSchema(
-      filePathOrUrl,
-      config?.schemaName || 'public',
+      config.connectionString,
+      config.schemaName || 'public',
       {
         dynamicJson: true,
         appendPlugins: [
@@ -54,7 +54,7 @@ const handler: MeshHandlerLibrary<
           const pool = new Pool(
             config?.pool
               ? { ...config?.pool }
-              : { connectionString: filePathOrUrl }
+              : { connectionString: config.connectionString }
           );
 
           pool.connect((err, client) => {
@@ -65,7 +65,7 @@ const handler: MeshHandlerLibrary<
             return resolve({ pgClient: client });
           });
         });
-      },
+      }
     };
   }
 };

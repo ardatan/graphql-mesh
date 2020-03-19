@@ -1,21 +1,119 @@
 {
   "definitions": {
-    "Extend": {
+    "ComposeWithMongooseFieldsOpts": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Extend",
-      "required": [
-        "type",
-        "sdl"
-      ],
+      "title": "ComposeWithMongooseFieldsOpts",
+      "required": [],
       "properties": {
-        "type": {
-          "type": "string",
-          "description": "Transformer to add custom SDL to the schema"
+        "only": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         },
-        "sdl": {
-          "type": "string",
-          "description": "GraphQL SDL and apply to the schema"
+        "remove": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "ComposeWithMongooseOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseOpts",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
+        },
+        "inputType": {
+          "$ref": "#/definitions/ComposeWithMongooseOpts"
+        },
+        "resolvers": {
+          "$ref": "#/definitions/TypeConverterResolversOpts"
+        }
+      }
+    },
+    "ComposeWithMongooseResolverOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseResolverOpts",
+      "required": [],
+      "properties": {
+        "filter": {
+          "$ref": "#/definitions/FilterHelperArgsOpts"
+        },
+        "sort": {
+          "$ref": "#/definitions/SortHelperArgsOpts"
+        },
+        "limit": {
+          "$ref": "#/definitions/LimitHelperArgsOpts"
+        },
+        "record": {
+          "$ref": "#/definitions/RecordHelperArgsOpts"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
+    "FilterHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FilterHelperArgsOpts",
+      "required": [],
+      "properties": {
+        "filterTypeName": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "onlyIndexed": {
+          "type": "boolean"
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "operators": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "removeFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         }
       }
     },
@@ -24,52 +122,23 @@
       "type": "object",
       "title": "GraphQLHandler",
       "required": [
-        "name"
+        "endpoint"
       ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Handler for remote/local/third-party GraphQL schema"
-        },
-        "config": {
-          "$ref": "#/definitions/GraphQLHandlerConfig",
-          "description": "Configuration to pass to `graphql-tools-fork`"
-        }
-      }
-    },
-    "GraphQLHandlerConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GraphQLHandlerConfig",
-      "required": [],
       "properties": {
         "headers": {
           "type": "object",
           "description": "JSON object representing the Headers to add to the runtime of the API calls"
-        }
-      }
-    },
-    "Grpc": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Grpc",
-      "required": [
-        "name",
-        "config"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
         },
-        "config": {
-          "$ref": "#/definitions/GrpcConfig"
+        "endpoint": {
+          "type": "string",
+          "description": "A url to your remote GraphQL endpoint"
         }
       }
     },
-    "GrpcConfig": {
+    "GrpcHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "GrpcConfig",
+      "title": "GrpcHandler",
       "required": [
         "endpoint",
         "protoFilePath",
@@ -88,6 +157,41 @@
         },
         "packageName": {
           "type": "string"
+        }
+      }
+    },
+    "Handler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Handler",
+      "required": [],
+      "properties": {
+        "graphql": {
+          "$ref": "#/definitions/GraphQLHandler",
+          "description": "Handler for remote/local/third-party GraphQL schema"
+        },
+        "grpc": {
+          "$ref": "#/definitions/GrpcHandler",
+          "description": "Handler for gRPC and Protobuf schemas"
+        },
+        "jsonSchema": {
+          "$ref": "#/definitions/JsonSchemaHandler",
+          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
+        },
+        "openapi": {
+          "$ref": "#/definitions/OpenapiHandler",
+          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
+        },
+        "postgraphile": {
+          "$ref": "#/definitions/PostGraphileHandler",
+          "description": "Handler for Postgres database, based on `postgraphile`"
+        },
+        "soap": {
+          "$ref": "#/definitions/SoapHandler",
+          "description": "Handler for SOAP"
+        },
+        "mongoose": {
+          "$ref": "#/definitions/MongooseHandler"
         }
       }
     },
@@ -118,28 +222,10 @@
         }
       }
     },
-    "JsonSchema": {
+    "JsonSchemaHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "JsonSchema",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
-        },
-        "config": {
-          "$ref": "#/definitions/JsonSchemaConfig",
-          "description": "Configuration"
-        }
-      }
-    },
-    "JsonSchemaConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "JsonSchemaConfig",
+      "title": "JsonSchemaHandler",
       "required": [
         "baseUrl",
         "operations"
@@ -246,60 +332,103 @@
         }
       }
     },
-    "Openapi": {
+    "LimitHelperArgsOpts": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Openapi",
-      "required": [
-        "name"
-      ],
+      "title": "LimitHelperArgsOpts",
+      "required": [],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
-        },
-        "config": {
-          "$ref": "#/definitions/OpenapiConfig",
-          "description": "Configuration to pass to `openapi-to-graphql`"
+        "defaultValue": {
+          "type": "integer"
         }
       }
     },
-    "OpenapiConfig": {
+    "MongooseHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "OpenapiConfig",
+      "title": "MongooseHandler",
       "required": [],
       "properties": {
+        "connectionString": {
+          "type": "string"
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        },
+        "discriminators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "MongooseModel": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseModel",
+      "required": [
+        "name",
+        "path"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/ComposeWithMongooseOpts"
+        }
+      }
+    },
+    "OpenapiHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OpenapiHandler",
+      "required": [
+        "source"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
+        },
         "headers": {
           "type": "object",
           "description": "JSON object representing the Headers to add to the runtime of the API calls"
         }
       }
     },
-    "PostGraphile": {
+    "PaginationResolverOpts": {
       "additionalProperties": false,
       "type": "object",
-      "title": "PostGraphile",
-      "required": [
-        "name"
-      ],
+      "title": "PaginationResolverOpts",
+      "required": [],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Handler for Postgres, based on PostGraphile."
-        },
-        "config": {
-          "$ref": "#/definitions/PostGraphileConfig",
-          "description": "Configuration to pass to PostGraphile"
+        "perPage": {
+          "type": "integer"
         }
       }
     },
-    "PostGraphileConfig": {
+    "PostGraphileHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "PostGraphileConfig",
-      "required": [],
+      "title": "PostGraphileHandler",
+      "required": [
+        "connectionString"
+      ],
       "properties": {
+        "connectionString": {
+          "type": "string",
+          "description": "A connection string to your Postgres database"
+        },
         "schemaName": {
           "type": "array",
           "items": {
@@ -340,19 +469,13 @@
         }
       }
     },
-    "Prefix": {
+    "PrefixTransformConfig": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Prefix",
-      "required": [
-        "type"
-      ],
+      "title": "PrefixTransformConfig",
+      "required": [],
       "properties": {
-        "type": {
-          "type": "string",
-          "description": "Transformer to add prefix to the GraphQL types and operations."
-        },
-        "prefix": {
+        "value": {
           "type": "string",
           "description": "The prefix to apply to the schema types. By default it's the API name."
         },
@@ -370,26 +493,31 @@
         }
       }
     },
-    "Rename": {
+    "RecordHelperArgsOpts": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Rename",
-      "required": [
-        "type",
-        "config"
-      ],
+      "title": "RecordHelperArgsOpts",
+      "required": [],
       "properties": {
-        "type": {
-          "type": "string",
-          "description": "Transformer to apply rename of a GraphQL type"
+        "recordTypeName": {
+          "type": "string"
         },
-        "config": {
+        "isRequired": {
+          "type": "boolean"
+        },
+        "removeFields": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/RenameTransformObject"
+            "type": "string"
           },
-          "additionalItems": false,
-          "description": "List of changes to apply"
+          "additionalItems": false
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         }
       }
     },
@@ -412,19 +540,31 @@
         }
       }
     },
-    "Soap": {
+    "SoapHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Soap",
+      "title": "SoapHandler",
       "required": [
-        "name"
+        "wsdl"
       ],
       "properties": {
-        "name": {
-          "type": "string"
+        "wsdl": {
+          "type": "string",
+          "description": "A url to your WSDL"
         },
         "config": {
           "type": "object"
+        }
+      }
+    },
+    "SortHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SortHelperArgsOpts",
+      "required": [],
+      "properties": {
+        "sortTypeName": {
+          "type": "string"
         }
       }
     },
@@ -434,7 +574,6 @@
       "title": "Source",
       "required": [
         "name",
-        "source",
         "handler"
       ],
       "properties": {
@@ -442,55 +581,218 @@
           "type": "string",
           "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
         },
-        "source": {
-          "type": "string",
-          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
-        },
         "context": {
           "type": "object",
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, Grpc, JsonSchema, Openapi, PostGraphile, Soap)",
+          "$ref": "#/definitions/Handler",
+          "description": "Point to the handler you wish to use, it can either be a predefined handler, or a custom"
+        },
+        "transforms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Transform"
+          },
+          "additionalItems": false,
+          "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
+        }
+      }
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Transform",
+      "required": [],
+      "properties": {
+        "extend": {
+          "type": "string",
+          "description": "GraphQL SDL and apply to the schema"
+        },
+        "prefix": {
+          "$ref": "#/definitions/PrefixTransformConfig",
+          "description": "Prefix transform"
+        },
+        "rename": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply rename of a GraphQL type"
+        }
+      }
+    },
+    "TypeConverterResolversOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TypeConverterResolversOpts",
+      "required": [],
+      "properties": {
+        "findById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
           "anyOf": [
             {
-              "$ref": "#/definitions/GraphQLHandler"
+              "type": "boolean"
             },
             {
-              "$ref": "#/definitions/Grpc"
-            },
-            {
-              "$ref": "#/definitions/JsonSchema"
-            },
-            {
-              "$ref": "#/definitions/Openapi"
-            },
-            {
-              "$ref": "#/definitions/PostGraphile"
-            },
-            {
-              "$ref": "#/definitions/Soap"
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
             }
           ]
         },
-        "transformations": {
-          "type": "array",
-          "items": {
-            "description": "Any of: Extend, Prefix, Rename",
-            "anyOf": [
-              {
-                "$ref": "#/definitions/Extend"
-              },
-              {
-                "$ref": "#/definitions/Prefix"
-              },
-              {
-                "$ref": "#/definitions/Rename"
-              }
-            ]
-          },
-          "additionalItems": false,
-          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources (Any of: Extend, Prefix, Rename)"
+        "findByIds": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "count": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "connection": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "pagination": {
+          "description": "Any of: Boolean, PaginationResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/PaginationResolverOpts"
+            }
+          ]
         }
       }
     }
@@ -510,24 +812,13 @@
       "additionalItems": false,
       "description": "Defines the list of your external data sources for your API mesh"
     },
-    "transformations": {
+    "transforms": {
       "type": "array",
       "items": {
-        "description": "Any of: Extend, Prefix, Rename",
-        "anyOf": [
-          {
-            "$ref": "#/definitions/Extend"
-          },
-          {
-            "$ref": "#/definitions/Prefix"
-          },
-          {
-            "$ref": "#/definitions/Rename"
-          }
-        ]
+        "$ref": "#/definitions/Transform"
       },
       "additionalItems": false,
-      "description": "Transformations to apply to the unified mesh schema (Any of: Extend, Prefix, Rename)"
+      "description": "Transform to apply to the unified mesh schema"
     },
     "additionalResolvers": {
       "type": "array",

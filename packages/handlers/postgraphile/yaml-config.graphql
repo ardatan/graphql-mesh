@@ -1,15 +1,15 @@
-type PostGraphile implements Handler {
+extend type Handler {
   """
-  Handler for Postgres, based on PostGraphile.
+  Handler for Postgres database, based on `postgraphile`
   """
-  name: String!
-  """
-  Configuration to pass to PostGraphile
-  """
-  config: PostGraphileConfig
+  postgraphile: PostGraphileHandler
 }
 
-type PostGraphileConfig {
+type PostGraphileHandler {
+  """
+  A connection string to your Postgres database
+  """
+  connectionString: String!
   """
   An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema.
   """

@@ -1,5 +1,14 @@
-type Soap implements Handler {
-  name: String!
-  config: JSON
+extend type Handler {
+  """
+  Handler for SOAP
+  """
+  soap: SoapHandler
 }
 
+type SoapHandler {
+  """
+  A url to your WSDL
+  """
+  wsdl: String!
+  config: JSON
+}

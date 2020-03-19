@@ -1,17 +1,17 @@
-type GraphQLHandler implements Handler {
+extend type Handler {
   """
   Handler for remote/local/third-party GraphQL schema
   """
-  name: String!
-  """
-  Configuration to pass to `graphql-tools-fork`
-  """
-  config: GraphQLHandlerConfig
+  graphql: GraphQLHandler
 }
 
-type GraphQLHandlerConfig {
+type GraphQLHandler {
   """
   JSON object representing the Headers to add to the runtime of the API calls
   """
   headers: JSON
+  """
+  A url to your remote GraphQL endpoint
+  """
+  endpoint: String!
 }

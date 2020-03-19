@@ -1,0 +1,94 @@
+extend type Handler {
+  mongoose: MongooseHandler
+}
+
+type MongooseHandler {
+  connectionString: String
+  models: [MongooseModel]
+  discriminators: [MongooseModel]
+}
+
+type MongooseModel {
+  name: String!
+  path: String!
+  options: ComposeWithMongooseOpts
+}
+
+type ComposeWithMongooseOpts {
+  name: String
+  description: String
+  fields: ComposeWithMongooseFieldsOpts
+  inputType: ComposeWithMongooseOpts
+  resolvers: TypeConverterResolversOpts
+}
+
+type ComposeWithMongooseFieldsOpts {
+  only: [String]
+  remove: [String]
+  required: [String]
+}
+
+union TypeConverterResolversFlag = Boolean | TypeConverterResolversOpts
+
+type TypeConverterResolversOpts {
+  findById: ComposeWithMongooseResolverFlag
+  findByIds: ComposeWithMongooseResolverFlag
+  findOne: ComposeWithMongooseResolverFlag
+  findMany: ComposeWithMongooseResolverFlag
+  updateById: ComposeWithMongooseResolverFlag
+  updateOne: ComposeWithMongooseResolverFlag
+  updateMany: ComposeWithMongooseResolverFlag
+  removeById: ComposeWithMongooseResolverFlag
+  removeOne: ComposeWithMongooseResolverFlag
+  removeMany: ComposeWithMongooseResolverFlag
+  createOne: ComposeWithMongooseResolverFlag
+  createMany: ComposeWithMongooseResolverFlag
+  count: ComposeWithMongooseResolverFlag
+  connection: ConnectionSortMapFlag
+  pagination: PaginationResolverFlag
+}
+
+union ComposeWithMongooseResolverFlag =
+    Boolean
+  | ComposeWithMongooseResolverOpts
+
+type ComposeWithMongooseResolverOpts {
+  filter: FilterHelperArgsOpts
+  sort: SortHelperArgsOpts
+  limit: LimitHelperArgsOpts
+  record: RecordHelperArgsOpts
+  skip: Boolean
+}
+
+type FilterHelperArgsOpts {
+  filterTypeName: String
+  isRequired: Boolean
+  onlyIndexed: Boolean
+  requiredFields: [String]
+  operators: FilterOperatorsFlag
+  removeFields: [String]
+}
+
+union FilterOperatorsFlag = Boolean | JSON
+
+type SortHelperArgsOpts {
+  sortTypeName: String
+}
+
+type LimitHelperArgsOpts {
+  defaultValue: Int
+}
+
+type RecordHelperArgsOpts {
+  recordTypeName: String
+  isRequired: Boolean
+  removeFields: [String]
+  requiredFields: [String]
+}
+
+union ConnectionSortMapFlag = Boolean | JSON
+union PaginationResolverFlag = Boolean | PaginationResolverOpts
+
+type PaginationResolverOpts {
+  perPage: Int
+}

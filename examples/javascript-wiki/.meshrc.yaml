@@ -1,11 +1,10 @@
 sources:
   - name: Wiki
-    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
     handler:
-      name: openapi
-transformations:
-  - type: extend
-    sdl: |
+      openapi:
+        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+transforms:
+  - extend: |
       extend type Query {
         viewsInPastMonth(project: String!): Float!
       }

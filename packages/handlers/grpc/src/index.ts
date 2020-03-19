@@ -2,9 +2,7 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { getGraphqlSchemaFromGrpc } from 'grpc-graphql-schema';
 import { isAbsolute, join } from 'path';
 
-type Options = YamlConfig.Grpc['config'];
-
-const handler: MeshHandlerLibrary<Options> = {
+const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
   async getMeshSource({ config }) {
     if (!config) {
       throw new Error('Config not specified!');
