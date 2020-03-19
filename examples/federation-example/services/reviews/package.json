@@ -1,5 +1,8 @@
 {
   "name": "reviews",
+  "version": "0.0.14",
+  "license": "MIT",
+  "private": true,
   "scripts": {
     "start": "node index.js"
   },
