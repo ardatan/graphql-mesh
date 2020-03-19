@@ -75,7 +75,9 @@ export async function getMesh(
   const schemas = Object.keys(results).map(key => results[key].schema);
 
   let unifiedSchema = mergeSchemas({
-    schemas
+    schemas,
+    assumeValid: true,
+    assumeValidSDL: true,
   });
 
   if (options.transforms && options.transforms.length > 0) {

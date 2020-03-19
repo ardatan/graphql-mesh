@@ -15,7 +15,7 @@
   },
   "workspaces": [
     "./packages/**/*",
-    "./examples/*"
+    "./examples/**/*"
   ],
   "name": "graphql-mesh",
   "resolutions": {
