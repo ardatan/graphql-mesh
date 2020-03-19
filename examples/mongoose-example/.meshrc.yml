@@ -1,10 +1,8 @@
 sources:
-    - name: Mongoose
-      handler:
-        name: mongoose
+  - name: Mongoose
+    handler:
+      mongoose:
         source: mongodb://localhost:27017/test
-        config:
-            models:
-                - name: User
-                  path: ./src/models.ts#User
-
+        models:
+          - name: User
+            path: ./src/models.ts#User
