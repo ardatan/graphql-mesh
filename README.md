@@ -214,7 +214,8 @@ The following APIs are supported/planned at the moment. You can easily add custo
 | `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
 | `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
 | `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          |
-| `@graphql-mesh/soap`         | Available       | SOAP specification                                                |
+| `@graphql-mesh/soap`         | Available | SOAP specification                                                 |
+| `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        |
 | `@graphql-mesh/odata`        | WIP       | OData specification                                                |
 
 </p>
