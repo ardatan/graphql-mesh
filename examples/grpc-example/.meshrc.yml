@@ -1,8 +1,7 @@
 sources:
-  - name: GRPC_Example
+  - name: Example
     handler:
-      name: grpc
-      config:
+      grpc:
         endpoint: localhost:50051
         protoFilePath: proto/Example.proto
         serviceName: Example

@@ -4,9 +4,9 @@ type Query {
   """
   sources: [Source!]!
   """
-  Transformations to apply to the unified mesh schema
+  Transform to apply to the unified mesh schema
   """
-  transformations: [Transformation]
+  transforms: [Transform]
   """
   Additional resolvers, or resolvers overrides you wish to add to the schema mesh
   """
@@ -25,19 +25,14 @@ type Source {
   """
   context: JSON
   """
-  A path to a local file, or a node module name, that handles the conversion of the API source specification
+  Point to the handler you wish to use, it can either be a predefined handler, or a custom
   """
   handler: Handler!
   """
-  List of transformations to apply to the current API source, before unifying it with the rest of the sources
+  List of transforms to apply to the current API source, before unifying it with the rest of the sources
   """
-  transformations: [Transformation]
+  transforms: [Transform]
 }
 
-interface Transformation @discriminator(field: "type") {
-  type: String!
-}
-
-interface Handler @discriminator(field: "name") {
-  name: String!
-}
+type Transform
+type Handler

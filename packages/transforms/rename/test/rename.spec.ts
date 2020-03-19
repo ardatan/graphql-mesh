@@ -15,15 +15,12 @@ describe('rename', () => {
   it('should change the name of a type', async () => {
     const newSchema = await renameTransform({
       schema,
-      config: {
-        type: '',
-        config: [
-          {
-            from: 'User',
-            to: 'MyUser'
-          }
-        ]
-      }
+      config: [
+        {
+          from: 'User',
+          to: 'MyUser'
+        }
+      ]
     });
 
     expect(newSchema.getType('User')).toBeUndefined();

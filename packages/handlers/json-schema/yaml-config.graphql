@@ -1,15 +1,11 @@
-type JsonSchema implements Handler {
+extend type Handler {
   """
   Handler for JSON Schema specification. Source could be a local json file, or a url to it.
   """
-  name: String!
-  """
-  Configuration
-  """
-  config: JsonSchemaConfig!
+  jsonSchema: JsonSchemaHandler
 }
 
-type JsonSchemaConfig {
+type JsonSchemaHandler {
   baseUrl: String!
   typeReferences: [JsonSchemaTypeReference]
   operationHeaders: JSON

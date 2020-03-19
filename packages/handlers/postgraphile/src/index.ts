@@ -4,14 +4,14 @@ import { createPostGraphileSchema } from 'postgraphile';
 import { Pool, PoolClient } from 'pg';
 
 const handler: MeshHandlerLibrary<
-  YamlConfig.PostGraphile,
+  YamlConfig.PostGraphileHandler,
   { pgClient: PoolClient }
 > = {
-  async getMeshSource({ handler, hooks }) {
+  async getMeshSource({ config, hooks }) {
     const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
     const graphileSchema = await createPostGraphileSchema(
-      handler.source,
-      handler.config?.schemaName || 'public',
+      config.connectionString,
+      config.schemaName || 'public',
       {
         dynamicJson: true,
         appendPlugins: [
@@ -52,9 +52,9 @@ const handler: MeshHandlerLibrary<
         return new Promise((resolve, reject) => {
           // TOOD: Clean this pool after context is no longer relevant, probably we'll do it with a hook
           const pool = new Pool(
-            handler.config?.pool
-              ? { ...handler.config?.pool }
-              : { connectionString: handler.source }
+            config?.pool
+              ? { ...config?.pool }
+              : { connectionString: config.connectionString }
           );
 
           pool.connect((err, client) => {

@@ -1,56 +1,20 @@
 {
   "definitions": {
-    "Extend": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Extend",
-      "required": [
-        "type",
-        "sdl"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "Transformer to add custom SDL to the schema"
-        },
-        "sdl": {
-          "type": "string",
-          "description": "GraphQL SDL and apply to the schema"
-        }
-      }
-    },
     "GraphQLHandler": {
       "additionalProperties": false,
       "type": "object",
       "title": "GraphQLHandler",
       "required": [
-        "name",
-        "source"
+        "endpoint"
       ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Handler for remote/local/third-party GraphQL schema"
-        },
-        "config": {
-          "$ref": "#/definitions/GraphQLHandlerConfig",
-          "description": "Configuration to pass to `graphql-tools-fork`"
-        },
-        "source": {
-          "type": "string",
-          "description": "A pointer to your API source - url endpoint"
-        }
-      }
-    },
-    "GraphQLHandlerConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GraphQLHandlerConfig",
-      "required": [],
       "properties": {
         "headers": {
           "type": "object",
           "description": "JSON object representing the Headers to add to the runtime of the API calls"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "A url to your remote GraphQL endpoint"
         }
       }
     },
@@ -58,23 +22,6 @@
       "additionalProperties": false,
       "type": "object",
       "title": "GrpcHandler",
-      "required": [
-        "name",
-        "config"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "config": {
-          "$ref": "#/definitions/GrpcHandlerConfig"
-        }
-      }
-    },
-    "GrpcHandlerConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GrpcHandlerConfig",
       "required": [
         "endpoint",
         "protoFilePath",
@@ -96,29 +43,42 @@
         }
       }
     },
-    "JsonSchema": {
+    "Handler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "JsonSchema",
-      "required": [
-        "name",
-        "config"
-      ],
+      "title": "Handler",
+      "required": [],
       "properties": {
-        "name": {
-          "type": "string",
+        "graphql": {
+          "$ref": "#/definitions/GraphQLHandler",
+          "description": "Handler for remote/local/third-party GraphQL schema"
+        },
+        "grpc": {
+          "$ref": "#/definitions/GrpcHandler",
+          "description": "Handler for gRPC and Protobuf schemas"
+        },
+        "jsonSchema": {
+          "$ref": "#/definitions/JsonSchemaHandler",
           "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
         },
-        "config": {
-          "$ref": "#/definitions/JsonSchemaConfig",
-          "description": "Configuration"
+        "openapi": {
+          "$ref": "#/definitions/OpenapiHandler",
+          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
+        },
+        "postgraphile": {
+          "$ref": "#/definitions/PostGraphileHandler",
+          "description": "Handler for Postgres database, based on `postgraphile`"
+        },
+        "soap": {
+          "$ref": "#/definitions/SoapHandler",
+          "description": "Handler for SOAP"
         }
       }
     },
-    "JsonSchemaConfig": {
+    "JsonSchemaHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "JsonSchemaConfig",
+      "title": "JsonSchemaHandler",
       "required": [
         "baseUrl",
         "operations"
@@ -225,70 +185,36 @@
         }
       }
     },
-    "Openapi": {
+    "OpenapiHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Openapi",
+      "title": "OpenapiHandler",
       "required": [
-        "name",
         "source"
       ],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
-        },
-        "config": {
-          "$ref": "#/definitions/OpenapiConfig",
-          "description": "Configuration to pass to `openapi-to-graphql`"
-        },
         "source": {
           "type": "string",
           "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
-        }
-      }
-    },
-    "OpenapiConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "OpenapiConfig",
-      "required": [],
-      "properties": {
+        },
         "headers": {
           "type": "object",
           "description": "JSON object representing the Headers to add to the runtime of the API calls"
         }
       }
     },
-    "PostGraphile": {
+    "PostGraphileHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "PostGraphile",
+      "title": "PostGraphileHandler",
       "required": [
-        "name",
-        "source"
+        "connectionString"
       ],
       "properties": {
-        "name": {
+        "connectionString": {
           "type": "string",
-          "description": "Handler for Postgres, based on PostGraphile."
+          "description": "A connection string to your Postgres database"
         },
-        "config": {
-          "$ref": "#/definitions/PostGraphileConfig",
-          "description": "Configuration to pass to PostGraphile"
-        },
-        "source": {
-          "type": "string",
-          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
-        }
-      }
-    },
-    "PostGraphileConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PostGraphileConfig",
-      "required": [],
-      "properties": {
         "schemaName": {
           "type": "array",
           "items": {
@@ -329,19 +255,13 @@
         }
       }
     },
-    "Prefix": {
+    "PrefixTransformConfig": {
       "additionalProperties": false,
       "type": "object",
-      "title": "Prefix",
-      "required": [
-        "type"
-      ],
+      "title": "PrefixTransformConfig",
+      "required": [],
       "properties": {
-        "type": {
-          "type": "string",
-          "description": "Transformer to add prefix to the GraphQL types and operations."
-        },
-        "prefix": {
+        "value": {
           "type": "string",
           "description": "The prefix to apply to the schema types. By default it's the API name."
         },
@@ -356,29 +276,6 @@
         "includeRootOperations": {
           "type": "boolean",
           "description": "Changes root types and changes the field names"
-        }
-      }
-    },
-    "Rename": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Rename",
-      "required": [
-        "type",
-        "config"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "Transformer to apply rename of a GraphQL type"
-        },
-        "config": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RenameTransformObject"
-          },
-          "additionalItems": false,
-          "description": "List of changes to apply"
         }
       }
     },
@@ -406,19 +303,15 @@
       "type": "object",
       "title": "SoapHandler",
       "required": [
-        "name",
-        "source"
+        "wsdl"
       ],
       "properties": {
-        "name": {
-          "type": "string"
+        "wsdl": {
+          "type": "string",
+          "description": "A url to your WSDL"
         },
         "config": {
           "type": "object"
-        },
-        "source": {
-          "type": "string",
-          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         }
       }
     },
@@ -440,52 +333,40 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "discriminator": {
-            "propertyName": "name"
-          },
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, GrpcHandler, JsonSchema, Openapi, PostGraphile, SoapHandler)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/GraphQLHandler"
-            },
-            {
-              "$ref": "#/definitions/GrpcHandler"
-            },
-            {
-              "$ref": "#/definitions/JsonSchema"
-            },
-            {
-              "$ref": "#/definitions/Openapi"
-            },
-            {
-              "$ref": "#/definitions/PostGraphile"
-            },
-            {
-              "$ref": "#/definitions/SoapHandler"
-            }
-          ]
+          "$ref": "#/definitions/Handler",
+          "description": "Point to the handler you wish to use, it can either be a predefined handler, or a custom"
         },
-        "transformations": {
+        "transforms": {
           "type": "array",
           "items": {
-            "discriminator": {
-              "propertyName": "type"
-            },
-            "description": "Any of: Extend, Prefix, Rename",
-            "anyOf": [
-              {
-                "$ref": "#/definitions/Extend"
-              },
-              {
-                "$ref": "#/definitions/Prefix"
-              },
-              {
-                "$ref": "#/definitions/Rename"
-              }
-            ]
+            "$ref": "#/definitions/Transform"
           },
           "additionalItems": false,
-          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources (Any of: Extend, Prefix, Rename)"
+          "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
+        }
+      }
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Transform",
+      "required": [],
+      "properties": {
+        "extend": {
+          "type": "string",
+          "description": "GraphQL SDL and apply to the schema"
+        },
+        "prefix": {
+          "$ref": "#/definitions/PrefixTransformConfig",
+          "description": "Prefix transform"
+        },
+        "rename": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply rename of a GraphQL type"
         }
       }
     }
@@ -505,27 +386,13 @@
       "additionalItems": false,
       "description": "Defines the list of your external data sources for your API mesh"
     },
-    "transformations": {
+    "transforms": {
       "type": "array",
       "items": {
-        "discriminator": {
-          "propertyName": "type"
-        },
-        "description": "Any of: Extend, Prefix, Rename",
-        "anyOf": [
-          {
-            "$ref": "#/definitions/Extend"
-          },
-          {
-            "$ref": "#/definitions/Prefix"
-          },
-          {
-            "$ref": "#/definitions/Rename"
-          }
-        ]
+        "$ref": "#/definitions/Transform"
       },
       "additionalItems": false,
-      "description": "Transformations to apply to the unified mesh schema (Any of: Extend, Prefix, Rename)"
+      "description": "Transform to apply to the unified mesh schema"
     },
     "additionalResolvers": {
       "type": "array",

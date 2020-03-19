@@ -13,7 +13,7 @@ export type MeshSource<ContextType = any> = {
 export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   hooks: Hooks;
-  handler: THandlerConfig;
+  config: THandlerConfig;
 };
 
 // Handlers
@@ -38,7 +38,7 @@ export class Hooks extends EventEmitter<AllHooks> {}
 export type HooksKeys = keyof AllHooks;
 
 // Transform
-export type TransformFn<Config extends { type: string } = any> = (options: {
+export type TransformFn<Config = any> = (options: {
   schema: GraphQLSchema;
   config: Config;
   apiName?: string;

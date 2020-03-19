@@ -15,10 +15,7 @@ describe('extend', () => {
 
     const newSchema = await extendTransform({
       schema,
-      config: {
-        type: '',
-        sdl: `extend type User { newField: String! }`
-      }
+      config: `extend type User { newField: String! }`
     });
 
     const type: GraphQLObjectType = newSchema.getType('User') as GraphQLObjectType;
@@ -42,10 +39,7 @@ describe('extend', () => {
 
     const newSchema = await extendTransform({
       schema,
-      config: {
-        type: '',
-        sdl: `extend type Query { newField: String! }`
-      }
+      config: `extend type Query { newField: String! }`
     });
 
     const type = newSchema.getQueryType();

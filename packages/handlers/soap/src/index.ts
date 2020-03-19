@@ -2,8 +2,8 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { soapGraphqlSchema } from 'soap-graphql';
 
 const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
-  async getMeshSource({ handler }) {
-    const schema = await soapGraphqlSchema(handler.source);
+  async getMeshSource({ config }) {
+    const schema = await soapGraphqlSchema(config.wsdl);
 
     return {
       schema

@@ -1,6 +1,6 @@
 import 'ts-node/register/transpile-only';
 import { IResolvers } from 'graphql-tools-fork';
-import { Transformation, GraphQLOperation } from './types';
+import { ResolvedTransform, GraphQLOperation } from './types';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -15,12 +15,12 @@ import Maybe from 'graphql/tsutils/Maybe';
 export async function applySchemaTransformations(
   name: string,
   schema: GraphQLSchema,
-  transformations: Transformation[]
+  transformations: ResolvedTransform[]
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    resultSchema = await transformation.transformer({
+    resultSchema = await transformation.transformFn({
       apiName: name,
       schema: resultSchema,
       config: transformation.config
@@ -32,12 +32,12 @@ export async function applySchemaTransformations(
 
 export async function applyOutputTransformations(
   schema: GraphQLSchema,
-  transformations: Transformation[]
+  transformations: ResolvedTransform[]
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    resultSchema = await transformation.transformer({
+    resultSchema = await transformation.transformFn({
       schema: resultSchema,
       config: transformation.config
     });

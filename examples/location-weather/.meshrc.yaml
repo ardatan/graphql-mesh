@@ -1,20 +1,18 @@
 sources:
   - name: Cities
     handler:
-      name: openapi
-      source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
-      config:
+      openapi:
+        source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
         headers:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
   - name: Weather
     context:
       apiKey: 971a693de7ff47a89127664547988be5
     handler:
-      source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
-      name: openapi
-transformations:
-  - type: extend
-    sdl: |
+      openapi:
+        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+transforms:
+  - extend: |
       extend type PopulatedPlaceSummary {
         dailyForecast: [Forecast!]!
         todayForecast: Forecast!

@@ -42,19 +42,19 @@ export async function getMesh(
   const hooks = new Hooks();
 
   for (const apiSource of options.sources) {
-    const source = await apiSource.handler.getMeshSource({
+    const source = await apiSource.handlerLibrary.getMeshSource({
       name: apiSource.name,
-      handler: apiSource.handlerSourceObject || {},
+      config: apiSource.handlerConfig || {},
       hooks
     });
 
     let apiSchema = source.schema;
 
-    if (apiSource.transformations && apiSource.transformations.length > 0) {
+    if (apiSource.transforms && apiSource.transforms.length > 0) {
       apiSchema = await applySchemaTransformations(
         apiSource.name,
         apiSchema,
-        apiSource.transformations
+        apiSource.transforms
       );
     }
 
@@ -68,7 +68,7 @@ export async function getMesh(
       schema: apiSchema,
       context: apiSource.context || {},
       contextVariables: source.contextVariables || [],
-      handler: apiSource.handler
+      handler: apiSource.handlerLibrary
     };
   }
 
@@ -78,10 +78,10 @@ export async function getMesh(
     schemas
   });
 
-  if (options.transformations && options.transformations.length > 0) {
+  if (options.transforms && options.transforms.length > 0) {
     unifiedSchema = await applyOutputTransformations(
       unifiedSchema,
-      options.transformations
+      options.transforms
     );
   }
 

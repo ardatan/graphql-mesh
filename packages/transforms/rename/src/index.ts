@@ -9,7 +9,7 @@ import {
   transformSchema
 } from 'graphql-tools-fork';
 
-export const renameTransform: TransformFn<YamlConfig.Rename> = async ({
+export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = async ({
   schema,
   config
 }): Promise<GraphQLSchema> => {
@@ -20,7 +20,7 @@ export const renameTransform: TransformFn<YamlConfig.Rename> = async ({
   ].filter(Boolean) as string[];
   const transforms: Transform[] = [];
 
-  for (const change of config.config) {
+  for (const change of config) {
     const [fromTypeName, fromFieldName] = change.from.split('.');
     const [toTypeName, toFieldName] = change.to.split('.');
     const isRootType = rootTypes.includes(fromTypeName);

@@ -1,5 +1,5 @@
 sources:
   - name: CountryInfo
     handler:
-      name: soap
-      source: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL
+      soap:
+        wsdl: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL

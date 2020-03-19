@@ -22,12 +22,12 @@ import AggregateError from 'aggregate-error';
 
 async function loadJsonSchema(
   filePathOrUrl: string,
-  handler: YamlConfig.JsonSchema
+  config: YamlConfig.JsonSchemaHandler
 ) {
   if (isUrl(filePathOrUrl)) {
     const res = await fetch(filePathOrUrl, {
       headers: {
-        ...handler.config?.schemaHeaders
+        ...config?.schemaHeaders
       }
     });
 
@@ -52,12 +52,12 @@ declare global {
   }
 }
 
-const handler: MeshHandlerLibrary<YamlConfig.JsonSchema> = {
-  async getMeshSource({ name, handler }) {
+const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
+  async getMeshSource({ config }) {
     const interpolator = new Interpolator();
     const visitorCache = new JSONSchemaVisitorCache();
     await Promise.all(
-      handler.config?.typeReferences?.map(typeReference =>
+      config.typeReferences?.map(typeReference =>
         Promise.all(
           Object.keys(typeReference).map(async key => {
             switch (key) {
@@ -105,11 +105,11 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchema> = {
     const contextVariables: string[] = [];
 
     await Promise.all(
-      handler.config?.operations?.map(async operationConfig => {
+      config.operations?.map(async operationConfig => {
         const [requestSchema, responseSchema] = await Promise.all([
           operationConfig.requestSchema &&
-            loadJsonSchema(operationConfig.requestSchema, handler),
-          loadJsonSchema(operationConfig.responseSchema, handler)
+            loadJsonSchema(operationConfig.requestSchema, config),
+          loadJsonSchema(operationConfig.responseSchema, config)
         ]);
         operationConfig.method =
           operationConfig.method ||
@@ -128,9 +128,9 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchema> = {
         const args: GraphQLFieldConfigArgumentMap = {};
 
         const interpolationStrings = [
-          ...(handler.config.operationHeaders
-            ? Object.keys(handler.config.operationHeaders).map(
-                headerName => handler.config.operationHeaders![headerName]
+          ...(config.operationHeaders
+            ? Object.keys(config.operationHeaders).map(
+                headerName => config.operationHeaders![headerName]
               )
             : []),
           ...(operationConfig.headers
@@ -191,10 +191,10 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchema> = {
               operationConfig.path,
               interpolationData
             );
-            const fullPath = urlJoin(handler.config.baseUrl, interpolatedPath);
+            const fullPath = urlJoin(config.baseUrl, interpolatedPath);
             const method = operationConfig.method;
             const headers = {
-              ...handler.config?.operationHeaders,
+              ...config.operationHeaders,
               ...operationConfig?.headers
             };
             for (const headerName in headers) {

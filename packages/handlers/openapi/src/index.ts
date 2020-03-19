@@ -7,22 +7,22 @@ import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 
-const handler: MeshHandlerLibrary<YamlConfig.Openapi> = {
-  async getMeshSource({ handler }) {
+const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
+  async getMeshSource({ config }) {
     let spec: Oas3;
 
-    if (isUrl(handler.source)) {
-      spec = await readUrl(handler.source);
+    if (isUrl(config.source)) {
+      spec = await readUrl(config.source);
     } else {
-      const actualPath = handler.source.startsWith('/')
-        ? handler.source
-        : resolve(process.cwd(), handler.source);
+      const actualPath = config.source.startsWith('/')
+        ? config.source
+        : resolve(process.cwd(), config.source);
 
       spec = readFile(actualPath);
     }
 
     const { schema } = await createGraphQLSchema(spec, {
-      ...(handler.config || {}),
+      ...(config || {}),
       operationIdFieldNames: true,
       viewer: false // Viewer set to false in order to force users to specify auth via config file
     });

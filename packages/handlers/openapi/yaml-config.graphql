@@ -1,19 +1,15 @@
-type Openapi implements Handler {
+extend type Handler {
   """
   Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
   """
-  name: String!
-  """
-  Configuration to pass to `openapi-to-graphql`
-  """
-  config: OpenapiConfig
+  openapi: OpenapiHandler
+}
+
+type OpenapiHandler {
   """
   A pointer to your API source - could be a local file, remote file or url endpoint
   """
   source: String!
-}
-
-type OpenapiConfig {
   """
   JSON object representing the Headers to add to the runtime of the API calls
   """

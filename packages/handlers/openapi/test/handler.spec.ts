@@ -6,8 +6,7 @@ describe('openapi', () => {
   it('should create a GraphQL schema from a simple local swagger file', async () => {
     const source = await handler.getMeshSource({
       name: 'Instagram',
-      handler: {
-        name: 'openapi',
+      config: {
         source: './test/fixtures/instagram.json'
       },
       hooks: new EventEmitter()

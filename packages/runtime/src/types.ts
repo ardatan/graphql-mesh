@@ -6,23 +6,25 @@ import {
 import { DocumentNode } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
 
-export type GetMeshOptions = {
-  sources: MeshResolvedSource[];
-  transformations?: Transformation[];
-  additionalResolvers?: IResolvers;
+type ValuesOf<T> = T[keyof T];
+
+export type ResolvedTransform = {
+  transformFn: TransformFn;
+  config: ValuesOf<YamlConfig.Transform>;
 };
 
-export type Transformation<> = {
-  transformer: TransformFn;
-  config: any;
+export type GetMeshOptions = {
+  sources: MeshResolvedSource[];
+  transforms?: ResolvedTransform[];
+  additionalResolvers?: IResolvers;
 };
 
 export type MeshResolvedSource = {
   name: string;
-  handler: MeshHandlerLibrary;
-  handlerSourceObject: YamlConfig.Source['handler'];
+  handlerLibrary: MeshHandlerLibrary;
+  handlerConfig: ValuesOf<YamlConfig.Handler>;
   context?: Record<string, any>;
-  transformations?: Transformation[];
+  transforms?: ResolvedTransform[];
 };
 
 export type GraphQLOperation = DocumentNode | string;

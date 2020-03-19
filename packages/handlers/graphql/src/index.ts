@@ -9,11 +9,11 @@ import { HttpLink } from 'apollo-link-http';
 import { GraphQLResolveInfo } from 'graphql';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
-  async getMeshSource({ handler, hooks }) {
+  async getMeshSource({ config, hooks }) {
     const link = new HttpLink({
-      uri: handler.source,
+      uri: config.endpoint,
       fetch,
-      headers: handler?.config?.headers || {}
+      headers: config.headers || {}
     });
     const introspection = await introspectSchema(link);
 

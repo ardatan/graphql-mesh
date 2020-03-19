@@ -3,16 +3,16 @@ import { getGraphqlSchemaFromGrpc } from 'grpc-graphql-schema';
 import { isAbsolute, join } from 'path';
 
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
-  async getMeshSource({ handler }) {
-    if (!handler.config) {
+  async getMeshSource({ config }) {
+    if (!config) {
       throw new Error('Config not specified!');
     }
 
-    handler.config.protoFilePath = isAbsolute(handler.config.protoFilePath)
-      ? handler.config.protoFilePath
-      : join(process.cwd(), handler.config.protoFilePath);
+    config.protoFilePath = isAbsolute(config.protoFilePath)
+      ? config.protoFilePath
+      : join(process.cwd(), config.protoFilePath);
 
-    const schema = await getGraphqlSchemaFromGrpc(handler.config);
+    const schema = await getGraphqlSchemaFromGrpc(config);
 
     return {
       schema

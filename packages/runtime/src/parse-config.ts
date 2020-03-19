@@ -1,5 +1,5 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { GetMeshOptions, Transformation, MeshResolvedSource } from './types';
+import { GetMeshOptions, ResolvedTransform, MeshResolvedSource } from './types';
 import { getHandler, getPackage, resolveAdditionalResolvers } from './utils';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 
@@ -13,38 +13,53 @@ export async function parseConfig(
       '.yaml': customLoader('yaml'),
       '.yml': customLoader('yaml'),
       '.js': customLoader('js'),
-      noExt: customLoader('yaml'),
-    },
+      noExt: customLoader('yaml')
+    }
   });
   const results = await explorer.search(dir);
   const config = results?.config as YamlConfig.Config;
 
   const sources = await Promise.all(
     config.sources.map<Promise<MeshResolvedSource>>(async source => {
-      const transformations: Transformation[] = await Promise.all(
-        (source.transformations || []).map(async t => {
-          return {
-            config: t,
-            transformer: await getPackage<TransformFn>(t.type, 'transform')
+      const transforms: ResolvedTransform[] = await Promise.all(
+        (source.transforms || []).map(async t => {
+          const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
+          const transformConfig = t[transformName];
+
+          return <ResolvedTransform>{
+            config: transformConfig,
+            transformFn: await getPackage<TransformFn>(
+              transformName,
+              'transform'
+            )
           };
         })
       );
 
-      return {
+      const handlerName = Object.keys(
+        source.handler
+      )[0] as keyof YamlConfig.Handler;
+      const handlerLibrary = await getHandler(handlerName);
+      const handlerConfig = source.handler[handlerName];
+
+      return <MeshResolvedSource>{
         name: source.name,
-        handler: await getHandler(source.handler.name),
-        handlerSourceObject: source.handler,
+        handlerLibrary,
+        handlerConfig,
         context: source.context || {},
-        transformations
+        transforms
       };
     })
   );
 
-  const transformations: Transformation[] = await Promise.all(
-    (config.transformations || []).map(async t => {
-      return {
-        config: t,
-        transformer: await getPackage<TransformFn>(t.type, 'transform')
+  const unifiedTransforms = await Promise.all(
+    (config.transforms || []).map(async t => {
+      const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
+      const transformConfig = t[transformName];
+
+      return <ResolvedTransform>{
+        config: transformConfig,
+        transformFn: await getPackage<TransformFn>(transformName, 'transform')
       };
     })
   );
@@ -56,7 +71,7 @@ export async function parseConfig(
 
   return {
     sources,
-    transformations,
+    transforms: unifiedTransforms,
     additionalResolvers
   };
 }
