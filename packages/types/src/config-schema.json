@@ -322,7 +322,7 @@
       "title": "MongooseHandler",
       "required": [],
       "properties": {
-        "source": {
+        "connectionString": {
           "type": "string"
         },
         "models": {

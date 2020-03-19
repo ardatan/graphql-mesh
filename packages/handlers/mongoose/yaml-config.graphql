@@ -3,7 +3,7 @@ extend type Handler {
 }
 
 type MongooseHandler {
-  source: String
+  connectionString: String
   models: [MongooseModel]
   discriminators: [MongooseModel]
 }

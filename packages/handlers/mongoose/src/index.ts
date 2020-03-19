@@ -49,8 +49,8 @@ async function loadExternalModuleByExpression(
 
 const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
   async getMeshSource({ config }) {
-    if (config.source) {
-      await mongoose.connect(config.source, {
+    if (config.connectionString) {
+      await mongoose.connect(config.connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       });
@@ -66,7 +66,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
       any,
       ArgsMap
     >> = {};
-    
+
     if (config.models) {
       await Promise.all(
         config.models.map(async modelConfig => {
