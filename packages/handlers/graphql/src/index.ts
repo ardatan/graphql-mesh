@@ -19,7 +19,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandlerConfig> = {
 
     const remoteSchema = makeRemoteExecutableSchema({
       schema: introspection,
-      link,
+      link
     });
 
     hooks.on('buildSdkFn', ({ fieldName, typeName, replaceFn, schema }) => {
@@ -30,12 +30,12 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandlerConfig> = {
           schema,
           args,
           info,
-          context,
+          context
         };
 
         return delegateToSchema(delegationOptions);
-      })
-    })
+      });
+    });
 
     return {
       schema: remoteSchema

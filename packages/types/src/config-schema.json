@@ -49,6 +49,48 @@
         }
       }
     },
+    "Grpc": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Grpc",
+      "required": [
+        "name",
+        "config"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/GrpcConfig"
+        }
+      }
+    },
+    "GrpcConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GrpcConfig",
+      "required": [
+        "endpoint",
+        "protoFilePath",
+        "serviceName",
+        "packageName"
+      ],
+      "properties": {
+        "endpoint": {
+          "type": "string"
+        },
+        "protoFilePath": {
+          "type": "string"
+        },
+        "serviceName": {
+          "type": "string"
+        },
+        "packageName": {
+          "type": "string"
+        }
+      }
+    },
     "InMemoryLRU": {
       "additionalProperties": false,
       "type": "object",
@@ -370,6 +412,22 @@
         }
       }
     },
+    "Soap": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Soap",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        }
+      }
+    },
     "Source": {
       "additionalProperties": false,
       "type": "object",
@@ -393,10 +451,13 @@
           "description": "Custom JSON object to add to the GraphQL context, use this to inject custom\nfields and later use it in your custom resolver. This object will be located\nin the context, under an object named as the API"
         },
         "handler": {
-          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, JsonSchema, Openapi, PostGraphile)",
+          "description": "A path to a local file, or a node module name, that handles the conversion of the API source specification (Any of: GraphQLHandler, Grpc, JsonSchema, Openapi, PostGraphile, Soap)",
           "anyOf": [
             {
               "$ref": "#/definitions/GraphQLHandler"
+            },
+            {
+              "$ref": "#/definitions/Grpc"
             },
             {
               "$ref": "#/definitions/JsonSchema"
@@ -406,6 +467,9 @@
             },
             {
               "$ref": "#/definitions/PostGraphile"
+            },
+            {
+              "$ref": "#/definitions/Soap"
             }
           ]
         },

@@ -1,0 +1,31 @@
+{
+  "name": "grpc-example",
+  "version": "0.0.14",
+  "author": "Simon Liang",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "preserver": "yarn build-server",
+    "build-server": "bash bash/build.sh",
+    "server": "bash bash/server.sh",
+    "mesh": "graphql-mesh serve",
+    "start": "concurrently -c 'bgBlue.bold,bgMagenta.bold' 'npm:server' 'npm:mesh'"
+  },
+  "dependencies": {
+    "debug": "4.1.1",
+    "google-protobuf": "3.11.4",
+    "grpc": "1.24.2",
+    "@graphql-mesh/cli": "0.0.14",
+    "@graphql-mesh/grpc": "0.0.14",
+    "graphql": "14.6.0"
+  },
+  "devDependencies": {
+    "concurrently": "5.1.0",
+    "@types/debug": "4.1.5",
+    "@types/google-protobuf": "3.7.2",
+    "@types/node": "13.9.1",
+    "grpc-tools": "1.8.1",
+    "grpc_tools_node_protoc_ts": "2.5.10",
+    "typescript": "3.8.3"
+  }
+}

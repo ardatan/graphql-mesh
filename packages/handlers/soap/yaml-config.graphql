@@ -1,0 +1,5 @@
+type Soap implements Handler {
+  name: String!
+  config: JSON
+}
+
