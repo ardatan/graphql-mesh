@@ -1,4 +1,3 @@
-import 'ts-node/register/transpile-only';
 import { IResolvers } from 'graphql-tools-fork';
 import { ResolvedTransform, GraphQLOperation } from './types';
 import {

@@ -1,5 +1,5 @@
 import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
-import { mergeSchemas } from '@graphql-toolkit/schema-merging';
+import { mergeSchemasAsync } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
 import {
   extractSdkFromResolvers,
@@ -17,9 +17,9 @@ export type Requester<C = {}> = <R, V>(
   options?: C
 ) => Promise<R>;
 
-export type RawSourcesOutput = Record<
-  string,
+export type RawSourceOutput = 
   {
+    name: string;
     // TOOD: Remove globalContextBuilder and use hooks for that
     globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
     sdk: Record<string, any>;
@@ -27,23 +27,22 @@ export type RawSourcesOutput = Record<
     context: Record<string, any>;
     contextVariables: string[];
     handler: MeshHandlerLibrary;
-  }
->;
+  };
 
 export async function getMesh(
   options: GetMeshOptions
 ): Promise<{
   execute: ExecuteMeshFn;
   schema: GraphQLSchema;
-  rawSources: RawSourcesOutput;
+  rawSources: RawSourceOutput[];
   sdkRequester: Requester;
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   cache?: KeyValueCache;
 }> {
-  const results: RawSourcesOutput = {};
+  const rawSources: RawSourceOutput[] = [];
   const hooks = new Hooks();
 
-  for (const apiSource of options.sources) {
+  await Promise.all(options.sources.map(async apiSource => {
     const source = await apiSource.handlerLibrary.getMeshSource({
       name: apiSource.name,
       config: apiSource.handlerConfig || {},
@@ -61,7 +60,8 @@ export async function getMesh(
       );
     }
 
-    results[apiSource.name] = {
+    rawSources.push({
+      name: apiSource.name,
       globalContextBuilder: source.contextBuilder || null,
       sdk: extractSdkFromResolvers(apiSchema, hooks, [
         apiSchema.getQueryType(),
@@ -72,12 +72,12 @@ export async function getMesh(
       context: apiSource.context || {},
       contextVariables: source.contextVariables || [],
       handler: apiSource.handlerLibrary
-    };
-  }));
+    });
+  }))
 
-  const schemas = Object.keys(results).map(key => results[key].schema);
+  const schemas = rawSources.map(({ schema }) => schema);
 
-  let unifiedSchema = mergeSchemas({
+  let unifiedSchema = await mergeSchemasAsync({
     schemas
   });
 
@@ -103,10 +103,8 @@ export async function getMesh(
     };
     
     await Promise.all(
-      Object.keys(results).map(async apiName => {
+      rawSources.map(async handlerRes => {
         let globalContext = {};
-
-        const handlerRes = results[apiName];
 
         const globalContextBuilder = handlerRes.globalContextBuilder;
 
@@ -117,6 +115,8 @@ export async function getMesh(
         if (globalContext) {
           Object.assign(context, globalContext);
         }
+
+        const apiName = handlerRes.name;
 
         if (handlerRes.context) {
           Object.assign(context, {
@@ -183,7 +183,7 @@ export async function getMesh(
     execute: meshExecute,
     schema: unifiedSchema,
     contextBuilder: buildMeshContext,
-    rawSources: results,
+    rawSources,
     sdkRequester: localRequester,
   };
 }

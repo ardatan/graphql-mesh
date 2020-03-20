@@ -178,6 +178,9 @@
           "$ref": "#/definitions/JsonSchemaHandler",
           "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
         },
+        "mongoose": {
+          "$ref": "#/definitions/MongooseHandler"
+        },
         "openapi": {
           "$ref": "#/definitions/OpenapiHandler",
           "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
@@ -189,9 +192,6 @@
         "soap": {
           "$ref": "#/definitions/SoapHandler",
           "description": "Handler for SOAP"
-        },
-        "mongoose": {
-          "$ref": "#/definitions/MongooseHandler"
         }
       }
     },
@@ -804,6 +804,13 @@
     "sources"
   ],
   "properties": {
+    "require": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false
+    },
     "sources": {
       "type": "array",
       "items": {

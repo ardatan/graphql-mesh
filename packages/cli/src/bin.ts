@@ -1,4 +1,4 @@
-#!/usr/bin/env node -r ts-node/register/transpile-only
+#!/usr/bin/env node
 
 import { writeFileSync } from 'fs';
 import { parseConfig, getMesh } from '@graphql-mesh/runtime';
