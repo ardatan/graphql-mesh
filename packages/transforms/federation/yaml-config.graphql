@@ -1,0 +1,29 @@
+extend type Transform {
+  federation: FederationTransform
+}
+
+type FederationTransform {
+    types: [FederationTransformType]
+}
+
+type FederationTransformType {
+    name: String
+    config: FederationObjectConfig
+}
+
+type FederationObjectConfig {
+    keyFields: [String]
+    extend: Boolean
+    fields: [FederationField]
+}
+
+type FederationField {
+    name: String
+    config: FederationFieldConfig
+}
+
+type FederationFieldConfig {
+    external: Boolean
+    provides: String
+    required: String
+}

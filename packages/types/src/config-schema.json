@@ -75,6 +75,91 @@
         }
       }
     },
+    "FederationField": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationField",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/FederationFieldConfig"
+        }
+      }
+    },
+    "FederationFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldConfig",
+      "required": [],
+      "properties": {
+        "external": {
+          "type": "boolean"
+        },
+        "provides": {
+          "type": "string"
+        },
+        "required": {
+          "type": "string"
+        }
+      }
+    },
+    "FederationObjectConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationObjectConfig",
+      "required": [],
+      "properties": {
+        "keyFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "extend": {
+          "type": "boolean"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FederationField"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "FederationTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationTransform",
+      "required": [],
+      "properties": {
+        "types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FederationTransformType"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "FederationTransformType": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationTransformType",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/FederationObjectConfig"
+        }
+      }
+    },
     "FilterHelperArgsOpts": {
       "additionalProperties": false,
       "type": "object",
@@ -581,6 +666,9 @@
         "extend": {
           "type": "string",
           "description": "GraphQL SDL and apply to the schema"
+        },
+        "federation": {
+          "$ref": "#/definitions/FederationTransform"
         },
         "prefix": {
           "$ref": "#/definitions/PrefixTransformConfig",

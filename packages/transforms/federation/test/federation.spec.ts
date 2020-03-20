@@ -1,0 +1,3 @@
+describe('federation', () => {
+    it('dummy', () => {});
+});
