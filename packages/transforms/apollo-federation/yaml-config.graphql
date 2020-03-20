@@ -3,23 +3,23 @@ extend type Transform {
 }
 
 type FederationTransform {
-    types: [FederationTransformType]
+    types: [FederationTransformType!]
 }
 
 type FederationTransformType {
-    name: String
+    name: String!
     config: FederationObjectConfig
 }
 
 type FederationObjectConfig {
-    keyFields: [String]
+    keyFields: [String!]
     extend: Boolean
-    fields: [FederationField]
+    fields: [FederationField!]
 }
 
 type FederationField {
-    name: String
-    config: FederationFieldConfig
+    name: String!
+    config: FederationFieldConfig!
 }
 
 type FederationFieldConfig {

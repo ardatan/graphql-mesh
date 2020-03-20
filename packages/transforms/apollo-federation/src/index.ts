@@ -9,15 +9,19 @@ export const extendFederation: TransformFn<YamlConfig.Transform['federation']> =
 
     const federationConfig: FederationConfig<any> = {};
 
-    for (const type of config.types) {
-        const fields: FederationFieldsConfig = {};
-        for (const field of type.config.fields) {
-            fields[field.name] = field.config;
+    if (config?.types) {
+        for (const type of config.types) {
+            const fields: FederationFieldsConfig = {};
+            if (type.config?.fields) {
+                for (const field of type.config.fields) {
+                    fields[field.name] = field.config;
+                }
+            }
+            federationConfig[type.name] = {
+                ...type.config,
+                fields,
+            };
         }
-        federationConfig[type.name] = {
-            ...type.config,
-            fields,
-        };
     }
 
     const federationSchema = transformSchemaFederation(schema, federationConfig);

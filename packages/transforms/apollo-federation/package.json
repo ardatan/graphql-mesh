@@ -1,5 +1,5 @@
 {
-    "name": "@graphql-mesh/transform-federation",
+    "name": "@graphql-mesh/transform-apollo-federation",
     "version": "0.0.14",
     "main": "dist/index.js",
     "license": "MIT",

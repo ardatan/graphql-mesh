@@ -79,7 +79,10 @@
       "additionalProperties": false,
       "type": "object",
       "title": "FederationField",
-      "required": [],
+      "required": [
+        "name",
+        "config"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -150,7 +153,9 @@
       "additionalProperties": false,
       "type": "object",
       "title": "FederationTransformType",
-      "required": [],
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -667,9 +672,6 @@
           "type": "string",
           "description": "GraphQL SDL and apply to the schema"
         },
-        "federation": {
-          "$ref": "#/definitions/FederationTransform"
-        },
         "prefix": {
           "$ref": "#/definitions/PrefixTransformConfig",
           "description": "Prefix transform"
@@ -681,6 +683,9 @@
           },
           "additionalItems": false,
           "description": "Transformer to apply rename of a GraphQL type"
+        },
+        "federation": {
+          "$ref": "#/definitions/FederationTransform"
         }
       }
     },
