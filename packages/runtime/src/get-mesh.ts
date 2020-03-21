@@ -1,4 +1,4 @@
-import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
+import { GraphQLSchema, execute, DocumentNode, GraphQLError, isObjectType, GraphQLObjectType } from 'graphql';
 import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
 import {
@@ -8,7 +8,7 @@ import {
   ensureDocumentNode
 } from './utils';
 import { MeshHandlerLibrary, Hooks } from '@graphql-mesh/types';
-import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
+import { addResolveFunctionsToSchema, IAddResolversToSchemaOptions } from 'graphql-tools-fork';
 
 export type Requester<C = {}> = <R, V>(
   doc: DocumentNode,
@@ -28,6 +28,21 @@ export type RawSourcesOutput = Record<
     handler: MeshHandlerLibrary;
   }
 >;
+
+function addResolversWithReferenceResolver(options: IAddResolversToSchemaOptions) {
+  const schema = addResolveFunctionsToSchema(options);
+  for (const typeName in options.resolvers) {
+    for (const fieldName in options.resolvers[typeName]) {
+      if (fieldName === '__resolveReference') {
+        const type = schema.getType(typeName);
+        if (isObjectType(type)) {
+          (type as any).resolveReference = (options.resolvers[typeName] as any).__resolveReference;
+        }
+      }
+    }
+  }
+  return schema;
+}
 
 export async function getMesh(
   options: GetMeshOptions
@@ -86,7 +101,7 @@ export async function getMesh(
   }
 
   if (options.additionalResolvers) {
-    unifiedSchema = addResolveFunctionsToSchema({
+    unifiedSchema = addResolversWithReferenceResolver({
       resolvers: options.additionalResolvers,
       schema: unifiedSchema
     });

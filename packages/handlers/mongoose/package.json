@@ -9,7 +9,7 @@
     },
     "peerDependencies": {
       "graphql": "*",
-      "mongoose": "5.9.5"
+      "mongoose": "^5.9.5"
     },
     "devDependencies": {
       "@types/jest": "25.1.4",

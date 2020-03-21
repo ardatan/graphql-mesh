@@ -1,5 +1,5 @@
 {
-    "name": "@graphql-mesh/transform-apollo-federation",
+    "name": "@graphql-mesh/transform-federation",
     "version": "0.0.14",
     "main": "dist/index.js",
     "license": "MIT",
@@ -8,11 +8,13 @@
       "build": "tsc"
     },
     "peerDependencies": {
-      "graphql": "*"
+      "graphql": "*",
+      "@apollo/federation": "^0.9.4"
     },
     "devDependencies": {
       "@types/jest": "25.1.4",
       "@types/node": "13.9.2",
+      "@apollo/federation": "0.13.2",
       "graphql": "14.6.0",
       "jest": "25.1.0",
       "ts-jest": "25.2.1",
