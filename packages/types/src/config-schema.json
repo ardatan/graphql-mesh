@@ -1,40 +1,5 @@
 {
   "definitions": {
-    "ApolloFederationHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ApolloFederationHandler",
-      "required": [
-        "serviceList"
-      ],
-      "properties": {
-        "serviceList": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ApolloFederationService"
-          },
-          "additionalItems": false,
-          "description": "JSON object representing the Headers to add to the runtime of the API calls"
-        }
-      }
-    },
-    "ApolloFederationService": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ApolloFederationService",
-      "required": [
-        "name",
-        "url"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        }
-      }
-    },
     "ComposeWithMongooseFieldsOpts": {
       "additionalProperties": false,
       "type": "object",
@@ -107,6 +72,40 @@
         },
         "skip": {
           "type": "boolean"
+        }
+      }
+    },
+    "FederationHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationHandler",
+      "required": [
+        "serviceList"
+      ],
+      "properties": {
+        "serviceList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FederationService"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "FederationService": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationService",
+      "required": [
+        "name",
+        "url"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -201,9 +200,6 @@
       "title": "Handler",
       "required": [],
       "properties": {
-        "apolloFederation": {
-          "$ref": "#/definitions/ApolloFederationHandler"
-        },
         "graphql": {
           "$ref": "#/definitions/GraphQLHandler",
           "description": "Handler for remote/local/third-party GraphQL schema"
@@ -211,6 +207,9 @@
         "grpc": {
           "$ref": "#/definitions/GrpcHandler",
           "description": "Handler for gRPC and Protobuf schemas"
+        },
+        "federation": {
+          "$ref": "#/definitions/FederationHandler"
         },
         "jsonSchema": {
           "$ref": "#/definitions/JsonSchemaHandler",

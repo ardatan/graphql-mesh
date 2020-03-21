@@ -5,7 +5,7 @@ import { addTypenameToAbstract } from 'graphql-tools-fork/dist/stitching/addType
 import { printSchemaWithDirectives } from '@graphql-toolkit/common';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
-const handler: MeshHandlerLibrary<YamlConfig.ApolloFederationHandler> = {
+const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
     async getMeshSource({ config }) {
         const gateway = new ApolloGateway(config);
         const loadedGateway = await gateway.load();

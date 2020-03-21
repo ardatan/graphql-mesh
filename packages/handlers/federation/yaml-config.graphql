@@ -1,15 +1,12 @@
 extend type Handler {
-  apolloFederation: ApolloFederationHandler
+  federation: FederationHandler
 }
 
-type ApolloFederationHandler {
-  """
-  JSON object representing the Headers to add to the runtime of the API calls
-  """
-  serviceList: [ApolloFederationService!]!
+type FederationHandler {
+  serviceList: [FederationService!]!
 }
 
-type ApolloFederationService {
+type FederationService {
     name: String!
     url: String!
 }
