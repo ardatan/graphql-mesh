@@ -1,5 +1,5 @@
 {
-    "name": "@graphql-mesh/apollo-federation",
+    "name": "@graphql-mesh/handler-federation",
     "version": "0.0.14",
     "main": "dist/index.js",
     "license": "MIT",
@@ -8,9 +8,11 @@
       "build": "tsc"
     },
     "peerDependencies": {
-      "graphql": "*"
+      "graphql": "*",
+      "@apollo/gateway": "*"
     },
     "devDependencies": {
+      "@apollo/gateway": "0.13.2",
       "@types/jest": "25.1.4",
       "@types/node": "13.9.2",
       "graphql": "14.6.0",
@@ -20,7 +22,6 @@
     },
     "dependencies": {
       "@graphql-mesh/types": "0.0.14",
-      "@apollo/gateway": "0.13.2",
       "graphql-tools-fork": "8.9.6"
     },
     "publishConfig": {

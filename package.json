@@ -1,4 +1,5 @@
 {
+  "name": "graphql-mesh",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -17,7 +18,6 @@
     "./packages/**/*",
     "./examples/**/*"
   ],
-  "name": "graphql-mesh",
   "resolutions": {
     "graphql": "14.6.0"
   }
