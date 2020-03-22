@@ -521,6 +521,39 @@
         }
       }
     },
+    "Redis": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Redis",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/RedisConfig"
+        }
+      }
+    },
+    "RedisConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RedisConfig",
+      "required": [],
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "RenameTransformObject": {
       "additionalProperties": false,
       "type": "object",
@@ -836,10 +869,13 @@
       "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
     },
     "cache": {
-      "description": "Backend cache (Any of: InMemoryLRU)",
+      "description": "Backend cache (Any of: InMemoryLRU, Redis)",
       "anyOf": [
         {
           "$ref": "#/definitions/InMemoryLRU"
+        },
+        {
+          "$ref": "#/definitions/Redis"
         }
       ]
     }
