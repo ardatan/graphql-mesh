@@ -2,6 +2,8 @@ import { EventEmitter } from 'tsee';
 import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
 import * as YamlConfig from './config';
 
+import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
+
 export { YamlConfig };
 
 export type MeshSource<ContextType = any> = {
@@ -45,16 +47,4 @@ export type TransformFn<Config = any> = (options: {
   apiName?: string;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 
-export interface KeyValueCacheSetOptions {
-  /**
-   * Specified in **seconds**, the time-to-live (TTL) value limits the lifespan
-   * of the data being stored in the cache.
-   */
-  ttl?: number | null
-};
-
-export interface KeyValueCache<V = string> {
-  get(key: string): Promise<V | undefined>;
-  set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void>;
-  delete(key: string): Promise<boolean | void>;
-}
+export { KeyValueCache, KeyValueCacheSetOptions };

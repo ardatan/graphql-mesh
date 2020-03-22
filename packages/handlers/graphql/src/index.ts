@@ -4,15 +4,15 @@ import {
   makeRemoteExecutableSchema,
   delegateToSchema
 } from 'graphql-tools-fork';
-import fetch from 'cross-fetch';
+import { fetchache, Request } from 'fetchache';
 import { HttpLink } from 'apollo-link-http';
 import { GraphQLResolveInfo } from 'graphql';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
-  async getMeshSource({ config, hooks }) {
+  async getMeshSource({ config, hooks, cache }) {
     const link = new HttpLink({
       uri: config.endpoint,
-      fetch,
+      fetch: (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache),
       headers: config.headers || {}
     });
     const introspection = await introspectSchema(link);

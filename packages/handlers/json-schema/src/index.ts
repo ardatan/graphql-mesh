@@ -18,7 +18,7 @@ import isUrl from 'is-url';
 import Interpolator from 'string-interpolation';
 import { join } from 'path';
 import AggregateError from 'aggregate-error';
-import { fetchWithCache } from './fetch-with-cache';
+import { fetchache } from 'fetchache';
 
 async function loadJsonSchema(
   filePathOrUrl: string,
@@ -31,7 +31,7 @@ async function loadJsonSchema(
         ...config?.schemaHeaders
       }
     });
-    const res = await fetchWithCache(req, cache);
+    const res = await fetchache(req, cache);
 
     return res.json();
   } else {
@@ -228,7 +228,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
               }
             }
             const request = new Request(urlObj.toString(), requestInit);
-            const response = await fetchWithCache(request, cache);
+            const response = await fetchache(request, cache);
             const responseText = await response.text();
             let responseJson: any;
             try {

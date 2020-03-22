@@ -2346,11 +2346,6 @@
   resolved "https://registry.npmjs.org/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
   integrity sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==
 
-"@types/http-cache-semantics@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.0.tgz#9140779736aa2655635ee756e2467d787cfe8a2a"
-  integrity sha512-c3Xy026kOF7QOTn00hbIllV1dLR9hG9NkSrLQgCVs8NF6sBU+VGWjD3wLPhmh1TYAc7ugCFsvHYMN4VcBN1U1A==
-
 "@types/is-url@1.2.28":
   version "1.2.28"
   resolved "https://registry.npmjs.org/@types/is-url/-/is-url-1.2.28.tgz#914dabd50546d9b0142806e42c72bc7c2b7e0787"
@@ -5322,6 +5317,14 @@ fecha@^2.3.3:
   version "2.3.3"
   resolved "https://registry.npmjs.org/fecha/-/fecha-2.3.3.tgz#948e74157df1a32fd1b12c3a3c3cdcb6ec9d96cd"
   integrity sha512-lUGBnIamTAwk4znq5BcqsDaxSmZ9nDVJaij6NvRt/Tg4R69gERA+otPKbS86ROw9nxVMw2/mp1fnaiWqbs6Sdg==
+
+fetchache@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.0.3.tgz#ddfe8a16d37ffc03b8f6c666f62e7d4f43001458"
+  integrity sha512-OGj9xCJHAnfXE6zxTYALE15pQHMs+NrCLTrFbTzCuaQAffQXG4ZR0oOQ9i94v2R0arcxsEnwF2Xa7Pbj3R5Wjw==
+  dependencies:
+    cross-fetch "3.0.4"
+    http-cache-semantics "4.1.0"
 
 figgy-pudding@^3.4.1, figgy-pudding@^3.5.1:
   version "3.5.1"
