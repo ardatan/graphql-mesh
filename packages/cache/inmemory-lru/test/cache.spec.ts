@@ -1,3 +1,3 @@
-describe('json-schema', () => {
+describe('inmemory-lru', () => {
   it('dummy', async () => {});
 });

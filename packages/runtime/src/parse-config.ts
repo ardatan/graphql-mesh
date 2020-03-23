@@ -1,7 +1,8 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { GetMeshOptions, ResolvedTransform, MeshResolvedSource } from './types';
-import { getHandler, getPackage, resolveAdditionalResolvers } from './utils';
+import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache } from './utils';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 
 export async function parseConfig(
   name = 'mesh',
@@ -19,60 +20,71 @@ export async function parseConfig(
   const results = await explorer.search(dir);
   const config = results?.config as YamlConfig.Config;
 
-  const sources = await Promise.all(
-    config.sources.map<Promise<MeshResolvedSource>>(async source => {
-      const transforms: ResolvedTransform[] = await Promise.all(
-        (source.transforms || []).map(async t => {
-          const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
-          const transformConfig = t[transformName];
+  if (config.require) {
+    await Promise.all(config.require.map(mod => import(mod)));
+  }
 
-          return <ResolvedTransform>{
-            config: transformConfig,
-            transformFn: await getPackage<TransformFn>(
-              transformName,
-              'transform'
-            )
-          };
-        })
-      );
-
-      const handlerName = Object.keys(
-        source.handler
-      )[0] as keyof YamlConfig.Handler;
-      const handlerLibrary = await getHandler(handlerName);
-      const handlerConfig = source.handler[handlerName];
-
-      return <MeshResolvedSource>{
-        name: source.name,
-        handlerLibrary,
-        handlerConfig,
-        context: source.context || {},
-        transforms
-      };
-    })
-  );
-
-  const unifiedTransforms = await Promise.all(
-    (config.transforms || []).map(async t => {
-      const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
-      const transformConfig = t[transformName];
-
-      return <ResolvedTransform>{
-        config: transformConfig,
-        transformFn: await getPackage<TransformFn>(transformName, 'transform')
-      };
-    })
-  );
-
-  const additionalResolvers = await resolveAdditionalResolvers(
-    dir,
-    config.additionalResolvers || []
-  );
+  const [
+    sources,
+    transforms,
+    additionalResolvers,
+    cache,
+  ] = await Promise.all([
+    Promise.all(
+      config.sources.map<Promise<MeshResolvedSource>>(async source => {
+        const transforms: ResolvedTransform[] = await Promise.all(
+          (source.transforms || []).map(async t => {
+            const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
+            const transformConfig = t[transformName];
+  
+            return <ResolvedTransform>{
+              config: transformConfig,
+              transformFn: await getPackage<TransformFn>(
+                transformName,
+                'transform'
+              )
+            };
+          })
+        );
+  
+        const handlerName = Object.keys(
+          source.handler
+        )[0] as keyof YamlConfig.Handler;
+        const handlerLibrary = await getHandler(handlerName);
+        const handlerConfig = source.handler[handlerName];
+  
+        return <MeshResolvedSource>{
+          name: source.name,
+          handlerLibrary,
+          handlerConfig,
+          context: source.context || {},
+          transforms
+        };
+      })
+    ),
+    Promise.all(
+      (config.transforms || []).map(async t => {
+        const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
+        const transformConfig = t[transformName];
+  
+        return <ResolvedTransform>{
+          config: transformConfig,
+          transformFn: await getPackage<TransformFn>(transformName, 'transform')
+        };
+      })
+    ),
+    resolveAdditionalResolvers(
+      dir,
+      config.additionalResolvers || []
+    ),
+    config.cache ? resolveCache(config.cache).then(Cache => new Cache(config.cache?.config)) : new InMemoryLRUCache()
+  ]);
 
   return {
     sources,
-    transforms: unifiedTransforms,
-    additionalResolvers
+    transforms,
+    additionalResolvers,
+    cache,
   };
 }
 

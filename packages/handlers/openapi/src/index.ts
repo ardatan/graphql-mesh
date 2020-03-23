@@ -2,17 +2,17 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import isUrl from 'is-url';
 import * as yaml from 'js-yaml';
-import { fetch } from 'cross-fetch';
+import { fetchache, KeyValueCache } from 'fetchache';
 import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 
 const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
-  async getMeshSource({ config }) {
+  async getMeshSource({ config, cache }) {
     let spec: Oas3;
 
     if (isUrl(config.source)) {
-      spec = await readUrl(config.source);
+      spec = await readUrl(config.source, cache);
     } else {
       const actualPath = config.source.startsWith('/')
         ? config.source
@@ -46,8 +46,8 @@ function readFile(path: string): Oas3 {
   }
 }
 
-async function readUrl(path: string): Promise<Oas3> {
-  const response = await fetch(path);
+async function readUrl(path: string, cache: KeyValueCache): Promise<Oas3> {
+  const response = await fetchache(new Request(path), cache);
   const contentType = response.headers.get('content-type') || '';
   if (/json$/.test(path) || /json$/.test(contentType)) {
     return response.json();

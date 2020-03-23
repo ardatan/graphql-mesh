@@ -285,6 +285,33 @@
         }
       }
     },
+    "InMemoryLRU": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "InMemoryLRU",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/InMemoryLRUConfig"
+        }
+      }
+    },
+    "InMemoryLRUConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "InMemoryLRUConfig",
+      "required": [],
+      "properties": {
+        "max": {
+          "type": "integer"
+        }
+      }
+    },
     "JsonSchemaHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -584,6 +611,39 @@
         }
       }
     },
+    "Redis": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Redis",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/RedisConfig"
+        }
+      }
+    },
+    "RedisConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RedisConfig",
+      "required": [],
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "RenameTransformObject": {
       "additionalProperties": false,
       "type": "object",
@@ -870,6 +930,13 @@
     "sources"
   ],
   "properties": {
+    "require": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false
+    },
     "sources": {
       "type": "array",
       "items": {
@@ -893,6 +960,17 @@
       },
       "additionalItems": false,
       "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
+    },
+    "cache": {
+      "description": "Backend cache (Any of: InMemoryLRU, Redis)",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/InMemoryLRU"
+        },
+        {
+          "$ref": "#/definitions/Redis"
+        }
+      ]
     }
   },
   "additionalProperties": false
