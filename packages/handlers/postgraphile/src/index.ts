@@ -1,21 +1,24 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLNamedType } from 'graphql';
 import { createPostGraphileSchema } from 'postgraphile';
-import { Pool, PoolClient } from 'pg';
+import { Client } from 'pg';
 
 const handler: MeshHandlerLibrary<
   YamlConfig.PostGraphileHandler,
-  { pgClient: PoolClient }
+  { pgClient: Client }
 > = {
   async getMeshSource({ config, hooks }) {
     const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
-    const pgPool = new Pool(
+    const pgClient = new Client(
       config?.pool
         ? { ...config?.pool }
         : { connectionString: config.connectionString }
     );
+    await pgClient.connect();
+    // Hack to trick Postgraphile
+    (pgClient as any)['release'] = () => {};
     const graphileSchema = await createPostGraphileSchema(
-      pgPool,
+      pgClient as any,
       config.schemaName || 'public',
       {
         dynamicJson: true,
@@ -53,10 +56,7 @@ const handler: MeshHandlerLibrary<
 
     return {
       schema: graphileSchema,
-      contextBuilder: async () => {
-        const pgClient = await pgPool.connect();
-        return { pgClient };
-      }
+      contextBuilder: async () => ({ pgClient }),
     };
   }
 };
