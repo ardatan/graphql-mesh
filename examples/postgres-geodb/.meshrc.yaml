@@ -21,5 +21,7 @@ transforms:
       extend type GeoCity {
         developers(limit: Int = 10): GithubSearchResultItemConnection!
       }
+require:
+  - ts-node/register/transpile-only
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts

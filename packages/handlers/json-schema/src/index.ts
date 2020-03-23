@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -13,23 +13,25 @@ import {
   JSONSchemaVisitor,
   JSONSchemaVisitorCache
 } from './json-schema-visitor';
-import { fetch } from 'cross-fetch';
 import urlJoin from 'url-join';
 import isUrl from 'is-url';
 import Interpolator from 'string-interpolation';
 import { join } from 'path';
 import AggregateError from 'aggregate-error';
+import { fetchache } from 'fetchache';
 
 async function loadJsonSchema(
   filePathOrUrl: string,
-  config: YamlConfig.JsonSchemaHandler
+  config: YamlConfig.JsonSchemaHandler,
+  cache: KeyValueCache,
 ) {
   if (isUrl(filePathOrUrl)) {
-    const res = await fetch(filePathOrUrl, {
+    const req = new Request(filePathOrUrl, {
       headers: {
         ...config?.schemaHeaders
       }
     });
+    const res = await fetchache(req, cache);
 
     return res.json();
   } else {
@@ -53,7 +55,7 @@ declare global {
 }
 
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
-  async getMeshSource({ config }) {
+  async getMeshSource({ config, cache }) {
     const interpolator = new Interpolator();
     const visitorCache = new JSONSchemaVisitorCache();
     await Promise.all(
@@ -107,9 +109,8 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
     await Promise.all(
       config.operations?.map(async operationConfig => {
         const [requestSchema, responseSchema] = await Promise.all([
-          operationConfig.requestSchema &&
-            loadJsonSchema(operationConfig.requestSchema, config),
-          loadJsonSchema(operationConfig.responseSchema, config)
+          operationConfig.requestSchema && loadJsonSchema(operationConfig.requestSchema, config, cache),
+            loadJsonSchema(operationConfig.responseSchema, config, cache)
         ]);
         operationConfig.method =
           operationConfig.method ||
@@ -226,7 +227,8 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
                   throw `Unknown method ${operationConfig.method}`;
               }
             }
-            const response = await fetch(urlObj.toString(), requestInit);
+            const request = new Request(urlObj.toString(), requestInit);
+            const response = await fetchache(request, cache);
             const responseText = await response.text();
             let responseJson: any;
             try {

@@ -1,4 +1,5 @@
 type Query {
+  require: [String]
   """
   Defines the list of your external data sources for your API mesh
   """
@@ -11,6 +12,10 @@ type Query {
   Additional resolvers, or resolvers overrides you wish to add to the schema mesh
   """
   additionalResolvers: [String]
+  """
+  Backend cache
+  """
+  cache: Cache
 }
 
 scalar JSON
@@ -36,3 +41,7 @@ type Source {
 
 type Transform
 type Handler
+
+interface Cache {
+  name: String!
+}

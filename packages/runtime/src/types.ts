@@ -5,6 +5,7 @@ import {
 } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
+import { KeyValueCache } from '@graphql-mesh/types';
 
 type ValuesOf<T> = T[keyof T];
 
@@ -17,6 +18,7 @@ export type GetMeshOptions = {
   sources: MeshResolvedSource[];
   transforms?: ResolvedTransform[];
   additionalResolvers?: IResolvers;
+  cache?: KeyValueCache;
 };
 
 export type MeshResolvedSource = {

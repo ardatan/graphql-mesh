@@ -1,5 +1,5 @@
 import Maybe from 'graphql/tsutils/Maybe';
-import { RawSourcesOutput } from '@graphql-mesh/runtime';
+import { RawSourceOutput } from '@graphql-mesh/runtime';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import {
@@ -64,7 +64,7 @@ function buildSignatureBasedOnRootFields(
 
     return `  ${
       field.name
-    }: (args: ${argsName}, context: ${unifiedContextIdentifier}, info: GraphQLResolveInfo) => Promise<${codegenHelpers.getTypeToUse(
+    }: (args: ${argsName}, context?: ${unifiedContextIdentifier}, info?: GraphQLResolveInfo) => Promise<${codegenHelpers.getTypeToUse(
       {
         kind: Kind.NAMED_TYPE,
         name: {
@@ -122,7 +122,7 @@ ${operations.join(',\n')}
 
 export async function generateTsTypes(
   unifiedSchema: GraphQLSchema,
-  rawSources: RawSourcesOutput
+  rawSources: RawSourceOutput[]
 ): Promise<string> {
   return codegen({
     filename: 'types.ts',
@@ -136,12 +136,10 @@ export async function generateTsTypes(
       contextSdk: {
         plugin: async () => {
           const results = await Promise.all(
-            Object.keys(rawSources).map(async apiName => {
-              const source = rawSources[apiName];
-
+            rawSources.map(async source => {
               return generateTypesForApi({
                 schema: source.schema,
-                name: apiName,
+                name: source.name,
                 contextVariables: source.contextVariables || []
               });
             })
