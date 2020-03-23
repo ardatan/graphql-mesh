@@ -6,16 +6,9 @@ import { printSchemaWithDirectives } from '@graphql-toolkit/common';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 
 const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
-    async getMeshSource({ config }) {
+    async getMeshSource({ config, cache }) {
         const gateway = new ApolloGateway(config);
         const loadedGateway = await gateway.load();
-        // TODO: Change with Mesh's Cache Impl.
-        const cacheMap = new Map();
-        const keyValueCache = {
-            get: async (key: string) => cacheMap.get(key),
-            set: async (key: string, value: string) => cacheMap.set(key, value) as any,
-            delete: async (key: string) => cacheMap.delete(key)
-        };
         const proxyResolver = async (source: any, args: any, context: any, info: GraphQLResolveInfo) => {
             const fragments = Object.keys(info.fragments).map(
                 fragment => info.fragments[fragment],
@@ -57,7 +50,7 @@ const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
                     operationName: operation.name.value,
                     variables: args,
                 },
-                cache: keyValueCache,
+                cache,
                 source,
             });
             if (result.errors) {
