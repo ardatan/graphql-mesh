@@ -1,0 +1,8 @@
+type InMemoryLRU implements Cache {
+    name: String!
+    config: InMemoryLRUConfig
+}
+
+type InMemoryLRUConfig {
+    max: Int
+}

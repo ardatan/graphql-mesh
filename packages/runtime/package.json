@@ -28,6 +28,7 @@
     "@graphql-mesh/extend": "0.0.14",
     "@graphql-mesh/prefix": "0.0.14",
     "@graphql-mesh/rename": "0.0.14",
+    "@graphql-mesh/cache-inmemory-lru": "0.0.14",
     "@graphql-mesh/types": "0.0.14",
     "@graphql-toolkit/schema-merging": "0.9.9",
     "apollo-server": "2.11.0",

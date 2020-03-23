@@ -17,5 +17,7 @@ transforms:
         dailyForecast: [Forecast!]!
         todayForecast: Forecast!
       }
+require:
+  - ts-node/register/transpile-only
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts

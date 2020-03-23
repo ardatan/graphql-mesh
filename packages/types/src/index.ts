@@ -2,6 +2,8 @@ import { EventEmitter } from 'tsee';
 import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
 import * as YamlConfig from './config';
 
+import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
+
 export { YamlConfig };
 
 export type MeshSource<ContextType = any> = {
@@ -14,6 +16,7 @@ export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   hooks: Hooks;
   config: THandlerConfig;
+  cache: KeyValueCache;
 };
 
 // Handlers
@@ -43,3 +46,5 @@ export type TransformFn<Config = any> = (options: {
   config: Config;
   apiName?: string;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
+
+export { KeyValueCache, KeyValueCacheSetOptions };
