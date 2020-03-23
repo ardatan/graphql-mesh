@@ -18,8 +18,8 @@ sources:
           includeRootOperations: true
 transforms:
   - extend: |
-      extend type Geo_City {
-        developers(limit: Int = 10): Github_SearchResultItemConnection!
+      extend type GeoCity {
+        developers(limit: Int = 10): GithubSearchResultItemConnection!
       }
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts
