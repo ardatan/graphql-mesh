@@ -53,6 +53,7 @@ export async function getMesh(
   sdkRequester: Requester;
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   cache?: KeyValueCache;
+  destroy: () => void;
 }> {
   const rawSources: RawSourceOutput[] = [];
   const hooks = new Hooks();
@@ -200,6 +201,7 @@ export async function getMesh(
     contextBuilder: buildMeshContext,
     rawSources,
     sdkRequester: localRequester,
+    destroy: () => { hooks.emit('destroy'); },
   };
 }
 

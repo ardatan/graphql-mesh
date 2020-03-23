@@ -1,16 +1,29 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLNamedType } from 'graphql';
 import { createPostGraphileSchema } from 'postgraphile';
-import { Pool, PoolClient } from 'pg';
+import { Client } from 'pg';
 
 const handler: MeshHandlerLibrary<
   YamlConfig.PostGraphileHandler,
-  { pgClient: PoolClient }
+  { pgClient: Client }
 > = {
   async getMeshSource({ config, hooks }) {
     const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
+    const pgClient = new Client(
+      {
+        ...config?.pool
+        ? { 
+          ...config?.pool 
+        }
+        : { 
+          connectionString: config.connectionString 
+        }
+      }
+    );
+    await pgClient.connect();
+    (pgClient as any)['release'] = () => {};
     const graphileSchema = await createPostGraphileSchema(
-      config.connectionString,
+      pgClient as any,
       config.schemaName || 'public',
       {
         dynamicJson: true,
@@ -46,26 +59,11 @@ const handler: MeshHandlerLibrary<
       }
     });
 
+    hooks.on('destroy', () => pgClient.end());
+  
     return {
       schema: graphileSchema,
-      contextBuilder: async () => {
-        return new Promise((resolve, reject) => {
-          // TOOD: Clean this pool after context is no longer relevant, probably we'll do it with a hook
-          const pool = new Pool(
-            config?.pool
-              ? { ...config?.pool }
-              : { connectionString: config.connectionString }
-          );
-
-          pool.connect((err, client) => {
-            if (err) {
-              return reject(err);
-            }
-
-            return resolve({ pgClient: client });
-          });
-        });
-      }
+      contextBuilder: async () => ({ pgClient }),
     };
   }
 };

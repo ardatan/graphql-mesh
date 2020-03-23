@@ -12,11 +12,11 @@ import {
   isNonNullType,
   GraphQLNamedType,
   parse,
-  printSchema,
   NamedTypeNode,
   Kind
 } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
+import { printSchemaWithDirectives } from '@graphql-toolkit/common';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -129,7 +129,7 @@ export async function generateTsTypes(
     documents: [],
     config: {},
     schemaAst: unifiedSchema,
-    schema: parse(printSchema(unifiedSchema)),
+    schema: parse(printSchemaWithDirectives(unifiedSchema)),
     pluginMap: {
       typescript: tsBasePlugin,
       resolvers: tsResolversPlugin,

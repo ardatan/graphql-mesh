@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/Urigo/graphql-mesh/workflows/CI/badge.svg)
 
-### Note: this project is experimental, and still being developed.
+### Note: this project is early and there will be breaking changes along the way
 
 GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run GraphQL (and also ones that do run GraphQL).
 It can be used as a gateway to other services, or run as a local GraphQL schema that aggregates data from remote APIs.

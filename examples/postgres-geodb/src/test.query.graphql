@@ -6,7 +6,7 @@ query citiesAndDevelopers($city: String!) {
       district
       developers {
         nodes {
-          ... on Github_User {
+          ... on GithubUser {
             login
             avatarUrl
           }

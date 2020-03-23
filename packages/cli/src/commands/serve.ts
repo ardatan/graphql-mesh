@@ -15,7 +15,6 @@ export async function serveMesh(
     cache,
   });
 
-  server.listen().then(({ url }) => {
-    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: ${url}`);
-  });
+  const { url } = await server.listen();
+  logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: ${url}`);
 }

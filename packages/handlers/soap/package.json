@@ -1,32 +1,31 @@
 {
-    "name": "@graphql-mesh/soap",
-    "version": "0.0.14",
-    "main": "dist/index.js",
-    "license": "MIT",
-    "scripts": {
-      "test": "jest --config=../../../jest.config.js",
-      "build": "tsc"
-    },
-    "peerDependencies": {
-      "graphql": "*",
-      "soap": "^0.31.0"
-    },
-    "devDependencies": {
-      "@types/jest": "25.1.4",
-      "@types/node": "13.9.2",
-      "graphql": "14.6.0",
-      "jest": "25.1.0",
-      "soap": "0.31.0",
-      "ts-jest": "25.2.1",
-      "ts-node-dev": "1.0.0-pre.44",
-      "typescript": "3.8.3"
-    },
-    "dependencies": {
-      "@graphql-mesh/types": "0.0.14",
-      "soap-graphql": "0.1.0"
-    },
-    "publishConfig": {
-      "access": "public"
-    }
+  "name": "@graphql-mesh/soap",
+  "version": "0.0.15",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest --config=../../../jest.config.js",
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "graphql": "*",
+    "soap": "^0.31.0"
+  },
+  "devDependencies": {
+    "@types/jest": "25.1.4",
+    "@types/node": "13.9.2",
+    "graphql": "14.6.0",
+    "jest": "25.1.0",
+    "soap": "0.31.0",
+    "ts-jest": "25.2.1",
+    "ts-node-dev": "1.0.0-pre.44",
+    "typescript": "3.8.3"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.0.15",
+    "soap-graphql": "0.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
-  
+}

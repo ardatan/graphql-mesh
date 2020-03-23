@@ -1,6 +1,6 @@
 {
     "name": "@graphql-mesh/cache-redis",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "license": "MIT",
     "scripts": {
         "test": "jest --config=../../../jest.config.js",
@@ -10,9 +10,9 @@
         "graphql": "*"
     },
     "devDependencies": {
+        "@types/ioredis": "4.14.9",
         "@types/jest": "25.1.4",
         "@types/node": "13.9.1",
-        "@types/ioredis": "4.14.9",
         "graphql": "14.6.0",
         "jest": "25.1.0",
         "ts-jest": "25.2.1",
@@ -26,8 +26,8 @@
         "definition": "dist/index.d.ts"
     },
     "dependencies": {
-        "@graphql-mesh/types": "0.0.14",
-        "dataloader": "1.4.0",
+        "@graphql-mesh/types": "0.0.15",
+        "dataloader": "2.0.0",
         "ioredis": "4.0.0",
         "ts-node": "8.6.2"
     },

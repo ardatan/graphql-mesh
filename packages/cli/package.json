@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../jest.config.js",
@@ -34,14 +34,14 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-codegen/add": "1.13.1",
     "@graphql-codegen/core": "1.13.1",
     "@graphql-codegen/typescript": "1.13.1",
     "@graphql-codegen/typescript-generic-sdk": "1.13.1",
     "@graphql-codegen/typescript-operations": "1.13.1",
     "@graphql-codegen/typescript-resolvers": "1.13.1",
-    "@graphql-mesh/runtime": "0.0.14",
+    "@graphql-mesh/runtime": "0.0.15",
     "@graphql-toolkit/code-file-loader": "0.9.9",
+    "@graphql-toolkit/common": "0.9.9",
     "@graphql-toolkit/core": "0.9.9",
     "@graphql-toolkit/graphql-file-loader": "0.9.9",
     "apollo-server": "2.11.0",
