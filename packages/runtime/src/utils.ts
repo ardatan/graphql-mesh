@@ -49,6 +49,7 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
   const possibleNames = [
     `@graphql-mesh/${name}`,
     `@graphql-mesh/${name}-${type}`,
+    `@graphql-mesh/${type}-${name}`,
     name,
     `${name}-${type}`,
     type,

@@ -1,88 +1,61 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { ApolloGateway } from '@apollo/gateway';
-import { DocumentNode, Kind, print, GraphQLField, GraphQLResolveInfo, buildSchema } from 'graphql';
-import { addTypenameToAbstract } from 'graphql-tools-fork/dist/stitching/addTypenameToAbstract';
-import { printSchemaWithDirectives } from '@graphql-toolkit/common';
-import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
+import { GraphQLResolveInfo, print } from 'graphql';
+import { delegateToSchema, IDelegateToSchemaOptions, makeRemoteExecutableSchema } from 'graphql-tools-fork';
+import { fetchache, Request } from 'fetchache';
+import { parse } from 'querystring';
 
 const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
-    async getMeshSource({ config, cache }) {
-        const gateway = new ApolloGateway(config);
-        const loadedGateway = await gateway.load();
-        const proxyResolver = async (source: any, args: any, context: any, info: GraphQLResolveInfo) => {
-            const fragments = Object.keys(info.fragments).map(
-                fragment => info.fragments[fragment],
-            );
-
-            const operation = {
-                ...info.operation,
-                name: {
-                    kind: Kind.NAME,
-                    value: info.operation.name?.value + '_' + info.fieldName,
-                },
-                selectionSet: {
-                    ...info.operation.selectionSet,
-                    selections: info.operation.selectionSet.selections.filter(selection => {
-                        if (selection.kind === 'Field') {
-                            if (selection.name.value === info.fieldName) {
-                                return true;
-                            } 
-                            return false;
-                        }
-                        return true;
-                    })
-                }
-            }
-    
-            let query: DocumentNode = {
-                kind: Kind.DOCUMENT,
-                definitions: [operation, ...fragments],
-            };
-    
-            query = addTypenameToAbstract(info.schema, query);
-    
-            const result = await loadedGateway.executor({
-                document: query,
-                queryHash: JSON.stringify(query) + '_' + info.fieldName,
-                context,
-                request: {
-                    query: print(query),
-                    operationName: operation.name.value,
-                    variables: args,
-                },
-                cache,
-                source,
-            });
-            if (result.errors) {
-                throw result.errors;
-            }
-            return result.data && result.data[info.fieldName];
-        };
-
-        const resolvers: any = {};
-        for (const fieldName in loadedGateway.schema.getQueryType()?.getFields()) {
-            resolvers.Query = resolvers.Query || {};
-            resolvers.Query[fieldName] = proxyResolver;
-        }
-        for (const fieldName in (loadedGateway.schema.getMutationType()?.getFields() || {})) {
-            resolvers.Mutation = resolvers.Mutation || {};
-            resolvers.Mutation[fieldName] = proxyResolver;
-        }
-        
-        const proxySchema = buildSchema(
-            printSchemaWithDirectives(loadedGateway.schema),
-            {
-                assumeValid: true,
-                assumeValidSDL: true,
-            }
-        )
-
-        addResolveFunctionsToSchema({
-            schema: proxySchema,
-            resolvers,
+    async getMeshSource({ config, hooks, cache }) {
+        const gateway = new ApolloGateway({
+            fetcher: (info: any, init: any) => fetchache(typeof info === 'string' ? new Request(info, init) : info, cache) as any,
+            ...config,
         });
+        const { schema, executor } = await gateway.load();
+        hooks.on('buildSdkFn', ({ fieldName, replaceFn, schema }) => {
+            replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
+                const delegationOptions: IDelegateToSchemaOptions = {
+                    schema: {
+                        schema,
+                        executor: ({ document, variables }) => executor({
+                            document,
+                            request: {
+                                query: print(document),
+                                operationName: info.operation.name?.value,
+                                variables,
+                            },
+                            cache,
+                            context,
+                            queryHash: print(document) + '_' + JSON.stringify(variables),
+                            operationName: info.operation.name?.value,
+                            operation: info.operation,
+                        }),
+                    },
+                    fieldName,
+                    args,
+                    info,
+                    context
+                };
 
-        return { schema: proxySchema };
+                return delegateToSchema(delegationOptions);
+            });
+        });
+        return { 
+            schema: makeRemoteExecutableSchema({
+                schema,
+                fetcher: ({ query, operationName, variables, context }) => executor({
+                    document: query,
+                    request: {
+                        query: print(query),
+                        variables,
+                    },
+                    operationName,
+                    cache,
+                    context,
+                    queryHash: print(query) + '_' + JSON.stringify(variables),
+                })
+            })
+        };
     }
 }
 

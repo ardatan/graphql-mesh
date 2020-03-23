@@ -22,6 +22,7 @@
     },
     "dependencies": {
       "@graphql-mesh/types": "0.0.14",
+      "fetchache": "0.0.3",
       "graphql-tools-fork": "8.9.6"
     },
     "publishConfig": {
