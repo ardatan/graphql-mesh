@@ -26,7 +26,7 @@
     "@graphql-mesh/types": "0.0.14",
     "aggregate-error": "3.0.1",
     "change-case": "4.1.1",
-    "cross-fetch": "3.0.4",
+    "fetchache": "0.0.3",
     "graphql-scalars": "1.0.7",
     "is-url": "1.2.4",
     "js-yaml": "3.13.1",
