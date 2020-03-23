@@ -12,7 +12,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
   async getMeshSource({ config, hooks, cache }) {
     const link = new HttpLink({
       uri: config.endpoint,
-      fetch: (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache),
+      fetch: (info, init) => fetchache(typeof info === 'string' ? new Request(info, init) : info, cache),
       headers: config.headers || {}
     });
     const introspection = await introspectSchema(link);
