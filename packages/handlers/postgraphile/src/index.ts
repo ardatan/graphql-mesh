@@ -9,8 +9,13 @@ const handler: MeshHandlerLibrary<
 > = {
   async getMeshSource({ config, hooks }) {
     const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
+    const pgPool = new Pool(
+      config?.pool
+        ? { ...config?.pool }
+        : { connectionString: config.connectionString }
+    );
     const graphileSchema = await createPostGraphileSchema(
-      config.connectionString,
+      pgPool,
       config.schemaName || 'public',
       {
         dynamicJson: true,
@@ -49,22 +54,8 @@ const handler: MeshHandlerLibrary<
     return {
       schema: graphileSchema,
       contextBuilder: async () => {
-        return new Promise((resolve, reject) => {
-          // TOOD: Clean this pool after context is no longer relevant, probably we'll do it with a hook
-          const pool = new Pool(
-            config?.pool
-              ? { ...config?.pool }
-              : { connectionString: config.connectionString }
-          );
-
-          pool.connect((err, client) => {
-            if (err) {
-              return reject(err);
-            }
-
-            return resolve({ pgClient: client });
-          });
-        });
+        const pgClient = await pgPool.connect();
+        return { pgClient };
       }
     };
   }
