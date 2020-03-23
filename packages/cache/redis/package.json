@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@graphql-mesh/types": "0.0.14",
-        "dataloader": "1.4.0",
+        "dataloader": "2.0.0",
         "ioredis": "4.0.0",
         "ts-node": "8.6.2"
     },
