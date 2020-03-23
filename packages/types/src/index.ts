@@ -33,6 +33,7 @@ export type AllHooks = {
     originalResolveFn?: GraphQLFieldResolver<any, any>;
     replaceFn: (fn: Function) => void;
   }) => void;
+  destroy: () => void;
 };
 export class Hooks extends EventEmitter<AllHooks> {}
 export type HooksKeys = keyof AllHooks;

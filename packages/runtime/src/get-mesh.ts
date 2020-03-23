@@ -37,6 +37,7 @@ export async function getMesh(
   rawSources: RawSourcesOutput;
   sdkRequester: Requester;
   contextBuilder: () => Promise<Record<string, any>>;
+  destroy: () => void;
 }> {
   const results: RawSourcesOutput = {};
   const hooks = new Hooks();
@@ -185,7 +186,8 @@ export async function getMesh(
     schema: unifiedSchema,
     contextBuilder: buildMeshContext,
     rawSources: results,
-    sdkRequester: localRequester
+    sdkRequester: localRequester,
+    destroy: () => { hooks.emit('destroy'); },
   };
 }
 
