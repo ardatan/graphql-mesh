@@ -1,0 +1,68 @@
+sources:
+  - name: KLM
+    handler:
+      name: json-schema
+      config: 
+        baseUrl: https://api-ute3.airfranceklm.com/
+        schemaHeaders:
+          Host: api-ute3.airfranceklm.com
+          Accept: application/hal+json;charset=UTF-8;
+          Content-Type: application/json
+          Authorization: Bearer fnpumj5n86vc5w46nxe46adj
+          AFKL-TRAVEL-Host: AF
+        operationHeaders:
+          Accept: application/hal+json;charset=UTF-8;
+          Accept-Language: en-GR
+          Content-Type: application/json
+          Authorization: Bearer wxddm93nf2jxqfmmq8u9pzc7
+          AFKL-TRAVEL-Host: AF
+          AFKL-TRAVEL-Country: GR
+          blueweb-identified-bot: BOT
+        typeReferences: 
+          - reference: "urn:jsonschema:org:joda:time:LocalDate"
+            sharedType: graphql#GraphQLString
+          - reference: "urn:jsonschema:org:joda:time:LocalDateTime"
+            sharedType: graphql#GraphQLString
+          - reference: "urn:jsonschema:com:afklm:ofa:util:DateInterval"
+            sharedType: graphql#GraphQLString
+        operations:
+          - type: Query
+            field: availableOffers
+            path: /travel/offers/v1/available-offers
+            method: POST
+            headers:
+              Accept: application/hal+json;profile=com.afklm.flightoffers.lowest-fare-offers.v3;
+            requestSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/request/available-offers
+            responseSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/response/available-offers
+          - type: Query
+            field: upsellOffers
+            path: /travel/offers/v1/upsell-offers
+            method: POST
+            headers:
+              Accept: application/hal+json;profile=com.afklm.flightoffers.lowest-fare-offers.v3;
+            requestSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/request/upsell-offers
+            responseSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/response/upsell-offers
+          - type: Query
+            field: lowestFareOffers
+            path: /travel/offers/v1/lowest-fare-offers
+            method: POST
+            headers:
+              Accept: application/hal+json;profile=com.afklm.flightoffers.lowest-fare-offers.v3;
+            requestSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/request/lowest-fare-offers
+            responseSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/response/lowest-fare-offers
+          - type: Query
+            field: tripSummary
+            path: /travel/offers/v1/trip-summary
+            method: POST
+            headers:
+              Accept: application/hal+json;profile=com.afklm.flightoffers.lowest-fare-offers.v3;
+            requestSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/request/trip-summary
+            responseSchema: https://api-ute3.airfranceklm.com/travel/offers/v1/jsonschema/response/trip-summary
+          - type: Query
+            field: ancillaryShopsOffers
+            path: /travel/ancillaryshops/{args.shopId}/offers
+            method: GET
+            headers:
+              Accept: application/hal+json;profile=com.klm.api.ancillaryShop.v3
+            requestSchema: ./schemas/ancillaryShopsOffersRequest.json
+            responseSchema: ./schemas/ancillaryShopsOffersResponse.json

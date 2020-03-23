@@ -1,0 +1,16 @@
+{
+    "name": "klm-api",
+    "version": "0.0.14",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+      "mesh:serve": "graphql-mesh serve",
+      "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
+    },
+    "dependencies": {
+      "@graphql-mesh/cli": "0.0.14",
+      "@graphql-mesh/runtime": "0.0.14",
+      "@graphql-mesh/json-schema": "0.0.14",
+      "graphql": "14.6.0"
+    }
+  }

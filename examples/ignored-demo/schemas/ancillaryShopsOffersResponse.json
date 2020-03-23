@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "type": "object",
+            "properties": {
+              "carts:products": {
+                "type": "object",
+                "properties": {
+                  "href": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "productClass": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "productType": {
+            "type": "string"
+          },
+          "passenger": {
+            "type": "object",
+            "properties": {
+              "passengerId": {
+                "type": "string"
+              }
+            }
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number"
+                },
+                "currencyCode": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "milesPercentage": {
+                  "type": "string"
+                },
+                "displayPriceText": {
+                  "type": "string"
+                },
+                "monetaryPercentage": {
+                  "type": "string"
+                },
+                "milesAmount": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "productCharacteristics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "integer"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "productId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "relatedContent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "productCode": {
+            "type": "string"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tag": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "href": {
+                      "type": "string"
+                    },
+                    "tag": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
