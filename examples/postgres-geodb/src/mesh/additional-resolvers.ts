@@ -1,10 +1,10 @@
-import { Resolvers, Github_SearchType } from './__generated__/types';
+import { Resolvers, GithubSearchType } from './__generated__/types';
 
 export const resolvers: Resolvers = {
-  Geo_City: {
-    developers: async (cityData, { limit }, context, info) => context.Github.api.Github_search(
+  GeoCity: {
+    developers: async (cityData, { limit }, context, info) => context.Github.api.Githubsearch(
       {
-        type: Github_SearchType.User,
+        type: GithubSearchType.User,
         query: `location:${cityData.name}`,
         first: limit
       },

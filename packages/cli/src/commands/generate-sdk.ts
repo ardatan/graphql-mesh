@@ -1,12 +1,12 @@
 import { GraphQLSchema, printSchema, parse } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
-import * as addPlugin from '@graphql-codegen/add';
 import * as tsPlugin from '@graphql-codegen/typescript';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { loadDocuments as loadDocumentsToolkit } from '@graphql-toolkit/core';
 import { CodeFileLoader } from '@graphql-toolkit/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
+import { printSchemaWithDirectives } from '@graphql-toolkit/common';
 
 export async function generateSdk(
   schema: GraphQLSchema,
@@ -22,13 +22,12 @@ export async function generateSdk(
   const output = await codegen({
     filename: 'types.ts',
     pluginMap: {
-      add: addPlugin,
       typescript: tsPlugin,
       typescriptOperations: tsOperationsPlugin,
       typescriptGenericSdk: tsGenericSdkPlugin
     },
     documents,
-    schema: parse(printSchema(schema)),
+    schema: parse(printSchemaWithDirectives(schema)),
     schemaAst: schema,
     plugins: [
       {

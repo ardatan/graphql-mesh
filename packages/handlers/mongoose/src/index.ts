@@ -48,7 +48,7 @@ async function loadExternalModuleByExpression(
 }
 
 const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
-  async getMeshSource({ config }) {
+  async getMeshSource({ config, hooks }) {
     if (config.connectionString) {
       await mongoose.connect(config.connectionString, {
         useNewUrlParser: true,
@@ -120,6 +120,8 @@ const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
     schemaComposer.Mutation.addFields(mutationFields);
 
     const schema = schemaComposer.buildSchema();
+
+    hooks.on('destroy', () => mongoose.disconnect());
 
     return {
       schema
