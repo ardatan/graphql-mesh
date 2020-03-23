@@ -23,6 +23,6 @@
     "@graphql-mesh/runtime": "0.0.14",
     "apollo-server": "2.11.0",
     "graphql": "14.6.0",
-    "graphql-tools-fork": "8.9.4"
+    "graphql-tools-fork": "8.9.7"
   }
 }

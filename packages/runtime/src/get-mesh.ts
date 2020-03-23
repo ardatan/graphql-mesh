@@ -86,7 +86,7 @@ export async function getMesh(
   }
 
   if (options.additionalResolvers) {
-    unifiedSchema = addResolveFunctionsToSchema({
+    addResolveFunctionsToSchema({
       resolvers: options.additionalResolvers,
       schema: unifiedSchema
     });
