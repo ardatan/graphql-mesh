@@ -14,8 +14,8 @@
     "devDependencies": {
       "@types/jest": "25.1.4",
       "@types/js-yaml": "3.12.2",
-      "@types/mongoose": "5.7.6",
-      "@types/node": "13.9.1",
+      "@types/mongoose": "5.7.7",
+      "@types/node": "13.9.3",
       "graphql": "14.6.0",
       "mongoose": "5.9.5",
       "jest": "25.1.0",
