@@ -12,7 +12,6 @@ export async function serveMesh(
     context: contextBuilder,
   });
 
-  server.listen().then(({ url }) => {
-    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: ${url}`);
-  });
+  const { url } = await server.listen();
+  logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: ${url}`);
 }
