@@ -9,16 +9,16 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "mongoose": "5.9.5"
+    "mongoose": "5.9.6"
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
     "@types/js-yaml": "3.12.2",
-    "@types/mongoose": "5.7.6",
+    "@types/mongoose": "5.7.7",
     "@types/node": "13.9.1",
     "graphql": "14.6.0",
     "jest": "25.1.0",
-    "mongoose": "5.9.5",
+    "mongoose": "5.9.6",
     "ts-jest": "25.2.1",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
