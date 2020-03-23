@@ -1,0 +1,10 @@
+type Redis implements Cache {
+    name: String!
+    config: RedisConfig
+}
+
+type RedisConfig {
+    host: String
+    port: Int
+    password: String
+}

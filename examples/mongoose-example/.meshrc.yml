@@ -1,3 +1,5 @@
+require:
+  - ts-node/register/transpile-only
 sources:
   - name: Mongoose
     handler:

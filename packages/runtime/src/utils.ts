@@ -1,4 +1,3 @@
-import 'ts-node/register/transpile-only';
 import { IResolvers } from 'graphql-tools-fork';
 import { ResolvedTransform, GraphQLOperation } from './types';
 import {
@@ -8,7 +7,7 @@ import {
   DocumentNode,
   parse
 } from 'graphql';
-import { Hooks, MeshHandlerLibrary } from '@graphql-mesh/types';
+import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 
@@ -50,7 +49,9 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
   const possibleNames = [
     `@graphql-mesh/${name}`,
     `@graphql-mesh/${name}-${type}`,
-    name
+    name,
+    `${name}-${type}`,
+    type,
   ];
   const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
 
@@ -156,4 +157,12 @@ export function extractSdkFromResolvers(
 
 export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
   return typeof document === 'string' ? parse(document) : document;
+}
+
+export type CacheCtor = new (cacheConfig: any) => KeyValueCache;
+
+export async function resolveCache(cacheConfig: YamlConfig.Config['cache']): Promise<CacheCtor> {
+  const [moduleName, exportName] = cacheConfig!.name.split('#');
+  const pkg = await getPackage<any>(moduleName, 'cache');
+  return exportName ? pkg[exportName] : pkg;
 }

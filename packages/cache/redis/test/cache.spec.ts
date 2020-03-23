@@ -1,3 +1,3 @@
-describe('json-schema', () => {
+describe('redis', () => {
   it('dummy', async () => {});
 });
