@@ -7,10 +7,7 @@ async function main() {
 
   const server = new ApolloServer({
     schema,
-    context: () => {
-      const context = contextBuilder();
-      return context;
-    }
+    context: contextBuilder,
   });
 
   server.listen().then(({ url }) => {
