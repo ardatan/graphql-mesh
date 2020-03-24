@@ -5879,10 +5879,10 @@ graphql-parse-resolve-info@4.5.0:
   dependencies:
     debug "^4.1.1"
 
-graphql-scalars@1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.0.8.tgz#74806a1e9372b38012b5628d52d839e21117f14b"
-  integrity sha512-H5R9qlhWJlJ/BoAbYmz8EwcKZs9jboKo40BgP1qGRaRacYRO4aQkskOVZngcAHpwqgkOZhZDGhcVwmL/jdU6JA==
+graphql-scalars@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.0.9.tgz#d354627c97807bd825fbdf49893051a3dbf5cc06"
+  integrity sha512-U2bIiy8hw1fgRHIB4AhCo9Oudlf88QXEjPVCM8W68GwUj9ZuQPmskyOIk9zt5HDc+FLy+qUEWpMZyqDbaU0plA==
 
 graphql-subscriptions@^1.0.0:
   version "1.1.0"
