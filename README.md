@@ -43,9 +43,9 @@ Now, create the initial GraphQL Mesh configuration file - `.meshrc.yaml`, under 
 ```yaml
 sources:
   - name: Wiki
-    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
     handler:
-      name: openapi
+      openapi:
+        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
 ```
 
 > Note: If you wish to have auto-complete and documentation in the YAML config file, create `.vscode/settings.json` in your project, with the following content: `{ "yaml.schemas": { "./node_modules/@graphql-mesh/types/dist/config-schema.json": ".meshrc.yaml" }}`
@@ -130,10 +130,10 @@ To add a new simple field, that just returns the amount of views for the past mo
 ```yaml
 sources:
   - name: Wiki
-    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
     handler:
-      name: openapi
-transformations:
+      openapi:
+        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+transforms:
   - type: extend
     sdl: |
       extend type Query {
@@ -210,6 +210,7 @@ The following APIs are supported/planned at the moment. You can easily add custo
 | Package                      | Status    | Supported Spec                                                     |
 | ---------------------------- | --------- | ------------------------------------------------------------------ |
 | `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) |
+| `@graphql-mesh/federation`   | WIP       | Apollo Federation services                                         |
 | `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               |
 | `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
 | `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
