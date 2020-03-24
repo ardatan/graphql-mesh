@@ -29,7 +29,7 @@ type CacheInvalidateConfig {
   """
   operation: [String!]
   """ 
-  Invalidate the cache after specific time, you can free text (for example: 1 minute / 10s)
+  Specified in seconds, the time-to-live (TTL) value limits the lifespan
   """
-  timer: String
+  ttl: Int
 }

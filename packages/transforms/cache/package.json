@@ -21,6 +21,8 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
+    "date-fns": "2.11.0",
+    "string-interpolation": "1.2.5",
     "@graphql-toolkit/common": "0.9.9",
     "@graphql-mesh/types": "0.0.16",
     "graphql-tools-fork": "8.10.0"

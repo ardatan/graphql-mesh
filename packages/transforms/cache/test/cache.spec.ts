@@ -1,7 +1,17 @@
+import { YamlConfig } from '@graphql-mesh/types';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
-import { GraphQLSchema, buildSchema } from 'graphql';
-import cacheTransform from '../src';
+import {
+  GraphQLSchema,
+  buildSchema,
+  execute,
+  parse,
+  DocumentNode
+} from 'graphql';
+import cacheTransform, { computeCacheKey } from '../src';
+
+const wait = (seconds: number) =>
+  new Promise(resolve => setTimeout(resolve, seconds * 1000));
 
 const MOCK_DATA = [
   {
@@ -36,7 +46,7 @@ const MOCK_DATA = [
 const spies = {
   Query: {
     user: jest.fn().mockImplementation((_, { id }) => {
-      return MOCK_DATA.find(u => u.id === id);
+      return MOCK_DATA.find(u => u.id.toString() === id.toString());
     }),
     users: jest.fn().mockImplementation((_, { filter }) => {
       if (!filter) {
@@ -69,7 +79,7 @@ describe('cache', () => {
   beforeEach(() => {
     const baseSchema = buildSchema(/* GraphQL */ `
       type Query {
-        user(id: ID!): User!
+        user(id: ID!): User
         users(filter: SearchUsersInput): [User!]!
       }
 
@@ -152,6 +162,160 @@ describe('cache', () => {
       expect(
         modifiedSchema.getQueryType()?.getFields()['users'].resolve
       ).not.toBe(spies.Query.users);
+    });
+  });
+
+  describe('Cache Wrapper', () => {
+    const checkCache = async (
+      config: YamlConfig.CacheTransformConfig[],
+      cacheKeyToCheck?: string
+    ) => {
+      const cache = new InMemoryLRUCache();
+
+      const modifiedSchema = await cacheTransform({
+        schema,
+        cache,
+        config
+      });
+
+      const executeOptions = {
+        schema: modifiedSchema,
+        document: parse(/* GraphQL */ `
+          query user {
+            user(id: 1) {
+              id
+              name
+            }
+          }
+        `),
+        contextValue: {}
+      };
+
+      const defaultCacheKey =
+        cacheKeyToCheck ||
+        computeCacheKey({
+          keyStr: undefined,
+          args: {},
+          schema,
+          info: {
+            fieldName: 'user',
+            parentType: {
+              name: 'Query'
+            }
+          } as any
+        });
+
+      // No data in cache before calling it
+      expect(await cache.get(defaultCacheKey)).not.toBeDefined();
+      // Run it for the first time
+      await execute(executeOptions);
+      // Original resolver should now be called
+      expect(spies.Query.user.mock.calls.length).toBe(1);
+      // Data should be stored in cache
+      expect(await cache.get(defaultCacheKey)).toBe(MOCK_DATA[0]);
+      // Running it again
+      await execute(executeOptions);
+      // No new calls to the original resolver
+      expect(spies.Query.user.mock.calls.length).toBe(1);
+
+      return {
+        cache,
+        executeAgain: () => execute(executeOptions),
+        executeDocument: (
+          operation: DocumentNode,
+          variables: Record<string, any> = {}
+        ) =>
+          execute({
+            schema: modifiedSchema,
+            document: operation,
+            variableValues: variables
+          })
+      };
+    };
+
+    it('Should wrap resolver correctly with caching - without cacheKey', async () => {
+      await checkCache([
+        {
+          field: 'Query.user'
+        }
+      ]);
+    });
+
+    it('Should wrap resolver correctly with caching with custom key', async () => {
+      const cacheKey = `customUser`;
+
+      await checkCache(
+        [
+          {
+            field: 'Query.user',
+            cacheKey
+          }
+        ],
+        cacheKey
+      );
+    });
+
+    it('Should wrap resolver correctly with caching with custom key', async () => {
+      const cacheKey = `customUser`;
+
+      await checkCache(
+        [
+          {
+            field: 'Query.user',
+            cacheKey
+          }
+        ],
+        cacheKey
+      );
+    });
+
+    it('Should clear cache correctly when TTL is set', async () => {
+      const key = 'user-1';
+      const { cache, executeAgain } = await checkCache(
+        [
+          {
+            field: 'Query.user',
+            cacheKey: key,
+            invalidate: {
+              ttl: 1
+            }
+          }
+        ],
+        key
+      );
+
+      expect(await cache.get(key)).toBeDefined();
+      await wait(1.1);
+      expect(await cache.get(key)).not.toBeDefined();
+      await executeAgain();
+      expect(await cache.get(key)).toBeDefined();
+    });
+
+    it('Should wrap resolver correctly with caching with custom calculated key - and ensure calling resovler again when key is different', async () => {
+      const { cache, executeDocument } = await checkCache(
+        [
+          {
+            field: 'Query.user',
+            cacheKey: `query-user-{args.id}`
+          }
+        ],
+        'query-user-1'
+      );
+
+      const otherIdQuery = parse(/* GraphQL */ `
+        query user {
+          user(id: 2) {
+            id
+          }
+        }
+      `);
+
+      expect(await cache.get('query-user-2')).not.toBeDefined();
+      await executeDocument(otherIdQuery);
+      expect(await cache.get('query-user-2')).toBe(MOCK_DATA[1]);
+      expect(spies.Query.user.mock.calls.length).toBe(2);
+      await executeDocument(otherIdQuery);
+      expect(spies.Query.user.mock.calls.length).toBe(2);
     });
   });
 });
