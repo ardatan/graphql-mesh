@@ -5914,6 +5914,20 @@ graphql-to-config-schema@0.0.10:
     json-schema-to-typescript "8.1.0"
     yargs "15.1.0"
 
+graphql-tools-fork@8.10.0:
+  version "8.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-8.10.0.tgz#5c745836b599c3a360bfc16d06dcd9c56752f0e8"
+  integrity sha512-RzUIpnBMxInqgAtTmfET34Z6cwpREwTaXedRDT+0e6vzMdL2GckDqkCQyxsXHghbCVOL80oOXGB02S0rzgkOwA==
+  dependencies:
+    apollo-link "^1.2.13"
+    apollo-link-http-common "^0.2.15"
+    deprecated-decorator "^0.1.6"
+    extract-files "^7.0.0"
+    form-data "^3.0.0"
+    iterall "^1.3.0"
+    node-fetch "^2.6.0"
+    uuid "^7.0.2"
+
 graphql-tools-fork@8.9.4:
   version "8.9.4"
   resolved "https://registry.npmjs.org/graphql-tools-fork/-/graphql-tools-fork-8.9.4.tgz#7f1e7ab403f02f514650e2e0cfe4428e1e20c616"
@@ -5941,20 +5955,6 @@ graphql-tools-fork@8.9.6:
     iterall "^1.3.0"
     node-fetch "^2.6.0"
     uuid "^7.0.1"
-
-graphql-tools-fork@8.9.9:
-  version "8.9.9"
-  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-8.9.9.tgz#5c3779b29997cd1821fa23b1981893dc7922ef4e"
-  integrity sha512-9fnu1YcfVMwVTbu9dyYLuEv9aOBwb3QXHnlUHcwEEyfseeHryoLVLoeXQjrfFtKIOP2wAiSHwKz/2cejlzWPnQ==
-  dependencies:
-    apollo-link "^1.2.13"
-    apollo-link-http-common "^0.2.15"
-    deprecated-decorator "^0.1.6"
-    extract-files "^7.0.0"
-    form-data "^3.0.0"
-    iterall "^1.3.0"
-    node-fetch "^2.6.0"
-    uuid "^7.0.2"
 
 graphql-tools@^4.0.0:
   version "4.0.6"

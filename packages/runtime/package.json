@@ -34,7 +34,7 @@
     "apollo-server": "2.11.0",
     "chalk": "3.0.0",
     "cosmiconfig": "6.0.0",
-    "graphql-tools-fork": "8.9.9",
+    "graphql-tools-fork": "8.10.0",
     "js-yaml": "3.13.1",
     "mkdirp": "1.0.3",
     "ts-node": "8.7.0",
