@@ -18,7 +18,7 @@ import isUrl from 'is-url';
 import Interpolator from 'string-interpolation';
 import { join } from 'path';
 import AggregateError from 'aggregate-error';
-import { fetchache } from 'fetchache';
+import { fetchache, Request } from 'fetchache';
 
 async function loadJsonSchema(
   filePathOrUrl: string,
