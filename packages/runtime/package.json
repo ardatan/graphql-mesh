@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../jest.config.js",
@@ -25,11 +25,11 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.0.15",
-    "@graphql-mesh/extend": "0.0.15",
-    "@graphql-mesh/prefix": "0.0.15",
-    "@graphql-mesh/rename": "0.0.15",
-    "@graphql-mesh/types": "0.0.15",
+    "@graphql-mesh/cache-inmemory-lru": "0.0.16",
+    "@graphql-mesh/extend": "0.0.16",
+    "@graphql-mesh/prefix": "0.0.16",
+    "@graphql-mesh/rename": "0.0.16",
+    "@graphql-mesh/types": "0.0.16",
     "@graphql-toolkit/schema-merging": "0.9.9",
     "apollo-server": "2.11.0",
     "chalk": "3.0.0",
