@@ -7,7 +7,12 @@ import {
   DocumentNode,
   parse
 } from 'graphql';
-import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import {
+  Hooks,
+  MeshHandlerLibrary,
+  KeyValueCache,
+  YamlConfig
+} from '@graphql-mesh/types';
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
@@ -15,7 +20,8 @@ import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 export async function applySchemaTransformations(
   name: string,
   schema: GraphQLSchema,
-  transformations: ResolvedTransform[]
+  transformations: ResolvedTransform[],
+  cache: KeyValueCache
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
@@ -23,7 +29,8 @@ export async function applySchemaTransformations(
     resultSchema = await transformation.transformFn({
       apiName: name,
       schema: resultSchema,
-      config: transformation.config
+      config: transformation.config,
+      cache
     });
   }
 
@@ -32,14 +39,16 @@ export async function applySchemaTransformations(
 
 export async function applyOutputTransformations(
   schema: GraphQLSchema,
-  transformations: ResolvedTransform[]
+  transformations: ResolvedTransform[],
+  cache: KeyValueCache
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
     resultSchema = await transformation.transformFn({
       schema: resultSchema,
-      config: transformation.config
+      config: transformation.config,
+      cache
     });
   }
 
@@ -52,7 +61,7 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
     `@graphql-mesh/${name}-${type}`,
     name,
     `${name}-${type}`,
-    type,
+    type
   ];
   const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
 
@@ -173,8 +182,10 @@ export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Pr
   if (!cacheConfig) {
     return new InMemoryLRUCache();
   }
+
   const [moduleName, exportName] = cacheConfig.name.split('#');
   const pkg = await getPackage<any>(moduleName, 'cache');
   const Cache = exportName ? pkg[exportName] : pkg;
+
   return new Cache(cacheConfig.config);
 }

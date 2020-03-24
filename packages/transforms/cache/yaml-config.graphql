@@ -1,0 +1,35 @@
+extend type Transform {
+  """
+  Transformer to apply caching for your data sources
+  """
+  cache: [CacheTransformConfig!]
+}
+
+type CacheTransformConfig {
+  """
+  The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`
+  """
+  field: String!
+  """
+  Specify keys to to build you cache map.
+  
+  Available hints:
+  - {arg:id} - use field argument
+  """
+  cacheKey: String
+  """
+  Invalidation rules
+  """
+  invalidate: CacheInvalidateConfig
+}
+
+type CacheInvalidateConfig {
+  """
+  Invalidate the cache when a specific operation is done without an error
+  """
+  operation: [String!]
+  """ 
+  Invalidate the cache after specific time, you can free text (for example: 1 minute / 10s)
+  """
+  timer: String
+}

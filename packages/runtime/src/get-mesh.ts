@@ -43,13 +43,14 @@ export async function getMesh(
   const rawSources: RawSourceOutput[] = [];
   const hooks = new Hooks();
   const schemas: GraphQLSchema[] = [];
+  const cache = options.cache || new InMemoryLRUCache();
 
   await Promise.all(options.sources.map(async apiSource => {
     const source = await apiSource.handlerLibrary.getMeshSource({
       name: apiSource.name,
       config: apiSource.handlerConfig || {},
       hooks,
-      cache: options.cache || new InMemoryLRUCache(),
+      cache,
     });
 
     let apiSchema = source.schema;
@@ -58,7 +59,8 @@ export async function getMesh(
       apiSchema = await applySchemaTransformations(
         apiSource.name,
         apiSchema,
-        apiSource.transforms
+        apiSource.transforms,
+        cache,
       );
     }
 
@@ -86,7 +88,8 @@ export async function getMesh(
   if (options.transforms && options.transforms.length > 0) {
     unifiedSchema = await applyOutputTransformations(
       unifiedSchema,
-      options.transforms
+      options.transforms,
+      cache,
     );
   }
 

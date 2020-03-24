@@ -1,0 +1,31 @@
+{
+  "name": "@graphql-mesh/cache",
+  "version": "0.0.16",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest --config=../../../jest.config.js",
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "@graphql-mesh/cache-inmemory-lru": "0.0.16",
+    "@types/jest": "25.1.4",
+    "@types/node": "13.9.2",
+    "graphql": "14.6.0",
+    "jest": "25.1.0",
+    "ts-jest": "25.2.1",
+    "ts-node-dev": "1.0.0-pre.44",
+    "typescript": "3.8.3"
+  },
+  "dependencies": {
+    "@graphql-toolkit/common": "0.9.9",
+    "@graphql-mesh/types": "0.0.16",
+    "graphql-tools-fork": "8.10.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -45,6 +45,7 @@ export type HooksKeys = keyof AllHooks;
 export type TransformFn<Config = any> = (options: {
   schema: GraphQLSchema;
   config: Config;
+  cache: KeyValueCache;
   apiName?: string;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 
