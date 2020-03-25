@@ -57,6 +57,7 @@ export async function getMesh(
 }> {
   const rawSources: RawSourceOutput[] = [];
   const hooks = new Hooks();
+  const schemas: GraphQLSchema[] = [];
 
   await Promise.all(options.sources.map(async apiSource => {
     const source = await apiSource.handlerLibrary.getMeshSource({
@@ -79,7 +80,7 @@ export async function getMesh(
     rawSources.push({
       name: apiSource.name,
       globalContextBuilder: source.contextBuilder || null,
-      sdk: extractSdkFromResolvers(apiSchema, hooks, [
+      sdk: await extractSdkFromResolvers(apiSchema, hooks, [
         apiSchema.getQueryType(),
         apiSchema.getMutationType(),
         apiSchema.getSubscriptionType()
@@ -89,9 +90,9 @@ export async function getMesh(
       contextVariables: source.contextVariables || [],
       handler: apiSource.handlerLibrary
     });
-  }))
 
-  const schemas = rawSources.map(({ schema }) => schema);
+    schemas.push(apiSchema);
+  }))
 
   let unifiedSchema = await mergeSchemasAsync({
     schemas

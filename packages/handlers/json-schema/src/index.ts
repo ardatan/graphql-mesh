@@ -7,7 +7,8 @@ import {
   GraphQLInputType,
   GraphQLBoolean,
   GraphQLFieldConfigArgumentMap,
-  GraphQLID
+  GraphQLID,
+  GraphQLNonNull
 } from 'graphql';
 import {
   JSONSchemaVisitor,
@@ -18,7 +19,7 @@ import isUrl from 'is-url';
 import Interpolator from 'string-interpolation';
 import { join } from 'path';
 import AggregateError from 'aggregate-error';
-import { fetchache } from 'fetchache';
+import { fetchache, Request } from 'fetchache';
 
 async function loadJsonSchema(
   filePathOrUrl: string,
@@ -161,7 +162,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
               );
             }
             args[varName] = {
-              type: GraphQLID
+              type: new GraphQLNonNull(GraphQLID)
             };
           } else if (interpolationKeyParts[0] === 'context') {
             contextVariables.push(varName);

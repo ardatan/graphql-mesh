@@ -31,6 +31,16 @@ To get started with the basics, install the following:
 $ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
 ```
 
+The, you need to install a Mesh handler, according to your API needs. You can see the list of all available built-in handlers in this README, under the `Supported APIs` section.
+
+For example, if you wish to use OpenAPI handler, install the handler that matches you needs:
+
+```
+$ yarn add graphql @graphql-mesh/openapi
+```
+
+Then, this handler will be available for you to use in your config file.
+
 </p>
 </details>
 
@@ -43,9 +53,9 @@ Now, create the initial GraphQL Mesh configuration file - `.meshrc.yaml`, under 
 ```yaml
 sources:
   - name: Wiki
-    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
     handler:
-      name: openapi
+      openapi:
+        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
 ```
 
 > Note: If you wish to have auto-complete and documentation in the YAML config file, create `.vscode/settings.json` in your project, with the following content: `{ "yaml.schemas": { "./node_modules/@graphql-mesh/types/dist/config-schema.json": ".meshrc.yaml" }}`
@@ -56,7 +66,7 @@ Now, to test your new GraphQL API based on your API specs, you can run:
 $ yarn graphql-mesh serve
 ```
 
-This will server a GraphiQL interface with your schema, so you'll be able to test it right away, before intergrating it to your application, you can try to run a test query.
+This will serve a GraphiQL interface with your schema, so you'll be able to test it right away, before intergrating it to your application, you can try to run a test query.
 
 This following will fetch all page views for Wikipedia.org on the past month:
 
@@ -118,6 +128,27 @@ async function test() {
 </details>
 
 <details>
+<summary><strong>Supported APIs</strong></summary>
+<p>
+
+The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
+
+| Package                      | Status    | Supported Spec                                                     |
+| ---------------------------- | --------- | ------------------------------------------------------------------ |
+| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) |
+| `@graphql-mesh/federation`   | WIP       | Apollo Federation services                                         |
+| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               |
+| `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
+| `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
+| `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          |
+| `@graphql-mesh/soap`         | Available | SOAP specification                                                 |
+| `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        |
+| `@graphql-mesh/odata`        | WIP       | OData specification                                                |
+
+</p>
+</details>
+
+<details>
 <summary><strong>Schema Transformations</strong></summary>
 <p>
 
@@ -130,10 +161,10 @@ To add a new simple field, that just returns the amount of views for the past mo
 ```yaml
 sources:
   - name: Wiki
-    source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
     handler:
-      name: openapi
-transformations:
+      openapi:
+        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+transforms:
   - type: extend
     sdl: |
       extend type Query {
@@ -198,26 +229,6 @@ query viewsInPastMonth {
 <summary><strong>Linking Schemas</strong></summary>
 <p>
 TODO
-</p>
-</details>
-
-<details>
-<summary><strong>Supported APIs</strong></summary>
-<p>
-
-The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
-
-| Package                      | Status    | Supported Spec                                                     |
-| ---------------------------- | --------- | ------------------------------------------------------------------ |
-| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) |
-| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               |
-| `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
-| `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
-| `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          |
-| `@graphql-mesh/soap`         | Available | SOAP specification                                                 |
-| `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        |
-| `@graphql-mesh/odata`        | WIP       | OData specification                                                |
-
 </p>
 </details>
 
