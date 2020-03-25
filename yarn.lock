@@ -2378,10 +2378,10 @@
     jest-diff "^25.1.0"
     pretty-format "^25.1.0"
 
-"@types/js-yaml@3.12.2":
-  version "3.12.2"
-  resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.12.2.tgz#a35a1809c33a68200fb6403d1ad708363c56470a"
-  integrity sha512-0CFu/g4mDSNkodVwWijdlr8jH7RoplRWNgovjFLEZeT+QEbbZXjBmCe3HwaWheAlCbHwomTwzZoSedeOycABug==
+"@types/js-yaml@3.12.3":
+  version "3.12.3"
+  resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.12.3.tgz#abf383c5b639d0aa8b8c4a420d6a85f703357d6c"
+  integrity sha512-otRe77JNNWzoVGLKw8TCspKswRoQToys4tuL6XYVBFxjgeM0RUrx7m3jkaTdxILxeGry3zM8mGYkGXMeQ02guA==
 
 "@types/json-schema@^7.0.3":
   version "7.0.4"
@@ -2519,15 +2519,20 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.1.tgz#96f606f8cd67fb018847d9b61e93997dabdefc72"
   integrity sha512-E6M6N0blf/jiZx8Q3nb0vNaswQeEyn0XlupO+xN6DtJ6r6IT4nXrTry7zhIfYvFCl3/8Cu6WIysmUBKiqV0bqQ==
 
-"@types/node@13.9.2", "@types/node@>=4.5.0":
-  version "13.9.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.2.tgz#ace1880c03594cc3e80206d96847157d8e7fa349"
-  integrity sha512-bnoqK579sAYrQbp73wwglccjJ4sfRdKU7WNEZ5FW4K2U6Kc0/eZ5kvXG0JKsEKFB50zrFmfFt52/cvBbZa7eXg==
+"@types/node@13.9.4":
+  version "13.9.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.4.tgz#63c58e67999bfbfa688dd49ed84639b01b543606"
+  integrity sha512-uzaaDXey/NI2l7kU+xCgWu852Dh/zmf6ZKApc0YQEQpY4DaiZFmLN29E6SLHJfSedj3iNWAndSwfSBpEDadJfg==
 
 "@types/node@>= 8":
   version "13.1.6"
   resolved "https://registry.npmjs.org/@types/node/-/node-13.1.6.tgz#076028d0b0400be8105b89a0a55550c86684ffec"
   integrity sha512-Jg1F+bmxcpENHP23sVKkNuU3uaxPnsBMW0cLjleiikFKomJQbsn0Cqk2yDvQArqzZN6ABfBkZ0To7pQ8sLdWDg==
+
+"@types/node@>=4.5.0":
+  version "13.9.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.2.tgz#ace1880c03594cc3e80206d96847157d8e7fa349"
+  integrity sha512-bnoqK579sAYrQbp73wwglccjJ4sfRdKU7WNEZ5FW4K2U6Kc0/eZ5kvXG0JKsEKFB50zrFmfFt52/cvBbZa7eXg==
 
 "@types/node@^10.1.0":
   version "10.17.13"
@@ -5879,10 +5884,10 @@ graphql-parse-resolve-info@4.5.0:
   dependencies:
     debug "^4.1.1"
 
-graphql-scalars@1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.0.7.tgz#76449abdf9419bc7dfe90d553b3bd5435916ccb2"
-  integrity sha512-GnjP6gP/orLm1Zeyzpt6jtTWEPL8Qkd8CwsZYAcQnMToNWootDRGR5TjRwI4NUzsQ0IyEXps36IZGSF+guB4nA==
+graphql-scalars@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.0.9.tgz#d354627c97807bd825fbdf49893051a3dbf5cc06"
+  integrity sha512-U2bIiy8hw1fgRHIB4AhCo9Oudlf88QXEjPVCM8W68GwUj9ZuQPmskyOIk9zt5HDc+FLy+qUEWpMZyqDbaU0plA==
 
 graphql-subscriptions@^1.0.0:
   version "1.1.0"

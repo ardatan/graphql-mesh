@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../jest.config.js",
@@ -17,9 +17,9 @@
   "devDependencies": {
     "@types/chalk": "2.2.0",
     "@types/jest": "25.1.4",
-    "@types/js-yaml": "3.12.2",
+    "@types/js-yaml": "3.12.3",
     "@types/mkdirp": "1.0.0",
-    "@types/node": "13.9.2",
+    "@types/node": "13.9.4",
     "@types/yargs": "15.0.4",
     "graphql": "14.6.0",
     "jest": "25.1.0",
@@ -39,7 +39,7 @@
     "@graphql-codegen/typescript-generic-sdk": "1.13.1",
     "@graphql-codegen/typescript-operations": "1.13.1",
     "@graphql-codegen/typescript-resolvers": "1.13.1",
-    "@graphql-mesh/runtime": "0.0.15",
+    "@graphql-mesh/runtime": "0.0.16",
     "@graphql-toolkit/code-file-loader": "0.9.9",
     "@graphql-toolkit/common": "0.9.9",
     "@graphql-toolkit/core": "0.9.9",

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -13,9 +13,9 @@
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
-    "@types/js-yaml": "3.12.2",
+    "@types/js-yaml": "3.12.3",
     "@types/mongoose": "5.7.7",
-    "@types/node": "13.9.1",
+    "@types/node": "13.9.4",
     "graphql": "14.6.0",
     "jest": "25.1.0",
     "mongoose": "5.9.6",
@@ -24,7 +24,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.15",
+    "@graphql-mesh/types": "0.0.16",
     "@graphql-mesh/utils": "0.0.11",
     "change-case": "4.1.1",
     "graphql-compose": "7.14.0",
