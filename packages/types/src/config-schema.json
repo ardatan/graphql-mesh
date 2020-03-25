@@ -659,6 +659,17 @@
         "outputDir"
       ],
       "properties": {
+        "if": {
+          "description": "Any of: String, Boolean",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
         "apply": {
           "type": "array",
           "items": {

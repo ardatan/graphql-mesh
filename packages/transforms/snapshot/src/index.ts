@@ -11,31 +11,40 @@ const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async
     schema,
     config
   }): Promise<GraphQLSchema> => {
-    const resolvers = extractResolversFromSchema(schema);
-    const resolversComposition: ResolversComposerMapping = {};
 
-    const outputDir = isAbsolute(config.outputDir) ? config.outputDir : join(process.cwd(), config.outputDir);
+    const configIf = 'if' in config ? typeof config.if === 'boolean' ? config.if : eval(config.if) : true;
 
-    const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
-        const snapshotFilePath = join(outputDir, info.parentType.name, info.fieldName, md5(JSON.stringify(args)), '.json');
-        if (existsSync(snapshotFilePath)) {
-            return readFileSync(snapshotFilePath);
+    if(configIf) {
+        const resolvers = extractResolversFromSchema(schema);
+        const resolversComposition: ResolversComposerMapping = {};
+    
+        const outputDir = isAbsolute(config.outputDir) ? config.outputDir : join(process.cwd(), config.outputDir);
+    
+        const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
+            const fileName = [info.parentType.name, info.fieldName, md5(JSON.stringify(args))].join('_') + '.json';
+            const snapshotFilePath = join(outputDir, fileName);
+            if (existsSync(snapshotFilePath)) {
+                return JSON.parse(readFileSync(snapshotFilePath, 'utf8'));
+            }
+            const result = await next(root, args, context, info);
+            ensureFileSync(snapshotFilePath);
+            writeFileSync(snapshotFilePath, JSON.stringify(result, null, 2));
+            return result;
+        };
+    
+        for (const field of config.apply) {
+            resolversComposition[field] = snapshotComposition;
         }
-        const result = await next(root, args, context, info);
-        ensureFileSync(snapshotFilePath);
-        writeFileSync(snapshotFilePath, JSON.stringify(result, null, 2));
-        return result;
-    };
-
-    for (const field of config.apply) {
-        resolversComposition[field] = snapshotComposition;
+    
+        const composedResolvers = composeResolvers(resolvers, resolversComposition);
+        addResolveFunctionsToSchema({
+            schema,
+            resolvers: composedResolvers,
+        });
+    
     }
-
-    const composedResolvers = composeResolvers(resolvers, resolversComposition);
-    return addResolveFunctionsToSchema({
-        schema,
-        resolvers: composedResolvers,
-    });
+    
+    return schema;
   };
 
 
