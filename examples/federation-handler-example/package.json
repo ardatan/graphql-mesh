@@ -1,6 +1,6 @@
 {
   "name": "federation-handler-example",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@apollo/gateway": "0.13.2",
-    "@graphql-mesh/cli": "0.0.14",
-    "@graphql-mesh/handler-federation": "0.0.15",
-    "@graphql-mesh/runtime": "0.0.15",
+    "@graphql-mesh/cli": "0.0.16",
+    "@graphql-mesh/handler-federation": "0.0.16",
+    "@graphql-mesh/runtime": "0.0.16",
     "graphql": "14.6.0"
   }
 }
