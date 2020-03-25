@@ -1,16 +1,44 @@
 extend type Transform {
+    """
+    Mocking configuration for your source
+    """
     mocking: MockingConfig
 }
 
 type MockingConfig {
+    """
+    If this expression is truthy, mocking would be enabled
+    """
     if: Boolean
+    """
+    Do not mock any other resolvers other than defined in `mocks`
+    """
     preserveResolvers: Boolean
+    """
+    Mock configurations
+    """
     mocks: [MockingFieldConfig]
 }
 
 type MockingFieldConfig {
+    """
+    Resolver path
+    Example: User.firstName 
+    """
     apply: String!
+    """
+    If this expression is truthy, mocking would be enabled
+    """
     if: Boolean
+    """
+    Faker.js expression
+    Read more (https://github.com/marak/Faker.js/#fakerfake)
+    """
     faker: String
+    """
+    Custom mocking
+    It can be a module or json file. 
+    Both "moduleName#exportName" or only "moduleName" would work
+    """
     custom: String
 }
