@@ -1,0 +1,15 @@
+extend type Transform {
+    mocking: MockingConfig
+}
+
+type MockingConfig {
+    if: Boolean
+    fields: [MockingFieldConfig]
+}
+
+type MockingFieldConfig {
+    apply: String!
+    if: Boolean
+    faker: String
+    custom: String
+}

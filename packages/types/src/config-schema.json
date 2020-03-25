@@ -75,6 +75,25 @@
         }
       }
     },
+    "Extend": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Extend",
+      "required": [
+        "type",
+        "sdl"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to add custom SDL to the schema"
+        },
+        "sdl": {
+          "type": "string",
+          "description": "GraphQL SDL and apply to the schema"
+        }
+      }
+    },
     "FilterHelperArgsOpts": {
       "additionalProperties": false,
       "type": "object",
@@ -164,8 +183,13 @@
       "additionalProperties": false,
       "type": "object",
       "title": "Handler",
-      "required": [],
+      "required": [
+        "name"
+      ],
       "properties": {
+        "name": {
+          "type": "string"
+        },
         "graphql": {
           "$ref": "#/definitions/GraphQLHandler",
           "description": "Handler for remote/local/third-party GraphQL schema"
@@ -343,6 +367,46 @@
         }
       }
     },
+    "MockingConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingConfig",
+      "required": [],
+      "properties": {
+        "if": {
+          "type": "boolean"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MockingFieldConfig"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "MockingFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingFieldConfig",
+      "required": [
+        "apply"
+      ],
+      "properties": {
+        "apply": {
+          "type": "string"
+        },
+        "if": {
+          "type": "boolean"
+        },
+        "faker": {
+          "type": "string"
+        },
+        "custom": {
+          "type": "string"
+        }
+      }
+    },
     "MongooseHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -469,6 +533,36 @@
         }
       }
     },
+    "Prefix": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Prefix",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to add prefix to the GraphQL types and operations."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "The prefix to apply to the schema types. By default it's the API name."
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "List of ignored types"
+        },
+        "includeRootOperations": {
+          "type": "boolean",
+          "description": "Changes root types and changes the field names"
+        }
+      }
+    },
     "PrefixTransformConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -554,6 +648,29 @@
         }
       }
     },
+    "Rename": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Rename",
+      "required": [
+        "type",
+        "config"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transformer to apply rename of a GraphQL type"
+        },
+        "config": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "List of changes to apply"
+        }
+      }
+    },
     "RenameTransformObject": {
       "additionalProperties": false,
       "type": "object",
@@ -607,12 +724,17 @@
       "title": "Source",
       "required": [
         "name",
+        "source",
         "handler"
       ],
       "properties": {
         "name": {
           "type": "string",
           "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
+        },
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         },
         "context": {
           "type": "object",
@@ -621,6 +743,25 @@
         "handler": {
           "$ref": "#/definitions/Handler",
           "description": "Point to the handler you wish to use, it can either be a predefined handler, or a custom"
+        },
+        "transformations": {
+          "type": "array",
+          "items": {
+            "description": "Any of: Extend, Prefix, Rename",
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Extend"
+              },
+              {
+                "$ref": "#/definitions/Prefix"
+              },
+              {
+                "$ref": "#/definitions/Rename"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "List of transformations to apply to the current API source, before unifying it with the rest of the sources (Any of: Extend, Prefix, Rename)"
         },
         "transforms": {
           "type": "array",
@@ -653,6 +794,9 @@
           },
           "additionalItems": false,
           "description": "Transformer to apply rename of a GraphQL type"
+        },
+        "mocking": {
+          "$ref": "#/definitions/MockingConfig"
         }
       }
     },
@@ -837,13 +981,6 @@
     "sources"
   ],
   "properties": {
-    "require": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "additionalItems": false
-    },
     "sources": {
       "type": "array",
       "items": {
@@ -852,13 +989,24 @@
       "additionalItems": false,
       "description": "Defines the list of your external data sources for your API mesh"
     },
-    "transforms": {
+    "transformations": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/Transform"
+        "description": "Any of: Extend, Prefix, Rename",
+        "anyOf": [
+          {
+            "$ref": "#/definitions/Extend"
+          },
+          {
+            "$ref": "#/definitions/Prefix"
+          },
+          {
+            "$ref": "#/definitions/Rename"
+          }
+        ]
       },
       "additionalItems": false,
-      "description": "Transform to apply to the unified mesh schema"
+      "description": "Transformations to apply to the unified mesh schema (Any of: Extend, Prefix, Rename)"
     },
     "additionalResolvers": {
       "type": "array",
@@ -867,6 +1015,21 @@
       },
       "additionalItems": false,
       "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
+    },
+    "require": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false
+    },
+    "transforms": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Transform"
+      },
+      "additionalItems": false,
+      "description": "Transform to apply to the unified mesh schema"
     },
     "cache": {
       "description": "Backend cache (Any of: InMemoryLRU, Redis)",
