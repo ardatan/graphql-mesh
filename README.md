@@ -28,8 +28,18 @@ GraphQL Mesh comes in multiple packages, which you should install according to y
 To get started with the basics, install the following:
 
 ```
-$ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli @graphql-mesh/openapi
+$ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
 ```
+
+The, you need to install a Mesh handler, according to your API needs. You can see the list of all available built-in handlers in this README, under the `Supported APIs` section.
+
+For example, if you wish to use OpenAPI handler, install the handler that matches you needs:
+
+```
+$ yarn add graphql @graphql-mesh/openapi
+```
+
+Then, this handler will be available for you to use in your config file.
 
 </p>
 </details>
@@ -118,6 +128,27 @@ async function test() {
 </details>
 
 <details>
+<summary><strong>Supported APIs</strong></summary>
+<p>
+
+The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
+
+| Package                      | Status    | Supported Spec                                                     |
+| ---------------------------- | --------- | ------------------------------------------------------------------ |
+| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) |
+| `@graphql-mesh/federation`   | WIP       | Apollo Federation services                                         |
+| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               |
+| `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
+| `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
+| `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          |
+| `@graphql-mesh/soap`         | Available | SOAP specification                                                 |
+| `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        |
+| `@graphql-mesh/odata`        | WIP       | OData specification                                                |
+
+</p>
+</details>
+
+<details>
 <summary><strong>Schema Transformations</strong></summary>
 <p>
 
@@ -198,27 +229,6 @@ query viewsInPastMonth {
 <summary><strong>Linking Schemas</strong></summary>
 <p>
 TODO
-</p>
-</details>
-
-<details>
-<summary><strong>Supported APIs</strong></summary>
-<p>
-
-The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
-
-| Package                      | Status    | Supported Spec                                                     |
-| ---------------------------- | --------- | ------------------------------------------------------------------ |
-| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) |
-| `@graphql-mesh/federation`   | WIP       | Apollo Federation services                                         |
-| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               |
-| `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         |
-| `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           |
-| `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          |
-| `@graphql-mesh/soap`         | Available | SOAP specification                                                 |
-| `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        |
-| `@graphql-mesh/odata`        | WIP       | OData specification                                                |
-
 </p>
 </details>
 
