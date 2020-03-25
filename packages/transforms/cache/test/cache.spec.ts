@@ -9,6 +9,7 @@ import {
   DocumentNode
 } from 'graphql';
 import cacheTransform, { computeCacheKey } from '../src';
+import objectHash from 'object-hash';
 
 const wait = (seconds: number) =>
   new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -191,7 +192,7 @@ describe('cache', () => {
         contextValue: {}
       };
 
-      const defaultCacheKey =
+      const cacheKey =
         cacheKeyToCheck ||
         computeCacheKey({
           keyStr: undefined,
@@ -206,13 +207,13 @@ describe('cache', () => {
         });
 
       // No data in cache before calling it
-      expect(await cache.get(defaultCacheKey)).not.toBeDefined();
+      expect(await cache.get(cacheKey)).not.toBeDefined();
       // Run it for the first time
       await execute(executeOptions);
       // Original resolver should now be called
       expect(spies.Query.user.mock.calls.length).toBe(1);
       // Data should be stored in cache
-      expect(await cache.get(defaultCacheKey)).toBe(MOCK_DATA[0]);
+      expect(await cache.get(cacheKey)).toBe(MOCK_DATA[0]);
       // Running it again
       await execute(executeOptions);
       // No new calls to the original resolver
@@ -316,6 +317,34 @@ describe('cache', () => {
       expect(spies.Query.user.mock.calls.length).toBe(2);
       await executeDocument(otherIdQuery);
       expect(spies.Query.user.mock.calls.length).toBe(2);
+    });
+
+    it('Should work correctly with argsHash', async () => {
+      const expectedHash = `query-user-${objectHash({ id: '1' })}`;
+
+      await checkCache(
+        [
+          {
+            field: 'Query.user',
+            cacheKey: `query-user-{argsHash}`
+          }
+        ],
+        expectedHash
+      );
+    });
+
+    it.only('Should work correctly with hash helper', async () => {
+      const expectedHash = objectHash('1');
+
+      await checkCache(
+        [
+          {
+            field: 'Query.user',
+            cacheKey: `{args.id|hash}`
+          }
+        ],
+        expectedHash
+      );
     });
   });
 });

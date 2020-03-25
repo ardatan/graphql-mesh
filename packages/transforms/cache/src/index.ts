@@ -21,6 +21,7 @@ interpolator.addAlias('fieldName', 'info.fieldName');
 interpolator.registerModifier('date', (formatStr: string) =>
   format(new Date(), formatStr)
 );
+interpolator.registerModifier('hash', (value: any) => objectHash(value));
 
 export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({
   schema,
