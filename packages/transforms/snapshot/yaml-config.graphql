@@ -1,0 +1,8 @@
+extend type Transform {
+  snapshot: SnapshotTransformConfig
+}
+
+type SnapshotTransformConfig {
+  apply: [String!]!
+  outputDir: String!
+}
