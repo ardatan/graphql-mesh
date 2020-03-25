@@ -64,7 +64,7 @@ export class JSONSchemaVisitor {
             case 'object':
                 if ('$ref' in def) {
                     return this.visitObjectReference(def, isInput);
-                } else if ('name' in def) {
+                } else if ('name' in def || 'title' in def) {
                     return this.visitTypedNamedObjectDefinition(def, prefix, isInput);
                 }  else if ('properties' in def){
                     return this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix, isInput);
@@ -219,7 +219,7 @@ export class JSONSchemaVisitor {
         return this.getGraphQLObjectTypeWithTypedObjectDef(typedUnnamedObjectDef, objectIdentifier, name, prefix, isInput);
     }
     visitTypedNamedObjectDefinition(typedNamedObjectDef: JSONSchemaTypedNamedObjectDefinition, prefix: string, isInput: boolean) {
-        const objectIdentifier = typedNamedObjectDef.name;
+        const objectIdentifier = 'name' in typedNamedObjectDef ? typedNamedObjectDef.name : typedNamedObjectDef.title;
         const name = pascalCase(objectIdentifier);
         return this.getGraphQLObjectTypeWithTypedObjectDef(typedNamedObjectDef, objectIdentifier, name, prefix, isInput);
     }
