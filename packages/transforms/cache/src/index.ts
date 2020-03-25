@@ -9,6 +9,7 @@ import {
 } from '@graphql-toolkit/common';
 import Interpolator from 'string-interpolation';
 import { format } from 'date-fns';
+import objectHash from 'object-hash';
 
 const interpolator = new Interpolator({
   delimiter: ['{', '}']
@@ -84,10 +85,13 @@ export function computeCacheKey(options: {
     return `${options.info.parentType.name}-${options.info.fieldName}`;
   }
 
-  return interpolator.parse(options.keyStr, {
+  const templateData = {
     args: options.args,
+    argsHash: options.args ? objectHash(options.args) : null,
     info: options.info || null
-  });
+  };
+
+  return interpolator.parse(options.keyStr, templateData);
 }
 
 export default cacheTransform;

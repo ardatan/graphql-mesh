@@ -12,9 +12,16 @@ type CacheTransformConfig {
   field: String!
   """
   Specify keys to to build you cache map.
-  
-  Available hints:
-  - {arg:id} - use field argument
+
+  Available variables:
+  - {args.argName} - use resolver argument
+  - {typeName} - use name of the type
+  - {fieldName} - use name of the field
+  - {argsHash} - a hash based on the 'args' object
+  - {info} - the GraphQLResolveInfo of the resolver
+
+  Available interpolations:
+  - {format|date} - returns the current date with a specific format
   """
   cacheKey: String
   """
@@ -28,7 +35,7 @@ type CacheInvalidateConfig {
   Invalidate the cache when a specific operation is done without an error
   """
   operation: [String!]
-  """ 
+  """
   Specified in seconds, the time-to-live (TTL) value limits the lifespan
   """
   ttl: Int
