@@ -5,7 +5,7 @@ import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 import { isAbsolute, join } from 'path';
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { ensureFileSync } from 'fs-extra';
-import md5 from 'md5';
+import objectHash from 'object-hash';
 
 const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async ({
     schema,
@@ -21,7 +21,7 @@ const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async
         const outputDir = isAbsolute(config.outputDir) ? config.outputDir : join(process.cwd(), config.outputDir);
     
         const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
-            const fileName = [info.parentType.name, info.fieldName, md5(JSON.stringify(args))].join('_') + '.json';
+            const fileName = [info.parentType.name, info.fieldName, objectHash(args)].join('_') + '.json';
             const snapshotFilePath = join(outputDir, fileName);
             if (existsSync(snapshotFilePath)) {
                 return JSON.parse(readFileSync(snapshotFilePath, 'utf8'));
