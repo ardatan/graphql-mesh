@@ -7,7 +7,8 @@ import {
   GraphQLInputType,
   GraphQLBoolean,
   GraphQLFieldConfigArgumentMap,
-  GraphQLID
+  GraphQLID,
+  GraphQLNonNull
 } from 'graphql';
 import {
   JSONSchemaVisitor,
@@ -161,7 +162,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
               );
             }
             args[varName] = {
-              type: GraphQLID
+              type: new GraphQLNonNull(GraphQLID)
             };
           } else if (interpolationKeyParts[0] === 'context') {
             contextVariables.push(varName);
