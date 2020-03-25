@@ -28,7 +28,7 @@ GraphQL Mesh comes in multiple packages, which you should install according to y
 To get started with the basics, install the following:
 
 ```
-$ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
+$ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli @graphql-mesh/openapi
 ```
 
 </p>
