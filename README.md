@@ -56,7 +56,7 @@ Now, to test your new GraphQL API based on your API specs, you can run:
 $ yarn graphql-mesh serve
 ```
 
-This will server a GraphiQL interface with your schema, so you'll be able to test it right away, before intergrating it to your application, you can try to run a test query.
+This will serve a GraphiQL interface with your schema, so you'll be able to test it right away, before intergrating it to your application, you can try to run a test query.
 
 This following will fetch all page views for Wikipedia.org on the past month:
 
