@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/node": "13.9.2",
+    "@types/node": "13.9.4",
     "graphql": "14.6.0",
     "graphql-to-config-schema": "0.0.10",
     "typescript": "3.8.3"

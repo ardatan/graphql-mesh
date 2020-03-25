@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import isUrl from 'is-url';
 import * as yaml from 'js-yaml';
-import { fetchache, KeyValueCache } from 'fetchache';
+import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';

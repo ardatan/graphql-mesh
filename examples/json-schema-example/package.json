@@ -1,5 +1,5 @@
 {
-  "name": "country-info-example",
+  "name": "json-schema-example",
   "version": "0.0.16",
   "license": "MIT",
   "private": true,
@@ -8,9 +8,8 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.0.16",
-    "@graphql-mesh/soap": "0.0.16",
-    "@graphql-mesh/transform-snapshot": "0.0.16",
-    "graphql": "14.6.0",
-    "soap": "0.31.0"
+    "@graphql-mesh/json-schema": "0.0.16",
+    "@graphql-mesh/transform-mocking": "0.0.16",
+    "graphql": "14.6.0"
   }
 }
