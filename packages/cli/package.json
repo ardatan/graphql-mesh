@@ -50,7 +50,7 @@
     "js-yaml": "3.13.1",
     "mkdirp": "1.0.3",
     "pascal-case": "3.1.1",
-    "ts-node": "8.7.0",
+    "ts-node": "8.8.1",
     "winston": "3.2.1",
     "yargs": "15.3.1"
   },
