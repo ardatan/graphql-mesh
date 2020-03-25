@@ -57,12 +57,17 @@ export type JSONSchemaTypedUnnamedObjectDefinition = {
     required?: string[];
 } & ({ $id: string; } | { id: string })
 
-export interface JSONSchemaTypedNamedObjectDefinition {
+export type JSONSchemaTypedNamedObjectDefinition = {
     type: 'object';
     name: string;
     description?: string;
     properties?: { [propertyName: string]: JSONSchemaDefinition };
-}
+} | {
+    type: 'object';
+    title: string;
+    description?: string;
+    properties?: { [propertyName: string]: JSONSchemaDefinition };
+};
 
 export interface JSONSchemaUntypedUnnamedObjectDefinition {
     type: 'object';

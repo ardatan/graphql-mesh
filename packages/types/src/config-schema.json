@@ -376,7 +376,10 @@
         "if": {
           "type": "boolean"
         },
-        "fields": {
+        "preserveResolvers": {
+          "type": "boolean"
+        },
+        "mocks": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/MockingFieldConfig"
@@ -783,6 +786,9 @@
           "type": "string",
           "description": "GraphQL SDL and apply to the schema"
         },
+        "mocking": {
+          "$ref": "#/definitions/MockingConfig"
+        },
         "prefix": {
           "$ref": "#/definitions/PrefixTransformConfig",
           "description": "Prefix transform"
@@ -794,9 +800,6 @@
           },
           "additionalItems": false,
           "description": "Transformer to apply rename of a GraphQL type"
-        },
-        "mocking": {
-          "$ref": "#/definitions/MockingConfig"
         }
       }
     },

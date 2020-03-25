@@ -4,7 +4,8 @@ extend type Transform {
 
 type MockingConfig {
     if: Boolean
-    fields: [MockingFieldConfig]
+    preserveResolvers: Boolean
+    mocks: [MockingFieldConfig]
 }
 
 type MockingFieldConfig {
