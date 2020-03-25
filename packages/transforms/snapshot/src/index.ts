@@ -3,8 +3,7 @@ import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 import { extractResolversFromSchema, composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-toolkit/common';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 import { isAbsolute, join } from 'path';
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { ensureFileSync } from 'fs-extra';
+import { ensureFileSync, existsSync, readFileSync, writeFileSync  } from 'fs-extra';
 import objectHash from 'object-hash';
 
 const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async ({
