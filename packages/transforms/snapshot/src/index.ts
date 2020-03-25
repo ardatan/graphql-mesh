@@ -12,7 +12,8 @@ const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async
     config
   }): Promise<GraphQLSchema> => {
 
-    const configIf = 'if' in config ? typeof config.if === 'boolean' ? config.if : eval(config.if) : true;
+    // TODO: Needs to be changed!
+    const configIf = 'if' in config ? typeof config.if === 'boolean' ? config.if : config.if && eval(config.if) : true;
 
     if(configIf) {
         const resolvers = extractResolversFromSchema(schema);
