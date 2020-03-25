@@ -10,6 +10,7 @@ import {
 } from 'graphql';
 import cacheTransform, { computeCacheKey } from '../src';
 import objectHash from 'object-hash';
+import { format } from 'date-fns';
 
 const wait = (seconds: number) =>
   new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -333,7 +334,7 @@ describe('cache', () => {
       );
     });
 
-    it.only('Should work correctly with hash helper', async () => {
+    it('Should work correctly with hash helper', async () => {
       const expectedHash = objectHash('1');
 
       await checkCache(
@@ -341,6 +342,20 @@ describe('cache', () => {
           {
             field: 'Query.user',
             cacheKey: `{args.id|hash}`
+          }
+        ],
+        expectedHash
+      );
+    });
+
+    it('Should work correctly with date helper', async () => {
+      const expectedHash = `1-${format(new Date(), `yyyy-MM-dd`)}`;
+
+      await checkCache(
+        [
+          {
+            field: 'Query.user',
+            cacheKey: `{args.id}-{yyyy-MM-dd|date}`
           }
         ],
         expectedHash
