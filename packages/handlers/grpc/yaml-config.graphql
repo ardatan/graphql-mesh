@@ -5,7 +5,7 @@ extend type Handler {
   grpc: GrpcHandler
 }
 
-type GrpcHandler implements Handler {
+type GrpcHandler {
   endpoint: String!
   protoFilePath: String!
   serviceName: String!
