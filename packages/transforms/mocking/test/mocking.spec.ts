@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from "graphql-tools-fork";
 import mockingTransform from "../src";
-import { MockingConfig } from "@graphql-mesh/types/dist/config";
+import { YamlConfig } from "@graphql-mesh/types";
 import { graphql } from "graphql";
 
 describe('mocking', () => {
@@ -33,7 +33,7 @@ describe('mocking', () => {
                 }
             }
         });
-        const mockingConfig: MockingConfig = {
+        const mockingConfig: YamlConfig.MockingConfig = {
             mocks: [
                 {
                     apply: 'User.fullName',
@@ -58,10 +58,10 @@ describe('mocking', () => {
             contextValue: {},
         });
         expect(result?.data?.users).toBeTruthy();
-        const user = result.data.users[0];
+        const user = result.data?.users[0];
         expect(user).toBeTruthy();
         expect(user.id).not.toBe('NOTID');
-        expect(result.data.users[0].fullName).not.toBe('fullName');
+        expect(result.data?.users[0].fullName).not.toBe('fullName');
         expect(queryUserCalled).toBeFalsy();
         expect(userFullNameCalled).toBeFalsy();
     });

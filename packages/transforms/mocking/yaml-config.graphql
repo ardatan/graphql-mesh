@@ -8,10 +8,12 @@ extend type Transform {
 type MockingConfig {
     """
     If this expression is truthy, mocking would be enabled
+    You can use environment variables expression, for example: `${MOCKING_ENABLED}`
     """
     if: Boolean
     """
-    Do not mock any other resolvers other than defined in `mocks`
+    Do not mock any other resolvers other than defined in `mocks`.
+    For example, you can enable this if you don't want to mock entire schema but partially.
     """
     preserveResolvers: Boolean
     """
@@ -28,11 +30,15 @@ type MockingFieldConfig {
     apply: String!
     """
     If this expression is truthy, mocking would be enabled
+    You can use environment variables expression, for example: `${MOCKING_ENABLED}`
     """
     if: Boolean
     """
-    Faker.js expression
+    Faker.js expression or function
     Read more (https://github.com/marak/Faker.js/#fakerfake)
+    Example;
+    faker: name.firstName
+    faker: "{{ name.firstName }} {{ name.lastName }}"
     """
     faker: String
     """

@@ -1,7 +1,7 @@
-import { GraphQLSchema, isObjectType, isListType } from 'graphql';
+import { GraphQLSchema, isObjectType, isListType, GraphQLFieldResolver } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 import { addMockFunctionsToSchema, IMocks } from 'graphql-tools-fork';
-import { fake } from 'faker';
+import * as faker from 'faker';
 
 const mockingTransform: TransformFn<YamlConfig.MockingConfig> = async ({
   schema,
@@ -19,9 +19,16 @@ const mockingTransform: TransformFn<YamlConfig.MockingConfig> = async ({
                     if (fieldName) {
                         if (fieldConfig.faker) {
                             const prevFn = mocks[typeName];
+                            let fakerFn: Function;
+                            const [service, method] = fieldConfig.faker.split('.');
+                            if (service in faker) {
+                                fakerFn = () => (faker as any)[service][method]();
+                            } else {
+                                fakerFn = () => faker.fake(fieldConfig.faker || '');
+                            }
                             mocks[typeName] = (...args) => {
                                 const prevObj = prevFn(...args);
-                                prevObj[fieldName] = () => fake(fieldConfig.faker || '');
+                                prevObj[fieldName] = fakerFn;
                                 return prevObj;
                             };
                         } else if (fieldConfig.custom) {
@@ -37,7 +44,14 @@ const mockingTransform: TransformFn<YamlConfig.MockingConfig> = async ({
                         }
                     } else {
                         if (fieldConfig.faker) {
-                            mocks[typeName] = () => fake(fieldConfig.faker || '');
+                            let fakerFn: GraphQLFieldResolver<any, any, { [argName: string]: any; }>;
+                            const [service, method] = fieldConfig.faker.split('.');
+                            if (service in faker) {
+                                fakerFn = () => (faker as any)[service][method]();
+                            } else {
+                                fakerFn = () => faker.fake(fieldConfig.faker || '');
+                            }
+                            mocks[typeName] = fakerFn;
                         } else if (fieldConfig.custom) {
                             const [moduleName, exportName] = fieldConfig.custom.split('#');
                             const m = await import(moduleName);
