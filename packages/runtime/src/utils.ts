@@ -10,6 +10,7 @@ import {
 import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 
 export async function applySchemaTransformations(
   name: string,
@@ -115,41 +116,50 @@ export async function resolveAdditionalResolvers(
   }, {} as IResolvers);
 }
 
-export function extractSdkFromResolvers(
+export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
   hooks: Hooks,
   types: Maybe<GraphQLObjectType>[]
 ) {
   const sdk: Record<string, Function> = {};
 
-  for (const type of types) {
-    if (type) {
-      const fields = type.getFields();
-
-      for (const [fieldName, field] of Object.entries(fields)) {
-        const resolveFn = field.resolve;
-
-        let fn: Function = resolveFn ? (
-          args: any,
-          context: any,
-          info: GraphQLResolveInfo
-        ) => resolveFn(null, args, context, info) : () => null;
-
-        hooks.emit('buildSdkFn', {
-          schema,
-          typeName: type.name,
-          fieldName: fieldName,
-          originalResolveFn: resolveFn,
-          replaceFn: newFn => {
-            if (newFn) {
-              fn = newFn;
-            }
-          }
-        });
-
-        sdk[fieldName] = fn;
+  await Promise.all(
+    types.map(async type => {
+      if (type) {
+        const fields = type.getFields();
+  
+        await Promise.all(
+          Object
+          .entries(fields)
+          .map(async ([fieldName, field]) => {
+            const resolveFn = field.resolve;
+    
+            let fn: Function = resolveFn ? (
+              args: any,
+              context: any,
+              info: GraphQLResolveInfo
+            ) => resolveFn(null, args, context, info) : () => null;
+    
+            hooks.emit('buildSdkFn', {
+              schema,
+              typeName: type.name,
+              fieldName: fieldName,
+              originalResolveFn: resolveFn,
+              replaceFn: newFn => {
+                if (newFn) {
+                  fn = newFn;
+                }
+              }
+            });
+    
+            sdk[fieldName] = fn;
+          })
+        )
       }
-    }
+    })
+  )
+
+  for (const type of types) {
   }
 
   return sdk;
@@ -159,10 +169,12 @@ export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
   return typeof document === 'string' ? parse(document) : document;
 }
 
-export type CacheCtor = new (cacheConfig: any) => KeyValueCache;
-
-export async function resolveCache(cacheConfig: YamlConfig.Config['cache']): Promise<CacheCtor> {
-  const [moduleName, exportName] = cacheConfig!.name.split('#');
+export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache> {
+  if (!cacheConfig) {
+    return new InMemoryLRUCache();
+  }
+  const [moduleName, exportName] = cacheConfig.name.split('#');
   const pkg = await getPackage<any>(moduleName, 'cache');
-  return exportName ? pkg[exportName] : pkg;
+  const Cache = exportName ? pkg[exportName] : pkg;
+  return new Cache(cacheConfig.config);
 }

@@ -20,9 +20,7 @@ export async function parseConfig(
   const results = await explorer.search(dir);
   const config = results?.config as YamlConfig.Config;
 
-  if (config.require) {
-    await Promise.all(config.require.map(mod => import(mod)));
-  }
+  await Promise.all(config.require?.map(mod => import(mod)) || []);
 
   const [
     sources,
@@ -63,7 +61,7 @@ export async function parseConfig(
       })
     ),
     Promise.all(
-      (config.transforms || []).map(async t => {
+      config.transforms?.map(async t => {
         const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
         const transformConfig = t[transformName];
   
@@ -71,13 +69,13 @@ export async function parseConfig(
           config: transformConfig,
           transformFn: await getPackage<TransformFn>(transformName, 'transform')
         };
-      })
+      }) || []
     ),
     resolveAdditionalResolvers(
       dir,
       config.additionalResolvers || []
     ),
-    config.cache ? resolveCache(config.cache).then(Cache => new Cache(config.cache?.config)) : new InMemoryLRUCache()
+    resolveCache(config.cache),
   ]);
 
   return {
