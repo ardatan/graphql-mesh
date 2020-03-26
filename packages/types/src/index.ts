@@ -1,7 +1,10 @@
 import { EventEmitter } from 'tsee';
-import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLFieldResolver,
+  GraphQLResolveInfo
+} from 'graphql';
 import * as YamlConfig from './config';
-
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 
 export { YamlConfig };
@@ -26,6 +29,13 @@ export declare type MeshHandlerLibrary<THandlerConfig = any, TContext = any> = {
   ) => Promise<MeshSource<TContext>>;
 };
 
+export type ResolverInfo = {
+  parent: any;
+  args: any;
+  context: any;
+  info: GraphQLResolveInfo;
+};
+
 // Hooks
 export type AllHooks = {
   schemaReady: (schema: GraphQLSchema) => void;
@@ -37,6 +47,9 @@ export type AllHooks = {
     replaceFn: (fn: Function) => void;
   }) => void;
   destroy: () => void;
+  resolverCalled: (resolverInfo: ResolverInfo) => void;
+  resolverDone: (resolverInfo: ResolverInfo, result: any) => void;
+  resolverError: (resolverInfo: ResolverInfo, error: Error) => void;
 };
 export class Hooks extends EventEmitter<AllHooks> {}
 export type HooksKeys = keyof AllHooks;
@@ -46,6 +59,7 @@ export type TransformFn<Config = any> = (options: {
   schema: GraphQLSchema;
   config: Config;
   cache: KeyValueCache;
+  hooks: Hooks;
   apiName?: string;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 

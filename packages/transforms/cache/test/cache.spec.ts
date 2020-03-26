@@ -1,4 +1,4 @@
-import { YamlConfig } from '@graphql-mesh/types';
+import { YamlConfig, Hooks } from '@graphql-mesh/types';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 import {
@@ -11,6 +11,7 @@ import {
 import cacheTransform, { computeCacheKey } from '../src';
 import objectHash from 'object-hash';
 import { format } from 'date-fns';
+import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 
 const wait = (seconds: number) =>
   new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -46,6 +47,30 @@ const MOCK_DATA = [
 ];
 
 const spies = {
+  Mutation: {
+    updateUser: jest.fn().mockImplementation((_, { userId, name }) => {
+      const user = MOCK_DATA.find(u => u.id.toString() === userId.toString());
+
+      if (!user) {
+        throw new Error(`Unable to find user ${userId}!`);
+      }
+
+      user.profile.name = name;
+
+      return user;
+    }),
+    deleteUser: jest.fn().mockImplementation((_, { userIdToDelete }) => {
+      const user = MOCK_DATA.find(
+        u => u.id.toString() === userIdToDelete.toString()
+      );
+
+      if (!user) {
+        throw new Error(`Unable to find user ${userIdToDelete}!`);
+      }
+
+      return true;
+    })
+  },
   Query: {
     user: jest.fn().mockImplementation((_, { id }) => {
       return MOCK_DATA.find(u => u.id.toString() === id.toString());
@@ -85,6 +110,11 @@ describe('cache', () => {
         users(filter: SearchUsersInput): [User!]!
       }
 
+      type Mutation {
+        updateUser(userId: ID!, name: String!): User
+        deleteUser(userIdToDelete: ID!): Boolean
+      }
+
       input SearchUsersInput {
         username: String
         email: String
@@ -116,6 +146,7 @@ describe('cache', () => {
 
   describe('Resolvers Composition', () => {
     const cache = new InMemoryLRUCache();
+    const hooks = new Hooks();
 
     it('should replace resolvers correctly with a specific type and field', async () => {
       expect(schema.getQueryType()?.getFields()['user'].resolve).toBe(
@@ -129,7 +160,8 @@ describe('cache', () => {
           {
             field: 'Query.user'
           }
-        ]
+        ],
+        hooks
       });
 
       expect(
@@ -155,7 +187,8 @@ describe('cache', () => {
           {
             field: 'Query.*'
           }
-        ]
+        ],
+        hooks
       });
 
       expect(
@@ -173,11 +206,13 @@ describe('cache', () => {
       cacheKeyToCheck?: string
     ) => {
       const cache = new InMemoryLRUCache();
+      const hooks = new Hooks();
 
       const modifiedSchema = await cacheTransform({
         schema,
         cache,
-        config
+        config,
+        hooks
       });
 
       const executeOptions = {
@@ -360,6 +395,83 @@ describe('cache', () => {
         ],
         expectedHash
       );
+    });
+  });
+
+  describe('Opration-based invalidation', () => {
+    it('Should invalidate cache when mutation is done based on key', async () => {
+      const cache = new InMemoryLRUCache();
+      const hooks = new Hooks();
+      const schemaWithHooks = applyResolversHooksToSchema(schema, hooks);
+
+      const schemaWithCache = await cacheTransform({
+        schema: schemaWithHooks,
+        cache,
+        config: [
+          {
+            field: 'Query.user',
+            cacheKey: 'query-user-{args.id}',
+            invalidate: {
+              effectingOperations: [
+                {
+                  operation: 'Mutation.updateUser',
+                  matchKey: 'query-user-{args.userId}'
+                },
+                {
+                  operation: 'Mutation.deleteUser',
+                  matchKey: 'query-user-{args.userIdToDelete}'
+                }
+              ]
+            }
+          }
+        ],
+        hooks
+      });
+
+      const expectedCacheKey = `query-user-1`;
+
+      const executeOptions = {
+        schema: schemaWithCache,
+        document: parse(/* GraphQL */ `
+          query user {
+            user(id: 1) {
+              id
+              name
+            }
+          }
+        `)
+      };
+
+      // Make sure cache works as needed, runs resolvers logic only once
+      expect(await cache.get(expectedCacheKey)).not.toBeDefined();
+      expect(spies.Query.user.mock.calls.length).toBe(0);
+      await execute(executeOptions);
+      expect(await cache.get(expectedCacheKey)).toBeDefined();
+      expect(spies.Query.user.mock.calls.length).toBe(1);
+      await execute(executeOptions);
+      expect(spies.Query.user.mock.calls.length).toBe(1);
+
+      // Run effecting mutation
+      await execute({
+        schema: schemaWithCache,
+        document: parse(/* GraphQL */ `
+          mutation updateUser {
+            updateUser(userId: 1, name: "test new") {
+              id
+              name
+            }
+          }
+        `)
+      });
+      
+      // Cache should be empty now, no calls for resolvers since then
+      expect(await cache.get(expectedCacheKey)).not.toBeDefined();
+      expect(spies.Query.user.mock.calls.length).toBe(1);
+
+      // Running again query, cache should be filled and resolver should get called again
+      await execute(executeOptions);
+      expect(await cache.get(expectedCacheKey)).toBeDefined();
+      expect(spies.Query.user.mock.calls.length).toBe(2);
     });
   });
 });

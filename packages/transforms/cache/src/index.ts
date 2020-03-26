@@ -21,17 +21,42 @@ interpolator.addAlias('fieldName', 'info.fieldName');
 interpolator.registerModifier('date', (formatStr: string) =>
   format(new Date(), formatStr)
 );
-interpolator.registerModifier('hash', (value: any) => objectHash(value));
+interpolator.registerModifier('hash', (value: any) =>
+  objectHash(value, { ignoreUnknown: true })
+);
 
 export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({
   schema,
   config,
-  cache
+  cache,
+  hooks
 }): Promise<GraphQLSchema> => {
   const sourceResolvers = extractResolversFromSchema(schema);
   const compositions: ResolversComposerMapping = {};
 
   for (const cacheItem of config) {
+    const effectingOperations = cacheItem.invalidate?.effectingOperations || [];
+
+    if (effectingOperations.length > 0) {
+      hooks.on('resolverDone', async (resolverInfo, result) => {
+        const effectingRule = effectingOperations.find(
+          o =>
+            o.operation ===
+            `${resolverInfo.info.parentType.name}.${resolverInfo.info.fieldName}`
+        );
+
+        if (effectingRule) {
+          const cacheKey = computeCacheKey({
+            keyStr: effectingRule.matchKey,
+            args: resolverInfo.args,
+            info: resolverInfo.info
+          });
+
+          await cache.delete(cacheKey);
+        }
+      });
+    }
+
     compositions[cacheItem.field] = <ResolversComposition>(
       (originalResolver => async (
         root: any,
@@ -42,7 +67,6 @@ export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = as
         const cacheKey = computeCacheKey({
           keyStr: cacheItem.cacheKey,
           args,
-          schema,
           info
         });
 
@@ -79,7 +103,6 @@ export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = as
 export function computeCacheKey(options: {
   keyStr: string | undefined;
   args: Record<string, any>;
-  schema: GraphQLSchema;
   info: GraphQLResolveInfo;
 }): string {
   if (!options.keyStr) {
@@ -88,7 +111,9 @@ export function computeCacheKey(options: {
 
   const templateData = {
     args: options.args,
-    argsHash: options.args ? objectHash(options.args) : null,
+    argsHash: options.args
+      ? objectHash(options.args, { ignoreUnknown: true })
+      : null,
     info: options.info || null
   };
 

@@ -34,9 +34,20 @@ type CacheInvalidateConfig {
   """
   Invalidate the cache when a specific operation is done without an error
   """
-  operation: [String!]
+  effectingOperations: [CacheEffectingOperationConfig!]
   """
   Specified in seconds, the time-to-live (TTL) value limits the lifespan
   """
   ttl: Int
+}
+
+type CacheEffectingOperationConfig {
+  """
+  Path to the operation that could effect it. In a form: Mutation.something
+  """
+  operation: String!
+  """
+  Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field.
+  """
+  matchKey: String
 }

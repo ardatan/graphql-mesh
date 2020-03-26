@@ -21,7 +21,8 @@ export async function applySchemaTransformations(
   name: string,
   schema: GraphQLSchema,
   transformations: ResolvedTransform[],
-  cache: KeyValueCache
+  cache: KeyValueCache,
+  hooks: Hooks
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
@@ -30,7 +31,8 @@ export async function applySchemaTransformations(
       apiName: name,
       schema: resultSchema,
       config: transformation.config,
-      cache
+      cache,
+      hooks
     });
   }
 
@@ -40,7 +42,8 @@ export async function applySchemaTransformations(
 export async function applyOutputTransformations(
   schema: GraphQLSchema,
   transformations: ResolvedTransform[],
-  cache: KeyValueCache
+  cache: KeyValueCache,
+  hooks: Hooks
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
@@ -48,7 +51,8 @@ export async function applyOutputTransformations(
     resultSchema = await transformation.transformFn({
       schema: resultSchema,
       config: transformation.config,
-      cache
+      cache,
+      hooks
     });
   }
 
@@ -136,19 +140,16 @@ export async function extractSdkFromResolvers(
     types.map(async type => {
       if (type) {
         const fields = type.getFields();
-  
+
         await Promise.all(
-          Object
-          .entries(fields)
-          .map(async ([fieldName, field]) => {
+          Object.entries(fields).map(async ([fieldName, field]) => {
             const resolveFn = field.resolve;
-    
-            let fn: Function = resolveFn ? (
-              args: any,
-              context: any,
-              info: GraphQLResolveInfo
-            ) => resolveFn(null, args, context, info) : () => null;
-    
+
+            let fn: Function = resolveFn
+              ? (args: any, context: any, info: GraphQLResolveInfo) =>
+                  resolveFn(null, args, context, info)
+              : () => null;
+
             hooks.emit('buildSdkFn', {
               schema,
               typeName: type.name,
@@ -160,13 +161,13 @@ export async function extractSdkFromResolvers(
                 }
               }
             });
-    
+
             sdk[fieldName] = fn;
           })
-        )
+        );
       }
     })
-  )
+  );
 
   for (const type of types) {
   }
@@ -178,7 +179,9 @@ export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
   return typeof document === 'string' ? parse(document) : document;
 }
 
-export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache> {
+export async function resolveCache(
+  cacheConfig?: YamlConfig.Config['cache']
+): Promise<KeyValueCache> {
   if (!cacheConfig) {
     return new InMemoryLRUCache();
   }
