@@ -310,6 +310,15 @@
     fetchache "0.0.3"
     tsee "1.3.0"
 
+"@graphql-toolkit/common@0.9.10":
+  version "0.9.10"
+  resolved "https://registry.yarnpkg.com/@graphql-toolkit/common/-/common-0.9.10.tgz#df910e4a9a69993649ca572796561993172ad897"
+  integrity sha512-UkWX+S50jqg2RraRrjMBoPLk2kYeXOVRDmpUenjs/KzHv+T9sqhbI5/QifqWeeRoQjxbtsGtuz98C6SvA76PLQ==
+  dependencies:
+    aggregate-error "3.0.1"
+    graphql-tools-fork "8.10.0"
+    lodash "4.17.15"
+
 "@graphql-toolkit/common@0.9.9":
   version "0.9.9"
   resolved "https://registry.npmjs.org/@graphql-toolkit/common/-/common-0.9.9.tgz#56daf4ac85deada766418b91d421592cbf18dcf0"
@@ -2429,6 +2438,20 @@ graphql-tools-fork@8.9.6:
     iterall "^1.3.0"
     node-fetch "^2.6.0"
     uuid "^7.0.1"
+
+graphql-tools-fork@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-9.0.0.tgz#998d1d36c007b8b2334701bf26735c7968371174"
+  integrity sha512-zi8EJLPm6J+TN2ieHFrpkgkKQTSfgK5+6I/GPTgcMLhy8Ym4Ek0XO83lFc2gcZJPF0vf7Jyk7TrkPxSX0pRoSw==
+  dependencies:
+    apollo-link "^1.2.13"
+    apollo-link-http-common "^0.2.15"
+    deprecated-decorator "^0.1.6"
+    extract-files "^7.0.0"
+    form-data "^3.0.0"
+    iterall "^1.3.0"
+    node-fetch "^2.6.0"
+    uuid "^7.0.2"
 
 graphql-tools@^4.0.0:
   version "4.0.7"
