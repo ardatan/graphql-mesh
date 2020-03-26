@@ -43,7 +43,7 @@ type CacheInvalidateConfig {
 
 type CacheEffectingOperationConfig {
   """
-  Path to the operation that could effect it. In a form: Mutation.something
+  Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
   """
   operation: String!
   """
