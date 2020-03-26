@@ -9,10 +9,10 @@ import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 
 export { YamlConfig };
 
-export type MeshSource<ContextType = any> = {
+export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
-  contextVariables?: string[];
-  contextBuilder?: () => Promise<ContextType>;
+  contextVariables?: (keyof InitialContext)[];
+  contextBuilder?: (initialContextValue: InitialContext) => Promise<ContextType>;
 };
 
 export type GetMeshSourceOptions<THandlerConfig> = {
@@ -44,7 +44,7 @@ export type AllHooks = {
     typeName: string;
     fieldName: string;
     originalResolveFn?: GraphQLFieldResolver<any, any>;
-    replaceFn: (fn: Function) => void;
+    replaceFn: (fn: (...args: any[]) => any) => void;
   }) => void;
   destroy: () => void;
   resolverCalled: (resolverInfo: ResolverInfo) => void;

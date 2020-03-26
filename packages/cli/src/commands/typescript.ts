@@ -46,6 +46,7 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
+  additionalContextIdentifier: string,
   type: Maybe<GraphQLObjectType>
 ): string[] {
   if (!type) {
@@ -64,7 +65,7 @@ function buildSignatureBasedOnRootFields(
 
     return `  ${
       field.name
-    }: (args: ${argsName}, context?: ${unifiedContextIdentifier}, info?: GraphQLResolveInfo) => Promise<${codegenHelpers.getTypeToUse(
+    }: (args: ${argsName}, context?: ${additionalContextIdentifier}, info?: GraphQLResolveInfo) => Promise<${codegenHelpers.getTypeToUse(
       {
         kind: Kind.NAMED_TYPE,
         name: {
@@ -83,18 +84,22 @@ function generateTypesForApi(options: {
 }) {
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
   const sdkIdentifier = `${options.name}Sdk`;
+  const additionalContextIdentifier = `${options.name}AdditionalContext`;
   const contextIdentifier = `${options.name}Context`;
   const operations = [
     ...buildSignatureBasedOnRootFields(
       codegenHelpers,
+      additionalContextIdentifier,
       options.schema.getQueryType()
     ),
     ...buildSignatureBasedOnRootFields(
       codegenHelpers,
+      additionalContextIdentifier,
       options.schema.getMutationType()
     ),
     ...buildSignatureBasedOnRootFields(
       codegenHelpers,
+      additionalContextIdentifier,
       options.schema.getSubscriptionType()
     )
   ];
@@ -106,16 +111,23 @@ ${operations.join(',\n')}
 };`
   };
 
+  const additionalContext = {
+    identifier: additionalContextIdentifier,
+    codeAst: `export type ${additionalContextIdentifier} = { 
+      ${options.contextVariables.map(val => `${val}?: string | number,`)}
+    };`
+  }
+
   const context = {
     identifier: contextIdentifier,
     codeAst: `export type ${contextIdentifier} = { 
       ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} }, 
-      ${options.contextVariables.map(val => `${val}?: string | number,`)}
-    };`
+    } & ${additionalContextIdentifier};`
   };
 
   return {
     sdk,
+    additionalContext,
     context
   };
 }
@@ -146,12 +158,16 @@ export async function generateTsTypes(
           );
 
           let sdkItems: string[] = [];
+          let additionalContextItems: string[] = [];
           let contextItems: string[] = [];
 
           for (const item of results) {
             if (item) {
               if (item.sdk) {
                 sdkItems.push(item.sdk.codeAst);
+              }
+              if (item.additionalContext) {
+                additionalContextItems.push(item.additionalContext.codeAst);
               }
               if (item.context) {
                 contextItems.push(item.context.codeAst);
@@ -165,7 +181,7 @@ export async function generateTsTypes(
             .join(' & ')};`;
 
           return {
-            content: [...sdkItems, ...contextItems, contextType].join('\n\n')
+            content: [...sdkItems, ...additionalContextItems, ...contextItems, contextType].join('\n\n')
           };
         }
       }

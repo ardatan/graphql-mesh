@@ -5,7 +5,15 @@ import {
   GraphQLObjectType,
   GraphQLResolveInfo,
   DocumentNode,
-  parse
+  parse,
+  GraphQLFieldResolver,
+  GraphQLField,
+  FieldNode,
+  Kind,
+  OperationDefinitionNode,
+  OperationTypeNode,
+  isObjectType,
+  SelectionSetNode
 } from 'graphql';
 import {
   Hooks,
@@ -16,6 +24,7 @@ import {
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { buildResolveInfo } from 'graphql/execution/execute';
 
 export async function applySchemaTransformations(
   name: string,
@@ -129,10 +138,45 @@ export async function resolveAdditionalResolvers(
   }, {} as IResolvers);
 }
 
+function buildFieldNode(field: GraphQLField<any, any>): FieldNode {
+  const hasSelectionSet = isObjectType(field.type);
+  const subFieldNodes: FieldNode[] = [];
+  const selectionSet: SelectionSetNode = {
+    kind: Kind.SELECTION_SET,
+    selections: subFieldNodes,
+  };
+  const fieldNode: FieldNode = {
+    kind: Kind.FIELD,
+    name: {
+      kind: Kind.NAME,
+      value: field.name,
+    },
+    selectionSet: hasSelectionSet ? selectionSet : undefined,
+  };
+
+  if (hasSelectionSet) {
+    const subFields = Object.values((field.type as GraphQLObjectType).getFields());
+    for (const subField of subFields) {
+      if (!isObjectType(subField)) {
+        subFieldNodes.push({
+          kind: Kind.FIELD,
+          name: {
+            kind: Kind.NAME,
+            value: subField.name,
+          },
+        })
+      }
+    } 
+  }
+  
+  return fieldNode;
+}
+
 export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
   hooks: Hooks,
-  types: Maybe<GraphQLObjectType>[]
+  types: Maybe<GraphQLObjectType>[],
+  contextBuilder?: (initialContextValue: any) => Promise<any>,
 ) {
   const sdk: Record<string, Function> = {};
 
@@ -145,9 +189,51 @@ export async function extractSdkFromResolvers(
           Object.entries(fields).map(async ([fieldName, field]) => {
             const resolveFn = field.resolve;
 
-            let fn: Function = resolveFn
-              ? (args: any, context: any, info: GraphQLResolveInfo) =>
-                  resolveFn(null, args, context, info)
+            let fn: GraphQLFieldResolver<any, any> = resolveFn
+              ? async (args: any, context: any, info: GraphQLResolveInfo) => {
+
+                const fieldNode = buildFieldNode(field);
+                const fieldNodes = [fieldNode];
+
+                const operation: OperationDefinitionNode = {
+                  kind: Kind.OPERATION_DEFINITION,
+                  name: {
+                    kind: Kind.NAME,
+                    value: `${type.name}_${fieldName}`,
+                  },
+                  operation: type.name.toLowerCase() as OperationTypeNode,
+                  selectionSet: {
+                    kind: Kind.SELECTION_SET,
+                    selections: fieldNodes,
+                  }
+                };
+
+                info = info && buildResolveInfo({
+                  schema,
+                  fragments: {},
+                  rootValue: null,
+                  contextValue: context,
+                  operation,
+                  variableValues: args,
+                  get fieldResolver() {
+                    return fn; // Get new one if replaced
+                  },
+                  errors: [],
+                },
+                  field,
+                  fieldNodes,
+                  type,
+                  {
+                    prev: undefined,
+                    key: field.name,
+                  },
+                );
+
+                return resolveFn(null, args, context.__isMeshContext ? context : {
+                  ...contextBuilder && await contextBuilder(context),
+                  ...context,
+                }, info)
+              }
               : () => null;
 
             hooks.emit('buildSdkFn', {
@@ -168,9 +254,6 @@ export async function extractSdkFromResolvers(
       }
     })
   );
-
-  for (const type of types) {
-  }
 
   return sdk;
 }
