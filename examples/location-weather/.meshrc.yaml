@@ -18,7 +18,15 @@ transforms:
         todayForecast: Forecast!
       }
   - cache:
-    - field: Query.*
+      # Geo data doesn't change frequntly, so we can cache it forever
+      - field: Query.*
+      # Forcast data might change, so we can cache it for 1 hour only
+      - field: PopulatedPlaceSummary.dailyForecast
+        invalidate:
+          ttl: 3600
+      - field: PopulatedPlaceSummary.todayForecast
+        invalidate:
+          ttl: 3600
 require:
   - ts-node/register/transpile-only
 additionalResolvers:

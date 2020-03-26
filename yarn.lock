@@ -1004,10 +1004,10 @@
     "@graphql-toolkit/graphql-tag-pluck" "0.9.9"
     tslib "1.11.1"
 
-"@graphql-toolkit/common@0.9.10-alpha-f92a59f.16":
-  version "0.9.10-alpha-f92a59f.16"
-  resolved "https://registry.npmjs.org/@graphql-toolkit/common/-/common-0.9.10-alpha-f92a59f.16.tgz#7d0c3f1e724f7ae1aeaefae6a9f288dc370eec37"
-  integrity sha512-PjvPLnIaQ4wHt7ZWDVk/A/3PayxjuRMVY/OLNvgDXnAdLemlRjyYO7ViCQ5HzAHCaRZVblH5G7t+KZ8gz68x2A==
+"@graphql-toolkit/common@0.9.10-alpha-044702b.19+044702b":
+  version "0.9.10-alpha-044702b.19"
+  resolved "https://registry.npmjs.org/@graphql-toolkit/common/-/common-0.9.10-alpha-044702b.19.tgz#9240c25d09dcf5c4bdf4e7169808f32be05333b8"
+  integrity sha512-vjug++G+MXzzm1jmfpT4VqwLhQ3UP2ZMbU6NGRpZ9CvgSITdnTEyr+0/fLoLub5J30me5UY6ZeGUBmXpyJoxjg==
   dependencies:
     aggregate-error "3.0.1"
     graphql-tools-fork "8.10.0"

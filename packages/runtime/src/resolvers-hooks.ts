@@ -11,31 +11,43 @@ export function applyResolversHooksToResolvers(
   hooks: Hooks
 ): IResolvers {
   return composeResolvers(resolvers, {
-    '*.*': originalResolver => (
+    '*.*': originalResolver => async (
       parentOrKind,
       args,
       context,
       info: GraphQLResolveInfo
     ) => {
-      // In case this is a scalar resolver, just run it as-is, without wrapping
-      // TODO: Fix in graphql-toolkit
-      if (parentOrKind && parentOrKind.kind) {
-        return originalResolver(parentOrKind, args, context, info);
+      hooks.emit('resolverCalled', {
+        parent: parentOrKind,
+        args,
+        context,
+        info
+      });
+
+      try {
+        const result = await originalResolver(
+          parentOrKind,
+          args,
+          context,
+          info
+        );
+
+        hooks.emit(
+          'resolverDone',
+          { parent: parentOrKind, args, context, info },
+          result
+        );
+
+        return result;
+      } catch (e) {
+        hooks.emit(
+          'resolverError',
+          { parent: parentOrKind, args, context, info },
+          e
+        );
+
+        throw e;
       }
-
-      hooks.emit('resolverCalled', { parent: parentOrKind, args, context, info });
-
-      return Promise.resolve(originalResolver(parentOrKind, args, context, info))
-        .then(result => {
-          hooks.emit('resolverDone', { parent: parentOrKind, args, context, info }, result);
-
-          return result;
-        })
-        .catch(e => {
-          hooks.emit('resolverError', { parent: parentOrKind, args, context, info }, e);
-
-          throw e;
-        });
     }
   });
 }

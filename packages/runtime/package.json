@@ -25,7 +25,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-toolkit/common": "0.9.10-alpha-f92a59f.16",
+    "@graphql-toolkit/common": "0.9.10-alpha-044702b.19+044702b",
     "@graphql-mesh/cache-inmemory-lru": "0.0.16",
     "@graphql-mesh/extend": "0.0.16",
     "@graphql-mesh/prefix": "0.0.16",
