@@ -27,13 +27,17 @@ export async function applySchemaTransformations(
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    resultSchema = await transformation.transformFn({
+    const transformedSchema = await transformation.transformFn({
       apiName: name,
       schema: resultSchema,
       config: transformation.config,
       cache,
       hooks
     });
+
+    if (transformedSchema) {
+      resultSchema = transformedSchema;
+    }
   }
 
   return resultSchema;
@@ -48,12 +52,16 @@ export async function applyOutputTransformations(
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    resultSchema = await transformation.transformFn({
+    const transformedSchema = await transformation.transformFn({
       schema: resultSchema,
       config: transformation.config,
       cache,
       hooks
     });
+
+    if (transformedSchema) {
+      resultSchema = transformedSchema;
+    }
   }
 
   return resultSchema;

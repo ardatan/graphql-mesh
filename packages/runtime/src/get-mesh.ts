@@ -14,7 +14,7 @@ import {
   ensureDocumentNode
 } from './utils';
 import { Hooks, KeyValueCache } from '@graphql-mesh/types';
-import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
+import { addResolversToSchema } from 'graphql-tools-fork';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import {
   applyResolversHooksToSchema,
@@ -91,7 +91,7 @@ export async function getMesh(
   }
 
   if (options.additionalResolvers) {
-    unifiedSchema = addResolveFunctionsToSchema({
+    unifiedSchema = addResolversToSchema({
       resolvers: applyResolversHooksToResolvers(
         options.additionalResolvers,
         hooks
@@ -100,7 +100,14 @@ export async function getMesh(
     });
   }
 
-  hooks.emit('schemaReady', unifiedSchema);
+  hooks.emit('schemaReady', {
+    schema: unifiedSchema,
+    applyResolvers: modifiedResolvers => {
+      if (modifiedResolvers) {
+        unifiedSchema = addResolversToSchema(unifiedSchema, modifiedResolvers);
+      }
+    }
+  });
 
   async function buildMeshContext(
     initialContextValue?: any

@@ -1,6 +1,6 @@
 import { YamlConfig, Hooks } from '@graphql-mesh/types';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
-import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
+import { addResolversToSchema } from 'graphql-tools-fork';
 import {
   GraphQLSchema,
   buildSchema,
@@ -135,7 +135,7 @@ describe('cache', () => {
       }
     `);
 
-    schema = addResolveFunctionsToSchema({
+    schema = addResolversToSchema({
       schema: baseSchema,
       resolvers: spies
     });
@@ -153,7 +153,9 @@ describe('cache', () => {
         spies.Query.user
       );
 
-      const modifiedSchema = await cacheTransform({
+      let modifiedSchema: GraphQLSchema;
+
+      cacheTransform({
         schema,
         cache,
         config: [
@@ -162,6 +164,13 @@ describe('cache', () => {
           }
         ],
         hooks
+      });
+
+      hooks.emit('schemaReady', {
+        schema,
+        applyResolvers: resolvers => {
+          modifiedSchema = addResolversToSchema(schema, resolvers);
+        }
       });
 
       expect(
@@ -180,7 +189,9 @@ describe('cache', () => {
         spies.Query.users
       );
 
-      const modifiedSchema = await cacheTransform({
+      let modifiedSchema: GraphQLSchema;
+
+      await cacheTransform({
         schema,
         cache,
         config: [
@@ -189,6 +200,13 @@ describe('cache', () => {
           }
         ],
         hooks
+      });
+
+      hooks.emit('schemaReady', {
+        schema,
+        applyResolvers: resolvers => {
+          modifiedSchema = addResolversToSchema(schema, resolvers);
+        }
       });
 
       expect(
@@ -207,12 +225,20 @@ describe('cache', () => {
     ) => {
       const cache = new InMemoryLRUCache();
       const hooks = new Hooks();
+      let modifiedSchema: GraphQLSchema;
 
-      const modifiedSchema = await cacheTransform({
+      await cacheTransform({
         schema,
         cache,
         config,
         hooks
+      });
+
+      hooks.emit('schemaReady', {
+        schema,
+        applyResolvers: resolvers => {
+          modifiedSchema = addResolversToSchema(schema, resolvers);
+        }
       });
 
       const executeOptions = {
@@ -232,8 +258,7 @@ describe('cache', () => {
         cacheKeyToCheck ||
         computeCacheKey({
           keyStr: undefined,
-          args: {},
-          schema,
+          args: { id: '1' },
           info: {
             fieldName: 'user',
             parentType: {
@@ -404,7 +429,7 @@ describe('cache', () => {
       const hooks = new Hooks();
       const schemaWithHooks = applyResolversHooksToSchema(schema, hooks);
 
-      const schemaWithCache = await cacheTransform({
+      await cacheTransform({
         schema: schemaWithHooks,
         cache,
         config: [
@@ -426,6 +451,15 @@ describe('cache', () => {
           }
         ],
         hooks
+      });
+
+      let schemaWithCache: GraphQLSchema;
+
+      hooks.emit('schemaReady', {
+        schema,
+        applyResolvers: resolvers => {
+          schemaWithCache = addResolversToSchema(schema, resolvers);
+        }
       });
 
       const expectedCacheKey = `query-user-1`;
