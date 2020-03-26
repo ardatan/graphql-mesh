@@ -17,6 +17,8 @@ transforms:
         dailyForecast: [Forecast!]!
         todayForecast: Forecast!
       }
+  - cache:
+    - field: Query.*
 require:
   - ts-node/register/transpile-only
 additionalResolvers:

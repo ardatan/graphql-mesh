@@ -11,7 +11,8 @@ type CacheTransformConfig {
   """
   field: String!
   """
-  Specify keys to to build you cache map.
+  Cache key to use to store your resolvers responses.
+  The defualt is: {typeName}-{fieldName}-{argsHash}
 
   Available variables:
   - {args.argName} - use resolver argument

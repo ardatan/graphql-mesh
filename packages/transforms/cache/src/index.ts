@@ -105,15 +105,17 @@ export function computeCacheKey(options: {
   args: Record<string, any>;
   info: GraphQLResolveInfo;
 }): string {
+  const argsHash = options.args
+  ? objectHash(options.args, { ignoreUnknown: true })
+  : '';
+
   if (!options.keyStr) {
-    return `${options.info.parentType.name}-${options.info.fieldName}`;
+    return `${options.info.parentType.name}-${options.info.fieldName}-${argsHash}`;
   }
 
   const templateData = {
     args: options.args,
-    argsHash: options.args
-      ? objectHash(options.args, { ignoreUnknown: true })
-      : null,
+    argsHash,
     info: options.info || null
   };
 
