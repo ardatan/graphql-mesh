@@ -2,31 +2,24 @@ import { Resolvers } from './__generated__/types';
 
 export const resolvers: Resolvers = {
   PopulatedPlaceSummary: {
-    dailyForecast: async (placeSummary, args, context, info) => {
-      const { Weather } = context;
+    dailyForecast: async (placeSummary, _, { Weather }) => {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon(
         {
           lat: placeSummary.latitude,
           lon: placeSummary.longitude,
           key: Weather.config.apiKey
-        },
-        context,
-        info
+        }
       );
 
       return forecast.data;
     },
-    todayForecast: async (placeSummary, args: never, context, info) => {
-      const { Weather } = context;
-
+    todayForecast: async (placeSummary, _, { Weather }) => {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon(
         {
           lat: placeSummary.latitude,
           lon: placeSummary.longitude,
           key: Weather.config.apiKey
         },
-        context,
-        info
       );
 
       return forecast.data[0];

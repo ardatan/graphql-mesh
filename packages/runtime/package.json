@@ -31,7 +31,7 @@
     "@graphql-mesh/prefix": "0.0.16",
     "@graphql-mesh/rename": "0.0.16",
     "@graphql-mesh/types": "0.0.16",
-    "@graphql-toolkit/schema-merging": "0.9.9",
+    "@graphql-toolkit/schema-merging": "0.9.10",
     "apollo-server": "2.11.0",
     "chalk": "3.0.0",
     "cosmiconfig": "6.0.0",
