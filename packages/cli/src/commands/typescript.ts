@@ -80,7 +80,7 @@ function buildSignatureBasedOnRootFields(
 function generateTypesForApi(options: {
   schema: GraphQLSchema;
   name: string;
-  contextVariables: string[];
+  contextVariables: (keyof any)[];
 }) {
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
   const sdkIdentifier = `${options.name}Sdk`;
@@ -114,7 +114,7 @@ ${operations.join(',\n')}
   const additionalContext = {
     identifier: additionalContextIdentifier,
     codeAst: `export type ${additionalContextIdentifier} = { 
-      ${options.contextVariables.map(val => `${val}?: string | number,`)}
+      ${options.contextVariables.map(val => `${val.toString()}?: any,`)}
     };`
   }
 
