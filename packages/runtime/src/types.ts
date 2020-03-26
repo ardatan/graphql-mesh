@@ -20,6 +20,7 @@ export type GetMeshOptions = {
   additionalResolvers?: IResolvers;
   cache?: KeyValueCache;
   hooks?: Hooks;
+  ignoreAdditionalResolvers?: boolean;
 };
 
 export type MeshResolvedSource = {
