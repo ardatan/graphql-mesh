@@ -1,1 +1,1 @@
-declare module 'string-interpolation';
+declare module 'string-interpolation/src';

@@ -16,7 +16,7 @@ import {
 } from './json-schema-visitor';
 import urlJoin from 'url-join';
 import isUrl from 'is-url';
-import Interpolator from 'string-interpolation';
+import Interpolator from 'string-interpolation/src';
 import { join } from 'path';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
