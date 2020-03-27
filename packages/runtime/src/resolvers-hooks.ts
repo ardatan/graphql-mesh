@@ -25,6 +25,7 @@ export function applyResolversHooksToResolvers(
       });
 
       try {
+        /*
         // Patch SDK for stitching
         for (let apiName in context) {
           if (typeof context[apiName] === 'object' && 'api' in context[apiName]) {
@@ -35,6 +36,7 @@ export function applyResolversHooksToResolvers(
             }
           }
         }
+        */
 
         const result = await originalResolver(
           parentOrKind,
