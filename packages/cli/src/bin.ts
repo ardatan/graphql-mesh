@@ -51,7 +51,7 @@ export async function graphqlMesh() {
           });
       },
       async args => {
-        const meshConfig = await parseConfig();
+        const meshConfig = await parseConfig(undefined, undefined, true);
         const { schema, destroy } = await getMesh(meshConfig);
         const result = await generateSdk(schema, args.operations);
         const outFile = resolve(process.cwd(), args.output);
@@ -71,7 +71,7 @@ export async function graphqlMesh() {
         });
       },
       async args => {
-        const meshConfig = await parseConfig();
+        const meshConfig = await parseConfig(undefined, undefined, true);
         const { schema, rawSources, destroy } = await getMesh(meshConfig);
         const result = await generateTsTypes(schema, rawSources);
         const outFile = resolve(process.cwd(), args.output);

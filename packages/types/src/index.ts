@@ -1,3 +1,4 @@
+import { IResolvers } from 'graphql-tools-fork';
 import { EventEmitter } from 'tsee';
 import {
   GraphQLSchema,
@@ -38,7 +39,10 @@ export type ResolverInfo = {
 
 // Hooks
 export type AllHooks = {
-  schemaReady: (schema: GraphQLSchema) => void;
+  schemaReady: (options: {
+    schema: GraphQLSchema;
+    applyResolvers: (modifiedResolvers: IResolvers) => void;
+  }) => void;
   buildSdkFn: (options: {
     schema: GraphQLSchema;
     typeName: string;
@@ -54,13 +58,12 @@ export type AllHooks = {
 export class Hooks extends EventEmitter<AllHooks> {}
 export type HooksKeys = keyof AllHooks;
 
-// Transform
 export type TransformFn<Config = any> = (options: {
   schema: GraphQLSchema;
   config: Config;
   cache: KeyValueCache;
   hooks: Hooks;
   apiName?: string;
-}) => Promise<GraphQLSchema> | GraphQLSchema;
+}) => Promise<GraphQLSchema | void> | GraphQLSchema | void;
 
 export { KeyValueCache, KeyValueCacheSetOptions };

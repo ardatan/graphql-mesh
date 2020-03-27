@@ -2,7 +2,8 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import {
   introspectSchema,
   makeRemoteExecutableSchema,
-  delegateToSchema
+  delegateToSchema,
+  IDelegateToSchemaOptions
 } from 'graphql-tools-fork';
 import { fetchache, Request } from 'fetchache';
 import { HttpLink } from 'apollo-link-http';
@@ -24,7 +25,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
 
     hooks.on('buildSdkFn', ({ fieldName, typeName, replaceFn, schema }) => {
       replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
-        const delegationOptions = {
+        const delegationOptions: IDelegateToSchemaOptions = {
           operation: typeName.toLowerCase() as any,
           fieldName,
           schema,

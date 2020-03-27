@@ -159,7 +159,7 @@
 
 "@babel/generator@^7.9.0":
   version "7.9.4"
-  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.9.4.tgz#12441e90c3b3c4159cdecf312075bf1a8ce2dbce"
+  resolved "https://registry.npmjs.org/@babel/generator/-/generator-7.9.4.tgz#12441e90c3b3c4159cdecf312075bf1a8ce2dbce"
   integrity sha512-rjP8ahaDy/ouhrvCoU1E5mqaitWrxwuNGU+dy1EpaoK48jZay4MdkskKGIMHLZNewg8sAsqpGSREJwP0zH3YQA==
   dependencies:
     "@babel/types" "^7.9.0"
@@ -351,7 +351,7 @@
 
 "@babel/helper-validator-identifier@^7.9.0":
   version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.9.0.tgz#ad53562a7fc29b3b9a91bbf7d10397fd146346ed"
+  resolved "https://registry.npmjs.org/@babel/helper-validator-identifier/-/helper-validator-identifier-7.9.0.tgz#ad53562a7fc29b3b9a91bbf7d10397fd146346ed"
   integrity sha512-6G8bQKjOh+of4PV/ThDm/rRqlU7+IGoJuofpagU5GlEl29Vv0RGqqt86ZGRV8ZuSOY3o+8yXl5y782SMcG7SHw==
 
 "@babel/helpers@^7.7.4":
@@ -410,7 +410,7 @@
 
 "@babel/parser@7.9.4", "@babel/parser@^7.9.0":
   version "7.9.4"
-  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.9.4.tgz#68a35e6b0319bbc014465be43828300113f2f2e8"
+  resolved "https://registry.npmjs.org/@babel/parser/-/parser-7.9.4.tgz#68a35e6b0319bbc014465be43828300113f2f2e8"
   integrity sha512-bC49otXX6N0/VYhgOMh4gnP26E9xnDZK3TmbNpxYzzz9BQLBosQwfyOe9/cXUU3txYhTzLCbcqd5c8y/OmCjHA==
 
 "@babel/parser@^7.0.0", "@babel/parser@^7.8.0":
@@ -688,7 +688,7 @@
 
 "@babel/traverse@7.9.0":
   version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.9.0.tgz#d3882c2830e513f4fe4cec9fe76ea1cc78747892"
+  resolved "https://registry.npmjs.org/@babel/traverse/-/traverse-7.9.0.tgz#d3882c2830e513f4fe4cec9fe76ea1cc78747892"
   integrity sha512-jAZQj0+kn4WTHO5dUZkZKhbFrqZE7K5LAQ5JysMnmvGij+wOdr+8lWqPeW0BcF4wFwrEXXtdGO7wcV6YPJcf3w==
   dependencies:
     "@babel/code-frame" "^7.8.3"
@@ -748,7 +748,7 @@
 
 "@babel/types@7.9.0", "@babel/types@^7.9.0":
   version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.9.0.tgz#00b064c3df83ad32b2dbf5ff07312b15c7f1efb5"
+  resolved "https://registry.npmjs.org/@babel/types/-/types-7.9.0.tgz#00b064c3df83ad32b2dbf5ff07312b15c7f1efb5"
   integrity sha512-BS9JKfXkzzJl8RluW4JGknzpiUV7ZrvTayM6yfqLTVBEnFtyowVIOu6rqxRd5cVO6yGoWf4T8u8dgK9oB+GCng==
   dependencies:
     "@babel/helper-validator-identifier" "^7.9.0"
@@ -1002,7 +1002,7 @@
 
 "@graphql-toolkit/code-file-loader@0.9.10":
   version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@graphql-toolkit/code-file-loader/-/code-file-loader-0.9.10.tgz#74f8db3705363c8c8956724c80228e1d02f105e5"
+  resolved "https://registry.npmjs.org/@graphql-toolkit/code-file-loader/-/code-file-loader-0.9.10.tgz#74f8db3705363c8c8956724c80228e1d02f105e5"
   integrity sha512-2Nl1B8+xzCIGEz/Y4pBiiRElCJM6Dz2AuhBOEMT/oyxb8NxJpDF48AaL8UiTBpDnRSrMRRY9iNQEGQwXOlfs5w==
   dependencies:
     "@graphql-toolkit/common" "0.9.10"
@@ -1011,17 +1011,8 @@
 
 "@graphql-toolkit/common@0.9.10":
   version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@graphql-toolkit/common/-/common-0.9.10.tgz#df910e4a9a69993649ca572796561993172ad897"
+  resolved "https://registry.npmjs.org/@graphql-toolkit/common/-/common-0.9.10.tgz#df910e4a9a69993649ca572796561993172ad897"
   integrity sha512-UkWX+S50jqg2RraRrjMBoPLk2kYeXOVRDmpUenjs/KzHv+T9sqhbI5/QifqWeeRoQjxbtsGtuz98C6SvA76PLQ==
-  dependencies:
-    aggregate-error "3.0.1"
-    graphql-tools-fork "8.10.0"
-    lodash "4.17.15"
-
-"@graphql-toolkit/common@0.9.10-alpha-f92a59f.16":
-  version "0.9.10-alpha-f92a59f.16"
-  resolved "https://registry.npmjs.org/@graphql-toolkit/common/-/common-0.9.10-alpha-f92a59f.16.tgz#7d0c3f1e724f7ae1aeaefae6a9f288dc370eec37"
-  integrity sha512-PjvPLnIaQ4wHt7ZWDVk/A/3PayxjuRMVY/OLNvgDXnAdLemlRjyYO7ViCQ5HzAHCaRZVblH5G7t+KZ8gz68x2A==
   dependencies:
     aggregate-error "3.0.1"
     graphql-tools-fork "8.10.0"
@@ -1047,7 +1038,7 @@
 
 "@graphql-toolkit/core@0.9.10":
   version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@graphql-toolkit/core/-/core-0.9.10.tgz#0eec813e8ba420d4f7f2b9782958d492b9b39dda"
+  resolved "https://registry.npmjs.org/@graphql-toolkit/core/-/core-0.9.10.tgz#0eec813e8ba420d4f7f2b9782958d492b9b39dda"
   integrity sha512-haZo6+Nv7WSw0n9npFQWyw1VFGVww7oSEV1m+H9vzgcg6+VsatEj4Dgu0C/66zF0AeCNrEypPZSDew8TD3tnIQ==
   dependencies:
     "@graphql-toolkit/common" "0.9.10"
@@ -1082,7 +1073,7 @@
 
 "@graphql-toolkit/graphql-file-loader@0.9.10":
   version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@graphql-toolkit/graphql-file-loader/-/graphql-file-loader-0.9.10.tgz#10a6e4efea7b18ff8c1473af6abb8c035b942c9f"
+  resolved "https://registry.npmjs.org/@graphql-toolkit/graphql-file-loader/-/graphql-file-loader-0.9.10.tgz#10a6e4efea7b18ff8c1473af6abb8c035b942c9f"
   integrity sha512-DUpdw/qO8DoDcKQuYvlQA51wtLCqgKO6Qjv8uzVDnIhpD4+d0/wDPt7l7H6+pgVuaD71jvNl7aSCrfqe+2Lvlw==
   dependencies:
     "@graphql-toolkit/common" "0.9.10"
@@ -1098,7 +1089,7 @@
 
 "@graphql-toolkit/graphql-tag-pluck@0.9.10":
   version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@graphql-toolkit/graphql-tag-pluck/-/graphql-tag-pluck-0.9.10.tgz#d32144eb14f4eced2a7fa48787485b93bc72f49f"
+  resolved "https://registry.npmjs.org/@graphql-toolkit/graphql-tag-pluck/-/graphql-tag-pluck-0.9.10.tgz#d32144eb14f4eced2a7fa48787485b93bc72f49f"
   integrity sha512-zffs2LTAaOVerSwb2D4F4A90W3izTiQqAUolqGLRWgEfxRyqbYweA6MTvWwYzl/Lvrh+/0Gobn4Wv7WcxvZ5Sw==
   dependencies:
     "@babel/parser" "7.9.4"
@@ -1126,7 +1117,7 @@
 
 "@graphql-toolkit/schema-merging@0.9.10":
   version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@graphql-toolkit/schema-merging/-/schema-merging-0.9.10.tgz#787975ec9b99769f3214919a5d83d64a8fbace79"
+  resolved "https://registry.npmjs.org/@graphql-toolkit/schema-merging/-/schema-merging-0.9.10.tgz#787975ec9b99769f3214919a5d83d64a8fbace79"
   integrity sha512-G9k3Bi7KL9+s4JOn5demMdl6x/7ytF3JaraUt3pbKeFQBqHX6Lu4Chj82kg9q9AwjLMG3/qO5JMSuATAotB7qQ==
   dependencies:
     "@graphql-toolkit/common" "0.9.10"

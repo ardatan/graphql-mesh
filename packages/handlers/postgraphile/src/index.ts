@@ -9,17 +9,15 @@ const handler: MeshHandlerLibrary<
 > = {
   async getMeshSource({ config, hooks }) {
     const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
-    const pgClient = new Client(
-      {
-        ...config?.pool
-        ? { 
-          ...config?.pool 
-        }
-        : { 
-          connectionString: config.connectionString 
-        }
-      }
-    );
+    const pgClient = new Client({
+      ...(config?.pool
+        ? {
+            ...config?.pool
+          }
+        : {
+            connectionString: config.connectionString
+          })
+    });
     await pgClient.connect();
     (pgClient as any)['release'] = () => {};
     const graphileSchema = await createPostGraphileSchema(
@@ -44,7 +42,7 @@ const handler: MeshHandlerLibrary<
 
     // This is a workaround because the final schema changes, and we need to make sure
     // the new types are there on those maps, otherwise postgraphile will fail to build queries
-    hooks.on('schemaReady', finalSchema => {
+    hooks.on('schemaReady', ({ schema: finalSchema }) => {
       const typeMap = finalSchema.getTypeMap();
 
       for (const [typeName, type] of Object.entries(typeMap)) {
@@ -60,10 +58,10 @@ const handler: MeshHandlerLibrary<
     });
 
     hooks.on('destroy', () => pgClient.end());
-  
+
     return {
       schema: graphileSchema,
-      contextBuilder: async () => ({ pgClient }),
+      contextBuilder: async () => ({ pgClient })
     };
   }
 };

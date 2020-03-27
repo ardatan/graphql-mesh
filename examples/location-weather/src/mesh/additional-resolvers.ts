@@ -5,24 +5,24 @@ export const resolvers: Resolvers = {
     dailyForecast: async (placeSummary, _, { Weather }) => {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon(
         {
-          lat: placeSummary.latitude,
-          lon: placeSummary.longitude,
+          lat: placeSummary.latitude!,
+          lon: placeSummary.longitude!,
           key: Weather.config.apiKey
         }
       );
 
-      return forecast.data;
+      return forecast.data!;
     },
     todayForecast: async (placeSummary, _, { Weather }) => {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon(
         {
-          lat: placeSummary.latitude,
-          lon: placeSummary.longitude,
+          lat: placeSummary.latitude!,
+          lon: placeSummary.longitude!,
           key: Weather.config.apiKey
         },
       );
 
-      return forecast.data[0];
+      return forecast.data[0]!;
     }
   }
 };
