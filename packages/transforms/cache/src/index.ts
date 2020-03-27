@@ -6,7 +6,7 @@ import {
   ResolversComposerMapping,
   ResolversComposition
 } from '@graphql-toolkit/common';
-import Interpolator from 'string-interpolation';
+import Interpolator from 'string-interpolation/src';
 import { format } from 'date-fns';
 import objectHash from 'object-hash';
 
