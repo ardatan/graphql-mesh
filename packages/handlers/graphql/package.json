@@ -14,7 +14,7 @@
     "@types/jest": "25.1.4",
     "@types/node": "13.9.4",
     "graphql": "14.6.0",
-    "jest": "25.2.1",
+    "jest": "25.2.3",
     "ts-jest": "25.2.1",
     "typescript": "3.8.3"
   },
@@ -22,7 +22,7 @@
     "@graphql-mesh/types": "0.0.16",
     "apollo-link-http": "1.5.16",
     "fetchache": "0.0.3",
-    "graphql-tools-fork": "8.10.0"
+    "graphql-tools-fork": "9.0.0"
   },
   "publishConfig": {
     "access": "public"

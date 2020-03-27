@@ -13,7 +13,7 @@
     "@types/jest": "25.1.4",
     "@types/node": "13.9.4",
     "graphql": "14.6.0",
-    "jest": "25.2.1",
+    "jest": "25.2.3",
     "ts-jest": "25.2.1",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
@@ -35,7 +35,7 @@
     "apollo-server": "2.11.0",
     "chalk": "3.0.0",
     "cosmiconfig": "6.0.0",
-    "graphql-tools-fork": "8.10.0",
+    "graphql-tools-fork": "9.0.0",
     "js-yaml": "3.13.1",
     "mkdirp": "1.0.3",
     "ts-node": "8.8.1",
