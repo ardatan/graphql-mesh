@@ -25,6 +25,19 @@ export function applyResolversHooksToResolvers(
       });
 
       try {
+        /*
+        // Patch SDK for stitching
+        for (let apiName in context) {
+          if (typeof context[apiName] === 'object' && 'api' in context[apiName]) {
+            for (let fnName in context[apiName].api) {
+              const originalFn = context[apiName].api[fnName].bind(context[apiName].api);
+              context[apiName].api[fnName] = (passedArgs: any, passedContext: any, passedInfo: any) => 
+                originalFn(passedArgs || args, passedContext || context, passedInfo ||info);
+            }
+          }
+        }
+        */
+
         const result = await originalResolver(
           parentOrKind,
           args,

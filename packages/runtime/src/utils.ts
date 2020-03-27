@@ -5,7 +5,18 @@ import {
   GraphQLObjectType,
   GraphQLResolveInfo,
   DocumentNode,
-  parse
+  parse,
+  GraphQLFieldResolver,
+  GraphQLField,
+  FieldNode,
+  Kind,
+  OperationDefinitionNode,
+  OperationTypeNode,
+  isObjectType,
+  SelectionSetNode,
+  print,
+  isScalarType,
+  isUnionType
 } from 'graphql';
 import {
   Hooks,
@@ -16,6 +27,8 @@ import {
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { buildResolveInfo } from 'graphql/execution/execute';
+import { buildOperation } from './generate-operation-for-field';
 
 export async function applySchemaTransformations(
   name: string,
@@ -140,7 +153,8 @@ export async function resolveAdditionalResolvers(
 export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
   hooks: Hooks,
-  types: Maybe<GraphQLObjectType>[]
+  types: Maybe<GraphQLObjectType>[],
+  contextBuilder?: (initialContextValue: any) => Promise<any>,
 ) {
   const sdk: Record<string, Function> = {};
 
@@ -153,9 +167,8 @@ export async function extractSdkFromResolvers(
           Object.entries(fields).map(async ([fieldName, field]) => {
             const resolveFn = field.resolve;
 
-            let fn: Function = resolveFn
-              ? (args: any, context: any, info: GraphQLResolveInfo) =>
-                  resolveFn(null, args, context, info)
+            let fn: (...args: any[]) => any = resolveFn
+              ? (args: any, context: any, info: GraphQLResolveInfo) => resolveFn(null, args, context, info)
               : () => null;
 
             hooks.emit('buildSdkFn', {
@@ -170,15 +183,52 @@ export async function extractSdkFromResolvers(
               }
             });
 
-            sdk[fieldName] = fn;
+            sdk[fieldName] = async (args: any, context: any, info: GraphQLResolveInfo) => {
+              if (!info) {
+                const operation = buildOperation({
+                  schema,
+                  kind: 'query',
+                  field: fieldName,
+                  depthLimit: 2,
+                  argNames: Object.keys(args),
+                });
+
+                info = buildResolveInfo({
+                  schema,
+                  fragments: {},
+                  rootValue: null,
+                  contextValue: context,
+                  operation,
+                  variableValues: args,
+                  get fieldResolver() {
+                    return fn; // Get new one if replaced
+                  },
+                  errors: [],
+                },
+                  field,
+                  operation.selectionSet.selections.filter(s => s.kind === Kind.FIELD) as FieldNode[],
+                  type,
+                  {
+                    prev: undefined,
+                    key: field.name,
+                  },
+                );
+              }
+
+              if (!(context?.__isMeshContext)) {
+                context = {
+                  ...contextBuilder && await contextBuilder(context),
+                  ...context,
+                };
+              }
+
+              return fn(args, context, info)
+            };
           })
         );
       }
     })
   );
-
-  for (const type of types) {
-  }
 
   return sdk;
 }

@@ -62,11 +62,15 @@ export async function getMesh(
       rawSources.push({
         name: apiSource.name,
         globalContextBuilder: source.contextBuilder || null,
-        sdk: await extractSdkFromResolvers(apiSchema, hooks, [
+        sdk: await extractSdkFromResolvers(
+          apiSchema, 
+          hooks, [
           apiSchema.getQueryType(),
           apiSchema.getMutationType(),
           apiSchema.getSubscriptionType()
-        ]),
+        ],
+          source.contextBuilder,
+        ),
         schema: apiSchema,
         context: apiSource.context || {},
         contextVariables: source.contextVariables || [],
@@ -113,7 +117,8 @@ export async function getMesh(
     initialContextValue?: any
   ): Promise<Record<string, any>> {
     const context: Record<string, any> = {
-      ...(initialContextValue || {})
+      ...(initialContextValue || {}),
+      __isMeshContext: true,
     };
 
     await Promise.all(
@@ -215,7 +220,8 @@ export class GraphQLMeshSdkError<Data = {}, Variables = {}> extends Error {
     public data: Data
   ) {
     super(
-      `GraphQL Mesh SDK Failed (\${errors.length} errors): \${errors.map(e => e.message).join('\\n\\t')}`
+      `GraphQL Mesh SDK Failed (${errors.length} errors): ${errors.map(e => e.message).join('\n\t')}`
     );
+    errors.forEach(e => console.error(e));
   }
 }
