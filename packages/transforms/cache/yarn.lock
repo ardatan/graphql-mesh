@@ -2439,10 +2439,10 @@ graphql-tools-fork@8.9.6:
     node-fetch "^2.6.0"
     uuid "^7.0.1"
 
-graphql-tools-fork@9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-9.0.0.tgz#998d1d36c007b8b2334701bf26735c7968371174"
-  integrity sha512-zi8EJLPm6J+TN2ieHFrpkgkKQTSfgK5+6I/GPTgcMLhy8Ym4Ek0XO83lFc2gcZJPF0vf7Jyk7TrkPxSX0pRoSw==
+graphql-tools-fork@9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-9.0.1.tgz#fc8df40c108bdba3268999dea355cc614c765038"
+  integrity sha512-kM6mUNVekgnWKtVqLGQ9HvQqQ3zZVPZRg1esltBoohsbUMaChl+9QkjBjoMxnZPnbTGOOGGagopNBQALIBysNg==
   dependencies:
     apollo-link "^1.2.13"
     apollo-link-http-common "^0.2.15"
