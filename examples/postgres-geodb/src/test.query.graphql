@@ -5,12 +5,8 @@ query citiesAndDevelopers($city: String!) {
       countrycode
       district
       developers {
-        nodes {
-          ... on GithubUser {
-            login
-            avatarUrl
-          }
-        }
+        login
+        avatarUrl
       }
     }
   }
