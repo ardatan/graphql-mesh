@@ -10,5 +10,20 @@ type SoapHandler {
   A url to your WSDL
   """
   wsdl: String!
-  config: JSON
+  securityCert: SoapSecurityCertificateConfig
+}
+
+type SoapSecurityCertificateConfig {
+  """
+  Path to the file containing your public key
+  """
+  publicKey: String!
+  """
+  Path to the file containing your private key
+  """
+  privateKey: String!
+  """
+  Password
+  """
+  password: String!
 }
