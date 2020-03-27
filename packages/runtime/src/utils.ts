@@ -106,7 +106,7 @@ export async function resolveAdditionalResolvers(
 ): Promise<IResolvers> {
   const loaded = await Promise.all(
     (additionalResolvers || []).map(async filePath => {
-      const exported = require(resolve(baseDir, filePath));
+      const exported = await import(resolve(baseDir, filePath));
       let resolvers = null;
 
       if (exported.default) {

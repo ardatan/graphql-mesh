@@ -8,23 +8,36 @@ import {
 } from './utils';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 
-export async function parseConfig(
-  name = 'mesh',
-  dir = process.cwd(),
-  ignoreAdditionalResolvers = false
-): Promise<GetMeshOptions> {
-  const explorer = cosmiconfig(name, {
-    loaders: {
-      '.json': customLoader('json'),
-      '.yaml': customLoader('yaml'),
-      '.yml': customLoader('yaml'),
-      '.js': customLoader('js'),
-      noExt: customLoader('yaml')
-    }
-  });
-  const results = await explorer.search(dir);
-  const config = results?.config as YamlConfig.Config;
+export type ConfigProcessOptions = {
+  dir?: string;
+  ignoreAdditionalResolvers?: boolean;
+}
 
+export async function parseConfig(rawConfig: YamlConfig.Config | string, options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions) {
+  let config: YamlConfig.Config;
+  const {
+    configFormat = 'object'
+  } = options || {};
+  switch(configFormat) {
+    case 'yaml':
+      config = defaultLoaders[".json"]('.meshrc.json', rawConfig as string);
+      break;
+    case 'json':
+      config = defaultLoaders[".json"]('.meshrc.json', rawConfig as string);
+      break;
+    case 'object':
+      config = rawConfig as YamlConfig.Config;
+      break;
+    
+  }
+  return processConfig(config, options);
+}
+
+export async function processConfig(config: YamlConfig.Config, options?: ConfigProcessOptions) {
+  const { 
+    dir = process.cwd(), 
+    ignoreAdditionalResolvers = false 
+  } = options || {};
   await Promise.all(config.require?.map(mod => import(mod)) || []);
 
   const [sources, transforms, additionalResolvers, cache] = await Promise.all([
@@ -119,4 +132,24 @@ function customLoader(ext: 'json' | 'yaml' | 'js') {
   }
 
   return loader;
+}
+
+export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions): Promise<GetMeshOptions> {
+  const {
+    configName = 'mesh',
+    dir = process.cwd(),
+    ignoreAdditionalResolvers = false,
+  } = options || {};
+  const explorer = cosmiconfig(configName, {
+    loaders: {
+      '.json': customLoader('json'),
+      '.yaml': customLoader('yaml'),
+      '.yml': customLoader('yaml'),
+      '.js': customLoader('js'),
+      noExt: customLoader('yaml')
+    }
+  });
+  const results = await explorer.search(dir);
+  const config = results?.config as YamlConfig.Config;
+  return processConfig(config, { dir, ignoreAdditionalResolvers });
 }

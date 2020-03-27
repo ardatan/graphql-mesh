@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { writeFileSync } from 'fs';
-import { parseConfig, getMesh } from '@graphql-mesh/runtime';
+import { findAndParseConfig, getMesh } from '@graphql-mesh/runtime';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
 import { generateTsTypes } from './commands/typescript';
@@ -28,7 +28,7 @@ export async function graphqlMesh() {
       () => null,
       async () => {
         try {
-          const meshConfig = await parseConfig();
+          const meshConfig = await findAndParseConfig();
           const { schema, contextBuilder } = await getMesh(meshConfig);
           await serveMesh(logger, schema, contextBuilder, meshConfig.cache);
         } catch (e) {
@@ -51,7 +51,7 @@ export async function graphqlMesh() {
           });
       },
       async args => {
-        const meshConfig = await parseConfig(undefined, undefined, true);
+        const meshConfig = await findAndParseConfig(undefined, undefined, true);
         const { schema, destroy } = await getMesh(meshConfig);
         const result = await generateSdk(schema, args.operations);
         const outFile = resolve(process.cwd(), args.output);
@@ -71,7 +71,7 @@ export async function graphqlMesh() {
         });
       },
       async args => {
-        const meshConfig = await parseConfig(undefined, undefined, true);
+        const meshConfig = await findAndParseConfig(undefined, undefined, true);
         const { schema, rawSources, destroy } = await getMesh(meshConfig);
         const result = await generateTsTypes(schema, rawSources);
         const outFile = resolve(process.cwd(), args.output);
