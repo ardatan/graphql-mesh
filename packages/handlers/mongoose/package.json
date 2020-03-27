@@ -15,7 +15,7 @@
     "@types/jest": "25.1.4",
     "@types/js-yaml": "3.12.3",
     "@types/mongoose": "5.7.8",
-    "@types/node": "13.9.4",
+    "@types/node": "13.9.5",
     "graphql": "14.6.0",
     "jest": "25.2.3",
     "mongoose": "5.9.6",
