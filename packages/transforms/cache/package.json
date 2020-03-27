@@ -28,7 +28,7 @@
     "string-interpolation": "1.2.5",
     "@graphql-toolkit/common": "0.9.10",
     "@graphql-mesh/types": "0.0.16",
-    "graphql-tools-fork": "9.0.0"
+    "graphql-tools-fork": "9.0.1"
   },
   "publishConfig": {
     "access": "public"
