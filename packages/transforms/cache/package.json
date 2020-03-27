@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "object-hash": "2.0.3",
-    "date-fns": "2.11.0",
+    "date-fns": "2.11.1",
     "string-interpolation": "1.2.5",
     "@graphql-toolkit/common": "0.9.10",
     "@graphql-mesh/types": "0.0.16",
