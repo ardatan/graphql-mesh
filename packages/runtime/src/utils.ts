@@ -150,44 +150,6 @@ export async function resolveAdditionalResolvers(
   }, {} as IResolvers);
 }
 
-function buildFieldNode(field: GraphQLField<any, any>): FieldNode {
-  const hasSelectionSet = isObjectType(field.type);
-  const subFieldNodes: FieldNode[] = [];
-  const selectionSet: SelectionSetNode = {
-    kind: Kind.SELECTION_SET,
-    selections: subFieldNodes,
-  };
-  const fieldNode: FieldNode = {
-    kind: Kind.FIELD,
-    name: {
-      kind: Kind.NAME,
-      value: field.name,
-    },
-    selectionSet: hasSelectionSet ? selectionSet : undefined,
-  };
-
-  if (hasSelectionSet) {
-    const subFields = Object.values((field.type as GraphQLObjectType).getFields());
-    for (const subField of subFields) {
-      if (isScalarType(subField)) {
-        subFieldNodes.push({
-          kind: Kind.FIELD,
-          name: {
-            kind: Kind.NAME,
-            value: subField.name,
-          },
-        })
-      } else if (isUnionType(subField)) {
-        subFieldNodes.push()
-      }
-      if (!isObjectType(subField)) {
-      }
-    }
-  }
-
-  return fieldNode;
-}
-
 export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
   hooks: Hooks,
