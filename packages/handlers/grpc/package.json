@@ -8,7 +8,8 @@
     "build": "tsc"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "grpc": "*"
   },
   "devDependencies": {
     "@types/node": "13.9.5",
@@ -20,7 +21,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.16",
-    "grpc-graphql-schema": "0.0.9"
+    "@ardatan/grpc-graphql-schema": "0.1.1"
   },
   "publishConfig": {
     "access": "public"
