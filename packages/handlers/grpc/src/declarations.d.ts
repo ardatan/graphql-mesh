@@ -1,4 +1,4 @@
-declare module 'string-interpolation/src';
+declare module 'grpc-caller';
 
 declare global {
     interface ObjectConstructor {
