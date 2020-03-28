@@ -14,10 +14,11 @@ export async function serveMesh(
 ): Promise<void> {
 
   if (isMaster && fork) {
-    for (let i = 0; i < (Number.isInteger(fork as number) ? parseInt(fork as string) : cpus().length); i++) {
+    fork = fork > 1 ? fork : cpus().length;
+    for (let i = 0; i < fork; i++) {
       clusterFork();
     }
-    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:4000/`);
+    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:4000 in ${fork} forks`);
   } else {
     const server = new ApolloServer({
       schema,
@@ -25,6 +26,10 @@ export async function serveMesh(
       cache,
     });
 
-    await server.listen();
+    const { url } = await server.listen();
+    if (!fork) {
+      logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: ${url}`);
+    }
   }
 }
+

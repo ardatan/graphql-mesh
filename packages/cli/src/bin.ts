@@ -25,7 +25,14 @@ export async function graphqlMesh() {
     .command<{ fork: string | number }>(
       'serve',
       'Serves a GraphiQLApolloServer interface to test your Mesh API',
-      () => null,
+      builder => {
+        builder
+          .option('fork', {
+            required: false,
+            number: true,
+            count: true
+          });
+      },
       async ({ fork }) => {
         try {
           const meshConfig = await parseConfig();
