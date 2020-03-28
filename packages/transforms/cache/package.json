@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-mesh/cache-transform",
+  "name": "@graphql-mesh/transform-cache",
   "version": "0.0.16",
   "main": "dist/index.js",
   "license": "MIT",
