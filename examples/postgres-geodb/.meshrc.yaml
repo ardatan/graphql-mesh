@@ -19,7 +19,7 @@ sources:
 transforms:
   - extend: |
       extend type GeoCity {
-        developers(limit: Int = 10): GithubSearchResultItemConnection!
+        developers(limit: Int = 10): [GithubUser]
       }
 require:
   - ts-node/register/transpile-only

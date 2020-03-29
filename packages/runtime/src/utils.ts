@@ -5,26 +5,43 @@ import {
   GraphQLObjectType,
   GraphQLResolveInfo,
   DocumentNode,
-  parse
+  parse,
+  FieldNode,
+  Kind
 } from 'graphql';
-import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import {
+  Hooks,
+  MeshHandlerLibrary,
+  KeyValueCache,
+  YamlConfig
+} from '@graphql-mesh/types';
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { buildResolveInfo } from 'graphql/execution/execute';
+import { buildOperationNodeForField } from '@graphql-toolkit/common';
 
 export async function applySchemaTransformations(
   name: string,
   schema: GraphQLSchema,
-  transformations: ResolvedTransform[]
+  transformations: ResolvedTransform[],
+  cache: KeyValueCache,
+  hooks: Hooks
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    resultSchema = await transformation.transformFn({
+    const transformedSchema = await transformation.transformFn({
       apiName: name,
       schema: resultSchema,
-      config: transformation.config
+      config: transformation.config,
+      cache,
+      hooks
     });
+
+    if (transformedSchema) {
+      resultSchema = transformedSchema;
+    }
   }
 
   return resultSchema;
@@ -32,15 +49,23 @@ export async function applySchemaTransformations(
 
 export async function applyOutputTransformations(
   schema: GraphQLSchema,
-  transformations: ResolvedTransform[]
+  transformations: ResolvedTransform[],
+  cache: KeyValueCache,
+  hooks: Hooks
 ): Promise<GraphQLSchema> {
   let resultSchema: GraphQLSchema = schema;
 
   for (const transformation of transformations) {
-    resultSchema = await transformation.transformFn({
+    const transformedSchema = await transformation.transformFn({
       schema: resultSchema,
-      config: transformation.config
+      config: transformation.config,
+      cache,
+      hooks
     });
+
+    if (transformedSchema) {
+      resultSchema = transformedSchema;
+    }
   }
 
   return resultSchema;
@@ -53,7 +78,8 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
     `@graphql-mesh/${type}-${name}`,
     name,
     `${name}-${type}`,
-    type,
+    `${type}-${name}`,
+    type
   ];
   const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
 
@@ -86,7 +112,7 @@ export async function resolveAdditionalResolvers(
 ): Promise<IResolvers> {
   const loaded = await Promise.all(
     (additionalResolvers || []).map(async filePath => {
-      const exported = require(resolve(baseDir, filePath));
+      const exported = await import(resolve(baseDir, filePath));
       let resolvers = null;
 
       if (exported.default) {
@@ -120,7 +146,8 @@ export async function resolveAdditionalResolvers(
 export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
   hooks: Hooks,
-  types: Maybe<GraphQLObjectType>[]
+  types: Maybe<GraphQLObjectType>[],
+  contextBuilder?: (initialContextValue: any) => Promise<any>,
 ) {
   const sdk: Record<string, Function> = {};
 
@@ -128,19 +155,15 @@ export async function extractSdkFromResolvers(
     types.map(async type => {
       if (type) {
         const fields = type.getFields();
-  
+
         await Promise.all(
-          Object
-          .entries(fields)
-          .map(async ([fieldName, field]) => {
+          Object.entries(fields).map(async ([fieldName, field]) => {
             const resolveFn = field.resolve;
-    
-            let fn: Function = resolveFn ? (
-              args: any,
-              context: any,
-              info: GraphQLResolveInfo
-            ) => resolveFn(null, args, context, info) : () => null;
-    
+
+            let fn: (...args: any[]) => any = resolveFn
+              ? (args: any, context: any, info: GraphQLResolveInfo) => resolveFn(null, args, context, info)
+              : () => null;
+
             hooks.emit('buildSdkFn', {
               schema,
               typeName: type.name,
@@ -152,16 +175,53 @@ export async function extractSdkFromResolvers(
                 }
               }
             });
-    
-            sdk[fieldName] = fn;
+
+            sdk[fieldName] = async (args: any, context: any, info: GraphQLResolveInfo) => {
+              if (!info) {
+                const operation = buildOperationNodeForField({
+                  schema,
+                  kind: 'query',
+                  field: fieldName,
+                  depthLimit: 2,
+                  argNames: Object.keys(args),
+                });
+
+                info = buildResolveInfo({
+                  schema,
+                  fragments: {},
+                  rootValue: null,
+                  contextValue: context,
+                  operation,
+                  variableValues: args,
+                  get fieldResolver() {
+                    return fn; // Get new one if replaced
+                  },
+                  errors: [],
+                },
+                  field,
+                  operation.selectionSet.selections.filter(s => s.kind === Kind.FIELD) as FieldNode[],
+                  type,
+                  {
+                    prev: undefined,
+                    key: field.name,
+                  },
+                );
+              }
+
+              if (!(context?.__isMeshContext)) {
+                context = {
+                  ...contextBuilder && await contextBuilder(context),
+                  ...context,
+                };
+              }
+
+              return fn(args, context, info)
+            };
           })
-        )
+        );
       }
     })
-  )
-
-  for (const type of types) {
-  }
+  );
 
   return sdk;
 }
@@ -170,12 +230,16 @@ export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
   return typeof document === 'string' ? parse(document) : document;
 }
 
-export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache> {
+export async function resolveCache(
+  cacheConfig?: YamlConfig.Config['cache']
+): Promise<KeyValueCache> {
   if (!cacheConfig) {
     return new InMemoryLRUCache();
   }
+
   const [moduleName, exportName] = cacheConfig.name.split('#');
   const pkg = await getPackage<any>(moduleName, 'cache');
   const Cache = exportName ? pkg[exportName] : pkg;
+
   return new Cache(cacheConfig.config);
 }

@@ -1,33 +1,25 @@
 import { GraphQLSchema, execute, DocumentNode, GraphQLError, isObjectType } from 'graphql';
 import { mergeSchemasAsync } from '@graphql-toolkit/schema-merging';
-import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions } from './types';
+import {
+  GraphQLOperation,
+  ExecuteMeshFn,
+  GetMeshOptions,
+  RawSourceOutput,
+  Requester
+} from './types';
 import {
   extractSdkFromResolvers,
   applySchemaTransformations,
   applyOutputTransformations,
   ensureDocumentNode
 } from './utils';
-import { MeshHandlerLibrary, Hooks, KeyValueCache } from '@graphql-mesh/types';
+import { Hooks, KeyValueCache } from '@graphql-mesh/types';
 import { addResolveFunctionsToSchema, IAddResolversToSchemaOptions } from 'graphql-tools-fork';
-import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru'
-
-export type Requester<C = {}> = <R, V>(
-  doc: DocumentNode,
-  vars?: V,
-  options?: C
-) => Promise<R>;
-
-export type RawSourceOutput = 
-  {
-    name: string;
-    // TOOD: Remove globalContextBuilder and use hooks for that
-    globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
-    sdk: Record<string, any>;
-    schema: GraphQLSchema;
-    context: Record<string, any>;
-    contextVariables: string[];
-    handler: MeshHandlerLibrary;
-  };
+import { addResolversToSchema } from 'graphql-tools-fork';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import {
+  applyResolversHooksToSchema, applyResolversHooksToResolvers
+} from './resolvers-hooks';
 
 function addResolversWithReferenceResolver(options: IAddResolversToSchemaOptions) {
   const schema = addResolveFunctionsToSchema(options);
@@ -52,47 +44,57 @@ export async function getMesh(
   rawSources: RawSourceOutput[];
   sdkRequester: Requester;
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
-  cache?: KeyValueCache;
   destroy: () => void;
+  hooks: Hooks;
+  cache: KeyValueCache;
 }> {
-  const rawSources: RawSourceOutput[] = [];
-  const hooks = new Hooks();
   const schemas: GraphQLSchema[] = [];
+  const rawSources: RawSourceOutput[] = [];
+  const hooks = options.hooks || new Hooks();
+  const cache = options.cache || new InMemoryLRUCache();
 
-  await Promise.all(options.sources.map(async apiSource => {
-    const source = await apiSource.handlerLibrary.getMeshSource({
-      name: apiSource.name,
-      config: apiSource.handlerConfig || {},
-      hooks,
-      cache: options.cache || new InMemoryLRUCache(),
-    });
+  await Promise.all(
+    options.sources.map(async apiSource => {
+      const source = await apiSource.handlerLibrary.getMeshSource({
+        name: apiSource.name,
+        config: apiSource.handlerConfig || {},
+        hooks,
+        cache
+      });
 
-    let apiSchema = source.schema;
+      let apiSchema = applyResolversHooksToSchema(source.schema, hooks);
 
-    if (apiSource.transforms && apiSource.transforms.length > 0) {
-      apiSchema = await applySchemaTransformations(
-        apiSource.name,
-        apiSchema,
-        apiSource.transforms
-      );
-    }
+      if (apiSource.transforms && apiSource.transforms.length > 0) {
+        apiSchema = await applySchemaTransformations(
+          apiSource.name,
+          apiSchema,
+          apiSource.transforms,
+          cache,
+          hooks
+        );
+      }
 
-    rawSources.push({
-      name: apiSource.name,
-      globalContextBuilder: source.contextBuilder || null,
-      sdk: await extractSdkFromResolvers(apiSchema, hooks, [
-        apiSchema.getQueryType(),
-        apiSchema.getMutationType(),
-        apiSchema.getSubscriptionType()
-      ]),
-      schema: apiSchema,
-      context: apiSource.context || {},
-      contextVariables: source.contextVariables || [],
-      handler: apiSource.handlerLibrary
-    });
+      rawSources.push({
+        name: apiSource.name,
+        globalContextBuilder: source.contextBuilder || null,
+        sdk: await extractSdkFromResolvers(
+          apiSchema,
+          hooks, [
+          apiSchema.getQueryType(),
+          apiSchema.getMutationType(),
+          apiSchema.getSubscriptionType()
+        ],
+          source.contextBuilder,
+        ),
+        schema: apiSchema,
+        context: apiSource.context || {},
+        contextVariables: source.contextVariables || [],
+        handler: apiSource.handlerLibrary
+      });
 
-    schemas.push(apiSchema);
-  }))
+      schemas.push(apiSchema);
+    })
+  );
 
   let unifiedSchema = await mergeSchemasAsync({
     schemas
@@ -101,24 +103,39 @@ export async function getMesh(
   if (options.transforms && options.transforms.length > 0) {
     unifiedSchema = await applyOutputTransformations(
       unifiedSchema,
-      options.transforms
+      options.transforms,
+      cache,
+      hooks
     );
   }
 
   if (options.additionalResolvers) {
-    unifiedSchema = addResolversWithReferenceResolver({
-      resolvers: options.additionalResolvers,
+    unifiedSchema = addResolversToSchema({
+      resolvers: applyResolversHooksToResolvers(
+        options.additionalResolvers,
+        hooks
+      ),
       schema: unifiedSchema
     });
   }
 
-  hooks.emit('schemaReady', unifiedSchema);
+  hooks.emit('schemaReady', {
+    schema: unifiedSchema,
+    applyResolvers: modifiedResolvers => {
+      if (modifiedResolvers) {
+        unifiedSchema = addResolversToSchema(unifiedSchema, modifiedResolvers);
+      }
+    }
+  });
 
-  async function buildMeshContext(initialContextValue?: any): Promise<Record<string, any>> {
+  async function buildMeshContext(
+    initialContextValue?: any
+  ): Promise<Record<string, any>> {
     const context: Record<string, any> = {
       ...(initialContextValue || {}),
+      __isMeshContext: true,
     };
-    
+
     await Promise.all(
       rawSources.map(async handlerRes => {
         let globalContext = {};
@@ -202,7 +219,11 @@ export async function getMesh(
     contextBuilder: buildMeshContext,
     rawSources,
     sdkRequester: localRequester,
-    destroy: () => { hooks.emit('destroy'); },
+    cache,
+    hooks,
+    destroy: () => {
+      hooks.emit('destroy');
+    }
   };
 }
 
@@ -214,7 +235,8 @@ export class GraphQLMeshSdkError<Data = {}, Variables = {}> extends Error {
     public data: Data
   ) {
     super(
-      `GraphQL Mesh SDK Failed (\${errors.length} errors): \${errors.map(e => e.message).join('\\n\\t')}`
+      `GraphQL Mesh SDK Failed (${errors.length} errors): ${errors.map(e => e.message).join('\n\t')}`
     );
+    errors.forEach(e => console.error(e));
   }
 }
