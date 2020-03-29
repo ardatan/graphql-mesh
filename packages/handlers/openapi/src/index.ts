@@ -1,7 +1,4 @@
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
 import isUrl from 'is-url';
-import * as yaml from 'js-yaml';
 import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { createGraphQLSchema } from 'openapi-to-graphql';
 import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
@@ -9,17 +6,9 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 
 const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
   async getMeshSource({ config, cache }) {
-    let spec: Oas3;
 
-    if (isUrl(config.source)) {
-      spec = await readUrl(config.source, cache);
-    } else {
-      const actualPath = config.source.startsWith('/')
-        ? config.source
-        : resolve(process.cwd(), config.source);
-
-      spec = readFile(actualPath);
-    }
+    const path = config.source;
+    const spec: Oas3 = await readFileOrUrl(path, cache);
 
     const { schema } = await createGraphQLSchema(spec, {
       ...(config || {}),
@@ -33,20 +22,48 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
   }
 };
 
-function readFile(path: string): Oas3 {
-  if (/json$/.test(path)) {
-    return JSON.parse(readFileSync(path, 'utf8'));
-  } else if (/yaml$/.test(path) || /yml$/.test(path)) {
-    return yaml.safeLoad(readFileSync(path, 'utf8'));
+async function readFileOrUrl<T>(filePathOrUrl: string, cache: KeyValueCache): Promise<T> {
+  if (isUrl(filePathOrUrl)) {
+    return readUrl(filePathOrUrl, cache);
+  } else {
+    return readFile(filePathOrUrl, cache);
+  }
+}
+
+async function readFile<T>(filePath: string, cache: KeyValueCache): Promise<T> {
+  const [path, fs] = await Promise.all([
+    import('path'), 
+    import('fs')
+  ]) as [typeof import('path'), typeof import('fs')];
+  const actualPath = filePath.startsWith('/')
+    ? filePath
+    : path.resolve(process.cwd(), filePath);
+  const cachedObjStr = await cache.get(actualPath);
+  const stats = await fs.promises.stat(actualPath);
+  if (cachedObjStr) {
+    const cachedObj = JSON.parse(cachedObjStr);
+    if (stats.mtimeMs <= cachedObj.mtimeMs) {
+      return cachedObj.result;
+    }
+  }
+  const resultStr = await fs.promises.readFile(actualPath, 'utf-8');
+  let result: T;
+  if (/json$/.test(filePath)) {
+    result = JSON.parse(resultStr);
+  } else if (/yaml$/.test(filePath) || /yml$/.test(filePath)) {
+    const { safeLoad: loadYaml } = await import('js-yaml');
+    result = loadYaml(resultStr);
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${path}' has ` +
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
+  cache.set(filePath, JSON.stringify({ result, mtimeMs: stats.mtimeMs }));
+  return result;
 }
 
-async function readUrl(path: string, cache: KeyValueCache): Promise<Oas3> {
+async function readUrl<T>(path: string, cache: KeyValueCache): Promise<T> {
   const response = await fetchache(new Request(path), cache);
   const contentType = response.headers.get('content-type') || '';
   if (/json$/.test(path) || /json$/.test(contentType)) {
@@ -57,7 +74,8 @@ async function readUrl(path: string, cache: KeyValueCache): Promise<Oas3> {
     /yaml$/.test(contentType) ||
     /yml$/.test(contentType)
   ) {
-    return yaml.safeLoad(await response.text());
+    const { safeLoad: loadYaml } = await import('js-yaml');
+    return loadYaml(await response.text());
   } else {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure endpoint '${path}' has ` +
