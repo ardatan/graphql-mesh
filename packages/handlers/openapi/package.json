@@ -11,17 +11,12 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/graphql-type-json": "0.3.2",
     "@types/is-url": "1.2.28",
     "@types/jest": "25.1.4",
-    "@types/js-yaml": "3.12.3",
-    "@types/node": "13.9.4",
-    "@types/request": "2.48.4",
-    "@types/request-promise-native": "1.0.17",
+    "@types/node": "13.9.5",
     "graphql": "14.6.0",
     "jest": "25.2.3",
     "ts-jest": "25.2.1",
-    "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
   },
   "dependencies": {

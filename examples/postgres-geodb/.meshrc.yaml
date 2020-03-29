@@ -5,7 +5,7 @@ sources:
         connectionString: postgres://postgres:docker@localhost/postgres
     transforms:
       - prefix:
-          value: Geo_
+          value: Geo
   - name: Github
     handler:
       graphql:
@@ -14,12 +14,12 @@ sources:
           Authorization: bearer ${GH_ACCESS_TOKEN}
     transforms:
       - prefix:
-          value: Github_
+          value: Github
           includeRootOperations: true
 transforms:
   - extend: |
       extend type GeoCity {
-        developers(limit: Int = 10): GithubSearchResultItemConnection!
+        developers(limit: Int = 10): [GithubUser]
       }
 require:
   - ts-node/register/transpile-only

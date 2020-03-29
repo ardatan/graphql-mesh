@@ -90,12 +90,12 @@ query wikipediaMetrics {
 Now that you know that your Mesh works, you can use it directly within your application:
 
 ```js
-const { getMesh, parseConfig } = require('@graphql-mesh/runtime');
+const { getMesh, findAndParseConfig } = require('@graphql-mesh/runtime');
 const { ApolloServer } = require('apollo-server');
 
 async function test() {
   // This will load the config file from the default location (process.cwd)
-  const meshConfig = await parseConfig();
+  const meshConfig = await findAndParseConfig();
   const { execute, schema, contextBuilder } = await getMesh(meshConfig);
 
   // Use `execute` to run a query directly and fetch data from your APIs
@@ -281,12 +281,12 @@ Now, instead of using `execute` manually, you can use the generated `getSdk` met
 
 ```ts
 import { getSdk } from './generated/sdk';
-import { getMesh, parseConfig } from '@graphql-mesh/runtime';
+import { getMesh, findAndParseConfig } from '@graphql-mesh/runtime';
 import { ApolloServer } from 'apollo-server';
 
 async function test() {
   // Load mesh config and get the sdkClient from it
-  const meshConfig = await parseConfig();
+  const meshConfig = await findAndParseConfig();
   const { sdkRequester } = await getMesh(meshConfig);
   // Get fully-typed SDK using the Mesh client and based on your GraphQL operations
   const sdk = getSdk(sdkRequester);

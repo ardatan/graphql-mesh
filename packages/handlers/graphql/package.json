@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
-    "@types/node": "13.9.4",
+    "@types/node": "13.9.5",
     "graphql": "14.6.0",
     "jest": "25.2.3",
     "ts-jest": "25.2.1",
@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.16",
-    "apollo-link-http": "1.5.16",
     "fetchache": "0.0.3",
-    "graphql-tools-fork": "9.0.0"
+    "@graphql-toolkit/core": "0.9.11",
+    "@graphql-toolkit/url-loader": "0.9.11"
   },
   "publishConfig": {
     "access": "public"

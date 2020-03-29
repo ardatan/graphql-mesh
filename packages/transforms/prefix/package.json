@@ -12,16 +12,15 @@
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
-    "@types/node": "13.9.4",
+    "@types/node": "13.9.5",
     "graphql": "14.6.0",
     "jest": "25.2.3",
     "ts-jest": "25.2.1",
-    "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.16",
-    "graphql-tools-fork": "9.0.0"
+    "graphql-tools-fork": "9.0.1"
   },
   "publishConfig": {
     "access": "public"

@@ -49,12 +49,6 @@ async function loadFromModuleExportExpression(expression: string) {
   return m[exportName] || (m.default && m.default[exportName]);
 }
 
-declare global {
-  interface ObjectConstructor {
-    keys<T>(obj: T): Array<keyof T>;
-  }
-}
-
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
   async getMeshSource({ config, cache }) {
     const interpolator = new Interpolator();

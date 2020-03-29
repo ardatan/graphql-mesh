@@ -51,6 +51,6 @@ export type RawSourceOutput = {
   sdk: Record<string, any>;
   schema: GraphQLSchema;
   context: Record<string, any>;
-  contextVariables: string[];
+  contextVariables: (keyof any)[];
   handler: MeshHandlerLibrary;
 };
