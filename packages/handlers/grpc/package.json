@@ -16,7 +16,6 @@
     "graphql": "14.6.0",
     "jest": "25.2.3",
     "ts-jest": "25.2.1",
-    "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
   },
   "dependencies": {
@@ -24,8 +23,7 @@
     "graphql-scalars": "1.0.9",
     "grpc-caller": "0.13.0",
     "iter-tools": "^6.2.6",
-    "protobufjs": "6.8.9",
-    "tslib": "1.11.1"
+    "protobufjs": "6.8.9"
   },
   "publishConfig": {
     "access": "public"

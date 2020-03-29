@@ -1,7 +1,7 @@
 import { GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLEnumType, GraphQLString, GraphQLInputObjectType, GraphQLObjectType, GraphQLType, GraphQLFloat, GraphQLFieldConfigMap, GraphQLInputFieldConfigMap, GraphQLInputType, GraphQLOutputType, GraphQLNonNull } from "graphql";
 import { JSONSchemaDefinition, JSONSchemaArrayDefinition, JSONSchemaObjectReference, JSONSchemaEnumDefinition, JSONSchemaTypedUnnamedObjectDefinition, JSONSchemaTypedNamedObjectDefinition, JSONSchemaTypedObjectDefinition } from "./json-schema-types";
 import { pascalCase } from 'pascal-case';
-import GraphQLJSON from "graphql-type-json";
+import { JSONResolver as GraphQLJSON } from 'graphql-scalars';
 
 type GraphQLSharedType = GraphQLInputType & GraphQLOutputType;
 

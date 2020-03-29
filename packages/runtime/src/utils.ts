@@ -6,17 +6,8 @@ import {
   GraphQLResolveInfo,
   DocumentNode,
   parse,
-  GraphQLFieldResolver,
-  GraphQLField,
   FieldNode,
-  Kind,
-  OperationDefinitionNode,
-  OperationTypeNode,
-  isObjectType,
-  SelectionSetNode,
-  print,
-  isScalarType,
-  isUnionType
+  Kind
 } from 'graphql';
 import {
   Hooks,
@@ -28,7 +19,7 @@ import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { buildResolveInfo } from 'graphql/execution/execute';
-import { buildOperation } from './generate-operation-for-field';
+import { buildOperationNodeForField } from '@graphql-toolkit/common';
 
 export async function applySchemaTransformations(
   name: string,
@@ -187,7 +178,7 @@ export async function extractSdkFromResolvers(
 
             sdk[fieldName] = async (args: any, context: any, info: GraphQLResolveInfo) => {
               if (!info) {
-                const operation = buildOperation({
+                const operation = buildOperationNodeForField({
                   schema,
                   kind: 'query',
                   field: fieldName,
