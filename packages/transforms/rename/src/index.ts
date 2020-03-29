@@ -59,9 +59,6 @@ export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = 
   }
 
   const transformedSchema = transformSchema(schema, transforms);
-  for (const type of Object.values(transformedSchema.getTypeMap())) {
-    type.astNode = null;
-  }
   return transformedSchema;
 };
 

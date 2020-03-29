@@ -45,9 +45,6 @@ export const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = as
   }
 
   const transformedSchema = transformSchema(schema, transforms);
-  for (const type of Object.values(transformedSchema.getTypeMap())) {
-    type.astNode = null;
-  }
   return transformedSchema;
 };
 
