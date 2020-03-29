@@ -1,5 +1,5 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { getGraphqlSchemaFromGrpc } from 'grpc-graphql-schema';
+import { getGraphqlSchemaFromGrpc } from './get-graphql-schema-from-grpc';
 import { isAbsolute, join } from 'path';
 
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {

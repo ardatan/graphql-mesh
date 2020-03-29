@@ -1,0 +1,54 @@
+extend type Transform {
+  """
+  Transformer to apply caching for your data sources
+  """
+  cache: [CacheTransformConfig!]
+}
+
+type CacheTransformConfig {
+  """
+  The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`
+  """
+  field: String!
+  """
+  Cache key to use to store your resolvers responses.
+  The defualt is: {typeName}-{fieldName}-{argsHash}
+
+  Available variables:
+  - {args.argName} - use resolver argument
+  - {typeName} - use name of the type
+  - {fieldName} - use name of the field
+  - {argsHash} - a hash based on the 'args' object
+  - {info} - the GraphQLResolveInfo of the resolver
+
+  Available interpolations:
+  - {format|date} - returns the current date with a specific format
+  """
+  cacheKey: String
+  """
+  Invalidation rules
+  """
+  invalidate: CacheInvalidateConfig
+}
+
+type CacheInvalidateConfig {
+  """
+  Invalidate the cache when a specific operation is done without an error
+  """
+  effectingOperations: [CacheEffectingOperationConfig!]
+  """
+  Specified in seconds, the time-to-live (TTL) value limits the lifespan
+  """
+  ttl: Int
+}
+
+type CacheEffectingOperationConfig {
+  """
+  Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
+  """
+  operation: String!
+  """
+  Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field.
+  """
+  matchKey: String
+}

@@ -1,13 +1,12 @@
 jest.mock('fs-extra');
 
-import transformSnapshot from '../src';
+import { computeSnapshotFilePath, snapshotTransform } from '../src';
 import { makeExecutableSchema } from 'graphql-tools-fork';
 import { graphql } from 'graphql';
 import { readFileSync, existsSync } from 'fs-extra';
-import { join } from 'path';
-import objectHash from 'object-hash';
 
 describe('snapshot', () => {
+    const outputDir = '__snapshots__';
     const users = [
         {
             id: '0',
@@ -25,7 +24,7 @@ describe('snapshot', () => {
         }
     ];
     it('it writes correct output', async () => {
-        const schema = await transformSnapshot({
+        const schema = await snapshotTransform({
             schema: makeExecutableSchema({
                 typeDefs: /* GraphQL */`
                     type Query {
@@ -47,8 +46,10 @@ describe('snapshot', () => {
             }),
             config: {
                 apply: ['Query.user'],
-                outputDir: '__snapshots__'
+                outputDir,
             },
+            cache: {} as any,
+            hooks: {} as any,
         });
 
         await graphql({
@@ -66,16 +67,21 @@ describe('snapshot', () => {
             `
         });
 
-        const filePath = join(process.cwd(), '__snapshots__', `Query_user_${objectHash({ id: '0' })}.json`);
+        const fileName = computeSnapshotFilePath({
+            typeName: 'Query',
+            fieldName: 'user',
+            args: { id: '0' },
+            outputDir,
+        });
 
-        expect(existsSync(filePath)).toBeTruthy();
-        expect(JSON.parse(readFileSync(filePath, 'utf8'))).toMatchObject(users[0]);
+        expect(existsSync(fileName)).toBeTruthy();
+        expect(JSON.parse(readFileSync(fileName, 'utf8'))).toMatchObject(users[0]);
 
     });
 
     it('should not call again if there is snapshot created', async () => {
         let calledCounter = 0;
-        const schema = await transformSnapshot({
+        const schema = await snapshotTransform({
             schema: makeExecutableSchema({
                 typeDefs: /* GraphQL */`
                     type Query {
@@ -102,6 +108,8 @@ describe('snapshot', () => {
                 apply: ['Query.user'],
                 outputDir: '__snapshots__'
             },
+            cache: {} as any,
+            hooks: {} as any,
         });
 
         const doTheRequest = () => graphql({

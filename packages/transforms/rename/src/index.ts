@@ -58,7 +58,8 @@ export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = 
     }
   }
 
-  return transformSchema(schema, transforms);
+  const transformedSchema = transformSchema(schema, transforms);
+  return transformedSchema;
 };
 
 export default renameTransform;

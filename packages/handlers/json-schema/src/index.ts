@@ -16,7 +16,7 @@ import {
 } from './json-schema-visitor';
 import urlJoin from 'url-join';
 import isUrl from 'is-url';
-import Interpolator from 'string-interpolation';
+import Interpolator from 'string-interpolation/src';
 import { join } from 'path';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
@@ -47,12 +47,6 @@ async function loadFromModuleExportExpression(expression: string) {
   const m = await import(moduleName);
 
   return m[exportName] || (m.default && m.default[exportName]);
-}
-
-declare global {
-  interface ObjectConstructor {
-    keys<T>(obj: T): Array<keyof T>;
-  }
 }
 
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {

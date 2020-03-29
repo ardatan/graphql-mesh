@@ -1,4 +1,4 @@
-import { GraphQLSchema } from "graphql";
+import { GraphQLSchema, GraphQLResolveInfo } from "graphql";
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 import { extractResolversFromSchema, composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-toolkit/common';
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
@@ -6,9 +6,30 @@ import { isAbsolute, join } from 'path';
 import { ensureFileSync, existsSync, readFileSync, writeFileSync  } from 'fs-extra';
 import objectHash from 'object-hash';
 
-const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async ({
+const writeFile = async (path: string, json: any) => {
+    try {
+        ensureFileSync(path);
+        writeFileSync(path, JSON.stringify(json, null, 2));
+    } catch(e) {
+        console.error(`Snapshot cannot saved to ${path}: ${e.message}`);
+    }
+}
+
+export function computeSnapshotFilePath(options: {
+    typeName: string;
+    fieldName: string;
+    args: any;
+    outputDir: string;
+}) {
+    const argsHash = objectHash(options.args, { ignoreUnknown: true });
+    const fileName = [options.typeName, options.fieldName, argsHash].join('_') + '.json';
+    const absoluteOutputDir = isAbsolute(options.outputDir) ? options.outputDir : join(process.cwd(), options.outputDir);
+    return join(absoluteOutputDir, fileName);
+} 
+
+export const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async ({
     schema,
-    config
+    config,
   }): Promise<GraphQLSchema> => {
 
     // TODO: Needs to be changed!
@@ -21,14 +42,17 @@ const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async
         const outputDir = isAbsolute(config.outputDir) ? config.outputDir : join(process.cwd(), config.outputDir);
     
         const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
-            const fileName = [info.parentType.name, info.fieldName, objectHash(args)].join('_') + '.json';
-            const snapshotFilePath = join(outputDir, fileName);
+            const snapshotFilePath = computeSnapshotFilePath({
+                typeName: info.parentType.name,
+                fieldName: info.fieldName,
+                args,
+                outputDir,
+            });
             if (existsSync(snapshotFilePath)) {
                 return JSON.parse(readFileSync(snapshotFilePath, 'utf8'));
             }
             const result = await next(root, args, context, info);
-            ensureFileSync(snapshotFilePath);
-            writeFileSync(snapshotFilePath, JSON.stringify(result, null, 2));
+            writeFile(snapshotFilePath, result);
             return result;
         };
     

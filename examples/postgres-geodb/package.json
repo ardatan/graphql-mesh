@@ -7,6 +7,7 @@
     "pretest-sdk": "yarn mesh:sdk",
     "test-sdk": "ts-node src/test.ts London",
     "mesh:serve": "graphql-mesh serve",
+    "premesh:serve": "yarn mesh:ts",
     "mesh:sdk": "graphql-mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
     "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
   },
@@ -18,6 +19,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.0.16",
     "@graphql-mesh/postgraphile": "0.0.16",
+    "@graphql-mesh/graphql": "0.0.16",
     "@graphql-mesh/runtime": "0.0.16",
     "graphql": "14.6.0"
   }

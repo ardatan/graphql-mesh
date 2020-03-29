@@ -8,12 +8,12 @@ sources:
                   field: users
                   path: /users
                   method: GET
-                  responseSchema: ./users.json
+                  responseSchema: ./json-schemas/users.json
                 - type: Query
                   field: company
                   path: /company/{args.id}
                   method: GET
-                  responseSchema: ./company.json
+                  responseSchema: ./json-schemas/company.json
       transforms:
         - mocking:
             mocks:

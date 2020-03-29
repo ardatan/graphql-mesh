@@ -17,8 +17,5 @@
   "workspaces": [
     "./packages/**/*",
     "./examples/**/*"
-  ],
-  "resolutions": {
-    "graphql": "14.6.0"
-  }
+  ]
 }

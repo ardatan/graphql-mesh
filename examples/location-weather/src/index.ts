@@ -1,8 +1,8 @@
 import { ApolloServer } from 'apollo-server';
-import { getMesh, parseConfig } from '@graphql-mesh/runtime';
+import { getMesh, findAndParseConfig } from '@graphql-mesh/runtime';
 
 async function main() {
-  const meshConfig = await parseConfig();
+  const meshConfig = await findAndParseConfig();
   const { schema, contextBuilder } = await getMesh(meshConfig);
 
   const server = new ApolloServer({

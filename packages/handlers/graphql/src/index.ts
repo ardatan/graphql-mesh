@@ -2,30 +2,28 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import {
   introspectSchema,
   makeRemoteExecutableSchema,
-  delegateToSchema
+  delegateToSchema,
+  IDelegateToSchemaOptions
 } from 'graphql-tools-fork';
 import { fetchache, Request } from 'fetchache';
-import { HttpLink } from 'apollo-link-http';
+import { loadSchema } from '@graphql-toolkit/core';
+import { UrlLoader } from '@graphql-toolkit/url-loader';
 import { GraphQLResolveInfo } from 'graphql';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
   async getMeshSource({ config, hooks, cache }) {
-    const link = new HttpLink({
-      uri: config.endpoint,
-      fetch: (info, init) => fetchache(typeof info === 'string' ? new Request(info, init) : info, cache),
-      headers: config.headers || {}
-    });
-    const introspection = await introspectSchema(link);
 
-    const remoteSchema = makeRemoteExecutableSchema({
-      schema: introspection,
-      link
-    });
+    const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
+    const remoteSchema = await loadSchema(config.endpoint, {
+      loaders: [ new UrlLoader() ],
+      fetch,
+      headers: config.headers,
+    })
 
-    hooks.on('buildSdkFn', ({ fieldName, replaceFn, schema }) => {
+    hooks.on('buildSdkFn', ({ typeName, fieldName, replaceFn, schema }) => {
       replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
-        const delegationOptions = {
-          operation: info.operation.operation,
+        const delegationOptions: IDelegateToSchemaOptions = {
+          operation: typeName.toLowerCase() as any,
           fieldName,
           schema,
           args,
@@ -38,7 +36,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
     });
 
     return {
-      schema: remoteSchema
+      schema: remoteSchema,
     };
   }
 };

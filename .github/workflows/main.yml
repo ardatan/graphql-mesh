@@ -45,13 +45,24 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
+      
       - name: Release Canary
-        run: |
-          echo "Source Repo: ${{github.repository}}"
-          if [ "${{github.repository}}" == "Urigo/graphql-mesh" ] && [ "${{ secrets.NODE_AUTH_TOKEN }}" != "" ]
-          then
-              echo "//registry.npmjs.org/:_authToken=${{ secrets.NODE_AUTH_TOKEN }}" > .npmrc
-              npm run ci:release:canary
-          else    
-              echo "Skipping canary publish due to a fork/PR..."
-          fi
+        id: canary
+        uses: 'kamilkisiela/release-canary@master'
+        if: github.repository == 'urigo/graphql-mesh'
+        with:
+          npm-token: ${{ secrets.NODE_AUTH_TOKEN }}
+          npm-script: 'ci:release:canary'
+      - name: Publish a message
+        if: steps.canary.outputs.released
+        uses: 'kamilkisiela/pr-comment@master'
+        with:
+          message: |
+            The latest changes of this PR are available as alpha in npm: `${{ steps.canary.outputs.version }}`
+            
+            Quickly update your package.json by running:
+            
+                npx match-version @graphql-mesh ${{ steps.canary.outputs.version }}
+          bot-token: ${{ secrets.GH_API_TOKEN }}
+          bot: 'theguild-bot'
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -3,9 +3,9 @@ import {
   YamlConfig,
   TransformFn
 } from '@graphql-mesh/types';
-import { DocumentNode } from 'graphql';
+import { DocumentNode, GraphQLSchema } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
-import { KeyValueCache } from '@graphql-mesh/types';
+import { KeyValueCache, Hooks } from '@graphql-mesh/types';
 
 type ValuesOf<T> = T[keyof T];
 
@@ -19,6 +19,8 @@ export type GetMeshOptions = {
   transforms?: ResolvedTransform[];
   additionalResolvers?: IResolvers;
   cache?: KeyValueCache;
+  hooks?: Hooks;
+  ignoreAdditionalResolvers?: boolean;
 };
 
 export type MeshResolvedSource = {
@@ -35,3 +37,20 @@ export type ExecuteMeshFn<TData = any, TVariables = any> = (
   document: GraphQLOperation,
   variables: TVariables
 ) => Promise<TData | null | undefined>;
+
+export type Requester<C = {}> = <R, V>(
+  doc: DocumentNode,
+  vars?: V,
+  options?: C
+) => Promise<R>;
+
+export type RawSourceOutput = {
+  name: string;
+  // TOOD: Remove globalContextBuilder and use hooks for that
+  globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
+  sdk: Record<string, any>;
+  schema: GraphQLSchema;
+  context: Record<string, any>;
+  contextVariables: (keyof any)[];
+  handler: MeshHandlerLibrary;
+};

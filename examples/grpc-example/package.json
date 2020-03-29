@@ -5,11 +5,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "preserver": "yarn build-server",
-    "build-server": "bash bash/build.sh",
-    "server": "bash bash/server.sh",
-    "mesh": "graphql-mesh serve",
-    "start": "concurrently -c 'bgBlue.bold,bgMagenta.bold' 'npm:server' 'npm:mesh'"
+    "mesh:serve": "graphql-mesh serve"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.0.16",
