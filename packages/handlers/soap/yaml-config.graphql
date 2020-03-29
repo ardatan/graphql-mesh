@@ -15,15 +15,27 @@ type SoapHandler {
 
 type SoapSecurityCertificateConfig {
   """
-  Path to the file containing your public key
+  Your public key
   """
-  publicKey: String!
+  publicKey: String
   """
-  Path to the file containing your private key
+  Your private key
   """
-  privateKey: String!
+  privateKey: String
   """
   Password
   """
-  password: String!
+  password: String
+  """
+  Path to the file contains your public key
+  """
+  publicKeyFilePath: String
+  """
+  Path to the file contains your private key
+  """
+  privateKeyFilePath: String
+  """
+  Path to the file contains your password
+  """
+  passwordFilePath: String
 }
