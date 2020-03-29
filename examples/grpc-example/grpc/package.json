@@ -9,8 +9,7 @@
   "scripts": {
     "postinstall": "npm run build",
     "build": "bash bash/build.sh",
-    "start": "bash bash/server.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "bash bash/server.sh"
   },
   "author": "",
   "license": "ISC",
