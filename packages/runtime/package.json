@@ -24,8 +24,8 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-toolkit/common": "0.9.11",
-    "@graphql-toolkit/schema-merging": "0.9.11",
+    "@graphql-toolkit/common": "0.9.12",
+    "@graphql-toolkit/schema-merging": "0.9.12",
     "@graphql-mesh/cache-inmemory-lru": "0.0.16",
     "@graphql-mesh/types": "0.0.16",
     "cosmiconfig": "6.0.0",
