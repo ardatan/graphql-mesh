@@ -5,7 +5,7 @@ extend type Handler {
   soap: SoapHandler
 }
 
-type SoapHandler {
+type SoapHandler @md {
   """
   A url to your WSDL
   """

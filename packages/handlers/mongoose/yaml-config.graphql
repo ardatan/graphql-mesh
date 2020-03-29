@@ -2,7 +2,7 @@ extend type Handler {
   mongoose: MongooseHandler
 }
 
-type MongooseHandler {
+type MongooseHandler @md {
   connectionString: String
   models: [MongooseModel]
   discriminators: [MongooseModel]
@@ -18,7 +18,14 @@ type ComposeWithMongooseOpts {
   name: String
   description: String
   fields: ComposeWithMongooseFieldsOpts
-  inputType: ComposeWithMongooseOpts
+  inputType: ComposeMongooseInputType
+  resolvers: TypeConverterResolversOpts
+}
+
+type ComposeMongooseInputType {
+  name: String
+  description: String
+  fields: ComposeWithMongooseFieldsOpts
   resolvers: TypeConverterResolversOpts
 }
 
