@@ -110,7 +110,7 @@ export async function getMesh(
   }
 
   if (options.additionalResolvers) {
-    unifiedSchema = addResolversToSchema({
+    unifiedSchema = addResolversWithReferenceResolver({
       resolvers: applyResolversHooksToResolvers(
         options.additionalResolvers,
         hooks
@@ -123,7 +123,10 @@ export async function getMesh(
     schema: unifiedSchema,
     applyResolvers: modifiedResolvers => {
       if (modifiedResolvers) {
-        unifiedSchema = addResolversToSchema(unifiedSchema, modifiedResolvers);
+        unifiedSchema = addResolversWithReferenceResolver({
+          schema: unifiedSchema, 
+          resolvers: modifiedResolvers,
+        });
       }
     }
   });
