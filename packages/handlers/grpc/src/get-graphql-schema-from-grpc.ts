@@ -25,9 +25,9 @@ export {
   getGraphqlTypeFromProtoDefinition,
 } from './type_converter';
 export {
-  GRPC_GQL_TYPE_MAPPING,
   GrpcGraphqlSchemaConfiguration,
-  typeDefinitionCache,
+  inputTypeDefinitionCache,
+  outputTypeDefinitionCache,
 } from './types';
 
 type GraphqlInputTypes = GraphQLInputObjectType | GraphQLObjectType;
@@ -52,30 +52,24 @@ export async function getGraphqlSchemaFromGrpc({
   const { nested = {} }: INamespace =
     await getPackageProtoDefinition(protoFilePath, packageName);
 
-  const types: GraphqlInputTypes[] = Object.keys(nested)
-    .filter((key: string) => 'fields' in nested[key])
-    .reduce(
-      (acc: GraphqlInputTypes[], key: string) => {
-        const definition: AnyNestedObject = nested[key];
-
-        // skip empty
-        if (key.startsWith('Empty')) {
-          return acc;
-        }
-
-        if ((<IType>definition).fields) {
-          return acc.concat([
-            getGraphqlTypeFromProtoDefinition({
-              definition: (<IType>definition),
-              typeName: key,
-            }),
-          ]);
-        }
-
-        return acc;
-      },
-      [],
-    );
+  for (const key in nested) {
+    if (key.startsWith('Empty')) {
+      continue;
+    }
+    const definition: AnyNestedObject = nested[key];
+    if ('fields' in definition) {
+      if ((<IType>definition).fields) {
+        getGraphqlTypeFromProtoDefinition({
+          definition: (<IType>definition),
+          typeName: key,
+        }, false);
+        getGraphqlTypeFromProtoDefinition({
+          definition: (<IType>definition),
+          typeName: key,
+        }, true);
+      }
+    }
+  }
 
   const query = Object.keys(nested)
     .filter((key: string) => 'methods' in nested[key] && key === serviceName)
@@ -123,7 +117,6 @@ export async function getGraphqlSchemaFromGrpc({
     );
 
   return new GraphQLSchema({
-    types,
     query,
     mutation,
     subscription,

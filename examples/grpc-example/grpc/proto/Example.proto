@@ -18,7 +18,7 @@ message Movie {
 
 message EmptyRequest {}
 
-message SearchByCastInput {
+message SearchByCastRequest {
     string castName = 1;
 }
 
@@ -41,5 +41,5 @@ service Example {
     /**
     * search movies by the name of the cast
     */
-    rpc SearchMoviesByCast (SearchByCastInput) returns (stream Movie) {}
+    rpc SearchMoviesByCast (SearchByCastRequest) returns (stream Movie) {}
 }

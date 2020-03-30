@@ -6,8 +6,8 @@ import {
 } from 'graphql';
 
 import {
-  GRPC_GQL_TYPE_MAPPING,
-  typeDefinitionCache,
+  inputTypeDefinitionCache,
+  outputTypeDefinitionCache,
 } from './types';
 import { IField, IType } from 'protobufjs';
 
@@ -27,8 +27,10 @@ interface ProtoDefinitionInput {
 
 export function getGraphqlTypeFromProtoDefinition(
   { definition, typeName }: ProtoDefinitionInput,
+  isInput: boolean,
 ): GraphQLInputObjectType | GraphQLObjectType {
   const { fields, comment } = definition;
+  const typeDefinitionCache = isInput ? inputTypeDefinitionCache : outputTypeDefinitionCache;
 
   // TODO: need to set up for either input type or object type
   const fieldsFunction = () => Object.keys(fields)
@@ -36,7 +38,7 @@ export function getGraphqlTypeFromProtoDefinition(
       (result, fieldName) => {
         const { rule, type, comment } = fields[fieldName];
 
-        const gqlType = GRPC_GQL_TYPE_MAPPING[type] || typeDefinitionCache[type];
+        const gqlType = typeDefinitionCache[type];
 
         // eslint-disable-next-line no-param-reassign
         result[fieldName] = {
@@ -56,7 +58,7 @@ export function getGraphqlTypeFromProtoDefinition(
   };
 
   // CONVENTION - types that end with `Input` are GraphQL input types
-  const type = typeName.endsWith('Input')
+  const type = isInput
     ? new GraphQLInputObjectType(typeDef)
     : new GraphQLObjectType(typeDef);
 

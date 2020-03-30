@@ -2,7 +2,8 @@
   "compilerOptions": {
     "lib": [
       "es2015",
-      "esnext.asynciterable"
+      "esnext.asynciterable",
+      "dom"
     ],
     "target": "ES6",
     "module": "commonjs",
