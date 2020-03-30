@@ -1,7 +1,8 @@
-import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID } from "graphql";
+import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap } from "graphql";
 import { BigIntResolver as GraphQLBigInt, GUIDResolver as GraphQLGUID, DateTimeResolver as GraphQLDateTime } from 'graphql-scalars';
 import fetchache, { KeyValueCache, Headers } from "fetchache";
 import urljoin from 'url-join';
+import { camelCase } from 'camel-case';
 
 const SCALARS: [string, GraphQLScalarType][] = [
     ['Edm.Binary', GraphQLString],
@@ -24,6 +25,12 @@ interface EndpointConfig {
     baseUrl: string;
     metadataHeaders?: HeadersInit;
     operationHeaders?: HeadersInit;
+}
+
+interface ServiceConfig extends EndpointConfig {
+    servicePath: string;
+    serviceBaseUrlFactory: (params: any) => string;
+    args: GraphQLFieldConfigArgumentMap;
 }
 
 export class SchemaFactory {
@@ -170,60 +177,56 @@ export class SchemaFactory {
             }
         }
     }
-    async fetchMetadata(endpointConfig: EndpointConfig): Promise<{ query: GraphQLObjectType, mutation?: GraphQLObjectType}> {
-        // STRING-INTERPOLATION TODO
-        const metadataUrl = urljoin(endpointConfig.baseUrl, '$metadata');
+    async Service(serviceConfig: ServiceConfig): Promise<{ queryFields: GraphQLFieldConfigMap<any, any>, mutationFields?: GraphQLFieldConfigMap<any, any>}> {
+        const metadataUrl = urljoin(serviceConfig.baseUrl, serviceConfig.servicePath, '$metadata');
         const metadataRequest = new Request(urljoin(metadataUrl, '$metadata'), {
-            headers: endpointConfig.metadataHeaders,
+            headers: serviceConfig.metadataHeaders,
         });
         const response = await fetchache(metadataRequest, this.cache);
         const text = await response.text();
         const $ = cheerio.load(text);
         
         $('EnumType').each((i, enumElement) => this.EnumType(enumElement));
-        $('ComplexType').each((i, enumElement) => this.ObjectType(enumElement, false, endpointConfig));
-        $('EntityType').each((i, enumElement) => this.ObjectType(enumElement, true, endpointConfig));
+        $('ComplexType').each((i, enumElement) => this.ObjectType(enumElement, false, serviceConfig));
+        $('EntityType').each((i, enumElement) => this.ObjectType(enumElement, true, serviceConfig));
         const queryFields: GraphQLFieldConfigMap<any, any> = {};
         $('EntityContainer').each((i, entityElement) => {
-            const entityElementName = entityElement.attribs['Name'];
-            const entitySetFields: GraphQLFieldConfigMap<any, any> = {};
             for (const entitySetElement of entityElement.children) {
                 const entitySetName = entitySetElement.attribs['Name'];
                 const entitySetTypeName = entitySetElement.attribs['EntityType'];
-                entitySetFields[entitySetName + 'All'] = {
+                queryFields[entitySetName + 'All'] = {
                     type: this.outputTypeMap.get(entitySetTypeName)!,
-                    resolve: async (root, args) => {
-                        const entitySetUrl = urljoin(endpointConfig.baseUrl, entitySetName);
+                    args: {
+                        ...serviceConfig.args,
+                    },
+                    resolve: async (root, args, context, info) => {
+                        const serviceBaseUrl = serviceConfig.serviceBaseUrlFactory({ root, args, context, info });
+                        const entitySetUrl = urljoin(serviceBaseUrl, entitySetName);
                         const entitySetRequest = new Request(entitySetUrl, {
-                            headers: endpointConfig.operationHeaders,
+                            headers: serviceConfig.operationHeaders,
                         });
                         const response = await fetchache(entitySetRequest, this.cache);
                         return response.json();
                     },
                 };
-                entitySetFields[entitySetName] = {
+                queryFields[entitySetName] = {
                     type: this.outputTypeMap.get(entitySetTypeName)!,
                     args: {
+                        ...serviceConfig.args,
                         id: {
                             type: new GraphQLNonNull(GraphQLID),
                         }
                     },
-                    resolve: async (root, args) => {
-                        const entitySetUrl = urljoin(endpointConfig.baseUrl, entitySetName + `(${args.id})`);
+                    resolve: async (root, args, context, info) => {
+                        const serviceBaseUrl = serviceConfig.serviceBaseUrlFactory({ root, args, context, info });
+                        const entitySetUrl = urljoin(serviceBaseUrl, entitySetName + `(${args.id})`);
                         const entitySetRequest = new Request(entitySetUrl, {
-                            headers: endpointConfig.operationHeaders,
+                            headers: serviceConfig.operationHeaders,
                         });
                         const response = await fetchache(entitySetRequest, this.cache);
                         return response.json();
                     },
                 };
-            }
-            queryFields[entityElementName] = {
-                args: {},
-                type: new GraphQLObjectType({
-                    name: entityElementName,
-                    fields: entitySetFields,
-                }),
             }
         });
         //TODO
@@ -232,10 +235,7 @@ export class SchemaFactory {
         $('Action')
 
         return {
-            query: new GraphQLObjectType({
-                name: 'Query',
-                fields: queryFields,
-            })
+            queryFields
         };
 
     }

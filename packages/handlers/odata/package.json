@@ -23,6 +23,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.0.16",
     "graphql-scalars": "1.0.9",
+    "camel-case": "4.1.1",
     "fetchache": "0.0.3",
     "cheerio": "1.0.0-rc.3",
     "url-join": "4.0.1"
