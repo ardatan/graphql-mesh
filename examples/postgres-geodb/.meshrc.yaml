@@ -6,6 +6,7 @@ sources:
     transforms:
       - prefix:
           value: Geo
+          includeRootOperations: true
   - name: Github
     handler:
       graphql:
