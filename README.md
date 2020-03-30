@@ -6,6 +6,8 @@ https://graphql-mesh.com
 
 ### Note: this project is early and there will be breaking changes along the way
 
+![Mesh GIF](./website/static/img/twitter_1200X345.gif)
+
 GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run GraphQL (and also ones that do run GraphQL).
 It can be used as a gateway to other services, or run as a local GraphQL schema that aggregates data from remote APIs.
 
