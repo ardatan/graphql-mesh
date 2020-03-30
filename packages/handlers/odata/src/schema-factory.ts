@@ -1,10 +1,11 @@
-import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap, GraphQLNamedType } from "graphql";
+import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap, GraphQLNamedType, GraphQLUnionType, GraphQLResolveInfo, GraphQLType } from "graphql";
 import { BigIntResolver as GraphQLBigInt, GUIDResolver as GraphQLGUID, DateTimeResolver as GraphQLDateTime } from 'graphql-scalars';
 import { KeyValueCache, Headers, Request, fetchache } from "fetchache";
 import urljoin from 'url-join';
 import { camelCase } from 'camel-case';
 import Interpolator from 'string-interpolation/src';
 import { JSDOM } from 'jsdom';
+import graphqlFields from 'graphql-fields';
 
 const SCALARS: [string, GraphQLScalarType][] = [
     ['Edm.Binary', GraphQLString],
@@ -23,6 +24,43 @@ const SCALARS: [string, GraphQLScalarType][] = [
     ['Edm.Duration', GraphQLString],
 ];
 
+const InlineCountEnum = new GraphQLEnumType({
+    name: 'InlineCount',
+    values: {
+        allpages: {
+            value: 'allpages',
+            description: 'The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)'
+        },
+        none: {
+            value: 'none',
+            description: 'The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.'
+        }
+    }
+})
+
+const queryArgs = {
+    'orderby': {
+        type: GraphQLString,
+        description: 'A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.'
+    },
+    'top': {
+        type: GraphQLInt,
+        description: 'A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.'
+    },
+    'skip': {
+        type: GraphQLInt,
+        description: 'A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.'
+    },
+    'filter': {
+        type: GraphQLString,
+        description: 'A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.'
+    },
+    'inlinecount': {
+        type: InlineCountEnum,
+        description: 'A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.'
+    }
+}
+
 interface EndpointConfig {
     baseUrl: string;
     metadataHeaders?: Record<string, string>;
@@ -33,12 +71,65 @@ interface ServiceConfig extends EndpointConfig {
     servicePath: string;
 }
 
+interface ResolverData {
+    root: any, args: any, context: any, info: GraphQLResolveInfo,
+}
+
+type ResolverDataFactory<T> = (data: ResolverData) => T; 
+
 export class SchemaFactory {
     private inputTypeMap: Map<string, GraphQLInputType>;
     private outputTypeMap: Map<string, GraphQLOutputType>;
+    private identifierFieldMap: Map<string, string>;
     constructor(private cache: KeyValueCache) {
-        this.inputTypeMap = new Map<string, GraphQLInputType>(SCALARS);
-        this.outputTypeMap = new Map<string, GraphQLOutputType>(SCALARS);
+        this.inputTypeMap = new Map(SCALARS);
+        this.outputTypeMap = new Map(SCALARS);
+        this.identifierFieldMap = new Map();
+    }
+    private prepareRequest({
+        resolverData,
+        serviceBaseUrlFactory,
+        headersFactory,
+        entityName,
+        actionName,
+        method = 'GET',
+    }: {
+        resolverData: ResolverData;
+        serviceBaseUrlFactory: ResolverDataFactory<string>;
+        headersFactory: ResolverDataFactory<Headers>;
+        entityName: string;
+        actionName?: string;
+        method?: string;
+    }) {
+        resolverData.context._serviceBaseUrl = resolverData.context._serviceBaseUrl || serviceBaseUrlFactory(resolverData);
+        resolverData.context._headers = resolverData.context._headers || headersFactory(resolverData)
+        if (!resolverData.context._headers.has('Accept')) {
+            resolverData.context._headers.set('Accept', 'application/json; odata.metadata=full');
+        }
+        if (!resolverData.context._headers.has('Content-Type')) {
+            resolverData.context._headers.set('Content-Type', 'application/json; odata.metadata=full');
+        }
+        const identifierFieldName = this.identifierFieldMap.get(entityName) || 'id';
+        const urlParts = [
+            resolverData.context._serviceBaseUrl, 
+            (identifierFieldName in resolverData.args ? `${entityName}(${resolverData.args[identifierFieldName!]})` : entityName), 
+            actionName
+        ]
+        const entitySetUrl = urljoin(urlParts.filter(Boolean));
+        const urlObj = new URL(entitySetUrl);
+        for (const param in queryArgs) {
+            if (param in resolverData.args) {
+                urlObj.searchParams.set('$' + param, resolverData.args[param]);
+            }
+        }
+        const selectionFields = Object.keys(graphqlFields(resolverData.info)).filter(fieldName => !fieldName.startsWith('__'));
+        urlObj.searchParams.set('$select', selectionFields.join(','));
+        
+        return new Request(decodeURIComponent(urlObj.toString()), {
+            headers: resolverData.context._headers,
+            method,
+            body: method !== 'GET' ? JSON.stringify(resolverData.args): null,
+        });
     }
     EnumType(enumElement: Element) {
         const values: GraphQLEnumValueConfigMap = {};
@@ -60,18 +151,11 @@ export class SchemaFactory {
     }
     dependenciesHold = new Map<string, Set<string>>();
     holdFactory = new Map<string, () => void>();
-    ObjectType(objectElement: Element, hasId: boolean, headersFactory: (data: any) => Headers) {
+    ObjectType(objectElement: Element, headersFactory: (data: any) => Headers) {
         const factory = () => {
             const typeName = objectElement.getAttribute('Name')!;
             const inputFields: GraphQLInputFieldConfigMap = {};
             const outputFields: GraphQLFieldConfigMap<any, any> = {};
-            let identifierFieldName = 'id';
-            if (hasId) {
-                outputFields['id'] = {
-                    type: GraphQLID,
-                    resolve: root => root[identifierFieldName],
-                };
-            }
             let broke = false;
             const fieldFactory = (child: Element) => {
                 const tag = child.tagName.toLowerCase();
@@ -108,7 +192,10 @@ export class SchemaFactory {
                     type: outputFieldType,
                 };
                 if (tag === 'navigationproperty') {
-                    outputFields[fieldName].resolve = async (root, args, context, info: any) => {
+                    outputFields[fieldName].args = {
+                        ...queryArgs,
+                    };
+                    outputFields[fieldName].resolve = async (root, args, context, info) => {
                         const navigationUrl = root[fieldName + '@odata.navigationLink'];
                         const interpolationData = { root, args, context, info };
                         context._headers = root.headers || headersFactory(interpolationData)
@@ -117,8 +204,17 @@ export class SchemaFactory {
                         }
                         if (!context._headers.has('Content-Type')) {
                             context._headers.set('Content-Type', 'application/json; odata.metadata=full');
+                        }        
+                        const urlObj = new URL(navigationUrl);
+                        for (const param in queryArgs) {
+                            if (param in args) {
+                                urlObj.searchParams.set('$' + param, args[param]);
+                            }
                         }
-                        const navigationRequest = new Request(navigationUrl, {
+                        const selectionFields = Object.keys(graphqlFields(info)).filter(fieldName => !fieldName.startsWith('__'));
+                        urlObj.searchParams.set('$select', selectionFields.join(','));
+                        
+                        const navigationRequest = new Request(decodeURIComponent(urlObj.toString()), {
                             headers: context._headers,
                         })
                         const response = await fetchache(navigationRequest, this.cache);
@@ -131,7 +227,10 @@ export class SchemaFactory {
             const typeRef = `${schemaNamespace}.${typeName}`;
             objectElement.querySelectorAll('Property').forEach(field => fieldFactory(field));
             objectElement.querySelectorAll('NavigationProperty').forEach(field => fieldFactory(field));
-            identifierFieldName = objectElement.querySelector('PropertyRef')?.getAttribute('Name')!;
+            const identifierFieldName = objectElement.querySelector('PropertyRef')?.getAttribute('Name');
+            if (identifierFieldName) {
+                this.identifierFieldMap.set(typeName, identifierFieldName);
+            }
             if (!broke) {
                 if (objectElement.getAttribute('Abstract')) {
                     if (!this.inputTypeMap.has(typeRef)) {
@@ -163,6 +262,11 @@ export class SchemaFactory {
                         }
                         Object.assign(inputFields, interfaceInputType.toConfig().fields);
                         Object.assign(outputFields, interfaceOutputType.toConfig().fields);
+                        const interfaceTypeName = interfaceOutputType.name;
+                        if (this.identifierFieldMap.has(interfaceTypeName) && !this.identifierFieldMap.has(typeName)) {
+                            const identifierFieldName = this.identifierFieldMap.get(interfaceTypeName!)!;
+                            this.identifierFieldMap.set(typeName, identifierFieldName);
+                        }
                         interfaces.push(interfaceOutputType);
                     }
                     if (!this.inputTypeMap.has(typeRef)) {
@@ -223,11 +327,6 @@ export class SchemaFactory {
             const varName =
                 interpolationKeyParts[interpolationKeyParts.length - 1];
             if (interpolationKeyParts[0] === 'args') {
-                if (varName === 'id') {
-                    throw new Error(
-                        `Argument name cannot be 'id'. Invalid statement; '${interpolationKey}'`
-                    );
-                }
                 serviceArgs[varName] = {
                     type: new GraphQLNonNull(GraphQLID)
                 };
@@ -252,8 +351,8 @@ export class SchemaFactory {
         const { window: { document } } = new JSDOM(text);
 
         document.querySelectorAll('EnumType').forEach(enumElement => this.EnumType(enumElement))
-        document.querySelectorAll('ComplexType').forEach(objectElement => this.ObjectType(objectElement, false, headersFactory))
-        document.querySelectorAll('EntityType').forEach(objectElement => this.ObjectType(objectElement, true, headersFactory));
+        document.querySelectorAll('ComplexType').forEach(objectElement => this.ObjectType(objectElement, headersFactory))
+        document.querySelectorAll('EntityType').forEach(objectElement => this.ObjectType(objectElement, headersFactory));
         const queryFields: GraphQLFieldConfigMap<any, any> = {};
         document.querySelectorAll('EntityContainer').forEach(entityContainerElement => {
             entityContainerElement.querySelectorAll('EntitySet').forEach(entitySetElement => {
@@ -263,51 +362,41 @@ export class SchemaFactory {
                     type: new GraphQLList(this.outputTypeMap.get(entitySetTypeName!)!),
                     args: {
                         ...serviceArgs,
+                        ...queryArgs,
                     },
-                    resolve: async (root, args, context, info: any) => {
-                        const interpolationData = { root, args, context, info };
-                        context._serviceBaseUrl = context._serviceBaseUrl || serviceBaseUrlFactory(interpolationData);
-                        context._headers = context._headers || headersFactory(interpolationData)
-                        if (!context._headers.has('Accept')) {
-                            context._headers.set('Accept', 'application/json; odata.metadata=full');
-                        }
-                        if (!context._headers.has('Content-Type')) {
-                            context._headers.set('Content-Type', 'application/json; odata.metadata=full');
-                        }
-                        const entitySetUrl = urljoin(context._serviceBaseUrl, entitySetName!);
-                        const entitySetRequest = new Request(entitySetUrl, {
-                            headers: context._headers,
-                        });
+                    resolve: async (root, args, context, info) => {
+                        const entitySetRequest = this.prepareRequest({
+                            resolverData: { root, args, context, info },
+                            serviceBaseUrlFactory,
+                            headersFactory,
+                            entityName: entitySetName,
+                        })
                         const response = await fetchache(entitySetRequest, this.cache);
                         const responseJson = await response.json();
                         return responseJson.value;
                     },
                 };
+                const identifierFieldName = this.identifierFieldMap.get(entitySetName!);
                 queryFields[camelCase(entitySetName + '_ByID')] = {
                     type: this.outputTypeMap.get(entitySetTypeName!)!,
                     args: {
                         ...serviceArgs,
-                        id: {
-                            type: new GraphQLNonNull(GraphQLID),
-                        }
+                        ...(identifierFieldName ? {
+                            [identifierFieldName]: {
+                                type: new GraphQLNonNull(GraphQLID),
+                            }
+                        } : {})
                     },
-                    resolve: async (root, args, context, info: any) => {
-                        const interpolationData = { root, args, context, info };
-                        context._serviceBaseUrl = context._serviceBaseUrl || serviceBaseUrlFactory(interpolationData);
-                        context._headers = context._headers || headersFactory(interpolationData)
-                        if (!context._headers.has('Accept')) {
-                            context._headers.set('Accept', 'application/json; odata.metadata=full');
-                        }
-                        if (!context._headers.has('Content-Type')) {
-                            context._headers.set('Content-Type', 'application/json; odata.metadata=full');
-                        }
-                        const entitySetUrl = urljoin(context._serviceBaseUrl, entitySetName + `(${args.id})`);
-                        const entitySetRequest = new Request(entitySetUrl, {
-                            headers: context._headers,
-                        });
+                    resolve: async (root, args, context, info) => {
+                        const entitySetRequest = this.prepareRequest({
+                            resolverData: { root, args, context, info },
+                            serviceBaseUrlFactory,
+                            headersFactory,
+                            entityName: entitySetName,
+                        })
                         const response = await fetchache(entitySetRequest, this.cache);
                         const responseJson = await response.json();
-                        return responseJson.value;
+                        return responseJson;
                     },
                 };
             })
@@ -319,7 +408,7 @@ export class SchemaFactory {
             const actionName = actionElement.getAttribute('Name')!;
             let actionFieldName = actionName;
             let returnType: GraphQLOutputType = GraphQLBoolean;
-            let returnTypeName: string;
+            let entityName: string;
             const args: GraphQLFieldConfigArgumentMap = {};
             const bound = actionElement.getAttribute('IsBound') === 'true';
             const bindingParamName = actionElement.getAttribute('EntitySetPath') || 'bindingParameter';
@@ -327,18 +416,18 @@ export class SchemaFactory {
                 const paramName = paramElement.getAttribute('Name')!;
                 let paramTypeName = paramElement.getAttribute('Type')!;
                 if (bound && paramName === bindingParamName) {
-                    let returnTypeName = paramElement.getAttribute('Type')!;
+                    entityName = paramElement.getAttribute('Type')!;
                     let isList = false;
-                    if (returnTypeName.startsWith('Collection(')) {
+                    if (entityName.startsWith('Collection(')) {
                         isList = true;
-                        returnTypeName = returnTypeName
+                        entityName = entityName
                             .replace('Collection(', '')
                             .replace(')', '');
                     }
-                    returnType = this.outputTypeMap.get(returnTypeName) as any;
+                    returnType = this.outputTypeMap.get(entityName) as any;
                     if ('name' in returnType) {
-                        returnTypeName = returnType.name;
-                        actionFieldName += returnTypeName;
+                        entityName = returnType.name;
+                        actionFieldName += entityName;
                     }
                     if (isList) {
                         returnType = new GraphQLList(returnType);
@@ -363,8 +452,31 @@ export class SchemaFactory {
                     };
                 }
             });
+            const returnTypeElement = actionElement.querySelector('ReturnType');
+            if (returnTypeElement) {
+                const returnTypeAttr = returnTypeElement.getAttribute('Type');
+                if (returnTypeAttr) {
+                    entityName = returnTypeAttr!;
+                    let isList = false;
+                    if (entityName.startsWith('Collection(')) {
+                        isList = true;
+                        entityName = entityName
+                            .replace('Collection(', '')
+                            .replace(')', '');
+                    }
+                    returnType = this.outputTypeMap.get(entityName) as any;
+                    if ('name' in returnType) {
+                        entityName = returnType.name;
+                        actionFieldName += entityName;
+                    }
+                    if (isList) {
+                        returnType = new GraphQLList(returnType);
+                    }
+                }
+            }
             if (bound) {
-                args.id = {
+                const identifierFieldName = this.identifierFieldMap.get(entityName!) || 'id';
+                args[identifierFieldName] = {
                     type: GraphQLID,
                 };
             }
@@ -373,22 +485,16 @@ export class SchemaFactory {
                 args: {
                     ...serviceArgs,
                     ...args,
+                    ...queryArgs,
                 },
                 resolve: async (root, args, context, info) => {
-                    const interpolationData = { root, args, context, info };
-                    context._serviceBaseUrl = context._serviceBaseUrl || serviceBaseUrlFactory(interpolationData);
-                    context._headers = context._headers || headersFactory(interpolationData)
-                    if (!context._headers.has('Accept')) {
-                        context._headers.set('Accept', 'application/json; odata.metadata=full');
-                    }
-                    if (!context._headers.has('Content-Type')) {
-                        context._headers.set('Content-Type', 'application/json; odata.metadata=full');
-                    }
-                    const entitySetUrl = urljoin(context._serviceBaseUrl, (bound ? `${returnTypeName}(${args.id})` : ''), actionName);
-                    const entitySetRequest = new Request(entitySetUrl, {
-                        headers: context._headers,
+                    const entitySetRequest = this.prepareRequest({
+                        resolverData: { root, args, context, info },
+                        serviceBaseUrlFactory,
+                        headersFactory,
+                        entityName,
+                        actionName,
                         method: 'POST',
-                        body: JSON.stringify(args),
                     });
                     const response = await fetchache(entitySetRequest, this.cache);
                     const responseJson = await response.json();
