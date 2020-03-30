@@ -23,7 +23,7 @@
     "@types/yargs": "15.0.4",
     "graphql": "14.6.0",
     "jest": "25.2.4",
-    "ts-jest": "25.2.1",
+    "ts-jest": "25.3.0",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
   },
