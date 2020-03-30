@@ -41,6 +41,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             });
             schemaConfig.mutation = mutation;
         }
+
         const schema = new GraphQLSchema(schemaConfig);
         return {
             schema,

@@ -127,16 +127,16 @@ export class SchemaFactory {
                     }
                 }
             }
+            const schemaNamespace = objectElement.parentElement?.getAttribute('Namespace');
+            const typeRef = `${schemaNamespace}.${typeName}`;
             objectElement.querySelectorAll('Property').forEach(field => fieldFactory(field));
             objectElement.querySelectorAll('NavigationProperty').forEach(field => fieldFactory(field));
             identifierFieldName = objectElement.querySelector('PropertyRef')?.getAttribute('Name')!;
             if (!broke) {
-                const schemaNamespace = objectElement.parentElement?.getAttribute('Namespace');
-                const typeRef = `${schemaNamespace}.${typeName}`;
                 if (objectElement.getAttribute('Abstract')) {
                     if (!this.inputTypeMap.has(typeRef)) {
                         this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                            name: typeName,
+                            name: typeName + 'Input',
                             fields: inputFields,
                         }))
                     }
@@ -165,9 +165,9 @@ export class SchemaFactory {
                         Object.assign(outputFields, interfaceOutputType.toConfig().fields);
                         interfaces.push(interfaceOutputType);
                     }
-                    if (!this.outputTypeMap.has(typeRef)) {
+                    if (!this.inputTypeMap.has(typeRef)) {
                         this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                            name: typeName,
+                            name: typeName + 'Input',
                             fields: inputFields,
                         }))
                     }
@@ -184,6 +184,7 @@ export class SchemaFactory {
                     if (factory) {
                         factory();
                     }
+                    this.dependenciesHold.delete(depTypeRef);
                 });
             }
         }
@@ -250,16 +251,15 @@ export class SchemaFactory {
         const text = await response.text();
         const { window: { document } } = new JSDOM(text);
 
-
         document.querySelectorAll('EnumType').forEach(enumElement => this.EnumType(enumElement))
         document.querySelectorAll('ComplexType').forEach(objectElement => this.ObjectType(objectElement, false, headersFactory))
         document.querySelectorAll('EntityType').forEach(objectElement => this.ObjectType(objectElement, true, headersFactory));
         const queryFields: GraphQLFieldConfigMap<any, any> = {};
         document.querySelectorAll('EntityContainer').forEach(entityContainerElement => {
             entityContainerElement.querySelectorAll('EntitySet').forEach(entitySetElement => {
-                const entitySetName = entitySetElement.getAttribute('Name');
-                const entitySetTypeName = entitySetElement.getAttribute('EntityType');
-                queryFields[camelCase(entitySetName + '_All')] = {
+                const entitySetName = entitySetElement.getAttribute('Name')!;
+                const entitySetTypeName = entitySetElement.getAttribute('EntityType')!;
+                queryFields[camelCase(entitySetName)] = {
                     type: new GraphQLList(this.outputTypeMap.get(entitySetTypeName!)!),
                     args: {
                         ...serviceArgs,
@@ -283,7 +283,7 @@ export class SchemaFactory {
                         return responseJson.value;
                     },
                 };
-                queryFields[camelCase(entitySetName!)] = {
+                queryFields[camelCase(entitySetName + '_ByID')] = {
                     type: this.outputTypeMap.get(entitySetTypeName!)!,
                     args: {
                         ...serviceArgs,
@@ -313,24 +313,36 @@ export class SchemaFactory {
             })
 
         });
-        //TODO
-        // $('Function')
-        //TODO
+
         const mutationFields: GraphQLFieldConfigMap<any, any> = {};
-        document.querySelectorAll('Action').forEach(actionElement => {
+        const mutationFactory = (actionElement: Element) => {
             const actionName = actionElement.getAttribute('Name')!;
             let actionFieldName = actionName;
-            let returnType: GraphQLNamedType = GraphQLBoolean;
+            let returnType: GraphQLOutputType = GraphQLBoolean;
+            let returnTypeName: string;
             const args: GraphQLFieldConfigArgumentMap = {};
-            let bound = false;
+            const bound = actionElement.getAttribute('IsBound') === 'true';
+            const bindingParamName = actionElement.getAttribute('EntitySetPath') || 'bindingParameter';
             actionElement.querySelectorAll('Parameter').forEach(paramElement => {
                 const paramName = paramElement.getAttribute('Name')!;
                 let paramTypeName = paramElement.getAttribute('Type')!;
-                if (paramName === 'bindingParameter') {
-                    bound = true;
-                    const returnTypeName = paramElement.getAttribute('Type')!;
-                    returnType = this.outputTypeMap.get(returnTypeName) as GraphQLNamedType;
-                    actionFieldName += returnType.name;
+                if (bound && paramName === bindingParamName) {
+                    let returnTypeName = paramElement.getAttribute('Type')!;
+                    let isList = false;
+                    if (returnTypeName.startsWith('Collection(')) {
+                        isList = true;
+                        returnTypeName = returnTypeName
+                            .replace('Collection(', '')
+                            .replace(')', '');
+                    }
+                    returnType = this.outputTypeMap.get(returnTypeName) as any;
+                    if ('name' in returnType) {
+                        returnTypeName = returnType.name;
+                        actionFieldName += returnTypeName;
+                    }
+                    if (isList) {
+                        returnType = new GraphQLList(returnType);
+                    }
                 } else {
                     let isList = false;
                     if (paramTypeName.startsWith('Collection(')) {
@@ -372,7 +384,7 @@ export class SchemaFactory {
                     if (!context._headers.has('Content-Type')) {
                         context._headers.set('Content-Type', 'application/json; odata.metadata=full');
                     }
-                    const entitySetUrl = urljoin(context._serviceBaseUrl, (bound ? `${returnType.name}(${args.id})` : ''), actionName);
+                    const entitySetUrl = urljoin(context._serviceBaseUrl, (bound ? `${returnTypeName}(${args.id})` : ''), actionName);
                     const entitySetRequest = new Request(entitySetUrl, {
                         headers: context._headers,
                         method: 'POST',
@@ -383,7 +395,10 @@ export class SchemaFactory {
                     return responseJson.value;
                 }
             }
-        });
+        };
+
+        document.querySelectorAll('Action').forEach(actionElement => mutationFactory(actionElement));
+        document.querySelectorAll('Function').forEach(functionElement => mutationFactory(functionElement));
 
         return {
             queryFields,
