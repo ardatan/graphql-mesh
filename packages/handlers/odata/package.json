@@ -1,0 +1,33 @@
+{
+  "name": "@graphql-mesh/odata",
+  "version": "0.0.16",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest --config=../../../jest.config.js",
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "graphql": "*",
+    "grpc": "*"
+  },
+  "devDependencies": {
+    "@types/cheerio": "0.22.17",
+    "@types/url-join": "4.0.0",
+    "@types/node": "13.9.5",
+    "graphql": "14.6.0",
+    "jest": "25.2.4",
+    "ts-jest": "25.2.1",
+    "typescript": "3.8.3"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.0.16",
+    "graphql-scalars": "1.0.9",
+    "fetchache": "0.0.3",
+    "cheerio": "1.0.0-rc.3",
+    "url-join": "4.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
