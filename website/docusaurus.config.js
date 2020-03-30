@@ -4,8 +4,8 @@ module.exports = {
   url: 'https://graphql-mesh.com',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
-  organizationName: 'urigo', // Usually your GitHub org/user name.
-  projectName: 'graphql-mesh', // Usually your repo name.
+  organizationName: 'urigo',
+  projectName: 'graphql-mesh',
   themeConfig: {
     navbar: {
       title: 'GraphQL Mesh',
@@ -51,12 +51,12 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus'
+              label: 'Discord',
+              href: 'http://bit.ly/guild-chat'
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus'
+              label: 'Stack Overflow',
+              href: 'https://stackoverflow.com/questions/tagged/graphql-mesh'
             }
           ]
         },
@@ -64,16 +64,12 @@ module.exports = {
           title: 'Social',
           items: [
             {
-              label: 'Blog',
-              to: 'blog'
-            },
-            {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus'
+              href: 'https://github.com/Urigo/graphql-mesh/'
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/docusaurus'
+              href: 'https://twitter.com/TheGuildDev'
             }
           ]
         }
@@ -86,7 +82,10 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          remarkPlugins: [require('remark-code-import'), require('remark-import-partial')],
+          remarkPlugins: [
+            require('remark-code-import'),
+            require('remark-import-partial')
+          ],
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/urigo/graphql-mesh/edit/master/website/'
         },

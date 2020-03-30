@@ -1,45 +1,47 @@
 import React from 'react';
 import classnames from 'classnames';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>Easy to Use</>,
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
+    title: <>GraphQL Query Language</>,
+    imageUrl: 'img/GraphQL_Logo.svg',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Use GraphQL query language to fetch data from your data-sources
+        directly, without the need for a running gateway server, or any other
+        bottleneck.
       </>
-    ),
+    )
   },
   {
-    title: <>Focus on What Matters</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    title: <>Any Data Source</>,
+    imageUrl: 'img/mesh-example.png',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        With GraphQL Mesh, you can use GraphQL query language to fetch from
+        (almost) any data source, without changing the source or modify it's
+        code.
       </>
-    ),
+    )
   },
+
   {
-    title: <>Powered by React</>,
-    imageUrl: 'img/undraw_docusaurus_react.svg',
+    title: <>Open Source</>,
+    imageUrl: 'img/open-source.svg',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        GraphQL Mesh is free and open-source, and been built with the community.
+        You can contribute, extend and have your custom logic easily.
       </>
-    ),
-  },
+    )
+  }
 ];
 
-function Feature({imageUrl, title, description}) {
+function Feature({ imageUrl, title, description }) {
   const imgUrl = useBaseUrl(imageUrl);
   return (
     <div className={classnames('col col--4', styles.feature)}>
@@ -56,25 +58,21 @@ function Feature({imageUrl, title, description}) {
 
 function Home() {
   const context = useDocusaurusContext();
-  const {siteConfig = {}} = context;
+  const { siteConfig = {} } = context;
   return (
-    <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
-      <header className={classnames('hero hero--primary', styles.heroBanner)}>
-        <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
-          <div className={styles.buttons}>
-            <Link
-              className={classnames(
-                'button button--outline button--secondary button--lg',
-                styles.getStarted,
-              )}
-              to={useBaseUrl('docs/doc1')}>
-              Get Started
-            </Link>
-          </div>
+    <Layout title={`GraphQL Mesh`} description="">
+      <header>
+        <div>
+          <video
+            width="100%"
+            height="100%"
+            playsInline={true}
+            autoPlay={true}
+            muted={true}
+            loop={true}
+          >
+            <source src="/video/medium_1200X345.mp4" type="video/mp4" />
+          </video>
         </div>
       </header>
       <main>
