@@ -51,8 +51,10 @@ export function getGraphqlTypeFromProtoDefinition(
       {},
     );
 
+  const graphqlTypeName = isInput ? typeName + 'Input' : typeName;
+
   const typeDef = {
-    name: typeName,
+    name: graphqlTypeName,
     fields: fieldsFunction,
     description: comment,
   };
