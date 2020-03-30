@@ -12,7 +12,7 @@
     "grpc": "*"
   },
   "devDependencies": {
-    "@types/cheerio": "0.22.17",
+    "@types/jsdom": "16.2.0",
     "@types/url-join": "4.0.0",
     "@types/node": "13.9.5",
     "graphql": "14.6.0",
@@ -25,8 +25,9 @@
     "graphql-scalars": "1.0.9",
     "camel-case": "4.1.1",
     "fetchache": "0.0.3",
-    "cheerio": "1.0.0-rc.3",
-    "url-join": "4.0.1"
+    "jsdom": "16.2.2",
+    "url-join": "4.0.1",
+    "string-interpolation": "1.2.5"
   },
   "publishConfig": {
     "access": "public"

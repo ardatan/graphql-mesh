@@ -5,11 +5,12 @@ extend type Handler {
 type ODataHandler {
   baseUrl: String!
   operationHeaders: JSON
-  schemaHeaders: JSON
-  services: [ODataServiceConfig]
+  metadataHeaders: JSON
+  services: [ODataServiceConfig!]!
 }
 
 type ODataServiceConfig {
-  name: String!
-  headers: JSON
+  servicePath: String!
+  operationHeaders: JSON
+  metadataHeaders: JSON
 }
