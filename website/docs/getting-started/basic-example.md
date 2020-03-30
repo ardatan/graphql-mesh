@@ -1,7 +1,7 @@
 ---
 id: basic-example
 title: Basic Usage
-sidebar_label: Basic Usage
+sidebar_label: 3. Basic Usage
 ---
 
 To get started with a simple Mesh, create a GraphQL Mesh configuration file - `.meshrc.yaml`, under your project root, and fill in your sources, for example:

@@ -5,7 +5,7 @@ extend type Transform {
   prefix: PrefixTransformConfig
 }
 
-type PrefixTransformConfig {
+type PrefixTransformConfig @md {
   """
   The prefix to apply to the schema types. By default it's the API name.
   """

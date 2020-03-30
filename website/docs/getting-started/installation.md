@@ -1,7 +1,7 @@
 ---
 id: installation
 title: Installation
-sidebar_label: Installation
+sidebar_label: 2. Installation
 ---
 
 GraphQL Mesh comes in multiple packages, which you should install according to your needs.

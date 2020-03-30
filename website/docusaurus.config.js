@@ -20,7 +20,6 @@ module.exports = {
           label: 'Docs & API Reference',
           position: 'left'
         },
-        { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/urigo/graphql-mesh',
           label: 'GitHub',

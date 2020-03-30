@@ -15,7 +15,7 @@ sources:
             method: GET
             responseSchema: ./json-schemas/company.json
     transforms:
-      - mocking:
+      - mock:
           mocks:
             - apply: User.firstName
               faker: '{{name.firstName}}'

@@ -1,5 +1,5 @@
 {
-    "name": "@graphql-mesh/transform-mocking",
+    "name": "@graphql-mesh/transform-mock",
     "version": "0.0.16",
     "main": "dist/index.js",
     "license": "MIT",

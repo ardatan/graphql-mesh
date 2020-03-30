@@ -1,7 +1,7 @@
 ---
 id: mesh-transforms
 title: Mesh Transforms
-sidebar_label: Mesh Transforms
+sidebar_label: 4. Mesh Transforms
 ---
 
 ## Introduction to Transforms
