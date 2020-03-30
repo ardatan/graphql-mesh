@@ -1,4 +1,4 @@
-## GraphQL Mesh
+<img src="https://graphql-mesh.com/img/mesh-text-logo.svg" alt="GraphQL Mesh" width="220">
 
 ![CI](https://github.com/Urigo/graphql-mesh/workflows/CI/badge.svg)
 
