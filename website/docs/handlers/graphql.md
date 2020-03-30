@@ -16,8 +16,10 @@ Now, you can use it directly in your Mesh config file:
 
 ```yml
 sources:
-  - graphql:
-      endpoint: http://my-service-url:3000/graphql
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        endpoint: http://my-service-url:3000/graphql
 ```
 
 ## Config API Reference
