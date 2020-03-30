@@ -11,25 +11,29 @@ module.exports = {
       title: 'GraphQL Mesh',
       logo: {
         alt: 'GraphQL Mesh',
-        src: 'img/logo.svg',
+        src: 'img/mesh-logo.svg',
       },
       links: [
         {
-          to: 'docs/doc1',
+          to: 'docs/getting-started/introduction',
           activeBasePath: 'docs',
-          label: 'Docs',
+          label: 'Docs & API Reference',
           position: 'left',
         },
         {to: 'blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/urigo/graphql-mesh',
           label: 'GitHub',
+          position: 'right',
+        },
+        {
+          href: 'https://twitter.com/TheGuildDev',
+          label: 'The Guild',
           position: 'right',
         },
       ],
     },
     footer: {
-      style: 'dark',
       links: [
         {
           title: 'Docs',
@@ -75,7 +79,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`,
     },
   },
   presets: [
@@ -85,7 +89,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/',
+            'https://github.com/urigo/graphql-mesh/edit/master/website/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

@@ -1,0 +1,19 @@
+---
+id: available-handlers
+title: Available Handlers
+sidebar_label: Available Handlers
+---
+
+The following APIs are supported/planned at the moment. You can easily add custom handlers to load and extend the schema.
+
+| NPM Package                  | Status    | Supported Spec                                                     | Docs                           |
+| ---------------------------- | --------- | ------------------------------------------------------------------ | ------------------------------ |
+| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) | [docs](/handlers/graphql)      |
+| `@graphql-mesh/federation`   | WIP       | Apollo Federation services                                         | soon                           |
+| `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               | [docs](/handlers/openapi)      |
+| `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         | [docs](/handlers/json-schema)  |
+| `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           | [docs](/handlers/postgraphile) |
+| `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          | [docs](/handlers/grpc)         |
+| `@graphql-mesh/soap`         | Available | SOAP specification                                                 | [docs](/handlers/soap)         |
+| `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        | [docs](/handlers/mongoose)     |
+| `@graphql-mesh/odata`        | WIP       | OData specification                                                | soon                           |
