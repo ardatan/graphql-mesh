@@ -11228,10 +11228,10 @@ mongoose@5.9.5:
     sift "7.0.1"
     sliced "1.0.1"
 
-mongoose@5.9.6:
-  version "5.9.6"
-  resolved "https://registry.npmjs.org/mongoose/-/mongoose-5.9.6.tgz#47e2e234638eede4caa52d961e3a7459b55530ef"
-  integrity sha512-EfFGO2QUoenf/4eFeF5y2R8aBLKHtqwrMk1pVGgl3OyNWufP5XLLPIuihP006YqR1+6xM1YsBzGpgBjMZkINGA==
+mongoose@5.9.7:
+  version "5.9.7"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.9.7.tgz#03c581860d0e2f60f6008f9457ab0c2905609875"
+  integrity sha512-WJOBh9WMvivqBK8my9HFtSzSySKdUxJPNGAwswEakAasWUcPXJl3yHMtZ4ngGnKbwTT9KnAr75xamlt/PouR9w==
   dependencies:
     bson "~1.1.1"
     kareem "2.3.1"
