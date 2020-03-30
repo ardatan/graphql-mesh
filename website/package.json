@@ -1,21 +1,21 @@
 {
-  "name": "website",
+  "name": "@graphql-mesh/website",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "docusaurus start",
-    "build": "docusaurus build",
+    "build:prod": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
     "remark-import-partial": "0.0.2",
     "remark-code-import": "0.1.3",
-    "@docusaurus/core": "^2.0.0-alpha.48",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.48",
-    "classnames": "^2.2.6",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4"
+    "@docusaurus/core": "2.0.0-alpha.48",
+    "@docusaurus/preset-classic": "2.0.0-alpha.48",
+    "classnames": "2.2.6",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
   },
   "browserslist": {
     "production": [
