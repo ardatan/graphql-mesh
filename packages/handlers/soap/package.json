@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
-    "@types/node": "13.9.6",
+    "@types/node": "13.9.7",
     "@types/soap": "0.21.0",
     "graphql": "14.6.0",
     "jest": "25.2.4",
