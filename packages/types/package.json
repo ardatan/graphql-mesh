@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts",
+    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts --markdown ../../website/docs/generated-markdown/",
     "build": "tsc && cp src/config-schema.json ./dist/"
   },
   "peerDependencies": {

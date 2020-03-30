@@ -5,7 +5,7 @@ extend type Handler {
   postgraphile: PostGraphileHandler
 }
 
-type PostGraphileHandler {
+type PostGraphileHandler @md {
   """
   A connection string to your Postgres database
   """

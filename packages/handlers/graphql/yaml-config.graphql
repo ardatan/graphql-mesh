@@ -5,7 +5,7 @@ extend type Handler {
   graphql: GraphQLHandler
 }
 
-type GraphQLHandler {
+type GraphQLHandler @md {
   """
   JSON object representing the Headers to add to the runtime of the API calls
   """

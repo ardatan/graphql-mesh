@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-mesh/extend",
+  "name": "@graphql-mesh/transform-extend",
   "version": "0.0.16",
   "main": "dist/index.js",
   "license": "MIT",

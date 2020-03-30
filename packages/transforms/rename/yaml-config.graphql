@@ -5,7 +5,7 @@ extend type Transform {
   rename: [RenameTransformObject!]
 }
 
-type RenameTransformObject {
+type RenameTransformObject @md {
   """
   The GraphQL type to rename
   """

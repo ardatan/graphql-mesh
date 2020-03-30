@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-mesh/prefix",
+  "name": "@graphql-mesh/transform-prefix",
   "version": "0.0.16",
   "main": "dist/index.js",
   "license": "MIT",
