@@ -5,7 +5,8 @@ import {
 import { withAsyncIteratorCancel } from './subscription';
 
 import {
-  typeDefinitionCache,
+  inputTypeDefinitionCache,
+  outputTypeDefinitionCache,
 } from './types';
 import { Readable } from 'stream';
 import { asyncMap } from 'iter-tools';
@@ -51,13 +52,13 @@ function getGraphqlMethodsFromProtoService({
 
       if (!requestArgName.startsWith('Empty')) {
         args[requestArgName] = {
-          type: typeDefinitionCache[requestArgName] as GraphQLInputType,
+          type: inputTypeDefinitionCache[requestArgName],
         };
       }
 
       const queryField: GraphQLFieldConfig<any, any> = {
         args,
-        type: typeDefinitionCache[responseType] as GraphQLOutputType,
+        type: outputTypeDefinitionCache[responseType],
         description: comment,
         resolve: async (__, arg) => {
           const response = await client[methodName](
@@ -85,7 +86,7 @@ function getGraphqlMethodsFromProtoService({
     (methodType === 'Mutation') ? {} : {
       // adding a default ping
       ping: {
-        type: <GraphQLOutputType>typeDefinitionCache.ServerStatus,
+        type: outputTypeDefinitionCache.ServerStatus,
         description: 'query for getting server status',
         resolve: () => ({ status: 'online' }),
       },
@@ -163,13 +164,13 @@ export function getGraphQlSubscriptionsFromProtoService({
 
       if (!requestArgName.startsWith('Empty')) {
         args[requestArgName] = {
-          type: typeDefinitionCache[requestArgName] as GraphQLInputType,
+          type: inputTypeDefinitionCache[requestArgName],
         };
       }
 
       const subscribeField: GraphQLFieldConfig<any, any> = {
         args,
-        type: typeDefinitionCache[responseType] as GraphQLOutputType,
+        type: outputTypeDefinitionCache[responseType],
         description: comment,
         subscribe: async (__, arg) => {
           const response: Readable & { cancel: () => void; } = await client[methodName](
