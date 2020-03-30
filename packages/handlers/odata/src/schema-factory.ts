@@ -38,28 +38,31 @@ const InlineCountEnum = new GraphQLEnumType({
     }
 })
 
-const queryArgs = {
-    'orderby': {
-        type: GraphQLString,
-        description: 'A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.'
-    },
-    'top': {
-        type: GraphQLInt,
-        description: 'A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.'
-    },
-    'skip': {
-        type: GraphQLInt,
-        description: 'A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.'
-    },
-    'filter': {
-        type: GraphQLString,
-        description: 'A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.'
-    },
-    'inlinecount': {
-        type: InlineCountEnum,
-        description: 'A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.'
+const ODataQueryOptions = new GraphQLInputObjectType({
+    name: 'QueryOptions',
+    fields: {
+        'orderby': {
+            type: GraphQLString,
+            description: 'A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.'
+        },
+        'top': {
+            type: GraphQLInt,
+            description: 'A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.'
+        },
+        'skip': {
+            type: GraphQLInt,
+            description: 'A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.'
+        },
+        'filter': {
+            type: GraphQLString,
+            description: 'A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.'
+        },
+        'inlinecount': {
+            type: InlineCountEnum,
+            description: 'A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.'
+        }
     }
-}
+});
 
 interface EndpointConfig {
     baseUrl: string;
@@ -117,9 +120,12 @@ export class SchemaFactory {
         ]
         const entitySetUrl = urljoin(urlParts.filter(Boolean));
         const urlObj = new URL(entitySetUrl);
-        for (const param in queryArgs) {
-            if (param in resolverData.args) {
-                urlObj.searchParams.set('$' + param, resolverData.args[param]);
+        if ('queryOptions' in resolverData.args) {
+            const { queryOptions } = resolverData.args;
+            for (const param in ODataQueryOptions.getFields()) {
+                if (param in queryOptions) {
+                    urlObj.searchParams.set('$' + param, queryOptions[param]);
+                }
             }
         }
         const selectionFields = Object.keys(graphqlFields(resolverData.info)).filter(fieldName => !fieldName.startsWith('__'));
@@ -135,9 +141,10 @@ export class SchemaFactory {
         const values: GraphQLEnumValueConfigMap = {};
         enumElement.querySelectorAll('Member').forEach(memberElement => {
             const key = memberElement.getAttribute('Name')!;
-            const value = memberElement.getAttribute('Value')!;
+            // This doesn't work.
+            // const value = memberElement.getAttribute('Value')!;
             values[key] = {
-                value,
+                value: key,
             };
         })
         const enumName = enumElement.getAttribute('Name')!;
@@ -193,7 +200,9 @@ export class SchemaFactory {
                 };
                 if (tag === 'navigationproperty') {
                     outputFields[fieldName].args = {
-                        ...queryArgs,
+                        queryOptions: {
+                            type: ODataQueryOptions,
+                        },
                     };
                     outputFields[fieldName].resolve = async (root, args, context, info) => {
                         const navigationUrl = root[fieldName + '@odata.navigationLink'];
@@ -206,9 +215,12 @@ export class SchemaFactory {
                             context._headers.set('Content-Type', 'application/json; odata.metadata=full');
                         }        
                         const urlObj = new URL(navigationUrl);
-                        for (const param in queryArgs) {
-                            if (param in args) {
-                                urlObj.searchParams.set('$' + param, args[param]);
+                        if ('queryOptions' in args) {
+                            const { queryOptions } = args;
+                            for (const param in ODataQueryOptions.getFields()) {
+                                if (param in queryOptions) {
+                                    urlObj.searchParams.set('$' + param, queryOptions[param]);
+                                }
                             }
                         }
                         const selectionFields = Object.keys(graphqlFields(info)).filter(fieldName => !fieldName.startsWith('__'));
@@ -235,7 +247,7 @@ export class SchemaFactory {
                 if (objectElement.getAttribute('Abstract')) {
                     if (!this.inputTypeMap.has(typeRef)) {
                         this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                            name: typeName + 'Input',
+                            name: typeName,
                             fields: inputFields,
                         }))
                     }
@@ -271,7 +283,7 @@ export class SchemaFactory {
                     }
                     if (!this.inputTypeMap.has(typeRef)) {
                         this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                            name: typeName + 'Input',
+                            name: typeName,
                             fields: inputFields,
                         }))
                     }
@@ -283,13 +295,18 @@ export class SchemaFactory {
                         }))
                     }
                 }
-                this.dependenciesHold.get(typeRef)?.forEach(depTypeRef => {
-                    const factory = this.holdFactory.get(depTypeRef);
-                    if (factory) {
-                        factory();
-                    }
-                    this.dependenciesHold.delete(depTypeRef);
-                });
+                const holdDeps = this.dependenciesHold.get(typeRef);
+                if (holdDeps) {
+                    this.dependenciesHold.delete(typeRef);
+                    holdDeps.forEach(depTypeRef => {
+                        holdDeps.delete(depTypeRef);
+                        const factory = this.holdFactory.get(depTypeRef);
+                        this.holdFactory.delete(depTypeRef);
+                        if (factory) {
+                            factory();
+                        }
+                    });
+                }
             }
         }
         factory();
@@ -362,7 +379,9 @@ export class SchemaFactory {
                     type: new GraphQLList(this.outputTypeMap.get(entitySetTypeName!)!),
                     args: {
                         ...serviceArgs,
-                        ...queryArgs,
+                        queryOptions: {
+                            type: ODataQueryOptions,
+                        },
                     },
                     resolve: async (root, args, context, info) => {
                         const entitySetRequest = this.prepareRequest({
@@ -485,7 +504,9 @@ export class SchemaFactory {
                 args: {
                     ...serviceArgs,
                     ...args,
-                    ...queryArgs,
+                    queryOptions: {
+                        type: ODataQueryOptions,
+                    },
                 },
                 resolve: async (root, args, context, info) => {
                     const entitySetRequest = this.prepareRequest({
