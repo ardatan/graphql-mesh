@@ -1,4 +1,4 @@
-import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap } from "graphql";
+import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap, GraphQLNamedType } from "graphql";
 import { BigIntResolver as GraphQLBigInt, GUIDResolver as GraphQLGUID, DateTimeResolver as GraphQLDateTime } from 'graphql-scalars';
 import { KeyValueCache, Headers, Request, fetchache } from "fetchache";
 import urljoin from 'url-join';
@@ -65,13 +65,13 @@ export class SchemaFactory {
             const typeName = objectElement.getAttribute('Name')!;
             const inputFields: GraphQLInputFieldConfigMap = {};
             const outputFields: GraphQLFieldConfigMap<any, any> = {};
+            let identifierFieldName = 'id';
             if (hasId) {
                 outputFields['id'] = {
                     type: GraphQLID,
                     resolve: root => root[identifierFieldName],
                 };
             }
-            let identifierFieldName = 'id';
             let broke = false;
             const fieldFactory = (child: Element) => {
                 const tag = child.tagName.toLowerCase();
@@ -122,11 +122,11 @@ export class SchemaFactory {
                             headers: context._headers,
                         })
                         const response = await fetchache(navigationRequest, this.cache);
-                        const responseJson =  await response.json();
+                        const responseJson = await response.json();
                         return responseJson.value;
                     }
                 }
-        }
+            }
             objectElement.querySelectorAll('Property').forEach(field => fieldFactory(field));
             objectElement.querySelectorAll('NavigationProperty').forEach(field => fieldFactory(field));
             identifierFieldName = objectElement.querySelector('PropertyRef')?.getAttribute('Name')!;
@@ -134,15 +134,19 @@ export class SchemaFactory {
                 const schemaNamespace = objectElement.parentElement?.getAttribute('Namespace');
                 const typeRef = `${schemaNamespace}.${typeName}`;
                 if (objectElement.getAttribute('Abstract')) {
-                    this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                        name: typeName,
-                        fields: inputFields,
-                    }))
-                    this.outputTypeMap.set(typeRef, new GraphQLInterfaceType({
-                        name: typeName,
-                        fields: outputFields,
-                        resolveType: root => this.outputTypeMap.get(root['@odata.type'].replace('#', '')) as GraphQLObjectType,
-                    }))
+                    if (!this.inputTypeMap.has(typeRef)) {
+                        this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
+                            name: typeName,
+                            fields: inputFields,
+                        }))
+                    }
+                    if (!this.outputTypeMap.has(typeRef)) {
+                        this.outputTypeMap.set(typeRef, new GraphQLInterfaceType({
+                            name: typeName,
+                            fields: outputFields,
+                            resolveType: root => this.outputTypeMap.get(root['@odata.type'].replace('#', '')) as GraphQLObjectType,
+                        }))
+                    }
                 } else {
                     const interfaces: GraphQLInterfaceType[] = [];
                     const interfaceName = objectElement.getAttribute('BaseType');
@@ -161,15 +165,19 @@ export class SchemaFactory {
                         Object.assign(outputFields, interfaceOutputType.toConfig().fields);
                         interfaces.push(interfaceOutputType);
                     }
-                    this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                        name: typeName,
-                        fields: inputFields,
-                    }))
-                    this.outputTypeMap.set(typeRef, new GraphQLObjectType({
-                        name: typeName,
-                        fields: outputFields,
-                        interfaces,
-                    }))
+                    if (!this.outputTypeMap.has(typeRef)) {
+                        this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
+                            name: typeName,
+                            fields: inputFields,
+                        }))
+                    }
+                    if (!this.outputTypeMap.has(typeRef)) {
+                        this.outputTypeMap.set(typeRef, new GraphQLObjectType({
+                            name: typeName,
+                            fields: outputFields,
+                            interfaces,
+                        }))
+                    }
                 }
                 this.dependenciesHold.get(typeRef)?.forEach(depTypeRef => {
                     const factory = this.holdFactory.get(depTypeRef);
@@ -271,7 +279,7 @@ export class SchemaFactory {
                             headers: context._headers,
                         });
                         const response = await fetchache(entitySetRequest, this.cache);
-                        const responseJson =  await response.json();
+                        const responseJson = await response.json();
                         return responseJson.value;
                     },
                 };
@@ -298,7 +306,7 @@ export class SchemaFactory {
                             headers: context._headers,
                         });
                         const response = await fetchache(entitySetRequest, this.cache);
-                        const responseJson =  await response.json();
+                        const responseJson = await response.json();
                         return responseJson.value;
                     },
                 };
@@ -308,11 +316,78 @@ export class SchemaFactory {
         //TODO
         // $('Function')
         //TODO
-        // $('Action')
+        const mutationFields: GraphQLFieldConfigMap<any, any> = {};
+        document.querySelectorAll('Action').forEach(actionElement => {
+            const actionName = actionElement.getAttribute('Name')!;
+            let actionFieldName = actionName;
+            let returnType: GraphQLNamedType = GraphQLBoolean;
+            const args: GraphQLFieldConfigArgumentMap = {};
+            let bound = false;
+            actionElement.querySelectorAll('Parameter').forEach(paramElement => {
+                const paramName = paramElement.getAttribute('Name')!;
+                let paramTypeName = paramElement.getAttribute('Type')!;
+                if (paramName === 'bindingParameter') {
+                    bound = true;
+                    const returnTypeName = paramElement.getAttribute('Type')!;
+                    returnType = this.outputTypeMap.get(returnTypeName) as GraphQLNamedType;
+                    actionFieldName += returnType.name;
+                } else {
+                    let isList = false;
+                    if (paramTypeName.startsWith('Collection(')) {
+                        isList = true;
+                        paramTypeName = paramTypeName
+                            .replace('Collection(', '')
+                            .replace(')', '');
+                    }
+                    let paramType = this.inputTypeMap.get(paramTypeName)!;
+                    if (isList) {
+                        paramType = new GraphQLList(paramType);
+                    }
+                    if (paramElement.getAttribute('Nullable') === 'false') {
+                        paramType = new GraphQLNonNull(paramType);
+                    }
+                    args[paramName] = {
+                        type: paramType,
+                    };
+                }
+            });
+            if (bound) {
+                args.id = {
+                    type: GraphQLID,
+                };
+            }
+            mutationFields[actionFieldName] = {
+                type: returnType,
+                args: {
+                    ...serviceArgs,
+                    ...args,
+                },
+                resolve: async (root, args, context, info) => {
+                    const interpolationData = { root, args, context, info };
+                    context._serviceBaseUrl = context._serviceBaseUrl || serviceBaseUrlFactory(interpolationData);
+                    context._headers = context._headers || headersFactory(interpolationData)
+                    if (!context._headers.has('Accept')) {
+                        context._headers.set('Accept', 'application/json; odata.metadata=full');
+                    }
+                    if (!context._headers.has('Content-Type')) {
+                        context._headers.set('Content-Type', 'application/json; odata.metadata=full');
+                    }
+                    const entitySetUrl = urljoin(context._serviceBaseUrl, (bound ? `${returnType.name}(${args.id})` : ''), actionName);
+                    const entitySetRequest = new Request(entitySetUrl, {
+                        headers: context._headers,
+                        method: 'POST',
+                        body: JSON.stringify(args),
+                    });
+                    const response = await fetchache(entitySetRequest, this.cache);
+                    const responseJson = await response.json();
+                    return responseJson.value;
+                }
+            }
+        });
 
         return {
             queryFields,
-            mutationFields: {},
+            mutationFields,
             contextVariables,
         };
 

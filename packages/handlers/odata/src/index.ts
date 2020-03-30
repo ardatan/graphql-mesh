@@ -1,6 +1,6 @@
 import { MeshHandlerLibrary, YamlConfig } from "@graphql-mesh/types";
 import { SchemaFactory } from "./schema-factory";
-import { GraphQLObjectType, GraphQLSchema, printSchema, printType } from "graphql";
+import { GraphQLObjectType, GraphQLSchema, printSchema, printType, GraphQLSchemaConfig } from "graphql";
 
 const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     async getMeshSource({ config, cache }) {
@@ -31,9 +31,17 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             name: 'Query',
             fields: mergedGeneratedConfigs.queryFields,
         });
-        const schema = new GraphQLSchema({
+        const schemaConfig: GraphQLSchemaConfig = {
             query,
-        });
+        };
+        if (Object.keys(mergedGeneratedConfigs.mutationFields).length > 0) {
+            const mutation = new GraphQLObjectType({
+                name: 'Mutation',
+                fields: mergedGeneratedConfigs.mutationFields,
+            });
+            schemaConfig.mutation = mutation;
+        }
+        const schema = new GraphQLSchema(schemaConfig);
         return {
             schema,
             contextVariables: mergedGeneratedConfigs.contextVariables,
