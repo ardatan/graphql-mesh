@@ -6,14 +6,8 @@ module.exports = {
       'getting-started/basic-example',
       'getting-started/mesh-transforms'
     ],
-    'Input Handlers': [
-      'handlers/available-handlers'
-    ],
-    Transforms: [
-      'transforms/available-transforms'
-    ],
-    Recipes: [
-      'recipes/typescript'
-    ]
+    'Input Handlers': ['handlers/available-handlers', 'handlers/graphql', 'handlers/openapi'],
+    Transforms: ['transforms/available-transforms'],
+    Recipes: ['recipes/typescript']
   }
 };

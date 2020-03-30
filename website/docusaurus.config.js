@@ -11,27 +11,27 @@ module.exports = {
       title: 'GraphQL Mesh',
       logo: {
         alt: 'GraphQL Mesh',
-        src: 'img/mesh-logo.svg',
+        src: 'img/mesh-logo.svg'
       },
       links: [
         {
           to: 'docs/getting-started/introduction',
           activeBasePath: 'docs',
           label: 'Docs & API Reference',
-          position: 'left',
+          position: 'left'
         },
-        {to: 'blog', label: 'Blog', position: 'left'},
+        { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/urigo/graphql-mesh',
           label: 'GitHub',
-          position: 'right',
+          position: 'right'
         },
         {
           href: 'https://twitter.com/TheGuildDev',
           label: 'The Guild',
-          position: 'right',
-        },
-      ],
+          position: 'right'
+        }
+      ]
     },
     footer: {
       links: [
@@ -40,61 +40,61 @@ module.exports = {
           items: [
             {
               label: 'Style Guide',
-              to: 'docs/doc1',
+              to: 'docs/doc1'
             },
             {
               label: 'Second Doc',
-              to: 'docs/doc2',
-            },
-          ],
+              to: 'docs/doc2'
+            }
+          ]
         },
         {
           title: 'Community',
           items: [
             {
               label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              href: 'https://stackoverflow.com/questions/tagged/docusaurus'
             },
             {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-          ],
+              href: 'https://discordapp.com/invite/docusaurus'
+            }
+          ]
         },
         {
           title: 'Social',
           items: [
             {
               label: 'Blog',
-              to: 'blog',
+              to: 'blog'
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/facebook/docusaurus'
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
-            },
-          ],
-        },
+              href: 'https://twitter.com/docusaurus'
+            }
+          ]
+        }
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`,
-    },
+      copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`
+    }
   },
   presets: [
     [
       '@docusaurus/preset-classic',
       {
         docs: {
+          remarkPlugins: [require('remark-code-import'), require('remark-import-partial')],
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl:
-            'https://github.com/urigo/graphql-mesh/edit/master/website/',
+          editUrl: 'https://github.com/urigo/graphql-mesh/edit/master/website/'
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      },
-    ],
-  ],
+          customCss: require.resolve('./src/css/custom.css')
+        }
+      }
+    ]
+  ]
 };
