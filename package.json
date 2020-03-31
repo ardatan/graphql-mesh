@@ -3,6 +3,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "build:website": "yarn build && cd website && yarn build:prod",
     "build": "lerna run build",
     "test": "lerna run test",
     "test-and-build": "yarn build && yarn test",
@@ -16,6 +17,7 @@
   },
   "workspaces": [
     "./packages/**/*",
-    "./examples/*"
+    "./examples/*",
+    "./website"
   ]
 }

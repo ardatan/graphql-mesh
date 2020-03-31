@@ -4,14 +4,14 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts",
+    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts --markdown ../../website/docs/generated-markdown/",
     "build": "tsc && cp src/config-schema.json ./dist/"
   },
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/node": "13.9.5",
+    "@types/node": "13.9.8",
     "graphql": "14.6.0",
     "graphql-to-config-schema": "0.0.16",
     "typescript": "3.8.3"

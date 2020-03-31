@@ -5,7 +5,7 @@ extend type Transform {
   snapshot: SnapshotTransformConfig
 }
 
-type SnapshotTransformConfig {
+type SnapshotTransformConfig @md {
   """
   Expression for when to activate this extension.
   Value can be a valid JS expression string or a boolean

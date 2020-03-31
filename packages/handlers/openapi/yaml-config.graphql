@@ -5,7 +5,7 @@ extend type Handler {
   openapi: OpenapiHandler
 }
 
-type OpenapiHandler {
+type OpenapiHandler @md {
   """
   A pointer to your API source - could be a local file, remote file or url endpoint
   """

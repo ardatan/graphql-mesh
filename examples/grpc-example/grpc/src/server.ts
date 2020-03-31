@@ -4,7 +4,7 @@ import * as debug from "debug";
 import * as grpc from "grpc";
 
 import { ExampleService, IExampleServer } from "./proto/Example_grpc_pb";
-import { EmptyRequest, Movie, MoviesResult, SearchByCastInput } from "./proto/Example_pb";
+import { EmptyRequest, Movie, MoviesResult, SearchByCastRequest } from "./proto/Example_pb";
 
 const log = debug("SampleServer");
 
@@ -54,9 +54,9 @@ class ServerImpl implements IExampleServer {
     callback(null, result);
   }
 
-  public searchMoviesByCast(call: grpc.ServerWriteableStream<SearchByCastInput>) {
+  public searchMoviesByCast(call: grpc.ServerWriteableStream<SearchByCastRequest>) {
     log("call started");
-    const input: SearchByCastInput = call.request;
+    const input: SearchByCastRequest = call.request;
     let i: number = 1;
     call.on("error", (error) => {
       log(error);

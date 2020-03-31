@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-mesh/prefix",
+  "name": "@graphql-mesh/transform-prefix",
   "version": "0.0.16",
   "main": "dist/index.js",
   "license": "MIT",
@@ -12,10 +12,10 @@
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
-    "@types/node": "13.9.5",
+    "@types/node": "13.9.8",
     "graphql": "14.6.0",
     "jest": "25.2.4",
-    "ts-jest": "25.2.1",
+    "ts-jest": "25.3.0",
     "typescript": "3.8.3"
   },
   "dependencies": {

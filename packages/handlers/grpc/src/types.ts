@@ -5,6 +5,8 @@ import {
   GraphQLFloat,
   GraphQLString,
   GraphQLBoolean,
+  GraphQLInputType,
+  GraphQLOutputType,
 } from 'graphql';
 
 import {
@@ -18,13 +20,17 @@ export interface GrpcGraphqlSchemaConfiguration {
   packageName: string;
 }
 
-export interface TypeMapping {
-  [key: string]: GraphQLType;
+export interface InputTypeMapping {
+  [key: string]: GraphQLInputType;
 }
+export interface OutputTypeMapping {
+  [key: string]: GraphQLOutputType;
+}
+
 
 // https://developers.google.com/protocol-buffers/docs/proto3#scalar
 // https://www.apollographql.com/docs/apollo-server/schemas/types.html
-export const GRPC_GQL_TYPE_MAPPING: TypeMapping = {
+const GRPC_GQL_TYPE_MAPPING = {
   int32: GraphQLInt,
   int64: GraphQLBigInt, // TODO: https://github.com/graphql/graphql-js/issues/292
   float: GraphQLFloat,
@@ -33,7 +39,12 @@ export const GRPC_GQL_TYPE_MAPPING: TypeMapping = {
   bool: GraphQLBoolean,
 };
 
-export const typeDefinitionCache: TypeMapping = {
+export const inputTypeDefinitionCache: InputTypeMapping = {
+  ...GRPC_GQL_TYPE_MAPPING,
+};
+
+export const outputTypeDefinitionCache: OutputTypeMapping = {
+  ...GRPC_GQL_TYPE_MAPPING,
   ServerStatus: new GraphQLObjectType({
     name: 'ServerStatus',
     description: 'status of the server',
