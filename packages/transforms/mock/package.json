@@ -13,7 +13,7 @@
     "devDependencies": {
         "@types/faker": "4.1.11",
         "@types/jest": "25.1.4",
-        "@types/node": "13.9.7",
+        "@types/node": "13.9.8",
         "graphql": "14.6.0",
         "jest": "25.2.4",
         "ts-jest": "25.3.0",
