@@ -72,14 +72,10 @@ input LocationInput {
 }
 
 type Mutation {
-  ResetDataSourceBoolean(person: PersonInput, lastName: String!, personInstance: PersonInput, userName: String!, tripId: Int!, queryOptions: QueryOptions): Boolean
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!, id: ID, queryOptions: QueryOptions): Boolean
-  GetPersonWithMostFriendsPerson(queryOptions: QueryOptions): Person
-  GetNearestAirportAirport(lat: Float!, lon: Float!, queryOptions: QueryOptions): Airport
-  GetFavoriteAirlinePersonAirline(AirlineCode: ID, queryOptions: QueryOptions): Airline
-  GetFriendsTripsTrip(person: PersonInput, userName: String!, TripId: ID, queryOptions: QueryOptions): [Trip]
-  GetInvolvedPeoplePerson(trip: TripInput, UserName: ID, queryOptions: QueryOptions): [Person]
-  UpdatePersonLastNameBoolean(person: PersonInput, lastName: String!, id: ID, queryOptions: QueryOptions): Boolean
+  GetFavoriteAirlinePerson(UserName: ID, queryOptions: QueryOptions): Airline
+  ResetDataSource(person: PersonInput, lastName: String!, personInstance: PersonInput, userName: String!, tripId: Int!, queryOptions: QueryOptions): Boolean
+  GetPersonWithMostFriends(queryOptions: QueryOptions): Person
+  GetNearestAirport(lat: Float!, lon: Float!, queryOptions: QueryOptions): Airport
 }
 
 type Person {
@@ -139,14 +135,15 @@ input PlanItemInput {
 }
 
 type Query {
-  people(queryOptions: QueryOptions): [Person]
-  peopleById(UserName: ID!): Person
-  airlines(queryOptions: QueryOptions): [Airline]
-  airlinesById(AirlineCode: ID!): Airline
-  airports(queryOptions: QueryOptions): [Airport]
-  airportsById(IcaoCode: ID!): Airport
-  newComePeople(queryOptions: QueryOptions): [Person]
-  newComePeopleById(UserName: ID!): Person
+  People(queryOptions: QueryOptions): [Person]
+  PeopleByUserName(UserName: ID!): Person
+  Airlines(queryOptions: QueryOptions): [Airline]
+  AirlinesByAirlineCode(AirlineCode: ID!): Airline
+  Airports(queryOptions: QueryOptions): [Airport]
+  AirportsByIcaoCode(IcaoCode: ID!): Airport
+  NewComePeople(queryOptions: QueryOptions): [Person]
+  NewComePeopleByUserName(UserName: ID!): Person
+  Me: Person
 }
 
 input QueryOptions {

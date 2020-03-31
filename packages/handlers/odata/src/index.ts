@@ -1,6 +1,8 @@
 import { MeshHandlerLibrary, YamlConfig } from "@graphql-mesh/types";
 import { ODataGraphQLSchemaFactory } from "./schema-factory";
 import { GraphQLObjectType, GraphQLSchema, printSchema, printType, GraphQLSchemaConfig } from "graphql";
+import { printSchemaWithDirectives,extractResolversFromSchema }from'@graphql-toolkit/common';
+import { addResolversToSchema } from'graphql-tools-fork';
 
 const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     async getMeshSource({ config, cache }) {
