@@ -15,7 +15,6 @@
     "graphql-mesh": "dist/bin.js"
   },
   "devDependencies": {
-    "@types/chalk": "2.2.0",
     "@types/jest": "25.1.4",
     "@types/js-yaml": "3.12.3",
     "@types/mkdirp": "1.0.0",
