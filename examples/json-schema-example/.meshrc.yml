@@ -1,7 +1,7 @@
 sources:
   - name: Fake API
     handler:
-      jsonSchema:
+      json-schema:
         baseUrl: https://not-existing-api.com/API
         operations:
           - type: Query
@@ -15,6 +15,13 @@ sources:
             method: GET
             responseSchema: ./json-schemas/company.json
     transforms:
+      - extend: |
+          extend type User {
+            company: Company
+          }
+          extend type Company {
+            employers: [User]
+          }
       - mock:
           mocks:
             - apply: User.firstName
@@ -25,3 +32,4 @@ sources:
               faker: '{{name.jobTitle}}'
             - apply: Company.name
               faker: '{{company.companyName}}'
+
