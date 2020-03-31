@@ -1,11 +1,11 @@
-import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap, GraphQLNamedType, GraphQLUnionType, GraphQLResolveInfo, GraphQLType, GraphQLInputField, GraphQLField, GraphQLFieldResolver } from "graphql";
+import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap, GraphQLNamedType, GraphQLUnionType, GraphQLResolveInfo, GraphQLType, GraphQLInputField, GraphQLField, GraphQLFieldResolver, GraphQLSchemaConfig, GraphQLSchema } from "graphql";
 import { BigIntResolver as GraphQLBigInt, GUIDResolver as GraphQLGUID, DateTimeResolver as GraphQLDateTime } from 'graphql-scalars';
 import { KeyValueCache, Headers, Request, fetchache } from "fetchache";
 import urljoin from 'url-join';
-import { camelCase } from 'camel-case';
 import Interpolator from 'string-interpolation/src';
 import { JSDOM } from 'jsdom';
 import graphqlFields from 'graphql-fields';
+import { writeFileSync } from "fs";
 
 // TODO: Add more scalars to graphql-scalars, then here.
 const SCALARS: [string, GraphQLScalarType][] = [
@@ -100,12 +100,15 @@ interface UnresolvedDependency {
     navigationProperty: boolean;
 }
 
-export class SchemaFactory {
+export class ODataGraphQLSchemaFactory {
     private inputTypeMap: Map<string, GraphQLInputType>;
     private outputTypeMap: Map<string, GraphQLOutputType>;
     private identifierFieldMap: Map<string, string>;
     private schemaAliasMap: Map<string, string>;
     private unresolvedDependencies: UnresolvedDependency[] = [];
+    private queryFields: GraphQLFieldConfigMap<any, any> = {};
+    private mutationFields: GraphQLFieldConfigMap<any, any> = {};
+    private contextVariables: string[] = [];
     constructor(private cache: KeyValueCache) {
         this.inputTypeMap = new Map(SCALARS);
         this.outputTypeMap = new Map(SCALARS);
@@ -202,7 +205,7 @@ export class SchemaFactory {
             body: method !== 'GET' ? JSON.stringify(resolverData.args) : null,
         });
     }
-    EnumType(enumElement: Element) {
+    private processEnumElement(enumElement: Element) {
         const values: GraphQLEnumValueConfigMap = {};
         enumElement.querySelectorAll('Member').forEach(memberElement => {
             const key = memberElement.getAttribute('Name')!;
@@ -222,7 +225,7 @@ export class SchemaFactory {
         this.inputTypeMap.set(`${schemaNamespace}.${enumName}`, graphQLEnumType);
         this.outputTypeMap.set(`${schemaNamespace}.${enumName}`, graphQLEnumType);
     }
-    ObjectType(objectElement: Element, headersFactory: (data: any) => Headers) {
+    private processTypeElement(objectElement: Element) {
         const typeName = objectElement.getAttribute('Name')!;
         const inputFields: GraphQLInputFieldConfigMap = {};
         const outputFields: GraphQLFieldConfigMap<any, any> = {};
@@ -304,17 +307,17 @@ export class SchemaFactory {
                         nonNullable: false,
                         navigationProperty: false,
                     });
-                    return;
-                }
-                Object.assign(inputFields, interfaceInputType.toConfig().fields);
-                Object.assign(outputFields, interfaceOutputType.toConfig().fields);
-                const interfaceTypeName = interfaceOutputType.name;
-                if (this.identifierFieldMap.has(interfaceTypeName) && !this.identifierFieldMap.has(typeName)) {
-                    const identifierFieldName = this.identifierFieldMap.get(interfaceTypeName!)!;
-                    this.identifierFieldMap.set(typeName, identifierFieldName);
-                }
-                if (interfaceOutputType instanceof GraphQLInterfaceType) {
-                    interfaces.push(interfaceOutputType);
+                } else {
+                    Object.assign(inputFields, interfaceInputType.toConfig().fields);
+                    Object.assign(outputFields, interfaceOutputType.toConfig().fields);
+                    const interfaceTypeName = interfaceOutputType.name;
+                    if (this.identifierFieldMap.has(interfaceTypeName) && !this.identifierFieldMap.has(typeName)) {
+                        const identifierFieldName = this.identifierFieldMap.get(interfaceTypeName!)!;
+                        this.identifierFieldMap.set(typeName, identifierFieldName);
+                    }
+                    if (interfaceOutputType instanceof GraphQLInterfaceType) {
+                        interfaces.push(interfaceOutputType);
+                    }
                 }
             }
             if (!this.inputTypeMap.has(typeRef)) {
@@ -332,7 +335,7 @@ export class SchemaFactory {
             }
         }
     }
-    async Service(serviceConfig: ServiceConfig): Promise<{ queryFields: GraphQLFieldConfigMap<any, any>, mutationFields: GraphQLFieldConfigMap<any, any>, contextVariables: string[] }> {
+    async processServiceConfig(serviceConfig: ServiceConfig) {
         const metadataUrl = urljoin(serviceConfig.baseUrl, serviceConfig.servicePath, '$metadata');
         const metadataRequest = new Request(metadataUrl, {
             headers: serviceConfig.metadataHeaders,
@@ -340,7 +343,6 @@ export class SchemaFactory {
 
         const interpolator = new Interpolator();
 
-        const contextVariables: string[] = [];
         const serviceArgs: GraphQLFieldConfigArgumentMap = {};
 
         const interpolationStrings = [
@@ -369,7 +371,7 @@ export class SchemaFactory {
                     type: new GraphQLNonNull(GraphQLID)
                 };
             } else if (interpolationKeyParts[0] === 'context') {
-                contextVariables.push(varName);
+                this.contextVariables.push(varName);
             }
         }
 
@@ -386,6 +388,7 @@ export class SchemaFactory {
 
         const response = await fetchache(metadataRequest, this.cache);
         const text = await response.text();
+        writeFileSync(process.cwd() + '/dump.xml', text);
         const { window: { document } } = new JSDOM(text);
 
         document.querySelectorAll('Schema').forEach(schemaElement => {
@@ -394,23 +397,27 @@ export class SchemaFactory {
             if (alias) {
                 this.schemaAliasMap.set(alias, namespace);
             }
-        })
-        document.querySelectorAll('EnumType').forEach(enumElement => this.EnumType(enumElement))
-        document.querySelectorAll('ComplexType').forEach(objectElement => this.ObjectType(objectElement, headersFactory))
-        document.querySelectorAll('EntityType').forEach(objectElement => this.ObjectType(objectElement, headersFactory));
+        });
+
+        document.querySelectorAll('EnumType').forEach(enumElement => this.processEnumElement(enumElement));
+        document.querySelectorAll('ComplexType').forEach(typeElement => this.processTypeElement(typeElement));
+        document.querySelectorAll('EntityType').forEach(typeElement => this.processTypeElement(typeElement));
 
         while(this.unresolvedDependencies.length > 0) {
             const { typeRef, fieldName, fieldTypeRef, isList, nonNullable, navigationProperty } = this.unresolvedDependencies.pop()!;
             const inputType = this.inputTypeMap.get(typeRef) as GraphQLInputObjectType;
-            const inputFieldMap = inputType.getFields();
+            const inputTypeFieldMap = inputType.getFields();
             const outputType = this.outputTypeMap.get(typeRef) as GraphQLObjectType;
-            const outputFieldMap = outputType.getFields();
+            const outputTypeFieldMap = outputType.getFields();
             let inputFieldType = this.inputTypeMap.get(fieldTypeRef)!;
             let outputFieldType = this.outputTypeMap.get(fieldTypeRef)! as any;
             if (fieldName === '__typename') {
-                Object.assign(inputFieldMap, (inputFieldType as GraphQLInputObjectType).getFields());
-                Object.assign(outputFieldMap, (outputFieldType as GraphQLObjectType).getFields());
-                outputFieldType.getInterfaces().push(outputFieldType as any);
+                Object.assign(inputTypeFieldMap, (inputFieldType as GraphQLInputObjectType).getFields());
+                Object.assign(outputTypeFieldMap, (outputFieldType as GraphQLObjectType).getFields());
+                const interfaces = outputType.getInterfaces();
+                if (!interfaces.includes(outputFieldType)) {
+                    interfaces.push(outputFieldType);
+                }
                 const interfaceTypeName = outputFieldType.name;
                 if (this.identifierFieldMap.has(interfaceTypeName) && !this.identifierFieldMap.has(outputType.name)) {
                     const identifierFieldName = this.identifierFieldMap.get(interfaceTypeName!)!;
@@ -430,7 +437,7 @@ export class SchemaFactory {
                     type: inputFieldType,
                     extensions: [],
                 };
-                Object.assign(inputFieldMap, {
+                Object.assign(inputTypeFieldMap, {
                     [fieldName]: inputField,
                 });
                 const outputField: GraphQLField<any, any> = {
@@ -451,20 +458,27 @@ export class SchemaFactory {
                     })
                     outputField.resolve = this.getNavigationPropertyResolver();
                 }
-                Object.assign(outputFieldMap, {
+                Object.assign(outputTypeFieldMap, {
                     [fieldName]: outputField,
                 });
             }
+            if (outputType instanceof GraphQLInterfaceType) {
+                for (const otherType of this.outputTypeMap.values()) {
+                    if (otherType instanceof GraphQLObjectType
+                        && otherType.getInterfaces().includes(outputType)) {
+                            Object.assign(otherType.getFields(), outputType.getFields());
+                    }
+                }
+            }
         }
 
-        const queryFields: GraphQLFieldConfigMap<any, any> = {};
         document.querySelectorAll('EntityContainer').forEach(entityContainerElement => {
             entityContainerElement.querySelectorAll('EntitySet').forEach(entitySetElement => {
                 const entitySetName = entitySetElement.getAttribute('Name')!;
                 let entitySetTypeName = entitySetElement.getAttribute('EntityType')!;
                 entitySetTypeName = this.resolveSchemaAlias(entitySetTypeName);
                 const entitySetType = this.outputTypeMap.get(entitySetTypeName!)!;
-                queryFields[camelCase(entitySetName)] = {
+                this.queryFields[entitySetName] = {
                     type: new GraphQLList(entitySetType),
                     args: {
                         ...serviceArgs,
@@ -488,7 +502,7 @@ export class SchemaFactory {
                     },
                 };
                 const identifierFieldName = this.identifierFieldMap.get('name' in entitySetType! ? (entitySetType as any).name : entitySetName);
-                queryFields[camelCase(entitySetName + '_ByID')] = {
+                this.queryFields[entitySetName + 'By' + identifierFieldName] = {
                     type: this.outputTypeMap.get(entitySetTypeName!)!,
                     args: {
                         ...serviceArgs,
@@ -514,18 +528,15 @@ export class SchemaFactory {
                     },
                 };
             })
-
         });
 
-        const mutationFields: GraphQLFieldConfigMap<any, any> = {};
-        const actionFactory = (actionElement: Element) => {
+        const actionFactory = (actionElement: Element, fieldName?: string, entityName?: string) => {
             const actionName = actionElement.getAttribute('Name')!;
-            let actionFieldName = actionName;
+            let actionFieldName = fieldName || actionName;
             let returnType: GraphQLOutputType = GraphQLBoolean;
-            let entityName: string;
             const args: GraphQLFieldConfigArgumentMap = {};
             const bound = actionElement.getAttribute('IsBound') === 'true';
-            const bindingParamName = actionElement.getAttribute('EntitySetPath') || 'bindingParameter';
+            const bindingParamName = actionElement.getAttribute('EntitySetPath')! || 'bindingParameter';
             actionElement.querySelectorAll('Parameter').forEach(paramElement => {
                 const paramName = paramElement.getAttribute('Name')!;
                 let paramTypeName = paramElement.getAttribute('Type')!;
@@ -539,13 +550,10 @@ export class SchemaFactory {
                             .replace(')', '');
                     }
                     entityName = this.resolveSchemaAlias(entityName);
-                    returnType = this.outputTypeMap.get(entityName) as any;
-                    if ('name' in returnType) {
-                        entityName = returnType.name;
+                    const entityType = this.outputTypeMap.get(entityName) as any;
+                    if ('name' in entityType) {
+                        entityName = entityType.name;
                         actionFieldName += entityName;
-                    }
-                    if (isList) {
-                        returnType = new GraphQLList(returnType);
                     }
                 } else {
                     let isList = false;
@@ -570,34 +578,31 @@ export class SchemaFactory {
             });
             const returnTypeElement = actionElement.querySelector('ReturnType');
             if (returnTypeElement) {
-                const returnTypeAttr = returnTypeElement.getAttribute('Type');
+                let returnTypeAttr = returnTypeElement.getAttribute('Type');
                 if (returnTypeAttr) {
-                    entityName = returnTypeAttr!;
                     let isList = false;
-                    if (entityName.startsWith('Collection(')) {
+                    if (returnTypeAttr!.startsWith('Collection(')) {
                         isList = true;
-                        entityName = entityName
+                        returnTypeAttr = returnTypeAttr
                             .replace('Collection(', '')
                             .replace(')', '');
                     }
-                    entityName = this.resolveSchemaAlias(entityName);
-                    returnType = this.outputTypeMap.get(entityName) as any;
-                    if ('name' in returnType) {
-                        entityName = returnType.name;
-                        actionFieldName += entityName;
-                    }
+                    returnTypeAttr = this.resolveSchemaAlias(returnTypeAttr);
+                    returnType = this.outputTypeMap.get(returnTypeAttr) as any;
                     if (isList) {
                         returnType = new GraphQLList(returnType);
                     }
                 }
             }
             if (bound) {
-                const identifierFieldName = this.identifierFieldMap.get(entityName!) || 'id';
-                args[identifierFieldName] = {
-                    type: GraphQLID,
-                };
+                const identifierFieldName = this.identifierFieldMap.get(entityName!);
+                if (identifierFieldName) {
+                    args[identifierFieldName] = {
+                        type: GraphQLID,
+                    };
+                }
             }
-            mutationFields[actionFieldName] = {
+            this.mutationFields[actionFieldName] = {
                 type: returnType,
                 args: {
                     ...serviceArgs,
@@ -611,7 +616,7 @@ export class SchemaFactory {
                         resolverData: { root, args, context, info },
                         serviceBaseUrlFactory,
                         headersFactory,
-                        entityName,
+                        entityName: entityName!,
                         actionName,
                         method: 'POST',
                     });
@@ -620,19 +625,111 @@ export class SchemaFactory {
                     if (responseJson.error) {
                         throw returnExtendedError(responseJson.error);
                     }
-                    return responseJson.value;
+                    if (returnType instanceof GraphQLList) {
+                        return responseJson.value;
+                    }
+                    return responseJson;
                 }
             }
         };
 
-        document.querySelectorAll('Action').forEach(actionElement => actionFactory(actionElement));
-        document.querySelectorAll('Function').forEach(functionElement => actionFactory(functionElement));
+        const actionImportFactory = (actionImportElement: Element) => {
+            const fieldName = actionImportElement.getAttribute('Name')!;
+            const actionType = actionImportElement.tagName.toLowerCase() === 'functionimport' ? 'Function' : 'Action';
+            const actionRef = actionImportElement.getAttribute(actionType)!;
+            const actionRefArr = actionRef.split('.');
+            const actionName = actionRefArr[actionRefArr.length - 1];
+            const schemaPathArr = actionRefArr.slice(0, actionRefArr.length - 1);
+            const schemaRef = schemaPathArr.join('.');
+            const actionElement = document.querySelector(`Schema[Namespace='${schemaRef}'] ${actionType}[Name='${actionName}']`)!;
+            const entitySetName = actionImportElement.getAttribute('EntitySet')!;
+            if (entitySetName) {
+                const entitySetElement = document.querySelector(`EntitySet[Name='${entitySetName}']`)!;
+                let entityName = entitySetElement.getAttribute('EntityType')!;
+                if (entityName.startsWith('Collection(')) {
+                    entityName = entityName
+                        .replace('Collection(', '')
+                        .replace(')', '');
+                }
+                entityName = this.resolveSchemaAlias(entityName);
+                const entityType = this.outputTypeMap.get(entityName) as any;
+                if ('name' in entityType) {
+                    entityName = entityType.name;
+                }
+                actionFactory(actionElement, fieldName, entityName);
+            }
+            actionFactory(actionElement, fieldName);
+        }
 
-        return {
-            queryFields,
-            mutationFields,
-            contextVariables,
+        document.querySelectorAll('Action[EntitySetPath]').forEach(actionElement => actionFactory(actionElement));
+        document.querySelectorAll('Function[EntitySetPath]').forEach(functionElement => actionFactory(functionElement));
+
+        document.querySelectorAll(`Action:not([EntitySetPath]) Parameter[Name='bindingParameter']`).forEach(paramElement => actionFactory(paramElement.parentElement!));
+        document.querySelectorAll(`Function:not([EntitySetPath]) Parameter[Name='bindingParameter']`).forEach(paramElement => actionFactory(paramElement.parentElement!));
+
+        document.querySelectorAll('ActionImport').forEach(actionImportElement => actionImportFactory(actionImportElement));
+        document.querySelectorAll('FunctionImport').forEach(functionImportElement => actionImportFactory(functionImportElement));
+        document.querySelectorAll('Singleton').forEach(singletonElement => {
+            const fieldName = singletonElement.getAttribute('Name')!;
+            let typeName = singletonElement.getAttribute('Type')!;
+            let isList = false;
+            if (typeName.startsWith('Collection(')) {
+                isList = true;
+                typeName = typeName
+                    .replace('Collection(', '')
+                    .replace(')', '');
+            }
+            typeName = this.resolveSchemaAlias(typeName);
+            let returnType = this.outputTypeMap.get(typeName)! as any;
+            if ('name' in returnType) {
+                typeName = returnType.name;
+            }
+            if (isList) {
+                returnType = new GraphQLList(returnType);
+            }
+            this.queryFields[fieldName] = {
+                type: returnType,
+                args: {
+                    ...serviceArgs,
+                },
+                resolve: async (root, args, context, info) => {
+                    const entitySetRequest = this.prepareRequest({
+                        resolverData: { root, args, context, info },
+                        serviceBaseUrlFactory,
+                        headersFactory,
+                        entityName: fieldName,
+                    });
+                    const response = await fetchache(entitySetRequest, this.cache);
+                    const responseJson = await response.json();
+                    if (responseJson.error) {
+                        throw returnExtendedError(responseJson.error);
+                    }
+                    if (isList) {
+                        return responseJson.value;
+                    }
+                    return responseJson;
+                }
+            }
+        });
+
+    }
+
+    getContextVariables() {
+        return this.contextVariables;
+    }
+    buildSchema() {
+        const schemaConfig: GraphQLSchemaConfig = {
+            query: new GraphQLObjectType({
+                name: 'Query',
+                fields: this.queryFields,
+            }),
         };
-
+        if (Object.keys(this.mutationFields).length > 0) {
+            schemaConfig.mutation = new GraphQLObjectType({
+                name: 'Mutation',
+                fields: this.mutationFields,
+            });
+        }
+        return new GraphQLSchema(schemaConfig);
     }
 }
