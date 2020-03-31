@@ -4,7 +4,7 @@ title: SOAP
 sidebar_label: SOAP
 ---
 
-This handler allow you to consume SOAP services from a remote endpoint.
+This handler allows you to consume SOAP services from a remote endpoint.
 
 To get started, install the handler library from NPM:
 

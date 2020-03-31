@@ -1,0 +1,15 @@
+{
+    "name": "microsoft-graph-example",
+    "version": "0.0.16",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+      "mesh:serve": "graphql-mesh serve"
+    },
+    "dependencies": {
+      "@graphql-mesh/cli": "0.0.16",
+      "@graphql-mesh/odata": "0.0.16",
+      "graphql": "14.6.0"
+    }
+  }
+  

@@ -4,7 +4,7 @@ title: Mongoose
 sidebar_label: Mongoose
 ---
 
-This handler allow you to use GraphQL schema created by `graphql-compose-mongoose`.
+This handler allows you to use GraphQL schema created by `graphql-compose-mongoose`.
 
 To get started, install the handler library from NPM:
 
