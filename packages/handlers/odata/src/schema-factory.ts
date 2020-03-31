@@ -161,6 +161,7 @@ export class ODataGraphQLSchemaFactory {
         serviceBaseUrlFactory,
         headersFactory,
         entityName,
+        entitySetName,
         actionName,
         method = 'GET',
     }: {
@@ -168,6 +169,7 @@ export class ODataGraphQLSchemaFactory {
         serviceBaseUrlFactory: ResolverDataFactory<string>;
         headersFactory: ResolverDataFactory<Headers>;
         entityName: string;
+        entitySetName: string;
         actionName?: string;
         method?: string;
     }) {
@@ -179,10 +181,21 @@ export class ODataGraphQLSchemaFactory {
         if (!resolverData.context._headers.has('Content-Type')) {
             resolverData.context._headers.set('Content-Type', 'application/json; odata.metadata=full');
         }
-        const identifierFieldName = this.identifierFieldMap.get(entityName) || 'id';
+        const identifierFieldName = this.identifierFieldMap.get(entityName);
+        let identifierPart = entitySetName;
+        if (identifierFieldName && identifierFieldName in resolverData.args) {
+            const fieldMap = resolverData.info.parentType.getFields();
+            const field = fieldMap[resolverData.info.fieldName]
+            const identifierArg = field.args.find(arg => arg.name === identifierFieldName);
+            if (identifierArg?.type.toString().includes('String')) {
+                identifierPart = `${entitySetName}('${resolverData.args[identifierFieldName!]}')`
+            } else {
+                identifierPart = `${entitySetName}(${resolverData.args[identifierFieldName!]})`
+            }
+        }
         const urlParts = [
             resolverData.context._serviceBaseUrl,
-            (identifierFieldName in resolverData.args ? `${entityName}(${resolverData.args[identifierFieldName!]})` : entityName),
+            identifierPart,
             actionName
         ]
         const entitySetUrl = urljoin(urlParts.filter(Boolean));
@@ -197,7 +210,6 @@ export class ODataGraphQLSchemaFactory {
         }
         const selectionFields = Object.keys(graphqlFields(resolverData.info)).filter(fieldName => !fieldName.startsWith('__'));
         urlObj.searchParams.set('$select', selectionFields.join(','));
-
         return new Request(decodeURIComponent(urlObj.toString()), {
             headers: resolverData.context._headers,
             method,
@@ -473,9 +485,10 @@ export class ODataGraphQLSchemaFactory {
         document.querySelectorAll('EntityContainer').forEach(entityContainerElement => {
             entityContainerElement.querySelectorAll('EntitySet').forEach(entitySetElement => {
                 const entitySetName = entitySetElement.getAttribute('Name')!;
-                let entitySetTypeName = entitySetElement.getAttribute('EntityType')!;
-                entitySetTypeName = this.resolveSchemaAlias(entitySetTypeName);
-                const entitySetType = this.outputTypeMap.get(entitySetTypeName!)!;
+                let entityName = entitySetElement.getAttribute('EntityType')!;
+                entityName = this.resolveSchemaAlias(entityName);
+                const entitySetType = this.outputTypeMap.get(entityName!)! as GraphQLObjectType;
+                entityName = entitySetType.name;
                 this.queryFields[entitySetName] = {
                     type: new GraphQLList(entitySetType),
                     args: {
@@ -489,7 +502,8 @@ export class ODataGraphQLSchemaFactory {
                             resolverData: { root, args, context, info },
                             serviceBaseUrlFactory,
                             headersFactory,
-                            entityName: entitySetName,
+                            entitySetName,
+                            entityName,
                         })
                         const response = await fetchache(entitySetRequest, this.cache);
                         const responseJson = await response.json();
@@ -500,13 +514,14 @@ export class ODataGraphQLSchemaFactory {
                     },
                 };
                 const identifierFieldName = this.identifierFieldMap.get('name' in entitySetType! ? (entitySetType as any).name : entitySetName);
+                const identifierFieldType = entitySetType.getFields()[identifierFieldName!]!.type as GraphQLScalarType;
                 this.queryFields[entitySetName + 'By' + identifierFieldName] = {
-                    type: this.outputTypeMap.get(entitySetTypeName!)!,
+                    type: entitySetType,
                     args: {
                         ...serviceArgs,
                         ...(identifierFieldName ? {
                             [identifierFieldName]: {
-                                type: new GraphQLNonNull(GraphQLID),
+                                type: identifierFieldType as GraphQLInputType,
                             }
                         } : {})
                     },
@@ -515,7 +530,8 @@ export class ODataGraphQLSchemaFactory {
                             resolverData: { root, args, context, info },
                             serviceBaseUrlFactory,
                             headersFactory,
-                            entityName: entitySetName,
+                            entityName,
+                            entitySetName,
                         })
                         const response = await fetchache(entitySetRequest, this.cache);
                         const responseJson = await response.json();
@@ -528,13 +544,14 @@ export class ODataGraphQLSchemaFactory {
             })
         });
 
-        const actionFactory = (actionElement: Element, fieldName?: string, entityName?: string) => {
+        const actionFactory = (actionElement: Element, fieldName?: string, entityType?: GraphQLObjectType) => {
             const actionName = actionElement.getAttribute('Name')!;
             let actionFieldName = fieldName || actionName;
             let returnType: GraphQLOutputType = GraphQLBoolean;
             const args: GraphQLFieldConfigArgumentMap = {};
             const bound = actionElement.getAttribute('IsBound') === 'true';
             const bindingParamName = actionElement.getAttribute('EntitySetPath')! || 'bindingParameter';
+            let entityName = entityType?.name;
             actionElement.querySelectorAll('Parameter').forEach(paramElement => {
                 const paramName = paramElement.getAttribute('Name')!;
                 let paramTypeName = paramElement.getAttribute('Type')!;
@@ -548,9 +565,9 @@ export class ODataGraphQLSchemaFactory {
                             .replace(')', '');
                     }
                     entityName = this.resolveSchemaAlias(entityName);
-                    const entityType = this.outputTypeMap.get(entityName) as any;
-                    if ('name' in entityType) {
-                        entityName = entityType.name;
+                    entityType = this.outputTypeMap.get(entityName)! as any;
+                    if ('name' in entityType!) {
+                        entityName = entityType!.name;
                         actionFieldName += entityName;
                     }
                 } else {
@@ -595,8 +612,9 @@ export class ODataGraphQLSchemaFactory {
             if (bound) {
                 const identifierFieldName = this.identifierFieldMap.get(entityName!);
                 if (identifierFieldName) {
+                    const identifierFieldType = entityType!.getFields()[identifierFieldName].type!;
                     args[identifierFieldName] = {
-                        type: GraphQLID,
+                        type: identifierFieldType as GraphQLInputType,
                     };
                 }
             }
@@ -614,6 +632,7 @@ export class ODataGraphQLSchemaFactory {
                         resolverData: { root, args, context, info },
                         serviceBaseUrlFactory,
                         headersFactory,
+                        entitySetName: '',
                         entityName: entityName!,
                         actionName,
                         method: 'POST',
@@ -651,10 +670,7 @@ export class ODataGraphQLSchemaFactory {
                 }
                 entityName = this.resolveSchemaAlias(entityName);
                 const entityType = this.outputTypeMap.get(entityName) as any;
-                if ('name' in entityType) {
-                    entityName = entityType.name;
-                }
-                actionFactory(actionElement, fieldName, entityName);
+                actionFactory(actionElement, fieldName, entityType);
             }
             actionFactory(actionElement, fieldName);
         }
@@ -695,7 +711,8 @@ export class ODataGraphQLSchemaFactory {
                         resolverData: { root, args, context, info },
                         serviceBaseUrlFactory,
                         headersFactory,
-                        entityName: fieldName,
+                        entityName: typeName,
+                        entitySetName: fieldName,
                     });
                     const response = await fetchache(entitySetRequest, this.cache);
                     const responseJson = await response.json();

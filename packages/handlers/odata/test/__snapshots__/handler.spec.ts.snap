@@ -72,7 +72,7 @@ input LocationInput {
 }
 
 type Mutation {
-  GetFavoriteAirlinePerson(UserName: ID, queryOptions: QueryOptions): Airline
+  GetFavoriteAirlinePerson(UserName: String!, queryOptions: QueryOptions): Airline
   ResetDataSource(person: PersonInput, lastName: String!, personInstance: PersonInput, userName: String!, tripId: Int!, queryOptions: QueryOptions): Boolean
   GetPersonWithMostFriends(queryOptions: QueryOptions): Person
   GetNearestAirport(lat: Float!, lon: Float!, queryOptions: QueryOptions): Airport
@@ -136,13 +136,13 @@ input PlanItemInput {
 
 type Query {
   People(queryOptions: QueryOptions): [Person]
-  PeopleByUserName(UserName: ID!): Person
+  PeopleByUserName(UserName: String!): Person
   Airlines(queryOptions: QueryOptions): [Airline]
-  AirlinesByAirlineCode(AirlineCode: ID!): Airline
+  AirlinesByAirlineCode(AirlineCode: String!): Airline
   Airports(queryOptions: QueryOptions): [Airport]
-  AirportsByIcaoCode(IcaoCode: ID!): Airport
+  AirportsByIcaoCode(IcaoCode: String!): Airport
   NewComePeople(queryOptions: QueryOptions): [Person]
-  NewComePeopleByUserName(UserName: ID!): Person
+  NewComePeopleByUserName(UserName: String!): Person
   Me: Person
 }
 
