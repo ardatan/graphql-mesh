@@ -5,7 +5,6 @@ import urljoin from 'url-join';
 import Interpolator from 'string-interpolation/src';
 import { JSDOM } from 'jsdom';
 import graphqlFields from 'graphql-fields';
-import { writeFileSync } from "fs";
 
 // TODO: Add more scalars to graphql-scalars, then here.
 const SCALARS: [string, GraphQLScalarType][] = [
@@ -388,7 +387,6 @@ export class ODataGraphQLSchemaFactory {
 
         const response = await fetchache(metadataRequest, this.cache);
         const text = await response.text();
-        writeFileSync(process.cwd() + '/dump.xml', text);
         const { window: { document } } = new JSDOM(text);
 
         document.querySelectorAll('Schema').forEach(schemaElement => {
