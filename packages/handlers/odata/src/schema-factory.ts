@@ -7,11 +7,13 @@ import Interpolator from 'string-interpolation/src';
 import { JSDOM } from 'jsdom';
 import graphqlFields from 'graphql-fields';
 
+// TODO: Add more scalars to graphql-scalars, then here.
 const SCALARS: [string, GraphQLScalarType][] = [
     ['Edm.Binary', GraphQLString],
     ['Edm.Stream', GraphQLString],
     ['Edm.String', GraphQLString],
     ['Edm.Int16', GraphQLInt],
+    ['Edm.Byte', GraphQLInt],
     ['Edm.Int32', GraphQLInt],
     ['Edm.Int64', GraphQLBigInt],
     ['Edm.Double', GraphQLFloat],
@@ -22,6 +24,8 @@ const SCALARS: [string, GraphQLScalarType][] = [
     ['Edm.TimeOfDay', GraphQLString],
     ['Edm.Single', GraphQLFloat],
     ['Edm.Duration', GraphQLString],
+    ['Edm.Decimal', GraphQLFloat],
+    ['Edm.SByte', GraphQLInt],
 ];
 
 const InlineCountEnum = new GraphQLEnumType({
