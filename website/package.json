@@ -11,7 +11,7 @@
   "dependencies": {
     "remark-import-partial": "0.0.2",
     "remark-code-import": "0.1.3",
-    "@docusaurus/core": "2.0.0-alpha.48",
+    "@docusaurus/core": "2.0.0-alpha.49",
     "@docusaurus/preset-classic": "2.0.0-alpha.48",
     "classnames": "2.2.6",
     "react": "16.13.1",
