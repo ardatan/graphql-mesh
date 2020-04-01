@@ -73,6 +73,7 @@ interface ServiceConfig extends EndpointConfig {
 interface ServiceContext {
     serviceUrlFactory: ResolverDataBasedFactory<string>;
     headersFactory: ResolverDataBasedFactory<Headers>;
+    serviceCommonArgs: GraphQLFieldConfigArgumentMap;
 }
 
 const EDM_SCALARS: [string, GraphQLScalarType][] = [
@@ -108,13 +109,14 @@ export class ODataGraphQLSchemaFactory {
     private baseTypeImplementationsMap = new Map<string, string[]>();
 
     private unresolvedDependencies: UnresolvedDependency[] = [];
-    private commonArgs: GraphQLFieldConfigArgumentMap = {};
 
     private queryFields: GraphQLFieldConfigMap<any, any> = {};
     private mutationFields: GraphQLFieldConfigMap<any, any> = {};
     private contextVariables: string[] = [];
 
     private operationNames = new Set<string>();
+
+    private interpolator = new Interpolator();
 
     constructor(private cache: KeyValueCache) { }
 
@@ -554,7 +556,7 @@ export class ODataGraphQLSchemaFactory {
         this.queryFields[`get${entitySetName}`] = {
             type: new GraphQLList(entityType),
             args: {
-                ...this.commonArgs,
+                ...serviceContext.serviceCommonArgs,
                 queryOptions: {
                     type: ODataQueryOptions,
                 },
@@ -567,7 +569,7 @@ export class ODataGraphQLSchemaFactory {
         const getByIdFieldConfig: GraphQLFieldConfig<any, any> = {
             type: entityType,
             args: {
-                ...this.commonArgs,
+                ...serviceContext.serviceCommonArgs,
                 [identifierField.name]: {
                     type: identifierField.type as GraphQLInputType,
                 }
@@ -581,7 +583,7 @@ export class ODataGraphQLSchemaFactory {
         this.mutationFields[`delete${entitySetName}By${identifierField.name}`] = {
             type: GraphQLJSON,
             args: {
-                ...this.commonArgs,
+                ...serviceContext.serviceCommonArgs,
                 [identifierField.name]: {
                     type: identifierField.type as GraphQLInputType,
                 }
@@ -606,7 +608,7 @@ export class ODataGraphQLSchemaFactory {
         this.mutationFields[`update${entitySetName}By${identifierField.name}`] = {
             type: entityType,
             args: {
-                ...this.commonArgs,
+                ...serviceContext.serviceCommonArgs,
                 [identifierField.name]: {
                     type: identifierField.type as GraphQLInputType,
                 },
@@ -620,7 +622,7 @@ export class ODataGraphQLSchemaFactory {
         this.mutationFields[`create${entitySetName}`] = {
             type: entityType,
             args: {
-                ...this.commonArgs,
+                ...serviceContext.serviceCommonArgs,
                 input: {
                     type: entityInput,
                 },
@@ -631,17 +633,11 @@ export class ODataGraphQLSchemaFactory {
         this.queryFields[`get${entitySetName}Count`] = {
             type: GraphQLInt,
             args: {
-                ...this.commonArgs,
+                ...serviceContext.serviceCommonArgs,
             },
             resolve: this.getResolver({ entitySetName, method: 'GET', count: true, ...serviceContext })
         }
 
-    }
-    private getActualGraphQLType(type: GraphQLType) {
-        if ('ofType' in type) {
-            return type.ofType;
-        }
-        return type;
     }
     private processOperations(operationTypeElement: Element, serviceContext: ServiceContext) {
         const operationName = operationTypeElement.getAttribute('Name');
@@ -809,7 +805,7 @@ export class ODataGraphQLSchemaFactory {
             headers: serviceConfig.metadataHeaders,
         });
 
-        const interpolator = new Interpolator();
+        const serviceCommonArgs: GraphQLFieldConfigArgumentMap = {};
 
         const interpolationStrings = [
             ...(serviceConfig.operationHeaders
@@ -823,7 +819,7 @@ export class ODataGraphQLSchemaFactory {
         const interpolationKeys: string[] = interpolationStrings.reduce(
             (keys, str) => [
                 ...keys,
-                ...interpolator.parseRules(str).map((match: any) => match.key)
+                ...this.interpolator.parseRules(str).map((match: any) => match.key)
             ],
             [] as string[]
         );
@@ -833,7 +829,7 @@ export class ODataGraphQLSchemaFactory {
             const varName =
                 interpolationKeyParts[interpolationKeyParts.length - 1];
             if (interpolationKeyParts[0] === 'args') {
-                this.commonArgs[varName] = {
+                serviceCommonArgs[varName] = {
                     type: new GraphQLNonNull(GraphQLID)
                 };
             } else if (interpolationKeyParts[0] === 'context') {
@@ -841,13 +837,13 @@ export class ODataGraphQLSchemaFactory {
             }
         }
 
-        const serviceUrlFactory = (interpolationData: any) => interpolator.parse(urljoin(serviceConfig.baseUrl, serviceConfig.servicePath), interpolationData);
+        const serviceUrlFactory: ResolverDataBasedFactory<string> = resolverData => this.interpolator.parse(urljoin(serviceConfig.baseUrl, serviceConfig.servicePath), resolverData);
 
-        const headersFactory = (interpolationData: any) => {
+        const headersFactory: ResolverDataBasedFactory<Headers> = (interpolationData: any) => {
             const headers = new Headers();
             const headersNoninterpolated = serviceConfig.operationHeaders || {};
             for (const headerName in headersNoninterpolated) {
-                headers.set(headerName, interpolator.parse(headersNoninterpolated[headerName], interpolationData))
+                headers.set(headerName, this.interpolator.parse(headersNoninterpolated[headerName], interpolationData))
             }
             return headers;
         }
@@ -859,6 +855,7 @@ export class ODataGraphQLSchemaFactory {
         this.processSchema(document, {
             serviceUrlFactory,
             headersFactory,
+            serviceCommonArgs,
         });
 
     }
