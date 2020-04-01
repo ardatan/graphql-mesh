@@ -5,7 +5,7 @@ extend type Handler {
   odata: ODataHandler
 }
 
-type ODataHandler {
+type ODataHandler @md {
   """
   Base URL for OData API
   """

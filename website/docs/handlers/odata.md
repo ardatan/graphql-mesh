@@ -26,4 +26,4 @@ sources:
 
 ## Config API Reference
 
-{@import ../generated-markdown/GraphQLHandler.generated.md}
+{@import ../generated-markdown/ODataHandler.generated.md}
