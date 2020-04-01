@@ -6,6 +6,16 @@ exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] =
   Name: String
 }
 
+input AirlineInput {
+  AirlineCode: String!
+  Name: String
+}
+
+input AirlinesUpdateInput {
+  AirlineCode: String
+  Name: String
+}
+
 type Airport {
   Name: String
   IcaoCode: String!
@@ -13,9 +23,30 @@ type Airport {
   Location: AirportLocation
 }
 
+input AirportInput {
+  Name: String
+  IcaoCode: String!
+  IataCode: String
+  Location: AirportLocationInput
+}
+
 type AirportLocation {
   Loc: String
   Address: String
+  City: City
+}
+
+input AirportLocationInput {
+  Loc: String
+  Address: String
+  City: CityInput
+}
+
+input AirportsUpdateInput {
+  Name: String
+  IcaoCode: String
+  IataCode: String
+  Location: AirportLocationInput
 }
 
 \\"\\"\\"
@@ -61,6 +92,11 @@ enum InlineCount {
   none
 }
 
+\\"\\"\\"
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+\\"\\"\\"
+scalar JSON
+
 type Location {
   Address: String
   City: City
@@ -72,10 +108,57 @@ input LocationInput {
 }
 
 type Mutation {
-  GetFavoriteAirlinePerson(UserName: String!, queryOptions: QueryOptions): Airline
-  ResetDataSource(person: PersonInput, lastName: String!, personInstance: PersonInput, userName: String!, tripId: Int!, queryOptions: QueryOptions): Boolean
-  GetPersonWithMostFriends(queryOptions: QueryOptions): Person
-  GetNearestAirport(lat: Float!, lon: Float!, queryOptions: QueryOptions): Airport
+  getPeopleByUserName(UserName: String!): Person
+  deletePeopleByUserName(UserName: String!): JSON
+  updatePeopleByUserName(UserName: String!, input: PeopleUpdateInput): Person
+  createPeople(input: PersonInput): Person
+  getAirlinesByAirlineCode(AirlineCode: String!): Airline
+  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON
+  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlinesUpdateInput): Airline
+  createAirlines(input: AirlineInput): Airline
+  getAirportsByIcaoCode(IcaoCode: String!): Airport
+  deleteAirportsByIcaoCode(IcaoCode: String!): JSON
+  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportsUpdateInput): Airport
+  createAirports(input: AirportInput): Airport
+  getNewComePeopleByUserName(UserName: String!): Person
+  deleteNewComePeopleByUserName(UserName: String!): JSON
+  updateNewComePeopleByUserName(UserName: String!, input: NewComePeopleUpdateInput): Person
+  createNewComePeople(input: PersonInput): Person
+  ResetDataSource(person: PersonInput, lastName: String, personInstance: PersonInput, userName: String, tripId: Int): Boolean
+}
+
+input NewComePeopleUpdateInput {
+  UserName: String
+  FirstName: String
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature
+  Features: [Feature]
+  AddressInfo: [LocationInput]
+  HomeAddress: LocationInput
+  Friends: [PersonInput]
+  BestFriend: PersonInput
+  Trips: [TripInput]
+}
+
+input PeopleUpdateInput {
+  UserName: String
+  FirstName: String
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature
+  Features: [Feature]
+  AddressInfo: [LocationInput]
+  HomeAddress: LocationInput
+  Friends: [PersonInput]
+  BestFriend: PersonInput
+  Trips: [TripInput]
 }
 
 type Person {
@@ -86,13 +169,17 @@ type Person {
   Gender: PersonGender!
   Age: BigInt
   Emails: [String]
-  AddressInfo: [Location]
-  HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Trips(queryOptions: QueryOptions): [Trip]
-  BestFriend(queryOptions: QueryOptions): Person
+  AddressInfo: [Location]
+  HomeAddress: Location
   Friends(queryOptions: QueryOptions): [Person]
+  BestFriend: Person
+  Trips(queryOptions: QueryOptions): [Trip]
+  GetFavoriteAirline: Airline
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+  UpdatePersonLastName(lastName: String): Boolean
+  ShareTrip(userName: String, tripId: Int): JSON
 }
 
 enum PersonGender {
@@ -102,20 +189,20 @@ enum PersonGender {
 }
 
 input PersonInput {
-  UserName: String
-  FirstName: String
+  UserName: String!
+  FirstName: String!
   LastName: String
   MiddleName: String
-  Gender: PersonGender
+  Gender: PersonGender!
   Age: BigInt
-  Emails: String
-  AddressInfo: LocationInput
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+  AddressInfo: [LocationInput]
   HomeAddress: LocationInput
-  FavoriteFeature: Feature
-  Features: Feature
-  Trips: [TripInput]
-  BestFriend: PersonInput
   Friends: [PersonInput]
+  BestFriend: PersonInput
+  Trips: [TripInput]
 }
 
 type PlanItem {
@@ -127,22 +214,28 @@ type PlanItem {
 }
 
 input PlanItemInput {
-  PlanItemId: Int
+  PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: String
-  EndsAt: String
-  Duration: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
 }
 
 type Query {
-  People(queryOptions: QueryOptions): [Person]
-  PeopleByUserName(UserName: String!): Person
-  Airlines(queryOptions: QueryOptions): [Airline]
-  AirlinesByAirlineCode(AirlineCode: String!): Airline
-  Airports(queryOptions: QueryOptions): [Airport]
-  AirportsByIcaoCode(IcaoCode: String!): Airport
-  NewComePeople(queryOptions: QueryOptions): [Person]
-  NewComePeopleByUserName(UserName: String!): Person
+  getPeople(queryOptions: QueryOptions): [Person]
+  getPeopleByUserName(UserName: String!): Person
+  getPeopleCount: Int
+  getAirlines(queryOptions: QueryOptions): [Airline]
+  getAirlinesByAirlineCode(AirlineCode: String!): Airline
+  getAirlinesCount: Int
+  getAirports(queryOptions: QueryOptions): [Airport]
+  getAirportsByIcaoCode(IcaoCode: String!): Airport
+  getAirportsCount: Int
+  getNewComePeople(queryOptions: QueryOptions): [Person]
+  getNewComePeopleByUserName(UserName: String!): Person
+  getNewComePeopleCount: Int
+  GetPersonWithMostFriends: Person
+  GetNearestAirport(lat: Float, lon: Float): Airport
   Me: Person
 }
 
@@ -205,17 +298,18 @@ type Trip {
   StartsAt: String!
   EndsAt: String!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
+  GetInvolvedPeople(queryOptions: QueryOptions): [Person]
 }
 
 input TripInput {
-  TripId: Int
-  ShareId: GUID
+  TripId: Int!
+  ShareId: GUID!
   Name: String
-  Budget: Float
+  Budget: Float!
   Description: String
-  Tags: String
-  StartsAt: String
-  EndsAt: String
+  Tags: [String]
+  StartsAt: String!
+  EndsAt: String!
   PlanItems: [PlanItemInput]
 }
 "

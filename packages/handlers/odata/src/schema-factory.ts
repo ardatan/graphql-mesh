@@ -1,32 +1,10 @@
-import { GraphQLOutputType, GraphQLInputType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLScalarType, GraphQLEnumType, GraphQLEnumValueConfigMap, Kind, ObjectTypeDefinitionNode, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLList, GraphQLInterfaceType, GraphQLNonNull, GraphQLInputObjectType, GraphQLInputFieldConfigMap, GraphQLID, GraphQLFieldConfigArgumentMap, GraphQLNamedType, GraphQLUnionType, GraphQLResolveInfo, GraphQLType, GraphQLInputField, GraphQLField, GraphQLFieldResolver, GraphQLSchemaConfig, GraphQLSchema } from "graphql";
-import { BigIntResolver as GraphQLBigInt, GUIDResolver as GraphQLGUID, DateTimeResolver as GraphQLDateTime } from 'graphql-scalars';
-import { KeyValueCache, Headers, Request, fetchache } from "fetchache";
-import urljoin from 'url-join';
+import { GraphQLObjectType, GraphQLInputObjectType, GraphQLScalarType, GraphQLType, GraphQLOutputType, GraphQLField, GraphQLInputType, GraphQLList, GraphQLNonNull, GraphQLFieldConfigMap, GraphQLFieldConfig, GraphQLFieldResolver, GraphQLArgumentConfig, GraphQLFieldConfigArgumentMap, GraphQLResolveInfo, GraphQLEnumType, GraphQLString, GraphQLInt, GraphQLInterfaceType, GraphQLObjectTypeConfig, GraphQLInterfaceTypeConfig, GraphQLInputObjectTypeConfig, GraphQLInputFieldConfigMap, GraphQLInputField, GraphQLBoolean, GraphQLArgument, GraphQLID, GraphQLSchemaConfig, GraphQLSchema, GraphQLFloat, GraphQLEnumValueConfigMap } from "graphql";
 import Interpolator from 'string-interpolation/src';
+import urljoin from "url-join";
+import graphqlFields from "graphql-fields";
+import { KeyValueCache, Request, Headers, fetchache } from "fetchache";
 import { JSDOM } from 'jsdom';
-import graphqlFields from 'graphql-fields';
-
-// TODO: Add more scalars to graphql-scalars, then here.
-const SCALARS: [string, GraphQLScalarType][] = [
-    ['Edm.Binary', GraphQLString],
-    ['Edm.Stream', GraphQLString],
-    ['Edm.String', GraphQLString],
-    ['Edm.Int16', GraphQLInt],
-    ['Edm.Byte', GraphQLInt],
-    ['Edm.Int32', GraphQLInt],
-    ['Edm.Int64', GraphQLBigInt],
-    ['Edm.Double', GraphQLFloat],
-    ['Edm.Boolean', GraphQLBoolean],
-    ['Edm.Guid', GraphQLGUID],
-    ['Edm.DateTimeOffset', GraphQLString],
-    ['Edm.Date', GraphQLDateTime],
-    ['Edm.TimeOfDay', GraphQLString],
-    ['Edm.Single', GraphQLFloat],
-    ['Edm.Duration', GraphQLString],
-    ['Edm.Decimal', GraphQLFloat],
-    ['Edm.SByte', GraphQLInt],
-    ['Edm.GeographyPoint', GraphQLString],
-];
+import { BigIntResolver as GraphQLBigInt, GUIDResolver as GraphQLGUID, DateTimeResolver as GraphQLDateTime, JSONResolver as GraphQLJSON } from 'graphql-scalars';
 
 const InlineCountEnum = new GraphQLEnumType({
     name: 'InlineCount',
@@ -68,6 +46,20 @@ const ODataQueryOptions = new GraphQLInputObjectType({
     }
 });
 
+interface ResolverData {
+    root: any, args: any, context: any, info: GraphQLResolveInfo,
+}
+
+type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
+
+interface UnresolvedDependency {
+    typeName: string;
+    fieldName: string;
+    fieldTypeName: string;
+    nonNullable: boolean;
+    queryable: boolean;
+}
+
 interface EndpointConfig {
     baseUrl: string;
     metadataHeaders?: Record<string, string>;
@@ -78,144 +70,331 @@ interface ServiceConfig extends EndpointConfig {
     servicePath: string;
 }
 
-interface ResolverData {
-    root: any, args: any, context: any, info: GraphQLResolveInfo,
+interface ServiceContext {
+    serviceUrlFactory: ResolverDataBasedFactory<string>;
+    headersFactory: ResolverDataBasedFactory<Headers>;
 }
 
-type ResolverDataFactory<T> = (data: ResolverData) => T;
-
-function returnExtendedError(anyError: any) {
-    const actualError = new Error(anyError.message || anyError);
-    (actualError as any).extensions = anyError;
-    return actualError;
-}
-
-interface UnresolvedDependency {
-    typeRef: string;
-    fieldName: string;
-    fieldTypeRef: string;
-    nonNullable: boolean;
-    isList: boolean;
-    navigationProperty: boolean;
-}
+const EDM_SCALARS: [string, GraphQLScalarType][] = [
+    ['Binary', GraphQLString],
+    ['Stream', GraphQLString],
+    ['String', GraphQLString],
+    ['Int16', GraphQLInt],
+    ['Byte', GraphQLInt],
+    ['Int32', GraphQLInt],
+    ['Int64', GraphQLBigInt],
+    ['Double', GraphQLFloat],
+    ['Boolean', GraphQLBoolean],
+    ['Guid', GraphQLGUID],
+    ['DateTimeOffset', GraphQLString],
+    ['Date', GraphQLDateTime],
+    ['TimeOfDay', GraphQLString],
+    ['Single', GraphQLFloat],
+    ['Duration', GraphQLString],
+    ['Decimal', GraphQLFloat],
+    ['SByte', GraphQLInt],
+    ['GeographyPoint', GraphQLString],
+];
 
 export class ODataGraphQLSchemaFactory {
-    private inputTypeMap: Map<string, GraphQLInputType>;
-    private outputTypeMap: Map<string, GraphQLOutputType>;
-    private identifierFieldMap: Map<string, string>;
-    private schemaAliasMap: Map<string, string>;
+    private entityTypeNameGraphQLObjectTypeMap = new Map<string, GraphQLObjectType | GraphQLInterfaceType>();
+    private entityTypeNameGraphQLInputObjectTypeMap = new Map<string, GraphQLInputObjectType>();
+    private complexTypeNameGraphQLObjectTypeMap = new Map<string, GraphQLObjectType | GraphQLInterfaceType>();
+    private complexTypeNameGraphQLInputObjectTypeMap = new Map<string, GraphQLInputObjectType>();
+    private edmTypeNameGraphQLScalarTypeMap = new Map<string, GraphQLScalarType>(EDM_SCALARS);
+    private enumTypeNameGraphQLEnumTypeMap = new Map<string, GraphQLEnumType>();
+    private entityTypeNameIdentifierFieldNameMap = new Map<string, string>();
+    private entitySetEntityTypeNameMap = new Map<string, string>();
+    private baseTypeImplementationsMap = new Map<string, string[]>();
+
     private unresolvedDependencies: UnresolvedDependency[] = [];
+    private commonArgs: GraphQLFieldConfigArgumentMap = {};
+
     private queryFields: GraphQLFieldConfigMap<any, any> = {};
     private mutationFields: GraphQLFieldConfigMap<any, any> = {};
     private contextVariables: string[] = [];
-    constructor(private cache: KeyValueCache) {
-        this.inputTypeMap = new Map(SCALARS);
-        this.outputTypeMap = new Map(SCALARS);
-        this.identifierFieldMap = new Map();
-        this.schemaAliasMap = new Map();
+
+    private operationNames = new Set<string>();
+
+    constructor(private cache: KeyValueCache) { }
+
+    private isEntityType(type: GraphQLType | string): boolean {
+        if (typeof type === 'string') {
+            const { typeName } = this.parseTypeRef(type);
+            return this.entityTypeNameGraphQLObjectTypeMap.has(typeName);
+        } else if (type instanceof GraphQLObjectType) {
+            return [...this.entityTypeNameGraphQLObjectTypeMap.values()].includes(type);
+        } else if (type instanceof GraphQLInputObjectType) {
+            return [...this.entityTypeNameGraphQLInputObjectTypeMap.values()].includes(type);
+        }
+        return false;
     }
-    private getNavigationPropertyResolver(): GraphQLFieldResolver<any, any> {
+
+    private isComplexType(type: GraphQLType | string): boolean {
+        if (typeof type === 'string') {
+            const { typeName } = this.parseTypeRef(type);
+            return this.complexTypeNameGraphQLObjectTypeMap.has(typeName);
+        } else if (type instanceof GraphQLObjectType) {
+            return [...this.complexTypeNameGraphQLObjectTypeMap.values()].includes(type);
+        } else if (type instanceof GraphQLInputObjectType) {
+            return [...this.complexTypeNameGraphQLInputObjectTypeMap.values()].includes(type);
+        }
+        return false;
+    }
+
+    private isEdmType(type: GraphQLType | string): boolean {
+        if (typeof type === 'string') {
+            const { typeName } = this.parseTypeRef(type);
+            return this.edmTypeNameGraphQLScalarTypeMap.has(typeName);
+        } else if (type instanceof GraphQLScalarType) {
+            return [...this.edmTypeNameGraphQLScalarTypeMap.values()].includes(type);
+        }
+        return false;
+    }
+
+    private isEnumType(type: GraphQLType | string): boolean {
+        if (typeof type === 'string') {
+            const { typeName } = this.parseTypeRef(type);
+            return this.enumTypeNameGraphQLEnumTypeMap.has(typeName);
+        } else if (type instanceof GraphQLEnumType) {
+            return [...this.enumTypeNameGraphQLEnumTypeMap.values()].includes(type);
+        }
+        return false;
+    }
+
+    private parseTypeRef(typeRef: string): { isList: boolean; typeName: string; } {
+        let isList = false;
+        typeRef = typeRef.replace('#', '');
+        if (typeRef.startsWith('Collection(') && typeRef.endsWith(')')) {
+            typeRef = typeRef.replace('Collection(', '').replace(')', '');
+            isList = true;
+        }
+        const typePath = typeRef.split('.');
+        const typeName = typePath[typePath.length - 1];
+        return { isList, typeName };
+    }
+
+    private getOutputTypeByRef(typeRefOrName: string, actualType?: boolean) {
+        const { isList, typeName } = this.parseTypeRef(typeRefOrName);
+        let outputType: GraphQLOutputType | undefined;
+        if (this.isEdmType(typeName)) {
+            outputType = this.edmTypeNameGraphQLScalarTypeMap.get(typeName)!;
+        } else if (this.isEnumType(typeName)) {
+            outputType = this.enumTypeNameGraphQLEnumTypeMap.get(typeName)!;
+        } else if (this.isComplexType(typeName)) {
+            outputType = this.complexTypeNameGraphQLObjectTypeMap.get(typeName)!;
+        } else if (this.isEntityType(typeName)) {
+            outputType = this.entityTypeNameGraphQLObjectTypeMap.get(typeName)!;
+        }
+        if (actualType) {
+            return outputType;
+        }
+        if (outputType) {
+            if (isList) {
+                outputType = new GraphQLList(outputType)
+            }
+            return outputType;
+        }
+        return null;
+    }
+
+    private getInputTypeByRef(typeRef: string) {
+        const { isList, typeName } = this.parseTypeRef(typeRef);
+        let inputType: GraphQLInputType | undefined;
+        if (this.isEdmType(typeName)) {
+            inputType = this.edmTypeNameGraphQLScalarTypeMap.get(typeName);
+        } else if (this.isEnumType(typeName)) {
+            inputType = this.enumTypeNameGraphQLEnumTypeMap.get(typeName)!;
+        } else if (this.isComplexType(typeName)) {
+            inputType = this.complexTypeNameGraphQLInputObjectTypeMap.get(typeName);
+        } else if (this.isEntityType(typeName)) {
+            inputType = this.entityTypeNameGraphQLInputObjectTypeMap.get(typeName)!;
+        }
+        if (inputType) {
+            if (isList) {
+                inputType = new GraphQLList(inputType)
+            }
+            return inputType;
+        }
+        return null;
+    }
+
+    private getEntityTypeIdentifier(entityTypeOrName: GraphQLObjectType | string): GraphQLField<any, any> {
+        let entityType: GraphQLObjectType | GraphQLInterfaceType | undefined;
+        if (typeof entityTypeOrName === 'string') {
+            entityType = this.entityTypeNameGraphQLObjectTypeMap.get(entityTypeOrName);
+            if (!entityType) {
+                throw new Error(`Entity type ${entityTypeOrName} not found!`);
+            }
+        } else {
+            entityType = entityTypeOrName;
+        }
+        const identifierFieldName = this.entityTypeNameIdentifierFieldNameMap.get(entityType.name);
+        if (!identifierFieldName) {
+            throw new Error(`Identifier field name for entity type ${entityTypeOrName} not found!`);
+        }
+        const fieldMap = entityType.getFields();
+        const identifierField = fieldMap[identifierFieldName];
+        if (!identifierField) {
+            throw new Error(`Identifier field for entity type ${entityTypeOrName} not found!`);
+        }
+        return identifierField;
+    }
+
+    private isAbstractType(type: Element): boolean {
+        return type.getAttribute('Abstract') === 'true';
+    }
+
+    private isNonNullableType(type: Element): boolean {
+        return type.getAttribute('Nullable') === 'false';
+    }
+
+    private getResolver({
+        serviceUrlFactory,
+        headersFactory,
+        entitySetName,
+        method,
+        ignoreIdentifierArg,
+        count,
+    }: {
+        serviceUrlFactory: ResolverDataBasedFactory<string>;
+        headersFactory: ResolverDataBasedFactory<Headers>;
+        entitySetName?: string;
+        method: 'GET' | 'POST' | 'DELETE' | 'PATCH'
+        ignoreIdentifierArg?: boolean;
+        count?: boolean;
+    }): GraphQLFieldResolver<any, any> {
         return async (root, args, context, info) => {
-            const navigationUrl = root[info.fieldName + '@odata.navigationLink'];
-            context._headers = context._headers;
-            if (!context._headers.has('Accept')) {
-                context._headers.set('Accept', 'application/json; odata.metadata=full');
+            if (info.operation.operation === 'query' && method !== 'GET') {
+                throw new Error(`Non-GET operations are not allowed in query operations`);
             }
-            if (!context._headers.has('Content-Type')) {
-                context._headers.set('Content-Type', 'application/json; odata.metadata=full');
+            const resolverData: ResolverData = { root, args, context, info };
+            if (root && info.fieldName in root) {
+                const returnVal = root[info.fieldName];
+                return returnVal;
             }
-            const urlObj = new URL(navigationUrl);
-            if ('queryOptions' in args) {
-                const { queryOptions } = args;
-                for (const param in ODataQueryOptions.getFields()) {
-                    if (param in queryOptions) {
-                        urlObj.searchParams.set('$' + param, queryOptions[param]);
+            const _serviceUrl = context._serviceUrl = context?._serviceUrl || serviceUrlFactory(resolverData);
+            const _headers = context._headers = context?._headers || headersFactory(resolverData);
+            let baseOperationUrl: string | undefined;
+            const requestInit: RequestInit = {};
+            // If it is navigation property
+            const navigationLinkField = info.fieldName + '@odata.navigationLink';
+            if (root && navigationLinkField in root) {
+                baseOperationUrl = root[navigationLinkField]
+            } else {
+                // If it is bound function
+                for (const rootFieldName in root) {
+                    const { typeName } = this.parseTypeRef(rootFieldName);
+                    if (typeName === info.fieldName) {
+                        const rootField = root[rootFieldName];
+                        if ('target' in rootField) {
+                            baseOperationUrl = rootField.target;
+                            if (method === 'GET' && Object.keys(args).length > 0) {
+                                baseOperationUrl += `(${Object.entries(args).filter(argEntry => argEntry[0] !== 'queryOptions').map(argEntry => argEntry.join(' = ')).join(', ')})`
+                            } else {
+                                requestInit.body = JSON.stringify(args);
+                            }
+                        }
                     }
                 }
-            }
-            const selectionFields = Object.keys(graphqlFields(info)).filter(fieldName => !fieldName.startsWith('__'));
-            urlObj.searchParams.set('$select', selectionFields.join(','));
-
-            const navigationRequest = new Request(decodeURIComponent(urlObj.toString()), {
-                headers: context._headers,
-            })
-            const response = await fetchache(navigationRequest, this.cache);
-            const responseJson = await response.json();
-            if (responseJson.error) {
-                throw returnExtendedError(responseJson.error);
-            }
-            return responseJson.value;
-        }
-    }
-    private resolveSchemaAlias(typeRef: string) {
-        typeRef = typeRef.replace('#', '');
-        for (const [alias, namespace] of this.schemaAliasMap) {
-            if (typeRef.startsWith(alias)) {
-                return typeRef.replace(alias, namespace);
-            }
-        }
-        return typeRef;
-    }
-    private prepareRequest({
-        resolverData,
-        serviceBaseUrlFactory,
-        headersFactory,
-        entityName,
-        entitySetName,
-        actionName,
-        method = 'GET',
-    }: {
-        resolverData: ResolverData;
-        serviceBaseUrlFactory: ResolverDataFactory<string>;
-        headersFactory: ResolverDataFactory<Headers>;
-        entityName: string;
-        entitySetName: string;
-        actionName?: string;
-        method?: string;
-    }) {
-        resolverData.context._serviceBaseUrl = resolverData.context._serviceBaseUrl || serviceBaseUrlFactory(resolverData);
-        resolverData.context._headers = resolverData.context._headers || headersFactory(resolverData)
-        if (!resolverData.context._headers.has('Accept')) {
-            resolverData.context._headers.set('Accept', 'application/json; odata.metadata=full');
-        }
-        if (!resolverData.context._headers.has('Content-Type')) {
-            resolverData.context._headers.set('Content-Type', 'application/json; odata.metadata=full');
-        }
-        const identifierFieldName = this.identifierFieldMap.get(entityName);
-        let identifierPart = entitySetName;
-        if (identifierFieldName && identifierFieldName in resolverData.args) {
-            const fieldMap = resolverData.info.parentType.getFields();
-            const field = fieldMap[resolverData.info.fieldName]
-            const identifierArg = field.args.find(arg => arg.name === identifierFieldName);
-            if (identifierArg?.type.toString().includes('String')) {
-                identifierPart = `${entitySetName}('${resolverData.args[identifierFieldName!]}')`
-            } else {
-                identifierPart = `${entitySetName}(${resolverData.args[identifierFieldName!]})`
-            }
-        }
-        const urlParts = [
-            resolverData.context._serviceBaseUrl,
-            identifierPart,
-            actionName
-        ]
-        const entitySetUrl = urljoin(urlParts.filter(Boolean));
-        const urlObj = new URL(entitySetUrl);
-        if ('queryOptions' in resolverData.args) {
-            const { queryOptions } = resolverData.args;
-            for (const param in ODataQueryOptions.getFields()) {
-                if (param in queryOptions) {
-                    urlObj.searchParams.set('$' + param, queryOptions[param]);
+                // Neither
+                if (!baseOperationUrl) {
+                    let entitySetPart: string = '';
+                    let identifierArgName: string | undefined;
+                    if (entitySetName) {
+                        entitySetPart = entitySetName;
+                        if (count) {
+                            entitySetPart = entitySetName + '/$count'
+                        } else if (!ignoreIdentifierArg && !(info.returnType instanceof GraphQLList)) {
+                            const entityTypeName = this.entitySetEntityTypeNameMap.get(entitySetName);
+                            if (!entityTypeName) {
+                                throw new Error(`Entity Type of ${entitySetName} not found!`);
+                            }
+                            const identifierField = this.getEntityTypeIdentifier(entityTypeName);
+                            if (!identifierField) {
+                                throw new Error(`Identifier for ${entityTypeName} not found!`);
+                            }
+                            identifierArgName = identifierField.name;
+                            if (identifierField.type.toString().includes('String')) {
+                                entitySetPart = `${entitySetName}('${args[identifierArgName]}')`;
+                            } else {
+                                entitySetPart = `${entitySetName}(${args[identifierArgName]})`;
+                            }
+                        }
+                        if (method !== 'GET') {
+                            requestInit.body = JSON.stringify(args.input);
+                        }
+                    } else {
+                        const operationName = info.fieldName;
+                        entitySetPart = operationName;
+                        const argEntries = Object.entries(args).filter(argEntry => argEntry[0] !== 'queryOptions');
+                        if (method === 'GET' && argEntries.length > 0) {
+                            entitySetPart = `${operationName}(${argEntries.map(argEntry => argEntry.join(' = ')).join(', ')})`
+                        } else if (method !== 'GET') {
+                            requestInit.body = JSON.stringify(args);
+                        }
+                    }
+                    baseOperationUrl = urljoin(_serviceUrl, entitySetPart)
                 }
             }
-        }
-        const selectionFields = Object.keys(graphqlFields(resolverData.info)).filter(fieldName => !fieldName.startsWith('__'));
-        urlObj.searchParams.set('$select', selectionFields.join(','));
-        return new Request(decodeURIComponent(urlObj.toString()), {
-            headers: resolverData.context._headers,
-            method,
-            body: method !== 'GET' ? JSON.stringify(resolverData.args) : null,
-        });
+            if (!baseOperationUrl || !_headers) {
+                throw new Error(`Invalid root object is passed to field resolver!`);
+            }
+            if (!_headers.has('Accept')) {
+                _headers.set('Accept', 'application/json; odata.metadata=full');
+            }
+            if (!_headers.has('Content-Type')) {
+                _headers.set('Content-Type', 'application/json; odata.metadata=full');
+            }
+
+            requestInit.method = method;
+            requestInit.headers = _headers;
+
+            const urlObj = new URL(baseOperationUrl);
+            if (method === 'GET') {
+                if ('queryOptions' in args) {
+                    const { queryOptions } = args;
+                    for (const param in ODataQueryOptions.getFields()) {
+                        if (param in queryOptions) {
+                            urlObj.searchParams.set('$' + param, queryOptions[param]);
+                        }
+                    }
+                }
+                const selectionFields = Object.keys(graphqlFields(resolverData.info)).filter(fieldName => {
+                    if (fieldName.startsWith('__')) {
+                        return false
+                    }
+                    if (this.operationNames.has(fieldName)) {
+                        return false;
+                    }
+                    return true;
+                });
+                if (selectionFields.length) {
+                    urlObj.searchParams.set('$select', selectionFields.join(','));
+                }
+            }
+            const entitySetRequest = new Request(decodeURIComponent(urlObj.toString()).split('+').join(' '), requestInit);
+            const response = await fetchache(entitySetRequest, this.cache);
+            if (count) {
+                return response.text();
+            }
+            const responseJson = await response.json();
+            let returnVal: any;
+            if (responseJson.error) {
+                const actualError = new Error(responseJson.error.message || responseJson.error) as any;
+                actualError.extensions = responseJson.error;
+                throw actualError;
+            }
+            if (info.returnType instanceof GraphQLList) {
+                returnVal = responseJson.value;
+            } else {
+                returnVal = responseJson;
+            }
+            context._serviceUrl = baseOperationUrl;
+            return returnVal;
+        };
     }
+
     private processEnumElement(enumElement: Element) {
         const values: GraphQLEnumValueConfigMap = {};
         enumElement.querySelectorAll('Member').forEach(memberElement => {
@@ -231,130 +410,406 @@ export class ODataGraphQLSchemaFactory {
             name: enumName,
             values,
         });
-        const schemaElement = enumElement.closest('Schema')!;
-        const schemaNamespace = schemaElement.getAttribute('Namespace')!;
-        this.inputTypeMap.set(`${schemaNamespace}.${enumName}`, graphQLEnumType);
-        this.outputTypeMap.set(`${schemaNamespace}.${enumName}`, graphQLEnumType);
+        this.enumTypeNameGraphQLEnumTypeMap.set(enumName, graphQLEnumType);
     }
-    private processTypeElement(objectElement: Element) {
-        const typeName = objectElement.getAttribute('Name')!;
-        const inputFields: GraphQLInputFieldConfigMap = {};
-        const outputFields: GraphQLFieldConfigMap<any, any> = {};
-        const schemaElement = objectElement.closest('Schema')!;
-        const schemaNamespace = schemaElement.getAttribute('Namespace');
-        const typeRef = `${schemaNamespace}.${typeName}`;
-        const fieldFactory = (child: Element) => {
-            const tag = child.tagName.toLowerCase();
-            const fieldName = child.getAttribute('Name')!;
-            let fieldTypeName = child.getAttribute('Type')!;
-            let isList = false;
-            let nonNullable = child.getAttribute('Nullable') === 'false';
-            if (fieldTypeName.startsWith('Collection(')) {
-                isList = true;
-                fieldTypeName = fieldTypeName
-                    .replace('Collection(', '')
-                    .replace(')', '');
+
+    private processTypeElement(typeElement: Element, serviceContext: ServiceContext) {
+        const typeName = typeElement.getAttribute('Name');
+        if (!typeName) {
+            throw new Error(`There is a ${typeElement.tagName} element without a valid Name attribute`);
+        }
+        const propertyRefElement = typeElement.querySelector('PropertyRef');
+        if (propertyRefElement) {
+            const identifierFieldName = propertyRefElement.getAttribute('Name');
+            if (identifierFieldName) {
+                this.entityTypeNameIdentifierFieldNameMap.set(typeName, identifierFieldName);
             }
-            fieldTypeName = this.resolveSchemaAlias(fieldTypeName);
-            let inputFieldType = this.inputTypeMap.get(fieldTypeName);
-            let outputFieldType = this.outputTypeMap.get(fieldTypeName);
-            if (!outputFieldType || !inputFieldType) {
+        }
+        const inputFieldConfigMap: GraphQLInputFieldConfigMap = {};
+        const outputFieldConfigMap: GraphQLFieldConfigMap<any, any> = {};
+        const inputObjectTypeConfig: GraphQLInputObjectTypeConfig = {
+            name: typeName + 'Input',
+            fields: inputFieldConfigMap,
+        }
+        const objectTypeConfig: GraphQLObjectTypeConfig<any, any> & GraphQLInterfaceTypeConfig<any, any> = {
+            name: typeName,
+            fields: outputFieldConfigMap,
+        }
+        typeElement.querySelectorAll('Property,NavigationProperty').forEach(propertyElement => {
+            const propertyName = propertyElement.getAttribute('Name');
+            const propertyTypeRef = propertyElement.getAttribute('Type');
+            if (!propertyName || !propertyTypeRef) {
+                throw new Error('There is a Property element without a valid Name and Type attribute');
+            }
+            let inputType = this.getInputTypeByRef(propertyTypeRef);
+            let outputType = this.getOutputTypeByRef(propertyTypeRef);
+            const nonNullable = this.isNonNullableType(propertyElement);
+            const queryable = propertyElement.tagName.toLowerCase() === 'NavigationProperty'.toLowerCase();
+            if (!outputType) {
                 this.unresolvedDependencies.push({
-                    typeRef,
-                    fieldName,
-                    fieldTypeRef: fieldTypeName,
-                    isList,
+                    typeName,
+                    fieldName: propertyName,
+                    fieldTypeName: propertyTypeRef,
                     nonNullable,
-                    navigationProperty: tag === 'navigationproperty',
-                });
+                    queryable,
+                })
                 return;
             }
-            if (isList) {
-                outputFieldType = new GraphQLList(outputFieldType);
-            }
             if (nonNullable) {
-                outputFieldType = new GraphQLNonNull(outputFieldType);
+                inputType = inputType && new GraphQLNonNull(inputType);
+                outputType = new GraphQLNonNull(outputType);
             }
-            inputFields[fieldName] = {
-                type: inputFieldType,
+            if (inputType) {
+                inputFieldConfigMap[propertyName] = {
+                    type: inputType,
+                };
+            }
+            outputFieldConfigMap[propertyName] = {
+                type: outputType,
+                args: (queryable && outputType instanceof GraphQLList) ? {
+                    queryOptions: {
+                        type: ODataQueryOptions,
+                    },
+                } : {},
+                resolve: this.getResolver({ method: 'GET', ...serviceContext }),
             };
-            outputFields[fieldName] = {
-                type: outputFieldType,
-            };
-        }
-        objectElement.querySelectorAll('Property').forEach(field => fieldFactory(field));
-        objectElement.querySelectorAll('NavigationProperty').forEach(field => fieldFactory(field));
-        const identifierFieldName = objectElement.querySelector('PropertyRef')?.getAttribute('Name');
-        if (identifierFieldName) {
-            this.identifierFieldMap.set(typeName, identifierFieldName);
-        }
-        if (objectElement.getAttribute('Abstract')) {
-            if (!this.inputTypeMap.has(typeRef)) {
-                this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                    name: typeName + 'Input',
-                    fields: inputFields,
-                }))
+        });
+        const baseTypeRef = typeElement.getAttribute('BaseType');
+        const isAbstract = this.isAbstractType(typeElement);
+        if (baseTypeRef) {
+            const { typeName: baseTypeName } = this.parseTypeRef(baseTypeRef);
+            if (!this.baseTypeImplementationsMap.has(baseTypeName)) {
+                this.baseTypeImplementationsMap.set(baseTypeName, []);
             }
-            if (!this.outputTypeMap.has(typeRef)) {
-                this.outputTypeMap.set(typeRef, new GraphQLInterfaceType({
-                    name: typeName,
-                    fields: outputFields,
-                    resolveType: root => this.outputTypeMap.get(this.resolveSchemaAlias(root['@odata.type'])) as GraphQLObjectType,
-                }))
-            }
-        } else {
-            const interfaces: GraphQLInterfaceType[] = [];
-            let interfaceName = objectElement.getAttribute('BaseType');
-            if (interfaceName) {
-                interfaceName = this.resolveSchemaAlias(interfaceName);
-                const interfaceInputType = this.inputTypeMap.get(interfaceName) as GraphQLInputObjectType;
-                const interfaceOutputType = this.outputTypeMap.get(interfaceName) as GraphQLInterfaceType;
-                if (!interfaceInputType || !interfaceOutputType) {
-                    this.unresolvedDependencies.push({
-                        typeRef,
-                        fieldName: '__typename',
-                        fieldTypeRef: objectElement.getAttribute('BaseType')!,
-                        isList: false,
-                        nonNullable: false,
-                        navigationProperty: false,
-                    });
-                } else {
-                    Object.assign(inputFields, interfaceInputType.toConfig().fields);
-                    Object.assign(outputFields, interfaceOutputType.toConfig().fields);
-                    const interfaceTypeName = interfaceOutputType.name;
-                    if (this.identifierFieldMap.has(interfaceTypeName) && !this.identifierFieldMap.has(typeName)) {
-                        const identifierFieldName = this.identifierFieldMap.get(interfaceTypeName!)!;
-                        this.identifierFieldMap.set(typeName, identifierFieldName);
-                    }
-                    if (interfaceOutputType instanceof GraphQLInterfaceType) {
-                        interfaces.push(interfaceOutputType);
-                    }
+            this.baseTypeImplementationsMap.get(baseTypeName)?.push(typeName);
+            const baseInputType = this.getInputTypeByRef(baseTypeName) as GraphQLInputObjectType;
+            const baseOutputType = this.getOutputTypeByRef(baseTypeName) as GraphQLObjectType | GraphQLInterfaceType;
+            if (!baseOutputType) {
+                this.unresolvedDependencies.push({
+                    typeName,
+                    fieldName: '__typename',
+                    fieldTypeName: baseTypeName,
+                    nonNullable: false,
+                    queryable: false,
+                });
+            } else {
+                if (baseInputType) {
+                    const baseInputFieldsConfig = baseInputType.toConfig().fields;
+                    Object.assign(inputFieldConfigMap, baseInputFieldsConfig);
+                }
+                const baseOutputFieldsConfig = baseOutputType.toConfig().fields;
+                Object.assign(outputFieldConfigMap, baseOutputFieldsConfig);
+                if (this.entityTypeNameIdentifierFieldNameMap.has(baseOutputType.name) && !this.entityTypeNameIdentifierFieldNameMap.has(typeName)) {
+                    const identifierFieldName = this.entityTypeNameIdentifierFieldNameMap.get(baseOutputType.name!)!;
+                    this.entityTypeNameIdentifierFieldNameMap.set(typeName, identifierFieldName);
+                }
+                if (baseOutputType instanceof GraphQLInterfaceType && !isAbstract) {
+                    objectTypeConfig.interfaces = [baseOutputType];
                 }
             }
-            if (!this.inputTypeMap.has(typeRef)) {
-                this.inputTypeMap.set(typeRef, new GraphQLInputObjectType({
-                    name: typeName + 'Input',
-                    fields: inputFields,
-                }))
+        }
+        let objectType: GraphQLInterfaceType | GraphQLObjectType;
+        if (isAbstract) {
+            objectType = new GraphQLInterfaceType({
+                ...objectTypeConfig,
+                resolveType: root => this.getOutputTypeByRef(root['@odata.type']) as GraphQLObjectType,
+            })
+        } else {
+            objectType = new GraphQLObjectType(objectTypeConfig);
+        }
+        const inputObjectType = new GraphQLInputObjectType(inputObjectTypeConfig);
+        if (typeElement.tagName.toLowerCase() === 'EntityType'.toLowerCase()) {
+            if (!this.entityTypeNameGraphQLObjectTypeMap.has(typeName)) {
+                this.entityTypeNameGraphQLObjectTypeMap.set(typeName, objectType);
             }
-            if (!this.outputTypeMap.has(typeRef)) {
-                this.outputTypeMap.set(typeRef, new GraphQLObjectType({
-                    name: typeName,
-                    fields: outputFields,
-                    interfaces,
-                }))
+            if (!this.entityTypeNameGraphQLInputObjectTypeMap.has(typeName)) {
+                this.entityTypeNameGraphQLInputObjectTypeMap.set(typeName, inputObjectType);
+            }
+        } else {
+            if (!this.complexTypeNameGraphQLObjectTypeMap.has(typeName)) {
+                this.complexTypeNameGraphQLObjectTypeMap.set(typeName, objectType);
+            }
+            if (!this.complexTypeNameGraphQLInputObjectTypeMap.has(typeName)) {
+                this.complexTypeNameGraphQLInputObjectTypeMap.set(typeName, inputObjectType);
             }
         }
     }
-    async processServiceConfig(serviceConfig: ServiceConfig) {
+    private processEntitySet(entitySetElement: Element, serviceContext: ServiceContext) {
+
+        const entitySetName = entitySetElement.getAttribute('Name');
+        const entityTypeRef = entitySetElement.getAttribute('EntityType');
+        if (!entitySetName || !entityTypeRef) {
+            throw new Error('Invalid EntitySet!');
+        }
+        const { typeName: entityTypeName } = this.parseTypeRef(entityTypeRef);
+        const entityType = this.getOutputTypeByRef(entityTypeName) as GraphQLObjectType;
+        if (!entityType) {
+            throw new Error(`Type for ${entitySetName} not found!`)
+        }
+        this.entitySetEntityTypeNameMap.set(entitySetName, entityTypeName);
+
+        const entityInput = this.getInputTypeByRef(entityTypeName) as GraphQLInputObjectType;
+        const entityInputFields = entityInput.getFields();
+
+        this.queryFields[`get${entitySetName}`] = {
+            type: new GraphQLList(entityType),
+            args: {
+                ...this.commonArgs,
+                queryOptions: {
+                    type: ODataQueryOptions,
+                },
+            },
+            resolve: this.getResolver({ entitySetName, method: 'GET', ...serviceContext })
+        };
+
+        const identifierField = this.getEntityTypeIdentifier(entityTypeName);
+
+        const getByIdFieldConfig: GraphQLFieldConfig<any, any> = {
+            type: entityType,
+            args: {
+                ...this.commonArgs,
+                [identifierField.name]: {
+                    type: identifierField.type as GraphQLInputType,
+                }
+            },
+            resolve: this.getResolver({ entitySetName, method: 'GET', ...serviceContext })
+        };
+
+        this.queryFields[`get${entitySetName}By${identifierField.name}`] = getByIdFieldConfig;
+        this.mutationFields[`get${entitySetName}By${identifierField.name}`] = getByIdFieldConfig;
+
+        this.mutationFields[`delete${entitySetName}By${identifierField.name}`] = {
+            type: GraphQLJSON,
+            args: {
+                ...this.commonArgs,
+                [identifierField.name]: {
+                    type: identifierField.type as GraphQLInputType,
+                }
+            },
+            resolve: this.getResolver({ entitySetName, method: 'DELETE', ...serviceContext })
+        };
+
+        const entityUpdateInputFields: GraphQLInputFieldConfigMap = {};
+
+        for (const fieldName in entityInputFields) {
+            const inputField = entityInputFields[fieldName];
+            entityUpdateInputFields[fieldName] = {
+                type: inputField.type instanceof GraphQLNonNull ? inputField.type.ofType as GraphQLInputType : inputField.type,
+            }
+        };
+
+        const entityUpdateInput = new GraphQLInputObjectType({
+            name: `${entitySetName}UpdateInput`,
+            fields: entityUpdateInputFields,
+        })
+
+        this.mutationFields[`update${entitySetName}By${identifierField.name}`] = {
+            type: entityType,
+            args: {
+                ...this.commonArgs,
+                [identifierField.name]: {
+                    type: identifierField.type as GraphQLInputType,
+                },
+                input: {
+                    type: entityUpdateInput,
+                },
+            },
+            resolve: this.getResolver({ entitySetName, method: 'PATCH', ...serviceContext })
+        };
+
+        this.mutationFields[`create${entitySetName}`] = {
+            type: entityType,
+            args: {
+                ...this.commonArgs,
+                input: {
+                    type: entityInput,
+                },
+            },
+            resolve: this.getResolver({ entitySetName, method: 'POST', ignoreIdentifierArg: true, ...serviceContext })
+        };
+
+        this.queryFields[`get${entitySetName}Count`] = {
+            type: GraphQLInt,
+            args: {
+                ...this.commonArgs,
+            },
+            resolve: this.getResolver({ entitySetName, method: 'GET', count: true, ...serviceContext })
+        }
+
+    }
+    private getActualGraphQLType(type: GraphQLType) {
+        if ('ofType' in type) {
+            return type.ofType;
+        }
+        return type;
+    }
+    private processOperations(operationTypeElement: Element, serviceContext: ServiceContext) {
+        const operationName = operationTypeElement.getAttribute('Name');
+        if (!operationName) {
+            throw new Error(`Invalid ${operationTypeElement.tagName}! Name not found!`);
+        }
+        this.operationNames.add(operationName);
+        let returnType: GraphQLOutputType = GraphQLJSON;
+        const operationTypeName = operationTypeElement.getAttribute('Type');
+        if (operationTypeName) {
+            returnType = this.getOutputTypeByRef(operationTypeName) || GraphQLJSON;
+        }
+        const returnTypeRef = operationTypeElement.querySelector('ReturnType')?.getAttribute('Type');
+        if (returnTypeRef) {
+            returnType = this.getOutputTypeByRef(returnTypeRef) || GraphQLJSON;
+        }
+        const method = operationTypeElement.tagName.toLowerCase() === 'Action'.toLowerCase() ? 'POST' : 'GET';
+        const isBound = operationTypeElement.getAttribute('IsBound') === 'true';
+        if (isBound) {
+            let bindingParameterName = operationTypeElement.getAttribute('EntitySetPath');
+            let bindingType: GraphQLObjectType | undefined;
+            const operationArgs: GraphQLArgument[] = [];
+            operationTypeElement.querySelectorAll('Parameter').forEach(parameterElement => {
+                const paramName = parameterElement.getAttribute('Name');
+                const paramTypeRef = parameterElement.getAttribute('Type');
+                if (!paramName || !paramTypeRef) {
+                    throw new Error(`Invalid ${parameterElement.tagName}! Name or Type not found!`);
+                }
+                if (bindingParameterName ? bindingParameterName === paramName : this.isEntityType(paramTypeRef)) {
+                    bindingParameterName = paramName;
+                    bindingType = this.getOutputTypeByRef(paramTypeRef, true) as GraphQLObjectType;
+                } else {
+                    const paramType = this.getInputTypeByRef(paramTypeRef);
+                    if (!paramType) {
+                        throw new Error(`${paramTypeRef} is an invalid type name for ${operationName}.${paramName}!`)
+                    }
+                    operationArgs.push({
+                        name: paramName,
+                        type: paramType,
+                        description: '',
+                        defaultValue: undefined,
+                        extensions: [],
+                        astNode: undefined,
+                    });
+                }
+            });
+            if (!bindingType) {
+                throw new Error(`Binding parameter cannot be found for ${operationName}!`);
+            }
+            if (returnType instanceof GraphQLList) {
+                operationArgs.push({
+                    name: 'queryOptions',
+                    type: ODataQueryOptions,
+                    description: '',
+                    extensions: [],
+                    defaultValue: undefined,
+                    astNode: undefined,
+                });
+            }
+            const bindingTypeFieldsMap = bindingType.getFields();
+            bindingTypeFieldsMap[operationName] = {
+                name: operationName,
+                description: '',
+                args: operationArgs,
+                extensions: [],
+                type: returnType,
+                resolve: this.getResolver({ method, ...serviceContext })
+            }
+        } else {
+            const operationArgs: GraphQLFieldConfigArgumentMap = {};
+            operationTypeElement.querySelectorAll('Parameter').forEach(parameterElement => {
+                const paramName = parameterElement.getAttribute('Name');
+                const paramTypeRef = parameterElement.getAttribute('Type');
+                if (!paramName || !paramTypeRef) {
+                    throw new Error(`Invalid ${parameterElement.tagName}! Name or Type not found!`);
+                }
+                const paramType = this.getInputTypeByRef(paramTypeRef);
+                if (!paramType) {
+                    throw new Error(`${paramTypeRef} is an invalid type name for ${operationName}.${paramName}!`)
+                }
+                operationArgs[paramName] = {
+                    type: paramType,
+                };
+            });
+            const rootFields = method === 'GET' ? this.queryFields : this.mutationFields;
+            rootFields[operationName] = {
+                type: returnType,
+                args: operationArgs,
+                resolve: this.getResolver({ method, ...serviceContext })
+            }
+        }
+    }
+    private reprocessUnresolvedDependencies(serviceContext: ServiceContext) {
+        for (const unresolvedDependency of this.unresolvedDependencies) {
+            const outputType = this.getOutputTypeByRef(unresolvedDependency.typeName) as GraphQLObjectType | GraphQLInterfaceType;
+            let outputFieldType = this.getOutputTypeByRef(unresolvedDependency.fieldTypeName) as GraphQLObjectType | GraphQLInterfaceType;
+            if (!outputType || !outputFieldType) {
+                throw new Error(`${unresolvedDependency.typeName}.${unresolvedDependency.fieldName} => ${unresolvedDependency.fieldTypeName} cannot be resolved!`);
+            }
+            if (unresolvedDependency.fieldName === '__typename') {
+                Object.assign(outputType.getFields(), outputFieldType.getFields());
+                if (outputType instanceof GraphQLObjectType && outputFieldType instanceof GraphQLInterfaceType) {
+                    outputType.getInterfaces().push(outputFieldType);
+                }
+                const baseTypeName = outputFieldType.name;
+                if (this.entityTypeNameIdentifierFieldNameMap.has(baseTypeName) && !this.entityTypeNameIdentifierFieldNameMap.has(outputType.name)) {
+                    const identifierFieldName = this.entityTypeNameIdentifierFieldNameMap.get(baseTypeName!)!;
+                    this.entityTypeNameIdentifierFieldNameMap.set(outputType.name, identifierFieldName);
+                }
+            } else {
+                const fieldMap = outputType.getFields();
+                const outputField: GraphQLField<any, any> = {
+                    name: unresolvedDependency.fieldName,
+                    type: unresolvedDependency.nonNullable ? new GraphQLNonNull(outputFieldType) : outputFieldType,
+                    description: '',
+                    args: [],
+                    extensions: [],
+                    resolve: this.getResolver({ method: 'GET', ...serviceContext }),
+                }
+                if (unresolvedDependency.queryable && outputFieldType instanceof GraphQLList) {
+                    outputField.args.push({
+                        name: 'queryOptions',
+                        type: ODataQueryOptions,
+                        description: '',
+                        extensions: [],
+                        defaultValue: undefined,
+                        astNode: undefined,
+                    })
+                }
+                fieldMap[unresolvedDependency.fieldName] = outputField;
+            }
+            const inputType = this.getInputTypeByRef(unresolvedDependency.typeName) as GraphQLInputObjectType;
+            if (inputType) {
+                const fieldMap = inputType.getFields();
+                const inputFieldType = this.getInputTypeByRef(unresolvedDependency.fieldTypeName);
+                if (!inputFieldType) {
+                    throw new Error(`${unresolvedDependency.typeName}.${unresolvedDependency.fieldName} => ${unresolvedDependency.fieldTypeName} cannot be resolved!`);
+                }
+                const inputField: GraphQLInputField = {
+                    name: unresolvedDependency.fieldName,
+                    type: inputFieldType,
+                    extensions: [],
+                };
+                fieldMap[unresolvedDependency.fieldName] = inputField;
+            }
+            this.baseTypeImplementationsMap.get(unresolvedDependency.typeName)?.forEach(implementation => {
+                const implementationInputType = this.getInputTypeByRef(implementation) as GraphQLInputObjectType;
+                Object.assign(implementationInputType.getFields(), inputType.getFields());
+                const implementationOutputType = this.getOutputTypeByRef(implementation) as GraphQLObjectType;
+                Object.assign(implementationOutputType.getFields(), outputType.getFields());
+            });
+        }
+    }
+    private processSchema(schemaElement: Document | Element, serviceContext: ServiceContext) {
+        schemaElement.querySelectorAll('EnumType').forEach(enumElement => this.processEnumElement(enumElement));
+        schemaElement.querySelectorAll('EntityType,ComplexType').forEach(typeElement => this.processTypeElement(typeElement, serviceContext));
+        this.reprocessUnresolvedDependencies(serviceContext);
+        schemaElement.querySelectorAll('EntitySet').forEach(entitySetElement => this.processEntitySet(entitySetElement, serviceContext));
+        schemaElement.querySelectorAll('Function,Action,Singleton').forEach(operationElement => this.processOperations(operationElement, serviceContext));
+    }
+
+    public async processServiceConfig(serviceConfig: ServiceConfig) {
         const metadataUrl = urljoin(serviceConfig.baseUrl, serviceConfig.servicePath, '$metadata');
         const metadataRequest = new Request(metadataUrl, {
             headers: serviceConfig.metadataHeaders,
         });
 
         const interpolator = new Interpolator();
-
-        const serviceArgs: GraphQLFieldConfigArgumentMap = {};
 
         const interpolationStrings = [
             ...(serviceConfig.operationHeaders
@@ -378,7 +833,7 @@ export class ODataGraphQLSchemaFactory {
             const varName =
                 interpolationKeyParts[interpolationKeyParts.length - 1];
             if (interpolationKeyParts[0] === 'args') {
-                serviceArgs[varName] = {
+                this.commonArgs[varName] = {
                     type: new GraphQLNonNull(GraphQLID)
                 };
             } else if (interpolationKeyParts[0] === 'context') {
@@ -386,7 +841,7 @@ export class ODataGraphQLSchemaFactory {
             }
         }
 
-        const serviceBaseUrlFactory = (interpolationData: any) => interpolator.parse(urljoin(serviceConfig.baseUrl, serviceConfig.servicePath), interpolationData);
+        const serviceUrlFactory = (interpolationData: any) => interpolator.parse(urljoin(serviceConfig.baseUrl, serviceConfig.servicePath), interpolationData);
 
         const headersFactory = (interpolationData: any) => {
             const headers = new Headers();
@@ -401,331 +856,9 @@ export class ODataGraphQLSchemaFactory {
         const text = await response.text();
         const { window: { document } } = new JSDOM(text);
 
-        document.querySelectorAll('Schema').forEach(schemaElement => {
-            const namespace = schemaElement.getAttribute('Namespace')!;
-            const alias = schemaElement.getAttribute('Alias');
-            if (alias) {
-                this.schemaAliasMap.set(alias, namespace);
-            }
-        });
-
-        document.querySelectorAll('EnumType').forEach(enumElement => this.processEnumElement(enumElement));
-        document.querySelectorAll('ComplexType').forEach(typeElement => this.processTypeElement(typeElement));
-        document.querySelectorAll('EntityType').forEach(typeElement => this.processTypeElement(typeElement));
-
-        while(this.unresolvedDependencies.length > 0) {
-            const { typeRef, fieldName, fieldTypeRef, isList, nonNullable, navigationProperty } = this.unresolvedDependencies.pop()!;
-            const inputType = this.inputTypeMap.get(typeRef) as GraphQLInputObjectType;
-            const inputTypeFieldMap = inputType.getFields();
-            const outputType = this.outputTypeMap.get(typeRef) as GraphQLObjectType;
-            const outputTypeFieldMap = outputType.getFields();
-            let inputFieldType = this.inputTypeMap.get(fieldTypeRef)!;
-            let outputFieldType = this.outputTypeMap.get(fieldTypeRef)! as any;
-            if (fieldName === '__typename') {
-                Object.assign(inputTypeFieldMap, (inputFieldType as GraphQLInputObjectType).getFields());
-                Object.assign(outputTypeFieldMap, (outputFieldType as GraphQLObjectType).getFields());
-                const interfaces = outputType.getInterfaces();
-                if (!interfaces.includes(outputFieldType)) {
-                    interfaces.push(outputFieldType);
-                }
-                const interfaceTypeName = outputFieldType.name;
-                if (this.identifierFieldMap.has(interfaceTypeName) && !this.identifierFieldMap.has(outputType.name)) {
-                    const identifierFieldName = this.identifierFieldMap.get(interfaceTypeName!)!;
-                    this.identifierFieldMap.set(outputType.name, identifierFieldName);
-                }
-            } else {
-                if (isList) {
-                    inputFieldType = new GraphQLList(inputFieldType);
-                    outputFieldType = new GraphQLList(outputFieldType);
-                }
-                if (nonNullable) {
-                    inputFieldType = new GraphQLNonNull(inputFieldType);
-                    outputFieldType = new GraphQLNonNull(outputFieldType);
-                }
-                const inputField: GraphQLInputField = {
-                    name: fieldName,
-                    type: inputFieldType,
-                    extensions: [],
-                };
-                Object.assign(inputTypeFieldMap, {
-                    [fieldName]: inputField,
-                });
-                const outputField: GraphQLField<any, any> = {
-                    name: fieldName,
-                    type: outputFieldType,
-                    description: '',
-                    args: [],
-                    extensions: [],
-                };
-                if (navigationProperty) {
-                    outputField.args.push({
-                        name: 'queryOptions',
-                        type: ODataQueryOptions,
-                        description: '',
-                        extensions: [],
-                        defaultValue: undefined,
-                        astNode: undefined,
-                    })
-                    outputField.resolve = this.getNavigationPropertyResolver();
-                }
-                Object.assign(outputTypeFieldMap, {
-                    [fieldName]: outputField,
-                });
-            }
-            if (outputType instanceof GraphQLInterfaceType) {
-                for (const otherType of this.outputTypeMap.values()) {
-                    if (otherType instanceof GraphQLObjectType
-                        && otherType.getInterfaces().includes(outputType)) {
-                            Object.assign(otherType.getFields(), outputType.getFields());
-                    }
-                }
-            }
-        }
-
-        document.querySelectorAll('EntityContainer').forEach(entityContainerElement => {
-            entityContainerElement.querySelectorAll('EntitySet').forEach(entitySetElement => {
-                const entitySetName = entitySetElement.getAttribute('Name')!;
-                let entityName = entitySetElement.getAttribute('EntityType')!;
-                entityName = this.resolveSchemaAlias(entityName);
-                const entitySetType = this.outputTypeMap.get(entityName!)! as GraphQLObjectType;
-                entityName = entitySetType.name;
-                this.queryFields[entitySetName] = {
-                    type: new GraphQLList(entitySetType),
-                    args: {
-                        ...serviceArgs,
-                        queryOptions: {
-                            type: ODataQueryOptions,
-                        },
-                    },
-                    resolve: async (root, args, context, info) => {
-                        const entitySetRequest = this.prepareRequest({
-                            resolverData: { root, args, context, info },
-                            serviceBaseUrlFactory,
-                            headersFactory,
-                            entitySetName,
-                            entityName,
-                        })
-                        const response = await fetchache(entitySetRequest, this.cache);
-                        const responseJson = await response.json();
-                        if (responseJson.error) {
-                            throw returnExtendedError(responseJson.error);
-                        }
-                        return responseJson.value;
-                    },
-                };
-                const identifierFieldName = this.identifierFieldMap.get('name' in entitySetType! ? (entitySetType as any).name : entitySetName);
-                const identifierFieldType = entitySetType.getFields()[identifierFieldName!]!.type as GraphQLScalarType;
-                this.queryFields[entitySetName + 'By' + identifierFieldName] = {
-                    type: entitySetType,
-                    args: {
-                        ...serviceArgs,
-                        ...(identifierFieldName ? {
-                            [identifierFieldName]: {
-                                type: identifierFieldType as GraphQLInputType,
-                            }
-                        } : {})
-                    },
-                    resolve: async (root, args, context, info) => {
-                        const entitySetRequest = this.prepareRequest({
-                            resolverData: { root, args, context, info },
-                            serviceBaseUrlFactory,
-                            headersFactory,
-                            entityName,
-                            entitySetName,
-                        })
-                        const response = await fetchache(entitySetRequest, this.cache);
-                        const responseJson = await response.json();
-                        if (responseJson.error) {
-                            throw returnExtendedError(responseJson.error);
-                        }
-                        return responseJson;
-                    },
-                };
-            })
-        });
-
-        const actionFactory = (actionElement: Element, fieldName?: string, entityType?: GraphQLObjectType) => {
-            const actionName = actionElement.getAttribute('Name')!;
-            let actionFieldName = fieldName || actionName;
-            let returnType: GraphQLOutputType = GraphQLBoolean;
-            const args: GraphQLFieldConfigArgumentMap = {};
-            const bound = actionElement.getAttribute('IsBound') === 'true';
-            const bindingParamName = actionElement.getAttribute('EntitySetPath')! || 'bindingParameter';
-            let entityName = entityType?.name;
-            actionElement.querySelectorAll('Parameter').forEach(paramElement => {
-                const paramName = paramElement.getAttribute('Name')!;
-                let paramTypeName = paramElement.getAttribute('Type')!;
-                if (bound && paramName === bindingParamName) {
-                    entityName = paramElement.getAttribute('Type')!;
-                    let isList = false;
-                    if (entityName.startsWith('Collection(')) {
-                        isList = true;
-                        entityName = entityName
-                            .replace('Collection(', '')
-                            .replace(')', '');
-                    }
-                    entityName = this.resolveSchemaAlias(entityName);
-                    entityType = this.outputTypeMap.get(entityName)! as any;
-                    if ('name' in entityType!) {
-                        entityName = entityType!.name;
-                        actionFieldName += entityName;
-                    }
-                } else {
-                    let isList = false;
-                    if (paramTypeName.startsWith('Collection(')) {
-                        isList = true;
-                        paramTypeName = paramTypeName
-                            .replace('Collection(', '')
-                            .replace(')', '');
-                    }
-                    paramTypeName = this.resolveSchemaAlias(paramTypeName);
-                    let paramType = this.inputTypeMap.get(paramTypeName)!;
-                    if (isList) {
-                        paramType = new GraphQLList(paramType);
-                    }
-                    if (paramElement.getAttribute('Nullable') === 'false') {
-                        paramType = new GraphQLNonNull(paramType);
-                    }
-                    args[paramName] = {
-                        type: paramType,
-                    };
-                }
-            });
-            const returnTypeElement = actionElement.querySelector('ReturnType');
-            if (returnTypeElement) {
-                let returnTypeAttr = returnTypeElement.getAttribute('Type');
-                if (returnTypeAttr) {
-                    let isList = false;
-                    if (returnTypeAttr!.startsWith('Collection(')) {
-                        isList = true;
-                        returnTypeAttr = returnTypeAttr
-                            .replace('Collection(', '')
-                            .replace(')', '');
-                    }
-                    returnTypeAttr = this.resolveSchemaAlias(returnTypeAttr);
-                    returnType = this.outputTypeMap.get(returnTypeAttr) as any;
-                    if (isList) {
-                        returnType = new GraphQLList(returnType);
-                    }
-                }
-            }
-            if (bound) {
-                const identifierFieldName = this.identifierFieldMap.get(entityName!);
-                if (identifierFieldName) {
-                    const identifierFieldType = entityType!.getFields()[identifierFieldName].type!;
-                    args[identifierFieldName] = {
-                        type: identifierFieldType as GraphQLInputType,
-                    };
-                }
-            }
-            this.mutationFields[actionFieldName] = {
-                type: returnType,
-                args: {
-                    ...serviceArgs,
-                    ...args,
-                    queryOptions: {
-                        type: ODataQueryOptions,
-                    },
-                },
-                resolve: async (root, args, context, info) => {
-                    const entitySetRequest = this.prepareRequest({
-                        resolverData: { root, args, context, info },
-                        serviceBaseUrlFactory,
-                        headersFactory,
-                        entitySetName: '',
-                        entityName: entityName!,
-                        actionName,
-                        method: 'POST',
-                    });
-                    const response = await fetchache(entitySetRequest, this.cache);
-                    const responseJson = await response.json();
-                    if (responseJson.error) {
-                        throw returnExtendedError(responseJson.error);
-                    }
-                    if (returnType instanceof GraphQLList) {
-                        return responseJson.value;
-                    }
-                    return responseJson;
-                }
-            }
-        };
-
-        const actionImportFactory = (actionImportElement: Element) => {
-            const fieldName = actionImportElement.getAttribute('Name')!;
-            const actionType = actionImportElement.tagName.toLowerCase() === 'functionimport' ? 'Function' : 'Action';
-            const actionRef = actionImportElement.getAttribute(actionType)!;
-            const actionRefArr = actionRef.split('.');
-            const actionName = actionRefArr[actionRefArr.length - 1];
-            const schemaPathArr = actionRefArr.slice(0, actionRefArr.length - 1);
-            const schemaRef = schemaPathArr.join('.');
-            const actionElement = document.querySelector(`Schema[Namespace='${schemaRef}'] ${actionType}[Name='${actionName}']`)!;
-            const entitySetName = actionImportElement.getAttribute('EntitySet')!;
-            if (entitySetName) {
-                const entitySetElement = document.querySelector(`EntitySet[Name='${entitySetName}']`)!;
-                let entityName = entitySetElement.getAttribute('EntityType')!;
-                if (entityName.startsWith('Collection(')) {
-                    entityName = entityName
-                        .replace('Collection(', '')
-                        .replace(')', '');
-                }
-                entityName = this.resolveSchemaAlias(entityName);
-                const entityType = this.outputTypeMap.get(entityName) as any;
-                actionFactory(actionElement, fieldName, entityType);
-            }
-            actionFactory(actionElement, fieldName);
-        }
-
-        document.querySelectorAll('Action[EntitySetPath]').forEach(actionElement => actionFactory(actionElement));
-        document.querySelectorAll('Function[EntitySetPath]').forEach(functionElement => actionFactory(functionElement));
-
-        document.querySelectorAll(`Action:not([EntitySetPath]) Parameter[Name='bindingParameter']`).forEach(paramElement => actionFactory(paramElement.parentElement!));
-        document.querySelectorAll(`Function:not([EntitySetPath]) Parameter[Name='bindingParameter']`).forEach(paramElement => actionFactory(paramElement.parentElement!));
-
-        document.querySelectorAll('ActionImport').forEach(actionImportElement => actionImportFactory(actionImportElement));
-        document.querySelectorAll('FunctionImport').forEach(functionImportElement => actionImportFactory(functionImportElement));
-
-        document.querySelectorAll('Singleton').forEach(singletonElement => {
-            const fieldName = singletonElement.getAttribute('Name')!;
-            let typeName = singletonElement.getAttribute('Type')!;
-            let isList = false;
-            if (typeName.startsWith('Collection(')) {
-                isList = true;
-                typeName = typeName
-                    .replace('Collection(', '')
-                    .replace(')', '');
-            }
-            typeName = this.resolveSchemaAlias(typeName);
-            let returnType = this.outputTypeMap.get(typeName)! as any;
-            if ('name' in returnType) {
-                typeName = returnType.name;
-            }
-            if (isList) {
-                returnType = new GraphQLList(returnType);
-            }
-            this.queryFields[fieldName] = {
-                type: returnType,
-                args: {
-                    ...serviceArgs,
-                },
-                resolve: async (root, args, context, info) => {
-                    const entitySetRequest = this.prepareRequest({
-                        resolverData: { root, args, context, info },
-                        serviceBaseUrlFactory,
-                        headersFactory,
-                        entityName: typeName,
-                        entitySetName: fieldName,
-                    });
-                    const response = await fetchache(entitySetRequest, this.cache);
-                    const responseJson = await response.json();
-                    if (responseJson.error) {
-                        throw returnExtendedError(responseJson.error);
-                    }
-                    if (isList) {
-                        return responseJson.value;
-                    }
-                    return responseJson;
-                }
-            }
+        this.processSchema(document, {
+            serviceUrlFactory,
+            headersFactory,
         });
 
     }
