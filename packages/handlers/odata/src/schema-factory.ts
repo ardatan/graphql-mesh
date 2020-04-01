@@ -683,6 +683,7 @@ export class ODataGraphQLSchemaFactory {
 
         document.querySelectorAll('ActionImport').forEach(actionImportElement => actionImportFactory(actionImportElement));
         document.querySelectorAll('FunctionImport').forEach(functionImportElement => actionImportFactory(functionImportElement));
+
         document.querySelectorAll('Singleton').forEach(singletonElement => {
             const fieldName = singletonElement.getAttribute('Name')!;
             let typeName = singletonElement.getAttribute('Type')!;
