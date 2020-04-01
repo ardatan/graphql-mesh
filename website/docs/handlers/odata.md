@@ -4,7 +4,7 @@ title: OData
 sidebar_label: OData
 ---
 
-This handler allows you to load remote OData schemas.
+This handler allows you to load remote OData metadata/schema as GraphQL Schema.
 
 To get started, install the handler library from NPM:
 
