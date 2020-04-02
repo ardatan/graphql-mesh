@@ -12,10 +12,11 @@
     "@graphql-mesh/grpc": "0.0.17",
     "debug": "4.1.1",
     "google-protobuf": "3.11.4",
-    "graphql": "14.6.0",
+    "graphql": "15.0.0",
     "grpc": "1.24.2"
   },
   "devDependencies": {
+        "bob-the-bundler": "0.3.4",
     "@types/debug": "4.1.5",
     "@types/google-protobuf": "3.7.2",
     "@types/node": "13.9.1",

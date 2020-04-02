@@ -1,4 +1,4 @@
-declare module 'string-interpolation/src';
+declare module '@ardatan/string-interpolation';
 
 declare global {
     interface ObjectConstructor {

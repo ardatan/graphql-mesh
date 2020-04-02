@@ -159,7 +159,6 @@ export async function getMesh(
   }
 
   async function meshExecute<
-    TData = any,
     TVariables = any,
     TContext = any,
     TRootValue = any
@@ -171,7 +170,7 @@ export async function getMesh(
   ) {
     const contextValue = await buildMeshContext(context);
 
-    return execute<TData>({
+    return execute({
       document: ensureDocumentNode(document),
       contextValue,
       rootValue: rootValue || {},
@@ -184,7 +183,7 @@ export async function getMesh(
     document: DocumentNode,
     variables: V
   ) => {
-    const executionResult = await meshExecute<R, V>(document, variables, {});
+    const executionResult = await meshExecute<V>(document, variables, {});
 
     if (executionResult.data && !executionResult.errors) {
       return executionResult.data as R;

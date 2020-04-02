@@ -1,280 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`openapi should create a GraphQL schema from a simple local swagger file 1`] = `
-"enum Action {
-  FOLLOW
-  UNFOLLOW
-  BLOCK
-  UNBLOCK
-  APPROVE
-  IGNORE
-}
-
-type CaptionData {
-  \\"\\"\\"Caption creation UNIX timestamp\\"\\"\\"
-  createdTime: String
-  from: UserShortInfo
-
-  \\"\\"\\"ID of this caption\\"\\"\\"
-  id: String
-
-  \\"\\"\\"Caption text\\"\\"\\"
-  text: String
-}
-
-type CommentEntry {
-  \\"\\"\\"Comment creation UNIX timestamp\\"\\"\\"
-  createdTime: String
-  from: UserShortInfo
-
-  \\"\\"\\"ID of this comment\\"\\"\\"
-  id: String
-
-  \\"\\"\\"Text of the comment\\"\\"\\"
-  text: String
-}
-
-type CommentsCollection {
-  \\"\\"\\"
-  Nember of comments available, data does not necessary contain all comments
-  \\"\\"\\"
-  count: Int
-
-  \\"\\"\\"
-  Collection of comment entries; **warning:** deprecated for Apps [created on or
-  after Nov 17, 2015](http://instagram.com/developer/changelog/)
-  \\"\\"\\"
-  data: [CommentEntry]
-}
-
-type CommentsResponse {
-  \\"\\"\\"Collection of comments\\"\\"\\"
-  data: [CommentEntry]
-  meta: MetaData
-}
-
-type CursorPaginationInfo {
-  \\"\\"\\"The cursor ID of the next page\\"\\"\\"
-  nextCursor: String
-
-  \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
-  nextUrl: String
-}
-
-type IdPaginationInfo {
-  \\"\\"\\"The max ID of the next page\\"\\"\\"
-  nextMaxId: String
-
-  \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
-  nextUrl: String
-}
-
-type ImageInfo {
-  \\"\\"\\"Image/video height in pixels\\"\\"\\"
-  height: Int
-
-  \\"\\"\\"URL of the image/video resource\\"\\"\\"
-  url: String
-
-  \\"\\"\\"Image/video width in pixels\\"\\"\\"
-  width: Int
-}
-
-type ImagesData {
-  lowResolution: ImageInfo
-  standardResolution: ImageInfo
-  thumbnail: ImageInfo
-}
-
-enum IncomingStatus {
-  NONE
-  FOLLOWED_BY
-  REQUESTED_BY
-}
-
-type LikesCollection {
-  \\"\\"\\"
-  Nember of likes available, data does not necessary contain all comments
-  \\"\\"\\"
-  count: Int
-
-  \\"\\"\\"
-  Collection of users who liked; **warning:** deprecated for Apps [created on or
-  after Nov 17, 2015](http://instagram.com/developer/changelog/)
-  \\"\\"\\"
-  data: [UserShortInfo]
-}
-
-type LocationInfo {
-  \\"\\"\\"ID of this location (in some responses it has a type of 'integer')\\"\\"\\"
-  id: String
-
-  \\"\\"\\"Location latitude\\"\\"\\"
-  latitude: Float
-
-  \\"\\"\\"Location longitude\\"\\"\\"
-  longitude: Float
-
-  \\"\\"\\"Location name\\"\\"\\"
-  name: String
-}
-
-type LocationInfoResponse {
-  data: LocationInfo
-  meta: MetaData
-}
-
-type LocationSearchResponse {
-  \\"\\"\\"List of found locations\\"\\"\\"
-  data: [LocationInfo]
-  meta: MetaData
-}
-
-type MediaEntry {
-  \\"\\"\\"??? Unknown ???\\"\\"\\"
-  attribution: String
-  caption: CaptionData
-  comments: CommentsCollection
-
-  \\"\\"\\"Media creation UNIX timestamp\\"\\"\\"
-  createdTime: String
-
-  \\"\\"\\"Filter of this media entry\\"\\"\\"
-  filter: String
-
-  \\"\\"\\"ID of a media entry\\"\\"\\"
-  id: String
-  images: ImagesData
-  likes: LikesCollection
-
-  \\"\\"\\"Fixed URL of this media entry\\"\\"\\"
-  link: String
-  location: LocationInfo
-
-  \\"\\"\\"List of tags assigned to this media\\"\\"\\"
-  tags: [String]
-
-  \\"\\"\\"Type of this media entry\\"\\"\\"
-  type: Type
-  user: UserShortInfo
-
-  \\"\\"\\"Indicates whether authenticated user has liked this media or not\\"\\"\\"
-  userHasLiked: Boolean
-
-  \\"\\"\\"Users located on this media entry\\"\\"\\"
-  usersInPhoto: [UserInPhoto]
-  videos: VideosData
-}
-
-type MediaEntryResponse {
-  data: MediaEntry
-  meta: MetaData
-}
-
-type MediaListResponse {
-  \\"\\"\\"List of media entries\\"\\"\\"
-  data: [MediaEntry]
-  meta: MetaData
-  pagination: IdPaginationInfo
-}
-
-type MediaSearchResponse {
-  \\"\\"\\"Found media entries; some end-points do not return likes informtaion\\"\\"\\"
-  data: [MediaEntry]
-  meta: MetaData
-}
-
-type MetaData {
-  \\"\\"\\"HTTP result code\\"\\"\\"
-  code: Int
-}
-
-\\"\\"\\"The start of any mutation\\"\\"\\"
-type Mutation {
-  \\"\\"\\"
-  Remove a comment either on the authenticated user's media object or authored by the authenticated user.
-  
-  
-  Equivalent to DELETE /media/{media-id}/comments/{comment-id}
-  \\"\\"\\"
-  deleteMediaMediaIdCommentsCommentId(
-    \\"\\"\\"The ID of the comment entry.\\"\\"\\"
-    commentId: String!
-
-    \\"\\"\\"The ID of the media resource.\\"\\"\\"
-    mediaId: String!
-  ): StatusResponse
-
-  \\"\\"\\"
-  Remove a like on this media by the currently authenticated user.
-  
-  Equivalent to DELETE /media/{media-id}/likes
-  \\"\\"\\"
-  deleteMediaMediaIdLikes(
-    \\"\\"\\"The ID of the media resource.\\"\\"\\"
-    mediaId: String!
-  ): StatusResponse
-
-  \\"\\"\\"
-  Create a comment on a media object with the following rules:
-  
-    * The total length of the comment cannot exceed 300 characters.
-    * The comment cannot contain more than 4 hashtags.
-    * The comment cannot contain more than 1 URL.
-    * The comment cannot consist of all capital letters.
-  
-  
-  Equivalent to POST /media/{media-id}/comments
-  \\"\\"\\"
-  postMediaMediaIdComments(
-    \\"\\"\\"The ID of the media resource.\\"\\"\\"
-    mediaId: String!
-
-    \\"\\"\\"
-    Text to post as a comment on the media object as specified in \`media-id\`.
-    \\"\\"\\"
-    text: String!
-  ): StatusResponse
-
-  \\"\\"\\"
-  Set a like on this media by the currently authenticated user.
-  
-  Equivalent to POST /media/{media-id}/likes
-  \\"\\"\\"
-  postMediaMediaIdLikes(
-    \\"\\"\\"The ID of the media resource.\\"\\"\\"
-    mediaId: String!
-  ): StatusResponse
-
-  \\"\\"\\"
-  Modify the relationship between the current user and the target user.
-  
-  Equivalent to POST /users/{user-id}/relationship
-  \\"\\"\\"
-  postUsersUserIdRelationship(
-    \\"\\"\\"Type of action to apply for relationship with the user.\\"\\"\\"
-    action: Action!
-
-    \\"\\"\\"The ID of the target user.\\"\\"\\"
-    userId: String!
-  ): RelationshipPostResponse
-}
-
-enum OutgoingStatus {
-  NONE
-  FOLLOWS
-  REQUESTED
-}
-
-type Position {
-  \\"\\"\\"X position (horizontal)\\"\\"\\"
-  x: Float
-
-  \\"\\"\\"Y position (vertical)\\"\\"\\"
-  y: Float
-}
-
-\\"\\"\\"The start of any query\\"\\"\\"
+"\\"\\"\\"The start of any query\\"\\"\\"
 type Query {
   \\"\\"\\"
   Get recent media from a geography subscription that you created.
@@ -629,35 +356,215 @@ type Query {
   ): RelationshipResponse
 }
 
-type RelationshipInfo {
-  \\"\\"\\"Status of incoming relationship\\"\\"\\"
-  incomingStatus: IncomingStatus
-
-  \\"\\"\\"Status of outgoing relationship\\"\\"\\"
-  outgoingStatus: OutgoingStatus
-
-  \\"\\"\\"Indicates whether target user is private or not\\"\\"\\"
-  targetUserIsPrivate: Boolean
+type MediaListResponse {
+  \\"\\"\\"List of media entries\\"\\"\\"
+  data: [MediaEntry]
+  meta: MetaData
+  pagination: IdPaginationInfo
 }
 
-type RelationshipPostResponse {
-  data: RelationshipStatus
+type MediaEntry {
+  \\"\\"\\"??? Unknown ???\\"\\"\\"
+  attribution: String
+  caption: CaptionData
+  comments: CommentsCollection
+
+  \\"\\"\\"Media creation UNIX timestamp\\"\\"\\"
+  createdTime: String
+
+  \\"\\"\\"Filter of this media entry\\"\\"\\"
+  filter: String
+
+  \\"\\"\\"ID of a media entry\\"\\"\\"
+  id: String
+  images: ImagesData
+  likes: LikesCollection
+
+  \\"\\"\\"Fixed URL of this media entry\\"\\"\\"
+  link: String
+  location: LocationInfo
+
+  \\"\\"\\"List of tags assigned to this media\\"\\"\\"
+  tags: [String]
+
+  \\"\\"\\"Type of this media entry\\"\\"\\"
+  type: Type
+  user: UserShortInfo
+
+  \\"\\"\\"Indicates whether authenticated user has liked this media or not\\"\\"\\"
+  userHasLiked: Boolean
+
+  \\"\\"\\"Users located on this media entry\\"\\"\\"
+  usersInPhoto: [UserInPhoto]
+  videos: VideosData
+}
+
+type CaptionData {
+  \\"\\"\\"Caption creation UNIX timestamp\\"\\"\\"
+  createdTime: String
+  from: UserShortInfo
+
+  \\"\\"\\"ID of this caption\\"\\"\\"
+  id: String
+
+  \\"\\"\\"Caption text\\"\\"\\"
+  text: String
+}
+
+type UserShortInfo {
+  \\"\\"\\"User full name\\"\\"\\"
+  fullName: String
+
+  \\"\\"\\"User ID\\"\\"\\"
+  id: String
+
+  \\"\\"\\"URL to user profile picture\\"\\"\\"
+  profilePicture: String
+
+  \\"\\"\\"User name, nickname\\"\\"\\"
+  username: String
+}
+
+type CommentsCollection {
+  \\"\\"\\"
+  Nember of comments available, data does not necessary contain all comments
+  \\"\\"\\"
+  count: Int
+
+  \\"\\"\\"
+  Collection of comment entries; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)
+  \\"\\"\\"
+  data: [CommentEntry]
+}
+
+type CommentEntry {
+  \\"\\"\\"Comment creation UNIX timestamp\\"\\"\\"
+  createdTime: String
+  from: UserShortInfo
+
+  \\"\\"\\"ID of this comment\\"\\"\\"
+  id: String
+
+  \\"\\"\\"Text of the comment\\"\\"\\"
+  text: String
+}
+
+type ImagesData {
+  lowResolution: ImageInfo
+  standardResolution: ImageInfo
+  thumbnail: ImageInfo
+}
+
+type ImageInfo {
+  \\"\\"\\"Image/video height in pixels\\"\\"\\"
+  height: Int
+
+  \\"\\"\\"URL of the image/video resource\\"\\"\\"
+  url: String
+
+  \\"\\"\\"Image/video width in pixels\\"\\"\\"
+  width: Int
+}
+
+type LikesCollection {
+  \\"\\"\\"
+  Nember of likes available, data does not necessary contain all comments
+  \\"\\"\\"
+  count: Int
+
+  \\"\\"\\"
+  Collection of users who liked; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)
+  \\"\\"\\"
+  data: [UserShortInfo]
+}
+
+type LocationInfo {
+  \\"\\"\\"ID of this location (in some responses it has a type of 'integer')\\"\\"\\"
+  id: String
+
+  \\"\\"\\"Location latitude\\"\\"\\"
+  latitude: Float
+
+  \\"\\"\\"Location longitude\\"\\"\\"
+  longitude: Float
+
+  \\"\\"\\"Location name\\"\\"\\"
+  name: String
+}
+
+enum Type {
+  IMAGE
+  VIDEO
+}
+
+type UserInPhoto {
+  position: Position
+  user: UserShortInfo
+}
+
+type Position {
+  \\"\\"\\"X position (horizontal)\\"\\"\\"
+  x: Float
+
+  \\"\\"\\"Y position (vertical)\\"\\"\\"
+  y: Float
+}
+
+type VideosData {
+  lowResolution: ImageInfo
+  standardResolution: ImageInfo
+}
+
+type MetaData {
+  \\"\\"\\"HTTP result code\\"\\"\\"
+  code: Int
+}
+
+type IdPaginationInfo {
+  \\"\\"\\"The max ID of the next page\\"\\"\\"
+  nextMaxId: String
+
+  \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
+  nextUrl: String
+}
+
+type LocationInfoResponse {
+  data: LocationInfo
   meta: MetaData
 }
 
-type RelationshipResponse {
-  data: RelationshipInfo
+type LocationSearchResponse {
+  \\"\\"\\"List of found locations\\"\\"\\"
+  data: [LocationInfo]
   meta: MetaData
 }
 
-type RelationshipStatus {
-  \\"\\"\\"Status of outgoing relationship\\"\\"\\"
-  outgoingStatus: OutgoingStatus
+type MediaEntryResponse {
+  data: MediaEntry
+  meta: MetaData
 }
 
-type StatusResponse {
-  \\"\\"\\"No data - 'null'\\"\\"\\"
-  data: String
+type CommentsResponse {
+  \\"\\"\\"Collection of comments\\"\\"\\"
+  data: [CommentEntry]
+  meta: MetaData
+}
+
+type UsersInfoResponse {
+  \\"\\"\\"User short information entries\\"\\"\\"
+  data: [UserShortInfo]
+  meta: MetaData
+}
+
+type MediaSearchResponse {
+  \\"\\"\\"Found media entries; some end-points do not return likes informtaion\\"\\"\\"
+  data: [MediaEntry]
+  meta: MetaData
+}
+
+type TagSearchResponse {
+  \\"\\"\\"List of found tags with brief statistics\\"\\"\\"
+  data: [TagInfo]
   meta: MetaData
 }
 
@@ -701,26 +608,9 @@ type TagPaginationInfo {
   nextUrl: String
 }
 
-type TagSearchResponse {
-  \\"\\"\\"List of found tags with brief statistics\\"\\"\\"
-  data: [TagInfo]
+type UserResponse {
+  data: UserInfo
   meta: MetaData
-}
-
-enum Type {
-  IMAGE
-  VIDEO
-}
-
-type UserCounts {
-  \\"\\"\\"Number of followers of this user\\"\\"\\"
-  followedBy: Int
-
-  \\"\\"\\"Number of users followed by this user\\"\\"\\"
-  follows: Int
-
-  \\"\\"\\"Number of user media\\"\\"\\"
-  media: Int
 }
 
 type UserInfo {
@@ -744,34 +634,15 @@ type UserInfo {
   website: String
 }
 
-type UserInPhoto {
-  position: Position
-  user: UserShortInfo
-}
+type UserCounts {
+  \\"\\"\\"Number of followers of this user\\"\\"\\"
+  followedBy: Int
 
-type UserResponse {
-  data: UserInfo
-  meta: MetaData
-}
+  \\"\\"\\"Number of users followed by this user\\"\\"\\"
+  follows: Int
 
-type UserShortInfo {
-  \\"\\"\\"User full name\\"\\"\\"
-  fullName: String
-
-  \\"\\"\\"User ID\\"\\"\\"
-  id: String
-
-  \\"\\"\\"URL to user profile picture\\"\\"\\"
-  profilePicture: String
-
-  \\"\\"\\"User name, nickname\\"\\"\\"
-  username: String
-}
-
-type UsersInfoResponse {
-  \\"\\"\\"User short information entries\\"\\"\\"
-  data: [UserShortInfo]
-  meta: MetaData
+  \\"\\"\\"Number of user media\\"\\"\\"
+  media: Int
 }
 
 type UsersPagingResponse {
@@ -781,9 +652,136 @@ type UsersPagingResponse {
   pagination: CursorPaginationInfo
 }
 
-type VideosData {
-  lowResolution: ImageInfo
-  standardResolution: ImageInfo
+type CursorPaginationInfo {
+  \\"\\"\\"The cursor ID of the next page\\"\\"\\"
+  nextCursor: String
+
+  \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
+  nextUrl: String
+}
+
+type RelationshipResponse {
+  data: RelationshipInfo
+  meta: MetaData
+}
+
+type RelationshipInfo {
+  \\"\\"\\"Status of incoming relationship\\"\\"\\"
+  incomingStatus: IncomingStatus
+
+  \\"\\"\\"Status of outgoing relationship\\"\\"\\"
+  outgoingStatus: OutgoingStatus
+
+  \\"\\"\\"Indicates whether target user is private or not\\"\\"\\"
+  targetUserIsPrivate: Boolean
+}
+
+enum IncomingStatus {
+  NONE
+  FOLLOWED_BY
+  REQUESTED_BY
+}
+
+enum OutgoingStatus {
+  NONE
+  FOLLOWS
+  REQUESTED
+}
+
+\\"\\"\\"The start of any mutation\\"\\"\\"
+type Mutation {
+  \\"\\"\\"
+  Remove a comment either on the authenticated user's media object or authored by the authenticated user.
+  
+  
+  Equivalent to DELETE /media/{media-id}/comments/{comment-id}
+  \\"\\"\\"
+  deleteMediaMediaIdCommentsCommentId(
+    \\"\\"\\"The ID of the comment entry.\\"\\"\\"
+    commentId: String!
+
+    \\"\\"\\"The ID of the media resource.\\"\\"\\"
+    mediaId: String!
+  ): StatusResponse
+
+  \\"\\"\\"
+  Remove a like on this media by the currently authenticated user.
+  
+  Equivalent to DELETE /media/{media-id}/likes
+  \\"\\"\\"
+  deleteMediaMediaIdLikes(
+    \\"\\"\\"The ID of the media resource.\\"\\"\\"
+    mediaId: String!
+  ): StatusResponse
+
+  \\"\\"\\"
+  Create a comment on a media object with the following rules:
+  
+    * The total length of the comment cannot exceed 300 characters.
+    * The comment cannot contain more than 4 hashtags.
+    * The comment cannot contain more than 1 URL.
+    * The comment cannot consist of all capital letters.
+  
+  
+  Equivalent to POST /media/{media-id}/comments
+  \\"\\"\\"
+  postMediaMediaIdComments(
+    \\"\\"\\"The ID of the media resource.\\"\\"\\"
+    mediaId: String!
+
+    \\"\\"\\"
+    Text to post as a comment on the media object as specified in \`media-id\`.
+    \\"\\"\\"
+    text: String!
+  ): StatusResponse
+
+  \\"\\"\\"
+  Set a like on this media by the currently authenticated user.
+  
+  Equivalent to POST /media/{media-id}/likes
+  \\"\\"\\"
+  postMediaMediaIdLikes(
+    \\"\\"\\"The ID of the media resource.\\"\\"\\"
+    mediaId: String!
+  ): StatusResponse
+
+  \\"\\"\\"
+  Modify the relationship between the current user and the target user.
+  
+  Equivalent to POST /users/{user-id}/relationship
+  \\"\\"\\"
+  postUsersUserIdRelationship(
+    \\"\\"\\"Type of action to apply for relationship with the user.\\"\\"\\"
+    action: Action!
+
+    \\"\\"\\"The ID of the target user.\\"\\"\\"
+    userId: String!
+  ): RelationshipPostResponse
+}
+
+type StatusResponse {
+  \\"\\"\\"No data - 'null'\\"\\"\\"
+  data: String
+  meta: MetaData
+}
+
+type RelationshipPostResponse {
+  data: RelationshipStatus
+  meta: MetaData
+}
+
+type RelationshipStatus {
+  \\"\\"\\"Status of outgoing relationship\\"\\"\\"
+  outgoingStatus: OutgoingStatus
+}
+
+enum Action {
+  FOLLOW
+  UNFOLLOW
+  BLOCK
+  UNBLOCK
+  APPROVE
+  IGNORE
 }
 "
 `;

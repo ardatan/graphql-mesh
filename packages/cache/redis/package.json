@@ -4,7 +4,9 @@
     "license": "MIT",
     "scripts": {
         "test": "jest --config=../../../jest.config.js",
-        "build": "tsc"
+        
+    "prepack": "bob-update-version",
+    "build": "bob"
     },
     "peerDependencies": {
         "graphql": "*"
@@ -13,17 +15,21 @@
         "@types/ioredis": "4.14.9",
         "@types/jest": "25.1.5",
         "@types/node": "13.9.8",
-        "graphql": "14.6.0",
+        "graphql": "15.0.0",
         "jest": "25.2.6",
         "ts-jest": "25.3.0",
         "ts-node-dev": "1.0.0-pre.44",
         "typescript": "3.8.3"
     },
-    "main": "dist/index.js",
-    "module": "dist/index.js",
+    "sideEffects": false,
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
     "typings": "dist/index.d.ts",
     "typescript": {
-        "definition": "dist/index.d.ts"
+      "definition": "dist/index.d.ts"
+    },
+    "buildOptions": {
+      "input": "./src/index.ts"
     },
     "dependencies": {
         "@graphql-mesh/types": "0.0.17",

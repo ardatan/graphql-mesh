@@ -1,1 +1,1 @@
-declare module 'string-interpolation/src';
+declare module '@ardatan/string-interpolation';

@@ -2,9 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es2019",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": [
-      "ES2015",
       "ESNext",
       "DOM"
     ],

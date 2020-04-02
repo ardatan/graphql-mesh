@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`rename should change the name of a type 1`] = `
-"type MyUser {
-  id: ID!
+"type Query {
+  user: MyUser!
 }
 
-type Query {
-  user: MyUser!
+type MyUser {
+  id: ID!
 }
 "
 `;

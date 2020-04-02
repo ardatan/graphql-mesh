@@ -1,22 +1,34 @@
 {
   "name": "@graphql-mesh/transform-cache",
   "version": "0.0.17",
-  "main": "dist/index.js",
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../../jest.config.js",
-    "build": "tsc"
+    
+    "prepack": "bob-update-version",
+    "build": "bob"
   },
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
+        "bob-the-bundler": "0.3.4",
     "@graphql-mesh/cache-inmemory-lru": "0.0.17",
     "@graphql-mesh/runtime": "0.0.17",
     "@types/jest": "25.1.5",
     "@types/node": "13.9.8",
     "@types/object-hash": "1.3.1",
-    "graphql": "14.6.0",
+    "graphql": "15.0.0",
     "jest": "25.2.6",
     "ts-jest": "25.3.0",
     "typescript": "3.8.3"
@@ -27,9 +39,10 @@
     "date-fns": "2.11.1",
     "graphql-tools-fork": "9.0.1",
     "object-hash": "2.0.3",
-    "string-interpolation": "1.2.5"
+    "@ardatan/string-interpolation": "1.2.8"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
   }
 }

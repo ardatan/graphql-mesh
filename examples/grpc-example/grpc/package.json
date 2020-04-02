@@ -9,8 +9,7 @@
   "scripts": {
     "postinstall": "npm run build",
     "build": "bash bash/build.sh",
-    "start": "bash bash/server.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "bash bash/server.sh"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +19,7 @@
     "grpc": "1.24.2"
   },
   "devDependencies": {
+        "bob-the-bundler": "0.3.4",
     "@types/debug": "^0.0.31",
     "@types/google-protobuf": "^3.2.7",
     "@types/node": "^10.12.18",

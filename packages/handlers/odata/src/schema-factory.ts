@@ -1,10 +1,10 @@
-import { GraphQLObjectType, GraphQLInputObjectType, GraphQLScalarType, GraphQLType, GraphQLOutputType, GraphQLField, GraphQLInputType, GraphQLList, GraphQLNonNull, GraphQLFieldConfigMap, GraphQLFieldConfig, GraphQLFieldResolver, GraphQLArgumentConfig, GraphQLFieldConfigArgumentMap, GraphQLResolveInfo, GraphQLEnumType, GraphQLString, GraphQLInt, GraphQLInterfaceType, GraphQLObjectTypeConfig, GraphQLInterfaceTypeConfig, GraphQLInputObjectTypeConfig, GraphQLInputFieldConfigMap, GraphQLInputField, GraphQLBoolean, GraphQLArgument, GraphQLID, GraphQLSchemaConfig, GraphQLSchema, GraphQLFloat, GraphQLEnumValueConfigMap, isInterfaceType, isNonNullType, isListType, isObjectType, isInputObjectType, isScalarType, isEnumType } from "graphql";
-import Interpolator from 'string-interpolation/src';
+import { GraphQLObjectType, GraphQLInputObjectType, GraphQLScalarType, GraphQLType, GraphQLOutputType, GraphQLField, GraphQLInputType, GraphQLList, GraphQLNonNull, GraphQLFieldConfigMap, GraphQLFieldConfig, GraphQLFieldResolver, GraphQLArgumentConfig, GraphQLFieldConfigArgumentMap, GraphQLResolveInfo, GraphQLEnumType, GraphQLString, GraphQLInt, GraphQLInterfaceType, GraphQLObjectTypeConfig, GraphQLInterfaceTypeConfig, GraphQLInputObjectTypeConfig, GraphQLInputFieldConfigMap, GraphQLInputField, GraphQLBoolean, GraphQLArgument, GraphQLID, GraphQLSchemaConfig, GraphQLSchema, GraphQLFloat, GraphQLEnumValueConfigMap, isInterfaceType, isNonNullType, isListType, isObjectType, isInputObjectType, isScalarType, isEnumType, GraphQLTypeResolver } from "graphql";
 import urljoin from "url-join";
 import graphqlFields from "graphql-fields";
 import { KeyValueCache, Request, Headers, fetchache } from "fetchache";
 import { JSDOM } from 'jsdom';
 import { BigIntResolver as GraphQLBigInt, GUIDResolver as GraphQLGUID, DateTimeResolver as GraphQLDateTime, JSONResolver as GraphQLJSON } from 'graphql-scalars';
+import { Interpolator } from '@ardatan/string-interpolation';
 
 const InlineCountEnum = new GraphQLEnumType({
     name: 'InlineCount',
@@ -274,8 +274,8 @@ export class ODataGraphQLSchemaFactory {
         method: 'GET' | 'POST' | 'DELETE' | 'PATCH'
         ignoreIdentifierArg?: boolean;
         count?: boolean;
-    }): GraphQLFieldResolver<any, any> {
-        return async (root, args, context, info) => {
+    }) {
+        const resolver: GraphQLFieldResolver<any, any> = async (root, args, context, info) => {
             if (info.operation.operation === 'query' && method !== 'GET') {
                 throw new Error(`Non-GET operations are not allowed in query operations`);
             }
@@ -358,6 +358,11 @@ export class ODataGraphQLSchemaFactory {
                 _headers.set('Content-Type', 'application/json; odata.metadata=full');
             }
 
+            if (context._disableMetadata) {
+                _headers.set('Accept', 'application/json');
+                _headers.set('Content-Type', 'application/json');
+            }
+
             requestInit.method = method;
             requestInit.headers = _headers;
 
@@ -401,6 +406,11 @@ export class ODataGraphQLSchemaFactory {
             if (responseJson.error) {
                 const actualError = new Error(responseJson.error.message || responseJson.error) as any;
                 actualError.extensions = responseJson.error;
+                // Workaround for metadata bug in navigation fields
+                if ((navigationLinkField in root) && !context._disableMetadata && actualError.message.includes('An error has occurred.')) {
+                    context._disableMetadata = true;
+                    return resolver(root, args, context, info);
+                }
                 throw actualError;
             }
             if (info.returnType instanceof GraphQLList) {
@@ -411,6 +421,7 @@ export class ODataGraphQLSchemaFactory {
             context._serviceUrl = baseOperationUrl;
             return returnVal;
         };
+        return resolver;
     }
 
     private processEnumElement(enumElement: Element) {
@@ -452,14 +463,6 @@ export class ODataGraphQLSchemaFactory {
         const objectTypeConfig: GraphQLObjectTypeConfig<any, any> & GraphQLInterfaceTypeConfig<any, any> = {
             name: typeName,
             fields: outputFieldConfigMap,
-            isTypeOf: root => {
-                const typeRef = root['@odata.type'];
-                if (typeRef) {
-                    const parsedTypeRef = this.parseTypeRef(typeRef);
-                    return parsedTypeRef.typeName === typeName;
-                }
-                return false;
-            },
         }
         typeElement.querySelectorAll('Property,NavigationProperty').forEach(propertyElement => {
             const propertyName = propertyElement.getAttribute('Name');
@@ -531,11 +534,22 @@ export class ODataGraphQLSchemaFactory {
                         throw new Error(`${typeName} cannot implement non-interface type ${baseOutputType.name}`)
                     }
                     objectTypeConfig.interfaces = [baseOutputType];
+                    if ('getInterfaces' in baseOutputType) {
+                        objectTypeConfig.interfaces.push(...baseOutputType.getInterfaces());
+                    }
                 }
             }
         }
         let objectType: GraphQLInterfaceType | GraphQLObjectType;
         if (isBaseType) {
+            const resolveType: GraphQLTypeResolver<any, any> = root => {
+                const typeRef = root['@odata.type'];
+                if (typeRef) {
+                    const parsedTypeRef = this.parseTypeRef(typeRef);
+                    return parsedTypeRef.typeName;
+                }
+                return typeName;
+            };
             if (!isAbstract) {
                 const nonAbstractBaseTypeConfig = {
                     ...objectTypeConfig,
@@ -546,12 +560,21 @@ export class ODataGraphQLSchemaFactory {
                     this.entityTypeNameIdentifierFieldNameMap.set(interfaceTypeName, identifierFieldName);
                 }
                 objectTypeConfig.name = interfaceTypeName;
-                objectType = new GraphQLInterfaceType(objectTypeConfig);
+                objectType = new GraphQLInterfaceType({
+                    ...objectTypeConfig,
+                    resolveType,
+                });
                 nonAbstractBaseTypeConfig.interfaces = [objectType];
+                if ('getInterfaces' in objectType) {
+                    nonAbstractBaseTypeConfig.interfaces.push(...objectType.getInterfaces());
+                }
                 const nonAbstractBaseType = new GraphQLObjectType(nonAbstractBaseTypeConfig);
                 this.nonAbstractBaseTypes.set(nonAbstractBaseTypeConfig.name, nonAbstractBaseType);
             } else {
-                objectType = new GraphQLInterfaceType(objectTypeConfig);
+                objectType = new GraphQLInterfaceType({
+                    ...objectTypeConfig,
+                    resolveType,
+                });
             }
         } else {
             objectType = new GraphQLObjectType(objectTypeConfig);
@@ -743,6 +766,8 @@ export class ODataGraphQLSchemaFactory {
                 args: operationArgs,
                 extensions: [],
                 type: returnType,
+                isDeprecated: false,
+                deprecationReason: undefined,
                 resolve: this.getResolver({ method, ...serviceContext })
             }
             serviceContext.schemaElement.querySelectorAll(`[BaseType='${bindingTypeRef}']`).forEach(implementationElement => {
@@ -816,6 +841,8 @@ export class ODataGraphQLSchemaFactory {
                     description: '',
                     args: [],
                     extensions: [],
+                    isDeprecated: false,
+                    deprecationReason: undefined,
                     resolve: this.getResolver({ method: 'GET', ...serviceContext }),
                 }
                 if (unresolvedDependency.queryable && isListType(outputFieldType)) {
