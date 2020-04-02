@@ -16,7 +16,7 @@
     "@types/node": "13.9.8",
     "@graphql-mesh/cache-inmemory-lru": "0.0.16",
     "graphql": "14.6.0",
-    "jest": "25.2.4",
+    "jest": "25.2.6",
     "ts-jest": "25.3.0",
     "tsee": "1.3.0",
     "typescript": "3.8.3"
