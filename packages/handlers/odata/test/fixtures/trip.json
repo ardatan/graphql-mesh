@@ -2,6 +2,7 @@
     "@odata.context": "https://services.odata.org/TripPinRESTierService/$metadata#Collection(Microsoft.OData.Service.Sample.TrippinInMemory.Models.Trip)",
     "value": [
         {
+            "@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Trip",
             "TripId": 0,
             "ShareId": "9d9b2fa0-efbf-490e-a5e3-bac8f7d47354",
             "Name": "Trip in US",

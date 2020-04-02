@@ -30,7 +30,7 @@ input AirportInput {
   Location: AirportLocationInput
 }
 
-type AirportLocation {
+type AirportLocation implements ILocation {
   Loc: String
   Address: String
   City: City
@@ -66,6 +66,45 @@ input CityInput {
   Region: String
 }
 
+type Employee implements IPerson {
+  Cost: BigInt!
+  Peers(queryOptions: QueryOptions): [IPerson]
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+  AddressInfo: [ILocation]
+  HomeAddress: ILocation
+  Friends(queryOptions: QueryOptions): [IPerson]
+  BestFriend: IPerson
+  Trips(queryOptions: QueryOptions): [Trip]
+  GetFavoriteAirline: Airline
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+  UpdatePersonLastName(lastName: String): Boolean
+  ShareTrip(userName: String, tripId: Int): JSON
+}
+
+type Event implements IPlanItem {
+  OccursAt: EventLocation
+  Description: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+type EventLocation implements ILocation {
+  BuildingInfo: String
+  Address: String
+  City: City
+}
+
 enum Feature {
   Feature1
   Feature2
@@ -73,10 +112,28 @@ enum Feature {
   Feature4
 }
 
+type Flight implements IPublicTransportation {
+  FlightNumber: String
+  Airline: Airline
+  From: Airport
+  To: Airport
+  SeatNumber: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
 \\"\\"\\"
 A field whose value is a generic Globally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.
 \\"\\"\\"
 scalar GUID
+
+interface ILocation {
+  Address: String
+  City: City
+}
 
 enum InlineCount {
   \\"\\"\\"
@@ -92,12 +149,50 @@ enum InlineCount {
   none
 }
 
+interface IPerson {
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+  AddressInfo: [ILocation]
+  HomeAddress: ILocation
+  Friends(queryOptions: QueryOptions): [IPerson]
+  BestFriend: IPerson
+  Trips(queryOptions: QueryOptions): [Trip]
+  GetFavoriteAirline: Airline
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+  UpdatePersonLastName(lastName: String): Boolean
+  ShareTrip(userName: String, tripId: Int): JSON
+}
+
+interface IPlanItem {
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+interface IPublicTransportation {
+  SeatNumber: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
 \\"\\"\\"
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 \\"\\"\\"
 scalar JSON
 
-type Location {
+type Location implements ILocation {
   Address: String
   City: City
 }
@@ -107,11 +202,35 @@ input LocationInput {
   City: CityInput
 }
 
+type Manager implements IPerson {
+  Budget: BigInt!
+  BossOffice: ILocation
+  DirectReports(queryOptions: QueryOptions): [IPerson]
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+  AddressInfo: [ILocation]
+  HomeAddress: ILocation
+  Friends(queryOptions: QueryOptions): [IPerson]
+  BestFriend: IPerson
+  Trips(queryOptions: QueryOptions): [Trip]
+  GetFavoriteAirline: Airline
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+  UpdatePersonLastName(lastName: String): Boolean
+  ShareTrip(userName: String, tripId: Int): JSON
+}
+
 type Mutation {
-  getPeopleByUserName(UserName: String!): Person
+  getPeopleByUserName(UserName: String!): IPerson
   deletePeopleByUserName(UserName: String!): JSON
-  updatePeopleByUserName(UserName: String!, input: PeopleUpdateInput): Person
-  createPeople(input: PersonInput): Person
+  updatePeopleByUserName(UserName: String!, input: PeopleUpdateInput): IPerson
+  createPeople(input: PersonInput): IPerson
   getAirlinesByAirlineCode(AirlineCode: String!): Airline
   deleteAirlinesByAirlineCode(AirlineCode: String!): JSON
   updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlinesUpdateInput): Airline
@@ -120,10 +239,10 @@ type Mutation {
   deleteAirportsByIcaoCode(IcaoCode: String!): JSON
   updateAirportsByIcaoCode(IcaoCode: String!, input: AirportsUpdateInput): Airport
   createAirports(input: AirportInput): Airport
-  getNewComePeopleByUserName(UserName: String!): Person
+  getNewComePeopleByUserName(UserName: String!): IPerson
   deleteNewComePeopleByUserName(UserName: String!): JSON
-  updateNewComePeopleByUserName(UserName: String!, input: NewComePeopleUpdateInput): Person
-  createNewComePeople(input: PersonInput): Person
+  updateNewComePeopleByUserName(UserName: String!, input: NewComePeopleUpdateInput): IPerson
+  createNewComePeople(input: PersonInput): IPerson
   ResetDataSource(person: PersonInput, lastName: String, personInstance: PersonInput, userName: String, tripId: Int): Boolean
 }
 
@@ -161,7 +280,7 @@ input PeopleUpdateInput {
   Trips: [TripInput]
 }
 
-type Person {
+type Person implements IPerson {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -171,10 +290,10 @@ type Person {
   Emails: [String]
   FavoriteFeature: Feature!
   Features: [Feature]!
-  AddressInfo: [Location]
-  HomeAddress: Location
-  Friends(queryOptions: QueryOptions): [Person]
-  BestFriend: Person
+  AddressInfo: [ILocation]
+  HomeAddress: ILocation
+  Friends(queryOptions: QueryOptions): [IPerson]
+  BestFriend: IPerson
   Trips(queryOptions: QueryOptions): [Trip]
   GetFavoriteAirline: Airline
   GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
@@ -205,7 +324,7 @@ input PersonInput {
   Trips: [TripInput]
 }
 
-type PlanItem {
+type PlanItem implements IPlanItem {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: String!
@@ -221,9 +340,18 @@ input PlanItemInput {
   Duration: String!
 }
 
+type PublicTransportation implements IPublicTransportation {
+  SeatNumber: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
 type Query {
-  getPeople(queryOptions: QueryOptions): [Person]
-  getPeopleByUserName(UserName: String!): Person
+  getPeople(queryOptions: QueryOptions): [IPerson]
+  getPeopleByUserName(UserName: String!): IPerson
   getPeopleCount: Int
   getAirlines(queryOptions: QueryOptions): [Airline]
   getAirlinesByAirlineCode(AirlineCode: String!): Airline
@@ -231,12 +359,12 @@ type Query {
   getAirports(queryOptions: QueryOptions): [Airport]
   getAirportsByIcaoCode(IcaoCode: String!): Airport
   getAirportsCount: Int
-  getNewComePeople(queryOptions: QueryOptions): [Person]
-  getNewComePeopleByUserName(UserName: String!): Person
+  getNewComePeople(queryOptions: QueryOptions): [IPerson]
+  getNewComePeopleByUserName(UserName: String!): IPerson
   getNewComePeopleCount: Int
-  GetPersonWithMostFriends: Person
+  GetPersonWithMostFriends: IPerson
   GetNearestAirport(lat: Float, lon: Float): Airport
-  Me: Person
+  Me: IPerson
 }
 
 input QueryOptions {
@@ -297,8 +425,8 @@ type Trip {
   Tags: [String]
   StartsAt: String!
   EndsAt: String!
-  PlanItems(queryOptions: QueryOptions): [PlanItem]
-  GetInvolvedPeople(queryOptions: QueryOptions): [Person]
+  PlanItems(queryOptions: QueryOptions): [IPlanItem]
+  GetInvolvedPeople(queryOptions: QueryOptions): [IPerson]
 }
 
 input TripInput {

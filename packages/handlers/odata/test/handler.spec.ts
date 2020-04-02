@@ -127,7 +127,9 @@ describe('odata', () => {
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new Response(JSON.stringify({
+        '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
         Location: {
+          '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.AirportLocation',
           Loc: ''
         }
       }));
@@ -270,7 +272,9 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(request.body);
+      const bodyObj = JSON.parse(request.body as any);
+      bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
+      return new Response(JSON.stringify(bodyObj));
     });
     const source = await handler.getMeshSource({
       name: 'TripPin',
@@ -354,7 +358,9 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(request.body);
+      const returnBody = JSON.parse(request.body as any);
+      returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
+      return new Response(JSON.stringify(returnBody));
     });
     const source = await handler.getMeshSource({
       name: 'TripPin',
@@ -399,6 +405,7 @@ describe('odata', () => {
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new Response(JSON.stringify({
+        '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
         Name: 'Name'
       }));
     });
