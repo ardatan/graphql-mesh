@@ -4,7 +4,6 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../jest.config.js",
-    
     "prepack": "bob-update-version",
     "build": "bob"
   },

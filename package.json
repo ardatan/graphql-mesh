@@ -13,7 +13,6 @@
     "ci:release:canary": "lerna publish --force-publish=\"*\" --preid \"alpha-`git rev-parse --short HEAD`\" --canary --exact --yes"
   },
   "devDependencies": {
-        "bob-the-bundler": "0.3.4",
     "lerna": "3.20.2"
   },
   "workspaces": [
