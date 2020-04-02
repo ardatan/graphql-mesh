@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@types/jest": "25.1.5",
-    "@types/node": "13.9.8",
+    "@types/node": "13.11.0",
     "@types/soap": "0.21.0",
     "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
