@@ -25,7 +25,7 @@
     "aggregate-error": "3.0.1",
     "change-case": "4.1.1",
     "fetchache": "0.0.3",
-    "graphql-scalars": "1.0.9",
+    "graphql-scalars": "1.1.0",
     "is-url": "1.2.4",
     "pascal-case": "3.1.1",
     "string-interpolation": "1.2.5",
