@@ -26,9 +26,10 @@ interpolator.registerModifier('hash', (value: any) =>
 
 export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({
   config,
+  schema,
   cache,
   hooks
-}): Promise<void> => {
+}) => {
   // We need to use `schemaReady` hook and not the schema directly because we need to make sure to run cache after all
   // other transformations are done, and to make sure that custom resolve are already loaded and merged into the schema
   hooks.on('schemaReady', ({ schema, applyResolvers }) => {
@@ -97,6 +98,7 @@ export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = as
     const wrappedResolvers = composeResolvers(sourceResolvers, compositions);
     applyResolvers(wrappedResolvers);
   });
+  return schema;
 };
 
 export function computeCacheKey(options: {

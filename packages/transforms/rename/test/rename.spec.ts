@@ -1,5 +1,7 @@
 import { renameTransform } from './../src/index';
 import { buildSchema, printSchema } from 'graphql';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { Hooks } from '@graphql-mesh/types';
 
 describe('rename', () => {
   const schema = buildSchema(/* GraphQL */ `
@@ -20,7 +22,9 @@ describe('rename', () => {
           from: 'User',
           to: 'MyUser'
         }
-      ]
+      ],
+      cache: new InMemoryLRUCache(),
+      hooks: new Hooks(),
     });
 
     expect(newSchema.getType('User')).toBeUndefined();
