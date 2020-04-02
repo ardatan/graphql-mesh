@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,10 +11,10 @@
     "graphql": "*"
   },
   "devDependencies": {
+    "@graphql-mesh/cache-inmemory-lru": "0.0.17",
     "@types/is-url": "1.2.28",
     "@types/jest": "25.1.4",
     "@types/node": "13.9.8",
-    "@graphql-mesh/cache-inmemory-lru": "0.0.16",
     "graphql": "14.6.0",
     "jest": "25.2.6",
     "ts-jest": "25.3.0",
@@ -22,7 +22,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.16",
+    "@graphql-mesh/types": "0.0.17",
     "change-case": "4.1.1",
     "fetchache": "0.0.3",
     "is-url": "1.2.4",

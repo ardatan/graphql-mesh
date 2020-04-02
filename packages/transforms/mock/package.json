@@ -1,6 +1,6 @@
 {
     "name": "@graphql-mesh/transform-mock",
-    "version": "0.0.16",
+    "version": "0.0.17",
     "main": "dist/index.js",
     "license": "MIT",
     "scripts": {
@@ -20,7 +20,7 @@
         "typescript": "3.8.3"
     },
     "dependencies": {
-        "@graphql-mesh/types": "0.0.16",
+        "@graphql-mesh/types": "0.0.17",
         "faker": "4.1.0",
         "graphql-tools-fork": "9.0.1"
     },

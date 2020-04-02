@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -19,7 +19,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.16",
+    "@graphql-mesh/types": "0.0.17",
     "graphql-scalars": "1.0.9",
     "grpc-caller": "0.13.0",
     "iter-tools": "^6.2.6",

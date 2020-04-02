@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -22,7 +22,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.16",
+    "@graphql-mesh/types": "0.0.17",
     "change-case": "4.1.1",
     "graphql-compose": "7.14.0",
     "graphql-compose-mongoose": "7.3.5"
