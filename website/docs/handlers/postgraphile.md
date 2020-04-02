@@ -4,7 +4,7 @@ title: PostGraphile
 sidebar_label: PostGraphile
 ---
 
-This handler allow you to use GraphQL schema created by `postgraphile`, based on a Postgres database schema.
+This handler allows you to use GraphQL schema created by `postgraphile`, based on a Postgres database schema.
 
 To get started, install the handler library from NPM:
 

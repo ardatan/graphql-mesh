@@ -4,7 +4,7 @@ title: gRPC
 sidebar_label: gRPC
 ---
 
-This handler allow you to load gRPC definition files (`.proto`).
+This handler allows you to load gRPC definition files (`.proto`).
 
 ```
 $ yarn add @graphql-mesh/grpc
