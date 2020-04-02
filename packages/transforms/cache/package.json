@@ -35,7 +35,7 @@
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.8",
     "@graphql-mesh/types": "0.0.18",
-    "@graphql-toolkit/common": "0.9.12",
+    "@graphql-toolkit/common": "0.9.13-alpha-ea055d3.12+ea055d3",
     "date-fns": "2.11.1",
     "graphql-tools-fork": "9.0.1",
     "object-hash": "2.0.3"

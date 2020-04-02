@@ -3,7 +3,7 @@
   "version": "0.0.18",
   "author": "Simon Liang",
   "license": "MIT",
-  "private": false,
+  "private": true,
   "scripts": {
     "mesh:serve": "graphql-mesh serve"
   },
