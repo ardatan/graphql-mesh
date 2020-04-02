@@ -1,7 +1,8 @@
 import { makeExecutableSchema } from "graphql-tools-fork";
 import mockingTransform from "../src";
-import { YamlConfig } from "@graphql-mesh/types";
+import { YamlConfig, Hooks } from "@graphql-mesh/types";
 import { graphql } from "graphql";
+import { InMemoryLRUCache } from "@graphql-mesh/cache-inmemory-lru";
 
 describe('mocking', () => {
     it('should mock fields and resolvers should not get called', async () => {
@@ -44,6 +45,8 @@ describe('mocking', () => {
         const transformedSchema = await mockingTransform({
             schema,
             config: mockingConfig,
+            cache: new InMemoryLRUCache(),
+            hooks: new Hooks(),
         });
         const result = await graphql({
             schema: transformedSchema,

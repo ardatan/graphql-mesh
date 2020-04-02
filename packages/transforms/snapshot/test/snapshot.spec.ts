@@ -4,6 +4,8 @@ import { computeSnapshotFilePath, snapshotTransform } from '../src';
 import { makeExecutableSchema } from 'graphql-tools-fork';
 import { graphql } from 'graphql';
 import { readFileSync, existsSync } from 'fs-extra';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { Hooks } from '@graphql-mesh/types';
 
 describe('snapshot', () => {
     const outputDir = '__snapshots__';
@@ -48,8 +50,8 @@ describe('snapshot', () => {
                 apply: ['Query.user'],
                 outputDir,
             },
-            cache: {} as any,
-            hooks: {} as any,
+            cache: new InMemoryLRUCache(),
+            hooks: new Hooks(),
         });
 
         await graphql({
@@ -108,8 +110,8 @@ describe('snapshot', () => {
                 apply: ['Query.user'],
                 outputDir: '__snapshots__'
             },
-            cache: {} as any,
-            hooks: {} as any,
+            cache: new InMemoryLRUCache(),
+            hooks: new Hooks(),
         });
 
         const doTheRequest = () => graphql({

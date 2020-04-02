@@ -64,6 +64,6 @@ export type TransformFn<Config = any> = (options: {
   cache: KeyValueCache;
   hooks: Hooks;
   apiName?: string;
-}) => Promise<GraphQLSchema | void> | GraphQLSchema | void;
+}) => Promise<GraphQLSchema> | GraphQLSchema;
 
 export { KeyValueCache, KeyValueCacheSetOptions };

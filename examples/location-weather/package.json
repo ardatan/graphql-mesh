@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "build": "tsc",
     "prestart": "yarn mesh:ts",
     "predev": "yarn mesh:ts",
     "premesh:serve": "yarn mesh:ts",
