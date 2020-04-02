@@ -21,7 +21,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-        "bob-the-bundler": "0.3.4",
+    "bob-the-bundler": "0.3.4",
     "@types/node": "13.9.8",
     "graphql": "15.0.0",
     "graphql-to-config-schema": "0.0.16",

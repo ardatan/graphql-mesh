@@ -22,7 +22,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-        "bob-the-bundler": "0.3.4",
+    "bob-the-bundler": "0.3.4",
     "@types/graphql-fields": "1.3.2",
     "@types/jsdom": "16.2.0",
     "@types/node": "13.9.5",

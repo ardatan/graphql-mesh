@@ -16,7 +16,7 @@
     "grpc": "1.24.2"
   },
   "devDependencies": {
-        "bob-the-bundler": "0.3.4",
+    "bob-the-bundler": "0.3.4",
     "@types/debug": "4.1.5",
     "@types/google-protobuf": "3.7.2",
     "@types/node": "13.9.1",

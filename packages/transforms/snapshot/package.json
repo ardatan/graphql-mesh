@@ -22,7 +22,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-        "bob-the-bundler": "0.3.4",
+    "bob-the-bundler": "0.3.4",
     "@types/fs-extra": "8.1.0",
     "@types/jest": "25.1.5",
     "@types/node": "13.9.8",
