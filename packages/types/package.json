@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -21,8 +21,8 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "bob-the-bundler": "0.3.4",
     "@types/node": "13.9.8",
+    "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
     "graphql-to-config-schema": "0.0.16",
     "typescript": "3.8.3"

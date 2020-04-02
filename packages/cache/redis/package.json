@@ -1,12 +1,11 @@
 {
     "name": "@graphql-mesh/cache-redis",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "license": "MIT",
     "scripts": {
         "test": "jest --config=../../../jest.config.js",
-        
-    "prepack": "bob-update-version",
-    "build": "bob"
+        "prepack": "bob-update-version",
+        "build": "bob"
     },
     "peerDependencies": {
         "graphql": "*"
@@ -26,13 +25,13 @@
     "module": "dist/index.esm.js",
     "typings": "dist/index.d.ts",
     "typescript": {
-      "definition": "dist/index.d.ts"
+        "definition": "dist/index.d.ts"
     },
     "buildOptions": {
-      "input": "./src/index.ts"
+        "input": "./src/index.ts"
     },
     "dependencies": {
-        "@graphql-mesh/types": "0.0.17",
+        "@graphql-mesh/types": "0.0.18",
         "dataloader": "2.0.0",
         "ioredis": "4.16.1",
         "ts-node": "8.8.1"

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-snapshot",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -14,7 +14,6 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../../jest.config.js",
-    
     "prepack": "bob-update-version",
     "build": "bob"
   },
@@ -22,11 +21,11 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "bob-the-bundler": "0.3.4",
     "@types/fs-extra": "8.1.0",
     "@types/jest": "25.1.5",
     "@types/node": "13.9.8",
     "@types/object-hash": "1.3.1",
+    "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
     "jest": "25.2.6",
     "ts-jest": "25.3.0",
@@ -34,7 +33,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.17",
+    "@graphql-mesh/types": "0.0.18",
     "@graphql-toolkit/common": "0.9.12",
     "fs-extra": "9.0.0",
     "graphql-tools-fork": "9.0.1",

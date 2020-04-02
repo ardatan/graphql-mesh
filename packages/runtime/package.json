@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../jest.config.js",
@@ -11,9 +11,9 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "bob-the-bundler": "0.3.4",
     "@types/jest": "25.1.5",
     "@types/node": "13.9.8",
+    "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
     "jest": "25.2.6",
     "ts-jest": "25.3.0",
@@ -30,8 +30,8 @@
     "input": "./src/index.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.0.17",
-    "@graphql-mesh/types": "0.0.17",
+    "@graphql-mesh/cache-inmemory-lru": "0.0.18",
+    "@graphql-mesh/types": "0.0.18",
     "@graphql-toolkit/common": "0.9.12",
     "@graphql-toolkit/schema-merging": "0.9.12",
     "cosmiconfig": "6.0.0",

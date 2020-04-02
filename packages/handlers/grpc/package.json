@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -14,7 +14,6 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../../jest.config.js",
-    
     "prepack": "bob-update-version",
     "build": "bob"
   },
@@ -23,8 +22,8 @@
     "grpc": "*"
   },
   "devDependencies": {
-    "bob-the-bundler": "0.3.4",
     "@types/node": "13.9.8",
+    "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
     "grpc": "1.24.2",
     "jest": "25.2.6",
@@ -32,7 +31,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.17",
+    "@graphql-mesh/types": "0.0.18",
     "graphql-scalars": "1.1.0",
     "grpc-caller": "0.13.0",
     "iter-tools": "^6.2.6",

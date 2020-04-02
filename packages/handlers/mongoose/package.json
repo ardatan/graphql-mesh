@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -14,7 +14,6 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../../jest.config.js",
-    
     "prepack": "bob-update-version",
     "build": "bob"
   },
@@ -23,10 +22,10 @@
     "mongoose": "*"
   },
   "devDependencies": {
-    "bob-the-bundler": "0.3.4",
     "@types/jest": "25.1.5",
     "@types/mongoose": "5.7.8",
     "@types/node": "13.9.8",
+    "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
     "jest": "25.2.6",
     "mongoose": "5.9.7",
@@ -34,7 +33,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.17",
+    "@graphql-mesh/types": "0.0.18",
     "change-case": "4.1.1",
     "graphql-compose": "7.14.0",
     "graphql-compose-mongoose": "7.3.5"
