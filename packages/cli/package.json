@@ -20,7 +20,7 @@
     "@types/mkdirp": "1.0.0",
     "@types/node": "13.9.8",
     "@types/yargs": "15.0.4",
-    "graphql": "14.6.0",
+    "graphql": "15.0.0",
     "jest": "25.2.6",
     "ts-jest": "25.3.0",
     "ts-node-dev": "1.0.0-pre.44",
