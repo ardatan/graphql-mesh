@@ -31,8 +31,8 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.19",
-    "@graphql-toolkit/core": "0.9.13-alpha-ea055d3.12+ea055d3",
-    "@graphql-toolkit/url-loader": "0.9.13-alpha-ea055d3.12+ea055d3",
+    "@graphql-toolkit/core": "0.10.1",
+    "@graphql-toolkit/url-loader": "0.10.1",
     "fetchache": "0.0.3"
   },
   "publishConfig": {
