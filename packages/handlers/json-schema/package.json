@@ -27,7 +27,7 @@
     "@types/url-join": "4.0.0",
     "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
-    "jest": "25.2.6",
+    "jest": "25.2.7",
     "ts-jest": "25.3.0",
     "typescript": "3.8.3"
   },

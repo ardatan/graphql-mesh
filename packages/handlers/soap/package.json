@@ -27,7 +27,7 @@
     "@types/soap": "0.21.0",
     "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
-    "jest": "25.2.6",
+    "jest": "25.2.7",
     "soap": "0.31.0",
     "ts-jest": "25.3.0",
     "ts-node-dev": "1.0.0-pre.44",
