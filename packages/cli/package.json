@@ -58,7 +58,7 @@
     "chalk": "4.0.0",
     "change-case": "4.1.1",
     "js-yaml": "3.13.1",
-    "mkdirp": "1.0.3",
+    "mkdirp": "1.0.4",
     "pascal-case": "3.1.1",
     "ts-node": "8.8.1",
     "winston": "3.2.1",
