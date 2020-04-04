@@ -23,22 +23,27 @@
     },
     "devDependencies": {
         "@types/jest": "25.1.5",
+        "@types/url-join": "4.0.0",
         "@types/node": "13.11.0",
         "@types/thrift": "0.10.9",
         "bob-the-bundler": "0.3.4",
         "graphql": "15.0.0",
         "jest": "25.2.7",
-        "thrift": "0.13.0",
         "ts-jest": "25.3.0",
         "ts-node-dev": "1.0.0-pre.44",
-        "typescript": "3.8.3"
+        "typescript": "3.8.3",
+        "thrift": "0.13.0"
     },
     "dependencies": {
         "@graphql-mesh/types": "0.0.19",
         "@graphql-mesh/utils": "0.0.19",
+        "@creditkarma/thrift-client": "0.16.0",
         "@creditkarma/thrift-parser": "1.2.0",
         "aggregate-error": "3.0.1",
-        "graphql-scalars": "1.1.0"
+        "graphql-scalars": "1.1.0",
+        "form-data": "3.0.0",
+        "fetchache": "0.0.3",
+        "url-join": "4.0.1"
     },
     "publishConfig": {
         "access": "public",

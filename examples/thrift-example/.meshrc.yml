@@ -1,0 +1,8 @@
+sources:
+    - name: Calculator
+      handler:
+        thrift:
+          idl: ./src/thrift/calculator.thrift
+          host: localhost
+          port: 8080
+          servicePath: /thrift

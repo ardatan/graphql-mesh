@@ -15,12 +15,27 @@ type ThriftHandler @md {
   """
   port: Int!
   """
+  Path
+  """
+  oath: String
+  """
+  SSL?
+  """
+  https: Boolean
+  protocol: ThriftProtocolType 
+  """
   Path to your service under Thrift API
   """
-  servicePath: String!
+  serviceName: String!
+  headers: JSON
   """
   IDL Path
   """
   idl: String!
 }
 
+enum ThriftProtocolType {
+  binary
+  compact
+  json
+}
