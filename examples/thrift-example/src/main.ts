@@ -5,8 +5,8 @@ import { Calculator } from './codegen'
 const PORT = 8080
 
 const serviceHandlers: Calculator.IHandler<express.Request> = {
-    add(left: number, right: number, context?: express.Request): number {
-        return left + right
+    add(request, context?: express.Request): number {
+        return request.left + request.right
     },
     subtract(left: number, right: number, context?: express.Request): number {
         return left - right

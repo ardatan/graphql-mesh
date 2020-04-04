@@ -3,6 +3,7 @@ sources:
       handler:
         thrift:
           idl: ./src/thrift/calculator.thrift
-          host: localhost
+          hostName: localhost
           port: 8080
-          servicePath: /thrift
+          path: /thrift
+          serviceName: calculator-service

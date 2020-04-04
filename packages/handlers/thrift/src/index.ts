@@ -8,7 +8,7 @@ import {
     createHttpClient,
     HttpConnection,
 } from '@creditkarma/thrift-client';
-import { ThriftClient, IThriftAnnotations, IMethodAnnotations, TTransport, TProtocol, MessageType, IThriftMessage, TApplicationException, TApplicationExceptionCodec, TApplicationExceptionType, TType } from '@creditkarma/thrift-server-core';
+import { ThriftClient, IThriftAnnotations, IMethodAnnotations, TTransport, TProtocol, MessageType, IThriftMessage, TApplicationException, TApplicationExceptionCodec, TApplicationExceptionType, TType, IThriftField } from '@creditkarma/thrift-server-core';
 import { pascalCase } from 'pascal-case';
 
 const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
@@ -21,7 +21,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
         const outputTypeMap = new Map<string, GraphQLOutputType>();
         const inputTypeMap = new Map<string, GraphQLInputType>();
         const rootFields: GraphQLFieldConfigMap<any, any> = {};
-        const annotations:IThriftAnnotations = {};
+        const annotations: IThriftAnnotations = {};
         const methodAnnotations: IMethodAnnotations = {};
         const methodNames: string[] = [];
         const methodParameters: {
@@ -29,12 +29,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
         } = {};
 
         type TypeVal = BaseTypeVal | ListTypeVal | SetTypeVal | MapTypeVal | EnumTypeVal | StructTypeVal;
-        type BaseTypeVal = { type: TType.BOOL | TType.BYTE | TType.DOUBLE | TType.I16 | TType.I32 | TType.I64 | TType.STRING };
-        type ListTypeVal = { type: TType.LIST, ofType: TypeVal };
-        type SetTypeVal = { type: TType.SET, ofType: TypeVal };
-        type MapTypeVal = { type: TType.MAP };
-        type EnumTypeVal = { type: TType.ENUM };
-        type StructTypeVal = { type: TType.STRUCT, name: string, fields: TypeMap };
+        type BaseTypeVal = { id: number, type: TType.BOOL | TType.BYTE | TType.DOUBLE | TType.I16 | TType.I32 | TType.I64 | TType.STRING };
+        type ListTypeVal = { id: number, type: TType.LIST, ofType: TypeVal };
+        type SetTypeVal = { id: number, type: TType.SET, ofType: TypeVal };
+        type MapTypeVal = { id: number, type: TType.MAP };
+        type EnumTypeVal = { id: number, type: TType.ENUM };
+        type StructTypeVal = { id: number, type: TType.STRUCT, name: string, fields: TypeMap };
         type TypeMap = Record<string, TypeVal>;
         const topTypeMap: TypeMap = {};
 
@@ -53,52 +53,52 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
 
             private encode(structName: string, args: any, typeMap: TypeMap, output: TProtocol) {
                 output.writeStructBegin(structName);
-                let count = 1;
-                for (const argName in args) {
+                const argNames = Object.keys(args).sort((a, b) => typeMap[a].id.toString().localeCompare(typeMap[b].id.toString()));
+                for (const argName of argNames) {
                     const argType = typeMap[argName];
                     const argVal = args[argName];
                     if (argVal) {
-                        switch(argType.type) {
+                        switch (argType.type) {
                             case TType.BOOL:
-                                output.writeFieldBegin(argName, TType.BOOL, count);
+                                output.writeFieldBegin(argName, TType.BOOL, argType.id);
                                 output.writeBool(argVal);
                                 output.writeFieldEnd();
                                 break;
                             case TType.BYTE:
-                                output.writeFieldBegin(argName, TType.BYTE, count);
+                                output.writeFieldBegin(argName, TType.BYTE, argType.id);
                                 output.writeByte(argVal);
                                 output.writeFieldEnd();
                                 break;
                             case TType.DOUBLE:
-                                output.writeFieldBegin(argName, TType.DOUBLE, count);
+                                output.writeFieldBegin(argName, TType.DOUBLE, argType.id);
                                 output.writeDouble(argVal);
                                 output.writeFieldEnd();
                                 break;
                             case TType.I16:
-                                output.writeFieldBegin(argName, TType.I16, count);
+                                output.writeFieldBegin(argName, TType.I16, argType.id);
                                 output.writeI16(argVal);
                                 output.writeFieldEnd();
                                 break;
                             case TType.I32:
-                                output.writeFieldBegin(argName, TType.I32, count);
+                                output.writeFieldBegin(argName, TType.I32, argType.id);
                                 output.writeI32(argVal);
                                 output.writeFieldEnd();
                                 break;
                             case TType.I64:
-                                output.writeFieldBegin(argName, TType.I32, count);
+                                output.writeFieldBegin(argName, TType.I32, argType.id);
                                 output.writeI64(argVal.toString());
                                 output.writeFieldEnd();
                                 break;
                             case TType.STRING:
-                                output.writeFieldBegin(argName, TType.STRING, count);
+                                output.writeFieldBegin(argName, TType.STRING, argType.id);
                                 output.writeString(argVal);
                                 output.writeFieldEnd();
                                 break;
                             case TType.STRUCT:
-                                output.writeFieldBegin(argName, argType.type, 1);
-                                this.encode(argType.name, args[argName], argType.fields, output);
+                                output.writeFieldBegin(argName, argType.type, argType.id);
+                                this.encode(argType.name, argVal, argType.fields, output);
                                 output.writeFieldEnd();
-                            break;
+                                break;
                             case TType.ENUM:
                                 // TODO: A
                                 break;
@@ -110,17 +110,68 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                                 break;
                         }
                     }
-                    count++;
                 }
 
                 output.writeFieldStop();
                 output.writeStructEnd();
             }
-            async doRequest(methodName: string, args: any, typeMap: TypeMap, context?: any) {        
+            decode(input: TProtocol) {
+                const result: any = {};
+                input.readStructBegin();
+                while (true) {
+                    const field: IThriftField = input.readFieldBegin();
+                    const fieldType = field.fieldType;
+                    const fieldName = field.fieldName || 'success';
+                    if (fieldType === TType.STOP) {
+                        break;
+                    }
+                    switch (fieldType) {
+                        case TType.BOOL:
+                            result[fieldName] = input.readBool();
+                            break;
+                        case TType.BYTE:
+                            result[fieldName] = input.readByte();
+                            break;
+                        case TType.DOUBLE:
+                            result[fieldName] = input.readDouble();
+                            break;
+                        case TType.I16:
+                            result[fieldName] = input.readI16();
+                            break;
+                        case TType.I32:
+                            result[fieldName] = input.readI32();
+                            break;
+                        case TType.I64:
+                            result[fieldName] = BigInt(input.readI64().toString());
+                            break;
+                        case TType.STRING:
+                            result[fieldName] = input.readString();
+                            break;
+                        case TType.STRUCT:
+                            input.readStructBegin();
+                            this.decode(input);
+                            input.readStructBegin();
+                            break;
+                        case TType.ENUM:
+                            // TODO: A
+                            break;
+                        case TType.MAP:
+                            // TODO: A
+                            break;
+                        case TType.LIST:
+                            // TODO: A
+                            break;
+                    }
+                    input.readFieldEnd();
+                }
+                input.readStructEnd();
+                return result;
+            }
+            async doRequest(methodName: string, args: any, typeMap: TypeMap, returnTypeVal: TypeVal, context?: any) {
                 const writer: TTransport = new this.transport();
                 const output: TProtocol = new this.protocol(writer);
                 output.writeMessageBegin(methodName, MessageType.CALL, this.incrementRequestId());
-                this.encode(methodName, args, typeMap, output);
+                this.encode(pascalCase(methodName) + '__Args', args, typeMap, output);
                 output.writeMessageEnd();
                 const data: Buffer = await this.connection.send(writer.flush(), context);
                 const reader: TTransport = this.transport.receiver(data);
@@ -133,7 +184,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                         return Promise.reject(err);
                     }
                     else {
-                        const result = Add__ResultCodec.decode(input);
+                        const result = this.decode(input);
                         input.readMessageEnd();
                         if (result.success != null) {
                             return result.success;
@@ -148,18 +199,17 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                 }
             }
         }
-        
         const thriftHttpClient = createHttpClient(MeshThriftClient, config);
 
         function processComments(comments: Comment[]) {
             return comments.map(comment => comment.value).join('\n');
         }
 
-        function getGraphQLFunctionType(functionType: FunctionType): { outputType: GraphQLOutputType; inputType: GraphQLInputType; typeVal: TypeVal } {
+        function getGraphQLFunctionType(functionType: FunctionType, id = Math.random()): { outputType: GraphQLOutputType; inputType: GraphQLInputType; typeVal: TypeVal } {
             let inputType: GraphQLInputType;
             let outputType: GraphQLOutputType;
             let typeVal: TypeVal;
-            switch(functionType.type) {
+            switch (functionType.type) {
                 case SyntaxType.BinaryKeyword:
                 case SyntaxType.StringKeyword:
                     inputType = GraphQLString;
@@ -194,16 +244,16 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                     typeVal = typeVal! || { type: TType.I64 };
                     break;
                 case SyntaxType.ListType:
-                    const ofTypeList = getGraphQLFunctionType(functionType.valueType);
+                    const ofTypeList = getGraphQLFunctionType(functionType.valueType, id);
                     inputType = new GraphQLList(ofTypeList.inputType);
                     outputType = new GraphQLList(ofTypeList.outputType);
                     typeVal = typeVal! || { type: TType.LIST, ofType: ofTypeList.typeVal };
                 case SyntaxType.SetType:
-                    const ofSetType = getGraphQLFunctionType(functionType.valueType);
+                    const ofSetType = getGraphQLFunctionType(functionType.valueType, id);
                     inputType = new GraphQLList(ofSetType.inputType);
                     outputType = new GraphQLList(ofSetType.outputType);
                     typeVal = typeVal! || { type: TType.SET, ofType: ofSetType.typeVal };
-                break;
+                    break;
                 case SyntaxType.MapType:
                     inputType = GraphQLJSON;
                     outputType = GraphQLJSON;
@@ -211,7 +261,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                     break;
                 case SyntaxType.Identifier:
                     let typeName = functionType.value;
-                    if (enumTypeMap.has(typeName)){
+                    if (enumTypeMap.has(typeName)) {
                         const enumType = enumTypeMap.get(typeName)!;
                         inputType = enumType;
                         outputType = enumType;
@@ -226,8 +276,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                     break;
                 default:
                     throw new Error(`Unknown function type: ${JSON.stringify(functionType, null, 2)}!`);
-             }
-             return { inputType: inputType!, outputType: outputType!, typeVal: typeVal! };
+            }
+            return {
+                inputType: inputType!, outputType: outputType!, typeVal: {
+                    ...typeVal!,
+                    id,
+                }
+            };
         }
 
         switch (thriftAST.type) {
@@ -252,7 +307,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                             const description = processComments(statement.comments);
                             const objectFields: GraphQLFieldConfigMap<any, any> = {};
                             const inputObjectFields: GraphQLInputFieldConfigMap = {};
-                            const structTypeVal: StructTypeVal = { name: structName, type: TType.STRUCT, fields: {} };
+                            const structTypeVal: StructTypeVal = { id: Math.random(), name: structName, type: TType.STRUCT, fields: {} };
                             topTypeMap[structName] = structTypeVal;
                             const structFieldTypeMap = structTypeVal.fields;
                             for (const field of statement.fields) {
@@ -260,7 +315,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                                 let fieldOutputType: GraphQLOutputType;
                                 let fieldInputType: GraphQLInputType;
                                 const description = processComments(field.comments);
-                                const processedFieldTypes = getGraphQLFunctionType(field.fieldType);
+                                const processedFieldTypes = getGraphQLFunctionType(field.fieldType, field.fieldID?.value);
                                 fieldOutputType = processedFieldTypes.outputType;
                                 fieldInputType = processedFieldTypes.inputType;
 
@@ -277,7 +332,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                                     type: fieldInputType,
                                     description,
                                 };
-                                structFieldTypeMap[structName] = processedFieldTypes.typeVal;
+                                structFieldTypeMap[fieldName] = processedFieldTypes.typeVal;
                             }
                             outputTypeMap.set(structName, new GraphQLObjectType({
                                 name: structName,
@@ -291,15 +346,17 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                             }));
                             break;
                         case SyntaxType.ServiceDefinition:
-                            for (const fn of statement.functions) {
+                            for (const fnIndex in statement.functions) {
+                                const fn = statement.functions[fnIndex];
                                 const fnName = fn.name.value;
                                 const description = processComments(fn.comments);
-                                const { outputType: returnType, typeVal } = getGraphQLFunctionType(fn.returnType);
+                                const { outputType: returnType, typeVal: returnTypeVal } = getGraphQLFunctionType(fn.returnType, Number(fnIndex) + 1);
                                 const args: GraphQLFieldConfigArgumentMap = {};
+                                const fieldTypeMap: TypeMap = {};
                                 for (const field of fn.fields) {
                                     const fieldName = field.name.value;
                                     const fieldDescription = processComments(field.comments);
-                                    let { inputType: fieldType } = getGraphQLFunctionType(field.fieldType);
+                                    let { inputType: fieldType, typeVal } = getGraphQLFunctionType(field.fieldType, field.fieldID?.value);
                                     if (field.requiredness === 'required') {
                                         fieldType = new GraphQLNonNull(fieldType);
                                     }
@@ -307,15 +364,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                                         type: fieldType,
                                         description: fieldDescription,
                                     };
+                                    fieldTypeMap[fieldName] = typeVal;
                                 }
-                                topTypeMap[pascalCase(fnName) + '__Args'] = typeVal;
                                 rootFields[fnName] = {
                                     type: returnType,
                                     description,
                                     args,
-                                    resolve: async (_, args) => {        
-                                        thriftHttpClient.doRequest(fnName, args, typeMap[fnName] as StructTypeVal);
-                                    },
+                                    resolve: async (_, args) => thriftHttpClient.doRequest(fnName, args, fieldTypeMap, returnTypeVal),
                                 };
                                 methodNames.push(fnName);
                                 methodAnnotations[fnName] = { annotations: {}, fieldAnnotations: {} };
@@ -323,7 +378,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                             }
                             break;
                         case SyntaxType.TypedefDefinition:
-                            const { inputType, outputType } = getGraphQLFunctionType(statement.definitionType);
+                            const { inputType, outputType } = getGraphQLFunctionType(statement.definitionType, Math.random());
                             const typeName = statement.name.value;
                             inputTypeMap.set(typeName, inputType);
                             outputTypeMap.set(typeName, outputType);
@@ -338,7 +393,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                         }),
                     }),
                 };
-                // break;
+            // break;
             case SyntaxType.ThriftErrors:
                 throw new AggregateError(thriftAST.errors);
         }
