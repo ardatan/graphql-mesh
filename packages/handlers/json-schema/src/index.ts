@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -15,32 +15,10 @@ import {
   JSONSchemaVisitorCache
 } from './json-schema-visitor';
 import urlJoin from 'url-join';
-import isUrl from 'is-url';
 import { Interpolator } from '@ardatan/string-interpolation';
-import { join } from 'path';
+import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
-
-async function loadJsonSchema(
-  filePathOrUrl: string,
-  config: YamlConfig.JsonSchemaHandler,
-  cache: KeyValueCache,
-) {
-  if (isUrl(filePathOrUrl)) {
-    const req = new Request(filePathOrUrl, {
-      headers: {
-        ...config?.schemaHeaders
-      }
-    });
-    const res = await fetchache(req, cache);
-
-    return res.json();
-  } else {
-    const m = await import(join(process.cwd(), filePathOrUrl));
-
-    return 'default' in m ? m.default : m;
-  }
-}
 
 async function loadFromModuleExportExpression(expression: string) {
   const [moduleName, exportName] = expression.split('#');
@@ -104,8 +82,8 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
     await Promise.all(
       config.operations?.map(async operationConfig => {
         const [requestSchema, responseSchema] = await Promise.all([
-          operationConfig.requestSchema && loadJsonSchema(operationConfig.requestSchema, config, cache),
-            loadJsonSchema(operationConfig.responseSchema, config, cache)
+          operationConfig.requestSchema && readFileOrUrlWithCache(operationConfig.requestSchema, config, cache),
+          readFileOrUrlWithCache(operationConfig.responseSchema, config, cache)
         ]);
         operationConfig.method =
           operationConfig.method ||

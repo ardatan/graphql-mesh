@@ -1,0 +1,26 @@
+extend type Handler {  
+  """
+  Handler for OData
+  """
+  thrift: ThriftHandler
+}
+
+type ThriftHandler @md {
+  """
+  Host Name
+  """
+  hostName: String!
+  """
+  Port
+  """
+  port: Int!
+  """
+  Path to your service under Thrift API
+  """
+  servicePath: String!
+  """
+  IDL Path
+  """
+  idl: String!
+}
+
