@@ -4,7 +4,7 @@ title: Thrift
 sidebar_label: SOAP
 ---
 
-This handler allows you to consume [Apache Thrift](https://thrift.apache.org/) `.thrift` files and generate an executable schema for those services.
+This handler allows you to consume [Apache Thrift](https://thrift.apache.org/) `.thrift` files and generate a remote executable schema for those services.
 
 To get started, install the handler library from NPM:
 

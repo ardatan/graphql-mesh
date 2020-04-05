@@ -18,7 +18,7 @@ https://graphql-mesh.com
 GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run GraphQL (and also ones that do run GraphQL).
 It can be used as a gateway to other services, or run as a local GraphQL schema that aggregates data from remote APIs.
 
-The goal of GraphQL Mesh is to let developers easily access services that are written in other APIs specs (such as gRPC, OpenAPI, Swagger, oData, SOAP, and also GraphQL) with GraphQL queries and mutations.
+The goal of GraphQL Mesh is to let developers easily access services that are written in other APIs specs (such as gRPC, OpenAPI/Swagger, OData, SOAP/WSDL, Apache Thrift, and also GraphQL) with GraphQL queries and mutations.
 
 GraphQL Mesh gives the developer the ability to modify the output schemas, link types across schemas and merge schema types. You can even add custom GraphQL types and resolvers that fit your needs.
 
