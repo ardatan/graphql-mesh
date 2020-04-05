@@ -19,6 +19,7 @@ import { Interpolator } from '@ardatan/string-interpolation';
 import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
+import { JSONSchemaDefinition } from './json-schema-types';
 
 async function loadFromModuleExportExpression(expression: string) {
   const [moduleName, exportName] = expression.split('#');
@@ -82,8 +83,12 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
     await Promise.all(
       config.operations?.map(async operationConfig => {
         const [requestSchema, responseSchema] = await Promise.all([
-          operationConfig.requestSchema && readFileOrUrlWithCache(operationConfig.requestSchema, config, cache),
-          readFileOrUrlWithCache(operationConfig.responseSchema, config, cache)
+          operationConfig.requestSchema ? readFileOrUrlWithCache<JSONSchemaDefinition>(operationConfig.requestSchema, cache, {
+            headers: config.schemaHeaders,
+          }) : undefined,
+          readFileOrUrlWithCache<JSONSchemaDefinition>(operationConfig.responseSchema, cache, {
+            headers: config.schemaHeaders,
+          })
         ]);
         operationConfig.method =
           operationConfig.method ||

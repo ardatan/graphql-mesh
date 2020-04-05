@@ -17,7 +17,7 @@ type ThriftHandler @md {
   """
   Path
   """
-  oath: String
+  path: String
   """
   SSL?
   """
@@ -27,7 +27,8 @@ type ThriftHandler @md {
   Path to your service under Thrift API
   """
   serviceName: String!
-  headers: JSON
+  schemaHeaders: JSON
+  operationHeaders: JSON
   """
   IDL Path
   """

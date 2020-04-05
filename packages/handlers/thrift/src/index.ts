@@ -13,9 +13,8 @@ import { pascalCase } from 'pascal-case';
 
 const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
     async getMeshSource({ config, cache }) {
-        const rawThrift = await readFileOrUrlWithCache<string>(config.idl, cache, { allowUnknownExtensions: true });
+        const rawThrift = await readFileOrUrlWithCache<string>(config.idl, cache, { allowUnknownExtensions: true, headers: config.schemaHeaders });
         const thriftAST: ThriftDocument | ThriftErrors = parse(rawThrift, { organize: false, });
-
 
         const enumTypeMap = new Map<string, GraphQLEnumType>();
         const outputTypeMap = new Map<string, GraphQLOutputType>();
@@ -30,9 +29,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
 
         type TypeVal = BaseTypeVal | ListTypeVal | SetTypeVal | MapTypeVal | EnumTypeVal | StructTypeVal;
         type BaseTypeVal = { id: number, type: TType.BOOL | TType.BYTE | TType.DOUBLE | TType.I16 | TType.I32 | TType.I64 | TType.STRING };
-        type ListTypeVal = { id: number, type: TType.LIST, ofType: TypeVal };
-        type SetTypeVal = { id: number, type: TType.SET, ofType: TypeVal };
-        type MapTypeVal = { id: number, type: TType.MAP };
+        type ListTypeVal = { id: number, type: TType.LIST, elementType: TypeVal; };
+        type SetTypeVal = { id: number, type: TType.SET, elementType: TypeVal; };
+        type MapTypeVal = { id: number, type: TType.MAP, keyType: TypeVal; valType: TypeVal; };
         type EnumTypeVal = { id: number, type: TType.ENUM };
         type StructTypeVal = { id: number, type: TType.STRUCT, name: string, fields: TypeMap };
         type TypeMap = Record<string, TypeVal>;
@@ -51,127 +50,152 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                 [methodName: string]: number;
             } = methodParameters;
 
-            private encode(structName: string, args: any, typeMap: TypeMap, output: TProtocol) {
-                output.writeStructBegin(structName);
-                const argNames = Object.keys(args).sort((a, b) => typeMap[a].id.toString().localeCompare(typeMap[b].id.toString()));
-                for (const argName of argNames) {
-                    const argType = typeMap[argName];
-                    const argVal = args[argName];
-                    if (argVal) {
-                        switch (argType.type) {
-                            case TType.BOOL:
-                                output.writeFieldBegin(argName, TType.BOOL, argType.id);
-                                output.writeBool(argVal);
-                                output.writeFieldEnd();
-                                break;
-                            case TType.BYTE:
-                                output.writeFieldBegin(argName, TType.BYTE, argType.id);
-                                output.writeByte(argVal);
-                                output.writeFieldEnd();
-                                break;
-                            case TType.DOUBLE:
-                                output.writeFieldBegin(argName, TType.DOUBLE, argType.id);
-                                output.writeDouble(argVal);
-                                output.writeFieldEnd();
-                                break;
-                            case TType.I16:
-                                output.writeFieldBegin(argName, TType.I16, argType.id);
-                                output.writeI16(argVal);
-                                output.writeFieldEnd();
-                                break;
-                            case TType.I32:
-                                output.writeFieldBegin(argName, TType.I32, argType.id);
-                                output.writeI32(argVal);
-                                output.writeFieldEnd();
-                                break;
-                            case TType.I64:
-                                output.writeFieldBegin(argName, TType.I32, argType.id);
-                                output.writeI64(argVal.toString());
-                                output.writeFieldEnd();
-                                break;
-                            case TType.STRING:
-                                output.writeFieldBegin(argName, TType.STRING, argType.id);
-                                output.writeString(argVal);
-                                output.writeFieldEnd();
-                                break;
-                            case TType.STRUCT:
-                                output.writeFieldBegin(argName, argType.type, argType.id);
-                                this.encode(argType.name, argVal, argType.fields, output);
-                                output.writeFieldEnd();
-                                break;
-                            case TType.ENUM:
-                                // TODO: A
-                                break;
-                            case TType.MAP:
-                                // TODO: A
-                                break;
-                            case TType.LIST:
-                                // TODO: A
-                                break;
-                        }
-                    }
-                }
-
-                output.writeFieldStop();
-                output.writeStructEnd();
-            }
-            decode(input: TProtocol) {
-                const result: any = {};
-                input.readStructBegin();
-                while (true) {
-                    const field: IThriftField = input.readFieldBegin();
-                    const fieldType = field.fieldType;
-                    const fieldName = field.fieldName || 'success';
-                    if (fieldType === TType.STOP) {
+            writeType(typeVal: TypeVal, value: any, output: TProtocol) {
+                switch (typeVal.type) {
+                    case TType.BOOL:
+                        output.writeBool(value);
                         break;
-                    }
-                    switch (fieldType) {
-                        case TType.BOOL:
-                            result[fieldName] = input.readBool();
-                            break;
-                        case TType.BYTE:
-                            result[fieldName] = input.readByte();
-                            break;
-                        case TType.DOUBLE:
-                            result[fieldName] = input.readDouble();
-                            break;
-                        case TType.I16:
-                            result[fieldName] = input.readI16();
-                            break;
-                        case TType.I32:
-                            result[fieldName] = input.readI32();
-                            break;
-                        case TType.I64:
-                            result[fieldName] = BigInt(input.readI64().toString());
-                            break;
-                        case TType.STRING:
-                            result[fieldName] = input.readString();
-                            break;
-                        case TType.STRUCT:
-                            input.readStructBegin();
-                            this.decode(input);
-                            input.readStructBegin();
-                            break;
-                        case TType.ENUM:
-                            // TODO: A
-                            break;
-                        case TType.MAP:
-                            // TODO: A
-                            break;
-                        case TType.LIST:
-                            // TODO: A
-                            break;
-                    }
-                    input.readFieldEnd();
+                    case TType.BYTE:
+                        output.writeByte(value);
+                        break;
+                    case TType.DOUBLE:
+                        output.writeDouble(value);
+                        break;
+                    case TType.I16:
+                        output.writeI16(value);
+                        break;
+                    case TType.I32:
+                        output.writeI32(value);
+                        break;
+                    case TType.I64:
+                        output.writeI64(value.toString());
+                        break;
+                    case TType.STRING:
+                        output.writeString(value);
+                        break;
+                    case TType.STRUCT:
+                        output.writeStructBegin(typeVal.name);
+                        const typeMap = typeVal.fields;
+                        for (const argName in value) {
+                            const argType = typeMap[argName];
+                            const argVal = value[argName];
+                            if (argVal) {
+                                output.writeFieldBegin(argName, argType.type, argType.id);
+                                this.writeType(argType, argVal, output);
+                                output.writeFieldEnd();
+                            }
+                        }
+                        output.writeFieldStop();
+                        output.writeStructEnd();
+                        break;
+                    case TType.ENUM:
+                        // TODO: A
+                        break;
+                    case TType.MAP:
+                        const keys = Object.keys(value);
+                        output.writeMapBegin(typeVal.keyType.type, typeVal.valType.type, keys.length);
+                        for (const key of keys) {
+                            this.writeType(typeVal.keyType, key, output);
+                            const val = value[key];
+                            this.writeType(typeVal.valType, val, output);
+                        }
+                        output.writeMapEnd();
+                        break;
+                    case TType.LIST:
+                        output.writeListBegin(typeVal.elementType.type, value.length);
+                        for (const element of value) {
+                            this.writeType(typeVal.elementType, element, output);
+                        }
+                        output.writeListEnd();
+                        break;
+                    case TType.SET:
+                        output.writeSetBegin(typeVal.elementType.type, value.length);
+                        for (const element of value) {
+                            this.writeType(typeVal.elementType, element, output);
+                        }
+                        output.writeSetEnd();
+                        break;
                 }
-                input.readStructEnd();
-                return result;
             }
-            async doRequest(methodName: string, args: any, typeMap: TypeMap, returnTypeVal: TypeVal, context?: any) {
+            readType(type: TType, input: TProtocol): any {
+                switch (type) {
+                    case TType.BOOL:
+                        return input.readBool();
+                    case TType.BYTE:
+                        return input.readByte();
+                    case TType.DOUBLE:
+                        return input.readDouble();
+                    case TType.I16:
+                        return input.readI16();
+                    case TType.I32:
+                        return input.readI32();
+                    case TType.I64:
+                        return BigInt(input.readI64().toString());
+                    case TType.STRING:
+                        return input.readString();
+                    case TType.STRUCT: {
+                        const result: any = {};
+                        input.readStructBegin();
+                        while (true) {
+                            const field: IThriftField = input.readFieldBegin();
+                            const fieldType = field.fieldType;
+                            const fieldName = field.fieldName || 'success';
+                            if (fieldType === TType.STOP) {
+                                break;
+                            }
+                            result[fieldName] = this.readType(fieldType, input);
+                            input.readFieldEnd();
+                        }
+                        input.readStructEnd();
+                        return result;
+                    }
+                    case TType.ENUM:
+                        // TODO: A
+                        break;
+                    case TType.MAP: {
+                        const result: any = {};
+                        const map = input.readMapBegin();
+                        for (let i = 0; i < map.size; i++) {
+                            const key = this.readType(map.keyType, input);
+                            const value = this.readType(map.valueType, input);
+                            result[key] = value;
+                        }
+                        input.readMapEnd();
+                        return result;
+                    }
+                    case TType.LIST: {
+                        const result: any[] = [];
+                        const list = input.readListBegin();
+                        for (let i = 0; i < list.size; i++) {
+                            const element = this.readType(list.elementType, input);
+                            result.push(element);
+                        }
+                        input.readListEnd();
+                        return result;
+                    }
+                    case TType.SET: {
+                        const result: any[] = [];
+                        const list = input.readSetBegin();
+                        for (let i = 0; i < list.size; i++) {
+                            const element = this.readType(list.elementType, input);
+                            result.push(element);
+                        }
+                        input.readSetEnd();
+                        return result;
+                    }
+                }
+            }
+            async doRequest(methodName: string, args: any, fields: TypeMap, context?: any) {
                 const writer: TTransport = new this.transport();
                 const output: TProtocol = new this.protocol(writer);
-                output.writeMessageBegin(methodName, MessageType.CALL, this.incrementRequestId());
-                this.encode(pascalCase(methodName) + '__Args', args, typeMap, output);
+                const id = this.incrementRequestId();
+                output.writeMessageBegin(methodName, MessageType.CALL, id);
+                this.writeType({
+                    name: pascalCase(methodName) + '__Args',
+                    type: TType.STRUCT,
+                    fields,
+                    id,
+                }, args, output);
                 output.writeMessageEnd();
                 const data: Buffer = await this.connection.send(writer.flush(), context);
                 const reader: TTransport = this.transport.receiver(data);
@@ -184,7 +208,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                         return Promise.reject(err);
                     }
                     else {
-                        const result = this.decode(input);
+                        const result = this.readType(TType.STRUCT, input);
                         input.readMessageEnd();
                         if (result.success != null) {
                             return result.success;
@@ -199,7 +223,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                 }
             }
         }
-        const thriftHttpClient = createHttpClient(MeshThriftClient, config);
+        const thriftHttpClient = createHttpClient(MeshThriftClient, {
+            ...config,
+            requestOptions: {
+                headers: config.operationHeaders,
+            }
+        });
 
         function processComments(comments: Comment[]) {
             return comments.map(comment => comment.value).join('\n');
@@ -247,17 +276,19 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                     const ofTypeList = getGraphQLFunctionType(functionType.valueType, id);
                     inputType = new GraphQLList(ofTypeList.inputType);
                     outputType = new GraphQLList(ofTypeList.outputType);
-                    typeVal = typeVal! || { type: TType.LIST, ofType: ofTypeList.typeVal };
+                    typeVal = typeVal! || { type: TType.LIST, elementType: ofTypeList.typeVal };
                 case SyntaxType.SetType:
                     const ofSetType = getGraphQLFunctionType(functionType.valueType, id);
                     inputType = new GraphQLList(ofSetType.inputType);
                     outputType = new GraphQLList(ofSetType.outputType);
-                    typeVal = typeVal! || { type: TType.SET, ofType: ofSetType.typeVal };
+                    typeVal = typeVal! || { type: TType.SET, elementType: ofSetType.typeVal };
                     break;
                 case SyntaxType.MapType:
                     inputType = GraphQLJSON;
                     outputType = GraphQLJSON;
-                    // TODO: typeVal = ???
+                    const ofTypeKey = getGraphQLFunctionType(functionType.keyType, id);
+                    const ofTypeValue = getGraphQLFunctionType(functionType.valueType, id);
+                    typeVal = typeVal! || { type: TType.MAP, keyType: ofTypeKey.typeVal, valType: ofTypeValue.typeVal };
                     break;
                 case SyntaxType.Identifier:
                     let typeName = functionType.value;
