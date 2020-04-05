@@ -897,7 +897,7 @@ export class ODataGraphQLSchemaFactory {
     public async processServiceConfig() {
         const metadataUrl = urljoin(this.config.baseUrl, this.config.servicePath, '$metadata');
         const metadataRequest = new Request(metadataUrl, {
-            headers: this.config.metadataHeaders,
+            headers: this.config.schemaHeaders,
         });
 
         const serviceCommonArgs: GraphQLFieldConfigArgumentMap = {};
