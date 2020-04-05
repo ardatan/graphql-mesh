@@ -3,5 +3,4 @@ sources:
       handler:
         odata:
             baseUrl: https://services.odata.org/
-            services:
-                - servicePath: TripPinRESTierService/
+            servicePath: TripPinRESTierService/
