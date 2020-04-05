@@ -1,5 +1,7 @@
 import { prefixTransform } from '../src';
 import { buildSchema, printSchema, GraphQLSchema } from 'graphql';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { Hooks } from '@graphql-mesh/types';
 
 describe('prefix', () => {
   let schema: GraphQLSchema;
@@ -21,7 +23,9 @@ describe('prefix', () => {
       schema,
       config: {
         value: 'T_'
-      }
+      },
+      cache: new InMemoryLRUCache(),
+      hooks: new Hooks(),
     });
 
     expect(newSchema.getType('User')).toBeUndefined();
@@ -34,7 +38,9 @@ describe('prefix', () => {
       schema,
       config: {
         value: 'T_'
-      }
+      },
+      cache: new InMemoryLRUCache(),
+      hooks: new Hooks(),
     });
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -46,7 +52,9 @@ describe('prefix', () => {
       schema,
       apiName: 'MyApi',
       config: {
-      }
+      },
+      cache: new InMemoryLRUCache(),
+      hooks: new Hooks(),
     });
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -60,7 +68,9 @@ describe('prefix', () => {
       config: {
         value: 'T_',
         ignore: ['User'],
-      }
+      },
+      cache: new InMemoryLRUCache(),
+      hooks: new Hooks(),
     });
 
     expect(newSchema.getType('Query')).toBeDefined();

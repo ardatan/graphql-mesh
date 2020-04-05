@@ -58,22 +58,22 @@ export namespace EmptyRequest {
     }
 }
 
-export class SearchByCastInput extends jspb.Message { 
+export class SearchByCastRequest extends jspb.Message { 
     getCastname(): string;
     setCastname(value: string): void;
 
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): SearchByCastInput.AsObject;
-    static toObject(includeInstance: boolean, msg: SearchByCastInput): SearchByCastInput.AsObject;
+    toObject(includeInstance?: boolean): SearchByCastRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: SearchByCastRequest): SearchByCastRequest.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: SearchByCastInput, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): SearchByCastInput;
-    static deserializeBinaryFromReader(message: SearchByCastInput, reader: jspb.BinaryReader): SearchByCastInput;
+    static serializeBinaryToWriter(message: SearchByCastRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SearchByCastRequest;
+    static deserializeBinaryFromReader(message: SearchByCastRequest, reader: jspb.BinaryReader): SearchByCastRequest;
 }
 
-export namespace SearchByCastInput {
+export namespace SearchByCastRequest {
     export type AsObject = {
         castname: string,
     }

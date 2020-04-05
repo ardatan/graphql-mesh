@@ -5,7 +5,7 @@ extend type Handler {
   openapi: OpenapiHandler
 }
 
-type OpenapiHandler {
+type OpenapiHandler @md {
   """
   A pointer to your API source - could be a local file, remote file or url endpoint
   """
@@ -13,5 +13,9 @@ type OpenapiHandler {
   """
   JSON object representing the Headers to add to the runtime of the API calls
   """
-  headers: JSON
+  operationHeaders: JSON
+  """
+  If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
+  """
+  schemaHeaders: JSON
 }

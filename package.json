@@ -3,6 +3,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "build:website": "yarn build && cd website && yarn build:prod",
     "build": "lerna run build",
     "test": "lerna run test",
     "test-and-build": "yarn build && yarn test",
@@ -15,7 +16,14 @@
     "lerna": "3.20.2"
   },
   "workspaces": [
-    "./packages/**/*",
-    "./examples/*"
-  ]
+    "./packages/*",
+    "./packages/cache/*",
+    "./packages/handlers/*",
+    "./packages/transforms/*",
+    "./examples/*",
+    "./website"
+  ],
+  "resolutions": {
+    "graphql": "15.0.0"
+  }
 }

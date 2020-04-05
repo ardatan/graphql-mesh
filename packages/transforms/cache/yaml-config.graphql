@@ -5,7 +5,7 @@ extend type Transform {
   cache: [CacheTransformConfig!]
 }
 
-type CacheTransformConfig {
+type CacheTransformConfig @md {
   """
   The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`
   """

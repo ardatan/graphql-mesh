@@ -3,7 +3,7 @@ import {
   composeWithMongooseDiscriminators
 } from 'graphql-compose-mongoose';
 import {
-  schemaComposer,
+  SchemaComposer,
   ObjMap,
   ObjectTypeComposerFieldConfigDefinition
 } from 'graphql-compose';
@@ -49,6 +49,9 @@ async function loadExternalModuleByExpression(
 
 const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
   async getMeshSource({ config, hooks }) {
+
+    const schemaComposer = new SchemaComposer();
+
     if (config.connectionString) {
       await mongoose.connect(config.connectionString, {
         useNewUrlParser: true,

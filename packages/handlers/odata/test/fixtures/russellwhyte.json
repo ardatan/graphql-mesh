@@ -1,0 +1,60 @@
+{
+    "@odata.context": "https://services.odata.org/TripPinRESTierService/$metadata#People/$entity",
+    "@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person",
+    "@odata.id": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')",
+    "@odata.editLink": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')",
+    "UserName": "russellwhyte",
+    "FirstName": "Russell",
+    "LastName": "Whyte",
+    "MiddleName": null,
+    "Gender@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.PersonGender",
+    "Gender": "Male",
+    "Age": null,
+    "Emails@odata.type": "#Collection(String)",
+    "Emails": [
+        "Russell@example.com",
+        "Russell@contoso.com"
+    ],
+    "FavoriteFeature@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Feature",
+    "FavoriteFeature": "Feature1",
+    "Features@odata.type": "#Collection(Microsoft.OData.Service.Sample.TrippinInMemory.Models.Feature)",
+    "Features": [
+        "Feature1",
+        "Feature2"
+    ],
+    "AddressInfo": [
+        {
+            "@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Location",
+            "Address": "187 Suffolk Ln.",
+            "City": {
+                "@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.City",
+                "Name": "Boise",
+                "CountryRegion": "United States",
+                "Region": "ID"
+            }
+        }
+    ],
+    "HomeAddress": null,
+    "Friends@odata.associationLink": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Friends/$ref",
+    "Friends@odata.navigationLink": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Friends",
+    "BestFriend@odata.associationLink": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/BestFriend/$ref",
+    "BestFriend@odata.navigationLink": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/BestFriend",
+    "Trips@odata.associationLink": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips/$ref",
+    "Trips@odata.navigationLink": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips",
+    "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip": {
+        "title": "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip",
+        "target": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip"
+    },
+    "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline": {
+        "title": "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline",
+        "target": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline"
+    },
+    "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips": {
+        "title": "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips",
+        "target": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips"
+    },
+    "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName": {
+        "title": "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName",
+        "target": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName"
+    }
+}

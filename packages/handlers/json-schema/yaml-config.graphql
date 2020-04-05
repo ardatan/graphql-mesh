@@ -5,7 +5,7 @@ extend type Handler {
   jsonSchema: JsonSchemaHandler
 }
 
-type JsonSchemaHandler {
+type JsonSchemaHandler @md {
   baseUrl: String!
   typeReferences: [JsonSchemaTypeReference]
   operationHeaders: JSON

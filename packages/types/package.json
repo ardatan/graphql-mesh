@@ -1,19 +1,30 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.0.16",
-  "main": "dist/index.js",
+  "version": "0.0.19",
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "buildOptions": {
+    "input": "./src/index.ts"
+  },
   "license": "MIT",
   "scripts": {
-    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts",
-    "build": "tsc && cp src/config-schema.json ./dist/"
+    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts --markdown ../../website/docs/generated-markdown/",
+    "prepack": "bob-update-version",
+    "build": "bob && cp src/config-schema.json ./dist/"
   },
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/node": "13.9.5",
-    "graphql": "14.6.0",
-    "graphql-to-config-schema": "0.0.11",
+    "@types/node": "13.11.0",
+    "bob-the-bundler": "0.3.4",
+    "graphql": "15.0.0",
+    "graphql-to-config-schema": "0.0.16",
     "typescript": "3.8.3"
   },
   "dependencies": {
@@ -21,6 +32,7 @@
     "tsee": "1.3.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
   }
 }

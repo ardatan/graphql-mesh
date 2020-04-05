@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`thrift should create a GraphQL Schema from Thrift IDL 1`] = `
+"type Query {
+  \\"\\"\\"\\"\\"\\"
+  ping: Boolean
+
+  \\"\\"\\"\\"\\"\\"
+  postTweet(tweet: TweetInput): Boolean
+
+  \\"\\"\\"\\"\\"\\"
+  searchTweets(query: String): TweetSearchResult
+
+  \\"\\"\\"\\"\\"\\"
+  zip: Boolean
+}
+
+\\"\\"\\"\\"\\"\\"
+input TweetInput {
+  \\"\\"\\"\\"\\"\\"
+  userId: Int!
+
+  \\"\\"\\"\\"\\"\\"
+  userName: String!
+
+  \\"\\"\\"\\"\\"\\"
+  text: String!
+
+  \\"\\"\\"\\"\\"\\"
+  loc: LocationInput
+
+  \\"\\"\\"\\"\\"\\"
+  tweetType: TweetType
+
+  \\"\\"\\"\\"\\"\\"
+  language: String
+}
+
+\\"\\"\\"\\"\\"\\"
+input LocationInput {
+  \\"\\"\\"\\"\\"\\"
+  latitude: Float!
+
+  \\"\\"\\"\\"\\"\\"
+  longitude: Float!
+}
+
+\\"\\"\\"\\"\\"\\"
+enum TweetType {
+  \\"\\"\\"\\"\\"\\"
+  TWEET
+
+  \\"\\"\\"\\"\\"\\"
+  RETWEET
+
+  \\"\\"\\"\\"\\"\\"
+  DM
+
+  \\"\\"\\"\\"\\"\\"
+  REPLY
+}
+
+\\"\\"\\"\\"\\"\\"
+type TweetSearchResult {
+  \\"\\"\\"\\"\\"\\"
+  tweets: [Tweet]
+}
+
+\\"\\"\\"\\"\\"\\"
+type Tweet {
+  \\"\\"\\"\\"\\"\\"
+  userId: Int!
+
+  \\"\\"\\"\\"\\"\\"
+  userName: String!
+
+  \\"\\"\\"\\"\\"\\"
+  text: String!
+
+  \\"\\"\\"\\"\\"\\"
+  loc: Location
+
+  \\"\\"\\"\\"\\"\\"
+  tweetType: TweetType
+
+  \\"\\"\\"\\"\\"\\"
+  language: String
+}
+
+\\"\\"\\"\\"\\"\\"
+type Location {
+  \\"\\"\\"\\"\\"\\"
+  latitude: Float!
+
+  \\"\\"\\"\\"\\"\\"
+  longitude: Float!
+}
+"
+`;

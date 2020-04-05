@@ -4,6 +4,6 @@
       "outDir": "./dist",
       "baseUrl": "./"
     },
-    "files": ["src/index.ts"]
+    "include": ["src"]
   }
   

@@ -5,10 +5,37 @@ extend type Handler {
   soap: SoapHandler
 }
 
-type SoapHandler {
+type SoapHandler @md {
   """
   A url to your WSDL
   """
   wsdl: String!
-  config: JSON
+  securityCert: SoapSecurityCertificateConfig
+}
+
+type SoapSecurityCertificateConfig {
+  """
+  Your public key
+  """
+  publicKey: String
+  """
+  Your private key
+  """
+  privateKey: String
+  """
+  Password
+  """
+  password: String
+  """
+  Path to the file contains your public key
+  """
+  publicKeyFilePath: String
+  """
+  Path to the file contains your private key
+  """
+  privateKeyFilePath: String
+  """
+  Path to the file contains your password
+  """
+  passwordFilePath: String
 }
