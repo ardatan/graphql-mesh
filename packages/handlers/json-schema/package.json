@@ -21,7 +21,6 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/is-url": "1.2.28",
     "@types/jest": "25.2.1",
     "@types/node": "13.11.0",
     "@types/url-join": "4.0.0",
@@ -34,11 +33,11 @@
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.8",
     "@graphql-mesh/types": "0.0.19",
+    "@graphql-mesh/utils": "0.0.19",
     "aggregate-error": "3.0.1",
     "change-case": "4.1.1",
     "fetchache": "0.0.3",
     "graphql-scalars": "1.1.0",
-    "is-url": "1.2.4",
     "pascal-case": "3.1.1",
     "url-join": "4.0.1"
   },

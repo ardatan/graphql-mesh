@@ -13,7 +13,7 @@ type OpenapiHandler @md {
   """
   JSON object representing the Headers to add to the runtime of the API calls
   """
-  headers: JSON
+  operationHeaders: JSON
   """
   If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
   """

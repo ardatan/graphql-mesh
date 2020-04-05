@@ -60,14 +60,11 @@ interface UnresolvedDependency {
     queryable: boolean;
 }
 
-interface EndpointConfig {
+interface ODataConfig {
     baseUrl: string;
-    metadataHeaders?: Record<string, string>;
-    operationHeaders?: Record<string, string>;
-}
-
-interface ServiceConfig extends EndpointConfig {
     servicePath: string;
+    schemaHeaders?: Record<string, string>;
+    operationHeaders?: Record<string, string>;
 }
 
 interface ServiceContext {
@@ -120,7 +117,7 @@ export class ODataGraphQLSchemaFactory {
 
     private nonAbstractBaseTypes = new Map<string, GraphQLObjectType>();
 
-    constructor(private cache: KeyValueCache) { }
+    constructor(private config: ODataConfig, private cache: KeyValueCache) { }
 
     private isEntityType(type: GraphQLType | string): boolean {
         if (typeof type === 'string') {
@@ -897,21 +894,21 @@ export class ODataGraphQLSchemaFactory {
         serviceContext.schemaElement.querySelectorAll('Function,Action,Singleton').forEach(operationElement => this.processOperations(operationElement, serviceContext));
     }
 
-    public async processServiceConfig(serviceConfig: ServiceConfig) {
-        const metadataUrl = urljoin(serviceConfig.baseUrl, serviceConfig.servicePath, '$metadata');
+    public async processServiceConfig() {
+        const metadataUrl = urljoin(this.config.baseUrl, this.config.servicePath, '$metadata');
         const metadataRequest = new Request(metadataUrl, {
-            headers: serviceConfig.metadataHeaders,
+            headers: this.config.schemaHeaders,
         });
 
         const serviceCommonArgs: GraphQLFieldConfigArgumentMap = {};
 
         const interpolationStrings = [
-            ...(serviceConfig.operationHeaders
-                ? Object.keys(serviceConfig.operationHeaders).map(
-                    headerName => serviceConfig.operationHeaders![headerName]
+            ...(this.config.operationHeaders
+                ? Object.keys(this.config.operationHeaders).map(
+                    headerName => this.config.operationHeaders![headerName]
                 )
                 : []),
-            serviceConfig.baseUrl,
+                this.config.baseUrl,
         ];
 
         const interpolationKeys: string[] = interpolationStrings.reduce(
@@ -935,11 +932,11 @@ export class ODataGraphQLSchemaFactory {
             }
         }
 
-        const serviceUrlFactory: ResolverDataBasedFactory<string> = resolverData => this.interpolator.parse(urljoin(serviceConfig.baseUrl, serviceConfig.servicePath), resolverData);
+        const serviceUrlFactory: ResolverDataBasedFactory<string> = resolverData => this.interpolator.parse(urljoin(this.config.baseUrl, this.config.servicePath), resolverData);
 
         const headersFactory: ResolverDataBasedFactory<Headers> = (interpolationData: any) => {
             const headers = new Headers();
-            const headersNoninterpolated = serviceConfig.operationHeaders || {};
+            const headersNoninterpolated = this.config.operationHeaders || {};
             for (const headerName in headersNoninterpolated) {
                 headers.set(headerName, this.interpolator.parse(headersNoninterpolated[headerName], interpolationData))
             }

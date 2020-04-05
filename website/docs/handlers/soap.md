@@ -4,7 +4,7 @@ title: SOAP
 sidebar_label: SOAP
 ---
 
-This handler allows you to consume SOAP services from a remote endpoint.
+This handler allows you to consume [SOAP](https://www.soapui.org/) `WSDL` files and generate a remote executable schema for those services.
 
 To get started, install the handler library from NPM:
 

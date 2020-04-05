@@ -25,11 +25,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -52,11 +48,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -92,11 +84,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -138,11 +126,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -181,11 +165,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -220,11 +200,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -280,11 +256,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -323,11 +295,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -366,11 +334,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -413,11 +377,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -458,11 +418,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -501,11 +457,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -545,11 +497,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        services: [
-          {
-            servicePath: 'TripPinRESTierService/'
-          }
-        ]
+        servicePath: 'TripPinRESTierService/'
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
