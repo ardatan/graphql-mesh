@@ -7,30 +7,39 @@ extend type Handler {
 
 type ThriftHandler @md {
   """
-  Host Name
+  The name of the host to connect to.
   """
   hostName: String!
   """
-  Port
+  The port number to attach to on the host.
   """
   port: Int!
   """
-  Path
+  The path on which the Thrift service is listening. Defaults to '/thrift'.
   """
   path: String
   """
-  SSL?
+  Boolean value indicating whether to use https. Defaults to false.
   """
   https: Boolean
+  """
+  Name of the Thrift protocol type to use. Defaults to 'binary'.
+  """
   protocol: ThriftProtocolType 
   """
-  Path to your service under Thrift API
+  The name of your service. Used for logging.
   """
-  serviceName: String!
-  schemaHeaders: JSON
+  serviceName: String!  
+  """
+  JSON object representing the Headers to add to the runtime of the API calls
+  """
   operationHeaders: JSON
   """
-  IDL Path
+  If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
+  """
+  schemaHeaders: JSON
+  """
+  Path to IDL file
   """
   idl: String!
 }

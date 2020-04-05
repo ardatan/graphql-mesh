@@ -4,7 +4,7 @@ title: OpenAPI / Swagger
 sidebar_label: 'OpenAPI / Swagger'
 ---
 
-This handler allows you to load remote or local OpenAPI (2/3) and Swagger schemas. Based on `openapi-to-graphql`.
+This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io/) schemas. Based on [OpenAPI-to-GraphQL](https://developer.ibm.com/open/projects/openapi-to-graphql/).
 
 You can import it using remote/local `.json` or `.yaml`.
 
