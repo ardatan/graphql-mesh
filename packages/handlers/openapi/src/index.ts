@@ -66,7 +66,7 @@ async function readFile<T>(filePath: string, cache: KeyValueCache): Promise<T> {
 async function readUrl<T>(path: string, cache: KeyValueCache): Promise<T> {
   const response = await fetchache(new Request(path), cache);
   const contentType = response.headers.get('content-type') || '';
-  if (/json$/.test(path) || /json$/.test(contentType)) {
+  if (/json$/.test(path) || contentType.toLowerCase().includes('application/json')) {
     return response.json();
   } else if (
     /yaml$/.test(path) ||
