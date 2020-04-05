@@ -27,6 +27,20 @@ const handler: MeshHandlerLibrary<
         dynamicJson: true,
         appendPlugins: [
           builder => {
+            builder.hook(
+              'GraphQLObjectType:interfaces',
+              (interfaces, build, context) => {
+                const {
+                  scope: { isRootQuery }
+                } = context;
+                if (!isRootQuery) {
+                  return interfaces;
+                }
+
+                return [];
+              }
+            );
+
             builder.hook('finalize', (schema, build) => {
               mapsToPatch.push(build.fieldDataGeneratorsByType);
               mapsToPatch.push(build.fieldDataGeneratorsByFieldNameByType);

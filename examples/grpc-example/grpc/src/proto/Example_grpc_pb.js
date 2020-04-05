@@ -37,15 +37,15 @@ function deserialize_io_xtech_example_MoviesResult(buffer_arg) {
   return Example_pb.MoviesResult.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_io_xtech_example_SearchByCastInput(arg) {
-  if (!(arg instanceof Example_pb.SearchByCastInput)) {
-    throw new Error('Expected argument of type io.xtech.example.SearchByCastInput');
+function serialize_io_xtech_example_SearchByCastRequest(arg) {
+  if (!(arg instanceof Example_pb.SearchByCastRequest)) {
+    throw new Error('Expected argument of type io.xtech.example.SearchByCastRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_io_xtech_example_SearchByCastInput(buffer_arg) {
-  return Example_pb.SearchByCastInput.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_io_xtech_example_SearchByCastRequest(buffer_arg) {
+  return Example_pb.SearchByCastRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -69,10 +69,10 @@ searchMoviesByCast: {
     path: '/io.xtech.example.Example/SearchMoviesByCast',
     requestStream: false,
     responseStream: true,
-    requestType: Example_pb.SearchByCastInput,
+    requestType: Example_pb.SearchByCastRequest,
     responseType: Example_pb.Movie,
-    requestSerialize: serialize_io_xtech_example_SearchByCastInput,
-    requestDeserialize: deserialize_io_xtech_example_SearchByCastInput,
+    requestSerialize: serialize_io_xtech_example_SearchByCastRequest,
+    requestDeserialize: deserialize_io_xtech_example_SearchByCastRequest,
     responseSerialize: serialize_io_xtech_example_Movie,
     responseDeserialize: deserialize_io_xtech_example_Movie,
   },

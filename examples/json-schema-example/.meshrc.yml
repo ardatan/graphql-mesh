@@ -1,28 +1,35 @@
 sources:
-    - name: Fake API
-      handler:
-        json-schema:
-            baseUrl: https://not-existing-api.com/API
-            operations:
-                - type: Query
-                  field: users
-                  path: /users
-                  method: GET
-                  responseSchema: ./json-schemas/users.json
-                - type: Query
-                  field: company
-                  path: /company/{args.id}
-                  method: GET
-                  responseSchema: ./json-schemas/company.json
-      transforms:
-        - mocking:
-            mocks:
-                - apply: User.firstName
-                  faker: "{{name.firstName}}"
-                - apply: User.lastName
-                  faker: "{{name.lastName}}"
-                - apply: User.jobTitle
-                  faker: "{{name.jobTitle}}"
-                - apply: Company.name
-                  faker: "{{company.companyName}}"
+  - name: Fake API
+    handler:
+      json-schema:
+        baseUrl: https://not-existing-api.com/API
+        operations:
+          - type: Query
+            field: users
+            path: /users
+            method: GET
+            responseSchema: ./json-schemas/users.json
+          - type: Query
+            field: company
+            path: /company/{args.id}
+            method: GET
+            responseSchema: ./json-schemas/company.json
+    transforms:
+      - extend: |
+          extend type User {
+            company: Company
+          }
+          extend type Company {
+            employers: [User]
+          }
+      - mock:
+          mocks:
+            - apply: User.firstName
+              faker: '{{name.firstName}}'
+            - apply: User.lastName
+              faker: '{{name.lastName}}'
+            - apply: User.jobTitle
+              faker: '{{name.jobTitle}}'
+            - apply: Company.name
+              faker: '{{company.companyName}}'
 

@@ -1,0 +1,23 @@
+{
+    "@odata.context": "https://services.odata.org/TripPinRESTierService/$metadata#Collection(Microsoft.OData.Service.Sample.TrippinInMemory.Models.Trip)",
+    "value": [
+        {
+            "@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Trip",
+            "TripId": 0,
+            "ShareId": "9d9b2fa0-efbf-490e-a5e3-bac8f7d47354",
+            "Name": "Trip in US",
+            "Budget": 3000,
+            "Description": "Trip from San Francisco to New York City",
+            "Tags": [
+                "business",
+                "New York meeting"
+            ],
+            "StartsAt": "2014-01-01T00:00:00Z",
+            "EndsAt": "2014-01-04T00:00:00Z",
+            "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople": {
+                "title": "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople",
+                "target": "https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trip(0)/GetInvolvedPeople"
+            }
+        }
+    ]
+}

@@ -1,10 +1,11 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.0.16",
+  "version": "0.0.19",
   "license": "MIT",
   "scripts": {
     "test": "jest --config=../../jest.config.js",
-    "build": "tsc"
+    "prepack": "bob-update-version",
+    "build": "bob"
   },
   "peerDependencies": {
     "graphql": "*"
@@ -15,23 +16,32 @@
     "graphql-mesh": "dist/bin.js"
   },
   "devDependencies": {
-    "@types/chalk": "2.2.0",
-    "@types/jest": "25.1.4",
+    "@types/jest": "25.2.1",
     "@types/js-yaml": "3.12.3",
     "@types/mkdirp": "1.0.0",
-    "@types/node": "13.9.5",
+    "@types/node": "13.11.0",
     "@types/yargs": "15.0.4",
-    "graphql": "14.6.0",
-    "jest": "25.2.3",
-    "ts-jest": "25.2.1",
+    "bob-the-bundler": "0.3.4",
+    "graphql": "15.0.0",
+    "jest": "25.2.7",
+    "ts-jest": "25.3.1",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "buildOptions": {
+    "input": "src/index.ts",
+    "bin": {
+      "graphql-mesh": {
+        "input": "src/bin.ts"
+      }
+    }
   },
   "dependencies": {
     "@graphql-codegen/core": "1.13.1",
@@ -39,22 +49,23 @@
     "@graphql-codegen/typescript-generic-sdk": "1.13.1",
     "@graphql-codegen/typescript-operations": "1.13.1",
     "@graphql-codegen/typescript-resolvers": "1.13.1",
-    "@graphql-mesh/runtime": "0.0.16",
-    "@graphql-toolkit/code-file-loader": "0.9.11",
-    "@graphql-toolkit/common": "0.9.11",
-    "@graphql-toolkit/core": "0.9.11",
-    "@graphql-toolkit/graphql-file-loader": "0.9.11",
+    "@graphql-mesh/runtime": "0.0.19",
+    "@graphql-toolkit/code-file-loader": "0.10.2",
+    "@graphql-toolkit/common": "0.10.2",
+    "@graphql-toolkit/core": "0.10.2",
+    "@graphql-toolkit/graphql-file-loader": "0.10.2",
     "apollo-server": "2.11.0",
-    "chalk": "3.0.0",
+    "chalk": "4.0.0",
     "change-case": "4.1.1",
     "js-yaml": "3.13.1",
-    "mkdirp": "1.0.3",
+    "mkdirp": "1.0.4",
     "pascal-case": "3.1.1",
-    "ts-node": "8.8.1",
+    "ts-node": "8.8.2",
     "winston": "3.2.1",
     "yargs": "15.3.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
   }
 }

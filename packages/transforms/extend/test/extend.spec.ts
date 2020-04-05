@@ -1,5 +1,7 @@
 import { extendTransform } from '../src/index';
 import { buildSchema, printSchema, GraphQLObjectType } from 'graphql';
+import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { Hooks } from '@graphql-mesh/types';
 
 describe('extend', () => {
   it('should extend schema types correctly', async () => {
@@ -15,7 +17,9 @@ describe('extend', () => {
 
     const newSchema = await extendTransform({
       schema,
-      config: `extend type User { newField: String! }`
+      config: `extend type User { newField: String! }`,
+      cache: new InMemoryLRUCache(),
+      hooks: new Hooks(),
     });
 
     const type: GraphQLObjectType = newSchema.getType('User') as GraphQLObjectType;
@@ -39,10 +43,12 @@ describe('extend', () => {
 
     const newSchema = await extendTransform({
       schema,
-      config: `extend type Query { newField: String! }`
+      config: `extend type Query { newField: String! }`,
+      cache: new InMemoryLRUCache(),
+      hooks: new Hooks(),
     });
 
-    const type = newSchema.getQueryType();
+    const type = newSchema.getQueryType()!;
     const fields = type.getFields();
 
     expect(Object.keys(fields).length).toBe(2);

@@ -1,0 +1,26 @@
+extend type Handler {  
+  """
+  Handler for OData
+  """
+  odata: ODataHandler
+}
+
+type ODataHandler @md {
+  """
+  Base URL for OData API
+  """
+  baseUrl: String!
+  """
+  Path to your service under OData API
+  """
+  servicePath: String!
+  """
+  Headers to be used with the operation requests
+  """
+  operationHeaders: JSON
+  """
+  Headers to be used with the $metadata requests
+  """
+  schemaHeaders: JSON
+}
+

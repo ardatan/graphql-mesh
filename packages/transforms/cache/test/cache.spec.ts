@@ -174,9 +174,9 @@ describe('cache', () => {
       });
 
       expect(
-        modifiedSchema.getQueryType()?.getFields()['user'].resolve
+        modifiedSchema!.getQueryType()?.getFields()['user'].resolve
       ).not.toBe(spies.Query.user);
-      expect(modifiedSchema.getQueryType()?.getFields()['users'].resolve).toBe(
+      expect(modifiedSchema!.getQueryType()?.getFields()['users'].resolve).toBe(
         spies.Query.users
       );
     });
@@ -210,10 +210,10 @@ describe('cache', () => {
       });
 
       expect(
-        modifiedSchema.getQueryType()?.getFields()['user'].resolve
+        modifiedSchema!.getQueryType()?.getFields()['user'].resolve
       ).not.toBe(spies.Query.user);
       expect(
-        modifiedSchema.getQueryType()?.getFields()['users'].resolve
+        modifiedSchema!.getQueryType()?.getFields()['users'].resolve
       ).not.toBe(spies.Query.users);
     });
   });
@@ -242,7 +242,7 @@ describe('cache', () => {
       });
 
       const executeOptions = {
-        schema: modifiedSchema,
+        schema: modifiedSchema!,
         document: parse(/* GraphQL */ `
           query user {
             user(id: 1) {
@@ -465,7 +465,7 @@ describe('cache', () => {
       const expectedCacheKey = `query-user-1`;
 
       const executeOptions = {
-        schema: schemaWithCache,
+        schema: schemaWithCache!,
         document: parse(/* GraphQL */ `
           query user {
             user(id: 1) {
@@ -487,7 +487,7 @@ describe('cache', () => {
 
       // Run effecting mutation
       await execute({
-        schema: schemaWithCache,
+        schema: schemaWithCache!,
         document: parse(/* GraphQL */ `
           mutation updateUser {
             updateUser(userId: 1, name: "test new") {

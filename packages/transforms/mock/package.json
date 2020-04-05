@@ -1,0 +1,40 @@
+{
+    "name": "@graphql-mesh/transform-mock",
+    "version": "0.0.19",
+    "sideEffects": false,
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "typings": "dist/index.d.ts",
+    "typescript": {
+        "definition": "dist/index.d.ts"
+    },
+    "buildOptions": {
+        "input": "./src/index.ts"
+    },
+    "license": "MIT",
+    "scripts": {
+        "test": "jest --config=../../../jest.config.js",
+        "prepack": "bob-update-version",
+        "build": "bob"
+    },
+    "peerDependencies": {
+        "graphql": "*"
+    },
+    "devDependencies": {
+        "@types/faker": "4.1.11",
+        "@types/jest": "25.2.1",
+        "@types/node": "13.11.0",
+        "graphql": "15.0.0",
+        "jest": "25.2.7",
+        "ts-jest": "25.3.1",
+        "typescript": "3.8.3"
+    },
+    "dependencies": {
+        "@graphql-mesh/types": "0.0.19",
+        "faker": "4.1.0",
+        "graphql-tools-fork": "9.0.1"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

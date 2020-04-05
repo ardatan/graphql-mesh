@@ -1,3 +1,3 @@
-describe('graphql', () => {
+describe('soap', () => {
   it('dummy', async () => {});
 });

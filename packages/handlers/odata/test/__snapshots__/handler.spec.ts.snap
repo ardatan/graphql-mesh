@@ -1,0 +1,506 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] = `
+"interface IPerson {
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+
+  \\"\\"\\"\\"\\"\\"
+  AddressInfo: [ILocation]
+
+  \\"\\"\\"\\"\\"\\"
+  HomeAddress: ILocation
+
+  \\"\\"\\"\\"\\"\\"
+  Friends(queryOptions: QueryOptions): [IPerson]
+
+  \\"\\"\\"\\"\\"\\"
+  BestFriend: IPerson
+
+  \\"\\"\\"\\"\\"\\"
+  Trips(queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  GetFavoriteAirline: Airline
+
+  \\"\\"\\"\\"\\"\\"
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  UpdatePersonLastName(lastName: String): Boolean
+
+  \\"\\"\\"\\"\\"\\"
+  ShareTrip(userName: String, tripId: Int): JSON
+}
+
+enum PersonGender {
+  Male
+  Female
+  Unknow
+}
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+enum Feature {
+  Feature1
+  Feature2
+  Feature3
+  Feature4
+}
+
+input QueryOptions {
+  \\"\\"\\"
+  A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.
+  \\"\\"\\"
+  orderby: String
+
+  \\"\\"\\"
+  A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
+  \\"\\"\\"
+  top: Int
+
+  \\"\\"\\"
+  A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
+  \\"\\"\\"
+  skip: Int
+
+  \\"\\"\\"
+  A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.
+  \\"\\"\\"
+  filter: String
+
+  \\"\\"\\"
+  A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.
+  \\"\\"\\"
+  inlinecount: InlineCount
+}
+
+enum InlineCount {
+  \\"\\"\\"
+  The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)
+  \\"\\"\\"
+  allpages
+
+  \\"\\"\\"
+  The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.
+  \\"\\"\\"
+  none
+}
+
+\\"\\"\\"
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+\\"\\"\\"
+scalar JSON
+
+type Airline {
+  AirlineCode: String!
+  Name: String
+}
+
+type Airport {
+  Name: String
+  IcaoCode: String!
+  IataCode: String
+
+  \\"\\"\\"\\"\\"\\"
+  Location: AirportLocation
+}
+
+type Trip {
+  TripId: Int!
+  ShareId: GUID!
+  Name: String
+  Budget: Float!
+  Description: String
+  Tags: [String]
+  StartsAt: String!
+  EndsAt: String!
+
+  \\"\\"\\"\\"\\"\\"
+  PlanItems(queryOptions: QueryOptions): [IPlanItem]
+
+  \\"\\"\\"\\"\\"\\"
+  GetInvolvedPeople(queryOptions: QueryOptions): [IPerson]
+}
+
+\\"\\"\\"
+A field whose value is a generic Globally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.
+\\"\\"\\"
+scalar GUID
+
+interface IPlanItem {
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+type Event implements IPlanItem {
+  OccursAt: EventLocation
+  Description: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+interface IPublicTransportation implements IPlanItem {
+  SeatNumber: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+type Flight implements IPublicTransportation & IPlanItem {
+  FlightNumber: String
+  Airline: Airline
+  From: Airport
+  To: Airport
+  SeatNumber: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+type Employee implements IPerson {
+  Cost: BigInt!
+  Peers(queryOptions: QueryOptions): [IPerson]
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+
+  \\"\\"\\"\\"\\"\\"
+  AddressInfo: [ILocation]
+
+  \\"\\"\\"\\"\\"\\"
+  HomeAddress: ILocation
+
+  \\"\\"\\"\\"\\"\\"
+  Friends(queryOptions: QueryOptions): [IPerson]
+
+  \\"\\"\\"\\"\\"\\"
+  BestFriend: IPerson
+
+  \\"\\"\\"\\"\\"\\"
+  Trips(queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  GetFavoriteAirline: Airline
+
+  \\"\\"\\"\\"\\"\\"
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  UpdatePersonLastName(lastName: String): Boolean
+
+  \\"\\"\\"\\"\\"\\"
+  ShareTrip(userName: String, tripId: Int): JSON
+}
+
+type Manager implements IPerson {
+  Budget: BigInt!
+  BossOffice: ILocation
+  DirectReports(queryOptions: QueryOptions): [IPerson]
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+
+  \\"\\"\\"\\"\\"\\"
+  AddressInfo: [ILocation]
+
+  \\"\\"\\"\\"\\"\\"
+  HomeAddress: ILocation
+
+  \\"\\"\\"\\"\\"\\"
+  Friends(queryOptions: QueryOptions): [IPerson]
+
+  \\"\\"\\"\\"\\"\\"
+  BestFriend: IPerson
+
+  \\"\\"\\"\\"\\"\\"
+  Trips(queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  GetFavoriteAirline: Airline
+
+  \\"\\"\\"\\"\\"\\"
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  UpdatePersonLastName(lastName: String): Boolean
+
+  \\"\\"\\"\\"\\"\\"
+  ShareTrip(userName: String, tripId: Int): JSON
+}
+
+interface ILocation {
+  Address: String
+
+  \\"\\"\\"\\"\\"\\"
+  City: City
+}
+
+type City {
+  Name: String
+  CountryRegion: String
+  Region: String
+}
+
+type AirportLocation implements ILocation {
+  Loc: String
+  Address: String
+
+  \\"\\"\\"\\"\\"\\"
+  City: City
+}
+
+type EventLocation implements ILocation {
+  BuildingInfo: String
+  Address: String
+
+  \\"\\"\\"\\"\\"\\"
+  City: City
+}
+
+type Person implements IPerson {
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+
+  \\"\\"\\"\\"\\"\\"
+  AddressInfo: [ILocation]
+
+  \\"\\"\\"\\"\\"\\"
+  HomeAddress: ILocation
+
+  \\"\\"\\"\\"\\"\\"
+  Friends(queryOptions: QueryOptions): [IPerson]
+
+  \\"\\"\\"\\"\\"\\"
+  BestFriend: IPerson
+
+  \\"\\"\\"\\"\\"\\"
+  Trips(queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  GetFavoriteAirline: Airline
+
+  \\"\\"\\"\\"\\"\\"
+  GetFriendsTrips(userName: String, queryOptions: QueryOptions): [Trip]
+
+  \\"\\"\\"\\"\\"\\"
+  UpdatePersonLastName(lastName: String): Boolean
+
+  \\"\\"\\"\\"\\"\\"
+  ShareTrip(userName: String, tripId: Int): JSON
+}
+
+type Location implements ILocation {
+  Address: String
+
+  \\"\\"\\"\\"\\"\\"
+  City: City
+}
+
+type PlanItem implements IPlanItem {
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+type PublicTransportation implements IPublicTransportation & IPlanItem {
+  SeatNumber: String
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+type Query {
+  getPeople(queryOptions: QueryOptions): [IPerson]
+  getPeopleByUserName(UserName: String!): IPerson
+  getPeopleCount: Int
+  getAirlines(queryOptions: QueryOptions): [Airline]
+  getAirlinesByAirlineCode(AirlineCode: String!): Airline
+  getAirlinesCount: Int
+  getAirports(queryOptions: QueryOptions): [Airport]
+  getAirportsByIcaoCode(IcaoCode: String!): Airport
+  getAirportsCount: Int
+  getNewComePeople(queryOptions: QueryOptions): [IPerson]
+  getNewComePeopleByUserName(UserName: String!): IPerson
+  getNewComePeopleCount: Int
+  GetPersonWithMostFriends: IPerson
+  GetNearestAirport(lat: Float, lon: Float): Airport
+  Me: IPerson
+}
+
+type Mutation {
+  getPeopleByUserName(UserName: String!): IPerson
+  deletePeopleByUserName(UserName: String!): JSON
+  updatePeopleByUserName(UserName: String!, input: PeopleUpdateInput): IPerson
+  createPeople(input: PersonInput): IPerson
+  getAirlinesByAirlineCode(AirlineCode: String!): Airline
+  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON
+  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlinesUpdateInput): Airline
+  createAirlines(input: AirlineInput): Airline
+  getAirportsByIcaoCode(IcaoCode: String!): Airport
+  deleteAirportsByIcaoCode(IcaoCode: String!): JSON
+  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportsUpdateInput): Airport
+  createAirports(input: AirportInput): Airport
+  getNewComePeopleByUserName(UserName: String!): IPerson
+  deleteNewComePeopleByUserName(UserName: String!): JSON
+  updateNewComePeopleByUserName(UserName: String!, input: NewComePeopleUpdateInput): IPerson
+  createNewComePeople(input: PersonInput): IPerson
+  ResetDataSource(person: PersonInput, lastName: String, personInstance: PersonInput, userName: String, tripId: Int): Boolean
+}
+
+input PeopleUpdateInput {
+  UserName: String
+  FirstName: String
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature
+  Features: [Feature]
+  AddressInfo: [LocationInput]
+  HomeAddress: LocationInput
+  Friends: [PersonInput]
+  BestFriend: PersonInput
+  Trips: [TripInput]
+}
+
+input LocationInput {
+  Address: String
+  City: CityInput
+}
+
+input CityInput {
+  Name: String
+  CountryRegion: String
+  Region: String
+}
+
+input PersonInput {
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+  AddressInfo: [LocationInput]
+  HomeAddress: LocationInput
+  Friends: [PersonInput]
+  BestFriend: PersonInput
+  Trips: [TripInput]
+}
+
+input TripInput {
+  TripId: Int!
+  ShareId: GUID!
+  Name: String
+  Budget: Float!
+  Description: String
+  Tags: [String]
+  StartsAt: String!
+  EndsAt: String!
+  PlanItems: [PlanItemInput]
+}
+
+input PlanItemInput {
+  PlanItemId: Int!
+  ConfirmationCode: String
+  StartsAt: String!
+  EndsAt: String!
+  Duration: String!
+}
+
+input AirlinesUpdateInput {
+  AirlineCode: String
+  Name: String
+}
+
+input AirlineInput {
+  AirlineCode: String!
+  Name: String
+}
+
+input AirportsUpdateInput {
+  Name: String
+  IcaoCode: String
+  IataCode: String
+  Location: AirportLocationInput
+}
+
+input AirportLocationInput {
+  Loc: String
+  Address: String
+  City: CityInput
+}
+
+input AirportInput {
+  Name: String
+  IcaoCode: String!
+  IataCode: String
+  Location: AirportLocationInput
+}
+
+input NewComePeopleUpdateInput {
+  UserName: String
+  FirstName: String
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender
+  Age: BigInt
+  Emails: [String]
+  FavoriteFeature: Feature
+  Features: [Feature]
+  AddressInfo: [LocationInput]
+  HomeAddress: LocationInput
+  Friends: [PersonInput]
+  BestFriend: PersonInput
+  Trips: [TripInput]
+}
+"
+`;

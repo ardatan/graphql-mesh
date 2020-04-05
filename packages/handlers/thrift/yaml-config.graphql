@@ -1,0 +1,51 @@
+extend type Handler {  
+  """
+  Handler for OData
+  """
+  thrift: ThriftHandler
+}
+
+type ThriftHandler @md {
+  """
+  The name of the host to connect to.
+  """
+  hostName: String!
+  """
+  The port number to attach to on the host.
+  """
+  port: Int!
+  """
+  The path on which the Thrift service is listening. Defaults to '/thrift'.
+  """
+  path: String
+  """
+  Boolean value indicating whether to use https. Defaults to false.
+  """
+  https: Boolean
+  """
+  Name of the Thrift protocol type to use. Defaults to 'binary'.
+  """
+  protocol: ThriftProtocolType 
+  """
+  The name of your service. Used for logging.
+  """
+  serviceName: String!  
+  """
+  JSON object representing the Headers to add to the runtime of the API calls
+  """
+  operationHeaders: JSON
+  """
+  If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
+  """
+  schemaHeaders: JSON
+  """
+  Path to IDL file
+  """
+  idl: String!
+}
+
+enum ThriftProtocolType {
+  binary
+  compact
+  json
+}

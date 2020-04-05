@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { writeFileSync } from 'fs';
 import { findAndParseConfig, getMesh } from '@graphql-mesh/runtime';
 import * as yargs from 'yargs';
