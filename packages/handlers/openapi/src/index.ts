@@ -5,20 +5,21 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 
 const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
   async getMeshSource({ config, cache }) {
-
     const path = config.source;
-    const spec: Oas3 = await readFileOrUrlWithCache(path, cache, config);
+    const spec: Oas3 = await readFileOrUrlWithCache(path, cache, {
+      headers: config.schemaHeaders
+    });
 
     const { schema } = await createGraphQLSchema(spec, {
-      ...(config || {}),
+      headers: config.operationHeaders,
       operationIdFieldNames: true,
-      viewer: false // Viewer set to false in order to force users to specify auth via config file
+      viewer: false, // Viewer set to false in order to force users to specify auth via config file
     });
 
     return {
-      schema
+      schema,
     };
-  }
+  },
 };
 
 export default handler;
