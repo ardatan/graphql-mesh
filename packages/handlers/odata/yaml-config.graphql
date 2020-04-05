@@ -11,21 +11,6 @@ type ODataHandler @md {
   """
   baseUrl: String!
   """
-  Headers to be used with the operation requests
-  """
-  operationHeaders: JSON
-  """
-  Headers to be used with the $metadata requests
-  """
-  metadataHeaders: JSON
-  """
-  Service Configurations
-  """
-  services: [ODataServiceConfig!]!
-}
-
-type ODataServiceConfig {
-  """
   Path to your service under OData API
   """
   servicePath: String!
@@ -36,5 +21,6 @@ type ODataServiceConfig {
   """
   Headers to be used with the $metadata requests
   """
-  metadataHeaders: JSON
+  schemaHeaders: JSON
 }
+
