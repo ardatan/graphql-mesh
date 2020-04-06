@@ -18,4 +18,9 @@ type OpenapiHandler @md {
   If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
   """
   schemaHeaders: JSON
+  """
+  Specifies the URL on which all paths will be based on.
+  Overrides the server object in the OAS.
+  """
+  baseUrl: String
 }
