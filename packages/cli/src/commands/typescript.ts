@@ -13,16 +13,14 @@ import {
   GraphQLNamedType,
   parse,
   NamedTypeNode,
-  Kind
+  Kind,
 } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 import { printSchemaWithDirectives } from '@graphql-toolkit/common';
 
 const unifiedContextIdentifier = 'MeshContext';
 
-function isWrapperType(
-  t: GraphQLOutputType
-): t is GraphQLNonNull<any> | GraphQLList<any> {
+function isWrapperType(t: GraphQLOutputType): t is GraphQLNonNull<any> | GraphQLList<any> {
   return isListType(t) || isNonNullType(t);
 }
 
@@ -59,9 +57,7 @@ function buildSignatureBasedOnRootFields(
     const field = fields[fieldName];
     const baseType = getBaseType(field.type);
     const argsName =
-      field.args && field.args.length > 0
-        ? `${type.name}${codegenHelpers.convertName(field.name)}Args`
-        : 'never';
+      field.args && field.args.length > 0 ? `${type.name}${codegenHelpers.convertName(field.name)}Args` : 'never';
 
     return `  ${
       field.name
@@ -70,72 +66,57 @@ function buildSignatureBasedOnRootFields(
         kind: Kind.NAMED_TYPE,
         name: {
           kind: Kind.NAME,
-          value: baseType.name
-        }
+          value: baseType.name,
+        },
       }
     )}>`;
   });
 }
 
-function generateTypesForApi(options: {
-  schema: GraphQLSchema;
-  name: string;
-  contextVariables: (keyof any)[];
-}) {
+function generateTypesForApi(options: { schema: GraphQLSchema; name: string; contextVariables: (keyof any)[] }) {
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
   const sdkIdentifier = `${options.name}Sdk`;
   const additionalContextIdentifier = `${options.name}AdditionalContext`;
   const contextIdentifier = `${options.name}Context`;
   const operations = [
-    ...buildSignatureBasedOnRootFields(
-      codegenHelpers,
-      additionalContextIdentifier,
-      options.schema.getQueryType()
-    ),
-    ...buildSignatureBasedOnRootFields(
-      codegenHelpers,
-      additionalContextIdentifier,
-      options.schema.getMutationType()
-    ),
+    ...buildSignatureBasedOnRootFields(codegenHelpers, additionalContextIdentifier, options.schema.getQueryType()),
+    ...buildSignatureBasedOnRootFields(codegenHelpers, additionalContextIdentifier, options.schema.getMutationType()),
     ...buildSignatureBasedOnRootFields(
       codegenHelpers,
       additionalContextIdentifier,
       options.schema.getSubscriptionType()
-    )
+    ),
   ];
 
   const sdk = {
     identifier: sdkIdentifier,
     codeAst: `export type ${sdkIdentifier} = {
 ${operations.join(',\n')}
-};`
+};`,
   };
 
   const additionalContext = {
     identifier: additionalContextIdentifier,
     codeAst: `export type ${additionalContextIdentifier} = { 
       ${options.contextVariables.map(val => `${val.toString()}?: any,`)}
-    };`
-  }
+    };`,
+  };
 
   const context = {
     identifier: contextIdentifier,
     codeAst: `export type ${contextIdentifier} = { 
       ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} }, 
-    } & ${additionalContextIdentifier};`
+    } & ${additionalContextIdentifier};`,
   };
 
   return {
     sdk,
     additionalContext,
-    context
+    context,
   };
 }
 
-export async function generateTsTypes(
-  unifiedSchema: GraphQLSchema,
-  rawSources: RawSourceOutput[]
-): Promise<string> {
+export async function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: RawSourceOutput[]): Promise<string> {
   return codegen({
     filename: 'types.ts',
     documents: [],
@@ -152,14 +133,14 @@ export async function generateTsTypes(
               return generateTypesForApi({
                 schema: source.schema,
                 name: source.name,
-                contextVariables: source.contextVariables || []
+                contextVariables: source.contextVariables || [],
               });
             })
           );
 
-          let sdkItems: string[] = [];
-          let additionalContextItems: string[] = [];
-          let contextItems: string[] = [];
+          const sdkItems: string[] = [];
+          const additionalContextItems: string[] = [];
+          const contextItems: string[] = [];
 
           for (const item of results) {
             if (item) {
@@ -181,26 +162,26 @@ export async function generateTsTypes(
             .join(' & ')};`;
 
           return {
-            content: [...sdkItems, ...additionalContextItems, ...contextItems, contextType].join('\n\n')
+            content: [...sdkItems, ...additionalContextItems, ...contextItems, contextType].join('\n\n'),
           };
-        }
-      }
+        },
+      },
     },
     plugins: [
       {
-        typescript: {}
+        typescript: {},
       },
       {
         resolvers: {
           useIndexSignature: true,
           noSchemaStitching: true,
           contextType: unifiedContextIdentifier,
-          federation: false
-        }
+          federation: false,
+        },
       },
       {
-        contextSdk: {}
-      }
-    ]
+        contextSdk: {},
+      },
+    ],
   });
 }
