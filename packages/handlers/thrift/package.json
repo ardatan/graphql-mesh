@@ -35,6 +35,7 @@
         "thrift": "0.13.0"
     },
     "dependencies": {
+        "@ardatan/string-interpolation": "1.2.8",
         "@graphql-mesh/types": "0.0.19",
         "@graphql-mesh/utils": "0.0.19",
         "@creditkarma/thrift-client": "0.16.0",

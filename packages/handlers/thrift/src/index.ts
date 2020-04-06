@@ -2,14 +2,14 @@ import { MeshHandlerLibrary, YamlConfig } from "@graphql-mesh/types";
 import { parse, ThriftDocument, ThriftErrors, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
 import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
-import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLString, GraphQLObjectType, GraphQLInputObjectType, GraphQLObjectTypeConfig, GraphQLInputObjectTypeConfig, GraphQLInputFieldConfigMap, GraphQLFieldConfigMap, GraphQLOutputType, GraphQLInputType, GraphQLList, GraphQLNonNull, GraphQLFieldConfigArgumentMap, GraphQLSchema } from "graphql";
+import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLString, GraphQLObjectType, GraphQLInputObjectType, GraphQLObjectTypeConfig, GraphQLInputObjectTypeConfig, GraphQLInputFieldConfigMap, GraphQLFieldConfigMap, GraphQLOutputType, GraphQLInputType, GraphQLList, GraphQLNonNull, GraphQLFieldConfigArgumentMap, GraphQLSchema, GraphQLID, GraphQLResolveInfo } from "graphql";
 import { BigIntResolver as GraphQLBigInt, JSONResolver as GraphQLJSON } from 'graphql-scalars';
 import {
     createHttpClient,
-    HttpConnection,
 } from '@creditkarma/thrift-client';
 import { ThriftClient, IThriftAnnotations, IMethodAnnotations, TTransport, TProtocol, MessageType, IThriftMessage, TApplicationException, TApplicationExceptionCodec, TApplicationExceptionType, TType, IThriftField } from '@creditkarma/thrift-server-core';
 import { pascalCase } from 'pascal-case';
+import { Interpolator } from '@ardatan/string-interpolation';
 
 const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
     async getMeshSource({ config, cache }) {
@@ -79,7 +79,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                         for (const argName in value) {
                             const argType = typeMap[argName];
                             const argVal = value[argName];
-                            if (argVal) {
+                            if (argType) {
                                 output.writeFieldBegin(argName, argType.type, argType.id);
                                 this.writeType(argType, argVal, output);
                                 output.writeFieldEnd();
@@ -316,6 +316,51 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
             };
         }
 
+
+        const interpolator = new Interpolator();
+
+        const commonArgs: GraphQLFieldConfigArgumentMap = {};
+
+        const interpolationStrings = [
+            ...(config.operationHeaders
+                ? Object.keys(config.operationHeaders).map(
+                    headerName => config.operationHeaders![headerName]
+                )
+                : []),
+        ];
+
+        const interpolationKeys: string[] = interpolationStrings.reduce(
+            (keys, str) => [
+                ...keys,
+                ...interpolator.parseRules(str).map((match: any) => match.key)
+            ],
+            [] as string[]
+        );
+
+        const contextVariables: string[] = [];
+
+        for (const interpolationKey of interpolationKeys) {
+            const interpolationKeyParts = interpolationKey.split('.');
+            const varName =
+                interpolationKeyParts[interpolationKeyParts.length - 1];
+            if (interpolationKeyParts[0] === 'args') {
+                commonArgs[varName] = {
+                    type: new GraphQLNonNull(GraphQLID)
+                };
+            } else if (interpolationKeyParts[0] === 'context') {
+                contextVariables.push(varName);
+            }
+        }
+
+        const headersFactory = (interpolationData: { root: any, args: any, context: any, info: GraphQLResolveInfo }) => {
+            const headers: Record<string, string> = {};
+            const headersNoninterpolated = config.operationHeaders || {};
+            for (const headerName in headersNoninterpolated) {
+                headers[headerName] = interpolator.parse(headersNoninterpolated[headerName], interpolationData);
+            }
+            return headers;
+        };
+
         switch (thriftAST.type) {
             case SyntaxType.ThriftDocument:
                 for (const statement of thriftAST.body) {
@@ -381,8 +426,10 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                                 const fn = statement.functions[fnIndex];
                                 const fnName = fn.name.value;
                                 const description = processComments(fn.comments);
-                                const { outputType: returnType, typeVal: returnTypeVal } = getGraphQLFunctionType(fn.returnType, Number(fnIndex) + 1);
-                                const args: GraphQLFieldConfigArgumentMap = {};
+                                const { outputType: returnType } = getGraphQLFunctionType(fn.returnType, Number(fnIndex) + 1);
+                                const args: GraphQLFieldConfigArgumentMap = {
+                                    ...commonArgs,
+                                };
                                 const fieldTypeMap: TypeMap = {};
                                 for (const field of fn.fields) {
                                     const fieldName = field.name.value;
@@ -401,7 +448,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                                     type: returnType,
                                     description,
                                     args,
-                                    resolve: async (_, args) => thriftHttpClient.doRequest(fnName, args, fieldTypeMap, returnTypeVal),
+                                    resolve: async (root, args, context, info) => thriftHttpClient.doRequest(fnName, args, fieldTypeMap, {
+                                        headers: headersFactory({ root, args, context, info }),
+                                    }),
                                 };
                                 methodNames.push(fnName);
                                 methodAnnotations[fnName] = { annotations: {}, fieldAnnotations: {} };
@@ -416,13 +465,19 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
                             break;
                     }
                 }
+
+                const queryObjectType = new GraphQLObjectType({
+                    name: 'Query',
+                    fields: rootFields,
+                });
+
+                const schema = new GraphQLSchema({
+                    query: queryObjectType,
+                });
+
                 return {
-                    schema: new GraphQLSchema({
-                        query: new GraphQLObjectType({
-                            name: 'Query',
-                            fields: rootFields,
-                        }),
-                    }),
+                    schema,
+                    contextVariables,
                 };
             // break;
             case SyntaxType.ThriftErrors:
