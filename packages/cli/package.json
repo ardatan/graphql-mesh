@@ -44,11 +44,11 @@
     }
   },
   "dependencies": {
-    "@graphql-codegen/core": "1.13.1",
-    "@graphql-codegen/typescript": "1.13.1",
-    "@graphql-codegen/typescript-generic-sdk": "1.13.1",
-    "@graphql-codegen/typescript-operations": "1.13.1",
-    "@graphql-codegen/typescript-resolvers": "1.13.1",
+    "@graphql-codegen/core": "1.13.2",
+    "@graphql-codegen/typescript": "1.13.2",
+    "@graphql-codegen/typescript-generic-sdk": "1.13.2",
+    "@graphql-codegen/typescript-operations": "1.13.2",
+    "@graphql-codegen/typescript-resolvers": "1.13.2",
     "@graphql-mesh/runtime": "0.0.19",
     "@graphql-toolkit/code-file-loader": "0.10.3",
     "@graphql-toolkit/common": "0.10.3",
