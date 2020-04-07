@@ -54,7 +54,7 @@
     "@graphql-toolkit/common": "0.10.3",
     "@graphql-toolkit/core": "0.10.3",
     "@graphql-toolkit/graphql-file-loader": "0.10.3",
-    "apollo-server": "2.11.0",
+    "apollo-server": "2.12.0",
     "chalk": "4.0.0",
     "change-case": "4.1.1",
     "js-yaml": "3.13.1",
