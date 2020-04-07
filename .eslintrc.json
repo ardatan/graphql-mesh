@@ -1,5 +1,8 @@
 {
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "extends": [
     "eslint:recommended",
     "standard",
@@ -13,7 +16,7 @@
     "no-console": "off",
     "no-prototype-builtins": "off",
     "no-useless-constructor": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", {"args":  "none"}],
+    "@typescript-eslint/no-unused-vars": ["error", {"args":  "none"}],
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-empty-interface": "off",
@@ -22,7 +25,10 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/ban-ts-ignore": "off"
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/return-await": "error",
+    "@typescript-eslint/class-name-casing": "error",
+    "@typescript-eslint/naming-convention": "error"
   },
   "env": {
     "es6": true,
@@ -31,7 +37,7 @@
   "overrides": [
     {
       "files": [
-        "**/tests/**/*.ts",
+        "**/test/**/*.ts",
         "*.spec.ts"
       ],
       "env": {
