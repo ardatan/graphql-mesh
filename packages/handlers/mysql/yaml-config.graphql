@@ -1,0 +1,7 @@
+extend type Handler {
+  mysql: MySQLHandler
+}
+
+type MySQLHandler @md {
+  connectionString: String!
+}
