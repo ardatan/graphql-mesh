@@ -1,5 +1,8 @@
 {
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "extends": [
     "eslint:recommended",
     "standard",
@@ -22,7 +25,10 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/ban-ts-ignore": "off"
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/return-await": "error",
+    "@typescript-eslint/class-name-casing": "error",
+    "@typescript-eslint/naming-convention": "error"
   },
   "env": {
     "es6": true,
