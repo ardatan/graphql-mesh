@@ -5,15 +5,10 @@ import {
   GraphQLFloat,
   GraphQLObjectType,
   GraphQLFieldConfigMap,
-  GraphQLInputFieldConfig,
   GraphQLInputFieldConfigMap,
-  GraphQLInputObjectType,
-  GraphQLScalarType,
   GraphQLID,
   GraphQLNonNull,
   GraphQLType,
-  GraphQLBoolean,
-  GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
@@ -68,7 +63,7 @@ export class MySQLGraphQLSchemaFactory {
 
   private async query<T>(queryStatement: string): Promise<T[] & { insertId: string }> {
     return new Promise((resolve, reject) => {
-      this.connection.query(queryStatement, function (error, results, fields) {
+      this.connection.query(queryStatement, function (error, results) {
         if (error) {
           return reject(error);
         }
@@ -252,7 +247,7 @@ export class MySQLGraphQLSchemaFactory {
           type: new GraphQLNonNull(GraphQLID),
         },
       },
-      resolve: async (root, args, context, info) => {
+      resolve: async (root, args) => {
         await this.query(
           `DELETE FROM ${tableName} WHERE ${primaryKeyFieldName}=${this.connection.escape(args[primaryKeyFieldName])}`
         );
