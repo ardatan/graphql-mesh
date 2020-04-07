@@ -7,10 +7,11 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
   async getMeshSource({ config, cache }) {
     const path = config.source;
     const spec: Oas3 = await readFileOrUrlWithCache(path, cache, {
-      headers: config.schemaHeaders
+      headers: config.schemaHeaders,
     });
 
     const { schema } = await createGraphQLSchema(spec, {
+      baseUrl: config.baseUrl,
       headers: config.operationHeaders,
       operationIdFieldNames: true,
       viewer: false, // Viewer set to false in order to force users to specify auth via config file
