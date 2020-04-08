@@ -24,8 +24,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -45,8 +44,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -81,8 +79,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -125,8 +122,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -162,8 +158,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -197,8 +192,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -251,8 +245,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -290,8 +283,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -329,8 +321,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -374,8 +365,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -418,8 +408,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -457,8 +446,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -497,8 +485,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
