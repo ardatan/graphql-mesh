@@ -37,7 +37,7 @@
     "@graphql-mesh/types": "0.0.20",
     "@graphql-toolkit/common": "0.10.3",
     "date-fns": "2.11.1",
-    "graphql-tools-fork": "9.0.1",
+    "graphql-tools": "5.0.0-rc.3",
     "object-hash": "2.0.3"
   },
   "publishConfig": {

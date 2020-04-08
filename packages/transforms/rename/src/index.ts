@@ -6,17 +6,17 @@ import {
   RenameObjectFields,
   RenameRootFields,
   RenameRootTypes,
-  transformSchema
-} from 'graphql-tools-fork';
+  transformSchema,
+} from 'graphql-tools';
 
 export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = async ({
   schema,
-  config
+  config,
 }): Promise<GraphQLSchema> => {
   const rootTypes = [
     schema.getQueryType()?.name,
     schema.getMutationType()?.name,
-    schema.getSubscriptionType()?.name
+    schema.getSubscriptionType()?.name,
   ].filter(Boolean) as string[];
   const transforms: Transform[] = [];
 
@@ -27,13 +27,9 @@ export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = 
 
     if (fromTypeName !== toTypeName) {
       if (isRootType) {
-        transforms.push(
-          new RenameRootTypes(t => (t === fromTypeName ? toTypeName : t))
-        );
+        transforms.push(new RenameRootTypes(t => (t === fromTypeName ? toTypeName : t)));
       } else {
-        transforms.push(
-          new RenameTypes(t => (t === fromTypeName ? toTypeName : t))
-        );
+        transforms.push(new RenameTypes(t => (t === fromTypeName ? toTypeName : t)));
       }
     }
 
@@ -41,17 +37,13 @@ export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = 
       if (isRootType) {
         transforms.push(
           new RenameRootFields((typeName, fieldName) =>
-            typeName === toTypeName && fieldName === fromFieldName
-              ? toFieldName
-              : fieldName
+            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName
           )
         );
       } else {
         transforms.push(
           new RenameObjectFields((typeName, fieldName) =>
-            typeName === toTypeName && fieldName === fromFieldName
-              ? toFieldName
-              : fieldName
+            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName
           )
         );
       }
