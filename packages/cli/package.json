@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/js-yaml": "3.12.3",
     "@types/mkdirp": "1.0.0",
-    "@types/node": "13.11.0",
+    
     "@types/yargs": "15.0.4"
   },
   "publishConfig": {

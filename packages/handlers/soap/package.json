@@ -17,7 +17,7 @@
     "soap": "*"
   },
   "devDependencies": {
-    "@types/node": "13.11.0",
+    
     "@types/soap": "0.21.0",
     "soap": "0.31.0"
   },

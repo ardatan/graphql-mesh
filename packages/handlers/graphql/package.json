@@ -15,9 +15,7 @@
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "@types/node": "13.11.0"
-  },
+  
   "dependencies": {
     "@graphql-mesh/types": "0.0.20",
     "@graphql-toolkit/core": "0.10.3",

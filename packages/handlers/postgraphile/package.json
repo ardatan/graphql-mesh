@@ -17,7 +17,7 @@
     "pg": "*"
   },
   "devDependencies": {
-    "@types/node": "13.11.0",
+    
     "pg": "8.0.0"
   },
   "dependencies": {

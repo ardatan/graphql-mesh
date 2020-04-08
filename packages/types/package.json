@@ -15,9 +15,7 @@
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "@types/node": "13.11.0"
-  },
+  
   "dependencies": {
     "fetchache": "0.0.3",
     "tsee": "1.3.0"
