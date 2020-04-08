@@ -16,7 +16,6 @@
     "graphql": "*"
   },
   "devDependencies": {
-    
     "@types/url-join": "4.0.0"
   },
   "dependencies": {

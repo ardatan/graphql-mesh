@@ -16,7 +16,7 @@
     "no-console": "off",
     "no-prototype-builtins": "off",
     "no-useless-constructor": "off",
-    "@typescript-eslint/no-unused-vars": ["error", {"args":  "none"}],
+    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }],
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-empty-interface": "off",
@@ -36,10 +36,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/test/**/*.ts",
-        "*.spec.ts"
-      ],
+      "files": ["**/test/**/*.ts", "*.spec.ts"],
       "env": {
         "jest": true
       },
@@ -49,7 +46,7 @@
     }
   ],
   "ignorePatterns": ["dist", "node_modules", "examples", "website"],
-  "globals":{
+  "globals": {
     "BigInt": true
   }
 }

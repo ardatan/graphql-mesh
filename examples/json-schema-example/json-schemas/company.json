@@ -1,10 +1,10 @@
 {
-    "type": "object",
-    "title": "Company",
-    "description": "Fake Company",
-    "properties": {
-        "name": {
-            "type": "string"
-        }
+  "type": "object",
+  "title": "Company",
+  "description": "Fake Company",
+  "properties": {
+    "name": {
+      "type": "string"
     }
+  }
 }

@@ -16,7 +16,6 @@
     "graphql": "*"
   },
   "devDependencies": {
-    
     "jest": "25.2.7",
     "ts-jest": "25.3.1",
     "ts-node-dev": "1.0.0-pre.44",

@@ -32,4 +32,3 @@ sources:
               faker: '{{name.jobTitle}}'
             - apply: Company.name
               faker: '{{company.companyName}}'
-

@@ -42,4 +42,3 @@ type JsonSchemaOperation {
   responseSchema: String!
   headers: JSON
 }
-

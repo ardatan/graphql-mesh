@@ -8,7 +8,7 @@ export class InMemoryLRUCache<V = string> implements KeyValueCache<V> {
 
   constructor({
     max = Infinity,
-    length = (item: V) => (Array.isArray(item) || typeof item === 'string') ? item.length : 1,
+    length = (item: V) => (Array.isArray(item) || typeof item === 'string' ? item.length : 1),
     ...options
   }: LRUCache.Options<string, V> = {}) {
     this.store = new LRUCache({

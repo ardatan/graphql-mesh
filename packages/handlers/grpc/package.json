@@ -17,7 +17,6 @@
     "grpc": "*"
   },
   "devDependencies": {
-    
     "grpc": "1.24.2"
   },
   "dependencies": {

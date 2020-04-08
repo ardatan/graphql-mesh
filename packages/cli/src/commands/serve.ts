@@ -10,9 +10,8 @@ export async function serveMesh(
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Record<string, any>,
   cache?: KeyValueCache,
-  fork?: string | number,
+  fork?: string | number
 ): Promise<void> {
-
   if (isMaster && fork) {
     fork = fork > 1 ? fork : cpus().length;
     for (let i = 0; i < fork; i++) {
@@ -32,4 +31,3 @@ export async function serveMesh(
     }
   }
 }
-

@@ -8,8 +8,8 @@
     "build": "tsc --project tsconfig.build.json && bob build",
     "postbuild": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
     "lint": "eslint --ext .ts ./packages/**/src/*.ts",
-    "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
-    "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
+    "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml,json}\"",
+    "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml,json}\"",
     "test": "jest --no-watchman",
     "test-and-build": "yarn build && yarn test",
     "prerelease": "yarn test-and-build",
@@ -50,7 +50,7 @@
     "packages/**/src/**/*.{ts,tsx}": [
       "eslint --fix"
     ],
-    "**/*.{ts,tsx,graphql,yml}": [
+    "**/*.{ts,tsx,graphql,yml,json}": [
       "prettier --write"
     ]
   },

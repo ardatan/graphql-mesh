@@ -1,21 +1,21 @@
 {
-    "name": "mongoose-example",
-    "version": "0.0.20",
-    "license": "MIT",
-    "private": true,
-    "scripts": {
-        "mesh:serve": "graphql-mesh serve"
-    },
-    "devDependencies": {
-        "@types/mongoose": "5.7.6",
-        "@types/node": "13.9.0",
-        "typescript": "3.8.3"
-    },
-    "dependencies": {
-        "@graphql-mesh/cli": "0.0.20",
-        "@graphql-mesh/mongoose": "0.0.20",
-        "graphql": "15.0.0",
-        "mongoose": "5.9.5",
-        "ts-node": "8.7.0"
-    }
+  "name": "mongoose-example",
+  "version": "0.0.20",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "mesh:serve": "graphql-mesh serve"
+  },
+  "devDependencies": {
+    "@types/mongoose": "5.7.6",
+    "@types/node": "13.9.0",
+    "typescript": "3.8.3"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.0.20",
+    "@graphql-mesh/mongoose": "0.0.20",
+    "graphql": "15.0.0",
+    "mongoose": "5.9.5",
+    "ts-node": "8.7.0"
+  }
 }

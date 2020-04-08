@@ -17,7 +17,6 @@
     "pg": "*"
   },
   "devDependencies": {
-    
     "pg": "8.0.0"
   },
   "dependencies": {

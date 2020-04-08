@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import * as debug from "debug";
-import * as grpc from "grpc";
+import * as debug from 'debug';
+import * as grpc from 'grpc';
 
-import { ExampleService, IExampleServer } from "./proto/Example_grpc_pb";
-import { EmptyRequest, Movie, MoviesResult, SearchByCastRequest } from "./proto/Example_pb";
+import { ExampleService, IExampleServer } from './proto/Example_grpc_pb';
+import { EmptyRequest, Movie, MoviesResult, SearchByCastRequest } from './proto/Example_pb';
 
-const log = debug("SampleServer");
+const log = debug('SampleServer');
 
 interface IRawMovie {
   cast: string[];
@@ -17,20 +17,20 @@ interface IRawMovie {
 
 const Movies = [
   {
-    cast: ["Tom Cruise", "Simon Pegg", "Jeremy Renner"],
-    name: "Mission: Impossible Rogue Nation",
+    cast: ['Tom Cruise', 'Simon Pegg', 'Jeremy Renner'],
+    name: 'Mission: Impossible Rogue Nation',
     rating: 0.97,
     year: 2015,
   },
   {
-    cast: ["Tom Cruise", "Simon Pegg", "Henry Cavill"],
-    name: "Mission: Impossible - Fallout",
+    cast: ['Tom Cruise', 'Simon Pegg', 'Henry Cavill'],
+    name: 'Mission: Impossible - Fallout',
     rating: 0.93,
     year: 2018,
   },
   {
-    cast: ["Leonardo DiCaprio", "Jonah Hill", "Margot Robbie"],
-    name: "The Wolf of Wall Street",
+    cast: ['Leonardo DiCaprio', 'Jonah Hill', 'Margot Robbie'],
+    name: 'The Wolf of Wall Street',
     rating: 0.78,
     year: 2013,
   },
@@ -55,10 +55,10 @@ class ServerImpl implements IExampleServer {
   }
 
   public searchMoviesByCast(call: grpc.ServerWriteableStream<SearchByCastRequest>) {
-    log("call started");
+    log('call started');
     const input: SearchByCastRequest = call.request;
     let i: number = 1;
-    call.on("error", (error) => {
+    call.on('error', error => {
       log(error);
       call.end();
     });
@@ -73,7 +73,7 @@ class ServerImpl implements IExampleServer {
     });
     setTimeout(() => {
       call.end();
-      log("call ended");
+      log('call ended');
     }, 3000);
   }
 }
@@ -82,18 +82,18 @@ function startServer() {
   const server = new grpc.Server();
 
   server.addService(ExampleService, new ServerImpl());
-  server.bind("0.0.0.0:50051", grpc.ServerCredentials.createInsecure());
+  server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
   server.start();
 
-  log("Server started, listening: 0.0.0.0:50051");
+  log('Server started, listening: 0.0.0.0:50051');
 }
 
 startServer();
 
-process.on("uncaughtException", (err) => {
+process.on('uncaughtException', err => {
   log(`process on uncaughtException error: ${err}`);
 });
 
-process.on("unhandledRejection", (err) => {
+process.on('unhandledRejection', err => {
   log(`process on unhandledRejection error: ${err}`);
 });

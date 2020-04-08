@@ -22,7 +22,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        value: 'T_'
+        value: 'T_',
       },
       cache: new InMemoryLRUCache(),
       hooks: new Hooks(),
@@ -37,7 +37,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        value: 'T_'
+        value: 'T_',
       },
       cache: new InMemoryLRUCache(),
       hooks: new Hooks(),
@@ -51,8 +51,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       apiName: 'MyApi',
-      config: {
-      },
+      config: {},
       cache: new InMemoryLRUCache(),
       hooks: new Hooks(),
     });

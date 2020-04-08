@@ -20,8 +20,8 @@ describe('rename', () => {
       config: [
         {
           from: 'User',
-          to: 'MyUser'
-        }
+          to: 'MyUser',
+        },
       ],
       cache: new InMemoryLRUCache(),
       hooks: new Hooks(),

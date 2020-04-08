@@ -15,9 +15,9 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     const schema = await getGraphqlSchemaFromGrpc(config);
 
     return {
-      schema
+      schema,
     };
-  }
+  },
 };
 
 export default handler;
