@@ -3,9 +3,7 @@
   "version": "0.0.20",
   "license": "MIT",
   "scripts": {
-    "test": "jest --config=../../jest.config.js",
-    "prepack": "bob-update-version",
-    "build": "bob"
+    "prepack": "bob prepack"
   },
   "peerDependencies": {
     "graphql": "*"
