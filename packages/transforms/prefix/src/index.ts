@@ -1,16 +1,11 @@
-import { GraphQLSchema, printSchema, Kind, buildSchema } from 'graphql';
+import { GraphQLSchema } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import {
-  Transform,
-  RenameTypes,
-  RenameRootFields,
-  transformSchema
-} from 'graphql-tools-fork';
+import { Transform, RenameTypes, RenameRootFields, transformSchema } from 'graphql-tools-fork';
 
 export const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = async ({
   apiName,
   schema,
-  config
+  config,
 }): Promise<GraphQLSchema> => {
   let prefix: string | null = null;
 
@@ -27,17 +22,12 @@ export const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = as
   const ignoreList = config.ignore || [];
   const transforms: Transform[] = [];
 
-  transforms.push(
-    new RenameTypes(typeName =>
-      ignoreList.includes(typeName) ? typeName : `${prefix}${typeName}`
-    )
-  );
+  transforms.push(new RenameTypes(typeName => (ignoreList.includes(typeName) ? typeName : `${prefix}${typeName}`)));
 
   if (config.includeRootOperations) {
     transforms.push(
       new RenameRootFields((typeName, fieldName) =>
-        ignoreList.includes(typeName) ||
-        ignoreList.includes(`${typeName}.${fieldName}`)
+        ignoreList.includes(typeName) || ignoreList.includes(`${typeName}.${fieldName}`)
           ? fieldName
           : `${prefix}${fieldName}`
       )

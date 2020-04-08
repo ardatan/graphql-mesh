@@ -2,14 +2,14 @@ import { EventEmitter } from 'tsee';
 import { printSchema, graphql } from 'graphql';
 import handler from '../src';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { addMock, resetMocks, Request, Response } from 'fetchache';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 declare module 'fetchache' {
   type FetchMockFn = (request: Request) => Promise<Response>;
   function addMock(url: string, mockFn: FetchMockFn): void;
   function resetMocks(): void;
 }
-import { addMock, resetMocks, Request, Response } from 'fetchache';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
 
 const TripPinMetadata = readFileSync(resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
 const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
@@ -18,14 +18,14 @@ const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip
 describe('odata', () => {
   beforeEach(() => {
     resetMocks();
-  })
+  });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -40,15 +40,13 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({ value: [
-        PersonMockData
-      ] }));
+      return new Response(JSON.stringify({ value: [PersonMockData] }));
     });
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -56,7 +54,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         {
           getPeople {
             UserName
@@ -84,7 +82,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -92,7 +90,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         {
           getPeopleByUserName(UserName: "SOMEID") {
             UserName
@@ -114,19 +112,21 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({
-        '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
-        Location: {
-          '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.AirportLocation',
-          Loc: ''
-        }
-      }));
+      return new Response(
+        JSON.stringify({
+          '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
+          Location: {
+            '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.AirportLocation',
+            Loc: '',
+          },
+        })
+      );
     });
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -134,7 +134,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         {
           getAirportsByIcaoCode(IcaoCode: "KSFO") {
             Location {
@@ -157,15 +157,13 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({ value: [
-        PersonMockData
-      ] }));
+      return new Response(JSON.stringify({ value: [PersonMockData] }));
     });
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -173,7 +171,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         {
           getPeople(queryOptions: { filter: "FirstName eq 'Scott'" }) {
             FirstName
@@ -186,7 +184,7 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-  })
+  });
   it('should generate correct HTTP request for $count', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/$count`;
@@ -200,7 +198,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -208,7 +206,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         {
           getPeopleCount
         }
@@ -225,25 +223,23 @@ describe('odata', () => {
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People`;
     const correctMethod = 'POST';
     const correctBody = {
-      "UserName": "lewisblack",
-      "FirstName": "Lewis",
-      "LastName": "Black",
-      "Emails": [
-        "lewisblack@example.com"
-      ],
-      "Gender": "Male",
-      "FavoriteFeature": "Feature1",
-      "Features": [],
-      "AddressInfo": [
+      UserName: 'lewisblack',
+      FirstName: 'Lewis',
+      LastName: 'Black',
+      Emails: ['lewisblack@example.com'],
+      Gender: 'Male',
+      FavoriteFeature: 'Feature1',
+      Features: [],
+      AddressInfo: [
         {
-          "Address": "187 Suffolk Ln.",
-          "City": {
-            "Name": "Boise",
-            "CountryRegion": "United States",
-            "Region": "ID"
-          }
-        }
-      ]
+          Address: '187 Suffolk Ln.',
+          City: {
+            Name: 'Boise',
+            CountryRegion: 'United States',
+            Region: 'ID',
+          },
+        },
+      ],
     };
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -256,7 +252,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -267,7 +263,7 @@ describe('odata', () => {
       variableValues: {
         input: correctBody,
       },
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         mutation CreatePeople($input: PersonInput) {
           createPeople(input: $input) {
             UserName
@@ -295,7 +291,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -303,7 +299,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         mutation {
           deletePeopleByUserName(UserName: "SOMEID")
         }
@@ -320,8 +316,8 @@ describe('odata', () => {
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People('SOMEID')`;
     const correctMethod = 'PATCH';
     const correctBody = {
-      "FirstName": "Mirs",
-      "LastName": "King"
+      FirstName: 'Mirs',
+      LastName: 'King',
     };
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -334,7 +330,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -343,10 +339,10 @@ describe('odata', () => {
     const graphqlResult = await graphql({
       schema: source.schema,
       variableValues: {
-        UserName: "SOMEID",
+        UserName: 'SOMEID',
         input: correctBody,
       },
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         mutation UpdatePeople($UserName: String!, $input: PeopleUpdateInput!) {
           updatePeopleByUserName(UserName: $UserName, input: $input) {
             FirstName
@@ -368,16 +364,18 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({
-        '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
-        Name: 'Name'
-      }));
+      return new Response(
+        JSON.stringify({
+          '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
+          Name: 'Name',
+        })
+      );
     });
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -385,7 +383,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         {
           GetNearestAirport(lat: 33, lon: -118) {
             Name
@@ -406,10 +404,13 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')?$select=Trips`, async () => {
       return new Response(JSON.stringify(PersonMockData));
-    })
-    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips?$filter=TripId eq 0`, async () => {
-      return new Response(JSON.stringify(TripMockData));
-    })
+    });
+    addMock(
+      `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips?$filter=TripId eq 0`,
+      async () => {
+        return new Response(JSON.stringify(TripMockData));
+      }
+    );
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new Response(JSON.stringify({}));
@@ -418,7 +419,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -426,7 +427,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         {
           getPeopleByUserName(UserName: "russellwhyte") {
             Trips(queryOptions: { filter: "TripId eq 0" }) {
@@ -457,7 +458,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -465,7 +466,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         mutation {
           ResetDataSource
         }
@@ -483,12 +484,12 @@ describe('odata', () => {
     const correctMethod = 'POST';
     const correctBody = {
       userName: 'scottketchum',
-      tripId: 0
+      tripId: 0,
     };
     let sentRequest: Request;
     addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')`, async () => {
       return new Response(JSON.stringify(PersonMockData));
-    })
+    });
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new Response(JSON.stringify(true));
@@ -497,7 +498,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/',
-        servicePath: 'TripPinRESTierService/'
+        servicePath: 'TripPinRESTierService/',
       },
       hooks: new EventEmitter(),
       cache: new InMemoryLRUCache(),
@@ -505,7 +506,7 @@ describe('odata', () => {
 
     const graphqlResult = await graphql({
       schema: source.schema,
-      source: /* GraphQL */`
+      source: /* GraphQL */ `
         mutation {
           getPeopleByUserName(UserName: "russellwhyte") {
             ShareTrip(userName: "scottketchum", tripId: 0)

@@ -1,5 +1,4 @@
 import {
-  GraphQLType,
   GraphQLObjectType,
   GraphQLInt,
   GraphQLFloat,
@@ -9,9 +8,7 @@ import {
   GraphQLOutputType,
 } from 'graphql';
 
-import {
-  BigIntResolver as GraphQLBigInt,
-} from 'graphql-scalars';
+import { BigIntResolver as GraphQLBigInt } from 'graphql-scalars';
 
 export interface GrpcGraphqlSchemaConfiguration {
   endpoint: string;
@@ -26,7 +23,6 @@ export interface InputTypeMapping {
 export interface OutputTypeMapping {
   [key: string]: GraphQLOutputType;
 }
-
 
 // https://developers.google.com/protocol-buffers/docs/proto3#scalar
 // https://www.apollographql.com/docs/apollo-server/schemas/types.html

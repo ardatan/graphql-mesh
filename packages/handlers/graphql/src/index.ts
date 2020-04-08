@@ -1,10 +1,5 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import {
-  introspectSchema,
-  makeRemoteExecutableSchema,
-  delegateToSchema,
-  IDelegateToSchemaOptions
-} from 'graphql-tools-fork';
+import { delegateToSchema, IDelegateToSchemaOptions } from 'graphql-tools-fork';
 import { fetchache, Request } from 'fetchache';
 import { loadSchema } from '@graphql-toolkit/core';
 import { UrlLoader } from '@graphql-toolkit/url-loader';
@@ -12,13 +7,13 @@ import { GraphQLResolveInfo } from 'graphql';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
   async getMeshSource({ config, hooks, cache }) {
-
-    const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
+    const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
+      fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
     const remoteSchema = await loadSchema(config.endpoint, {
-      loaders: [ new UrlLoader() ],
+      loaders: [new UrlLoader()],
       fetch,
       headers: config.headers,
-    })
+    });
 
     hooks.on('buildSdkFn', ({ fieldName, typeName, replaceFn, schema }) => {
       replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
@@ -28,7 +23,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
           schema,
           args,
           info,
-          context
+          context,
         };
 
         return delegateToSchema(delegationOptions);
@@ -38,7 +33,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
     return {
       schema: remoteSchema,
     };
-  }
+  },
 };
 
 export default handler;

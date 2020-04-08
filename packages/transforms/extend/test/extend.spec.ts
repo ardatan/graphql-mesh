@@ -26,7 +26,7 @@ describe('extend', () => {
     const fields = type.getFields();
 
     expect(Object.keys(fields).length).toBe(2);
-    expect(fields['newField']).toBeDefined();
+    expect(fields.newField).toBeDefined();
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
@@ -52,7 +52,7 @@ describe('extend', () => {
     const fields = type.getFields();
 
     expect(Object.keys(fields).length).toBe(2);
-    expect(fields['newField']).toBeDefined();
+    expect(fields.newField).toBeDefined();
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 });

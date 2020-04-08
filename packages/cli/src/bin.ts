@@ -13,23 +13,22 @@ const logger = createLogger({
   format: format.prettyPrint(),
   transports: [
     new transports.Console({
-      format: format.simple()
-    })
-  ]
+      format: format.simple(),
+    }),
+  ],
 });
 
 export async function graphqlMesh() {
-  yargs
+  return yargs
     .command<{ fork: string | number }>(
       'serve',
       'Serves a GraphiQLApolloServer interface to test your Mesh API',
       builder => {
-        builder
-          .option('fork', {
-            required: false,
-            number: true,
-            count: true
-          });
+        builder.option('fork', {
+          required: false,
+          number: true,
+          count: true,
+        });
       },
       async ({ fork }) => {
         try {
@@ -48,11 +47,11 @@ export async function graphqlMesh() {
         builder
           .option('operations', {
             required: true,
-            type: 'array'
+            type: 'array',
           })
           .option('output', {
             required: true,
-            type: 'string'
+            type: 'string',
           });
       },
       async args => {
@@ -74,7 +73,7 @@ export async function graphqlMesh() {
       builder => {
         builder.option('output', {
           required: true,
-          type: 'string'
+          type: 'string',
         });
       },
       async args => {
