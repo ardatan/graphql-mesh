@@ -1,5 +1,5 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { delegateToSchema, IDelegateToSchemaOptions } from 'graphql-tools';
+import { delegateToSchema, IDelegateToSchemaOptions } from 'graphql-tools-fork';
 import { fetchache, Request } from 'fetchache';
 import { loadSchema } from '@graphql-toolkit/core';
 import { UrlLoader } from '@graphql-toolkit/url-loader';

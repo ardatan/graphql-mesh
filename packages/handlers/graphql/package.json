@@ -21,7 +21,7 @@
     "@graphql-toolkit/core": "0.10.3",
     "@graphql-toolkit/url-loader": "0.10.3",
     "fetchache": "0.0.3",
-    "graphql-tools": "5.0.0-rc.3"
+    "graphql-tools-fork": "9.0.1"
   },
   "publishConfig": {
     "access": "public",

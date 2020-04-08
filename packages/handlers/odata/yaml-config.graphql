@@ -1,4 +1,4 @@
-extend type Handler {  
+extend type Handler {
   """
   Handler for OData
   """
@@ -7,13 +7,9 @@ extend type Handler {
 
 type ODataHandler @md {
   """
-  Base URL for OData API
+  Endpoint URL for OData API
   """
-  baseUrl: String!
-  """
-  Path to your service under OData API
-  """
-  servicePath: String!
+  endpoint: String!
   """
   Headers to be used with the operation requests
   """
@@ -23,4 +19,3 @@ type ODataHandler @md {
   """
   schemaHeaders: JSON
 }
-

@@ -22,7 +22,7 @@
     "@graphql-toolkit/common": "0.10.3",
     "@graphql-toolkit/schema-merging": "0.10.3",
     "cosmiconfig": "6.0.0",
-    "graphql-tools": "5.0.0-rc.3",
+    "graphql-tools-fork": "9.0.1",
     "tsee": "1.3.0"
   },
   "publishConfig": {

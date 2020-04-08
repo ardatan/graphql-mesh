@@ -7,7 +7,7 @@ import {
   RenameRootFields,
   RenameRootTypes,
   transformSchema,
-} from 'graphql-tools';
+} from 'graphql-tools-fork';
 
 export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = async ({
   schema,

@@ -1,4 +1,4 @@
-import { IResolvers } from 'graphql-tools';
+import { IResolvers } from 'graphql-tools-fork';
 import { EventEmitter } from 'tsee';
 import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import * as YamlConfig from './config';

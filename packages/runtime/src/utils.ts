@@ -1,4 +1,4 @@
-import { IResolvers } from 'graphql-tools';
+import { IResolvers } from 'graphql-tools-fork';
 import { ResolvedTransform, GraphQLOperation } from './types';
 import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
 import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig } from '@graphql-mesh/types';

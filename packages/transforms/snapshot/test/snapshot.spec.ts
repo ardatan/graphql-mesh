@@ -1,5 +1,5 @@
 import { computeSnapshotFilePath, snapshotTransform } from '../src';
-import { makeExecutableSchema } from 'graphql-tools';
+import { makeExecutableSchema } from 'graphql-tools-fork';
 import { graphql } from 'graphql';
 import { readFileSync, existsSync } from 'fs-extra';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
