@@ -1,6 +1,6 @@
 {
     "name": "@graphql-mesh/transform-federation",
-    "version": "0.0.19",
+    "version": "0.0.20",
     "main": "dist/index.js",
     "license": "MIT",
     "scripts": {
@@ -21,7 +21,7 @@
       "typescript": "3.8.3"
     },
     "dependencies": {
-      "@graphql-mesh/types": "0.0.19",
+      "@graphql-mesh/types": "0.0.20",
       "graphql-transform-federation": "2.1.0"
     },
     "publishConfig": {
