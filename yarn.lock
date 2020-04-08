@@ -3112,10 +3112,10 @@
     "@types/mongodb" "*"
     "@types/node" "*"
 
-"@types/mongoose@5.7.8":
-  version "5.7.8"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.8.tgz#684e168d605d61be28fe1f1932f0b8b0e17115eb"
-  integrity sha512-nLyVONnGou1DfNwyP70FUVG+teusG8Whlwbke5BZrZ03iG6Iyu5gowzfuKpN7pu8BW/SOcF+Gcpny08FJdGuWw==
+"@types/mongoose@5.7.9":
+  version "5.7.9"
+  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.9.tgz#2af0daa2c044f9d6c7428980c1af8ecb17247b90"
+  integrity sha512-Rr9TSa3E/hkoX6UPr1UgOdkZBNne/l/nukLQYqs47TbE2x1TM9teS+wjeVi3FQkpEzd6i0OnEvIk+MRbfVfkyA==
   dependencies:
     "@types/mongodb" "*"
     "@types/node" "*"
