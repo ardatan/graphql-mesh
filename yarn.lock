@@ -1647,7 +1647,7 @@
     jest-util "^25.3.0"
     slash "^3.0.0"
 
-"@jest/core@^25.3.0":
+"@jest/core@^25.2.7", "@jest/core@^25.3.0":
   version "25.3.0"
   resolved "https://registry.yarnpkg.com/@jest/core/-/core-25.3.0.tgz#80f97a7a8b59dde741a24f30871cc26d0197d426"
   integrity sha512-+D5a/tFf6pA/Gqft2DLBp/yeSRgXhlJ+Wpst0X/ZkfTRP54qDR3C61VfHwaex+GzZBiTcE9vQeoZ2v5T10+Mqw==
@@ -4790,10 +4790,10 @@ bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
 
-bob-the-bundler@1.0.0-rc.13:
-  version "1.0.0-rc.13"
-  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.0.0-rc.13.tgz#3bfb6a5d103a42b1316ab0b6135ddd1761c4a41f"
-  integrity sha512-0rNzjvWnkmW/BiMzU3Ll6J1RI+WIvxI5f8auI221IibjNB0yo33fcgdk57r3sGdvyATkwrMGcu4Fr04Gr0KJ1A==
+bob-the-bundler@1.0.0-rc.14:
+  version "1.0.0-rc.14"
+  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.0.0-rc.14.tgz#0c04117ade7361a564f575aaa2bb7a3bc6ca481d"
+  integrity sha512-G1iJbnVS+D/1CwFUSmMG//GHmxurT5bTuToBPh4aR1tNkHHW6URPjAP9S63UFgss/FJY4u/zb4eC+i9hAzlklA==
   dependencies:
     "@rollup/plugin-node-resolve" "7.1.1"
     consola "2.11.3"
@@ -10336,7 +10336,7 @@ jest-changed-files@^25.3.0:
     execa "^3.2.0"
     throat "^5.0.0"
 
-jest-cli@^25.3.0:
+jest-cli@^25.2.7:
   version "25.3.0"
   resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-25.3.0.tgz#d9e11f5700cc5946583cf0d01a9bdebceed448d2"
   integrity sha512-XpNQPlW1tzpP7RGG8dxpkRegYDuLjzSiENu92+CYM87nEbmEPb3b4+yo8xcsHOnj0AG7DUt9b3uG8LuHI3MDzw==
@@ -14242,7 +14242,7 @@ pretty-error@^2.1.1:
     renderkid "^2.0.1"
     utila "~0.4"
 
-pretty-format@^25.2.1, pretty-format@^25.3.0:
+pretty-format@^25.2.1, pretty-format@^25.2.6, pretty-format@^25.3.0:
   version "25.3.0"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-25.3.0.tgz#d0a4f988ff4a6cd350342fdabbb809aeb4d49ad5"
   integrity sha512-wToHwF8bkQknIcFkBqNfKu4+UZqnrLn/Vr+wwKQwwvPzkBfDDKp/qIabFqdgtoi5PEnM8LFByVsOrHoa3SpTVA==
