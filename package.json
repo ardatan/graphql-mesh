@@ -5,7 +5,7 @@
   "scripts": {
     "build:website": "yarn build && cd website && yarn build:prod",
     "prebuild": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/",
-    "build": "tsc --project tsconfig.json && bob build",
+    "build": "tsc --project tsconfig.build.json && bob build",
     "postbuild": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
     "lint": "eslint --ext .ts ./packages/**/src/*.ts",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
