@@ -1,20 +1,7 @@
-import { IResolvers } from 'graphql-tools-fork';
+import { IResolvers } from 'graphql-tools';
 import { ResolvedTransform, GraphQLOperation } from './types';
-import {
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLResolveInfo,
-  DocumentNode,
-  parse,
-  FieldNode,
-  Kind
-} from 'graphql';
-import {
-  Hooks,
-  MeshHandlerLibrary,
-  KeyValueCache,
-  YamlConfig
-} from '@graphql-mesh/types';
+import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
+import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import Maybe from 'graphql/tsutils/Maybe';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
@@ -36,7 +23,7 @@ export async function applySchemaTransformations(
       schema: resultSchema,
       config: transformation.config,
       cache,
-      hooks
+      hooks,
     });
 
     if (transformedSchema) {
@@ -60,7 +47,7 @@ export async function applyOutputTransformations(
       schema: resultSchema,
       config: transformation.config,
       cache,
-      hooks
+      hooks,
     });
 
     if (transformedSchema) {
@@ -79,7 +66,7 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
     name,
     `${name}-${type}`,
     `${type}-${name}`,
-    type
+    type,
   ];
   const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
 
@@ -90,9 +77,7 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
       return (exported.default || exported.parser || exported) as T;
     } catch (err) {
       if (err.message.indexOf(`Cannot find module '${moduleName}'`) === -1) {
-        throw new Error(
-          `Unable to load ${type} matching ${name}: ${err.message}`
-        );
+        throw new Error(`Unable to load ${type} matching ${name}: ${err.message}`);
       }
     }
   }
@@ -106,10 +91,7 @@ export async function getHandler(name: string): Promise<MeshHandlerLibrary> {
   return handlerFn;
 }
 
-export async function resolveAdditionalResolvers(
-  baseDir: string,
-  additionalResolvers: string[]
-): Promise<IResolvers> {
+export async function resolveAdditionalResolvers(baseDir: string, additionalResolvers: string[]): Promise<IResolvers> {
   const loaded = await Promise.all(
     (additionalResolvers || []).map(async filePath => {
       const exported = await import(resolve(baseDir, filePath));
@@ -138,7 +120,7 @@ export async function resolveAdditionalResolvers(
   return loaded.reduce((prev, t) => {
     return {
       ...prev,
-      ...t
+      ...t,
     };
   }, {} as IResolvers);
 }
@@ -147,7 +129,7 @@ export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
   hooks: Hooks,
   types: Maybe<GraphQLObjectType>[],
-  contextBuilder?: (initialContextValue: any) => Promise<any>,
+  contextBuilder?: (initialContextValue: any) => Promise<any>
 ) {
   const sdk: Record<string, Function> = {};
 
@@ -173,7 +155,7 @@ export async function extractSdkFromResolvers(
                 if (newFn) {
                   fn = newFn;
                 }
-              }
+              },
             });
 
             sdk[fieldName] = async (args: any, context: any, info: GraphQLResolveInfo) => {
@@ -186,36 +168,37 @@ export async function extractSdkFromResolvers(
                   argNames: Object.keys(args),
                 });
 
-                info = buildResolveInfo({
-                  schema,
-                  fragments: {},
-                  rootValue: null,
-                  contextValue: context,
-                  operation,
-                  variableValues: args,
-                  get fieldResolver() {
-                    return fn; // Get new one if replaced
+                info = buildResolveInfo(
+                  {
+                    schema,
+                    fragments: {},
+                    rootValue: null,
+                    contextValue: context,
+                    operation,
+                    variableValues: args,
+                    get fieldResolver() {
+                      return fn; // Get new one if replaced
+                    },
+                    errors: [],
                   },
-                  errors: [],
-                },
                   field,
                   operation.selectionSet.selections.filter(s => s.kind === Kind.FIELD) as FieldNode[],
                   type,
                   {
                     prev: undefined,
                     key: field.name,
-                  },
+                  }
                 );
               }
 
-              if (!(context?.__isMeshContext)) {
+              if (!context?.__isMeshContext) {
                 context = {
-                  ...contextBuilder && await contextBuilder(context),
+                  ...(contextBuilder && (await contextBuilder(context))),
                   ...context,
                 };
               }
 
-              return fn(args, context, info)
+              return fn(args, context, info);
             };
           })
         );
@@ -230,9 +213,7 @@ export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
   return typeof document === 'string' ? parse(document) : document;
 }
 
-export async function resolveCache(
-  cacheConfig?: YamlConfig.Config['cache']
-): Promise<KeyValueCache> {
+export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache> {
   if (!cacheConfig) {
     return new InMemoryLRUCache();
   }

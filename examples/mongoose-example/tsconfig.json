@@ -1,22 +1,6 @@
 {
-    "compilerOptions": {
-        "lib": [
-            "es2015",
-            "esnext.asynciterable"
-        ],
-        "target": "ES6",
-        "module": "commonjs",
-        "sourceMap": true,
-        "declaration": true,
-        "rootDir": "src",
-        "outDir": "build",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
-    },
+    "extends": "../../tsconfig.json",
     "include": [
-        "src/*"
-    ],
-    "exclude": [
-        "node_modules"
+        "src"
     ]
 }

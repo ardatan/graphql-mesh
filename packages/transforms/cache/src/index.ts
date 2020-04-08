@@ -36,7 +36,7 @@ export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = as
       const effectingOperations = cacheItem.invalidate?.effectingOperations || [];
 
       if (effectingOperations.length > 0) {
-        hooks.on('resolverDone', async (resolverInfo, result) => {
+        hooks.on('resolverDone', async resolverInfo => {
           const effectingRule = effectingOperations.find(
             o => o.operation === `${resolverInfo.info.parentType.name}.${resolverInfo.info.fieldName}`
           );
