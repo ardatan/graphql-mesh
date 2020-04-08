@@ -1,7 +1,7 @@
 ---
 id: mongoose
-title: Mongoose
-sidebar_label: Mongoose
+title: MongoDB / Mongoose
+sidebar_label: MongoDB / Mongoose
 ---
 
 This handler allows you to use GraphQL schema created by `graphql-compose-mongoose`.

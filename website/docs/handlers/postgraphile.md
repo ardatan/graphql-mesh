@@ -1,7 +1,7 @@
 ---
 id: postgraphile
-title: PostGraphile
-sidebar_label: PostGraphile
+title: PostgreSQL / PostGraphile
+sidebar_label: PostgreSQL / PostGraphile
 ---
 
 This handler allows you to use GraphQL schema created by [PostGraphile](https://www.graphile.org/postgraphile/), based on a PostgreSQL database schema.

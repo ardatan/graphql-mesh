@@ -1,6 +1,6 @@
 ---
 id: grpc
-title: gRPC
+title: gRPC & Protobuf
 sidebar_label: gRPC
 ---
 
