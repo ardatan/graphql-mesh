@@ -1,11 +1,6 @@
-import {
-  MeshHandlerLibrary,
-  YamlConfig,
-  TransformFn
-} from '@graphql-mesh/types';
+import { MeshHandlerLibrary, YamlConfig, TransformFn, KeyValueCache, Hooks } from '@graphql-mesh/types';
 import { DocumentNode, GraphQLSchema } from 'graphql';
 import { IResolvers } from 'graphql-tools-fork';
-import { KeyValueCache, Hooks } from '@graphql-mesh/types';
 
 type ValuesOf<T> = T[keyof T];
 
@@ -38,11 +33,7 @@ export type ExecuteMeshFn<TData = any, TVariables = any> = (
   variables: TVariables
 ) => Promise<TData | null | undefined>;
 
-export type Requester<C = {}> = <R, V>(
-  doc: DocumentNode,
-  vars?: V,
-  options?: C
-) => Promise<R>;
+export type Requester<C = {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
 
 export type RawSourceOutput = {
   name: string;

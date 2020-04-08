@@ -1,43 +1,35 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { GetMeshOptions, ResolvedTransform, MeshResolvedSource } from './types';
-import {
-  getHandler,
-  getPackage,
-  resolveAdditionalResolvers,
-  resolveCache
-} from './utils';
+import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache } from './utils';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
-}
+};
 
-export async function parseConfig(rawConfig: YamlConfig.Config | string, options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions) {
+export async function parseConfig(
+  rawConfig: YamlConfig.Config | string,
+  options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions
+) {
   let config: YamlConfig.Config;
-  const {
-    configFormat = 'object'
-  } = options || {};
-  switch(configFormat) {
+  const { configFormat = 'object' } = options || {};
+  switch (configFormat) {
     case 'yaml':
-      config = defaultLoaders[".json"]('.meshrc.json', rawConfig as string);
+      config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
       break;
     case 'json':
-      config = defaultLoaders[".json"]('.meshrc.json', rawConfig as string);
+      config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
       break;
     case 'object':
       config = rawConfig as YamlConfig.Config;
       break;
-    
   }
   return processConfig(config, options);
 }
 
 export async function processConfig(config: YamlConfig.Config, options?: ConfigProcessOptions) {
-  const { 
-    dir = process.cwd(), 
-    ignoreAdditionalResolvers = false 
-  } = options || {};
+  const { dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
   await Promise.all(config.require?.map(mod => import(mod)) || []);
 
   const [sources, transforms, additionalResolvers, cache] = await Promise.all([
@@ -45,34 +37,27 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
       config.sources.map<Promise<MeshResolvedSource>>(async source => {
         const transforms: ResolvedTransform[] = await Promise.all(
           (source.transforms || []).map(async t => {
-            const transformName = Object.keys(
-              t
-            )[0] as keyof YamlConfig.Transform;
+            const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
             const transformConfig = t[transformName];
 
-            return <ResolvedTransform>{
+            return {
               config: transformConfig,
-              transformFn: await getPackage<TransformFn>(
-                transformName,
-                'transform'
-              )
-            };
+              transformFn: await getPackage<TransformFn>(transformName, 'transform'),
+            } as ResolvedTransform;
           })
         );
 
-        const handlerName = Object.keys(
-          source.handler
-        )[0] as keyof YamlConfig.Handler;
+        const handlerName = Object.keys(source.handler)[0] as keyof YamlConfig.Handler;
         const handlerLibrary = await getHandler(handlerName);
         const handlerConfig = source.handler[handlerName];
 
-        return <MeshResolvedSource>{
+        return {
           name: source.name,
           handlerLibrary,
           handlerConfig,
           context: source.context || {},
-          transforms
-        };
+          transforms,
+        } as MeshResolvedSource;
       })
     ),
     Promise.all(
@@ -80,24 +65,21 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
         const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
         const transformConfig = t[transformName];
 
-        return <ResolvedTransform>{
+        return {
           config: transformConfig,
-          transformFn: await getPackage<TransformFn>(transformName, 'transform')
-        };
+          transformFn: await getPackage<TransformFn>(transformName, 'transform'),
+        } as ResolvedTransform;
       }) || []
     ),
-    resolveAdditionalResolvers(
-      dir,
-      ignoreAdditionalResolvers ? [] : config.additionalResolvers || []
-    ),
-    resolveCache(config.cache)
+    resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || []),
+    resolveCache(config.cache),
   ]);
 
   return {
     sources,
     transforms,
     additionalResolvers,
-    cache
+    cache,
   };
 }
 
@@ -134,20 +116,18 @@ function customLoader(ext: 'json' | 'yaml' | 'js') {
   return loader;
 }
 
-export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions): Promise<GetMeshOptions> {
-  const {
-    configName = 'mesh',
-    dir = process.cwd(),
-    ignoreAdditionalResolvers = false,
-  } = options || {};
+export async function findAndParseConfig(
+  options?: { configName?: string } & ConfigProcessOptions
+): Promise<GetMeshOptions> {
+  const { configName = 'mesh', dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
   const explorer = cosmiconfig(configName, {
     loaders: {
       '.json': customLoader('json'),
       '.yaml': customLoader('yaml'),
       '.yml': customLoader('yaml'),
       '.js': customLoader('js'),
-      noExt: customLoader('yaml')
-    }
+      noExt: customLoader('yaml'),
+    },
   });
   const results = await explorer.search(dir);
   const config = results?.config as YamlConfig.Config;

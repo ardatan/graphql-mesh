@@ -9,7 +9,6 @@ on:
       - master
 
 jobs:
-
   test:
     name: Testing on ${{matrix.os}} and Node ${{matrix.node_version}}
     runs-on: ${{matrix.os}}
@@ -26,6 +25,8 @@ jobs:
           version: ${{ matrix.node_version }}
       - name: Install Dependencies using Yarn
         run: yarn install
+      - name: Lint
+        run: yarn lint
       - name: Build
         run: yarn build
       - name: Test
@@ -45,7 +46,7 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
-      
+
       - name: Release Canary
         id: canary
         uses: 'kamilkisiela/release-canary@master'
@@ -59,9 +60,9 @@ jobs:
         with:
           message: |
             The latest changes of this PR are available as alpha in npm: `${{ steps.canary.outputs.version }}`
-            
+
             Quickly update your package.json by running:
-            
+
                 npx match-version @graphql-mesh ${{ steps.canary.outputs.version }}
           bot-token: ${{ secrets.GH_API_TOKEN }}
           bot: 'theguild-bot'

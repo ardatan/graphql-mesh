@@ -1,4 +1,4 @@
-import { fetchache, KeyValueCache } from 'fetchache';
+import { fetchache, KeyValueCache, Request } from 'fetchache';
 import isUrl from 'is-url';
 import { safeLoad as loadYaml } from 'js-yaml';
 
