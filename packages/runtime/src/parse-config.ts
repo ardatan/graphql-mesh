@@ -86,7 +86,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
 function customLoader(ext: 'json' | 'yaml' | 'js') {
   function loader(filepath: string, content: string) {
     if (typeof process !== 'undefined' && 'env' in process) {
-      content = content.replace(/\$\{(.*?)\}/g, (str, variable) => {
+      content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
         let varName = variable;
         let defaultValue = '';
 

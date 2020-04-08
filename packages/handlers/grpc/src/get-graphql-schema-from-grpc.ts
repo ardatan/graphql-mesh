@@ -1,5 +1,5 @@
 import grpcCaller from 'grpc-caller';
-import { GraphQLSchema, GraphQLInputObjectType, GraphQLObjectType } from 'graphql';
+import { GraphQLSchema, GraphQLObjectType } from 'graphql';
 
 import { GrpcGraphqlSchemaConfiguration } from './types';
 import { getGraphqlTypeFromProtoDefinition } from './type_converter';
@@ -19,8 +19,6 @@ export {
 
 export { getGraphqlTypeFromProtoDefinition } from './type_converter';
 export { GrpcGraphqlSchemaConfiguration, inputTypeDefinitionCache, outputTypeDefinitionCache } from './types';
-
-type GraphqlInputTypes = GraphQLInputObjectType | GraphQLObjectType;
 
 export async function getGraphqlSchemaFromGrpc({
   endpoint,

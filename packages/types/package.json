@@ -8,25 +8,14 @@
   "typescript": {
     "definition": "dist/index.d.ts"
   },
-  "buildOptions": {
-    "input": "./src/index.ts"
-  },
   "license": "MIT",
   "scripts": {
-    "prebuild": "graphql-to-config-schema --schema ../../**/yaml-config.graphql --json ./src/config-schema.json --typings ./src/config.ts --markdown ../../website/docs/generated-markdown/",
-    "prepack": "bob-update-version",
-    "build": "bob && cp src/config-schema.json ./dist/"
+    "prepack": "bob prepack"
   },
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "@types/node": "13.11.0",
-    "bob-the-bundler": "0.3.4",
-    "graphql": "15.0.0",
-    "graphql-to-config-schema": "0.0.16",
-    "typescript": "3.8.3"
-  },
+  
   "dependencies": {
     "fetchache": "0.0.3",
     "tsee": "1.3.0"

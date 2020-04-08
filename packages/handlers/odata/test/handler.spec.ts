@@ -2,9 +2,10 @@ import { EventEmitter } from 'tsee';
 import { printSchema, graphql } from 'graphql';
 import handler from '../src';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
-import { addMock, resetMocks, Request, Response } from 'fetchache';
+import { addMock, resetMocks, Response } from 'fetchache';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+
 declare module 'fetchache' {
   type FetchMockFn = (request: Request) => Promise<Response>;
   function addMock(url: string, mockFn: FetchMockFn): void;
@@ -222,7 +223,7 @@ describe('odata', () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People`;
     const correctMethod = 'POST';
-    const correctBody = {
+    const correctBody: any = {
       UserName: 'lewisblack',
       FirstName: 'Lewis',
       LastName: 'Black',

@@ -6,7 +6,7 @@ import {
   ResolversComposerMapping,
   ResolversComposition,
 } from '@graphql-toolkit/common';
-import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
+import { addResolveFunctionsToSchema } from 'graphql-tools';
 import { isAbsolute, join } from 'path';
 import { ensureFileSync, existsSync, readFileSync, writeFileSync } from 'fs-extra';
 import objectHash from 'object-hash';
