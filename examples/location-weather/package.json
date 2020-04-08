@@ -22,6 +22,6 @@
     "@graphql-mesh/transform-extend": "0.0.20",
     "apollo-server": "2.11.0",
     "graphql": "15.0.0",
-    "graphql-tools-fork": "9.0.1"
+    "graphql-tools-fork": "8.9.4"
   }
 }

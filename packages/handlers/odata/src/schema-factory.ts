@@ -115,7 +115,8 @@ interface UnresolvedDependency {
 }
 
 interface ODataConfig {
-  endpoint: string;
+  baseUrl: string;
+  servicePath: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
 }
@@ -992,7 +993,7 @@ export class ODataGraphQLSchemaFactory {
   }
 
   public async processServiceConfig() {
-    const metadataUrl = urljoin(this.config.endpoint, '$metadata');
+    const metadataUrl = urljoin(this.config.baseUrl, this.config.servicePath, '$metadata');
     const metadataRequest = new Request(metadataUrl, {
       headers: this.config.schemaHeaders,
     });
@@ -1003,7 +1004,7 @@ export class ODataGraphQLSchemaFactory {
       ...(this.config.operationHeaders
         ? Object.keys(this.config.operationHeaders).map(headerName => this.config.operationHeaders![headerName])
         : []),
-      this.config.endpoint,
+      this.config.baseUrl,
     ];
 
     const interpolationKeys: string[] = interpolationStrings.reduce(
@@ -1024,7 +1025,7 @@ export class ODataGraphQLSchemaFactory {
     }
 
     const serviceUrlFactory: ResolverDataBasedFactory<string> = resolverData =>
-      this.interpolator.parse(this.config.endpoint, resolverData);
+      this.interpolator.parse(urljoin(this.config.baseUrl, this.config.servicePath), resolverData);
 
     const headersFactory: ResolverDataBasedFactory<Headers> = (interpolationData: any) => {
       const headers = new Headers();

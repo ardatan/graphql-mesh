@@ -2,4 +2,5 @@ sources:
   - name: TripPin
     handler:
       odata:
-        endpoint: https://services.odata.org/TripPinRESTierService/
+        baseUrl: https://services.odata.org/
+        servicePath: TripPinRESTierService/

@@ -7,9 +7,13 @@ extend type Handler {
 
 type ODataHandler @md {
   """
-  Endpoint URL for OData API
+  Base URL for OData API
   """
-  endpoint: String!
+  baseUrl: String!
+  """
+  Path to your service under OData API
+  """
+  servicePath: String!
   """
   Headers to be used with the operation requests
   """

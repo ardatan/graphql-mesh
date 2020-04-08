@@ -18,7 +18,7 @@
   
   "dependencies": {
     "@graphql-mesh/types": "0.0.20",
-    "graphql-tools-fork": "9.0.1"
+    "graphql-tools-fork": "8.9.4"
   },
   "publishConfig": {
     "access": "public",
