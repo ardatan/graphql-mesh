@@ -7,7 +7,7 @@
     "prebuild": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/",
     "build": "tsc --project tsconfig.json && bob build",
     "postbuild": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
-    "lint": "eslint --ext .ts .",
+    "lint": "eslint --ext .ts ./packages/**/src/*.ts",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
     "test": "jest --no-watchman",
