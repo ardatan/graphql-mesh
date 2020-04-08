@@ -15,7 +15,9 @@ module.exports = {
       'handlers/json-schema',
       'handlers/postgraphile',
       'handlers/soap',
-      'handlers/mongoose'
+      'handlers/mongoose',
+      'handlers/odata',
+      'handlers/thrift'
     ],
     Transforms: [
       'transforms/rename',

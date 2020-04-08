@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -31,7 +31,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.19",
+    "@graphql-mesh/types": "0.0.20",
     "graphql-tools-fork": "9.0.1"
   },
   "publishConfig": {
