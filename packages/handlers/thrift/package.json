@@ -16,7 +16,6 @@
         "thrift": "*"
     },
     "devDependencies": {
-        
         "@types/thrift": "0.10.9",
         "@types/url-join": "4.0.0",
         "thrift": "0.13.0"

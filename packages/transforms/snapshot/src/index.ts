@@ -9,7 +9,7 @@ import {
 import { addResolveFunctionsToSchema } from 'graphql-tools-fork';
 import { isAbsolute, join } from 'path';
 import { ensureFileSync, existsSync, readFileSync, writeFileSync } from 'fs-extra';
-import objectHash from 'object-hash';
+import { computeSnapshotFilePath } from './compute-snapshot-file-path';
 
 const writeFile = async (path: string, json: any) => {
   try {
@@ -20,19 +20,7 @@ const writeFile = async (path: string, json: any) => {
   }
 };
 
-export function computeSnapshotFilePath(options: {
-  typeName: string;
-  fieldName: string;
-  args: any;
-  outputDir: string;
-}) {
-  const argsHash = objectHash(options.args, { ignoreUnknown: true });
-  const fileName = [options.typeName, options.fieldName, argsHash].join('_') + '.json';
-  const absoluteOutputDir = isAbsolute(options.outputDir) ? options.outputDir : join(process.cwd(), options.outputDir);
-  return join(absoluteOutputDir, fileName);
-}
-
-export const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async ({
+const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async ({
   schema,
   config,
 }): Promise<GraphQLSchema> => {

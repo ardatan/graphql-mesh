@@ -1,4 +1,5 @@
-import { computeSnapshotFilePath, snapshotTransform } from '../src';
+import snapshotTransform from '../src';
+import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
 import { makeExecutableSchema } from 'graphql-tools-fork';
 import { graphql } from 'graphql';
 import { readFileSync, existsSync } from 'fs-extra';

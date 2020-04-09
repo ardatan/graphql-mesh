@@ -2,7 +2,7 @@ import { GraphQLSchema } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 import { Transform, RenameTypes, RenameRootFields, transformSchema } from 'graphql-tools-fork';
 
-export const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = async ({
+const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = async ({
   apiName,
   schema,
   config,

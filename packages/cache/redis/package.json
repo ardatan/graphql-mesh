@@ -2,13 +2,11 @@
     "name": "@graphql-mesh/cache-redis",
     "version": "0.0.20",
     "license": "MIT",
-    "scripts": {"prepack": "bob prepack"
+    "scripts": {
+        "prepack": "bob prepack"
     },
     "peerDependencies": {
         "graphql": "*"
-    },
-    "devDependencies": {
-        "@types/ioredis": "4.14.9"
     },
     "sideEffects": false,
     "main": "dist/index.cjs.js",
@@ -18,11 +16,13 @@
         "definition": "dist/index.d.ts"
     },
     "dependencies": {
+        "@types/ioredis": "4.14.9",
         "@graphql-mesh/types": "0.0.20",
         "dataloader": "2.0.0",
         "ioredis": "4.16.1"
     },
     "publishConfig": {
-        "access": "public"
+        "access": "public",
+        "directory": "dist"
     }
 }

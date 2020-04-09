@@ -17,12 +17,10 @@
     "pg": "*"
   },
   "devDependencies": {
-    
     "pg": "8.0.0"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.20",
-    "change-case": "4.1.1",
     "postgraphile": "4.6.0"
   },
   "publishConfig": {

@@ -15,11 +15,9 @@
   "peerDependencies": {
     "graphql": "*"
   },
-  
   "dependencies": {
     "@graphql-mesh/types": "0.0.20",
     "@graphql-mesh/utils": "0.0.20",
-    "change-case": "4.1.1",
     "openapi-to-graphql": "2.0.0"
   },
   "publishConfig": {

@@ -1,4 +1,4 @@
-import { extendTransform } from '../src/index';
+import extendTransform from '../src/index';
 import { buildSchema, printSchema, GraphQLObjectType } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';

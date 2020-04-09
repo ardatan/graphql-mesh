@@ -1,4 +1,4 @@
-import { prefixTransform } from '../src';
+import prefixTransform from '../src';
 import { buildSchema, printSchema, GraphQLSchema } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
@@ -22,7 +22,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        value: 'T_'
+        value: 'T_',
       },
       cache: new InMemoryLRUCache(),
       hooks: new Hooks(),
@@ -37,7 +37,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        value: 'T_'
+        value: 'T_',
       },
       cache: new InMemoryLRUCache(),
       hooks: new Hooks(),
@@ -51,8 +51,7 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       apiName: 'MyApi',
-      config: {
-      },
+      config: {},
       cache: new InMemoryLRUCache(),
       hooks: new Hooks(),
     });
