@@ -57,4 +57,6 @@ export type TransformFn<Config = any> = (options: {
   apiName?: string;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 
+export type Maybe<T> = null | undefined | T;
+
 export { KeyValueCache, KeyValueCacheSetOptions };
