@@ -12,17 +12,10 @@ import {
 } from 'graphql';
 import { JSONSchemaVisitor, JSONSchemaVisitorCache } from './json-schema-visitor';
 import urlJoin from 'url-join';
-import { readFileOrUrlWithCache, stringInterpolator } from '@graphql-mesh/utils';
+import { readFileOrUrlWithCache, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
-
-async function loadFromModuleExportExpression(expression: string) {
-  const [moduleName, exportName] = expression.split('#');
-  const m = await import(moduleName);
-
-  return m[exportName] || (m.default && m.default[exportName]);
-}
 
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
   async getMeshSource({ config, cache }) {
