@@ -1,10 +1,6 @@
 import { IResolvers } from 'graphql-tools-fork';
-import { EventEmitter } from 'tsee';
-import {
-  GraphQLSchema,
-  GraphQLFieldResolver,
-  GraphQLResolveInfo
-} from 'graphql';
+import { IEventEmitter } from 'tsee';
+import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 
@@ -25,9 +21,7 @@ export type GetMeshSourceOptions<THandlerConfig> = {
 
 // Handlers
 export declare type MeshHandlerLibrary<THandlerConfig = any, TContext = any> = {
-  getMeshSource: (
-    options: GetMeshSourceOptions<THandlerConfig>
-  ) => Promise<MeshSource<TContext>>;
+  getMeshSource: (options: GetMeshSourceOptions<THandlerConfig>) => Promise<MeshSource<TContext>>;
 };
 
 export type ResolverInfo = {
@@ -39,10 +33,7 @@ export type ResolverInfo = {
 
 // Hooks
 export type AllHooks = {
-  schemaReady: (options: {
-    schema: GraphQLSchema;
-    applyResolvers: (modifiedResolvers: IResolvers) => void;
-  }) => void;
+  schemaReady: (options: { schema: GraphQLSchema; applyResolvers: (modifiedResolvers: IResolvers) => void }) => void;
   buildSdkFn: (options: {
     schema: GraphQLSchema;
     typeName: string;
@@ -55,7 +46,7 @@ export type AllHooks = {
   resolverDone: (resolverInfo: ResolverInfo, result: any) => void;
   resolverError: (resolverInfo: ResolverInfo, error: Error) => void;
 };
-export class Hooks extends EventEmitter<AllHooks> {}
+export type Hooks = IEventEmitter<AllHooks>;
 export type HooksKeys = keyof AllHooks;
 
 export type TransformFn<Config = any> = (options: {

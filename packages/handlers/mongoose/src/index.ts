@@ -1,27 +1,12 @@
-import {
-  composeWithMongoose,
-  composeWithMongooseDiscriminators
-} from 'graphql-compose-mongoose';
-import {
-  SchemaComposer,
-  ObjMap,
-  ObjectTypeComposerFieldConfigDefinition
-} from 'graphql-compose';
+import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
+import { SchemaComposer, ObjMap, ObjectTypeComposerFieldConfigDefinition } from 'graphql-compose';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { camelCase } from 'change-case';
 import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
 import mongoose from 'mongoose';
-import { isAbsolute, join } from 'path';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
-const modelQueryOperations = [
-  'findById',
-  'findByIds',
-  'findOne',
-  'findMany',
-  'count',
-  'connection',
-  'pagination'
-];
+const modelQueryOperations = ['findById', 'findByIds', 'findOne', 'findMany', 'count', 'connection', 'pagination'];
 
 const modelMutationOperations = [
   'createOne',
@@ -31,65 +16,35 @@ const modelMutationOperations = [
   'updateMany',
   'removeById',
   'removeOne',
-  'removeMany'
+  'removeMany',
 ];
-
-async function loadExternalModuleByExpression(
-  expression: string,
-  defaultExportName?: string
-) {
-  const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const absoluteModulePath = isAbsolute(modulePath)
-    ? modulePath
-    : join(process.cwd(), modulePath);
-  const mod = await import(absoluteModulePath);
-
-  return (exportName && mod[exportName]) || mod.default || mod;
-}
 
 const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
   async getMeshSource({ config, hooks }) {
-
     const schemaComposer = new SchemaComposer();
 
     if (config.connectionString) {
       await mongoose.connect(config.connectionString, {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
       });
     }
 
-    const queryFields: ObjMap<ObjectTypeComposerFieldConfigDefinition<
-      any,
-      any,
-      ArgsMap
-    >> = {};
-    const mutationFields: ObjMap<ObjectTypeComposerFieldConfigDefinition<
-      any,
-      any,
-      ArgsMap
-    >> = {};
+    const queryFields: ObjMap<ObjectTypeComposerFieldConfigDefinition<any, any, ArgsMap>> = {};
+    const mutationFields: ObjMap<ObjectTypeComposerFieldConfigDefinition<any, any, ArgsMap>> = {};
 
     if (config.models) {
       await Promise.all(
         config.models.map(async modelConfig => {
-          const model = await loadExternalModuleByExpression(
-            modelConfig.path,
-            modelConfig.name
-          );
-          const modelTC = composeWithMongoose(
-            model,
-            modelConfig.options as any
-          );
+          const model = await loadFromModuleExportExpression(modelConfig.path, modelConfig.name);
+          const modelTC = composeWithMongoose(model, modelConfig.options as any);
           for (const queryOperation of modelQueryOperations) {
-            queryFields[
-              camelCase(`${modelConfig.name}_${queryOperation}`)
-            ] = modelTC.getResolver(queryOperation);
+            queryFields[camelCase(`${modelConfig.name}_${queryOperation}`)] = modelTC.getResolver(queryOperation);
           }
           for (const mutationOperation of modelMutationOperations) {
-            mutationFields[
-              camelCase(`${modelConfig.name}_${mutationOperation}`)
-            ] = modelTC.getResolver(mutationOperation);
+            mutationFields[camelCase(`${modelConfig.name}_${mutationOperation}`)] = modelTC.getResolver(
+              mutationOperation
+            );
           }
         })
       );
@@ -98,23 +53,20 @@ const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
     if (config.discriminators) {
       await Promise.all(
         config.discriminators.map(async discriminatorConfig => {
-          const discriminator = await loadExternalModuleByExpression(
+          const discriminator = await loadFromModuleExportExpression(
             discriminatorConfig.path,
             discriminatorConfig.name
           );
-          const discriminatorTC = composeWithMongooseDiscriminators(
-            discriminator,
-            discriminatorConfig.options as any
-          );
+          const discriminatorTC = composeWithMongooseDiscriminators(discriminator, discriminatorConfig.options as any);
           for (const queryOperation of modelQueryOperations) {
-            queryFields[
-              camelCase(`${discriminatorConfig.name}_${queryOperation}`)
-            ] = discriminatorTC.getResolver(queryOperation);
+            queryFields[camelCase(`${discriminatorConfig.name}_${queryOperation}`)] = discriminatorTC.getResolver(
+              queryOperation
+            );
           }
           for (const mutationOperation of modelMutationOperations) {
-            mutationFields[
-              camelCase(`${discriminatorConfig.name}_${mutationOperation}`)
-            ] = discriminatorTC.getResolver(mutationOperation);
+            mutationFields[camelCase(`${discriminatorConfig.name}_${mutationOperation}`)] = discriminatorTC.getResolver(
+              mutationOperation
+            );
           }
         })
       );
@@ -127,9 +79,9 @@ const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
     hooks.on('destroy', () => mongoose.disconnect());
 
     return {
-      schema
+      schema,
     };
-  }
+  },
 };
 
 export default handler;
