@@ -3,8 +3,15 @@ import mockingTransform from '../src';
 import { YamlConfig, Hooks } from '@graphql-mesh/types';
 import { graphql } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { EventEmitter } from 'events';
 
 describe('mocking', () => {
+  let cache: InMemoryLRUCache;
+  let hooks: Hooks;
+  beforeEach(() => {
+    cache = new InMemoryLRUCache();
+    hooks = new EventEmitter() as Hooks;
+  });
   it('should mock fields and resolvers should not get called', async () => {
     let queryUserCalled = false;
     let userFullNameCalled = false;
@@ -45,8 +52,8 @@ describe('mocking', () => {
     const transformedSchema = await mockingTransform({
       schema,
       config: mockingConfig,
-      cache: new InMemoryLRUCache(),
-      hooks: new Hooks(),
+      cache,
+      hooks,
     });
     const result = await graphql({
       schema: transformedSchema,

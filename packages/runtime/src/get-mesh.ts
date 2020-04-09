@@ -11,6 +11,7 @@ import { Hooks, KeyValueCache } from '@graphql-mesh/types';
 import { addResolversToSchema } from 'graphql-tools';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
+import { EventEmitter } from 'events';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -26,7 +27,11 @@ export async function getMesh(
 }> {
   const schemas: GraphQLSchema[] = [];
   const rawSources: RawSourceOutput[] = [];
-  const hooks = options.hooks || new Hooks();
+  let hooks = options.hooks!;
+  if (!hooks) {
+    hooks = new EventEmitter({ captureRejections: true }) as Hooks;
+    hooks.setMaxListeners(Infinity);
+  }
   const cache = options.cache || new InMemoryLRUCache();
 
   await Promise.all(

@@ -1,4 +1,4 @@
-import { YamlConfig, Hooks } from '@graphql-mesh/types';
+import { YamlConfig, Hooks, KeyValueCache } from '@graphql-mesh/types';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { addResolversToSchema } from 'graphql-tools';
 import { GraphQLSchema, buildSchema, execute, parse, DocumentNode } from 'graphql';
@@ -6,6 +6,7 @@ import cacheTransform, { computeCacheKey } from '../src';
 import objectHash from 'object-hash';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
+import { EventEmitter } from 'events';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 
@@ -93,6 +94,8 @@ const spies = {
 
 describe('cache', () => {
   let schema: GraphQLSchema;
+  let cache: KeyValueCache;
+  let hooks: Hooks;
 
   beforeEach(() => {
     const baseSchema = buildSchema(/* GraphQL */ `
@@ -131,14 +134,14 @@ describe('cache', () => {
       resolvers: spies,
     });
 
+    cache = new InMemoryLRUCache();
+    hooks = new EventEmitter() as Hooks;
+
     spies.Query.user.mockClear();
     spies.Query.users.mockClear();
   });
 
   describe('Resolvers Composition', () => {
-    const cache = new InMemoryLRUCache();
-    const hooks = new Hooks();
-
     it('should replace resolvers correctly with a specific type and field', async () => {
       expect(schema.getQueryType()?.getFields()['user'].resolve).toBe(spies.Query.user);
 
@@ -197,8 +200,6 @@ describe('cache', () => {
 
   describe('Cache Wrapper', () => {
     const checkCache = async (config: YamlConfig.CacheTransformConfig[], cacheKeyToCheck?: string) => {
-      const cache = new InMemoryLRUCache();
-      const hooks = new Hooks();
       let modifiedSchema: GraphQLSchema;
 
       await cacheTransform({
@@ -396,8 +397,6 @@ describe('cache', () => {
 
   describe('Opration-based invalidation', () => {
     it('Should invalidate cache when mutation is done based on key', async () => {
-      const cache = new InMemoryLRUCache();
-      const hooks = new Hooks();
       const schemaWithHooks = applyResolversHooksToSchema(schema, hooks);
 
       await cacheTransform({
