@@ -12,8 +12,7 @@ import {
 } from 'graphql';
 import { JSONSchemaVisitor, JSONSchemaVisitorCache } from './json-schema-visitor';
 import urlJoin from 'url-join';
-import { Interpolator } from '@ardatan/string-interpolation';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { readFileOrUrlWithCache, stringInterpolator } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
@@ -27,7 +26,6 @@ async function loadFromModuleExportExpression(expression: string) {
 
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
   async getMeshSource({ config, cache }) {
-    const interpolator = new Interpolator();
     const visitorCache = new JSONSchemaVisitorCache();
     await Promise.all(
       config.typeReferences?.map(typeReference =>
@@ -94,7 +92,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         ];
 
         const interpolationKeys: string[] = interpolationStrings.reduce(
-          (keys, str) => [...keys, ...interpolator.parseRules(str).map((match: any) => match.key)],
+          (keys, str) => [...keys, ...stringInterpolator.parseRules(str).map((match: any) => match.key)],
           [] as string[]
         );
 
@@ -128,7 +126,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
           args,
           resolve: async (root, args, context, info) => {
             const interpolationData = { root, args, context, info };
-            const interpolatedPath = interpolator.parse(operationConfig.path, interpolationData);
+            const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
             const fullPath = urlJoin(config.baseUrl, interpolatedPath);
             const method = operationConfig.method;
             const headers = {
@@ -136,7 +134,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
               ...operationConfig?.headers,
             };
             for (const headerName in headers) {
-              headers[headerName] = interpolator.parse(headers[headerName], interpolationData);
+              headers[headerName] = stringInterpolator.parse(headers[headerName], interpolationData);
             }
             const requestInit: RequestInit = {
               method,
