@@ -6,19 +6,8 @@ import {
   ResolversComposerMapping,
   ResolversComposition,
 } from '@graphql-toolkit/common';
-import { Interpolator } from '@ardatan/string-interpolation';
-import { format } from 'date-fns';
 import objectHash from 'object-hash';
-
-const interpolator = new Interpolator({
-  delimiter: ['{', '}'],
-});
-interpolator.addAlias('typeName', 'info.parentType.name');
-interpolator.addAlias('type', 'info.parentType.name');
-interpolator.addAlias('parentType', 'info.parentType.name');
-interpolator.addAlias('fieldName', 'info.fieldName');
-interpolator.registerModifier('date', (formatStr: string) => format(new Date(), formatStr));
-interpolator.registerModifier('hash', (value: any) => objectHash(value, { ignoreUnknown: true }));
+import { stringInterpolator } from '@graphql-mesh/utils';
 
 export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({
   config,
@@ -104,7 +93,7 @@ export function computeCacheKey(options: {
     info: options.info || null,
   };
 
-  return interpolator.parse(options.keyStr, templateData);
+  return stringInterpolator.parse(options.keyStr, templateData);
 }
 
 export default cacheTransform;
