@@ -4,7 +4,7 @@ import { WSSecurityCert } from 'soap';
 import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 
 const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
-  async getMeshSource({ cache, config }) {
+  async getMeshSource({ config, cache }) {
     const soapClient = await createSoapClient(config.wsdl);
     const schema = await soapGraphqlSchema({
       soapClient,
@@ -12,11 +12,23 @@ const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
     if (config.securityCert) {
       const securityCertConfig = config.securityCert;
       const privateKey =
-        securityCertConfig?.privateKey || (await readFileOrUrlWithCache(securityCertConfig?.privateKeyFilePath, cache));
+        securityCertConfig?.privateKey ||
+        (securityCertConfig?.privateKeyFilePath &&
+          (await readFileOrUrlWithCache(securityCertConfig?.privateKeyFilePath, cache, {
+            allowUnknownExtensions: true,
+          })));
       const publicKey =
-        securityCertConfig?.publicKey || (await readFileOrUrlWithCache(securityCertConfig?.publicKeyFilePath, cache));
+        securityCertConfig?.publicKey ||
+        (securityCertConfig?.publicKeyFilePath &&
+          (await readFileOrUrlWithCache(securityCertConfig?.publicKeyFilePath, cache, {
+            allowUnknownExtensions: true,
+          })));
       const password =
-        securityCertConfig?.password || (await readFileOrUrlWithCache(securityCertConfig?.passwordFilePath, cache));
+        securityCertConfig?.password ||
+        (securityCertConfig?.passwordFilePath &&
+          (await readFileOrUrlWithCache(securityCertConfig?.passwordFilePath, cache, {
+            allowUnknownExtensions: true,
+          })));
       soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password));
     }
 
