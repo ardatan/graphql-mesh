@@ -9,8 +9,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/is-url": "1.2.28",
-    "@types/node": "13.11.0"
+    "@types/is-url": "1.2.28"
   },
   "sideEffects": false,
   "main": "dist/index.cjs.js",
@@ -20,7 +19,10 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
+    "@ardatan/string-interpolation": "1.2.8",
+    "date-fns": "2.11.1",
     "fetchache": "0.0.3",
+    "object-hash": "2.0.3",
     "is-url": "1.2.4",
     "js-yaml": "3.13.1"
   },

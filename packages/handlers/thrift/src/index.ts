@@ -1,6 +1,6 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, ThriftErrors, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { readFileOrUrlWithCache, stringInterpolator } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import {
   GraphQLEnumType,
@@ -39,7 +39,6 @@ import {
   IThriftField,
 } from '@creditkarma/thrift-server-core';
 import { pascalCase } from 'pascal-case';
-import { Interpolator } from '@ardatan/string-interpolation';
 
 const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
   async getMeshSource({ config, cache }) {
@@ -388,8 +387,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       };
     }
 
-    const interpolator = new Interpolator();
-
     const commonArgs: GraphQLFieldConfigArgumentMap = {};
 
     const interpolationStrings = [
@@ -399,7 +396,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
     ];
 
     const interpolationKeys: string[] = interpolationStrings.reduce(
-      (keys, str) => [...keys, ...interpolator.parseRules(str).map((match: any) => match.key)],
+      (keys, str) => [...keys, ...stringInterpolator.parseRules(str).map((match: any) => match.key)],
       [] as string[]
     );
 
@@ -421,7 +418,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       const headers: Record<string, string> = {};
       const headersNoninterpolated = config.operationHeaders || {};
       for (const headerName in headersNoninterpolated) {
-        headers[headerName] = interpolator.parse(headersNoninterpolated[headerName], interpolationData);
+        headers[headerName] = stringInterpolator.parse(headersNoninterpolated[headerName], interpolationData);
       }
       return headers;
     };

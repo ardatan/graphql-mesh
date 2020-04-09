@@ -1,11 +1,9 @@
 import { IResolvers } from 'graphql-tools-fork';
 import { ResolvedTransform, GraphQLOperation } from './types';
 import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
-import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, Maybe } from '@graphql-mesh/types';
 import { resolve } from 'path';
-import Maybe from 'graphql/tsutils/Maybe';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
-import { buildResolveInfo } from 'graphql/execution/execute';
 import { buildOperationNodeForField } from '@graphql-toolkit/common';
 
 export async function applySchemaTransformations(
@@ -168,27 +166,21 @@ export async function extractSdkFromResolvers(
                   argNames: Object.keys(args),
                 });
 
-                info = buildResolveInfo(
-                  {
-                    schema,
-                    fragments: {},
-                    rootValue: null,
-                    contextValue: context,
-                    operation,
-                    variableValues: args,
-                    get fieldResolver() {
-                      return fn; // Get new one if replaced
-                    },
-                    errors: [],
-                  },
-                  field,
-                  operation.selectionSet.selections.filter(s => s.kind === Kind.FIELD) as FieldNode[],
-                  type,
-                  {
+                info = {
+                  fieldName: field.name,
+                  fieldNodes: operation.selectionSet.selections.filter(s => s.kind === Kind.FIELD) as FieldNode[],
+                  returnType: field.type,
+                  parentType: type,
+                  schema,
+                  fragments: {},
+                  rootValue: null,
+                  operation,
+                  variableValues: args,
+                  path: {
                     prev: undefined,
                     key: field.name,
-                  }
-                );
+                  },
+                } as any;
               }
 
               if (!context?.__isMeshContext) {

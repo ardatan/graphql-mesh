@@ -19,9 +19,7 @@ sources:
   - name: TripPin
     handler:
       odata:
-        baseUrl: https://services.odata.org/
-        services:
-          - servicePath: TripPinRESTierService/
+        baseUrl: https://services.odata.org/TripPinRESTierService/
 ```
 
 ## Config API Reference

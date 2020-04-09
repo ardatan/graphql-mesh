@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "@graphql-mesh/types": "0.0.20",
+        "@graphql-mesh/utils": "0.0.20",
         "faker": "4.1.0",
         "graphql-tools-fork": "8.9.4"
     },

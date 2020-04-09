@@ -4,10 +4,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "pretest-sdk": "yarn mesh:sdk",
+    "pretest-sdk": "yarn mesh:ts && yarn mesh:sdk",
     "test-sdk": "ts-node src/test-sdk.ts London",
-    "mesh:serve": "graphql-mesh serve",
     "premesh:serve": "yarn mesh:ts",
+    "mesh:serve": "graphql-mesh serve",
     "mesh:sdk": "graphql-mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
     "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
   },

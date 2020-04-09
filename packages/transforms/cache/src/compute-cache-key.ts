@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo } from 'graphql';
 import objectHash from 'object-hash';
-import { interpolator } from './interpolator';
+import { stringInterpolator } from '@graphql-mesh/utils';
 
 export function computeCacheKey(options: {
   keyStr: string | undefined;
@@ -19,5 +19,5 @@ export function computeCacheKey(options: {
     info: options.info || null,
   };
 
-  return interpolator.parse(options.keyStr, templateData);
+  return stringInterpolator.parse(options.keyStr, templateData);
 }

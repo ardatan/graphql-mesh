@@ -1,6 +1,0 @@
-sources:
-  - name: TripPin
-    handler:
-      odata:
-        baseUrl: https://services.odata.org/
-        servicePath: TripPinRESTierService/

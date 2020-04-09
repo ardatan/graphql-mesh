@@ -1,5 +1,5 @@
 import { IResolvers } from 'graphql-tools-fork';
-import { EventEmitter } from 'tsee';
+import { IEventEmitter } from 'tsee';
 import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
@@ -46,7 +46,7 @@ export type AllHooks = {
   resolverDone: (resolverInfo: ResolverInfo, result: any) => void;
   resolverError: (resolverInfo: ResolverInfo, error: Error) => void;
 };
-export class Hooks extends EventEmitter<AllHooks> {}
+export type Hooks = IEventEmitter<AllHooks>;
 export type HooksKeys = keyof AllHooks;
 
 export type TransformFn<Config = any> = (options: {
@@ -56,5 +56,7 @@ export type TransformFn<Config = any> = (options: {
   hooks: Hooks;
   apiName?: string;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
+
+export type Maybe<T> = null | undefined | T;
 
 export { KeyValueCache, KeyValueCacheSetOptions };

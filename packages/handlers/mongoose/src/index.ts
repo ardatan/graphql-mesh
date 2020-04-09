@@ -4,7 +4,7 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { camelCase } from 'camel-case';
 import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
 import mongoose from 'mongoose';
-import { isAbsolute, join } from 'path';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const modelQueryOperations = ['findById', 'findByIds', 'findOne', 'findMany', 'count', 'connection', 'pagination'];
 
@@ -18,14 +18,6 @@ const modelMutationOperations = [
   'removeOne',
   'removeMany',
 ];
-
-async function loadExternalModuleByExpression(expression: string, defaultExportName?: string) {
-  const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(process.cwd(), modulePath);
-  const mod = await import(absoluteModulePath);
-
-  return (exportName && mod[exportName]) || mod.default || mod;
-}
 
 const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
   async getMeshSource({ config, hooks }) {
@@ -44,7 +36,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
     if (config.models) {
       await Promise.all(
         config.models.map(async modelConfig => {
-          const model = await loadExternalModuleByExpression(modelConfig.path, modelConfig.name);
+          const model = await loadFromModuleExportExpression(modelConfig.path, modelConfig.name);
           const modelTC = composeWithMongoose(model, modelConfig.options as any);
           for (const queryOperation of modelQueryOperations) {
             queryFields[camelCase(`${modelConfig.name}_${queryOperation}`)] = modelTC.getResolver(queryOperation);
@@ -61,7 +53,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
     if (config.discriminators) {
       await Promise.all(
         config.discriminators.map(async discriminatorConfig => {
-          const discriminator = await loadExternalModuleByExpression(
+          const discriminator = await loadFromModuleExportExpression(
             discriminatorConfig.path,
             discriminatorConfig.name
           );
