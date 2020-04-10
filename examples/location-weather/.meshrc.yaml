@@ -3,7 +3,7 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
-        headers:
+        operationHeaders:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
   - name: Weather
     context:
@@ -14,8 +14,8 @@ sources:
 transforms:
   - extend: |
       extend type PopulatedPlaceSummary {
-        dailyForecast: [Forecast!]!
-        todayForecast: Forecast!
+        dailyForecast: [Forecast]
+        todayForecast: Forecast
       }
   - cache:
       # Geo data doesn't change frequntly, so we can cache it forever

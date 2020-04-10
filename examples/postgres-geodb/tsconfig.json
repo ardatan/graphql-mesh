@@ -1,7 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs"
+    "target": "es2015",
+    "module": "commonjs",    
+    "moduleResolution": "node", /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    "lib": [
+      "esnext"
+    ],
+    "sourceMap": true /* Generates corresponding '.map' file. */,
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
