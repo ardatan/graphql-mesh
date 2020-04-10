@@ -1,0 +1,17 @@
+extend type Transform {
+  """
+  Transformer to apply composition to resolvers
+  """
+  resolversComposition: [ResolversCompositionTransformObject!]
+}
+
+type ResolversCompositionTransformObject @md {
+  """
+  The GraphQL Resolver path
+  """
+  resolver: String!
+  """
+  Path to the composer
+  """
+  composer: String!
+}
