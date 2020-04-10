@@ -8,10 +8,12 @@ extend type Transform {
 type ResolversCompositionTransformObject @md {
   """
   The GraphQL Resolver path
+  Example: Query.users
   """
   resolver: String!
   """
-  Path to the composer
+  Path to the composer function
+  Example: ./src/auth.js#authComposer
   """
   composer: String!
 }
