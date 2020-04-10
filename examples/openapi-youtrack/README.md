@@ -1,5 +1,10 @@
 ## YouTrack GraphQL API
 
+![image](https://user-images.githubusercontent.com/20847995/79001969-29645080-7b58-11ea-87fb-01388c0cf286.png)
+![image](https://user-images.githubusercontent.com/20847995/79002026-44cf5b80-7b58-11ea-8791-6e8633aaa9c4.png)
+![image](https://user-images.githubusercontent.com/20847995/79002067-5add1c00-7b58-11ea-8129-0015009fee9e.png)
+
+
 This example takes YouTrack as API Source and generates GraphQL Schema
 
 You should have a YouTrack instance and a valid token.
