@@ -4,7 +4,7 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-      "mesh:serve": "graphql-mesh serve"
+      "start": "graphql-mesh serve"
     },
     "dependencies": {
       "@graphql-mesh/cli": "0.0.20",
