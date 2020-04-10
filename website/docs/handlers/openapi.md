@@ -24,6 +24,10 @@ sources:
         source: ./my-schema.json
 ```
 
+> We have a lot of examples for OpenAPI Handler;
+- [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/javascript-wiki)
+- [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/location-weather)
+
 ## Config API Reference
 
 {@import ../generated-markdown/OpenapiHandler.generated.md}

@@ -21,3 +21,6 @@ transforms:
       myNewField: String!
     }
 ```
+
+> You can check Location Weather example that uses OpenAPI handler with extend transform and additional resolvers;
+[See the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/location-weather)]

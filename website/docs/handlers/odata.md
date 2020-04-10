@@ -22,6 +22,9 @@ sources:
         baseUrl: https://services.odata.org/TripPinRESTierService/
 ```
 
+> You can check out our TripPin example that uses OData handler.
+[Click here to open the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/odata-trippin)
+
 ## Config API Reference
 
 {@import ../generated-markdown/ODataHandler.generated.md}

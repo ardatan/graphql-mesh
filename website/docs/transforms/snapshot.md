@@ -31,6 +31,9 @@ The following snapshot will work if you are in development environment (see the 
 
 To modify your snapshots and change the responses, go to `__snapshots__` and modify the responses under those files. 
 
+> You can check out our example that uses SOAP Handler with snapshot transform.
+[Click here to open the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/country-info)
+
 ## Config API Reference
 
 {@import ../generated-markdown/SnapshotTransformConfig.generated.md}

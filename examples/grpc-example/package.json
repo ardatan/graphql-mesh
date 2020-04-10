@@ -5,7 +5,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "mesh:serve": "graphql-mesh serve"
+    "pregrpc:start": "bash bash/build.sh",
+    "grpc:start": "bash bash/server.sh",
+    "mesh:start": "graphql-mesh serve",
+    "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\""
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.0.20",

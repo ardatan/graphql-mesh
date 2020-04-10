@@ -22,6 +22,9 @@ sources:
         wsdl: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL
 ```
 
+> You can check out our example that uses SOAP Handler.
+[Click here to open the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/country-info)
+
 ## Config API Reference
 
 {@import ../generated-markdown/SoapHandler.generated.md}

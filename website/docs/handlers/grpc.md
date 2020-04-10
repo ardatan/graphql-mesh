@@ -23,6 +23,9 @@ sources:
         packageName: io.xtech.example
 ```
 
+> You can check out our example that uses gRPC Handler.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example)
+
 ## Config API Reference
 
 {@import ../generated-markdown/GrpcHandler.generated.md}

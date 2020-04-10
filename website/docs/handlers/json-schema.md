@@ -30,6 +30,9 @@ sources:
             responseSchema: ./json-schemas/users.json
 ```
 
+> You can check out our example that uses JSON Schema handler with mock data.
+[Click here to open the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/json-schema-example)
+
 ## Config API Reference
 
 {@import ../generated-markdown/JsonSchemaHandler.generated.md}

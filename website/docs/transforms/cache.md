@@ -132,6 +132,9 @@ const { schema, execute, cache } = getMesh(config);
 cache.delete(SOME_KEY);
 ```
 
+> You can check Location Weather example that uses OpenAPI handler with cache transform;
+[See the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/location-weather)]
+
 ## Config API Reference
 
 {@import ../generated-markdown/CacheTransformConfig.generated.md}

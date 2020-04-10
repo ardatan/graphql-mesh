@@ -26,6 +26,9 @@ transforms:
 
 The example above will replace the resolver of `User.firstName` with a mock that uses `faker.js` to generate a random name.
 
+> You can check out our example that uses JSON Schema handler with mock data.
+[Click here to open the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/json-schema-example)
+
 ## Config API Reference
 
 {@import ../generated-markdown/MockingConfig.generated.md}
