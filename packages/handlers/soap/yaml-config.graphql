@@ -33,15 +33,15 @@ type SoapSecurityCertificateConfig {
   """
   password: String
   """
-  Path to the file contains your public key
+  Path to the file or URL contains your public key
   """
-  publicKeyFilePath: String
+  publicKeyPath: String
   """
-  Path to the file contains your private key
+  Path to the file or URL contains your private key
   """
-  privateKeyFilePath: String
+  privateKeyPath: String
   """
-  Path to the file contains your password
+  Path to the file or URL contains your password
   """
-  passwordFilePath: String
+  passwordPath: String
 }
