@@ -3,6 +3,7 @@ import {
   getInterpolatedHeadersFactory,
   ResolverData,
   parseInterpolationStrings,
+  getHeadersObject,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema } from '@ardatan/openapi-to-graphql';
 import { Oas3 } from '@ardatan/openapi-to-graphql/lib/types/oas3';
@@ -27,14 +28,14 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       headers: config.operationHeaders,
       skipSchemaValidation: config.skipSchemaValidation,
       operationIdFieldNames: true,
-      sendOAuthTokenInQuery: true,
-      viewer: true,
       fillEmptyResponses: true,
       resolverMiddleware: (resolverFactoryParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };
         const headers = headersFactory(resolverData);
-        resolverFactoryParams.requestOptions = resolverFactoryParams.requestOptions || {};
-        resolverFactoryParams.requestOptions.headers = headers;
+        resolverFactoryParams.data.options.headers = {
+          ...resolverFactoryParams.data.options.headers,
+          ...getHeadersObject(headers),
+        };
         return originalFactory(resolverFactoryParams)(root, args, context, info);
       },
     });

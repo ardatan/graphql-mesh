@@ -35,7 +35,7 @@
     "@graphql-mesh/utils": "0.0.20",
     "change-case": "4.1.1",
     "fetchache": "0.0.3",
-    "@ardatan/openapi-to-graphql": "2.0.5"
+    "@ardatan/openapi-to-graphql": "2.0.6"
   },
   "publishConfig": {
     "access": "public",
