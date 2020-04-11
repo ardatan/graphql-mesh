@@ -5,32 +5,35 @@ import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 
 const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
   async getMeshSource({ config, cache }) {
-    const soapClient = await createSoapClient(config.wsdl);
+    const soapClient = await createSoapClient(config.wsdl, {
+      basicAuth: config.basicAuth,
+    });
+
+    if (config.securityCert) {
+      const securityCertConfig = config.securityCert;
+      const [privateKey, publicKey, password] = await Promise.all([
+        securityCertConfig.privateKey ||
+          (securityCertConfig.privateKeyFilePath &&
+            readFileOrUrlWithCache<string>(securityCertConfig.privateKeyFilePath, cache, {
+              allowUnknownExtensions: true,
+            })),
+        securityCertConfig.publicKey ||
+          (securityCertConfig.publicKeyFilePath &&
+            readFileOrUrlWithCache<string>(securityCertConfig.publicKeyFilePath, cache, {
+              allowUnknownExtensions: true,
+            })),
+        securityCertConfig.password ||
+          (securityCertConfig.passwordFilePath &&
+            readFileOrUrlWithCache<string>(securityCertConfig.passwordFilePath, cache, {
+              allowUnknownExtensions: true,
+            })),
+      ]);
+      soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password));
+    }
+
     const schema = await soapGraphqlSchema({
       soapClient,
     });
-    if (config.securityCert) {
-      const securityCertConfig = config.securityCert;
-      const privateKey =
-        securityCertConfig?.privateKey ||
-        (securityCertConfig?.privateKeyFilePath &&
-          (await readFileOrUrlWithCache(securityCertConfig?.privateKeyFilePath, cache, {
-            allowUnknownExtensions: true,
-          })));
-      const publicKey =
-        securityCertConfig?.publicKey ||
-        (securityCertConfig?.publicKeyFilePath &&
-          (await readFileOrUrlWithCache(securityCertConfig?.publicKeyFilePath, cache, {
-            allowUnknownExtensions: true,
-          })));
-      const password =
-        securityCertConfig?.password ||
-        (securityCertConfig?.passwordFilePath &&
-          (await readFileOrUrlWithCache(securityCertConfig?.passwordFilePath, cache, {
-            allowUnknownExtensions: true,
-          })));
-      soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password));
-    }
 
     return {
       schema,
