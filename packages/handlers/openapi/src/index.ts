@@ -29,6 +29,7 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       skipSchemaValidation: config.skipSchemaValidation,
       operationIdFieldNames: true,
       fillEmptyResponses: true,
+      viewer: false,
       resolverMiddleware: (resolverFactoryParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };
         const headers = headersFactory(resolverData);
