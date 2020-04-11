@@ -33,10 +33,10 @@
   resolved "https://registry.npmjs.org/@apollographql/graphql-playground-html/-/graphql-playground-html-1.6.24.tgz#3ce939cb127fb8aaa3ffc1e90dff9b8af9f2e3dc"
   integrity sha512-8GqG48m1XqyXh4mIZrtB5xOhUwSsh1WsrrsaZQOEYYql3YN9DEu9OOSg0ILzXHZo/h2Q74777YE4YzlArQzQEQ==
 
-"@ardatan/openapi-to-graphql@2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@ardatan/openapi-to-graphql/-/openapi-to-graphql-2.0.2.tgz#77e8c872cdf1759ab80297068461def02442b03a"
-  integrity sha512-c1rbwgDb0xnWvy5ttqxKpwTc+b3H3Q177wQotLRjo7Eq64InfXXMaV0smlTBU8DvLw9JWM7sJdB7wP1HR/emyw==
+"@ardatan/openapi-to-graphql@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@ardatan/openapi-to-graphql/-/openapi-to-graphql-2.0.5.tgz#54d755990dfdc1721b50f560f7311fb6e1bd480a"
+  integrity sha512-n6IHiP7+Lg9bvHu6UsyQ7Nl+T3PbxVUI67/48S6P1IChwnNmKS9u9Wyk4Vs0uJqSlT6pAmoU6YfYXkR0GvoulA==
   dependencies:
     cross-fetch "3.0.4"
     debug "^4.1.0"

@@ -1,4 +1,9 @@
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import {
+  readFileOrUrlWithCache,
+  getInterpolatedHeadersFactory,
+  ResolverData,
+  parseInterpolationStrings,
+} from '@graphql-mesh/utils';
 import { createGraphQLSchema } from '@ardatan/openapi-to-graphql';
 import { Oas3 } from '@ardatan/openapi-to-graphql/lib/types/oas3';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
@@ -14,17 +19,51 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
     const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
       fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
 
+    const headersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
+
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
       baseUrl: config.baseUrl,
       headers: config.operationHeaders,
       skipSchemaValidation: config.skipSchemaValidation,
       operationIdFieldNames: true,
-      viewer: false, // Viewer set to false in order to force users to specify auth via config file
+      sendOAuthTokenInQuery: true,
+      viewer: true,
+      fillEmptyResponses: true,
+      resolverMiddleware: (resolverFactoryParams, originalFactory) => (root, args, context, info: any) => {
+        const resolverData: ResolverData = { root, args, context, info };
+        const headers = headersFactory(resolverData);
+        resolverFactoryParams.requestOptions = resolverFactoryParams.requestOptions || {};
+        resolverFactoryParams.requestOptions.headers = headers;
+        return originalFactory(resolverFactoryParams)(root, args, context, info);
+      },
     });
+
+    const { args, contextVariables } = parseInterpolationStrings(Object.values(config.operationHeaders || {}));
+
+    const rootFields = [
+      ...Object.values(schema.getQueryType()?.getFields() || {}),
+      ...Object.values(schema.getMutationType()?.getFields() || {}),
+      ...Object.values(schema.getSubscriptionType()?.getFields() || {}),
+    ];
+
+    for (const rootField of rootFields) {
+      for (const argName in args) {
+        const argConfig = args[argName];
+        rootField.args.push({
+          name: argName,
+          description: undefined,
+          defaultValue: undefined,
+          extensions: undefined,
+          astNode: undefined,
+          ...argConfig,
+        });
+      }
+    }
 
     return {
       schema,
+      contextVariables,
     };
   },
 };
