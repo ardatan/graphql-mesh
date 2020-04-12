@@ -1,9 +1,8 @@
 import {
   readFileOrUrlWithCache,
-  getInterpolatedHeadersFactory,
   ResolverData,
   parseInterpolationStrings,
-  getHeadersObject,
+  stringInterpolator,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema } from '@ardatan/openapi-to-graphql';
 import { Oas3 } from '@ardatan/openapi-to-graphql/lib/types/oas3';
@@ -20,8 +19,6 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
     const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
       fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
 
-    const headersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
-
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
       baseUrl: config.baseUrl,
@@ -32,11 +29,10 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       viewer: false,
       resolverMiddleware: (resolverFactoryParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };
-        const headers = headersFactory(resolverData);
-        resolverFactoryParams.data.options.headers = {
-          ...resolverFactoryParams.data.options.headers,
-          ...getHeadersObject(headers),
-        };
+        const headers = resolverFactoryParams.data.options.headers;
+        for (const headerName in headers) {
+          headers[headerName] = stringInterpolator.parse(headers[headerName], resolverData);
+        }
         return originalFactory(resolverFactoryParams)(root, args, context, info);
       },
     });
