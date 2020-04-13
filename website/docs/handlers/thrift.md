@@ -1,7 +1,7 @@
 ---
 id: thrift
-title: Thrift
-sidebar_label: SOAP
+title: Apache Thrift
+sidebar_label: Apache Thrift
 ---
 
 This handler allows you to consume [Apache Thrift](https://thrift.apache.org/) `.thrift` files and generate a remote executable schema for those services.
@@ -25,6 +25,9 @@ sources:
           path: /thrift
           serviceName: calculator-service
 ```
+
+> You can check out our example that uses Thrift Handler.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/thrift-example)
 
 ## Config API Reference
 

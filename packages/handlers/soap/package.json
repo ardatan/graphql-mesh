@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.20",
+    "@graphql-mesh/utils": "0.0.20",
     "soap-graphql": "0.1.0"
   },
   "publishConfig": {

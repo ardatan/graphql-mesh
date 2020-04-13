@@ -4,6 +4,7 @@ import { graphql } from 'graphql';
 import { readFileSync, existsSync } from 'fs-extra';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
+import { EventEmitter } from 'events';
 
 jest.mock('fs-extra');
 
@@ -25,6 +26,12 @@ describe('snapshot', () => {
       address: 'Moon',
     },
   ];
+  let cache: InMemoryLRUCache;
+  let hooks: Hooks;
+  beforeEach(() => {
+    cache = new InMemoryLRUCache();
+    hooks = new EventEmitter() as Hooks;
+  });
   it('it writes correct output', async () => {
     const schema = await snapshotTransform({
       schema: makeExecutableSchema({
@@ -51,7 +58,7 @@ describe('snapshot', () => {
         outputDir,
       },
       cache: new InMemoryLRUCache(),
-      hooks: new Hooks(),
+      hooks,
     });
 
     await graphql({
@@ -110,7 +117,7 @@ describe('snapshot', () => {
         outputDir: '__snapshots__',
       },
       cache: new InMemoryLRUCache(),
-      hooks: new Hooks(),
+      hooks,
     });
 
     const doTheRequest = () =>

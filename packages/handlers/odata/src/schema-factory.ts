@@ -48,7 +48,7 @@ import {
   DateTimeResolver as GraphQLDateTime,
   JSONResolver as GraphQLJSON,
 } from 'graphql-scalars';
-import { Interpolator } from '@ardatan/string-interpolation';
+import { stringInterpolator } from '@graphql-mesh/utils';
 
 const InlineCountEnum = new GraphQLEnumType({
   name: 'InlineCount',
@@ -116,7 +116,6 @@ interface UnresolvedDependency {
 
 interface ODataConfig {
   baseUrl: string;
-  servicePath: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
 }
@@ -166,8 +165,6 @@ export class ODataGraphQLSchemaFactory {
   private contextVariables: string[] = [];
 
   private operationNames = new Set<string>();
-
-  private interpolator = new Interpolator();
 
   private nonAbstractBaseTypes = new Map<string, GraphQLObjectType>();
 
@@ -993,7 +990,7 @@ export class ODataGraphQLSchemaFactory {
   }
 
   public async processServiceConfig() {
-    const metadataUrl = urljoin(this.config.baseUrl, this.config.servicePath, '$metadata');
+    const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
     const metadataRequest = new Request(metadataUrl, {
       headers: this.config.schemaHeaders,
     });
@@ -1008,7 +1005,7 @@ export class ODataGraphQLSchemaFactory {
     ];
 
     const interpolationKeys: string[] = interpolationStrings.reduce(
-      (keys, str) => [...keys, ...this.interpolator.parseRules(str).map((match: any) => match.key)],
+      (keys, str) => [...keys, ...stringInterpolator.parseRules(str).map((match: any) => match.key)],
       [] as string[]
     );
 
@@ -1025,13 +1022,13 @@ export class ODataGraphQLSchemaFactory {
     }
 
     const serviceUrlFactory: ResolverDataBasedFactory<string> = resolverData =>
-      this.interpolator.parse(urljoin(this.config.baseUrl, this.config.servicePath), resolverData);
+      stringInterpolator.parse(this.config.baseUrl, resolverData);
 
     const headersFactory: ResolverDataBasedFactory<Headers> = (interpolationData: any) => {
       const headers = new Headers();
       const headersNoninterpolated = this.config.operationHeaders || {};
       for (const headerName in headersNoninterpolated) {
-        headers.set(headerName, this.interpolator.parse(headersNoninterpolated[headerName], interpolationData));
+        headers.set(headerName, stringInterpolator.parse(headersNoninterpolated[headerName], interpolationData));
       }
       return headers;
     };
