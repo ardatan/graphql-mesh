@@ -158,13 +158,14 @@ export class ODataGraphQLSchemaFactory {
   private entityTypeNameIdentifierFieldNameMap = new Map<string, string>();
   private entitySetEntityTypeNameMap = new Map<string, string>();
 
+  private boundOperationsFullNameMap = new Map<string, string>();
+  private operationSet = new Set<string>();
+
   private unresolvedDependencies: UnresolvedDependency[] = [];
 
   private queryFields: GraphQLFieldConfigMap<any, any> = {};
   private mutationFields: GraphQLFieldConfigMap<any, any> = {};
   private contextVariables: string[] = [];
-
-  private operationNames = new Set<string>();
 
   private nonAbstractBaseTypes = new Map<string, GraphQLObjectType>();
 
@@ -323,7 +324,7 @@ export class ODataGraphQLSchemaFactory {
     ignoreIdentifierArg?: boolean;
     count?: boolean;
   }) {
-    const resolver: GraphQLFieldResolver<any, any> = async (root, args, context, info) => {
+    const resolver: GraphQLFieldResolver<any, any> = async (root, args, context = {}, info) => {
       if (info.operation.operation === 'query' && method !== 'GET') {
         throw new Error(`Non-GET operations are not allowed in query operations`);
       }
@@ -332,8 +333,9 @@ export class ODataGraphQLSchemaFactory {
         const returnVal = root[info.fieldName];
         return returnVal;
       }
-      const _serviceUrl = (context._serviceUrl = context?._serviceUrl || serviceUrlFactory(resolverData));
-      const _headers = (context._headers = context?._headers || headersFactory(resolverData));
+      const _serviceUrl =
+        (root && root['@odata.id']) || (context._serviceUrl = context?._serviceUrl || serviceUrlFactory(resolverData));
+      const _headers: Headers = (context._headers = context?._headers || headersFactory(resolverData));
       let baseOperationUrl: string | undefined;
       const requestInit: RequestInit = {};
       // If it is navigation property
@@ -389,9 +391,12 @@ export class ODataGraphQLSchemaFactory {
           } else {
             const operationName = info.fieldName;
             entitySetPart = operationName;
+            if (this.boundOperationsFullNameMap.has(operationName)) {
+              entitySetPart = this.boundOperationsFullNameMap.get(operationName)!;
+            }
             const argEntries = Object.entries(args).filter(argEntry => argEntry[0] !== 'queryOptions');
             if (method === 'GET' && argEntries.length > 0) {
-              entitySetPart = `${operationName}(${argEntries.map(argEntry => argEntry.join(' = ')).join(', ')})`;
+              entitySetPart = `${entitySetPart}(${argEntries.map(argEntry => argEntry.join(' = ')).join(', ')})`;
             } else if (method !== 'GET') {
               requestInit.body = JSON.stringify(args);
             }
@@ -431,15 +436,20 @@ export class ODataGraphQLSchemaFactory {
           if (fieldName.startsWith('__')) {
             return false;
           }
-          if (this.operationNames.has(fieldName)) {
+          if (this.boundOperationsFullNameMap.has(fieldName)) {
             return false;
           }
           return true;
         });
+        const actualReturnType = this.getActualGraphQLType(info.returnType);
+        const identifierField = this.getEntityTypeIdentifier(actualReturnType);
+        const identifierFieldName = identifierField?.name;
+        if (identifierFieldName && !selectionFields.includes(identifierFieldName)) {
+          selectionFields.push(identifierField.name);
+        }
         if (!count) {
           // $select doesn't work with inherited types' fields. So if there is an inline fragment for
           // implemented types, we cannot use $select
-          const actualReturnType = this.getActualGraphQLType(info.returnType);
           const actualReturnTypeFieldMap = actualReturnType.getFields();
           const ignoreSelect =
             isInterfaceType(actualReturnType) &&
@@ -449,7 +459,8 @@ export class ODataGraphQLSchemaFactory {
           }
         }
       }
-      const entitySetRequest = new Request(decodeURIComponent(urlObj.toString()).split('+').join(' '), requestInit);
+      const finalUrl = decodeURIComponent(urlObj.toString()).split('+').join(' ');
+      const entitySetRequest = new Request(finalUrl, requestInit);
       const response = await fetchache(entitySetRequest, this.cache);
       if (count) {
         return response.text();
@@ -472,10 +483,22 @@ export class ODataGraphQLSchemaFactory {
       }
       if (info.returnType instanceof GraphQLList) {
         returnVal = responseJson.value;
+        const actualReturnType = this.getActualGraphQLType(info.returnType);
+        const identifierField = this.getEntityTypeIdentifier(actualReturnType);
+        const identifierFieldName = identifierField?.name;
+        if (identifierFieldName) {
+          returnVal = returnVal.map((element: any) => {
+            if (!('@odata.id' in element)) {
+              const identifier = element[identifierFieldName];
+              element['@odata.id'] = baseOperationUrl + '(' + identifier + ')';
+            }
+            return element;
+          });
+        }
       } else {
         returnVal = responseJson;
       }
-      context._serviceUrl = baseOperationUrl;
+      returnVal['@odata.id'] = returnVal['@odata.id'] || baseOperationUrl;
       return returnVal;
     };
     return resolver;
@@ -767,7 +790,6 @@ export class ODataGraphQLSchemaFactory {
     if (!operationName) {
       throw new Error(`Invalid ${operationTypeElement.tagName}! Name not found!`);
     }
-    this.operationNames.add(operationName);
     let returnType: GraphQLOutputType = GraphQLJSON;
     const operationTypeName = operationTypeElement.getAttribute('Type');
     if (operationTypeName) {
@@ -833,6 +855,10 @@ export class ODataGraphQLSchemaFactory {
         deprecationReason: undefined,
         resolve: this.getResolver({ method, ...serviceContext }),
       };
+      this.boundOperationsFullNameMap.set(
+        operationName,
+        operationTypeElement.closest('[Namespace]')?.getAttribute('Namespace') + '.' + operationName
+      );
       serviceContext.schemaElement.querySelectorAll(`[BaseType='${bindingTypeRef}']`).forEach(implementationElement => {
         const implementationTypeName = implementationElement.getAttribute('Name');
         if (!implementationTypeName) {
