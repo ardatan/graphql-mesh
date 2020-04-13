@@ -24,7 +24,7 @@ export async function serveMesh(
     for (let i = 0; i < fork; i++) {
       clusterFork();
     }
-    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:4000 in ${fork} forks`);
+    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:${port} in ${fork} forks`);
   } else {
     const app = express();
 
@@ -142,11 +142,13 @@ export async function serveMesh(
       `);
     });
 
-    app.listen(4000, (err, data) => {
+    app.listen(port.toString(), (err, data) => {
       if (err) {
         console.error(err);
       }
-      logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:4000`);
+      if (!fork) {
+        logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:4000`);
+      }
     });
   }
 }
