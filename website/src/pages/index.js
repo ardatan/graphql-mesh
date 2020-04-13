@@ -7,11 +7,11 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>GraphQL Query Language</>,
+    title: <>GraphQL as a Query Language</>,
     imageUrl: 'img/GraphQL_Logo.svg',
     description: (
       <>
-        Use GraphQL query language to fetch data from your data-sources
+        Use GraphQL as a query language to fetch data from your data-sources
         directly, without the need for a running gateway server, or any other
         bottleneck.
       </>
@@ -58,7 +58,6 @@ function Feature({ imageUrl, title, description }) {
 
 function Home() {
   const context = useDocusaurusContext();
-  const { siteConfig = {} } = context;
   return (
     <Layout title={`GraphQL Mesh`} description="">
       <header>
@@ -72,6 +71,7 @@ function Home() {
             loop={true}
           >
             <source src="/video/medium_1200X345.mp4" type="video/mp4" />
+            <source src="/video/medium_1200X345.mp4" type="video/webm" />
           </video>
         </div>
       </header>

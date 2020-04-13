@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@types/jest": "25.2.1",
-    "@types/mongoose": "5.7.8",
+    "@types/mongoose": "5.7.10",
     "@types/node": "13.11.0",
     "bob-the-bundler": "0.3.4",
     "graphql": "15.0.0",
@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.20",
+    "@graphql-mesh/utils": "0.0.20",
     "change-case": "4.1.1",
     "graphql-compose": "7.14.1",
     "graphql-compose-mongoose": "7.3.5"

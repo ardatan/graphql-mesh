@@ -1,4 +1,4 @@
-import { GraphQLSchema, execute, DocumentNode, GraphQLError, isObjectType } from 'graphql';
+import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
 import { mergeSchemasAsync } from '@graphql-toolkit/schema-merging';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, RawSourceOutput, Requester } from './types';
 import {
@@ -8,25 +8,11 @@ import {
   ensureDocumentNode,
 } from './utils';
 import { Hooks, KeyValueCache } from '@graphql-mesh/types';
-import { addResolveFunctionsToSchema, IAddResolversToSchemaOptions } from 'graphql-tools-fork';
 
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
-
-function addResolversWithReferenceResolver(options: IAddResolversToSchemaOptions) {
-  const schema = addResolveFunctionsToSchema(options);
-  for (const typeName in options.resolvers) {
-    for (const fieldName in options.resolvers[typeName]) {
-      if (fieldName === '__resolveReference') {
-        const type = schema.getType(typeName);
-        if (isObjectType(type)) {
-          (type as any).resolveReference = (options.resolvers[typeName] as any).__resolveReference;
-        }
-      }
-    }
-  }
-  return schema;
-}
+import { EventEmitter } from 'events';
+import { addResolversWithReferenceResolver } from './add-resolvers-with-reference-resolver';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -42,7 +28,11 @@ export async function getMesh(
 }> {
   const schemas: GraphQLSchema[] = [];
   const rawSources: RawSourceOutput[] = [];
-  const hooks = options.hooks || new Hooks();
+  let hooks = options.hooks!;
+  if (!hooks) {
+    hooks = new EventEmitter({ captureRejections: true }) as Hooks;
+    hooks.setMaxListeners(Infinity);
+  }
   const cache = options.cache || new InMemoryLRUCache();
 
   await Promise.all(

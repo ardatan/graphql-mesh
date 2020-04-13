@@ -1,0 +1,8 @@
+subscription ExampleSearchMoviesByCast {
+  ExampleSearchMoviesByCast(SearchByCastRequest: { castName: "Tom Cruise" }) {
+    name
+    year
+    rating
+    cast
+  }
+}

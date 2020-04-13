@@ -22,6 +22,9 @@ transforms:
       value: MyApi_
 ```
 
+> You can check out our example that uses schema stitching with a PostgreSQL datasource and prefix transform.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
+
 ## Config API Reference
 
 {@import ../generated-markdown/PrefixTransformConfig.generated.md}

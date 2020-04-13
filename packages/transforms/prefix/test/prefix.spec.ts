@@ -2,9 +2,12 @@ import { prefixTransform } from '../src';
 import { buildSchema, printSchema, GraphQLSchema } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
+import { EventEmitter } from 'events';
 
 describe('prefix', () => {
   let schema: GraphQLSchema;
+  let cache: InMemoryLRUCache;
+  let hooks: Hooks;
 
   beforeEach(() => {
     schema = buildSchema(/* GraphQL */ `
@@ -16,16 +19,18 @@ describe('prefix', () => {
         id: ID!
       }
     `);
+    cache = new InMemoryLRUCache();
+    hooks = new EventEmitter() as Hooks;
   });
 
   it('should prefix all schema types when prefix is specified explicitly', async () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        value: 'T_'
+        value: 'T_',
       },
-      cache: new InMemoryLRUCache(),
-      hooks: new Hooks(),
+      cache,
+      hooks,
     });
 
     expect(newSchema.getType('User')).toBeUndefined();
@@ -37,10 +42,10 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       config: {
-        value: 'T_'
+        value: 'T_',
       },
-      cache: new InMemoryLRUCache(),
-      hooks: new Hooks(),
+      cache,
+      hooks,
     });
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -51,10 +56,9 @@ describe('prefix', () => {
     const newSchema = await prefixTransform({
       schema,
       apiName: 'MyApi',
-      config: {
-      },
-      cache: new InMemoryLRUCache(),
-      hooks: new Hooks(),
+      config: {},
+      cache,
+      hooks,
     });
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -69,8 +73,8 @@ describe('prefix', () => {
         value: 'T_',
         ignore: ['User'],
       },
-      cache: new InMemoryLRUCache(),
-      hooks: new Hooks(),
+      cache,
+      hooks,
     });
 
     expect(newSchema.getType('Query')).toBeDefined();
