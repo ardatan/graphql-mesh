@@ -1,7 +1,7 @@
 ---
 id: mongoose
-title: Mongoose
-sidebar_label: Mongoose
+title: MongoDB / Mongoose
+sidebar_label: MongoDB / Mongoose
 ---
 
 This handler allows you to use GraphQL schema created by `graphql-compose-mongoose`.
@@ -25,6 +25,9 @@ sources:
             path: ./src/models#User
 
 ```
+
+> You can check out our example that uses Mongoose handler.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/mongoose-example)
 
 ## Config API Reference
 

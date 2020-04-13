@@ -4,24 +4,27 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "predev": "yarn mesh:ts",
     "dev": "ts-node-dev src/index.ts",
     "prestart": "yarn mesh:ts",
-    "predev": "yarn mesh:ts",
+    "start": "ts-node src/index.ts",
     "premesh:serve": "yarn mesh:ts",
     "mesh:serve": "graphql-mesh serve",
     "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
   },
   "devDependencies": {
     "@types/node": "13.9.0",
+    "ts-node": "8.8.2",
+    "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.8.3"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.0.20",
     "@graphql-mesh/openapi": "0.0.20",
     "@graphql-mesh/runtime": "0.0.20",
+    "@graphql-mesh/transform-cache": "0.0.20",
     "@graphql-mesh/transform-extend": "0.0.20",
     "apollo-server": "2.11.0",
-    "graphql": "15.0.0",
-    "graphql-tools-fork": "8.9.4"
+    "graphql": "15.0.0"
   }
 }

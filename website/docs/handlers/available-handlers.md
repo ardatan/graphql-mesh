@@ -12,8 +12,8 @@ The following APIs are supported/planned at the moment. You can easily add custo
 | `@graphql-mesh/handler-federation`   | Available       | Apollo Federation Services                                         | [docs](/docs/handlers/federation)      |
 | `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               | [docs](/docs/handlers/openapi)      |
 | `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         | [docs](/docs/handlers/json-schema)  |
-| `@graphql-mesh/postgraphile` | Available | Postgres database schema                                           | [docs](/docs/handlers/postgraphile) |
-| `@graphql-mesh/grpc`         | Available | gRPC and protobuf schemas                                          | [docs](/docs/handlers/grpc)         |
+| `@graphql-mesh/postgraphile` | Available | PostgreSQL database schema                                           | [docs](/docs/handlers/postgraphile) |
+| `@graphql-mesh/grpc`         | Available | gRPC and Protobuf schemas                                          | [docs](/docs/handlers/grpc)         |
 | `@graphql-mesh/soap`         | Available | SOAP specification                                                 | [docs](/docs/handlers/soap)         |
 | `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        | [docs](/docs/handlers/mongoose)     |
 | `@graphql-mesh/odata`        | Available       | OData specification                                                | [docs](/docs/handlers/odata)                           |

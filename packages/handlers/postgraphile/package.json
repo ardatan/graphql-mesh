@@ -32,7 +32,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.0.20",
     "change-case": "4.1.1",
-    "pg": "8.0.0",
+    "pg": "8.0.2",
     "postgraphile": "4.6.0"
   },
   "publishConfig": {

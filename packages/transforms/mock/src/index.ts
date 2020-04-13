@@ -2,6 +2,7 @@ import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 import { addMockFunctionsToSchema, IMocks } from 'graphql-tools-fork';
 import * as faker from 'faker';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const mockingTransform: TransformFn<YamlConfig.MockingConfig> = async ({ schema, config }): Promise<GraphQLSchema> => {
   const configIf = 'if' in config ? config.if : true;
@@ -29,9 +30,7 @@ const mockingTransform: TransformFn<YamlConfig.MockingConfig> = async ({ schema,
                 return prevObj;
               };
             } else if (fieldConfig.custom) {
-              const [moduleName, exportName] = fieldConfig.custom.split('#');
-              const m = await import(moduleName);
-              const exportedVal = m[exportName] || (m.default && m.default[exportName]);
+              const exportedVal = await loadFromModuleExportExpression(fieldConfig.custom);
               const prevFn = mocks[typeName];
               mocks[typeName] = (...args) => {
                 const prevObj = prevFn(...args);
