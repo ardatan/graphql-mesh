@@ -56,7 +56,7 @@
     "@graphql-toolkit/core": "0.10.3",
     "@graphql-toolkit/graphql-file-loader": "0.10.3",
     "apollo-server-express": "2.12.0",
-    "graphql-playground-html": "1.6.13",
+    "graphql-playground-html": "1.6.19",
     "chalk": "4.0.0",
     "change-case": "4.1.1",
     "express": "4.17.1",
