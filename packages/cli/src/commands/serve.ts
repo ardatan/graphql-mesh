@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, introspectionFromSchema } from 'graphql';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { Logger } from 'winston';
@@ -9,6 +9,8 @@ import { loadDocuments } from '@graphql-toolkit/core';
 import { CodeFileLoader } from '@graphql-toolkit/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
 import { basename } from 'path';
+import { renderPlaygroundPage } from 'graphql-playground-html';
+import { createServer } from 'http';
 
 export async function serveMesh(
   logger: Logger,
@@ -46,17 +48,9 @@ export async function serveMesh(
 
     // For embedded examples
     app.get('/', (req, res) => {
-      res.end(`
-      <!DOCTYPE html>
-      <html>
-      
-      <head>
-        <meta charset=utf-8/>
-        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
-        <title>GraphQL Mesh Playground</title>
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/graphql-playground-react/build/static/css/index.css" />
-        <link rel="shortcut icon" href="//cdn.jsdelivr.net/npm/graphql-playground-react/build/favicon.png" />
-        <script>
+      res.setHeader('Content-Type', 'text/html');
+      res.write(`
+      <script>
           const localStorageMock = new Map();
           Object.defineProperty(window, 'localStorage', {
             get() {
@@ -83,69 +77,27 @@ export async function serveMesh(
             }
           });
         </script>
-        <script src="//cdn.jsdelivr.net/npm/graphql-playground-react/build/static/js/middleware.js"></script>
-      </head>
-      
-      <body>
-        <div id="root">
-          <style>
-            body {
-              background-color: rgb(23, 42, 58);
-              font-family: Open Sans, sans-serif;
-              height: 90vh;
-            }
-      
-            #root {
-              height: 100%;
-              width: 100%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-      
-            .loading {
-              font-size: 32px;
-              font-weight: 200;
-              color: rgba(255, 255, 255, .6);
-              margin-left: 20px;
-            }
-      
-            img {
-              width: 78px;
-              height: 78px;
-            }
-      
-            .title {
-              font-weight: 400;
-            }
-          </style>
-          <img src='//cdn.jsdelivr.net/npm/graphql-playground-react/build/logo.png' alt=''>
-          <div class="loading"> Loading
-            <span class="title">GraphQL Mesh Playground</span>
-          </div>
-        </div>
-        <script>window.addEventListener('load', function (event) {
-            GraphQLPlayground.init(document.getElementById('root'), {
-              // options as 'endpoint' belong here
-              tabs: ${JSON.stringify(
-                documents.map(doc => ({
-                  name: doc.location && basename(doc.location),
-                  endpoint: `http://localhost:${port}/graphql`,
-                  query: doc.rawSDL,
-                }))
-              )}
-            })
-          })</script>
-      </body>
-      
-      </html>
       `);
+      const endpoint = `http://localhost:${port}/graphql`;
+      const tabs = documents.map(doc => ({
+        name: doc.location && basename(doc.location),
+        endpoint,
+        query: doc.rawSDL!,
+      }));
+      const playground = renderPlaygroundPage({
+        title: 'GraphQL Mesh Playground',
+        tabs,
+        endpoint,
+        schema: introspectionFromSchema(schema),
+      });
+      res.write(playground);
+      res.end();
     });
 
-    app.listen(port.toString(), (err, data) => {
-      if (err) {
-        console.error(err);
-      }
+    const httpServer = createServer(app);
+    apollo.installSubscriptionHandlers(httpServer);
+
+    httpServer.listen(port.toString(), () => {
       if (!fork) {
         logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:4000`);
       }

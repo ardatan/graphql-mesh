@@ -8573,6 +8573,11 @@ graphql-parse-resolve-info@4.5.0:
   dependencies:
     debug "^4.1.1"
 
+graphql-playground-html@1.6.13:
+  version "1.6.13"
+  resolved "https://registry.yarnpkg.com/graphql-playground-html/-/graphql-playground-html-1.6.13.tgz#16d61416161d96f2725bc37b0b64d135a189f252"
+  integrity sha512-5DNtVeaWrfxrobA2Vp3ypWjAQYGPIXyZ3rdQXy4m4nDJnc4UALPSZRh9y+U4kp8GaoPp1aCgIJerDSRBOT9HnA==
+
 graphql-scalars@1.1.0:
   version "1.1.0"
   resolved "https://registry.npmjs.org/graphql-scalars/-/graphql-scalars-1.1.0.tgz#e3d1583acbd7a13d7360056b3f5395297249f860"
