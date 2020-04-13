@@ -1,0 +1,16 @@
+extend type Handler {
+  """
+  Handler for Neo4j
+  """
+  neo4j: Neo4jHandler
+}
+
+type Neo4jHandler @md {
+  url: String!
+  username: String!
+  password: String!
+  """
+  Specifies whether relationships should always be included in the type definitions as [relationship](https://grandstack.io/docs/neo4j-graphql-js.html#relationship-types) types, even if the relationships do not have properties.
+  """
+  alwaysIncludeRelationships: Boolean
+}
