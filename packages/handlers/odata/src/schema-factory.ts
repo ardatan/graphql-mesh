@@ -272,7 +272,7 @@ export class ODataGraphQLSchemaFactory {
     return null;
   }
 
-  private getEntityTypeIdentifier(entityTypeOrName: GraphQLObjectType | string): GraphQLField<any, any> {
+  private getEntityTypeIdentifier(entityTypeOrName: GraphQLObjectType | string): GraphQLField<any, any> | undefined {
     let entityType: GraphQLObjectType | GraphQLInterfaceType | undefined;
     if (typeof entityTypeOrName === 'string') {
       entityType = this.entityTypeNameGraphQLObjectTypeMap.get(entityTypeOrName);
@@ -284,12 +284,12 @@ export class ODataGraphQLSchemaFactory {
     }
     const identifierFieldName = this.entityTypeNameIdentifierFieldNameMap.get(entityType.name);
     if (!identifierFieldName) {
-      throw new Error(`Identifier field name for entity type ${entityTypeOrName} not found!`);
+      return undefined;
     }
     const fieldMap = entityType.getFields();
     const identifierField = fieldMap[identifierFieldName];
     if (!identifierField) {
-      throw new Error(`Identifier field for entity type ${entityTypeOrName} not found!`);
+      return undefined;
     }
     return identifierField;
   }
@@ -445,7 +445,7 @@ export class ODataGraphQLSchemaFactory {
         const identifierField = this.getEntityTypeIdentifier(actualReturnType);
         const identifierFieldName = identifierField?.name;
         if (identifierFieldName && !selectionFields.includes(identifierFieldName)) {
-          selectionFields.push(identifierField.name);
+          selectionFields.push(identifierFieldName);
         }
         if (!count) {
           // $select doesn't work with inherited types' fields. So if there is an inline fragment for
@@ -481,14 +481,14 @@ export class ODataGraphQLSchemaFactory {
         }
         throw actualError;
       }
+      const actualReturnType = this.getActualGraphQLType(info.returnType);
+      const identifierField = this.getEntityTypeIdentifier(actualReturnType);
+      const identifierFieldName = identifierField?.name;
       if (info.returnType instanceof GraphQLList) {
         returnVal = responseJson.value;
-        const actualReturnType = this.getActualGraphQLType(info.returnType);
-        const identifierField = this.getEntityTypeIdentifier(actualReturnType);
-        const identifierFieldName = identifierField?.name;
         if (identifierFieldName) {
           returnVal = returnVal.map((element: any) => {
-            if (!('@odata.id' in element)) {
+            if (typeof element === 'object' && !('@odata.id' in element)) {
               const identifier = element[identifierFieldName];
               element['@odata.id'] = baseOperationUrl + '(' + identifier + ')';
             }
@@ -498,7 +498,10 @@ export class ODataGraphQLSchemaFactory {
       } else {
         returnVal = responseJson;
       }
-      returnVal['@odata.id'] = returnVal['@odata.id'] || baseOperationUrl;
+      if (identifierFieldName && typeof returnVal === 'object' && !('@odata.id' in returnVal)) {
+        const identifier = returnVal[identifierFieldName];
+        returnVal['@odata.id'] = baseOperationUrl + '(' + identifier + ')';
+      }
       return returnVal;
     };
     return resolver;
@@ -711,27 +714,33 @@ export class ODataGraphQLSchemaFactory {
     };
 
     const identifierField = this.getEntityTypeIdentifier(entityTypeName);
+    if (!identifierField) {
+      throw new Error(`Identifier field name for entity type ${entityTypeName} not found!`);
+    }
+
+    const identifierFieldName = identifierField.name;
+    const identifierFieldType = identifierField.type;
 
     const getByIdFieldConfig: GraphQLFieldConfig<any, any> = {
       type: entityType,
       args: {
         ...serviceContext.serviceCommonArgs,
-        [identifierField.name]: {
-          type: identifierField.type as GraphQLInputType,
+        [identifierFieldName]: {
+          type: identifierFieldType as GraphQLInputType,
         },
       },
       resolve: this.getResolver({ entitySetName, method: 'GET', ...serviceContext }),
     };
 
-    this.queryFields[`get${entitySetName}By${identifierField.name}`] = getByIdFieldConfig;
-    this.mutationFields[`get${entitySetName}By${identifierField.name}`] = getByIdFieldConfig;
+    this.queryFields[`get${entitySetName}By${identifierFieldName}`] = getByIdFieldConfig;
+    this.mutationFields[`get${entitySetName}By${identifierFieldName}`] = getByIdFieldConfig;
 
-    this.mutationFields[`delete${entitySetName}By${identifierField.name}`] = {
+    this.mutationFields[`delete${entitySetName}By${identifierFieldName}`] = {
       type: GraphQLJSON,
       args: {
         ...serviceContext.serviceCommonArgs,
-        [identifierField.name]: {
-          type: identifierField.type as GraphQLInputType,
+        [identifierFieldName]: {
+          type: identifierFieldType as GraphQLInputType,
         },
       },
       resolve: this.getResolver({ entitySetName, method: 'DELETE', ...serviceContext }),

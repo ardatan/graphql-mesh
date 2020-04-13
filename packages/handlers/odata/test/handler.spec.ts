@@ -109,7 +109,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for requesting a complex property', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/Airports('KSFO')?$select=Location`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/Airports('KSFO')?$select=IcaoCode,Location`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -117,6 +117,7 @@ describe('odata', () => {
       return new Response(
         JSON.stringify({
           '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
+          IcaoCode: Date.now().toString(),
           Location: {
             '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.AirportLocation',
             Loc: '',
@@ -138,6 +139,7 @@ describe('odata', () => {
       source: /* GraphQL */ `
         {
           getAirportsByIcaoCode(IcaoCode: "KSFO") {
+            IcaoCode
             Location {
               Loc
             }
@@ -153,7 +155,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for query options', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People?$filter=FirstName eq 'Scott'&$select=FirstName`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People?$filter=FirstName eq 'Scott'&$select=UserName,FirstName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -174,6 +176,7 @@ describe('odata', () => {
       source: /* GraphQL */ `
         {
           getPeople(queryOptions: { filter: "FirstName eq 'Scott'" }) {
+            UserName
             FirstName
           }
         }
@@ -355,7 +358,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for invoking unbound functions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/GetNearestAirport(lat = 33, lon = -118)?$select=Name`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/GetNearestAirport(lat = 33, lon = -118)?$select=IcaoCode,Name`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -363,6 +366,7 @@ describe('odata', () => {
       return new Response(
         JSON.stringify({
           '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
+          IcaoCode: Date.now().toString(),
           Name: 'Name',
         })
       );
@@ -381,6 +385,7 @@ describe('odata', () => {
       source: /* GraphQL */ `
         {
           GetNearestAirport(lat: 33, lon: -118) {
+            IcaoCode
             Name
           }
         }
@@ -397,18 +402,25 @@ describe('odata', () => {
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trip(0)/GetInvolvedPeople?$select=UserName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')?$select=Trips`, async () => {
-      return new Response(JSON.stringify(PersonMockData));
-    });
     addMock(
-      `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips?$filter=TripId eq 0`,
+      `https://services.odata.org/TripPinRESTierService/People('russellwhyte')?$select=UserName,Trips`,
+      async () => {
+        return new Response(JSON.stringify(PersonMockData));
+      }
+    );
+    addMock(
+      `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips?$filter=TripId eq 0&$select=TripId`,
       async () => {
         return new Response(JSON.stringify(TripMockData));
       }
     );
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({}));
+      return new Response(
+        JSON.stringify({
+          value: [],
+        })
+      );
     });
     const source = await handler.getMeshSource({
       name: 'TripPin',
@@ -424,7 +436,9 @@ describe('odata', () => {
       source: /* GraphQL */ `
         {
           getPeopleByUserName(UserName: "russellwhyte") {
+            UserName
             Trips(queryOptions: { filter: "TripId eq 0" }) {
+              TripId
               GetInvolvedPeople {
                 UserName
               }
@@ -480,7 +494,7 @@ describe('odata', () => {
       tripId: 0,
     };
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')`, async () => {
+    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')?$select=UserName`, async () => {
       return new Response(JSON.stringify(PersonMockData));
     });
     addMock(correctUrl, async request => {
