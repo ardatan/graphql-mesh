@@ -26,15 +26,15 @@ module.exports = {
           position: 'right'
         },
         {
-          href: 'https://twitter.com/TheGuildDev',
-          label: 'The Guild',
+          href: 'https://the-guild.dev/connected-build?utm_source=github&utm_medium=release-note&utm_campaign=mesh#section-contact',
+          label: 'Contact Us',
           position: 'right'
         }
       ]
     },
     footer: {
       links: [
-        {
+        /* {
           title: 'Docs',
           items: [
             {
@@ -46,7 +46,7 @@ module.exports = {
               to: 'docs/doc2'
             }
           ]
-        },
+        }, */
         {
           title: 'Community',
           items: [
