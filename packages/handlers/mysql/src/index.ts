@@ -5,9 +5,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
   async getMeshSource({ config, hooks }) {
     const schemaFactory = new MySQLGraphQLSchemaFactory(config.connectionString);
     const schema = await schemaFactory.buildGraphQLSchema();
-    hooks.on('destroy', async () => {
-      await schemaFactory.destroyConnection();
-    });
+    hooks.on('destroy', () => schemaFactory.destroyConnection());
     return {
       schema,
     };

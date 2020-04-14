@@ -13,6 +13,7 @@ import {
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
   GraphQLList,
+  GraphQLResolveInfo,
 } from 'graphql';
 import { BigIntResolver as GraphQLBigInt, DateTimeResolver as GraphQLDateTime } from 'graphql-scalars';
 import { camelCase, pascalCase } from 'change-case';
@@ -61,9 +62,9 @@ export class MySQLGraphQLSchemaFactory {
     this.connection = createConnection(connectionString);
   }
 
-  private async query<T>(queryStatement: string): Promise<T[] & { insertId: string }> {
+  private async query<T>(queryStatement: string, variables?: any[]): Promise<T[] & { insertId: string }> {
     return new Promise((resolve, reject) => {
-      this.connection.query(queryStatement, function (error, results) {
+      this.connection.query(queryStatement, variables, function (error, results) {
         if (error) {
           return reject(error);
         }
@@ -73,12 +74,13 @@ export class MySQLGraphQLSchemaFactory {
   }
 
   private getColumnsForTableName(tableName: string): Promise<ColumnInfo[]> {
-    return this.query(`SHOW FULL FIELDS FROM ${tableName}`);
+    return this.query(`SHOW FULL FIELDS FROM ??`, [tableName]);
   }
 
   private async getTableNames() {
     const results = await this.query<{ TABLE_NAME: string }>(
-      `SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = "employees"`
+      `SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = ?`,
+      [this.connection.config.database]
     );
     return results.map(result => result.TABLE_NAME);
   }
@@ -137,8 +139,8 @@ export class MySQLGraphQLSchemaFactory {
     this.queryFields[readAllOperationName] = {
       type: new GraphQLList(outputType),
       resolve: async (root, args, context, info) => {
-        const fields = Object.keys(graphqlFields(info));
-        return this.query(`SELECT ${fields.join(',')} FROM ${tableName}`);
+        const { marks, fields } = this.getFields(info, outputFields);
+        return this.query(`SELECT ${marks} FROM ??`, [...fields, tableName]);
       },
     };
 
@@ -151,14 +153,13 @@ export class MySQLGraphQLSchemaFactory {
         },
       },
       resolve: async (root, args, context, info) => {
-        const fields = Object.keys(graphqlFields(info));
-        const result = await this.query(`
-                    SELECT 
-                    ${fields.join(',')} 
-                    FROM 
-                    ${tableName} 
-                    WHERE ${primaryKeyFieldName} = ${this.connection.escape(args[primaryKeyFieldName])}
-                `);
+        const { marks, fields } = this.getFields(info, outputFields);
+        const result = await this.query(`SELECT ${marks} FROM ?? WHERE ?? = ?`, [
+          ...fields,
+          tableName,
+          primaryKeyFieldName,
+          args[primaryKeyFieldName],
+        ]);
         return result && result[0];
       },
     };
@@ -168,34 +169,24 @@ export class MySQLGraphQLSchemaFactory {
       type: outputType,
       args: createInputFields,
       resolve: async (root, args, context, info) => {
-        const statement = `INSERT INTO ${tableName} (${Object.keys(args).join(',')}) VALUES (${Object.values(args)
-          .map(field => {
-            if (field instanceof Date) {
-              return `STR_TO_DATE(${this.connection.escape(
-                field
-                  .toLocaleString('en-US', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
-                  })
-                  .replace(',', '')
-              )}', '%m/%d/%Y %H:%i:%s')`;
-            } else {
-              return this.connection.escape(field);
-            }
-          })
-          .join(',')})`;
-        const result = await this.query(statement);
-        const fields = Object.keys(graphqlFields(info));
-        return this.query(
-          `SELECT ${fields.join(',')} from ${tableName} where ${primaryKeyFieldName}=${this.connection.escape(
-            result.insertId
-          )};`
-        );
+        const argumentNames = Object.keys(args);
+        const argumentValues = Object.values(args);
+        const fieldMarks = argumentNames.map(_ => '??').join(',');
+        const valueMarks = argumentValues.map(_ => '?').join(',');
+        const insertResult = await this.query(`INSERT INTO ?? (${fieldMarks}) VALUES (${valueMarks})`, [
+          tableName,
+          ...argumentNames,
+          ...argumentValues,
+        ]);
+
+        const { marks, fields } = this.getFields(info, outputFields);
+        const result = await this.query(`SELECT ${marks} from ?? where ??=?;`, [
+          ...fields,
+          tableName,
+          primaryKeyFieldName,
+          insertResult.insertId || args[primaryKeyFieldName],
+        ]);
+        return result && result[0];
       },
     };
 
@@ -206,36 +197,18 @@ export class MySQLGraphQLSchemaFactory {
       resolve: async (root, args, context, info) => {
         await this.query(
           `UPDATE ${tableName} SET ${Object.entries(args)
-            .map(entry => {
-              const fieldName = entry[0];
-              let fieldValue = entry[1];
-              if (fieldValue instanceof Date) {
-                fieldValue = `STR_TO_DATE(${this.connection.escape(
-                  fieldValue
-                    .toLocaleString('en-US', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                      hour12: false,
-                    })
-                    .replace(',', '')
-                )}', '%m/%d/%Y %H:%i:%s')`;
-              } else {
-                fieldValue = this.connection.escape(fieldValue);
-              }
-              return `${fieldName}=${fieldValue}`;
-            })
-            .join(',')}`
+            .map(([key, value]) => `??=?`)
+            .join(',')}`,
+          [tableName, Object.entries(args).flat()]
         );
-        const fields = Object.keys(graphqlFields(info));
-        return this.query(
-          `SELECT ${fields.join(',')} FROM ${tableName} WHERE ${primaryKeyFieldName}=${this.connection.escape(
-            args[primaryKeyFieldName]
-          )}`
-        );
+        const { marks, fields } = this.getFields(info, outputFields);
+        const result = await this.query(`SELECT ${marks} FROM ?? WHERE ??=?`, [
+          ...fields,
+          tableName,
+          primaryKeyFieldName,
+          args[primaryKeyFieldName],
+        ]);
+        return result && result[0];
       },
     };
 
@@ -248,9 +221,7 @@ export class MySQLGraphQLSchemaFactory {
         },
       },
       resolve: async (root, args) => {
-        await this.query(
-          `DELETE FROM ${tableName} WHERE ${primaryKeyFieldName}=${this.connection.escape(args[primaryKeyFieldName])}`
-        );
+        await this.query(`DELETE FROM ?? WHERE ??=?`, [tableName, primaryKeyFieldName, args[primaryKeyFieldName]]);
         return args[primaryKeyFieldName];
       },
     };
@@ -280,5 +251,34 @@ export class MySQLGraphQLSchemaFactory {
 
   public async destroyConnection() {
     return new Promise((resolve, reject) => this.connection.end((err, data) => (err ? reject(err) : resolve(data))));
+  }
+
+  private dateFieldToString(fieldValue: Date | string): string {
+    const dateObj = new Date(fieldValue);
+    return `STR_TO_DATE(${this.connection.escape(
+      dateObj
+        .toLocaleString('en-US', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        })
+        .replace(',', '')
+    )}', '%m/%d/%Y %H:%i:%s')`;
+  }
+
+  private getFields(
+    info: GraphQLResolveInfo,
+    outputFields: GraphQLFieldConfigMap<any, any>
+  ): { marks: string; fields: string[] } {
+    // There might be relational fields so we need to make sure fields are in that table.
+    const fields = Object.keys(graphqlFields(info)).filter(fieldName => fieldName in outputFields);
+    return {
+      marks: fields.map(_ => '??').join(','),
+      fields,
+    };
   }
 }
