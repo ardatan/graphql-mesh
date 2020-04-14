@@ -18,7 +18,8 @@ module.exports = {
       'handlers/mongoose',
       'handlers/odata',
       'handlers/thrift',
-      'handlers/tuql'
+      'handlers/tuql',
+      'handlers/mysql',
       'handlers/neo4j'
     ],
     Transforms: [
