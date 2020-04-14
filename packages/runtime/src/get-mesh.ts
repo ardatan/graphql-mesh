@@ -8,7 +8,7 @@ import {
   ensureDocumentNode,
 } from './utils';
 import { Hooks, KeyValueCache } from '@graphql-mesh/types';
-import { addResolversToSchema } from 'graphql-tools-fork';
+import { addResolversToSchema } from 'graphql-tools';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
 import { EventEmitter } from 'events';

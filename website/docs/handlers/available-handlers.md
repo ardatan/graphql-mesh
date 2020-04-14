@@ -8,7 +8,7 @@ The following APIs are supported/planned at the moment. You can easily add custo
 
 | NPM Package                  | Status    | Supported Spec                                                     | Docs                           |
 | ---------------------------- | --------- | ------------------------------------------------------------------ | ------------------------------ |
-| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools-fork`) | [docs](/docs/handlers/graphql)      |
+| `@graphql-mesh/graphql`      | Available | GraphQL endpoint (schema-stitching, based on `graphql-tools`) | [docs](/docs/handlers/graphql)      |
 | `@graphql-mesh/federation`   | WIP       | Apollo Federation services                                         | soon                           |
 | `@graphql-mesh/openapi`      | Available | Swagger, OpenAPI 2/3 (based on `openapi-to-graphql`)               | [docs](/docs/handlers/openapi)      |
 | `@graphql-mesh/json-schema`  | Available | JSON schema structure for request/response                         | [docs](/docs/handlers/json-schema)  |

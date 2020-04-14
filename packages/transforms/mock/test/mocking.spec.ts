@@ -1,4 +1,4 @@
-import { makeExecutableSchema } from 'graphql-tools-fork';
+import { makeExecutableSchema } from 'graphql-tools';
 import mockingTransform from '../src';
 import { YamlConfig, Hooks } from '@graphql-mesh/types';
 import { graphql } from 'graphql';
