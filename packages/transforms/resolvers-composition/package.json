@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-resolvers-composition",
-  "version": "0.0.30",
+  "version": "0.1.0",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -15,19 +15,9 @@
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "@types/jest": "25.2.1",
-    "@types/node": "13.11.0",
-    "bob-the-bundler": "0.3.4",
-    "graphql": "15.0.0",
-    "jest": "25.2.7",
-    "ts-jest": "25.3.1",
-    "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.8.3"
-  },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.30",
-    "@graphql-mesh/utils": "0.0.30",
+    "@graphql-mesh/types": "0.1.0",
+    "@graphql-mesh/utils": "0.1.0",
     "@graphql-toolkit/common": "0.10.3",
     "graphql-tools": "5.0.0"
   },

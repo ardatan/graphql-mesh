@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.0.30",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "prepack": "bob prepack"
