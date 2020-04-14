@@ -1,7 +1,7 @@
 ---
 id: tuql
-title: Tuql
-sidebar_label: Tuql
+title: SQLite / Tuql
+sidebar_label: SQLite / Tuql
 ---
 
 This handler allows you to use GraphQL schema created by [Tuql](https://github.com/bradleyboy/tuql), based on a SQLite database schema or an SQL dump file.
@@ -31,6 +31,13 @@ sources:
       tuql:
         infile: path/to/db_dump.sql
 ```
+
+<iframe
+     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/sqlite-chinook?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
+     title="chinook-example"
+     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
 
 ## Config API Reference
 
