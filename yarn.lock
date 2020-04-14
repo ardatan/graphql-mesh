@@ -4075,6 +4075,16 @@ apollo-link@^1.2.12, apollo-link@^1.2.13, apollo-link@^1.2.3:
     tslib "^1.9.3"
     zen-observable-ts "^0.8.20"
 
+apollo-link@^1.2.14:
+  version "1.2.14"
+  resolved "https://registry.yarnpkg.com/apollo-link/-/apollo-link-1.2.14.tgz#3feda4b47f9ebba7f4160bef8b977ba725b684d9"
+  integrity sha512-p67CMEFP7kOG1JZ0ZkYZwRDa369w5PIjtMjvrQd/HnIV8FRsHRqLqK+oAZQnFa1DDdZtOtHTi+aMIW6EatC2jg==
+  dependencies:
+    apollo-utilities "^1.3.0"
+    ts-invariant "^0.4.0"
+    tslib "^1.9.3"
+    zen-observable-ts "^0.8.21"
+
 apollo-server-caching@^0.5.1:
   version "0.5.1"
   resolved "https://registry.npmjs.org/apollo-server-caching/-/apollo-server-caching-0.5.1.tgz#5cd0536ad5473abb667cc82b59bc56b96fb35db6"
@@ -8629,19 +8639,19 @@ graphql-tools-fork@9.0.1:
     node-fetch "^2.6.0"
     uuid "^7.0.2"
 
-graphql-tools@5.0.0-rc.3:
-  version "5.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-5.0.0-rc.3.tgz#0b7374ba34ead07d95d567b86d2d37d74009aa7f"
-  integrity sha512-gpTri2VcFNA/4Wv7V4U5aY6ApQxZXAJGPjcaus8c6oQIxFszJBuzNN1FwScq/ev1sMEt0JItVrXMCiBou5qxGQ==
+graphql-tools@5.0.0-rc.4:
+  version "5.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-5.0.0-rc.4.tgz#05cac3e653cdacb8a04ba4890e0e71a52451e409"
+  integrity sha512-RctJaC9rNo2sfoB1hl1ZxX8U5FgNVa1rVvssP2m4TgGifJnZNOFIS4WbIeIzU/kBiPnLCgvM8MMoKMPFJbFIog==
   dependencies:
-    apollo-link "^1.2.13"
+    apollo-link "^1.2.14"
     apollo-upload-client "^13.0.0"
     deprecated-decorator "^0.1.6"
     form-data "^3.0.0"
     iterall "^1.3.0"
     node-fetch "^2.6.0"
-    tslib "^1.11.0"
-    uuid "^7.0.2"
+    tslib "^1.11.1"
+    uuid "^7.0.3"
 
 graphql-tools@^4.0.0:
   version "4.0.7"
@@ -17061,7 +17071,7 @@ tslib@1.10.0:
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
   integrity sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==
 
-tslib@1.11.1, tslib@^1.10.0, tslib@^1.11.0, tslib@^1.5.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3, tslib@~1.11.1:
+tslib@1.11.1, tslib@^1.10.0, tslib@^1.11.1, tslib@^1.5.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3, tslib@~1.11.1:
   version "1.11.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
@@ -17557,7 +17567,7 @@ uuid@^3.0.1, uuid@^3.1.0, uuid@^3.3.2:
   resolved "https://registry.npmjs.org/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
-uuid@^7.0.2:
+uuid@^7.0.2, uuid@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npmjs.org/uuid/-/uuid-7.0.3.tgz#c5c9f2c8cf25dc0a372c4df1441c41f5bd0c680b"
   integrity sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==
@@ -18402,6 +18412,14 @@ zen-observable-ts@^0.8.20:
   version "0.8.20"
   resolved "https://registry.npmjs.org/zen-observable-ts/-/zen-observable-ts-0.8.20.tgz#44091e335d3fcbc97f6497e63e7f57d5b516b163"
   integrity sha512-2rkjiPALhOtRaDX6pWyNqK1fnP5KkJJybYebopNSn6wDG1lxBoFs2+nwwXKoA6glHIrtwrfBBy6da0stkKtTAA==
+  dependencies:
+    tslib "^1.9.3"
+    zen-observable "^0.8.0"
+
+zen-observable-ts@^0.8.21:
+  version "0.8.21"
+  resolved "https://registry.yarnpkg.com/zen-observable-ts/-/zen-observable-ts-0.8.21.tgz#85d0031fbbde1eba3cd07d3ba90da241215f421d"
+  integrity sha512-Yj3yXweRc8LdRMrCC8nIc4kkjWecPAUVh0TI0OUrWXx6aX790vLcDlWca6I4vsyCGH3LpWxq0dJRcMOFoVqmeg==
   dependencies:
     tslib "^1.9.3"
     zen-observable "^0.8.0"
