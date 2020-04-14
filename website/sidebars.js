@@ -19,7 +19,8 @@ module.exports = {
       'handlers/odata',
       'handlers/thrift',
       'handlers/tuql',
-      'handlers/mysql'
+      'handlers/mysql',
+      'handlers/neo4j'
     ],
     Transforms: [
       'transforms/rename',
