@@ -3,6 +3,7 @@ id: neo4j
 title: Neo4j
 sidebar_label: Neo4j
 ---
+![image](https://user-images.githubusercontent.com/20847995/79219440-f1605480-7e5a-11ea-980e-6ba54ee1450e.png)
 
 This handler allows you to use GraphQL schema created by `neo4j-graphql-js`.
 

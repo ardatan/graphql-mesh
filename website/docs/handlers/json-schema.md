@@ -3,6 +3,7 @@ id: json-schema
 title: JSON Schema
 sidebar_label: JSON Schema
 ---
+![image](https://user-images.githubusercontent.com/20847995/79218994-11434880-7e5a-11ea-8594-08185526080f.png)
 
 This handler allows you to load any remote REST service, and describe it's request/response using the YAML config.
 

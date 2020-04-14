@@ -3,6 +3,7 @@ id: odata
 title: OData / Microsoft Graph
 sidebar_label: OData / Microsoft Graph
 ---
+![image](https://user-images.githubusercontent.com/20847995/79219762-87947a80-7e5b-11ea-903d-ba159935fa17.png)
 
 This handler allows you to load remote [OData](https://www.odata.org/) metadata/schema as GraphQL Schema.
 

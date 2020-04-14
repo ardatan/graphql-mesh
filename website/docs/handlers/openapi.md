@@ -3,6 +3,7 @@ id: openapi
 title: OpenAPI / Swagger
 sidebar_label: 'OpenAPI / Swagger'
 ---
+![image](https://user-images.githubusercontent.com/20847995/79218686-7ba7b900-7e59-11ea-8a5e-676a83b9f86e.png)
 
 This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io/) schemas. Based on [OpenAPI-to-GraphQL](https://developer.ibm.com/open/projects/openapi-to-graphql/).
 

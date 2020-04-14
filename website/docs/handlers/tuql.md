@@ -3,6 +3,7 @@ id: tuql
 title: SQLite / Tuql
 sidebar_label: SQLite / Tuql
 ---
+![image](https://user-images.githubusercontent.com/20847995/79220131-228d5480-7e5c-11ea-8faa-63083653573b.png)
 
 This handler allows you to use GraphQL schema created by [Tuql](https://github.com/bradleyboy/tuql), based on a SQLite database schema or an SQL dump file.
 
