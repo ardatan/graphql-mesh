@@ -71,6 +71,8 @@ export async function getMesh(
 
   let unifiedSchema = await mergeSchemasAsync({
     schemas,
+    assumeValid: true,
+    assumeValidSDL: true,
   });
 
   if (options.transforms && options.transforms.length > 0) {

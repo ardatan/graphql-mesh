@@ -10,6 +10,7 @@ module.exports = {
     'Input Handlers': [
       'handlers/available-handlers',
       'handlers/graphql',
+      'handlers/federation',
       'handlers/openapi',
       'handlers/grpc',
       'handlers/json-schema',

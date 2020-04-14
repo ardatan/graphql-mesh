@@ -1,0 +1,12 @@
+extend type Handler {
+  federation: FederationHandler
+}
+
+type FederationHandler {
+  serviceList: [FederationService!]!
+}
+
+type FederationService {
+    name: String!
+    url: String!
+}

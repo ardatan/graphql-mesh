@@ -15,7 +15,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
       headers: config.headers,
     });
 
-    hooks.on('buildSdkFn', ({ fieldName, typeName, replaceFn, schema }) => {
+    hooks.on('buildSdkFn', ({ typeName, fieldName, replaceFn, schema }) => {
       replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
         const delegationOptions: IDelegateToSchemaOptions = {
           operation: typeName.toLowerCase() as any,
