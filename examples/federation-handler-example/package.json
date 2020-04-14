@@ -10,7 +10,7 @@
     "start-service-products": "nodemon services/products/index.js",
     "start-service-inventory": "nodemon services/inventory/index.js",
     "start-services": "concurrently \"npm:start-service-*\"",
-    "postinstall": "lerna bootstrap"
+    "start": "concurrently \"npm:start-services\" \"npm:start-gateway\""
   },
   "devDependencies": {
     "nodemon": "2.0.2",
