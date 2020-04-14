@@ -26,6 +26,9 @@ sources:
 
 ```
 
+> You can check out our example that uses Mongoose handler.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/mongoose-example)
+
 ## Config API Reference
 
 {@import ../generated-markdown/MongooseHandler.generated.md}

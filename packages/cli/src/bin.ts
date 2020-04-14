@@ -20,7 +20,7 @@ const logger = createLogger({
 
 export async function graphqlMesh() {
   return yargs
-    .command<{ fork: string | number }>(
+    .command<{ fork: string | number; port: string | number; 'example-query': string }>(
       'serve',
       'Serves a GraphiQLApolloServer interface to test your Mesh API',
       builder => {
@@ -29,12 +29,19 @@ export async function graphqlMesh() {
           number: true,
           count: true,
         });
+        builder.option('port', {
+          required: false,
+        });
+        builder.option('example-query', {
+          required: false,
+          string: true,
+        });
       },
-      async ({ fork }) => {
+      async ({ fork, port, 'example-query': exampleQuery }) => {
         try {
           const meshConfig = await findAndParseConfig();
           const { schema, contextBuilder } = await getMesh(meshConfig);
-          await serveMesh(logger, schema, contextBuilder, meshConfig.cache, fork);
+          serveMesh(logger, schema, contextBuilder, meshConfig.cache, fork, port, exampleQuery);
         } catch (e) {
           logger.error('Unable to serve mesh: ', e);
         }
