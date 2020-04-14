@@ -1,7 +1,13 @@
 {
     "name": "@graphql-mesh/handler-federation",
     "version": "0.0.20",
-    "main": "dist/index.js",
+    "sideEffects": false,
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "typings": "dist/index.d.ts",
+    "typescript": {
+      "definition": "dist/index.d.ts"
+    },
     "license": "MIT",
     "scripts": {
       "prepack": "bob prepack"
@@ -19,7 +25,8 @@
       "graphql-tools": "5.0.0-rc.4"
     },
     "publishConfig": {
-      "access": "public"
+      "access": "public",
+      "directory": "dist"
     }
   }
   
