@@ -34,6 +34,7 @@
     "@graphql-mesh/types": "0.0.20",
     "@graphql-toolkit/common": "0.10.3",
     "@graphql-toolkit/schema-merging": "0.10.3",
+    "param-case": "3.0.3",
     "cosmiconfig": "6.0.0",
     "graphql-tools": "5.0.0-rc.4"
   },

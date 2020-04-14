@@ -24,7 +24,6 @@ import {
   GraphQLInputField,
   GraphQLBoolean,
   GraphQLArgument,
-  GraphQLID,
   GraphQLSchemaConfig,
   GraphQLSchema,
   GraphQLFloat,
@@ -40,7 +39,7 @@ import {
 } from 'graphql';
 import urljoin from 'url-join';
 import graphqlFields from 'graphql-fields';
-import { KeyValueCache, Request, Headers, fetchache } from 'fetchache';
+import { KeyValueCache, Request, fetchache } from 'fetchache';
 import { JSDOM } from 'jsdom';
 import {
   BigIntResolver as GraphQLBigInt,
@@ -48,7 +47,11 @@ import {
   DateTimeResolver as GraphQLDateTime,
   JSONResolver as GraphQLJSON,
 } from 'graphql-scalars';
-import { stringInterpolator } from '@graphql-mesh/utils';
+import {
+  getInterpolatedStringFactory,
+  getInterpolatedHeadersFactory,
+  parseInterpolationStrings,
+} from '@graphql-mesh/utils';
 
 const InlineCountEnum = new GraphQLEnumType({
   name: 'InlineCount',
@@ -1030,43 +1033,18 @@ export class ODataGraphQLSchemaFactory {
       headers: this.config.schemaHeaders,
     });
 
-    const serviceCommonArgs: GraphQLFieldConfigArgumentMap = {};
-
-    const interpolationStrings = [
-      ...(this.config.operationHeaders
-        ? Object.keys(this.config.operationHeaders).map(headerName => this.config.operationHeaders![headerName])
-        : []),
+    const { args: serviceCommonArgs, contextVariables } = parseInterpolationStrings([
+      ...Object.values(this.config.operationHeaders || {}),
       this.config.baseUrl,
-    ];
+    ]);
 
-    const interpolationKeys: string[] = interpolationStrings.reduce(
-      (keys, str) => [...keys, ...stringInterpolator.parseRules(str).map((match: any) => match.key)],
-      [] as string[]
+    this.contextVariables = contextVariables;
+
+    const serviceUrlFactory: ResolverDataBasedFactory<string> = getInterpolatedStringFactory(this.config.baseUrl);
+
+    const headersFactory: ResolverDataBasedFactory<Headers> = getInterpolatedHeadersFactory(
+      this.config.operationHeaders
     );
-
-    for (const interpolationKey of interpolationKeys) {
-      const interpolationKeyParts = interpolationKey.split('.');
-      const varName = interpolationKeyParts[interpolationKeyParts.length - 1];
-      if (interpolationKeyParts[0] === 'args') {
-        serviceCommonArgs[varName] = {
-          type: new GraphQLNonNull(GraphQLID),
-        };
-      } else if (interpolationKeyParts[0] === 'context') {
-        this.contextVariables.push(varName);
-      }
-    }
-
-    const serviceUrlFactory: ResolverDataBasedFactory<string> = resolverData =>
-      stringInterpolator.parse(this.config.baseUrl, resolverData);
-
-    const headersFactory: ResolverDataBasedFactory<Headers> = (interpolationData: any) => {
-      const headers = new Headers();
-      const headersNoninterpolated = this.config.operationHeaders || {};
-      for (const headerName in headersNoninterpolated) {
-        headers.set(headerName, stringInterpolator.parse(headersNoninterpolated[headerName], interpolationData));
-      }
-      return headers;
-    };
 
     const response = await fetchache(metadataRequest, this.cache);
     const text = await response.text();

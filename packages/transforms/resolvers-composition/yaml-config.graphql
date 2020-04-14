@@ -1,0 +1,19 @@
+extend type Transform {
+  """
+  Transformer to apply composition to resolvers
+  """
+  resolversComposition: [ResolversCompositionTransformObject!]
+}
+
+type ResolversCompositionTransformObject @md {
+  """
+  The GraphQL Resolver path
+  Example: Query.users
+  """
+  resolver: String!
+  """
+  Path to the composer function
+  Example: ./src/auth.js#authComposer
+  """
+  composer: String!
+}

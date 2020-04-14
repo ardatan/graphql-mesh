@@ -6,13 +6,15 @@ import {
   GraphQLOutputType,
   GraphQLInputType,
   GraphQLBoolean,
-  GraphQLFieldConfigArgumentMap,
-  GraphQLID,
-  GraphQLNonNull,
 } from 'graphql';
 import { JSONSchemaVisitor, JSONSchemaVisitorCache } from './json-schema-visitor';
 import urlJoin from 'url-join';
-import { readFileOrUrlWithCache, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
+import {
+  readFileOrUrlWithCache,
+  loadFromModuleExportExpression,
+  stringInterpolator,
+  parseInterpolationStrings,
+} from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
@@ -72,37 +74,14 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
         const destination = operationConfig.type === 'Query' ? queryFields : mutationFields;
         const type = schemaVisitor.visit(responseSchema, 'Response', operationConfig.field, false) as GraphQLOutputType;
-        const args: GraphQLFieldConfigArgumentMap = {};
 
-        const interpolationStrings = [
-          ...(config.operationHeaders
-            ? Object.keys(config.operationHeaders).map(headerName => config.operationHeaders![headerName])
-            : []),
-          ...(operationConfig.headers
-            ? Object.keys(operationConfig.headers).map(headerName => operationConfig.headers![headerName])
-            : []),
+        const { args, contextVariables: specificContextVariables } = parseInterpolationStrings([
+          ...Object.values(config.operationHeaders || {}),
+          ...Object.values(operationConfig.headers || {}),
           operationConfig.path,
-        ];
+        ]);
 
-        const interpolationKeys: string[] = interpolationStrings.reduce(
-          (keys, str) => [...keys, ...stringInterpolator.parseRules(str).map((match: any) => match.key)],
-          [] as string[]
-        );
-
-        for (const interpolationKey of interpolationKeys) {
-          const interpolationKeyParts = interpolationKey.split('.');
-          const varName = interpolationKeyParts[interpolationKeyParts.length - 1];
-          if (interpolationKeyParts[0] === 'args') {
-            if (varName === 'input') {
-              throw new Error(`Argument name cannot be 'input'. Invalid statement; '${interpolationKey}'`);
-            }
-            args[varName] = {
-              type: new GraphQLNonNull(GraphQLID),
-            };
-          } else if (interpolationKeyParts[0] === 'context') {
-            contextVariables.push(varName);
-          }
-        }
+        contextVariables.push(...specificContextVariables);
 
         if (requestSchema) {
           args.input = {
