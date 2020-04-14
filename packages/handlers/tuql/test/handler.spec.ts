@@ -1,3 +1,3 @@
 describe('tuql', () => {
-    it('dummy', () => {})
+  it('dummy', () => {});
 });

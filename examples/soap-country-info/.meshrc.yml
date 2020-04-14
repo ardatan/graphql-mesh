@@ -6,7 +6,7 @@ sources:
     transforms:
       - snapshot:
           if: "process.env.NODE_ENV != 'production'"
-          apply: 
+          apply:
             - Query.*
             - Mutation.*
           outputDir: __snapshots__
