@@ -1,4 +1,4 @@
-import { IAddResolversToSchemaOptions, addResolveFunctionsToSchema } from 'graphql-tools-fork';
+import { IAddResolversToSchemaOptions, addResolveFunctionsToSchema } from 'graphql-tools';
 import { isObjectType } from 'graphql';
 
 export function addResolversWithReferenceResolver(options: IAddResolversToSchemaOptions) {
