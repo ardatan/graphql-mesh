@@ -4,8 +4,7 @@
     "main": "dist/index.js",
     "license": "MIT",
     "scripts": {
-      "test": "jest --config=../../../jest.config.js",
-      "build": "tsc"
+      "prepack": "bob prepack"
     },
     "peerDependencies": {
       "graphql": "*",

@@ -1,7 +1,7 @@
 ---
 id: federation
 title: Apollo Federation
-sidebar_label: Federation
+sidebar_label: Apollo Federation
 ---
 
 This handler allows you to load remote Apollo Federation services.
@@ -29,6 +29,9 @@ sources:
             - name: inventory
               url: http://localhost:4004/graphql      
 ```
+
+> You can check out our example that uses Federation Handler.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/federation-example)
 
 ## Config API Reference
 
