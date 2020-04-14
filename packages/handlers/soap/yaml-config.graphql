@@ -10,12 +10,26 @@ type SoapHandler @md {
   A url to your WSDL
   """
   wsdl: String!
+  """
+  Basic Authentication Configuration
+  Including username and password fields
+  """
   basicAuth: SoapSecurityBasicAuthConfig
+  """
+  SSL Certificate Based Authentication Configuration
+  Including public key, private key and password fields
+  """
   securityCert: SoapSecurityCertificateConfig
 }
 
 type SoapSecurityBasicAuthConfig {
+  """
+  Username for Basic Authentication
+  """
   username: String!
+  """
+  Password for Basic Authentication
+  """
   password: String!
 }
 
