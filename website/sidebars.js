@@ -17,7 +17,10 @@ module.exports = {
       'handlers/soap',
       'handlers/mongoose',
       'handlers/odata',
-      'handlers/thrift'
+      'handlers/thrift',
+      'handlers/tuql',
+      'handlers/mysql',
+      'handlers/neo4j'
     ],
     Transforms: [
       'transforms/rename',

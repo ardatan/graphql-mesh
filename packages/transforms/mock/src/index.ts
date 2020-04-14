@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import { addMockFunctionsToSchema, IMocks } from 'graphql-tools-fork';
+import { addMockFunctionsToSchema, IMocks } from 'graphql-tools';
 import * as faker from 'faker';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 

@@ -2,12 +2,8 @@
 
 ```
 # start the gRPC server
-cd grpc
-yarn install
-yarn start
+yarn grpc:start
 
 # start the GraphQL server
-cd ..
-yarn install
-yarn mesh:serve
+yarn mesh:start
 ```

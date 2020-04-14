@@ -26,6 +26,9 @@ sources:
           serviceName: calculator-service
 ```
 
+> You can check out our example that uses Thrift Handler.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/thrift-example)
+
 ## Config API Reference
 
 {@import ../generated-markdown/ThriftHandler.generated.md}

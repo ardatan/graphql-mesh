@@ -1,0 +1,5 @@
+sources:
+  - name: Employees
+    handler:
+      mysql:
+        connectionString: mysql://root:passwd@localhost:3306/employees
