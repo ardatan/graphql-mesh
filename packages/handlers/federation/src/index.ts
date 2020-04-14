@@ -1,6 +1,6 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { ApolloGateway } from '@apollo/gateway';
-import { GraphQLResolveInfo, print } from 'graphql';
+import { GraphQLResolveInfo, print, Kind, OperationDefinitionNode } from 'graphql';
 import { delegateToSchema, IDelegateToSchemaOptions, makeRemoteExecutableSchema, Fetcher } from 'graphql-tools';
 import { fetchache, Request } from 'fetchache';
 
@@ -24,6 +24,11 @@ const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
         context,
         queryHash: print(query) + '_' + JSON.stringify(variables),
         logger: console,
+        metrics: {},
+        source: print(query),
+        operation: query.definitions.find(
+          definition => definition.kind === Kind.OPERATION_DEFINITION && definition.name?.value === operationName
+        ) as OperationDefinitionNode,
       });
     const remoteSchemaOptions = {
       schema,
