@@ -1,14 +1,14 @@
 {
-  "name": "odata-trippin-example",
+  "name": "chinook",
   "version": "0.0.20",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "graphql-mesh serve --example-query example.query.graphql"
+    "mesh:serve": "graphql-mesh serve"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.0.20",
-    "@graphql-mesh/odata": "0.0.20",
+    "@graphql-mesh/tuql": "0.0.20",
     "graphql": "15.0.0"
   }
 }

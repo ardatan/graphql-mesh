@@ -31,8 +31,16 @@ The following snapshot will work if you are in development environment (see the 
 
 To modify your snapshots and change the responses, go to `__snapshots__` and modify the responses under those files. 
 
-> You can check out our example that uses SOAP Handler with snapshot transform.
-[Click here to open the example on CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/country-info)
+## Codesandbox Example
+
+You can check out our example that uses SOAP Handler with snapshot transform.
+
+<iframe
+     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/country-info?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
+     title="country-info-example"
+     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" />
 
 ## Config API Reference
 

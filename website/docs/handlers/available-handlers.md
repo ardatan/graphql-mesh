@@ -18,4 +18,5 @@ The following APIs are supported/planned at the moment. You can easily add custo
 | `@graphql-mesh/mongoose`     | Available | Mongoose schema wrapper based on `graphql-compose-mongoose`        | [docs](/docs/handlers/mongoose)     |
 | `@graphql-mesh/odata`        | Available       | OData specification                                                | [docs](/docs/handlers/odata)                           |
 | `@graphql-mesh/thrift`        | Available       | Apache Thrift                                                | [docs](/docs/handlers/thrift)                           |
+| `@graphql-mesh/tuql`        | Available       | SQLite Database                                                | [docs](/docs/handlers/tuql)                           |
 | `@graphql-mesh/neo4j`        | Available       | Neo4j                                                 | [docs](/docs/handlers/neo4j)                           |

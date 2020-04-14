@@ -1,0 +1,5 @@
+sources:
+  - name: Chinook
+    handler:
+      tuql:
+        db: ./chinook.db

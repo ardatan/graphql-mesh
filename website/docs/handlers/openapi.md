@@ -25,8 +25,8 @@ sources:
 ```
 
 > We have a lot of examples for OpenAPI Handler;
-- [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/javascript-wiki)
-- [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/location-weather)
+- [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
+- [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather)
 
 ## Config API Reference
 

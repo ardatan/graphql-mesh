@@ -1,0 +1,14 @@
+query wikipediaMetrics {
+  getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
+    access: ALL_ACCESS
+    agent: USER
+    start: "20200101"
+    end: "20200226"
+    project: "en.wikipedia.org"
+    granularity: DAILY
+  ) {
+    items {
+      views
+    }
+  }
+}

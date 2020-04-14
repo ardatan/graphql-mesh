@@ -7,7 +7,7 @@
   "scripts": {
     "pregrpc:start": "bash bash/build.sh",
     "grpc:start": "bash bash/server.sh",
-    "mesh:start": "graphql-mesh serve",
+    "mesh:start": "graphql-mesh serve --example-query \"example-queries/*.graphql\"",
     "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\""
   },
   "dependencies": {
