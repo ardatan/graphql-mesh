@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.0.22",
+  "version": "0.0.30",
   "license": "MIT",
   "scripts": {
     "prepack": "bob prepack"
@@ -16,8 +16,8 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.0.22",
-    "@graphql-mesh/types": "0.0.22",
+    "@graphql-mesh/cache-inmemory-lru": "0.0.30",
+    "@graphql-mesh/types": "0.0.30",
     "@graphql-toolkit/common": "0.10.3",
     "@graphql-toolkit/schema-merging": "0.10.3",
     "cosmiconfig": "6.0.0",

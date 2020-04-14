@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.0.22",
+  "version": "0.0.30",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",

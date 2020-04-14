@@ -5,7 +5,7 @@
     "./packages/**/*",
     "./examples/*"
   ],
-  "version": "0.0.22",
+  "version": "0.0.30",
   "command": {
     "publish": {
       "ignoreChanges": [

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/soap",
-  "version": "0.0.22",
+  "version": "0.0.30",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -21,8 +21,8 @@
     "soap": "0.31.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.22",
-    "@graphql-mesh/utils": "0.0.22",
+    "@graphql-mesh/types": "0.0.30",
+    "@graphql-mesh/utils": "0.0.30",
     "fetchache": "0.0.3",
     "soap-graphql": "0.1.0"
   },
