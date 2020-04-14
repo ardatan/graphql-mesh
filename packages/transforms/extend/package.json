@@ -8,27 +8,12 @@
   "typescript": {
     "definition": "dist/index.d.ts"
   },
-  "buildOptions": {
-    "input": "./src/index.ts"
-  },
   "license": "MIT",
   "scripts": {
-    "test": "jest --config=../../../jest.config.js",
-    "prepack": "bob-update-version",
-    "build": "bob"
+    "prepack": "bob prepack"
   },
   "peerDependencies": {
     "graphql": "*"
-  },
-  "devDependencies": {
-    "@types/jest": "25.2.1",
-    "@types/node": "13.11.0",
-    "bob-the-bundler": "0.3.4",
-    "graphql": "15.0.0",
-    "jest": "25.2.7",
-    "ts-jest": "25.3.1",
-    "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.8.3"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.0.20"

@@ -1,7 +1,7 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { ApolloGateway } from '@apollo/gateway';
 import { GraphQLResolveInfo, print } from 'graphql';
-import { delegateToSchema, IDelegateToSchemaOptions, makeRemoteExecutableSchema, Fetcher } from 'graphql-tools-fork';
+import { delegateToSchema, IDelegateToSchemaOptions, makeRemoteExecutableSchema, Fetcher } from 'graphql-tools';
 import { fetchache, Request } from 'fetchache';
 
 const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {

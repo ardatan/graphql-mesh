@@ -1,4 +1,4 @@
-import { renameTransform } from './../src/index';
+import renameTransform from './../src/index';
 import { buildSchema, printSchema } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';

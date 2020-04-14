@@ -23,4 +23,8 @@ type OpenapiHandler @md {
   Overrides the server object in the OAS.
   """
   baseUrl: String
+  """
+  Skip OpenAPI 3 Schema Validation
+  """
+  skipSchemaValidation: Boolean
 }

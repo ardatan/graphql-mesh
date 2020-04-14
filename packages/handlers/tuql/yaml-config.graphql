@@ -1,0 +1,17 @@
+extend type Handler {
+  """
+  Handler for SQLite database, based on `tuql`
+  """
+  tuql: TuqlHandler
+}
+
+type TuqlHandler @md {
+  """
+  Pointer to your SQLite database
+  """
+  db: String
+  """
+  Path to the SQL Dump file if you want to build a in-memory database
+  """
+  infile: String
+}

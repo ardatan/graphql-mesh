@@ -8,10 +8,11 @@ import {
   ensureDocumentNode,
 } from './utils';
 import { Hooks, KeyValueCache } from '@graphql-mesh/types';
-import { addResolversToSchema } from 'graphql-tools-fork';
+import { addResolversToSchema } from 'graphql-tools';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
 import { EventEmitter } from 'events';
+import { MESH_CONTEXT_SYMBOL } from './constants';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -97,7 +98,7 @@ export async function getMesh(
   async function buildMeshContext(initialContextValue?: any): Promise<Record<string, any>> {
     const context: Record<string, any> = {
       ...(initialContextValue || {}),
-      __isMeshContext: true,
+      [MESH_CONTEXT_SYMBOL]: true,
     };
 
     await Promise.all(

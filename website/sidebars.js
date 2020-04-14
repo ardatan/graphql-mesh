@@ -10,6 +10,7 @@ module.exports = {
     'Input Handlers': [
       'handlers/available-handlers',
       'handlers/graphql',
+      'handlers/federation',
       'handlers/openapi',
       'handlers/grpc',
       'handlers/json-schema',
@@ -18,7 +19,9 @@ module.exports = {
       'handlers/mongoose',
       'handlers/odata',
       'handlers/thrift',
-      'handlers/federation'
+      'handlers/tuql',
+      'handlers/mysql',
+      'handlers/neo4j'
     ],
     Transforms: [
       'transforms/rename',

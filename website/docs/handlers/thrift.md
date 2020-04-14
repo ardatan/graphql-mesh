@@ -3,6 +3,7 @@ id: thrift
 title: Apache Thrift
 sidebar_label: Apache Thrift
 ---
+![image](https://user-images.githubusercontent.com/20847995/79219986-e4903080-7e5b-11ea-8220-e69ae73e7966.png)
 
 This handler allows you to consume [Apache Thrift](https://thrift.apache.org/) `.thrift` files and generate a remote executable schema for those services.
 

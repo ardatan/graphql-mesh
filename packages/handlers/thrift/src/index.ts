@@ -1,6 +1,6 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, ThriftErrors, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
-import { readFileOrUrlWithCache, stringInterpolator } from '@graphql-mesh/utils';
+import { readFileOrUrlWithCache, parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import {
   GraphQLEnumType,
@@ -19,8 +19,6 @@ import {
   GraphQLNonNull,
   GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
-  GraphQLID,
-  GraphQLResolveInfo,
 } from 'graphql';
 import { BigIntResolver as GraphQLBigInt, JSONResolver as GraphQLJSON } from 'graphql-scalars';
 import { createHttpClient } from '@creditkarma/thrift-client';
@@ -59,16 +57,17 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       [methodName: string]: number;
     } = {};
 
-    type TypeVal = BaseTypeVal | ListTypeVal | SetTypeVal | MapTypeVal | EnumTypeVal | StructTypeVal;
+    type TypeVal = BaseTypeVal | ListTypeVal | SetTypeVal | MapTypeVal | EnumTypeVal | StructTypeVal | VoidTypeVal;
     type BaseTypeVal = {
-      id: number;
+      id?: number;
       type: TType.BOOL | TType.BYTE | TType.DOUBLE | TType.I16 | TType.I32 | TType.I64 | TType.STRING;
     };
-    type ListTypeVal = { id: number; type: TType.LIST; elementType: TypeVal };
-    type SetTypeVal = { id: number; type: TType.SET; elementType: TypeVal };
-    type MapTypeVal = { id: number; type: TType.MAP; keyType: TypeVal; valType: TypeVal };
-    type EnumTypeVal = { id: number; type: TType.ENUM };
-    type StructTypeVal = { id: number; type: TType.STRUCT; name: string; fields: TypeMap };
+    type ListTypeVal = { id?: number; type: TType.LIST; elementType: TypeVal };
+    type SetTypeVal = { id?: number; type: TType.SET; elementType: TypeVal };
+    type MapTypeVal = { id?: number; type: TType.MAP; keyType: TypeVal; valType: TypeVal };
+    type EnumTypeVal = { id?: number; type: TType.ENUM };
+    type StructTypeVal = { id?: number; type: TType.STRUCT; name: string; fields: TypeMap };
+    type VoidTypeVal = { id?: number; type: TType.VOID };
     type TypeMap = Record<string, TypeVal>;
     const topTypeMap: TypeMap = {};
 
@@ -386,41 +385,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       };
     }
 
-    const commonArgs: GraphQLFieldConfigArgumentMap = {};
-
-    const interpolationStrings = [
-      ...(config.operationHeaders
-        ? Object.keys(config.operationHeaders).map(headerName => config.operationHeaders![headerName])
-        : []),
-    ];
-
-    const interpolationKeys: string[] = interpolationStrings.reduce(
-      (keys, str) => [...keys, ...stringInterpolator.parseRules(str).map((match: any) => match.key)],
-      [] as string[]
+    const { args: commonArgs, contextVariables } = parseInterpolationStrings(
+      Object.values(config.operationHeaders || {})
     );
 
-    const contextVariables: string[] = [];
-
-    for (const interpolationKey of interpolationKeys) {
-      const interpolationKeyParts = interpolationKey.split('.');
-      const varName = interpolationKeyParts[interpolationKeyParts.length - 1];
-      if (interpolationKeyParts[0] === 'args') {
-        commonArgs[varName] = {
-          type: new GraphQLNonNull(GraphQLID),
-        };
-      } else if (interpolationKeyParts[0] === 'context') {
-        contextVariables.push(varName);
-      }
-    }
-
-    const headersFactory = (interpolationData: { root: any; args: any; context: any; info: GraphQLResolveInfo }) => {
-      const headers: Record<string, string> = {};
-      const headersNoninterpolated = config.operationHeaders || {};
-      for (const headerName in headersNoninterpolated) {
-        headers[headerName] = stringInterpolator.parse(headersNoninterpolated[headerName], interpolationData);
-      }
-      return headers;
-    };
+    const headersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
 
     switch (thriftAST.type) {
       case SyntaxType.ThriftDocument: {

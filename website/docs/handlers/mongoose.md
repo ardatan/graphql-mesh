@@ -3,6 +3,7 @@ id: mongoose
 title: MongoDB / Mongoose
 sidebar_label: MongoDB / Mongoose
 ---
+![image](https://user-images.githubusercontent.com/20847995/79219137-5f584c00-7e5a-11ea-83fb-800f9ac73fd8.png)
 
 This handler allows you to use GraphQL schema created by `graphql-compose-mongoose`.
 

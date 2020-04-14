@@ -1,7 +1,7 @@
 import { Hooks } from '@graphql-mesh/types';
 import { GraphQLSchema, GraphQLResolveInfo } from 'graphql';
 import { extractResolversFromSchema, composeResolvers } from '@graphql-toolkit/common';
-import { addResolveFunctionsToSchema, IResolvers } from 'graphql-tools-fork';
+import { addResolveFunctionsToSchema, IResolvers } from 'graphql-tools';
 
 export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hooks): IResolvers {
   return composeResolvers(resolvers, {
