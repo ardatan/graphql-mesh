@@ -8834,20 +8834,6 @@ graphql-to-config-schema@0.0.16:
     mkdirp "1.0.3"
     yargs "15.3.1"
 
-graphql-tools-fork@8.9.4:
-  version "8.9.4"
-  resolved "https://registry.yarnpkg.com/graphql-tools-fork/-/graphql-tools-fork-8.9.4.tgz#7f1e7ab403f02f514650e2e0cfe4428e1e20c616"
-  integrity sha512-EZWoB/7+YKJTXB1YTCyzbROXnm4hYopJr2BYVLfxbKwHM87/jHN71GuIh8iBzubhldVPr4s7yCb2qDVEaXpSdA==
-  dependencies:
-    apollo-link "^1.2.13"
-    apollo-link-http-common "^0.2.15"
-    deprecated-decorator "^0.1.6"
-    extract-files "^7.0.0"
-    form-data "^3.0.0"
-    iterall "^1.3.0"
-    node-fetch "^2.6.0"
-    uuid "^7.0.1"
-
 graphql-tools-fork@9.0.1:
   version "9.0.1"
   resolved "https://registry.npmjs.org/graphql-tools-fork/-/graphql-tools-fork-9.0.1.tgz#fc8df40c108bdba3268999dea355cc614c765038"
@@ -12370,11 +12356,6 @@ mpath@0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/mpath/-/mpath-0.6.0.tgz#aa922029fca4f0f641f360e74c5c1b6a4c47078e"
   integrity sha512-i75qh79MJ5Xo/sbhxrDrPSEG0H/mr1kcZXJ8dH6URU5jD/knFxCVqVC/gVSW7GIXL/9hHWlT9haLbCXWOll3qw==
-
-mpath@0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/mpath/-/mpath-0.7.0.tgz#20e8102e276b71709d6e07e9f8d4d0f641afbfb8"
-  integrity sha512-Aiq04hILxhz1L+f7sjGyn7IxYzWm1zLNNXcfhDtx04kZ2Gk7uvFdgZ8ts1cWa/6d0TQmag2yR8zSGZUmp0tFNg==
 
 mquery@3.2.2:
   version "3.2.2"
