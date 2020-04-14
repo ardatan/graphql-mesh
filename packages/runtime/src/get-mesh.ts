@@ -8,7 +8,8 @@ import {
   ensureDocumentNode,
 } from './utils';
 import { Hooks, KeyValueCache } from '@graphql-mesh/types';
-import { addResolversToSchema } from 'graphql-tools';
+
+import { addResolversWithReferenceResolver } from './add-resolvers-with-reference-resolver';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
 import { EventEmitter } from 'events';
@@ -80,7 +81,7 @@ export async function getMesh(
   }
 
   if (options.additionalResolvers) {
-    unifiedSchema = addResolversToSchema({
+    unifiedSchema = addResolversWithReferenceResolver({
       resolvers: applyResolversHooksToResolvers(options.additionalResolvers, hooks),
       schema: unifiedSchema,
     });
@@ -90,7 +91,10 @@ export async function getMesh(
     schema: unifiedSchema,
     applyResolvers: modifiedResolvers => {
       if (modifiedResolvers) {
-        unifiedSchema = addResolversToSchema(unifiedSchema, modifiedResolvers);
+        unifiedSchema = addResolversWithReferenceResolver({
+          schema: unifiedSchema,
+          resolvers: modifiedResolvers,
+        });
       }
     },
   });

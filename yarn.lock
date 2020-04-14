@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@apollo/federation@^0.13.2":
+"@apollo/federation@0.13.2", "@apollo/federation@^0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.13.2.tgz#a9f842abd1619fe5cd732c56cfbc45dab0ae784a"
   integrity sha512-62uXIIHxHXG71gSwROFt8yxtYeUZ2BaIgAkxZ1H82GB4+s1gt4xwizcmmCWqQhK3KBy4LbPOfI1YyHW4Wv5ZpQ==
@@ -9103,6 +9103,11 @@ graphql-tools@^4.0.0, graphql-tools@^4.0.4:
     deprecated-decorator "^0.1.6"
     iterall "^1.1.3"
     uuid "^3.1.0"
+
+graphql-transform-federation@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-transform-federation/-/graphql-transform-federation-2.1.0.tgz#ff95d5a3be982f047cd5604cd2a866d49bd26827"
+  integrity sha512-mpTfWKLBJXr/b6OmwWEa4M5vA6OdNGFszEZMHUwgd0eD0/khDQK+aaks0Ufl/bRd01K1h9N+n1pf8DQcXXPjGg==
 
 graphql-type-json@^0.2.1:
   version "0.2.4"

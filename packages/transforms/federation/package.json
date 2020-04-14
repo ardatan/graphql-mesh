@@ -1,5 +1,5 @@
 {
-    "name": "@graphql-mesh/transform-mock",
+    "name": "@graphql-mesh/transform-federation",
     "version": "0.0.20",
     "sideEffects": false,
     "main": "dist/index.cjs.js",
@@ -10,22 +10,22 @@
     },
     "license": "MIT",
     "scripts": {
-        "prepack": "bob prepack"
+      "prepack": "bob prepack"
     },
     "peerDependencies": {
-        "graphql": "*"
+      "graphql": "*",
+      "@apollo/federation": "*"
     },
     "devDependencies": {
-        "@types/faker": "4.1.11"
+      "@apollo/federation": "0.13.2"
     },
     "dependencies": {
-        "@graphql-mesh/types": "0.0.20",
-        "@graphql-mesh/utils": "0.0.20",
-        "faker": "4.1.0",
-        "graphql-tools": "5.0.0-rc.4"
+      "@graphql-mesh/types": "0.0.20",
+      "graphql-transform-federation": "2.1.0"
     },
     "publishConfig": {
       "access": "public",
       "directory": "dist"
     }
-}
+  }
+  

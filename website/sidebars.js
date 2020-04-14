@@ -29,7 +29,8 @@ module.exports = {
       'transforms/extend',
       'transforms/cache',
       'transforms/snapshot',
-      'transforms/mock'
+      'transforms/mock',
+      'transforms/federation'
     ],
     'API Reference': ['api/cli', 'api/runtime'],
     Recipes: ['recipes/typescript', 'recipes/as-sdk', 'recipes/as-gateway'],
