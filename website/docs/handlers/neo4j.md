@@ -31,4 +31,4 @@ sources:
 
 ## Config API Reference
 
-{@import ../generated-markdown/Neo4JHandler.generated.md}
+{@import ../generated-markdown/Neo4jHandler.generated.md}
