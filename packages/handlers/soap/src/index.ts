@@ -1,32 +1,41 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
 import { WSSecurityCert } from 'soap';
-
-async function openFile(path?: string) {
-  if (path) {
-    const { promises: { readFile } } = await import('fs');
-    return readFile(path, 'utf-8');
-  }
-}
+import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 
 const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
-  async getMeshSource({ config }) {
-    const soapClient = await createSoapClient(config.wsdl)
+  async getMeshSource({ config, cache }) {
+    const soapClient = await createSoapClient(config.wsdl);
     const schema = await soapGraphqlSchema({
       soapClient,
     });
     if (config.securityCert) {
       const securityCertConfig = config.securityCert;
-      const privateKey = securityCertConfig?.privateKey || await openFile(securityCertConfig?.privateKeyFilePath);
-      const publicKey = securityCertConfig?.publicKey || await openFile(securityCertConfig?.publicKeyFilePath);
-      const password = securityCertConfig?.password || await openFile(securityCertConfig?.passwordFilePath);
-      soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password))
+      const privateKey =
+        securityCertConfig?.privateKey ||
+        (securityCertConfig?.privateKeyFilePath &&
+          (await readFileOrUrlWithCache(securityCertConfig?.privateKeyFilePath, cache, {
+            allowUnknownExtensions: true,
+          })));
+      const publicKey =
+        securityCertConfig?.publicKey ||
+        (securityCertConfig?.publicKeyFilePath &&
+          (await readFileOrUrlWithCache(securityCertConfig?.publicKeyFilePath, cache, {
+            allowUnknownExtensions: true,
+          })));
+      const password =
+        securityCertConfig?.password ||
+        (securityCertConfig?.passwordFilePath &&
+          (await readFileOrUrlWithCache(securityCertConfig?.passwordFilePath, cache, {
+            allowUnknownExtensions: true,
+          })));
+      soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password));
     }
 
     return {
-      schema
+      schema,
     };
-  }
+  },
 };
 
 export default handler;

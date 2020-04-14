@@ -1,20 +1,15 @@
 {
     "compilerOptions": {
-        "lib": [
-            "es2015",
-            "esnext.asynciterable"
-        ],
-        "target": "ES6",
+        "target": "es2015",
         "module": "commonjs",
-        "sourceMap": true,
-        "declaration": true,
-        "rootDir": "src",
-        "outDir": "build",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "moduleResolution": "node", /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+        "lib": [
+            "esnext"
+        ],
+        "sourceMap": true /* Generates corresponding '.map' file. */,
     },
     "include": [
-        "src/*"
+        "src"
     ],
     "exclude": [
         "node_modules"

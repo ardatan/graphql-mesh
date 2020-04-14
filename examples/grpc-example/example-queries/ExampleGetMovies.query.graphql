@@ -1,0 +1,10 @@
+query ExampleGetMovies {
+  ExampleGetMovies {
+    result {
+      name
+      year
+      rating
+      cast
+    }
+  }
+}
