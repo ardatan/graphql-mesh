@@ -22,7 +22,7 @@
     "@graphql-toolkit/schema-merging": "0.10.3",
     "param-case": "3.0.3",
     "cosmiconfig": "6.0.0",
-    "graphql-tools": "5.0.0-rc.4"
+    "graphql-tools": "5.0.0"
   },
   "publishConfig": {
     "access": "public",

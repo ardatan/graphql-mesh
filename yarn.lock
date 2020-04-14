@@ -9079,10 +9079,10 @@ graphql-tools-fork@9.0.1:
     node-fetch "^2.6.0"
     uuid "^7.0.2"
 
-graphql-tools@5.0.0-rc.4:
-  version "5.0.0-rc.4"
-  resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-5.0.0-rc.4.tgz#05cac3e653cdacb8a04ba4890e0e71a52451e409"
-  integrity sha512-RctJaC9rNo2sfoB1hl1ZxX8U5FgNVa1rVvssP2m4TgGifJnZNOFIS4WbIeIzU/kBiPnLCgvM8MMoKMPFJbFIog==
+graphql-tools@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-5.0.0.tgz#67281c834a0e29f458adba8018f424816fa627e9"
+  integrity sha512-5zn3vtn//382b7G3Wzz3d5q/sh+f7tVrnxeuhTMTJ7pWJijNqLxH7VEzv8VwXCq19zAzHYEosFHfXiK7qzvk7w==
   dependencies:
     apollo-link "^1.2.14"
     apollo-upload-client "^13.0.0"
