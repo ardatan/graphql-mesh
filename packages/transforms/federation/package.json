@@ -17,7 +17,7 @@
       "@apollo/federation": "*"
     },
     "devDependencies": {
-      "@apollo/federation": "0.13.2"
+      "@apollo/federation": "0.14.1"
     },
     "dependencies": {
       "@graphql-mesh/types": "0.0.20",
