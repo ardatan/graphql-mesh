@@ -57,16 +57,17 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       [methodName: string]: number;
     } = {};
 
-    type TypeVal = BaseTypeVal | ListTypeVal | SetTypeVal | MapTypeVal | EnumTypeVal | StructTypeVal;
+    type TypeVal = BaseTypeVal | ListTypeVal | SetTypeVal | MapTypeVal | EnumTypeVal | StructTypeVal | VoidTypeVal;
     type BaseTypeVal = {
-      id: number;
+      id?: number;
       type: TType.BOOL | TType.BYTE | TType.DOUBLE | TType.I16 | TType.I32 | TType.I64 | TType.STRING;
     };
-    type ListTypeVal = { id: number; type: TType.LIST; elementType: TypeVal };
-    type SetTypeVal = { id: number; type: TType.SET; elementType: TypeVal };
-    type MapTypeVal = { id: number; type: TType.MAP; keyType: TypeVal; valType: TypeVal };
-    type EnumTypeVal = { id: number; type: TType.ENUM };
-    type StructTypeVal = { id: number; type: TType.STRUCT; name: string; fields: TypeMap };
+    type ListTypeVal = { id?: number; type: TType.LIST; elementType: TypeVal };
+    type SetTypeVal = { id?: number; type: TType.SET; elementType: TypeVal };
+    type MapTypeVal = { id?: number; type: TType.MAP; keyType: TypeVal; valType: TypeVal };
+    type EnumTypeVal = { id?: number; type: TType.ENUM };
+    type StructTypeVal = { id?: number; type: TType.STRUCT; name: string; fields: TypeMap };
+    type VoidTypeVal = { id?: number; type: TType.VOID };
     type TypeMap = Record<string, TypeVal>;
     const topTypeMap: TypeMap = {};
 

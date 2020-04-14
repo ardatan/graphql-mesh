@@ -1,22 +1,40 @@
 {
   "compilerOptions": {
+    "incremental": true,
+
+    "outDir": "dist",
     "baseUrl": ".",
-    "target": "es2019",
+
+    "target": "es2018",
     "module": "esnext",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "lib": ["esnext"],
     "allowSyntheticDefaultImports": true,
-    "declaration": true /* Generates corresponding '.d.ts' file. */,
-    "sourceMap": true /* Generates corresponding '.map' file. */,
-    "strict": true /* Enable all strict type-checking options. */,
-    "moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
-    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
-    "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
-    "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
-    "forceConsistentCasingInFileNames": true
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "declaration": true,
+
+    "suppressImplicitAnyIndexErrors": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+
+    "paths": {
+      "@graphql-mesh/cli": ["packages/cli/src/index.ts"],
+      "@graphql-mesh/runtime": ["packages/runtime/src/index.ts"],
+      "@graphql-mesh/types": ["packages/types/src/index.ts"],
+      "@graphql-mesh/utils": ["packages/utils/src/index.ts"],
+      "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
+      "@graphql-mesh/handler-*": ["packages/handlers/*/src/index.ts"],
+      "@graphql-mesh/*": ["packages/handlers/*/src/index.ts"],
+      "@graphql-mesh/transform-*": ["packages/transforms/*/src/index.ts"]
+    }
   },
+  "include": ["packages"],
+  "exclude": ["**/node_modules", "**/dist"]
 }

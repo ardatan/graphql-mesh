@@ -9,7 +9,7 @@ import {
   transformSchema,
 } from 'graphql-tools';
 
-export const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = async ({
+const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = async ({
   schema,
   config,
 }): Promise<GraphQLSchema> => {

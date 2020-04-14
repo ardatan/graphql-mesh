@@ -1,10 +1,7 @@
 import { GraphQLSchema, extendSchema, parse } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
 
-export const extendTransform: TransformFn<YamlConfig.Transform['extend']> = ({
-  schema,
-  config
-}): GraphQLSchema => {
+const extendTransform: TransformFn<YamlConfig.Transform['extend']> = ({ schema, config }): GraphQLSchema => {
   if (!config) {
     throw new Error(`'extend' transform requires a valid SDL string!`);
   }

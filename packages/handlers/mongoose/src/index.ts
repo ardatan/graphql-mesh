@@ -1,7 +1,7 @@
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import { SchemaComposer, ObjMap, ObjectTypeComposerFieldConfigDefinition } from 'graphql-compose';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { camelCase } from 'change-case';
+import { camelCase } from 'camel-case';
 import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
 import mongoose from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';

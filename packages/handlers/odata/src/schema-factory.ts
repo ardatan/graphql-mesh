@@ -162,7 +162,6 @@ export class ODataGraphQLSchemaFactory {
   private entitySetEntityTypeNameMap = new Map<string, string>();
 
   private boundOperationsFullNameMap = new Map<string, string>();
-  private operationSet = new Set<string>();
 
   private unresolvedDependencies: UnresolvedDependency[] = [];
 

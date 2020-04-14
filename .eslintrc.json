@@ -37,7 +37,7 @@
   "overrides": [
     {
       "files": [
-        "**/test/**/*.ts",
+        "**/test/**/*.{ts,js}",
         "*.spec.ts"
       ],
       "env": {
@@ -48,7 +48,7 @@
       }
     }
   ],
-  "ignorePatterns": ["dist", "node_modules", "examples", "website"],
+  "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts"],
   "globals":{
     "BigInt": true
   }

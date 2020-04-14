@@ -21,7 +21,7 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler, { pgClient: Cl
       dynamicJson: true,
       appendPlugins: [
         builder => {
-          builder.hook('GraphQLObjectType:interfaces', (interfaces, build, context) => {
+          builder.hook('GraphQLObjectType:interfaces', (interfaces, _, context) => {
             const {
               scope: { isRootQuery },
             } = context;
