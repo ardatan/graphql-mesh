@@ -6,15 +6,9 @@ import {
   ResolversComposerMapping,
   ResolversComposition,
 } from '@graphql-toolkit/common';
-import objectHash from 'object-hash';
-import { stringInterpolator } from '@graphql-mesh/utils';
+import { computeCacheKey } from './compute-cache-key';
 
-export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({
-  config,
-  schema,
-  cache,
-  hooks,
-}) => {
+const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({ config, schema, cache, hooks }) => {
   // We need to use `schemaReady` hook and not the schema directly because we need to make sure to run cache after all
   // other transformations are done, and to make sure that custom resolve are already loaded and merged into the schema
   hooks.on('schemaReady', ({ schema, applyResolvers }) => {
@@ -25,7 +19,7 @@ export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = as
       const effectingOperations = cacheItem.invalidate?.effectingOperations || [];
 
       if (effectingOperations.length > 0) {
-        hooks.on('resolverDone', async (resolverInfo, result) => {
+        hooks.on('resolverDone', async resolverInfo => {
           const effectingRule = effectingOperations.find(
             o => o.operation === `${resolverInfo.info.parentType.name}.${resolverInfo.info.fieldName}`
           );
@@ -75,25 +69,5 @@ export const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = as
   });
   return schema;
 };
-
-export function computeCacheKey(options: {
-  keyStr: string | undefined;
-  args: Record<string, any>;
-  info: GraphQLResolveInfo;
-}): string {
-  const argsHash = options.args ? objectHash(options.args, { ignoreUnknown: true }) : '';
-
-  if (!options.keyStr) {
-    return `${options.info.parentType.name}-${options.info.fieldName}-${argsHash}`;
-  }
-
-  const templateData = {
-    args: options.args,
-    argsHash,
-    info: options.info || null,
-  };
-
-  return stringInterpolator.parse(options.keyStr, templateData);
-}
 
 export default cacheTransform;

@@ -3,21 +3,10 @@
   "version": "0.0.20",
   "license": "MIT",
   "scripts": {
-    "test": "jest --config=../../jest.config.js",
-    "prepack": "bob-update-version",
-    "build": "bob"
+    "prepack": "bob prepack"
   },
   "peerDependencies": {
     "graphql": "*"
-  },
-  "devDependencies": {
-    "@types/jest": "25.2.1",
-    "@types/node": "13.11.0",
-    "bob-the-bundler": "0.3.4",
-    "graphql": "15.0.0",
-    "jest": "25.2.7",
-    "ts-jest": "25.3.1",
-    "typescript": "3.8.3"
   },
   "sideEffects": false,
   "main": "dist/index.cjs.js",
@@ -26,16 +15,14 @@
   "typescript": {
     "definition": "dist/index.d.ts"
   },
-  "buildOptions": {
-    "input": "./src/index.ts"
-  },
   "dependencies": {
     "@graphql-mesh/cache-inmemory-lru": "0.0.20",
     "@graphql-mesh/types": "0.0.20",
     "@graphql-toolkit/common": "0.10.3",
     "@graphql-toolkit/schema-merging": "0.10.3",
+    "param-case": "3.0.3",
     "cosmiconfig": "6.0.0",
-    "graphql-tools-fork": "9.0.1"
+    "graphql-tools": "5.0.0-rc.4"
   },
   "publishConfig": {
     "access": "public",

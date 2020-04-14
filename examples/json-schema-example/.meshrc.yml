@@ -1,7 +1,7 @@
 sources:
   - name: Fake API
     handler:
-      json-schema:
+      jsonSchema:
         baseUrl: https://not-existing-api.com/API
         operations:
           - type: Query
@@ -32,4 +32,3 @@ sources:
               faker: '{{name.jobTitle}}'
             - apply: Company.name
               faker: '{{company.companyName}}'
-

@@ -10,6 +10,7 @@ module.exports = {
     'Input Handlers': [
       'handlers/available-handlers',
       'handlers/graphql',
+      'handlers/federation',
       'handlers/openapi',
       'handlers/grpc',
       'handlers/json-schema',
@@ -17,7 +18,10 @@ module.exports = {
       'handlers/soap',
       'handlers/mongoose',
       'handlers/odata',
-      'handlers/thrift'
+      'handlers/thrift',
+      'handlers/tuql',
+      'handlers/mysql',
+      'handlers/neo4j'
     ],
     Transforms: [
       'transforms/rename',
@@ -25,7 +29,8 @@ module.exports = {
       'transforms/extend',
       'transforms/cache',
       'transforms/snapshot',
-      'transforms/mock'
+      'transforms/mock',
+      'transforms/federation'
     ],
     'API Reference': ['api/cli', 'api/runtime'],
     Recipes: ['recipes/typescript', 'recipes/as-sdk', 'recipes/as-gateway'],

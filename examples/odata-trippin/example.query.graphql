@@ -1,0 +1,23 @@
+query GetPeople {
+  getPeople(queryOptions: { top: 2 }) {
+    UserName
+    FirstName
+    LastName
+    Gender
+    FavoriteFeature
+    AddressInfo {
+      Address
+      City {
+        Name
+        Region
+        CountryRegion
+      }
+    }
+    Trips {
+      Description
+      GetInvolvedPeople {
+        UserName
+      }
+    }
+  }
+}

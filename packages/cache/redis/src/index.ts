@@ -25,6 +25,7 @@ export class RedisCache implements KeyValueCache<string> {
     if (reply !== null) {
       return reply;
     }
+    return undefined;
   }
 
   async delete(key: string): Promise<boolean> {

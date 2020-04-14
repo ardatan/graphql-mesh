@@ -70,8 +70,8 @@ function Home() {
             muted={true}
             loop={true}
           >
+            <source src="/video/medium_1200X345.webm" type="video/webm" />
             <source src="/video/medium_1200X345.mp4" type="video/mp4" />
-            <source src="/video/medium_1200X345.mp4" type="video/webm" />
           </video>
         </div>
       </header>

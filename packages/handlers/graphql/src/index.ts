@@ -1,5 +1,5 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { delegateToSchema, IDelegateToSchemaOptions } from 'graphql-tools-fork';
+import { delegateToSchema, IDelegateToSchemaOptions } from 'graphql-tools';
 import { fetchache, Request } from 'fetchache';
 import { loadSchema } from '@graphql-toolkit/core';
 import { UrlLoader } from '@graphql-toolkit/url-loader';
@@ -15,7 +15,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
       headers: config.headers,
     });
 
-    hooks.on('buildSdkFn', ({ fieldName, typeName, replaceFn, schema }) => {
+    hooks.on('buildSdkFn', ({ typeName, fieldName, replaceFn, schema }) => {
       replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
         const delegationOptions: IDelegateToSchemaOptions = {
           operation: typeName.toLowerCase() as any,

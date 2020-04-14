@@ -10,5 +10,5 @@ temp
 config.ts
 config-schema.json
 ignored-demo
-yarn.lock
 package-lock.json
+.bob

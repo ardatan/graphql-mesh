@@ -3,8 +3,9 @@ id: graphql
 title: GraphQL
 sidebar_label: GraphQL
 ---
+![image](https://user-images.githubusercontent.com/20847995/79219047-333ccb00-7e5a-11ea-9fce-57ff137ba924.png)
 
-This handler allows you to load remote GraphQL schemas and use it with schema-stitching, based on `graphql-tools-fork`.
+This handler allows you to load remote GraphQL schemas and use it with schema-stitching, based on `graphql-tools`.
 
 To get started, install the handler library from NPM:
 

@@ -1,4 +1,4 @@
-import { prefixTransform } from '../src';
+import prefixTransform from '../src';
 import { buildSchema, printSchema, GraphQLSchema } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';

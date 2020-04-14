@@ -2,6 +2,7 @@ import { Hooks } from '@graphql-mesh/types';
 import { printSchema } from 'graphql';
 import handler from '../src';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import { resolve } from 'path';
 import { EventEmitter } from 'events';
 
 describe('openapi', () => {
@@ -9,7 +10,7 @@ describe('openapi', () => {
     const source = await handler.getMeshSource({
       name: 'Instagram',
       config: {
-        source: './test/fixtures/instagram.json',
+        source: resolve(__dirname, './fixtures/instagram.json'),
       },
       hooks: new EventEmitter() as Hooks,
       cache: new InMemoryLRUCache(),
