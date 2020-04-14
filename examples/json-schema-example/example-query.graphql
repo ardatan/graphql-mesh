@@ -1,0 +1,15 @@
+{
+  users {
+    firstName
+    lastName
+    jobTitle
+    company {
+      name
+      employers {
+        firstName
+        lastName
+        jobTitle
+      }
+    }
+  }
+}

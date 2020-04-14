@@ -3,6 +3,7 @@ id: postgraphile
 title: PostgreSQL / PostGraphile
 sidebar_label: PostgreSQL / PostGraphile
 ---
+![image](https://user-images.githubusercontent.com/20847995/79219670-5ae06300-7e5b-11ea-81f1-d0c08a884607.png)
 
 This handler allows you to use GraphQL schema created by [PostGraphile](https://www.graphile.org/postgraphile/), based on a PostgreSQL database schema.
 
@@ -21,6 +22,9 @@ sources:
       postgraphile:
         connectionString: postgres://postgres:password@localhost/postgres
 ```
+
+> You can check out our example that uses schema stitching with a PostgreSQL datasource.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
 
 ## Config API Reference
 

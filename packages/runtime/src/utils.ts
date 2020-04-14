@@ -1,10 +1,12 @@
-import { IResolvers } from 'graphql-tools-fork';
+import { IResolvers } from 'graphql-tools';
 import { ResolvedTransform, GraphQLOperation } from './types';
 import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
 import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, Maybe } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { buildOperationNodeForField } from '@graphql-toolkit/common';
+import { paramCase } from 'param-case';
+import { MESH_CONTEXT_SYMBOL } from './constants';
 
 export async function applySchemaTransformations(
   name: string,
@@ -57,14 +59,16 @@ export async function applyOutputTransformations(
 }
 
 export async function getPackage<T>(name: string, type: string): Promise<T> {
+  const casedName = paramCase(name);
+  const casedType = paramCase(type);
   const possibleNames = [
-    `@graphql-mesh/${name}`,
-    `@graphql-mesh/${name}-${type}`,
-    `@graphql-mesh/${type}-${name}`,
-    name,
-    `${name}-${type}`,
-    `${type}-${name}`,
-    type,
+    `@graphql-mesh/${casedName}`,
+    `@graphql-mesh/${casedName}-${casedType}`,
+    `@graphql-mesh/${casedType}-${casedName}`,
+    casedName,
+    `${casedName}-${casedType}`,
+    `${casedType}-${casedName}`,
+    casedType,
   ];
   const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
 
@@ -183,7 +187,7 @@ export async function extractSdkFromResolvers(
                 } as any;
               }
 
-              if (!context?.__isMeshContext) {
+              if (!(context && context[MESH_CONTEXT_SYMBOL])) {
                 context = {
                   ...(contextBuilder && (await contextBuilder(context))),
                   ...context,

@@ -1,24 +1,67 @@
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { createGraphQLSchema } from 'openapi-to-graphql';
-import { Oas3 } from 'openapi-to-graphql/lib/types/oas3';
+import {
+  readFileOrUrlWithCache,
+  ResolverData,
+  parseInterpolationStrings,
+  stringInterpolator,
+} from '@graphql-mesh/utils';
+import { createGraphQLSchema } from '@ardatan/openapi-to-graphql';
+import { Oas3 } from '@ardatan/openapi-to-graphql/lib/types/oas3';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { fetchache, Request } from 'fetchache';
 
 const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
   async getMeshSource({ config, cache }) {
     const path = config.source;
-    const spec: Oas3 = await readFileOrUrlWithCache(path, cache, {
+    const spec = await readFileOrUrlWithCache<Oas3>(path, cache, {
       headers: config.schemaHeaders,
     });
 
+    const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
+      fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
+
     const { schema } = await createGraphQLSchema(spec, {
+      fetch,
       baseUrl: config.baseUrl,
       headers: config.operationHeaders,
+      skipSchemaValidation: config.skipSchemaValidation,
       operationIdFieldNames: true,
-      viewer: false, // Viewer set to false in order to force users to specify auth via config file
+      fillEmptyResponses: true,
+      viewer: false,
+      resolverMiddleware: (resolverFactoryParams, originalFactory) => (root, args, context, info: any) => {
+        const resolverData: ResolverData = { root, args, context, info };
+        const headers = resolverFactoryParams.data.options.headers;
+        for (const headerName in headers) {
+          headers[headerName] = stringInterpolator.parse(headers[headerName], resolverData);
+        }
+        return originalFactory(resolverFactoryParams)(root, args, context, info);
+      },
     });
+
+    const { args, contextVariables } = parseInterpolationStrings(Object.values(config.operationHeaders || {}));
+
+    const rootFields = [
+      ...Object.values(schema.getQueryType()?.getFields() || {}),
+      ...Object.values(schema.getMutationType()?.getFields() || {}),
+      ...Object.values(schema.getSubscriptionType()?.getFields() || {}),
+    ];
+
+    for (const rootField of rootFields) {
+      for (const argName in args) {
+        const argConfig = args[argName];
+        rootField.args.push({
+          name: argName,
+          description: undefined,
+          defaultValue: undefined,
+          extensions: undefined,
+          astNode: undefined,
+          ...argConfig,
+        });
+      }
+    }
 
     return {
       schema,
+      contextVariables,
     };
   },
 };

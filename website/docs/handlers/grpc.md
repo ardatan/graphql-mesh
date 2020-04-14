@@ -3,6 +3,7 @@ id: grpc
 title: gRPC & Protobuf
 sidebar_label: gRPC
 ---
+![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
 
 This handler allows you to load [gRPC](https://grpc.io/) definition files (`.proto`).
 
@@ -22,6 +23,9 @@ sources:
         serviceName: Example
         packageName: io.xtech.example
 ```
+
+> You can check out our example that uses gRPC Handler.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example)
 
 ## Config API Reference
 

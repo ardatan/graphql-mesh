@@ -1,0 +1,6 @@
+mutation ListOfLanguagesByName {
+  listOfLanguagesByName {
+    sISOCode
+    sName
+  }
+}
