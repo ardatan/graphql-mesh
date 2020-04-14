@@ -1,31 +1,30 @@
 {
-    "name": "@graphql-mesh/transform-federation",
-    "version": "0.0.20",
-    "sideEffects": false,
-    "main": "dist/index.cjs.js",
-    "module": "dist/index.esm.js",
-    "typings": "dist/index.d.ts",
-    "typescript": {
-        "definition": "dist/index.d.ts"
-    },
-    "license": "MIT",
-    "scripts": {
-      "prepack": "bob prepack"
-    },
-    "peerDependencies": {
-      "graphql": "*",
-      "@apollo/federation": "*"
-    },
-    "devDependencies": {
-      "@apollo/federation": "0.14.1"
-    },
-    "dependencies": {
-      "@graphql-mesh/types": "0.0.20",
-      "graphql-transform-federation": "2.1.0"
-    },
-    "publishConfig": {
-      "access": "public",
-      "directory": "dist"
-    }
+  "name": "@graphql-mesh/transform-federation",
+  "version": "0.0.21",
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prepack": "bob prepack"
+  },
+  "peerDependencies": {
+    "@apollo/federation": "*",
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "@apollo/federation": "0.14.1"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.0.21",
+    "graphql-transform-federation": "2.1.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
   }
-  
+}

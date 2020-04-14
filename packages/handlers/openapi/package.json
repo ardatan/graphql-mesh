@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -16,10 +16,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.0.20",
-    "@graphql-mesh/utils": "0.0.20",
-    "fetchache": "0.0.3",
-    "@ardatan/openapi-to-graphql": "2.0.6"
+    "@ardatan/openapi-to-graphql": "2.0.6",
+    "@graphql-mesh/types": "0.0.21",
+    "@graphql-mesh/utils": "0.0.21",
+    "fetchache": "0.0.3"
   },
   "publishConfig": {
     "access": "public",
