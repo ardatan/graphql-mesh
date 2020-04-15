@@ -17,8 +17,10 @@ Add the following configuration to your Mesh config file:
 ```yml
 transforms:
   - resolversComposition:
-        'Query.me': is-auth#isAuth
-        'Mutation.*': is-admin#isAdmin
+        - resolver: 'Query.me'
+          composer: is-auth#isAuth
+        - resolver: 'Mutation.*'
+          composer: is-admin#isAdmin
 ```
 
 ```ts
