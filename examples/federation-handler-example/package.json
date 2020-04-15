@@ -1,6 +1,6 @@
 {
   "name": "federation-handler-example",
-  "version": "0.0.16",
+  "version": "0.1.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -13,13 +13,13 @@
     "start": "concurrently \"npm:start-services\" \"npm:start-gateway\""
   },
   "devDependencies": {
-    "nodemon": "2.0.2",
-    "concurrently": "5.1.0"
+    "concurrently": "5.1.0",
+    "nodemon": "2.0.2"
   },
   "dependencies": {
     "@apollo/gateway": "0.13.2",
-    "@graphql-mesh/cli": "0.0.20",
-    "@graphql-mesh/handler-federation": "0.0.20",
+    "@graphql-mesh/cli": "0.1.0",
+    "@graphql-mesh/handler-federation": "0.1.0",
     "graphql": "14.6.0"
   }
 }

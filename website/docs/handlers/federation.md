@@ -31,7 +31,7 @@ sources:
 ```
 
 > You can check out our example that uses Federation Handler.
-[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/federation-example)
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/federation-handler-example)
 
 ## Config API Reference
 

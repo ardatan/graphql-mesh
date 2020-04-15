@@ -30,6 +30,7 @@ module.exports = {
       'transforms/cache',
       'transforms/snapshot',
       'transforms/mock',
+      'transforms/resolvers-composition',
       'transforms/federation'
     ],
     'API Reference': ['api/cli', 'api/runtime'],
