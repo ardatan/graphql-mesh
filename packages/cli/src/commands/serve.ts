@@ -98,7 +98,7 @@ export async function serveMesh(
       <script>
         window.addEventListener('load', function (event) {
           const renderPageOptions = ${JSON.stringify(renderPageOptions)};
-          const endpoint = location.protocol + '//' + location.hostname + ':' + location.port + '/graphql';
+          const endpoint = location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/graphql';
           renderPageOptions.endpoint = endpoint;
           renderPageOptions.tabs.forEach(tab => {
             tab.endpoint = endpoint;
