@@ -10,5 +10,8 @@
     "@graphql-mesh/cli": "0.1.1",
     "@graphql-mesh/tuql": "0.1.1",
     "graphql": "15.0.0"
+  },
+  "resolutions": {
+    "graphql": "15.0.0"
   }
 }

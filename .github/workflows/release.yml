@@ -17,9 +17,10 @@ jobs:
           git remote rm origin
           git remote add origin "https://$USER_NAME:$GITHUB_PAT@github.com/Urigo/graphql-mesh"
           git fetch
-          git checkout origin/master
+          git checkout master
           git config --global user.email octobot@github.com
           git config --global user.name GitHub Actions
+          git reset --hard
         env:
           USER_NAME: ${{ secrets.DEPLOYING_USER_NAME }}
           GITHUB_PAT: ${{ secrets.GITHUB_PAT }}

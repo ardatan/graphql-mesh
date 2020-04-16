@@ -18,7 +18,7 @@
     "prerelease": "yarn test-and-build",
     "preci:release": "yarn test-and-build",
     "release": "lerna publish --exact --force-publish=\"*\"",
-    "ci:release": "lerna publish --exact --force-publish=\"*\" --yes --repo-version=$NPM_VERSION",
+    "ci:release": "lerna publish --exact --force-publish=\"*\" --yes --repo-version=$NPM_VERSION --no-git-tag-version",
     "ci:release:canary": "lerna publish --force-publish=\"*\" --preid \"alpha-`git rev-parse --short HEAD`\" --canary --exact --yes"
   },
   "devDependencies": {
