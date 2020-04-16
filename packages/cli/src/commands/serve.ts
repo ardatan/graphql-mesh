@@ -1,6 +1,6 @@
-import { GraphQLSchema } from 'graphql';
-import { ApolloServer } from 'apollo-server';
-import { ApolloServerExpressConfig } from 'apollo-server-express';
+import { GraphQLSchema, introspectionFromSchema } from 'graphql';
+import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
 import { Logger } from 'winston';
 import { KeyValueCache } from '@graphql-mesh/types';
 import { fork as clusterFork, isMaster } from 'cluster';
@@ -9,6 +9,8 @@ import { loadDocuments } from '@graphql-toolkit/core';
 import { CodeFileLoader } from '@graphql-toolkit/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
 import { basename } from 'path';
+import { renderPlaygroundPage, RenderPageOptions } from 'graphql-playground-html';
+import { createServer } from 'http';
 
 export async function serveMesh(
   logger: Logger,
@@ -18,7 +20,7 @@ export async function serveMesh(
   fork?: string | number,
   port: string | number = 4000,
   exampleQuery?: string
-) {
+): Promise<void> {
   if (isMaster && fork) {
     fork = fork > 1 ? fork : cpus().length;
     for (let i = 0; i < fork; i++) {
@@ -26,28 +28,84 @@ export async function serveMesh(
     }
     logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:${port} in ${fork} forks`);
   } else {
-    const apolloOptions: ApolloServerExpressConfig = {
+    const app = express();
+    app.set('trust proxy', 'loopback');
+    const httpServer = createServer(app);
+
+    const apollo = new ApolloServer({
       schema,
       context: contextBuilder,
       cache,
-    };
+      playground: false,
+    });
 
-    if (exampleQuery) {
-      const documents = await loadDocuments(exampleQuery, {
-        loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-        cwd: process.cwd(),
-      });
-      apolloOptions.playground = {
-        tabs: documents.map(doc => ({
-          name: doc.location && basename(doc.location),
-          query: doc.rawSDL!,
-        })),
+    apollo.applyMiddleware({ app });
+    apollo.installSubscriptionHandlers(httpServer);
+
+    // For embedded examples
+    app.get('/', async (req, res) => {
+      res.setHeader('Content-Type', 'text/html');
+      res.write(`
+        <script>
+            const localStorageMock = new Map();
+            Object.defineProperty(window, 'localStorage', {
+              get() {
+                return {
+                  getItem(key) {
+                    return localStorageMock.get(key);
+                  },
+                  setItem(key, val) {
+                    return localStorageMock.set(key, val);
+                  },
+                  clear() {
+                    return localStorageMock.clear();
+                  },
+                  key(i) {
+                    return localStorageMock.keys()[i];
+                  },
+                  remove(key) {
+                    return localStorageMock.delete(key);
+                  },
+                  get length() {
+                    return localStorageMock.size;
+                  }
+                }
+              }
+            });
+          </script>
+      `);
+      const endpoint = `${req.get('X-Forwarded-Protocol') || req.protocol}://${
+        req.get('Host') || `${req.hostname}:${port}`
+      }/graphql`;
+
+      const renderPageOptions: RenderPageOptions = {
+        title: 'GraphQL Mesh Playground',
+        endpoint,
+        schema: introspectionFromSchema(schema),
       };
-    }
 
-    const apollo = new ApolloServer(apolloOptions);
+      if (exampleQuery) {
+        const documents = await loadDocuments(exampleQuery, {
+          loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
+          cwd: process.cwd(),
+        });
 
-    const { url } = await apollo.listen(port.toString());
-    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: ${url}`);
+        renderPageOptions.tabs = documents.map(doc => ({
+          name: doc.location && basename(doc.location),
+          endpoint,
+          query: doc.rawSDL!,
+        }));
+      }
+
+      const playground = renderPlaygroundPage(renderPageOptions);
+      res.write(playground);
+      res.end();
+    });
+
+    httpServer.listen(port.toString(), () => {
+      if (!fork) {
+        logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:4000`);
+      }
+    });
   }
 }
