@@ -8,9 +8,9 @@ import { cpus } from 'os';
 import { loadDocuments } from '@graphql-toolkit/core';
 import { CodeFileLoader } from '@graphql-toolkit/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
-import { basename } from 'path';
-import { renderPlaygroundPage, RenderPageOptions } from 'graphql-playground-html';
+import { basename, resolve } from 'path';
 import { createServer } from 'http';
+import { readFileSync } from 'fs';
 
 export async function serveMesh(
   logger: Logger,
@@ -74,14 +74,11 @@ export async function serveMesh(
             });
           </script>
       `);
-      const endpoint = `${req.get('X-Forwarded-Protocol') || req.protocol}://${
-        req.get('Host') || `${req.hostname}:${port}`
-      }/graphql`;
 
-      const renderPageOptions: RenderPageOptions = {
+      const renderPageOptions: any = {
         title: 'GraphQL Mesh Playground',
-        endpoint,
         schema: introspectionFromSchema(schema),
+        tabs: [],
       };
 
       if (exampleQuery) {
@@ -92,13 +89,24 @@ export async function serveMesh(
 
         renderPageOptions.tabs = documents.map(doc => ({
           name: doc.location && basename(doc.location),
-          endpoint,
           query: doc.rawSDL!,
         }));
       }
 
-      const playground = renderPlaygroundPage(renderPageOptions);
-      res.write(playground);
+      res.write(readFileSync(resolve(__dirname, './playground.html'), 'utf8'));
+      res.write(`
+      <script>
+        window.addEventListener('load', function (event) {
+          const renderPageOptions = ${JSON.stringify(renderPageOptions)};
+          const endpoint = location.protocol + '//' + location.hostname + ':' + location.port + '/graphql';
+          renderPageOptions.endpoint = endpoint;
+          renderPageOptions.tabs.forEach(tab => {
+            tab.endpoint = endpoint;
+          });
+          GraphQLPlayground.init(document.getElementById('root'), renderPageOptions)
+        })
+      </script>
+      `);
       res.end();
     });
 
