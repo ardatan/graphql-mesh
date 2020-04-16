@@ -1,0 +1,9 @@
+{
+  albums(limit: 2) {
+    albumId
+    title
+    artist {
+      name
+    }
+  }
+}

@@ -78,7 +78,6 @@ export async function serveMesh(
       const renderPageOptions: any = {
         title: 'GraphQL Mesh Playground',
         schema: introspectionFromSchema(schema),
-        tabs: [],
       };
 
       if (exampleQuery) {
@@ -100,9 +99,11 @@ export async function serveMesh(
           const renderPageOptions = ${JSON.stringify(renderPageOptions)};
           const endpoint = location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/graphql';
           renderPageOptions.endpoint = endpoint;
-          renderPageOptions.tabs.forEach(tab => {
-            tab.endpoint = endpoint;
-          });
+          if (renderPageOptions.tabs) {
+            renderPageOptions.tabs.forEach(tab => {
+              tab.endpoint = endpoint;
+            });
+          }
           GraphQLPlayground.init(document.getElementById('root'), renderPageOptions)
         })
       </script>
