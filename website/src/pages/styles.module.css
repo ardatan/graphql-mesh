@@ -21,3 +21,9 @@
   height: 200px;
   width: 200px;
 }
+
+.buttonsWrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
