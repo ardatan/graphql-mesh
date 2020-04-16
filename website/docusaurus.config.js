@@ -7,6 +7,11 @@ module.exports = {
   organizationName: 'urigo',
   projectName: 'graphql-mesh',
   themeConfig: {
+    algolia: {
+      apiKey: 'dc81d9e0ead1aecb5e776d262181ceeb',
+      indexName: 'graphql-mesh',
+      algoliaOptions: {},
+    },
     navbar: {
       title: 'GraphQL Mesh',
       logo: {
@@ -17,8 +22,8 @@ module.exports = {
         {
           to: 'docs/getting-started/introduction',
           activeBasePath: 'docs',
-          label: 'Docs & API Reference',
-          position: 'left'
+          label: 'API & Documentation',
+          position: 'right'
         },
         {
           href: 'https://github.com/urigo/graphql-mesh',

@@ -4,6 +4,9 @@ import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
+import Button from '../components/ui/Button';
+import Link from '@docusaurus/Link';
+import LiveDemo from '../components/live-demo';
 
 const features = [
   {
@@ -74,7 +77,19 @@ function Home() {
             <source src="/video/medium_1200X345.mp4" type="video/mp4" />
           </video>
         </div>
+        <div className={styles.buttonsWrapper}>
+          <Button>
+            <Link to={'#live-demo'}>Try It Out Live</Link>
+          </Button>
+          <Button>
+            <Link to={`/docs/getting-started/introduction`}>View Docs</Link>
+          </Button>
+        </div>
       </header>
+      <div className={styles.liveDemo}>
+        <a id="live-demo" />
+        <LiveDemo />
+      </div>
       <main>
         {features && features.length && (
           <section className={styles.features}>
