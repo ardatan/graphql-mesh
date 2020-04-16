@@ -18,7 +18,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.1.0",
     "@graphql-mesh/utils": "0.1.0",
-    "@graphql-toolkit/common": "0.10.3",
+    "@graphql-toolkit/common": "0.10.4",
     "graphql-tools": "5.0.0"
   },
   "publishConfig": {
