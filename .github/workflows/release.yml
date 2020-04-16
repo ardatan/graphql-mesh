@@ -29,3 +29,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
           NPM_VERSION: ${{ github.event.release.tag_name }}
+      - run: |
+          git add .
+          git commit -m "${{ github.event.release.tag_name }}"
+          git push -f
