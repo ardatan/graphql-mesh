@@ -1,11 +1,11 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { MySQLGraphQLSchemaFactory } from './generate-schema';
+import { composeWithMysql } from 'graphql-compose-mysql';
 
 const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
-  async getMeshSource({ config, hooks }) {
-    const schemaFactory = new MySQLGraphQLSchemaFactory(config.connectionString);
-    const schema = await schemaFactory.buildGraphQLSchema();
-    hooks.on('destroy', () => schemaFactory.destroyConnection());
+  async getMeshSource({ config }) {
+    const schema = await composeWithMysql({
+      mysqlConfig: config,
+    });
     return {
       schema,
     };

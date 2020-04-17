@@ -16,6 +16,9 @@ const EXAMPLES = {
     'SOAP': {
         'Country Info': 'soap-country-info'
     },
+    'MySQL': {
+        'Rfam': 'mysql-rfam',
+    },
     'SQLite': {
         'Chinook': 'sqlite-chinook'
     }

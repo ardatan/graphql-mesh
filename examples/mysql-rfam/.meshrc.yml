@@ -1,5 +1,8 @@
 sources:
-  - name: Employees
+  - name: Rfam
     handler:
       mysql:
-        connectionString: mysql://rfamro@mysql-rfam-public.ebi.ac.uk:4497/Rfam
+        host: mysql-rfam-public.ebi.ac.uk
+        port: 4497
+        user: rfamro
+        database: Rfam
