@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/graphql-fields": "1.3.2",
-    "@types/mysql": "2.15.9"
+    "@types/mysql": "2.15.10"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.2",
