@@ -4,12 +4,6 @@
  * and scoped locally.
  */
 
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .features {
   display: flex;
   align-items: center;
@@ -22,8 +16,19 @@
   width: 200px;
 }
 
-.buttonsWrapper {
+.buttons {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.npmBadge {
+  margin: 10px;
+  min-height: 28px;
 }

@@ -8,7 +8,7 @@ module.exports = {
   projectName: 'graphql-mesh',
   themeConfig: {
     algolia: {
-      apiKey: 'dc81d9e0ead1aecb5e776d262181ceeb',
+      apiKey: 'c028a32ff6167533a28b0c7e8bb250d9',
       indexName: 'graphql-mesh',
       algoliaOptions: {},
     },

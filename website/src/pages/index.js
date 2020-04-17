@@ -14,22 +14,20 @@ const features = [
     imageUrl: 'img/GraphQL_Logo.svg',
     description: (
       <>
-        Use GraphQL as a query language to fetch data from your data-sources
-        directly, without the need for a running gateway server, or any other
-        bottleneck.
+        Use GraphQL as a query language to fetch data from your data-sources directly, without the need for a running
+        gateway server, or any other bottleneck.
       </>
-    )
+    ),
   },
   {
     title: <>Any Data Source</>,
     imageUrl: 'img/mesh-example.png',
     description: (
       <>
-        With GraphQL Mesh, you can use GraphQL query language to fetch from
-        (almost) any data source, without changing the source or modify it's
-        code.
+        With GraphQL Mesh, you can use GraphQL query language to fetch from (almost) any data source, without changing
+        the source or modify it's code.
       </>
-    )
+    ),
   },
 
   {
@@ -37,11 +35,11 @@ const features = [
     imageUrl: 'img/open-source.svg',
     description: (
       <>
-        GraphQL Mesh is free and open-source, and been built with the community.
-        You can contribute, extend and have your custom logic easily.
+        GraphQL Mesh is free and open-source, and been built with the community. You can contribute, extend and have
+        your custom logic easily.
       </>
-    )
-  }
+    ),
+  },
 ];
 
 function Feature({ imageUrl, title, description }) {
@@ -63,21 +61,16 @@ function Home() {
   const context = useDocusaurusContext();
   return (
     <Layout title={`GraphQL Mesh`} description="">
-      <header>
-        <div>
-          <video
-            width="100%"
-            height="100%"
-            playsInline={true}
-            autoPlay={true}
-            muted={true}
-            loop={true}
-          >
-            <source src="/video/medium_1200X345.webm" type="video/webm" />
-            <source src="/video/medium_1200X345.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <div className={styles.buttonsWrapper}>
+      <header class={styles.header}>
+        <video width="100%" height="100%" playsInline={true} autoPlay={true} muted={true} loop={true}>
+          <source src="/video/medium_1200X345.webm" type="video/webm" />
+          <source src="/video/medium_1200X345.mp4" type="video/mp4" />
+        </video>
+        <img class={styles.npmBadge}
+          alt="npm"
+          src="https://img.shields.io/npm/v/@graphql-mesh/runtime?color=%231BCBE2&label=stable&style=for-the-badge"
+        />
+        <div className={styles.buttons}>
           <Button>
             <Link to={'#live-demo'}>Try It Out Live</Link>
           </Button>
