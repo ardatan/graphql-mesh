@@ -8,15 +8,21 @@ import {
   GraphQLInputFieldConfigMap,
   GraphQLID,
   GraphQLNonNull,
-  GraphQLType,
   GraphQLSchema,
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
   GraphQLList,
   GraphQLResolveInfo,
+  GraphQLScalarType,
+  Kind,
+  ValueNode,
+  GraphQLOutputType,
+  GraphQLInputType,
 } from 'graphql';
 import { BigIntResolver as GraphQLBigInt, DateTimeResolver as GraphQLDateTime } from 'graphql-scalars';
-import { camelCase, pascalCase } from 'change-case';
+import { upperCase } from 'upper-case';
+import { pascalCase } from 'pascal-case';
+import { camelCase } from 'camel-case';
 import graphqlFields from 'graphql-fields';
 
 interface ColumnInfo {
@@ -27,6 +33,47 @@ interface ColumnInfo {
   Null?: 'NO' | 'YES';
   Default?: any;
 }
+
+const createDummyScalar = (name: string) =>
+  new GraphQLScalarType({
+    name,
+    serialize: data => (data.toJSON ? data.toJSON() : data.toString()),
+    parseValue: data => data,
+    parseLiteral(ast: ValueNode, variables): any {
+      switch (ast.kind) {
+        case Kind.LIST:
+          return ast.values.map(value => this.parseLiteral(value, variables));
+        case Kind.VARIABLE:
+          return variables[ast.name.value];
+        case Kind.NULL:
+          return null;
+        case Kind.BOOLEAN:
+        case Kind.INT:
+        case Kind.FLOAT:
+        case Kind.STRING:
+        case Kind.ENUM:
+          return ast.value;
+        case Kind.OBJECT:
+          return ast.fields.reduce(
+            (prev, curr) => ({ ...prev, [curr.name.value]: this.parseLiteral(curr.value, variables) }),
+            {} as any
+          );
+      }
+    },
+  });
+
+// TODO: Move this to graphql-scalars
+const GraphQLBlob = new GraphQLScalarType({
+  name: 'Blob',
+  serialize: (value: any) => Buffer.from(value, 'binary'),
+  parseValue: (value: any) => Buffer.from(value, 'binary'),
+  parseLiteral: (ast: ValueNode) => {
+    if (ast.kind !== Kind.STRING) {
+      throw new Error('Invalid Blob');
+    }
+    return Buffer.from(ast.value, 'binary');
+  },
+});
 
 export class MySQLGraphQLSchemaFactory {
   private scalarsMap = new Map([
@@ -46,10 +93,12 @@ export class MySQLGraphQLSchemaFactory {
     ['real', GraphQLFloat],
     ['decimal', GraphQLFloat],
     ['date', GraphQLDateTime],
-    ['time', GraphQLString],
+    ['time', GraphQLString], // Implement those in graphql-scalars
     ['datetime', GraphQLDateTime],
     ['timestamp', GraphQLDateTime],
     ['year', GraphQLString],
+    ['blob', GraphQLBlob],
+    ['longblob', GraphQLBlob],
   ]);
 
   private outputTypeMap = new Map<string, GraphQLObjectType>();
@@ -92,7 +141,7 @@ export class MySQLGraphQLSchemaFactory {
     let primaryKeyFieldName = 'id';
     for (const column of columns) {
       const fieldName = column.Field;
-      let columnGraphQLType: GraphQLType;
+      let columnGraphQLType: GraphQLInputType & GraphQLOutputType;
       if (column.Key) {
         columnGraphQLType = GraphQLID;
         if (column.Key === 'PRI') {
@@ -100,18 +149,24 @@ export class MySQLGraphQLSchemaFactory {
         }
       } else if (column.Type.startsWith('enum(')) {
         const enumValues = column.Type.replace(`enum('`, '').replace(`')`, '').split(`','`);
-        columnGraphQLType = new GraphQLEnumType({
-          name: pascalCase(fieldName),
-          values: enumValues.reduce(
-            (prev, curr) => ({ ...prev, [curr]: { value: curr } }),
-            {} as GraphQLEnumValueConfigMap
-          ),
-        });
+        if (enumValues.some(value => !isNaN(Number(value)))) {
+          columnGraphQLType = GraphQLInt;
+        } else {
+          columnGraphQLType = new GraphQLEnumType({
+            name: pascalCase(tableName + '_' + fieldName),
+            values: enumValues.reduce(
+              (prev, curr) => ({ ...prev, [upperCase(camelCase(curr))]: { value: curr } }),
+              {} as GraphQLEnumValueConfigMap
+            ),
+          });
+        }
       } else {
         const columnTypeName = column.Type.split('(')[0];
         columnGraphQLType = this.scalarsMap.get(columnTypeName)!;
         if (!columnGraphQLType) {
-          throw new Error(`Unknown type: ${columnTypeName}`);
+          console.warn(`Unknown type: ${columnTypeName}. Adding a dummy scalar`);
+          columnGraphQLType = createDummyScalar(pascalCase(columnTypeName));
+          this.scalarsMap.set(columnTypeName, columnGraphQLType);
         }
       }
       outputFields[fieldName] = {
