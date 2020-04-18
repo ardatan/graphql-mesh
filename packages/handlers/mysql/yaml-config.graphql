@@ -3,5 +3,9 @@ extend type Handler {
 }
 
 type MySQLHandler @md {
-  connectionString: String!
+  host: String!
+  port: Int!
+  user: String!
+  password: String
+  database: String!
 }

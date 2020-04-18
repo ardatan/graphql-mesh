@@ -2,4 +2,8 @@ sources:
   - name: Employees
     handler:
       mysql:
-        connectionString: mysql://root:passwd@localhost:3306/employees
+        host: localhost
+        port: 3306
+        user: root
+        password: passwd
+        database: employees
