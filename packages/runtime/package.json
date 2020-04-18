@@ -21,7 +21,7 @@
     "@graphql-toolkit/common": "0.10.4",
     "@graphql-toolkit/schema-merging": "0.10.4",
     "aggregate-error": "3.0.1",
-    "ajv": "6.12.0",
+    "ajv": "6.12.1",
     "cosmiconfig": "6.0.0",
     "graphql-tools": "5.0.0",
     "param-case": "3.0.3"
