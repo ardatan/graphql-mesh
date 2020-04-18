@@ -39,9 +39,9 @@ const SCALARS: [string, GraphQLScalarType][] = [
 
 export interface GrpcGraphQLSchemaConfig {
   protoFilePath: string;
-  serviceName: string;
-  packageName: string;
   endpoint: string;
+  serviceName?: string;
+  packageName?: string;
 }
 
 export class GrpcGraphQLSchemaFactory {

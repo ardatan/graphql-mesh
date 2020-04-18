@@ -6,8 +6,22 @@ extend type Handler {
 }
 
 type GrpcHandler @md {
+  """
+  gRPC Endpoint
+  """
   endpoint: String!
+  """
+  gRPC Proto file that contains your protobuf schema
+  """
   protoFilePath: String!
-  serviceName: String!
-  packageName: String!
+  """
+  Your base service name
+  Used for naming only
+  """
+  serviceName: String
+  """
+  Your base package name
+  Used for naming only
+  """
+  packageName: String
 }
