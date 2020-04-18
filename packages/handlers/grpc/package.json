@@ -22,6 +22,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.1.4",
     "@graphql-mesh/utils": "0.1.4",
+    "camel-case": "4.1.1",
     "graphql-scalars": "1.1.0",
     "grpc-caller": "0.13.0",
     "iter-tools": "6.2.6",

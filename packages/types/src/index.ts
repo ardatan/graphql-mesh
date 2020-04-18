@@ -6,6 +6,10 @@ import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 
 export { YamlConfig };
 
+export function getJsonSchema() {
+  return require('./config-schema.json');
+}
+
 export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
   contextVariables?: (keyof InitialContext)[];

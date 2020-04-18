@@ -20,9 +20,14 @@
     "@graphql-mesh/types": "0.1.4",
     "@graphql-toolkit/common": "0.10.4",
     "@graphql-toolkit/schema-merging": "0.10.4",
+    "aggregate-error": "3.0.1",
+    "ajv": "6.12.0",
     "cosmiconfig": "6.0.0",
     "graphql-tools": "5.0.0",
     "param-case": "3.0.3"
+  },
+  "devDependencies": {
+    "@types/ajv": "1.0.0"
   },
   "publishConfig": {
     "access": "public",

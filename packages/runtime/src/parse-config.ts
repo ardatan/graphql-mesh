@@ -1,7 +1,8 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { GetMeshOptions, ResolvedTransform, MeshResolvedSource } from './types';
 import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache } from './utils';
-import { TransformFn, YamlConfig } from '@graphql-mesh/types';
+import { TransformFn, YamlConfig, getJsonSchema } from '@graphql-mesh/types';
+import Ajv from 'ajv';
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -116,6 +117,17 @@ function customLoader(ext: 'json' | 'yaml' | 'js') {
   return loader;
 }
 
+export function validateConfig(config: any): asserts config is YamlConfig.Config {
+  const ajv = new Ajv({ schemaId: 'auto' });
+  // Settings for draft-04
+  const metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
+  ajv.addMetaSchema(metaSchema);
+  const isValid = ajv.validate(getJsonSchema(), config);
+  if (!isValid) {
+    throw new Error(`GraphQL Mesh Configuration is not valid: ${ajv.errorsText()}`);
+  }
+}
+
 export async function findAndParseConfig(
   options?: { configName?: string } & ConfigProcessOptions
 ): Promise<GetMeshOptions> {
@@ -130,6 +142,7 @@ export async function findAndParseConfig(
     },
   });
   const results = await explorer.search(dir);
-  const config = results?.config as YamlConfig.Config;
+  const config = results?.config;
+  validateConfig(config);
   return processConfig(config, { dir, ignoreAdditionalResolvers });
 }
