@@ -1,0 +1,8 @@
+subscription SearchMoviesByCast {
+  SearchMoviesByCast(input: { castName: "Tom Cruise" }) {
+    name
+    year
+    rating
+    cast
+  }
+}

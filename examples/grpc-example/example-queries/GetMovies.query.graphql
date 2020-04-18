@@ -1,5 +1,5 @@
-query ExampleGetMovies {
-  ExampleGetMovies {
+mutation GetMovies {
+  GetMovies {
     result {
       name
       year
