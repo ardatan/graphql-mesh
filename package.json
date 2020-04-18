@@ -42,7 +42,7 @@
     "graphql": "15.0.0",
     "graphql-to-config-schema": "0.0.16",
     "lerna": "3.20.2",
-    "lint-staged": "10.1.4",
+    "lint-staged": "10.1.5",
     "husky": "4.2.5",
     "prettier": "2.0.4"
   },
