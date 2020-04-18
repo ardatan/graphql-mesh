@@ -1,0 +1,50 @@
+name: Website Deployment
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deploy-website:
+    name: Deploy Website
+    runs-on: ubuntu-latest
+    if: contains(github.ref, 'master')
+    steps:
+      - name: Checkout Master
+        uses: actions/checkout@v1
+      - name: Use Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '13.x'
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache Yarn
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Cache Lerna
+        uses: actions/cache@master
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Install Dependencies using Yarn
+        run: yarn install && git checkout yarn.lock
+      - name: Build
+        run: yarn build:website
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GIT_CONFIG_NAME: ${{ github.actor }}
+          GIT_CONFIG_EMAIL: ${{github.actor}}@bots.github.com
+          ACCESS_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: website/build # The folder the action should deploy.
