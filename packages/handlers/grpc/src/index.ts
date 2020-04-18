@@ -1,6 +1,5 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { getGraphqlSchemaFromGrpc } from './get-graphql-schema-from-grpc';
-import { isAbsolute, join } from 'path';
+import { GrpcGraphQLSchemaFactory } from './grpc-graphql-schema-factory';
 
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
   async getMeshSource({ config }) {
@@ -8,16 +7,15 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
       throw new Error('Config not specified!');
     }
 
-    config.protoFilePath = isAbsolute(config.protoFilePath)
-      ? config.protoFilePath
-      : join(process.cwd(), config.protoFilePath);
+    const schemaFactory = new GrpcGraphQLSchemaFactory(config);
+    await schemaFactory.init();
 
-    const schema = await getGraphqlSchemaFromGrpc(config);
+    const schema = schemaFactory.buildSchema();
 
     return {
-      schema
+      schema,
     };
-  }
+  },
 };
 
 export default handler;
