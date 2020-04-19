@@ -144,7 +144,7 @@ export async function getMesh(
 
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any>(
     document: GraphQLOperation,
-    variables: TVariables,
+    variables?: TVariables,
     context?: TContext,
     rootValue?: TRootValue
   ) {
@@ -154,7 +154,7 @@ export async function getMesh(
       document: ensureDocumentNode(document),
       contextValue,
       rootValue: rootValue || {},
-      variableValues: variables,
+      variableValues: variables || {},
       schema: unifiedSchema,
     });
   }
