@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/deep-equal": "1.0.1",
-    "@types/form-urlencoded": "2.0.0"
+    "@types/form-urlencoded": "2.0.1"
   },
   "peerDependencies": {
     "graphql": "*"

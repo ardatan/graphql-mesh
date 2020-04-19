@@ -2093,10 +2093,10 @@
   resolved "https://registry.yarnpkg.com/@types/faker/-/faker-4.1.11.tgz#07911f1a39aeeaeec71d8efa0f93ef0eeafd3462"
   integrity sha512-iL7khABWgMH53FDfQNYtbFDJXjM3G97KswtyVMUP9XBSt9c+33L1TsXI+mx+EgnoOcuSp12qZae6hLCxGcq7yg==
 
-"@types/form-urlencoded@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/form-urlencoded/-/form-urlencoded-2.0.0.tgz#c2261384b701b48ed36acb76914b93bc35c2057c"
-  integrity sha512-YSOtk4tKFNUTlh+e8T4TBEDVVT2E1C9gKoF0+7ArcM1YZqQ8L7lUr4DxJpCS0jY6xm7GmATev46neF3rUfwuKA==
+"@types/form-urlencoded@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/form-urlencoded/-/form-urlencoded-2.0.1.tgz#5c7789aca2681564116c3d278359232527e14ba1"
+  integrity sha512-Kz3LwezuNvsQF8ZcswMv4b5ZhKmjTkH2Rxle6l/520Npvaxho6b4HN9lStp6HhGrZsL/rwJHpWK9vM1RA7uZbw==
 
 "@types/fs-capacitor@*":
   version "2.0.0"
