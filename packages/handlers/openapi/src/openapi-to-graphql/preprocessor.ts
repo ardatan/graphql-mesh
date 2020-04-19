@@ -553,15 +553,15 @@ export function createDataDef(
 
       // oneOf will ideally be turned into a union type
       if (Array.isArray(collapsedSchema.oneOf)) {
-        const oneOfDataDef = createDataDefFromOneOf(
+        const oneOfDataDef = createDataDefFromOneOf({
           saneName,
           saneInputName,
           collapsedSchema,
           isInputObjectType,
           def,
           data,
-          oas
-        );
+          oas,
+        });
         if (typeof oneOfDataDef === 'object') {
           return oneOfDataDef;
         }
@@ -573,15 +573,15 @@ export function createDataDef(
        * Fields common to all member schemas will be made non-null
        */
       if (Array.isArray(collapsedSchema.anyOf)) {
-        const anyOfDataDef = createDataDefFromAnyOf(
+        const anyOfDataDef = createDataDefFromAnyOf({
           saneName,
           saneInputName,
           collapsedSchema,
           isInputObjectType,
           def,
           data,
-          oas
-        );
+          oas,
+        });
         if (typeof anyOfDataDef === 'object') {
           return anyOfDataDef;
         }
@@ -1036,15 +1036,23 @@ function hasNestedAnyOfUsage(collapsedSchema: SchemaObject, oas: Oas3): boolean 
  * anyOf should resolve into an object that contains the superset of all
  * properties from the member schemas
  */
-function createDataDefFromAnyOf(
-  saneName: string,
-  saneInputName: string,
-  collapsedSchema: SchemaObject,
-  isInputObjectType: boolean,
-  def: DataDefinition,
-  data: PreprocessingData,
-  oas: Oas3
-) {
+function createDataDefFromAnyOf({
+  saneName,
+  saneInputName,
+  collapsedSchema,
+  isInputObjectType,
+  def,
+  data,
+  oas,
+}: {
+  saneName: string;
+  saneInputName: string;
+  collapsedSchema: SchemaObject;
+  isInputObjectType: boolean;
+  def: DataDefinition;
+  data: PreprocessingData;
+  oas: Oas3;
+}): DataDefinition | void {
   const anyOfData = getMemberSchemaData(collapsedSchema.anyOf, data, oas);
 
   if (
@@ -1186,15 +1194,23 @@ function createDataDefFromAnyOf(
   }
 }
 
-function createDataDefFromOneOf(
-  saneName: string,
-  saneInputName: string,
-  collapsedSchema: SchemaObject,
-  isInputObjectType: boolean,
-  def: DataDefinition,
-  data: PreprocessingData,
-  oas: Oas3
-) {
+function createDataDefFromOneOf({
+  saneName,
+  saneInputName,
+  collapsedSchema,
+  isInputObjectType,
+  def,
+  data,
+  oas,
+}: {
+  saneName: string;
+  saneInputName: string;
+  collapsedSchema: SchemaObject;
+  isInputObjectType: boolean;
+  def: DataDefinition;
+  data: PreprocessingData;
+  oas: Oas3;
+}): DataDefinition | void {
   const oneOfData = getMemberSchemaData(collapsedSchema.oneOf, data, oas);
 
   if (

@@ -11,7 +11,7 @@
 // Type imports:
 import { PreprocessingData } from './types/preprocessing_data';
 import { Operation, DataDefinition } from './types/operation';
-import { Oas3, SchemaObject, ParameterObject, ReferenceObject, LinkObject } from './types/oas3';
+import { SchemaObject, ParameterObject, ReferenceObject, LinkObject, Oas3 } from './types/oas3';
 import { Args, GraphQLType } from './types/graphql';
 import {
   GraphQLScalarType,
@@ -285,7 +285,7 @@ function createOrReuseUnion({ def, operation, data, iteration }: CreateOrReuseCo
       name: def.graphQLTypeName,
       description,
       types,
-      resolveType: (source, context, info) => {
+      resolveType: source => {
         const properties = Object.keys(source);
 
         // Remove custom _openAPIToGraphQL property used to pass data
@@ -433,7 +433,7 @@ function createOrReuseList({
 /**
  * Creates an enum type or returns an existing one, and stores it in data
  */
-function createOrReuseEnum({ def, data }: CreateOrReuseSimpleTypeParams): GraphQLEnumType {
+function createOrReuseEnum({ def }: CreateOrReuseSimpleTypeParams): GraphQLEnumType {
   /**
    * Try to reuse existing enum type
    *
@@ -470,7 +470,7 @@ function createOrReuseEnum({ def, data }: CreateOrReuseSimpleTypeParams): GraphQ
 /**
  * Returns the GraphQL scalar type matching the given JSON schema type
  */
-function getScalarType({ def, data }: CreateOrReuseSimpleTypeParams): GraphQLScalarType {
+function getScalarType({ def }: CreateOrReuseSimpleTypeParams): GraphQLScalarType {
   switch (def.targetGraphQLType) {
     case 'id':
       def.graphQLType = GraphQLID;
@@ -678,7 +678,7 @@ function createFields({
  *  Any changes to constructing operationIds in preprocessor.js should be
  *  reflected here.
  */
-function linkOpRefToOpId({ links, linkKey, operation, data }: LinkOpRefToOpIdParams): string {
+function linkOpRefToOpId({ links, linkKey, operation, data }: LinkOpRefToOpIdParams): string | void {
   const link = links[linkKey];
 
   if (typeof link.operationRef === 'string') {
@@ -1102,7 +1102,7 @@ export function getArgs({ requestPayloadDef, parameters, operation, data }: GetA
  *
  * For example, name reference, file path, web-hosted OAS link, etc.
  */
-function getLinkLocationType(linkLocation: string): string {
+function getLinkLocationType(): string {
   // TODO: currently we only support the title as a link location
   return 'title';
 }
@@ -1119,9 +1119,9 @@ function getOasFromLinkLocation({
   linkLocation: string;
   link: LinkObject;
   data: PreprocessingData;
-}): Oas3 {
+}): Oas3 | void {
   // May be an external reference
-  switch (getLinkLocationType(linkLocation)) {
+  switch (getLinkLocationType()) {
     case 'title':
       // Get the possible
       const possibleOass = data.oass.filter(oas => {
