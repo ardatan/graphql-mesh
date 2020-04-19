@@ -1,7 +1,7 @@
 {
   "name": "graphql-mesh",
   "license": "MIT",
-  "version": "0.1.4",
+  "version": "0.1.5-0868fd1.2",
   "private": true,
   "scripts": {
     "prebuild:website": "yarn generate-config-schema && yarn copy-config-schema",
@@ -43,7 +43,6 @@
     "graphql-to-config-schema": "0.0.16",
     "lerna": "3.20.2",
     "lint-staged": "10.1.6",
-    "libnpmpublish": "3.0.1",
     "globby": "11.0.0",
     "husky": "4.2.5",
     "prettier": "2.0.4"

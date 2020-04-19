@@ -2,7 +2,6 @@ const { argv } = require('yargs');
 const { sync: glob } = require('globby');
 const { writeFileSync } = require('fs');
 const { resolve, dirname, join } = require('path');
-const { publish } = require('libnpmpublish');
 const semver = require('semver');
 const cp = require('child_process');
 const rootPackageJson = require('../package.json');
@@ -12,13 +11,10 @@ async function release() {
     let version = argv.version || rootPackageJson.version;
     let tag = argv.tag || 'latest';
     if (argv.canary) {
-        if(!version) {
-            const gitHash = cp.spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
-            version = semver.inc(version, 'prerelease', true, gitHash);
-        }
+        const gitHash = cp.spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
+        version = semver.inc(version, 'prerelease', true, 'alpha-' + gitHash);
+        tag = 'canary';
     }
-
-    const token = argv.token;
     
     const workspaceGlobs = rootPackageJson.workspaces.map(workspace => workspace + '/package.json');
     
@@ -27,6 +23,7 @@ async function release() {
     const packageNames = packageJsonPaths.map(packageJsonPath => require(packageJsonPath).name);
     
     rootPackageJson.version = version;
+    writeFileSync(resolve(__dirname, '../package.json'), JSON.stringify(rootPackageJson, null, 2));
     await Promise.all(packageJsonPaths.map(async packageJsonPath => {
         const packageJson = require(packageJsonPath);
         packageJson.version = version;
@@ -57,12 +54,11 @@ async function release() {
             }
             writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
 
-            await publish(distPath, distPackageJson, {
-                npmVersion: `${distPackageJson.name}@${distPackageJson.version}`,
-                defaultTag: tag,
-                access: distPackageJson.publishConfig.access,
-                token,
-            });
+            console.info(`Releasing ${packageJson.name}@${packageJson.version} as ${tag} tag`)
+            const result = cp.spawnSync('npm', ['publish', '--tag', tag, '--access', packageJson.publishConfig.access], {
+                cwd: distPath,
+            }).stdout.toString().trim();
+            console.info(result);
         }
     }))
     

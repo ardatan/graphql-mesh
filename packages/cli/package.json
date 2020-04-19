@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.1.4",
+  "version": "0.1.5-0868fd1.2",
   "license": "MIT",
   "scripts": {
     "prepack": "bob prepack"
@@ -33,7 +33,7 @@
     "@graphql-codegen/typescript-generic-sdk": "1.13.2",
     "@graphql-codegen/typescript-operations": "1.13.2",
     "@graphql-codegen/typescript-resolvers": "1.13.2",
-    "@graphql-mesh/runtime": "0.1.4",
+    "@graphql-mesh/runtime": "0.1.5-0868fd1.2",
     "@graphql-toolkit/code-file-loader": "0.10.4",
     "@graphql-toolkit/common": "0.10.4",
     "@graphql-toolkit/core": "0.10.4",

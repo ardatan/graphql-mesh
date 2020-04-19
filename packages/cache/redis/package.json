@@ -1,28 +1,28 @@
 {
-    "name": "@graphql-mesh/cache-redis",
-    "version": "0.1.4",
-    "license": "MIT",
-    "scripts": {
-        "prepack": "bob prepack"
-    },
-    "peerDependencies": {
-        "graphql": "*"
-    },
-    "sideEffects": false,
-    "main": "dist/index.cjs.js",
-    "module": "dist/index.esm.js",
-    "typings": "dist/index.d.ts",
-    "typescript": {
-        "definition": "dist/index.d.ts"
-    },
-    "dependencies": {
-        "@graphql-mesh/types": "0.1.4",
-        "@types/ioredis": "4.14.9",
-        "dataloader": "2.0.0",
-        "ioredis": "4.16.2"
-    },
-    "publishConfig": {
-        "access": "public",
-        "directory": "dist"
-    }
+  "name": "@graphql-mesh/cache-redis",
+  "version": "0.1.5-0868fd1.2",
+  "license": "MIT",
+  "scripts": {
+    "prepack": "bob prepack"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.1.5-0868fd1.2",
+    "@types/ioredis": "4.14.9",
+    "dataloader": "2.0.0",
+    "ioredis": "4.16.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
 }
