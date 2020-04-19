@@ -101,7 +101,8 @@ export class JSONSchemaVisitor {
   }
 
   visitArray(arrayDef: JSONSchemaArrayDefinition, propertyName: string, prefix: string, isInput: boolean) {
-    return new GraphQLList(this.visit(arrayDef.items, propertyName, prefix, isInput));
+    const itemsDef = Array.isArray(arrayDef.items) ? arrayDef.items[0] : arrayDef.items;
+    return new GraphQLList(this.visit(itemsDef, propertyName, prefix, isInput));
   }
 
   visitBoolean() {
