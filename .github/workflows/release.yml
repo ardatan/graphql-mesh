@@ -22,10 +22,9 @@ jobs:
           git checkout master
           git reset --hard
       - run: yarn install
-      - run: npm run ci:release
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-          NPM_VERSION: ${{ github.event.release.tag_name }}
+      - run: yarn build
+      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NODE_AUTH_TOKEN }}" > .npmrc
+      - run: npm run release --version ${{ github.event.release.tag_name }}
       - run: |
           git add .
           git commit -m "${{ github.event.release.tag_name }}"

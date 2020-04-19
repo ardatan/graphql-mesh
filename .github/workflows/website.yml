@@ -29,16 +29,9 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Cache Lerna
-        uses: actions/cache@master
-        with:
-          path: |
-            node_modules
-            */*/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
-      - name: Build
+      - name: Build Website
         run: yarn build:website
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3

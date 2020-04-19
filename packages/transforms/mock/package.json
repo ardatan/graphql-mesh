@@ -1,31 +1,31 @@
 {
-    "name": "@graphql-mesh/transform-mock",
-    "version": "0.1.4",
-    "sideEffects": false,
-    "main": "dist/index.cjs.js",
-    "module": "dist/index.esm.js",
-    "typings": "dist/index.d.ts",
-    "typescript": {
-        "definition": "dist/index.d.ts"
-    },
-    "license": "MIT",
-    "scripts": {
-        "prepack": "bob prepack"
-    },
-    "peerDependencies": {
-        "graphql": "*"
-    },
-    "devDependencies": {
-        "@types/faker": "4.1.11"
-    },
-    "dependencies": {
-        "@graphql-mesh/types": "0.1.4",
-        "@graphql-mesh/utils": "0.1.4",
-        "faker": "4.1.0",
-        "graphql-tools": "5.0.0"
-    },
-    "publishConfig": {
-        "access": "public",
-        "directory": "dist"
-    }
+  "name": "@graphql-mesh/transform-mock",
+  "version": "0.1.4",
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prepack": "bob prepack"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "@types/faker": "4.1.11"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.1.4",
+    "@graphql-mesh/utils": "0.1.4",
+    "faker": "4.1.0",
+    "graphql-tools": "5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
 }

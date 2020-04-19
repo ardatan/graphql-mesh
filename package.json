@@ -1,10 +1,13 @@
 {
   "name": "graphql-mesh",
   "license": "MIT",
+  "version": "0.1.4",
   "private": true,
   "scripts": {
-    "build:website": "yarn build && cd website && yarn build:prod",
-    "prebuild": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/",
+    "prebuild:website": "yarn generate-config-schema && yarn copy-config-schema",
+    "build:website": "cd website && yarn build:prod",
+    "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/",
+    "prebuild": "yarn generate-config-schema",
     "build": "tsc --project tsconfig.build.json && bob build",
     "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
     "fix-bin": "node scripts/fix-bin.js",
@@ -15,11 +18,8 @@
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
     "test": "jest --no-watchman",
     "test-and-build": "yarn build && yarn test",
-    "prerelease": "yarn test-and-build",
-    "preci:release": "yarn test-and-build",
-    "release": "lerna publish --exact --force-publish=\"*\"",
-    "ci:release": "lerna publish --exact --force-publish=\"*\" --yes --repo-version=$NPM_VERSION --no-git-tag-version",
-    "ci:release:canary": "lerna publish --force-publish=\"*\" --preid \"alpha-`git rev-parse --short HEAD`\" --canary --exact --yes"
+    "release": "node scripts/release.js",
+    "release:canary": "node scripts/release.js --canary"
   },
   "devDependencies": {
     "@types/jest": "25.2.1",
@@ -41,8 +41,8 @@
     "fs-extra": "9.0.0",
     "graphql": "15.0.0",
     "graphql-to-config-schema": "0.0.16",
-    "lerna": "3.20.2",
     "lint-staged": "10.1.6",
+    "globby": "11.0.0",
     "husky": "4.2.5",
     "prettier": "2.0.4"
   },
