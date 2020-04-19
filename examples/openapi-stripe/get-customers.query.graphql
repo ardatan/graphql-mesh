@@ -1,0 +1,9 @@
+query GetCustomers {
+  getCustomers {
+    data {
+      id
+      name
+      email
+    }
+  }
+}

@@ -447,12 +447,8 @@ function createOrReuseEnum({ def }: CreateOrReuseSimpleTypeParams): GraphQLEnumT
 
     const values = {};
     def.schema.enum.forEach(e => {
-      let key = Oas3Tools.sanitize(e.toString(), Oas3Tools.CaseStyle.ALL_CAPS);
-      if (!key || !isNaN(parseInt(key[0]))) {
-        key = '_' + key;
-      }
       // Force enum values to string and value should be in ALL_CAPS
-      values[key] = {
+      values[Oas3Tools.sanitize(e.toString(), Oas3Tools.CaseStyle.ALL_CAPS)] = {
         value: e,
       };
     });

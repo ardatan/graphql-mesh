@@ -169,7 +169,11 @@ export async function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: 
     },
     plugins: [
       {
-        typescript: {},
+        typescript: {
+          namingConvention: {
+            enumValues: 'keep',
+          },
+        },
       },
       {
         resolvers: {
