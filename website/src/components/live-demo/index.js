@@ -6,6 +6,7 @@ const EXAMPLES = {
         'JavaScript Wiki': 'openapi-javascript-wiki',
         'Location Weather': 'openapi-location-weather',
         'YouTrack': 'openapi-youtrack',
+        'Stripe': 'openapi-stripe',
     },
     'JSON Schema': {
         'Fake API': 'json-schema-example',
