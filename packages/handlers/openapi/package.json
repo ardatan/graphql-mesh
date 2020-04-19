@@ -12,14 +12,26 @@
   "scripts": {
     "prepack": "bob prepack"
   },
+  "devDependencies": {
+    "@types/deep-equal": "1.0.1",
+    "@types/form-urlencoded": "2.0.0"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@ardatan/openapi-to-graphql": "2.0.6",
     "@graphql-mesh/types": "0.1.4",
     "@graphql-mesh/utils": "0.1.4",
-    "fetchache": "0.0.3"
+    "fetchache": "0.0.3",
+    "debug": "4.1.1",
+    "deep-equal": "2.0.2",
+    "form-urlencoded": "4.1.3",
+    "jsonpath-plus": "4.0.0",
+    "oas-validator": "4.0.3",
+    "graphql-scalars": "1.1.0",
+    "pluralize": "8.0.0",
+    "swagger2openapi": "6.0.3",
+    "url-join": "4.0.1"
   },
   "publishConfig": {
     "access": "public",

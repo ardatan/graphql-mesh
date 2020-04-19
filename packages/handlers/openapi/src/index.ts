@@ -4,8 +4,8 @@ import {
   parseInterpolationStrings,
   stringInterpolator,
 } from '@graphql-mesh/utils';
-import { createGraphQLSchema } from '@ardatan/openapi-to-graphql';
-import { Oas3 } from '@ardatan/openapi-to-graphql/lib/types/oas3';
+import { createGraphQLSchema } from './openapi-to-graphql';
+import { Oas3 } from './openapi-to-graphql/types/oas3';
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { fetchache, Request } from 'fetchache';
 
