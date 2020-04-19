@@ -89,7 +89,7 @@ export async function createGraphQLSchema(spec: Oas3 | Oas2 | (Oas3 | Oas2)[], o
   options.equivalentToMessages =
     typeof options.equivalentToMessages === 'boolean' ? options.equivalentToMessages : true;
 
-  options.fetch = typeof options.fetch === 'function' ? options.fetch : await import('cross-fetch').then(m => m.fetch);
+  options.fetch = typeof options.fetch === 'function' ? options.fetch : await import('fetchache').then(m => m.fetch);
 
   options.resolverMiddleware =
     typeof options.resolverMiddleware === 'function'
