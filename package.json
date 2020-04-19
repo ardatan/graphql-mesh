@@ -1,6 +1,7 @@
 {
   "name": "graphql-mesh",
   "license": "MIT",
+  "version": "0.1.4",
   "private": true,
   "scripts": {
     "build:website": "yarn build && cd website && yarn build:prod",
@@ -15,11 +16,8 @@
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
     "test": "jest --no-watchman",
     "test-and-build": "yarn build && yarn test",
-    "prerelease": "yarn test-and-build",
-    "preci:release": "yarn test-and-build",
-    "release": "lerna publish --exact --force-publish=\"*\"",
-    "ci:release": "lerna publish --exact --force-publish=\"*\" --yes --repo-version=$NPM_VERSION --no-git-tag-version",
-    "ci:release:canary": "lerna publish --force-publish=\"*\" --preid \"alpha-`git rev-parse --short HEAD`\" --canary --exact --yes"
+    "release": "node scripts/release.js --version=$VERSION",
+    "release:canary": "node scripts/release.js --canary"
   },
   "devDependencies": {
     "@types/jest": "25.2.1",
@@ -43,6 +41,8 @@
     "graphql-to-config-schema": "0.0.16",
     "lerna": "3.20.2",
     "lint-staged": "10.1.6",
+    "libnpmpublish": "3.0.1",
+    "globby": "11.0.0",
     "husky": "4.2.5",
     "prettier": "2.0.4"
   },
