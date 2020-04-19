@@ -12,9 +12,6 @@
     "input": "./src/index.ts"
   },
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "peerDependencies": {
     "graphql": "*"
   },

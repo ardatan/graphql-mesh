@@ -2,9 +2,6 @@
   "name": "@graphql-mesh/cache-inmemory-lru",
   "version": "0.1.4",
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "peerDependencies": {
     "graphql": "*"
   },

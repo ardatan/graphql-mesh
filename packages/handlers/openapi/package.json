@@ -9,9 +9,6 @@
     "definition": "dist/index.d.ts"
   },
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "devDependencies": {
     "@types/deep-equal": "1.0.1",
     "@types/form-urlencoded": "2.0.0"

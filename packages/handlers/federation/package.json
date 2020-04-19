@@ -9,9 +9,6 @@
     "definition": "dist/index.d.ts"
   },
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "peerDependencies": {
     "@apollo/gateway": "*",
     "graphql": "*"
