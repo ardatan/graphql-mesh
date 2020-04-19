@@ -1,6 +1,6 @@
 const { argv } = require('yargs');
 const { sync: glob } = require('globby');
-const { writeFileSync } = require('fs');
+const { writeFileSync } = require('fs-extra');
 const { resolve, dirname, join } = require('path');
 const semver = require('semver');
 const cp = require('child_process');
