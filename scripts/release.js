@@ -64,7 +64,7 @@ async function release() {
             }
         }
     }))
-    console.info(`${tag} => ${packageJson.version}`);
+    console.info(`${tag} => ${version}`);
 }
 
 release().catch(err => {
