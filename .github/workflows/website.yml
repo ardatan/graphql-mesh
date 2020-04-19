@@ -3,15 +3,12 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
   deploy-website:
     name: Deploy Website
+    timeout-minutes: 10
     runs-on: ubuntu-latest
-    if: contains(github.ref, 'master')
     steps:
       - name: Checkout Master
         uses: actions/checkout@v1
