@@ -54,7 +54,7 @@ async function release() {
             }
             writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
 
-            const publishSpawn = cp.spawnSync('npm', ['publish', distPath, '--tag', tag, '--access', packageJson.publishConfig.access, '--dry-run']);
+            const publishSpawn = cp.spawnSync('npm', ['publish', distPath, '--tag', tag, '--access', packageJson.publishConfig.access]);
             if(publishSpawn.status !== 0) {
                 const error = publishSpawn.stderr.toString('utf8').trim();
                 throw error;
