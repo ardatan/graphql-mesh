@@ -17,6 +17,8 @@ async function release() {
             version = semver.inc(version, 'prerelease', true, gitHash);
         }
     }
+
+    const token = argv.token;
     
     const workspaceGlobs = rootPackageJson.workspaces.map(workspace => workspace + '/package.json');
     
@@ -59,7 +61,7 @@ async function release() {
                 npmVersion: `${distPackageJson.name}@${distPackageJson.version}`,
                 defaultTag: tag,
                 access: distPackageJson.publishConfig.access,
-                token: process.env.NODE_AUTH_TOKEN,
+                token,
             });
         }
     }))

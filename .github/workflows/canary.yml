@@ -28,13 +28,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Cache Lerna
-        uses: actions/cache@master
-        with:
-          path: |
-            node_modules
-            */*/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Build
@@ -46,7 +39,7 @@ jobs:
         if: github.repository == 'urigo/graphql-mesh'
         with:
           npm-token: ${{ secrets.NODE_AUTH_TOKEN }}
-          npm-script: 'release:canary'
+          npm-script: 'release:canary --token=${{ secrets.NODE_AUTH_TOKEN }}'
       - name: Publish a message
         if: steps.canary.outputs.released
         uses: 'kamilkisiela/pr-comment@master'

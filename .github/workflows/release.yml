@@ -22,6 +22,7 @@ jobs:
           git checkout master
           git reset --hard
       - run: yarn install
+      - run: yarn build
       - run: npm run release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
