@@ -54,7 +54,7 @@ async function release() {
             }
             writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
 
-            console.info(`Releasing ${packageJson.name}@${packageJson.version} as ${tag} tag`)
+            console.info(`Releasing => ${packageJson.name}@${packageJson.version} as ${tag} tag`)
             const result = cp.spawnSync('npm', ['publish', '--tag', tag, '--access', packageJson.publishConfig.access], {
                 cwd: distPath,
             }).stdout.toString().trim();
