@@ -62,10 +62,9 @@ async function release() {
                 const error = publishSpawn.stderr.toString('utf8').trim();
                 throw error;
             }
-            console.info(`${packageJson.name}@${tag} => ${packageJson.version}`);
         }
     }))
-    
+    console.info(`${tag} => ${packageJson.version}`);
 }
 
 release().catch(err => {
