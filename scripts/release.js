@@ -54,15 +54,12 @@ async function release() {
             }
             writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
 
-            console.info(`Releasing => ${packageJson.name}@${packageJson.version} as ${tag} tag`)
-            const publishSpawn = cp.spawnSync('npm', ['publish', '--tag', tag, '--access', packageJson.publishConfig.access], {
-                cwd: distPath,
-            });
-            const error = publishSpawn.stderr.toString();
-            if(error) {
+            const publishSpawn = cp.spawnSync('npm', ['publish', distPath, '--tag', tag, '--access', packageJson.publishConfig.access, '--dry-run']);
+            if(publishSpawn.status !== 0) {
+                const error = publishSpawn.stderr.toString('utf8').trim();
                 throw error;
             }
-            console.info(publishSpawn.stdout.toString());
+            console.info(`Released => ${packageJson.name}@${packageJson.version} as ${tag} tag`);
         }
     }))
     

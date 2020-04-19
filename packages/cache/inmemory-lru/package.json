@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-inmemory-lru",
-  "version": "0.1.4",
+  "version": "0.1.5-alpha-390b7ab.8",
   "license": "MIT",
   "scripts": {
     "prepack": "bob prepack"
@@ -16,7 +16,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.4",
+    "@graphql-mesh/types": "0.1.5-alpha-390b7ab.8",
     "@types/lru-cache": "5.1.0",
     "lru-cache": "5.1.1"
   },
