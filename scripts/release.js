@@ -9,6 +9,9 @@ const rootPackageJson = require('../package.json');
 async function release() {
 
     let version = argv.version || rootPackageJson.version;
+    if(version.startsWith('v')) {
+        version = version.replace('v', '')
+    }
     let tag = argv.tag || 'latest';
     if (argv.canary) {
         const gitHash = cp.spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
@@ -59,7 +62,7 @@ async function release() {
                 const error = publishSpawn.stderr.toString('utf8').trim();
                 throw error;
             }
-            console.info(`Released => ${packageJson.name}@${packageJson.version} as ${tag} tag`);
+            console.info(`${packageJson.name}@${tag} => ${packageJson.version}`);
         }
     }))
     

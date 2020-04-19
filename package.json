@@ -1,7 +1,7 @@
 {
   "name": "graphql-mesh",
   "license": "MIT",
-  "version": "0.1.4",
+  "version": "0.1.5-alpha-e4fc998.1",
   "private": true,
   "scripts": {
     "prebuild:website": "yarn generate-config-schema && yarn copy-config-schema",
@@ -18,7 +18,7 @@
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
     "test": "jest --no-watchman",
     "test-and-build": "yarn build && yarn test",
-    "release": "node scripts/release.js --version=$VERSION",
+    "release": "node scripts/release.js",
     "release:canary": "node scripts/release.js --canary"
   },
   "devDependencies": {
