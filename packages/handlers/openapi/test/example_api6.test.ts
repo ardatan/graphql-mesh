@@ -7,7 +7,7 @@
 
 /* globals beforeAll, test, expect */
 
-import { graphql, parse, validate, GraphQLSchema, printSchema } from 'graphql';
+import { graphql, parse, validate, GraphQLSchema } from 'graphql';
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
@@ -25,7 +25,7 @@ let createdSchema: GraphQLSchema;
  */
 beforeAll(() => {
   return Promise.all([
-    openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema, report }) => {
+    openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema }) => {
       createdSchema = schema;
     }),
     startServer(PORT),
