@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/handler-federation",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -17,7 +17,7 @@
     "@apollo/gateway": "0.14.1"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.4",
+    "@graphql-mesh/types": "0.1.5",
     "fetchache": "0.0.3",
     "graphql-tools": "5.0.0"
   },

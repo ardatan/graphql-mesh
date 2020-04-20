@@ -24,7 +24,8 @@ jobs:
       - run: yarn install
       - run: yarn build
       - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NODE_AUTH_TOKEN }}" > .npmrc
-      - run: npm run release --version ${{ github.event.release.tag_name }}
+      - run: npm run release --ver="${{ github.event.release.tag_name }}"
+      - run: rm .npmrc
       - run: |
           git add .
           git commit -m "${{ github.event.release.tag_name }}"
