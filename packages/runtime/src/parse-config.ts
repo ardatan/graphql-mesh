@@ -17,7 +17,7 @@ export async function parseConfig(
   const { configFormat = 'object' } = options || {};
   switch (configFormat) {
     case 'yaml':
-      config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
+      config = defaultLoaders['.yaml']('.meshrc.yml', rawConfig as string);
       break;
     case 'json':
       config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
