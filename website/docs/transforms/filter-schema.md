@@ -53,28 +53,6 @@ type Query {
     me: User
     users: [User]
     user(id: ID): User
-    admins: [User]
-}
-
-type Mutation {
-    updateMyProfile(name: String, age: Int): User
-    addUser(username: String, name: String, age: Int): User
-    removeUser(id: ID): ID
-}
-
-type User {
-    id: ID
-    username: String
-    password: String
-    name: String
-    age: Int
-    ipAddress: String
-}
-``````graphql
-type Query {
-    me: User
-    users: [User]
-    user(id: ID): User
 }
 
 type Mutation {
