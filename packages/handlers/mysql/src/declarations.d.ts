@@ -1,1 +1,2 @@
-declare module 'graphql-compose-mysql';
+declare module 'mysql';
+declare module 'mysql-utilities';
