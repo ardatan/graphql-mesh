@@ -28,6 +28,16 @@ import { JSONResolver as GraphQLJSON } from 'graphql-scalars';
 
 type GraphQLSharedType = GraphQLInputType & GraphQLOutputType;
 
+const asArray = <T>(maybeArray: T | T[]): T[] => {
+  if (Array.isArray(maybeArray)) {
+    return maybeArray;
+  } else if (maybeArray) {
+    return [maybeArray];
+  } else {
+    return [];
+  }
+};
+
 export class JSONSchemaVisitorCache {
   public readonly inputSpecificTypesByIdentifier = new Map<string, GraphQLInputType>();
   public readonly outputSpecificTypesByIdentifier = new Map<string, GraphQLOutputType>();
@@ -82,6 +92,7 @@ export class JSONSchemaVisitor {
         } else {
           return this.visitString();
         }
+      case 'null':
       case 'any':
         return this.visitAny();
       case 'object':
@@ -101,7 +112,8 @@ export class JSONSchemaVisitor {
   }
 
   visitArray(arrayDef: JSONSchemaArrayDefinition, propertyName: string, prefix: string, isInput: boolean) {
-    return new GraphQLList(this.visit(arrayDef.items, propertyName, prefix, isInput));
+    const [itemsDef] = asArray(arrayDef.items);
+    return new GraphQLList(itemsDef ? this.visit(itemsDef, propertyName, prefix, isInput) : this.visitAny());
   }
 
   visitBoolean() {
