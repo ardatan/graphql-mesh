@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@master
       
       - name: Detect Changes
-        uses: kamilkisiela/graphql-inspector@fix/assume-valid-schema
+        uses: kamilkisiela/graphql-inspector@ae5e3fc9986dbf2d49cad81ad7e7f7c9b16cd50c
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           schema: 'master:schema.graphql'
