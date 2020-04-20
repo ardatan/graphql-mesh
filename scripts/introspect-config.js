@@ -3,9 +3,10 @@ const { GraphQLFileLoader } = require('@graphql-toolkit/graphql-file-loader');
 const { printSchemaWithDirectives } = require('@graphql-toolkit/common');
 const { writeFileSync } = require('fs');
 const { resolve } = require('path');
+const { DIRECTIVES } = require('graphql-to-config-schema');
 
 async function main () {
-    const schema = await loadSchema('./**/yaml-config.graphql', {
+    const schema = await loadSchema([DIRECTIVES, './**/yaml-config.graphql'], {
         loaders: [
             new GraphQLFileLoader()
         ],
