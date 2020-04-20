@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package io.xtech.example;
 
+import "google/protobuf/timestamp.proto";
+
 /**
  * movie message payload
  */
@@ -14,6 +16,7 @@ message Movie {
      * list of cast
      */
     repeated string cast = 4;
+	google.protobuf.Timestamp time = 5;
 }
 
 message EmptyRequest {}

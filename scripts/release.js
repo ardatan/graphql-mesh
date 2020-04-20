@@ -8,7 +8,7 @@ const rootPackageJson = require('../package.json');
 
 async function release() {
 
-    let version = argv.ver || rootPackageJson.version;
+    let version = process.env.RELEASE_VERSION || rootPackageJson.version;
     if(version.startsWith('v')) {
         version = version.replace('v', '')
     }

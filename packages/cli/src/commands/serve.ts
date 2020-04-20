@@ -11,6 +11,7 @@ import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
 import { basename, resolve } from 'path';
 import { createServer } from 'http';
 import { readFileSync } from 'fs';
+import 'json-bigint-patch';
 
 export async function serveMesh(
   logger: Logger,

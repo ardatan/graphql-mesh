@@ -3,6 +3,7 @@ import * as grpc from 'grpc';
 
 import { ExampleService, IExampleServer } from './proto/Example_grpc_pb';
 import { EmptyRequest, Movie, MoviesResult, SearchByCastRequest } from './proto/Example_pb';
+import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 
 const log = debug('SampleServer');
 
@@ -11,7 +12,10 @@ interface IRawMovie {
   name: string;
   rating: number;
   year: number;
+  time: { seconds: number };
 }
+
+const seconds = Date.now();
 
 const Movies = [
   {
@@ -19,18 +23,27 @@ const Movies = [
     name: 'Mission: Impossible Rogue Nation',
     rating: 0.97,
     year: 2015,
+    time: {
+      seconds,
+    },
   },
   {
     cast: ['Tom Cruise', 'Simon Pegg', 'Henry Cavill'],
     name: 'Mission: Impossible - Fallout',
     rating: 0.93,
     year: 2018,
+    time: {
+      seconds,
+    },
   },
   {
     cast: ['Leonardo DiCaprio', 'Jonah Hill', 'Margot Robbie'],
     name: 'The Wolf of Wall Street',
     rating: 0.78,
     year: 2013,
+    time: {
+      seconds,
+    },
   },
 ];
 
@@ -41,6 +54,9 @@ function createMovie(movie: IRawMovie): Movie {
   result.setName(movie.name);
   result.setYear(movie.year);
   result.setRating(movie.rating);
+  const timestamp = new Timestamp();
+  timestamp.setSeconds(movie.time.seconds);
+  result.setTime(timestamp);
 
   return result;
 }

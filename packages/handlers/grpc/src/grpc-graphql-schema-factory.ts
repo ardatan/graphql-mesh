@@ -1,23 +1,4 @@
-import {
-  GraphQLInputType,
-  GraphQLOutputType,
-  GraphQLInt,
-  GraphQLFloat,
-  GraphQLString,
-  GraphQLBoolean,
-  GraphQLScalarType,
-  GraphQLFieldConfigMap,
-  GraphQLEnumType,
-  GraphQLEnumTypeConfig,
-  GraphQLInputObjectTypeConfig,
-  GraphQLObjectTypeConfig,
-  GraphQLList,
-  GraphQLInputObjectType,
-  GraphQLObjectType,
-  GraphQLFieldConfig,
-  GraphQLFieldConfigArgumentMap,
-  GraphQLSchema,
-} from 'graphql';
+import { GraphQLEnumTypeConfig } from 'graphql';
 import { BigIntResolver as GraphQLBigInt } from 'graphql-scalars';
 import { AnyNestedObject, load } from 'protobufjs';
 import { isAbsolute, join } from 'path';
@@ -27,15 +8,16 @@ import { withAsyncIteratorCancel } from './with-async-iterator-cancel';
 import grpcCaller from 'grpc-caller';
 import { camelCase } from 'camel-case';
 import { pascalCase } from 'pascal-case';
+import { SchemaComposer } from 'graphql-compose';
 
-const SCALARS: [string, GraphQLScalarType][] = [
-  ['int32', GraphQLInt],
-  ['int64', GraphQLBigInt],
-  ['float', GraphQLFloat],
-  ['double', GraphQLFloat],
-  ['string', GraphQLString],
-  ['bool', GraphQLBoolean],
-];
+const SCALARS = {
+  int32: 'Int',
+  int64: 'BigInt',
+  float: 'Float',
+  double: 'Float',
+  string: 'String',
+  bool: 'Boolean',
+};
 
 export interface GrpcGraphQLSchemaConfig {
   protoFilePath: string;
@@ -45,27 +27,20 @@ export interface GrpcGraphQLSchemaConfig {
 }
 
 export class GrpcGraphQLSchemaFactory {
-  private inputTypeMap: Map<string, GraphQLInputType>;
-  private outputTypeMap: Map<string, GraphQLOutputType>;
-  private nonSubscriptionFields: GraphQLFieldConfigMap<any, any> = {};
-  private subscriptionFields: GraphQLFieldConfigMap<any, any> = {};
-  private futureJobs: Function[] = [];
+  schemaComposer: SchemaComposer<any>;
   constructor(private config: GrpcGraphQLSchemaConfig) {
-    this.inputTypeMap = new Map(SCALARS);
-    this.outputTypeMap = new Map(SCALARS);
-    this.outputTypeMap.set(
-      'ServerStatus',
-      new GraphQLObjectType({
-        name: 'ServerStatus',
-        description: 'status of the server',
-        fields: () => ({
-          status: {
-            type: GraphQLString,
-            descripton: 'status string',
-          },
-        }),
-      })
-    );
+    this.schemaComposer = new SchemaComposer();
+    this.schemaComposer.add(GraphQLBigInt);
+    this.schemaComposer.createObjectTC({
+      name: 'ServerStatus',
+      description: 'status of the server',
+      fields: {
+        status: {
+          type: 'String',
+          descripton: 'status string',
+        },
+      },
+    });
   }
 
   async init() {
@@ -77,10 +52,25 @@ export class GrpcGraphQLSchemaFactory {
       keepComments: true,
     });
     this.visit(nested, '', '');
-    this.futureJobs.forEach(futureJob => futureJob());
   }
 
-  visit(nested: AnyNestedObject, name: string, currentPath: string) {
+  getTypeName(typePath: string, isInput: boolean) {
+    if (typePath in SCALARS) {
+      return SCALARS[typePath];
+    }
+    let baseTypeName = pascalCase(
+      typePath
+        .replace(this.config.packageName + '.', '')
+        .split('.')
+        .join('_')
+    );
+    if (isInput) {
+      baseTypeName += 'Input';
+    }
+    return baseTypeName;
+  }
+
+  async visit(nested: AnyNestedObject, name: string, currentPath: string) {
     if ('values' in nested) {
       let typeName = name;
       if (currentPath !== this.config.packageName) {
@@ -95,45 +85,35 @@ export class GrpcGraphQLSchemaFactory {
           value: key,
         };
       }
-      const enumType = new GraphQLEnumType(enumTypeConfig);
-      this.inputTypeMap.set(currentPath + '.' + name, enumType);
+      this.schemaComposer.createEnumTC(enumTypeConfig);
     } else if ('fields' in nested) {
       let typeName = name;
       if (currentPath !== this.config.packageName) {
         typeName = pascalCase(currentPath.split('.').join('_') + '_' + typeName);
       }
-      const inputTypeConfig: GraphQLInputObjectTypeConfig = {
-        name: pascalCase(typeName + '_Input'),
+      const inputTC = this.schemaComposer.createInputTC({
+        name: typeName + 'Input',
         fields: {},
-      };
-      const outputTypeConfig: GraphQLObjectTypeConfig<any, any> = {
+      });
+      const outputTC = this.schemaComposer.createObjectTC({
         name: typeName,
         fields: {},
-      };
+      });
       for (const fieldName in nested.fields) {
         const { type, rule } = nested.fields[fieldName];
-        let inputType = this.inputTypeMap.get(type) || this.inputTypeMap.get(currentPath + '.' + type);
-        let outputType = this.outputTypeMap.get(type) || this.outputTypeMap.get(currentPath + '.' + type);
-        // If not resolved, do it later
-        if (!inputType || !outputType) {
-          this.futureJobs.push(() => this.visit(nested, name, currentPath));
-          return;
-        }
-        if (rule === 'repeated') {
-          inputType = new GraphQLList(inputType);
-          outputType = new GraphQLList(outputType);
-        }
-        inputTypeConfig.fields[fieldName] = {
-          type: inputType,
-        };
-        outputTypeConfig.fields[fieldName] = {
-          type: outputType,
-        };
+        const typeName = this.getTypeName(type, false);
+        const inputTypeName = this.getTypeName(type, true);
+        inputTC.addFields({
+          [fieldName]: {
+            type: rule === 'repeated' ? `[${inputTypeName}]` : inputTypeName,
+          },
+        });
+        outputTC.addFields({
+          [fieldName]: {
+            type: rule === 'repeated' ? `[${typeName}]` : typeName,
+          },
+        });
       }
-      const inputType = new GraphQLInputObjectType(inputTypeConfig);
-      const outputType = new GraphQLObjectType(outputTypeConfig);
-      this.inputTypeMap.set(currentPath + '.' + name, inputType);
-      this.outputTypeMap.set(currentPath + '.' + name, outputType);
     } else if ('methods' in nested) {
       const methods = nested.methods;
       const client = grpcCaller(this.config.endpoint, this.config.protoFilePath, name, null, {
@@ -142,19 +122,7 @@ export class GrpcGraphQLSchemaFactory {
       });
       for (const methodName in methods) {
         const method = methods[methodName];
-        const inputType =
-          this.inputTypeMap.get(method.requestType) || this.inputTypeMap.get(currentPath + '.' + method.requestType);
-        // If not resolved, do it later
-        if (!inputType) {
-          this.futureJobs.push(() => this.visit(nested, name, currentPath));
-          return;
-        }
-        const args: GraphQLFieldConfigArgumentMap = {
-          input: {
-            type: inputType,
-            defaultValue: {},
-          },
-        };
+        const inputType = this.getTypeName(method.requestType, true);
         let rootFieldName = methodName;
         if (name !== this.config.serviceName) {
           rootFieldName = camelCase(name + '_' + rootFieldName);
@@ -162,58 +130,83 @@ export class GrpcGraphQLSchemaFactory {
         if (currentPath !== this.config.packageName) {
           rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
         }
-        const outputType =
-          this.outputTypeMap.get(method.responseType) ||
-          this.outputTypeMap.get(currentPath + '.' + method.responseType);
-        // If not resolved, do it later
-        if (!outputType) {
-          this.futureJobs.push(() => this.visit(nested, name, currentPath));
-          return;
-        }
-        const fieldConfig: GraphQLFieldConfig<any, any> = {
+        const outputType = this.getTypeName(method.responseType, false);
+        const fieldConfig = {
           type: outputType,
-          args,
+          args: {
+            input: {
+              type: inputType,
+              defaultValue: {},
+            },
+          },
         };
         if (method.responseStream) {
-          this.subscriptionFields[rootFieldName] = {
-            ...fieldConfig,
-            subscribe: async (__, args) => {
-              const response: Readable & { cancel: () => void } = await client[methodName](args.input, {});
+          this.schemaComposer.Subscription.addFields({
+            [rootFieldName]: {
+              ...fieldConfig,
+              subscribe: async (__, args) => {
+                const response: Readable & { cancel: () => void } = await client[methodName](args.input, {});
 
-              response.on('error', (error: Error & { code: number }) => {
-                if (error.code === 1) {
-                  // cancelled
-                  response.removeAllListeners('error');
+                response.on('error', (error: Error & { code: number }) => {
+                  if (error.code === 1) {
+                    // cancelled
+                    response.removeAllListeners('error');
+                    response.removeAllListeners();
+                  }
+                });
+
+                response.on('end', () => {
                   response.removeAllListeners();
-                }
-              });
+                });
 
-              response.on('end', () => {
-                response.removeAllListeners();
-              });
+                const asyncIterator = asyncMap(data => ({ [rootFieldName]: data }), response);
 
-              const asyncIterator = asyncMap(data => ({ [rootFieldName]: data }), response);
-
-              return withAsyncIteratorCancel(asyncIterator, () => {
-                response.cancel();
-              });
+                return withAsyncIteratorCancel(asyncIterator, () => {
+                  response.cancel();
+                });
+              },
             },
-          };
+          });
         } else {
-          this.nonSubscriptionFields[rootFieldName] = {
-            ...fieldConfig,
-            resolve: (_, args) => {
-              return client[methodName](
-                args.input,
-                {},
-                {
-                  deadline: Date.now() + (Number(process.env.REQUEST_TIMEOUT) || 200000),
-                }
-              );
+          const identifier = rootFieldName.toLowerCase();
+          const rootTC = identifier.startsWith('get') ? this.schemaComposer.Query : this.schemaComposer.Mutation;
+          rootTC.addFields({
+            [rootFieldName]: {
+              ...fieldConfig,
+              resolve: (_, args) => {
+                return client[methodName](
+                  args.input,
+                  {},
+                  {
+                    deadline: Date.now() + (Number(process.env.REQUEST_TIMEOUT) || 200000),
+                  }
+                );
+              },
             },
-          };
+          });
         }
       }
+      let rootPingFieldName = 'ping';
+      if (name !== this.config.serviceName) {
+        rootPingFieldName = camelCase(name + '_' + rootPingFieldName);
+      }
+      if (currentPath !== this.config.packageName) {
+        rootPingFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootPingFieldName);
+      }
+      this.schemaComposer.Query.addFields({
+        [rootPingFieldName]: {
+          type: 'ServerStatus',
+          resolve: () => {
+            return client.ping(
+              {},
+              {},
+              {
+                deadline: Date.now() + (Number(process.env.REQUEST_TIMEOUT) || 200000),
+              }
+            );
+          },
+        },
+      });
     } else if ('nested' in nested) {
       for (const key in nested.nested) {
         const currentNested = nested.nested[key];
@@ -223,24 +216,6 @@ export class GrpcGraphQLSchemaFactory {
   }
 
   buildSchema() {
-    return new GraphQLSchema({
-      query: new GraphQLObjectType({
-        name: 'Query',
-        fields: {
-          foo: {
-            type: GraphQLString,
-            resolve: () => 'FOO',
-          },
-        },
-      }),
-      mutation: new GraphQLObjectType({
-        name: 'Mutation',
-        fields: this.nonSubscriptionFields,
-      }),
-      subscription: new GraphQLObjectType({
-        name: 'Subscription',
-        fields: this.subscriptionFields,
-      }),
-    });
+    return this.schemaComposer.buildSchema();
   }
 }

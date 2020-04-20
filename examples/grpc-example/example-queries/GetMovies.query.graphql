@@ -1,10 +1,13 @@
-mutation GetMovies {
+query GetMovies {
   GetMovies {
     result {
       name
       year
       rating
       cast
+      time {
+        seconds
+      }
     }
   }
 }
