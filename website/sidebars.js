@@ -31,7 +31,8 @@ module.exports = {
       'transforms/snapshot',
       'transforms/mock',
       'transforms/resolvers-composition',
-      'transforms/federation'
+      'transforms/federation',
+      'transforms/filter-schema'
     ],
     'API Reference': ['api/cli', 'api/runtime'],
     Recipes: ['recipes/typescript', 'recipes/as-sdk', 'recipes/as-gateway'],
