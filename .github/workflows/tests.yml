@@ -1,6 +1,12 @@
 name: Tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   test:
@@ -52,7 +58,7 @@ jobs:
         uses: actions/checkout@master
       
       - name: Detect Changes
-        uses: kamilkisiela/graphql-inspector@36111899d4e07cbe27251fad30a287aff0977184
+        uses: kamilkisiela/graphql-inspector@5ece18ce00c61e8cf73d23d47319c178673bae1d
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           schema: 'master:schema.graphql'
