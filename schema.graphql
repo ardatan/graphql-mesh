@@ -12,7 +12,6 @@ type Redis implements Cache {
 }
 type RedisConfig {
   port: Int
-  password: String
 }
 type Handler {
   """Handler for remote/local/third-party GraphQL schema"""
