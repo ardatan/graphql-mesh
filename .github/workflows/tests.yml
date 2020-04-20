@@ -50,7 +50,7 @@ jobs:
       - name: Test
         run: yarn test --logHeapUsage
   check-configuration:
-    name: Check Configuration
+    name: Check Configuration Schema
     runs-on: ubuntu-latest
       
     steps:
