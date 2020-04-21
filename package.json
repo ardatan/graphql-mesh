@@ -45,7 +45,7 @@
     "lint-staged": "10.1.7",
     "globby": "11.0.0",
     "husky": "4.2.5",
-    "prettier": "2.0.4"
+    "prettier": "2.0.5"
   },
   "husky": {
     "hooks": {
