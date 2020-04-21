@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -18,8 +18,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.8",
-    "@graphql-mesh/utils": "0.1.8",
+    "@graphql-mesh/types": "0.1.9",
+    "@graphql-mesh/utils": "0.1.9",
     "fetchache": "0.0.3",
     "debug": "4.1.1",
     "deep-equal": "2.0.2",

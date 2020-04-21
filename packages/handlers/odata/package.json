@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/odata",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -18,8 +18,8 @@
     "@types/url-join": "4.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.8",
-    "@graphql-mesh/utils": "0.1.8",
+    "@graphql-mesh/types": "0.1.9",
+    "@graphql-mesh/utils": "0.1.9",
     "fetchache": "0.0.3",
     "graphql-fields": "2.0.3",
     "graphql-scalars": "1.1.2",
