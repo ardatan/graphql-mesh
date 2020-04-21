@@ -42,7 +42,7 @@
     "chalk": "4.0.0",
     "change-case": "4.1.1",
     "js-yaml": "3.13.1",
-    "json-bigint-patch": "0.0.3",
+    "json-bigint-patch": "0.0.4",
     "mkdirp": "1.0.4",
     "pascal-case": "3.1.1",
     "winston": "3.2.1",
