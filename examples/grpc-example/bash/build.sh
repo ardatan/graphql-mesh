@@ -20,8 +20,3 @@ proto/*.proto
 --ts_out=${PROTO_DEST} \
 -I ./proto \
 proto/*.proto
-
-# TypeScript compiling
-mkdir -p build/proto
-cp -r ./src/proto/* build/proto
-tsc

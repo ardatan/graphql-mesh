@@ -2067,6 +2067,13 @@
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
   integrity sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g==
 
+"@types/express-graphql@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@types/express-graphql/-/express-graphql-0.9.0.tgz#6f891c11785204bff3a27cae00180c4228550eb8"
+  integrity sha512-+n13emasFUtIn5kpJUTIUy4tAiJBRnHSChpA8OVmKvdKYbzzK6iI/zsnWEKP8qQJDpiUh48wrRKIXNC+5U/t+w==
+  dependencies:
+    express-graphql "*"
+
 "@types/express-serve-static-core@*":
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.4.tgz#157c79c2d28b632d6418497c57c93185e392e444"
@@ -2163,7 +2170,7 @@
   dependencies:
     graphql "^14.5.3"
 
-"@types/graphql-upload@^8.0.0":
+"@types/graphql-upload@8.0.3", "@types/graphql-upload@^8.0.0":
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/@types/graphql-upload/-/graphql-upload-8.0.3.tgz#b371edb5f305a2a1f7b7843a890a2a7adc55c3ec"
   integrity sha512-hmLg9pCU/GmxBscg8GCr1vmSoEmbItNNxdD5YH2TJkXm//8atjwuprB+xJBK714JG1dkxbbhp5RHX+Pz1KsCMA==
@@ -6815,7 +6822,7 @@ expect@^25.4.0:
     jest-message-util "^25.4.0"
     jest-regex-util "^25.2.6"
 
-express-graphql@0.9.0, express-graphql@^0.9.0:
+express-graphql@*, express-graphql@0.9.0, express-graphql@^0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/express-graphql/-/express-graphql-0.9.0.tgz#00fd8552f866bac5c9a4612b2c4c82076107b3c2"
   integrity sha512-wccd9Lb6oeJ8yHpUs/8LcnGjFUUQYmOG9A5BNLybRdCzGw0PeUrtBxsIR8bfiur6uSW4OvPkVDoYH06z6/N9+w==
@@ -15193,6 +15200,14 @@ source-map-support@^0.5.12, source-map-support@^0.5.6, source-map-support@~0.5.1
     buffer-from "^1.0.0"
     source-map "^0.6.0"
 
+source-map-support@^0.5.17:
+  version "0.5.17"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.17.tgz#29fe1b3c98b9dbd5064ada89052ee8ff070cb46c"
+  integrity sha512-bwdKOBZ5L0gFRh4KOxNap/J/MpvX9Yxsq9lFDx65s3o7F/NiHy7JRaGIS8MwW6tZPAq9UXE207Il0cfcb5yu/Q==
+  dependencies:
+    buffer-from "^1.0.0"
+    source-map "^0.6.0"
+
 source-map-url@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/source-map-url/-/source-map-url-0.4.0.tgz#3e935d7ddd73631b97659956d55128e87b5084a3"
@@ -16199,6 +16214,17 @@ ts-node@8.8.1:
     diff "^4.0.1"
     make-error "^1.1.1"
     source-map-support "^0.5.6"
+    yn "3.1.1"
+
+ts-node@8.9.0:
+  version "8.9.0"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.9.0.tgz#d7bf7272dcbecd3a2aa18bd0b96c7d2f270c15d4"
+  integrity sha512-rwkXfOs9zmoHrV8xE++dmNd6ZIS+nmHHCxcV53ekGJrxFLMbp+pizpPS07ARvhwneCIECPppOwbZHvw9sQtU4w==
+  dependencies:
+    arg "^4.1.0"
+    diff "^4.0.1"
+    make-error "^1.1.1"
+    source-map-support "^0.5.17"
     yn "3.1.1"
 
 tsargs@^1.4.0:

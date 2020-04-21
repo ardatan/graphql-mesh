@@ -1,11 +1,8 @@
-import * as debug from 'debug';
 import * as grpc from 'grpc';
 
 import { ExampleService, IExampleServer } from './proto/Example_grpc_pb';
 import { EmptyRequest, Movie, MoviesResult, SearchByCastRequest } from './proto/Example_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
-
-const log = debug('SampleServer');
 
 interface IRawMovie {
   cast: string[];
@@ -69,20 +66,20 @@ class ServerImpl implements IExampleServer {
   }
 
   public searchMoviesByCast(call: grpc.ServerWriteableStream<SearchByCastRequest>) {
-    log('call started');
+    console.log('call started');
     const input: SearchByCastRequest = call.request;
     let i: number = 1;
     call.on('error', error => {
-      log(error);
+      console.error(error);
       call.end();
     });
     const intervals = Movies.map(createMovie).map(movie => {
       if (movie.getCastList().indexOf(input.getCastname()) > -1) {
         const interval = setInterval(() => {
-          log(movie.getName());
+          console.log(movie.getName());
           if (call.cancelled || call.destroyed) {
             intervals.forEach(clearInterval);
-            log('call ended');
+            console.log('call ended');
             return;
           }
           call.write(movie);
@@ -101,15 +98,15 @@ function startServer() {
   server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
   server.start();
 
-  log('Server started, listening: 0.0.0.0:50051');
+  console.log('Server started, listening: 0.0.0.0:50051');
 }
 
 startServer();
 
 process.on('uncaughtException', err => {
-  log(`process on uncaughtException error: ${err}`);
+  console.error(`process on uncaughtException error: ${err}`);
 });
 
 process.on('unhandledRejection', err => {
-  log(`process on unhandledRejection error: ${err}`);
+  console.error(`process on unhandledRejection error: ${err}`);
 });
