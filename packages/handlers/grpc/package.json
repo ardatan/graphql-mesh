@@ -20,7 +20,7 @@
     "@graphql-mesh/types": "0.1.8",
     "@graphql-mesh/utils": "0.1.8",
     "camel-case": "4.1.1",
-    "graphql-scalars": "1.1.0",
+    "graphql-scalars": "1.1.2",
     "graphql-compose": "7.14.4",
     "grpc-caller": "0.13.0",
     "protobufjs": "6.9.0",

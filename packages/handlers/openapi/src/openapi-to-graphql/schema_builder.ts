@@ -36,7 +36,7 @@ import { getResolver } from './resolver_builder';
 import { createDataDef } from './preprocessor';
 import debug from 'debug';
 import { handleWarning, sortObject } from './utils';
-import { JSONResolver as GraphQLJSON } from 'graphql-scalars';
+import { GraphQLJSON } from 'graphql-scalars';
 
 type GetArgsParams = {
   requestPayloadDef?: DataDefinition;

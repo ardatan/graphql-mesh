@@ -1,6 +1,6 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLEnumTypeConfig } from 'graphql';
-import { BigIntResolver as GraphQLBigInt } from 'graphql-scalars';
+import { GraphQLBigInt } from 'graphql-scalars';
 import { AnyNestedObject, load } from 'protobufjs';
 import { isAbsolute, join } from 'path';
 import grpcCaller, { GrpcResponseStream } from 'grpc-caller';

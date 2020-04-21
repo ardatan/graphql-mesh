@@ -24,7 +24,7 @@ import {
   JSONSchemaTypedObjectDefinition,
 } from './json-schema-types';
 import { pascalCase } from 'pascal-case';
-import { JSONResolver as GraphQLJSON } from 'graphql-scalars';
+import { GraphQLJSON } from 'graphql-scalars';
 
 type GraphQLSharedType = GraphQLInputType & GraphQLOutputType;
 

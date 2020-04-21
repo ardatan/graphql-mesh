@@ -6,11 +6,7 @@ import { promisify } from 'util';
 import { pascalCase } from 'pascal-case';
 import graphqlFields from 'graphql-fields';
 import { camelCase } from 'camel-case';
-import {
-  BigIntResolver as GraphQLBigInt,
-  DateTimeResolver as GraphQLDateTime,
-  JSONResolver as GraphQLJSON,
-} from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 
 export const SCALARS = {
   bigint: 'BigInt',

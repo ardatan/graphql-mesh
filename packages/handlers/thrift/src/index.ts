@@ -20,7 +20,7 @@ import {
   GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
 } from 'graphql';
-import { BigIntResolver as GraphQLBigInt, JSONResolver as GraphQLJSON } from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLJSON } from 'graphql-scalars';
 import { createHttpClient } from '@creditkarma/thrift-client';
 import {
   ThriftClient,

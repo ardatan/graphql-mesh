@@ -41,12 +41,7 @@ import urljoin from 'url-join';
 import graphqlFields from 'graphql-fields';
 import { KeyValueCache, Request, fetchache } from 'fetchache';
 import { JSDOM } from 'jsdom';
-import {
-  BigIntResolver as GraphQLBigInt,
-  GUIDResolver as GraphQLGUID,
-  DateTimeResolver as GraphQLDateTime,
-  JSONResolver as GraphQLJSON,
-} from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLGUID, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 import {
   getInterpolatedStringFactory,
   getInterpolatedHeadersFactory,
