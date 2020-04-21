@@ -10061,10 +10061,10 @@ jsesc@~0.5.0:
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
   integrity sha1-597mbjXW/Bb3EP6R1c9p9w8IkR0=
 
-json-bigint-patch@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/json-bigint-patch/-/json-bigint-patch-0.0.2.tgz#c6f440781877b94848b22edba0e851a3eca2f7ae"
-  integrity sha512-IVRe1p+dg46sVXwkEWwXFZCJPiUmiFHbY8rJU0aPNq80qB/TyomsuSfuEvQ2OAu1shvuQtNv9vRi6CmVRkzRLw==
+json-bigint-patch@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/json-bigint-patch/-/json-bigint-patch-0.0.3.tgz#27e8d909e038359d57d0594377fe2487a8665306"
+  integrity sha512-xh310Nwz8VZ+FNUCHAJZ10ccW5S25BWaW9AzFwpSgoAIPRL+/BdVrUsssw2Q9GZ+3ipv5JE+yYgMFv4eBtrsEg==
 
 json-int64@~1.0:
   version "1.0.2"

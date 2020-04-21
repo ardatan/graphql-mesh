@@ -10,6 +10,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/debug": "4.1.5",
     "@types/deep-equal": "1.0.1",
     "@types/form-urlencoded": "2.0.1"
   },
