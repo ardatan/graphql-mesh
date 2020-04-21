@@ -61,6 +61,11 @@ type GrpcHandler @md {
   Used for naming only
   """
   packageName: String
+  """
+  Request timeout in milliseconds
+  Default: 200000
+  """
+  requestTimeout: Int
 }
 type FederationHandler @md {
   serviceList: [FederationService!]!

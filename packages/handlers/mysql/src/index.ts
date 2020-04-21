@@ -1,10 +1,9 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
-import { createConnection } from 'mysql';
+import { createConnection, TableForeign } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
 import { promisify } from 'util';
 import { pascalCase } from 'pascal-case';
-import { TYPE_MAP } from './mysql-type-map';
 import graphqlFields from 'graphql-fields';
 import { camelCase } from 'camel-case';
 import {
@@ -13,74 +12,63 @@ import {
   JSONResolver as GraphQLJSON,
 } from 'graphql-scalars';
 
-interface Table {
-  TABLE_NAME: string;
-  TABLE_TYPE: string;
-  ENGINE: string;
-  VERSION: number;
-  ROW_FORMAT: string;
-  TABLE_ROWS: number;
-  AVG_ROW_LENGTH: number;
-  DATA_LENGTH: number;
-  MAX_DATA_LENGTH: number;
-  INDEX_LENGTH: number;
-  DATA_FREE: number;
-  AUTO_INCREMENT: number;
-  CREATE_TIME: Date;
-  UPDATE_TIME: Date;
-  CHECK_TIME: Date;
-  TABLE_COLLATION: string;
-  CHECKSUM?: any;
-  CREATE_OPTIONS: string;
-  TABLE_COMMENT: string;
-}
+export const SCALARS = {
+  bigint: 'BigInt',
+  binary: 'String',
+  bit: 'Int',
+  blob: 'String',
+  bool: 'Boolean',
+  boolean: 'Boolean',
 
-interface TableField {
-  Field: string;
-  Type: string;
-  Collation: string;
-  Null: string;
-  Key: string;
-  Default?: any;
-  Extra: string;
-  Privileges: string;
-  Comment: string;
-}
+  char: 'String',
 
-interface TableForeign {
-  CONSTRAINT_NAME: string;
-  COLUMN_NAME: string;
-  ORDINAL_POSITION: number;
-  POSITION_IN_UNIQUE_CONSTRAINT: number;
-  REFERENCED_TABLE_NAME: string;
-  REFERENCED_COLUMN_NAME: string;
-}
+  date: 'DateTime',
+  datetime: 'DateTime',
 
-interface TablePrimaryKey {
-  Table: string;
-  Non_unique: number;
-  Key_name: string;
-  Seq_in_index: number;
-  Column_name: string;
-  Collation: string;
-  Cardinality: number;
-  Sub_part?: any;
-  Packed?: any;
-  Null: string;
-  Index_type: string;
-  Comment: string;
-  Index_comment: string;
-}
+  dec: 'Float',
+  decimal: 'Float',
+  double: 'Float',
+
+  float: 'Float',
+
+  int: 'Int',
+  integer: 'Int',
+
+  json: 'JSON',
+
+  longblob: 'String',
+  longtext: 'String',
+
+  mediumblob: 'String',
+  mediumint: 'Int',
+  mediumtext: 'String',
+
+  numeric: 'Float',
+
+  smallint: 'Int',
+
+  text: 'String',
+  time: 'Date',
+  timestamp: 'Date',
+  tinyblob: 'String',
+  tinyint: 'Int',
+  tinytext: 'String',
+
+  varbinary: 'String',
+  varchar: 'String',
+
+  year: 'Int',
+};
 
 const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
   async getMeshSource({ config, hooks }) {
     const schemaComposer = new SchemaComposer();
     const connection = createConnection(config);
-    connection.connect();
+    const connect = promisify(connection.connect);
+    await connect();
     upgrade(connection);
     introspection(connection);
     const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
-    const tables: Record<string, Table> = await getDatabaseTables(config.database);
     const getTableFields = promisify(connection.fields.bind(connection));
     const getTableForeigns = promisify(connection.foreign.bind(connection));
     const getTablePrimaryKeys = promisify(connection.primary.bind(connection));
@@ -89,6 +77,9 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
     const insert = promisify(connection.insert.bind(connection));
     const update = promisify(connection.update.bind(connection));
     const deleteRow = promisify(connection.delete.bind(connection));
+    schemaComposer.add(GraphQLBigInt);
+    schemaComposer.add(GraphQLJSON);
+    schemaComposer.add(GraphQLDateTime);
     schemaComposer.createEnumTC({
       name: 'OrderBy',
       values: {
@@ -100,9 +91,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
         },
       },
     });
-    schemaComposer.add(GraphQLBigInt);
-    schemaComposer.add(GraphQLJSON);
-    schemaComposer.add(GraphQLDateTime);
+    const tables = await getDatabaseTables(config.database);
     for (const tableName in tables) {
       const table = tables[tableName];
       const objectTypeName = pascalCase(table.TABLE_NAME);
@@ -140,15 +129,15 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
         extensions: table,
         fields: {},
       });
-      const primaryKeys: Record<string, TablePrimaryKey> = await getTablePrimaryKeys(tableName);
-      const fields: Record<string, TableField> = await getTableFields(tableName);
+      const primaryKeys = await getTablePrimaryKeys(tableName);
+      const fields = await getTableFields(tableName);
       for (const fieldName in fields) {
         const tableField = fields[fieldName];
         const typePattern = tableField.Type;
         const [realTypeNameCased, restTypePattern] = typePattern.split('(');
         const [typeDetails] = restTypePattern?.split(')') || [];
         const realTypeName = realTypeNameCased.toLowerCase();
-        let type: string = TYPE_MAP[realTypeName];
+        let type: string = SCALARS[realTypeName];
         if (realTypeName === 'enum' || realTypeName === 'set') {
           const enumValues = typeDetails.split(`'`).join('').split(',');
           const enumTypeName = pascalCase(tableName + '_' + fieldName);
@@ -203,7 +192,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
           },
         });
       }
-      const tableForeigns: Record<string, TableForeign> = await getTableForeigns(tableName);
+      const tableForeigns = await getTableForeigns(tableName);
       for (const foreignName in tableForeigns) {
         const tableForeign = tableForeigns[foreignName];
         const foreignTableName = tableForeign.REFERENCED_TABLE_NAME;
@@ -235,13 +224,11 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                 ...args?.where,
               };
               // Generate limit statement
-              const limit = [args.limit, args.offset].filter(Boolean);
+              const limit: number[] = [args.limit, args.offset].filter(Boolean);
               if (limit.length) {
-                const result = await selectLimit(foreignTableName, fields, limit, where, args?.orderBy);
-                return result;
+                return selectLimit(foreignTableName, fields, limit, where, args?.orderBy);
               } else {
-                const result = await select(foreignTableName, fields, where, args?.orderBy);
-                return result;
+                return select(foreignTableName, fields, where, args?.orderBy);
               }
             },
           },
@@ -280,11 +267,9 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
             // Generate limit statement
             const limit = [args.limit, args.offset].filter(Boolean);
             if (limit.length) {
-              const result = await selectLimit(tableName, fields, limit, args.where, args?.orderBy);
-              return result;
+              return selectLimit(tableName, fields, limit, args.where, args?.orderBy);
             } else {
-              const result = await select(tableName, fields, args.where, args?.orderBy);
-              return result;
+              return select(tableName, fields, args.where, args?.orderBy);
             }
           },
         },
@@ -307,7 +292,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
               const columnName = primaryKey.Column_name;
               where[columnName] = args[columnName] || recordId;
             }
-            const result = await select(tableName, fields, where);
+            const result = await select(tableName, fields, where, {});
             return result[0];
           },
         },
@@ -331,7 +316,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
             );
             const fieldMap = graphqlFields(info);
             const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
-            const result = await select(tableName, fields, args.where);
+            const result = await select(tableName, fields, args.where, {});
             return result[0];
           },
         },
@@ -350,8 +335,10 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
       });
     }
     hooks.on('destroy', () => connection.end());
+
+    const schema = schemaComposer.buildSchema();
     return {
-      schema: schemaComposer.buildSchema(),
+      schema,
     };
   },
 };

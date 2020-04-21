@@ -76,19 +76,21 @@ class ServerImpl implements IExampleServer {
       log(error);
       call.end();
     });
-    Movies.map(createMovie).forEach((movie: Movie) => {
+    const intervals = Movies.map(createMovie).map(movie => {
       if (movie.getCastList().indexOf(input.getCastname()) > -1) {
-        setTimeout(() => {
+        const interval = setInterval(() => {
           log(movie.getName());
+          if (call.cancelled || call.destroyed) {
+            intervals.forEach(clearInterval);
+            log('call ended');
+            return;
+          }
           call.write(movie);
         }, i * 1000);
         i += 1;
+        return interval;
       }
     });
-    setTimeout(() => {
-      call.end();
-      log('call ended');
-    }, 3000);
   }
 }
 

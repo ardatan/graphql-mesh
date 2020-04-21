@@ -23,7 +23,6 @@
     "graphql-scalars": "1.1.0",
     "graphql-compose": "7.14.4",
     "grpc-caller": "0.13.0",
-    "iter-tools": "6.2.6",
     "protobufjs": "6.9.0",
     "pascal-case": "3.1.1"
   },
