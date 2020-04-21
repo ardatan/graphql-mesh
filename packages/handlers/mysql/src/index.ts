@@ -60,10 +60,12 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
   async getMeshSource({ config, hooks }) {
     const schemaComposer = new SchemaComposer();
     const connection = createConnection(config);
-    const connect = promisify(connection.connect);
+    const connect = promisify(connection.connect.bind(connection));
     await connect();
+
     upgrade(connection);
     introspection(connection);
+
     const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
     const getTableFields = promisify(connection.fields.bind(connection));
     const getTableForeigns = promisify(connection.foreign.bind(connection));
@@ -73,6 +75,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
     const insert = promisify(connection.insert.bind(connection));
     const update = promisify(connection.update.bind(connection));
     const deleteRow = promisify(connection.delete.bind(connection));
+
     schemaComposer.add(GraphQLBigInt);
     schemaComposer.add(GraphQLJSON);
     schemaComposer.add(GraphQLDateTime);
