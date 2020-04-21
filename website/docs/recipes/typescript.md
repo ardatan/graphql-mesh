@@ -61,7 +61,6 @@ Now, instead of using `execute` manually, you can use the generated `getSdk` met
 ```ts
 import { getSdk } from './generated/sdk';
 import { getMesh, findAndParseConfig } from '@graphql-mesh/runtime';
-import { ApolloServer } from 'apollo-server';
 
 async function test() {
   // Load mesh config and get the sdkClient from it

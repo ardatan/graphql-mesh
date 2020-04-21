@@ -67,7 +67,6 @@ Start by load and parsing your configuration file, and pass it to `getMesh`, thi
 
 ```js
 const { getMesh, findAndParseConfig } = require('@graphql-mesh/runtime');
-const { ApolloServer } = require('apollo-server');
 
 async function test() {
   // This will load the config file from the default location (process.cwd)
