@@ -2,6 +2,7 @@
     "name": "covid-mesh",
     "version": "0.1.9",
     "license": "MIT",
+    "private": true,
     "author": {
         "name": "JYC",
         "url": "https://github.com/jycouet"

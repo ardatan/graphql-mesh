@@ -3,14 +3,14 @@ import styles from './styles.module.css';
 
 const EXAMPLES = {
     'OpenAPI': {
-        'Stripe': 'openapi-stripe',
-        'YouTrack': 'openapi-youtrack',
         'JavaScript Wiki': 'openapi-javascript-wiki',
         'Location Weather': 'openapi-location-weather',
+        'YouTrack': 'openapi-youtrack',
+        'Stripe': 'openapi-stripe',
     },
     'JSON Schema': {
-        'Covid-19 Statistics': 'json-schema-covid',
         'Fake API': 'json-schema-example',
+        'Covid-19 Statistics': 'json-schema-covid',
     },
     'OData':{
         'TripPin': 'odata-trippin'
@@ -28,7 +28,7 @@ const EXAMPLES = {
 
 export default () => {
 
-    const [exampleRepo, setExampleRepo] = useState('openapi-javascript-wiki');
+    const [exampleRepo, setExampleRepo] = useState('openapi-stripe');
 
     return (
         <div>
