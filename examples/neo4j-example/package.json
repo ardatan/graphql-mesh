@@ -1,14 +1,14 @@
 {
   "name": "neo4j-example",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "graphql-mesh serve"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.1.9",
-    "@graphql-mesh/neo4j": "0.1.9",
+    "@graphql-mesh/cli": "0.1.10",
+    "@graphql-mesh/neo4j": "0.1.10",
     "graphql": "15.0.0"
   }
 }

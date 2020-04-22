@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -17,7 +17,7 @@
     "pg": "8.0.2"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.9",
+    "@graphql-mesh/types": "0.1.10",
     "postgraphile": "4.5.5"
   },
   "publishConfig": {
