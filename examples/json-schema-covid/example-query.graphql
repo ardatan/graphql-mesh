@@ -1,0 +1,17 @@
+# Write your query or mutation here
+query getData {
+  case(countryRegion: "France") {
+    confirmed
+    deaths
+    recovered
+    countryRegion
+    population {
+      records {
+        fields {
+          value
+          country_name
+        }
+      }
+    }
+  }
+}
