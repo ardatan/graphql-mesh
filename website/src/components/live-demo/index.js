@@ -10,6 +10,7 @@ const EXAMPLES = {
     },
     'JSON Schema': {
         'Fake API': 'json-schema-example',
+        'Covid-19 Statistics': 'json-schema-covid',
     },
     'OData':{
         'TripPin': 'odata-trippin'
@@ -27,7 +28,7 @@ const EXAMPLES = {
 
 export default () => {
 
-    const [exampleRepo, setExampleRepo] = useState('openapi-javascript-wiki');
+    const [exampleRepo, setExampleRepo] = useState('openapi-stripe');
 
     return (
         <div>

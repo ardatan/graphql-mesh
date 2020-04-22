@@ -12,6 +12,18 @@ jobs:
     steps:
       - name: Checkout Master
         uses: actions/checkout@v1
+      - name: Configure Git Credientials
+        run: |
+          git config --global user.email "${{github.actor}}@users.noreply.github.com"
+          git config --global user.name "${{github.actor}}"
+          echo "machine github.com login ${{github.actor}} password ${{secrets.GITHUB_TOKEN}}" > ~/.netrc
+      - name: Add origin remote and refetch master
+        run: |
+          git remote rm origin
+          git remote add origin "https://github.com/${{github.repository}}"
+          git fetch
+          git checkout master
+          git reset --hard
       - name: Use Node
         uses: actions/setup-node@v1
         with:
@@ -28,13 +40,7 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
-      - name: Build Website
-        run: yarn build:website
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
-          GIT_CONFIG_NAME: ${{ github.actor }}
-          GIT_CONFIG_EMAIL: ${{github.actor}}@bots.github.com
-          ACCESS_TOKEN: ${{ secrets.PAGES_TOKEN }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: website/build # The folder the action should deploy.
+        run: yarn deploy:website
+        env:
+          GIT_USER: ${{github.actor}}

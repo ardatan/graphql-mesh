@@ -53,11 +53,11 @@ async function release() {
             distPackageJson.dependencies = packageJson.dependencies;
             distPackageJson.devDependencies = packageJson.devDependencies;
             distPackageJson.publishConfig = {
-                access: packageJson.publishConfig.access || 'public'
+                access: (packageJson.publishConfig && packageJson.publishConfig.access) || 'public'
             }
             writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
 
-            const publishSpawn = cp.spawnSync('npm', ['publish', distPath, '--tag', tag, '--access', packageJson.publishConfig.access]);
+            const publishSpawn = cp.spawnSync('npm', ['publish', distPath, '--tag', tag, '--access', distPackageJson.publishConfig.access]);
             if(publishSpawn.status !== 0) {
                 const error = publishSpawn.stderr.toString('utf8').trim();
                 throw error;

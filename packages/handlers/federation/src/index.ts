@@ -1,7 +1,7 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { ApolloGateway } from '@apollo/gateway';
-import { GraphQLResolveInfo, print, Kind, OperationDefinitionNode } from 'graphql';
-import { delegateToSchema, IDelegateToSchemaOptions, makeRemoteExecutableSchema, Fetcher } from 'graphql-tools';
+import { print, Kind, OperationDefinitionNode } from 'graphql';
+import { makeRemoteExecutableSchema, Fetcher } from 'graphql-tools';
 import { fetchache, Request } from 'fetchache';
 
 const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
@@ -35,20 +35,6 @@ const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
       fetcher,
     };
     const remoteSchema = makeRemoteExecutableSchema(remoteSchemaOptions);
-    hooks.on('buildSdkFn', ({ fieldName, replaceFn, schema }) => {
-      replaceFn((args: any, context: any, info: GraphQLResolveInfo) => {
-        const delegationOptions: IDelegateToSchemaOptions = {
-          operation: info.operation.operation,
-          fieldName,
-          schema,
-          args,
-          info,
-          context,
-        };
-
-        return delegateToSchema(delegationOptions);
-      });
-    });
     hooks.on('destroy', () => gateway.stop());
     return {
       schema: remoteSchema,

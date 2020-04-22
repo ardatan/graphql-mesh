@@ -1,6 +1,6 @@
 import { IResolvers } from 'graphql-tools';
 import { IEventEmitter } from 'tsee';
-import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
+import { GraphQLSchema, GraphQLResolveInfo } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 
@@ -38,13 +38,6 @@ export type ResolverInfo = {
 // Hooks
 export type AllHooks = {
   schemaReady: (options: { schema: GraphQLSchema; applyResolvers: (modifiedResolvers: IResolvers) => void }) => void;
-  buildSdkFn: (options: {
-    schema: GraphQLSchema;
-    typeName: string;
-    fieldName: string;
-    originalResolveFn?: GraphQLFieldResolver<any, any>;
-    replaceFn: (fn: (...args: any[]) => any) => void;
-  }) => void;
   destroy: () => void;
   resolverCalled: (resolverInfo: ResolverInfo) => void;
   resolverDone: (resolverInfo: ResolverInfo, result: any) => void;
