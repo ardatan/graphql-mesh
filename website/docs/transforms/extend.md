@@ -22,6 +22,13 @@ transforms:
     }
 ```
 
+or
+
+```yml
+transforms:
+  - extend: my-extension.graphql
+```
+
 ## Codesandbox Example
 
 You can check Location Weather example that uses OpenAPI handler with extend transform and additional resolvers;
