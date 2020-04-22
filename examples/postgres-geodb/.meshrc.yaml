@@ -2,7 +2,7 @@ sources:
   - name: Geo
     handler:
       postgraphile:
-        connectionString: postgres://postgres:docker@localhost/postgres
+        connectionString: postgres://postgres:docker@localhost:5432/postgres
     transforms:
       - prefix:
           value: Geo

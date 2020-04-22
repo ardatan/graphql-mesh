@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.9",
-    "postgraphile": "4.6.0"
+    "postgraphile": "4.5.5"
   },
   "publishConfig": {
     "access": "public",

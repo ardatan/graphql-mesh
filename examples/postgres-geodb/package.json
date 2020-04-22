@@ -10,7 +10,7 @@
     "mesh:serve": "graphql-mesh serve",
     "mesh:sdk": "graphql-mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
     "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts",
-    "start": "mesh:serve"
+    "start": "yarn mesh:serve"
   },
   "devDependencies": {
     "@types/node": "13.9.0",

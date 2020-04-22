@@ -144,21 +144,9 @@ export async function extractSdkFromResolvers(
           Object.entries(fields).map(async ([fieldName, field]) => {
             const resolveFn = field.resolve;
 
-            let fn: (...args: any[]) => any = resolveFn
+            const fn: (...args: any[]) => any = resolveFn
               ? (args: any, context: any, info: GraphQLResolveInfo) => resolveFn(null, args, context, info)
               : () => null;
-
-            hooks.emit('buildSdkFn', {
-              schema,
-              typeName: type.name,
-              fieldName: fieldName,
-              originalResolveFn: resolveFn,
-              replaceFn: newFn => {
-                if (newFn) {
-                  fn = newFn;
-                }
-              },
-            });
 
             sdk[fieldName] = async (args: any, context: any, info: GraphQLResolveInfo) => {
               if (!info) {
