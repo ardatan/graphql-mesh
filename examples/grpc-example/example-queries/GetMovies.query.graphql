@@ -8,6 +8,7 @@ query GetMovies {
       time {
         seconds
       }
+      genre
     }
   }
 }

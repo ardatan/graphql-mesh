@@ -1,7 +1,7 @@
 import * as grpc from 'grpc';
 
 import { ExampleService, IExampleServer } from './proto/Example_grpc_pb';
-import { EmptyRequest, Movie, MoviesResult, SearchByCastRequest } from './proto/Example_pb';
+import { EmptyRequest, Genre, Movie, MoviesResult, SearchByCastRequest } from './proto/Example_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 
 interface IRawMovie {
@@ -10,6 +10,7 @@ interface IRawMovie {
   rating: number;
   year: number;
   time: { seconds: number };
+  genre: Genre;
 }
 
 const seconds = Date.now();
@@ -23,6 +24,7 @@ const Movies = [
     time: {
       seconds,
     },
+    genre: Genre.ACTION,
   },
   {
     cast: ['Tom Cruise', 'Simon Pegg', 'Henry Cavill'],
@@ -32,6 +34,7 @@ const Movies = [
     time: {
       seconds,
     },
+    genre: Genre.ACTION,
   },
   {
     cast: ['Leonardo DiCaprio', 'Jonah Hill', 'Margot Robbie'],
@@ -41,6 +44,7 @@ const Movies = [
     time: {
       seconds,
     },
+    genre: Genre.DRAMA,
   },
 ];
 
@@ -54,6 +58,7 @@ function createMovie(movie: IRawMovie): Movie {
   const timestamp = new Timestamp();
   timestamp.setSeconds(movie.time.seconds);
   result.setTime(timestamp);
+  result.setGenre(movie.genre);
 
   return result;
 }
