@@ -65,9 +65,9 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           name: typeName,
           values: {},
         };
-        for (const key in nested.values) {
+        for (const [key, value] of Object.entries(nested.values)) {
           enumTypeConfig.values[key] = {
-            value: key,
+            value: value,
           };
         }
         schemaComposer.createEnumTC(enumTypeConfig);
