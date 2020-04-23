@@ -6,9 +6,10 @@ import { fetchache, Request } from 'fetchache';
 
 const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
   async getMeshSource({ config, hooks, cache }) {
+    const gatewayFetcher: any = (info: RequestInfo, init: RequestInit) =>
+      fetchache(typeof info === 'string' ? new Request(info, init) : info, cache);
     const gateway = new ApolloGateway({
-      fetcher: (info: any, init: any) =>
-        fetchache(typeof info === 'string' ? new Request(info, init) : info, cache) as any,
+      fetcher: gatewayFetcher,
       ...config,
     });
     const { schema, executor } = await gateway.load();
@@ -16,6 +17,7 @@ const handler: MeshHandlerLibrary<YamlConfig.FederationHandler> = {
       executor({
         document: query,
         request: {
+          operationName,
           query: print(query),
           variables,
         },
