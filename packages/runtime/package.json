@@ -15,8 +15,8 @@
   "dependencies": {
     "@graphql-mesh/cache-inmemory-lru": "0.1.10",
     "@graphql-mesh/types": "0.1.10",
-    "@graphql-toolkit/common": "0.10.4",
-    "@graphql-toolkit/schema-merging": "0.10.4",
+    "@graphql-toolkit/common": "0.10.5",
+    "@graphql-toolkit/schema-merging": "0.10.5",
     "aggregate-error": "3.0.1",
     "ajv": "6.12.2",
     "cosmiconfig": "6.0.0",

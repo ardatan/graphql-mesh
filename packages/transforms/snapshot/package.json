@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.10",
-    "@graphql-toolkit/common": "0.10.4",
+    "@graphql-toolkit/common": "0.10.5",
     "fs-extra": "9.0.0",
     "graphql-tools": "5.0.0",
     "object-hash": "2.0.3"
