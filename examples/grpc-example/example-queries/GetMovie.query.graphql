@@ -1,0 +1,10 @@
+query GetMovie {
+  GetMovie(input: { movie: { genre: DRAMA, year: 2015 } }) {
+    result {
+      name
+      year
+      rating
+      genre
+    }
+  }
+}

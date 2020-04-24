@@ -65,6 +65,20 @@ function createMovie(movie: IRawMovie): Movie {
 }
 
 class ServerImpl implements IExampleServer {
+  public getMovie(request: grpc.ServerUnaryCall<MovieRequest>, callback: grpc.sendUnaryData<MoviesResult>) {
+    const result = new MoviesResult();
+    Movies.map(createMovie).forEach((movie: Movie) => {
+      const requestMovieObj = request.request.getMovie().toObject();
+      const movieObj = movie.toObject();
+      for (const [key, value] of Object.entries(requestMovieObj)) {
+        if (movieObj[key] === value) {
+          result.addResult(movie);
+        }
+      }
+    });
+    callback(null, result);
+  }
+
   public getMovies(request: grpc.ServerUnaryCall<EmptyRequest>, callback: grpc.sendUnaryData<MoviesResult>) {
     const result = new MoviesResult();
     Movies.map(createMovie).forEach((movie: Movie) => result.addResult(movie));

@@ -95,7 +95,9 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
             value: value,
           };
         }
+        const enumInputTypeConfig = Object.assign({}, enumTypeConfig, { name: typeName + 'Input' });
         schemaComposer.createEnumTC(enumTypeConfig);
+        schemaComposer.createEnumTC(enumInputTypeConfig);
       } else if ('fields' in nested) {
         let typeName = name;
         if (currentPath !== config.packageName) {
