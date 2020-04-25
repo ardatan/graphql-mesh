@@ -1,7 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
 import Layout from '@theme/Layout';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 import Button from '../components/ui/Button';
@@ -58,15 +57,16 @@ function Feature({ imageUrl, title, description }) {
 }
 
 function Home() {
-  const context = useDocusaurusContext();
   return (
     <Layout title={`GraphQL Mesh`} description="">
-      <header class={styles.header}>
-        <video width="100%" height="100%" playsInline={true} autoPlay={true} muted={true} loop={true}>
-          <source src="/video/medium_1200X345.webm" type="video/webm" />
-          <source src="/video/medium_1200X345.mp4" type="video/mp4" />
-        </video>
-        <img class={styles.npmBadge}
+      <header className={styles.header}>
+        <div className={styles.bannerVideoContainer}>
+          <video className={styles.bannerVideo} width="100%" height="100%" playsInline={true} autoPlay={true} muted={true} loop={true}>
+            <source src="/video/medium_1200X345.webm" type="video/webm" />
+            <source src="/video/medium_1200X345.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <img className={styles.npmBadge}
           alt="npm"
           src="https://img.shields.io/npm/v/@graphql-mesh/runtime?color=%231BCBE2&label=stable&style=for-the-badge"
         />

@@ -7,6 +7,7 @@ module.exports = {
   organizationName: 'urigo',
   projectName: 'graphql-mesh',
   themeConfig: {
+    defaultDarkMode: true,
     algolia: {
       apiKey: 'c028a32ff6167533a28b0c7e8bb250d9',
       indexName: 'graphql-mesh',
