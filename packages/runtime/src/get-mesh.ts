@@ -1,4 +1,12 @@
-import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
+import {
+  GraphQLSchema,
+  execute,
+  DocumentNode,
+  GraphQLError,
+  isUnionType,
+  GraphQLUnionType,
+  GraphQLObjectType,
+} from 'graphql';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, RawSourceOutput, Requester } from './types';
 import {
   extractSdkFromResolvers,
@@ -71,6 +79,42 @@ export async function getMesh(
   );
   let unifiedSchema = mergeSchemas({
     schemas,
+    mergeTypes: true,
+    mergeDirectives: true,
+    // Should be fixed in graphql-tools
+    onTypeConflict: (left, right) => {
+      if (isUnionType(left) && isUnionType(right)) {
+        const types: GraphQLObjectType[] = [];
+        const leftConfig = left.toConfig();
+        for (const type of leftConfig.types) {
+          const foundIndex = types.findIndex(existingType => existingType.name === type.name);
+          if (foundIndex === -1) {
+            types.push(type);
+          } else {
+            types[foundIndex] = type;
+          }
+        }
+        const rightConfig = right.toConfig();
+        for (const type of rightConfig.types) {
+          const foundIndex = types.findIndex(existingType => existingType.name === type.name);
+          if (foundIndex === -1) {
+            types.push(type);
+          } else {
+            types[foundIndex] = type;
+          }
+        }
+        return new GraphQLUnionType({
+          name: rightConfig.name || leftConfig.name,
+          description: rightConfig.description || leftConfig.description,
+          types,
+          resolveType: (...args) =>
+            rightConfig.resolveType?.apply(rightConfig, args) ||
+            leftConfig.resolveType?.apply(rightConfig, args) ||
+            args[0].__typename,
+        });
+      }
+      return right;
+    },
   });
 
   if (options.transforms && options.transforms.length > 0) {
