@@ -1,7 +1,8 @@
 import * as grpc from 'grpc';
 
-import { ExampleService, IExampleServer } from './proto/Example_grpc_pb';
-import { EmptyRequest, Genre, Movie, MoviesResult, SearchByCastRequest } from './proto/Example_pb';
+import { ExampleService, IExampleServer } from './proto/io/xtech/service_grpc_pb';
+import { EmptyRequest, MoviesResult, SearchByCastRequest, MovieRequest } from './proto/io/xtech/service_pb';
+import { Genre, Movie } from './proto/io/xtech/movie_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 
 interface IRawMovie {
