@@ -2202,10 +2202,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
   integrity sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==
 
-"@types/ioredis@4.14.9":
-  version "4.14.9"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.14.9.tgz#774387d44d3ad60e1b849044b2b28b96e5813866"
-  integrity sha512-yNdzppM6vY4DYqXCnt4A3PXArxsMWeJCYxFlyl4AJKrNSGMEAP9TPcXR+8Q6zh9glcCtxmwMQhi4pwdqqHH3OA==
+"@types/ioredis@4.16.0":
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.16.0.tgz#7c56f0036f8363992a28288640f2542962a04e83"
+  integrity sha512-fxR2oHLj0NIqdM9OT8/hwPmlHI05i77UVfP9deys8+ZutZuo0SneA7FvXm2Kage6drQyl8F5gHWiTGK0lXaCCA==
   dependencies:
     "@types/node" "*"
 
