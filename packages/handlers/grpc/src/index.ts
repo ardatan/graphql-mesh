@@ -39,6 +39,8 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
       },
     });
 
+    const ENUMS = new Set<string>();
+
     function getTypeName(typePath: string, isInput: boolean) {
       if (typePath in SCALARS) {
         return SCALARS[typePath];
@@ -49,7 +51,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           .split('.')
           .join('_')
       );
-      if (isInput) {
+      if (!ENUMS.has(baseTypeName) && isInput) {
         baseTypeName += 'Input';
       }
       return baseTypeName;
@@ -70,6 +72,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
             value: value,
           };
         }
+        ENUMS.add(typeName);
         schemaComposer.createEnumTC(enumTypeConfig);
       } else if ('fields' in nested) {
         let typeName = name;
@@ -86,16 +89,20 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         });
         for (const fieldName in nested.fields) {
           const { type, rule } = nested.fields[fieldName];
-          const typeName = getTypeName(type, false);
-          const inputTypeName = getTypeName(type, true);
           inputTC.addFields({
             [fieldName]: {
-              type: rule === 'repeated' ? `[${inputTypeName}]` : inputTypeName,
+              type: () => {
+                const inputTypeName = getTypeName(type, true);
+                return rule === 'repeated' ? `[${inputTypeName}]` : inputTypeName;
+              },
             },
           });
           outputTC.addFields({
             [fieldName]: {
-              type: rule === 'repeated' ? `[${typeName}]` : typeName,
+              type: () => {
+                const typeName = getTypeName(type, false);
+                return rule === 'repeated' ? `[${typeName}]` : typeName;
+              },
             },
           });
         }
@@ -107,7 +114,6 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         });
         for (const methodName in methods) {
           const method = methods[methodName];
-          const inputType = getTypeName(method.requestType, true);
           let rootFieldName = methodName;
           if (name !== config.serviceName) {
             rootFieldName = camelCase(name + '_' + rootFieldName);
@@ -115,12 +121,11 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           if (currentPath !== config.packageName) {
             rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
           }
-          const outputType = getTypeName(method.responseType, false);
           const fieldConfig = {
-            type: outputType,
+            type: () => getTypeName(method.responseType, false),
             args: {
               input: {
-                type: inputType,
+                type: () => getTypeName(method.requestType, true),
                 defaultValue: {},
               },
             },

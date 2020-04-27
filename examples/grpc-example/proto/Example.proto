@@ -32,6 +32,10 @@ message SearchByCastRequest {
     string castName = 1;
 }
 
+message MovieRequest {
+    Movie movie = 1;
+}
+
 /**
  * movie result message, contains list of movies
  */
@@ -46,7 +50,7 @@ service Example {
     /**
     * get all movies
     */
-    rpc GetMovies (EmptyRequest) returns (MoviesResult) {}
+    rpc GetMovies (MovieRequest) returns (MoviesResult) {}
 
     /**
     * search movies by the name of the cast
