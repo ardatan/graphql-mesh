@@ -22,7 +22,7 @@
     "@types/node": "13.9.1",
     "concurrently": "5.1.0",
     "grpc-tools": "1.8.1",
-    "grpc_tools_node_protoc_ts": "2.5.10",
+    "grpc_tools_node_protoc_ts": "3.0.0",
     "typescript": "3.8.3",
     "ts-node": "8.9.0"
   }

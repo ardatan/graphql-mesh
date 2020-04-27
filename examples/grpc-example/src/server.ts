@@ -1,7 +1,7 @@
 import * as grpc from 'grpc';
 
 import { ExampleService, IExampleServer } from './proto/Example_grpc_pb';
-import { EmptyRequest, Genre, Movie, MoviesResult, SearchByCastRequest } from './proto/Example_pb';
+import { Genre, Movie, MoviesResult, SearchByCastRequest, MovieRequest } from './proto/Example_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 
 interface IRawMovie {
@@ -64,9 +64,31 @@ function createMovie(movie: IRawMovie): Movie {
 }
 
 class ServerImpl implements IExampleServer {
-  public getMovies(request: grpc.ServerUnaryCall<EmptyRequest>, callback: grpc.sendUnaryData<MoviesResult>) {
+  public getMovie(request: grpc.ServerUnaryCall<MovieRequest>, callback: grpc.sendUnaryData<MoviesResult>) {
     const result = new MoviesResult();
-    Movies.map(createMovie).forEach((movie: Movie) => result.addResult(movie));
+    Movies.map(createMovie).forEach((movie: Movie) => {
+      const requestMovieObj = request.request.getMovie().toObject();
+      const movieObj = movie.toObject();
+      for (const [key, value] of Object.entries(requestMovieObj)) {
+        if (movieObj[key] === value) {
+          result.addResult(movie);
+        }
+      }
+    });
+    callback(null, result);
+  }
+
+  public getMovies(request: grpc.ServerUnaryCall<MovieRequest>, callback: grpc.sendUnaryData<MoviesResult>) {
+    const result = new MoviesResult();
+    Movies.map(createMovie).forEach((movie: Movie) => {
+      const requestMovieObj = request.request.getMovie().toObject();
+      const movieObj = movie.toObject();
+      for (const [key, value] of Object.entries(requestMovieObj)) {
+        if (movieObj[key] === value) {
+          result.addResult(movie);
+        }
+      }
+    });
     callback(null, result);
   }
 
