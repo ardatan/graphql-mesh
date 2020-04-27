@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary, YamlConfig, TransformFn, KeyValueCache, Hooks } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, YamlConfig, TransformFn, KeyValueCache, Hooks, MergerFn } from '@graphql-mesh/types';
 import { DocumentNode, GraphQLSchema } from 'graphql';
 import { IResolvers } from 'graphql-tools';
 
@@ -16,6 +16,7 @@ export type GetMeshOptions = {
   cache?: KeyValueCache;
   hooks?: Hooks;
   ignoreAdditionalResolvers?: boolean;
+  merger: MergerFn;
 };
 
 export type MeshResolvedSource = {

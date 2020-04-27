@@ -13,7 +13,6 @@ import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
 import { EventEmitter } from 'events';
 import { MESH_CONTEXT_SYMBOL } from './constants';
-import { mergeSchemas } from 'graphql-tools';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -69,8 +68,10 @@ export async function getMesh(
       schemas.push(apiSchema);
     })
   );
-  let unifiedSchema = mergeSchemas({
-    schemas,
+  let unifiedSchema = await options.merger({
+    sources: rawSources,
+    cache,
+    hooks,
   });
 
   if (options.transforms && options.transforms.length > 0) {

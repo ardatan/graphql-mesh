@@ -57,3 +57,9 @@ export type TransformFn<Config = any> = (options: {
 export type Maybe<T> = null | undefined | T;
 
 export { KeyValueCache, KeyValueCacheSetOptions };
+
+export type MergerFn = (options: {
+  sources: { name: string; schema: GraphQLSchema }[];
+  cache: KeyValueCache;
+  hooks: Hooks;
+}) => Promise<GraphQLSchema> | GraphQLSchema;

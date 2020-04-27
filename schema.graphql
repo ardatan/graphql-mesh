@@ -253,6 +253,8 @@ type Query {
   additionalResolvers: [String]
   """Backend cache"""
   cache: Cache
+  """Merge method"""
+  merger: String
 }
 scalar JSON
 type Source {

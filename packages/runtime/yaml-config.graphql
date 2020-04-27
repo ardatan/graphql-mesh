@@ -16,6 +16,10 @@ type Query {
   Backend cache
   """
   cache: Cache
+  """
+  Merge method
+  """
+  merger: String
 }
 
 scalar JSON
