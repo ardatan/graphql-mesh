@@ -1,7 +1,8 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { accessSync, constants } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
-import { AnyNestedObject, load } from 'protobufjs';
+import { AnyNestedObject, Root, IParseOptions } from 'protobufjs';
 import { isAbsolute, join } from 'path';
 import grpcCaller, { GrpcResponseStream } from 'grpc-caller';
 import { camelCase } from 'camel-case';
@@ -17,6 +18,30 @@ const SCALARS = {
   string: 'String',
   bool: 'Boolean',
 };
+
+interface LoadOptions extends IParseOptions {
+  includeDirs?: string[];
+}
+
+function addIncludePathResolver(root: Root, includePaths: string[]) {
+  const originalResolvePath = root.resolvePath;
+  root.resolvePath = (origin: string, target: string) => {
+    if (isAbsolute(target)) {
+      return target;
+    }
+    for (const directory of includePaths) {
+      const fullPath: string = join(directory, target);
+      try {
+        accessSync(fullPath, constants.R_OK);
+        return fullPath;
+      } catch (err) {
+        continue;
+      }
+    }
+    process.emitWarning(`${target} not found in any of the include paths ${includePaths}`);
+    return originalResolvePath(origin, target);
+  };
+}
 
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
   async getMeshSource({ config }) {
@@ -175,10 +200,21 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
       }
     }
 
-    const absoluteProtoFilePath = isAbsolute(config.protoFilePath)
-      ? config.protoFilePath
-      : join(process.cwd(), config.protoFilePath);
-    const root = await load(absoluteProtoFilePath);
+    const root = new Root();
+    let fileName = config.protoFilePath;
+    let options: LoadOptions = {};
+    if (typeof config.protoFilePath === 'object' && config.protoFilePath.file) {
+      fileName = config.protoFilePath.file;
+      options = config.protoFilePath.load;
+      if (options.includeDirs) {
+        if (!Array.isArray(options.includeDirs)) {
+          return Promise.reject(new Error('The includeDirs option must be an array'));
+        }
+        addIncludePathResolver(root, options.includeDirs);
+      }
+    }
+    const protoDefinition = await root.load(fileName as string, options);
+    protoDefinition.resolveAll();
     const nested = root.toJSON({
       keepComments: true,
     });

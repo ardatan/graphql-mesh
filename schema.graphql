@@ -50,7 +50,7 @@ type GrpcHandler @md {
   """gRPC Endpoint"""
   endpoint: String!
   """gRPC Proto file that contains your protobuf schema"""
-  protoFilePath: String!
+  protoFilePath: ProtoFilePathOrString!
   """
   Your base service name
   Used for naming only
@@ -67,6 +67,14 @@ type GrpcHandler @md {
   """
   requestTimeout: Int
 }
+type LoadOptions {
+  includeDirs: [String]
+}
+type ProtoFilePath @md {
+  file: String!
+  load: LoadOptions
+}
+union ProtoFilePathOrString = ProtoFilePath | String
 type FederationHandler @md {
   serviceList: [FederationService!]!
 }

@@ -15,9 +15,16 @@ declare module 'grpc-caller' {
     options?: { deadline: number }
   ) => GrpcResponse<TData>;
   export type GrpcCaller = Record<string, GrpcMethod>;
+  export type ProtoFilePath = {
+    file: string;
+    load?: LoadOptions;
+  };
+  export type LoadOptions = {
+    includeDirs?: string[];
+  };
   export default function grpcCaller(
     endpoint: string,
-    protoFilePath: string,
+    protoFilePath: ProtoFilePath | string,
     name: string,
     greeter: string,
     options: GrpcCallerOptions
