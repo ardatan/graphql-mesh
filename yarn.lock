@@ -1102,10 +1102,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
-"@docusaurus/core@2.0.0-alpha.50":
-  version "2.0.0-alpha.50"
-  resolved "https://registry.yarnpkg.com/@docusaurus/core/-/core-2.0.0-alpha.50.tgz#4631efd9956a95aff29a6dfc9b3afffbcf6939e4"
-  integrity sha512-lNvft+di325Ww3/S/kgbJmDmZF6OgJc3gM5zE8Lcl2Hqa6gZ6INIsGhnGxIX5Of1apliWGRVSojEF+mxf0BE1g==
+"@docusaurus/core@2.0.0-alpha.51":
+  version "2.0.0-alpha.51"
+  resolved "https://registry.yarnpkg.com/@docusaurus/core/-/core-2.0.0-alpha.51.tgz#3e6d859d072a0fc7ccf7c8d2ad68c3ec659c3a03"
+  integrity sha512-ZAxMX6nsJvooWD7pu2ipY73T76NMxKioMrSi9+pGENd+wTlEKbLQ0QWMWBgLfmx3jpccMopHMKdnpNuOJCSJOQ==
   dependencies:
     "@babel/core" "^7.9.0"
     "@babel/plugin-syntax-dynamic-import" "^7.8.3"
@@ -1114,7 +1114,7 @@
     "@babel/preset-react" "^7.9.4"
     "@babel/preset-typescript" "^7.9.0"
     "@babel/runtime" "^7.9.2"
-    "@docusaurus/utils" "^2.0.0-alpha.50"
+    "@docusaurus/utils" "^2.0.0-alpha.51"
     "@endiliey/static-site-generator-webpack-plugin" "^4.0.0"
     babel-loader "^8.1.0"
     babel-plugin-dynamic-import-node "^2.3.0"
@@ -1135,7 +1135,9 @@
     html-tags "^3.1.0"
     html-webpack-plugin "^4.0.4"
     import-fresh "^3.2.1"
-    lodash "^4.17.15"
+    lodash.has "^4.5.2"
+    lodash.isplainobject "^4.0.6"
+    lodash.isstring "^4.0.1"
     mini-css-extract-plugin "^0.8.0"
     nprogress "^0.2.0"
     null-loader "^3.0.0"
@@ -1151,7 +1153,7 @@
     react-router-config "^5.1.1"
     react-router-dom "^5.1.2"
     semver "^6.3.0"
-    shelljs "^0.8.3"
+    shelljs "^0.8.4"
     std-env "^2.2.1"
     terser-webpack-plugin "^2.3.5"
     wait-file "^1.0.5"
@@ -1292,6 +1294,17 @@
     fs-extra "^8.1.0"
     gray-matter "^4.0.2"
     lodash "^4.17.15"
+
+"@docusaurus/utils@^2.0.0-alpha.51":
+  version "2.0.0-alpha.51"
+  resolved "https://registry.yarnpkg.com/@docusaurus/utils/-/utils-2.0.0-alpha.51.tgz#bef7b88c775b0c4a35084b65567574ce205941ea"
+  integrity sha512-c7vRUQR8EaEq2mHqD7fx4MENwJgxBLpVnizKwuSsXnl9jUW46amX/2rtrXCzgSKjs6Fo3MqOu+QAWbDkh73Djg==
+  dependencies:
+    escape-string-regexp "^2.0.0"
+    fs-extra "^8.1.0"
+    gray-matter "^4.0.2"
+    lodash.camelcase "^4.3.0"
+    lodash.kebabcase "^4.1.1"
 
 "@endiliey/static-site-generator-webpack-plugin@^4.0.0":
   version "4.0.0"
@@ -10556,6 +10569,11 @@ lodash.get@4.4.2:
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
 
+lodash.has@^4.5.2:
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/lodash.has/-/lodash.has-4.5.2.tgz#d19f4dc1095058cccbe2b0cdf4ee0fe4aa37c862"
+  integrity sha1-0Z9NwQlQWMzL4rDN9O4P5Ko3yGI=
+
 lodash.includes@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.includes/-/lodash.includes-4.3.0.tgz#60bb98a87cb923c68ca1e51325483314849f553f"
@@ -14960,6 +14978,15 @@ shelljs@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.3.tgz#a7f3319520ebf09ee81275b2368adb286659b097"
   integrity sha512-fc0BKlAWiLpwZljmOvAOTE/gXawtCoNrP5oaY7KIaQbbyHeQVg01pSEuEGvGh3HEdBU4baCD7wQBwADmM/7f7A==
+  dependencies:
+    glob "^7.0.0"
+    interpret "^1.0.0"
+    rechoir "^0.6.2"
+
+shelljs@^0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.4.tgz#de7684feeb767f8716b326078a8a00875890e3c2"
+  integrity sha512-7gk3UZ9kOfPLIAbslLzyWeGiEqx9e3rxwZM0KE6EL8GlGwjym9Mrlx5/p33bWTu9YG6vcS4MBxYZDHYr5lr8BQ==
   dependencies:
     glob "^7.0.0"
     interpret "^1.0.0"
