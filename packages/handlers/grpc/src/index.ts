@@ -38,8 +38,11 @@ function addIncludePathResolver(root: Root, includePaths: string[]) {
         continue;
       }
     }
-    process.emitWarning(`${target} not found in any of the include paths ${includePaths}`);
-    return originalResolvePath(origin, target);
+    const path = originalResolvePath(origin, target);
+    if (path === null) {
+      console.warn(`${target} not found in any of the include paths ${includePaths}`);
+    }
+    return path;
   };
 }
 
@@ -64,8 +67,6 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
       },
     });
 
-    const ENUMS = new Set<string>();
-
     function getTypeName(typePath: string, isInput: boolean) {
       if (typePath in SCALARS) {
         return SCALARS[typePath];
@@ -76,7 +77,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           .split('.')
           .join('_')
       );
-      if (!ENUMS.has(baseTypeName) && isInput) {
+      if (isInput && !schemaComposer.isEnumType(baseTypeName)) {
         baseTypeName += 'Input';
       }
       return baseTypeName;
@@ -94,10 +95,9 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         };
         for (const [key, value] of Object.entries(nested.values)) {
           enumTypeConfig.values[key] = {
-            value: value,
+            value,
           };
         }
-        ENUMS.add(typeName);
         schemaComposer.createEnumTC(enumTypeConfig);
       } else if ('fields' in nested) {
         let typeName = name;
@@ -112,78 +112,82 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           name: typeName,
           fields: {},
         });
-        for (const fieldName in nested.fields) {
-          const { type, rule } = nested.fields[fieldName];
-          inputTC.addFields({
-            [fieldName]: {
-              type: () => {
-                const inputTypeName = getTypeName(type, true);
-                return rule === 'repeated' ? `[${inputTypeName}]` : inputTypeName;
+        await Promise.all(
+          Object.keys(nested.fields).map(async fieldName => {
+            const { type, rule } = nested.fields[fieldName];
+            inputTC.addFields({
+              [fieldName]: {
+                type: () => {
+                  const inputTypeName = getTypeName(type, true);
+                  return rule === 'repeated' ? `[${inputTypeName}]` : inputTypeName;
+                },
               },
-            },
-          });
-          outputTC.addFields({
-            [fieldName]: {
-              type: () => {
-                const typeName = getTypeName(type, false);
-                return rule === 'repeated' ? `[${typeName}]` : typeName;
+            });
+            outputTC.addFields({
+              [fieldName]: {
+                type: () => {
+                  const typeName = getTypeName(type, false);
+                  return rule === 'repeated' ? `[${typeName}]` : typeName;
+                },
               },
-            },
-          });
-        }
+            });
+          })
+        );
       } else if ('methods' in nested) {
         const methods = nested.methods;
         const client = grpcCaller(config.endpoint, config.protoFilePath, name, null, {
           'grpc.max_send_message_length': -1,
           'grpc.max_receive_message_length': -1,
         });
-        for (const methodName in methods) {
-          const method = methods[methodName];
-          let rootFieldName = methodName;
-          if (name !== config.serviceName) {
-            rootFieldName = camelCase(name + '_' + rootFieldName);
-          }
-          if (currentPath !== config.packageName) {
-            rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
-          }
-          const fieldConfig = {
-            type: () => getTypeName(method.responseType, false),
-            args: {
-              input: {
-                type: () => getTypeName(method.requestType, true),
-                defaultValue: {},
-              },
-            },
-          };
-          if (method.responseStream) {
-            schemaComposer.Subscription.addFields({
-              [rootFieldName]: {
-                ...fieldConfig,
-                subscribe: (__, args) => {
-                  const responseStream = client[methodName](args.input, {}) as GrpcResponseStream;
-                  return withCancel(responseStream, () => responseStream.cancel());
+        await Promise.all(
+          Object.keys(methods).map(async methodName => {
+            const method = methods[methodName];
+            let rootFieldName = methodName;
+            if (name !== config.serviceName) {
+              rootFieldName = camelCase(name + '_' + rootFieldName);
+            }
+            if (currentPath !== config.packageName) {
+              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
+            }
+            const fieldConfig = {
+              type: () => getTypeName(method.responseType, false),
+              args: {
+                input: {
+                  type: () => getTypeName(method.requestType, true),
+                  defaultValue: {},
                 },
-                resolve: (payload: any) => payload,
               },
-            });
-          } else {
-            const identifier = rootFieldName.toLowerCase();
-            const rootTC = identifier.startsWith('get') ? schemaComposer.Query : schemaComposer.Mutation;
-            rootTC.addFields({
-              [rootFieldName]: {
-                ...fieldConfig,
-                resolve: (_, args) =>
-                  client[methodName](
-                    args.input,
-                    {},
-                    {
-                      deadline: Date.now() + config.requestTimeout,
-                    }
-                  ),
-              },
-            });
-          }
-        }
+            };
+            if (method.responseStream) {
+              schemaComposer.Subscription.addFields({
+                [rootFieldName]: {
+                  ...fieldConfig,
+                  subscribe: (__, args) => {
+                    const responseStream = client[methodName](args.input, {}) as GrpcResponseStream;
+                    return withCancel(responseStream, () => responseStream.cancel());
+                  },
+                  resolve: (payload: any) => payload,
+                },
+              });
+            } else {
+              const identifier = rootFieldName.toLowerCase();
+              const rootTC = identifier.startsWith('get') ? schemaComposer.Query : schemaComposer.Mutation;
+              rootTC.addFields({
+                [rootFieldName]: {
+                  ...fieldConfig,
+                  resolve: (_, args) =>
+                    client[methodName](
+                      args.input,
+                      {},
+                      {
+                        deadline: Date.now() + config.requestTimeout,
+                      }
+                    ),
+                },
+              });
+            }
+          })
+        );
         let rootPingFieldName = 'ping';
         if (name !== config.serviceName) {
           rootPingFieldName = camelCase(name + '_' + rootPingFieldName);
@@ -198,10 +202,12 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           },
         });
       } else if ('nested' in nested) {
-        for (const key in nested.nested) {
-          const currentNested = nested.nested[key];
-          visit(currentNested, key, currentPath ? currentPath + '.' + name : name);
-        }
+        await Promise.all(
+          Object.keys(nested.nested).map(async key => {
+            const currentNested = nested.nested[key];
+            await visit(currentNested, key, currentPath ? currentPath + '.' + name : name);
+          })
+        );
       }
     }
 
@@ -223,7 +229,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     const nested = root.toJSON({
       keepComments: true,
     });
-    visit(nested, '', '');
+    await visit(nested, '', '');
 
     const schema = schemaComposer.buildSchema();
 

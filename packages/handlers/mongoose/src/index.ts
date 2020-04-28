@@ -38,14 +38,20 @@ const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
         config.models.map(async modelConfig => {
           const model = await loadFromModuleExportExpression(modelConfig.path, modelConfig.name);
           const modelTC = composeWithMongoose(model, modelConfig.options as any);
-          for (const queryOperation of modelQueryOperations) {
-            queryFields[camelCase(`${modelConfig.name}_${queryOperation}`)] = modelTC.getResolver(queryOperation);
-          }
-          for (const mutationOperation of modelMutationOperations) {
-            mutationFields[camelCase(`${modelConfig.name}_${mutationOperation}`)] = modelTC.getResolver(
-              mutationOperation
-            );
-          }
+          await Promise.all([
+            Promise.all(
+              modelQueryOperations.map(async queryOperation => {
+                queryFields[camelCase(`${modelConfig.name}_${queryOperation}`)] = modelTC.getResolver(queryOperation);
+              })
+            ),
+            Promise.all(
+              modelMutationOperations.map(async mutationOperation => {
+                mutationFields[camelCase(`${modelConfig.name}_${mutationOperation}`)] = modelTC.getResolver(
+                  mutationOperation
+                );
+              })
+            ),
+          ]);
         })
       );
     }
