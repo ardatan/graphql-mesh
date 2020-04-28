@@ -3,6 +3,10 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
-        protoFilePath: ./proto/Example.proto
+        protoFilePath:
+          file: io/xtech/service.proto
+          load:
+            includeDirs:
+              - ./proto
         serviceName: Example
-        packageName: io.xtech.example
+        packageName: io.xtech
