@@ -59,11 +59,11 @@ async function release() {
             return new Promise((resolve, reject) => {
                 const publishSpawn = cp.spawn('npm', ['publish', distPath, '--tag', tag, '--access', distPackageJson.publishConfig.access]);
                 publishSpawn.on("error", function (error) {
-                    reject(new Error(command + " " + args.join(" ") + " in " + cwd + " encountered error " + error.message));
+                    reject(new Error("npm publish encountered error " + error.message));
                 });
                 publishSpawn.on("exit", function(code) {
                     if (code !== 0) {
-                        reject(new Error(command + " " + args.join(" ") + " in " + cwd + " exited with code " + code));
+                        reject(new Error("npm publish exited with code " + code));
                     } else {
                         resolve();
                     }
