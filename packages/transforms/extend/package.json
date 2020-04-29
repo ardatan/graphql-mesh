@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.11",
-    "@graphql-toolkit/core": "0.10.5",
-    "@graphql-toolkit/graphql-file-loader": "0.10.5",
-    "@graphql-toolkit/code-file-loader": "0.10.5"
+    "@graphql-toolkit/core": "0.10.6",
+    "@graphql-toolkit/graphql-file-loader": "0.10.6",
+    "@graphql-toolkit/code-file-loader": "0.10.6"
   },
   "publishConfig": {
     "access": "public",
