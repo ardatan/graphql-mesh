@@ -1,6 +1,6 @@
 {
   "name": "grpc-example",
-  "version": "0.1.11",
+  "version": "0.1.13",
   "author": "Simon Liang",
   "license": "MIT",
   "private": true,
@@ -11,8 +11,8 @@
     "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\""
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.1.11",
-    "@graphql-mesh/grpc": "0.1.11",
+    "@graphql-mesh/cli": "0.1.13",
+    "@graphql-mesh/grpc": "0.1.13",
     "google-protobuf": "3.11.4",
     "graphql": "15.0.0",
     "grpc": "1.24.2"
