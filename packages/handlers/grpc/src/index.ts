@@ -170,7 +170,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
                 },
               });
             } else {
-              const identifier = rootFieldName.toLowerCase();
+              const identifier = methodName.toLowerCase();
               const rootTC = identifier.startsWith('get') ? schemaComposer.Query : schemaComposer.Mutation;
               rootTC.addFields({
                 [rootFieldName]: {

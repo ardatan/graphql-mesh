@@ -36,3 +36,16 @@ service Example {
   rpc SearchMoviesByCast (SearchByCastRequest) returns (stream Movie) {}
 
 }
+
+service AnotherExample {
+  /**
+  * get all movies
+  */
+  rpc GetMovies (MovieRequest) returns (MoviesResult) {}
+
+  /**
+  * search movies by the name of the cast
+  */
+  rpc SearchMoviesByCast (SearchByCastRequest) returns (stream Movie) {}
+
+}
