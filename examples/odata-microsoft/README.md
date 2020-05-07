@@ -73,7 +73,3 @@ This is a *demo* that enables basic, read-only querying of the [Microsoft Graph 
   }
 }
 ```
-
-## How it works
-* src/setup.js reads in a well-formed $metadata CSDL, parses it and builds up a GraphQL schema
-* src/setup.js code generates resolvers that naively issues requests to the Graph service when the previous (parent) resolver doesn't have the data at hand
