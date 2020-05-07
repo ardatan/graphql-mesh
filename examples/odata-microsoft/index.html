@@ -1,0 +1,103 @@
+<html>
+
+<head>
+  <title>MSGraphQL Demo</title>
+  <style>
+    body {
+      margin-top: 5%;
+      margin-left: 5%;
+      padding: 10px;
+      font-family: 'HelveticaNeue', 'Arial', sans-serif;
+      width: 25%;
+      text-align: left;
+    }
+
+    body>div {
+      padding: 10px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px;
+    }
+
+    .hidden {
+      visibility: hidden
+    }
+
+    .visible {
+      visibility: visible
+    }
+
+    .response {
+      padding: 0px;
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- bluebird only needed if this page needs to run on Internet Explorer -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js' class='pre'></script>
+  <script src='https://secure.aadcdn.microsoftonline-p.com/lib/0.1.1/js/msal.min.js'></script>
+  <script src='https://code.jquery.com/jquery-3.2.1.min.js' class='pre'></script>
+
+  <div>
+    <h2>Microsoft Graph GraphQL Demo</h2>
+    <div id='label'>Sign-in with org or personal account</div>
+    <button id='auth' onclick='login()'>Login</button>
+  </div>
+
+  <pre class='response'></pre>
+
+  <script class='pre'>
+    var applicationConfig = {
+      redirectUri: location.href,
+      clientID: '58503fd3-6d1d-4eb2-a3e7-f2c1a761480b',
+      scopes: ['openid', 'profile', 'User.ReadWrite',
+        'User.Read', 'Sites.ReadWrite.All', 'Contacts.ReadWrite',
+        'Calendars.Read', 'Mail.Read', 'Device.Read',
+        'Files.Read.All', 'Mail.Read.Shared', 'People.Read',
+        'People.Read', 'Notes.Read.All', 'Tasks.Read', 'Mail.ReadWrite'],
+    };
+  </script>
+
+  <script>
+    'use strict';
+    var clientApplication = new Msal.UserAgentApplication(applicationConfig.clientID, applicationConfig.authority, function (errorDesc, token, error, tokenType) {
+      // Called after loginRedirect or acquireTokenPopup
+    });
+    function login() {
+      clientApplication.loginPopup(applicationConfig.scopes).then(function (idToken) {
+        clientApplication.acquireTokenSilent(applicationConfig.scopes).then(function (accessToken) {
+          updateUI(accessToken);
+        }, function (error) {
+          clientApplication.acquireTokenPopup(applicationConfig.scopes).then(function (accessToken) {
+            updateUI(accessToken);
+          }, function (error) {
+            logMessage('Error acquiring the popup:\n' + error);
+          });
+        })
+      }, function (error) {
+        logMessage('Error during login:\n' + error);
+      });
+    }
+    function updateUI(token) {
+      var userName = clientApplication.getUser().name;
+      var authButton = document.getElementById('auth');
+      authButton.innerHTML = 'logout';
+      authButton.setAttribute('onclick', 'logout();');
+      var label = document.getElementById('label');
+      document.cookie = 'token=' + token;
+      window.location.href = 'graphql/';
+    }
+    function logout() {
+      clientApplication.logout();
+    }
+    function logMessage(s) {
+      document.body.querySelector('.response').appendChild(document.createTextNode('\n' + s));
+    }
+  </script>
+</body>
+
+</html>

@@ -13,7 +13,8 @@ const EXAMPLES = {
         'Covid-19 Statistics': 'json-schema-covid',
     },
     'OData':{
-        'TripPin': 'odata-trippin'
+        'TripPin': 'odata-trippin',
+        'Microsoft Graph': 'odata-microsoft',
     },
     'SOAP': {
         'Country Info': 'soap-country-info'

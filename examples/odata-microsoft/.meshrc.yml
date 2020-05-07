@@ -1,0 +1,7 @@
+sources:
+  - name: Microsoft Graph
+    handler:
+      odata:
+        baseUrl: https://graph.microsoft.com/v1.0
+        operationHeaders:
+          Authorization: Bearer {context.cookies.token}
