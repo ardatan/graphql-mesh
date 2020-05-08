@@ -14,15 +14,15 @@
     "mongoose": "*"
   },
   "devDependencies": {
-    "@types/mongoose": "5.7.14",
-    "mongoose": "5.9.11"
+    "@types/mongoose": "5.7.15",
+    "mongoose": "5.9.12"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.13",
     "@graphql-mesh/utils": "0.1.13",
     "camel-case": "4.1.1",
     "graphql-compose": "7.14.4",
-    "graphql-compose-mongoose": "7.3.5"
+    "graphql-compose-mongoose": "7.3.6"
   },
   "publishConfig": {
     "access": "public",
