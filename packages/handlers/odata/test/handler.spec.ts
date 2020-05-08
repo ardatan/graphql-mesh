@@ -65,7 +65,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -100,7 +100,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -146,7 +146,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -181,7 +181,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -213,7 +213,7 @@ describe('odata', () => {
           PeopleCount
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -271,7 +271,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -304,7 +304,7 @@ describe('odata', () => {
           deletePeopleByUserName(UserName: "SOMEID")
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -348,7 +348,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -390,7 +390,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -443,7 +443,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -475,7 +475,7 @@ describe('odata', () => {
           ResetDataSource
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -516,7 +516,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
