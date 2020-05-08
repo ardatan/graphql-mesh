@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { parseInterpolationStrings, getInterpolatedHeadersFactory, ResolverData } from '@graphql-mesh/utils';
-import { fetchache, Request } from 'fetchache';
+import { fetchache, Request, Response } from 'fetchache';
 import urljoin from 'url-join';
 import { JSDOM } from 'jsdom';
 import {
@@ -16,6 +16,9 @@ import {
 import { GraphQLBigInt, GraphQLGUID, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 import { isListType, GraphQLResolveInfo, isAbstractType, GraphQLObjectType } from 'graphql';
 import graphqlFields from 'graphql-fields';
+import DataLoader from 'dataloader';
+import { parseResponse } from 'http-string-parser';
+import { nativeFetch } from './native-fetch';
 
 const SCALARS = new Map<string, string>([
   ['Binary', 'String'],
@@ -48,7 +51,7 @@ interface EntityTypeExtensions {
 }
 
 const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
-  async getMeshSource({ config, cache }) {
+  async getMeshSource({ name, config, cache }) {
     const metadataUrl = urljoin(config.baseUrl, '$metadata');
     const metadataRequest = new Request(metadataUrl, {
       headers: config.schemaHeaders,
@@ -245,12 +248,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     });
 
     const origHeadersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
-    const headersFactory = (resolverData: ResolverData) => {
+    const headersFactory = (resolverData: ResolverData, method: string) => {
       const headers = origHeadersFactory(resolverData);
       if (!headers.has('Accept')) {
         headers.set('Accept', 'application/json');
       }
-      if (!headers.has('Content-Type')) {
+      if (!headers.has('Content-Type') && method !== 'GET') {
         headers.set('Content-Type', 'application/json');
       }
       return headers;
@@ -288,6 +291,110 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         }
       }
     }
+
+    const DATALOADER_FACTORIES = {
+      multipart: (context: any) =>
+        new DataLoader(
+          async (requests: Request[]): Promise<Response[]> => {
+            console.log(requests.length);
+            let requestBody = '';
+            const requestBoundary = 'batch_' + Date.now();
+            for (const requestIndex in requests) {
+              requestBody += `--${requestBoundary}\n`;
+              const request = requests[requestIndex];
+              requestBody += `Content-Type: application/http\n`;
+              requestBody += `Content-Transfer-Encoding:binary\n`;
+              requestBody += `Content-ID: ${requestIndex}\n\n`;
+              requestBody += `${request.method} ${request.url} HTTP/1.1\n`;
+              request.headers.forEach((value, key) => {
+                requestBody += `${key}: ${value}\n`;
+              });
+              if (request.body) {
+                const bodyAsStr = await request.text();
+                requestBody += `Content-Length: ${bodyAsStr.length}`;
+                requestBody += `\n`;
+                requestBody += bodyAsStr;
+              }
+              requestBody += `\n`;
+            }
+            requestBody += `--${requestBoundary}--\n`;
+            const batchHeaders = headersFactory({ context }, 'POST');
+            batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
+            const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
+              method: 'POST',
+              body: requestBody,
+              headers: batchHeaders,
+            });
+            const batchResponse = await nativeFetch(batchRequest);
+            const batchResponseText = await batchResponse.text();
+            const responseLines = batchResponseText.split('\n');
+            const responseBoundary = responseLines[0];
+            if (!responseBoundary.startsWith('--')) {
+              return requests.map(() => batchResponse);
+            }
+            const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
+            const responseTextArr = actualResponse.split(responseBoundary);
+            return responseTextArr.map(responseTextWithContentHeader => {
+              const responseText = responseTextWithContentHeader.split('\n').slice(4).join('\n');
+              const { body, headers, statusCode, statusMessage } = parseResponse(responseText);
+              return new Response(body, {
+                headers,
+                status: parseInt(statusCode),
+                statusText: statusMessage,
+              });
+            });
+          }
+        ),
+      json: (context: any) =>
+        new DataLoader(
+          async (requests: Request[]): Promise<Response[]> => {
+            const batchHeaders = headersFactory({ context }, 'POST');
+            batchHeaders.set('Content-Type', 'application/json');
+            const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
+              method: 'POST',
+              body: JSON.stringify({
+                requests: await Promise.all(
+                  requests.map(async (request, index) => {
+                    const id = index.toString();
+                    const url = request.url.replace(config.baseUrl, '');
+                    const method = request.method;
+                    const headers: HeadersInit = {};
+                    request.headers.forEach((value, key) => {
+                      headers[key] = value;
+                    });
+                    return {
+                      id,
+                      url,
+                      method,
+                      body: request.body && (await request.json()),
+                      headers,
+                    };
+                  })
+                ),
+              }),
+              headers: batchHeaders,
+            });
+            const batchResponse = await fetchache(batchRequest, cache);
+            const batchResponseText = await batchResponse.text();
+            const batchResponseJson = JSON.parse(batchResponseText);
+            return requests.map((_req, index) => {
+              if (!('responses' in batchResponseJson)) {
+                return batchResponse;
+              }
+              const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
+              return new Response(JSON.stringify(responseObj.body), {
+                status: responseObj.status,
+                headers: responseObj.headers,
+              });
+            });
+          }
+        ),
+      none: () => ({
+        load: (request: any) => fetchache(request, cache),
+      }),
+    };
+
+    const dataLoaderFactory = DATALOADER_FACTORIES[config.batch || 'none'];
 
     schemaElement.querySelectorAll('EntityType,ComplexType').forEach(typeElement => {
       const entityTypeName = typeElement.getAttribute('Name');
@@ -392,11 +499,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             url.href += '/' + navigationPropertyName;
             prepareSearchParams(url, args, info);
             const urlString = getUrlString(url);
+            const method = 'GET';
             const request = new Request(urlString, {
-              method: 'GET',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -456,11 +564,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               .join(', ')})`;
             prepareSearchParams(url, args, info);
             const urlString = getUrlString(url);
+            const method = 'GET';
             const request = new Request(urlString, {
-              method: 'GET',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -495,12 +604,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             const url = new URL(config.baseUrl);
             url.href += '/' + actionName;
             const urlString = getUrlString(url);
+            const method = 'POST';
             const request = new Request(urlString, {
-              method: 'POST',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
               body: JSON.stringify(args),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -541,11 +651,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             const url = new URL(config.baseUrl);
             url.href += '/' + singletonName;
             const urlString = getUrlString(url);
+            const method = 'GET';
             const request = new Request(urlString, {
-              method: 'GET',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -600,11 +711,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               url.href += '/' + functionRef;
               prepareSearchParams(url, args, info);
               const urlString = getUrlString(url);
+              const method = 'GET';
               const request = new Request(urlString, {
-                method: 'GET',
-                headers: headersFactory({ root, args, context, info }),
+                method,
+                headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await fetchache(request, cache);
+              const response = await context[`${name}DataLoader`].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -657,12 +769,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               const url = new URL(root['@odata.id']);
               url.href += '/' + actionRef;
               const urlString = getUrlString(url);
+              const method = 'POST';
               const request = new Request(urlString, {
-                method: 'POST',
-                headers: headersFactory({ root, args, context, info }),
+                method,
+                headers: headersFactory({ root, args, context, info }, method),
                 body: JSON.stringify(args),
               });
-              const response = await fetchache(request, cache);
+              const response = await context[`${name}DataLoader`].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -739,11 +852,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             url.href += '/' + entitySetName;
             prepareSearchParams(url, args, info);
             const urlString = getUrlString(url);
+            const method = 'GET';
             const request = new Request(urlString, {
-              method: 'GET',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -762,11 +876,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
             prepareSearchParams(url, args, info);
             const urlString = getUrlString(url);
+            const method = 'GET';
             const request = new Request(urlString, {
-              method: 'GET',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -784,11 +899,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             const url = new URL(config.baseUrl);
             url.href += `/${entitySetName}/$count`;
             const urlString = getUrlString(url);
+            const method = 'GET';
             const request = new Request(urlString, {
-              method: 'GET',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return responseText;
           },
@@ -809,12 +925,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             url.href += '/' + entitySetName;
             const urlString = getUrlString(url);
             rebuildOpenInputObjects(args.input);
+            const method = 'POST';
             const request = new Request(urlString, {
-              method: 'POST',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
               body: JSON.stringify(args.input),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -832,11 +949,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             url.href += '/' + entitySetName;
             addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
             const urlString = getUrlString(url);
+            const method = 'DELETE';
             const request = new Request(urlString, {
-              method: 'DELETE',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -858,12 +976,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
             const urlString = getUrlString(url);
             rebuildOpenInputObjects(args.input);
+            const method = 'PATCH';
             const request = new Request(urlString, {
-              method: 'PATCH',
-              headers: headersFactory({ root, args, context, info }),
+              method,
+              headers: headersFactory({ root, args, context, info }, method),
               body: JSON.stringify(args.input),
             });
-            const response = await fetchache(request, cache);
+            const response = await context[`${name}DataLoader`].load(request);
             const responseText = await response.text();
             return handleResponseText(responseText, urlString, info);
           },
@@ -876,6 +995,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     return {
       schema,
       contextVariables,
+      contextBuilder: async context => ({
+        [`${name}DataLoader`]: dataLoaderFactory(context),
+      }),
     };
   },
 };

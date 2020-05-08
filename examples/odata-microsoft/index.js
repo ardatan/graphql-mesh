@@ -13,7 +13,7 @@ async function main(){
 
     console.log('Generating Mesh Instance...')
     const config = await findAndParseConfig();
-    const { schema } = await getMesh(config);
+    const { schema, contextBuilder } = await getMesh(config);
 
     app.use(cookieParser());
     
@@ -23,10 +23,13 @@ async function main(){
     
     app.use(
       '/graphql/',
-      graphqlHTTP({
-          schema,
-          graphiql: true,
-        })
+      graphqlHTTP(async (req) => {
+          return {
+            schema,
+            context: await contextBuilder(req),
+            graphiql: true,
+          };
+      })
     );
     
     app.listen(port);
