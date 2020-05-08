@@ -12436,6 +12436,11 @@ pg-connection-string@^2.0.0:
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.2.0.tgz#caab4d38a9de4fdc29c9317acceed752897de41c"
   integrity sha512-xB/+wxcpFipUZOQcSzcgkjcNOosGhEoPSjz06jC89lv1dj7mc9bZv6wLVy8M2fVjP0a/xN0N988YDq1L0FhK3A==
 
+pg-connection-string@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.2.2.tgz#fdc2fb2084e655f0b3e6e50c69330f6932df452e"
+  integrity sha512-+hel4DGuSZCjCZwglAuyi+XlodHnKmrbyTw0hVWlmGN2o4AfJDkDo5obAFzblS5M5PFBMx0uDt5Y1QjlNC+tqg==
+
 pg-int8@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/pg-int8/-/pg-int8-1.0.1.tgz#943bd463bf5b71b4170115f80f8efc9a0c0eb78c"
@@ -12445,6 +12450,11 @@ pg-pool@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.1.1.tgz#83763aa042ca8e48b0723693b3de3ff076de4ca1"
   integrity sha512-kYH6S0mcZF1TPg1F9boFee2JlCSm2oqnlR2Mz2Wgn1psQbEBNVeNTJCw2wCK48QsctwvGUzbxLMg/lYV6hL/3A==
+
+pg-pool@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.2.0.tgz#edde90f21556f83d16c45f1efd696af4afec6f2f"
+  integrity sha512-7BLwDNDEfPFjE9vmZLcJPLFwuDAVGZ5lIZo2MeQfwYG7EPGfdNVis/dz6obI/yKqvQIx2sf6QBKXMLB+y/ftgA==
 
 pg-protocol@^1.2.2:
   version "1.2.2"
@@ -12471,7 +12481,21 @@ pg-types@^2.1.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
-pg@8.0.3, "pg@>=6.1.0 <9":
+pg@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-8.1.0.tgz#e5ac5ac2b77bad438130d93982cb60485d5c1a8c"
+  integrity sha512-Jp+XSNTGYDztc2FgIbmBXeeYMR7kKjfgnl3R+ioO6rkcxDmaea+YPp/gaxe13PBnJAFYyEGl0ixpwPm2gb6eUw==
+  dependencies:
+    buffer-writer "2.0.0"
+    packet-reader "1.0.0"
+    pg-connection-string "^2.2.2"
+    pg-pool "^3.2.0"
+    pg-protocol "^1.2.2"
+    pg-types "^2.1.0"
+    pgpass "1.x"
+    semver "4.3.2"
+
+"pg@>=6.1.0 <9":
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/pg/-/pg-8.0.3.tgz#b220ee468a1819e1c7e9ca9878f8ae50ba8e1952"
   integrity sha512-fvcNXn4o/iq4jKq15Ix/e58q3jPSmzOp6/8C3CaHoSR/bsxdg+1FXfDRePdtE/zBb3++TytvOrS1hNef3WC/Kg==
