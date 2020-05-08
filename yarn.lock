@@ -7758,19 +7758,19 @@ graphql-auth-directives@^2.2.0:
     graphql-tools "^4.0.4"
     jsonwebtoken "^8.3.0"
 
-graphql-compose-connection@6.0.4:
-  version "6.0.4"
-  resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-6.0.4.tgz#857356e5fc4e7335bc6da62bd3bbfe9a257f00db"
-  integrity sha512-LSIdv3pqFbf+71xD3fAMRZq4GFtqHAYkLFE3RDdWWgsDaOWLuw/+5Dcva0+Di82VI0z9J98il9192bH5L4GNdw==
+graphql-compose-connection@^6.0.4:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-6.1.0.tgz#58c3ed4d7b90928f11a8ee51cc814117db8efb42"
+  integrity sha512-8vLfm1P7Am2EdGU5trMOOrbVU117WRJCKF3GRg/biYhM/tfrozOFC/k3gSjpCwafXwIINX+g1HJDpgjZ/ywTMg==
 
-graphql-compose-mongoose@7.3.5:
-  version "7.3.5"
-  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-7.3.5.tgz#9820f1510a274c3483c3c7c6a3d963b46b428ea2"
-  integrity sha512-0sTdKNGwGdDQJAx/EBxmn+2xVgfZmSbd08xUlTuzMj75Hw8WyCyt19n7yOH3NWtUGxRoEOg4hfidPDA3aXOoRw==
+graphql-compose-mongoose@7.3.6:
+  version "7.3.6"
+  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-7.3.6.tgz#75d29423b1ee01c7a198aa0876410cf70bd16008"
+  integrity sha512-5ytfpn15I+nd7lXVD68aocn4F3qp+e7if1iJXpLkzmImyfp/R2Ip/9ndGrdIKDVttlm6v6RfFZ964K706JIHxw==
   dependencies:
     object-path "^0.11.4"
   optionalDependencies:
-    graphql-compose-connection "6.0.4"
+    graphql-compose-connection "^6.0.4"
     graphql-compose-pagination "^6.0.3"
 
 graphql-compose-pagination@^6.0.3:
