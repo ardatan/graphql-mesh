@@ -19,6 +19,7 @@ import graphqlFields from 'graphql-fields';
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { nativeFetch } from './native-fetch';
+import { mergeSchemas } from '@graphql-toolkit/schema-merging';
 
 const SCALARS = new Map<string, string>([
   ['Binary', 'String'],
@@ -138,38 +139,10 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     }
 
     function handleResponseText(responseText: string, urlString: string, info: GraphQLResolveInfo) {
+      let responseJson: any;
       try {
-        const responseJson = JSON.parse(responseText);
-        if (responseJson.error) {
-          const actualError = new Error(responseJson.error.message || responseJson.error) as any;
-          actualError.extensions = responseJson.error;
-          throw actualError;
-        }
-        const urlStringWithoutSearchParams = urlString.split('?')[0];
-        if (isListType(info.returnType)) {
-          const actualReturnType: GraphQLObjectType = info.returnType.ofType;
-          const { entityInfo } = actualReturnType.extensions as EntityTypeExtensions;
-          const returnList: any[] = responseJson.value;
-          return returnList.map(element => {
-            const urlOfElement = new URL(urlStringWithoutSearchParams);
-            addIdentifierToUrl(
-              urlOfElement,
-              entityInfo.identifierFieldName,
-              entityInfo.identifierFieldTypeRef,
-              element
-            );
-            return {
-              '@odata.id': element['@odata.id'] || getUrlString(urlOfElement),
-              ...element,
-            };
-          });
-        } else {
-          return {
-            '@odata.id': responseJson['@odata.id'] || urlStringWithoutSearchParams,
-            ...responseJson,
-          };
-        }
-      } catch (e) {
+        responseJson = JSON.parse(responseText);
+      } catch (error) {
         const actualError = new Error(responseText);
         Object.assign(actualError, {
           extensions: {
@@ -177,6 +150,30 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
         });
         throw actualError;
+      }
+      if (responseJson.error) {
+        const actualError = new Error(responseJson.error.message || responseJson.error) as any;
+        actualError.extensions = responseJson.error;
+        throw actualError;
+      }
+      const urlStringWithoutSearchParams = urlString.split('?')[0];
+      if (isListType(info.returnType)) {
+        const actualReturnType: GraphQLObjectType = info.returnType.ofType;
+        const { entityInfo } = actualReturnType.extensions as EntityTypeExtensions;
+        const returnList: any[] = responseJson.value;
+        return returnList.map(element => {
+          const urlOfElement = new URL(urlStringWithoutSearchParams);
+          addIdentifierToUrl(urlOfElement, entityInfo.identifierFieldName, entityInfo.identifierFieldTypeRef, element);
+          return {
+            '@odata.id': element['@odata.id'] || getUrlString(urlOfElement),
+            ...element,
+          };
+        });
+      } else {
+        return {
+          '@odata.id': responseJson['@odata.id'] || urlStringWithoutSearchParams,
+          ...responseJson,
+        };
       }
     }
 
@@ -296,7 +293,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       multipart: (context: any) =>
         new DataLoader(
           async (requests: Request[]): Promise<Response[]> => {
-            console.log(requests.length);
             let requestBody = '';
             const requestBoundary = 'batch_' + Date.now();
             for (const requestIndex in requests) {
@@ -993,7 +989,8 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     const schema = schemaComposer.buildSchema();
 
     return {
-      schema,
+      // Rebuild the schema as a workaround
+      schema: mergeSchemas({ schemas: [schema] }),
       contextVariables,
       contextBuilder: async context => ({
         [`${name}DataLoader`]: dataLoaderFactory(context),
