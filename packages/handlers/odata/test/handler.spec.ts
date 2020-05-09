@@ -29,7 +29,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -39,7 +39,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for requesting an EntitySet', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = 'https://services.odata.org/TripPinRESTierService/People?$select=UserName,FirstName';
+    const correctUrl = 'https://services.odata.org/TripPinRESTierService/People';
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -49,7 +49,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -59,13 +59,13 @@ describe('odata', () => {
       schema: source.schema,
       source: /* GraphQL */ `
         {
-          getPeople {
+          People {
             UserName
             FirstName
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -74,7 +74,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for requesting a single Entity by ID', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('SOMEID')?$select=UserName,FirstName`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('SOMEID')`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -84,7 +84,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -94,13 +94,13 @@ describe('odata', () => {
       schema: source.schema,
       source: /* GraphQL */ `
         {
-          getPeopleByUserName(UserName: "SOMEID") {
+          PeopleByUserName(UserName: "SOMEID") {
             UserName
             FirstName
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -128,7 +128,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -138,7 +138,7 @@ describe('odata', () => {
       schema: source.schema,
       source: /* GraphQL */ `
         {
-          getAirportsByIcaoCode(IcaoCode: "KSFO") {
+          AirportsByIcaoCode(IcaoCode: "KSFO") {
             IcaoCode
             Location {
               Loc
@@ -146,7 +146,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -155,7 +155,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for query options', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People?$filter=FirstName eq 'Scott'&$select=UserName,FirstName`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People?$filter=FirstName eq 'Scott'`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -165,7 +165,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -175,13 +175,13 @@ describe('odata', () => {
       schema: source.schema,
       source: /* GraphQL */ `
         {
-          getPeople(queryOptions: { filter: "FirstName eq 'Scott'" }) {
+          People(queryOptions: { filter: "FirstName eq 'Scott'" }) {
             UserName
             FirstName
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -200,7 +200,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -210,10 +210,10 @@ describe('odata', () => {
       schema: source.schema,
       source: /* GraphQL */ `
         {
-          getPeopleCount
+          PeopleCount
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -231,7 +231,7 @@ describe('odata', () => {
       Emails: ['lewisblack@example.com'],
       Gender: 'Male',
       FavoriteFeature: 'Feature1',
-      Features: [],
+      Features: ['Feature1', 'Feature2'],
       AddressInfo: [
         {
           Address: '187 Suffolk Ln.',
@@ -253,7 +253,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -271,7 +271,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -291,7 +291,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -304,7 +304,7 @@ describe('odata', () => {
           deletePeopleByUserName(UserName: "SOMEID")
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -329,7 +329,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -342,13 +342,13 @@ describe('odata', () => {
         input: correctBody,
       },
       source: /* GraphQL */ `
-        mutation UpdatePeople($UserName: String!, $input: PeopleUpdateInput!) {
+        mutation UpdatePeople($UserName: String!, $input: PersonUpdateInput!) {
           updatePeopleByUserName(UserName: $UserName, input: $input) {
             FirstName
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -374,7 +374,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -390,7 +390,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -399,15 +399,12 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for invoking bound functions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trip(0)/GetInvolvedPeople?$select=UserName`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips(0)/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople?$select=UserName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
-    addMock(
-      `https://services.odata.org/TripPinRESTierService/People('russellwhyte')?$select=UserName,Trips`,
-      async () => {
-        return new Response(JSON.stringify(PersonMockData));
-      }
-    );
+    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')`, async () => {
+      return new Response(JSON.stringify(PersonMockData));
+    });
     addMock(
       `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips?$filter=TripId eq 0&$select=TripId`,
       async () => {
@@ -425,7 +422,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -435,7 +432,7 @@ describe('odata', () => {
       schema: source.schema,
       source: /* GraphQL */ `
         {
-          getPeopleByUserName(UserName: "russellwhyte") {
+          PeopleByUserName(UserName: "russellwhyte") {
             UserName
             Trips(queryOptions: { filter: "TripId eq 0" }) {
               TripId
@@ -446,7 +443,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -465,7 +462,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -478,7 +475,7 @@ describe('odata', () => {
           ResetDataSource
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -494,7 +491,7 @@ describe('odata', () => {
       tripId: 0,
     };
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')?$select=UserName`, async () => {
+    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')`, async () => {
       return new Response(JSON.stringify(PersonMockData));
     });
     addMock(correctUrl, async request => {
@@ -504,7 +501,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService/',
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
       hooks,
       cache,
@@ -514,12 +511,12 @@ describe('odata', () => {
       schema: source.schema,
       source: /* GraphQL */ `
         mutation {
-          getPeopleByUserName(UserName: "russellwhyte") {
+          PeopleByUserName(UserName: "russellwhyte") {
             ShareTrip(userName: "scottketchum", tripId: 0)
           }
         }
       `,
-      contextValue: {},
+      contextValue: await source.contextBuilder({}),
     });
 
     expect(graphqlResult.errors).toBeFalsy();

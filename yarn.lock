@@ -2229,6 +2229,11 @@
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
   integrity sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==
 
+"@types/http-string-parser@0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.29.tgz#0256e22f357a2e822ac8b848b545e06153c32ede"
+  integrity sha1-AlbiLzV6LoIqyLhItUXgYVPDLt4=
+
 "@types/ioredis@4.16.1":
   version "4.16.1"
   resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.16.1.tgz#157092208df0031fd83cf657e722248dc563d451"
@@ -4901,6 +4906,14 @@ convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   integrity sha512-4FJkXzKXEDB1snCFZlLP4gpC3JILicCpGbzG9f9G7tGqGCzETQ2hWPrcinA9oU4wtf2biUaEH5065UnMeR33oA==
   dependencies:
     safe-buffer "~5.1.1"
+
+cookie-parser@1.4.5:
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/cookie-parser/-/cookie-parser-1.4.5.tgz#3e572d4b7c0c80f9c61daf604e4336831b5d1d49"
+  integrity sha512-f13bPUj/gG/5mDr+xLmSxxDsB9DQiTIfhJS/sqjrmfAWiAN+x2O4i/XguTL9yDZ+/IFDanJ+5x7hC4CXT9Tdzw==
+  dependencies:
+    cookie "0.4.0"
+    cookie-signature "1.0.6"
 
 cookie-signature@1.0.6:
   version "1.0.6"
@@ -7998,6 +8011,11 @@ http-signature@~1.2.0:
     assert-plus "^1.0.0"
     jsprim "^1.2.2"
     sshpk "^1.7.0"
+
+http-string-parser@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/http-string-parser/-/http-string-parser-0.0.6.tgz#4088a1aba2b89155ce13918bcfb5cbbea6c4e7e9"
+  integrity sha1-QIihq6K4kVXOE5GLz7XLvqbE5+k=
 
 http2-client@^1.2.5:
   version "1.3.3"
