@@ -8,7 +8,8 @@ import { camelCase } from 'camel-case';
 import { pascalCase } from 'pascal-case';
 import { SchemaComposer } from 'graphql-compose';
 import { withCancel } from '@graphql-mesh/utils';
-import { loadObject, credentials } from 'grpc';
+import { loadPackageDefinition, credentials } from '@grpc/grpc-js';
+import { load } from '@grpc/proto-loader';
 import { get } from 'lodash';
 import { Readable } from 'stream';
 import { promisify } from 'util';
@@ -106,7 +107,8 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     }
     const protoDefinition = await root.load(fileName as string, options);
     protoDefinition.resolveAll();
-    const grpcObject = loadObject(root);
+    const packageDefinition = await load(fileName as string, options);
+    const grpcObject = loadPackageDefinition(packageDefinition);
 
     async function visit(nested: AnyNestedObject, name: string, currentPath: string) {
       if ('values' in nested) {
@@ -118,9 +120,9 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           name: typeName,
           values: {},
         };
-        for (const [key] of Object.entries(nested.values)) {
+        for (const [key, value] of Object.entries(nested.values)) {
           enumTypeConfig.values[key] = {
-            value: key,
+            value,
           };
         }
         schemaComposer.createEnumTC(enumTypeConfig);

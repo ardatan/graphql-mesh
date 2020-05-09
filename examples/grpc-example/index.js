@@ -1,4 +1,4 @@
-const { Server, loadPackageDefinition, ServerCredentials } = require('grpc');
+const { Server, loadPackageDefinition, ServerCredentials } = require('@grpc/grpc-js');
 const { load } = require('@grpc/proto-loader');
 
 const seconds = Date.now();
@@ -85,10 +85,11 @@ async function startServer() {
       });
     }
   });
-  server.bind('0.0.0.0:50051', ServerCredentials.createInsecure());
-  server.start();
-
-  console.log('Server started, listening: 0.0.0.0:50051');
+  server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), () => {
+    server.start();
+  
+    console.log('Server started, listening: 0.0.0.0:50051');
+  });
 }
 
 startServer().catch(console.error);
