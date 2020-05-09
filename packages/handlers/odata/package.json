@@ -13,7 +13,6 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/follow-redirects": "1.8.0",
     "@types/graphql-fields": "1.3.2",
     "@types/http-string-parser": "0.0.29",
     "@types/jsdom": "16.2.1",
@@ -23,11 +22,9 @@
     "@graphql-mesh/types": "0.1.13",
     "@graphql-mesh/utils": "0.1.13",
     "@graphql-toolkit/schema-merging": "0.10.6",
-    "graphql-tools": "5.0.0",
     "http-string-parser": "0.0.6",
     "dataloader": "2.0.0",
     "fetchache": "0.0.3",
-    "follow-redirects": "1.11.0",
     "graphql-compose": "7.14.4",
     "graphql-fields": "2.0.3",
     "graphql-scalars": "1.1.2",
