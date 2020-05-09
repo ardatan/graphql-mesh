@@ -1,16 +1,16 @@
 {
   "name": "javascript-wiki",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "graphql-mesh serve --example-query \"example-queries/*.graphql\""
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.1.13",
-    "@graphql-mesh/openapi": "0.1.13",
-    "@graphql-mesh/runtime": "0.1.13",
-    "@graphql-mesh/transform-extend": "0.1.13",
+    "@graphql-mesh/cli": "0.1.15",
+    "@graphql-mesh/openapi": "0.1.15",
+    "@graphql-mesh/runtime": "0.1.15",
+    "@graphql-mesh/transform-extend": "0.1.15",
     "graphql": "15.0.0",
     "moment": "2.24.0"
   }

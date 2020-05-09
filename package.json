@@ -1,7 +1,7 @@
 {
   "name": "graphql-mesh",
   "license": "MIT",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "private": true,
   "scripts": {
     "predeploy:website": "yarn generate-config-schema",
