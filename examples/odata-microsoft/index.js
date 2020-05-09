@@ -2,6 +2,7 @@ const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const fs = require('fs');
 
 const port = process.env.PORT || 4000;
 
@@ -21,15 +22,19 @@ async function main(){
       res.sendFile(path.join(__dirname, '/index.html'));
     });
     
+    const defaultQuery = fs.readFileSync('./example-queries/fetchRecentEmails.graphql', 'utf8');
+
     app.use(
       '/graphql/',
-      graphqlHTTP(async (req) => {
-          return {
+      graphqlHTTP(async (req) => ({
             schema,
-            context: await contextBuilder(req),
-            graphiql: true,
-          };
-      })
+            context: await contextBuilder({
+              accessToken: req.cookies.accessToken,
+            }),
+            graphiql: {
+              defaultQuery
+            },
+          }))
     );
     
     app.listen(port);

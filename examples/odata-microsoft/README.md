@@ -10,10 +10,9 @@ This is a *demo* that enables basic, read-only querying of the [Microsoft Graph 
 ## Installation
 1. Clone the repo
 2. Install dependencies (`npm install`)
-3. Generate schema description and resolver code using `npm run build`
-4. Navigate to the [App Registration Portal](https://apps.dev.microsoft.com/), set up a [new web app](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-app-registration)
-5. Configure App Id and redirect URIs in the AppConfiguration of build/index.html
-6. Run `npm start` and go to `localhost:4000`
+3. Navigate to the [App Registration Portal](https://apps.dev.microsoft.com/), set up a [new web app](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-app-registration)
+4. Configure App Id and redirect URIs in the AppConfiguration of build/index.html
+5. Run `npm start` and go to `localhost:4000`
 
 ## Sample requests
 #### Fetch recent emails

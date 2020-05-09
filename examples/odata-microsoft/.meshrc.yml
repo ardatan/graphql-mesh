@@ -5,4 +5,4 @@ sources:
         baseUrl: https://graph.microsoft.com/v1.0
         batch: json
         operationHeaders:
-          Authorization: Bearer {context.cookies.token}
+          Authorization: Bearer {context.accessToken}

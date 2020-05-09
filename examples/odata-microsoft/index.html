@@ -37,10 +37,7 @@
 </head>
 
 <body>
-  <!-- bluebird only needed if this page needs to run on Internet Explorer -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js' class='pre'></script>
-  <script src='https://secure.aadcdn.microsoftonline-p.com/lib/0.1.1/js/msal.min.js'></script>
-  <script src='https://code.jquery.com/jquery-3.2.1.min.js' class='pre'></script>
+  <script type="text/javascript" src="https://alcdn.msftauth.net/lib/1.3.0/js/msal.js" class='pre'></script>
 
   <div>
     <h2>Microsoft Graph GraphQL Demo</h2>
@@ -51,44 +48,55 @@
   <pre class='response'></pre>
 
   <script class='pre'>
-    var applicationConfig = {
-      redirectUri: location.href,
-      clientID: '58503fd3-6d1d-4eb2-a3e7-f2c1a761480b',
+    const applicationConfig = {
+      auth: {
+        clientId: '58503fd3-6d1d-4eb2-a3e7-f2c1a761480b',
+        // authority: "Enter_the_Cloud_Instance_Id_HereEnter_the_Tenant_Info_Here",
+        redirectUri: location.href,
+      },
+      cache: {
+        cacheLocation: "localStorage", // This configures where your cache will be stored
+        storeAuthStateInCookie: true, // Set this to "true" if you are having issues on IE11 or Edge
+      },
+    };
+    
+    const tokenRequest = {
       scopes: ['openid', 'profile', 'User.ReadWrite',
         'User.Read', 'Sites.ReadWrite.All', 'Contacts.ReadWrite',
         'Calendars.Read', 'Mail.Read', 'Device.Read',
         'Files.Read.All', 'Mail.Read.Shared', 'People.Read',
         'People.Read', 'Notes.Read.All', 'Tasks.Read', 'Mail.ReadWrite'],
     };
-  </script>
-
-  <script>
-    'use strict';
-    var clientApplication = new Msal.UserAgentApplication(applicationConfig.clientID, applicationConfig.authority, function (errorDesc, token, error, tokenType) {
-      // Called after loginRedirect or acquireTokenPopup
-    });
-    function login() {
-      clientApplication.loginPopup(applicationConfig.scopes).then(function (idToken) {
-        clientApplication.acquireTokenSilent(applicationConfig.scopes).then(function (accessToken) {
-          updateUI(accessToken);
-        }, function (error) {
-          clientApplication.acquireTokenPopup(applicationConfig.scopes).then(function (accessToken) {
-            updateUI(accessToken);
-          }, function (error) {
-            logMessage('Error acquiring the popup:\n' + error);
-          });
-        })
-      }, function (error) {
-        logMessage('Error during login:\n' + error);
-      });
+    
+    const clientApplication = new Msal.UserAgentApplication(applicationConfig);
+    async function login() {
+      let idToken, tokenResponse;
+      try {
+        idToken = await clientApplication.loginPopup(tokenRequest);
+      } catch(e) {
+        logMessage('Error during login:\n' + e);
+        return;
+      }
+      try {
+        tokenResponse = await clientApplication.acquireTokenSilent(tokenRequest);
+      } catch(e) {
+        try {
+          tokenResponse = await clientApplication.acquireTokenPopup(tokenRequest)
+        }catch(e) {
+          logMessage('Error acquiring the popup:\n' + e);
+          return;
+        }
+      }
+      
+      updateUI(tokenResponse);
     }
-    function updateUI(token) {
-      var userName = clientApplication.getUser().name;
-      var authButton = document.getElementById('auth');
+    function updateUI(tokenResponse) {
+      const userName = clientApplication.getAccount().name;
+      const authButton = document.getElementById('auth');
       authButton.innerHTML = 'logout';
       authButton.setAttribute('onclick', 'logout();');
-      var label = document.getElementById('label');
-      document.cookie = 'token=' + token;
+      const label = document.getElementById('label');
+      document.cookie = `accessToken=${tokenResponse.accessToken};expires=${tokenResponse.expiresOn.toUTCString()}`;
       window.location.href = 'graphql/';
     }
     function logout() {
