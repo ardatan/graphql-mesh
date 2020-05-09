@@ -496,7 +496,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           extensions: { navigationPropertyElement },
           resolve: async (root, args, context, info) => {
             const url = new URL(root['@odata.id']);
-            url.href += '/' + navigationPropertyName;
+            url.href = urljoin(url.href, '/' + navigationPropertyName);
             prepareSearchParams(url, args, info);
             const urlString = getUrlString(url);
             const method = 'GET';
@@ -557,7 +557,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + functionName;
+            url.href = urljoin(url.href, '/' + functionName);
             url.href += `(${Object.entries(args)
               .filter(argEntry => argEntry[0] !== 'queryOptions')
               .map(argEntry => argEntry.join(' = '))
@@ -602,7 +602,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + actionName;
+            url.href = urljoin(url.href, '/' + actionName);
             const urlString = getUrlString(url);
             const method = 'POST';
             const request = new Request(urlString, {
@@ -649,7 +649,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + singletonName;
+            url.href = urljoin(url.href, '/' + singletonName);
             const urlString = getUrlString(url);
             const method = 'GET';
             const request = new Request(urlString, {
@@ -708,7 +708,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             args,
             resolve: async (root, args, context, info) => {
               const url = new URL(root['@odata.id']);
-              url.href += '/' + functionRef;
+              url.href = urljoin(url.href, '/' + functionRef);
               prepareSearchParams(url, args, info);
               const urlString = getUrlString(url);
               const method = 'GET';
@@ -767,7 +767,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             args,
             resolve: async (root, args, context, info) => {
               const url = new URL(root['@odata.id']);
-              url.href += '/' + actionRef;
+              url.href = urljoin(url.href, '/' + actionRef);
               const urlString = getUrlString(url);
               const method = 'POST';
               const request = new Request(urlString, {
@@ -849,7 +849,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + entitySetName;
+            url.href = urljoin(url.href, '/' + entitySetName);
             prepareSearchParams(url, args, info);
             const urlString = getUrlString(url);
             const method = 'GET';
@@ -872,7 +872,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + entitySetName;
+            url.href = urljoin(url.href, '/' + entitySetName);
             addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
             prepareSearchParams(url, args, info);
             const urlString = getUrlString(url);
@@ -897,7 +897,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += `/${entitySetName}/$count`;
+            url.href = urljoin(url.href, `/${entitySetName}/$count`);
             const urlString = getUrlString(url);
             const method = 'GET';
             const request = new Request(urlString, {
@@ -922,7 +922,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + entitySetName;
+            url.href = urljoin(url.href, '/' + entitySetName);
             const urlString = getUrlString(url);
             rebuildOpenInputObjects(args.input);
             const method = 'POST';
@@ -946,7 +946,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + entitySetName;
+            url.href = urljoin(url.href, '/' + entitySetName);
             addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
             const urlString = getUrlString(url);
             const method = 'DELETE';
@@ -972,7 +972,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
-            url.href += '/' + entitySetName;
+            url.href = urljoin(url.href, '/' + entitySetName);
             addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
             const urlString = getUrlString(url);
             rebuildOpenInputObjects(args.input);
