@@ -4,11 +4,15 @@ import { GraphQLEnumTypeConfig } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { AnyNestedObject, Root, IParseOptions } from 'protobufjs';
 import { isAbsolute, join } from 'path';
-import grpcCaller, { GrpcResponseStream } from 'grpc-caller';
 import { camelCase } from 'camel-case';
 import { pascalCase } from 'pascal-case';
 import { SchemaComposer } from 'graphql-compose';
 import { withCancel } from '@graphql-mesh/utils';
+import { loadPackageDefinition, credentials } from '@grpc/grpc-js';
+import { load } from '@grpc/proto-loader';
+import { get } from 'lodash';
+import { Readable } from 'stream';
+import { promisify } from 'util';
 
 const SCALARS = {
   int32: 'Int',
@@ -21,6 +25,11 @@ const SCALARS = {
 
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
+}
+
+interface GrpcResponseStream<T = any> extends Readable {
+  [Symbol.asyncIterator](): AsyncIterableIterator<T>;
+  cancel(): void;
 }
 
 function addIncludePathResolver(root: Root, includePaths: string[]) {
@@ -83,6 +92,24 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
       return baseTypeName;
     }
 
+    const root = new Root();
+    let fileName = config.protoFilePath;
+    let options: LoadOptions = {};
+    if (typeof config.protoFilePath === 'object' && config.protoFilePath.file) {
+      fileName = config.protoFilePath.file;
+      options = config.protoFilePath.load;
+      if (options.includeDirs) {
+        if (!Array.isArray(options.includeDirs)) {
+          return Promise.reject(new Error('The includeDirs option must be an array'));
+        }
+        addIncludePathResolver(root, options.includeDirs);
+      }
+    }
+    const protoDefinition = await root.load(fileName as string, options);
+    protoDefinition.resolveAll();
+    const packageDefinition = await load(fileName as string, options);
+    const grpcObject = loadPackageDefinition(packageDefinition);
+
     async function visit(nested: AnyNestedObject, name: string, currentPath: string) {
       if ('values' in nested) {
         let typeName = name;
@@ -134,11 +161,9 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           })
         );
       } else if ('methods' in nested) {
+        const ServiceClient: any = get(grpcObject, currentPath + '.' + name);
+        const client = new ServiceClient(config.endpoint, credentials.createInsecure());
         const methods = nested.methods;
-        const client = grpcCaller(config.endpoint, config.protoFilePath, name, null, {
-          'grpc.max_send_message_length': -1,
-          'grpc.max_receive_message_length': -1,
-        });
         await Promise.all(
           Object.keys(methods).map(async methodName => {
             const method = methods[methodName];
@@ -159,30 +184,25 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
               },
             };
             if (method.responseStream) {
+              const clientMethod: Function = (input: any) => {
+                const responseStream = client[methodName](input) as GrpcResponseStream;
+                return withCancel(responseStream, () => responseStream.cancel());
+              };
               schemaComposer.Subscription.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  subscribe: (__, args) => {
-                    const responseStream = client[methodName](args.input, {}) as GrpcResponseStream;
-                    return withCancel(responseStream, () => responseStream.cancel());
-                  },
+                  subscribe: (__, args) => clientMethod(args.input),
                   resolve: (payload: any) => payload,
                 },
               });
             } else {
+              const clientMethod: Function = promisify(client[methodName].bind(client));
               const identifier = methodName.toLowerCase();
               const rootTC = identifier.startsWith('get') ? schemaComposer.Query : schemaComposer.Mutation;
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  resolve: (_, args) =>
-                    client[methodName](
-                      args.input,
-                      {},
-                      {
-                        deadline: Date.now() + config.requestTimeout,
-                      }
-                    ),
+                  resolve: (_, args) => clientMethod(args.input),
                 },
               });
             }
@@ -210,26 +230,10 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         );
       }
     }
-
-    const root = new Root();
-    let fileName = config.protoFilePath;
-    let options: LoadOptions = {};
-    if (typeof config.protoFilePath === 'object' && config.protoFilePath.file) {
-      fileName = config.protoFilePath.file;
-      options = config.protoFilePath.load;
-      if (options.includeDirs) {
-        if (!Array.isArray(options.includeDirs)) {
-          return Promise.reject(new Error('The includeDirs option must be an array'));
-        }
-        addIncludePathResolver(root, options.includeDirs);
-      }
-    }
-    const protoDefinition = await root.load(fileName as string, options);
-    protoDefinition.resolveAll();
-    const nested = root.toJSON({
+    const rootNested = root.toJSON({
       keepComments: true,
     });
-    await visit(nested, '', '');
+    await visit(rootNested, '', '');
 
     const schema = schemaComposer.buildSchema();
 
