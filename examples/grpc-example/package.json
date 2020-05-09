@@ -5,25 +5,19 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "pregrpc:start": "bash bash/build.sh",
-    "grpc:start": "ts-node --transpile-only src/server.ts",
+    "grpc:start": "node index.js",
     "mesh:start": "graphql-mesh serve --example-query \"example-queries/*.graphql\"",
     "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\""
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.1.13",
     "@graphql-mesh/grpc": "0.1.13",
+    "@grpc/proto-loader": "0.5.4",
     "google-protobuf": "3.11.4",
     "graphql": "15.0.0",
     "grpc": "1.24.2"
   },
   "devDependencies": {
-    "@types/google-protobuf": "3.7.2",
-    "@types/node": "13.9.1",
-    "concurrently": "5.1.0",
-    "grpc-tools": "1.8.1",
-    "grpc_tools_node_protoc_ts": "3.0.0",
-    "typescript": "3.8.3",
-    "ts-node": "8.9.0"
+    "concurrently": "5.1.0"
   }
 }
