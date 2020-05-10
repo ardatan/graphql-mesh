@@ -1,0 +1,5 @@
+sources:
+  - name: StackExchange
+    handler:
+      openapi:
+        source: https://grokify.github.io/api-specs/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml

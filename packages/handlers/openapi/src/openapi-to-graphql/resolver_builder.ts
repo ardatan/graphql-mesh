@@ -363,129 +363,105 @@ export function getResolver({
 
       if (response.headers.get('content-type')) {
         /**
-         * Throw warning if the non-application/json content does not
-         * match the OAS.
+         * If the response body is type JSON, then parse it
          *
-         * Use an inclusion test in case of charset
-         *
-         * i.e. text/plain; charset=utf-8
+         * content-type may not be necessarily 'application/json' it can be
+         * 'application/json; charset=utf-8' for example
          */
-        if (
-          !(
-            response.headers.get('content-type').includes(operation.responseContentType) ||
-            operation.responseContentType.includes(response.headers.get('content-type'))
-          )
-        ) {
-          const errorString =
-            `Operation ` +
-            `${operation.operationString} ` +
-            `should have a content-type '${operation.responseContentType}' ` +
-            `but has '${response.headers.get('content-type')}' instead`;
+        if (response.headers.get('content-type').includes('json')) {
+          let responseBody;
+          try {
+            responseBody = JSON.parse(body);
+          } catch (e) {
+            const errorString =
+              `Cannot JSON parse response body of ` +
+              `operation ${operation.operationString} ` +
+              `even though it has content-type '${response.headers.get('content-type')}'`;
 
-          httpLog(errorString);
-          throw errorString;
-        } else {
-          /**
-           * If the response body is type JSON, then parse it
-           *
-           * content-type may not be necessarily 'application/json' it can be
-           * 'application/json; charset=utf-8' for example
-           */
-          if (response.headers.get('content-type').includes('application/json')) {
-            let responseBody;
-            try {
-              responseBody = JSON.parse(body);
-            } catch (e) {
-              const errorString =
-                `Cannot JSON parse response body of ` +
-                `operation ${operation.operationString} ` +
-                `even though it has content-type 'application/json'`;
+            httpLog(errorString);
+            throw errorString;
+          }
 
-              httpLog(errorString);
-              throw errorString;
-            }
+          resolveData.responseHeaders = headersToObject(response.headers);
 
-            resolveData.responseHeaders = headersToObject(response.headers);
+          // Deal with the fact that the server might send unsanitized data
+          let saneData = Oas3Tools.sanitizeObjectKeys(
+            responseBody,
+            !data.options.simpleNames ? Oas3Tools.CaseStyle.camelCase : Oas3Tools.CaseStyle.simple
+          );
 
-            // Deal with the fact that the server might send unsanitized data
-            let saneData = Oas3Tools.sanitizeObjectKeys(
-              responseBody,
-              !data.options.simpleNames ? Oas3Tools.CaseStyle.camelCase : Oas3Tools.CaseStyle.simple
-            );
-
-            // Pass on _openAPIToGraphQL to subsequent resolvers
-            if (saneData && typeof saneData === 'object') {
-              if (Array.isArray(saneData)) {
-                saneData.forEach(element => {
-                  if (typeof element._openAPIToGraphQL === 'undefined') {
-                    element._openAPIToGraphQL = {
-                      data: {},
-                    };
-                  }
-
-                  if (root && typeof root === 'object' && typeof root._openAPIToGraphQL === 'object') {
-                    Object.assign(element._openAPIToGraphQL, root._openAPIToGraphQL);
-                  }
-
-                  element._openAPIToGraphQL.data[getIdentifier(info)] = resolveData;
-                });
-              } else {
-                if (typeof saneData._openAPIToGraphQL === 'undefined') {
-                  saneData._openAPIToGraphQL = {
+          // Pass on _openAPIToGraphQL to subsequent resolvers
+          if (saneData && typeof saneData === 'object') {
+            if (Array.isArray(saneData)) {
+              saneData.forEach(element => {
+                if (typeof element._openAPIToGraphQL === 'undefined') {
+                  element._openAPIToGraphQL = {
                     data: {},
                   };
                 }
 
                 if (root && typeof root === 'object' && typeof root._openAPIToGraphQL === 'object') {
-                  Object.assign(saneData._openAPIToGraphQL, root._openAPIToGraphQL);
+                  Object.assign(element._openAPIToGraphQL, root._openAPIToGraphQL);
                 }
 
-                saneData._openAPIToGraphQL.data[getIdentifier(info)] = resolveData;
-              }
-            }
-
-            // Apply limit argument
-            if (
-              data.options.addLimitArgument &&
-              /**
-               * NOTE: Does not differentiate between autogenerated args and
-               * preexisting args
-               *
-               * Ensure that there is not preexisting 'limit' argument
-               */
-              !operation.parameters.find(parameter => {
-                return parameter.name === 'limit';
-              }) &&
-              // Only array data
-              Array.isArray(saneData) &&
-              // Only array of objects/arrays
-              saneData.some(data => {
-                return typeof data === 'object';
-              })
-            ) {
-              let arraySaneData = saneData;
-
-              if ('limit' in args) {
-                const limit = args.limit;
-
-                if (limit >= 0) {
-                  arraySaneData = arraySaneData.slice(0, limit);
-                } else {
-                  throw new Error(`Auto-generated 'limit' argument must be greater than or equal to 0`);
-                }
-              } else {
-                throw new Error(`Cannot get value for auto-generated 'limit' argument`);
+                element._openAPIToGraphQL.data[getIdentifier(info)] = resolveData;
+              });
+            } else {
+              if (typeof saneData._openAPIToGraphQL === 'undefined') {
+                saneData._openAPIToGraphQL = {
+                  data: {},
+                };
               }
 
-              saneData = arraySaneData;
+              if (root && typeof root === 'object' && typeof root._openAPIToGraphQL === 'object') {
+                Object.assign(saneData._openAPIToGraphQL, root._openAPIToGraphQL);
+              }
+
+              saneData._openAPIToGraphQL.data[getIdentifier(info)] = resolveData;
             }
-
-            return saneData;
-          } else {
-            // TODO: Handle YAML
-
-            return body;
           }
+
+          // Apply limit argument
+          if (
+            data.options.addLimitArgument &&
+            /**
+             * NOTE: Does not differentiate between autogenerated args and
+             * preexisting args
+             *
+             * Ensure that there is not preexisting 'limit' argument
+             */
+            !operation.parameters.find(parameter => {
+              return parameter.name === 'limit';
+            }) &&
+            // Only array data
+            Array.isArray(saneData) &&
+            // Only array of objects/arrays
+            saneData.some(data => {
+              return typeof data === 'object';
+            })
+          ) {
+            let arraySaneData = saneData;
+
+            if ('limit' in args) {
+              const limit = args.limit;
+
+              if (limit >= 0) {
+                arraySaneData = arraySaneData.slice(0, limit);
+              } else {
+                throw new Error(`Auto-generated 'limit' argument must be greater than or equal to 0`);
+              }
+            } else {
+              throw new Error(`Cannot get value for auto-generated 'limit' argument`);
+            }
+
+            saneData = arraySaneData;
+          }
+
+          return saneData;
+        } else {
+          // TODO: Handle YAML
+
+          return body;
         }
       } else {
         /**

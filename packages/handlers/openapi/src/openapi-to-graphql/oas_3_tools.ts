@@ -774,7 +774,7 @@ export function getResponseStatusCode(path: string, method: string, oas: Oas3, d
   if (typeof endpoint.responses === 'object') {
     const codes = Object.keys(endpoint.responses);
     const successCodes = codes.filter(code => {
-      return SUCCESS_STATUS_RX.test(code);
+      return SUCCESS_STATUS_RX.test(code) || code === 'default';
     });
     if (successCodes.length === 1) {
       return successCodes[0];
