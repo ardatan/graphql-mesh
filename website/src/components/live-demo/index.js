@@ -7,6 +7,7 @@ const EXAMPLES = {
         'Location Weather': 'openapi-location-weather',
         'YouTrack': 'openapi-youtrack',
         'Stripe': 'openapi-stripe',
+        'StackExchange': 'openapi-stackexchange'
     },
     'JSON Schema': {
         'Fake API': 'json-schema-example',
