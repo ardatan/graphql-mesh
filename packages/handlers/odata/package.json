@@ -25,7 +25,7 @@
     "http-string-parser": "0.0.6",
     "dataloader": "2.0.0",
     "fetchache": "0.0.3",
-    "graphql-compose": "7.14.4",
+    "graphql-compose": "7.15.0",
     "graphql-fields": "2.0.3",
     "graphql-scalars": "1.1.2",
     "jsdom": "16.2.2",
