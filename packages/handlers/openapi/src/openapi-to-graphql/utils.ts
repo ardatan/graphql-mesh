@@ -87,7 +87,7 @@ export function handleWarning({
     if (typeof log === 'function') {
       log(output);
     } else {
-      console.log(output);
+      console.warn(output);
     }
     data.options.report.warnings.push(warning);
   }
