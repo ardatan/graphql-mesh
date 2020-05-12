@@ -397,6 +397,7 @@ type FederationObjectConfig {
   keyFields: [String!]
   extend: Boolean
   fields: [FederationField!]
+  resolveReference: String
 }
 type FederationField {
   name: String!
