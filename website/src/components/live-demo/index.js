@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styles from './styles.module.css';
-import useThemeContext from '@theme/hooks/useThemeContext';
 
 const EXAMPLES = {
     'OpenAPI': {
@@ -8,13 +7,15 @@ const EXAMPLES = {
         'Location Weather': 'openapi-location-weather',
         'YouTrack': 'openapi-youtrack',
         'Stripe': 'openapi-stripe',
+        'StackExchange': 'openapi-stackexchange'
     },
     'JSON Schema': {
         'Fake API': 'json-schema-example',
         'Covid-19 Statistics': 'json-schema-covid',
     },
     'OData':{
-        'TripPin': 'odata-trippin'
+        'TripPin': 'odata-trippin',
+        'Microsoft Graph': 'odata-microsoft',
     },
     'SOAP': {
         'Country Info': 'soap-country-info'
@@ -30,7 +31,6 @@ const EXAMPLES = {
 export default () => {
 
     const [exampleRepo, setExampleRepo] = useState('openapi-stripe');
-    const { isDarkTheme = true } = useThemeContext();
 
     return (
         <div>
@@ -51,7 +51,7 @@ export default () => {
             </div>
             <div className={styles.container}>
             <iframe
-                src={'https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/' + exampleRepo + `?fontsize=14&hidenavigation=1&theme=${isDarkTheme ? 'dark' : 'light'}&module=%2F.meshrc.yml`}
+                src={'https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/' + exampleRepo + `?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
                 style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
                 title={exampleRepo}
                 allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"

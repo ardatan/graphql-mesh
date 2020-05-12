@@ -1,0 +1,16 @@
+query fetchRecentEmails {
+  me {
+    displayName
+    officeLocation
+    skills
+    messages {
+      subject
+      isRead
+      from {
+        emailAddress {
+          address
+        }
+      }
+    }
+  }
+}

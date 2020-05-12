@@ -1,0 +1,9 @@
+query fetchGroupsAndMembers {
+  groups {
+    displayName
+    description
+    members {
+      id
+    }
+  }
+}

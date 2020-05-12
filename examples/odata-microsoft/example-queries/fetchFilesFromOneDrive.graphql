@@ -1,0 +1,18 @@
+query fetchFilesFromOneDrive {
+  me {
+    drives {
+      quota {
+        used
+        remaining
+      }
+      root {
+        children {
+          name
+          size
+          lastModifiedDateTime
+          webUrl
+        }
+      }
+    }
+  }
+}

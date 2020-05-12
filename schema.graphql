@@ -49,7 +49,7 @@ type GrpcHandler @md {
   """gRPC Endpoint"""
   endpoint: String!
   """gRPC Proto file that contains your protobuf schema"""
-  protoFilePath: String!
+  protoFilePath: ProtoFilePathOrString!
   """
   Your base service name
   Used for naming only
@@ -66,6 +66,14 @@ type GrpcHandler @md {
   """
   requestTimeout: Int
 }
+type LoadOptions {
+  includeDirs: [String]
+}
+type ProtoFilePath @md {
+  file: String!
+  load: LoadOptions
+}
+union ProtoFilePathOrString = ProtoFilePath | String
 type JsonSchemaHandler @md {
   baseUrl: String!
   typeReferences: [JsonSchemaTypeReference]
@@ -203,6 +211,12 @@ type ODataHandler @md {
   operationHeaders: JSON
   """Headers to be used with the $metadata requests"""
   schemaHeaders: JSON
+  """Enable batching"""
+  batch: ODataBatchMethod
+}
+enum ODataBatchMethod {
+  multipart
+  json
 }
 type OpenapiHandler @md {
   """A pointer to your API source - could be a local file, remote file or url endpoint"""

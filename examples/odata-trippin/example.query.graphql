@@ -1,5 +1,5 @@
 query GetPeople {
-  getPeople(queryOptions: { top: 2 }) {
+  People(queryOptions: { top: 2 }) {
     UserName
     FirstName
     LastName

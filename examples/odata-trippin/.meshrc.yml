@@ -2,4 +2,5 @@ sources:
   - name: TripPin
     handler:
       odata:
-        baseUrl: https://services.odata.org/TripPinRESTierService/
+        baseUrl: https://services.odata.org/TripPinRESTierService
+        batch: multipart

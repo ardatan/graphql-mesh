@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/graphql",
-  "version": "0.1.10",
+  "version": "0.1.16",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -13,9 +13,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.10",
-    "@graphql-toolkit/core": "0.10.5",
-    "@graphql-toolkit/url-loader": "0.10.5",
+    "@graphql-mesh/types": "0.1.16",
+    "@graphql-toolkit/core": "0.10.6",
+    "@graphql-toolkit/url-loader": "0.10.6",
     "fetchache": "0.0.3",
     "graphql-tools": "5.0.0"
   },
