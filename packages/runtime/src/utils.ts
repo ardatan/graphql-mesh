@@ -210,7 +210,6 @@ export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Pr
 }
 
 export async function resolveMerger(mergerConfig?: YamlConfig.Config['merger']): Promise<MergerFn> {
-  const [moduleName, exportName] = mergerConfig.split('#');
-  const pkg = await getPackage<any>(moduleName, 'merger');
-  return exportName ? pkg[exportName] : pkg;
+  const pkg = await getPackage<any>(mergerConfig || 'stitching', 'merger');
+  return pkg.default || pkg;
 }
