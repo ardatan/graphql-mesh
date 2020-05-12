@@ -59,7 +59,18 @@ export type Maybe<T> = null | undefined | T;
 export { KeyValueCache, KeyValueCacheSetOptions };
 
 export type MergerFn = (options: {
-  sources: { name: string; schema: GraphQLSchema }[];
+  rawSources: RawSourceOutput[];
   cache: KeyValueCache;
   hooks: Hooks;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
+
+export type RawSourceOutput = {
+  name: string;
+  // TOOD: Remove globalContextBuilder and use hooks for that
+  globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
+  sdk: Record<string, any>;
+  schema: GraphQLSchema;
+  context: Record<string, any>;
+  contextVariables: (keyof any)[];
+  handler: MeshHandlerLibrary;
+};

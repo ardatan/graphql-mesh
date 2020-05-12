@@ -1,9 +1,8 @@
-import { RawSourceOutput } from '.';
-import { KeyValueCache, Hooks } from '@graphql-mesh/types';
+import { KeyValueCache, Hooks, RawSourceOutput } from '@graphql-mesh/types';
 import { GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 
-export async function createStitchedSchema({
+const mergeUsingStitching = async function ({
   rawSources,
   cache,
   hooks,
@@ -15,4 +14,6 @@ export async function createStitchedSchema({
   return mergeSchemas({
     schemas: rawSources.map(rawSource => rawSource.schema),
   });
-}
+};
+
+export default mergeUsingStitching;

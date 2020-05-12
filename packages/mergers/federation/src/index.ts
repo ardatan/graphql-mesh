@@ -1,10 +1,9 @@
-import { KeyValueCache, Hooks } from '@graphql-mesh/types';
+import { KeyValueCache, Hooks, MergerFn, RawSourceOutput } from '@graphql-mesh/types';
 import { GraphQLSchema, print, Kind, OperationDefinitionNode, graphql } from 'graphql';
-import { RawSourceOutput } from './types';
 import { makeRemoteExecutableSchema, Fetcher } from 'graphql-tools';
 import { ApolloGateway } from '@apollo/gateway';
 
-export async function createFederationSchema({
+const mergeUsingFederation: MergerFn = async function ({
   rawSources,
   cache,
   hooks,
@@ -60,4 +59,6 @@ export async function createFederationSchema({
   const remoteSchema = makeRemoteExecutableSchema(remoteSchemaOptions);
   hooks.on('destroy', () => gateway.stop());
   return remoteSchema;
-}
+};
+
+export default mergeUsingFederation;
