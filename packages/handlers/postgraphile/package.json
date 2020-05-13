@@ -14,7 +14,7 @@
     "pg": "*"
   },
   "devDependencies": {
-    "pg": "8.1.0"
+    "pg": "8.2.0"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.16",
