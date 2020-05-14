@@ -38,7 +38,6 @@ type Handler {
   thrift: ThriftHandler
   """Handler for SQLite database, based on `tuql`"""
   tuql: TuqlHandler
-  federation: FederationHandler
 }
 type GraphQLHandler @md {
   """JSON object representing the Headers to add to the runtime of the API calls"""
@@ -498,12 +497,5 @@ type TuqlHandler @md {
   db: String
   """Path to the SQL Dump file if you want to build a in-memory database"""
   infile: String
-}
-type FederationHandler @md {
-  serviceList: [FederationService!]!
-}
-type FederationService {
-  name: String!
-  url: String!
 }
 directive @md on OBJECT

@@ -10,7 +10,6 @@ module.exports = {
     'Input Handlers': [
       'handlers/available-handlers',
       'handlers/graphql',
-      'handlers/federation',
       'handlers/openapi',
       'handlers/grpc',
       'handlers/json-schema',
@@ -35,7 +34,12 @@ module.exports = {
       'transforms/filter-schema'
     ],
     'API Reference': ['api/cli', 'api/runtime'],
-    Recipes: ['recipes/typescript', 'recipes/as-sdk', 'recipes/as-gateway'],
+    Recipes: [
+      'recipes/typescript', 
+      'recipes/as-sdk', 
+      'recipes/as-gateway',
+      'recipes/federation'
+    ],
     'Extend Your Mesh': ['extend/custom-handler', 'extend/custom-transform']
   }
 };
