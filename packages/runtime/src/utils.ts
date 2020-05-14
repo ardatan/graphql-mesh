@@ -1,7 +1,7 @@
 import { IResolvers } from 'graphql-tools';
 import { ResolvedTransform, GraphQLOperation } from './types';
 import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
-import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, Maybe } from '@graphql-mesh/types';
+import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, Maybe, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { buildOperationNodeForField } from '@graphql-toolkit/common';
@@ -207,4 +207,9 @@ export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Pr
   const Cache = exportName ? pkg[exportName] : pkg;
 
   return new Cache(cacheConfig.config);
+}
+
+export async function resolveMerger(mergerConfig?: YamlConfig.Config['merger']): Promise<MergerFn> {
+  const pkg = await getPackage<any>(mergerConfig || 'stitching', 'merger');
+  return pkg.default || pkg;
 }

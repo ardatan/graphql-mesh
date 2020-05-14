@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.16",
+    "@graphql-mesh/utils": "0.1.16",
     "graphql-transform-federation": "2.1.0"
   },
   "publishConfig": {

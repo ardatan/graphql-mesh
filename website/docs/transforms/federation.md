@@ -33,5 +33,15 @@ transforms:
                     # id: Int! @external
                     - name: id
                       external: true
+                # See the content of that file below
+                resolveReference: ./userResolveReference.js
 
+```
+
+### Add Reference Resolver
+
+`./userResolveReference.js`
+```js
+// So we can point to an existing query field to resolve that entity
+module.exports = (root, context) => context.accounts.api.user({ id: root.id })
 ```

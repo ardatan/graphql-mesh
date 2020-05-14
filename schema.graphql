@@ -20,7 +20,6 @@ type Handler {
   graphql: GraphQLHandler
   """Handler for gRPC and Protobuf schemas"""
   grpc: GrpcHandler
-  federation: FederationHandler
   """Handler for JSON Schema specification. Source could be a local json file, or a url to it."""
   jsonSchema: JsonSchemaHandler
   mongoose: MongooseHandler
@@ -75,13 +74,6 @@ type ProtoFilePath @md {
   load: LoadOptions
 }
 union ProtoFilePathOrString = ProtoFilePath | String
-type FederationHandler @md {
-  serviceList: [FederationService!]!
-}
-type FederationService {
-  name: String!
-  url: String!
-}
 type JsonSchemaHandler @md {
   baseUrl: String!
   typeReferences: [JsonSchemaTypeReference]
@@ -267,6 +259,8 @@ type Query {
   additionalResolvers: [String]
   """Backend cache"""
   cache: Cache
+  """Merge method"""
+  merger: String
 }
 scalar JSON
 type Source {
@@ -403,6 +397,7 @@ type FederationObjectConfig {
   keyFields: [String!]
   extend: Boolean
   fields: [FederationField!]
+  resolveReference: String
 }
 type FederationField {
   name: String!

@@ -1,6 +1,6 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { GetMeshOptions, ResolvedTransform, MeshResolvedSource } from './types';
-import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache } from './utils';
+import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache, resolveMerger } from './utils';
 import { TransformFn, YamlConfig, getJsonSchema } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 
@@ -33,7 +33,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
   const { dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
   await Promise.all(config.require?.map(mod => import(mod)) || []);
 
-  const [sources, transforms, additionalResolvers, cache] = await Promise.all([
+  const [sources, transforms, additionalResolvers, cache, merger] = await Promise.all([
     Promise.all(
       config.sources.map<Promise<MeshResolvedSource>>(async source => {
         const transforms: ResolvedTransform[] = await Promise.all(
@@ -74,6 +74,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     ),
     resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || []),
     resolveCache(config.cache),
+    resolveMerger(config.merger),
   ]);
 
   return {
@@ -81,6 +82,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     transforms,
     additionalResolvers,
     cache,
+    merger,
   };
 }
 

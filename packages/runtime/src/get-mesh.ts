@@ -1,19 +1,18 @@
 import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
-import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, RawSourceOutput, Requester } from './types';
+import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, Requester } from './types';
 import {
   extractSdkFromResolvers,
   applySchemaTransformations,
   applyOutputTransformations,
   ensureDocumentNode,
 } from './utils';
-import { Hooks, KeyValueCache } from '@graphql-mesh/types';
+import { Hooks, KeyValueCache, RawSourceOutput } from '@graphql-mesh/types';
 
 import { addResolversWithReferenceResolver } from './add-resolvers-with-reference-resolver';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
 import { EventEmitter } from 'events';
 import { MESH_CONTEXT_SYMBOL } from './constants';
-import { mergeSchemas } from 'graphql-tools';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -69,8 +68,10 @@ export async function getMesh(
       schemas.push(apiSchema);
     })
   );
-  let unifiedSchema = mergeSchemas({
-    schemas,
+  let unifiedSchema = await options.merger({
+    rawSources,
+    cache,
+    hooks,
   });
 
   if (options.transforms && options.transforms.length > 0) {

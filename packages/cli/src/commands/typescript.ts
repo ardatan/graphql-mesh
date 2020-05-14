@@ -1,5 +1,4 @@
-import { Maybe } from '@graphql-mesh/types';
-import { RawSourceOutput } from '@graphql-mesh/runtime';
+import { Maybe, RawSourceOutput } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import {

@@ -65,6 +65,7 @@
     "./packages/cache/*",
     "./packages/handlers/*",
     "./packages/transforms/*",
+    "./packages/mergers/*",
     "./examples/*",
     "./website"
   ],

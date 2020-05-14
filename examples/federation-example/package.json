@@ -9,8 +9,7 @@
     "start-service-reviews": "nodemon services/reviews/index.js",
     "start-service-products": "nodemon services/products/index.js",
     "start-service-inventory": "nodemon services/inventory/index.js",
-    "start-services": "concurrently \"npm:start-service-*\"",
-    "start": "concurrently \"npm:start-services\" \"npm:start-gateway\""
+    "start-services": "concurrently \"npm:start-service-*\""
   },
   "devDependencies": {
     "concurrently": "5.1.0",
@@ -18,8 +17,9 @@
   },
   "dependencies": {
     "@apollo/gateway": "0.13.2",
+    "apollo-server": "2.11.0",
     "@graphql-mesh/cli": "0.1.16",
-    "@graphql-mesh/handler-federation": "0.1.16",
+    "@graphql-mesh/merger-federation": "0.1.16",
     "graphql": "14.6.0"
   }
 }
