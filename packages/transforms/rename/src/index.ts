@@ -1,13 +1,7 @@
 import { GraphQLSchema } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import {
-  Transform,
-  RenameTypes,
-  RenameObjectFields,
-  RenameRootFields,
-  RenameRootTypes,
-  transformSchema,
-} from 'graphql-tools';
+import { RenameTypes, RenameObjectFields, RenameRootFields, RenameRootTypes, wrapSchema } from '@graphql-tools/wrap';
+import { Transform } from '@graphql-tools/utils';
 
 const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = async ({
   schema,
@@ -50,8 +44,10 @@ const renameTransform: TransformFn<YamlConfig.RenameTransformObject[]> = async (
     }
   }
 
-  const transformedSchema = transformSchema(schema, transforms);
-  return transformedSchema;
+  return wrapSchema({
+    schema,
+    transforms,
+  });
 };
 
 export default renameTransform;

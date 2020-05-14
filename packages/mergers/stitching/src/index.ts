@@ -1,6 +1,6 @@
 import { KeyValueCache, Hooks, RawSourceOutput } from '@graphql-mesh/types';
 import { GraphQLSchema } from 'graphql';
-import { mergeSchemas } from 'graphql-tools';
+import { stitchSchemas } from '@graphql-tools/stitch';
 
 const mergeUsingStitching = async function ({
   rawSources,
@@ -11,7 +11,7 @@ const mergeUsingStitching = async function ({
   cache: KeyValueCache;
   hooks: Hooks;
 }): Promise<GraphQLSchema> {
-  return mergeSchemas({
+  return stitchSchemas({
     schemas: rawSources.map(rawSource => rawSource.schema),
   });
 };

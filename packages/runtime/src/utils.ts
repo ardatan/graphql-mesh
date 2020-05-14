@@ -1,10 +1,9 @@
-import { IResolvers } from 'graphql-tools';
 import { ResolvedTransform, GraphQLOperation } from './types';
 import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
 import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, Maybe, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
-import { buildOperationNodeForField } from '@graphql-toolkit/common';
+import { buildOperationNodeForField, IResolvers } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 
@@ -145,7 +144,7 @@ export async function extractSdkFromResolvers(
             const resolveFn = field.resolve;
 
             const fn: (...args: any[]) => any = resolveFn
-              ? (args: any, context: any, info: GraphQLResolveInfo) => resolveFn(null, args, context, info)
+              ? (args: any, context: any, info: any) => resolveFn(null, args, context, info)
               : () => null;
 
             sdk[fieldName] = async (args: any, context: any, info: GraphQLResolveInfo) => {

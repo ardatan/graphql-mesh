@@ -1,6 +1,6 @@
 import snapshotTransform from '../src';
 import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
-import { makeExecutableSchema } from 'graphql-tools';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql } from 'graphql';
 import { readFileSync, existsSync } from 'fs-extra';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';

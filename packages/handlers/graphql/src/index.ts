@@ -1,7 +1,7 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { fetchache, Request } from 'fetchache';
-import { loadSchema } from '@graphql-toolkit/core';
-import { UrlLoader } from '@graphql-toolkit/url-loader';
+import { loadSchema } from '@graphql-tools/load';
+import { UrlLoader } from '@graphql-tools/url-loader';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
   async getMeshSource({ config, hooks, cache }) {

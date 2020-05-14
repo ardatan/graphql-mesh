@@ -1,6 +1,7 @@
 import { GraphQLSchema } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import { Transform, RenameTypes, RenameRootFields, transformSchema } from 'graphql-tools';
+import { RenameTypes, RenameRootFields, wrapSchema } from '@graphql-tools/wrap';
+import { Transform } from '@graphql-tools/utils';
 
 const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = async ({
   apiName,
@@ -34,8 +35,10 @@ const prefixTransform: TransformFn<YamlConfig.PrefixTransformConfig> = async ({
     );
   }
 
-  const transformedSchema = transformSchema(schema, transforms);
-  return transformedSchema;
+  return wrapSchema({
+    schema,
+    transforms,
+  });
 };
 
 export default prefixTransform;

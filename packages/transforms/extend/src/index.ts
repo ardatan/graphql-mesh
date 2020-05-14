@@ -1,8 +1,8 @@
 import { GraphQLSchema, extendSchema, concatAST } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import { loadTypedefs } from '@graphql-toolkit/core';
-import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
-import { CodeFileLoader } from '@graphql-toolkit/code-file-loader';
+import { loadTypedefs } from '@graphql-tools/load';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 
 const extendTransform: TransformFn<YamlConfig.Transform['extend']> = async ({
   schema,

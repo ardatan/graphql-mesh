@@ -1,7 +1,8 @@
 import { GraphQLSchema } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import { addResolversToSchema } from 'graphql-tools';
-import { composeResolvers, extractResolversFromSchema, ResolversComposerMapping } from '@graphql-toolkit/common';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { composeResolvers, ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
+import { getResolversFromSchema } from '@graphql-tools/utils';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const resolversCompositionTransform: TransformFn<YamlConfig.ResolversCompositionTransformObject[]> = async ({
@@ -14,15 +15,13 @@ const resolversCompositionTransform: TransformFn<YamlConfig.ResolversComposition
     resolversComposition[resolver] = await loadFromModuleExportExpression(composer, 'default');
   }
 
-  const resolvers = extractResolversFromSchema(schema);
+  const resolvers = getResolversFromSchema(schema);
   const composedResolvers = composeResolvers(resolvers, resolversComposition);
 
-  addResolversToSchema({
+  return addResolversToSchema({
     schema,
     resolvers: composedResolvers,
   });
-
-  return schema;
 };
 
 export default resolversCompositionTransform;

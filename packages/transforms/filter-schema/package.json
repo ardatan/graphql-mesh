@@ -19,7 +19,7 @@
     "@graphql-mesh/types": "0.1.16",
     "@graphql-mesh/utils": "0.1.16",
     "micromatch": "4.0.2",
-    "graphql-tools": "5.0.0"
+    "@graphql-tools/stitch": "6.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public",

@@ -19,7 +19,7 @@ import graphqlFields from 'graphql-fields';
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { nativeFetch } from './native-fetch';
-import { mergeSchemas } from '@graphql-toolkit/schema-merging';
+import { mergeSchemas } from '@graphql-tools/merge';
 
 const SCALARS = new Map<string, string>([
   ['Binary', 'String'],

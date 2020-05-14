@@ -3,10 +3,10 @@ import { codegen } from '@graphql-codegen/core';
 import * as tsPlugin from '@graphql-codegen/typescript';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
-import { loadDocuments as loadDocumentsToolkit } from '@graphql-toolkit/core';
-import { CodeFileLoader } from '@graphql-toolkit/code-file-loader';
-import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
-import { printSchemaWithDirectives } from '@graphql-toolkit/common';
+import { loadDocuments as loadDocumentsToolkit } from '@graphql-tools/load';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 export async function generateSdk(schema: GraphQLSchema, operationsPaths: string[]): Promise<string> {
   const documents = await loadDocumentsToolkit(operationsPaths, {

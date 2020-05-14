@@ -1,11 +1,12 @@
 import { Hooks } from '@graphql-mesh/types';
-import { GraphQLSchema, GraphQLResolveInfo } from 'graphql';
-import { extractResolversFromSchema, composeResolvers } from '@graphql-toolkit/common';
-import { addResolveFunctionsToSchema, IResolvers } from 'graphql-tools';
+import { GraphQLSchema } from 'graphql';
+import { composeResolvers } from '@graphql-tools/resolvers-composition';
+import { IResolvers, getResolversFromSchema } from '@graphql-tools/utils';
+import { addResolversToSchema } from '@graphql-tools/schema';
 
 export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hooks): IResolvers {
   return composeResolvers(resolvers, {
-    '*.*': originalResolver => async (parentOrKind, args, context, info: GraphQLResolveInfo) => {
+    '*.*': originalResolver => async (parentOrKind, args, context, info) => {
       hooks.emit('resolverCalled', {
         parent: parentOrKind,
         args,
@@ -42,9 +43,9 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hoo
 }
 
 export function applyResolversHooksToSchema(schema: GraphQLSchema, hooks: Hooks): GraphQLSchema {
-  const sourceResolvers = extractResolversFromSchema(schema);
+  const sourceResolvers = getResolversFromSchema(schema);
 
-  return addResolveFunctionsToSchema({
+  return addResolversToSchema({
     schema,
     resolvers: applyResolversHooksToResolvers(sourceResolvers, hooks),
   });

@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.16",
-    "@graphql-toolkit/core": "0.10.6",
-    "@graphql-toolkit/url-loader": "0.10.6",
+    "@graphql-tools/load": "6.0.0-alpha.1",
+    "@graphql-tools/url-loader": "6.0.0-alpha.1",
     "fetchache": "0.0.3",
-    "graphql-tools": "5.0.0"
+    "@graphql-tools/stitch": "6.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public",
