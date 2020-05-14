@@ -27,7 +27,14 @@ const mergeUsingFederation: MergerFn = async function ({
       return {
         process({ request, context }) {
           const schema = serviceMap.get(name);
-          return graphql(schema, request.query, null, context, request.variables, request.operationName);
+          return graphql(
+            schema,
+            request.query,
+            null,
+            context.graphqlContext || context,
+            request.variables,
+            request.operationName
+          );
         },
       };
     },

@@ -4,6 +4,17 @@ sources:
     handler:
       graphql:
         endpoint: http://localhost:4001/graphql
+    transforms:
+      - federation:
+          types:
+            - name: Query
+              config:
+                extend: true
+            - name: User
+              config:
+                keyFields:
+                  - id
+                resolveReference: ./services/accounts/user-reference-resolver
   - name: reviews
     handler:
       graphql:

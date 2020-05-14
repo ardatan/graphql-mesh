@@ -1,6 +1,15 @@
 import { IResolvers } from 'graphql-tools';
 import { ResolvedTransform, GraphQLOperation } from './types';
-import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLResolveInfo,
+  DocumentNode,
+  parse,
+  FieldNode,
+  Kind,
+  print,
+} from 'graphql';
 import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, Maybe, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
@@ -157,6 +166,8 @@ export async function extractSdkFromResolvers(
                   depthLimit: 2,
                   argNames: Object.keys(args),
                 });
+
+                console.log(print(operation));
 
                 info = {
                   fieldName: field.name,
