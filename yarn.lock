@@ -2432,10 +2432,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/mongoose@5.7.19":
-  version "5.7.19"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.19.tgz#b1d9fcc0096211e5f6a0fb142fbcd81230082629"
-  integrity sha512-KIROeMK8nB5Z4Mi5QaZ5ypByoXNf+V31tYTdHtFayo/hvqHhxM8PCS+IDRma9X3aFRU0gvQWlZLJxR6VGPTVew==
+"@types/mongoose@5.7.20":
+  version "5.7.20"
+  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.20.tgz#faf65445ebc9632f7e9eb5d1cf93b80fb93002cf"
+  integrity sha512-s9zTkj3rTaeS16VcNCUAYsO/SS5ePEcnWmX0SrvzpuHGngtL54zXbVwS7LhTwNFXNrlTVgzhnYp9kgGwFvftVg==
   dependencies:
     "@types/mongodb" "*"
     "@types/node" "*"
