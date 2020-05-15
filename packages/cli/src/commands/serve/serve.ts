@@ -8,7 +8,7 @@ import { createServer } from 'http';
 import { playground } from './playground';
 import graphqlHTTP from 'express-graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
+import { SubscriptionServer, OperationMessagePayload, ConnectionContext } from 'subscriptions-transport-ws';
 
 export async function serveMesh(
   logger: Logger,
@@ -48,6 +48,14 @@ export async function serveMesh(
         schema,
         execute,
         subscribe,
+        onConnect: async function (
+          _params: OperationMessagePayload,
+          _webSocket: WebSocket,
+          connectionContext: ConnectionContext
+        ) {
+          const context = await contextBuilder(connectionContext.request);
+          return context;
+        },
       },
       {
         server: httpServer,
