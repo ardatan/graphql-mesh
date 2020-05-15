@@ -2327,10 +2327,10 @@
   resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.12.3.tgz#abf383c5b639d0aa8b8c4a420d6a85f703357d6c"
   integrity sha512-otRe77JNNWzoVGLKw8TCspKswRoQToys4tuL6XYVBFxjgeM0RUrx7m3jkaTdxILxeGry3zM8mGYkGXMeQ02guA==
 
-"@types/jsdom@16.2.1":
-  version "16.2.1"
-  resolved "https://registry.yarnpkg.com/@types/jsdom/-/jsdom-16.2.1.tgz#9e6eee6a578f74eed5997558ab430dbc11aac753"
-  integrity sha512-KCEq427OsWfpX7FRyEMb3i2XIuz8Pt3XPls4nmX0iMTDJWsHD4Kzoa3v4Uv9c9IDf11ALeHUtPcyAjTz/HV03Q==
+"@types/jsdom@16.2.2":
+  version "16.2.2"
+  resolved "https://registry.yarnpkg.com/@types/jsdom/-/jsdom-16.2.2.tgz#5d820a9578ccb8ac20afecdc141479aa77167dd0"
+  integrity sha512-QP2IQ5d65WtIMfQwttqFVFgMNikqeWO8mwUCfLrHDI4ijwb5qGhzPEm2ajWr2rlcCnjWeoYeb7Jx3+mtZGWMBw==
   dependencies:
     "@types/node" "*"
     "@types/parse5" "*"
