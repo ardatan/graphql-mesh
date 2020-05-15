@@ -26,7 +26,7 @@
     "graphql-scalars": "1.1.2"
   },
   "devDependencies": {
-    "@types/mysql": "2.15.10",
+    "@types/mysql": "2.15.11",
     "mysql": "2.18.1"
   },
   "publishConfig": {
