@@ -13,7 +13,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/object-hash": "1.3.2"
+    "@types/object-hash": "1.3.3"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.16",
