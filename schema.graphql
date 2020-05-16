@@ -76,16 +76,9 @@ type ProtoFilePath @md {
 union ProtoFilePathOrString = ProtoFilePath | String
 type JsonSchemaHandler @md {
   baseUrl: String!
-  typeReferences: [JsonSchemaTypeReference]
   operationHeaders: JSON
   schemaHeaders: JSON
   operations: [JsonSchemaOperation!]!
-}
-type JsonSchemaTypeReference {
-  reference: String!
-  sharedType: String!
-  inputType: String!
-  outputType: String!
 }
 enum JsonSchemaOperationType {
   Query
