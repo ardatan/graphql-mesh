@@ -1,0 +1,16 @@
+# STEP2: 2 sources combined
+query getData_step2 {
+  case(countryRegion: "France") {
+    confirmed
+    deaths
+    recovered
+    countryRegion
+    population {
+      records {
+        fields {
+          value
+        }
+      }
+    }
+  }
+}

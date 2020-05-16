@@ -8,7 +8,7 @@
     "url": "https://github.com/jycouet"
   },
   "scripts": {
-    "start": "graphql-mesh serve --example-query example-query.graphql"
+    "start": "graphql-mesh serve --example-query \"example-queries/*.graphql\""
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.1.16",

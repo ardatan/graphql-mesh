@@ -1,0 +1,31 @@
+# STEP3_2: 2 sources combined to get ratios & case & population
+query getData_step3_2 {
+  fr: stat(country: "France") {
+    deathRatio
+    case {
+      countryRegion
+      deaths
+    }
+    population {
+      records {
+        fields {
+          value
+        }
+      }
+    }
+  }
+  at: stat(country: "Austria") {
+    deathRatio
+    case {
+      countryRegion
+      deaths
+    }
+    population {
+      records {
+        fields {
+          value
+        }
+      }
+    }
+  }
+}
