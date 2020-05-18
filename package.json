@@ -23,7 +23,7 @@
     "release:canary": "node scripts/release.js --canary"
   },
   "devDependencies": {
-    "@types/jest": "25.2.2",
+    "@types/jest": "25.2.3",
     "@types/node": "13.13.6",
     "jest": "26.0.1",
     "ts-jest": "26.0.0",
