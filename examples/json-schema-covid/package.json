@@ -1,6 +1,6 @@
 {
   "name": "covid-mesh",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "license": "MIT",
   "private": true,
   "author": {
@@ -8,14 +8,14 @@
     "url": "https://github.com/jycouet"
   },
   "scripts": {
-    "start": "graphql-mesh serve --example-query example-query.graphql"
+    "start": "graphql-mesh serve --example-query \"example-queries/*.graphql\""
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.1.16",
-    "@graphql-mesh/graphql": "0.1.16",
-    "@graphql-mesh/json-schema": "0.1.16",
-    "@graphql-mesh/runtime": "0.1.16",
-    "@graphql-mesh/transform-extend": "0.1.16",
+    "@graphql-mesh/cli": "0.1.17",
+    "@graphql-mesh/graphql": "0.1.17",
+    "@graphql-mesh/json-schema": "0.1.17",
+    "@graphql-mesh/runtime": "0.1.17",
+    "@graphql-mesh/transform-extend": "0.1.17",
     "graphql": "15.0.0"
   }
 }

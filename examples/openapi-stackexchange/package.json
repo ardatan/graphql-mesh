@@ -1,14 +1,14 @@
 {
   "name": "openapi-stackexchange",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "graphql-mesh serve --example-query get-questions.query.graphql"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.1.16",
-    "@graphql-mesh/openapi": "0.1.16",
+    "@graphql-mesh/cli": "0.1.17",
+    "@graphql-mesh/openapi": "0.1.17",
     "graphql": "15.0.0",
     "graphql-fields": "2.0.3"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -16,9 +16,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.16",
+    "@graphql-mesh/types": "0.1.17",
     "neo4j-driver": "4.0.2",
-    "neo4j-graphql-js": "2.14.0"
+    "neo4j-graphql-js": "2.14.1"
   },
   "publishConfig": {
     "access": "public",

@@ -1,10 +1,15 @@
 {
-    "type": "object",
-    "title": "Company",
-    "description": "Fake Company",
-    "properties": {
-        "name": {
-            "type": "string"
+    "$ref": "#/definitions/Company",
+    "definitions": {
+        "Company": {
+            "type": "object",
+            "title": "Company",
+            "description": "Fake Company",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
         }
     }
 }
