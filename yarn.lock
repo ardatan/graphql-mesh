@@ -1637,12 +1637,12 @@
     "@graphql-tools/utils" "6.0.0-alpha.2"
     tslib "~2.0.0"
 
-"@graphql-tools/resolvers-composition@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.0-alpha.2.tgz#5bd66ccfce8ba7c8e734e4ccd0c23718cce36afb"
-  integrity sha512-+jaLV54Q+FCsg2VTiDcItLxn9ViEeIhYwDSzRP7YaKcGOZgrtMZ5hLd6PmSYGCN+iOpd2077LSr6U0npghkFKg==
+"@graphql-tools/resolvers-composition@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.0-alpha-f92a671.0.tgz#a6c0b1eb9dd8cce6d0b4ca206112fe7bd8c9b6a0"
+  integrity sha512-erfhvzhe/0LNtj94fMlVwtwXFUpQATZSA7CZVF+SoXChB20r90mX2dRXRLdGa6v8cDqYs55OWT8JVNLMKFCHyg==
   dependencies:
-    "@graphql-tools/utils" "6.0.0-alpha.2"
+    "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
     lodash "4.17.15"
 
 "@graphql-tools/schema@6.0.0-alpha.2":
@@ -1674,6 +1674,13 @@
     cross-fetch "3.0.4"
     tslib "~2.0.0"
     valid-url "1.0.9"
+
+"@graphql-tools/utils@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.0-alpha-f92a671.0.tgz#4a635f47efc3217e17fbfa770c3f405666b18cc3"
+  integrity sha512-hDd5LJwDfOlSoozLZ1Fae+/Plsgt1F/L/9xanOghhBy2wVjqWyKRGUaGUHlbsnzEKklYo0Cpg20Cv6+DGLftMQ==
+  dependencies:
+    camel-case "4.1.1"
 
 "@graphql-tools/utils@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
@@ -15865,11 +15872,6 @@ tslib@^1.10.0, tslib@^1.11.1, tslib@^1.5.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
-
-tslib@~2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.0.tgz#18d13fc2dce04051e20f074cc8387fd8089ce4f3"
-  integrity sha512-lTqkx847PI7xEDYJntxZH89L2/aXInsyF2luSafe/+0fHOMjlBNXdH6th7f70qxLDhul7KZK0zC8V5ZIyHl0/g==
 
 tslib@~2.0.0:
   version "2.0.0"
