@@ -1574,15 +1574,6 @@
     "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
     tslib "~2.0.0"
 
-"@graphql-tools/delegate@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-6.0.0-alpha.2.tgz#bb970ebd1ccaad870cf4d4d61645aada51558d40"
-  integrity sha512-7/QG40cuVRDDhUQT6TCxXeEtnAId8TIpZdXiML8mDHDyYHmpYERQoIp1iOsbcA+YV4toMh1q4gv2mVgJUJFZSA==
-  dependencies:
-    "@graphql-tools/schema" "6.0.0-alpha.2"
-    "@graphql-tools/utils" "6.0.0-alpha.2"
-    tslib "~2.0.0"
-
 "@graphql-tools/graphql-file-loader@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.0.0-alpha.2.tgz#c9a37fc5256434a3c9e2a32f64719ea836ac4056"
@@ -1714,16 +1705,6 @@
     "@graphql-tools/delegate" "6.0.0-alpha-f92a671.0"
     "@graphql-tools/schema" "6.0.0-alpha-f92a671.0"
     "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
-    tslib "~2.0.0"
-
-"@graphql-tools/wrap@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-6.0.0-alpha.2.tgz#a1f17654f7d14b2604afb11b8328266283c26fb5"
-  integrity sha512-qVmB7XgzT8rxKpBOdvhHAaMM66SluU4f9eaHNCVOG8f+CuS3fje7wvCYGYzGYiy5EqvTiLVMLlewERDQGnbNhA==
-  dependencies:
-    "@graphql-tools/delegate" "6.0.0-alpha.2"
-    "@graphql-tools/schema" "6.0.0-alpha.2"
-    "@graphql-tools/utils" "6.0.0-alpha.2"
     tslib "~2.0.0"
 
 "@grpc/grpc-js@1.0.3":
@@ -2433,10 +2414,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/fs-extra@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-9.0.0.tgz#02b9aa0cdbeedc997642b6736fe48b8e4c271895"
-  integrity sha512-xCbDUSZArlmMjiJdczt8AFNH2MwcMb/pj/HKja1hx3u1qzOUINcJktQMGoGVlgFnzxnuCahxKFlcRBkSAcm33g==
+"@types/fs-extra@9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-9.0.1.tgz#91c8fc4c51f6d5dbe44c2ca9ab09310bd00c7918"
+  integrity sha512-B42Sxuaz09MhC3DDeW5kubRcQ5by4iuVQ0cRRWM2lggLzAa/KVom0Aft/208NgMvNQQZ86s5rVcqDdn/SH0/mg==
   dependencies:
     "@types/node" "*"
 
