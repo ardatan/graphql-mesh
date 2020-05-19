@@ -1574,15 +1574,6 @@
     "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
     tslib "~2.0.0"
 
-"@graphql-tools/delegate@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-6.0.0-alpha.2.tgz#bb970ebd1ccaad870cf4d4d61645aada51558d40"
-  integrity sha512-7/QG40cuVRDDhUQT6TCxXeEtnAId8TIpZdXiML8mDHDyYHmpYERQoIp1iOsbcA+YV4toMh1q4gv2mVgJUJFZSA==
-  dependencies:
-    "@graphql-tools/schema" "6.0.0-alpha.2"
-    "@graphql-tools/utils" "6.0.0-alpha.2"
-    tslib "~2.0.0"
-
 "@graphql-tools/graphql-file-loader@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.0.0-alpha.2.tgz#c9a37fc5256434a3c9e2a32f64719ea836ac4056"
@@ -1714,16 +1705,6 @@
     "@graphql-tools/delegate" "6.0.0-alpha-f92a671.0"
     "@graphql-tools/schema" "6.0.0-alpha-f92a671.0"
     "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
-    tslib "~2.0.0"
-
-"@graphql-tools/wrap@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-6.0.0-alpha.2.tgz#a1f17654f7d14b2604afb11b8328266283c26fb5"
-  integrity sha512-qVmB7XgzT8rxKpBOdvhHAaMM66SluU4f9eaHNCVOG8f+CuS3fje7wvCYGYzGYiy5EqvTiLVMLlewERDQGnbNhA==
-  dependencies:
-    "@graphql-tools/delegate" "6.0.0-alpha.2"
-    "@graphql-tools/schema" "6.0.0-alpha.2"
-    "@graphql-tools/utils" "6.0.0-alpha.2"
     tslib "~2.0.0"
 
 "@grpc/grpc-js@1.0.3":
@@ -2657,10 +2638,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/mongoose@5.7.20":
-  version "5.7.20"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.20.tgz#faf65445ebc9632f7e9eb5d1cf93b80fb93002cf"
-  integrity sha512-s9zTkj3rTaeS16VcNCUAYsO/SS5ePEcnWmX0SrvzpuHGngtL54zXbVwS7LhTwNFXNrlTVgzhnYp9kgGwFvftVg==
+"@types/mongoose@5.7.21":
+  version "5.7.21"
+  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.21.tgz#a3f0b6875f85c2afae6a5f0f1a7991732329e7e8"
+  integrity sha512-KPJ4zVHWZK5vKlnJj2YDDCTmesYkW9iGB95ATfFYcdvx394Xuyh9/Cq0NSJnJ8J8PFVlhx9iBQ+Q425tEuEJvA==
   dependencies:
     "@types/mongodb" "*"
     "@types/node" "*"
