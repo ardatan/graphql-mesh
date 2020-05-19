@@ -1,18 +1,13 @@
-import { GraphQLResolveInfo } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import {
-  composeResolvers,
-  extractResolversFromSchema,
-  ResolversComposerMapping,
-  ResolversComposition,
-} from '@graphql-toolkit/common';
+import { ResolversComposerMapping, ResolversComposition, composeResolvers } from '@graphql-tools/resolvers-composition';
+import { getResolversFromSchema } from '@graphql-tools/utils';
 import { computeCacheKey } from './compute-cache-key';
 
 const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({ config, schema, cache, hooks }) => {
   // We need to use `schemaReady` hook and not the schema directly because we need to make sure to run cache after all
   // other transformations are done, and to make sure that custom resolve are already loaded and merged into the schema
   hooks.on('schemaReady', ({ schema, applyResolvers }) => {
-    const sourceResolvers = extractResolversFromSchema(schema);
+    const sourceResolvers = getResolversFromSchema(schema);
     const compositions: ResolversComposerMapping = {};
 
     for (const cacheItem of config) {
@@ -36,12 +31,7 @@ const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({ 
         });
       }
 
-      compositions[cacheItem.field] = (originalResolver => async (
-        root: any,
-        args: any,
-        context: any,
-        info: GraphQLResolveInfo
-      ) => {
+      compositions[cacheItem.field] = (originalResolver => async (root: any, args: any, context: any, info: any) => {
         const cacheKey = computeCacheKey({
           keyStr: cacheItem.cacheKey,
           args,

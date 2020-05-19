@@ -6,6 +6,14 @@
       product {
         name
       }
+      author {
+        id
+        name
+        username
+        reviews {
+          body
+        }
+      }
     }
   }
 }

@@ -1,25 +1,25 @@
 {
-  "name": "@graphql-mesh/merger-federation",
-  "version": "0.1.17",
-  "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "license": "MIT",
-  "peerDependencies": {
-    "graphql": "*"
-  },
-  "dependencies": {
-    "@graphql-mesh/types": "0.1.17",
-    "@apollo/gateway": "0.16.0",
-    "fetchache": "0.0.3",
-    "graphql-tools": "5.0.0"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "dist"
+    "name": "@graphql-mesh/merger-federation",
+    "version": "0.1.17",
+    "sideEffects": false,
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "typings": "dist/index.d.ts",
+    "typescript": {
+      "definition": "dist/index.d.ts"
+    },
+    "license": "MIT",
+    "peerDependencies": {
+      "graphql": "*"
+    },
+    "dependencies": {
+      "@graphql-mesh/types": "0.1.17",
+      "@apollo/gateway": "0.16.0",
+      "fetchache": "0.0.3",
+      "@graphql-tools/wrap": "6.0.0-alpha.1"
+    },
+    "publishConfig": {
+      "access": "public",
+      "directory": "dist"
+    }
   }
-}

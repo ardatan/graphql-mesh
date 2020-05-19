@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import { addMockFunctionsToSchema, IMocks } from 'graphql-tools';
+import { addMocksToSchema, IMocks } from '@graphql-tools/mock';
 import * as faker from 'faker';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
@@ -58,7 +58,7 @@ const mockingTransform: TransformFn<YamlConfig.MockingConfig> = async ({ schema,
         }
       }
     }
-    addMockFunctionsToSchema({
+    addMocksToSchema({
       schema,
       mocks,
       preserveResolvers: config?.preserveResolvers,

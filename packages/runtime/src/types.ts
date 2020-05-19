@@ -1,6 +1,6 @@
 import { MeshHandlerLibrary, YamlConfig, TransformFn, KeyValueCache, Hooks, MergerFn } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
-import { IResolvers } from 'graphql-tools';
+import { IResolvers } from '@graphql-tools/utils';
 
 type ValuesOf<T> = T[keyof T];
 

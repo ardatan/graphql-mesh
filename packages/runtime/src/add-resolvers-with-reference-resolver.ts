@@ -1,8 +1,9 @@
-import { IAddResolversToSchemaOptions, addResolveFunctionsToSchema } from 'graphql-tools';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { IAddResolversToSchemaOptions } from '@graphql-tools/utils';
 import { isObjectType } from 'graphql';
 
 export function addResolversWithReferenceResolver(options: IAddResolversToSchemaOptions) {
-  const schema = addResolveFunctionsToSchema(options);
+  const schema = addResolversToSchema(options);
   for (const typeName in options.resolvers) {
     for (const fieldName in options.resolvers[typeName]) {
       if (fieldName === '__resolveReference') {

@@ -1,12 +1,8 @@
 import { GraphQLSchema } from 'graphql';
 import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import {
-  extractResolversFromSchema,
-  composeResolvers,
-  ResolversComposerMapping,
-  ResolversComposition,
-} from '@graphql-toolkit/common';
-import { addResolveFunctionsToSchema } from 'graphql-tools';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
+import { getResolversFromSchema } from '@graphql-tools/utils';
 import { isAbsolute, join } from 'path';
 import { ensureFileSync, existsSync, readFileSync, writeFileSync } from 'fs-extra';
 import { computeSnapshotFilePath } from './compute-snapshot-file-path';
@@ -29,7 +25,7 @@ const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async
   const configIf = 'if' in config ? (typeof config.if === 'boolean' ? config.if : config.if && eval(config.if)) : true;
 
   if (configIf) {
-    const resolvers = extractResolversFromSchema(schema);
+    const resolvers = getResolversFromSchema(schema);
     const resolversComposition: ResolversComposerMapping = {};
 
     const outputDir = isAbsolute(config.outputDir) ? config.outputDir : join(process.cwd(), config.outputDir);
@@ -54,7 +50,7 @@ const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async
     }
 
     const composedResolvers = composeResolvers(resolvers, resolversComposition);
-    addResolveFunctionsToSchema({
+    return addResolversToSchema({
       schema,
       resolvers: composedResolvers,
     });

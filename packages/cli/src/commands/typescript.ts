@@ -15,7 +15,7 @@ import {
   Kind,
 } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
-import { printSchemaWithDirectives } from '@graphql-toolkit/common';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const unifiedContextIdentifier = 'MeshContext';
 

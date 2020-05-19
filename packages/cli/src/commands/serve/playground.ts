@@ -1,7 +1,7 @@
 import { Request, Response, RequestHandler } from 'express';
-import { loadDocuments } from '@graphql-toolkit/core';
-import { CodeFileLoader } from '@graphql-toolkit/code-file-loader';
-import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
+import { loadDocuments } from '@graphql-tools/load';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { basename, resolve } from 'path';
 import { readFileSync } from 'fs';
 

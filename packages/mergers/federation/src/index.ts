@@ -1,6 +1,6 @@
 import { KeyValueCache, Hooks, MergerFn, RawSourceOutput } from '@graphql-mesh/types';
-import { GraphQLSchema, print, Kind, OperationDefinitionNode, graphql } from 'graphql';
-import { makeRemoteExecutableSchema, Fetcher } from 'graphql-tools';
+import { GraphQLSchema, print, graphql } from 'graphql';
+import { makeRemoteExecutableSchema } from '@graphql-tools/wrap';
 import { ApolloGateway } from '@apollo/gateway';
 
 const mergeUsingFederation: MergerFn = async function ({
@@ -39,31 +39,31 @@ const mergeUsingFederation: MergerFn = async function ({
       };
     },
   });
-  const { schema, executor } = await gateway.load();
-  const fetcher: Fetcher = ({ query, operationName, variables, context }) =>
-    executor({
-      document: query,
-      request: {
-        operationName,
-        query: print(query),
-        variables,
-      },
-      operationName,
-      cache,
-      context,
-      queryHash: print(query) + '_' + JSON.stringify(variables),
-      logger: console,
-      metrics: {},
-      source: print(query),
-      operation: query.definitions.find(
-        definition => definition.kind === Kind.OPERATION_DEFINITION && definition.name?.value === operationName
-      ) as OperationDefinitionNode,
-    });
-  const remoteSchemaOptions = {
+  const { schema, executor: gatewayExecutor } = await gateway.load();
+  const remoteSchema = makeRemoteExecutableSchema({
     schema,
-    fetcher,
-  };
-  const remoteSchema = makeRemoteExecutableSchema(remoteSchemaOptions);
+    executor: ({ document, info, variables, context }): any => {
+      const documentStr = print(document);
+      const { operation } = info;
+      const operationName = operation.name?.value;
+      return gatewayExecutor({
+        document,
+        request: {
+          operationName,
+          query: documentStr,
+          variables,
+        },
+        operationName,
+        cache,
+        context,
+        queryHash: documentStr + '_' + JSON.stringify(variables),
+        logger: console,
+        metrics: {},
+        source: documentStr,
+        operation,
+      });
+    },
+  });
   hooks.on('destroy', () => gateway.stop());
   return remoteSchema;
 };
