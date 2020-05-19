@@ -58,6 +58,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Detect Changes
+        if: github.repository == 'urigo/graphql-mesh'
         uses: kamilkisiela/graphql-inspector@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
