@@ -427,9 +427,9 @@ describe('cache', () => {
       let schemaWithCache: GraphQLSchema;
 
       hooks.emit('schemaReady', {
-        schema,
+        schema: schemaWithHooks,
         applyResolvers: resolvers => {
-          schemaWithCache = addResolversToSchema(schema, resolvers);
+          schemaWithCache = addResolversToSchema(schemaWithHooks, resolvers);
         },
       });
 

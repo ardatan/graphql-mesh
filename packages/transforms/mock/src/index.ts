@@ -58,7 +58,7 @@ const mockingTransform: TransformFn<YamlConfig.MockingConfig> = async ({ schema,
         }
       }
     }
-    addMocksToSchema({
+    return addMocksToSchema({
       schema,
       mocks,
       preserveResolvers: config?.preserveResolvers,
