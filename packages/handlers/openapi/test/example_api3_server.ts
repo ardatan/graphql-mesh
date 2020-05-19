@@ -192,17 +192,14 @@ export function startServer(PORT: number) {
   };
 
   app.get('/api/authors/:authorId', (req, res) => {
-    console.log(req.method, req.path);
     res.send(Authors[req.params.authorId]);
   });
 
   app.get('/api/books/:bookId', (req, res) => {
-    console.log(req.method, req.path);
     res.send(Books[req.params.bookId]);
   });
 
   app.get('/api/nextWorks/:authorId', authMiddleware, (req, res) => {
-    console.log(req.method, req.path);
     res.send(NextWorks[req.params.authorId]);
   });
 

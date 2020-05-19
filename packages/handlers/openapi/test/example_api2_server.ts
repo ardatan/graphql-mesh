@@ -18,24 +18,19 @@ export function startServer(PORT: number) {
   app.use(bodyParser.json());
 
   app.get('/api/user', (req, res) => {
-    console.log(req.method, req.path);
     res.send({
       name: 'Arlene L McMahon',
     });
   });
 
   app.get('/api/user2', (req, res) => {
-    console.log(req.method, req.path);
     res.send({
       name: 'William B Ropp',
     });
   });
 
   return new Promise(resolve => {
-    server = app.listen(PORT, () => {
-      console.log(`Example API accessible on port ${PORT}`);
-      resolve();
-    });
+    server = app.listen(PORT, resolve);
   });
 }
 
@@ -44,10 +39,7 @@ export function startServer(PORT: number) {
  */
 export function stopServer() {
   return new Promise(resolve => {
-    server.close(() => {
-      console.log(`Stopped API server`);
-      resolve();
-    });
+    server.close(resolve);
   });
 }
 

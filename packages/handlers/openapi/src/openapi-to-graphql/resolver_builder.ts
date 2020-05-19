@@ -65,7 +65,10 @@ interface ResolveData {
   responseHeaders: HeadersInit;
 }
 
-export type ResolverMiddleware = (getResolverParams: GetResolverParams, factory: ResolverFactory) => ResolveFunction;
+export type ResolverMiddleware = (
+  getResolverParams: () => GetResolverParams,
+  factory: ResolverFactory
+) => ResolveFunction;
 
 type ResolverFactory = typeof getResolver;
 
@@ -73,14 +76,8 @@ type ResolverFactory = typeof getResolver;
  * Creates and returns a resolver function that performs API requests for the
  * given GraphQL query
  */
-export function getResolver({
-  operation,
-  argsFromLink = {},
-  payloadName,
-  data,
-  baseUrl,
-  requestOptions,
-}: GetResolverParams): ResolveFunction {
+export function getResolver(getResolverParams: () => GetResolverParams): ResolveFunction {
+  let { operation, argsFromLink = {}, payloadName, data, baseUrl, requestOptions } = getResolverParams();
   // Determine the appropriate URL:
   if (typeof baseUrl === 'undefined') {
     baseUrl = Oas3Tools.getBaseUrl(operation);

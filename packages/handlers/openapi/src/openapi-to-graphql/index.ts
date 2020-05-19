@@ -456,15 +456,16 @@ function getFieldForOperation(
   // Create resolve function:
   const payloadSchemaName = operation.payloadDefinition ? operation.payloadDefinition.graphQLInputObjectTypeName : null;
 
-  const resolverFactoryParams = {
-    operation,
-    payloadName: payloadSchemaName,
-    data,
-    baseUrl,
-    requestOptions,
-  };
-
-  const resolve = data.options.resolverMiddleware(resolverFactoryParams, getResolver);
+  const resolve = data.options.resolverMiddleware(
+    () => ({
+      operation,
+      payloadName: payloadSchemaName,
+      data,
+      baseUrl,
+      requestOptions,
+    }),
+    getResolver
+  );
 
   // Create args:
   const args: Args = getArgs({

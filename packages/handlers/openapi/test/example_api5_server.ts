@@ -18,14 +18,12 @@ export function startServer(PORT: number) {
   app.use(bodyParser.json());
 
   app.get('/api/o_d_d___n_a_m_e', (req, res) => {
-    console.log(req.method, req.path);
     res.send({
       data: 'odd name',
     });
   });
 
   app.get('/api/w-e-i-r-d___n-a-m-e', (req, res) => {
-    console.log(req.method, req.path);
     res.send({
       data: 'weird name',
     });
@@ -39,14 +37,12 @@ export function startServer(PORT: number) {
    * ([A-Za-z0-9_])."
    */
   app.get('/api/w-e-i-r-d___n-a-m-e2/:funky___parameter', (req, res) => {
-    console.log(req.method, req.path);
     res.send({
       data: `weird name 2 param: ${req.params.funky___parameter}`,
     });
   });
 
   app.get('/api/w-e-i-r-d___n-a-m-e3/:funky___parameter', (req, res) => {
-    console.log(req.method, req.path);
     res.send({
       data: `weird name 3 param: ${req.params.funky___parameter}`,
     });

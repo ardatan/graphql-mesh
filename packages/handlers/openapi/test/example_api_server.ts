@@ -355,8 +355,6 @@ export function startServer(PORT: number) {
   };
 
   app.get('/api/users', (req, res) => {
-    console.log(req.method, req.path);
-
     const limit = req.query.limit;
     if (typeof limit === 'string') {
       res.send(Object.values(Users).slice(0, Number(limit)));
@@ -366,8 +364,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/users/:username', (req, res) => {
-    console.log(req.method, req.path);
-
     if (req.params.username in Users) {
       res.send(Users[req.params.username]);
     } else {
@@ -378,8 +374,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/users/:username/car', (req, res) => {
-    console.log(req.method, req.path);
-
     if (req.params.username in Users) {
       res.send(Cars[req.params.username]);
     } else {
@@ -390,8 +384,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/users/:username/friends', (req, res) => {
-    console.log(req.method, req.path);
-
     if (req.params.username in Users) {
       const friends = Users[req.params.username].friends.map((friendName: string | number) => {
         return Users[friendName];
@@ -406,8 +398,6 @@ export function startServer(PORT: number) {
   });
 
   app.post('/api/users', (req, res) => {
-    console.log(req.method, req.path);
-
     const user = req.body;
     if ('name' in user && 'address' in user && 'employerId' in user && 'hobbies' in user) {
       res.status(201).send(user);
@@ -419,8 +409,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/assets/:companyId', (req, res) => {
-    console.log(req.method, req.path);
-
     const assets: {
       name: string;
       address: { street: string; city: string };
@@ -448,14 +436,10 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/cars', (req, res) => {
-    console.log(req.method, req.path);
-
     res.send(Object.values(Cars));
   });
 
   app.get('/api/companies/:id', (req, res) => {
-    console.log(req.method, req.path);
-
     if (req.params.id in Companies) {
       res.status(200).send(Companies[req.params.id]);
     } else {
@@ -466,8 +450,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/coffeeLocation', (req: any, res: any) => {
-    console.log(req.method, req.path);
-
     res.send({
       lat: parseFloat(req.query.lat) + 5,
       long: parseFloat(req.query.long) + 5,
@@ -496,26 +478,18 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/cleanDesks', (req, res) => {
-    console.log(req.method, req.path);
-
     res.set('Content-Type', 'text/plain').status(200).send('5 clean desks');
   });
 
   app.get('/api/dirtyDesks', (req, res) => {
-    console.log(req.method, req.path);
-
     res.set('Content-Type', 'text/plain').status(200).send('5 dirty desks');
   });
 
   app.get('/api/bonuses', (req, res) => {
-    console.log(req.method, req.path);
-
     res.status(204).send();
   });
 
   app.get('/api/offices/:id', (req: any, res: any) => {
-    console.log(req.method, req.path);
-
     const accept = req.headers.accept;
     if (accept.includes('text/plain')) {
       res.set('Content-Type', 'text/plain').status(200).send('You asked for text!');
@@ -533,8 +507,6 @@ export function startServer(PORT: number) {
   });
 
   app.post('/api/products', (req, res) => {
-    console.log(req.method, req.path);
-
     const product = req.body;
 
     if ('product-name' in product && 'product-id' in product && 'product-tag' in product) {
@@ -581,14 +553,10 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/papers', (req, res) => {
-    console.log(req.method, req.path);
-
     res.status(200).send(Object.values(Papers));
   });
 
   app.post('/api/papers', (req, res) => {
-    console.log(req.method, req.path);
-
     const contentType = req.headers['content-type'];
     if (contentType.includes('text/plain')) {
       res
@@ -603,8 +571,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/patents/:id', authMiddleware, (req, res) => {
-    console.log(req.method, req.path);
-
     // Find patent based off of patent ID
     const patent = Object.values(Patents).find(currentPatent => {
       return currentPatent['patent-id'] === req.params.id;
@@ -618,8 +584,6 @@ export function startServer(PORT: number) {
   });
 
   app.post('/api/projects', authMiddleware, (req, res) => {
-    console.log(req.method, req.path);
-
     const project = req.body;
 
     if ('project-id' in project && 'lead-id' in project) {
@@ -632,8 +596,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/projects/:id', authMiddleware, (req, res) => {
-    console.log(req.method, req.path);
-
     // Find project based off of projectId
     const project = Object.values(Projects).find(currentProject => {
       return currentProject.projectId === Number(req.params.id);
@@ -653,8 +615,6 @@ export function startServer(PORT: number) {
   });
 
   app.post('/api/scanner/:path', (req, res) => {
-    console.log(req.method, req.path);
-
     res.status(200).send({
       body: `req.body: ${req.body}, req.query.query: ${req.query.query}, req.path.path: ${req.params.path}`,
     });
@@ -710,14 +670,10 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/trashcans', (req, res) => {
-    console.log(req.method, req.path);
-
     res.status(200).send(Array.from(Object.values(TrashCans)));
   });
 
   app.get('/api/trashcans/:username', (req, res) => {
-    console.log(req.method, req.path);
-
     if (req.params.username in Users) {
       res.status(200).send(TrashCans[req.params.username]);
     } else {
@@ -728,8 +684,6 @@ export function startServer(PORT: number) {
   });
 
   app.post('/api/trashcans/:username', (req, res) => {
-    console.log(req.method, req.path);
-
     const trashItem = req.body;
 
     if (req.params.username in Users) {
