@@ -77,6 +77,14 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`
     }
   },
+  scripts: [
+    {
+      src: 'https://the-guild.dev/static/banner.js',
+      // we may want to load it ASAP
+      async: true,
+      defer: true,
+    }
+  ],
   presets: [
     [
       '@docusaurus/preset-classic',
