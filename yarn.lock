@@ -1574,13 +1574,13 @@
     "@graphql-tools/utils" "6.0.0-alpha.2"
     tslib "~2.0.0"
 
-"@graphql-tools/graphql-file-loader@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.0.0-alpha.2.tgz#c9a37fc5256434a3c9e2a32f64719ea836ac4056"
-  integrity sha512-AwDb/cw+Vok956GswVLnF78gKVhx4Ooy+kBGBafRx4yLZc2mJ+4ZjSKCt7Gx4STkEu9M5qi94HnUCfAtG18Gag==
+"@graphql-tools/graphql-file-loader@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.0.0-alpha-f92a671.0.tgz#96cd579e3a31af4feb3b7357cf33f0117ef273a2"
+  integrity sha512-tO8qxHY4+syNPapbSh8XUemwi7HTVzo4O0gKTTRaGzQBUcMdjK4COk9vUHsXGAZXCvVNqiBR0Y6oRnQnvTJTGA==
   dependencies:
-    "@graphql-tools/import" "6.0.0-alpha.2"
-    "@graphql-tools/utils" "6.0.0-alpha.2"
+    "@graphql-tools/import" "6.0.0-alpha-f92a671.0"
+    "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
     fs-extra "9.0.0"
     tslib "~2.0.0"
 
@@ -1596,10 +1596,10 @@
   optionalDependencies:
     vue-template-compiler "^2.6.11"
 
-"@graphql-tools/import@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/import/-/import-6.0.0-alpha.2.tgz#287193c03e220597cea717fb29e78c6eb640acb0"
-  integrity sha512-37b1hmnZSoLE7W0E1KKU+SXWiPzklByMsOA7OQcF9VHajfPl5SDmZGeBJRiLzaaNsbDyQQs+oSmECyUQzLnCsg==
+"@graphql-tools/import@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/import/-/import-6.0.0-alpha-f92a671.0.tgz#1c65d1b888c011ca121630642d7ceb9202093ff9"
+  integrity sha512-Tec3jsiPIwGALgQH/l9MjTtSc+qWOqGQ2vt22oLYYf/bq+Cxv4+g0+ehrwgP2T7xNFZjZ/kWC0/nsycRoxwmIA==
   dependencies:
     fs-extra "9.0.0"
     resolve-from "5.0.0"
@@ -1674,6 +1674,13 @@
     cross-fetch "3.0.4"
     tslib "~2.0.0"
     valid-url "1.0.9"
+
+"@graphql-tools/utils@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.0-alpha-f92a671.0.tgz#4a635f47efc3217e17fbfa770c3f405666b18cc3"
+  integrity sha512-hDd5LJwDfOlSoozLZ1Fae+/Plsgt1F/L/9xanOghhBy2wVjqWyKRGUaGUHlbsnzEKklYo0Cpg20Cv6+DGLftMQ==
+  dependencies:
+    camel-case "4.1.1"
 
 "@graphql-tools/utils@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
@@ -15865,11 +15872,6 @@ tslib@^1.10.0, tslib@^1.11.1, tslib@^1.5.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
-
-tslib@~2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.0.tgz#18d13fc2dce04051e20f074cc8387fd8089ce4f3"
-  integrity sha512-lTqkx847PI7xEDYJntxZH89L2/aXInsyF2luSafe/+0fHOMjlBNXdH6th7f70qxLDhul7KZK0zC8V5ZIyHl0/g==
 
 tslib@~2.0.0:
   version "2.0.0"
