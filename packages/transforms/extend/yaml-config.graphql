@@ -1,6 +1,6 @@
 extend type Transform {
   """
-  GraphQL SDL and apply to the schema
+  GraphQL SDL or file path contains SDL to be applied to the schema
   """
   extend: String
 }

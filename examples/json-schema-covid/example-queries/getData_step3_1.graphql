@@ -1,0 +1,9 @@
+# STEP3_1: 2 sources combined to get ratios
+query getData_step3_1 {
+  fr: stat(country: "France") {
+    deathRatio
+  }
+  at: stat(country: "Austria") {
+    deathRatio
+  }
+}

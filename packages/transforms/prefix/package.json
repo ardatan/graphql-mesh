@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-prefix",
-  "version": "0.1.0",
+  "version": "0.1.17",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -9,14 +9,11 @@
     "definition": "dist/index.d.ts"
   },
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.0",
+    "@graphql-mesh/types": "0.1.17",
     "graphql-tools": "5.0.0"
   },
   "publishConfig": {

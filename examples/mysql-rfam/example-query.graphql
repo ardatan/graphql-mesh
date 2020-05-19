@@ -1,0 +1,11 @@
+{
+  getAlignmentAndTree(limit: 5) {
+    rfam_acc
+    family(limit: 1) {
+      type
+      description
+      comment
+      author
+    }
+  }
+}

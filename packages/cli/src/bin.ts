@@ -4,7 +4,7 @@ import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
 import { generateTsTypes } from './commands/typescript';
 import { generateSdk } from './commands/generate-sdk';
-import { serveMesh } from './commands/serve';
+import { serveMesh } from './commands/serve/serve';
 import { resolve, dirname } from 'path';
 import * as mkdirp from 'mkdirp';
 
@@ -41,7 +41,7 @@ export async function graphqlMesh() {
         try {
           const meshConfig = await findAndParseConfig();
           const { schema, contextBuilder } = await getMesh(meshConfig);
-          await serveMesh(logger, schema, contextBuilder, meshConfig.cache, fork, port, exampleQuery);
+          await serveMesh(logger, schema, contextBuilder, fork, port, exampleQuery);
         } catch (e) {
           logger.error('Unable to serve mesh: ', e);
         }

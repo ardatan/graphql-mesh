@@ -1,0 +1,13 @@
+.picker {
+    padding-left: 30px;
+    padding-bottom: 5px;
+    white-space: nowrap;
+  }
+
+.container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: stretch;
+    margin-top: 3px;
+    font-size: 12px;
+  }

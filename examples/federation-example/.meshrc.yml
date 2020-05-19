@@ -1,0 +1,29 @@
+merger: federation
+sources:
+  - name: accounts
+    handler:
+      graphql:
+        endpoint: http://localhost:4001/graphql
+    transforms:
+      - federation:
+          types:
+            - name: Query
+              config:
+                extend: true
+            - name: User
+              config:
+                keyFields:
+                  - id
+                resolveReference: ./services/accounts/user-reference-resolver
+  - name: reviews
+    handler:
+      graphql:
+        endpoint: http://localhost:4002/graphql
+  - name: products
+    handler:
+      graphql:
+        endpoint: http://localhost:4003/graphql
+  - name: inventory
+    handler:
+      graphql:
+        endpoint: http://localhost:4004/graphql

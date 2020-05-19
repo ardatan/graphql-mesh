@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.1.0",
+  "version": "0.1.17",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -9,23 +9,20 @@
     "definition": "dist/index.d.ts"
   },
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "peerDependencies": {
     "graphql": "*",
     "mongoose": "*"
   },
   "devDependencies": {
-    "@types/mongoose": "5.7.8",
-    "mongoose": "5.9.7"
+    "@types/mongoose": "5.7.20",
+    "mongoose": "5.9.15"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.0",
-    "@graphql-mesh/utils": "0.1.0",
+    "@graphql-mesh/types": "0.1.17",
+    "@graphql-mesh/utils": "0.1.17",
     "camel-case": "4.1.1",
-    "graphql-compose": "7.14.1",
-    "graphql-compose-mongoose": "7.3.5"
+    "graphql-compose": "7.15.0",
+    "graphql-compose-mongoose": "7.3.8"
   },
   "publishConfig": {
     "access": "public",

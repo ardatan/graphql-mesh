@@ -1,6 +1,8 @@
 mutation ListOfLanguagesByName {
-  listOfLanguagesByName {
-    sISOCode
-    sName
+  ListOfLanguagesByName {
+    tLanguage {
+      sISOCode
+      sName
+    }
   }
 }

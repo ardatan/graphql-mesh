@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.1.0",
+  "version": "0.1.17",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -9,19 +9,16 @@
     "definition": "dist/index.d.ts"
   },
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "peerDependencies": {
     "graphql": "*",
     "pg": "*"
   },
   "devDependencies": {
-    "pg": "8.0.2"
+    "pg": "8.2.1"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.1.0",
-    "postgraphile": "4.6.0"
+    "@graphql-mesh/types": "0.1.17",
+    "postgraphile": "4.7.0"
   },
   "publishConfig": {
     "access": "public",

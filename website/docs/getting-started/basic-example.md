@@ -14,7 +14,7 @@ sources:
         source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
 ```
 
-This demo will use the public API pf Wikipedia, which uses `openapi` spec, so we'll need to make sure we have `@graphql-codegen/openapi` handler installed as well:
+This demo will use the public API pf Wikipedia, which uses `openapi` spec, so we'll need to make sure we have `@graphql-mesh/openapi` handler installed as well:
 
 ```
 $ yarn add graphql @graphql-mesh/openapi
@@ -67,7 +67,6 @@ Start by load and parsing your configuration file, and pass it to `getMesh`, thi
 
 ```js
 const { getMesh, findAndParseConfig } = require('@graphql-mesh/runtime');
-const { ApolloServer } = require('apollo-server');
 
 async function test() {
   // This will load the config file from the default location (process.cwd)

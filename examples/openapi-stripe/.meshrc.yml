@@ -1,0 +1,8 @@
+sources:
+  - name: Stripe
+    handler:
+      openapi:
+        source: https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml
+        baseUrl: https://api.stripe.com
+        operationHeaders:
+          Authorization: 'Bearer ${STRIPE_TOKEN}'

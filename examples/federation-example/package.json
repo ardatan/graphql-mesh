@@ -1,0 +1,25 @@
+{
+  "name": "federation-handler-example",
+  "version": "0.1.17",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start-gateway": "mesh serve --example-query=example-query.graphql",
+    "start-service-accounts": "nodemon services/accounts/index.js",
+    "start-service-reviews": "nodemon services/reviews/index.js",
+    "start-service-products": "nodemon services/products/index.js",
+    "start-service-inventory": "nodemon services/inventory/index.js",
+    "start-services": "concurrently \"npm:start-service-*\""
+  },
+  "devDependencies": {
+    "concurrently": "5.1.0",
+    "nodemon": "2.0.2"
+  },
+  "dependencies": {
+    "@apollo/gateway": "0.13.2",
+    "apollo-server": "2.11.0",
+    "@graphql-mesh/cli": "0.1.17",
+    "@graphql-mesh/merger-federation": "0.1.17",
+    "graphql": "14.6.0"
+  }
+}

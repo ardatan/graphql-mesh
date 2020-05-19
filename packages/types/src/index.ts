@@ -1,10 +1,14 @@
 import { IResolvers } from 'graphql-tools';
 import { IEventEmitter } from 'tsee';
-import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
+import { GraphQLSchema, GraphQLResolveInfo } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 
 export { YamlConfig };
+
+export function getJsonSchema() {
+  return require('./config-schema.json');
+}
 
 export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
@@ -34,13 +38,6 @@ export type ResolverInfo = {
 // Hooks
 export type AllHooks = {
   schemaReady: (options: { schema: GraphQLSchema; applyResolvers: (modifiedResolvers: IResolvers) => void }) => void;
-  buildSdkFn: (options: {
-    schema: GraphQLSchema;
-    typeName: string;
-    fieldName: string;
-    originalResolveFn?: GraphQLFieldResolver<any, any>;
-    replaceFn: (fn: (...args: any[]) => any) => void;
-  }) => void;
   destroy: () => void;
   resolverCalled: (resolverInfo: ResolverInfo) => void;
   resolverDone: (resolverInfo: ResolverInfo, result: any) => void;
@@ -60,3 +57,20 @@ export type TransformFn<Config = any> = (options: {
 export type Maybe<T> = null | undefined | T;
 
 export { KeyValueCache, KeyValueCacheSetOptions };
+
+export type MergerFn = (options: {
+  rawSources: RawSourceOutput[];
+  cache: KeyValueCache;
+  hooks: Hooks;
+}) => Promise<GraphQLSchema> | GraphQLSchema;
+
+export type RawSourceOutput = {
+  name: string;
+  // TOOD: Remove globalContextBuilder and use hooks for that
+  globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
+  sdk: Record<string, any>;
+  schema: GraphQLSchema;
+  context: Record<string, any>;
+  contextVariables: (keyof any)[];
+  handler: MeshHandlerLibrary;
+};

@@ -1,6 +1,6 @@
 {
   "name": "postgres-geodb-example",
-  "version": "0.1.0",
+  "version": "0.1.17",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "mesh:serve": "graphql-mesh serve",
     "mesh:sdk": "graphql-mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
     "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts",
-    "start": "mesh:serve"
+    "start": "yarn mesh:serve"
   },
   "devDependencies": {
     "@types/node": "13.9.0",
@@ -18,10 +18,10 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.1.0",
-    "@graphql-mesh/graphql": "0.1.0",
-    "@graphql-mesh/postgraphile": "0.1.0",
-    "@graphql-mesh/runtime": "0.1.0",
+    "@graphql-mesh/cli": "0.1.17",
+    "@graphql-mesh/graphql": "0.1.17",
+    "@graphql-mesh/postgraphile": "0.1.17",
+    "@graphql-mesh/runtime": "0.1.17",
     "graphql": "15.0.0"
   }
 }

@@ -4,12 +4,6 @@
  * and scoped locally.
  */
 
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .features {
   display: flex;
   align-items: center;
@@ -20,4 +14,34 @@
 .featureImage {
   height: 200px;
   width: 200px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  z-index: 1;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  -webkit-box-reflect: left;
+}
+
+.npmBadge {
+  margin: 10px;
+  min-height: 28px;
+  z-index: 1;
+}
+
+.bannerVideo {
+  max-width: 1200px;
+  margin-bottom: -100px;
+  -webkit-box-reflect: right;
+}
+
+.bannerVideoContainer {
+  -webkit-box-reflect: left;
 }

@@ -18,4 +18,13 @@ type ODataHandler @md {
   Headers to be used with the $metadata requests
   """
   schemaHeaders: JSON
+  """
+  Enable batching
+  """
+  batch: ODataBatchMethod
+}
+
+enum ODataBatchMethod {
+  multipart
+  json
 }

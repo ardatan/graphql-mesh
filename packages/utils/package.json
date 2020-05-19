@@ -1,10 +1,7 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.1.0",
+  "version": "0.1.17",
   "license": "MIT",
-  "scripts": {
-    "prepack": "bob prepack"
-  },
   "peerDependencies": {
     "graphql": "*"
   },
@@ -20,7 +17,7 @@
   },
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.8",
-    "date-fns": "2.12.0",
+    "date-fns": "2.14.0",
     "fetchache": "0.0.3",
     "is-url": "1.2.4",
     "js-yaml": "3.13.1",

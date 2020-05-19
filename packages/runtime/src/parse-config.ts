@@ -1,7 +1,8 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { GetMeshOptions, ResolvedTransform, MeshResolvedSource } from './types';
-import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache } from './utils';
-import { TransformFn, YamlConfig } from '@graphql-mesh/types';
+import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache, resolveMerger } from './utils';
+import { TransformFn, YamlConfig, getJsonSchema } from '@graphql-mesh/types';
+import Ajv from 'ajv';
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -16,7 +17,7 @@ export async function parseConfig(
   const { configFormat = 'object' } = options || {};
   switch (configFormat) {
     case 'yaml':
-      config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
+      config = defaultLoaders['.yaml']('.meshrc.yml', rawConfig as string);
       break;
     case 'json':
       config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
@@ -32,7 +33,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
   const { dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
   await Promise.all(config.require?.map(mod => import(mod)) || []);
 
-  const [sources, transforms, additionalResolvers, cache] = await Promise.all([
+  const [sources, transforms, additionalResolvers, cache, merger] = await Promise.all([
     Promise.all(
       config.sources.map<Promise<MeshResolvedSource>>(async source => {
         const transforms: ResolvedTransform[] = await Promise.all(
@@ -73,6 +74,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     ),
     resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || []),
     resolveCache(config.cache),
+    resolveMerger(config.merger),
   ]);
 
   return {
@@ -80,6 +82,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     transforms,
     additionalResolvers,
     cache,
+    merger,
   };
 }
 
@@ -116,6 +119,17 @@ function customLoader(ext: 'json' | 'yaml' | 'js') {
   return loader;
 }
 
+export function validateConfig(config: any): asserts config is YamlConfig.Config {
+  const ajv = new Ajv({ schemaId: 'auto' });
+  // Settings for draft-04
+  const metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
+  ajv.addMetaSchema(metaSchema);
+  const isValid = ajv.validate(getJsonSchema(), config);
+  if (!isValid) {
+    throw new Error(`GraphQL Mesh Configuration is not valid: ${ajv.errorsText()}`);
+  }
+}
+
 export async function findAndParseConfig(
   options?: { configName?: string } & ConfigProcessOptions
 ): Promise<GetMeshOptions> {
@@ -130,6 +144,7 @@ export async function findAndParseConfig(
     },
   });
   const results = await explorer.search(dir);
-  const config = results?.config as YamlConfig.Config;
+  const config = results?.config;
+  validateConfig(config);
   return processConfig(config, { dir, ignoreAdditionalResolvers });
 }

@@ -1,0 +1,494 @@
+schema { query: Query }
+type InMemoryLRU implements Cache {
+  name: String!
+  config: InMemoryLRUConfig
+}
+type InMemoryLRUConfig {
+  max: Int
+}
+type Redis implements Cache {
+  name: String!
+  config: RedisConfig
+}
+type RedisConfig {
+  host: String
+  port: Int
+  password: String
+}
+type Handler {
+  """Handler for remote/local/third-party GraphQL schema"""
+  graphql: GraphQLHandler
+  """Handler for gRPC and Protobuf schemas"""
+  grpc: GrpcHandler
+  """Handler for JSON Schema specification. Source could be a local json file, or a url to it."""
+  jsonSchema: JsonSchemaHandler
+  mongoose: MongooseHandler
+  mysql: MySQLHandler
+  """Handler for Neo4j"""
+  neo4j: Neo4jHandler
+  """Handler for OData"""
+  odata: ODataHandler
+  """Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."""
+  openapi: OpenapiHandler
+  """Handler for Postgres database, based on `postgraphile`"""
+  postgraphile: PostGraphileHandler
+  """Handler for SOAP"""
+  soap: SoapHandler
+  """Handler for OData"""
+  thrift: ThriftHandler
+  """Handler for SQLite database, based on `tuql`"""
+  tuql: TuqlHandler
+}
+type GraphQLHandler @md {
+  """JSON object representing the Headers to add to the runtime of the API calls"""
+  headers: JSON
+  """A url to your remote GraphQL endpoint"""
+  endpoint: String!
+}
+type GrpcHandler @md {
+  """gRPC Endpoint"""
+  endpoint: String!
+  """gRPC Proto file that contains your protobuf schema"""
+  protoFilePath: ProtoFilePathOrString!
+  """
+  Your base service name
+  Used for naming only
+  """
+  serviceName: String
+  """
+  Your base package name
+  Used for naming only
+  """
+  packageName: String
+  """
+  Request timeout in milliseconds
+  Default: 200000
+  """
+  requestTimeout: Int
+}
+type LoadOptions {
+  includeDirs: [String]
+}
+type ProtoFilePath @md {
+  file: String!
+  load: LoadOptions
+}
+union ProtoFilePathOrString = ProtoFilePath | String
+type JsonSchemaHandler @md {
+  baseUrl: String!
+  operationHeaders: JSON
+  schemaHeaders: JSON
+  operations: [JsonSchemaOperation!]!
+}
+enum JsonSchemaOperationType {
+  Query
+  Mutation
+}
+enum JsonSchemaOperationMethod {
+  GET
+  DELETE
+  POST
+  PUT
+}
+type JsonSchemaOperation {
+  field: String!
+  path: String!
+  description: String
+  type: JsonSchemaOperationType!
+  method: JsonSchemaOperationMethod!
+  requestSchema: String
+  responseSchema: String!
+  headers: JSON
+}
+type MongooseHandler @md {
+  connectionString: String
+  models: [MongooseModel]
+  discriminators: [MongooseModel]
+}
+type MongooseModel {
+  name: String!
+  path: String!
+  options: ComposeWithMongooseOpts
+}
+type ComposeWithMongooseOpts {
+  name: String
+  description: String
+  fields: ComposeWithMongooseFieldsOpts
+  inputType: ComposeMongooseInputType
+  resolvers: TypeConverterResolversOpts
+}
+type ComposeMongooseInputType {
+  name: String
+  description: String
+  fields: ComposeWithMongooseFieldsOpts
+  resolvers: TypeConverterResolversOpts
+}
+type ComposeWithMongooseFieldsOpts {
+  only: [String]
+  remove: [String]
+  required: [String]
+}
+union TypeConverterResolversFlag = Boolean | TypeConverterResolversOpts
+type TypeConverterResolversOpts {
+  findById: ComposeWithMongooseResolverFlag
+  findByIds: ComposeWithMongooseResolverFlag
+  findOne: ComposeWithMongooseResolverFlag
+  findMany: ComposeWithMongooseResolverFlag
+  updateById: ComposeWithMongooseResolverFlag
+  updateOne: ComposeWithMongooseResolverFlag
+  updateMany: ComposeWithMongooseResolverFlag
+  removeById: ComposeWithMongooseResolverFlag
+  removeOne: ComposeWithMongooseResolverFlag
+  removeMany: ComposeWithMongooseResolverFlag
+  createOne: ComposeWithMongooseResolverFlag
+  createMany: ComposeWithMongooseResolverFlag
+  count: ComposeWithMongooseResolverFlag
+  connection: ConnectionSortMapFlag
+  pagination: PaginationResolverFlag
+}
+union ComposeWithMongooseResolverFlag = Boolean | ComposeWithMongooseResolverOpts
+type ComposeWithMongooseResolverOpts {
+  filter: FilterHelperArgsOpts
+  sort: SortHelperArgsOpts
+  limit: LimitHelperArgsOpts
+  record: RecordHelperArgsOpts
+  skip: Boolean
+}
+type FilterHelperArgsOpts {
+  filterTypeName: String
+  isRequired: Boolean
+  onlyIndexed: Boolean
+  requiredFields: [String]
+  operators: FilterOperatorsFlag
+  removeFields: [String]
+}
+union FilterOperatorsFlag = Boolean | JSON
+type SortHelperArgsOpts {
+  sortTypeName: String
+}
+type LimitHelperArgsOpts {
+  defaultValue: Int
+}
+type RecordHelperArgsOpts {
+  recordTypeName: String
+  isRequired: Boolean
+  removeFields: [String]
+  requiredFields: [String]
+}
+union ConnectionSortMapFlag = Boolean | JSON
+union PaginationResolverFlag = Boolean | PaginationResolverOpts
+type PaginationResolverOpts {
+  perPage: Int
+}
+type MySQLHandler @md {
+  host: String!
+  port: Int!
+  user: String!
+  password: String
+  database: String!
+}
+type Neo4jHandler @md {
+  """URL for the Neo4j Instance e.g. neo4j://localhost"""
+  url: String!
+  """Username for basic authentication"""
+  username: String!
+  """Password for basic authentication"""
+  password: String!
+  """Specifies whether relationships should always be included in the type definitions as [relationship](https://grandstack.io/docs/neo4j-graphql-js.html#relationship-types) types, even if the relationships do not have properties."""
+  alwaysIncludeRelationships: Boolean
+}
+type ODataHandler @md {
+  """Base URL for OData API"""
+  baseUrl: String!
+  """Headers to be used with the operation requests"""
+  operationHeaders: JSON
+  """Headers to be used with the $metadata requests"""
+  schemaHeaders: JSON
+  """Enable batching"""
+  batch: ODataBatchMethod
+}
+enum ODataBatchMethod {
+  multipart
+  json
+}
+type OpenapiHandler @md {
+  """A pointer to your API source - could be a local file, remote file or url endpoint"""
+  source: String!
+  """JSON object representing the Headers to add to the runtime of the API calls"""
+  operationHeaders: JSON
+  """If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."""
+  schemaHeaders: JSON
+  """
+  Specifies the URL on which all paths will be based on.
+  Overrides the server object in the OAS.
+  """
+  baseUrl: String
+  """Skip OpenAPI 3 Schema Validation"""
+  skipSchemaValidation: Boolean
+}
+type PostGraphileHandler @md {
+  """A connection string to your Postgres database"""
+  connectionString: String!
+  """An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema."""
+  schemaName: [String!]
+  """Connection Pool settings"""
+  pool: PostGraphilePool
+}
+type PostGraphilePool {
+  user: String
+  password: String
+  database: String
+  host: String
+  port: Int
+  connectionString: String
+}
+type Query {
+  require: [String]
+  """Defines the list of your external data sources for your API mesh"""
+  sources: [Source!]!
+  """Transform to apply to the unified mesh schema"""
+  transforms: [Transform]
+  """Additional resolvers, or resolvers overrides you wish to add to the schema mesh"""
+  additionalResolvers: [String]
+  """Backend cache"""
+  cache: Cache
+  """Merge method"""
+  merger: String
+}
+scalar JSON
+type Source {
+  """The name you wish to set to your remote API, this will be used for building the GraphQL context"""
+  name: String!
+  """Custom JSON object to add to the GraphQL context, use this to inject custom fields and later use it in your custom resolver. This object will be located in the context, under an object named as the API"""
+  context: JSON
+  """Point to the handler you wish to use, it can either be a predefined handler, or a custom"""
+  handler: Handler!
+  """List of transforms to apply to the current API source, before unifying it with the rest of the sources"""
+  transforms: [Transform]
+}
+type Transform {
+  """Transformer to apply caching for your data sources"""
+  cache: [CacheTransformConfig!]
+  """GraphQL SDL or file path contains SDL to be applied to the schema"""
+  extend: String
+  federation: FederationTransform
+  filterSchema: [String]
+  """Mock configuration for your source"""
+  mock: MockingConfig
+  """Prefix transform"""
+  prefix: PrefixTransformConfig
+  """Transformer to apply rename of a GraphQL type"""
+  rename: [RenameTransformObject!]
+  """Transformer to apply composition to resolvers"""
+  resolversComposition: [ResolversCompositionTransformObject!]
+  """Configuration for Snapshot extension"""
+  snapshot: SnapshotTransformConfig
+}
+interface Cache {
+  name: String!
+}
+type SoapHandler @md {
+  """A url to your WSDL"""
+  wsdl: String!
+  """
+  Basic Authentication Configuration
+  Including username and password fields
+  """
+  basicAuth: SoapSecurityBasicAuthConfig
+  """
+  SSL Certificate Based Authentication Configuration
+  Including public key, private key and password fields
+  """
+  securityCert: SoapSecurityCertificateConfig
+}
+type SoapSecurityBasicAuthConfig {
+  """Username for Basic Authentication"""
+  username: String!
+  """Password for Basic Authentication"""
+  password: String!
+}
+type SoapSecurityCertificateConfig {
+  """Your public key"""
+  publicKey: String
+  """Your private key"""
+  privateKey: String
+  """Password"""
+  password: String
+  """Path to the file or URL contains your public key"""
+  publicKeyPath: String
+  """Path to the file or URL contains your private key"""
+  privateKeyPath: String
+  """Path to the file or URL contains your password"""
+  passwordPath: String
+}
+type ThriftHandler @md {
+  """The name of the host to connect to."""
+  hostName: String!
+  """The port number to attach to on the host."""
+  port: Int!
+  """The path on which the Thrift service is listening. Defaults to '/thrift'."""
+  path: String
+  """Boolean value indicating whether to use https. Defaults to false."""
+  https: Boolean
+  """Name of the Thrift protocol type to use. Defaults to 'binary'."""
+  protocol: ThriftProtocolType
+  """The name of your service. Used for logging."""
+  serviceName: String!
+  """JSON object representing the Headers to add to the runtime of the API calls"""
+  operationHeaders: JSON
+  """If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."""
+  schemaHeaders: JSON
+  """Path to IDL file"""
+  idl: String!
+}
+enum ThriftProtocolType {
+  binary
+  compact
+  json
+}
+type CacheTransformConfig @md {
+  """The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`"""
+  field: String!
+  """
+  Cache key to use to store your resolvers responses.
+  The defualt is: {typeName}-{fieldName}-{argsHash}
+  
+  Available variables:
+  - {args.argName} - use resolver argument
+  - {typeName} - use name of the type
+  - {fieldName} - use name of the field
+  - {argsHash} - a hash based on the 'args' object
+  - {info} - the GraphQLResolveInfo of the resolver
+  
+  Available interpolations:
+  - {format|date} - returns the current date with a specific format
+  """
+  cacheKey: String
+  """Invalidation rules"""
+  invalidate: CacheInvalidateConfig
+}
+type CacheInvalidateConfig {
+  """Invalidate the cache when a specific operation is done without an error"""
+  effectingOperations: [CacheEffectingOperationConfig!]
+  """Specified in seconds, the time-to-live (TTL) value limits the lifespan"""
+  ttl: Int
+}
+type CacheEffectingOperationConfig {
+  """Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field."""
+  operation: String!
+  """Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field."""
+  matchKey: String
+}
+type FederationTransform {
+  types: [FederationTransformType!]
+}
+type FederationTransformType {
+  name: String!
+  config: FederationObjectConfig
+}
+type FederationObjectConfig {
+  keyFields: [String!]
+  extend: Boolean
+  fields: [FederationField!]
+  resolveReference: String
+}
+type FederationField {
+  name: String!
+  config: FederationFieldConfig!
+}
+type FederationFieldConfig {
+  external: Boolean
+  provides: String
+  required: String
+}
+type MockingConfig @md {
+  """
+  If this expression is truthy, mocking would be enabled
+  You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+  """
+  if: Boolean
+  """
+  Do not mock any other resolvers other than defined in `mocks`.
+  For example, you can enable this if you don't want to mock entire schema but partially.
+  """
+  preserveResolvers: Boolean
+  """Mock configurations"""
+  mocks: [MockingFieldConfig]
+}
+type MockingFieldConfig {
+  """
+  Resolver path
+  Example: User.firstName
+  """
+  apply: String!
+  """
+  If this expression is truthy, mocking would be enabled
+  You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+  """
+  if: Boolean
+  """
+  Faker.js expression or function
+  Read more (https://github.com/marak/Faker.js/#fakerfake)
+  Example;
+  faker: name.firstName
+  faker: "{{ name.firstName }} {{ name.lastName }}"
+  """
+  faker: String
+  """
+  Custom mocking
+  It can be a module or json file.
+  Both "moduleName#exportName" or only "moduleName" would work
+  """
+  custom: String
+}
+type PrefixTransformConfig @md {
+  """The prefix to apply to the schema types. By default it's the API name."""
+  value: String
+  """List of ignored types"""
+  ignore: [String!]
+  """Changes root types and changes the field names"""
+  includeRootOperations: Boolean
+}
+type RenameTransformObject @md {
+  """The GraphQL type to rename"""
+  from: String!
+  """The new name"""
+  to: String!
+}
+type ResolversCompositionTransformObject @md {
+  """
+  The GraphQL Resolver path
+  Example: Query.users
+  """
+  resolver: String!
+  """
+  Path to the composer function
+  Example: ./src/auth.js#authComposer
+  """
+  composer: String!
+}
+type SnapshotTransformConfig @md {
+  """
+  Expression for when to activate this extension.
+  Value can be a valid JS expression string or a boolean
+  """
+  if: If
+  """
+  Resolver to be applied
+  For example;
+    apply:
+        - Query.* <- * will apply this extension to all fields of Query type
+        - Mutation.someMutationButProbablyYouWontNeedIt
+  """
+  apply: [String!]!
+  """Path to the directory of the generated snapshot files"""
+  outputDir: String!
+}
+union If = String | Boolean
+type TuqlHandler @md {
+  """Pointer to your SQLite database"""
+  db: String
+  """Path to the SQL Dump file if you want to build a in-memory database"""
+  infile: String
+}
+directive @md on OBJECT

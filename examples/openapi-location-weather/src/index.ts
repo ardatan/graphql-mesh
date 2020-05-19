@@ -1,17 +1,36 @@
-import { ApolloServer } from 'apollo-server';
+import * as express from 'express';
+import * as graphqlHTTP from 'express-graphql';
 import { getMesh, findAndParseConfig } from '@graphql-mesh/runtime';
 
 async function main() {
   const meshConfig = await findAndParseConfig();
   const { schema, contextBuilder } = await getMesh(meshConfig);
 
-  const server = new ApolloServer({
-    schema,
-    context: contextBuilder,
-  });
+  const app = express();
 
-  server.listen().then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
+  app.use(
+    graphqlHTTP(async req => ({
+      schema,
+      context: await contextBuilder(req),
+      graphiql: {
+        defaultQuery: /* GraphQL */ `{
+  findCitiesUsingGET(limit: 5) {
+    data {
+      name
+      dailyForecast {
+        weather{
+          description
+        }
+      }
+    }
+  }
+}`.trim(),
+      } as any,
+    }))
+  );
+
+  app.listen(4000, () => {
+    console.log(`🚀 Server ready at http://localhost:4000`);
   });
 }
 

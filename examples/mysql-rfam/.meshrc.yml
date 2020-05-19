@@ -1,0 +1,8 @@
+sources:
+  - name: Rfam
+    handler:
+      mysql:
+        host: mysql-rfam-public.ebi.ac.uk
+        port: 4497
+        user: rfamro
+        database: Rfam

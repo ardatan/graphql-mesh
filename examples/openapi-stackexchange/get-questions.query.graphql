@@ -1,0 +1,11 @@
+query GetQuestions {
+  getQuestions(site: "stackoverflow") {
+    items {
+      title
+      tags
+      isAnswered
+      answerCount
+      link
+    }
+  }
+}

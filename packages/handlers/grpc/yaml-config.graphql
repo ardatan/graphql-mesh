@@ -6,8 +6,38 @@ extend type Handler {
 }
 
 type GrpcHandler @md {
+  """
+  gRPC Endpoint
+  """
   endpoint: String!
-  protoFilePath: String!
-  serviceName: String!
-  packageName: String!
+  """
+  gRPC Proto file that contains your protobuf schema
+  """
+  protoFilePath: ProtoFilePathOrString!
+  """
+  Your base service name
+  Used for naming only
+  """
+  serviceName: String
+  """
+  Your base package name
+  Used for naming only
+  """
+  packageName: String
+  """
+  Request timeout in milliseconds
+  Default: 200000
+  """
+  requestTimeout: Int
 }
+
+type LoadOptions {
+  includeDirs: [String]
+}
+
+type ProtoFilePath @md {
+  file: String!
+  load: LoadOptions
+}
+
+union ProtoFilePathOrString = ProtoFilePath | String

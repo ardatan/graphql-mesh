@@ -19,14 +19,14 @@ Now, you can use it directly in your Mesh config file:
 sources:
   - name: Neo4j
     handler:
-      mongoose:
+      neo4j:
         url: neo4j://localhost
         username: neo4j
         password: MY_PASSWORD
 
 ```
 
-> You can check out our example that uses Mongoose handler.
+> You can check out our example that uses Neo4j handler.
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/neo4j-example)
 
 ## Config API Reference

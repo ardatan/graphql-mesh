@@ -1,13 +1,12 @@
 import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
-import { mergeSchemasAsync } from '@graphql-toolkit/schema-merging';
-import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, RawSourceOutput, Requester } from './types';
+import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, Requester } from './types';
 import {
   extractSdkFromResolvers,
   applySchemaTransformations,
   applyOutputTransformations,
   ensureDocumentNode,
 } from './utils';
-import { Hooks, KeyValueCache } from '@graphql-mesh/types';
+import { Hooks, KeyValueCache, RawSourceOutput } from '@graphql-mesh/types';
 
 import { addResolversWithReferenceResolver } from './add-resolvers-with-reference-resolver';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
@@ -69,11 +68,10 @@ export async function getMesh(
       schemas.push(apiSchema);
     })
   );
-
-  let unifiedSchema = await mergeSchemasAsync({
-    schemas,
-    assumeValid: true,
-    assumeValidSDL: true,
+  let unifiedSchema = await options.merger({
+    rawSources,
+    cache,
+    hooks,
   });
 
   if (options.transforms && options.transforms.length > 0) {
@@ -144,7 +142,7 @@ export async function getMesh(
 
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any>(
     document: GraphQLOperation,
-    variables: TVariables,
+    variables?: TVariables,
     context?: TContext,
     rootValue?: TRootValue
   ) {
@@ -154,7 +152,7 @@ export async function getMesh(
       document: ensureDocumentNode(document),
       contextValue,
       rootValue: rootValue || {},
-      variableValues: variables,
+      variableValues: variables || {},
       schema: unifiedSchema,
     });
   }
