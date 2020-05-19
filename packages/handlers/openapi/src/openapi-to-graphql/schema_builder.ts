@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-else-if */
 /* eslint-disable no-case-declarations */
 // Copyright IBM Corp. 2018. All Rights Reserved.
 // Node module: openapi-to-graphql
@@ -608,13 +609,16 @@ function createFields({
           }
 
           // Get resolve function for link
-          const linkResolver = getResolver({
-            operation: linkedOp,
-            argsFromLink: argsFromLink as { [key: string]: string },
-            data,
-            baseUrl: data.options.baseUrl,
-            requestOptions: data.options.requestOptions,
-          });
+          const linkResolver = data.options.resolverMiddleware(
+            () => ({
+              operation: linkedOp,
+              argsFromLink: argsFromLink as { [key: string]: string },
+              data,
+              baseUrl: data.options.baseUrl,
+              requestOptions: data.options.requestOptions,
+            }),
+            getResolver
+          );
 
           // Get arguments for link
           const args = getArgs({
