@@ -1619,6 +1619,15 @@
     unixify "1.0.0"
     valid-url "1.0.9"
 
+"@graphql-tools/merge@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.0-alpha-f92a671.0.tgz#975766daa2835220e4f275d8a4522fca303316ac"
+  integrity sha512-LbmAOFi9ZmHQtbW5ZfMJmWBp6M6ZAYifDsYCrrrZi6wfwWJ2tsXr3RXRKBn7+kU8VClfLT6eLdYl4QoLlOgIRA==
+  dependencies:
+    "@graphql-tools/schema" "6.0.0-alpha-f92a671.0"
+    "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
+    tslib "~2.0.0"
+
 "@graphql-tools/merge@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.0-alpha.2.tgz#fd585d6be074845b0c54600be1156a71f618b411"
@@ -1644,6 +1653,14 @@
   dependencies:
     "@graphql-tools/utils" "6.0.0-alpha.2"
     lodash "4.17.15"
+
+"@graphql-tools/schema@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.0.0-alpha-f92a671.0.tgz#572f27bd6427c0011a85e9e29e8c9ce4cdfd2857"
+  integrity sha512-PjO246t0+2dHTKWHecLTmwo30J4ChTFddl4irvnUwuLsuTGLOZsrIXgWzeak1evsog00tBgBgffnZrP1k3O/pQ==
+  dependencies:
+    "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
+    tslib "~2.0.0"
 
 "@graphql-tools/schema@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
@@ -1674,6 +1691,13 @@
     cross-fetch "3.0.4"
     tslib "~2.0.0"
     valid-url "1.0.9"
+
+"@graphql-tools/utils@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.0-alpha-f92a671.0.tgz#4a635f47efc3217e17fbfa770c3f405666b18cc3"
+  integrity sha512-hDd5LJwDfOlSoozLZ1Fae+/Plsgt1F/L/9xanOghhBy2wVjqWyKRGUaGUHlbsnzEKklYo0Cpg20Cv6+DGLftMQ==
+  dependencies:
+    camel-case "4.1.1"
 
 "@graphql-tools/utils@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
@@ -15865,11 +15889,6 @@ tslib@^1.10.0, tslib@^1.11.1, tslib@^1.5.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
-
-tslib@~2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.0.tgz#18d13fc2dce04051e20f074cc8387fd8089ce4f3"
-  integrity sha512-lTqkx847PI7xEDYJntxZH89L2/aXInsyF2luSafe/+0fHOMjlBNXdH6th7f70qxLDhul7KZK0zC8V5ZIyHl0/g==
 
 tslib@~2.0.0:
   version "2.0.0"
