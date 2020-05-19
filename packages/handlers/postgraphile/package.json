@@ -10,15 +10,12 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "graphql": "*",
-    "pg": "*"
-  },
-  "devDependencies": {
-    "pg": "8.2.1"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.17",
-    "postgraphile": "4.7.0"
+    "postgraphile": "4.7.0",
+    "pg": "8.2.1"
   },
   "publishConfig": {
     "access": "public",

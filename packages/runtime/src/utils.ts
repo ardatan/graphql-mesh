@@ -128,7 +128,6 @@ export async function resolveAdditionalResolvers(baseDir: string, additionalReso
 
 export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
-  hooks: Hooks,
   types: Maybe<GraphQLObjectType>[],
   contextBuilder?: (initialContextValue: any) => Promise<any>
 ) {

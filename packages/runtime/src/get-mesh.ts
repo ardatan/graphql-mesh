@@ -55,7 +55,6 @@ export async function getMesh(
         globalContextBuilder: source.contextBuilder || null,
         sdk: await extractSdkFromResolvers(
           apiSchema,
-          hooks,
           [apiSchema.getQueryType(), apiSchema.getMutationType(), apiSchema.getSubscriptionType()],
           source.contextBuilder
         ),
