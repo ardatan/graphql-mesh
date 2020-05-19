@@ -1645,6 +1645,14 @@
     "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
     lodash "4.17.15"
 
+"@graphql-tools/schema@6.0.0-alpha-f92a671.0":
+  version "6.0.0-alpha-f92a671.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.0.0-alpha-f92a671.0.tgz#572f27bd6427c0011a85e9e29e8c9ce4cdfd2857"
+  integrity sha512-PjO246t0+2dHTKWHecLTmwo30J4ChTFddl4irvnUwuLsuTGLOZsrIXgWzeak1evsog00tBgBgffnZrP1k3O/pQ==
+  dependencies:
+    "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
+    tslib "~2.0.0"
+
 "@graphql-tools/schema@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.0.0-alpha.2.tgz#e4729367c5a709b85e93d3f9108bba7721329289"
