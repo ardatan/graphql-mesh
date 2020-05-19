@@ -5,6 +5,7 @@ const { resolve, dirname, join } = require('path');
 const semver = require('semver');
 const cp = require('child_process');
 const rootPackageJson = require('../package.json');
+const { cwd } = require('process');
 
 async function release() {
 
@@ -19,9 +20,12 @@ async function release() {
         tag = 'canary';
     }
 
+    console.info(`Version: ${version}`);
+    console.info(`Tag: ${tag}`);
+
     const workspaceGlobs = rootPackageJson.workspaces.map(workspace => workspace + '/package.json');
 
-    const packageJsonPaths = glob(workspaceGlobs).map(packageJsonPath => resolve(process.cwd(), packageJsonPath));
+    const packageJsonPaths = glob(workspaceGlobs).map(packageJsonPath => resolve(cwd(), packageJsonPath));
 
     const packageNames = packageJsonPaths.map(packageJsonPath => require(packageJsonPath).name);
 
@@ -61,7 +65,7 @@ async function release() {
                 publishSpawn.stdout.on('data', (data) => {
                     console.info(data.toString('utf8'));
                 })
-                publishSpawn.stderr.on('message', function(message) {
+                publishSpawn.stderr.on('data', function(message) {
                     console.error(message.toString('utf8'));
                 })
                 publishSpawn.on("exit", function(code, signal) {
@@ -74,6 +78,7 @@ async function release() {
             });
         }
     }))
+    console.info(`Released successfully!`);
     console.info(`${tag} => ${version}`);
 }
 
