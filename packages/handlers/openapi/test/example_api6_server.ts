@@ -19,14 +19,12 @@ export function startServer(PORT: number | string) {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   app.get('/api/object', (req, res) => {
-    console.log(req.method, req.path);
     res.send({
       data: 'object',
     });
   });
 
   app.get('/api/object2', (req, res) => {
-    console.log(req.method, req.path);
     if (typeof req.headers.specialheader === 'string') {
       res.send({
         data: `object2 with special header: '${req.headers.specialheader}'`,
@@ -39,22 +37,18 @@ export function startServer(PORT: number | string) {
   });
 
   app.post('/api/formUrlEncoded', (req, res) => {
-    console.log(req.method, req.path);
     res.send(req.body);
   });
 
   app.get('/api/cars/:id', (req, res) => {
-    console.log(req.method, req.path);
     res.send(`Car ID: ${req.params.id}`);
   });
 
   app.get('/api/cacti/:cactusId', (req, res) => {
-    console.log(req.method, req.path);
     res.send(`Cactus ID: ${req.params.cactusId}`);
   });
 
   app.get('/api/eateries/:eatery/breads/:breadName/dishes/:dishKey', (req, res) => {
-    console.log(req.method, req.path);
     res.send(`Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`);
   });
 
