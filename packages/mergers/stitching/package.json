@@ -15,7 +15,7 @@
     "dependencies": {
       "@graphql-mesh/types": "0.1.17",
       "fetchache": "0.0.3",
-      "@graphql-tools/stitch": "6.0.0-alpha.1"
+      "@graphql-tools/stitch": "6.0.0-alpha.2"
     },
     "publishConfig": {
       "access": "public",

@@ -1,4 +1,6 @@
-schema { query: Query }
+schema {
+  query: Query
+}
 type InMemoryLRU implements Cache {
   name: String!
   config: InMemoryLRUConfig
