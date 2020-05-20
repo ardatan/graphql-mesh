@@ -174,6 +174,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       if (isListType(info.returnType)) {
         const actualReturnType: GraphQLObjectType = info.returnType.ofType;
         const { entityInfo } = actualReturnType.extensions as EntityTypeExtensions;
+        if ('Message' in responseJson && !('value' in responseJson)) {
+          const error = new Error(responseJson.Message);
+          Object.assign(error, { extensions: responseJson });
+          throw error;
+        }
         const returnList: any[] = responseJson.value;
         return returnList.map(element => {
           const urlOfElement = new URL(urlStringWithoutSearchParams);
