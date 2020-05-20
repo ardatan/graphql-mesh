@@ -30,9 +30,11 @@ export async function serveMesh(
     app.set('trust proxy', 'loopback');
     const httpServer = createServer(app);
 
-    const playgroundMiddleware = playground(exampleQuery, graphqlPath);
-    app.get('/', playgroundMiddleware);
-    app.get(graphqlPath, playgroundMiddleware);
+    if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
+      const playgroundMiddleware = playground(exampleQuery, graphqlPath);
+      app.get('/', playgroundMiddleware);
+      app.get(graphqlPath, playgroundMiddleware);
+    }
 
     app.use(
       graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),

@@ -6,7 +6,11 @@ import { basename, resolve } from 'path';
 import { readFileSync } from 'fs';
 
 export function playground(exampleQuery: string, graphqlPath: string): RequestHandler {
-  return async (req: Request, res: Response) => {
+  return async (req: Request, res: Response, next) => {
+    if (req.query.query) {
+      next();
+      return;
+    }
     res.setHeader('Content-Type', 'text/html');
     res.write(`
           <script>
