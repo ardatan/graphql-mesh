@@ -6,12 +6,16 @@ async function testSdk(city: string) {
   const meshConfig = await findAndParseConfig();
   console.log(`Loading Mesh schema...`);
   const { sdkRequester, destroy } = await getMesh(meshConfig);
-  const sdk = getSdk(sdkRequester);
-  console.log(`Running query, looking for GitHub developers from ${city}...`);
-  const result = await sdk.citiesAndDevelopers({ city });
+  try {
+    const sdk = getSdk(sdkRequester);
+    console.log(`Running query, looking for GitHub developers from ${city}...`);
+    const result = await sdk.citiesAndDevelopers({ city });
 
-  console.table(result.allCities?.nodes[0]?.developers, ['login', 'avatarUrl']);
+    console.table(result.allCities?.nodes[0]?.developers, ['login', 'avatarUrl']);
+  } catch (e) {
+    console.error(e);
+  }
   destroy();
 }
 
-testSdk(process.argv[2]);
+testSdk(process.argv[2]).catch(e => console.error(e));

@@ -19,7 +19,6 @@ import graphqlFields from 'graphql-fields';
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { nativeFetch } from './native-fetch';
-import { mergeSchemas } from '@graphql-tools/merge';
 
 const SCALARS = new Map<string, string>([
   ['Binary', 'String'],
@@ -989,8 +988,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     const schema = schemaComposer.buildSchema();
 
     return {
-      // Rebuild the schema as a workaround
-      schema: mergeSchemas({ schemas: [schema] }),
+      schema,
       contextVariables,
       contextBuilder: async context => ({
         [`${name}DataLoader`]: dataLoaderFactory(context),

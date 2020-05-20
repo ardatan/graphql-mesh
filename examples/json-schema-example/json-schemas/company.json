@@ -8,8 +8,20 @@
             "properties": {
                 "name": {
                     "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/CompanyType"
                 }
             }
+        },
+        "CompanyType": {
+            "type": "string",
+            "title": "CompanyType",
+            "enum": [
+                "Public Limited",
+                "Private Limited",
+                "One Person"
+            ]
         }
     }
 }
