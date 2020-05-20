@@ -14,10 +14,11 @@ query locationsAndDevelopers {
   allCities(orderBy: ID_ASC, first: 10) {
     nodes {
       name
+      countrycode
+      district
       developers {
-        ... on Github_User {
-          login
-        }
+        login
+        avatarUrl
       }
     }
   }
