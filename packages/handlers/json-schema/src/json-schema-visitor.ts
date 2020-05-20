@@ -106,10 +106,17 @@ export class JSONSchemaVisitor<TContext> {
 
   visitEnum(enumDef: JSONSchemaEnumDefinition, propertyName: string, prefix: string) {
     const name = createName([propertyName, prefix].join('_'));
-    this.schemaComposer.createEnumTC({
+    const enumTC = this.schemaComposer.createEnumTC({
       name,
-      values: enumDef.enum.reduce((values, enumValue) => ({ ...values, [enumValue]: {} }), {}),
     });
+    for (const enumValue of enumDef.enum) {
+      const enumKey = createName(enumValue);
+      enumTC.addFields({
+        [enumKey]: {
+          value: enumValue,
+        },
+      });
+    }
     return name;
   }
 
