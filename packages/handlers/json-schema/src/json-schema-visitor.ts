@@ -105,7 +105,13 @@ export class JSONSchemaVisitor<TContext> {
   }
 
   visitEnum(enumDef: JSONSchemaEnumDefinition, propertyName: string, prefix: string) {
-    const name = createName([prefix, propertyName].join('_'));
+    let refName = `${prefix}_${propertyName}`;
+    if ('title' in enumDef) {
+      refName = enumDef.title;
+    } else if ('name' in enumDef) {
+      refName = enumDef.name;
+    }
+    const name = createName(refName);
     const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
     this.schemaComposer.createEnumTC({
       name,

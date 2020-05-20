@@ -10,14 +10,18 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string",
-                    "enum": [
-                        "Public Limited",
-                        "Private Limited",
-                        "One Person"
-                    ]
+                    "$ref": "#/definitions/CompanyType"
                 }
             }
+        },
+        "CompanyType": {
+            "type": "string",
+            "title": "CompanyType",
+            "enum": [
+                "Public Limited",
+                "Private Limited",
+                "One Person"
+            ]
         }
     }
 }
