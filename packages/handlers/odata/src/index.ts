@@ -128,7 +128,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           if (entityInfo.actualFields.includes(fieldName)) {
             selectionFields.push(fieldName);
           }
-          if (entityInfo.navigationFields.includes(fieldName)) {
+          if (config.expandNavProps && entityInfo.navigationFields.includes(fieldName)) {
             const searchParams = prepareSearchParams(fields[fieldName], schema);
             const searchParamsStr = decodeURIComponent(searchParams.toString());
             expandedFields.push(`${fieldName}(${searchParamsStr.split('&').join(';')})`);

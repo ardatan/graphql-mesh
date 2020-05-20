@@ -208,6 +208,8 @@ type ODataHandler @md {
   schemaHeaders: JSON
   """Enable batching"""
   batch: ODataBatchMethod
+  """Use $expand for navigation props instead of seperate HTTP requests (Default: false)"""
+  expandNavProps: Boolean
 }
 enum ODataBatchMethod {
   multipart
