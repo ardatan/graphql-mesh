@@ -7,7 +7,7 @@ import {
   JSONSchemaTypedNamedObjectDefinition,
   JSONSchemaTypedObjectDefinition,
 } from './json-schema-types';
-import { SchemaComposer } from 'graphql-compose';
+import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { pascalCase } from 'pascal-case';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
@@ -105,17 +105,23 @@ export class JSONSchemaVisitor<TContext> {
   }
 
   visitEnum(enumDef: JSONSchemaEnumDefinition, propertyName: string, prefix: string) {
-    const name = createName([propertyName, prefix].join('_'));
-    const enumTC = this.schemaComposer.createEnumTC({
+    const name = createName([prefix, propertyName].join('_'));
+    const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
+    this.schemaComposer.createEnumTC({
       name,
+      values: enumDef.enum.reduce(
+        (values, enumValue) => ({
+          ...values,
+          [createName(enumValue)]: {
+            value: enumValue,
+          },
+        }),
+        {}
+      ),
     });
     for (const enumValue of enumDef.enum) {
       const enumKey = createName(enumValue);
-      enumTC.addFields({
-        [enumKey]: {
-          value: enumValue,
-        },
-      });
+      values[enumKey] = { value: enumValue };
     }
     return name;
   }
