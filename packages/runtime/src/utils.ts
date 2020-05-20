@@ -152,7 +152,8 @@ export async function extractSdkFromResolvers(
                   schema,
                   kind: 'query',
                   field: fieldName,
-                  depthLimit: 2,
+                  // If return field is Relay Connection, go into deeper one more level.
+                  depthLimit: 'nodes' in fields && 'edges' in fields ? 2 : 1,
                   argNames: Object.keys(args),
                 });
 
