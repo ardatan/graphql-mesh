@@ -53,6 +53,7 @@ const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async
     return addResolversToSchema({
       schema,
       resolvers: composedResolvers,
+      updateResolversInPlace: true,
     });
   }
 

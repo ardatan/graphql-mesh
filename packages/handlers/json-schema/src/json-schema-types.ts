@@ -48,11 +48,27 @@ export interface JSONSchemaStringDefinition {
   description?: string;
 }
 
-export interface JSONSchemaEnumDefinition {
+export type JSONSchemaEnumDefinition = JSONSchemaNamedEnumDefinition | JSONSchemaUnnamedEnumDefinition;
+
+export interface JSONSchemaNamedEnumDefinition {
   type: 'string';
   description?: string;
   enum: string[];
 }
+
+export type JSONSchemaUnnamedEnumDefinition =
+  | {
+      type: 'string';
+      title: string;
+      description?: string;
+      enum: string[];
+    }
+  | {
+      type: 'string';
+      name: string;
+      description?: string;
+      enum: string[];
+    };
 
 export type JSONSchemaTypedUnnamedObjectDefinition = {
   type: 'object';

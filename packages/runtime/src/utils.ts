@@ -138,8 +138,12 @@ export async function extractSdkFromResolvers(
       if (type) {
         const fields = type.getFields();
 
+        const fieldNames = Object.keys(fields);
+        const operationDepthLimit = fieldNames.some(fieldName => fieldName.endsWith('nodes')) ? 2 : 1;
+
         await Promise.all(
-          Object.entries(fields).map(async ([fieldName, field]) => {
+          fieldNames.map(async fieldName => {
+            const field = fields[fieldName];
             const resolveFn = field.resolve;
 
             const fn: (...args: any[]) => any = resolveFn
@@ -152,7 +156,8 @@ export async function extractSdkFromResolvers(
                   schema,
                   kind: 'query',
                   field: fieldName,
-                  depthLimit: 2,
+                  // If return field is Relay Connection, go into deeper one more level.
+                  depthLimit: operationDepthLimit,
                   argNames: Object.keys(args),
                 });
 

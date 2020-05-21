@@ -49,10 +49,7 @@ export function startServer(PORT: number) {
   });
 
   return new Promise(resolve => {
-    server = app.listen(PORT, () => {
-      console.log(`Example API accessible on port ${PORT}`);
-      resolve();
-    });
+    server = app.listen(PORT, resolve);
   });
 }
 
@@ -61,10 +58,7 @@ export function startServer(PORT: number) {
  */
 export function stopServer() {
   return new Promise(resolve => {
-    server.close(() => {
-      console.log(`Stopped API server`);
-      resolve();
-    });
+    server.close(resolve);
   });
 }
 

@@ -81,6 +81,7 @@ export async function getMesh(
     unifiedSchema = addResolversWithReferenceResolver({
       resolvers: applyResolversHooksToResolvers(options.additionalResolvers, hooks),
       schema: unifiedSchema,
+      updateResolversInPlace: true,
     });
   }
 
@@ -91,6 +92,7 @@ export async function getMesh(
         unifiedSchema = addResolversWithReferenceResolver({
           schema: unifiedSchema,
           resolvers: modifiedResolvers,
+          updateResolversInPlace: true,
         });
       }
     },

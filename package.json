@@ -23,13 +23,13 @@
     "release:canary": "node scripts/release.js --canary"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "6.0.0-alpha-f92a671.0",
+    "@graphql-tools/schema": "6.0.0-alpha-f9fc3ef.0",
     "@types/jest": "25.2.2",
-    "@types/node": "13.13.6",
+    "@types/node": "13.13.8",
     "jest": "26.0.1",
     "ts-jest": "26.0.0",
     "ts-node-dev": "1.0.0-pre.44",
-    "typescript": "3.9.2",
+    "typescript": "3.9.3",
     "@typescript-eslint/eslint-plugin": "2.34.0",
     "@typescript-eslint/parser": "2.34.0",
     "bob-the-bundler": "1.0.0-rc.14",

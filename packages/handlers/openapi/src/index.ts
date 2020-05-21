@@ -1,13 +1,12 @@
 import {
   readFileOrUrlWithCache,
-  ResolverData,
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
   getHeadersObject,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, YamlConfig, ResolverData } from '@graphql-mesh/types';
 import { fetchache, Request } from 'fetchache';
 
 const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {

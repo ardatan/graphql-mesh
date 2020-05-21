@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { parseInterpolationStrings, getInterpolatedHeadersFactory, ResolverData } from '@graphql-mesh/utils';
+import { MeshHandlerLibrary, YamlConfig, ResolverData } from '@graphql-mesh/types';
+import { parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
 import { fetchache, Request, Response } from 'fetchache';
 import urljoin from 'url-join';
 import { JSDOM } from 'jsdom';
@@ -173,7 +173,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       const urlStringWithoutSearchParams = urlString.split('?')[0];
       if (isListType(info.returnType)) {
         const actualReturnType: GraphQLObjectType = info.returnType.ofType;
-        const { entityInfo } = actualReturnType.extensions as EntityTypeExtensions;
+        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
         if ('Message' in responseJson && !('value' in responseJson)) {
           const error = new Error(responseJson.Message);
           Object.assign(error, { extensions: responseJson });
@@ -181,12 +181,20 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         }
         const returnList: any[] = responseJson.value;
         return returnList.map(element => {
+          if (!entityTypeExtensions?.entityInfo) {
+            return element;
+          }
           const urlOfElement = new URL(urlStringWithoutSearchParams);
-          addIdentifierToUrl(urlOfElement, entityInfo.identifierFieldName, entityInfo.identifierFieldTypeRef, element);
+          addIdentifierToUrl(
+            urlOfElement,
+            entityTypeExtensions.entityInfo.identifierFieldName,
+            entityTypeExtensions.entityInfo.identifierFieldTypeRef,
+            element
+          );
           const identifierUrl = element['@odata.id'] || getUrlString(urlOfElement);
           const fieldMap = actualReturnType.getFields();
           for (const fieldName in element) {
-            if (entityInfo.navigationFields.includes(fieldName)) {
+            if (entityTypeExtensions.entityInfo.navigationFields.includes(fieldName)) {
               const field = element[fieldName];
               let fieldType = fieldMap[fieldName].type;
               if ('ofType' in fieldType) {
@@ -223,11 +231,14 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         });
       } else {
         const actualReturnType = info.returnType as GraphQLObjectType;
-        const { entityInfo } = actualReturnType.extensions as EntityTypeExtensions;
+        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
+        if (!entityTypeExtensions?.entityInfo) {
+          return responseJson;
+        }
         const identifierUrl = responseJson['@odata.id'] || urlStringWithoutSearchParams;
         const fieldMap = actualReturnType.getFields();
         for (const fieldName in responseJson) {
-          if (entityInfo.navigationFields.includes(fieldName)) {
+          if (entityTypeExtensions?.entityInfo.navigationFields.includes(fieldName)) {
             const field = responseJson[fieldName];
             let fieldType = fieldMap[fieldName].type;
             if ('ofType' in fieldType) {

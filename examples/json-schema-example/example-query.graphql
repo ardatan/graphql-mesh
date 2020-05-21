@@ -5,6 +5,7 @@
     jobTitle
     company {
       name
+      type
       employers {
         firstName
         lastName

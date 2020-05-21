@@ -457,8 +457,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/cookie', (req, res) => {
-    console.log(req.method, req.path, req.query, req.headers);
-
     if ('cookie' in req.headers) {
       res
         .set('Content-Type', 'text/plain')
@@ -470,8 +468,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/copier', (req, res) => {
-    console.log(req.method, req.path, req.query, req.headers);
-
     res.status(200).send({
       body: req.query.query,
     });
@@ -519,8 +515,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/products/:id', (req, res) => {
-    console.log(req.method, req.path, req.params, req.query);
-
     if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
       const product = {
         // eslint-disable-next-line @typescript-eslint/camelcase
@@ -538,8 +532,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/products/:id/reviews', (req, res) => {
-    console.log(req.method, req.path, req.params, req.query);
-
     if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
       res.status(200).send([
         { text: 'Great product', timestamp: 1502787600000000 },
@@ -609,8 +601,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/scanner', (req, res) => {
-    console.log(req.method, req.path, req.query, req.headers);
-
     res.status(200).send({ body: req.query.query });
   });
 
@@ -621,8 +611,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/snack', (req, res) => {
-    console.log(req.method, req.path, req.query, req.headers);
-
     if ('snack_type' in req.headers && 'snack_size' in req.headers) {
       res
         .set('Content-Type', 'text/plain')
@@ -634,8 +622,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/status', (req, res) => {
-    console.log(req.method, req.path, req.query, req.headers);
-
     if (typeof req.query.limit !== 'undefined' && typeof req.get('exampleHeader') !== 'undefined') {
       res.set('Content-Type', 'text/plain').status(200).send('Ok');
     } else {
@@ -646,8 +632,6 @@ export function startServer(PORT: number) {
   });
 
   app.post('/api/status', (req, res) => {
-    console.log(req.method, req.path, req.query, req.headers);
-
     if ('hello' in req.body && req.body.hello === 'world') {
       res.status(200).send('success');
     } else {
@@ -658,8 +642,6 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/secure', (req, res) => {
-    console.log(req.method, req.path, req.query, req.headers);
-
     if (req.get('authorization') === 'Bearer abcdef') {
       res.status(200).set('Content-Type', 'text/plain').send('A secure message.');
     } else {
@@ -698,10 +680,7 @@ export function startServer(PORT: number) {
   });
 
   return new Promise(resolve => {
-    server = app.listen(PORT, () => {
-      console.log(`Example API accessible on port ${PORT}`);
-      resolve();
-    });
+    server = app.listen(PORT, resolve);
   });
 }
 
@@ -710,10 +689,7 @@ export function startServer(PORT: number) {
  */
 export function stopServer() {
   return new Promise(resolve => {
-    server.close(() => {
-      console.log(`Stopped API server`);
-      resolve();
-    });
+    server.close(resolve);
   });
 }
 

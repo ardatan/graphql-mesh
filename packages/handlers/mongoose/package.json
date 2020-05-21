@@ -14,7 +14,7 @@
     "mongoose": "*"
   },
   "devDependencies": {
-    "@types/mongoose": "5.7.20",
+    "@types/mongoose": "5.7.21",
     "mongoose": "5.9.15"
   },
   "dependencies": {
