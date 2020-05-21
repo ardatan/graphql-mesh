@@ -28,20 +28,20 @@ export declare type MeshHandlerLibrary<THandlerConfig = any, TContext = any> = {
   getMeshSource: (options: GetMeshSourceOptions<THandlerConfig>) => Promise<MeshSource<TContext>>;
 };
 
-export type ResolverInfo = {
-  parent: any;
-  args: any;
-  context: any;
-  info: GraphQLResolveInfo;
+export type ResolverData<TParent = any, TArgs = any, TContext = any> = {
+  root?: TParent;
+  args?: TArgs;
+  context?: TContext;
+  info?: GraphQLResolveInfo;
 };
 
 // Hooks
 export type AllHooks = {
   schemaReady: (options: { schema: GraphQLSchema; applyResolvers: (modifiedResolvers: IResolvers) => void }) => void;
   destroy: () => void;
-  resolverCalled: (resolverInfo: ResolverInfo) => void;
-  resolverDone: (resolverInfo: ResolverInfo, result: any) => void;
-  resolverError: (resolverInfo: ResolverInfo, error: Error) => void;
+  resolverCalled: (resolverData: ResolverData) => void;
+  resolverDone: (resolverData: ResolverData, result: any) => void;
+  resolverError: (resolverData: ResolverData, error: Error) => void;
 };
 export type Hooks = IEventEmitter<AllHooks>;
 export type HooksKeys = keyof AllHooks;

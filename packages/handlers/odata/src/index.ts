@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { parseInterpolationStrings, getInterpolatedHeadersFactory, ResolverData } from '@graphql-mesh/utils';
+import { MeshHandlerLibrary, YamlConfig, ResolverData } from '@graphql-mesh/types';
+import { parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
 import { fetchache, Request, Response } from 'fetchache';
 import urljoin from 'url-join';
 import { JSDOM } from 'jsdom';

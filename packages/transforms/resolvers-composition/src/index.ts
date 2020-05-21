@@ -21,6 +21,7 @@ const resolversCompositionTransform: TransformFn<YamlConfig.ResolversComposition
   return addResolversToSchema({
     schema,
     resolvers: composedResolvers,
+    updateResolversInPlace: true,
   });
 };
 

@@ -6,13 +6,14 @@ import { addResolversToSchema } from '@graphql-tools/schema';
 
 export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hooks): IResolvers {
   return composeResolvers(resolvers, {
-    '*.*': originalResolver => async (parentOrKind, args, context, info) => {
-      hooks.emit('resolverCalled', {
-        parent: parentOrKind,
+    '*.*': originalResolver => async (parent, args, context, info) => {
+      const resolverData = {
+        parent,
         args,
         context,
         info,
-      });
+      };
+      hooks.emit('resolverCalled', resolverData);
 
       try {
         /*
@@ -28,13 +29,13 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hoo
         }
         */
 
-        const result = await originalResolver(parentOrKind, args, context, info);
+        const result = await originalResolver(parent, args, context, info);
 
-        hooks.emit('resolverDone', { parent: parentOrKind, args, context, info }, result);
+        hooks.emit('resolverDone', resolverData, result);
 
         return result;
       } catch (e) {
-        hooks.emit('resolverError', { parent: parentOrKind, args, context, info }, e);
+        hooks.emit('resolverError', resolverData, e);
 
         throw e;
       }
@@ -48,5 +49,6 @@ export function applyResolversHooksToSchema(schema: GraphQLSchema, hooks: Hooks)
   return addResolversToSchema({
     schema,
     resolvers: applyResolversHooksToResolvers(sourceResolvers, hooks),
+    updateResolversInPlace: true,
   });
 }

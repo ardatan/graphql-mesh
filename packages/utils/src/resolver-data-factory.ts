@@ -1,13 +1,7 @@
-import { GraphQLResolveInfo, GraphQLFieldConfigArgumentMap, GraphQLNonNull, GraphQLID } from 'graphql';
+import { GraphQLFieldConfigArgumentMap, GraphQLNonNull, GraphQLID } from 'graphql';
 import { stringInterpolator } from './string-interpolator';
 import { Headers } from 'fetchache';
-
-export type ResolverData<TParent = any, TArgs = any, TContext = any> = {
-  root?: TParent;
-  args?: TArgs;
-  context?: TContext;
-  info?: GraphQLResolveInfo;
-};
+import { ResolverData } from '@graphql-mesh/types';
 
 export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
 

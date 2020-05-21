@@ -21,7 +21,6 @@
   "dependencies": {
     "@graphql-mesh/types": "0.1.17",
     "@graphql-mesh/utils": "0.1.17",
-    "@graphql-tools/merge": "6.0.0-alpha-f9fc3ef.0",
     "http-string-parser": "0.0.6",
     "dataloader": "2.0.0",
     "fetchache": "0.0.3",
