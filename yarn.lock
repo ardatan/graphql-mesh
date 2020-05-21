@@ -1628,13 +1628,13 @@
     "@graphql-tools/utils" "6.0.0-alpha.2"
     tslib "~2.0.0"
 
-"@graphql-tools/mock@6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-6.0.0-alpha.2.tgz#d49cc8cfd96ff43bb7e36dc85f3b89819358129d"
-  integrity sha512-FuyJV3lZHpzeGwFIsZKnsCUgGmty+XcsaROLZs3jeNK1aKr+ijK0vXILXpusOts2Bdf/TibKoI5ywhZyxhl+Bw==
+"@graphql-tools/mock@6.0.0-alpha-f9fc3ef.0":
+  version "6.0.0-alpha-f9fc3ef.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-6.0.0-alpha-f9fc3ef.0.tgz#5d3f217260f6732e4cc3052f370b58f1bf342e7b"
+  integrity sha512-JAzzdrLINiCeIib/rWi5olrK5iSMUzGwRJDBCL1T1JtVXRzDvLV40JBF7JmCqydUNgUJi+4Adnw4o5sDcNmuTw==
   dependencies:
-    "@graphql-tools/schema" "6.0.0-alpha.2"
-    "@graphql-tools/utils" "6.0.0-alpha.2"
+    "@graphql-tools/schema" "6.0.0-alpha-f9fc3ef.0"
+    "@graphql-tools/utils" "6.0.0-alpha-f9fc3ef.0"
     tslib "~2.0.0"
 
 "@graphql-tools/resolvers-composition@6.0.0-alpha-f92a671.0":
@@ -1651,6 +1651,14 @@
   integrity sha512-PjO246t0+2dHTKWHecLTmwo30J4ChTFddl4irvnUwuLsuTGLOZsrIXgWzeak1evsog00tBgBgffnZrP1k3O/pQ==
   dependencies:
     "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
+    tslib "~2.0.0"
+
+"@graphql-tools/schema@6.0.0-alpha-f9fc3ef.0":
+  version "6.0.0-alpha-f9fc3ef.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.0.0-alpha-f9fc3ef.0.tgz#3250ae2ff841dba986e7ab8ea54748db63018598"
+  integrity sha512-44SPp/xTpxO7yKO8lKGAYeWsG9JYrHahzbz5PZqF5fzCs8A8p4+LPPexQ2P42+LOqWXzO5BDH87qdr0pWg0dTg==
+  dependencies:
+    "@graphql-tools/utils" "6.0.0-alpha-f9fc3ef.0"
     tslib "~2.0.0"
 
 "@graphql-tools/schema@6.0.0-alpha.2":
@@ -1687,6 +1695,13 @@
   version "6.0.0-alpha-f92a671.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.0-alpha-f92a671.0.tgz#4a635f47efc3217e17fbfa770c3f405666b18cc3"
   integrity sha512-hDd5LJwDfOlSoozLZ1Fae+/Plsgt1F/L/9xanOghhBy2wVjqWyKRGUaGUHlbsnzEKklYo0Cpg20Cv6+DGLftMQ==
+  dependencies:
+    camel-case "4.1.1"
+
+"@graphql-tools/utils@6.0.0-alpha-f9fc3ef.0":
+  version "6.0.0-alpha-f9fc3ef.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.0-alpha-f9fc3ef.0.tgz#071b95d0c0330904da33816bf7837052780cef7c"
+  integrity sha512-XGU+IgjSZTm1X0mNN6RAkySTpjcoIEEV45mxa/s5fOV1/TYXy+JGz7M5hg2vcAG/TkApUBpzFGw9aDzi+Rhjbg==
   dependencies:
     camel-case "4.1.1"
 
