@@ -1555,13 +1555,13 @@
     tslib "1.11.1"
     valid-url "1.0.9"
 
-"@graphql-tools/code-file-loader@6.0.0-alpha-f9fc3ef.0":
-  version "6.0.0-alpha-f9fc3ef.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-6.0.0-alpha-f9fc3ef.0.tgz#8fff8acc5c8afd4a990ee2b57a3863dd5b06ba84"
-  integrity sha512-7pDOqnS7oKeENng/Ie2oNKwXe2RTyZi1mW0DOCkopTKmoq71k5vQO71FITD4P86b8XHai0kTVZxe4pVGJ3mWEw==
+"@graphql-tools/code-file-loader@6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-6.0.0.tgz#a6916e50295ea94d6505ade3096632086353208d"
+  integrity sha512-Q1yVGXgZQJkBxED7FXH2qcjlqrYPY25tHsqEg1h8Tw0Oz0zeKlWmqI/mAL4xX3VDrBK/uYSxQnrUB0x5VxvWyQ==
   dependencies:
-    "@graphql-tools/graphql-tag-pluck" "6.0.0-alpha-f9fc3ef.0"
-    "@graphql-tools/utils" "6.0.0-alpha-f9fc3ef.0"
+    "@graphql-tools/graphql-tag-pluck" "6.0.0"
+    "@graphql-tools/utils" "6.0.0"
     fs-extra "9.0.0"
     tslib "~2.0.0"
 
@@ -1584,15 +1584,15 @@
     fs-extra "9.0.0"
     tslib "~2.0.0"
 
-"@graphql-tools/graphql-tag-pluck@6.0.0-alpha-f9fc3ef.0":
-  version "6.0.0-alpha-f9fc3ef.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-6.0.0-alpha-f9fc3ef.0.tgz#032ecbd1bfb86ba5d15e650f4196651dba92a0d6"
-  integrity sha512-ajeFP3tL1stuQLdAKxJslqhLrn+QoGQ5BqNtexmUpXLCaRE2IVGvuxxgAllGBkFWYEtNoK0ce+VaN3yqwSm8yw==
+"@graphql-tools/graphql-tag-pluck@6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-6.0.0.tgz#183142e8359190c16e712cdd47b62c49ccaa5841"
+  integrity sha512-EV6Ij0ACf2rIYpXolcLmNtgHUzVigZwvc7x3QCqG865jsIM9pn6LNCyChDlR/pqUe6yQT+9XmjcEGxZhYmpuNQ==
   dependencies:
     "@babel/parser" "7.9.6"
     "@babel/traverse" "7.9.6"
     "@babel/types" "7.9.6"
-    "@graphql-tools/utils" "6.0.0-alpha-f9fc3ef.0"
+    "@graphql-tools/utils" "6.0.0"
   optionalDependencies:
     vue-template-compiler "^2.6.11"
 
@@ -1674,6 +1674,13 @@
     cross-fetch "3.0.4"
     tslib "~2.0.0"
     valid-url "1.0.9"
+
+"@graphql-tools/utils@6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.0.tgz#ddbff7ceec9609fc02fde5a14c774a14a9b17e18"
+  integrity sha512-oU4f6w4+VKniFFTopUHUgFSuZpGxopjSFU0nhJ2X9Z2HietxnKaL38xoYTZACemlctlYiNeYj6Ha8Ew/FTp3qg==
+  dependencies:
+    camel-case "4.1.1"
 
 "@graphql-tools/utils@6.0.0-alpha-f9fc3ef.0":
   version "6.0.0-alpha-f9fc3ef.0"

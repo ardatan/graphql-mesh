@@ -31,7 +31,7 @@
     "@graphql-codegen/typescript-operations": "1.14.0",
     "@graphql-codegen/typescript-resolvers": "1.14.0",
     "@graphql-mesh/runtime": "0.1.17",
-    "@graphql-tools/code-file-loader": "6.0.0-alpha-f9fc3ef.0",
+    "@graphql-tools/code-file-loader": "6.0.0",
     "@graphql-tools/utils": "6.0.0-alpha-f9fc3ef.0",
     "@graphql-tools/load": "6.0.0-alpha-f9fc3ef.0",
     "@graphql-tools/graphql-file-loader": "6.0.0-alpha-f9fc3ef.0",
