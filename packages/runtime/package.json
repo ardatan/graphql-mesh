@@ -19,7 +19,7 @@
     "aggregate-error": "3.0.1",
     "ajv": "6.12.2",
     "cosmiconfig": "6.0.0",
-    "@graphql-tools/merge": "6.0.0-alpha.2",
+    "@graphql-tools/merge": "6.0.0-alpha-f9fc3ef.0",
     "@graphql-tools/resolvers-composition": "6.0.0-alpha-f92a671.0",
     "@graphql-tools/schema": "6.0.0-alpha-f92a671.0",
     "@graphql-tools/stitch": "6.0.0-alpha-f92a671.0",
