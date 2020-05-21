@@ -16,7 +16,7 @@
     "@graphql-mesh/types": "0.1.17",
     "@graphql-tools/load": "6.0.0-alpha.2",
     "@graphql-tools/graphql-file-loader": "6.0.0-alpha.2",
-    "@graphql-tools/code-file-loader": "6.0.0-alpha.2"
+    "@graphql-tools/code-file-loader": "6.0.0-alpha-f9fc3ef.0"
   },
   "publishConfig": {
     "access": "public",
