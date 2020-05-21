@@ -34,7 +34,7 @@
     "@graphql-tools/code-file-loader": "6.0.0-alpha-f9fc3ef.0",
     "@graphql-tools/utils": "6.0.0-alpha-f92a671.0",
     "@graphql-tools/load": "6.0.0-alpha-f9fc3ef.0",
-    "@graphql-tools/graphql-file-loader": "6.0.0-alpha.2",
+    "@graphql-tools/graphql-file-loader": "6.0.0-alpha-f9fc3ef.0",
     "express": "4.17.1",
     "express-graphql": "0.9.0",
     "graphql-upload": "10.0.0",
