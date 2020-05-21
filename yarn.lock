@@ -1619,6 +1619,15 @@
     unixify "1.0.0"
     valid-url "1.0.9"
 
+"@graphql-tools/merge@6.0.0-alpha-f9fc3ef.0":
+  version "6.0.0-alpha-f9fc3ef.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.0-alpha-f9fc3ef.0.tgz#43855f1c698e25312577e4d996d7053e7913d4b2"
+  integrity sha512-eXk2dj2mgNPjhS8FKhjY5rGV6zUbmcKE25voO/U4tW2de+Z15hwpCXehyRQyV5/diyTyt3EAozC4+3beoW9W+w==
+  dependencies:
+    "@graphql-tools/schema" "6.0.0-alpha-f9fc3ef.0"
+    "@graphql-tools/utils" "6.0.0-alpha-f9fc3ef.0"
+    tslib "~2.0.0"
+
 "@graphql-tools/merge@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.0-alpha.2.tgz#fd585d6be074845b0c54600be1156a71f618b411"
@@ -1651,6 +1660,14 @@
   integrity sha512-PjO246t0+2dHTKWHecLTmwo30J4ChTFddl4irvnUwuLsuTGLOZsrIXgWzeak1evsog00tBgBgffnZrP1k3O/pQ==
   dependencies:
     "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
+    tslib "~2.0.0"
+
+"@graphql-tools/schema@6.0.0-alpha-f9fc3ef.0":
+  version "6.0.0-alpha-f9fc3ef.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.0.0-alpha-f9fc3ef.0.tgz#3250ae2ff841dba986e7ab8ea54748db63018598"
+  integrity sha512-44SPp/xTpxO7yKO8lKGAYeWsG9JYrHahzbz5PZqF5fzCs8A8p4+LPPexQ2P42+LOqWXzO5BDH87qdr0pWg0dTg==
+  dependencies:
+    "@graphql-tools/utils" "6.0.0-alpha-f9fc3ef.0"
     tslib "~2.0.0"
 
 "@graphql-tools/schema@6.0.0-alpha.2":
