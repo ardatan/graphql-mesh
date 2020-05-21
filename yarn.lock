@@ -1646,12 +1646,12 @@
     "@graphql-tools/utils" "6.0.0-alpha.2"
     tslib "~2.0.0"
 
-"@graphql-tools/resolvers-composition@6.0.0-alpha-f92a671.0":
-  version "6.0.0-alpha-f92a671.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.0-alpha-f92a671.0.tgz#a6c0b1eb9dd8cce6d0b4ca206112fe7bd8c9b6a0"
-  integrity sha512-erfhvzhe/0LNtj94fMlVwtwXFUpQATZSA7CZVF+SoXChB20r90mX2dRXRLdGa6v8cDqYs55OWT8JVNLMKFCHyg==
+"@graphql-tools/resolvers-composition@6.0.0-alpha-f9fc3ef.0":
+  version "6.0.0-alpha-f9fc3ef.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.0-alpha-f9fc3ef.0.tgz#67f8b8dbbfae2de55de10ee835f0f8e41cc36860"
+  integrity sha512-Cj0dIyFpmdctG6bfr+bLbIXRYmpqFy5tsNm8w6ryEeJYtTBDJzhApJEku4b9WDkFtsyQs8cDPaAhtV6JWLBjHw==
   dependencies:
-    "@graphql-tools/utils" "6.0.0-alpha-f92a671.0"
+    "@graphql-tools/utils" "6.0.0-alpha-f9fc3ef.0"
     lodash "4.17.15"
 
 "@graphql-tools/schema@6.0.0-alpha-f92a671.0":
