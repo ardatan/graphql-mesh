@@ -23,7 +23,6 @@ This is a *demo* that enables basic, read-only querying of the [Microsoft Graph 
   me {
     displayName
     officeLocation
-    skills
     messages {
       subject
       isRead

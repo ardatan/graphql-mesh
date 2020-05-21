@@ -1,0 +1,13 @@
+{
+    "name": "openapi-magento-2",
+    "version": "0.1.17",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+      "start": "graphql-mesh serve"
+    },
+    "dependencies": {
+      "@graphql-mesh/cli": "0.1.17",
+      "@graphql-mesh/openapi": "0.1.17"
+    }
+  }

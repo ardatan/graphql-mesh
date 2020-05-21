@@ -14,8 +14,8 @@ import {
   InputTypeComposer,
 } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLGUID, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
-import { isListType, GraphQLResolveInfo, isAbstractType, GraphQLObjectType } from 'graphql';
-import graphqlFields from 'graphql-fields';
+import { isListType, GraphQLResolveInfo, isAbstractType, GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { nativeFetch } from './native-fetch';
@@ -44,6 +44,7 @@ const SCALARS = new Map<string, string>([
 interface EntityTypeExtensions {
   entityInfo: {
     actualFields: string[];
+    navigationFields: string[];
     identifierFieldName?: string;
     identifierFieldTypeRef?: string;
   };
@@ -101,36 +102,50 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       return realTypeName;
     }
 
-    function prepareSearchParams(url: URL, args: any, info: GraphQLResolveInfo) {
+    function prepareSearchParams(fragment: ResolveTree, schema: GraphQLSchema) {
+      const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName);
+      const returnType = schema.getType(fragmentTypeNames[0]);
+      const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType);
+      const searchParams = new URLSearchParams();
       if ('queryOptions' in args) {
-        const { queryOptions } = args;
+        const { queryOptions } = args as any;
         for (const param in queryOptionsFields) {
           if (param in queryOptions) {
-            url.searchParams.set('$' + param, queryOptions[param]);
+            searchParams.set('$' + param, queryOptions[param]);
           }
         }
       }
 
       // $select doesn't work with inherited types' fields. So if there is an inline fragment for
       // implemented types, we cannot use $select
-      const isSelectable = isListType(info.returnType)
-        ? !isAbstractType(info.returnType.ofType)
-        : !isAbstractType(info.returnType);
+      const isSelectable = !isAbstractType(returnType);
 
       if (isSelectable) {
-        const { entityInfo } = (isListType(info.returnType)
-          ? info.returnType.ofType.extensions
-          : info.returnType.extensions) as EntityTypeExtensions;
-        const selectionFields = Object.keys(graphqlFields(info)).filter(fieldName =>
-          entityInfo.actualFields.includes(fieldName)
-        );
+        const { entityInfo } = returnType.extensions as EntityTypeExtensions;
+        const selectionFields: string[] = [];
+        const expandedFields: string[] = [];
+        for (const fieldName in fields) {
+          if (entityInfo.actualFields.includes(fieldName)) {
+            selectionFields.push(fieldName);
+          }
+          if (config.expandNavProps && entityInfo.navigationFields.includes(fieldName)) {
+            const searchParams = prepareSearchParams(fields[fieldName], schema);
+            const searchParamsStr = decodeURIComponent(searchParams.toString());
+            expandedFields.push(`${fieldName}(${searchParamsStr.split('&').join(';')})`);
+            selectionFields.push(fieldName);
+          }
+        }
         if (!selectionFields.includes(entityInfo.identifierFieldName)) {
           selectionFields.push(entityInfo.identifierFieldName);
         }
         if (selectionFields.length) {
-          url.searchParams.set('$select', selectionFields.join(','));
+          searchParams.set('$select', selectionFields.join(','));
+        }
+        if (expandedFields.length) {
+          searchParams.set('$expand', expandedFields.join(','));
         }
       }
+      return searchParams;
     }
 
     function getUrlString(url: URL) {
@@ -158,17 +173,101 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       const urlStringWithoutSearchParams = urlString.split('?')[0];
       if (isListType(info.returnType)) {
         const actualReturnType: GraphQLObjectType = info.returnType.ofType;
-        const { entityInfo } = actualReturnType.extensions as EntityTypeExtensions;
+        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
+        if ('Message' in responseJson && !('value' in responseJson)) {
+          const error = new Error(responseJson.Message);
+          Object.assign(error, { extensions: responseJson });
+          throw error;
+        }
         const returnList: any[] = responseJson.value;
         return returnList.map(element => {
+          if (!entityTypeExtensions?.entityInfo) {
+            return element;
+          }
           const urlOfElement = new URL(urlStringWithoutSearchParams);
-          addIdentifierToUrl(urlOfElement, entityInfo.identifierFieldName, entityInfo.identifierFieldTypeRef, element);
+          addIdentifierToUrl(
+            urlOfElement,
+            entityTypeExtensions.entityInfo.identifierFieldName,
+            entityTypeExtensions.entityInfo.identifierFieldTypeRef,
+            element
+          );
+          const identifierUrl = element['@odata.id'] || getUrlString(urlOfElement);
+          const fieldMap = actualReturnType.getFields();
+          for (const fieldName in element) {
+            if (entityTypeExtensions.entityInfo.navigationFields.includes(fieldName)) {
+              const field = element[fieldName];
+              let fieldType = fieldMap[fieldName].type;
+              if ('ofType' in fieldType) {
+                fieldType = fieldType.ofType;
+              }
+              const { entityInfo: fieldEntityInfo } = (fieldType as any).extensions as EntityTypeExtensions;
+              if (field instanceof Array) {
+                for (const fieldElement of field) {
+                  const urlOfField = new URL(urljoin(identifierUrl, fieldName));
+                  addIdentifierToUrl(
+                    urlOfField,
+                    fieldEntityInfo.identifierFieldName,
+                    fieldEntityInfo.identifierFieldTypeRef,
+                    fieldElement
+                  );
+                  fieldElement['@odata.id'] = fieldElement['@odata.id'] || getUrlString(urlOfField);
+                }
+              } else {
+                const urlOfField = new URL(urljoin(identifierUrl, fieldName));
+                addIdentifierToUrl(
+                  urlOfField,
+                  fieldEntityInfo.identifierFieldName,
+                  fieldEntityInfo.identifierFieldTypeRef,
+                  field
+                );
+                field['@odata.id'] = field['@odata.id'] || getUrlString(urlOfField);
+              }
+            }
+          }
           return {
-            '@odata.id': element['@odata.id'] || getUrlString(urlOfElement),
+            '@odata.id': identifierUrl,
             ...element,
           };
         });
       } else {
+        const actualReturnType = info.returnType as GraphQLObjectType;
+        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
+        if (!entityTypeExtensions?.entityInfo) {
+          return responseJson;
+        }
+        const identifierUrl = responseJson['@odata.id'] || urlStringWithoutSearchParams;
+        const fieldMap = actualReturnType.getFields();
+        for (const fieldName in responseJson) {
+          if (entityTypeExtensions?.entityInfo.navigationFields.includes(fieldName)) {
+            const field = responseJson[fieldName];
+            let fieldType = fieldMap[fieldName].type;
+            if ('ofType' in fieldType) {
+              fieldType = fieldType.ofType;
+            }
+            const { entityInfo: fieldEntityInfo } = (fieldType as any).extensions as EntityTypeExtensions;
+            if (field instanceof Array) {
+              for (const fieldElement of field) {
+                const urlOfField = new URL(urljoin(identifierUrl, fieldName));
+                addIdentifierToUrl(
+                  urlOfField,
+                  fieldEntityInfo.identifierFieldName,
+                  fieldEntityInfo.identifierFieldTypeRef,
+                  fieldElement
+                );
+                fieldElement['@odata.id'] = fieldElement['@odata.id'] || getUrlString(urlOfField);
+              }
+            } else {
+              const urlOfField = new URL(urljoin(identifierUrl, fieldName));
+              addIdentifierToUrl(
+                urlOfField,
+                fieldEntityInfo.identifierFieldName,
+                fieldEntityInfo.identifierFieldTypeRef,
+                field
+              );
+              field['@odata.id'] = field['@odata.id'] || getUrlString(urlOfField);
+            }
+          }
+        }
         return {
           '@odata.id': responseJson['@odata.id'] || urlStringWithoutSearchParams,
           ...responseJson,
@@ -397,7 +496,8 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       const isAbstract = typeElement.getAttribute('Abstract') === 'true';
       const extensions: EntityTypeExtensions = {
         entityInfo: {
-          actualFields: new Array<string>(),
+          actualFields: [],
+          navigationFields: [],
         },
         typeElement,
       };
@@ -474,7 +574,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       });
       typeElement.querySelectorAll('NavigationProperty').forEach(navigationPropertyElement => {
         const navigationPropertyName = navigationPropertyElement.getAttribute('Name');
-        extensions.entityInfo.actualFields.push(navigationPropertyName);
+        extensions.entityInfo.navigationFields.push(navigationPropertyName);
         const navigationPropertyTypeRef = navigationPropertyElement.getAttribute('Type');
         const isRequired = navigationPropertyElement.getAttribute('Nullable') === 'false';
         const isList = navigationPropertyTypeRef.startsWith('Collection(');
@@ -490,9 +590,16 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           },
           extensions: { navigationPropertyElement },
           resolve: async (root, args, context, info) => {
+            if (navigationPropertyName in root) {
+              return root[navigationPropertyName];
+            }
             const url = new URL(root['@odata.id']);
             url.href = urljoin(url.href, '/' + navigationPropertyName);
-            prepareSearchParams(url, args, info);
+            const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+            const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+            searchParams.forEach((value, key) => {
+              url.searchParams.set(key, value);
+            });
             const urlString = getUrlString(url);
             const method = 'GET';
             const request = new Request(urlString, {
@@ -557,7 +664,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               .filter(argEntry => argEntry[0] !== 'queryOptions')
               .map(argEntry => argEntry.join(' = '))
               .join(', ')})`;
-            prepareSearchParams(url, args, info);
+            const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+            const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+            searchParams.forEach((value, key) => {
+              url.searchParams.set(key, value);
+            });
             const urlString = getUrlString(url);
             const method = 'GET';
             const request = new Request(urlString, {
@@ -645,6 +756,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
             url.href = urljoin(url.href, '/' + singletonName);
+            const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+            const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+            searchParams.forEach((value, key) => {
+              url.searchParams.set(key, value);
+            });
             const urlString = getUrlString(url);
             const method = 'GET';
             const request = new Request(urlString, {
@@ -704,7 +820,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             resolve: async (root, args, context, info) => {
               const url = new URL(root['@odata.id']);
               url.href = urljoin(url.href, '/' + functionRef);
-              prepareSearchParams(url, args, info);
+              const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+              const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+              searchParams.forEach((value, key) => {
+                url.searchParams.set(key, value);
+              });
               const urlString = getUrlString(url);
               const method = 'GET';
               const request = new Request(urlString, {
@@ -845,7 +965,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           resolve: async (root, args, context, info) => {
             const url = new URL(config.baseUrl);
             url.href = urljoin(url.href, '/' + entitySetName);
-            prepareSearchParams(url, args, info);
+            const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+            const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+            searchParams.forEach((value, key) => {
+              url.searchParams.set(key, value);
+            });
             const urlString = getUrlString(url);
             const method = 'GET';
             const request = new Request(urlString, {
@@ -869,7 +993,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             const url = new URL(config.baseUrl);
             url.href = urljoin(url.href, '/' + entitySetName);
             addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
-            prepareSearchParams(url, args, info);
+            const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+            const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+            searchParams.forEach((value, key) => {
+              url.searchParams.set(key, value);
+            });
             const urlString = getUrlString(url);
             const method = 'GET';
             const request = new Request(urlString, {

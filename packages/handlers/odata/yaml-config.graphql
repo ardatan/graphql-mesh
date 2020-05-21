@@ -22,6 +22,10 @@ type ODataHandler @md {
   Enable batching
   """
   batch: ODataBatchMethod
+  """
+  Use $expand for navigation props instead of seperate HTTP requests (Default: false)
+  """
+  expandNavProps: Boolean
 }
 
 enum ODataBatchMethod {

@@ -4,3 +4,4 @@ sources:
       odata:
         baseUrl: https://services.odata.org/TripPinRESTierService
         batch: multipart
+        expandNavProps: true

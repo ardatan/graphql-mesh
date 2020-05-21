@@ -25,7 +25,7 @@
     "dataloader": "2.0.0",
     "fetchache": "0.0.3",
     "graphql-compose": "7.15.0",
-    "graphql-fields": "2.0.3",
+    "graphql-parse-resolve-info": "4.7.0",
     "graphql-scalars": "1.1.2",
     "jsdom": "16.2.2",
     "url-join": "4.0.1"
