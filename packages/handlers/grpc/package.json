@@ -19,7 +19,7 @@
     "@grpc/proto-loader": "0.5.4",
     "camel-case": "4.1.1",
     "graphql-scalars": "1.1.2",
-    "graphql-compose": "7.15.0",
+    "graphql-compose": "7.16.1",
     "protobufjs": "6.9.0",
     "pascal-case": "3.1.1",
     "lodash": "4.17.15"
