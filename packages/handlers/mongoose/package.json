@@ -21,7 +21,7 @@
     "@graphql-mesh/types": "0.1.17",
     "@graphql-mesh/utils": "0.1.17",
     "camel-case": "4.1.1",
-    "graphql-compose": "7.15.0",
+    "graphql-compose": "7.16.1",
     "graphql-compose-mongoose": "7.3.8"
   },
   "publishConfig": {
