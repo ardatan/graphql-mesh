@@ -130,8 +130,8 @@ export async function extractSdkFromResolvers(
   schema: GraphQLSchema,
   types: Maybe<GraphQLObjectType>[],
   contextBuilder?: (initialContextValue: any) => Promise<any>
-) {
-  const sdk: Record<string, Function> = {};
+): Promise<Record<string, (...args: any[]) => any>> {
+  const sdk: Record<string, (...args: any[]) => any> = {};
 
   await Promise.all(
     types.map(async type => {
