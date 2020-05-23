@@ -10,12 +10,10 @@ import {
   isListType,
   isNonNullType,
   GraphQLNamedType,
-  parse,
   NamedTypeNode,
   Kind,
 } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -115,49 +113,48 @@ ${operations.join(',\n')}
   };
 }
 
-export async function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: RawSourceOutput[]): Promise<string> {
+export function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: RawSourceOutput[]): Promise<string> {
   return codegen({
     filename: 'types.ts',
     documents: [],
     config: {},
     schemaAst: unifiedSchema,
-    schema: parse(printSchemaWithDirectives(unifiedSchema)),
+    schema: undefined as any, // This is not necessary on codegen.
     pluginMap: {
       typescript: tsBasePlugin,
       resolvers: tsResolversPlugin,
       contextSdk: {
         plugin: async () => {
-          const results = await Promise.all(
-            rawSources.map(async source => {
-              return generateTypesForApi({
-                schema: source.schema,
-                name: source.name,
-                contextVariables: source.contextVariables || [],
-              });
-            })
-          );
-
           const sdkItems: string[] = [];
           const additionalContextItems: string[] = [];
           const contextItems: string[] = [];
 
-          for (const item of results) {
-            if (item) {
-              if (item.sdk) {
-                sdkItems.push(item.sdk.codeAst);
+          const results = await Promise.all(
+            rawSources.map(source => {
+              const item = generateTypesForApi({
+                schema: source.schema,
+                name: source.name,
+                contextVariables: source.contextVariables || [],
+              });
+
+              if (item) {
+                if (item.sdk) {
+                  sdkItems.push(item.sdk.codeAst);
+                }
+                if (item.additionalContext) {
+                  additionalContextItems.push(item.additionalContext.codeAst);
+                }
+                if (item.context) {
+                  contextItems.push(item.context.codeAst);
+                }
               }
-              if (item.additionalContext) {
-                additionalContextItems.push(item.additionalContext.codeAst);
-              }
-              if (item.context) {
-                contextItems.push(item.context.codeAst);
-              }
-            }
-          }
+              return item;
+            })
+          );
 
           const contextType = `export type ${unifiedContextIdentifier} = ${results
-            .filter(r => r && r.context)
             .map(r => r?.context?.identifier)
+            .filter(Boolean)
             .join(' & ')};`;
 
           return {

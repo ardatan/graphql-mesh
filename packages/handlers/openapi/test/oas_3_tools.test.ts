@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable camelcase */
 // Copyright IBM Corp. 2017. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
