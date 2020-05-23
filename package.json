@@ -13,7 +13,7 @@
     "fix-bin": "node scripts/fix-bin.js",
     "copy-playground-html": "cp ./packages/cli/src/commands/serve/playground.html ./packages/cli/dist",
     "postbuild": "yarn copy-config-schema && yarn copy-playground-html && yarn fix-bin",
-    "lint": "eslint --ext .ts ./packages/**/src/*.ts",
+    "lint": "eslint --ext .ts \"./packages/**/src/*.ts\"",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
     "introspect-config": "node scripts/introspect-config.js",
