@@ -1619,15 +1619,6 @@
     unixify "1.0.0"
     valid-url "1.0.9"
 
-"@graphql-tools/merge@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.0.tgz#bbedb8c162fae5f2388cfd3aada52d39edafd928"
-  integrity sha512-ikLdS46Em08Hfuf9KRsoKkN08E4NaW4H3X2Mty6D8Vue7X+z4/wRXpfgAp09rYxN+EwVmWHJU5NswCyHTiVYSg==
-  dependencies:
-    "@graphql-tools/schema" "6.0.0"
-    "@graphql-tools/utils" "6.0.0"
-    tslib "~2.0.0"
-
 "@graphql-tools/merge@6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.1.tgz#2ce4efe5f541b7ea34b80e94e546dd4b99dde274"
@@ -1646,12 +1637,12 @@
     "@graphql-tools/utils" "6.0.1"
     tslib "~2.0.0"
 
-"@graphql-tools/resolvers-composition@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.0.tgz#fc512a5b27c03566444d53ce065e2797028fd7fd"
-  integrity sha512-L75suQE7ViOVMpSl2U8U8ilvYgqZdNkTrntz8JKoyi7ePNB3aS9ZjCkpq3/oq/o+QLPXZ2+Tu2PfjaF/oCkDNQ==
+"@graphql-tools/resolvers-composition@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.1.tgz#be9e87eaa00c75f3032d25f37e7f78b045f506c1"
+  integrity sha512-Tg6jCTl9TPlB30HxIonVJ635TdGGph3djms+pHEPyymHHgj1MSUzpaTFTcMDldyJew+ZumfqUqak7ySH1ssh7g==
   dependencies:
-    "@graphql-tools/utils" "6.0.0"
+    "@graphql-tools/utils" "6.0.1"
     lodash "4.17.15"
 
 "@graphql-tools/schema@6.0.0":
