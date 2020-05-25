@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.17",
-    "@graphql-tools/load": "6.0.0",
+    "@graphql-tools/load": "6.0.1",
     "@graphql-tools/graphql-file-loader": "6.0.0",
     "@graphql-tools/code-file-loader": "6.0.1"
   },
