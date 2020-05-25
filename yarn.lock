@@ -1619,15 +1619,6 @@
     unixify "1.0.0"
     valid-url "1.0.9"
 
-"@graphql-tools/merge@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.0.tgz#bbedb8c162fae5f2388cfd3aada52d39edafd928"
-  integrity sha512-ikLdS46Em08Hfuf9KRsoKkN08E4NaW4H3X2Mty6D8Vue7X+z4/wRXpfgAp09rYxN+EwVmWHJU5NswCyHTiVYSg==
-  dependencies:
-    "@graphql-tools/schema" "6.0.0"
-    "@graphql-tools/utils" "6.0.0"
-    tslib "~2.0.0"
-
 "@graphql-tools/merge@6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.1.tgz#2ce4efe5f541b7ea34b80e94e546dd4b99dde274"
@@ -7916,10 +7907,10 @@ graphql-relay@^0.6.0:
   dependencies:
     prettier "^1.16.0"
 
-graphql-scalars@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.1.2.tgz#4646de16afa39de95f0dd2c3160703a39f11efc2"
-  integrity sha512-6fWb766SdKOFmCSqIXaJINlywVTGokIeHT4xy/OJwTCdxWJ9UwJuzwoEtvkVroYKjI7KLca8AalSzvP2nHK0vg==
+graphql-scalars@1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.1.3.tgz#3f5ae13870eb8eacc03bfbeae46c0000ec8a9d43"
+  integrity sha512-uReVUBYgs+OEDVWTCYv+TpVqPft0EmpIcf8EJXFh7YiXGYsKtReC7U2jAXM77CJ86+JHqiZzSjjL9qOCqGEYVw==
 
 graphql-sequelize@^9.3.6:
   version "9.4.0"
