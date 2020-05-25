@@ -1637,13 +1637,13 @@
     "@graphql-tools/utils" "6.0.1"
     tslib "~2.0.0"
 
-"@graphql-tools/mock@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-6.0.0.tgz#ed366c09a06312e3f3137108337bf2b0756e6cd2"
-  integrity sha512-UcsgBBwfLM8HH+cmBy0PUZBda0zmlzBPgWKrJFgjzaaawtXpjGIj44LT37waNlhOHUzYqCF0iBpgnrOBjLU4lw==
+"@graphql-tools/mock@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-6.0.1.tgz#4030cfd9c5572977c35ff1f23472bf2378013151"
+  integrity sha512-te4ARXKmZOCxtkZqmB9lM483BjmMW1qPilDJqXRnYsRfjWnXpGN7BjiXaVMwX+i/xY7YLDfWamTcRADwQkv4Qw==
   dependencies:
-    "@graphql-tools/schema" "6.0.0"
-    "@graphql-tools/utils" "6.0.0"
+    "@graphql-tools/schema" "6.0.1"
+    "@graphql-tools/utils" "6.0.1"
     tslib "~2.0.0"
 
 "@graphql-tools/resolvers-composition@6.0.0":
