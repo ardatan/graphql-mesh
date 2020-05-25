@@ -1619,15 +1619,6 @@
     unixify "1.0.0"
     valid-url "1.0.9"
 
-"@graphql-tools/merge@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.0.tgz#bbedb8c162fae5f2388cfd3aada52d39edafd928"
-  integrity sha512-ikLdS46Em08Hfuf9KRsoKkN08E4NaW4H3X2Mty6D8Vue7X+z4/wRXpfgAp09rYxN+EwVmWHJU5NswCyHTiVYSg==
-  dependencies:
-    "@graphql-tools/schema" "6.0.0"
-    "@graphql-tools/utils" "6.0.0"
-    tslib "~2.0.0"
-
 "@graphql-tools/merge@6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.1.tgz#2ce4efe5f541b7ea34b80e94e546dd4b99dde274"
@@ -11175,10 +11166,10 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
-mongoose@5.9.15:
-  version "5.9.15"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.9.15.tgz#935e157d1429c0702b71c5ecf0e6801faa771091"
-  integrity sha512-dGIDqaQkAJoLl7lsRLy70mDg+VcL1IPOHr/0f23MLF45PtnM5exRdmienfyVjdrSVGgTus+1sMUKef6vSnrDZg==
+mongoose@5.9.16:
+  version "5.9.16"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.9.16.tgz#6aa688a6b7b444d10f60ac539b92556cae20475e"
+  integrity sha512-b4HNndgh+dacoLE/2SBF3iBBofeaKL+aGVZH7jnPRc2RXRCplX4sfH5sgoz03ryCSXJ+RQNIfqKAADt/ZBzPDA==
   dependencies:
     bson "^1.1.4"
     kareem "2.3.1"
