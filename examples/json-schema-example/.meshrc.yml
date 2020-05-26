@@ -26,11 +26,6 @@ sources:
             method: POST
             requestSchema: ./json-schemas/user-input.json
             responseSchema: ./json-schemas/user.json
-          - type: Mutation
-            field: removeUser
-            path: /user/{args.id}
-            method: DELETE
-            responseSchema: ./json-schemas/user.json
     transforms:
       - extend: |
           extend type User {
