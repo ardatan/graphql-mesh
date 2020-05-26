@@ -1,8 +1,5 @@
 {
-    "type": "array",
-    "items": {
-        "$ref": "#/definitions/User"
-    },
+    "$ref": "#/definitions/User",
     "definitions": {
         "User": {
             "type": "object",
@@ -16,6 +13,9 @@
                     "type": "string"
                 },
                 "jobTitle": {
+                    "type": "string"
+                },
+                "companyId": {
                     "type": "string"
                 }
             }

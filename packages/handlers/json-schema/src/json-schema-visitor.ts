@@ -30,8 +30,10 @@ function createName(ref: string) {
 }
 
 export class JSONSchemaVisitor<TContext> {
-  private cache = new Map<string, string>();
-  constructor(private schemaComposer: SchemaComposer<TContext>, private isInput: boolean) {}
+  private cache: Map<string, string>;
+  constructor(private schemaComposer: SchemaComposer<TContext>, private isInput: boolean) {
+    this.cache = new Map();
+  }
 
   visit(def: JSONSchemaDefinition, propertyName: string, prefix: string) {
     const summary = JSON.stringify({
@@ -175,10 +177,9 @@ export class JSONSchemaVisitor<TContext> {
   }
 
   private getGraphQLObjectTypeWithTypedObjectDef(objectDef: JSONSchemaTypedObjectDefinition, objectIdentifier: string) {
-    let name = createName(objectIdentifier);
+    const name = createName(objectIdentifier);
     const fields = this.createFieldsMapFromProperties(objectDef, name);
     if (this.isInput) {
-      name += 'Input';
       this.schemaComposer.createInputTC({
         name,
         fields,

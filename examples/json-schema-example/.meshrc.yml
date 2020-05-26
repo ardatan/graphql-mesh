@@ -5,15 +5,32 @@ sources:
         baseUrl: https://not-existing-api.com/API
         operations:
           - type: Query
-            field: users
-            path: /users
+            field: me
+            path: /me
             method: GET
-            responseSchema: ./json-schemas/users.json
+            responseSchema: ./json-schemas/user.json
           - type: Query
             field: company
             path: /company/{args.id}
             method: GET
             responseSchema: ./json-schemas/company.json
+          - type: Mutation
+            field: createUser
+            path: /user
+            method: PUT
+            requestSchema: ./json-schemas/user-input.json
+            responseSchema: ./json-schemas/user.json
+          - type: Mutation
+            field: updateUser
+            path: /user/{args.id}
+            method: POST
+            requestSchema: ./json-schemas/user-input.json
+            responseSchema: ./json-schemas/user.json
+          - type: Mutation
+            field: removeUser
+            path: /user/{args.id}
+            method: DELETE
+            responseSchema: ./json-schemas/user.json
     transforms:
       - extend: |
           extend type User {
