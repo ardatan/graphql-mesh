@@ -6,13 +6,11 @@ import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
+import { flatten } from 'lodash';
 
 const getFileName = (filePath: string) => {
-  const arr = filePath
-    .split('/')
-    .map(part => part.split('\\'))
-    .flat();
-  return arr.pop().split('.').join('_');
+  const arr = filePath.split('/').map(part => part.split('\\'));
+  return flatten(arr).pop().split('.').join('_');
 };
 
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
