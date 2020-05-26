@@ -30,9 +30,16 @@ function createName(ref: string) {
 }
 
 export class JSONSchemaVisitor<TContext> {
-  constructor(private schemaComposer: SchemaComposer<TContext>, private isInput: boolean) {}
+  private cache: Map<string, string>;
+  constructor(private schemaComposer: SchemaComposer<TContext>, private isInput: boolean) {
+    this.cache = new Map();
+  }
 
   visit(def: JSONSchemaDefinition, propertyName: string, prefix: string) {
+    const summary = JSON.stringify(def);
+    if (this.cache.has(summary)) {
+      return this.cache.get(summary);
+    }
     if ('definitions' in def) {
       for (const propertyName in def.definitions) {
         const definition = def.definitions[propertyName];
@@ -45,38 +52,48 @@ export class JSONSchemaVisitor<TContext> {
         this.visit(definition, propertyName, prefix);
       }
     }
+    let result: string;
     switch (def.type) {
       case 'array':
-        return this.visitArray(def, propertyName, prefix);
+        result = this.visitArray(def, propertyName, prefix);
+        break;
       case 'boolean':
-        return this.visitBoolean();
+        result = this.visitBoolean();
+        break;
       case 'integer':
-        return this.visitInteger();
+        result = this.visitInteger();
+        break;
       case 'number':
-        return this.visitNumber();
+        result = this.visitNumber();
+        break;
       case 'string':
         if ('enum' in def) {
-          return this.visitEnum(def, propertyName, prefix);
+          result = this.visitEnum(def, propertyName, prefix);
         } else {
-          return this.visitString();
+          result = this.visitString();
         }
+        break;
       case 'null':
       case 'any':
-        return this.visitAny();
+        result = this.visitAny();
+        break;
       case 'object':
         if ('name' in def || 'title' in def) {
-          return this.visitTypedNamedObjectDefinition(def, prefix);
+          result = this.visitTypedNamedObjectDefinition(def, prefix);
         } else if ('properties' in def) {
-          return this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix);
+          result = this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix);
         } else if ('additionalProperties' in def && def.additionalProperties) {
-          return this.visitAny();
+          result = this.visitAny();
         }
+        break;
+      default:
+        if ('$ref' in def) {
+          result = this.visitObjectReference(def);
+        }
+        break;
     }
-    if ('$ref' in def) {
-      return this.visitObjectReference(def);
-    }
-    throw new Error(`Unexpected schema definition:
-        ${JSON.stringify(def, null, 2)}`);
+    this.cache.set(summary, result);
+    return result;
   }
 
   visitArray(arrayDef: JSONSchemaArrayDefinition, propertyName: string, prefix: string) {
@@ -156,10 +173,9 @@ export class JSONSchemaVisitor<TContext> {
   }
 
   private getGraphQLObjectTypeWithTypedObjectDef(objectDef: JSONSchemaTypedObjectDefinition, objectIdentifier: string) {
-    let name = createName(objectIdentifier);
+    const name = createName(objectIdentifier);
     const fields = this.createFieldsMapFromProperties(objectDef, name);
     if (this.isInput) {
-      name += 'Input';
       this.schemaComposer.createInputTC({
         name,
         fields,

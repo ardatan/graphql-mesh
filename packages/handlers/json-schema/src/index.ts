@@ -6,6 +6,12 @@ import AggregateError from 'aggregate-error';
 import { fetchache, Request } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
+import { flatten } from 'lodash';
+
+const getFileName = (filePath: string) => {
+  const arr = filePath.split('/').map(part => part.split('\\'));
+  return flatten(arr).pop().split('.').join('_');
+};
 
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
   async getMeshSource({ config, cache }) {
@@ -30,7 +36,8 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
         operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
         const destination = operationConfig.type;
-        const type = outputSchemaVisitor.visit(responseSchema, 'Response', operationConfig.field);
+        const responseFileName = getFileName(operationConfig.responseSchema);
+        const type = outputSchemaVisitor.visit(responseSchema, 'Response', responseFileName);
 
         const { args, contextVariables: specificContextVariables } = parseInterpolationStrings([
           ...Object.values(config.operationHeaders || {}),
@@ -41,8 +48,9 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         contextVariables.push(...specificContextVariables);
 
         if (requestSchema) {
+          const requestFileName = getFileName(operationConfig.requestSchema);
           args.input = {
-            type: inputSchemaVisitor.visit(requestSchema, 'Request', operationConfig.field) as any,
+            type: inputSchemaVisitor.visit(requestSchema, 'Request', requestFileName) as any,
           };
         }
 
