@@ -36,11 +36,7 @@ export class JSONSchemaVisitor<TContext> {
   }
 
   visit(def: JSONSchemaDefinition, propertyName: string, prefix: string) {
-    const summary = JSON.stringify({
-      def,
-      propertyName,
-      prefix,
-    });
+    const summary = JSON.stringify(def);
     if (this.cache.has(summary)) {
       return this.cache.get(summary);
     }
@@ -83,11 +79,11 @@ export class JSONSchemaVisitor<TContext> {
         break;
       case 'object':
         if ('name' in def || 'title' in def) {
-          return this.visitTypedNamedObjectDefinition(def, prefix);
+          result = this.visitTypedNamedObjectDefinition(def, prefix);
         } else if ('properties' in def) {
-          return this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix);
+          result = this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix);
         } else if ('additionalProperties' in def && def.additionalProperties) {
-          return this.visitAny();
+          result = this.visitAny();
         }
         break;
       default:

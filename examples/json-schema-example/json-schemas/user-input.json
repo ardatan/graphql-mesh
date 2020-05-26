@@ -1,21 +1,16 @@
 {
-    "$ref": "#/definitions/UserInput",
-    "definitions": {
-        "UserInput": {
-            "type": "object",
-            "title": "UserInput",
-            "description": "Fake User Input Object",
-            "properties": {
-                "firstName": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "jobTitle": {
-                    "type": "string"
-                }
-            }
+    "type": "object",
+    "title": "UserInput",
+    "description": "Fake User Input Object",
+    "properties": {
+        "firstName": {
+            "type": "string"
+        },
+        "lastName": {
+            "type": "string"
+        },
+        "jobTitle": {
+            "type": "string"
         }
     }
 }
