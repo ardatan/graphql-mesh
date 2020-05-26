@@ -1670,15 +1670,15 @@
     "@graphql-tools/utils" "6.0.1"
     tslib "~2.0.0"
 
-"@graphql-tools/stitch@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-6.0.0.tgz#c6abbb49be598f97781c615d37fb75292aeb6907"
-  integrity sha512-A7VLjQh7XHPYSP0N7ngit7/qIzuc7gEU0QEMVOM/CgfXafhT9PrVKudwjuNUwSaEoj+bYvt+InxrfFWzai5xnQ==
+"@graphql-tools/stitch@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-6.0.1.tgz#33efaee31adf02a22a4ffa2d897909c43fbb1c0f"
+  integrity sha512-2zQEYHpzQ67A59W3bD+YB+jjpAT24UT5a7Gpu5V4+sBsLEQdT0rnkUUQR4YYj4TshRDEPDbv2LcjuPAX3+QMPg==
   dependencies:
-    "@graphql-tools/delegate" "6.0.0"
-    "@graphql-tools/schema" "6.0.0"
-    "@graphql-tools/utils" "6.0.0"
-    "@graphql-tools/wrap" "6.0.0"
+    "@graphql-tools/delegate" "6.0.1"
+    "@graphql-tools/schema" "6.0.1"
+    "@graphql-tools/utils" "6.0.1"
+    "@graphql-tools/wrap" "6.0.1"
     tslib "~2.0.0"
 
 "@graphql-tools/url-loader@6.0.1":
