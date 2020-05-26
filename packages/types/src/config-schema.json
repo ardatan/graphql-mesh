@@ -1,0 +1,1444 @@
+{
+  "definitions": {
+    "InMemoryLRU": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "InMemoryLRU",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/InMemoryLRUConfig"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "InMemoryLRUConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "InMemoryLRUConfig",
+      "properties": {
+        "max": {
+          "type": "integer"
+        }
+      }
+    },
+    "Redis": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Redis",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/RedisConfig"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "RedisConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RedisConfig",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Handler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Handler",
+      "properties": {
+        "graphql": {
+          "$ref": "#/definitions/GraphQLHandler",
+          "description": "Handler for remote/local/third-party GraphQL schema"
+        },
+        "grpc": {
+          "$ref": "#/definitions/GrpcHandler",
+          "description": "Handler for gRPC and Protobuf schemas"
+        },
+        "jsonSchema": {
+          "$ref": "#/definitions/JsonSchemaHandler",
+          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
+        },
+        "mongoose": {
+          "$ref": "#/definitions/MongooseHandler"
+        },
+        "mysql": {
+          "$ref": "#/definitions/MySQLHandler"
+        },
+        "neo4j": {
+          "$ref": "#/definitions/Neo4jHandler",
+          "description": "Handler for Neo4j"
+        },
+        "odata": {
+          "$ref": "#/definitions/ODataHandler",
+          "description": "Handler for OData"
+        },
+        "openapi": {
+          "$ref": "#/definitions/OpenapiHandler",
+          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
+        },
+        "postgraphile": {
+          "$ref": "#/definitions/PostGraphileHandler",
+          "description": "Handler for Postgres database, based on `postgraphile`"
+        },
+        "soap": {
+          "$ref": "#/definitions/SoapHandler",
+          "description": "Handler for SOAP"
+        },
+        "thrift": {
+          "$ref": "#/definitions/ThriftHandler",
+          "description": "Handler for OData"
+        },
+        "tuql": {
+          "$ref": "#/definitions/TuqlHandler",
+          "description": "Handler for SQLite database, based on `tuql`"
+        }
+      }
+    },
+    "GraphQLHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLHandler",
+      "properties": {
+        "headers": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "A url to your remote GraphQL endpoint"
+        }
+      },
+      "required": [
+        "endpoint"
+      ]
+    },
+    "GrpcHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GrpcHandler",
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "description": "gRPC Endpoint"
+        },
+        "protoFilePath": {
+          "description": "gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ProtoFilePath"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "serviceName": {
+          "type": "string",
+          "description": "Your base service name\nUsed for naming only"
+        },
+        "packageName": {
+          "type": "string",
+          "description": "Your base package name\nUsed for naming only"
+        },
+        "requestTimeout": {
+          "type": "integer",
+          "description": "Request timeout in milliseconds\nDefault: 200000"
+        }
+      },
+      "required": [
+        "endpoint",
+        "protoFilePath"
+      ]
+    },
+    "LoadOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LoadOptions",
+      "properties": {
+        "includeDirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "ProtoFilePath": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ProtoFilePath",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "load": {
+          "$ref": "#/definitions/LoadOptions"
+        }
+      },
+      "required": [
+        "file"
+      ]
+    },
+    "JsonSchemaHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaHandler",
+      "properties": {
+        "baseUrl": {
+          "type": "string"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {}
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {}
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JsonSchemaOperation"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": [
+        "baseUrl",
+        "operations"
+      ]
+    },
+    "JsonSchemaOperation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaOperation",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Query",
+            "Mutation"
+          ],
+          "description": "Allowed values: Query, Mutation"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "DELETE",
+            "POST",
+            "PUT"
+          ],
+          "description": "Allowed values: GET, DELETE, POST, PUT"
+        },
+        "requestSchema": {
+          "type": "string"
+        },
+        "responseSchema": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": [
+        "field",
+        "path",
+        "type",
+        "method",
+        "responseSchema"
+      ]
+    },
+    "MongooseHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseHandler",
+      "properties": {
+        "connectionString": {
+          "type": "string"
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        },
+        "discriminators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "MongooseModel": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseModel",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/ComposeWithMongooseOpts"
+        }
+      },
+      "required": [
+        "name",
+        "path"
+      ]
+    },
+    "ComposeWithMongooseOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseOpts",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
+        },
+        "inputType": {
+          "$ref": "#/definitions/ComposeMongooseInputType"
+        },
+        "resolvers": {
+          "$ref": "#/definitions/TypeConverterResolversOpts"
+        }
+      }
+    },
+    "ComposeMongooseInputType": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeMongooseInputType",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
+        },
+        "resolvers": {
+          "$ref": "#/definitions/TypeConverterResolversOpts"
+        }
+      }
+    },
+    "ComposeWithMongooseFieldsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseFieldsOpts",
+      "properties": {
+        "only": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "remove": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "TypeConverterResolversOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TypeConverterResolversOpts",
+      "properties": {
+        "findById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findByIds": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "count": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "connection": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "properties": {}
+            }
+          ]
+        },
+        "pagination": {
+          "description": "Any of: Boolean, PaginationResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/PaginationResolverOpts"
+            }
+          ]
+        }
+      }
+    },
+    "ComposeWithMongooseResolverOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseResolverOpts",
+      "properties": {
+        "filter": {
+          "$ref": "#/definitions/FilterHelperArgsOpts"
+        },
+        "sort": {
+          "$ref": "#/definitions/SortHelperArgsOpts"
+        },
+        "limit": {
+          "$ref": "#/definitions/LimitHelperArgsOpts"
+        },
+        "record": {
+          "$ref": "#/definitions/RecordHelperArgsOpts"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
+    "FilterHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FilterHelperArgsOpts",
+      "properties": {
+        "filterTypeName": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "onlyIndexed": {
+          "type": "boolean"
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "operators": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "properties": {}
+            }
+          ]
+        },
+        "removeFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "SortHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SortHelperArgsOpts",
+      "properties": {
+        "sortTypeName": {
+          "type": "string"
+        }
+      }
+    },
+    "LimitHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LimitHelperArgsOpts",
+      "properties": {
+        "defaultValue": {
+          "type": "integer"
+        }
+      }
+    },
+    "RecordHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RecordHelperArgsOpts",
+      "properties": {
+        "recordTypeName": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "removeFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "PaginationResolverOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PaginationResolverOpts",
+      "properties": {
+        "perPage": {
+          "type": "integer"
+        }
+      }
+    },
+    "MySQLHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MySQLHandler",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "database": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "host",
+        "port",
+        "user",
+        "database"
+      ]
+    },
+    "Neo4jHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Neo4jHandler",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL for the Neo4j Instance e.g. neo4j://localhost"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username for basic authentication"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for basic authentication"
+        },
+        "alwaysIncludeRelationships": {
+          "type": "boolean",
+          "description": "Specifies whether relationships should always be included in the type definitions as [relationship](https://grandstack.io/docs/neo4j-graphql-js.html#relationship-types) types, even if the relationships do not have properties."
+        }
+      },
+      "required": [
+        "url",
+        "username",
+        "password"
+      ]
+    },
+    "ODataHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ODataHandler",
+      "properties": {
+        "baseUrl": {
+          "type": "string",
+          "description": "Base URL for OData API"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Headers to be used with the operation requests"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Headers to be used with the $metadata requests"
+        },
+        "batch": {
+          "type": "string",
+          "enum": [
+            "multipart",
+            "json"
+          ],
+          "description": "Enable batching (Allowed values: multipart, json)"
+        },
+        "expandNavProps": {
+          "type": "boolean",
+          "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
+        }
+      },
+      "required": [
+        "baseUrl"
+      ]
+    },
+    "OpenapiHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OpenapiHandler",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "Specifies the URL on which all paths will be based on.\nOverrides the server object in the OAS."
+        },
+        "skipSchemaValidation": {
+          "type": "boolean",
+          "description": "Skip OpenAPI 3 Schema Validation"
+        }
+      },
+      "required": [
+        "source"
+      ]
+    },
+    "PostGraphileHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphileHandler",
+      "properties": {
+        "connectionString": {
+          "type": "string",
+          "description": "A connection string to your Postgres database"
+        },
+        "schemaName": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema."
+        },
+        "pool": {
+          "$ref": "#/definitions/PostGraphilePool",
+          "description": "Connection Pool settings"
+        }
+      },
+      "required": [
+        "connectionString"
+      ]
+    },
+    "PostGraphilePool": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphilePool",
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "database": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "connectionString": {
+          "type": "string"
+        }
+      }
+    },
+    "Source": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Source",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
+        },
+        "context": {
+          "type": "object",
+          "properties": {},
+          "description": "Custom JSON object to add to the GraphQL context, use this to inject custom fields and later use it in your custom resolver. This object will be located in the context, under an object named as the API"
+        },
+        "handler": {
+          "$ref": "#/definitions/Handler",
+          "description": "Point to the handler you wish to use, it can either be a predefined handler, or a custom"
+        },
+        "transforms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Transform"
+          },
+          "additionalItems": false,
+          "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
+        }
+      },
+      "required": [
+        "name",
+        "handler"
+      ]
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Transform",
+      "properties": {
+        "cache": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CacheTransformConfig"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply caching for your data sources"
+        },
+        "extend": {
+          "type": "string",
+          "description": "GraphQL SDL or file path contains SDL to be applied to the schema"
+        },
+        "federation": {
+          "$ref": "#/definitions/FederationTransform"
+        },
+        "filterSchema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "mock": {
+          "$ref": "#/definitions/MockingConfig",
+          "description": "Mock configuration for your source"
+        },
+        "prefix": {
+          "$ref": "#/definitions/PrefixTransformConfig",
+          "description": "Prefix transform"
+        },
+        "rename": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply rename of a GraphQL type"
+        },
+        "resolversComposition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResolversCompositionTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply composition to resolvers"
+        },
+        "snapshot": {
+          "$ref": "#/definitions/SnapshotTransformConfig",
+          "description": "Configuration for Snapshot extension"
+        }
+      }
+    },
+    "SoapHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SoapHandler",
+      "properties": {
+        "wsdl": {
+          "type": "string",
+          "description": "A url to your WSDL"
+        },
+        "basicAuth": {
+          "$ref": "#/definitions/SoapSecurityBasicAuthConfig",
+          "description": "Basic Authentication Configuration\nIncluding username and password fields"
+        },
+        "securityCert": {
+          "$ref": "#/definitions/SoapSecurityCertificateConfig",
+          "description": "SSL Certificate Based Authentication Configuration\nIncluding public key, private key and password fields"
+        }
+      },
+      "required": [
+        "wsdl"
+      ]
+    },
+    "SoapSecurityBasicAuthConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SoapSecurityBasicAuthConfig",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Username for Basic Authentication"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for Basic Authentication"
+        }
+      },
+      "required": [
+        "username",
+        "password"
+      ]
+    },
+    "SoapSecurityCertificateConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SoapSecurityCertificateConfig",
+      "properties": {
+        "publicKey": {
+          "type": "string",
+          "description": "Your public key"
+        },
+        "privateKey": {
+          "type": "string",
+          "description": "Your private key"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password"
+        },
+        "publicKeyPath": {
+          "type": "string",
+          "description": "Path to the file or URL contains your public key"
+        },
+        "privateKeyPath": {
+          "type": "string",
+          "description": "Path to the file or URL contains your private key"
+        },
+        "passwordPath": {
+          "type": "string",
+          "description": "Path to the file or URL contains your password"
+        }
+      }
+    },
+    "ThriftHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ThriftHandler",
+      "properties": {
+        "hostName": {
+          "type": "string",
+          "description": "The name of the host to connect to."
+        },
+        "port": {
+          "type": "integer",
+          "description": "The port number to attach to on the host."
+        },
+        "path": {
+          "type": "string",
+          "description": "The path on which the Thrift service is listening. Defaults to '/thrift'."
+        },
+        "https": {
+          "type": "boolean",
+          "description": "Boolean value indicating whether to use https. Defaults to false."
+        },
+        "protocol": {
+          "type": "string",
+          "enum": [
+            "binary",
+            "compact",
+            "json"
+          ],
+          "description": "Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: binary, compact, json)"
+        },
+        "serviceName": {
+          "type": "string",
+          "description": "The name of your service. Used for logging."
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."
+        },
+        "idl": {
+          "type": "string",
+          "description": "Path to IDL file"
+        }
+      },
+      "required": [
+        "hostName",
+        "port",
+        "serviceName",
+        "idl"
+      ]
+    },
+    "CacheTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CacheTransformConfig",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`"
+        },
+        "cacheKey": {
+          "type": "string",
+          "description": "Cache key to use to store your resolvers responses.\nThe defualt is: {typeName}-{fieldName}-{argsHash}\n\nAvailable variables:\n- {args.argName} - use resolver argument\n- {typeName} - use name of the type\n- {fieldName} - use name of the field\n- {argsHash} - a hash based on the 'args' object\n- {info} - the GraphQLResolveInfo of the resolver\n\nAvailable interpolations:\n- {format|date} - returns the current date with a specific format"
+        },
+        "invalidate": {
+          "$ref": "#/definitions/CacheInvalidateConfig",
+          "description": "Invalidation rules"
+        }
+      },
+      "required": [
+        "field"
+      ]
+    },
+    "CacheInvalidateConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CacheInvalidateConfig",
+      "properties": {
+        "effectingOperations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CacheEffectingOperationConfig"
+          },
+          "additionalItems": false,
+          "description": "Invalidate the cache when a specific operation is done without an error"
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Specified in seconds, the time-to-live (TTL) value limits the lifespan"
+        }
+      }
+    },
+    "CacheEffectingOperationConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CacheEffectingOperationConfig",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field."
+        },
+        "matchKey": {
+          "type": "string",
+          "description": "Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field."
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "FederationTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationTransform",
+      "properties": {
+        "types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FederationTransformType"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "FederationTransformType": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationTransformType",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/FederationObjectConfig"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "FederationObjectConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationObjectConfig",
+      "properties": {
+        "keyFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "extend": {
+          "type": "boolean"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FederationField"
+          },
+          "additionalItems": false
+        },
+        "resolveReference": {
+          "type": "string"
+        }
+      }
+    },
+    "FederationField": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationField",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/FederationFieldConfig"
+        }
+      },
+      "required": [
+        "name",
+        "config"
+      ]
+    },
+    "FederationFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldConfig",
+      "properties": {
+        "external": {
+          "type": "boolean"
+        },
+        "provides": {
+          "type": "string"
+        },
+        "required": {
+          "type": "string"
+        }
+      }
+    },
+    "MockingConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingConfig",
+      "properties": {
+        "if": {
+          "type": "boolean",
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
+        },
+        "preserveResolvers": {
+          "type": "boolean",
+          "description": "Do not mock any other resolvers other than defined in `mocks`.\nFor example, you can enable this if you don't want to mock entire schema but partially."
+        },
+        "mocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MockingFieldConfig"
+          },
+          "additionalItems": false,
+          "description": "Mock configurations"
+        }
+      }
+    },
+    "MockingFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingFieldConfig",
+      "properties": {
+        "apply": {
+          "type": "string",
+          "description": "Resolver path\nExample: User.firstName"
+        },
+        "if": {
+          "type": "boolean",
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
+        },
+        "faker": {
+          "type": "string",
+          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample;\nfaker: name.firstName\nfaker: \"{{ name.firstName }} {{ name.lastName }}\""
+        },
+        "custom": {
+          "type": "string",
+          "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
+        }
+      },
+      "required": [
+        "apply"
+      ]
+    },
+    "PrefixTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PrefixTransformConfig",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The prefix to apply to the schema types. By default it's the API name."
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "List of ignored types"
+        },
+        "includeRootOperations": {
+          "type": "boolean",
+          "description": "Changes root types and changes the field names"
+        }
+      }
+    },
+    "RenameTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RenameTransformObject",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "The GraphQL type to rename"
+        },
+        "to": {
+          "type": "string",
+          "description": "The new name"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ]
+    },
+    "ResolversCompositionTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResolversCompositionTransformObject",
+      "properties": {
+        "resolver": {
+          "type": "string",
+          "description": "The GraphQL Resolver path\nExample: Query.users"
+        },
+        "composer": {
+          "type": "string",
+          "description": "Path to the composer function\nExample: ./src/auth.js#authComposer"
+        }
+      },
+      "required": [
+        "resolver",
+        "composer"
+      ]
+    },
+    "SnapshotTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SnapshotTransformConfig",
+      "properties": {
+        "if": {
+          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "apply": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Resolver to be applied\nFor example;\n  apply:\n      - Query.* <- * will apply this extension to all fields of Query type\n      - Mutation.someMutationButProbablyYouWontNeedIt"
+        },
+        "outputDir": {
+          "type": "string",
+          "description": "Path to the directory of the generated snapshot files"
+        }
+      },
+      "required": [
+        "apply",
+        "outputDir"
+      ]
+    },
+    "TuqlHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TuqlHandler",
+      "properties": {
+        "db": {
+          "type": "string",
+          "description": "Pointer to your SQLite database"
+        },
+        "infile": {
+          "type": "string",
+          "description": "Path to the SQL Dump file if you want to build a in-memory database"
+        }
+      }
+    }
+  },
+  "title": "Config",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "required": [
+    "sources"
+  ],
+  "properties": {
+    "require": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Source"
+      },
+      "additionalItems": false,
+      "description": "Defines the list of your external data sources for your API mesh"
+    },
+    "transforms": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Transform"
+      },
+      "additionalItems": false,
+      "description": "Transform to apply to the unified mesh schema"
+    },
+    "additionalResolvers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false,
+      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
+    },
+    "cache": {
+      "description": "Backend cache (Any of: InMemoryLRU, Redis)",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/InMemoryLRU"
+        },
+        {
+          "$ref": "#/definitions/Redis"
+        }
+      ]
+    },
+    "merger": {
+      "type": "string",
+      "description": "Merge method"
+    }
+  },
+  "additionalProperties": false
+}
