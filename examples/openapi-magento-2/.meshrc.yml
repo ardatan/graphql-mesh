@@ -1,6 +1,0 @@
-sources:
-  - name: Magento 2
-    handler:
-      openapi:
-        source: http://magento2demo.firebearstudio.com/rest/all/schema
-        skipSchemaValidation: true
