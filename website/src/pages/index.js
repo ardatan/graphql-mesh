@@ -72,10 +72,7 @@ function Home() {
         />
         <div className={styles.buttons}>
           <Button>
-            <Link to={'#live-demo'}>Try It Out Live</Link>
-          </Button>
-          <Button>
-            <Link to={`/docs/getting-started/introduction`}>View Docs</Link>
+            <Link to={`/docs/getting-started/introduction`}>Get Started</Link>
           </Button>
         </div>
       </header>
