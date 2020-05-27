@@ -2617,10 +2617,10 @@
     "@types/mongodb" "*"
     "@types/node" "*"
 
-"@types/mysql@2.15.12":
-  version "2.15.12"
-  resolved "https://registry.yarnpkg.com/@types/mysql/-/mysql-2.15.12.tgz#93c18b7941286a4dd850b5838eea486c570ec498"
-  integrity sha512-LZAiEBtuDhvS4nb6FcRX9oVYYds/JIuE3yjidu1cmMI/OvN10SP3OuszRqL1LDF3AJKw0gpEJ4wrkZuEynxMMw==
+"@types/mysql@2.15.13":
+  version "2.15.13"
+  resolved "https://registry.yarnpkg.com/@types/mysql/-/mysql-2.15.13.tgz#153dc2e2f8dffd39f7bba556c2679f14bdbecde1"
+  integrity sha512-9hlUjghm0EeLndks56bH6NDcA52ozGcLXr8etlJVuoYXHa2M+neR2XpGekrulln5LsZg8ZRp8/Z0qKGb9Mpjbw==
   dependencies:
     "@types/node" "*"
 
