@@ -4,13 +4,13 @@ import { loadSchema } from '@graphql-tools/load';
 import { UrlLoader } from '@graphql-tools/url-loader';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
-  async getMeshSource({ config, hooks, cache }) {
+  async getMeshSource({ config, cache }) {
     const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
       fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
     const schema = await loadSchema(config.endpoint, {
       loaders: [new UrlLoader()],
       fetch,
-      headers: config.headers,
+      ...config,
     });
 
     return {
