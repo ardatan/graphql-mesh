@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@apollo/federation@0.16.0", "@apollo/federation@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.16.0.tgz#ce20c52d2f0368eb086465a9098ba2fa8038bfe9"
-  integrity sha512-+UA9QQNA4q896OOmyFHhKTf7iOIFvjL+h/I7ozRkA+Ayv1368pXtd3zyeKrXtUKD21a1vtEkEjCUX9aDGR8cqg==
+"@apollo/federation@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.16.1.tgz#616716aedc750c3a9e93499df519d5cda58d8637"
+  integrity sha512-kjUbO2Zeus2QCxCHkSMKsLsKtMxIfltbZqFr6cp7U1nEFny3QTFSyhTDiFkKKBqJPdMW6V5NEsiQt5t9kwVK6A==
   dependencies:
     apollo-graphql "^0.4.0"
-    apollo-server-env "^2.4.4-alpha.0"
+    apollo-server-env "^2.4.4"
     core-js "^3.4.0"
     lodash.xorby "^4.7.0"
 
@@ -19,6 +19,16 @@
   dependencies:
     apollo-graphql "^0.4.0"
     apollo-server-env "^2.4.3"
+    core-js "^3.4.0"
+    lodash.xorby "^4.7.0"
+
+"@apollo/federation@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.16.0.tgz#ce20c52d2f0368eb086465a9098ba2fa8038bfe9"
+  integrity sha512-+UA9QQNA4q896OOmyFHhKTf7iOIFvjL+h/I7ozRkA+Ayv1368pXtd3zyeKrXtUKD21a1vtEkEjCUX9aDGR8cqg==
+  dependencies:
+    apollo-graphql "^0.4.0"
+    apollo-server-env "^2.4.4-alpha.0"
     core-js "^3.4.0"
     lodash.xorby "^4.7.0"
 
@@ -1161,6 +1171,14 @@
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-0.16.0.tgz#47a329ec89aa9ecd065fd28b47bb1f477bb4354c"
   integrity sha512-5Eio0QL991VQUkK2MUqHbH3/pqe4SGNYAT8hMKxNBiESPEkRtdwUwN+YTd4uRwIFl7+I8MTcRdwmoJwz/G6YNA==
+  dependencies:
+    "@types/lodash" "^4.14.136"
+    lodash "^4.17.15"
+
+"@creditkarma/thrift-server-core@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-0.16.1.tgz#90ac060878b84214816e7b7b72dcf98d5429b735"
+  integrity sha512-rbzmS46vH6oth1I7zcSLcTslRlzolAiD9TSCNoxZHdnwfM65QJQIVCJ8Tz3l/78fzZAiZ71+9wZAuf61jl0Wzg==
   dependencies:
     "@types/lodash" "^4.14.136"
     lodash "^4.17.15"
@@ -3535,6 +3553,14 @@ apollo-server-env@^2.4.3:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/apollo-server-env/-/apollo-server-env-2.4.3.tgz#9bceedaae07eafb96becdfd478f8d92617d825d2"
   integrity sha512-23R5Xo9OMYX0iyTu2/qT0EUb+AULCBriA9w8HDfMoChB8M+lFClqUkYtaTTHDfp6eoARLW8kDBhPOBavsvKAjA==
+  dependencies:
+    node-fetch "^2.1.2"
+    util.promisify "^1.0.0"
+
+apollo-server-env@^2.4.4:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/apollo-server-env/-/apollo-server-env-2.4.4.tgz#12d2d0896dcb184478cba066c7a683ab18689ca1"
+  integrity sha512-c2oddDS3lwAl6QNCIKCLEzt/dF9M3/tjjYRVdxOVN20TidybI7rAbnT4QOzf4tORnGXtiznEAvr/Kc9ahhKADg==
   dependencies:
     node-fetch "^2.1.2"
     util.promisify "^1.0.0"

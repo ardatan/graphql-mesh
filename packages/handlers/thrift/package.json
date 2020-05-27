@@ -21,7 +21,7 @@
   "dependencies": {
     "@creditkarma/thrift-client": "0.16.0",
     "@creditkarma/thrift-parser": "1.2.0",
-    "@creditkarma/thrift-server-core": "0.16.0",
+    "@creditkarma/thrift-server-core": "0.16.1",
     "@graphql-mesh/types": "0.1.18",
     "@graphql-mesh/utils": "0.1.18",
     "aggregate-error": "3.0.1",
