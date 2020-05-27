@@ -4,7 +4,7 @@ title: Filter Schema Transform
 sidebar_label: Filter Schema
 ---
 
-The `filterSchema` transform allows you to filter fields in specific tyypes.
+The `filterSchema` transform allows you to filter fields in specific types.
 
 ```
 yarn add @graphql-mesh/transform-filter-schema
