@@ -23,9 +23,11 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v1
         with:
-          # Setup .npmrc file to publish to npm
           node-version: '14.x'
-          registry-url: 'https://registry.npmjs.org/:_authToken=${{ secrets.NODE_AUTH_TOKEN }}'
+      - name: Setup NPM credentials
+        run: echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
       - name: Get yarn cache
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -44,8 +46,6 @@ jobs:
         run: npm run release
         env:
           RELEASE_VERSION: ${{ github.event.release.tag_name }}
-      - name: Clean NPM Credentials
-        run: rm .npmrc
       - name: Commit updated package.json files
         run: |
           git add .
