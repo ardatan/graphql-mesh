@@ -1152,10 +1152,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@creditkarma/thrift-client@0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-client/-/thrift-client-0.16.0.tgz#1bd316409de0ccdd820c1600003396f0b946a275"
-  integrity sha512-Pk7CGcFmqKjsA59Lf1bUXJYgu1oTAZlHN7P4c4YUBWJMfvO3+dsrcJsvQ0SKxkD4twRpQtInNWzodrvjelxixg==
+"@creditkarma/thrift-client@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-client/-/thrift-client-0.16.1.tgz#4d4cb01e7b74c8617396a99ab94e448653a6ea89"
+  integrity sha512-oTlz6dNGj0nQjPyTB+eLwMDE2DAsbsfgz4xmPt7yf8tMd4lazFY7eVzEK0slh6zj9KYD/wuS21wz3Bmofp3pQw==
   dependencies:
     "@types/generic-pool" "^3.1.4"
     "@types/request" "^2.48.1"
