@@ -19,7 +19,7 @@ transforms:
   - filterSchema:
     - Query.!admins # <-- This will remove field `admins` from `Query` type
     - Mutation.!{addUser, removeUser} # <-- This will remove fields `addUser` and `removeUser` from `Mutation` type
-    - User.{id,username,name,age} # <-- This will remove fields except `id`, `username`, `name` and `age`
+    - User.!{id,username,name,age} # <-- This will remove fields except `id`, `username`, `name` and `age`
 ```
 
 Let's assume you have the following schema,
