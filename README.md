@@ -52,9 +52,9 @@ To get started with the basics, install the following:
 $ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
 ```
 
-The, you need to install a Mesh handler, according to your API needs. You can see the list of all available built-in handlers in this README, under the `Supported APIs` section.
+Then, you need to install a Mesh handler, according to your API needs. You can see the list of all available built-in handlers in this README, under the `Supported APIs` section.
 
-For example, if you wish to use OpenAPI handler, install the handler that matches you needs:
+For example, if you wish to use OpenAPI handler, install the handler that matches your needs:
 
 ```
 $ yarn add graphql @graphql-mesh/openapi
