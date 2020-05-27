@@ -116,14 +116,38 @@
       "type": "object",
       "title": "GraphQLHandler",
       "properties": {
+        "endpoint": {
+          "type": "string",
+          "description": "A url to your remote GraphQL endpoint"
+        },
         "headers": {
           "type": "object",
           "properties": {},
           "description": "JSON object representing the Headers to add to the runtime of the API calls"
         },
-        "endpoint": {
+        "useGETForQueries": {
+          "type": "boolean",
+          "description": "Use HTTP GET for Query operations"
+        },
+        "method": {
           "type": "string",
-          "description": "A url to your remote GraphQL endpoint"
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
+        },
+        "enableSubscriptions": {
+          "type": "boolean",
+          "description": "Enable GraphQL Subscriptions using WebSocket"
+        },
+        "customFetch": {
+          "type": "string",
+          "description": "Path to a custom W3 Compatible Fetch Implementation"
+        },
+        "webSocketImpl": {
+          "type": "string",
+          "description": "Path to a custom W3 Compatible WebSocket Implementation"
         }
       },
       "required": [

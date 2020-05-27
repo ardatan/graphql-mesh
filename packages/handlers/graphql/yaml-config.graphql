@@ -7,11 +7,36 @@ extend type Handler {
 
 type GraphQLHandler @md {
   """
+  A url to your remote GraphQL endpoint
+  """
+  endpoint: String!
+  """
   JSON object representing the Headers to add to the runtime of the API calls
   """
   headers: JSON
   """
-  A url to your remote GraphQL endpoint
+  Use HTTP GET for Query operations
   """
-  endpoint: String!
+  useGETForQueries: Boolean
+  """
+  HTTP method used for GraphQL operations
+  """
+  method: GraphQLHandlerHTTPMethod
+  """
+  Enable GraphQL Subscriptions using WebSocket
+  """
+  enableSubscriptions: Boolean
+  """
+  Path to a custom W3 Compatible Fetch Implementation
+  """
+  customFetch: String
+  """
+  Path to a custom W3 Compatible WebSocket Implementation
+  """
+  webSocketImpl: String
+}
+
+enum GraphQLHandlerHTTPMethod {
+  GET
+  POST
 }
