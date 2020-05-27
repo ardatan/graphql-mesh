@@ -10,13 +10,10 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@apollo/federation": "*",
     "graphql": "*"
   },
-  "devDependencies": {
-    "@apollo/federation": "0.16.0"
-  },
   "dependencies": {
+    "@apollo/federation": "0.16.1",
     "@graphql-mesh/types": "0.1.18",
     "@graphql-mesh/utils": "0.1.18",
     "graphql-transform-federation": "2.1.0"
