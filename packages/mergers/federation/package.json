@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.18",
-    "@apollo/gateway": "0.16.0",
+    "@apollo/gateway": "0.16.2",
     "fetchache": "0.0.3",
     "@graphql-tools/wrap": "6.0.3"
   },
