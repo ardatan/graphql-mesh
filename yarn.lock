@@ -7420,10 +7420,10 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-form-urlencoded@4.1.3:
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-4.1.3.tgz#c32e01da4dfc60d136157e0a5513739b9bd24d31"
-  integrity sha512-z0YJtPuq0BSOrErlpj+o1KHTRaOH6LN16043ZVK2Wk5uUGpX308PJ5ZJDtU++ndoZkzASHVclUTD2mb1jHzqlA==
+form-urlencoded@4.1.4:
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-4.1.4.tgz#829365fb764a097aae201d6c9b18ade1f0e77b51"
+  integrity sha512-R7Vytos0gMYuPQTMwnNzvK9PBItNV+Qkm/pvghEZI3j2kMrzZmJlczAgHFmt12VV+IRYQXgTlSGP1PKAsMCIUA==
 
 format-util@^1.0.3:
   version "1.0.5"
