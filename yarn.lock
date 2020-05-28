@@ -1175,6 +1175,14 @@
     "@types/lodash" "^4.14.136"
     lodash "^4.17.15"
 
+"@creditkarma/thrift-server-core@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-0.16.1.tgz#90ac060878b84214816e7b7b72dcf98d5429b735"
+  integrity sha512-rbzmS46vH6oth1I7zcSLcTslRlzolAiD9TSCNoxZHdnwfM65QJQIVCJ8Tz3l/78fzZAiZ71+9wZAuf61jl0Wzg==
+  dependencies:
+    "@types/lodash" "^4.14.136"
+    lodash "^4.17.15"
+
 "@creditkarma/thrift-server-express@0.16.0":
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-express/-/thrift-server-express-0.16.0.tgz#c01c3dbd9e1808bf610cd3353473d3139ff1cf76"
