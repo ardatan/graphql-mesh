@@ -185,6 +185,10 @@
         "requestTimeout": {
           "type": "integer",
           "description": "Request timeout in milliseconds\nDefault: 200000"
+        },
+        "credentialsFunction": {
+          "type": "string",
+          "description": "The exported function to call to set up grpc authentication"
         }
       },
       "required": [

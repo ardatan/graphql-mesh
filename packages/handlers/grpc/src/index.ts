@@ -3,12 +3,12 @@ import { accessSync, constants } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { AnyNestedObject, Root, IParseOptions } from 'protobufjs';
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join, resolve } from 'path';
 import { camelCase } from 'camel-case';
 import { pascalCase } from 'pascal-case';
 import { SchemaComposer } from 'graphql-compose';
 import { withCancel } from '@graphql-mesh/utils';
-import { loadPackageDefinition, credentials } from '@grpc/grpc-js';
+import { credentials, ChannelCredentials, CallCredentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
 import { get } from 'lodash';
 import { Readable } from 'stream';
@@ -31,6 +31,8 @@ interface GrpcResponseStream<T = any> extends Readable {
   [Symbol.asyncIterator](): AsyncIterableIterator<T>;
   cancel(): void;
 }
+
+type CredentialsFunction = () => ChannelCredentials | CallCredentials;
 
 function addIncludePathResolver(root: Root, includePaths: string[]) {
   const originalResolvePath = root.resolvePath;
@@ -55,11 +57,42 @@ function addIncludePathResolver(root: Root, includePaths: string[]) {
   };
 }
 
+/**
+ * Resolve the credentials function module path. Load and return the function
+ * if it can be found. Otherwise log a warning and set the credentials function to
+ * `createInsecure()`
+ * @param filePath the relative path to the credentials function module.
+ */
+async function resolveCredentialsFunction(filePath: string): Promise<CredentialsFunction> {
+  const exported = await import(resolve(process.cwd(), filePath));
+  let credentialsFunction = null;
+  if (exported.default) {
+    if (exported.default.credentialsFunction) {
+      credentialsFunction = exported.default.credentialsFunction;
+    } else if (typeof exported.default === 'function') {
+      credentialsFunction = exported.default;
+    }
+  } else if (exported.credentialsFunction) {
+    credentialsFunction = exported.credentialsFunction;
+  }
+
+  if (!credentialsFunction) {
+    console.warn(`Unable to load authentication function from file: ${filePath}`);
+    return credentials.createInsecure();
+  }
+
+  return credentialsFunction;
+}
+
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
   async getMeshSource({ config }) {
     if (!config) {
       throw new Error('Config not specified!');
     }
+
+    const creds = config.credentialsFunction
+      ? (await resolveCredentialsFunction(config.credentialsFunction))()
+      : credentials.createInsecure();
 
     config.requestTimeout = config.requestTimeout || 200000;
 
@@ -162,7 +195,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         );
       } else if ('methods' in nested) {
         const ServiceClient: any = get(grpcObject, currentPath + '.' + name);
-        const client = new ServiceClient(config.endpoint, credentials.createInsecure());
+        const client = new ServiceClient(config.endpoint, creds);
         const methods = nested.methods;
         await Promise.all(
           Object.keys(methods).map(async methodName => {
