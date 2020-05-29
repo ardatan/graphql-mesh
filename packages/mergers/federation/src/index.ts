@@ -2,6 +2,7 @@ import { KeyValueCache, Hooks, MergerFn, RawSourceOutput } from '@graphql-mesh/t
 import { GraphQLSchema, print, graphql } from 'graphql';
 import { makeRemoteExecutableSchema } from '@graphql-tools/wrap';
 import { ApolloGateway } from '@apollo/gateway';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const mergeUsingFederation: MergerFn = async function ({
   rawSources,
@@ -61,6 +62,8 @@ const mergeUsingFederation: MergerFn = async function ({
         metrics: {},
         source: documentStr,
         operation,
+        schema,
+        schemaHash: printSchemaWithDirectives(schema) as any,
       });
     },
   });
