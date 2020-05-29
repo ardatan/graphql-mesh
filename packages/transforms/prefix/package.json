@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.1.18",
-    "@graphql-tools/wrap": "6.0.3",
-    "@graphql-tools/utils": "6.0.3"
+    "@graphql-tools/wrap": "6.0.4",
+    "@graphql-tools/utils": "6.0.4"
   },
   "publishConfig": {
     "access": "public",

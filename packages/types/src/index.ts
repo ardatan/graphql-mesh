@@ -68,7 +68,6 @@ export type RawSourceOutput = {
   name: string;
   // TOOD: Remove globalContextBuilder and use hooks for that
   globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
-  sdk: Record<string, any>;
   schema: GraphQLSchema;
   context: Record<string, any>;
   contextVariables: (keyof any)[];

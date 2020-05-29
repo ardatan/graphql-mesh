@@ -8,7 +8,7 @@ import graphqlFields from 'graphql-fields';
 import { camelCase } from 'camel-case';
 import { GraphQLBigInt, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 
-export const SCALARS = {
+const SCALARS = {
   bigint: 'BigInt',
   binary: 'String',
   bit: 'Int',

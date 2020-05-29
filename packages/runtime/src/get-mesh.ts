@@ -1,18 +1,13 @@
 import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
 import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, Requester } from './types';
-import {
-  extractSdkFromResolvers,
-  applySchemaTransformations,
-  applyOutputTransformations,
-  ensureDocumentNode,
-} from './utils';
+import { applySchemaTransformations, applyOutputTransformations, ensureDocumentNode } from './utils';
 import { Hooks, KeyValueCache, RawSourceOutput } from '@graphql-mesh/types';
 
 import { addResolversWithReferenceResolver } from './add-resolvers-with-reference-resolver';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
 import { EventEmitter } from 'events';
-import { MESH_CONTEXT_SYMBOL } from './constants';
+import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -53,11 +48,6 @@ export async function getMesh(
       rawSources.push({
         name: apiSource.name,
         globalContextBuilder: source.contextBuilder || null,
-        sdk: await extractSdkFromResolvers(
-          apiSchema,
-          [apiSchema.getQueryType(), apiSchema.getMutationType(), apiSchema.getSubscriptionType()],
-          source.contextBuilder
-        ),
         schema: apiSchema,
         context: apiSource.context || {},
         contextVariables: source.contextVariables || [],
@@ -98,7 +88,7 @@ export async function getMesh(
     },
   });
 
-  async function buildMeshContext(initialContextValue?: any): Promise<Record<string, any>> {
+  async function buildMeshContext(initialContextValue?: any) {
     const context: Record<string, any> = {
       ...(initialContextValue || {}),
       [MESH_CONTEXT_SYMBOL]: true,
@@ -128,13 +118,9 @@ export async function getMesh(
           });
         }
 
-        if (handlerRes.sdk) {
-          if (typeof handlerRes.sdk === 'function') {
-            context[apiName].api = handlerRes.sdk(context);
-          } else if (typeof handlerRes.sdk === 'object') {
-            context[apiName].api = handlerRes.sdk;
-          }
-        }
+        context[apiName] = context[apiName] || {};
+        context[apiName].schema = handlerRes.schema;
+        context[apiName][MESH_API_CONTEXT_SYMBOL] = true;
       })
     );
 
@@ -181,13 +167,11 @@ export async function getMesh(
     sdkRequester: localRequester,
     cache,
     hooks,
-    destroy: () => {
-      hooks.emit('destroy');
-    },
+    destroy: () => hooks.emit('destroy'),
   };
 }
 
-export class GraphQLMeshSdkError<Data = {}, Variables = {}> extends Error {
+export class GraphQLMeshSdkError<Data = any, Variables = any> extends Error {
   constructor(
     public errors: ReadonlyArray<GraphQLError>,
     public document: DocumentNode,
