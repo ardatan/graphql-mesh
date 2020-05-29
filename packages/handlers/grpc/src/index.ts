@@ -3,12 +3,12 @@ import { accessSync, constants } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { AnyNestedObject, Root, IParseOptions } from 'protobufjs';
-import { isAbsolute, join, resolve } from 'path';
+import { isAbsolute, join } from 'path';
 import { camelCase } from 'camel-case';
 import { pascalCase } from 'pascal-case';
 import { SchemaComposer } from 'graphql-compose';
-import { withCancel } from '@graphql-mesh/utils';
-import { credentials, ChannelCredentials, CallCredentials, loadPackageDefinition } from '@grpc/grpc-js';
+import { withCancel, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
 import { get } from 'lodash';
 import { Readable } from 'stream';
@@ -31,8 +31,6 @@ interface GrpcResponseStream<T = any> extends Readable {
   [Symbol.asyncIterator](): AsyncIterableIterator<T>;
   cancel(): void;
 }
-
-type CredentialsFunction = () => ChannelCredentials | CallCredentials;
 
 function addIncludePathResolver(root: Root, includePaths: string[]) {
   const originalResolvePath = root.resolvePath;
@@ -57,42 +55,33 @@ function addIncludePathResolver(root: Root, includePaths: string[]) {
   };
 }
 
-/**
- * Resolve the credentials function module path. Load and return the function
- * if it can be found. Otherwise log a warning and set the credentials function to
- * `createInsecure()`
- * @param filePath the relative path to the credentials function module.
- */
-async function resolveCredentialsFunction(filePath: string): Promise<CredentialsFunction> {
-  const exported = await import(resolve(process.cwd(), filePath));
-  let credentialsFunction = null;
-  if (exported.default) {
-    if (exported.default.credentialsFunction) {
-      credentialsFunction = exported.default.credentialsFunction;
-    } else if (typeof exported.default === 'function') {
-      credentialsFunction = exported.default;
-    }
-  } else if (exported.credentialsFunction) {
-    credentialsFunction = exported.credentialsFunction;
-  }
-
-  if (!credentialsFunction) {
-    console.warn(`Unable to load authentication function from file: ${filePath}`);
-    return credentials.createInsecure();
-  }
-
-  return credentialsFunction;
-}
-
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
-  async getMeshSource({ config }) {
+  async getMeshSource({ config, cache }) {
     if (!config) {
       throw new Error('Config not specified!');
     }
 
-    const creds = config.credentialsFunction
-      ? (await resolveCredentialsFunction(config.credentialsFunction))()
-      : credentials.createInsecure();
+    let creds: any;
+    if (config.credentialsSsl) {
+      const rootCA =
+        config.credentialsSsl.rootCA &&
+        (await readFileOrUrlWithCache<string>(config.credentialsSsl.rootCA, cache, {
+          allowUnknownExtensions: true,
+        }).then(Buffer.from));
+      const privateKey =
+        config.credentialsSsl.privateKey &&
+        (await readFileOrUrlWithCache<string>(config.credentialsSsl.privateKey, cache, {
+          allowUnknownExtensions: true,
+        }).then(Buffer.from));
+      const certChain =
+        config.credentialsSsl.certChain &&
+        (await readFileOrUrlWithCache<string>(config.credentialsSsl.certChain, cache, {
+          allowUnknownExtensions: true,
+        }).then(Buffer.from));
+      creds = credentials.createSsl(rootCA, privateKey, certChain);
+    } else {
+      creds = credentials.createInsecure();
+    }
 
     config.requestTimeout = config.requestTimeout || 200000;
 
@@ -219,13 +208,15 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
             if (method.responseStream) {
               const clientMethod: Function = (input: any) => {
                 const responseStream = client[methodName](input) as GrpcResponseStream;
-                return withCancel(responseStream, () => responseStream.cancel());
+                const test = withCancel(responseStream, () => responseStream.cancel());
+                return test;
               };
               schemaComposer.Subscription.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
                   subscribe: (__, args) => clientMethod(args.input),
-                  resolve: (payload: any) => payload,
+                  // TODO: Bug related to graphql-tools
+                  resolve: (payload: any) => payload[rootFieldName] || payload,
                 },
               });
             } else {

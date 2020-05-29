@@ -81,8 +81,8 @@ type GrpcHandler @md {
   Default: 200000
   """
   requestTimeout: Int
-  """The exported function to call to set up grpc authentication"""
-  credentialsFunction: String
+  """SSL Credentials"""
+  credentialsSsl: GrpcCredentialsSsl
 }
 type LoadOptions {
   includeDirs: [String]
@@ -92,6 +92,11 @@ type ProtoFilePath @md {
   load: LoadOptions
 }
 union ProtoFilePathOrString = ProtoFilePath | String
+type GrpcCredentialsSsl {
+  rootCA: String
+  certChain: String
+  privateKey: String
+}
 type JsonSchemaHandler @md {
   baseUrl: String!
   operationHeaders: JSON

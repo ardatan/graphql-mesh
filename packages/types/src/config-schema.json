@@ -186,9 +186,9 @@
           "type": "integer",
           "description": "Request timeout in milliseconds\nDefault: 200000"
         },
-        "credentialsFunction": {
-          "type": "string",
-          "description": "The exported function to call to set up grpc authentication"
+        "credentialsSsl": {
+          "$ref": "#/definitions/GrpcCredentialsSsl",
+          "description": "SSL Credentials"
         }
       },
       "required": [
@@ -225,6 +225,22 @@
       "required": [
         "file"
       ]
+    },
+    "GrpcCredentialsSsl": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GrpcCredentialsSsl",
+      "properties": {
+        "rootCA": {
+          "type": "string"
+        },
+        "certChain": {
+          "type": "string"
+        },
+        "privateKey": {
+          "type": "string"
+        }
+      }
     },
     "JsonSchemaHandler": {
       "additionalProperties": false,

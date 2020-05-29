@@ -3,7 +3,10 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
-        credentialsFunction: ./auth.js
+        credentialsSsl:
+          rootCA: ./certs/ca.crt
+          certChain: ./certs/server.crt
+          privateKey: ./certs/server.key
         protoFilePath:
           file: io/xtech/service.proto
           load:

@@ -30,9 +30,9 @@ type GrpcHandler @md {
   """
   requestTimeout: Int
   """
-  The exported function to call to set up grpc authentication
+  SSL Credentials
   """
-  credentialsFunction: String
+  credentialsSsl: GrpcCredentialsSsl
 }
 
 type LoadOptions {
@@ -45,3 +45,9 @@ type ProtoFilePath @md {
 }
 
 union ProtoFilePathOrString = ProtoFilePath | String
+
+type GrpcCredentialsSsl {
+  rootCA: String
+  certChain: String
+  privateKey: String
+}
