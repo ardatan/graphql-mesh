@@ -3,6 +3,7 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
+        credentialsFunction: ./auth.js
         protoFilePath:
           file: io/xtech/service.proto
           load:

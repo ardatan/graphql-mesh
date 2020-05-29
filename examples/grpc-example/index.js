@@ -1,3 +1,4 @@
+const { readFileSync } = require('fs');
 const { Server, loadPackageDefinition, ServerCredentials } = require('@grpc/grpc-js');
 const { load } = require('@grpc/proto-loader');
 
@@ -7,7 +8,7 @@ const Genre = {
   UNSPECIFIED: 0,
   ACTION: 1,
   DRAMA: 2,
-}
+};
 
 const Movies = [
   {
@@ -60,7 +61,8 @@ async function startServer() {
       });
       const moviesResult = { result };
       callback(null, moviesResult);
-    },searchMoviesByCast(call) {
+    },
+    searchMoviesByCast(call) {
       console.log('call started');
       const input = call.request;
       let i = 1;
@@ -83,13 +85,20 @@ async function startServer() {
           return interval;
         }
       });
+    },
+  });
+  const rootCA = readFileSync('./certs/ca.crt');
+  const certChain = readFileSync('./certs/server.crt');
+  const privateKey = readFileSync('./certs/server.key');
+  server.bindAsync(
+    '0.0.0.0:50051',
+    ServerCredentials.createSsl(rootCA, [{ private_key: privateKey, cert_chain: certChain }]),
+    () => {
+      server.start();
+
+      console.log('Server started, listening: 0.0.0.0:50051');
     }
-  });
-  server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), () => {
-    server.start();
-  
-    console.log('Server started, listening: 0.0.0.0:50051');
-  });
+  );
 }
 
 startServer().catch(console.error);

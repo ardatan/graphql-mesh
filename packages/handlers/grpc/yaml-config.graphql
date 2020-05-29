@@ -29,6 +29,10 @@ type GrpcHandler @md {
   Default: 200000
   """
   requestTimeout: Int
+  """
+  The exported function to call to set up grpc authentication
+  """
+  credentialsFunction: String
 }
 
 type LoadOptions {
