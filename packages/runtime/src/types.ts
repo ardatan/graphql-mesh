@@ -1,6 +1,7 @@
 import { MeshHandlerLibrary, YamlConfig, TransformFn, KeyValueCache, Hooks, MergerFn } from '@graphql-mesh/types';
-import { DocumentNode } from 'graphql';
+import { DocumentNode, GraphQLSchema } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
+import { MESH_CONTEXT_SYMBOL } from './constants';
 
 type ValuesOf<T> = T[keyof T];
 
@@ -34,4 +35,15 @@ export type ExecuteMeshFn<TData = any, TVariables = any> = (
   variables: TVariables
 ) => Promise<TData | null | undefined>;
 
-export type Requester<C = {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
+export type Requester<C = any> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
+
+export type APIContext = {
+  api: Record<string, Promise<any>>;
+  config: any;
+  schema: GraphQLSchema;
+};
+
+export type MeshContext = {
+  [MESH_CONTEXT_SYMBOL]: true;
+  [key: string]: APIContext;
+};

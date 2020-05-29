@@ -1,11 +1,10 @@
 import { ResolvedTransform, GraphQLOperation } from './types';
-import { GraphQLSchema, GraphQLObjectType, GraphQLResolveInfo, DocumentNode, parse, FieldNode, Kind } from 'graphql';
-import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, Maybe, MergerFn } from '@graphql-mesh/types';
+import { GraphQLSchema, DocumentNode, parse } from 'graphql';
+import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
-import { buildOperationNodeForField, IResolvers } from '@graphql-tools/utils';
+import { IResolvers } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
-import { MESH_CONTEXT_SYMBOL } from './constants';
 
 export async function applySchemaTransformations(
   name: string,
@@ -124,76 +123,6 @@ export async function resolveAdditionalResolvers(baseDir: string, additionalReso
       ...t,
     };
   }, {} as IResolvers);
-}
-
-export async function extractSdkFromResolvers(
-  schema: GraphQLSchema,
-  types: Maybe<GraphQLObjectType>[],
-  contextBuilder?: (initialContextValue: any) => Promise<any>
-): Promise<Record<string, (...args: any[]) => any>> {
-  const sdk: Record<string, (...args: any[]) => any> = {};
-
-  await Promise.all(
-    types.map(async type => {
-      if (type) {
-        const fields = type.getFields();
-
-        const fieldNames = Object.keys(fields);
-        const operationDepthLimit = fieldNames.some(fieldName => fieldName.endsWith('nodes')) ? 2 : 1;
-
-        await Promise.all(
-          fieldNames.map(async fieldName => {
-            const field = fields[fieldName];
-            const resolveFn = field.resolve;
-
-            const fn: (...args: any[]) => any = resolveFn
-              ? (args: any, context: any, info: any) => resolveFn(null, args, context, info)
-              : () => null;
-
-            sdk[fieldName] = async (args: any, context: any, info: GraphQLResolveInfo) => {
-              if (!info) {
-                const operation = buildOperationNodeForField({
-                  schema,
-                  kind: 'query',
-                  field: fieldName,
-                  // If return field is Relay Connection, go into deeper one more level.
-                  depthLimit: operationDepthLimit,
-                  argNames: Object.keys(args),
-                });
-
-                info = {
-                  fieldName: field.name,
-                  fieldNodes: operation.selectionSet.selections.filter(s => s.kind === Kind.FIELD) as FieldNode[],
-                  returnType: field.type,
-                  parentType: type,
-                  schema,
-                  fragments: {},
-                  rootValue: null,
-                  operation,
-                  variableValues: args,
-                  path: {
-                    prev: undefined,
-                    key: field.name,
-                  },
-                } as any;
-              }
-
-              if (!(context && context[MESH_CONTEXT_SYMBOL])) {
-                context = {
-                  ...(contextBuilder && (await contextBuilder(context))),
-                  ...context,
-                };
-              }
-
-              return fn(args, context, info);
-            };
-          })
-        );
-      }
-    })
-  );
-
-  return sdk;
 }
 
 export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {

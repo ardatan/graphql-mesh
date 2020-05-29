@@ -53,20 +53,17 @@ function buildSignatureBasedOnRootFields(
   return Object.keys(fields).map(fieldName => {
     const field = fields[fieldName];
     const baseType = getBaseType(field.type);
-    const argsName =
-      field.args && field.args.length > 0 ? `${type.name}${codegenHelpers.convertName(field.name)}Args` : 'never';
-
-    return `  ${
-      field.name
-    }: (args: ${argsName}, context?: ${additionalContextIdentifier}, info?: GraphQLResolveInfo) => Promise<${codegenHelpers.getTypeToUse(
-      {
-        kind: Kind.NAMED_TYPE,
-        name: {
-          kind: Kind.NAME,
-          value: baseType.name,
-        },
-      }
-    )}>`;
+    const argsExists = field.args && field.args.length > 0;
+    const argsName = argsExists ? `${type.name}${codegenHelpers.convertName(field.name)}Args` : '{}';
+    return `  ${field.name}: (args${
+      argsExists ? '' : '?'
+    }: ${argsName}, projectionOptions?: ProjectionOptions) => Promise<${codegenHelpers.getTypeToUse({
+      kind: Kind.NAMED_TYPE,
+      name: {
+        kind: Kind.NAME,
+        value: baseType.name,
+      },
+    })}>`;
   });
 }
 
@@ -125,6 +122,28 @@ export function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: RawSou
       resolvers: tsResolversPlugin,
       contextSdk: {
         plugin: async () => {
+          const commonTypes = [
+            `export type SelectedFields = {
+  [fieldName: string]: SelectedFields;
+} | true;
+export type ProjectionOptions = {
+  /**
+  * If you don't provide custom selection, this is the depth of generated selection set by GraphQL Mesh
+  * default: 2
+  */
+  depth?: number;
+  /**
+  * Provide selection set in form of object similar to MongoDB's projection
+  * example: { foo: { bar: true }, baz: true }
+  */
+  fields?: SelectedFields;
+  /**
+  * Provide selection set in form of GraphQL SDL
+  * example: { foo bar baz }
+  */
+  selectionSet?: string;
+}`,
+          ];
           const sdkItems: string[] = [];
           const additionalContextItems: string[] = [];
           const contextItems: string[] = [];
@@ -158,7 +177,9 @@ export function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: RawSou
             .join(' & ')};`;
 
           return {
-            content: [...sdkItems, ...additionalContextItems, ...contextItems, contextType].join('\n\n'),
+            content: [...commonTypes, ...sdkItems, ...additionalContextItems, ...contextItems, contextType].join(
+              '\n\n'
+            ),
           };
         },
       },

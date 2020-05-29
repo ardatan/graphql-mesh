@@ -53,8 +53,10 @@ export async function graphqlMesh() {
       builder => {
         builder
           .option('operations', {
-            required: true,
             type: 'array',
+          })
+          .option('depth', {
+            type: 'number',
           })
           .option('output', {
             required: true,
@@ -66,7 +68,7 @@ export async function graphqlMesh() {
           ignoreAdditionalResolvers: true,
         });
         const { schema, destroy } = await getMesh(meshConfig);
-        const result = await generateSdk(schema, args.operations);
+        const result = await generateSdk(schema, args);
         const outFile = resolve(process.cwd(), args.output);
         const dirName = dirname(outFile);
         mkdirp.sync(dirName);
