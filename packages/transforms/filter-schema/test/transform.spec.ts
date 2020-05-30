@@ -7,8 +7,8 @@ import { Hooks } from '@graphql-mesh/types';
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
   const hooks = new EventEmitter() as Hooks;
-  it('should filter out fields', () => {
-    const schema = buildSchema(/* GraphQL */ `
+  it('should filter out fields', async () => {
+    let schema = buildSchema(/* GraphQL */ `
       type User {
         id: ID
         name: String
@@ -32,7 +32,7 @@ describe('filter', () => {
         admin: User
       }
     `);
-    filterSchemaTransform({
+    schema = await filterSchemaTransform({
       schema,
       config: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'],
       cache,
@@ -60,19 +60,30 @@ type Query {
     );
   });
 
-  it('should throw an error if fieldMap left empty', () => {
-    expect(() =>
-      filterSchemaTransform({
-        schema: buildSchema(/* GraphQL */ `
-          type Query {
-            foo: String
-            bar: String
-          }
-        `),
-        config: ['Query.baz'],
-        cache,
-        hooks,
-      })
-    ).toThrowError(/Query type is now empty! Please fix your filter definitions!/);
+  it('should remove type if all fields are filtered out', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type Query {
+        foo: String
+        bar: String
+      }
+      type Mutation {
+        baz: String
+        qux: String
+      }
+    `);
+
+    schema = await filterSchemaTransform({
+      schema,
+      config: ['Mutation.!*'],
+      cache,
+      hooks,
+    });
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type Query {
+  foo: String
+  bar: String
+}`.trim()
+    );
   });
 });

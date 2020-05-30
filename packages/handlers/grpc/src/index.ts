@@ -215,8 +215,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
                 [rootFieldName]: {
                   ...fieldConfig,
                   subscribe: (__, args) => clientMethod(args.input),
-                  // TODO: Bug related to graphql-tools
-                  resolve: (payload: any) => payload[rootFieldName] || payload,
+                  resolve: (payload: any) => payload,
                 },
               });
             } else {
