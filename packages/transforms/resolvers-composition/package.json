@@ -15,8 +15,8 @@
   "dependencies": {
     "@graphql-mesh/types": "0.1.18",
     "@graphql-mesh/utils": "0.1.18",
-    "@graphql-tools/resolvers-composition": "6.0.4",
-    "@graphql-tools/schema": "6.0.4"
+    "@graphql-tools/resolvers-composition": "6.0.5",
+    "@graphql-tools/schema": "6.0.5"
   },
   "publishConfig": {
     "access": "public",
