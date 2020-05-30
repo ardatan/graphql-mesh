@@ -19,7 +19,7 @@
     "@graphql-mesh/types": "0.1.18",
     "@graphql-mesh/utils": "0.1.18",
     "faker": "4.1.0",
-    "@graphql-tools/mock": "6.0.4"
+    "@graphql-tools/mock": "6.0.5"
   },
   "publishConfig": {
     "access": "public",
