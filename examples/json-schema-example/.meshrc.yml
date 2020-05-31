@@ -27,13 +27,6 @@ sources:
             requestSchema: ./json-schemas/user-input.json
             responseSchema: ./json-schemas/user.json
     transforms:
-      - extend: |
-          extend type User {
-            company: Company
-          }
-          extend type Company {
-            employers: [User]
-          }
       - mock:
           mocks:
             - apply: User.firstName
@@ -44,3 +37,10 @@ sources:
               faker: '{{name.jobTitle}}'
             - apply: Company.name
               faker: '{{company.companyName}}'
+additionalTypeDefs: |
+  extend type User {
+    company: Company
+  }
+  extend type Company {
+    employers: [User]
+  }

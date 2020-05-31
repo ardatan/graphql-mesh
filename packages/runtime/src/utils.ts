@@ -3,8 +3,10 @@ import { GraphQLSchema, DocumentNode, parse } from 'graphql';
 import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
-import { IResolvers } from '@graphql-tools/utils';
+import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
+import { loadTypedefs } from '@graphql-tools/load';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 
 export async function applySchemaTransformations(
   name: string,
@@ -89,6 +91,14 @@ export async function getHandler(name: string): Promise<MeshHandlerLibrary> {
   const handlerFn = await getPackage<MeshHandlerLibrary>(name, 'handler');
 
   return handlerFn;
+}
+
+export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeDefs: string) {
+  const sources = await loadTypedefs(additionalTypeDefs, {
+    cwd: baseDir,
+    loaders: [new GraphQLFileLoader()],
+  });
+  return sources.map(source => source.document || parse(source.rawSDL || printSchemaWithDirectives(source.schema)));
 }
 
 export async function resolveAdditionalResolvers(baseDir: string, additionalResolvers: string[]): Promise<IResolvers> {

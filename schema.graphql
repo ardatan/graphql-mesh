@@ -273,6 +273,8 @@ type Query {
   sources: [Source!]!
   """Transform to apply to the unified mesh schema"""
   transforms: [Transform]
+  """Additional type definitions, or type definitions overrides you wish to add to the schema mesh"""
+  additionalTypeDefs: String
   """Additional resolvers, or resolvers overrides you wish to add to the schema mesh"""
   additionalResolvers: [String]
   """Backend cache"""
@@ -294,8 +296,6 @@ type Source {
 type Transform {
   """Transformer to apply caching for your data sources"""
   cache: [CacheTransformConfig!]
-  """GraphQL SDL or file path contains SDL to be applied to the schema"""
-  extend: String
   federation: FederationTransform
   filterSchema: [String]
   """Mock configuration for your source"""

@@ -11,8 +11,7 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
-transforms:
-  - extend: |
+additionalTypeDefs: |
       extend type PopulatedPlaceSummary {
         dailyForecast: [Forecast]
         todayForecast: Forecast

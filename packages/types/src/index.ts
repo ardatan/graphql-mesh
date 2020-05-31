@@ -1,6 +1,6 @@
 import { IResolvers } from '@graphql-tools/utils';
 import { IEventEmitter } from 'tsee';
-import { GraphQLSchema, GraphQLResolveInfo } from 'graphql';
+import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 
@@ -62,6 +62,8 @@ export type MergerFn = (options: {
   rawSources: RawSourceOutput[];
   cache: KeyValueCache;
   hooks: Hooks;
+  typeDefs: DocumentNode[];
+  resolvers: IResolvers;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 
 export type RawSourceOutput = {

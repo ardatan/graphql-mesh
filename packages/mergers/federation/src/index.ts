@@ -1,17 +1,16 @@
-import { KeyValueCache, Hooks, MergerFn, RawSourceOutput } from '@graphql-mesh/types';
-import { GraphQLSchema, print, graphql } from 'graphql';
+import { MergerFn } from '@graphql-mesh/types';
+import { GraphQLSchema, print, graphql, extendSchema } from 'graphql';
 import { makeRemoteExecutableSchema } from '@graphql-tools/wrap';
 import { ApolloGateway } from '@apollo/gateway';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { addResolversToSchema } from '@graphql-tools/schema';
 
 const mergeUsingFederation: MergerFn = async function ({
   rawSources,
   cache,
   hooks,
-}: {
-  rawSources: RawSourceOutput[];
-  cache: KeyValueCache;
-  hooks: Hooks;
+  typeDefs,
+  resolvers,
 }): Promise<GraphQLSchema> {
   const serviceMap = new Map<string, GraphQLSchema>();
   const serviceList: { name: string; url: string }[] = [];
@@ -41,7 +40,7 @@ const mergeUsingFederation: MergerFn = async function ({
     },
   });
   const { schema, executor: gatewayExecutor } = await gateway.load();
-  const remoteSchema = makeRemoteExecutableSchema({
+  let remoteSchema = makeRemoteExecutableSchema({
     schema,
     executor: ({ document, info, variables, context }): any => {
       const documentStr = print(document);
@@ -68,6 +67,14 @@ const mergeUsingFederation: MergerFn = async function ({
     },
   });
   hooks.on('destroy', () => gateway.stop());
+  typeDefs.forEach(typeDef => {
+    remoteSchema = extendSchema(remoteSchema, typeDef);
+  });
+  remoteSchema = addResolversToSchema({
+    schema: remoteSchema,
+    resolvers,
+    updateResolversInPlace: true,
+  });
   return remoteSchema;
 };
 

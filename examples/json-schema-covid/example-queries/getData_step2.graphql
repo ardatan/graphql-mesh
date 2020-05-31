@@ -4,7 +4,6 @@ query getData_step2 {
     confirmed
     deaths
     recovered
-    countryRegion
     population {
       records {
         fields {

@@ -1460,6 +1460,10 @@
       "additionalItems": false,
       "description": "Transform to apply to the unified mesh schema"
     },
+    "additionalTypeDefs": {
+      "type": "string",
+      "description": "Additional type definitions, or type definitions overrides you wish to add to the schema mesh"
+    },
     "additionalResolvers": {
       "type": "array",
       "items": {

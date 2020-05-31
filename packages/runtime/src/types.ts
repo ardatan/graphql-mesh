@@ -13,6 +13,7 @@ export type ResolvedTransform = {
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
   transforms?: ResolvedTransform[];
+  additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers;
   cache?: KeyValueCache;
   hooks?: Hooks;
