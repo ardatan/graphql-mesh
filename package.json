@@ -1,7 +1,7 @@
 {
   "name": "graphql-mesh",
   "license": "MIT",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "private": true,
   "scripts": {
     "predeploy:website": "yarn generate-config-schema",
@@ -24,10 +24,10 @@
   },
   "devDependencies": {
     "@graphql-tools/schema": "6.0.5",
-    "@types/jest": "25.2.2",
+    "@types/jest": "25.2.3",
     "@types/node": "13.13.9",
     "jest": "26.0.1",
-    "ts-jest": "26.0.0",
+    "ts-jest": "26.1.0",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.9.3",
     "@typescript-eslint/eslint-plugin": "3.0.2",

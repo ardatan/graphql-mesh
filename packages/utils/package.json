@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.8",
-    "@graphql-mesh/utils": "0.1.18",
+    "@graphql-mesh/utils": "0.1.19",
     "date-fns": "2.14.0",
     "fetchache": "0.0.3",
     "is-url": "1.2.4",
