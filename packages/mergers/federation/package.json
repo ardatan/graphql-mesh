@@ -16,7 +16,9 @@
     "@graphql-mesh/types": "0.1.19",
     "@apollo/gateway": "0.16.2",
     "fetchache": "0.0.3",
-    "@graphql-tools/wrap": "6.0.5"
+    "@graphql-tools/wrap": "6.0.5",
+    "@graphql-tools/utils": "6.0.5",
+    "@graphql-tools/schema": "6.0.5"
   },
   "publishConfig": {
     "access": "public",
