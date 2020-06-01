@@ -1,8 +1,10 @@
 import { fetchache, KeyValueCache, Request } from 'fetchache';
 import isUrl from 'is-url';
 import { safeLoad as loadYaml } from 'js-yaml';
-import { promises as fs } from 'fs';
 import { isAbsolute, resolve } from 'path';
+import { stat, readFile } from 'fs-extra';
+
+export { isUrl };
 
 interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
@@ -27,14 +29,14 @@ export async function readFileWithCache<T>(
 ): Promise<T> {
   const actualPath = isAbsolute ? filePath : resolve(process.cwd(), filePath);
   const cachedObjStr = await cache.get(actualPath);
-  const stats = await fs.stat(actualPath);
+  const stats = await stat(actualPath);
   if (cachedObjStr) {
     const cachedObj = JSON.parse(cachedObjStr);
     if (stats.mtimeMs <= cachedObj.mtimeMs) {
       return cachedObj.result;
     }
   }
-  let result: any = await fs.readFile(actualPath, 'utf-8');
+  let result: any = await readFile(actualPath, 'utf-8');
   if (/json$/.test(filePath)) {
     result = JSON.parse(result);
   } else if (/yaml$/.test(filePath) || /yml$/.test(filePath)) {

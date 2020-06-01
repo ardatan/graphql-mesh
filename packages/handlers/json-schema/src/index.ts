@@ -1,17 +1,39 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { JSONSchemaVisitor } from './json-schema-visitor';
+import { JSONSchemaVisitor, getFileName } from './json-schema-visitor';
 import urlJoin from 'url-join';
-import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/utils';
+import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings, isUrl } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
-import { fetchache, Request } from 'fetchache';
+import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
-import { flatten } from 'lodash';
+import { pathExists, writeJSON } from 'fs-extra';
+import toJsonSchema from 'to-json-schema';
+import { dirname } from 'path';
 
-const getFileName = (filePath: string) => {
-  const arr = filePath.split('/').map(part => part.split('\\'));
-  return flatten(arr).pop().split('.').join('_');
-};
+async function generateJsonSchemaFromSample({
+  samplePath,
+  schemaPath,
+  cache,
+}: {
+  samplePath: string;
+  schemaPath?: string;
+  cache: KeyValueCache;
+}) {
+  if (!schemaPath || (!isUrl(schemaPath) && !(await pathExists(schemaPath)))) {
+    const sample = await readFileOrUrlWithCache(samplePath, cache);
+    const schema = toJsonSchema(sample, {
+      required: false,
+      objects: {
+        additionalProperties: false,
+      },
+    });
+    if (schemaPath) {
+      await writeJSON(schemaPath, schema);
+    }
+    return schema;
+  }
+  return null;
+}
 
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
   async getMeshSource({ config, cache }) {
@@ -23,21 +45,43 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
 
     await Promise.all(
       config.operations?.map(async operationConfig => {
-        const [requestSchema, responseSchema] = await Promise.all([
-          operationConfig.requestSchema
-            ? readFileOrUrlWithCache<JSONSchemaDefinition>(operationConfig.requestSchema, cache, {
+        let [requestSchema, responseSchema] = await Promise.all([
+          operationConfig.requestSample &&
+            generateJsonSchemaFromSample({
+              samplePath: operationConfig.requestSample,
+              schemaPath: operationConfig.requestSchema,
+              cache,
+            }),
+          operationConfig.responseSample &&
+            generateJsonSchemaFromSample({
+              samplePath: operationConfig.responseSample,
+              schemaPath: operationConfig.responseSchema,
+              cache,
+            }),
+        ]);
+        [requestSchema, responseSchema] = await Promise.all([
+          requestSchema ||
+            (operationConfig.requestSchema &&
+              readFileOrUrlWithCache(operationConfig.requestSchema, cache, {
                 headers: config.schemaHeaders,
-              })
-            : undefined,
-          readFileOrUrlWithCache<JSONSchemaDefinition>(operationConfig.responseSchema, cache, {
-            headers: config.schemaHeaders,
-          }),
+              })),
+          responseSchema ||
+            (operationConfig.responseSchema &&
+              readFileOrUrlWithCache(operationConfig.responseSchema, cache, {
+                headers: config.schemaHeaders,
+              })),
         ]);
         operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
         operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
         const destination = operationConfig.type;
-        const responseFileName = getFileName(operationConfig.responseSchema);
-        const type = outputSchemaVisitor.visit(responseSchema, 'Response', responseFileName);
+        const basedFileName = operationConfig.responseSchema || operationConfig.responseSample;
+        const responseFileName = getFileName(basedFileName);
+        const type = outputSchemaVisitor.visit(
+          responseSchema as JSONSchemaDefinition,
+          'Response',
+          responseFileName,
+          dirname(basedFileName)
+        );
 
         const { args, contextVariables: specificContextVariables } = parseInterpolationStrings([
           ...Object.values(config.operationHeaders || {}),
@@ -48,9 +92,15 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         contextVariables.push(...specificContextVariables);
 
         if (requestSchema) {
-          const requestFileName = getFileName(operationConfig.requestSchema);
+          const basedFileName = operationConfig.requestSchema || operationConfig.requestSample;
+          const requestFileName = getFileName(basedFileName);
           args.input = {
-            type: inputSchemaVisitor.visit(requestSchema, 'Request', requestFileName) as any,
+            type: inputSchemaVisitor.visit(
+              requestSchema as JSONSchemaDefinition,
+              'Request',
+              requestFileName,
+              isUrl(basedFileName) ? basedFileName : dirname(basedFileName)
+            ) as any,
           };
         }
 

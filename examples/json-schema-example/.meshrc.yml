@@ -18,26 +18,14 @@ sources:
             field: createUser
             path: /user
             method: PUT
-            requestSchema: ./json-schemas/user-input.json
+            requestSample: ./json-samples/user-input.json
             responseSchema: ./json-schemas/user.json
           - type: Mutation
             field: updateUser
             path: /user/{args.id}
             method: POST
-            requestSchema: ./json-schemas/user-input.json
+            requestSample: ./json-samples/user-input.json
             responseSchema: ./json-schemas/user.json
-    transforms:
-      - mock:
-          mocks:
-            - apply: User.firstName
-              faker: '{{name.firstName}}'
-            - apply: User.lastName
-              faker: '{{name.lastName}}'
-            - apply: User.jobTitle
-              faker: '{{name.jobTitle}}'
-            - apply: Company.name
-              faker: '{{company.companyName}}'
-
 additionalTypeDefs: |
   extend type User {
     company: Company
@@ -45,3 +33,14 @@ additionalTypeDefs: |
   extend type Company {
     employers: [User]
   }
+transforms:
+  - mock:
+      mocks:
+        - apply: User.firstName
+          faker: '{{name.firstName}}'
+        - apply: User.lastName
+          faker: '{{name.lastName}}'
+        - apply: User.jobTitle
+          faker: '{{name.jobTitle}}'
+        - apply: Company.name
+          faker: '{{company.companyName}}'

@@ -31,6 +31,8 @@ type JsonSchemaOperation {
   type: JsonSchemaOperationType!
   method: JsonSchemaOperationMethod!
   requestSchema: String
-  responseSchema: String!
+  responseSchema: String
+  requestSample: String
+  responseSample: String
   headers: JSON
 }

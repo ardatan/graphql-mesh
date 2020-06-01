@@ -9,6 +9,9 @@ import {
 } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
 import { pascalCase } from 'pascal-case';
+import { join, isAbsolute, dirname } from 'path';
+import { readJSONSync } from 'fs-extra';
+import { flatten } from 'lodash';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
   if (Array.isArray(maybeArray)) {
@@ -21,13 +24,11 @@ const asArray = <T>(maybeArray: T | T[]): T[] => {
 };
 
 const invalidSeperators = [':', '>', '<', '.'];
-function createName(ref: string) {
-  ref = ref.split('/').pop();
-  for (const sep of invalidSeperators) {
-    ref = ref.split(sep).join('_');
-  }
-  return pascalCase(ref);
-}
+
+export const getFileName = (filePath: string) => {
+  const arr = filePath.split('/').map(part => part.split('\\'));
+  return flatten(arr).pop().split('.').join('_');
+};
 
 export class JSONSchemaVisitor<TContext> {
   private cache: Map<string, string>;
@@ -35,7 +36,31 @@ export class JSONSchemaVisitor<TContext> {
     this.cache = new Map();
   }
 
-  visit(def: JSONSchemaDefinition, propertyName: string, prefix: string) {
+  createName(ref: string, cwd: string) {
+    let [externalPath, internalRef] = ref.split('#');
+    // If a reference
+    if (internalRef) {
+      if (externalPath) {
+        const absolutePath = isAbsolute(externalPath) ? externalPath : join(cwd, externalPath);
+        const externalSchema = readJSONSync(absolutePath);
+        this.visit(
+          externalSchema,
+          this.isInput ? 'Request' : 'Response',
+          getFileName(absolutePath),
+          dirname(absolutePath)
+        );
+      }
+    } else {
+      internalRef = ref;
+    }
+    internalRef = internalRef.split('/').pop();
+    for (const sep of invalidSeperators) {
+      internalRef = internalRef.split(sep).join('_');
+    }
+    return pascalCase(internalRef);
+  }
+
+  visit(def: JSONSchemaDefinition, propertyName: string, prefix: string, cwd: string) {
     const summary = JSON.stringify(def);
     if (this.cache.has(summary)) {
       return this.cache.get(summary);
@@ -43,19 +68,19 @@ export class JSONSchemaVisitor<TContext> {
     if ('definitions' in def) {
       for (const propertyName in def.definitions) {
         const definition = def.definitions[propertyName];
-        this.visit(definition, propertyName, prefix);
+        this.visit(definition, propertyName, prefix, cwd);
       }
     }
     if ('$defs' in def) {
       for (const propertyName in def.$defs) {
         const definition = def.$defs[propertyName];
-        this.visit(definition, propertyName, prefix);
+        this.visit(definition, propertyName, prefix, cwd);
       }
     }
     let result: string;
     switch (def.type) {
       case 'array':
-        result = this.visitArray(def, propertyName, prefix);
+        result = this.visitArray(def, propertyName, prefix, cwd);
         break;
       case 'boolean':
         result = this.visitBoolean();
@@ -68,7 +93,7 @@ export class JSONSchemaVisitor<TContext> {
         break;
       case 'string':
         if ('enum' in def) {
-          result = this.visitEnum(def, propertyName, prefix);
+          result = this.visitEnum(def, propertyName, prefix, cwd);
         } else {
           result = this.visitString();
         }
@@ -79,16 +104,16 @@ export class JSONSchemaVisitor<TContext> {
         break;
       case 'object':
         if ('name' in def || 'title' in def) {
-          result = this.visitTypedNamedObjectDefinition(def, prefix);
+          result = this.visitTypedNamedObjectDefinition(def, cwd);
         } else if ('properties' in def) {
-          result = this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix);
+          result = this.visitTypedUnnamedObjectDefinition(def, propertyName, prefix, cwd);
         } else if ('additionalProperties' in def && def.additionalProperties) {
           result = this.visitAny();
         }
         break;
       default:
         if ('$ref' in def) {
-          result = this.visitObjectReference(def);
+          result = this.visitObjectReference(def, cwd);
         }
         break;
     }
@@ -96,11 +121,11 @@ export class JSONSchemaVisitor<TContext> {
     return result;
   }
 
-  visitArray(arrayDef: JSONSchemaArrayDefinition, propertyName: string, prefix: string) {
+  visitArray(arrayDef: JSONSchemaArrayDefinition, propertyName: string, prefix: string, cwd: string) {
     const [itemsDef] = asArray(arrayDef.items);
     let itemTypeName = 'JSON';
     if (itemsDef) {
-      itemTypeName = this.visit(itemsDef, propertyName, prefix);
+      itemTypeName = this.visit(itemsDef, propertyName, prefix, cwd);
     }
     return `[${itemTypeName}]`;
   }
@@ -121,20 +146,20 @@ export class JSONSchemaVisitor<TContext> {
     return 'String';
   }
 
-  visitEnum(enumDef: JSONSchemaEnumDefinition, propertyName: string, prefix: string) {
+  visitEnum(enumDef: JSONSchemaEnumDefinition, propertyName: string, prefix: string, cwd: string) {
     let refName = `${prefix}_${propertyName}`;
     if ('title' in enumDef) {
       refName = enumDef.title;
     } else if ('name' in enumDef) {
       refName = enumDef.name;
     }
-    const name = createName(refName);
+    const name = this.createName(refName, cwd);
     this.schemaComposer.createEnumTC({
       name,
       values: enumDef.enum.reduce(
         (values, enumValue) => ({
           ...values,
-          [createName(enumValue)]: {
+          [this.createName(enumValue, cwd)]: {
             value: enumValue,
           },
         }),
@@ -144,7 +169,7 @@ export class JSONSchemaVisitor<TContext> {
     return name;
   }
 
-  private createFieldsMapFromProperties(objectDef: JSONSchemaTypedObjectDefinition, prefix: string) {
+  private createFieldsMapFromProperties(objectDef: JSONSchemaTypedObjectDefinition, prefix: string, cwd: string) {
     const fieldMap: Record<
       string,
       {
@@ -156,7 +181,7 @@ export class JSONSchemaVisitor<TContext> {
     for (const propertyName in objectDef.properties) {
       const fieldName = propertyName.split(':').join('_');
       const property = objectDef.properties[propertyName];
-      let type = this.visit(property, propertyName, prefix);
+      let type = this.visit(property, propertyName, prefix, cwd);
       const isRequired = 'required' in objectDef && objectDef.required?.includes(propertyName);
       if (isRequired) {
         type += '!';
@@ -172,9 +197,13 @@ export class JSONSchemaVisitor<TContext> {
     return fieldMap;
   }
 
-  private getGraphQLObjectTypeWithTypedObjectDef(objectDef: JSONSchemaTypedObjectDefinition, objectIdentifier: string) {
-    const name = createName(objectIdentifier);
-    const fields = this.createFieldsMapFromProperties(objectDef, name);
+  private getGraphQLObjectTypeWithTypedObjectDef(
+    objectDef: JSONSchemaTypedObjectDefinition,
+    objectIdentifier: string,
+    cwd: string
+  ) {
+    const name = this.createName(objectIdentifier, cwd);
+    const fields = this.createFieldsMapFromProperties(objectDef, name, cwd);
     if (this.isInput) {
       this.schemaComposer.createInputTC({
         name,
@@ -192,18 +221,19 @@ export class JSONSchemaVisitor<TContext> {
   visitTypedUnnamedObjectDefinition(
     typedUnnamedObjectDef: JSONSchemaTypedUnnamedObjectDefinition,
     propertyName: string,
-    prefix: string
+    prefix: string,
+    cwd: string
   ) {
-    return this.getGraphQLObjectTypeWithTypedObjectDef(typedUnnamedObjectDef, prefix + '_' + propertyName);
+    return this.getGraphQLObjectTypeWithTypedObjectDef(typedUnnamedObjectDef, prefix + '_' + propertyName, cwd);
   }
 
-  visitTypedNamedObjectDefinition(typedNamedObjectDef: JSONSchemaTypedNamedObjectDefinition, prefix: string) {
+  visitTypedNamedObjectDefinition(typedNamedObjectDef: JSONSchemaTypedNamedObjectDefinition, cwd: string) {
     const objectIdentifier = 'name' in typedNamedObjectDef ? typedNamedObjectDef.name : typedNamedObjectDef.title;
-    return this.getGraphQLObjectTypeWithTypedObjectDef(typedNamedObjectDef, objectIdentifier);
+    return this.getGraphQLObjectTypeWithTypedObjectDef(typedNamedObjectDef, objectIdentifier, cwd);
   }
 
-  visitObjectReference(objectRef: JSONSchemaObjectReference) {
-    return createName(objectRef.$ref);
+  visitObjectReference(objectRef: JSONSchemaObjectReference, cwd: string) {
+    return this.createName(objectRef.$ref, cwd);
   }
 
   visitAny() {

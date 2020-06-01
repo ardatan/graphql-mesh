@@ -309,6 +309,12 @@
         "responseSchema": {
           "type": "string"
         },
+        "requestSample": {
+          "type": "string"
+        },
+        "responseSample": {
+          "type": "string"
+        },
         "headers": {
           "type": "object",
           "properties": {}
@@ -318,8 +324,7 @@
         "field",
         "path",
         "type",
-        "method",
-        "responseSchema"
+        "method"
       ]
     },
     "MongooseHandler": {
