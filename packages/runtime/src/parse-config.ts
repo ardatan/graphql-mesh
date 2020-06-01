@@ -1,6 +1,13 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { GetMeshOptions, ResolvedTransform, MeshResolvedSource } from './types';
-import { getHandler, getPackage, resolveAdditionalResolvers, resolveCache, resolveMerger } from './utils';
+import {
+  getHandler,
+  getPackage,
+  resolveAdditionalResolvers,
+  resolveCache,
+  resolveMerger,
+  resolveAdditionalTypeDefs,
+} from './utils';
 import { TransformFn, YamlConfig, getJsonSchema } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 
@@ -33,7 +40,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
   const { dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
   await Promise.all(config.require?.map(mod => import(mod)) || []);
 
-  const [sources, transforms, additionalResolvers, cache, merger] = await Promise.all([
+  const [sources, transforms, additionalTypeDefs, additionalResolvers, cache, merger] = await Promise.all([
     Promise.all(
       config.sources.map<Promise<MeshResolvedSource>>(async source => {
         const transforms: ResolvedTransform[] = await Promise.all(
@@ -72,6 +79,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
         } as ResolvedTransform;
       }) || []
     ),
+    resolveAdditionalTypeDefs(dir, config.additionalTypeDefs),
     resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || []),
     resolveCache(config.cache),
     resolveMerger(config.merger),
@@ -80,6 +88,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
   return {
     sources,
     transforms,
+    additionalTypeDefs,
     additionalResolvers,
     cache,
     merger,

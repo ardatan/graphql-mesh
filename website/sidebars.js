@@ -25,7 +25,6 @@ module.exports = {
     Transforms: [
       'transforms/rename',
       'transforms/prefix',
-      'transforms/extend',
       'transforms/cache',
       'transforms/snapshot',
       'transforms/mock',

@@ -15,7 +15,6 @@
     "@graphql-mesh/graphql": "0.1.19",
     "@graphql-mesh/json-schema": "0.1.19",
     "@graphql-mesh/runtime": "0.1.19",
-    "@graphql-mesh/transform-extend": "0.1.19",
     "graphql": "15.0.0"
   }
 }

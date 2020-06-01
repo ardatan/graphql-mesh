@@ -11,23 +11,22 @@ sources:
           - type: Query
             field: population
             path: /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
-            method: GET        
+            method: GET
             responseSchema: ./src/json-schemas/worldPop.json
-transforms:
-  - extend: |
-      extend type Case {
-        population: ApiPopulation
-      }
-      extend type Query {
-        stat(country: String!): Stat
-      }
-      type Stat {
-        confirmedRatio: Float
-        deathRatio: Float
-        recoveredRatio: Float
-        case: Case
-        population: ApiPopulation
-      }
+additionalTypeDefs: |
+  extend type Case {
+    population: ApiPopulation
+  }
+  extend type Query {
+    stat(country: String!): Stat
+  }
+  type Stat {
+    confirmedRatio: Float
+    deathRatio: Float
+    recoveredRatio: Float
+    case: Case
+    population: ApiPopulation
+  }
 additionalResolvers:
   - ./src/case-additional-resolvers.js
   - ./src/query-additional-resolvers.js

@@ -16,8 +16,7 @@ sources:
       - prefix:
           value: Github
           includeRootOperations: true
-transforms:
-  - extend: |
+additionalTypeDefs: |
       extend type GeoCity {
         developers(limit: Int = 10): [GithubUser]
       }

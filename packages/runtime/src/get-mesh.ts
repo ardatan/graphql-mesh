@@ -3,11 +3,11 @@ import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, Requester } from './ty
 import { applySchemaTransformations, applyOutputTransformations, ensureDocumentNode } from './utils';
 import { Hooks, KeyValueCache, RawSourceOutput } from '@graphql-mesh/types';
 
-import { addResolversWithReferenceResolver } from './add-resolvers-with-reference-resolver';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
-import { applyResolversHooksToSchema, applyResolversHooksToResolvers } from './resolvers-hooks';
+import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { EventEmitter } from 'events';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
+import { addResolversToSchema } from '@graphql-tools/schema';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -39,7 +39,7 @@ export async function getMesh(
         cache,
       });
 
-      let apiSchema = applyResolversHooksToSchema(source.schema, hooks);
+      let apiSchema = source.schema;
 
       if (apiSource.transforms && apiSource.transforms.length > 0) {
         apiSchema = await applySchemaTransformations(apiSource.name, apiSchema, apiSource.transforms, cache, hooks);
@@ -61,25 +61,19 @@ export async function getMesh(
     rawSources,
     cache,
     hooks,
+    typeDefs: options.additionalTypeDefs || [],
+    resolvers: options.additionalResolvers || {},
   });
 
   if (options.transforms && options.transforms.length > 0) {
     unifiedSchema = await applyOutputTransformations(unifiedSchema, options.transforms, cache, hooks);
   }
 
-  if (options.additionalResolvers) {
-    unifiedSchema = addResolversWithReferenceResolver({
-      resolvers: applyResolversHooksToResolvers(options.additionalResolvers, hooks),
-      schema: unifiedSchema,
-      updateResolversInPlace: true,
-    });
-  }
-
   hooks.emit('schemaReady', {
     schema: unifiedSchema,
     applyResolvers: modifiedResolvers => {
       if (modifiedResolvers) {
-        unifiedSchema = addResolversWithReferenceResolver({
+        unifiedSchema = addResolversToSchema({
           schema: unifiedSchema,
           resolvers: modifiedResolvers,
           updateResolversInPlace: true,
@@ -87,6 +81,8 @@ export async function getMesh(
       }
     },
   });
+
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, hooks);
 
   async function buildMeshContext(initialContextValue?: any) {
     const context: Record<string, any> = {
