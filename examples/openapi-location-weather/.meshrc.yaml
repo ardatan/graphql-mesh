@@ -11,11 +11,8 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
-additionalTypeDefs: |
-      extend type PopulatedPlaceSummary {
-        dailyForecast: [Forecast]
-        todayForecast: Forecast
-      }
+
+transforms:
   - cache:
       # Geo data doesn't change frequntly, so we can cache it forever
       - field: Query.*
@@ -26,7 +23,14 @@ additionalTypeDefs: |
       - field: PopulatedPlaceSummary.todayForecast
         invalidate:
           ttl: 3600
+
+additionalTypeDefs: |
+      extend type PopulatedPlaceSummary {
+        dailyForecast: [Forecast]
+        todayForecast: Forecast
+      }
 require:
   - ts-node/register/transpile-only
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts
+

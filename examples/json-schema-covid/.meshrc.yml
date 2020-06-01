@@ -13,6 +13,7 @@ sources:
             path: /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
             method: GET
             responseSchema: ./src/json-schemas/worldPop.json
+
 additionalTypeDefs: |
   extend type Case {
     population: ApiPopulation
