@@ -23,7 +23,7 @@
     "fetchache": "0.0.3",
     "fs-extra": "9.0.0",
     "lodash": "4.17.15",
-    "graphql-compose": "7.17.0",
+    "graphql-compose": "7.18.0",
     "graphql-scalars": "1.1.5",
     "pascal-case": "3.1.1",
     "url-join": "4.0.1",
