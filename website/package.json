@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/website",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "docusaurus start",

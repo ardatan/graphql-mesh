@@ -1,14 +1,14 @@
 {
   "name": "openapi-stripe",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "graphql-mesh serve --example-query get-customers.query.graphql"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.1.19",
-    "@graphql-mesh/openapi": "0.1.19",
+    "@graphql-mesh/cli": "0.2.0",
+    "@graphql-mesh/openapi": "0.2.0",
     "graphql": "15.0.0",
     "graphql-fields": "2.0.3"
   }
