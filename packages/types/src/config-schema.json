@@ -189,6 +189,11 @@
         "credentialsSsl": {
           "$ref": "#/definitions/GrpcCredentialsSsl",
           "description": "SSL Credentials"
+        },
+        "metaData": {
+          "type": "object",
+          "properties": {},
+          "description": "MetaData"
         }
       },
       "required": [

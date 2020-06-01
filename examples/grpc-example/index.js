@@ -60,10 +60,12 @@ async function startServer() {
         }
       });
       const moviesResult = { result };
+      console.log('called with MetaData:', JSON.stringify(call.metadata.getMap()));
       callback(null, moviesResult);
     },
     searchMoviesByCast(call) {
       console.log('call started');
+      console.log('called with MetaData:', JSON.stringify(call.metadata.getMap()));
       const input = call.request;
       let i = 1;
       call.on('error', error => {

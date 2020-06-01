@@ -83,6 +83,8 @@ type GrpcHandler @md {
   requestTimeout: Int
   """SSL Credentials"""
   credentialsSsl: GrpcCredentialsSsl
+  """MetaData"""
+  metaData: JSON
 }
 type LoadOptions {
   includeDirs: [String]

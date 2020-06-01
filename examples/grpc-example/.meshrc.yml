@@ -7,6 +7,9 @@ sources:
           rootCA: ./certs/ca.crt
           certChain: ./certs/server.crt
           privateKey: ./certs/server.key
+        metaData:
+          someKey: 'someValue'
+          connection_type: ['headers', 'connection']
         protoFilePath:
           file: io/xtech/service.proto
           load:

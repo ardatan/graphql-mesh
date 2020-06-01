@@ -8,7 +8,14 @@ import { camelCase } from 'camel-case';
 import { pascalCase } from 'pascal-case';
 import { SchemaComposer } from 'graphql-compose';
 import { withCancel, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import {
+  CallCredentials,
+  ChannelCredentials,
+  Metadata,
+  MetadataValue,
+  credentials,
+  loadPackageDefinition,
+} from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
 import { get } from 'lodash';
 import { Readable } from 'stream';
@@ -55,13 +62,33 @@ function addIncludePathResolver(root: Root, includePaths: string[]) {
   };
 }
 
+function addMetaDataToCall(call: Function, input: any, context: any, metaData: any) {
+  const meta = new Metadata();
+  if (metaData) {
+    for (const [key, value] of Object.entries(metaData)) {
+      let metaValue = value;
+      if (Array.isArray(value)) {
+        // Extract data from context
+        metaValue = get(context, value);
+      }
+      if (typeof metaValue !== 'string') {
+        metaValue = JSON.stringify(value);
+      }
+      meta.add(key, metaValue as MetadataValue);
+    }
+
+    return call(input, meta);
+  }
+  return call(input);
+}
+
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
   async getMeshSource({ config, cache }) {
     if (!config) {
       throw new Error('Config not specified!');
     }
 
-    let creds: any;
+    let creds: ChannelCredentials | CallCredentials;
     if (config.credentialsSsl) {
       const rootCA =
         config.credentialsSsl.rootCA &&
@@ -206,15 +233,16 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
               },
             };
             if (method.responseStream) {
-              const clientMethod: Function = (input: any) => {
-                const responseStream = client[methodName](input) as GrpcResponseStream;
+              const clientMethod: Function = (input: unknown, metaData: Metadata) => {
+                const responseStream = client[methodName](input, metaData) as GrpcResponseStream;
                 const test = withCancel(responseStream, () => responseStream.cancel());
                 return test;
               };
               schemaComposer.Subscription.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  subscribe: (__, args) => clientMethod(args.input),
+                  subscribe: (__, args, context) =>
+                    addMetaDataToCall(clientMethod, args.input, context, config.metaData),
                   resolve: (payload: any) => payload,
                 },
               });
@@ -225,7 +253,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  resolve: (_, args) => clientMethod(args.input),
+                  resolve: (_, args, context) => addMetaDataToCall(clientMethod, args.input, context, config.metaData),
                 },
               });
             }
