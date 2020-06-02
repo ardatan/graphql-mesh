@@ -2,15 +2,15 @@ import snapshotTransform from '../src';
 import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql } from 'graphql';
-import { readFileSync, existsSync } from 'fs-extra';
+import { readJSON, remove, mkdir } from 'fs-extra';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
 import { EventEmitter } from 'events';
-
-jest.mock('fs-extra');
+import { join } from 'path';
+import { tmpdir } from 'os';
 
 describe('snapshot', () => {
-  const outputDir = '__snapshots__';
+  const outputDir = join(tmpdir(), '__snapshots__');
   const users = [
     {
       id: '0',
@@ -27,11 +27,13 @@ describe('snapshot', () => {
       address: 'Moon',
     },
   ];
-  let cache: InMemoryLRUCache;
   let hooks: Hooks;
-  beforeEach(() => {
-    cache = new InMemoryLRUCache();
+  beforeEach(async () => {
     hooks = new EventEmitter() as Hooks;
+    await mkdir(outputDir);
+  });
+  afterEach(async () => {
+    await remove(outputDir);
   });
   it('it writes correct output', async () => {
     const schema = await snapshotTransform({
@@ -84,8 +86,7 @@ describe('snapshot', () => {
       outputDir,
     });
 
-    expect(existsSync(fileName)).toBeTruthy();
-    expect(JSON.parse(readFileSync(fileName, 'utf8'))).toMatchObject(users[0]);
+    expect(await readJSON(fileName)).toMatchObject(users[0]);
   });
 
   it('should not call again if there is snapshot created', async () => {
@@ -115,7 +116,7 @@ describe('snapshot', () => {
       }),
       config: {
         apply: ['Query.user'],
-        outputDir: '__snapshots__',
+        outputDir,
       },
       cache: new InMemoryLRUCache(),
       hooks,

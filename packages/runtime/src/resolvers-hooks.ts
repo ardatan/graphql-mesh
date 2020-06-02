@@ -11,17 +11,12 @@ import {
   GraphQLResolveInfo,
 } from 'graphql';
 import { composeResolvers } from '@graphql-tools/resolvers-composition';
-import {
-  IResolvers,
-  getResolversFromSchema,
-  Operation,
-  buildOperationNodeForField,
-  SelectedFields,
-} from '@graphql-tools/utils';
+import { IResolvers, Operation, buildOperationNodeForField, SelectedFields } from '@graphql-tools/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import { MeshContext, APIContext } from './types';
 import { delegateToSchema } from '@graphql-tools/delegate';
+import { extractResolvers } from '@graphql-mesh/utils';
 
 function isMeshContext(context: any): context is MeshContext {
   return !!context && typeof context === 'object' && MESH_CONTEXT_SYMBOL in context;
@@ -180,7 +175,7 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hoo
 }
 
 export function applyResolversHooksToSchema(schema: GraphQLSchema, hooks: Hooks): GraphQLSchema {
-  const sourceResolvers = getResolversFromSchema(schema);
+  const sourceResolvers = extractResolvers(schema);
 
   return addResolversToSchema({
     schema,
