@@ -61,8 +61,8 @@ export async function getMesh(
     rawSources,
     cache,
     hooks,
-    typeDefs: options.additionalTypeDefs || [],
-    resolvers: options.additionalResolvers || {},
+    typeDefs: options.additionalTypeDefs,
+    resolvers: options.additionalResolvers,
   });
 
   if (options.transforms && options.transforms.length > 0) {

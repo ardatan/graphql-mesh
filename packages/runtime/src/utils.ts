@@ -94,11 +94,14 @@ export async function getHandler(name: string): Promise<MeshHandlerLibrary> {
 }
 
 export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeDefs: string) {
-  const sources = await loadTypedefs(additionalTypeDefs, {
-    cwd: baseDir,
-    loaders: [new GraphQLFileLoader()],
-  });
-  return sources.map(source => source.document || parse(source.rawSDL || printSchemaWithDirectives(source.schema)));
+  if (additionalTypeDefs) {
+    const sources = await loadTypedefs(additionalTypeDefs, {
+      cwd: baseDir,
+      loaders: [new GraphQLFileLoader()],
+    });
+    return sources.map(source => source.document || parse(source.rawSDL || printSchemaWithDirectives(source.schema)));
+  }
+  return undefined;
 }
 
 export async function resolveAdditionalResolvers(baseDir: string, additionalResolvers: string[]): Promise<IResolvers> {
