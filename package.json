@@ -23,7 +23,7 @@
     "release:canary": "node scripts/release.js --canary"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "6.0.6",
+    "@graphql-tools/schema": "6.0.7",
     "@types/jest": "25.2.3",
     "@types/node": "13.13.9",
     "jest": "26.0.1",
