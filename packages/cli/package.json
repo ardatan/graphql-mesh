@@ -25,10 +25,10 @@
     }
   },
   "dependencies": {
-    "@graphql-codegen/core": "1.15.0",
-    "@graphql-codegen/typescript": "1.15.0",
-    "@graphql-codegen/typescript-generic-sdk": "1.15.0",
-    "@graphql-codegen/typescript-operations": "1.15.0",
+    "@graphql-codegen/core": "1.15.1",
+    "@graphql-codegen/typescript": "1.15.1",
+    "@graphql-codegen/typescript-generic-sdk": "1.15.1",
+    "@graphql-codegen/typescript-operations": "1.15.1",
     "@graphql-codegen/typescript-resolvers": "1.15.0",
     "@graphql-mesh/runtime": "0.2.3",
     "@graphql-tools/code-file-loader": "6.0.6",
