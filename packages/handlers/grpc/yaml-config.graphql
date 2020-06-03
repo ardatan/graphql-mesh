@@ -33,6 +33,10 @@ type GrpcHandler @md {
   SSL Credentials
   """
   credentialsSsl: GrpcCredentialsSsl
+  """
+  MetaData
+  """
+  metaData: JSON
 }
 
 type LoadOptions {

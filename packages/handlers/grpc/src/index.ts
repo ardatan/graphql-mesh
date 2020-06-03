@@ -7,8 +7,17 @@ import { isAbsolute, join } from 'path';
 import { camelCase } from 'camel-case';
 import { pascalCase } from 'pascal-case';
 import { SchemaComposer } from 'graphql-compose';
+import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
 import { withCancel, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import {
+  ChannelCredentials,
+  ClientReadableStream,
+  ClientUnaryCall,
+  Metadata,
+  MetadataValue,
+  credentials,
+  loadPackageDefinition,
+} from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
 import { get } from 'lodash';
 import { Readable } from 'stream';
@@ -27,10 +36,15 @@ interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
 }
 
-interface GrpcResponseStream<T = any> extends Readable {
+interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable {
   [Symbol.asyncIterator](): AsyncIterableIterator<T>;
   cancel(): void;
 }
+
+type ClientMethod = (
+  input: unknown,
+  metaData?: Metadata
+) => Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>>;
 
 function addIncludePathResolver(root: Root, includePaths: string[]) {
   const originalResolvePath = root.resolvePath;
@@ -55,13 +69,45 @@ function addIncludePathResolver(root: Root, includePaths: string[]) {
   };
 }
 
+function addMetaDataToCall(
+  call: ClientMethod,
+  input: unknown,
+  context: Record<string, unknown>,
+  metaData: Record<string, string | ArrayBuffer>
+) {
+  const meta = new Metadata();
+  if (metaData) {
+    for (const [key, value] of Object.entries(metaData)) {
+      let metaValue: unknown = value;
+      if (Array.isArray(value)) {
+        // Extract data from context
+        metaValue = get(context, value);
+      }
+      // Ensure that the metadata is compatible with what node-grpc expects
+      if (typeof metaValue !== 'string') {
+        if ((metaValue as ArrayBuffer).slice && (metaValue as ArrayBuffer).byteLength >= 0 && key.endsWith('-bin')) {
+          // Doesn't look like an TypedArray
+          throw new Error(`MetaData key '${key}' is a Buffer, but does not end with '-bin'`);
+        } else {
+          throw new Error(`MetaData key '${key}' has a non string`);
+        }
+      }
+
+      meta.add(key, metaValue as MetadataValue);
+    }
+
+    return call(input, meta);
+  }
+  return call(input);
+}
+
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
   async getMeshSource({ config, cache }) {
     if (!config) {
       throw new Error('Config not specified!');
     }
 
-    let creds: any;
+    let creds: ChannelCredentials;
     if (config.credentialsSsl) {
       const rootCA =
         config.credentialsSsl.rootCA &&
@@ -183,7 +229,11 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           })
         );
       } else if ('methods' in nested) {
-        const ServiceClient: any = get(grpcObject, currentPath + '.' + name);
+        const objPath = currentPath + '.' + name;
+        const ServiceClient = get(grpcObject, objPath);
+        if (typeof ServiceClient !== 'function') {
+          throw new Error(`Object at path ${objPath} is not a Service constructor`);
+        }
         const client = new ServiceClient(config.endpoint, creds);
         const methods = nested.methods;
         await Promise.all(
@@ -206,26 +256,28 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
               },
             };
             if (method.responseStream) {
-              const clientMethod: Function = (input: any) => {
-                const responseStream = client[methodName](input) as GrpcResponseStream;
+              const clientMethod: ClientMethod = (input: unknown, metaData: Metadata) => {
+                const responseStream = client[methodName](input, metaData) as GrpcResponseStream;
                 const test = withCancel(responseStream, () => responseStream.cancel());
                 return test;
               };
               schemaComposer.Subscription.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  subscribe: (__, args) => clientMethod(args.input),
-                  resolve: (payload: any) => payload,
+                  subscribe: (__, args: ArgsMap, context: Record<string, unknown>) =>
+                    addMetaDataToCall(clientMethod, args.input, context, config.metaData),
+                  resolve: (payload: unknown) => payload,
                 },
               });
             } else {
-              const clientMethod: Function = promisify(client[methodName].bind(client));
+              const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
               const identifier = methodName.toLowerCase();
               const rootTC = identifier.startsWith('get') ? schemaComposer.Query : schemaComposer.Mutation;
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  resolve: (_, args) => clientMethod(args.input),
+                  resolve: (_, args: ArgsMap, context: Record<string, unknown>) =>
+                    addMetaDataToCall(clientMethod, args.input, context, config.metaData),
                 },
               });
             }
