@@ -27,7 +27,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  -webkit-box-reflect: left;
+  background-color: black;
 }
 
 .npmBadge {
@@ -40,8 +40,4 @@
   max-width: 1200px;
   margin-bottom: -100px;
   -webkit-box-reflect: right;
-}
-
-.bannerVideoContainer {
-  -webkit-box-reflect: left;
 }

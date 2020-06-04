@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classnames from 'classnames';
 import Layout from '@theme/Layout';
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -57,6 +57,7 @@ function Feature({ imageUrl, title, description }) {
 }
 
 function Home() {
+  const [showLiveDemo, setShowLiveDemo] = useState(false);
   return (
     <Layout title={`GraphQL Mesh`} description="">
       <header className={styles.header}>
@@ -71,15 +72,18 @@ function Home() {
           src="https://img.shields.io/npm/v/@graphql-mesh/runtime?color=%231BCBE2&label=stable&style=for-the-badge"
         />
         <div className={styles.buttons}>
+        <Button>
+          <a href="#" onClick={() => setShowLiveDemo(true)}>Try it out Live</a>
+        </Button>
           <Button>
-            <Link to={`/docs/getting-started/introduction`}>Get Started</Link>
+            <Link to={`/docs/getting-started/introduction`}>View Docs</Link>
           </Button>
         </div>
       </header>
-      <div className={styles.liveDemo}>
+      { showLiveDemo && <div className={styles.liveDemo}>
         <a id="live-demo" />
         <LiveDemo />
-      </div>
+      </div> }
       <main>
         {features && features.length && (
           <section className={styles.features}>
