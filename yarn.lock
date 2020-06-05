@@ -2,7 +2,17 @@
 # yarn lockfile v1
 
 
-"@apollo/federation@0.16.3", "@apollo/federation@^0.16.3":
+"@apollo/federation@0.16.4":
+  version "0.16.4"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.16.4.tgz#fb5acbfabb31e7c1ac7bfcfb99ffd4e9f032b3c2"
+  integrity sha512-PLqeLhgjtdlsVieu1NdQF2kZRybrMmQkxkkPJXSA5eqbc4qbmi0HxBFvSgP7qh8hTLKhAbBZYtJkWkNOga4OKQ==
+  dependencies:
+    apollo-graphql "^0.4.0"
+    apollo-server-env "^2.4.4"
+    core-js "^3.4.0"
+    lodash.xorby "^4.7.0"
+
+"@apollo/federation@^0.16.3":
   version "0.16.3"
   resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.16.3.tgz#c15cb7cd20dc7b6cfc17f1e40656c0851eb9700c"
   integrity sha512-2F0tw1b2PEdvPsKpmDosdKwlxZpxCZK1yGiqRBSjyG94+MswGrsQobFpnDVKy50slVtDbcRP6VeJfiS/9EHX5g==
