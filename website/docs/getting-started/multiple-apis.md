@@ -4,7 +4,7 @@ title: Multiple APIs
 sidebar_label: 5. Multiple APIs
 ---
 
-## Extending Schema
+## Extending Schema with JavaScript Code File
 
 You can add custom resolvers and custom GraphQL schema SDL, and use the API SDK to fetch the data and manipulate it. So the query above could be simplified with custom logic.
 
@@ -78,7 +78,7 @@ query viewsInPastMonth {
 
 > You can find the complete example [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/javascript-wiki)
 
-## Stitching Schemas
+## Stitching Schemas using Declarative API without JavaScript Code File 
 
 You can combine multiple APIs in Mesh using `additionalTypeDefs` and `additionalResolvers`. 
 
@@ -102,6 +102,21 @@ additionalTypeDefs: |
         todayForecast: Forecast
       }
 additionalResolvers:
+  - type: PopulatedPlaceSummary
+    field: dailyForecast
+    requiredSelectionSet: |
+      {
+        latitude
+        longitude
+      }
+    targetSource: Weather
+    targetMethod: getForecastDailyLatLatLonLon
+    returnData: data
+    args:
+      lat: root.latitude
+      lon: root.longitude
+      key: context.weatherApiKey
+  # and/or as a code file
   - ./additional-resolvers.js
 ```
 
@@ -111,28 +126,23 @@ After declaration, we stitch APIs in resolvers level;
 const WEATHER_KEY = '971a693de7ff47a89127664547988be5';
 module.exports = {
   // In here we call `Weather` API in `Cities` API.
-  PopulatedPlaceSummary: {
-    dailyForecast: async (placeSummary, _, { Weather }) => {
-      const forecast = await Weather.api.getForecastDailyLatLatLonLon({
-        lat: placeSummary.latitude!,
-        lon: placeSummary.longitude!,
-        key: WEATHER_KEY,
-      });
+    todayForecast: {
+      selectionSet: `{
+        latitude
+        longitude
+      }`,
+      resolve: async (placeSummary, _, { Weather }) => {
+        const forecast = await Weather.api.getForecastDailyLatLatLonLon({
+          lat: placeSummary.latitude!,
+          lon: placeSummary.longitude!,
+          key: WEATHER_KEY,
+        });
 
-      return forecast.data!;
-    },
-    todayForecast: async (placeSummary, _, { Weather }) => {
-      const forecast = await Weather.api.getForecastDailyLatLatLonLon({
-        lat: placeSummary.latitude!,
-        lon: placeSummary.longitude!,
-        key: WEATHER_KEY,
-      });
-
-      return forecast.data![0]!;
+        return forecast.data![0]!;
+      }
     },
   },
 };
 ```
 
 You can use TypeScript to have full type-safety in additional resolvers. See [TypeScript Support](/docs/recipes/typescript) section to learn more.
-

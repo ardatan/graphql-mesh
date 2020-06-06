@@ -2,7 +2,7 @@ extend type Transform {
   federation: FederationTransform
 }
 
-type FederationTransform {
+type FederationTransform @md {
   types: [FederationTransformType!]
 }
 

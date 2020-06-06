@@ -419,7 +419,7 @@ type CacheEffectingOperationConfig {
   """Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field."""
   matchKey: String
 }
-type FederationTransform {
+type FederationTransform @md {
   types: [FederationTransformType!]
 }
 type FederationTransformType {

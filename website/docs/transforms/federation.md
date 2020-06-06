@@ -33,15 +33,26 @@ transforms:
                     # id: Int! @external
                     - name: id
                       external: true
-                # See the content of that file below
-                resolveReference: ./userResolveReference.js
+                resolveReference:
+                  targetSource: accounts
+                  targetMethod: user
+                  args:
+                    id: root.id
 
 ```
 
-### Add Reference Resolver
+### Add Reference Resolver as a Code File
+
+If you want to add more complex business logic, you can point to a code file that exports a resolver function.
+
+```yaml
+resolveReference: ./userResolveReference.js
+```
 
 `./userResolveReference.js`
 ```js
 // So we can point to an existing query field to resolve that entity
 module.exports = (root, context) => context.accounts.api.user({ id: root.id })
 ```
+
+{@import ../generated-markdown/FederationTransform.generated.md}
