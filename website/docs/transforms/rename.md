@@ -17,8 +17,8 @@ Add the following configuration to your Mesh config file:
 ```yml
 transforms:
   - rename:
-      from: ApiUser
-      to: User
+      - from: ApiUser
+        to: User
 ```
 
 ## Config API Reference
