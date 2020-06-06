@@ -1,4 +1,4 @@
-import { GraphQLSchema, parse, print, Kind } from 'graphql';
+import { GraphQLSchema, Kind, print } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 import * as tsPlugin from '@graphql-codegen/typescript';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
@@ -6,23 +6,23 @@ import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { loadDocuments as loadDocumentsToolkit } from '@graphql-tools/load';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { printSchemaWithDirectives, Source, buildOperationNodeForField, Operation } from '@graphql-tools/utils';
+import { buildOperationNodeForField, Operation, Source } from '@graphql-tools/utils';
+import { scalarsMap } from './scalars-map';
 
 export async function generateSdk(
   schema: GraphQLSchema,
   {
     operations: operationsPaths = [],
-    depth: depthLimit = 2,
+    depth: depthLimit = 1,
   }: {
     operations?: string[];
     depth?: number;
   }
 ): Promise<string> {
-  let documents: Source[] = [];
+  let sources: Source[] = [];
   if (operationsPaths.length) {
-    documents = await loadDocumentsToolkit(operationsPaths, {
+    sources = await loadDocumentsToolkit(operationsPaths, {
       loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-      sort: true,
       skipGraphQLImport: true,
       cwd: process.cwd(),
     });
@@ -42,13 +42,14 @@ export async function generateSdk(
             kind: operationType as Operation,
             depthLimit,
           });
-          documents.push({
-            document: {
-              kind: Kind.DOCUMENT,
-              definitions: [operation],
-            },
-            rawSDL: print(operation),
-            location: `${operation.name?.value}.graphql`,
+          const document = {
+            kind: Kind.DOCUMENT,
+            definitions: [operation],
+          };
+          sources.push({
+            document,
+            rawSDL: print(document),
+            location: `${fieldName}_${operationType}.graphql`,
           });
         }
       }
@@ -62,8 +63,9 @@ export async function generateSdk(
       typescriptOperations: tsOperationsPlugin,
       typescriptGenericSdk: tsGenericSdkPlugin,
     },
-    documents,
-    schema: parse(printSchemaWithDirectives(schema)),
+    documents: sources,
+    skipDocumentsValidation: true,
+    schema: undefined as any, // This is not necessary on codegen.
     schemaAst: schema,
     plugins: [
       {
@@ -76,7 +78,10 @@ export async function generateSdk(
         typescriptGenericSdk: {},
       },
     ],
-    config: {},
+    config: {
+      flattenGeneratedTypes: true,
+      scalars: scalarsMap,
+    },
   });
 
   return output;

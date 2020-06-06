@@ -14,6 +14,7 @@ import {
   Kind,
 } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
+import { scalarsMap } from './scalars-map';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -114,7 +115,9 @@ export function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: RawSou
   return codegen({
     filename: 'types.ts',
     documents: [],
-    config: {},
+    config: {
+      scalars: scalarsMap,
+    },
     schemaAst: unifiedSchema,
     schema: undefined as any, // This is not necessary on codegen.
     pluginMap: {
