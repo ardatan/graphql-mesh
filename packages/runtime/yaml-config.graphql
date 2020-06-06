@@ -15,7 +15,7 @@ type Query {
   """
   Additional resolvers, or resolvers overrides you wish to add to the schema mesh
   """
-  additionalResolvers: [String]
+  additionalResolvers: [AdditionalResolver]
   """
   Backend cache
   """
@@ -48,4 +48,19 @@ type Handler
 
 interface Cache {
   name: String!
+}
+
+union AdditionalResolver = String | AdditionalResolverObject
+
+type AdditionalResolverObject {
+  type: String!
+  field: String!
+  requiredSelectionSet: String
+  targetSource: String!
+  targetMethod: String!
+  args: JSON!
+  returnData: String
+  resultSelectedFields: JSON
+  resultSelectionSet: String
+  resultDepth: Int
 }

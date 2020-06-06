@@ -7,6 +7,7 @@ import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { get, set } from 'lodash';
 
 export async function getPackage<T>(name: string, type: string): Promise<T> {
   const casedName = paramCase(name);
@@ -54,29 +55,60 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
   return undefined;
 }
 
-export async function resolveAdditionalResolvers(baseDir: string, additionalResolvers: string[]): Promise<IResolvers> {
+export async function resolveAdditionalResolvers(
+  baseDir: string,
+  additionalResolvers: (string | YamlConfig.AdditionalResolverObject)[]
+): Promise<IResolvers> {
   const loaded = await Promise.all(
-    (additionalResolvers || []).map(async filePath => {
-      const exported = await import(resolve(baseDir, filePath));
-      let resolvers = null;
+    (additionalResolvers || []).map(async additionalResolver => {
+      if (typeof additionalResolver === 'string') {
+        const filePath = additionalResolver;
 
-      if (exported.default) {
-        if (exported.default.resolvers) {
-          resolvers = exported.default.resolvers;
-        } else if (typeof exported.default === 'object') {
-          resolvers = exported.default;
+        const exported = await import(resolve(baseDir, filePath));
+        let resolvers = null;
+
+        if (exported.default) {
+          if (exported.default.resolvers) {
+            resolvers = exported.default.resolvers;
+          } else if (typeof exported.default === 'object') {
+            resolvers = exported.default;
+          }
+        } else if (exported.resolvers) {
+          resolvers = exported.resolvers;
         }
-      } else if (exported.resolvers) {
-        resolvers = exported.resolvers;
+
+        if (!resolvers) {
+          console.warn(`Unable to load resolvers from file: ${filePath}`);
+
+          return {};
+        }
+
+        return resolvers;
+      } else {
+        return {
+          [additionalResolver.type]: {
+            [additionalResolver.field]: {
+              selectionSet: additionalResolver.requiredSelectionSet,
+              resolve: async (root: any, args: any, context: any, info: any) => {
+                const resolverData = { root, args, context, info };
+                const methodArgs: any = {};
+                for (const argPath in additionalResolver.args) {
+                  set(methodArgs, argPath, get(resolverData, additionalResolver.args[argPath]));
+                }
+                const result = await context[additionalResolver.targetSource].api[additionalResolver.targetMethod](
+                  methodArgs,
+                  {
+                    selectedFields: additionalResolver.resultSelectedFields,
+                    selectionSet: additionalResolver.resultSelectionSet,
+                    depth: additionalResolver.resultDepth,
+                  }
+                );
+                return additionalResolver.returnData ? get(result, additionalResolver.returnData) : result;
+              },
+            },
+          },
+        };
       }
-
-      if (!resolvers) {
-        console.warn(`Unable to load resolvers from file: ${filePath}`);
-
-        return {};
-      }
-
-      return resolvers;
     })
   );
 

@@ -14,7 +14,11 @@ sources:
               config:
                 keyFields:
                   - id
-                resolveReference: ./services/accounts/user-reference-resolver
+                resolveReference:
+                  targetSource: accounts
+                  targetMethod: user
+                  args:
+                    id: root.id
   - name: reviews
     handler:
       graphql:

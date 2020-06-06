@@ -29,5 +29,14 @@ additionalTypeDefs: |
     population: ApiPopulation
   }
 additionalResolvers:
-  - ./src/case-additional-resolvers.js
+  - type: Case
+    field: population
+    requiredSelectionSet: |
+      { 
+        countryRegion 
+      }
+    targetSource: WorldPop
+    targetMethod: population
+    args:
+      country: root.countryRegion
   - ./src/query-additional-resolvers.js

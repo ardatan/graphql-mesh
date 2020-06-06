@@ -15,7 +15,19 @@ type FederationObjectConfig {
   keyFields: [String!]
   extend: Boolean
   fields: [FederationField!]
-  resolveReference: String
+  resolveReference: ResolveReference
+}
+
+union ResolveReference = String | ResolveReferenceObject
+
+type ResolveReferenceObject {
+  targetSource: String!
+  targetMethod: String!
+  args: JSON!
+  returnData: String
+  resultSelectedFields: JSON
+  resultSelectionSet: String
+  resultDepth: Int
 }
 
 type FederationField {

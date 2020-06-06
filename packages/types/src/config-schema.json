@@ -994,6 +994,52 @@
         }
       }
     },
+    "AdditionalResolverObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "AdditionalResolverObject",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "requiredSelectionSet": {
+          "type": "string"
+        },
+        "targetSource": {
+          "type": "string"
+        },
+        "targetMethod": {
+          "type": "string"
+        },
+        "args": {
+          "type": "object",
+          "properties": {}
+        },
+        "returnData": {
+          "type": "string"
+        },
+        "resultSelectedFields": {
+          "type": "object",
+          "properties": {}
+        },
+        "resultSelectionSet": {
+          "type": "string"
+        },
+        "resultDepth": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "field",
+        "targetSource",
+        "targetMethod",
+        "args"
+      ]
+    },
     "SoapHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -1234,9 +1280,52 @@
           "additionalItems": false
         },
         "resolveReference": {
-          "type": "string"
+          "description": "Any of: String, ResolveReferenceObject",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/ResolveReferenceObject"
+            }
+          ]
         }
       }
+    },
+    "ResolveReferenceObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResolveReferenceObject",
+      "properties": {
+        "targetSource": {
+          "type": "string"
+        },
+        "targetMethod": {
+          "type": "string"
+        },
+        "args": {
+          "type": "object",
+          "properties": {}
+        },
+        "returnData": {
+          "type": "string"
+        },
+        "resultSelectedFields": {
+          "type": "object",
+          "properties": {}
+        },
+        "resultSelectionSet": {
+          "type": "string"
+        },
+        "resultDepth": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "targetSource",
+        "targetMethod",
+        "args"
+      ]
     },
     "FederationField": {
       "additionalProperties": false,
@@ -1468,10 +1557,18 @@
     "additionalResolvers": {
       "type": "array",
       "items": {
-        "type": "string"
+        "description": "Any of: String, AdditionalResolverObject",
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions/AdditionalResolverObject"
+          }
+        ]
       },
       "additionalItems": false,
-      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh"
+      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalResolverObject)"
     },
     "cache": {
       "description": "Backend cache (Any of: InMemoryLRU, Redis)",
