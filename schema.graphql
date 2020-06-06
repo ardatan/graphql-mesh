@@ -290,8 +290,6 @@ scalar JSON
 type Source {
   """The name you wish to set to your remote API, this will be used for building the GraphQL context"""
   name: String!
-  """Custom JSON object to add to the GraphQL context, use this to inject custom fields and later use it in your custom resolver. This object will be located in the context, under an object named as the API"""
-  context: JSON
   """Point to the handler you wish to use, it can either be a predefined handler, or a custom"""
   handler: Handler!
   """List of transforms to apply to the current API source, before unifying it with the rest of the sources"""

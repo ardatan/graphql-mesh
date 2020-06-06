@@ -151,7 +151,7 @@ export type ProjectionOptions = {
           const results = await Promise.all(
             rawSources.map(source => {
               const item = generateTypesForApi({
-                schema: source.schema,
+                schema: unifiedSchema.extensions.stitchingInfo.transformedSchemas.get(source),
                 name: source.name,
                 contextVariables: source.contextVariables || [],
               });

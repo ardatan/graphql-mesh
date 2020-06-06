@@ -1,8 +1,9 @@
-import prefixTransform from '../src';
+import PrefixTransform from '../src';
 import { buildSchema, printSchema, GraphQLSchema } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
 import { EventEmitter } from 'events';
+import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('prefix', () => {
   let schema: GraphQLSchema;
@@ -23,14 +24,18 @@ describe('prefix', () => {
     hooks = new EventEmitter() as Hooks;
   });
 
-  it('should prefix all schema types when prefix is specified explicitly', async () => {
-    const newSchema = await prefixTransform({
+  it('should prefix all schema types when prefix is specified explicitly', () => {
+    const newSchema = wrapSchema({
       schema,
-      config: {
-        value: 'T_',
-      },
-      cache,
-      hooks,
+      transforms: [
+        new PrefixTransform({
+          config: {
+            value: 'T_',
+          },
+          cache,
+          hooks,
+        }),
+      ],
     });
 
     expect(newSchema.getType('User')).toBeUndefined();
@@ -38,27 +43,35 @@ describe('prefix', () => {
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
-  it('should not modify root types', async () => {
-    const newSchema = await prefixTransform({
+  it('should not modify root types', () => {
+    const newSchema = wrapSchema({
       schema,
-      config: {
-        value: 'T_',
-      },
-      cache,
-      hooks,
+      transforms: [
+        new PrefixTransform({
+          config: {
+            value: 'T_',
+          },
+          cache,
+          hooks,
+        }),
+      ],
     });
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('T_Query')).toBeUndefined();
   });
 
-  it('should use apiName when its available', async () => {
-    const newSchema = await prefixTransform({
+  it('should use apiName when its available', () => {
+    const newSchema = wrapSchema({
       schema,
-      apiName: 'MyApi',
-      config: {},
-      cache,
-      hooks,
+      transforms: [
+        new PrefixTransform({
+          apiName: 'MyApi',
+          config: {},
+          cache,
+          hooks,
+        }),
+      ],
     });
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -66,15 +79,19 @@ describe('prefix', () => {
     expect(newSchema.getType('MyApi_User')).toBeDefined();
   });
 
-  it('should allow to ignore types', async () => {
-    const newSchema = await prefixTransform({
+  it('should allow to ignore types', () => {
+    const newSchema = wrapSchema({
       schema,
-      config: {
-        value: 'T_',
-        ignore: ['User'],
-      },
-      cache,
-      hooks,
+      transforms: [
+        new PrefixTransform({
+          config: {
+            value: 'T_',
+            ignore: ['User'],
+          },
+          cache,
+          hooks,
+        }),
+      ],
     });
 
     expect(newSchema.getType('Query')).toBeDefined();

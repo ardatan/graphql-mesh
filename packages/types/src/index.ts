@@ -1,8 +1,10 @@
-import { IResolvers } from '@graphql-tools/utils';
+/* eslint-disable @typescript-eslint/no-misused-new */
+import { IResolvers, Transform } from '@graphql-tools/utils';
 import { IEventEmitter } from 'tsee';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
+import { Executor, Subscriber } from '@graphql-tools/delegate';
 
 export { YamlConfig };
 
@@ -12,6 +14,8 @@ export function getJsonSchema() {
 
 export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
+  executor?: Executor;
+  subscriber?: Subscriber;
   contextVariables?: (keyof InitialContext)[];
   contextBuilder?: (initialContextValue: InitialContext) => Promise<ContextType>;
 };
@@ -37,7 +41,7 @@ export type ResolverData<TParent = any, TArgs = any, TContext = any> = {
 
 // Hooks
 export type AllHooks = {
-  schemaReady: (options: { schema: GraphQLSchema; applyResolvers: (modifiedResolvers: IResolvers) => void }) => void;
+  schemaReady: (schema: GraphQLSchema) => void;
   destroy: () => void;
   resolverCalled: (resolverData: ResolverData) => void;
   resolverDone: (resolverData: ResolverData, result: any) => void;
@@ -46,13 +50,18 @@ export type AllHooks = {
 export type Hooks = IEventEmitter<AllHooks>;
 export type HooksKeys = keyof AllHooks;
 
-export type TransformFn<Config = any> = (options: {
-  schema: GraphQLSchema;
+export interface MeshTransformOptions<Config = any> {
   config: Config;
   cache: KeyValueCache;
   hooks: Hooks;
   apiName?: string;
-}) => Promise<GraphQLSchema> | GraphQLSchema;
+}
+
+export interface MeshTransformConstructor<Config = any> {
+  new (options: MeshTransformOptions<Config>): Transform;
+}
+
+export { Transform };
 
 export type Maybe<T> = null | undefined | T;
 
@@ -62,16 +71,20 @@ export type MergerFn = (options: {
   rawSources: RawSourceOutput[];
   cache: KeyValueCache;
   hooks: Hooks;
-  typeDefs: DocumentNode[];
-  resolvers: IResolvers;
+  typeDefs?: DocumentNode[];
+  resolvers?: IResolvers;
+  transforms: Transform[];
+  executor?: Executor;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 
 export type RawSourceOutput = {
   name: string;
   // TOOD: Remove globalContextBuilder and use hooks for that
-  globalContextBuilder: null | ((initialContextValue?: any) => Promise<any>);
+  contextBuilder: null | ((initialContextValue?: any) => Promise<any>);
   schema: GraphQLSchema;
-  context: Record<string, any>;
+  executor?: Executor;
+  subscriber?: Subscriber;
+  transforms: Transform[];
   contextVariables: (keyof any)[];
   handler: MeshHandlerLibrary;
 };

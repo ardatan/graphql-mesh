@@ -1,12 +1,14 @@
-import { TransformFn, YamlConfig } from '@graphql-mesh/types';
+import { Transform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { ResolversComposerMapping, ResolversComposition, composeResolvers } from '@graphql-tools/resolvers-composition';
 import { computeCacheKey } from './compute-cache-key';
 import { extractResolvers } from '@graphql-mesh/utils';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { GraphQLSchema } from 'graphql';
 
-const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({ config, schema, cache, hooks }) => {
-  // We need to use `schemaReady` hook and not the schema directly because we need to make sure to run cache after all
-  // other transformations are done, and to make sure that custom resolve are already loaded and merged into the schema
-  hooks.on('schemaReady', ({ schema, applyResolvers }) => {
+export default class CacheTransform implements Transform {
+  constructor(private options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]>) {}
+  transformSchema(schema: GraphQLSchema) {
+    const { config, hooks, cache } = this.options;
     const sourceResolvers = extractResolvers(schema);
     const compositions: ResolversComposerMapping = {};
 
@@ -55,9 +57,10 @@ const cacheTransform: TransformFn<YamlConfig.CacheTransformConfig[]> = async ({ 
     }
 
     const wrappedResolvers = composeResolvers(sourceResolvers, compositions);
-    applyResolvers(wrappedResolvers);
-  });
-  return schema;
-};
-
-export default cacheTransform;
+    return addResolversToSchema({
+      schema,
+      resolvers: wrappedResolvers,
+      updateResolversInPlace: true,
+    });
+  }
+}

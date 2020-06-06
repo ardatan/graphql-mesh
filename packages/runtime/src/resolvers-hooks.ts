@@ -50,7 +50,10 @@ function createProxyInfo({
   const actualReturnType = 'ofType' in info.returnType ? info.returnType.ofType : info.returnType;
   const returnType = 'ofType' in field.type ? field.type.ofType : field.type;
   if ('name' in actualReturnType && 'name' in returnType && actualReturnType.name === returnType.name) {
-    return info;
+    return {
+      ...info,
+      returnType,
+    };
   }
 
   selectionSet = selectionSet && (typeof selectionSet === 'string' ? parse(selectionSet) : parse(print(selectionSet)));
@@ -61,7 +64,6 @@ function createProxyInfo({
       schema,
       kind: 'query',
       field: field.name,
-      // If return field is Relay Connection, go into deeper one more level.
       depthLimit,
       argNames: Object.keys(args),
       selectedFields,
@@ -106,10 +108,11 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hoo
                     {},
                     {
                       get(_, fieldName: string) {
+                        const apiSchema = info.schema.extensions.sourceMap.get(apiContext.rawSource);
                         const rootTypes: Record<Operation, GraphQLObjectType> = {
-                          query: apiContext.schema.getQueryType(),
-                          mutation: apiContext.schema.getMutationType(),
-                          subscription: apiContext.schema.getSubscriptionType(),
+                          query: apiSchema.getQueryType(),
+                          mutation: apiSchema.getMutationType(),
+                          subscription: apiSchema.getSubscriptionType(),
                         };
                         let parentType: GraphQLObjectType;
                         let operation: Operation;
@@ -127,7 +130,7 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hoo
                         }
                         return (methodArgs: any = {}, { depth, fields, selectionSet }: any = {}) => {
                           const proxyInfo = createProxyInfo({
-                            schema: apiContext.schema,
+                            schema: apiSchema,
                             parentType,
                             field,
                             depthLimit: depth,
@@ -138,7 +141,7 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hoo
                             info,
                           });
                           return delegateToSchema({
-                            schema: apiContext.schema,
+                            schema: apiSchema,
                             operation,
                             fieldName,
                             args: methodArgs,

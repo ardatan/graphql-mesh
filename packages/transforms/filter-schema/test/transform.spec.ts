@@ -1,8 +1,9 @@
 import { buildSchema, printSchema } from 'graphql';
-import filterSchemaTransform from '../src';
+import FilterSchemaTransform from '../src';
 import { EventEmitter } from 'events';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
+import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
@@ -32,11 +33,15 @@ describe('filter', () => {
         admin: User
       }
     `);
-    schema = await filterSchemaTransform({
+    schema = wrapSchema({
       schema,
-      config: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'],
-      cache,
-      hooks,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'],
+          cache,
+          hooks,
+        }),
+      ],
     });
 
     expect(printSchema(schema).trim()).toBe(
@@ -72,11 +77,15 @@ type Query {
       }
     `);
 
-    schema = await filterSchemaTransform({
+    schema = wrapSchema({
       schema,
-      config: ['Mutation.!*'],
-      cache,
-      hooks,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['Mutation.!*'],
+          cache,
+          hooks,
+        }),
+      ],
     });
     expect(printSchema(schema).trim()).toBe(
       /* GraphQL */ `

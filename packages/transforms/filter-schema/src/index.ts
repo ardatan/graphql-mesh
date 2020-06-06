@@ -1,25 +1,24 @@
 import { matcher } from 'micromatch';
 
 import { GraphQLSchema } from 'graphql';
-import { TransformFn, YamlConfig } from '@graphql-mesh/types';
-import { Transform } from '@graphql-tools/utils';
-import { FilterRootFields, FilterObjectFields, wrapSchema } from '@graphql-tools/wrap';
+import { Transform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { FilterRootFields, FilterObjectFields } from '@graphql-tools/wrap';
+import {
+  applySchemaTransforms,
+  applyRequestTransforms,
+  applyResultTransforms,
+  Request,
+  Result,
+} from '@graphql-tools/utils';
 
-const filterSchemaTransform: TransformFn<YamlConfig.Transform['filterSchema']> = ({
-  schema,
-  config,
-}): GraphQLSchema => {
-  const rootTypes = [
-    schema.getQueryType()?.name,
-    schema.getMutationType()?.name,
-    schema.getSubscriptionType()?.name,
-  ].filter(Boolean) as string[];
-  const transforms: Transform[] = [];
-  for (const filter of config) {
-    const [typeName, fieldGlob] = filter.split('.');
-    const isMatch = matcher(fieldGlob.trim());
-    if (rootTypes.includes(typeName)) {
-      transforms.push(
+export default class FilterTransform implements Transform {
+  private transforms: Transform[] = [];
+  constructor(options: MeshTransformOptions<YamlConfig.Transform['filterSchema']>) {
+    const { config } = options;
+    for (const filter of config) {
+      const [typeName, fieldGlob] = filter.split('.');
+      const isMatch = matcher(fieldGlob.trim());
+      this.transforms.push(
         new FilterRootFields((rootTypeName, rootFieldName) => {
           if (rootTypeName === typeName) {
             return isMatch(rootFieldName);
@@ -27,8 +26,7 @@ const filterSchemaTransform: TransformFn<YamlConfig.Transform['filterSchema']> =
           return true;
         })
       );
-    } else {
-      transforms.push(
+      this.transforms.push(
         new FilterObjectFields((objectTypeName, objectFieldName) => {
           if (objectTypeName === typeName) {
             return isMatch(objectFieldName);
@@ -38,10 +36,16 @@ const filterSchemaTransform: TransformFn<YamlConfig.Transform['filterSchema']> =
       );
     }
   }
-  return wrapSchema({
-    schema,
-    transforms,
-  });
-};
 
-export default filterSchemaTransform;
+  transformSchema(schema: GraphQLSchema) {
+    return applySchemaTransforms(schema, this.transforms);
+  }
+
+  transformRequest(request: Request) {
+    return applyRequestTransforms(request, this.transforms);
+  }
+
+  transformResult(result: Result) {
+    return applyResultTransforms(result, this.transforms);
+  }
+}

@@ -1,4 +1,4 @@
-import snapshotTransform from '../src';
+import SnapshotTransform from '../src';
 import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql } from 'graphql';
@@ -8,6 +8,7 @@ import { Hooks } from '@graphql-mesh/types';
 import { EventEmitter } from 'events';
 import { join } from 'path';
 import { tmpdir } from 'os';
+import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('snapshot', () => {
   const outputDir = join(tmpdir(), '__snapshots__');
@@ -36,7 +37,7 @@ describe('snapshot', () => {
     await remove(outputDir);
   });
   it('it writes correct output', async () => {
-    const schema = await snapshotTransform({
+    const schema = wrapSchema({
       schema: makeExecutableSchema({
         typeDefs: /* GraphQL */ `
           type Query {
@@ -56,12 +57,16 @@ describe('snapshot', () => {
           },
         },
       }),
-      config: {
-        apply: ['Query.user'],
-        outputDir,
-      },
-      cache: new InMemoryLRUCache(),
-      hooks,
+      transforms: [
+        new SnapshotTransform({
+          config: {
+            apply: ['Query.user'],
+            outputDir,
+          },
+          cache: new InMemoryLRUCache(),
+          hooks,
+        }),
+      ],
     });
 
     await graphql({
@@ -91,7 +96,7 @@ describe('snapshot', () => {
 
   it('should not call again if there is snapshot created', async () => {
     let calledCounter = 0;
-    const schema = await snapshotTransform({
+    const schema = wrapSchema({
       schema: makeExecutableSchema({
         typeDefs: /* GraphQL */ `
           type Query {
@@ -114,12 +119,16 @@ describe('snapshot', () => {
           },
         },
       }),
-      config: {
-        apply: ['Query.user'],
-        outputDir,
-      },
-      cache: new InMemoryLRUCache(),
-      hooks,
+      transforms: [
+        new SnapshotTransform({
+          config: {
+            apply: ['Query.user'],
+            outputDir,
+          },
+          cache: new InMemoryLRUCache(),
+          hooks,
+        }),
+      ],
     });
 
     const doTheRequest = () =>

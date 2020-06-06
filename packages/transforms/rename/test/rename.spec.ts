@@ -1,8 +1,9 @@
-import renameTransform from './../src/index';
+import RenameTransform from './../src/index';
 import { buildSchema, printSchema } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
 import { EventEmitter } from 'events';
+import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('rename', () => {
   const schema = buildSchema(/* GraphQL */ `
@@ -21,17 +22,21 @@ describe('rename', () => {
     hooks = new EventEmitter() as Hooks;
   });
 
-  it('should change the name of a type', async () => {
-    const newSchema = await renameTransform({
+  it('should change the name of a type', () => {
+    const newSchema = wrapSchema({
       schema,
-      config: [
-        {
-          from: 'User',
-          to: 'MyUser',
-        },
+      transforms: [
+        new RenameTransform({
+          config: [
+            {
+              from: 'User',
+              to: 'MyUser',
+            },
+          ],
+          cache,
+          hooks,
+        }),
       ],
-      cache,
-      hooks,
     });
 
     expect(newSchema.getType('User')).toBeUndefined();

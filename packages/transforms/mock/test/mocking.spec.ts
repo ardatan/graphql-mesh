@@ -1,9 +1,10 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import mockingTransform from '../src';
+import { wrapSchema } from '@graphql-tools/wrap';
 import { YamlConfig, Hooks } from '@graphql-mesh/types';
 import { graphql } from 'graphql';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { EventEmitter } from 'events';
+import MockingTransform from '../src';
 
 describe('mocking', () => {
   let cache: InMemoryLRUCache;
@@ -49,11 +50,15 @@ describe('mocking', () => {
         },
       ],
     };
-    const transformedSchema = await mockingTransform({
+    const transformedSchema = await wrapSchema({
       schema,
-      config: mockingConfig,
-      cache,
-      hooks,
+      transforms: [
+        new MockingTransform({
+          config: mockingConfig,
+          cache,
+          hooks,
+        }),
+      ],
     });
     const result = await graphql({
       schema: transformedSchema,

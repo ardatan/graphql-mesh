@@ -923,11 +923,6 @@
           "type": "string",
           "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
         },
-        "context": {
-          "type": "object",
-          "properties": {},
-          "description": "Custom JSON object to add to the GraphQL context, use this to inject custom fields and later use it in your custom resolver. This object will be located in the context, under an object named as the API"
-        },
         "handler": {
           "$ref": "#/definitions/Handler",
           "description": "Point to the handler you wish to use, it can either be a predefined handler, or a custom"

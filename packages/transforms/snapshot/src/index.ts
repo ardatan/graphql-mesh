@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import { TransformFn, YamlConfig } from '@graphql-mesh/types';
+import { YamlConfig, Transform, MeshTransformOptions } from '@graphql-mesh/types';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
 import { isAbsolute, join } from 'path';
@@ -18,48 +18,48 @@ const writeFile = async (path: string, json: any) => {
   }
 };
 
-const snapshotTransform: TransformFn<YamlConfig.SnapshotTransformConfig> = async ({
-  schema,
-  config,
-}): Promise<GraphQLSchema> => {
-  // TODO: Needs to be changed!
-  // eslint-disable-next-line no-eval
-  const configIf = 'if' in config ? (typeof config.if === 'boolean' ? config.if : config.if && eval(config.if)) : true;
+export default class SnapshotTransform implements Transform {
+  constructor(private options: MeshTransformOptions<YamlConfig.SnapshotTransformConfig>) {}
+  transformSchema(schema: GraphQLSchema) {
+    const { config } = this.options;
 
-  if (configIf) {
-    const resolvers = extractResolvers(schema);
-    const resolversComposition: ResolversComposerMapping = {};
+    // TODO: Needs to be changed!
+    const configIf =
+      'if' in config ? (typeof config.if === 'boolean' ? config.if : config.if && eval(config.if)) : true;
 
-    const outputDir = isAbsolute(config.outputDir) ? config.outputDir : join(process.cwd(), config.outputDir);
+    if (configIf) {
+      const resolvers = extractResolvers(schema);
+      const resolversComposition: ResolversComposerMapping = {};
 
-    const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
-      const snapshotFilePath = computeSnapshotFilePath({
-        typeName: info.parentType.name,
-        fieldName: info.fieldName,
-        args,
-        outputDir,
-      });
-      if (await pathExists(snapshotFilePath)) {
-        return readJSON(snapshotFilePath);
+      const outputDir = isAbsolute(config.outputDir) ? config.outputDir : join(process.cwd(), config.outputDir);
+
+      const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
+        const snapshotFilePath = computeSnapshotFilePath({
+          typeName: info.parentType.name,
+          fieldName: info.fieldName,
+          args,
+          outputDir,
+        });
+        if (await pathExists(snapshotFilePath)) {
+          return readJSON(snapshotFilePath);
+        }
+        const result = await next(root, args, context, info);
+        await writeFile(snapshotFilePath, result);
+        return result;
+      };
+
+      for (const field of config.apply) {
+        resolversComposition[field] = snapshotComposition;
       }
-      const result = await next(root, args, context, info);
-      await writeFile(snapshotFilePath, result);
-      return result;
-    };
 
-    for (const field of config.apply) {
-      resolversComposition[field] = snapshotComposition;
+      const composedResolvers = composeResolvers(resolvers, resolversComposition);
+      return addResolversToSchema({
+        schema,
+        resolvers: composedResolvers,
+        updateResolversInPlace: true,
+      });
     }
 
-    const composedResolvers = composeResolvers(resolvers, resolversComposition);
-    return addResolversToSchema({
-      schema,
-      resolvers: composedResolvers,
-      updateResolversInPlace: true,
-    });
+    return schema;
   }
-
-  return schema;
-};
-
-export default snapshotTransform;
+}

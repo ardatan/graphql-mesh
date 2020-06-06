@@ -46,7 +46,7 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler, { pgClient: Cl
 
     // This is a workaround because the final schema changes, and we need to make sure
     // the new types are there on those maps, otherwise postgraphile will fail to build queries
-    hooks.on('schemaReady', ({ schema: finalSchema }) => {
+    hooks.on('schemaReady', finalSchema => {
       const typeMap = finalSchema.getTypeMap();
 
       for (const [typeName, type] of Object.entries(typeMap)) {

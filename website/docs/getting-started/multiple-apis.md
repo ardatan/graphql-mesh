@@ -93,8 +93,6 @@ sources:
         operationHeaders:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
   - name: Weather
-    context:
-      apiKey: 971a693de7ff47a89127664547988be5
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
@@ -110,6 +108,7 @@ additionalResolvers:
 After declaration, we stitch APIs in resolvers level;
 
 ```js
+const WEATHER_KEY = '971a693de7ff47a89127664547988be5';
 module.exports = {
   // In here we call `Weather` API in `Cities` API.
   PopulatedPlaceSummary: {
@@ -117,7 +116,7 @@ module.exports = {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon({
         lat: placeSummary.latitude!,
         lon: placeSummary.longitude!,
-        key: Weather.config.apiKey,
+        key: WEATHER_KEY,
       });
 
       return forecast.data!;
@@ -126,7 +125,7 @@ module.exports = {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon({
         lat: placeSummary.latitude!,
         lon: placeSummary.longitude!,
-        key: Weather.config.apiKey,
+        key: WEATHER_KEY,
       });
 
       return forecast.data![0]!;

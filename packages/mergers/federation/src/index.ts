@@ -1,6 +1,7 @@
-import { MergerFn } from '@graphql-mesh/types';
+/* eslint-disable no-unused-expressions */
+import { MergerFn, RawSourceOutput } from '@graphql-mesh/types';
 import { GraphQLSchema, print, graphql, extendSchema } from 'graphql';
-import { makeRemoteExecutableSchema } from '@graphql-tools/wrap';
+import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway } from '@apollo/gateway';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
@@ -11,11 +12,15 @@ const mergeUsingFederation: MergerFn = async function ({
   hooks,
   typeDefs,
   resolvers,
+  transforms,
 }): Promise<GraphQLSchema> {
   const serviceMap = new Map<string, GraphQLSchema>();
   const serviceList: { name: string; url: string }[] = [];
+  const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
   for (const rawSource of rawSources) {
-    serviceMap.set(rawSource.name, rawSource.schema);
+    const transformedSchema = wrapSchema(rawSource);
+    serviceMap.set(rawSource.name, transformedSchema);
+    sourceMap.set(rawSource, transformedSchema);
     serviceList.push({
       name: rawSource.name,
       url: 'http://localhost/' + rawSource.name,
@@ -40,7 +45,7 @@ const mergeUsingFederation: MergerFn = async function ({
     },
   });
   const { schema, executor: gatewayExecutor } = await gateway.load();
-  let remoteSchema = makeRemoteExecutableSchema({
+  let remoteSchema = wrapSchema({
     schema,
     executor: ({ document, info, variables, context }): any => {
       const documentStr = print(document);
@@ -65,16 +70,22 @@ const mergeUsingFederation: MergerFn = async function ({
         schemaHash: printSchemaWithDirectives(schema) as any,
       });
     },
+    transforms,
   });
   hooks.on('destroy', () => gateway.stop());
-  typeDefs.forEach(typeDef => {
+  typeDefs?.forEach(typeDef => {
     remoteSchema = extendSchema(remoteSchema, typeDef);
   });
-  remoteSchema = addResolversToSchema({
-    schema: remoteSchema,
-    resolvers,
-    updateResolversInPlace: true,
-  });
+  if (resolvers) {
+    remoteSchema = addResolversToSchema({
+      schema: remoteSchema,
+      resolvers,
+      updateResolversInPlace: true,
+    });
+  }
+  remoteSchema.extensions = {
+    sourceMap,
+  };
   return remoteSchema;
 };
 

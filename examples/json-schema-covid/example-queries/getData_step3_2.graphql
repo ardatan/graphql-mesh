@@ -3,7 +3,6 @@ query getData_step3_2 {
   fr: stat(country: "France") {
     deathRatio
     case {
-      countryRegion
       deaths
     }
     population {
@@ -17,7 +16,6 @@ query getData_step3_2 {
   at: stat(country: "Austria") {
     deathRatio
     case {
-      countryRegion
       deaths
     }
     population {

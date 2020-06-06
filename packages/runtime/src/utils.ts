@@ -1,62 +1,12 @@
-import { ResolvedTransform, GraphQLOperation } from './types';
-import { GraphQLSchema, DocumentNode, parse } from 'graphql';
-import { Hooks, MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn } from '@graphql-mesh/types';
+import { GraphQLOperation } from './types';
+import { DocumentNode, parse } from 'graphql';
+import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-
-export async function applySchemaTransformations(
-  name: string,
-  schema: GraphQLSchema,
-  transformations: ResolvedTransform[],
-  cache: KeyValueCache,
-  hooks: Hooks
-): Promise<GraphQLSchema> {
-  let resultSchema: GraphQLSchema = schema;
-
-  for (const transformation of transformations) {
-    const transformedSchema = await transformation.transformFn({
-      apiName: name,
-      schema: resultSchema,
-      config: transformation.config,
-      cache,
-      hooks,
-    });
-
-    if (transformedSchema) {
-      resultSchema = transformedSchema;
-    }
-  }
-
-  return resultSchema;
-}
-
-export async function applyOutputTransformations(
-  schema: GraphQLSchema,
-  transformations: ResolvedTransform[],
-  cache: KeyValueCache,
-  hooks: Hooks
-): Promise<GraphQLSchema> {
-  let resultSchema: GraphQLSchema = schema;
-
-  for (const transformation of transformations) {
-    const transformedSchema = await transformation.transformFn({
-      schema: resultSchema,
-      config: transformation.config,
-      cache,
-      hooks,
-    });
-
-    if (transformedSchema) {
-      resultSchema = transformedSchema;
-    }
-  }
-
-  return resultSchema;
-}
 
 export async function getPackage<T>(name: string, type: string): Promise<T> {
   const casedName = paramCase(name);
