@@ -72,8 +72,8 @@ function Home() {
           src="https://img.shields.io/npm/v/@graphql-mesh/runtime?color=%231BCBE2&label=stable&style=for-the-badge"
         />
         <div className={styles.buttons}>
-        <Button>
-          <a href="#" onClick={() => setShowLiveDemo(true)}>Try it out Live</a>
+        <Button onClick={() => setShowLiveDemo(true)}>
+          Try it out Live
         </Button>
           <Button>
             <Link to={`/docs/getting-started/introduction`}>View Docs</Link>
