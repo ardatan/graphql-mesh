@@ -1,12 +1,43 @@
+/* eslint-disable no-unused-expressions */
 import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
-import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, Requester } from './types';
+import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, Requester, ResolvedTransform } from './types';
 import { ensureDocumentNode } from './utils';
-import { Hooks, KeyValueCache, RawSourceOutput } from '@graphql-mesh/types';
+import { Hooks, KeyValueCache, RawSourceOutput, MeshTransform } from '@graphql-mesh/types';
 
 import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { EventEmitter } from 'events';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
+import { applySchemaTransforms } from '@graphql-tools/utils';
+
+export function groupTransforms({
+  transforms,
+  apiName,
+  cache,
+  hooks,
+}: {
+  transforms: ResolvedTransform[];
+  apiName: string;
+  cache: KeyValueCache;
+  hooks: Hooks;
+}) {
+  const wrapTransforms: MeshTransform[] = [];
+  const noWrapTransforms: MeshTransform[] = [];
+  transforms?.forEach(({ transformCtor: TransformCtor, config }) => {
+    const transform = new TransformCtor({
+      apiName,
+      config,
+      cache,
+      hooks,
+    });
+    if (transform.noWrap) {
+      noWrapTransforms.push(transform);
+    } else {
+      wrapTransforms.push(transform);
+    }
+  });
+  return { wrapTransforms, noWrapTransforms };
+}
 
 export async function getMesh(
   options: GetMeshOptions
@@ -37,24 +68,26 @@ export async function getMesh(
         cache,
       });
 
-      const apiSchema = source.schema;
+      let apiSchema = source.schema;
 
       const apiName = apiSource.name;
+
+      const { wrapTransforms, noWrapTransforms } = groupTransforms({
+        transforms: apiSource.transforms,
+        apiName,
+        cache,
+        hooks,
+      });
+
+      apiSchema = applySchemaTransforms(apiSchema, noWrapTransforms);
+
       rawSources.push({
         name: apiName,
         contextBuilder: source.contextBuilder || null,
         schema: apiSchema,
         executor: source.executor,
         subscriber: source.subscriber,
-        transforms: apiSource.transforms.map(
-          ({ transformCtor: TransformCtor, config }) =>
-            new TransformCtor({
-              apiName,
-              config,
-              cache,
-              hooks,
-            })
-        ),
+        transforms: wrapTransforms,
         contextVariables: source.contextVariables || [],
         handler: apiSource.handlerLibrary,
       });

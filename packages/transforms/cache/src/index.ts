@@ -1,11 +1,11 @@
-import { Transform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { ResolversComposerMapping, ResolversComposition, composeResolvers } from '@graphql-tools/resolvers-composition';
 import { computeCacheKey } from './compute-cache-key';
 import { extractResolvers } from '@graphql-mesh/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 
-export default class CacheTransform implements Transform {
+export default class CacheTransform implements MeshTransform {
   constructor(private options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]>) {}
   transformSchema(schema: GraphQLSchema) {
     const { config, hooks, cache } = this.options;

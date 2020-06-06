@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import { YamlConfig, Transform, MeshTransformOptions } from '@graphql-mesh/types';
+import { YamlConfig, MeshTransform, MeshTransformOptions } from '@graphql-mesh/types';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
 import { isAbsolute, join } from 'path';
@@ -18,7 +18,7 @@ const writeFile = async (path: string, json: any) => {
   }
 };
 
-export default class SnapshotTransform implements Transform {
+export default class SnapshotTransform implements MeshTransform {
   constructor(private options: MeshTransformOptions<YamlConfig.SnapshotTransformConfig>) {}
   transformSchema(schema: GraphQLSchema) {
     const { config } = this.options;

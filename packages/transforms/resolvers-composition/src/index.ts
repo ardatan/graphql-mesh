@@ -1,10 +1,11 @@
 import { GraphQLSchema } from 'graphql';
-import { YamlConfig, MeshTransformOptions, Transform } from '@graphql-mesh/types';
+import { YamlConfig, MeshTransformOptions, MeshTransform } from '@graphql-mesh/types';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
 import { extractResolvers, loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 
-export default class ResolversCompositionTransform implements Transform {
+export default class ResolversCompositionTransform implements MeshTransform {
+  public noWrap = true;
   constructor(private options: MeshTransformOptions<YamlConfig.ResolversCompositionTransformObject[]>) {}
   transformSchema(schema: GraphQLSchema) {
     const resolversComposition: ResolversComposerMapping = {};

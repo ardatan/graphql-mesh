@@ -1,7 +1,7 @@
 import { matcher } from 'micromatch';
 
 import { GraphQLSchema } from 'graphql';
-import { Transform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { FilterRootFields, FilterObjectFields } from '@graphql-tools/wrap';
 import {
   applySchemaTransforms,
@@ -9,9 +9,10 @@ import {
   applyResultTransforms,
   Request,
   Result,
+  Transform,
 } from '@graphql-tools/utils';
 
-export default class FilterTransform implements Transform {
+export default class FilterTransform implements MeshTransform {
   private transforms: Transform[] = [];
   constructor(options: MeshTransformOptions<YamlConfig.Transform['filterSchema']>) {
     const { config } = options;

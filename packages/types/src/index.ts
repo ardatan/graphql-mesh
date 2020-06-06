@@ -58,10 +58,12 @@ export interface MeshTransformOptions<Config = any> {
 }
 
 export interface MeshTransformConstructor<Config = any> {
-  new (options: MeshTransformOptions<Config>): Transform;
+  new (options: MeshTransformOptions<Config>): MeshTransform;
 }
 
-export { Transform };
+export interface MeshTransform extends Transform {
+  noWrap?: boolean;
+}
 
 export type Maybe<T> = null | undefined | T;
 
@@ -84,7 +86,7 @@ export type RawSourceOutput = {
   schema: GraphQLSchema;
   executor?: Executor;
   subscriber?: Subscriber;
-  transforms: Transform[];
+  transforms: MeshTransform[];
   contextVariables: (keyof any)[];
   handler: MeshHandlerLibrary;
 };

@@ -1,9 +1,9 @@
 import { GraphQLSchema, GraphQLObjectType, GraphQLID, isNonNullType, GraphQLNonNull } from 'graphql';
-import { Transform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 import { transformSchemaFederation, FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 
-export default class FederationTransform implements Transform {
+export default class FederationTransform implements MeshTransform {
   constructor(private options: MeshTransformOptions<YamlConfig.Transform['federation']>) {}
   transformSchema(schema: GraphQLSchema) {
     const { config } = this.options;
