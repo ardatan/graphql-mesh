@@ -80,11 +80,13 @@ query viewsInPastMonth {
 
 > You can use TypeScript to have full type-safety in additional resolvers. See [TypeScript Support](/docs/recipes/typescript) section to learn more.
 
-## Stitching Schemas using Declarative API without JavaScript Code File 
+## Stitching Schemas using declarative API without JavaScript Code File 
 
 You can combine multiple APIs in Mesh using `additionalTypeDefs` and `additionalResolvers`. 
 
 The following example has two different OpenAPI sources; we add two new fields to a type of `Cities`, and those fields have return types from `Weather` API.
+
+But this time we don't use an extra resolvers file for `additionalResolvers` but only the configuration file.
 
 ```yaml
 sources:
