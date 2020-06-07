@@ -21,7 +21,17 @@ additionalTypeDefs: |
       extend type GeoCity {
         developers(limit: Int = 10): [GithubUser]
       }
-require:
-  - ts-node/register/transpile-only
 additionalResolvers:
-  - ./src/mesh/additional-resolvers.ts
+  - type: GeoCity
+    field: developers
+    requiredSelectionSet: |
+      {
+        name
+      }
+    targetSource: Github
+    targetMethod: Githubsearch
+    returnData: nodes
+    args:
+      type: "USER"
+      query: "location:{root.name}"
+      first: "{args.limit}"

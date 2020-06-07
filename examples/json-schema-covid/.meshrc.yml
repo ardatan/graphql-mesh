@@ -38,5 +38,5 @@ additionalResolvers:
     targetSource: WorldPop
     targetMethod: population
     args:
-      country: root.countryRegion
+      country: '{root.countryRegion}'
   - ./src/query-additional-resolvers.js

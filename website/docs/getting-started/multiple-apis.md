@@ -1,7 +1,7 @@
 ---
 id: multiple-apis
-title: Multiple APIs
-sidebar_label: 5. Multiple APIs
+title: Extending Schema with Multiple APIs
+sidebar_label: 5. Extending Schema with Multiple APIs
 ---
 
 ## Extending Schema with JavaScript Code File
@@ -78,6 +78,8 @@ query viewsInPastMonth {
 
 > You can find the complete example [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/javascript-wiki)
 
+> You can use TypeScript to have full type-safety in additional resolvers. See [TypeScript Support](/docs/recipes/typescript) section to learn more.
+
 ## Stitching Schemas using Declarative API without JavaScript Code File 
 
 You can combine multiple APIs in Mesh using `additionalTypeDefs` and `additionalResolvers`. 
@@ -113,36 +115,21 @@ additionalResolvers:
     targetMethod: getForecastDailyLatLatLonLon
     returnData: data
     args:
-      lat: root.latitude
-      lon: root.longitude
-      key: context.weatherApiKey
-  # and/or as a code file
-  - ./additional-resolvers.js
-```
-
-After declaration, we stitch APIs in resolvers level;
-
-```js
-const WEATHER_KEY = '971a693de7ff47a89127664547988be5';
-module.exports = {
-  // In here we call `Weather` API in `Cities` API.
-    todayForecast: {
-      selectionSet: `{
+      lat: "{root.latitude}"
+      lon: "{root.longitude}"
+      key: "{context.weatherApiKey}"
+  - type: PopulatedPlaceSummary
+    field: todayForecast
+    requiredSelectionSet: |
+      {
         latitude
         longitude
-      }`,
-      resolve: async (placeSummary, _, { Weather }) => {
-        const forecast = await Weather.api.getForecastDailyLatLatLonLon({
-          lat: placeSummary.latitude!,
-          lon: placeSummary.longitude!,
-          key: WEATHER_KEY,
-        });
-
-        return forecast.data![0]!;
       }
-    },
-  },
-};
+    targetSource: Weather
+    targetMethod: getForecastDailyLatLatLonLon
+    returnData: data[0]
+    args:
+      lat: "{root.latitude}"
+      lon: "{root.longitude}"
+      key: "{context.weatherApiKey}"
 ```
-
-You can use TypeScript to have full type-safety in additional resolvers. See [TypeScript Support](/docs/recipes/typescript) section to learn more.

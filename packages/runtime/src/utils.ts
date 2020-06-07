@@ -8,6 +8,8 @@ import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { get, set } from 'lodash';
+import { stringInterpolator } from '@graphql-mesh/utils';
+import { mergeResolvers } from '@graphql-tools/merge';
 
 export async function getPackage<T>(name: string, type: string): Promise<T> {
   const casedName = paramCase(name);
@@ -59,7 +61,7 @@ export async function resolveAdditionalResolvers(
   baseDir: string,
   additionalResolvers: (string | YamlConfig.AdditionalResolverObject)[]
 ): Promise<IResolvers> {
-  const loaded = await Promise.all(
+  const loadedResolvers = await Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {
       if (typeof additionalResolver === 'string') {
         const filePath = additionalResolver;
@@ -93,7 +95,7 @@ export async function resolveAdditionalResolvers(
                 const resolverData = { root, args, context, info };
                 const methodArgs: any = {};
                 for (const argPath in additionalResolver.args) {
-                  set(methodArgs, argPath, get(resolverData, additionalResolver.args[argPath]));
+                  set(methodArgs, argPath, stringInterpolator.parse(additionalResolver.args[argPath], resolverData));
                 }
                 const result = await context[additionalResolver.targetSource].api[additionalResolver.targetMethod](
                   methodArgs,
@@ -112,12 +114,7 @@ export async function resolveAdditionalResolvers(
     })
   );
 
-  return loaded.reduce((prev, t) => {
-    return {
-      ...prev,
-      ...t,
-    };
-  }, {} as IResolvers);
+  return mergeResolvers(loadedResolvers);
 }
 
 export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {

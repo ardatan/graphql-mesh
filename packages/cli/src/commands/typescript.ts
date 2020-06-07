@@ -100,7 +100,7 @@ ${operations.join(',\n')}
   const context = {
     identifier: contextIdentifier,
     codeAst: `export type ${contextIdentifier} = { 
-      ${options.name}: { config: Record<string, any>, api: ${sdkIdentifier} }, 
+      ${options.name}: { api: ${sdkIdentifier} }, 
     } & ${additionalContextIdentifier};`,
   };
 

@@ -8,7 +8,7 @@ export const resolvers: Resolvers = {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon({
         lat: placeSummary.latitude!,
         lon: placeSummary.longitude!,
-        key: Weather.config.apiKey,
+        key: WEATHER_API_KEY,
       });
 
       return forecast.data!;
@@ -17,7 +17,7 @@ export const resolvers: Resolvers = {
       const forecast = await Weather.api.getForecastDailyLatLatLonLon({
         lat: placeSummary.latitude!,
         lon: placeSummary.longitude!,
-        key: Weather.config.apiKey,
+        key: WEATHER_API_KEY,
       });
 
       return forecast.data![0]!;
