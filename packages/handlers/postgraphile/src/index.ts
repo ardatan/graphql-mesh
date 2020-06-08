@@ -29,6 +29,8 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
     }
     const graphileSchema = await createPostGraphileSchema(pgPool, config.schemaName || 'public', {
       dynamicJson: true,
+      subscriptions: true,
+      live: true,
       readCache,
       writeCache,
     });

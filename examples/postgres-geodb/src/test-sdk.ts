@@ -15,6 +15,7 @@ async function testSdk(city: string) {
   } catch (e) {
     console.error(e);
   }
+  // Force database connections to finish (not necessary)
   destroy();
 }
 
