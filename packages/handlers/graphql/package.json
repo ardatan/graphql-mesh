@@ -15,7 +15,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.2.6",
     "fetchache": "0.0.3",
-    "@graphql-tools/url-loader": "6.0.8"
+    "@graphql-tools/url-loader": "6.0.9"
   },
   "publishConfig": {
     "access": "public",
