@@ -1,14 +1,14 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { GraphQLNamedType } from 'graphql';
-import { createPostGraphileSchema } from 'postgraphile';
-import { Client } from 'pg';
+import { execute, subscribe } from 'graphql';
+import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile';
+import { Pool } from 'pg';
 import { isAbsolute, join } from 'path';
 import { pathExists } from 'fs-extra';
+import { cwd } from 'process';
 
-const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler, { pgClient: Client }> = {
+const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
   async getMeshSource({ config, hooks }) {
-    const mapsToPatch: Array<Map<GraphQLNamedType, any>> = [];
-    const pgClient = new Client({
+    const pgPool = new Pool({
       ...(config?.pool
         ? {
             ...config?.pool,
@@ -17,11 +17,9 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler, { pgClient: Cl
             connectionString: config.connectionString,
           }),
     });
-    await pgClient.connect();
-    (pgClient as any).release = () => {};
     let readCache: string, writeCache: string;
     if (config.cachePath) {
-      const absoluteCachePath = isAbsolute(config.cachePath) ? config.cachePath : join(process.cwd(), config.cachePath);
+      const absoluteCachePath = isAbsolute(config.cachePath) ? config.cachePath : join(cwd(), config.cachePath);
       if (await pathExists(absoluteCachePath)) {
         // If file exists, read that one. if not, create a new one
         readCache = absoluteCachePath;
@@ -29,57 +27,52 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler, { pgClient: Cl
         writeCache = absoluteCachePath;
       }
     }
-    const graphileSchema = await createPostGraphileSchema(pgClient as any, config.schemaName || 'public', {
+    const graphileSchema = await createPostGraphileSchema(pgPool, config.schemaName || 'public', {
       dynamicJson: true,
       readCache,
       writeCache,
-      appendPlugins: [
-        builder => {
-          builder.hook('GraphQLObjectType:interfaces', (interfaces, _, context) => {
-            const {
-              scope: { isRootQuery },
-            } = context;
-            if (!isRootQuery) {
-              return interfaces;
-            }
-
-            return [];
-          });
-
-          builder.hook('finalize', (schema, build) => {
-            mapsToPatch.push(build.fieldDataGeneratorsByType);
-            mapsToPatch.push(build.fieldDataGeneratorsByFieldNameByType);
-            mapsToPatch.push(build.fieldArgDataGeneratorsByFieldNameByType);
-            mapsToPatch.push(build.scopeByType);
-
-            return schema;
-          });
-        },
-      ],
     });
 
-    // This is a workaround because the final schema changes, and we need to make sure
-    // the new types are there on those maps, otherwise postgraphile will fail to build queries
-    hooks.on('schemaReady', finalSchema => {
-      const typeMap = finalSchema.getTypeMap();
-
-      for (const [typeName, type] of Object.entries(typeMap)) {
-        for (const map of mapsToPatch) {
-          const oldType = graphileSchema.getType(typeName);
-          const val = oldType ? map.get(oldType) : null;
-
-          if (val) {
-            map.set(type, val);
-          }
-        }
-      }
-    });
-
-    hooks.on('destroy', () => pgClient.end());
+    hooks.on('destroy', () => pgPool.end());
 
     return {
       schema: graphileSchema,
-      contextBuilder: async () => ({ pgClient }),
+      executor({ document, variables, context: meshContext }) {
+        return withPostGraphileContext(
+          {
+            pgPool,
+          },
+          async postgraphileContext => {
+            // Execute your GraphQL query in this function with the provided
+            // `context` object, which should NOT be used outside of this
+            // function.
+            return execute({
+              schema: graphileSchema, // The schema from `createPostGraphileSchema`
+              document,
+              contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
+              variableValues: variables,
+            });
+          }
+        ) as any;
+      },
+      subscriber({ document, variables, context: meshContext }) {
+        return withPostGraphileContext(
+          {
+            pgPool,
+          },
+          async postgraphileContext => {
+            // Execute your GraphQL query in this function with the provided
+            // `context` object, which should NOT be used outside of this
+            // function.
+            return subscribe({
+              schema: graphileSchema, // The schema from `createPostGraphileSchema`
+              document,
+              contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
+              variableValues: variables,
+            }) as any;
+          }
+        ) as any;
+      },
     };
   },
 };

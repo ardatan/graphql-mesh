@@ -223,6 +223,10 @@ type Neo4jHandler @md {
   password: String!
   """Specifies whether relationships should always be included in the type definitions as [relationship](https://grandstack.io/docs/neo4j-graphql-js.html#relationship-types) types, even if the relationships do not have properties."""
   alwaysIncludeRelationships: Boolean
+  """Specifies database name"""
+  database: String
+  """Introspection Cache (if you want to reset cache, delete the file on this path)"""
+  cachePath: String
 }
 type ODataHandler @md {
   """Base URL for OData API"""

@@ -3,6 +3,7 @@ sources:
     handler:
       postgraphile:
         connectionString: postgres://postgres:docker@localhost:5432/postgres
+        cachePath: ./postgraphile_cache.json
     transforms:
       - prefix:
           value: Geo
