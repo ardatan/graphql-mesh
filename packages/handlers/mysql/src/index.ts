@@ -1,12 +1,13 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
-import { createConnection, TableForeign } from 'mysql';
+import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
 import { promisify } from 'util';
 import { pascalCase } from 'pascal-case';
 import graphqlFields from 'graphql-fields';
 import { camelCase } from 'camel-case';
 import { GraphQLBigInt, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
+import { execute } from 'graphql';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -56,25 +57,51 @@ const SCALARS = {
   year: 'Int',
 };
 
+async function getPromisifiedConnection(pool: Pool) {
+  const getConnection = promisify(pool.getConnection.bind(pool));
+
+  const connection = await getConnection();
+
+  const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
+  const getTableFields = promisify(connection.fields.bind(connection));
+  const getTableForeigns = promisify(connection.foreign.bind(connection));
+  const getTablePrimaryKeys = promisify(connection.primary.bind(connection));
+
+  const selectLimit = promisify(connection.selectLimit.bind(connection));
+  const select = promisify(connection.select.bind(connection));
+  const insert = promisify(connection.insert.bind(connection));
+  const update = promisify(connection.update.bind(connection));
+  const deleteRow = promisify(connection.delete.bind(connection));
+
+  return {
+    connection,
+    getDatabaseTables,
+    getTableFields,
+    getTableForeigns,
+    getTablePrimaryKeys,
+    selectLimit,
+    select,
+    insert,
+    update,
+    deleteRow,
+  };
+}
+
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
+type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnection>>;
+
+type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
+
 const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
   async getMeshSource({ config, hooks }) {
-    const schemaComposer = new SchemaComposer();
-    const connection = createConnection(config);
-    const connect = promisify(connection.connect.bind(connection));
-    await connect();
+    const schemaComposer = new SchemaComposer<MysqlContext>();
+    const pool = createPool(config);
+    pool.on('connection', connection => {
+      upgrade(connection);
+      introspection(connection);
+    });
 
-    upgrade(connection);
-    introspection(connection);
-
-    const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
-    const getTableFields = promisify(connection.fields.bind(connection));
-    const getTableForeigns = promisify(connection.foreign.bind(connection));
-    const getTablePrimaryKeys = promisify(connection.primary.bind(connection));
-    const selectLimit = promisify(connection.selectLimit.bind(connection));
-    const select = promisify(connection.select.bind(connection));
-    const insert = promisify(connection.insert.bind(connection));
-    const update = promisify(connection.update.bind(connection));
-    const deleteRow = promisify(connection.delete.bind(connection));
+    const introspectionConnection = await getPromisifiedConnection(pool);
 
     schemaComposer.add(GraphQLBigInt);
     schemaComposer.add(GraphQLJSON);
@@ -90,7 +117,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
         },
       },
     });
-    const tables = await getDatabaseTables(config.database);
+    const tables = await introspectionConnection.getDatabaseTables(config.database);
     await Promise.all(
       Object.keys(tables).map(async tableName => {
         const table = tables[tableName];
@@ -129,8 +156,8 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
           extensions: table,
           fields: {},
         });
-        const primaryKeys = await getTablePrimaryKeys(tableName);
-        const fields = await getTableFields(tableName);
+        const primaryKeys = await introspectionConnection.getTablePrimaryKeys(tableName);
+        const fields = await introspectionConnection.getTableFields(tableName);
         await Promise.all(
           Object.keys(fields).map(async fieldName => {
             const tableField = fields[fieldName];
@@ -194,7 +221,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
             });
           })
         );
-        const tableForeigns = await getTableForeigns(tableName);
+        const tableForeigns = await introspectionConnection.getTableForeigns(tableName);
         await Promise.all(
           Object.keys(tableForeigns).map(async foreignName => {
             const tableForeign = tableForeigns[foreignName];
@@ -219,7 +246,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                   },
                 },
                 extensions: tableForeign,
-                resolve: async (root, args, context, info) => {
+                resolve: async (root, args, { mysqlConnection }, info) => {
                   const fieldMap = graphqlFields(info);
                   const fields = Object.keys(fieldMap).filter(
                     fieldName => Object.keys(fieldMap[fieldName]).length === 0
@@ -231,9 +258,9 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                   // Generate limit statement
                   const limit: number[] = [args.limit, args.offset].filter(Boolean);
                   if (limit.length) {
-                    return selectLimit(foreignTableName, fields, limit, where, args?.orderBy);
+                    return mysqlConnection.selectLimit(foreignTableName, fields, limit, where, args?.orderBy);
                   } else {
-                    return select(foreignTableName, fields, where, args?.orderBy);
+                    return mysqlConnection.select(foreignTableName, fields, where, args?.orderBy);
                   }
                 },
               },
@@ -257,7 +284,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                 type: orderByInputName,
               },
             },
-            resolve: async (root, args, context, info) => {
+            resolve: async (root, args, { mysqlConnection }, info) => {
               const fieldMap = graphqlFields(info);
               const fields: string[] = [];
               await Promise.all(
@@ -275,9 +302,9 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
               // Generate limit statement
               const limit = [args.limit, args.offset].filter(Boolean);
               if (limit.length) {
-                return selectLimit(tableName, fields, limit, args.where, args?.orderBy);
+                return mysqlConnection.selectLimit(tableName, fields, limit, args.where, args?.orderBy);
               } else {
-                return select(tableName, fields, args.where, args?.orderBy);
+                return mysqlConnection.select(tableName, fields, args.where, args?.orderBy);
               }
             },
           },
@@ -290,8 +317,8 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                 type: insertInputName + '!',
               },
             },
-            resolve: async (root, args, context, info) => {
-              const { recordId } = await insert(args);
+            resolve: async (root, args, { mysqlConnection }, info) => {
+              const { recordId } = await mysqlConnection.insert(args);
               const fieldMap = graphqlFields(info);
               const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
               const where: any = {};
@@ -302,7 +329,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                   where[columnName] = args[columnName] || recordId;
                 })
               );
-              const result = await select(tableName, fields, where, {});
+              const result = await mysqlConnection.select(tableName, fields, where, {});
               return result[0];
             },
           },
@@ -316,8 +343,8 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                 type: whereInputName,
               },
             },
-            resolve: async (root, args, context, info) => {
-              await update(
+            resolve: async (root, args, { mysqlConnection }, info) => {
+              await mysqlConnection.update(
                 tableName,
                 {
                   [tableName]: args[tableName],
@@ -326,7 +353,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
               );
               const fieldMap = graphqlFields(info);
               const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
-              const result = await select(tableName, fields, args.where, {});
+              const result = await mysqlConnection.select(tableName, fields, args.where, {});
               return result[0];
             },
           },
@@ -337,19 +364,33 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                 type: whereInputName,
               },
             },
-            resolve: async (root, args) => {
-              await deleteRow(tableName, args.where);
+            resolve: async (root, args, { mysqlConnection }) => {
+              await mysqlConnection.deleteRow(tableName, args.where);
               return true;
             },
           },
         });
       })
     );
-    hooks.on('destroy', () => connection.end());
+    hooks.on('destroy', () => pool.end());
 
     const schema = schemaComposer.buildSchema();
+
+    introspectionConnection.connection.release();
+
     return {
       schema,
+      async executor({ document, variables, context: meshContext }) {
+        const mysqlConnection = await getPromisifiedConnection(pool);
+        const result = (await execute({
+          schema,
+          document,
+          variableValues: variables,
+          contextValue: { ...meshContext, mysqlConnection },
+        })) as any;
+        mysqlConnection.connection.release();
+        return result;
+      },
     };
   },
 };
