@@ -787,6 +787,14 @@
         "alwaysIncludeRelationships": {
           "type": "boolean",
           "description": "Specifies whether relationships should always be included in the type definitions as [relationship](https://grandstack.io/docs/neo4j-graphql-js.html#relationship-types) types, even if the relationships do not have properties."
+        },
+        "database": {
+          "type": "string",
+          "description": "Specifies database name"
+        },
+        "cachePath": {
+          "type": "string",
+          "description": "Introspection Cache (if you want to reset cache, delete the file on this path)"
         }
       },
       "required": [
