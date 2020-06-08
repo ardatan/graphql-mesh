@@ -1,5 +1,5 @@
 import { YamlConfig, Hooks, KeyValueCache } from '@graphql-mesh/types';
-import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { GraphQLSchema, buildSchema, execute, parse, DocumentNode } from 'graphql';
 import CacheTransform from '../src';

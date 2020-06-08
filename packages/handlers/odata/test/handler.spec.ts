@@ -1,7 +1,7 @@
 import { Hooks, KeyValueCache } from '@graphql-mesh/types';
 import { printSchema, graphql } from 'graphql';
 import handler from '../src';
-import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addMock, resetMocks, Response } from 'fetchache';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';

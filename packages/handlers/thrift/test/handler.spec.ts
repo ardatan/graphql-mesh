@@ -1,6 +1,6 @@
 import thriftHandler from '../src';
 import { Hooks } from '@graphql-mesh/types';
-import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { join } from 'path';
 import { printSchema } from 'graphql';
 import { EventEmitter } from 'events';

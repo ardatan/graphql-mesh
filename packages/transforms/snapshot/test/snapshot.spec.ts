@@ -3,7 +3,7 @@ import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql } from 'graphql';
 import { readJSON, remove, mkdir } from 'fs-extra';
-import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { Hooks } from '@graphql-mesh/types';
 import { EventEmitter } from 'events';
 import { join } from 'path';
