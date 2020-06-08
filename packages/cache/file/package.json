@@ -1,25 +1,25 @@
 {
-    "name": "@graphql-mesh/cache-file",
-    "version": "0.2.6",
-    "license": "MIT",
-    "peerDependencies": {
-      "graphql": "*"
-    },
-    "sideEffects": false,
-    "main": "dist/index.cjs.js",
-    "module": "dist/index.esm.js",
-    "typings": "dist/index.d.ts",
-    "typescript": {
-      "definition": "dist/index.d.ts"
-    },
-    "dependencies": {
-      "@graphql-mesh/types": "0.2.6",
-      "dataloader": "2.0.0",
-      "fs-extra": "9.0.1",
-      "lodash": "4.17.15"
-    },
-    "publishConfig": {
-      "access": "public",
-      "directory": "dist"
-    }
+  "name": "@graphql-mesh/cache-file",
+  "version": "0.2.7",
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.2.7",
+    "dataloader": "2.0.0",
+    "fs-extra": "9.0.1",
+    "lodash": "4.17.15"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
   }
+}
