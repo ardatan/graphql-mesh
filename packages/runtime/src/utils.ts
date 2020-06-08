@@ -120,15 +120,18 @@ export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
   return typeof document === 'string' ? parse(document) : document;
 }
 
-export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache> {
-  const cacheName = Object.keys(cacheConfig)[0];
-  const config = cacheConfig[cacheName];
+export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache | undefined> {
+  if (cacheConfig) {
+    const cacheName = Object.keys(cacheConfig)[0];
+    const config = cacheConfig[cacheName];
 
-  const moduleName = kebabCase(cacheName);
-  const pkg = await getPackage<any>(moduleName, 'cache');
-  const Cache = pkg.default || pkg;
+    const moduleName = kebabCase(cacheName);
+    const pkg = await getPackage<any>(moduleName, 'cache');
+    const Cache = pkg.default || pkg;
 
-  return new Cache(config);
+    return new Cache(config);
+  }
+  return undefined;
 }
 
 export async function resolveMerger(mergerConfig?: YamlConfig.Config['merger']): Promise<MergerFn> {
