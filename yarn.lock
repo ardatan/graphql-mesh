@@ -2704,10 +2704,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/mongoose@5.7.22":
-  version "5.7.22"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.22.tgz#39412bd41f23ba6677828c37725f5178ae8de549"
-  integrity sha512-oBl4oDbaSzEjyLBUb8h6p7bINdLxVlWHJfA5/6r1MWwu63tHDqUdHoc+CGc+VcmZ4P520Hz4Ps1RP3XMwufR/g==
+"@types/mongoose@5.7.23":
+  version "5.7.23"
+  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.23.tgz#dd2d2de9033c0591456ad35c22c36e0f52c843f0"
+  integrity sha512-Yh1vXr+Y+ro887sma0kihtvbazy3prC+gjT0FJZ/Kt6rOQoHnCRm8oiOvDWGncP3YVXAoCj4YeNLp7moIyBKIQ==
   dependencies:
     "@types/mongodb" "*"
     "@types/node" "*"
