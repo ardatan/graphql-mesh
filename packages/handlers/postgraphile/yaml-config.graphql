@@ -18,6 +18,10 @@ type PostGraphileHandler @md {
   Connection Pool settings
   """
   pool: PostGraphilePool
+  """
+  Introspection Cache (if you want to reset cache, delete the file on this path)
+  """
+  cachePath: String
 }
 
 type PostGraphilePool {

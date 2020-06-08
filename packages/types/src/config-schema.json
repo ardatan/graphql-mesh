@@ -883,6 +883,10 @@
         "pool": {
           "$ref": "#/definitions/PostGraphilePool",
           "description": "Connection Pool settings"
+        },
+        "cachePath": {
+          "type": "string",
+          "description": "Introspection Cache (if you want to reset cache, delete the file on this path)"
         }
       },
       "required": [

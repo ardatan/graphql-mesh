@@ -2,6 +2,8 @@ import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLNamedType } from 'graphql';
 import { createPostGraphileSchema } from 'postgraphile';
 import { Client } from 'pg';
+import { isAbsolute, join } from 'path';
+import { pathExists } from 'fs-extra';
 
 const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler, { pgClient: Client }> = {
   async getMeshSource({ config, hooks }) {
@@ -17,8 +19,20 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler, { pgClient: Cl
     });
     await pgClient.connect();
     (pgClient as any).release = () => {};
+    let readCache: string, writeCache: string;
+    if (config.cachePath) {
+      const absoluteCachePath = isAbsolute(config.cachePath) ? config.cachePath : join(process.cwd(), config.cachePath);
+      if (await pathExists(absoluteCachePath)) {
+        // If file exists, read that one. if not, create a new one
+        readCache = absoluteCachePath;
+      } else {
+        writeCache = absoluteCachePath;
+      }
+    }
     const graphileSchema = await createPostGraphileSchema(pgClient as any, config.schemaName || 'public', {
       dynamicJson: true,
+      readCache,
+      writeCache,
       appendPlugins: [
         builder => {
           builder.hook('GraphQLObjectType:interfaces', (interfaces, _, context) => {
