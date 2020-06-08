@@ -1,13 +1,14 @@
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { execute, subscribe } from 'graphql';
-import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile';
+import { withPostGraphileContext } from 'postgraphile';
+import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
-import { isAbsolute, join } from 'path';
-import { pathExists } from 'fs-extra';
-import { cwd } from 'process';
+import { join } from 'path';
+import { tmpdir } from 'os';
+import { readJSON, unlink } from 'fs-extra';
 
 const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
-  async getMeshSource({ config, hooks }) {
+  async getMeshSource({ name, cache, config, hooks }) {
     const pgPool = new Pool({
       ...(config?.pool
         ? {
@@ -17,25 +18,35 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
             connectionString: config.connectionString,
           }),
     });
-    let readCache: string, writeCache: string;
-    if (config.cachePath) {
-      const absoluteCachePath = isAbsolute(config.cachePath) ? config.cachePath : join(cwd(), config.cachePath);
-      if (await pathExists(absoluteCachePath)) {
-        // If file exists, read that one. if not, create a new one
-        readCache = absoluteCachePath;
-      } else {
-        writeCache = absoluteCachePath;
-      }
-    }
-    const graphileSchema = await createPostGraphileSchema(pgPool, config.schemaName || 'public', {
+
+    const cacheKey = name + '_introspection';
+
+    const tmpFile = join(tmpdir(), cacheKey);
+    const cachedIntrospection = config.cacheIntrospection && (await cache.get(cacheKey));
+
+    let writeCache: () => Promise<void>;
+
+    const builder = await getPostGraphileBuilder(pgPool, config.schemaName || 'public', {
       dynamicJson: true,
       subscriptions: true,
       live: true,
-      readCache,
-      writeCache,
+      readCache: cachedIntrospection,
+      writeCache: config.cacheIntrospection && !cachedIntrospection && tmpFile,
+      setWriteCacheCallback: fn => {
+        writeCache = fn;
+      },
     });
 
+    const graphileSchema = builder.buildSchema();
+
     hooks.on('destroy', () => pgPool.end());
+
+    if (config.cacheIntrospection && !cachedIntrospection) {
+      await writeCache();
+      const json = await readJSON(tmpFile);
+      await cache.set(cacheKey, json);
+      await unlink(tmpFile);
+    }
 
     return {
       schema: graphileSchema,

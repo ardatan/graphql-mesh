@@ -27,7 +27,7 @@ type Neo4jHandler @md {
   """
   database: String
   """
-  Introspection Cache (if you want to reset cache, delete the file on this path)
+  Cache Introspection
   """
-  cachePath: String
+  cacheIntrospection: Boolean
 }

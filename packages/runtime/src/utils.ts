@@ -2,12 +2,11 @@ import { GraphQLOperation } from './types';
 import { DocumentNode, parse } from 'graphql';
 import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
-import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { get, set } from 'lodash';
+import { get, set, kebabCase } from 'lodash';
 import { stringInterpolator } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
 
@@ -122,15 +121,14 @@ export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
 }
 
 export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache> {
-  if (!cacheConfig) {
-    return new InMemoryLRUCache();
-  }
+  const cacheName = Object.keys(cacheConfig)[0];
+  const config = cacheConfig[cacheName];
 
-  const [moduleName, exportName] = cacheConfig.name.split('#');
+  const moduleName = kebabCase(cacheName);
   const pkg = await getPackage<any>(moduleName, 'cache');
-  const Cache = exportName ? pkg[exportName] : pkg;
+  const Cache = pkg.default || pkg;
 
-  return new Cache(cacheConfig.config);
+  return new Cache(config);
 }
 
 export async function resolveMerger(mergerConfig?: YamlConfig.Config['merger']): Promise<MergerFn> {

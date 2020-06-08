@@ -45,10 +45,7 @@ type Source {
 
 type Transform
 type Handler
-
-interface Cache {
-  name: String!
-}
+type Cache
 
 union AdditionalResolver = String | AdditionalResolverObject
 

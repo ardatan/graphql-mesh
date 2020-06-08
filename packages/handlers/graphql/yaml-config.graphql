@@ -34,6 +34,10 @@ type GraphQLHandler @md {
   Path to a custom W3 Compatible WebSocket Implementation
   """
   webSocketImpl: String
+  """
+  Cache Introspection
+  """
+  cacheIntrospection: Boolean
 }
 
 enum GraphQLHandlerHTTPMethod {

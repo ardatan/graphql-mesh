@@ -1,4 +1,4 @@
 __generated__
 src/__generated__
 src/sdk.generated.ts
-postgraphile_cache.json
+mesh-cache.json

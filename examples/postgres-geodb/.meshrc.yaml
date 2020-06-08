@@ -3,7 +3,7 @@ sources:
     handler:
       postgraphile:
         connectionString: postgres://postgres:docker@localhost:5432/postgres
-        cachePath: ./postgraphile_cache.json
+        cacheIntrospection: true
     transforms:
       - prefix:
           value: Geo
@@ -13,6 +13,7 @@ sources:
         endpoint: https://api.github.com/graphql
         headers:
           Authorization: bearer ${GH_ACCESS_TOKEN}
+        cacheIntrospection: true
     transforms:
       - prefix:
           value: Github
@@ -36,3 +37,7 @@ additionalResolvers:
       type: "USER"
       query: "location:{root.name}"
       first: "{args.limit}"
+
+cache:
+  file:
+    path: ./mesh-cache.json

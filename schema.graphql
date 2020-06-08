@@ -1,16 +1,16 @@
 schema {
   query: Query
 }
-type InMemoryLRU implements Cache {
-  name: String!
-  config: InMemoryLRUConfig
+type Cache {
+  file: FileCacheConfig
+  inMemoryLRU: InMemoryLRUConfig
+  redis: RedisConfig
+}
+type FileCacheConfig {
+  path: String
 }
 type InMemoryLRUConfig {
   max: Int
-}
-type Redis implements Cache {
-  name: String!
-  config: RedisConfig
 }
 type RedisConfig {
   host: String
@@ -56,6 +56,8 @@ type GraphQLHandler @md {
   customFetch: String
   """Path to a custom W3 Compatible WebSocket Implementation"""
   webSocketImpl: String
+  """Cache Introspection"""
+  cacheIntrospection: Boolean
 }
 enum GraphQLHandlerHTTPMethod {
   GET
@@ -225,8 +227,8 @@ type Neo4jHandler @md {
   alwaysIncludeRelationships: Boolean
   """Specifies database name"""
   database: String
-  """Introspection Cache (if you want to reset cache, delete the file on this path)"""
-  cachePath: String
+  """Cache Introspection"""
+  cacheIntrospection: Boolean
 }
 type ODataHandler @md {
   """Base URL for OData API"""
@@ -266,8 +268,8 @@ type PostGraphileHandler @md {
   schemaName: [String!]
   """Connection Pool settings"""
   pool: PostGraphilePool
-  """Introspection Cache (if you want to reset cache, delete the file on this path)"""
-  cachePath: String
+  """Cache Introspection"""
+  cacheIntrospection: Boolean
 }
 type PostGraphilePool {
   user: String
@@ -316,9 +318,6 @@ type Transform {
   resolversComposition: [ResolversCompositionTransformObject!]
   """Configuration for Snapshot extension"""
   snapshot: SnapshotTransformConfig
-}
-interface Cache {
-  name: String!
 }
 union AdditionalResolver = String | AdditionalResolverObject
 type AdditionalResolverObject {

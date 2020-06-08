@@ -19,9 +19,9 @@ type PostGraphileHandler @md {
   """
   pool: PostGraphilePool
   """
-  Introspection Cache (if you want to reset cache, delete the file on this path)
+  Cache Introspection
   """
-  cachePath: String
+  cacheIntrospection: Boolean
 }
 
 type PostGraphilePool {

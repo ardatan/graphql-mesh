@@ -1,20 +1,30 @@
 {
   "definitions": {
-    "InMemoryLRU": {
+    "Cache": {
       "additionalProperties": false,
       "type": "object",
-      "title": "InMemoryLRU",
+      "title": "Cache",
       "properties": {
-        "name": {
-          "type": "string"
+        "file": {
+          "$ref": "#/definitions/FileCacheConfig"
         },
-        "config": {
+        "inMemoryLRU": {
           "$ref": "#/definitions/InMemoryLRUConfig"
+        },
+        "redis": {
+          "$ref": "#/definitions/RedisConfig"
         }
-      },
-      "required": [
-        "name"
-      ]
+      }
+    },
+    "FileCacheConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FileCacheConfig",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      }
     },
     "InMemoryLRUConfig": {
       "additionalProperties": false,
@@ -25,22 +35,6 @@
           "type": "integer"
         }
       }
-    },
-    "Redis": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Redis",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "config": {
-          "$ref": "#/definitions/RedisConfig"
-        }
-      },
-      "required": [
-        "name"
-      ]
     },
     "RedisConfig": {
       "additionalProperties": false,
@@ -148,6 +142,10 @@
         "webSocketImpl": {
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
+        },
+        "cacheIntrospection": {
+          "type": "boolean",
+          "description": "Cache Introspection"
         }
       },
       "required": [
@@ -792,9 +790,9 @@
           "type": "string",
           "description": "Specifies database name"
         },
-        "cachePath": {
-          "type": "string",
-          "description": "Introspection Cache (if you want to reset cache, delete the file on this path)"
+        "cacheIntrospection": {
+          "type": "boolean",
+          "description": "Cache Introspection"
         }
       },
       "required": [
@@ -892,9 +890,9 @@
           "$ref": "#/definitions/PostGraphilePool",
           "description": "Connection Pool settings"
         },
-        "cachePath": {
-          "type": "string",
-          "description": "Introspection Cache (if you want to reset cache, delete the file on this path)"
+        "cacheIntrospection": {
+          "type": "boolean",
+          "description": "Cache Introspection"
         }
       },
       "required": [
@@ -1583,15 +1581,8 @@
       "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalResolverObject)"
     },
     "cache": {
-      "description": "Backend cache (Any of: InMemoryLRU, Redis)",
-      "anyOf": [
-        {
-          "$ref": "#/definitions/InMemoryLRU"
-        },
-        {
-          "$ref": "#/definitions/Redis"
-        }
-      ]
+      "$ref": "#/definitions/Cache",
+      "description": "Backend cache"
     },
     "merger": {
       "type": "string",

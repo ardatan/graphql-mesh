@@ -1,0 +1,7 @@
+type Cache {
+  file: FileCacheConfig
+}
+
+type FileCacheConfig {
+  path: String
+}

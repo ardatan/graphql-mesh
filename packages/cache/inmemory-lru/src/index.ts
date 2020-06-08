@@ -3,12 +3,12 @@ import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
 
 // Based on https://github.com/apollographql/apollo-server/blob/master/packages/apollo-datasource-rest/src/HTTPCache.ts
 
-export class InMemoryLRUCache<V = string> implements KeyValueCache<V> {
+export default class InMemoryLRUCache<V = string> implements KeyValueCache<V> {
   private store: LRUCache<string, V>;
 
   constructor({
     max = Infinity,
-    length = (item: V) => (Array.isArray(item) || typeof item === 'string') ? item.length : 1,
+    length = (item: V) => (Array.isArray(item) || typeof item === 'string' ? item.length : 1),
     ...options
   }: LRUCache.Options<string, V> = {}) {
     this.store = new LRUCache({

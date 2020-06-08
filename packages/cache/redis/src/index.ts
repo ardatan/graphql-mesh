@@ -2,7 +2,7 @@ import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
 import Redis, { RedisOptions } from 'ioredis';
 import DataLoader from 'dataloader';
 
-export class RedisCache implements KeyValueCache<string> {
+export default class RedisCache implements KeyValueCache<string> {
   readonly client: Redis.Redis;
 
   private loader: DataLoader<string, string | null>;
