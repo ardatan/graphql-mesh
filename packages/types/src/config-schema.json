@@ -893,6 +893,10 @@
         "cacheIntrospection": {
           "type": "boolean",
           "description": "Cache Introspection"
+        },
+        "federation": {
+          "type": "boolean",
+          "description": "Enable Apollo Federation support (enable only if your merger is set as `federation`)"
         }
       },
       "required": [

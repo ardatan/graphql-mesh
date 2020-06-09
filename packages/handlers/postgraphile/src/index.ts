@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
 import { execute, subscribe } from 'graphql';
-import { withPostGraphileContext } from 'postgraphile';
+import { withPostGraphileContext, Plugin } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { readJSON, unlink } from 'fs-extra';
+import FederationPlugin from '@graphile/federation';
 
 const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
   async getMeshSource({ name, cache, config, hooks }) {
@@ -26,6 +28,12 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
 
     let writeCache: () => Promise<void>;
 
+    const appendPlugins: Plugin[] = [];
+
+    if (config.federation) {
+      appendPlugins.push(FederationPlugin);
+    }
+
     const builder = await getPostGraphileBuilder(pgPool, config.schemaName || 'public', {
       dynamicJson: true,
       subscriptions: true,
@@ -35,6 +43,7 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
       setWriteCacheCallback: fn => {
         writeCache = fn;
       },
+      appendPlugins,
     });
 
     const graphileSchema = builder.buildSchema();
