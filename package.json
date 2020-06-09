@@ -25,7 +25,7 @@
   "devDependencies": {
     "@graphql-tools/schema": "6.0.9",
     "@types/jest": "25.2.3",
-    "@types/node": "13.13.11",
+    "@types/node": "13.13.12",
     "jest": "26.0.1",
     "ts-jest": "26.1.0",
     "ts-node-dev": "1.0.0-pre.44",
