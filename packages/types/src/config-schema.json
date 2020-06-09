@@ -978,6 +978,10 @@
           "$ref": "#/definitions/MockingConfig",
           "description": "Mock configuration for your source"
         },
+        "namingConvention": {
+          "$ref": "#/definitions/NamingConventionTransformConfig",
+          "description": "Transformer to apply naming convention to GraphQL Types"
+        },
         "prefix": {
           "$ref": "#/definitions/PrefixTransformConfig",
           "description": "Prefix transform"
@@ -1418,6 +1422,70 @@
       "required": [
         "apply"
       ]
+    },
+    "NamingConventionTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "NamingConventionTransformConfig",
+      "properties": {
+        "typeNames": {
+          "type": "string",
+          "enum": [
+            "camelCase",
+            "capitalCase",
+            "constantCase",
+            "dotCase",
+            "headerCase",
+            "noCase",
+            "paramCase",
+            "pascalCase",
+            "pathCase",
+            "sentenceCase",
+            "snakeCase",
+            "upperCase",
+            "lowerCase"
+          ],
+          "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
+        },
+        "fieldNames": {
+          "type": "string",
+          "enum": [
+            "camelCase",
+            "capitalCase",
+            "constantCase",
+            "dotCase",
+            "headerCase",
+            "noCase",
+            "paramCase",
+            "pascalCase",
+            "pathCase",
+            "sentenceCase",
+            "snakeCase",
+            "upperCase",
+            "lowerCase"
+          ],
+          "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
+        },
+        "enumValues": {
+          "type": "string",
+          "enum": [
+            "camelCase",
+            "capitalCase",
+            "constantCase",
+            "dotCase",
+            "headerCase",
+            "noCase",
+            "paramCase",
+            "pascalCase",
+            "pathCase",
+            "sentenceCase",
+            "snakeCase",
+            "upperCase",
+            "lowerCase"
+          ],
+          "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
+        }
+      }
     },
     "PrefixTransformConfig": {
       "additionalProperties": false,

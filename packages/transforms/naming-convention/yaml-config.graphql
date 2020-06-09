@@ -1,0 +1,28 @@
+extend type Transform {
+  """
+  Transformer to apply naming convention to GraphQL Types
+  """
+  namingConvention: NamingConventionTransformConfig
+}
+
+type NamingConventionTransformConfig @md {
+  typeNames: NamingConventionType
+  fieldNames: NamingConventionType
+  enumValues: NamingConventionType
+}
+
+enum NamingConventionType {
+  camelCase
+  capitalCase
+  constantCase
+  dotCase
+  headerCase
+  noCase
+  paramCase
+  pascalCase
+  pathCase
+  sentenceCase
+  snakeCase
+  upperCase
+  lowerCase
+}

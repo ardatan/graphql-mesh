@@ -17,3 +17,6 @@ sources:
               - ./proto
         serviceName: Example
         packageName: io.xtech
+    transforms:
+      - namingConvention:
+          fieldNames: camelCase

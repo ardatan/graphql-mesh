@@ -30,7 +30,8 @@ module.exports = {
       'transforms/mock',
       'transforms/resolvers-composition',
       'transforms/federation',
-      'transforms/filter-schema'
+      'transforms/filter-schema',
+      'transforms/naming-convention'
     ],
     'API Reference': ['api/cli', 'api/runtime'],
     Recipes: [

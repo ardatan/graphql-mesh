@@ -310,6 +310,8 @@ type Transform {
   filterSchema: [String]
   """Mock configuration for your source"""
   mock: MockingConfig
+  """Transformer to apply naming convention to GraphQL Types"""
+  namingConvention: NamingConventionTransformConfig
   """Prefix transform"""
   prefix: PrefixTransformConfig
   """Transformer to apply rename of a GraphQL type"""
@@ -495,6 +497,26 @@ type MockingFieldConfig {
   Both "moduleName#exportName" or only "moduleName" would work
   """
   custom: String
+}
+type NamingConventionTransformConfig @md {
+  typeNames: NamingConventionType
+  fieldNames: NamingConventionType
+  enumValues: NamingConventionType
+}
+enum NamingConventionType {
+  camelCase
+  capitalCase
+  constantCase
+  dotCase
+  headerCase
+  noCase
+  paramCase
+  pascalCase
+  pathCase
+  sentenceCase
+  snakeCase
+  upperCase
+  lowerCase
 }
 type PrefixTransformConfig @md {
   """The prefix to apply to the schema types. By default it's the API name."""

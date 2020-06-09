@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`namingConvention should change the name of a type 1`] = `
+"type Query {
+  user: User!
+}
+
+type User {
+  id: ID!
+  type: UserType
+}
+
+enum UserType {
+  ADMIN
+  MODERATOR
+  NEWBIE
+}
+"
+`;
