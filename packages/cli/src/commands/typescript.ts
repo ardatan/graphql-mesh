@@ -1,35 +1,12 @@
 import { Maybe, RawSourceOutput } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
-import {
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLOutputType,
-  GraphQLNonNull,
-  GraphQLList,
-  isListType,
-  isNonNullType,
-  GraphQLNamedType,
-  NamedTypeNode,
-  Kind,
-} from 'graphql';
+import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 import { scalarsMap } from './scalars-map';
 
 const unifiedContextIdentifier = 'MeshContext';
 const additionalContextIdentifier = 'MeshAdditionalContext';
-
-function isWrapperType(t: GraphQLOutputType): t is GraphQLNonNull<any> | GraphQLList<any> {
-  return isListType(t) || isNonNullType(t);
-}
-
-function getBaseType(type: GraphQLOutputType): GraphQLNamedType {
-  if (isWrapperType(type)) {
-    return getBaseType(type.ofType);
-  } else {
-    return type;
-  }
-}
 
 class CodegenHelpers extends tsBasePlugin.TsVisitor {
   public getTypeToUse(namedType: NamedTypeNode): string {
@@ -54,18 +31,20 @@ function buildSignatureBasedOnRootFields(
 
   return Object.keys(fields).map(fieldName => {
     const field = fields[fieldName];
-    const baseType = getBaseType(field.type);
     const argsExists = field.args && field.args.length > 0;
     const argsName = argsExists ? `${type.name}${codegenHelpers.convertName(field.name)}Args` : '{}';
-    return `  ${field.name}: (args${
-      argsExists ? '' : '?'
-    }: ${argsName}, projectionOptions?: ProjectionOptions) => Promise<${codegenHelpers.getTypeToUse({
+    const parentTypeNode = {
       kind: Kind.NAMED_TYPE,
       name: {
         kind: Kind.NAME,
-        value: baseType.name,
+        value: type.name,
       },
-    })}>`;
+    };
+    return `  ${field.name}: (args${
+      argsExists ? '' : '?'
+    }: ${argsName}, projectionOptions?: ProjectionOptions) => Promise<${codegenHelpers.getTypeToUse(
+      parentTypeNode
+    )}['${fieldName}']>`;
   });
 }
 
