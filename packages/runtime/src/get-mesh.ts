@@ -158,8 +158,8 @@ export async function getMesh(
     });
   }
 
-  const localRequester: Requester = async <R, V>(document: DocumentNode, variables: V) => {
-    const executionResult = await meshExecute<V>(document, variables, {});
+  const localRequester: Requester = async <R, V>(document: DocumentNode, variables: V, context: any) => {
+    const executionResult = await meshExecute<V>(document, variables, context);
 
     if (executionResult.data && !executionResult.errors) {
       return executionResult.data as R;

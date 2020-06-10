@@ -3,7 +3,7 @@ import { loadDocuments } from '@graphql-tools/load';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { basename, resolve } from 'path';
-import { readFileSync } from 'fs';
+import { readFile } from 'fs-extra';
 
 export function playground(exampleQuery: string, graphqlPath: string): RequestHandler {
   return async (req: Request, res: Response, next) => {
@@ -58,7 +58,7 @@ export function playground(exampleQuery: string, graphqlPath: string): RequestHa
       }));
     }
 
-    res.write(readFileSync(resolve(__dirname, './playground.html'), 'utf8'));
+    res.write(await readFile(resolve(__dirname, './playground.html'), 'utf8'));
     res.write(`
             <script>
             window.addEventListener('load', function (event) {

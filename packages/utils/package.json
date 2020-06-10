@@ -20,6 +20,7 @@
     "@graphql-tools/utils": "6.0.9",
     "date-fns": "2.14.0",
     "fetchache": "0.0.3",
+    "fs-extra": "9.0.1",
     "is-url": "1.2.4",
     "js-yaml": "3.14.0",
     "object-hash": "2.0.3"

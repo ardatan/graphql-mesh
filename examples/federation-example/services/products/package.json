@@ -9,6 +9,6 @@
   "dependencies": {
     "@apollo/federation": "0.13.2",
     "apollo-server": "2.11.0",
-    "graphql": "14.6.0"
+    "graphql": "15.1.0"
   }
 }

@@ -29,10 +29,10 @@ export type GetMeshOptions = {
   merger: MergerFn;
 };
 
-export type MeshResolvedSource = {
+export type MeshResolvedSource<THandlerConfig = ValuesOf<YamlConfig.Handler>> = {
   name: string;
-  handlerLibrary: MeshHandlerLibrary;
-  handlerConfig: ValuesOf<YamlConfig.Handler>;
+  handlerLibrary: MeshHandlerLibrary<THandlerConfig>;
+  handlerConfig: THandlerConfig;
   transforms?: ResolvedTransform[];
 };
 

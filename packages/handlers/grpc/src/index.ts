@@ -1,5 +1,5 @@
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
-import { accessSync, constants } from 'fs';
+import { MeshHandlerLibrary, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
+import { pathExistsSync } from 'fs-extra';
 import { GraphQLEnumTypeConfig } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { AnyNestedObject, Root, IParseOptions } from 'protobufjs';
@@ -54,11 +54,8 @@ function addIncludePathResolver(root: Root, includePaths: string[]) {
     }
     for (const directory of includePaths) {
       const fullPath: string = join(directory, target);
-      try {
-        accessSync(fullPath, constants.R_OK);
+      if (pathExistsSync(fullPath)) {
         return fullPath;
-      } catch (err) {
-        continue;
       }
     }
     const path = originalResolvePath(origin, target);
@@ -101,6 +98,16 @@ function addMetaDataToCall(
   return call(input);
 }
 
+async function getBuffer(path: string, cache: KeyValueCache) {
+  if (path) {
+    const result = await readFileOrUrlWithCache<string>(path, cache, {
+      allowUnknownExtensions: true,
+    });
+    return Buffer.from(result);
+  }
+  return undefined;
+}
+
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
   async getMeshSource({ config, cache }) {
     if (!config) {
@@ -109,21 +116,11 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
 
     let creds: ChannelCredentials;
     if (config.credentialsSsl) {
-      const rootCA =
-        config.credentialsSsl.rootCA &&
-        (await readFileOrUrlWithCache<string>(config.credentialsSsl.rootCA, cache, {
-          allowUnknownExtensions: true,
-        }).then(Buffer.from));
-      const privateKey =
-        config.credentialsSsl.privateKey &&
-        (await readFileOrUrlWithCache<string>(config.credentialsSsl.privateKey, cache, {
-          allowUnknownExtensions: true,
-        }).then(Buffer.from));
-      const certChain =
-        config.credentialsSsl.certChain &&
-        (await readFileOrUrlWithCache<string>(config.credentialsSsl.certChain, cache, {
-          allowUnknownExtensions: true,
-        }).then(Buffer.from));
+      const [rootCA, privateKey, certChain] = await Promise.all([
+        getBuffer(config.credentialsSsl.rootCA, cache),
+        getBuffer(config.credentialsSsl.privateKey, cache),
+        getBuffer(config.credentialsSsl.certChain, cache),
+      ]);
       creds = credentials.createSsl(rootCA, privateKey, certChain);
     } else {
       creds = credentials.createInsecure();

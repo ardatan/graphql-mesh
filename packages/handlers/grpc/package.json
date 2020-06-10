@@ -18,6 +18,7 @@
     "@grpc/grpc-js": "1.0.5",
     "@grpc/proto-loader": "0.5.4",
     "camel-case": "4.1.1",
+    "fs-extra": "9.0.1",
     "graphql-scalars": "1.1.5",
     "graphql-compose": "7.18.1",
     "protobufjs": "6.9.0",

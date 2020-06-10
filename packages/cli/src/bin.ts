@@ -1,12 +1,11 @@
-import { writeFileSync } from 'fs';
 import { findAndParseConfig, getMesh } from '@graphql-mesh/runtime';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
 import { generateTsTypes } from './commands/typescript';
 import { generateSdk } from './commands/generate-sdk';
 import { serveMesh } from './commands/serve/serve';
-import { resolve, dirname } from 'path';
-import * as mkdirp from 'mkdirp';
+import { resolve } from 'path';
+import { writeFile, ensureFile } from 'fs-extra';
 
 const logger = createLogger({
   level: 'info',
@@ -70,9 +69,8 @@ export async function graphqlMesh() {
         const { schema, destroy } = await getMesh(meshConfig);
         const result = await generateSdk(schema, args);
         const outFile = resolve(process.cwd(), args.output);
-        const dirName = dirname(outFile);
-        mkdirp.sync(dirName);
-        writeFileSync(outFile, result);
+        await ensureFile(outFile);
+        await writeFile(outFile, result);
         destroy();
       }
     )
@@ -90,11 +88,10 @@ export async function graphqlMesh() {
           ignoreAdditionalResolvers: true,
         });
         const { schema, rawSources, destroy } = await getMesh(meshConfig);
-        const result = await generateTsTypes(schema, rawSources);
+        const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
         const outFile = resolve(process.cwd(), args.output);
-        const dirName = dirname(outFile);
-        mkdirp.sync(dirName);
-        writeFileSync(outFile, result);
+        await ensureFile(outFile);
+        await writeFile(outFile, result);
         destroy();
       }
     ).argv;

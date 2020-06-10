@@ -1,5 +1,5 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { GetMeshOptions, MeshResolvedSource, ResolvedTransform } from './types';
+import { MeshResolvedSource, ResolvedTransform } from './types';
 import {
   getHandler,
   getPackage,
@@ -95,6 +95,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     additionalResolvers,
     cache,
     merger,
+    mergerType: config.merger,
   };
 }
 
@@ -142,9 +143,7 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
   }
 }
 
-export async function findAndParseConfig(
-  options?: { configName?: string } & ConfigProcessOptions
-): Promise<GetMeshOptions> {
+export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions) {
   const { configName = 'mesh', dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
   const explorer = cosmiconfig(configName, {
     loaders: {

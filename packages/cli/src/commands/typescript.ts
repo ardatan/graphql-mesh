@@ -17,6 +17,7 @@ import { codegen } from '@graphql-codegen/core';
 import { scalarsMap } from './scalars-map';
 
 const unifiedContextIdentifier = 'MeshContext';
+const additionalContextIdentifier = 'MeshAdditionalContext';
 
 function isWrapperType(t: GraphQLOutputType): t is GraphQLNonNull<any> | GraphQLList<any> {
   return isListType(t) || isNonNullType(t);
@@ -111,7 +112,11 @@ ${operations.join(',\n')}
   };
 }
 
-export function generateTsTypes(unifiedSchema: GraphQLSchema, rawSources: RawSourceOutput[]): Promise<string> {
+export function generateTsTypes(
+  unifiedSchema: GraphQLSchema,
+  rawSources: RawSourceOutput[],
+  mergerType = 'stitching'
+): Promise<string> {
   return codegen({
     filename: 'types.ts',
     documents: [],
@@ -174,15 +179,25 @@ export type ProjectionOptions = {
             })
           );
 
+          const additionalContextType = `export type ${additionalContextIdentifier} = ${results
+            .map(r => r?.additionalContext?.identifier)
+            .filter(Boolean)
+            .join(' & ')};`;
+
           const contextType = `export type ${unifiedContextIdentifier} = ${results
             .map(r => r?.context?.identifier)
             .filter(Boolean)
             .join(' & ')};`;
 
           return {
-            content: [...commonTypes, ...sdkItems, ...additionalContextItems, ...contextItems, contextType].join(
-              '\n\n'
-            ),
+            content: [
+              ...commonTypes,
+              ...sdkItems,
+              ...additionalContextItems,
+              ...contextItems,
+              additionalContextType,
+              contextType,
+            ].join('\n\n'),
           };
         },
       },
@@ -198,9 +213,9 @@ export type ProjectionOptions = {
       {
         resolvers: {
           useIndexSignature: true,
-          noSchemaStitching: true,
+          noSchemaStitching: mergerType !== 'stitching',
           contextType: unifiedContextIdentifier,
-          federation: false,
+          federation: mergerType === 'federation',
         },
       },
       {
