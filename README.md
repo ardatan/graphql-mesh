@@ -1,19 +1,13 @@
-<img src="https://graphql-mesh.com/img/mesh-text-logo.svg" alt="GraphQL Mesh" width="220">
+[![Mesh GIF](./website/static/img/twitter_1200X345.gif)](https://graphql-mesh.com)
 
 [![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcli)
 ![CI](https://github.com/Urigo/graphql-mesh/workflows/CI/badge.svg)
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![renovate-app badge][renovate-badge]][renovate-app]
-
-[renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
-[renovate-app]: https://renovateapp.com/
 
 https://graphql-mesh.com
 
 ### Note: this project is early and there will be breaking changes along the way
-
-![Mesh GIF](./website/static/img/twitter_1200X345.gif)
 
 GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run GraphQL (and also ones that do run GraphQL).
 It can be used as a gateway to other services, or run as a local GraphQL schema that aggregates data from remote APIs.
