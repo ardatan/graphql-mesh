@@ -1473,12 +1473,12 @@
   resolved "https://registry.yarnpkg.com/@graphile/lru/-/lru-4.5.0.tgz#e8fe036d322dfe1715675aab171979981e28ac9e"
   integrity sha512-OoIgewLowjegJzz3tpcRE5LpQKqsap1ETFaZtC1r9p36h5ieUJnWTxCTpB7XIsU9muMTt7MMt8x0E5apS47QIQ==
 
-"@graphql-codegen/core@1.15.2":
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/core/-/core-1.15.2.tgz#62817e652032528954b9a4c4d3c0a1ed406b2644"
-  integrity sha512-hZh68w4C1hGi/8F6oSK5cOzI03GKybN7unDtF2XWBvTevLVBZrVk/8RQJKLZYgx+ldGdcm2wbf4T6HPWo7w1Kg==
+"@graphql-codegen/core@1.15.3":
+  version "1.15.3"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/core/-/core-1.15.3.tgz#a7d72fefdbc20d111dd33bc1bf964faa565e98b7"
+  integrity sha512-L3iBKayJRJ1slNWppxfox5VXNu7KE5vNYhm6CqahywaaZLDxpbevw3D6U3O4sW2S7xdZQq2ucggjrRS8gQuS1g==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.15.2"
+    "@graphql-codegen/plugin-helpers" "1.15.3"
     "@graphql-tools/merge" "^6.0.0"
     "@graphql-tools/utils" "^6.0.0"
     tslib "~2.0.0"
@@ -1717,22 +1717,13 @@
     unixify "1.0.0"
     valid-url "1.0.9"
 
-"@graphql-tools/merge@6.0.9":
+"@graphql-tools/merge@6.0.9", "@graphql-tools/merge@^6.0.0":
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.9.tgz#2432352512825b0639d55d379acd172055e30d32"
   integrity sha512-aOYgziSQnlubdaCFuPS5MNu9hmhMMfl65xvkZN1k5L/kP6rGN6SyjfeUEEzveOFgIYJbYxQEoxySD9gBAm8PiQ==
   dependencies:
     "@graphql-tools/schema" "6.0.9"
     "@graphql-tools/utils" "6.0.9"
-    tslib "~2.0.0"
-
-"@graphql-tools/merge@^6.0.0":
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.6.tgz#7863b2e9bcfbe1bbcb813b43bb9b878f6471e6c3"
-  integrity sha512-xHAPkkyEobR7ehL2G5sUoUGf1LLogu32IxReXoB0zRv6ar9NhGr/mZwrpBAjfDrhXgitn/F1CmDJUCFTv9RHeA==
-  dependencies:
-    "@graphql-tools/schema" "6.0.6"
-    "@graphql-tools/utils" "6.0.6"
     tslib "~2.0.0"
 
 "@graphql-tools/mock@6.0.9":
@@ -1759,14 +1750,6 @@
   dependencies:
     "@graphql-tools/utils" "6.0.9"
     lodash "4.17.15"
-
-"@graphql-tools/schema@6.0.6":
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.0.6.tgz#bbeee1a15f4953a66c3ed1828c73d1e03024cb65"
-  integrity sha512-DjtTbu+M0PC2VEEK3q0Dmy6zrGW4Ix2UxmHrBP7UucC+RnTgsaz+P0q7ztxCzTxKSDuoiu4/z9/coc+MdzaV/A==
-  dependencies:
-    "@graphql-tools/utils" "6.0.6"
-    tslib "~2.0.0"
 
 "@graphql-tools/schema@6.0.9":
   version "6.0.9"
@@ -1802,14 +1785,7 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/utils@6.0.6", "@graphql-tools/utils@^6.0.0":
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.6.tgz#49ef23dc96ee92771115c5b35eebaea0b0e3b71a"
-  integrity sha512-GHRnK7uSBERIoDd4D+RRQucF2eHESDpX4gcPvRuFiJblL+tEsno+I91FzyiTix3vFxnz3bAzWt7p+EN25PE4Xw==
-  dependencies:
-    camel-case "4.1.1"
-
-"@graphql-tools/utils@6.0.9":
+"@graphql-tools/utils@6.0.9", "@graphql-tools/utils@^6.0.0":
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.9.tgz#135a56f6520a99a2bbbfaf7d76bd5f681d1ce457"
   integrity sha512-WtX+t64SCN9VejKA/gdtm2sHPOX8D1G1tAyrrKH7hnh6RaCmQwYkhs/f6tBnTTYOIBy7yVYNoXzqiv/tmOkAOQ==
