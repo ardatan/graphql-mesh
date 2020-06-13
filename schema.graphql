@@ -400,13 +400,14 @@ type CacheTransformConfig @md {
   field: String!
   """
   Cache key to use to store your resolvers responses.
-  The defualt is: {typeName}-{fieldName}-{argsHash}
+  The defualt is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
   
   Available variables:
   - {args.argName} - use resolver argument
   - {typeName} - use name of the type
   - {fieldName} - use name of the field
   - {argsHash} - a hash based on the 'args' object
+  - {fieldNamesHash} - a hash based on the field names selected by the client
   - {info} - the GraphQLResolveInfo of the resolver
   
   Available interpolations:
