@@ -45,6 +45,7 @@ const mergeUsingFederation: MergerFn = async function ({
     },
   });
   const { schema, executor: gatewayExecutor } = await gateway.load();
+  const schemaHash: any = printSchemaWithDirectives(schema);
   let remoteSchema = wrapSchema({
     schema,
     executor: ({ document, info, variables, context }): any => {
@@ -54,8 +55,8 @@ const mergeUsingFederation: MergerFn = async function ({
       return gatewayExecutor({
         document,
         request: {
-          operationName,
           query: documentStr,
+          operationName,
           variables,
         },
         operationName,
@@ -67,7 +68,7 @@ const mergeUsingFederation: MergerFn = async function ({
         source: documentStr,
         operation,
         schema,
-        schemaHash: printSchemaWithDirectives(schema) as any,
+        schemaHash,
       });
     },
     transforms,
@@ -83,9 +84,10 @@ const mergeUsingFederation: MergerFn = async function ({
       updateResolversInPlace: true,
     });
   }
-  remoteSchema.extensions = {
-    sourceMap,
-  };
+  remoteSchema.extensions = remoteSchema.extensions || {};
+  Object.defineProperty(remoteSchema.extensions, 'sourceMap', {
+    get: () => sourceMap,
+  });
   return remoteSchema;
 };
 

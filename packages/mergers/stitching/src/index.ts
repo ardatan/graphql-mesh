@@ -1,21 +1,20 @@
 import { MergerFn } from '@graphql-mesh/types';
-import { GraphQLSchema } from 'graphql';
 import { stitchSchemas } from '@graphql-tools/stitch';
-import { applySchemaTransforms } from '@graphql-tools/utils';
+import { wrapSchema } from '@graphql-tools/wrap';
 
-const mergeUsingStitching: MergerFn = async function ({
-  rawSources,
-  typeDefs,
-  resolvers,
-  transforms,
-}): Promise<GraphQLSchema> {
+const mergeUsingStitching: MergerFn = async function ({ rawSources, typeDefs, resolvers, transforms }) {
   const unifiedSchema = stitchSchemas({
     subschemas: rawSources,
     typeDefs,
     resolvers,
-    schemaTransforms: [schema => applySchemaTransforms(schema, transforms)],
   });
-  (unifiedSchema.extensions as any).sourceMap = unifiedSchema.extensions.stitchingInfo.transformedSchemas;
+  unifiedSchema.extensions = unifiedSchema.extensions || {};
+  Object.defineProperty(unifiedSchema.extensions, 'sourceMap', {
+    get: () => unifiedSchema.extensions.stitchingInfo.transformedSchemas,
+  });
+  if (transforms?.length) {
+    return wrapSchema(unifiedSchema, transforms);
+  }
   return unifiedSchema;
 };
 
