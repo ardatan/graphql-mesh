@@ -6,7 +6,6 @@ import { codegen } from '@graphql-codegen/core';
 import { scalarsMap } from './scalars-map';
 
 const unifiedContextIdentifier = 'MeshContext';
-const additionalContextIdentifier = 'MeshAdditionalContext';
 
 class CodegenHelpers extends tsBasePlugin.TsVisitor {
   public getTypeToUse(namedType: NamedTypeNode): string {
@@ -18,11 +17,7 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
   }
 }
 
-function buildSignatureBasedOnRootFields(
-  codegenHelpers: CodegenHelpers,
-  additionalContextIdentifier: string,
-  type: Maybe<GraphQLObjectType>
-): string[] {
+function buildSignatureBasedOnRootFields(codegenHelpers: CodegenHelpers, type: Maybe<GraphQLObjectType>): string[] {
   if (!type) {
     return [];
   }
@@ -48,19 +43,14 @@ function buildSignatureBasedOnRootFields(
   });
 }
 
-function generateTypesForApi(options: { schema: GraphQLSchema; name: string; contextVariables: (keyof any)[] }) {
+function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
   const sdkIdentifier = `${options.name}Sdk`;
-  const additionalContextIdentifier = `${options.name}AdditionalContext`;
   const contextIdentifier = `${options.name}Context`;
   const operations = [
-    ...buildSignatureBasedOnRootFields(codegenHelpers, additionalContextIdentifier, options.schema.getQueryType()),
-    ...buildSignatureBasedOnRootFields(codegenHelpers, additionalContextIdentifier, options.schema.getMutationType()),
-    ...buildSignatureBasedOnRootFields(
-      codegenHelpers,
-      additionalContextIdentifier,
-      options.schema.getSubscriptionType()
-    ),
+    ...buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType()),
+    ...buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType()),
+    ...buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getSubscriptionType()),
   ];
 
   const sdk = {
@@ -70,23 +60,15 @@ ${operations.join(',\n')}
 };`,
   };
 
-  const additionalContext = {
-    identifier: additionalContextIdentifier,
-    codeAst: `export type ${additionalContextIdentifier} = { 
-      ${options.contextVariables.map(val => `${val.toString()}?: any,`)}
-    };`,
-  };
-
   const context = {
     identifier: contextIdentifier,
     codeAst: `export type ${contextIdentifier} = { 
       ${options.name}: { api: ${sdkIdentifier} }, 
-    } & ${additionalContextIdentifier};`,
+    };`,
   };
 
   return {
     sdk,
-    additionalContext,
     context,
   };
 }
@@ -132,23 +114,18 @@ export type ProjectionOptions = {
 }`,
           ];
           const sdkItems: string[] = [];
-          const additionalContextItems: string[] = [];
           const contextItems: string[] = [];
 
           const results = await Promise.all(
             rawSources.map(source => {
               const item = generateTypesForApi({
-                schema: unifiedSchema.extensions.stitchingInfo.transformedSchemas.get(source),
+                schema: unifiedSchema.extensions.sourceMap.get(source),
                 name: source.name,
-                contextVariables: source.contextVariables || [],
               });
 
               if (item) {
                 if (item.sdk) {
                   sdkItems.push(item.sdk.codeAst);
-                }
-                if (item.additionalContext) {
-                  additionalContextItems.push(item.additionalContext.codeAst);
                 }
                 if (item.context) {
                   contextItems.push(item.context.codeAst);
@@ -158,25 +135,13 @@ export type ProjectionOptions = {
             })
           );
 
-          const additionalContextType = `export type ${additionalContextIdentifier} = ${results
-            .map(r => r?.additionalContext?.identifier)
-            .filter(Boolean)
-            .join(' & ')};`;
-
           const contextType = `export type ${unifiedContextIdentifier} = ${results
             .map(r => r?.context?.identifier)
             .filter(Boolean)
             .join(' & ')};`;
 
           return {
-            content: [
-              ...commonTypes,
-              ...sdkItems,
-              ...additionalContextItems,
-              ...contextItems,
-              additionalContextType,
-              contextType,
-            ].join('\n\n'),
+            content: [...commonTypes, ...sdkItems, ...contextItems, contextType].join('\n\n'),
           };
         },
       },
