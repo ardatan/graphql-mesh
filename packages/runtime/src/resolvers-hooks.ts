@@ -85,7 +85,11 @@ function createProxyInfo({
   };
 }
 
-export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hooks): IResolvers {
+export function applyResolversHooksToResolvers(
+  unifiedSchema: GraphQLSchema,
+  resolvers: IResolvers,
+  hooks: Hooks
+): IResolvers {
   return composeResolvers(resolvers, {
     '*.*': originalResolver => async (root, args, context, info) => {
       const resolverData = {
@@ -108,7 +112,7 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, hooks: Hoo
                     {},
                     {
                       get(_, fieldName: string) {
-                        const apiSchema = info.schema.extensions.sourceMap.get(apiContext.rawSource);
+                        const apiSchema: GraphQLSchema = unifiedSchema.extensions.sourceMap.get(apiContext.rawSource);
                         const rootTypes: Record<Operation, GraphQLObjectType> = {
                           query: apiSchema.getQueryType(),
                           mutation: apiSchema.getMutationType(),
@@ -182,7 +186,7 @@ export function applyResolversHooksToSchema(schema: GraphQLSchema, hooks: Hooks)
 
   return addResolversToSchema({
     schema,
-    resolvers: applyResolversHooksToResolvers(sourceResolvers, hooks),
+    resolvers: applyResolversHooksToResolvers(schema, sourceResolvers, hooks),
     updateResolversInPlace: true,
   });
 }
