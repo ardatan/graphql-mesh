@@ -1,7 +1,16 @@
 import { YamlConfig, Hooks, KeyValueCache } from '@graphql-mesh/types';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { GraphQLSchema, buildSchema, execute, parse, DocumentNode } from 'graphql';
+import {
+  GraphQLSchema,
+  buildSchema,
+  execute,
+  parse,
+  DocumentNode,
+  GraphQLObjectType,
+  OperationDefinitionNode,
+  FieldNode,
+} from 'graphql';
 import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
 import objectHash from 'object-hash';
@@ -216,6 +225,9 @@ describe('cache', () => {
         contextValue: {},
       };
 
+      const queryType = schema.getType('Query') as GraphQLObjectType;
+      const queryFields = queryType.getFields();
+      const operation = executeOptions.document.definitions[0] as OperationDefinitionNode;
       const cacheKey =
         cacheKeyToCheck ||
         computeCacheKey({
@@ -223,8 +235,17 @@ describe('cache', () => {
           args: { id: '1' },
           info: {
             fieldName: 'user',
-            parentType: {
-              name: 'Query',
+            parentType: queryType,
+            returnType: queryFields.user.type,
+            schema,
+            fieldNodes: operation.selectionSet.selections as FieldNode[],
+            fragments: {},
+            rootValue: {},
+            operation,
+            variableValues: {},
+            path: {
+              prev: null,
+              key: 'user',
             },
           } as any,
         });
