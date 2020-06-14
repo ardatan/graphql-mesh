@@ -31,7 +31,7 @@ const resolvers = {
           fields: {
             items: {
               articles: {
-                view: true
+                views: true
               }
             }
           }
