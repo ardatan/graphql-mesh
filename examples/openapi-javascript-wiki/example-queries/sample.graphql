@@ -1,0 +1,9 @@
+query resolverFieldSelectionTest {
+  viewsOver500K(project: "en.wikipedia.com") {
+    items {
+      articles {
+        article
+      }
+    }
+  }
+}

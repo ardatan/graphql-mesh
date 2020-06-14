@@ -18,6 +18,33 @@ const resolvers = {
       }
 
       return items[0].views;
+    },
+    async viewsOver500K(_, { project }, { Wiki }) {
+      const pageviewTops = await Wiki.api.getMetricsPageviewsTopProjectAccessYearMonthDay(
+        {
+          project: "en.wikipedia.org",
+          access: "all-access",
+          day: "31",
+          month: "05",
+          year: "2020"
+        }, {
+          fields: {
+            items: {
+              articles: {
+                view: true
+              }
+            }
+          }
+        });
+      pageviewTops.items.forEach((item, index, array) => {
+        console.log(item);
+        array[index].articles = item.articles.filter(
+          element => {
+            return element.views >= 500000;
+          }
+        );
+      });
+      return pageviewTops;
     }
   }
 };

@@ -7,6 +7,7 @@ sources:
 additionalTypeDefs: |
       extend type Query {
         viewsInPastMonth(project: String!): Float!
+        viewsOver500K(project: String!): PageviewTops
       }
 additionalResolvers:
   - ./src/mesh/additional-resolvers.js
