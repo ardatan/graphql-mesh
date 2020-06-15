@@ -49,10 +49,9 @@
 
 .button:hover {
   background: var(--ifm-link-color);
-}
-
-.button:hover a {
   color: #fff !important;
   text-decoration: none;
+  border-color: white;
 }
+
 

@@ -75,9 +75,11 @@ function Home() {
         <Button onClick={() => setShowLiveDemo(true)}>
           Try it out Live
         </Button>
+        <Link to={`/docs/getting-started/introduction`}>
           <Button>
-            <Link to={`/docs/getting-started/introduction`}>View Docs</Link>
+            View Docs
           </Button>
+        </Link>
         </div>
       </header>
       { showLiveDemo && <div className={styles.liveDemo}>
