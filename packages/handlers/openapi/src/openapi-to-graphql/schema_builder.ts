@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-dupe-else-if */
 /* eslint-disable no-case-declarations */
 // Copyright IBM Corp. 2018. All Rights Reserved.
@@ -287,7 +288,7 @@ function createOrReuseUnion({ def, operation, data, iteration }: CreateOrReuseCo
       description,
       types,
       resolveType: source => {
-        const properties = Object.keys(source);
+        const properties = Object.keys(source) as string[];
 
         // Remove custom _openAPIToGraphQL property used to pass data
         const otgIndex = properties.indexOf('_openAPIToGraphQL');
@@ -307,7 +308,7 @@ function createOrReuseUnion({ def, operation, data, iteration }: CreateOrReuseCo
          * of the fields specified in the OAS
          */
         return types.find(type => {
-          const typeFields = Object.keys(type.getFields());
+          const typeFields = Object.keys(type.getFields()) as string[];
 
           if (properties.length <= typeFields.length) {
             for (let i = 0; i < properties.length; i++) {

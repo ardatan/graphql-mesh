@@ -362,11 +362,11 @@ async function translateOpenAPIToGraphQL(
   queryFields = sortObject(queryFields);
   mutationFields = sortObject(mutationFields);
   authQueryFields = sortObject(authQueryFields);
-  Object.keys(authQueryFields).forEach(key => {
+  Object.keys(authQueryFields).forEach((key: string) => {
     authQueryFields[key] = sortObject(authQueryFields[key]);
   });
   authMutationFields = sortObject(authMutationFields);
-  Object.keys(authMutationFields).forEach(key => {
+  Object.keys(authMutationFields).forEach((key: string) => {
     authMutationFields[key] = sortObject(authMutationFields[key]);
   });
 
