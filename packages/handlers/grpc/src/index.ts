@@ -234,7 +234,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         const client = new ServiceClient(config.endpoint, creds);
         const methods = nested.methods;
         await Promise.all(
-          Object.keys(methods).map(async methodName => {
+          Object.keys(methods).map(async (methodName: string) => {
             const method = methods[methodName];
             let rootFieldName = methodName;
             if (name !== config.serviceName) {
@@ -295,7 +295,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         });
       } else if ('nested' in nested) {
         await Promise.all(
-          Object.keys(nested.nested).map(async key => {
+          Object.keys(nested.nested).map(async (key: string) => {
             const currentNested = nested.nested[key];
             await visit(currentNested, key, currentPath ? currentPath + '.' + name : name);
           })

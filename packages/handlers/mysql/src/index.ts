@@ -247,7 +247,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                 },
                 extensions: tableForeign,
                 resolve: async (root, args, { mysqlConnection }, info) => {
-                  const fieldMap = graphqlFields(info);
+                  const fieldMap: Record<string, any> = graphqlFields(info);
                   const fields = Object.keys(fieldMap).filter(
                     fieldName => Object.keys(fieldMap[fieldName]).length === 0
                   );
@@ -285,7 +285,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
               },
             },
             resolve: async (root, args, { mysqlConnection }, info) => {
-              const fieldMap = graphqlFields(info);
+              const fieldMap: Record<string, any> = graphqlFields(info);
               const fields: string[] = [];
               await Promise.all(
                 Object.keys(fieldMap).map(async fieldName => {
@@ -319,7 +319,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
             },
             resolve: async (root, args, { mysqlConnection }, info) => {
               const { recordId } = await mysqlConnection.insert(args);
-              const fieldMap = graphqlFields(info);
+              const fieldMap: Record<string, any> = graphqlFields(info);
               const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
               const where: any = {};
               await Promise.all(
@@ -351,7 +351,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
                 },
                 args.where
               );
-              const fieldMap = graphqlFields(info);
+              const fieldMap: Record<string, any> = graphqlFields(info);
               const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
               const result = await mysqlConnection.select(tableName, fields, args.where, {});
               return result[0];

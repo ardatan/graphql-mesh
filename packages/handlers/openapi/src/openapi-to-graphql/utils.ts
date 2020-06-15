@@ -110,5 +110,5 @@ export function sortObject(o: any) {
 export function getCommonPropertyNames(object1: any, object2: any): string[] {
   return Object.keys(object1).filter(propertyName => {
     return propertyName in object2;
-  });
+  }) as string[];
 }

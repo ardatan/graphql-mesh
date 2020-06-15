@@ -424,7 +424,7 @@ export function createDataDef(
 
     const saneLinks = {};
     if (typeof links === 'object') {
-      Object.keys(links).forEach(linkKey => {
+      Object.keys(links).forEach((linkKey: string) => {
         saneLinks[
           Oas3Tools.sanitize(
             linkKey,
@@ -1088,7 +1088,7 @@ function createDataDefFromAnyOf({
 
         // Check if any member schema has conflicting properties
         anyOfData.allProperties.forEach(properties => {
-          Object.keys(properties).forEach(propertyName => {
+          Object.keys(properties).forEach((propertyName: string) => {
             if (
               !incompatibleProperties.has(propertyName) && // Has not been already identified as a problematic property
               typeof allProperties[propertyName] === 'object' &&
@@ -1115,7 +1115,7 @@ function createDataDefFromAnyOf({
         }
 
         anyOfData.allProperties.forEach(properties => {
-          Object.keys(properties).forEach(propertyName => {
+          Object.keys(properties).forEach((propertyName: string) => {
             if (!incompatibleProperties.has(propertyName)) {
               // Dereferenced by processing anyOfData
               const propertySchema = properties[propertyName] as SchemaObject;

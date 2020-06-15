@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 // Copyright IBM Corp. 2018. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
@@ -556,7 +557,7 @@ export function getRequestBodyObject(
         };
       } else {
         // Pick first (random) content type
-        const randomContentType = Object.keys(content)[0];
+        const randomContentType = Object.keys(content)[0].toString();
 
         return {
           payloadContentType: randomContentType,
@@ -670,7 +671,7 @@ export function getResponseObject(
           };
         } else {
           // Pick first (random) content type
-          const randomContentType = Object.keys(content)[0];
+          const randomContentType = Object.keys(content)[0].toString();
 
           return {
             responseContentType: randomContentType,
@@ -772,7 +773,7 @@ export function getResponseStatusCode(path: string, method: string, oas: Oas3, d
   const endpoint: OperationObject = oas.paths[path][method];
 
   if (typeof endpoint.responses === 'object') {
-    const codes = Object.keys(endpoint.responses);
+    const codes = Object.keys(endpoint.responses) as string[];
     const successCodes = codes.filter(code => {
       return SUCCESS_STATUS_RX.test(code) || code === 'default';
     });
