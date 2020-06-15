@@ -1219,10 +1219,10 @@
     "@types/lodash" "^4.14.136"
     lodash "^4.17.15"
 
-"@creditkarma/thrift-server-express@0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-express/-/thrift-server-express-0.16.0.tgz#c01c3dbd9e1808bf610cd3353473d3139ff1cf76"
-  integrity sha512-0Jv+VElNS38KiCdFcBu7ECZrx2c/34SeqsnGOjgxLgMROpORek35RoWqL3wvFcP1/Wstoh/gVNg1DZ5XRCgUKg==
+"@creditkarma/thrift-server-express@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-express/-/thrift-server-express-0.16.1.tgz#09117b018bd2c5ff9b77b99a502bb377c845fea3"
+  integrity sha512-XPUPRnnJkGbLCZZMwLRSNGMZgxlC0n1LYIW2CXuH24aZIcTd9hQP09xc1khs5STMZii6q79wWx2hg6H/oZDDYA==
   dependencies:
     zipkin "^0.15.0"
 
@@ -1482,22 +1482,6 @@
     "@graphql-tools/merge" "^6.0.0"
     "@graphql-tools/utils" "^6.0.0"
     tslib "~2.0.0"
-
-"@graphql-codegen/plugin-helpers@1.15.2":
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.15.2.tgz#102d93094858f10537911bd3c788f730f0f74974"
-  integrity sha512-5bvgNrLEtXj0tmyGj0I2JfxbjL1wkOKcjTubGDFfmbOR4aGOCCJPCgTtoCyCX8qbazW4LOsVInWieKEoEGUzYg==
-  dependencies:
-    "@graphql-tools/utils" "^6.0.0"
-    camel-case "4.1.1"
-    common-tags "1.8.0"
-    constant-case "3.0.3"
-    import-from "3.0.0"
-    lower-case "2.0.1"
-    param-case "3.0.3"
-    pascal-case "3.1.1"
-    tslib "~2.0.0"
-    upper-case "2.0.1"
 
 "@graphql-codegen/plugin-helpers@1.15.3":
   version "1.15.3"
