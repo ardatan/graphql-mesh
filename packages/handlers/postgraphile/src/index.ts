@@ -7,7 +7,6 @@ import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { readJSON, unlink } from 'fs-extra';
-import FederationPlugin from '@graphile/federation';
 
 const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
   async getMeshSource({ name, cache, config, hooks }) {
@@ -28,11 +27,7 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
 
     let writeCache: () => Promise<void>;
 
-    const appendPlugins: Plugin[] = [];
-
-    if (config.federation) {
-      appendPlugins.push(FederationPlugin);
-    }
+    const appendPlugins = await Promise.all<Plugin>(config.plugins?.map(pluginName => import(pluginName)));
 
     const builder = await getPostGraphileBuilder(pgPool, config.schemaName || 'public', {
       dynamicJson: true,

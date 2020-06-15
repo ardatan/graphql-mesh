@@ -26,6 +26,28 @@ sources:
 > You can check out our example that uses schema stitching with a PostgreSQL datasource.
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
 
+### External Plugins (e.g. Federation)
+You can add PostGraphile plugins such as FederationPlugin and ConnectionFilterPlugin. You can install it using npm or yarn like below;
+```sh
+yarn add @graphile/federation
+```
+
+and add those in your configuration file;
+
+```yml
+sources:
+  - name: MyDb
+    handler:
+      postgraphile:
+        connectionString: postgres://postgres:password@localhost/postgres
+        plugins:
+          - "@graphile/federation"
+```
+
+> Use `FederationPlugin` only if you are using `federation` as merger as in [Federation Recipe](/recipes/federation)
+
+[Learn more about PostGraphile plugins](https://www.graphile.org/postgraphile/extending/)
+
 ## Config API Reference
 
 {@import ../generated-markdown/PostGraphileHandler.generated.md}

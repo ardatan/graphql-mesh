@@ -23,9 +23,9 @@ type PostGraphileHandler @md {
   """
   cacheIntrospection: Boolean
   """
-  Enable Apollo Federation support (enable only if your merger is set as `federation`)
+  Extra Postgraphile Plugins
   """
-  federation: Boolean
+  plugins: [String]
 }
 
 type PostGraphilePool {
