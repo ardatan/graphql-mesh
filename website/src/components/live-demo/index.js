@@ -30,7 +30,7 @@ const EXAMPLES = {
 
 export default () => {
 
-    const [exampleRepo, setExampleRepo] = useState('openapi-stripe');
+    const [exampleRepo, setExampleRepo] = useState('json-schema-example');
     const [loading, setLoading] = useState(true);
 
     return (
