@@ -117,7 +117,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     }
 
     function prepareSearchParams(fragment: ResolveTree, schema: GraphQLSchema) {
-      const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName);
+      const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName) as string[];
       const returnType = schema.getType(fragmentTypeNames[0]);
       const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType);
       const searchParams = new URLSearchParams();
