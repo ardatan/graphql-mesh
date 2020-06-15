@@ -20,7 +20,9 @@
     "@graphql-mesh/types": "0.2.10",
     "@graphql-mesh/utils": "0.2.10",
     "date-fns": "2.14.0",
-    "@graphql-tools/resolvers-composition": "6.0.9",
+    "@graphql-tools/resolvers-composition": "6.0.10",
+    "@graphql-tools/schema": "6.0.10",
+    "@graphql-tools/utils": "6.0.10",
     "graphql-fields": "2.0.3",
     "object-hash": "2.0.3"
   },
