@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -13,7 +13,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.2.10",
+    "@graphql-mesh/types": "0.2.11",
     "@graphql-tools/wrap": "6.0.10",
     "@graphql-tools/utils": "6.0.10"
   },
