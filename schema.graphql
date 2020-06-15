@@ -270,8 +270,8 @@ type PostGraphileHandler @md {
   pool: PostGraphilePool
   """Cache Introspection"""
   cacheIntrospection: Boolean
-  """Enable Apollo Federation support (enable only if your merger is set as `federation`)"""
-  federation: Boolean
+  """Extra Postgraphile Plugins"""
+  plugins: [String]
 }
 type PostGraphilePool {
   user: String

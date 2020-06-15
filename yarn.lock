@@ -12,15 +12,6 @@
     core-js "^3.4.0"
     lodash.xorby "^4.7.0"
 
-"@apollo/federation@^0.6.8":
-  version "0.6.10"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.6.10.tgz#e74a7f45adaa06410736d52b2e8a8a8b4fc40720"
-  integrity sha512-KdEg2N/T9OEV9wYtrhkNTxnoemap3gCKaJzxogf6a14cVHk9/HMrv8hDUcl3Uu3fzUq591JVBfBcLJntD+2FkQ==
-  dependencies:
-    apollo-env "^0.5.1"
-    apollo-graphql "^0.3.3"
-    apollo-server-env "2.4.0"
-
 "@apollo/gateway@0.16.5":
   version "0.16.5"
   resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.16.5.tgz#ccd30fef677ed2edd1fe542f3d053393b2ad835d"
@@ -1458,16 +1449,6 @@
     url "^0.11.0"
     webpack-sources "^1.4.3"
 
-"@graphile/federation@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@graphile/federation/-/federation-0.0.3.tgz#c2b2b62fd1b7432dd5696068572f9a69ab9b6403"
-  integrity sha512-Xh2fU4T3aCLovoRy2LFlhr7p9ftH6x3mNswMuR33lvmfCT8UngYiaDKxFKp9Ovtm+RvExp4r3KIt6NPDvicptg==
-  dependencies:
-    "@apollo/federation" "^0.6.8"
-    "@types/graphql" "^14.0.0"
-    graphile-utils "^4.4.2"
-    graphql-tools "^4.0.5"
-
 "@graphile/lru@4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@graphile/lru/-/lru-4.5.0.tgz#e8fe036d322dfe1715675aab171979981e28ac9e"
@@ -1482,22 +1463,6 @@
     "@graphql-tools/merge" "^6.0.0"
     "@graphql-tools/utils" "^6.0.0"
     tslib "~2.0.0"
-
-"@graphql-codegen/plugin-helpers@1.15.2":
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.15.2.tgz#102d93094858f10537911bd3c788f730f0f74974"
-  integrity sha512-5bvgNrLEtXj0tmyGj0I2JfxbjL1wkOKcjTubGDFfmbOR4aGOCCJPCgTtoCyCX8qbazW4LOsVInWieKEoEGUzYg==
-  dependencies:
-    "@graphql-tools/utils" "^6.0.0"
-    camel-case "4.1.1"
-    common-tags "1.8.0"
-    constant-case "3.0.3"
-    import-from "3.0.0"
-    lower-case "2.0.1"
-    param-case "3.0.3"
-    pascal-case "3.1.1"
-    tslib "~2.0.0"
-    upper-case "2.0.1"
 
 "@graphql-codegen/plugin-helpers@1.15.3":
   version "1.15.3"
@@ -2552,13 +2517,6 @@
     "@types/koa" "*"
     graphql "^14.5.3"
 
-"@types/graphql@^14.0.0":
-  version "14.5.0"
-  resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.5.0.tgz#a545fb3bc8013a3547cf2f07f5e13a33642b75d6"
-  integrity sha512-MOkzsEp1Jk5bXuAsHsUi6BVv0zCO+7/2PTiZMXWDSsMXvNU6w/PLMQT2vHn8hy2i0JqojPz1Sz6rsFjHtsU0lA==
-  dependencies:
-    graphql "*"
-
 "@types/html-minifier-terser@^5.0.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@types/html-minifier-terser/-/html-minifier-terser-5.1.0.tgz#551a4589b6ee2cc9c1dff08056128aec29b94880"
@@ -3532,15 +3490,6 @@ apollo-engine-reporting@^2.0.0:
     async-retry "^1.2.1"
     uuid "^8.0.0"
 
-apollo-env@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/apollo-env/-/apollo-env-0.5.1.tgz#b9b0195c16feadf0fe9fd5563edb0b9b7d9e97d3"
-  integrity sha512-fndST2xojgSdH02k5hxk1cbqA9Ti8RX4YzzBoAB4oIe1Puhq7+YlhXGXfXB5Y4XN0al8dLg+5nAkyjNAR2qZTw==
-  dependencies:
-    core-js "^3.0.1"
-    node-fetch "^2.2.0"
-    sha.js "^2.4.11"
-
 apollo-env@^0.6.1, apollo-env@^0.6.5:
   version "0.6.5"
   resolved "https://registry.yarnpkg.com/apollo-env/-/apollo-env-0.6.5.tgz#5a36e699d39e2356381f7203493187260fded9f3"
@@ -3558,14 +3507,6 @@ apollo-errors@^1.9.0:
   dependencies:
     assert "^1.4.1"
     extendable-error "^0.1.5"
-
-apollo-graphql@^0.3.3:
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/apollo-graphql/-/apollo-graphql-0.3.7.tgz#533232ed48b0b6dbcf5635f65e66cf8677a5b768"
-  integrity sha512-ghW16xx9tRcyL38Pw6G5OidMnYn+CNUGZWmvqQgEO2nRy4T0ONPZZBOvGrIMtJQ70oEykNMKGm0zm6PdHdxd8Q==
-  dependencies:
-    apollo-env "^0.6.1"
-    lodash.sortby "^4.7.0"
 
 apollo-graphql@^0.4.0:
   version "0.4.4"
@@ -3656,14 +3597,6 @@ apollo-server-core@^2.14.3:
     sha.js "^2.4.11"
     subscriptions-transport-ws "^0.9.11"
     ws "^6.0.0"
-
-apollo-server-env@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/apollo-server-env/-/apollo-server-env-2.4.0.tgz#6611556c6b627a1636eed31317d4f7ea30705872"
-  integrity sha512-7ispR68lv92viFeu5zsRUVGP+oxsVI3WeeBNniM22Cx619maBUwcYTIC3+Y3LpXILhLZCzA1FASZwusgSlyN9w==
-  dependencies:
-    node-fetch "^2.1.2"
-    util.promisify "^1.0.0"
 
 apollo-server-env@^2.4.4:
   version "2.4.4"
@@ -7946,7 +7879,7 @@ graphile-build@4.7.0:
     pluralize "^7.0.0"
     semver "^6.0.0"
 
-graphile-utils@^4.4.2, graphile-utils@^4.7.0:
+graphile-utils@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/graphile-utils/-/graphile-utils-4.7.0.tgz#f1b4b77a84741bbcbb69c1f3d2c009bd9c7336f6"
   integrity sha512-q147Dn4BV7AfujMCSoWf48dqUJUdr2ReLCY9aal7+m2ZthxMlnqhqrbGFvsDz+Vdx/KaZoDbNqEgAmfhE9R0mA==
@@ -8092,7 +8025,7 @@ graphql-tools-fork@9.0.1:
     node-fetch "^2.6.0"
     uuid "^7.0.2"
 
-graphql-tools@^4.0.0, graphql-tools@^4.0.4, graphql-tools@^4.0.5:
+graphql-tools@^4.0.0, graphql-tools@^4.0.4:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-4.0.8.tgz#e7fb9f0d43408fb0878ba66b522ce871bafe9d30"
   integrity sha512-MW+ioleBrwhRjalKjYaLQbr+920pHBgy9vM/n47sswtns8+96sRn5M/G+J1eu7IMeKWiN/9p6tmwCHU7552VJg==
@@ -8134,7 +8067,7 @@ graphql-upload@^8.0.2:
     http-errors "^1.7.3"
     object-path "^0.11.4"
 
-graphql@*, graphql@15.1.0, "graphql@>=0.9 <0.14 || ^14.0.2", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2", graphql@^14.2.1, graphql@^14.5.3:
+graphql@15.1.0, "graphql@>=0.9 <0.14 || ^14.0.2", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2", graphql@^14.2.1, graphql@^14.5.3:
   version "15.1.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.1.0.tgz#b93e28de805294ec08e1630d901db550cb8960a1"
   integrity sha512-0TVyfOlCGhv/DBczQkJmwXOK6fjWkjzY3Pt7wY8i0gcYXq8aogG3weCsg48m72lywKSeOqedEHvVPOvZvSD51Q==

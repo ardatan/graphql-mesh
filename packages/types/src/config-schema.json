@@ -894,9 +894,13 @@
           "type": "boolean",
           "description": "Cache Introspection"
         },
-        "federation": {
-          "type": "boolean",
-          "description": "Enable Apollo Federation support (enable only if your merger is set as `federation`)"
+        "plugins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Extra Postgraphile Plugins"
         }
       },
       "required": [
@@ -1197,7 +1201,7 @@
         },
         "cacheKey": {
           "type": "string",
-          "description": "Cache key to use to store your resolvers responses.\nThe defualt is: {typeName}-{fieldName}-{argsHash}\n\nAvailable variables:\n- {args.argName} - use resolver argument\n- {typeName} - use name of the type\n- {fieldName} - use name of the field\n- {argsHash} - a hash based on the 'args' object\n- {info} - the GraphQLResolveInfo of the resolver\n\nAvailable interpolations:\n- {format|date} - returns the current date with a specific format"
+          "description": "Cache key to use to store your resolvers responses.\nThe defualt is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}\n\nAvailable variables:\n- {args.argName} - use resolver argument\n- {typeName} - use name of the type\n- {fieldName} - use name of the field\n- {argsHash} - a hash based on the 'args' object\n- {fieldNamesHash} - a hash based on the field names selected by the client\n- {info} - the GraphQLResolveInfo of the resolver\n\nAvailable interpolations:\n- {format|date} - returns the current date with a specific format"
         },
         "invalidate": {
           "$ref": "#/definitions/CacheInvalidateConfig",
