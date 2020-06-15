@@ -57,7 +57,7 @@ export interface MeshTransformOptions<Config = any> {
   apiName?: string;
 }
 
-export interface MeshTransformConstructor<Config = any> {
+export interface MeshTransformLibrary<Config = any> {
   new (options: MeshTransformOptions<Config>): MeshTransform;
 }
 

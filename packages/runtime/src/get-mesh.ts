@@ -1,6 +1,14 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, execute, DocumentNode, GraphQLError } from 'graphql';
-import { GraphQLOperation, ExecuteMeshFn, GetMeshOptions, Requester, ResolvedTransform } from './types';
+import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
+import {
+  GraphQLOperation,
+  ExecuteMeshFn,
+  GetMeshOptions,
+  Requester,
+  ResolvedTransform,
+  SubscribeMeshFn,
+  MeshContext,
+} from './types';
 import { ensureDocumentNode } from './utils';
 import { Hooks, KeyValueCache, RawSourceOutput, MeshTransform } from '@graphql-mesh/types';
 
@@ -23,7 +31,7 @@ export function groupTransforms({
 }) {
   const wrapTransforms: MeshTransform[] = [];
   const noWrapTransforms: MeshTransform[] = [];
-  transforms?.forEach(({ transformCtor: TransformCtor, config }) => {
+  transforms?.forEach(({ transformLibrary: TransformCtor, config }) => {
     const transform = new TransformCtor({
       apiName,
       config,
@@ -43,6 +51,7 @@ export async function getMesh(
   options: GetMeshOptions
 ): Promise<{
   execute: ExecuteMeshFn;
+  subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
   rawSources: RawSourceOutput[];
   sdkRequester: Requester;
@@ -101,7 +110,7 @@ export async function getMesh(
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
     transforms: options.transforms.map(
-      ({ transformCtor: TransformCtor, config }) =>
+      ({ transformLibrary: TransformCtor, config }) =>
         new TransformCtor({
           config,
           cache,
@@ -114,9 +123,9 @@ export async function getMesh(
 
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, hooks);
 
-  async function buildMeshContext(initialContextValue?: any) {
-    const context: Record<string, any> = {
-      ...(initialContextValue || {}),
+  async function buildMeshContext<TAdditionalContext>(initialContextValue?: TAdditionalContext) {
+    const context: MeshContext & TAdditionalContext = {
+      ...initialContextValue,
       [MESH_CONTEXT_SYMBOL]: true,
     };
 
@@ -131,10 +140,12 @@ export async function getMesh(
           }
         }
 
-        context[rawSource.name] = {
-          rawSource,
-          [MESH_API_CONTEXT_SYMBOL]: true,
-        };
+        Object.assign(context, {
+          [rawSource.name]: {
+            rawSource,
+            [MESH_API_CONTEXT_SYMBOL]: true,
+          },
+        });
       })
     );
 
@@ -150,6 +161,23 @@ export async function getMesh(
     const contextValue = await buildMeshContext(context);
 
     return execute({
+      document: ensureDocumentNode(document),
+      contextValue,
+      rootValue: rootValue || {},
+      variableValues: variables || {},
+      schema: unifiedSchema,
+    });
+  }
+
+  async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any>(
+    document: GraphQLOperation,
+    variables?: TVariables,
+    context?: TContext,
+    rootValue?: TRootValue
+  ) {
+    const contextValue = await buildMeshContext(context);
+
+    return subscribe({
       document: ensureDocumentNode(document),
       contextValue,
       rootValue: rootValue || {},
@@ -175,6 +203,7 @@ export async function getMesh(
 
   return {
     execute: meshExecute,
+    subscribe: meshSubscribe,
     schema: unifiedSchema,
     contextBuilder: buildMeshContext,
     rawSources,

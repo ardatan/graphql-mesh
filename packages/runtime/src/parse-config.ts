@@ -11,6 +11,12 @@ import {
 import { YamlConfig, getJsonSchema } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 
+declare global {
+  interface ObjectConstructor {
+    keys<T>(obj: T): Array<keyof T>;
+  }
+}
+
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
@@ -42,43 +48,44 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, cache, merger] = await Promise.all([
     Promise.all(
-      config.sources.map<Promise<MeshResolvedSource>>(
-        async (source): Promise<MeshResolvedSource> => {
-          const handlerName = Object.keys(source.handler)[0] as keyof YamlConfig.Handler;
-          const handlerConfig = source.handler[handlerName];
-          const [handlerLibrary, transforms] = await Promise.all([
-            getHandler(handlerName),
-            Promise.all(
-              (source.transforms || []).map(async t => {
-                const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
-                const transformConfig = t[transformName];
-                const transformCtor = await getPackage<ResolvedTransform['transformCtor']>(transformName, 'transform');
+      config.sources.map<Promise<MeshResolvedSource>>(async source => {
+        const handlerName = Object.keys(source.handler)[0];
+        const handlerConfig = source.handler[handlerName];
+        const [handlerLibrary, transforms] = await Promise.all([
+          getHandler(handlerName),
+          Promise.all(
+            (source.transforms || []).map(async t => {
+              const transformName: keyof YamlConfig.Transform = Object.keys(t)[0];
+              const transformConfig = t[transformName];
+              const transformLibrary = await getPackage<ResolvedTransform['transformLibrary']>(
+                transformName,
+                'transform'
+              );
 
-                return {
-                  config: transformConfig,
-                  transformCtor,
-                };
-              })
-            ),
-          ]);
+              return {
+                config: transformConfig,
+                transformLibrary,
+              };
+            })
+          ),
+        ]);
 
-          return {
-            name: source.name,
-            handlerConfig,
-            handlerLibrary,
-            transforms,
-          };
-        }
-      )
+        return {
+          name: source.name,
+          handlerConfig,
+          handlerLibrary,
+          transforms,
+        };
+      })
     ),
     Promise.all(
       config.transforms?.map(async t => {
         const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
         const transformConfig = t[transformName];
-
+        const TransformLibrary = await getPackage<ResolvedTransform['transformLibrary']>(transformName, 'transform');
         return {
           config: transformConfig,
-          transformCtor: await getPackage<ResolvedTransform['transformCtor']>(transformName, 'transform'),
+          transformLibrary: TransformLibrary,
         };
       }) || []
     ),

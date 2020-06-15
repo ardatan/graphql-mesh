@@ -41,7 +41,7 @@ function createProxyInfo({
   parentType: GraphQLObjectType;
   field: GraphQLField<any, any>;
   root: any;
-  args: any;
+  args: Record<string, any>;
   depthLimit?: number;
   selectedFields?: SelectedFields;
   selectionSet?: string | DocumentNode;
@@ -49,7 +49,13 @@ function createProxyInfo({
 }): any {
   const actualReturnType = 'ofType' in info.returnType ? info.returnType.ofType : info.returnType;
   const returnType = 'ofType' in field.type ? field.type.ofType : field.type;
-  if ('name' in actualReturnType && 'name' in returnType && actualReturnType.name === returnType.name) {
+  if (
+    !selectedFields &&
+    !selectionSet &&
+    'name' in actualReturnType &&
+    'name' in returnType &&
+    actualReturnType.name === returnType.name
+  ) {
     return {
       ...info,
       returnType,

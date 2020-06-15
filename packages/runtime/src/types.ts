@@ -4,18 +4,16 @@ import {
   KeyValueCache,
   Hooks,
   MergerFn,
-  MeshTransformConstructor,
+  MeshTransformLibrary,
   RawSourceOutput,
 } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 
-type ValuesOf<T> = T[keyof T];
-
-export type ResolvedTransform = {
-  transformCtor: MeshTransformConstructor<ValuesOf<YamlConfig.Transform>>;
-  config: ValuesOf<YamlConfig.Transform>;
+export type ResolvedTransform<TTransformName extends keyof YamlConfig.Transform = keyof YamlConfig.Transform> = {
+  transformLibrary: MeshTransformLibrary<YamlConfig.Transform[TTransformName]>;
+  config: YamlConfig.Transform[TTransformName];
 };
 
 export type GetMeshOptions = {
@@ -29,10 +27,10 @@ export type GetMeshOptions = {
   merger: MergerFn;
 };
 
-export type MeshResolvedSource<THandlerConfig = ValuesOf<YamlConfig.Handler>> = {
+export type MeshResolvedSource<THandlerName extends keyof YamlConfig.Handler = keyof YamlConfig.Handler> = {
   name: string;
-  handlerLibrary: MeshHandlerLibrary<THandlerConfig>;
-  handlerConfig: THandlerConfig;
+  handlerLibrary: MeshHandlerLibrary<YamlConfig.Handler[THandlerName]>;
+  handlerConfig: YamlConfig.Handler[THandlerName];
   transforms?: ResolvedTransform[];
 };
 
@@ -42,6 +40,11 @@ export type ExecuteMeshFn<TData = any, TVariables = any> = (
   document: GraphQLOperation,
   variables: TVariables
 ) => Promise<TData | null | undefined>;
+
+export type SubscribeMeshFn<TData = any, TVariables = any> = (
+  document: GraphQLOperation,
+  variables: TVariables
+) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
 
 export type Requester<C = any> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
 
