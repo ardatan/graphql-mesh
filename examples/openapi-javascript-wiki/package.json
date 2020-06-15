@@ -11,6 +11,6 @@
     "@graphql-mesh/openapi": "0.2.10",
     "@graphql-mesh/runtime": "0.2.10",
     "graphql": "15.1.0",
-    "moment": "2.24.0"
+    "moment": "2.26.0"
   }
 }
