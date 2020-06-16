@@ -10,13 +10,11 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "graphql": "*",
-    "thrift": "*"
+    "graphql": "*"
   },
   "devDependencies": {
     "@types/thrift": "0.10.9",
-    "@types/url-join": "4.0.0",
-    "thrift": "0.13.0"
+    "@types/url-join": "4.0.0"
   },
   "dependencies": {
     "@creditkarma/thrift-client": "0.16.1",
@@ -27,7 +25,8 @@
     "aggregate-error": "3.0.1",
     "fetchache": "0.0.3",
     "graphql-scalars": "1.1.5",
-    "url-join": "4.0.1"
+    "url-join": "4.0.1",
+    "thrift": "0.13.0"
   },
   "publishConfig": {
     "access": "public",

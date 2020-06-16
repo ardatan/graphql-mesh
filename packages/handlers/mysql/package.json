@@ -13,13 +13,13 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "graphql": "*",
-    "mysql": "*"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.2.11",
     "graphql-compose": "7.18.1",
     "graphql-fields": "2.0.3",
+    "mysql": "2.18.1",
     "mysql-utilities": "1.1.0-alpha.4",
     "camel-case": "4.1.1",
     "pascal-case": "3.1.1",
@@ -27,8 +27,7 @@
   },
   "devDependencies": {
     "@types/graphql-fields": "1.3.2",
-    "@types/mysql": "2.15.13",
-    "mysql": "2.18.1"
+    "@types/mysql": "2.15.13"
   },
   "publishConfig": {
     "access": "public",

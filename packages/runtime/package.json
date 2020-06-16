@@ -17,7 +17,6 @@
     "@graphql-mesh/merger-stitching": "0.2.11",
     "@graphql-mesh/types": "0.2.11",
     "@graphql-mesh/utils": "0.2.11",
-    "aggregate-error": "3.0.1",
     "ajv": "6.12.2",
     "cosmiconfig": "6.0.0",
     "@graphql-tools/delegate": "6.0.10",

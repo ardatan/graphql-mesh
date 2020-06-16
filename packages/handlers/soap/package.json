@@ -10,18 +10,17 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "graphql": "*",
-    "soap": "*"
+    "graphql": "*"
   },
   "devDependencies": {
-    "@types/soap": "0.21.0",
-    "soap": "0.31.0"
+    "@types/soap": "0.21.0"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.2.11",
     "@graphql-mesh/utils": "0.2.11",
     "fetchache": "0.0.3",
-    "soap-graphql": "0.1.0"
+    "soap-graphql": "0.1.0",
+    "soap": "0.31.0"
   },
   "publishConfig": {
     "access": "public",
