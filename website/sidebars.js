@@ -33,13 +33,13 @@ module.exports = {
       'transforms/filter-schema',
       'transforms/naming-convention'
     ],
-    'API Reference': ['api/cli', 'api/runtime'],
+    // 'API Reference': ['api/cli', 'api/runtime'],
     Recipes: [
       'recipes/typescript', 
       'recipes/as-sdk', 
       'recipes/as-gateway',
       'recipes/federation'
     ],
-    'Extend Your Mesh': ['extend/custom-handler', 'extend/custom-transform']
+    // 'Extend Your Mesh': ['extend/custom-handler', 'extend/custom-transform']
   }
 };

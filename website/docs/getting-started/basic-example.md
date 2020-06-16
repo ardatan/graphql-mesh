@@ -65,6 +65,12 @@ You can use the Mesh `GraphQLScehma` instance to query your data from your appli
 
 Start by load and parsing your configuration file, and pass it to `getMesh`, this will return for your a modified version of GraphQL's `execute`, so you can use it directly to fetch your data:
 
+You need to install `@graphql-mesh/runtime` to access GraphQL Mesh Schema inside your code.
+
+```
+$ yarn add @graphql-mesh/runtime
+```
+
 ```js
 const { getMesh, findAndParseConfig } = require('@graphql-mesh/runtime');
 

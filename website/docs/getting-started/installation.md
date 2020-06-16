@@ -9,7 +9,7 @@ GraphQL Mesh comes in multiple packages, which you should install according to y
 To get started with the basics, install the following:
 
 ```
-$ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
+$ yarn add graphql @graphql-mesh/cli
 ```
 
 Then, you need to install a Mesh handler, according to your API needs. You can see the list of [all available built-in handlers in here](/docs/handlers/available-handlers).
