@@ -97,7 +97,7 @@ export function applyResolversHooksToResolvers(
   hooks: Hooks
 ): IResolvers {
   return composeResolvers(resolvers, {
-    '*.*': originalResolver => async (root, args, context, info) => {
+    '*.*': originalResolver => async (root, args, context = {}, info) => {
       const resolverData = {
         root,
         args,
