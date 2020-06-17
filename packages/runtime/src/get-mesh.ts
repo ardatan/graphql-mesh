@@ -124,6 +124,7 @@ export async function getMesh(
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, hooks);
 
   async function buildMeshContext<TAdditionalContext>(context?: TAdditionalContext) {
+    context = context || ({} as TAdditionalContext);
     await Promise.all(
       rawSources.map(async rawSource => {
         const contextBuilder = rawSource.contextBuilder;
