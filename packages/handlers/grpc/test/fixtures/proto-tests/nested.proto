@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package io.xtech;
+
+message Item {
+  string name = 1;
+}
+
+message TopLevel {
+  string value = 1;
+
+  message Nested {
+    Item movie = 2;
+  }
+
+  Nested nested_usage = 3;
+}
+
+message Result {
+  repeated Item result = 1;
+}
+
+
+service Example {
+  rpc Get (TopLevel.Nested) returns (Result) {}
+}

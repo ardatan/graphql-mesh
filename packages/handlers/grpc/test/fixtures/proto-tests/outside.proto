@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package io.outside;
+
+import "movie.proto";
+
+message MovieRequest {
+  io.xtech.Movie movie = 1;
+}
+
+message MoviesResult {
+  repeated io.xtech.Movie result = 1;
+}
+
+
+service Example {
+  rpc GetMovies (MovieRequest) returns (MoviesResult) {}
+}

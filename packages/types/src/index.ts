@@ -21,10 +21,10 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
 };
 
 export type GetMeshSourceOptions<THandlerConfig> = {
-  name: string;
-  hooks: Hooks;
+  name?: string;
+  hooks?: Hooks;
   config: THandlerConfig;
-  cache: KeyValueCache;
+  cache?: KeyValueCache;
 };
 
 // Handlers

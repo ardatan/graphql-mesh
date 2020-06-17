@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+message Item {
+  bool boolean = 1;
+  bytes bytesType = 2;
+  double doubleNum = 3;
+  fixed32 fixedint32 = 4;
+  fixed64 fixedint64 = 5;
+  float floatNum = 6;
+  int32 integer32 = 7;
+  int64 integer64 = 8;
+  sfixed32 sfixedint32 = 9;
+  sfixed64 sfixedint64 = 10;
+  sint32 sinteger32 = 11;
+  sint64 sinteger64 = 12;
+  string str = 13;
+  uint32 uinteger32 = 14;
+  uint64 uinteger64 = 15;
+}
+
+message Result {
+  repeated Item result = 1;
+}
+
+
+service Example {
+  rpc Get (Item) returns (Result) {}
+}
