@@ -1,37 +1,33 @@
-import { MeshHandlerLibrary, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
-import { pathExistsSync } from 'fs-extra';
-import { GraphQLEnumTypeConfig } from 'graphql';
-import { GraphQLBigInt } from 'graphql-scalars';
-import { AnyNestedObject, Root, IParseOptions } from 'protobufjs';
-import { isAbsolute, join } from 'path';
-import { camelCase } from 'camel-case';
-import { pascalCase } from 'pascal-case';
-import { SchemaComposer } from 'graphql-compose';
-import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
-import { withCancel, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { withCancel } from '@graphql-mesh/utils';
 import {
   ChannelCredentials,
   ClientReadableStream,
   ClientUnaryCall,
   Metadata,
-  MetadataValue,
   credentials,
   loadPackageDefinition,
 } from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
+import { camelCase } from 'camel-case';
+import { SchemaComposer } from 'graphql-compose';
+import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
+import { GraphQLBigInt, GraphQLByte } from 'graphql-scalars';
 import { get } from 'lodash';
+import { pascalCase } from 'pascal-case';
+import { AnyNestedObject, IParseOptions, Root } from 'protobufjs';
 import { Readable } from 'stream';
 import { promisify } from 'util';
 
-const SCALARS = {
-  int32: 'Int',
-  int64: 'BigInt',
-  float: 'Float',
-  double: 'Float',
-  string: 'String',
-  bool: 'Boolean',
-};
-
+import {
+  ClientMethod,
+  addIncludePathResolver,
+  addMetaDataToCall,
+  createEnum,
+  createInputOutput,
+  getBuffer,
+  getTypeName,
+} from './utils';
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
 }
@@ -39,73 +35,6 @@ interface LoadOptions extends IParseOptions {
 interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable {
   [Symbol.asyncIterator](): AsyncIterableIterator<T>;
   cancel(): void;
-}
-
-type ClientMethod = (
-  input: unknown,
-  metaData?: Metadata
-) => Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>>;
-
-function addIncludePathResolver(root: Root, includePaths: string[]) {
-  const originalResolvePath = root.resolvePath;
-  root.resolvePath = (origin: string, target: string) => {
-    if (isAbsolute(target)) {
-      return target;
-    }
-    for (const directory of includePaths) {
-      const fullPath: string = join(directory, target);
-      if (pathExistsSync(fullPath)) {
-        return fullPath;
-      }
-    }
-    const path = originalResolvePath(origin, target);
-    if (path === null) {
-      console.warn(`${target} not found in any of the include paths ${includePaths}`);
-    }
-    return path;
-  };
-}
-
-function addMetaDataToCall(
-  call: ClientMethod,
-  input: unknown,
-  context: Record<string, unknown>,
-  metaData: Record<string, string | ArrayBuffer>
-) {
-  const meta = new Metadata();
-  if (metaData) {
-    for (const [key, value] of Object.entries(metaData)) {
-      let metaValue: unknown = value;
-      if (Array.isArray(value)) {
-        // Extract data from context
-        metaValue = get(context, value);
-      }
-      // Ensure that the metadata is compatible with what node-grpc expects
-      if (typeof metaValue !== 'string') {
-        if ((metaValue as ArrayBuffer).slice && (metaValue as ArrayBuffer).byteLength >= 0 && key.endsWith('-bin')) {
-          // Doesn't look like an TypedArray
-          throw new Error(`MetaData key '${key}' is a Buffer, but does not end with '-bin'`);
-        } else {
-          throw new Error(`MetaData key '${key}' has a non string`);
-        }
-      }
-
-      meta.add(key, metaValue as MetadataValue);
-    }
-
-    return call(input, meta);
-  }
-  return call(input);
-}
-
-async function getBuffer(path: string, cache: KeyValueCache) {
-  if (path) {
-    const result = await readFileOrUrlWithCache<string>(path, cache, {
-      allowUnknownExtensions: true,
-    });
-    return Buffer.from(result);
-  }
-  return undefined;
 }
 
 const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
@@ -130,6 +59,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
 
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
+    schemaComposer.add(GraphQLByte);
     schemaComposer.createObjectTC({
       name: 'ServerStatus',
       description: 'status of the server',
@@ -140,22 +70,6 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         },
       },
     });
-
-    function getTypeName(typePath: string, isInput: boolean) {
-      if (typePath in SCALARS) {
-        return SCALARS[typePath];
-      }
-      let baseTypeName = pascalCase(
-        typePath
-          .replace(config.packageName + '.', '')
-          .split('.')
-          .join('_')
-      );
-      if (isInput && !schemaComposer.isEnumType(baseTypeName)) {
-        baseTypeName += 'Input';
-      }
-      return baseTypeName;
-    }
 
     const root = new Root();
     let fileName = config.protoFilePath;
@@ -176,57 +90,46 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     const grpcObject = loadPackageDefinition(packageDefinition);
 
     async function visit(nested: AnyNestedObject, name: string, currentPath: string) {
-      if ('values' in nested) {
-        let typeName = name;
-        if (currentPath !== config.packageName) {
-          typeName = pascalCase(currentPath.split('.').join('_') + '_' + typeName);
-        }
-        const enumTypeConfig: GraphQLEnumTypeConfig = {
-          name: typeName,
-          values: {},
-        };
-        for (const [key, value] of Object.entries(nested.values)) {
-          enumTypeConfig.values[key] = {
-            value,
-          };
-        }
-        schemaComposer.createEnumTC(enumTypeConfig);
-      } else if ('fields' in nested) {
-        let typeName = name;
-        if (currentPath !== config.packageName) {
-          typeName = pascalCase(currentPath.split('.').join('_') + '_' + typeName);
-        }
-        const inputTC = schemaComposer.createInputTC({
-          name: typeName + 'Input',
-          fields: {},
-        });
-        const outputTC = schemaComposer.createObjectTC({
-          name: typeName,
-          fields: {},
-        });
+      if ('nested' in nested) {
         await Promise.all(
-          Object.keys(nested.fields).map(async fieldName => {
-            const { type, rule } = nested.fields[fieldName];
-            inputTC.addFields({
-              [fieldName]: {
-                type: () => {
-                  const inputTypeName = getTypeName(type, true);
-                  return rule === 'repeated' ? `[${inputTypeName}]` : inputTypeName;
-                },
-              },
-            });
-            outputTC.addFields({
-              [fieldName]: {
-                type: () => {
-                  const typeName = getTypeName(type, false);
-                  return rule === 'repeated' ? `[${typeName}]` : typeName;
-                },
-              },
-            });
+          Object.keys(nested.nested).map(async (key: string) => {
+            const currentNested = nested.nested[key];
+            await visit(currentNested, key, currentPath ? currentPath + '.' + name : name);
           })
         );
+      }
+      if ('values' in nested) {
+        if (config.packageName && currentPath && !currentPath.includes(config.packageName)) {
+          // outside value that needs to be scoped by package name to ensure there are no clashes
+          const typeName = pascalCase(currentPath.split('.').join('_') + '_' + name);
+          schemaComposer.createEnumTC(createEnum(typeName, nested.values));
+        } else {
+          const typeName = pascalCase(name);
+          if (currentPath && currentPath !== config.packageName) {
+            // this is a nested value, add both nested name and unnested name
+            const nestedName = config.packageName ? currentPath.split(config.packageName)[1] : currentPath;
+            const typeName = pascalCase(nestedName.split('.').join('_') + '_' + name);
+            schemaComposer.createEnumTC(createEnum(typeName, nested.values));
+          }
+          schemaComposer.createEnumTC(createEnum(typeName, nested.values));
+        }
+      } else if ('fields' in nested) {
+        if (config.packageName && currentPath && !currentPath.includes(config.packageName)) {
+          // outside message that needs to be scoped by package name to ensure there are no clashes
+          const typeName = pascalCase(currentPath.split('.').join('_') + '_' + name);
+          createInputOutput(schemaComposer, typeName, currentPath, config.packageName, nested.fields);
+        } else {
+          const typeName = pascalCase(name);
+          if (currentPath && currentPath !== config.packageName) {
+            // this is a nested message, add both nested name and unnested name
+            const nestedName = config.packageName ? currentPath.split(config.packageName)[1] : currentPath;
+            const typeName = pascalCase(nestedName.split('.').join('_') + '_' + name);
+            createInputOutput(schemaComposer, typeName, currentPath, config.packageName, nested.fields);
+          }
+          createInputOutput(schemaComposer, typeName, currentPath, config.packageName, nested.fields);
+        }
       } else if ('methods' in nested) {
-        const objPath = currentPath + '.' + name;
+        const objPath = currentPath ? currentPath + '.' + name : name;
         const ServiceClient = get(grpcObject, objPath);
         if (typeof ServiceClient !== 'function') {
           throw new Error(`Object at path ${objPath} is not a Service constructor`);
@@ -237,17 +140,21 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           Object.keys(methods).map(async (methodName: string) => {
             const method = methods[methodName];
             let rootFieldName = methodName;
+            let responseType = method.responseType;
+            let requestType = method.requestType;
             if (name !== config.serviceName) {
               rootFieldName = camelCase(name + '_' + rootFieldName);
             }
             if (currentPath !== config.packageName) {
               rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
+              responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType);
+              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType);
             }
             const fieldConfig = {
-              type: () => getTypeName(method.responseType, false),
+              type: () => getTypeName(schemaComposer, responseType, false, config.packageName),
               args: {
                 input: {
-                  type: () => getTypeName(method.requestType, true),
+                  type: () => getTypeName(schemaComposer, requestType, true, config.packageName),
                   defaultValue: {},
                 },
               },
@@ -293,13 +200,6 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
             resolve: () => ({ status: 'online' }),
           },
         });
-      } else if ('nested' in nested) {
-        await Promise.all(
-          Object.keys(nested.nested).map(async (key: string) => {
-            const currentNested = nested.nested[key];
-            await visit(currentNested, key, currentPath ? currentPath + '.' + name : name);
-          })
-        );
       }
     }
     const rootNested = root.toJSON({
