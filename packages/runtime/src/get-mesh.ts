@@ -123,24 +123,20 @@ export async function getMesh(
 
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, hooks);
 
-  async function buildMeshContext<TAdditionalContext>(initialContextValue?: TAdditionalContext) {
-    const context: MeshContext & TAdditionalContext = {
-      ...initialContextValue,
-      [MESH_CONTEXT_SYMBOL]: true,
-    };
-
+  async function buildMeshContext<TAdditionalContext>(context?: TAdditionalContext) {
     await Promise.all(
       rawSources.map(async rawSource => {
         const contextBuilder = rawSource.contextBuilder;
 
         if (contextBuilder) {
-          const sourceContext = await contextBuilder(initialContextValue);
+          const sourceContext = await contextBuilder(context);
           if (sourceContext) {
             Object.assign(context, sourceContext);
           }
         }
 
         Object.assign(context, {
+          [MESH_CONTEXT_SYMBOL]: true,
           [rawSource.name]: {
             rawSource,
             [MESH_API_CONTEXT_SYMBOL]: true,
@@ -149,7 +145,7 @@ export async function getMesh(
       })
     );
 
-    return context;
+    return context as MeshContext & TAdditionalContext;
   }
 
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any>(
