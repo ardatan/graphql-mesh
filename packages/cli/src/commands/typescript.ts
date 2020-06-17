@@ -92,26 +92,7 @@ export function generateTsTypes(
       contextSdk: {
         plugin: async () => {
           const commonTypes = [
-            `export type SelectedFields = {
-  [fieldName: string]: SelectedFields;
-} | true;
-export type ProjectionOptions = {
-  /**
-  * If you don't provide custom selection, this is the depth of generated selection set by GraphQL Mesh
-  * default: 2
-  */
-  depth?: number;
-  /**
-  * Provide selection set in form of object similar to MongoDB's projection
-  * example: { foo: { bar: true }, baz: true }
-  */
-  fields?: SelectedFields;
-  /**
-  * Provide selection set in form of GraphQL SDL
-  * example: { foo bar baz }
-  */
-  selectionSet?: string;
-}`,
+            `import { MeshContext as OriginalMeshContext, ProjectionOptions } from '@graphql-mesh/runtime';`,
           ];
           const sdkItems: string[] = [];
           const contextItems: string[] = [];
@@ -138,7 +119,7 @@ export type ProjectionOptions = {
           const contextType = `export type ${unifiedContextIdentifier} = ${results
             .map(r => r?.context?.identifier)
             .filter(Boolean)
-            .join(' & ')};`;
+            .join(' & ')} & OriginalMeshContext;`;
 
           return {
             content: [...commonTypes, ...sdkItems, ...contextItems, contextType].join('\n\n'),
