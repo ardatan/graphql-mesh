@@ -13,7 +13,15 @@ import {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
 } from 'graphql-compose';
-import { GraphQLBigInt, GraphQLGUID, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
+import {
+  GraphQLBigInt,
+  GraphQLGUID,
+  GraphQLDateTime,
+  GraphQLJSON,
+  GraphQLDate,
+  GraphQLByte,
+  GraphQLUtcOffset,
+} from 'graphql-scalars';
 import { isListType, GraphQLResolveInfo, isAbstractType, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
@@ -26,19 +34,19 @@ const SCALARS = new Map<string, string>([
   ['Edm.Stream', 'String'],
   ['Edm.String', 'String'],
   ['Edm.Int16', 'Int'],
-  ['Edm.Byte', 'Int'],
+  ['Edm.Byte', 'Byte'],
   ['Edm.Int32', 'Int'],
   ['Edm.Int64', 'BigInt'],
   ['Edm.Double', 'Float'],
   ['Edm.Boolean', 'Boolean'],
   ['Edm.Guid', 'GUID'],
-  ['Edm.DateTimeOffset', 'String'],
-  ['Edm.Date', 'DateTime'],
+  ['Edm.DateTimeOffset', 'UtcOffset'],
+  ['Edm.Date', 'Date'],
   ['Edm.TimeOfDay', 'String'],
   ['Edm.Single', 'Float'],
   ['Edm.Duration', 'String'],
   ['Edm.Decimal', 'Float'],
-  ['Edm.SByte', 'Int'],
+  ['Edm.SByte', 'Byte'],
   ['Edm.GeographyPoint', 'String'],
 ]);
 
@@ -72,6 +80,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     schemaComposer.add(GraphQLGUID);
     schemaComposer.add(GraphQLDateTime);
     schemaComposer.add(GraphQLJSON);
+    schemaComposer.add(GraphQLByte);
+    schemaComposer.add(GraphQLDate);
+    schemaComposer.add(GraphQLUtcOffset);
 
     const aliasNamespaceMap = new Map<string, string>();
 
