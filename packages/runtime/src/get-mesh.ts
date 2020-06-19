@@ -134,7 +134,7 @@ export async function getMesh(
         const contextBuilder = rawSource.contextBuilder;
 
         if (contextBuilder) {
-          const sourceContext = await contextBuilder(initialContextValue);
+          const sourceContext = await contextBuilder(context);
           if (sourceContext) {
             Object.assign(context, sourceContext);
           }

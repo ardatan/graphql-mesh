@@ -97,7 +97,7 @@ export function applyResolversHooksToResolvers(
   hooks: Hooks
 ): IResolvers {
   return composeResolvers(resolvers, {
-    '*.*': originalResolver => async (root, args, context, info) => {
+    '*.*': originalResolver => async (root, args, context = {}, info) => {
       const resolverData = {
         root,
         args,
@@ -107,71 +107,65 @@ export function applyResolversHooksToResolvers(
       hooks.emit('resolverCalled', resolverData);
 
       try {
-        const proxyContext = new Proxy(
-          {},
-          {
-            get(_, apiName: string) {
-              if (isMeshContext(context)) {
-                const apiContext = context[apiName];
-                if (isAPIContext(apiContext)) {
-                  const sdk = new Proxy(
-                    {},
-                    {
-                      get(_, fieldName: string) {
-                        const apiSchema: GraphQLSchema = unifiedSchema.extensions.sourceMap.get(apiContext.rawSource);
-                        const rootTypes: Record<Operation, GraphQLObjectType> = {
-                          query: apiSchema.getQueryType(),
-                          mutation: apiSchema.getMutationType(),
-                          subscription: apiSchema.getSubscriptionType(),
-                        };
-                        let parentType: GraphQLObjectType;
-                        let operation: Operation;
-                        let field: GraphQLField<any, any>;
-                        for (const operationName in rootTypes) {
-                          const rootType = rootTypes[operationName as Operation];
-                          if (rootType) {
-                            const fieldMap = rootType.getFields();
-                            if (fieldName in fieldMap) {
-                              operation = operationName as Operation;
-                              field = fieldMap[fieldName];
-                              parentType = rootType;
-                            }
-                          }
+        const proxyContext = new Proxy(context, {
+          get(context, apiName: string) {
+            if (isMeshContext(context)) {
+              const apiContext = context[apiName];
+              if (isAPIContext(apiContext)) {
+                const sdk = new Proxy(apiContext, {
+                  get(apiContext, fieldName: string) {
+                    const apiSchema: GraphQLSchema = unifiedSchema.extensions.sourceMap.get(apiContext.rawSource);
+                    const rootTypes: Record<Operation, GraphQLObjectType> = {
+                      query: apiSchema.getQueryType(),
+                      mutation: apiSchema.getMutationType(),
+                      subscription: apiSchema.getSubscriptionType(),
+                    };
+                    let parentType: GraphQLObjectType;
+                    let operation: Operation;
+                    let field: GraphQLField<any, any>;
+                    for (const operationName in rootTypes) {
+                      const rootType = rootTypes[operationName as Operation];
+                      if (rootType) {
+                        const fieldMap = rootType.getFields();
+                        if (fieldName in fieldMap) {
+                          operation = operationName as Operation;
+                          field = fieldMap[fieldName];
+                          parentType = rootType;
                         }
-                        return (methodArgs: any = {}, { depth, fields, selectionSet }: any = {}) => {
-                          const proxyInfo = createProxyInfo({
-                            schema: apiSchema,
-                            parentType,
-                            field,
-                            depthLimit: depth,
-                            root,
-                            args: methodArgs,
-                            selectedFields: fields,
-                            selectionSet,
-                            info,
-                          });
-                          return delegateToSchema({
-                            schema: apiSchema,
-                            operation,
-                            fieldName,
-                            args: methodArgs,
-                            context,
-                            info: proxyInfo,
-                          });
-                        };
-                      },
+                      }
                     }
-                  );
-                  return {
-                    ...apiContext,
-                    api: sdk,
-                  };
-                }
+                    return (methodArgs: any = {}, { depth, fields, selectionSet }: any = {}) => {
+                      const proxyInfo = createProxyInfo({
+                        schema: apiSchema,
+                        parentType,
+                        field,
+                        depthLimit: depth,
+                        root,
+                        args: methodArgs,
+                        selectedFields: fields,
+                        selectionSet,
+                        info,
+                      });
+                      return delegateToSchema({
+                        schema: apiSchema,
+                        operation,
+                        fieldName,
+                        args: methodArgs,
+                        context,
+                        info: proxyInfo,
+                      });
+                    };
+                  },
+                });
+                return {
+                  ...apiContext,
+                  api: sdk,
+                };
               }
-              return context[apiName];
-            },
-          }
-        );
+            }
+            return context[apiName];
+          },
+        });
 
         const result = await originalResolver(root, args, proxyContext, info);
 
