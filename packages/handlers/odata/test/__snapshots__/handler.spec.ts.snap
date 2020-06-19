@@ -177,8 +177,8 @@ type Trip implements ITrip {
   Budget: Float!
   Description: String
   Tags: [String]
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
   GetInvolvedPeople: [Person]
 }
@@ -190,8 +190,8 @@ interface ITrip {
   Budget: Float!
   Description: String
   Tags: [String]
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
   GetInvolvedPeople: [Person]
 }
@@ -201,19 +201,24 @@ A field whose value is a generic Globally Unique Identifier: https://en.wikipedi
 \\"\\"\\"
 scalar GUID
 
+\\"\\"\\"
+A field whose value is a UTC Offset: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+\\"\\"\\"
+scalar UtcOffset
+
 type PlanItem implements IPlanItem {
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   Duration: String!
 }
 
 interface IPlanItem {
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   Duration: String!
 }
 
@@ -222,8 +227,8 @@ type Event implements IPlanItem {
   Description: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   Duration: String!
 }
 
@@ -231,8 +236,8 @@ type PublicTransportation implements IPublicTransportation & IPlanItem {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   Duration: String!
 }
 
@@ -240,8 +245,8 @@ interface IPublicTransportation {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   Duration: String!
 }
 
@@ -253,8 +258,8 @@ type Flight implements IPublicTransportation {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: String!
-  EndsAt: String!
+  StartsAt: UtcOffset!
+  EndsAt: UtcOffset!
   Duration: String!
 }
 
