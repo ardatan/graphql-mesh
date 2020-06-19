@@ -27,7 +27,7 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
 
     let writeCache: () => Promise<void>;
 
-    const appendPlugins = await Promise.all<Plugin>(config.plugins?.map(pluginName => import(pluginName)));
+    const appendPlugins = await Promise.all<Plugin>((config.plugins || []).map(pluginName => import(pluginName)));
 
     const builder = await getPostGraphileBuilder(pgPool, config.schemaName || 'public', {
       dynamicJson: true,
