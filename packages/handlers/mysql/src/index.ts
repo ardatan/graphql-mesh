@@ -6,7 +6,14 @@ import { promisify } from 'util';
 import { pascalCase } from 'pascal-case';
 import graphqlFields from 'graphql-fields';
 import { camelCase } from 'camel-case';
-import { GraphQLBigInt, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
+import {
+  GraphQLBigInt,
+  GraphQLDateTime,
+  GraphQLJSON,
+  GraphQLDate,
+  GraphQLTimestamp,
+  GraphQLTime,
+} from 'graphql-scalars';
 import { execute } from 'graphql';
 
 const SCALARS = {
@@ -19,7 +26,7 @@ const SCALARS = {
 
   char: 'String',
 
-  date: 'DateTime',
+  date: 'Date',
   datetime: 'DateTime',
 
   dec: 'Float',
@@ -45,8 +52,8 @@ const SCALARS = {
   smallint: 'Int',
 
   text: 'String',
-  time: 'Date',
-  timestamp: 'Date',
+  time: 'Time',
+  timestamp: 'Timestamp',
   tinyblob: 'String',
   tinyint: 'Int',
   tinytext: 'String',
@@ -105,7 +112,10 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
 
     schemaComposer.add(GraphQLBigInt);
     schemaComposer.add(GraphQLJSON);
+    schemaComposer.add(GraphQLDate);
+    schemaComposer.add(GraphQLTime);
     schemaComposer.add(GraphQLDateTime);
+    schemaComposer.add(GraphQLTimestamp);
     schemaComposer.createEnumTC({
       name: 'OrderBy',
       values: {

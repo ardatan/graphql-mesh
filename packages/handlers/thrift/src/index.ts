@@ -20,7 +20,7 @@ import {
   GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
 } from 'graphql';
-import { GraphQLBigInt, GraphQLJSON } from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLJSON, GraphQLByte } from 'graphql-scalars';
 import { createHttpClient } from '@creditkarma/thrift-client';
 import {
   ThriftClient,
@@ -325,8 +325,8 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
           typeVal = typeVal! || { type: TType.I32 };
           break;
         case SyntaxType.ByteKeyword:
-          inputType = GraphQLInt;
-          outputType = GraphQLInt;
+          inputType = GraphQLByte;
+          outputType = GraphQLByte;
           typeVal = typeVal! || { type: TType.BYTE };
           break;
         case SyntaxType.I64Keyword:

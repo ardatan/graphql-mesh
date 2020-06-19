@@ -24,7 +24,7 @@
     "@graphql-mesh/utils": "0.2.12",
     "aggregate-error": "3.0.1",
     "fetchache": "0.0.3",
-    "graphql-scalars": "1.1.5",
+    "graphql-scalars": "1.1.6",
     "url-join": "4.0.1",
     "thrift": "0.13.0"
   },
