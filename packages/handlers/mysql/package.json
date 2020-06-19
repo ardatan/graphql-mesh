@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/graphql-fields": "1.3.2",
-    "@types/mysql": "2.15.13"
+    "@types/mysql": "2.15.14"
   },
   "publishConfig": {
     "access": "public",
