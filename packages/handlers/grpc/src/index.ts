@@ -1,7 +1,7 @@
 import { MeshHandlerLibrary, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
 import { pathExistsSync } from 'fs-extra';
 import { GraphQLEnumTypeConfig } from 'graphql';
-import { GraphQLBigInt } from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLUnsignedInt } from 'graphql-scalars';
 import { AnyNestedObject, Root, IParseOptions } from 'protobufjs';
 import { isAbsolute, join } from 'path';
 import { camelCase } from 'camel-case';
@@ -26,6 +26,8 @@ import { promisify } from 'util';
 const SCALARS = {
   int32: 'Int',
   int64: 'BigInt',
+  uint32: 'UnsignedInt',
+  uint64: 'UnsignedInt',
   float: 'Float',
   double: 'Float',
   string: 'String',
@@ -130,6 +132,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
 
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
+    schemaComposer.add(GraphQLUnsignedInt);
     schemaComposer.createObjectTC({
       name: 'ServerStatus',
       description: 'status of the server',
