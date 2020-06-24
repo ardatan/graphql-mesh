@@ -2611,10 +2611,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.29.tgz#0256e22f357a2e822ac8b848b545e06153c32ede"
   integrity sha1-AlbiLzV6LoIqyLhItUXgYVPDLt4=
 
-"@types/ioredis@4.16.5":
-  version "4.16.5"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.16.5.tgz#861384f39974a9d1b70bbad48e967e11fdb591a5"
-  integrity sha512-jU60KcKiyFfNIz+rXbqm1tx+FqKOg8LnlSH+3o+j92IP1SQ2U9a2OZn/UkjzPoWgn0K7DtorraDsdpFgLyc9FQ==
+"@types/ioredis@4.16.7":
+  version "4.16.7"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.16.7.tgz#2620a48c26faeb4b65f2ef7501ed6e515d8a3327"
+  integrity sha512-gc0g0OlBxc/Mlhutv5Njkm3A4m5oZXq8gCeEGOt2c4p4ZIYw9dotYjg6z8nSsxOH9KnKkjWUzg0oGCAqtnGFIg==
   dependencies:
     "@types/node" "*"
 
