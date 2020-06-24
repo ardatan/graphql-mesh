@@ -45,11 +45,14 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
 
     let creds: ChannelCredentials;
     if (config.credentialsSsl) {
-      const [rootCA, privateKey, certChain] = await Promise.all([
-        getBuffer(config.credentialsSsl.rootCA, cache),
+      const sslFiles = [
         getBuffer(config.credentialsSsl.privateKey, cache),
         getBuffer(config.credentialsSsl.certChain, cache),
-      ]);
+      ];
+      if (config.credentialsSsl.rootCA !== 'rootCA') {
+        sslFiles.unshift(getBuffer(config.credentialsSsl.rootCA, cache));
+      }
+      const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
       creds = credentials.createSsl(rootCA, privateKey, certChain);
     } else {
       creds = credentials.createInsecure();
