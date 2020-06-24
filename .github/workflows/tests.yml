@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    name: Linting
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master
@@ -34,7 +34,7 @@ jobs:
       - name: Lint
         run: yarn lint
   build:
-    name: Linting
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master
