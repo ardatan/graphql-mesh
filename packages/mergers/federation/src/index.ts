@@ -51,15 +51,15 @@ const mergeUsingFederation: MergerFn = async function ({
     executor: ({ document, info, variables, context }): any => {
       const documentStr = print(document);
       const { operation } = info;
-      const operationName = operation.name?.value;
+      // const operationName = operation.name?.value;
       return gatewayExecutor({
         document,
         request: {
           query: documentStr,
-          operationName,
+          operationName: undefined,
           variables,
         },
-        operationName,
+        operationName: undefined,
         cache,
         context,
         queryHash: documentStr + '_' + JSON.stringify(variables),

@@ -7,7 +7,6 @@ generated
 yarn-error.log
 temp
 *.generated.graphql
-config.ts
 ignored-demo
 package-lock.json
 .bob

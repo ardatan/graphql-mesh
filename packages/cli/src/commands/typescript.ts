@@ -83,6 +83,7 @@ export function generateTsTypes(
     documents: [],
     config: {
       scalars: scalarsMap,
+      skipTypename: true,
     },
     schemaAst: unifiedSchema,
     schema: undefined as any, // This is not necessary on codegen.
