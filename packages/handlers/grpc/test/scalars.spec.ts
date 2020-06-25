@@ -14,7 +14,7 @@ describe.each<[string, string]>([
   ['sint32', 'Int'],
   ['sint64', 'BigInt'],
   ['string', 'String'],
-  ['uint32', 'Int'],
+  ['uint32', 'UnsignedInt'],
   ['uint64', 'BigInt'],
 ])('Valid Scalars', (scalarType, scalarGqlType) => {
   test(`getGraphQLScalar should return the proper graphql scalar for ${scalarType}`, () => {

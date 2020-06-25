@@ -12,7 +12,7 @@ import { load } from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
 import { SchemaComposer } from 'graphql-compose';
 import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
-import { GraphQLBigInt, GraphQLByte } from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
 import { pascalCase } from 'pascal-case';
 import { AnyNestedObject, IParseOptions, Root } from 'protobufjs';
@@ -63,6 +63,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
     schemaComposer.add(GraphQLByte);
+    schemaComposer.add(GraphQLUnsignedInt);
     schemaComposer.createObjectTC({
       name: 'ServerStatus',
       description: 'status of the server',

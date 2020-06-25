@@ -14,8 +14,8 @@ const SCALARS: ScalarMap = new Map([
   ['sint32', 'Int'],
   ['sint64', 'BigInt'],
   ['string', 'String'],
-  ['uint32', 'Int'],
-  ['uint64', 'BigInt'],
+  ['uint32', 'UnsignedInt'],
+  ['uint64', 'BigInt'], // A new scalar might be needed
 ]);
 
 export function isScalarType(type: string): boolean {

@@ -96,7 +96,7 @@ describe('grpc utils', () => {
       ['sint32', 'Int'],
       ['sint64', 'BigInt'],
       ['string', 'String'],
-      ['uint32', 'Int'],
+      ['uint32', 'UnsignedInt'],
       ['uint64', 'BigInt'],
     ])('scalar types', (scalarType, scalarGqlType) => {
       test(`should return the proper name for ${scalarType}`, () => {
