@@ -72,7 +72,7 @@ async function getPromisifiedConnection(pool: Pool) {
   const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
   const getTableFields = promisify(connection.fields.bind(connection));
   const getTableForeigns = promisify(connection.foreign.bind(connection));
-  const getTablePrimaryKeys = promisify(connection.primary.bind(connection));
+  const getTablePrimaryKeyMetadata = promisify(connection.primary.bind(connection));
 
   const selectLimit = promisify(connection.selectLimit.bind(connection));
   const select = promisify(connection.select.bind(connection));
@@ -85,7 +85,7 @@ async function getPromisifiedConnection(pool: Pool) {
     getDatabaseTables,
     getTableFields,
     getTableForeigns,
-    getTablePrimaryKeys,
+    getTablePrimaryKeyMetadata,
     selectLimit,
     select,
     insert,
@@ -166,7 +166,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
           extensions: table,
           fields: {},
         });
-        const primaryKeys = await introspectionConnection.getTablePrimaryKeys(tableName);
+        const primaryKeyMetadata = await introspectionConnection.getTablePrimaryKeyMetadata(tableName);
         const fields = await introspectionConnection.getTableFields(tableName);
         await Promise.all(
           Object.keys(fields).map(async fieldName => {
@@ -328,17 +328,13 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
               },
             },
             resolve: async (root, args, { mysqlConnection }, info) => {
-              const { recordId } = await mysqlConnection.insert(args);
+              const input = args[tableName];
+              const { recordId } = await mysqlConnection.insert(tableName, input);
               const fieldMap: Record<string, any> = graphqlFields(info);
               const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
               const where: any = {};
-              await Promise.all(
-                Object.keys(primaryKeys).map(async primaryKeyName => {
-                  const primaryKey = primaryKeys[primaryKeyName];
-                  const columnName = primaryKey.Column_name;
-                  where[columnName] = args[columnName] || recordId;
-                })
-              );
+              const primaryColumnName = primaryKeyMetadata.Column_name;
+              where[primaryColumnName] = input[primaryColumnName] || recordId;
               const result = await mysqlConnection.select(tableName, fields, where, {});
               return result[0];
             },
@@ -354,13 +350,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
               },
             },
             resolve: async (root, args, { mysqlConnection }, info) => {
-              await mysqlConnection.update(
-                tableName,
-                {
-                  [tableName]: args[tableName],
-                },
-                args.where
-              );
+              await mysqlConnection.update(tableName, args[tableName], args.where);
               const fieldMap: Record<string, any> = graphqlFields(info);
               const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
               const result = await mysqlConnection.select(tableName, fields, args.where, {});

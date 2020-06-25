@@ -66,7 +66,7 @@ declare module 'mysql' {
     databaseTables(databaseName: string, callback: Callback<Record<string, DatabaseTable>>);
     fields(tableName: string, callback: Callback<Record<string, TableField>>);
     foreign(tableName: string, callback: Callback<Record<string, TableForeign>>);
-    primary(tableName: string, callback: Callback<Record<string, TablePrimaryKey>>);
+    primary(tableName: string, callback: Callback<TablePrimaryKey>);
     selectLimit(
       tableName: string,
       fields: string[],
@@ -76,7 +76,7 @@ declare module 'mysql' {
       callback: Callback<any[]>
     );
     select(tableName: string, fields: string[], where: any, orderBy: any, callback: Callback<any[]>);
-    insert(record: Record<string, any>, callback: Callback<{ recordId: string | number }>);
+    insert(tableName: string, record: Record<string, any>, callback: Callback<{ recordId: string | number }>);
     update(tableName: string, input: any, where: any, callback: Callback<{ affectedRows: any }>);
     delete(tableName: string, where: any, callback: Callback<{ affectedRows: any }>);
   }

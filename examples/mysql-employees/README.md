@@ -1,2 +1,9 @@
-Install and follow instructions on README file inside tar file, then run `yarn mesh:serve` in this folder.
-[https://launchpad.net/test-db/employees-db-1/1.0.6/+download/employees_db-full-1.0.6.tar.bz2](Download Required Database Dump)
+Run this docker container;
+```bash
+docker run -d \
+  --name mysql-employees \
+  -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=college \
+  -v $PWD/data:/var/lib/mysql \
+  genschsa/mysql-employees
+```
