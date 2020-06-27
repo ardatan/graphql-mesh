@@ -5,11 +5,21 @@ import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings, 
 import AggregateError from 'aggregate-error';
 import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
-import { SchemaComposer } from 'graphql-compose';
+import { SchemaComposer, GraphQLDate } from 'graphql-compose';
 import { pathExists, writeJSON } from 'fs-extra';
 import toJsonSchema from 'to-json-schema';
 import { dirname } from 'path';
-import { GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
+import {
+  GraphQLJSON,
+  GraphQLVoid,
+  GraphQLDateTime,
+  GraphQLTime,
+  GraphQLTimestamp,
+  GraphQLPhoneNumber,
+  GraphQLURL,
+  GraphQLEmailAddress,
+  GraphQLIPv4,
+} from 'graphql-scalars';
 
 async function generateJsonSchemaFromSample({
   samplePath,
@@ -45,6 +55,15 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
 
     schemaComposer.add(GraphQLJSON);
     schemaComposer.add(GraphQLVoid);
+    schemaComposer.add(GraphQLDateTime);
+    schemaComposer.add(GraphQLDate);
+    schemaComposer.add(GraphQLTime);
+    schemaComposer.add(GraphQLTimestamp);
+    schemaComposer.add(GraphQLPhoneNumber);
+    schemaComposer.add(GraphQLURL);
+    schemaComposer.add(GraphQLEmailAddress);
+    schemaComposer.add(GraphQLIPv4);
+    schemaComposer.add(GraphQLIPv4);
 
     const inputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, true);
     const outputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, false);

@@ -46,6 +46,7 @@ export interface JSONSchemaNumberDefinition {
 export interface JSONSchemaStringDefinition {
   type: 'string';
   description?: string;
+  format?: string;
 }
 
 export type JSONSchemaEnumDefinition = JSONSchemaNamedEnumDefinition | JSONSchemaUnnamedEnumDefinition;

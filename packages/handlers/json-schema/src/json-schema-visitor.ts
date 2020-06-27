@@ -6,6 +6,7 @@ import {
   JSONSchemaTypedUnnamedObjectDefinition,
   JSONSchemaTypedNamedObjectDefinition,
   JSONSchemaTypedObjectDefinition,
+  JSONSchemaStringDefinition,
 } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
 import { pascalCase } from 'pascal-case';
@@ -95,7 +96,7 @@ export class JSONSchemaVisitor<TContext> {
         if ('enum' in def) {
           result = this.visitEnum(def, propertyName, prefix, cwd);
         } else {
-          result = this.visitString();
+          result = this.visitString(def);
         }
         break;
       case 'null':
@@ -144,7 +145,47 @@ export class JSONSchemaVisitor<TContext> {
     return 'Float';
   }
 
-  visitString() {
+  visitString(stringDef: JSONSchemaStringDefinition) {
+    if (stringDef.format) {
+      switch (stringDef.format) {
+        /*
+
+             * * date-time
+             * * date
+             * * time
+             * * utc-millisec
+             * * color
+             * * style
+             * * phone
+             * * uri
+             * * email
+             * * ip-address
+             * * ipv6
+        */
+        case 'date-time':
+          return 'DateTime';
+        case 'date':
+          return 'Date';
+        case 'time':
+          return 'Time';
+        case 'utc-millisec':
+          return 'Timestamp';
+        case 'color':
+          return 'String'; // TODO
+        case 'phone':
+          return 'PhoneNumber';
+        case 'uri':
+          return 'URL';
+        case 'email':
+          return 'EmailAddress';
+        case 'ip-address':
+          return 'IPv4';
+        case 'ipv6':
+          return 'IPv6';
+        case 'style':
+          return 'String'; // TODO
+      }
+    }
     return 'String';
   }
 
