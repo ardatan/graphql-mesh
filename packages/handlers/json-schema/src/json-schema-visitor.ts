@@ -99,6 +99,8 @@ export class JSONSchemaVisitor<TContext> {
         }
         break;
       case 'null':
+        result = this.visitNull();
+        break;
       case 'any':
         result = this.visitAny();
         break;
@@ -238,5 +240,9 @@ export class JSONSchemaVisitor<TContext> {
 
   visitAny() {
     return 'JSON';
+  }
+
+  visitNull() {
+    return 'Void';
   }
 }
