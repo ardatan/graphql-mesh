@@ -5,13 +5,14 @@ import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings, 
 import AggregateError from 'aggregate-error';
 import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
-import { SchemaComposer, GraphQLDate } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import { pathExists, writeJSON } from 'fs-extra';
 import toJsonSchema from 'to-json-schema';
 import { dirname } from 'path';
 import {
   GraphQLJSON,
   GraphQLVoid,
+  GraphQLDate,
   GraphQLDateTime,
   GraphQLTime,
   GraphQLTimestamp,
