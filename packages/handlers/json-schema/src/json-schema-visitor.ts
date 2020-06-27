@@ -120,6 +120,11 @@ export class JSONSchemaVisitor<TContext> {
         }
         break;
     }
+    if (!result) {
+      throw new Error(
+        `Unknown JSON Schema definition for (${prefix}, ${propertyName}): ${JSON.stringify(result, null, 2)}`
+      );
+    }
     this.cache.set(summary, result);
     return result;
   }
@@ -148,20 +153,6 @@ export class JSONSchemaVisitor<TContext> {
   visitString(stringDef: JSONSchemaStringDefinition) {
     if (stringDef.format) {
       switch (stringDef.format) {
-        /*
-
-             * * date-time
-             * * date
-             * * time
-             * * utc-millisec
-             * * color
-             * * style
-             * * phone
-             * * uri
-             * * email
-             * * ip-address
-             * * ipv6
-        */
         case 'date-time':
           return 'DateTime';
         case 'date':
@@ -169,7 +160,10 @@ export class JSONSchemaVisitor<TContext> {
         case 'time':
           return 'Time';
         case 'utc-millisec':
+          /*
           return 'Timestamp';
+          */
+          return 'String';
         case 'color':
           return 'String'; // TODO
         case 'phone':

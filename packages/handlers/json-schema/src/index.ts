@@ -40,7 +40,11 @@ async function generateJsonSchemaFromSample({
       strings: {
         detectFormat: true,
       },
+      arrays: {
+        mode: 'first',
+      },
     });
+    console.log(schema);
     if (schemaPath) {
       await writeJSON(schemaPath, schema);
     }
