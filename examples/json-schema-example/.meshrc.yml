@@ -1,13 +1,46 @@
 sources:
-  - name: OneIncTransactionsByType
+  - name: Fake API
     handler:
       jsonSchema:
-        baseUrl: https://testapiprocessone.oneincsystems.com/api/
+        baseUrl: https://not-existing-api.com/API
         operations:
           - type: Query
-            field: transactions
-            path: Transaction/GetTransactionsByType
+            field: me
+            path: /me
+            method: GET
+            responseSchema: ./json-schemas/user.json
+          - type: Query
+            field: company
+            path: /company/{args.id}
+            method: GET
+            responseSchema: ./json-schemas/company.json
+          - type: Mutation
+            field: createUser
+            path: /user
+            method: PUT
+            requestSample: ./json-samples/user-input.json
+            responseSchema: ./json-schemas/user.json
+          - type: Mutation
+            field: updateUser
+            path: /user/{args.id}
             method: POST
-            requestSample: ./json-samples/transactionsByTypeInput.json
-            responseSample: ./json-samples/transactionsByType.json
-            responseSchema: ./json-schemas/transactionsByType.json
+            requestSample: ./json-samples/user-input.json
+            responseSchema: ./json-schemas/user.json
+additionalTypeDefs: |
+  extend type User {
+    company: Company
+  }
+  extend type Company {
+    employers: [User]
+  }
+transforms:
+  - mock:
+      mocks:
+        - apply: User.firstName
+          faker: '{{name.firstName}}'
+        - apply: User.lastName
+          faker: '{{name.lastName}}'
+        - apply: User.jobTitle
+          faker: '{{name.jobTitle}}'
+        - apply: Company.name
+          faker: '{{company.companyName}}'
