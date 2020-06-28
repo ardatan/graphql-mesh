@@ -9,6 +9,18 @@ import { SchemaComposer } from 'graphql-compose';
 import { pathExists, writeJSON } from 'fs-extra';
 import toJsonSchema from 'to-json-schema';
 import { dirname } from 'path';
+import {
+  GraphQLJSON,
+  GraphQLVoid,
+  GraphQLDate,
+  GraphQLDateTime,
+  GraphQLTime,
+  GraphQLTimestamp,
+  GraphQLPhoneNumber,
+  GraphQLURL,
+  GraphQLEmailAddress,
+  GraphQLIPv4,
+} from 'graphql-scalars';
 
 async function generateJsonSchemaFromSample({
   samplePath,
@@ -26,6 +38,12 @@ async function generateJsonSchemaFromSample({
       objects: {
         additionalProperties: false,
       },
+      strings: {
+        detectFormat: true,
+      },
+      arrays: {
+        mode: 'first',
+      },
     });
     if (schemaPath) {
       await writeJSON(schemaPath, schema);
@@ -38,6 +56,19 @@ async function generateJsonSchemaFromSample({
 const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
   async getMeshSource({ config, cache }) {
     const schemaComposer = new SchemaComposer();
+
+    schemaComposer.add(GraphQLJSON);
+    schemaComposer.add(GraphQLVoid);
+    schemaComposer.add(GraphQLDateTime);
+    schemaComposer.add(GraphQLDate);
+    schemaComposer.add(GraphQLTime);
+    schemaComposer.add(GraphQLTimestamp);
+    schemaComposer.add(GraphQLPhoneNumber);
+    schemaComposer.add(GraphQLURL);
+    schemaComposer.add(GraphQLEmailAddress);
+    schemaComposer.add(GraphQLIPv4);
+    schemaComposer.add(GraphQLIPv4);
+
     const inputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, true);
     const outputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, false);
 
