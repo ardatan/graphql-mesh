@@ -45,7 +45,6 @@ async function generateJsonSchemaFromSample({
         mode: 'first',
       },
     });
-    console.log(schema);
     if (schemaPath) {
       await writeJSON(schemaPath, schema);
     }
