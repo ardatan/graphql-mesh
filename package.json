@@ -26,7 +26,7 @@
     "@graphql-tools/schema": "6.0.11",
     "@types/jest": "26.0.0",
     "@types/node": "13.13.12",
-    "jest": "26.0.1",
+    "jest": "26.1.0",
     "ts-jest": "26.1.1",
     "ts-node-dev": "1.0.0-pre.49",
     "typescript": "3.9.5",
