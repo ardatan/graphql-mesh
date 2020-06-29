@@ -15,11 +15,12 @@ import {
   GraphQLDate,
   GraphQLDateTime,
   GraphQLTime,
-  GraphQLTimestamp,
+  // GraphQLTimestamp,
   GraphQLPhoneNumber,
   GraphQLURL,
   GraphQLEmailAddress,
   GraphQLIPv4,
+  GraphQLIPv6,
 } from 'graphql-scalars';
 
 async function generateJsonSchemaFromSample({
@@ -62,12 +63,12 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
     schemaComposer.add(GraphQLDateTime);
     schemaComposer.add(GraphQLDate);
     schemaComposer.add(GraphQLTime);
-    schemaComposer.add(GraphQLTimestamp);
+    // schemaComposer.add(GraphQLTimestamp);
     schemaComposer.add(GraphQLPhoneNumber);
     schemaComposer.add(GraphQLURL);
     schemaComposer.add(GraphQLEmailAddress);
     schemaComposer.add(GraphQLIPv4);
-    schemaComposer.add(GraphQLIPv4);
+    schemaComposer.add(GraphQLIPv6);
 
     const inputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, true);
     const outputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, false);
