@@ -2821,10 +2821,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/mongoose@5.7.28":
-  version "5.7.28"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.28.tgz#99385892962e51649d3a40912f2a6f2629558d89"
-  integrity sha512-ll74S2QhC34MSSSk30NHlU8ILESIA2l4mDfAfDse/VM20tT9MRV9WGKWK3HglKRmdL77iMUYMcgHdKJebabtzA==
+"@types/mongoose@5.7.29":
+  version "5.7.29"
+  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.29.tgz#247a2b4d26bf4d7e81417261f033908eef6b124e"
+  integrity sha512-+7u1akCerciZ2MG66p6Vy+9Tg7dYcgSeNbDInxdOA5vB5xAZhNiIBj8HESnJmIqOBcWxQ90HpaPWtEwggBqXug==
   dependencies:
     "@types/mongodb" "*"
     "@types/node" "*"
