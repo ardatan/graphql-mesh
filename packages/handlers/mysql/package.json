@@ -20,7 +20,7 @@
     "graphql-compose": "7.18.1",
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",
-    "mysql-utilities": "1.1.0-alpha.4",
+    "mysql-utilities": "1.1.0-alpha.5",
     "camel-case": "4.1.1",
     "pascal-case": "3.1.1",
     "graphql-scalars": "1.1.6"
