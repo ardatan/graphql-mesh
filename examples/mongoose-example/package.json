@@ -9,7 +9,7 @@
   "devDependencies": {
     "@types/mongoose": "5.7.29",
     "@types/node": "14.0.14",
-    "typescript": "3.8.3"
+    "typescript": "3.9.6"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.2.13",
