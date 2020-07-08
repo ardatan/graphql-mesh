@@ -7879,10 +7879,10 @@ graphql-compose-connection@^6.2.0:
   resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-6.2.0.tgz#a251e829f99971a206294bf6b55e4328c2b73419"
   integrity sha512-oXz0Tq6ttrAsnguLKlxO4TIN14CMMrphwsdAv7kQYDkr6tHzx17sNFgT/w0ovBix8Hnaa9X3Tq1M3O0C+0hydA==
 
-graphql-compose-mongoose@7.4.0:
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-7.4.0.tgz#59dbfa995eb4b4e08350b85850641f6d09f19b77"
-  integrity sha512-N/xgn1zjeIJSGdCTMsoXi+hHHaafTE2L8Brt6TDWRs12sqbLicavLLY/kjs7B+mcWTC7SZZ3KwiVv7kB8I6UVg==
+graphql-compose-mongoose@7.4.1:
+  version "7.4.1"
+  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-7.4.1.tgz#2afd288c9ab1a50a1c232633abe67b3c9c7a01c9"
+  integrity sha512-AdLV9rzazB6iHNL6v4kBrMlNJGBZpjDBztMccNoxQbCE3DCqSOhgDu1VeyEUDZ/OgDZfph/QwdP5yTRfzIIxcA==
   dependencies:
     object-path "^0.11.4"
   optionalDependencies:
