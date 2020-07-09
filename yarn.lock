@@ -11481,22 +11481,22 @@ oas-kit-common@^1.0.8:
   dependencies:
     fast-safe-stringify "^2.0.7"
 
-oas-linter@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/oas-linter/-/oas-linter-3.1.2.tgz#ff5eae63290cd2c0ef195bae9bcf5e91b6884c19"
-  integrity sha512-mv3HBG9aQz8PLGvonewIN9Y2Ra8QL6jvotRvf7NCdZ20n5vg4dO4y61UZh6s+KRDfJaU1PO+9Oxrn3EUN4Xygw==
+oas-linter@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/oas-linter/-/oas-linter-3.1.3.tgz#1526b3da32a1bbf124d720f27fd4eb9971cebfff"
+  integrity sha512-jFWBHjSoqODGo7cKA/VWqqWSLbHNtnyCEpa2nMMS64SzCUbZDk63Oe7LqQZ2qJA0K2VRreYLt6cVkYy6MqNRDg==
   dependencies:
     should "^13.2.1"
     yaml "^1.8.3"
 
-oas-resolver@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.3.2.tgz#990a722ddcafe9b0b85893362963b829190b236f"
-  integrity sha512-toGCUv8wyZZmUAAsw4jn+511xNpUFW2ZLp4sAZ7xpERIeosrbxBxtkVxot9kXvdUHtPjRafi5+bkJ56TwQeYSQ==
+oas-resolver@^2.3.2, oas-resolver@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.4.0.tgz#45efbb206597c347f9c4548480e8418d3b9d6433"
+  integrity sha512-EvxQVsPbOVpWac8p+TDLXtAf8VgSUqdse7TCF3yQGTczX5XAwg9jnvPfuAEKMbPJAQujR1IzrKRYf+e0NXMtbQ==
   dependencies:
     node-fetch-h2 "^2.3.0"
     oas-kit-common "^1.0.8"
-    reftools "^1.1.1"
+    reftools "^1.1.2"
     yaml "^1.8.3"
     yargs "^15.3.1"
 
@@ -11505,19 +11505,19 @@ oas-schema-walker@^1.1.4:
   resolved "https://registry.yarnpkg.com/oas-schema-walker/-/oas-schema-walker-1.1.4.tgz#4b9d090c3622039741334d3e138510ff38197618"
   integrity sha512-foVDDS0RJYMfhQEDh/WdBuCzydTcsCnGo9EeD8SpWq1uW10JXiz+8SfYVDA7LO87kjmlnTRZle/2gr5qxabaEA==
 
-oas-validator@4.0.3, oas-validator@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-4.0.3.tgz#9c28c38c902a6deeba2c48890befe9e86f712250"
-  integrity sha512-yLS0WI0HRWajBUiPUjyPGoZorsgaPpgeObea6ZUhlRCuZZE2Bq8SYkHfhqj7+BVv+K8y+b/cbCmNLM6GVKPDcw==
+oas-validator@4.0.5, oas-validator@^4.0.3:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-4.0.5.tgz#3ab2078d914355b3f6f63deabc3dbe24ad88c669"
+  integrity sha512-gvbPGhUwgL1V/eWZ3xWxyoz0Fq8sqNS754SFPsgaIKuHnFSnj10I8IvzKaW+xxlkbOw6LmImm8He6YwbF8K9cQ==
   dependencies:
     ajv "^5.5.2"
     better-ajv-errors "^0.6.7"
     call-me-maybe "^1.0.1"
     oas-kit-common "^1.0.8"
-    oas-linter "^3.1.2"
-    oas-resolver "^2.3.2"
+    oas-linter "^3.1.3"
+    oas-resolver "^2.4.0"
     oas-schema-walker "^1.1.4"
-    reftools "^1.1.1"
+    reftools "^1.1.2"
     should "^13.2.1"
     yaml "^1.8.3"
 
@@ -13610,10 +13610,10 @@ reduce@^1.0.1:
   dependencies:
     object-keys "^1.1.0"
 
-reftools@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.1.tgz#09cff48f62c09cae40bd1fe9683f5412d2a4656d"
-  integrity sha512-7ySkzK7YpUeJP16rzJqEXTZ7IrAq/AL/p+wWejD9wdKQOe+mYYVAOB3w5ZTs2eoHfmAidwr/6PcC+q+LzPF/DQ==
+reftools@^1.1.1, reftools@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.2.tgz#fd972ea18850c2b64dcf3f78cb8fd328f13cc7b3"
+  integrity sha512-0YbhSgpIZl2OpTe+40v+1NKI6vS/lYyGkL2BgY2YlMVq8lJutk2CGhHplH6tSjdQxj13b//wdlAq9SBVMeH/Ew==
 
 regenerate-unicode-properties@^8.2.0:
   version "8.2.0"
