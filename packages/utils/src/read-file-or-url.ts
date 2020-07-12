@@ -62,7 +62,7 @@ export async function readUrlWithCache<T>(
   if (/json$/.test(path) || contentType.startsWith('application/json')) {
     return JSON.parse(responseText);
   } else if (/yaml$/.test(path) || /yml$/.test(path) || contentType.includes('yaml') || contentType.includes('yml')) {
-    return loadYaml(responseText);
+    return (loadYaml(responseText) as any) as T;
   } else if (!config?.allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure URL '${path}' has ` +
