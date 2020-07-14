@@ -205,8 +205,14 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
      *
      * NOTE: This may cause the user to encounter unexpected changes
      */
-    headers['content-type'] =
-      typeof operation.payloadContentType !== 'undefined' ? operation.payloadContentType : 'application/json';
+    if (operation.method !== 'get') {
+      /**
+       * the check is done on the 'get' operation to determine if there is a payload because
+       * operation.payloadRequired is not always correctly initialized (at least during the unit test)
+       */
+      headers['content-type'] =
+        typeof operation.payloadContentType !== 'undefined' ? operation.payloadContentType : 'application/json';
+    }
     headers.accept =
       typeof operation.responseContentType !== 'undefined' ? operation.responseContentType : 'application/json';
 
