@@ -15,6 +15,7 @@ categories:
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 exclude-labels:
   - dependencies
+  - documentation
 version-resolver:
   major:
     labels:
