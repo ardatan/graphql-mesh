@@ -23,7 +23,7 @@
     "graphql-compose": "7.18.1",
     "protobufjs": "6.9.0",
     "pascal-case": "3.1.1",
-    "lodash": "4.17.15"
+    "lodash": "4.17.19"
   },
   "publishConfig": {
     "access": "public",
