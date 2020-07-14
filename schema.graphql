@@ -262,6 +262,7 @@ type OpenapiHandler @md {
   baseUrl: String
   """Skip OpenAPI 3 Schema Validation"""
   skipSchemaValidation: Boolean
+  qs: JSON
 }
 type PostGraphileHandler @md {
   """A connection string to your Postgres database"""

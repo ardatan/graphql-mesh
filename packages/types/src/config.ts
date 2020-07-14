@@ -481,6 +481,9 @@ export interface OpenapiHandler {
    * Skip OpenAPI 3 Schema Validation
    */
   skipSchemaValidation?: boolean;
+  qs?: {
+    [k: string]: any;
+  };
 }
 /**
  * Handler for Postgres database, based on `postgraphile`

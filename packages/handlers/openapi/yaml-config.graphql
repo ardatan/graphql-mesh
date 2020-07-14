@@ -27,4 +27,5 @@ type OpenapiHandler @md {
   Skip OpenAPI 3 Schema Validation
   """
   skipSchemaValidation: Boolean
+  qs: JSON
 }

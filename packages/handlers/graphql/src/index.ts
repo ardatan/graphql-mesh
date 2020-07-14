@@ -3,7 +3,7 @@ import { fetchache, Request } from 'fetchache';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildClientSchema, introspectionFromSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import { getInterpolatedHeadersFactory, ResolverDataBasedFactory } from '@graphql-mesh/utils';
+import { getInterpolatedHeadersFactory, ResolverDataBasedFactory, getHeadersObject } from '@graphql-mesh/utils';
 import { ExecutionParams } from '@graphql-tools/delegate';
 
 const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
@@ -20,11 +20,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
         args: params.variables,
         context: params.context,
       };
-      const headersObj = headersFactory(resolverData);
-      const headers: HeadersInit = {};
-      headersObj.forEach((val, key) => {
-        headers[key] = val;
-      });
+      const headers = getHeadersObject(headersFactory(resolverData));
       return urlLoader.getExecutorAndSubscriber(config.endpoint, {
         customFetch,
         ...config,
