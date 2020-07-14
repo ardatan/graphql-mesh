@@ -7,6 +7,7 @@ import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { readJSON, unlink } from 'fs-extra';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
   async getMeshSource({ name, cache, config, hooks }) {
@@ -27,7 +28,9 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
 
     let writeCache: () => Promise<void>;
 
-    const appendPlugins = await Promise.all<Plugin>((config.plugins || []).map(pluginName => import(pluginName)));
+    const appendPlugins = await Promise.all<Plugin>(
+      (config.plugins || []).map(pluginName => loadFromModuleExportExpression(pluginName, 'default'))
+    );
 
     const builder = await getPostGraphileBuilder(pgPool, config.schemaName || 'public', {
       dynamicJson: true,
