@@ -114,10 +114,15 @@
           "type": "string",
           "description": "A url to your remote GraphQL endpoint"
         },
-        "headers": {
+        "schemaHeaders": {
           "type": "object",
           "properties": {},
-          "description": "JSON object representing the Headers to add to the runtime of the API calls"
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
         },
         "useGETForQueries": {
           "type": "boolean",

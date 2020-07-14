@@ -11,9 +11,13 @@ type GraphQLHandler @md {
   """
   endpoint: String!
   """
-  JSON object representing the Headers to add to the runtime of the API calls
+  JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
   """
-  headers: JSON
+  schemaHeaders: JSON
+  """
+  JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
+  """
+  operationHeaders: JSON
   """
   Use HTTP GET for Query operations
   """
