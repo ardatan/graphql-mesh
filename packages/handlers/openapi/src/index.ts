@@ -2,7 +2,9 @@ import {
   readFileOrUrlWithCache,
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
+  getInterpolatedStringFactory,
   getHeadersObject,
+  ResolverDataBasedFactory,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -20,6 +22,16 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
 
     const headersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
+    const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
+    for (const queryName in config.qs || {}) {
+      queryStringFactoryMap.set(queryName, getInterpolatedStringFactory(config.qs[queryName]));
+    }
+    const searchParamsFactory = (resolverData: ResolverData, searchParams: URLSearchParams) => {
+      for (const queryName in config.qs || {}) {
+        searchParams.set(queryName, queryStringFactoryMap.get(queryName)(resolverData));
+      }
+      return searchParams;
+    };
 
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
@@ -34,6 +46,8 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
         resolverParams.requestOptions = {
           headers: getHeadersObject(headersFactory(resolverData)),
         };
+        const urlObj = new URL(resolverParams.baseUrl);
+        searchParamsFactory(resolverData, urlObj.searchParams);
         return originalFactory(() => resolverParams)(root, args, context, info);
       },
     });

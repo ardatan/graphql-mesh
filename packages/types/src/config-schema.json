@@ -868,6 +868,10 @@
         "skipSchemaValidation": {
           "type": "boolean",
           "description": "Skip OpenAPI 3 Schema Validation"
+        },
+        "qs": {
+          "type": "object",
+          "properties": {}
         }
       },
       "required": [
