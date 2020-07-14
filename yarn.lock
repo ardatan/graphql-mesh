@@ -11444,7 +11444,7 @@ oas-linter@^3.1.3:
     should "^13.2.1"
     yaml "^1.8.3"
 
-oas-resolver@^2.4.0, oas-resolver@^2.4.1:
+oas-resolver@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.4.1.tgz#46948226f73e514ac6733f166cc559e800e4389b"
   integrity sha512-rRmUv9mDTKPtsB2OGaoNMK4BC1Q/pL+tWRPKRjXJEBoLmfegJhecOZPBtIR0gKEVQb9iAA0MqulkgY43EiCFDg==
@@ -11460,23 +11460,7 @@ oas-schema-walker@^1.1.4:
   resolved "https://registry.yarnpkg.com/oas-schema-walker/-/oas-schema-walker-1.1.4.tgz#4b9d090c3622039741334d3e138510ff38197618"
   integrity sha512-foVDDS0RJYMfhQEDh/WdBuCzydTcsCnGo9EeD8SpWq1uW10JXiz+8SfYVDA7LO87kjmlnTRZle/2gr5qxabaEA==
 
-oas-validator@4.0.5:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-4.0.5.tgz#3ab2078d914355b3f6f63deabc3dbe24ad88c669"
-  integrity sha512-gvbPGhUwgL1V/eWZ3xWxyoz0Fq8sqNS754SFPsgaIKuHnFSnj10I8IvzKaW+xxlkbOw6LmImm8He6YwbF8K9cQ==
-  dependencies:
-    ajv "^5.5.2"
-    better-ajv-errors "^0.6.7"
-    call-me-maybe "^1.0.1"
-    oas-kit-common "^1.0.8"
-    oas-linter "^3.1.3"
-    oas-resolver "^2.4.0"
-    oas-schema-walker "^1.1.4"
-    reftools "^1.1.2"
-    should "^13.2.1"
-    yaml "^1.8.3"
-
-oas-validator@^4.0.6:
+oas-validator@4.0.6, oas-validator@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-4.0.6.tgz#a0f2d0d123dd220bb03865cd7d3ed47c23b6a54a"
   integrity sha512-WNKjQCw6UnbHRQM00stje0sn//OSzrhGWBD5s4p9dv3t8r3+CZcJgc/BcIPSM2IKaR2iOZWJjyfGGYzi6Hd5lQ==
@@ -13562,7 +13546,7 @@ reduce@^1.0.1:
   dependencies:
     object-keys "^1.1.0"
 
-reftools@^1.1.2, reftools@^1.1.3:
+reftools@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.3.tgz#f430d11677d81ae97b8dbb3836713bb52b1cd0a7"
   integrity sha512-JTlhKmSzqE/gt5Z5RX25yZDq67MlRRtTz1gLy/NY+wPDx1e1vEJsv1PoNrpKZBwitcEMXs2k7pzmbmraP1ZMAQ==
