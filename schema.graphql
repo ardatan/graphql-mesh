@@ -44,8 +44,10 @@ type Handler {
 type GraphQLHandler @md {
   """A url to your remote GraphQL endpoint"""
   endpoint: String!
-  """JSON object representing the Headers to add to the runtime of the API calls"""
-  headers: JSON
+  """JSON object representing the Headers to add to the runtime of the API calls only for schema introspection"""
+  schemaHeaders: JSON
+  """JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"""
+  operationHeaders: JSON
   """Use HTTP GET for Query operations"""
   useGETForQueries: Boolean
   """HTTP method used for GraphQL operations"""
