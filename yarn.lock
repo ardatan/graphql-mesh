@@ -2779,10 +2779,10 @@
     "@types/mongodb" "*"
     "@types/node" "*"
 
-"@types/mysql@2.15.14":
-  version "2.15.14"
-  resolved "https://registry.yarnpkg.com/@types/mysql/-/mysql-2.15.14.tgz#df60e7b5f531662a8758e74b7685bed2b0ef1835"
-  integrity sha512-YyNcxZZ4qlb9v41lu8Qfo+quX8eUqz4mr/6Nx7sclc2pUemOvjU7xrpuVave0/sR/VdtDPTXZOWQLC/kthxrHg==
+"@types/mysql@2.15.15":
+  version "2.15.15"
+  resolved "https://registry.yarnpkg.com/@types/mysql/-/mysql-2.15.15.tgz#af2223d2841091a5a819eabee6dff19567f1cf1f"
+  integrity sha512-1GJnq7RwuFPRicMHdT53vza5v39nep9OKIbozxNUpFXP04CydcdWrqpZQ+MlVdlLFCisWnnt09xughajjWpFsw==
   dependencies:
     "@types/node" "*"
 
