@@ -1750,13 +1750,13 @@
     "@graphql-tools/utils" "6.0.14"
     tslib "~2.0.0"
 
-"@graphql-tools/mock@6.0.12":
-  version "6.0.12"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-6.0.12.tgz#3f140802d37f58b2d235b9ea1cc358945b2530cf"
-  integrity sha512-g4QEoUNusHAHRGRAl9p/jR06efcWoes48qsMq1bWuJJiSX4N6OepHzWVDZqDWD5RwuPVv8ugvVXLeSFRWZQDbQ==
+"@graphql-tools/mock@6.0.14":
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-6.0.14.tgz#9dfd2539a55953796d74e81645840c65dd6ed79e"
+  integrity sha512-cFzJ7D87XGQm6Z67zkTy80TdPLP+5Wjy251L6ywHZRL/lO4MfU6sqmTzMgHe3xMWehyvBNMAQ8pb83oLP/HXFA==
   dependencies:
-    "@graphql-tools/schema" "6.0.12"
-    "@graphql-tools/utils" "6.0.12"
+    "@graphql-tools/schema" "6.0.14"
+    "@graphql-tools/utils" "6.0.14"
     tslib "~2.0.0"
 
 "@graphql-tools/relay-operation-optimizer@6.0.12":
