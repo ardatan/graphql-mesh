@@ -1,4 +1,4 @@
-import { GraphQLSchema, isEnumType, GraphQLEnumValueConfigMap, GraphQLEnumType } from 'graphql';
+import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import {
   RenameTypes,
@@ -6,6 +6,7 @@ import {
   RenameRootFields,
   RenameRootTypes,
   RenameInputObjectFields,
+  TransformEnumValues,
   RenameInterfaceFields,
 } from '@graphql-tools/wrap';
 import {
@@ -53,27 +54,6 @@ const NAMING_CONVENTIONS: Record<NamingConventionType, NamingConventionFn> = {
   lowerCase,
 };
 
-class RenameEnumValuesTransform implements Transform {
-  constructor(private renamer: (typeName: string, value: string) => string) {}
-  transformSchema(schema: GraphQLSchema) {
-    const typeMap = schema.getTypeMap();
-    for (const typeName in typeMap) {
-      const type = typeMap[typeName];
-      if (isEnumType(type)) {
-        const enumConfig = type.toConfig();
-        const newValuesMap: GraphQLEnumValueConfigMap = {};
-        const oldValuesMap = enumConfig.values;
-        for (const oldValue in oldValuesMap) {
-          newValuesMap[this.renamer(typeName, oldValue)] = oldValuesMap[oldValue];
-        }
-        enumConfig.values = newValuesMap;
-        typeMap[typeName] = new GraphQLEnumType(enumConfig);
-      }
-    }
-    return schema;
-  }
-}
-
 export default class NamingConventionTransform implements MeshTransform {
   private transforms: Transform[] = [];
 
@@ -96,7 +76,13 @@ export default class NamingConventionTransform implements MeshTransform {
     }
     if (options.config.enumValues) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.enumValues];
-      this.transforms.push(new RenameEnumValuesTransform((_, enumValue) => namingConventionFn(enumValue)));
+
+      this.transforms.push(
+        new TransformEnumValues((typeName, externalValue, enumValueConfig) => [
+          namingConventionFn(externalValue),
+          enumValueConfig,
+        ])
+      );
     }
   }
 
