@@ -1687,6 +1687,16 @@
     "@graphql-tools/utils" "6.0.12"
     tslib "~2.0.0"
 
+"@graphql-tools/delegate@6.0.14":
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-6.0.14.tgz#41a728d9d453ea698915aac7071c101dd7dd053b"
+  integrity sha512-RVqwL+PLj6aQFmkUjHTQzkAOaWUNOe7BoAdldoXhTmzL8tgGvWWzlqFNBv54sj1FAaqP1p8DtAztH3mph97sSw==
+  dependencies:
+    "@ardatan/aggregate-error" "0.0.1"
+    "@graphql-tools/schema" "6.0.14"
+    "@graphql-tools/utils" "6.0.14"
+    tslib "~2.0.0"
+
 "@graphql-tools/graphql-file-loader@6.0.14":
   version "6.0.14"
   resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.0.14.tgz#45da45ea8640c1c168dc6387eccbd050182ec5b8"
@@ -1803,17 +1813,17 @@
     "@graphql-tools/wrap" "6.0.12"
     tslib "~2.0.0"
 
-"@graphql-tools/url-loader@6.0.12":
-  version "6.0.12"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-6.0.12.tgz#ea6e2e542ed0944efa8d3276c57e1979df095ecb"
-  integrity sha512-XK3D9oXshhlwQCNA92qqRIGPwCrhZGrGguYEkCyvEB4Y4e/MbzRPCExyeiZLI8mEepMJKhbAfx0ieQFPRbhx9Q==
+"@graphql-tools/url-loader@6.0.14":
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-6.0.14.tgz#da6e9fa7ed89d7c75dbf7d44cd93f88ebf95af1c"
+  integrity sha512-dBgN1Gk5mqW5UxfiYI8pd40CMA08DoJbcGR7VPpMNxowh6OOWJmBmDD8k97UfxC50xSEYqqYrKJqFw2SqyWI5w==
   dependencies:
-    "@graphql-tools/delegate" "6.0.12"
-    "@graphql-tools/utils" "6.0.12"
-    "@graphql-tools/wrap" "6.0.12"
-    "@types/websocket" "1.0.0"
+    "@graphql-tools/delegate" "6.0.14"
+    "@graphql-tools/utils" "6.0.14"
+    "@graphql-tools/wrap" "6.0.14"
+    "@types/websocket" "1.0.1"
     cross-fetch "3.0.5"
-    subscriptions-transport-ws "0.9.16"
+    subscriptions-transport-ws "0.9.17"
     tslib "~2.0.0"
     valid-url "1.0.9"
     websocket "1.0.31"
@@ -1842,6 +1852,17 @@
     "@graphql-tools/delegate" "6.0.12"
     "@graphql-tools/schema" "6.0.12"
     "@graphql-tools/utils" "6.0.12"
+    aggregate-error "3.0.1"
+    tslib "~2.0.0"
+
+"@graphql-tools/wrap@6.0.14":
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-6.0.14.tgz#d843be41c9fd8350f2c5e8d24c488a5ae999f176"
+  integrity sha512-DM29MsOjgxcdMntC4C8eA4ElI/2ERXtEmsZjowCW/fwpPkMONX1yNcw8xwiyZC7x1UGE4VkhqTGB9FUTMnYRog==
+  dependencies:
+    "@graphql-tools/delegate" "6.0.14"
+    "@graphql-tools/schema" "6.0.14"
+    "@graphql-tools/utils" "6.0.14"
     aggregate-error "3.0.1"
     tslib "~2.0.0"
 
@@ -3019,10 +3040,10 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
-"@types/websocket@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/websocket/-/websocket-1.0.0.tgz#828c794b0a50949ad061aa311af1009934197e4b"
-  integrity sha512-MLr8hDM8y7vvdAdnoDEP5LotRoYJj7wgT6mWzCUQH/gHqzS4qcnOT/K4dhC0WimWIUiA3Arj9QAJGGKNRiRZKA==
+"@types/websocket@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/websocket/-/websocket-1.0.1.tgz#039272c196c2c0e4868a0d8a1a27bbb86e9e9138"
+  integrity sha512-f5WLMpezwVxCLm1xQe/kdPpQIOmL0TXYx2O15VYfYzc7hTIdxiOoOvez+McSIw3b7z/1zGovew9YSL7+h4h7/Q==
   dependencies:
     "@types/node" "*"
 
@@ -15248,10 +15269,21 @@ stylehacks@^4.0.0:
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
 
-subscriptions-transport-ws@0.9.16, subscriptions-transport-ws@^0.9.11, subscriptions-transport-ws@^0.9.15, subscriptions-transport-ws@^0.9.16:
+subscriptions-transport-ws@0.9.16:
   version "0.9.16"
   resolved "https://registry.yarnpkg.com/subscriptions-transport-ws/-/subscriptions-transport-ws-0.9.16.tgz#90a422f0771d9c32069294c08608af2d47f596ec"
   integrity sha512-pQdoU7nC+EpStXnCfh/+ho0zE0Z+ma+i7xvj7bkXKb1dvYHSZxgRPaU6spRP+Bjzow67c/rRDoix5RT0uU9omw==
+  dependencies:
+    backo2 "^1.0.2"
+    eventemitter3 "^3.1.0"
+    iterall "^1.2.1"
+    symbol-observable "^1.0.4"
+    ws "^5.2.0"
+
+subscriptions-transport-ws@0.9.17, subscriptions-transport-ws@^0.9.11, subscriptions-transport-ws@^0.9.15, subscriptions-transport-ws@^0.9.16:
+  version "0.9.17"
+  resolved "https://registry.yarnpkg.com/subscriptions-transport-ws/-/subscriptions-transport-ws-0.9.17.tgz#e30e40f0caae0d2781903c01a8cb51b6e2682098"
+  integrity sha512-hNHi2N80PBz4T0V0QhnnsMGvG3XDFDS9mS6BhZ3R12T6EBywC8d/uJscsga0cVO4DKtXCkCRrWm2sOYrbOdhEA==
   dependencies:
     backo2 "^1.0.2"
     eventemitter3 "^3.1.0"
