@@ -47,6 +47,7 @@ export interface JSONSchemaStringDefinition {
   type: 'string';
   description?: string;
   format?: string;
+  pattern?: string;
 }
 
 export type JSONSchemaEnumDefinition = JSONSchemaNamedEnumDefinition | JSONSchemaUnnamedEnumDefinition;
