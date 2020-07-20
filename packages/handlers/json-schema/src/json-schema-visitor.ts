@@ -13,6 +13,7 @@ import { pascalCase } from 'pascal-case';
 import { join, isAbsolute, dirname } from 'path';
 import { readJSONSync } from 'fs-extra';
 import { flatten } from 'lodash';
+import { RegularExpression } from 'graphql-scalars';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
   if (Array.isArray(maybeArray)) {
@@ -96,7 +97,7 @@ export class JSONSchemaVisitor<TContext> {
         if ('enum' in def) {
           result = this.visitEnum(def, propertyName, prefix, cwd);
         } else {
-          result = this.visitString(def);
+          result = this.visitString(def, propertyName, prefix, cwd);
         }
         break;
       case 'null':
@@ -150,7 +151,13 @@ export class JSONSchemaVisitor<TContext> {
     return 'Float';
   }
 
-  visitString(stringDef: JSONSchemaStringDefinition) {
+  visitString(stringDef: JSONSchemaStringDefinition, propertyName: string, prefix: string, cwd: string) {
+    if (stringDef.pattern) {
+      const refName = `${prefix}_${propertyName}`;
+      const name = this.createName(refName, cwd);
+      this.schemaComposer.add(new RegularExpression(name, new RegExp(stringDef.pattern)));
+      return name;
+    }
     if (stringDef.format) {
       switch (stringDef.format) {
         case 'date-time':
