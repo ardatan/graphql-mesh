@@ -118,3 +118,8 @@ export interface JSONSchemaNullDefinition {
   type: 'null';
   description?: string;
 }
+
+export interface JSONSchemaOneOfDefinition {
+  title?: string;
+  oneOf: JSONSchemaNonRootDefinition[];
+}
