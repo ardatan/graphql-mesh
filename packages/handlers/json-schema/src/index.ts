@@ -8,7 +8,6 @@ import { JSONSchemaDefinition } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
 import { pathExists, writeJSON } from 'fs-extra';
 import toJsonSchema from 'to-json-schema';
-import { dirname } from 'path';
 import {
   GraphQLJSON,
   GraphQLVoid,
@@ -70,8 +69,9 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
     schemaComposer.add(GraphQLIPv4);
     schemaComposer.add(GraphQLIPv6);
 
-    const inputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, true);
-    const outputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, false);
+    const externalFileCache = new Map<string, any>();
+    const inputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, true, externalFileCache);
+    const outputSchemaVisitor = new JSONSchemaVisitor(schemaComposer, false, externalFileCache);
 
     const contextVariables: string[] = [];
 
@@ -106,13 +106,14 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
         operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
         const destination = operationConfig.type;
-        const basedFileName = operationConfig.responseSchema || operationConfig.responseSample;
-        const responseFileName = getFileName(basedFileName);
+        const basedFilePath = operationConfig.responseSchema || operationConfig.responseSample;
+        externalFileCache.set(basedFilePath, responseSchema);
+        const responseFileName = getFileName(basedFilePath);
         const type = outputSchemaVisitor.visit(
           responseSchema as JSONSchemaDefinition,
           'Response',
           responseFileName,
-          dirname(basedFileName)
+          basedFilePath
         );
 
         const { args, contextVariables: specificContextVariables } = parseInterpolationStrings([
@@ -124,14 +125,15 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         contextVariables.push(...specificContextVariables);
 
         if (requestSchema) {
-          const basedFileName = operationConfig.requestSchema || operationConfig.requestSample;
-          const requestFileName = getFileName(basedFileName);
+          const basedFilePath = operationConfig.requestSchema || operationConfig.requestSample;
+          externalFileCache.set(basedFilePath, requestSchema);
+          const requestFileName = getFileName(basedFilePath);
           args.input = {
             type: inputSchemaVisitor.visit(
               requestSchema as JSONSchemaDefinition,
               'Request',
               requestFileName,
-              isUrl(basedFileName) ? basedFileName : dirname(basedFileName)
+              basedFilePath
             ) as any,
           };
         }

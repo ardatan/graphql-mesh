@@ -7,13 +7,15 @@ import {
   JSONSchemaTypedNamedObjectDefinition,
   JSONSchemaTypedObjectDefinition,
   JSONSchemaStringDefinition,
+  JSONSchemaOneOfDefinition,
 } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
 import { pascalCase } from 'pascal-case';
 import { join, isAbsolute, dirname } from 'path';
 import { readJSONSync } from 'fs-extra';
-import { flatten } from 'lodash';
+import { flatten, get } from 'lodash';
 import { RegularExpression } from 'graphql-scalars';
+import Ajv from 'ajv';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
   if (Array.isArray(maybeArray)) {
@@ -34,24 +36,42 @@ export const getFileName = (filePath: string) => {
 
 export class JSONSchemaVisitor<TContext> {
   private cache: Map<string, string>;
-  constructor(private schemaComposer: SchemaComposer<TContext>, private isInput: boolean) {
+  private ajv: Ajv.Ajv;
+  constructor(
+    private schemaComposer: SchemaComposer<TContext>,
+    private isInput: boolean,
+    private externalFileCache = new Map<string, any>()
+  ) {
+    this.ajv = new Ajv({
+      schemaId: 'auto',
+      missingRefs: 'ignore',
+      logger: false,
+    });
+    // Settings for draft-04
+    const metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
+    this.ajv.addMetaSchema(metaSchema);
     this.cache = new Map();
   }
 
+  // TODO: Should be improved!
   createName(ref: string, cwd: string) {
     let [externalPath, internalRef] = ref.split('#');
     // If a reference
     if (internalRef) {
-      if (externalPath) {
-        const absolutePath = isAbsolute(externalPath) ? externalPath : join(cwd, externalPath);
+      const cwdDir = dirname(cwd);
+      const absolutePath = externalPath ? (isAbsolute(externalPath) ? externalPath : join(cwdDir, externalPath)) : cwd;
+      const fileName = getFileName(absolutePath);
+      if (!this.externalFileCache.has(absolutePath)) {
         const externalSchema = readJSONSync(absolutePath);
-        this.visit(
-          externalSchema,
-          this.isInput ? 'Request' : 'Response',
-          getFileName(absolutePath),
-          dirname(absolutePath)
-        );
+        this.externalFileCache.set(absolutePath, externalSchema);
+        this.visit(externalSchema, this.isInput ? 'Request' : 'Response', fileName, absolutePath, true);
       }
+      const internalRefArr = internalRef.split('/').filter(Boolean);
+      const internalPath = internalRefArr.join('.');
+      const internalPropertyName = internalRefArr[internalRefArr.length - 1];
+      const internalDef = get(this.externalFileCache.get(absolutePath), internalPath);
+      const result = this.visit(internalDef, internalPropertyName, fileName, absolutePath);
+      return result;
     } else {
       internalRef = ref;
     }
@@ -59,10 +79,16 @@ export class JSONSchemaVisitor<TContext> {
     for (const sep of invalidSeperators) {
       internalRef = internalRef.split(sep).join('_');
     }
-    return pascalCase(internalRef);
+    const name = pascalCase(internalRef);
+    if (this.schemaComposer.has(name)) {
+      const fileNamePrefix = getFileName(cwd).split('.').join('_');
+      return pascalCase(fileNamePrefix + '_' + name);
+    }
+    return name;
   }
 
-  visit(def: JSONSchemaDefinition, propertyName: string, prefix: string, cwd: string) {
+  visit(def: JSONSchemaDefinition, propertyName: string, prefix: string, cwd: string, ignoreResult?: boolean) {
+    def.type = Array.isArray(def.type) ? def.type[0] : def.type;
     const summary = JSON.stringify(def);
     if (this.cache.has(summary)) {
       return this.cache.get(summary);
@@ -121,9 +147,12 @@ export class JSONSchemaVisitor<TContext> {
         }
         break;
     }
-    if (!result) {
+    if ('oneOf' in def) {
+      result = this.visitOneOfReference(def, propertyName, prefix, cwd);
+    }
+    if (!result && !ignoreResult) {
       throw new Error(
-        `Unknown JSON Schema definition for (${prefix}, ${propertyName}): ${JSON.stringify(result, null, 2)}`
+        `Unknown JSON Schema definition for (${prefix}, ${propertyName}): ${JSON.stringify(def, null, 2)}`
       );
     }
     this.cache.set(summary, result);
@@ -153,10 +182,13 @@ export class JSONSchemaVisitor<TContext> {
 
   visitString(stringDef: JSONSchemaStringDefinition, propertyName: string, prefix: string, cwd: string) {
     if (stringDef.pattern) {
-      const refName = `${prefix}_${propertyName}`;
-      const name = this.createName(refName, cwd);
-      this.schemaComposer.add(new RegularExpression(name, new RegExp(stringDef.pattern)));
-      return name;
+      let refName = `${prefix}_${propertyName}`;
+      if ('format' in stringDef) {
+        refName = stringDef.format;
+      }
+      const scalarName = this.createName(refName, cwd);
+      this.schemaComposer.add(new RegularExpression(scalarName, new RegExp(stringDef.pattern)));
+      return scalarName;
     }
     if (stringDef.format) {
       switch (stringDef.format) {
@@ -252,11 +284,17 @@ export class JSONSchemaVisitor<TContext> {
       this.schemaComposer.createInputTC({
         name,
         fields,
+        extensions: {
+          objectDef,
+        },
       });
     } else {
       this.schemaComposer.createObjectTC({
         name,
         fields,
+        extensions: {
+          objectDef,
+        },
       });
     }
     return name;
@@ -286,5 +324,30 @@ export class JSONSchemaVisitor<TContext> {
 
   visitNull() {
     return 'Void';
+  }
+
+  visitOneOfReference(oneOfReference: JSONSchemaOneOfDefinition, propertyName: string, prefix: string, cwd: string) {
+    let unionIdentifier = oneOfReference.title;
+    if (!unionIdentifier) {
+      unionIdentifier = prefix + '_' + propertyName;
+    }
+    const unionName = this.createName(unionIdentifier, cwd);
+    const types = oneOfReference.oneOf.map(def => this.visit(def, propertyName, prefix, cwd));
+
+    this.schemaComposer.createUnionTC({
+      name: unionName,
+      types,
+      resolveType: (root: any) => {
+        for (const typeName of types) {
+          const typeDef = this.schemaComposer.getAnyTC(typeName);
+          const isValid = this.ajv.validate(typeDef.getExtension('objectDef'), root);
+          if (isValid) {
+            return typeName;
+          }
+        }
+        return null;
+      },
+    });
+    return unionName;
   }
 }
