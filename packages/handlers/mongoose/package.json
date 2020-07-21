@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/mongoose": "5.7.32",
-    "mongoose": "5.9.24"
+    "mongoose": "5.9.25"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.2.13",
