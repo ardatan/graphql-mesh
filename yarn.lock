@@ -11232,10 +11232,10 @@ neo-async@^2.5.0, neo-async@^2.6.1:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.1.tgz#ac27ada66167fa8849a6addd837f6b189ad2081c"
   integrity sha512-iyam8fBuCUpWeKPGpaNMetEocMt364qkCsfL9JuhjXX6dRnguRVOfk2GZaDpPjcOKiiXCPINZC1GczQ7iTq3Zw==
 
-neo4j-driver@4.1.0, neo4j-driver@^4.0.1:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-4.1.0.tgz#1d02cd5cbdbb91e69fb03a3adb13d74d05916110"
-  integrity sha512-zhzmAZREBSSSMKWzN8WfvUEEdaqQxzm2hfiOUUvwbMHT6LtFbvHPPU4GvNpJLy8KNJx7qwkgelv9bp06OGOZ0A==
+neo4j-driver@4.1.1, neo4j-driver@^4.0.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-4.1.1.tgz#0d25de398256117b6088fc5e4466100ee4ae5f57"
+  integrity sha512-VK4YzeTG/uxYLUOR3Sh7/bx6RRXY/BJ0C3Y2zt69jSUKtijnboX7yGob+7y5b+HI8/c1TdN7dSXKkWf0b+vwBQ==
   dependencies:
     "@babel/runtime" "^7.9.6"
     rxjs "^6.5.5"
