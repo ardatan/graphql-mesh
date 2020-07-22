@@ -1,5 +1,5 @@
 const express = require('express');
-const graphqlHTTP = require('express-graphql');
+const { graphqlHTTP } = require('express-graphql');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
