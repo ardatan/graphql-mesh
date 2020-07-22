@@ -6,7 +6,7 @@ import { cpus } from 'os';
 import 'json-bigint-patch';
 import { createServer } from 'http';
 import { playground } from './playground';
-import graphqlHTTP from 'express-graphql';
+import { graphqlHTTP } from 'express-graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { SubscriptionServer, OperationMessagePayload, ConnectionContext } from 'subscriptions-transport-ws';
 
