@@ -7409,10 +7409,10 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-form-urlencoded@4.1.4:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-4.1.4.tgz#829365fb764a097aae201d6c9b18ade1f0e77b51"
-  integrity sha512-R7Vytos0gMYuPQTMwnNzvK9PBItNV+Qkm/pvghEZI3j2kMrzZmJlczAgHFmt12VV+IRYQXgTlSGP1PKAsMCIUA==
+form-urlencoded@4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-4.2.1.tgz#264d0b4524a87332e94f606237493fb5d26dcd84"
+  integrity sha512-0eFJroOH2qaqc/630d4YZpmsyKmh6sfq/1z3YMXvFab0O6teGnf8640C7gufikwbQJFaC6nPlG4d/GiYVN+Dcw==
 
 format-util@^1.0.3:
   version "1.0.5"
