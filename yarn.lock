@@ -14788,12 +14788,11 @@ soap-graphql@0.1.1:
   dependencies:
     graphql-iso-date "~3.3.0"
 
-soap@*, soap@0.31.0:
-  version "0.31.0"
-  resolved "https://registry.yarnpkg.com/soap/-/soap-0.31.0.tgz#2854d816ba2421c2f519ab22dcd1ea75587e7509"
-  integrity sha512-xp5l+qtY9DT4aK0403yu6sJ3UpaLLg0dzHgT4FCZREN99T6TeHRzdPVhdHW+sRlMSHJ+N8NOeQF6gJqZh0KoKA==
+soap@*, soap@0.32.0:
+  version "0.32.0"
+  resolved "https://registry.yarnpkg.com/soap/-/soap-0.32.0.tgz#d727d6fe52beaf784ca68109f4b4ee44448cba17"
+  integrity sha512-nThCSW0CjlYypAtN+VLXubAGAjlHt5w339J9ROypj+xU2J43ynxWVoSvFrzBnjJveACoYgJVOdoHESf/33ehSw==
   dependencies:
-    "@types/request" "^2.48.1"
     bluebird "^3.5.0"
     concat-stream "^2.0.0"
     debug "^4.1.1"
