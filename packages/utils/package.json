@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
