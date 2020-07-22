@@ -19,7 +19,7 @@
     "@graphql-mesh/types": "0.2.14",
     "@graphql-mesh/utils": "0.2.14",
     "fetchache": "0.0.3",
-    "soap-graphql": "0.1.0",
+    "soap-graphql": "0.1.1",
     "soap": "0.31.0"
   },
   "publishConfig": {

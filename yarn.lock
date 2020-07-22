@@ -14764,10 +14764,10 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-soap-graphql@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/soap-graphql/-/soap-graphql-0.1.0.tgz#4bb01f25dcb412558d571c11d7000ad6e9189c8b"
-  integrity sha512-n3ianTQH4ijOTh3RCTnokto/QwFv26qDyRp//YgkLzcovGWwips0juOn1fSn3kmDxdX6/FM0B+CTYCRfNaMt5w==
+soap-graphql@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/soap-graphql/-/soap-graphql-0.1.1.tgz#8217435e5bcf4618c0d18a57825ea872012b7e79"
+  integrity sha512-nh8ZCGS3rGsoyiuLAHxKC7y0vNxajWLEwk3WPJIt30LF/xPIcRP1mFQ/X+oc5m1LJFOatzxARAt53nF66rjLew==
   dependencies:
     graphql-iso-date "~3.3.0"
 
