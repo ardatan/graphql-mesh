@@ -23,7 +23,7 @@
     "fetchache": "0.0.3",
     "debug": "4.1.1",
     "deep-equal": "2.0.3",
-    "form-urlencoded": "4.1.4",
+    "form-urlencoded": "4.2.1",
     "jsonpath-plus": "4.0.0",
     "oas-validator": "4.0.6",
     "graphql-scalars": "1.1.6",
