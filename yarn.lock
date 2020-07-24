@@ -1851,10 +1851,10 @@
     aggregate-error "3.0.1"
     tslib "~2.0.0"
 
-"@grpc/grpc-js@1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.1.2.tgz#3125484c19fd1c9e3f4dc7a880f9fa1b872b46c8"
-  integrity sha512-k2u86Bkm/3xrjUaSWeIyzXScBt/cC8uE7BznR0cpueQi11R33W6qfJdMrkrsmSHirp5likR55JSXUrcWG6ybHA==
+"@grpc/grpc-js@1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.1.3.tgz#0b91b166d744b6a43b00430dceff0f0ff88c98d5"
+  integrity sha512-HtOsk2YUofBcm1GkPqGzb6pwHhv+74eC2CUO229USIDKRtg30ycbZmqC+HdNtY3nHqoc9IgcRlntFgopyQoYCA==
   dependencies:
     semver "^6.2.0"
 
