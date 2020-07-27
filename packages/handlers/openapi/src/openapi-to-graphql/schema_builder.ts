@@ -978,7 +978,7 @@ export function getArgs({ requestPayloadDef, parameters, operation, data }: GetA
         typeKey: 'INVALID_OAS',
         message:
           `The operation '${operation.operationString}' contains a ` +
-          `parameter '${JSON.stringify(parameter)}' with no 'schema' or ` +
+          `parameter '${JSON.stringify(parameter)}' with no 'schemfa' or ` +
           `'content' property`,
         data,
         log: translationLog,
@@ -995,7 +995,7 @@ export function getArgs({ requestPayloadDef, parameters, operation, data }: GetA
     }
 
     // TODO: remove
-    const paramDef = createDataDef({ fromSchema: parameter.name }, schema as SchemaObject, true, data);
+    const paramDef = createDataDef({ fromSchema: parameter.name }, schema as SchemaObject, true, data, operation.oas);
 
     // @ts-ignore
     const type = getGraphQLType({

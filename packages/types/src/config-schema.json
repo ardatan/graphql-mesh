@@ -871,7 +871,8 @@
         },
         "qs": {
           "type": "object",
-          "properties": {}
+          "properties": {},
+          "description": "JSON object representing the query search parameters to add to the API calls"
         }
       },
       "required": [

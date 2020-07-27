@@ -104,7 +104,7 @@ export function preprocessOas(oass: Oas3[], options: InternalOptions): Preproces
 
         const payloadDefinition =
           payloadSchema && typeof payloadSchema !== 'undefined'
-            ? createDataDef(payloadSchemaNames, payloadSchema as SchemaObject, true, data, undefined, oas)
+            ? createDataDef(payloadSchemaNames, payloadSchema as SchemaObject, true, data, oas)
             : undefined;
 
         // Response schema
@@ -136,8 +136,8 @@ export function preprocessOas(oass: Oas3[], options: InternalOptions): Preproces
           responseSchema as SchemaObject,
           false,
           data,
-          links,
-          oas
+          oas,
+          links
         );
 
         // Parameters
@@ -390,8 +390,8 @@ export function createDataDef(
   schema: SchemaObject,
   isInputObjectType: boolean,
   data: PreprocessingData,
-  links?: { [key: string]: LinkObject },
-  oas?: Oas3
+  oas?: Oas3,
+  links?: { [key: string]: LinkObject }
 ): DataDefinition {
   const preferredName = getPreferredName(names);
 
@@ -607,7 +607,6 @@ export function createDataDef(
                 itemsSchema as SchemaObject,
                 isInputObjectType,
                 data,
-                undefined,
                 oas
               );
 
@@ -767,7 +766,7 @@ function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[]): strin
 }
 
 /**
- * Add the properties to the data definition
+ * Recursively add all of the properties of an object to the data definition
  */
 function addObjectPropertiesToDataDef(
   def: DataDefinition,
@@ -775,7 +774,7 @@ function addObjectPropertiesToDataDef(
   required: string[],
   isInputObjectType: boolean,
   data: PreprocessingData,
-  oas?: Oas3
+  oas: Oas3
 ) {
   /**
    * Resolve all required properties
@@ -806,7 +805,6 @@ function addObjectPropertiesToDataDef(
         propSchema,
         isInputObjectType,
         data,
-        undefined,
         oas
       );
 
@@ -963,25 +961,27 @@ function getMemberSchemaData(
   };
 
   schemas.forEach(schema => {
-    // Dereference schemas
-    if ('$ref' in schema) {
-      schema = Oas3Tools.resolveRef(schema.$ref, oas) as SchemaObject;
-    }
+    if (schema) {
+      // Dereference schemas
+      if ('$ref' in schema) {
+        schema = Oas3Tools.resolveRef(schema.$ref, oas) as SchemaObject;
+      }
 
-    // Consolidate target GraphQL type
-    const memberTargetGraphQLType = Oas3Tools.getSchemaTargetGraphQLType(schema, data);
-    if (memberTargetGraphQLType) {
-      result.allTargetGraphQLTypes.push(memberTargetGraphQLType);
-    }
+      // Consolidate target GraphQL type
+      const memberTargetGraphQLType = Oas3Tools.getSchemaTargetGraphQLType(schema, data);
+      if (memberTargetGraphQLType) {
+        result.allTargetGraphQLTypes.push(memberTargetGraphQLType);
+      }
 
-    // Consolidate properties
-    if (schema.properties) {
-      result.allProperties.push(schema.properties);
-    }
+      // Consolidate properties
+      if (schema.properties) {
+        result.allProperties.push(schema.properties);
+      }
 
-    // Consolidate required
-    if (schema.required) {
-      result.allRequired = result.allRequired.concat(schema.required);
+      // Consolidate required
+      if (schema.required) {
+        result.allRequired = result.allRequired.concat(schema.required);
+      }
     }
   });
 
@@ -998,6 +998,9 @@ function hasNestedOneOfUsage(collapsedSchema: SchemaObject, oas: Oas3): boolean 
   return (
     Array.isArray(collapsedSchema.oneOf) &&
     collapsedSchema.oneOf.some(memberSchema => {
+      if (!memberSchema) {
+        return false;
+      }
       // anyOf and oneOf are nested
       if ('$ref' in memberSchema) {
         memberSchema = Oas3Tools.resolveRef(memberSchema.$ref, oas) as SchemaObject;
@@ -1128,7 +1131,6 @@ function createDataDefFromAnyOf({
                 propertySchema,
                 isInputObjectType,
                 data,
-                undefined,
                 oas
               );
 
@@ -1248,7 +1250,6 @@ function createDataDefFromOneOf({
               memberSchema,
               isInputObjectType,
               data,
-              undefined,
               oas
             );
             (def.subDefinitions as DataDefinition[]).push(subDefinition);

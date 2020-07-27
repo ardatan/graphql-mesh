@@ -209,7 +209,13 @@ const getViewerAnyAuthOT = (
   let args = {};
   for (const protocolName in data.security) {
     // Create input object types for the viewer arguments
-    const def = createDataDef({ fromRef: protocolName }, data.security[protocolName].schema, true, data);
+    const def = createDataDef(
+      { fromRef: protocolName },
+      data.security[protocolName].schema,
+      true,
+      data,
+      data.security[protocolName].oas
+    );
 
     const type = getGraphQLType({
       def,

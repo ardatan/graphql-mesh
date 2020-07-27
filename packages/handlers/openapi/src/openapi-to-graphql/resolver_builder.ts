@@ -350,7 +350,7 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
         const extensions = {
           method: operation.method,
           path: operation.path,
-
+          statusText: response.statusText,
           statusCode: response.status,
           responseHeaders: headersToObject(response.headers),
           responseBody,

@@ -81,6 +81,9 @@ export async function generateSdk(
     config: {
       flattenGeneratedTypes: true,
       scalars: scalarsMap,
+      namingConvention: {
+        enumValues: 'keep',
+      },
     },
   });
 
