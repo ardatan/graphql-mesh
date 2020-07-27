@@ -1520,23 +1520,6 @@
     tslib "~2.0.0"
     upper-case "2.0.1"
 
-"@graphql-codegen/plugin-helpers@1.17.4":
-  version "1.17.4"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.17.4.tgz#720fcd31126b0d2af6f820414ec88e4e6c230d79"
-  integrity sha512-7fycmjHZBhlHgHPzxJdEdB33cBSfmtqe7biS9HW6EtArvcG0rFXtDlA+nwKEdO7O39XfnR83A8FJkMw6x0h/gg==
-  dependencies:
-    "@graphql-tools/utils" "^6.0.0"
-    camel-case "4.1.1"
-    common-tags "1.8.0"
-    constant-case "3.0.3"
-    import-from "3.0.0"
-    lodash "~4.17.15"
-    lower-case "2.0.1"
-    param-case "3.0.3"
-    pascal-case "3.1.1"
-    tslib "~2.0.0"
-    upper-case "2.0.1"
-
 "@graphql-codegen/typescript-generic-sdk@1.17.4":
   version "1.17.4"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-generic-sdk/-/typescript-generic-sdk-1.17.4.tgz#7eacb04590d16eab9a3383c411fb742ff3ff2e07"
@@ -1684,13 +1667,13 @@
     dataloader "2.0.0"
     tslib "~2.0.0"
 
-"@graphql-tools/code-file-loader@6.0.14":
-  version "6.0.14"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-6.0.14.tgz#f23a0125e18028b4bad01e262135f9883a2eecae"
-  integrity sha512-KwEVAYren9x0LgCVX78lHxlLxNARBUBz5EIbe2XkrjeRQgv2GF5ktuW4uEaatzAi+M+719znKfY6E26gnKkjsw==
+"@graphql-tools/code-file-loader@6.0.15":
+  version "6.0.15"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-6.0.15.tgz#d4c04b6493ac658da13bb115e7ed6821e2c687f1"
+  integrity sha512-Z4RLnJzlHWHbfe/yRFLqWuqxd6//dSxj/87FiOwN2GR+o/7I0N7ppZIAsLleVDM0LghDO+Nnt1cacNAEmTd0Fw==
   dependencies:
-    "@graphql-tools/graphql-tag-pluck" "6.0.14"
-    "@graphql-tools/utils" "6.0.14"
+    "@graphql-tools/graphql-tag-pluck" "6.0.15"
+    "@graphql-tools/utils" "6.0.15"
     fs-extra "9.0.1"
     tslib "~2.0.0"
 
@@ -1724,15 +1707,15 @@
     fs-extra "9.0.1"
     tslib "~2.0.0"
 
-"@graphql-tools/graphql-tag-pluck@6.0.14":
-  version "6.0.14"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-6.0.14.tgz#cc3be7e5aeebb563edbea81c1a18602a9a863a97"
-  integrity sha512-diS8H5ro1zAbImJYaScDxSVih4RD1a+OyovcaYYwa+lZY1Nxht0aXiTZW1JtzNLLw98HxkVIT2SCZkN1M4udkQ==
+"@graphql-tools/graphql-tag-pluck@6.0.15":
+  version "6.0.15"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-6.0.15.tgz#0e519202bc21faf068a22528b2e10d196e181aa6"
+  integrity sha512-d27PwoTIz3mQumnFtWjn60dulpePvWG6D8itPTGgl75H7LNpIdKPYlLTTcPcFsfWiFb4yIgg6/oarU8pJfRAsw==
   dependencies:
     "@babel/parser" "7.10.5"
     "@babel/traverse" "7.10.5"
     "@babel/types" "7.10.5"
-    "@graphql-tools/utils" "6.0.14"
+    "@graphql-tools/utils" "6.0.15"
   optionalDependencies:
     vue-template-compiler "^2.6.11"
 
