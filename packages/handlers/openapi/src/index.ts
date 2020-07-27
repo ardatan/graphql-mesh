@@ -59,9 +59,10 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
         };
         const urlObj = new URL(resolverParams.baseUrl);
         searchParamsFactory(resolverData, urlObj.searchParams);
-        if (context.customFetch) {
-          resolverParams.data.options.fetch = context.customFetch;
-        }
+
+        resolverParams.baseUrl = context?.baseUrl;
+        resolverParams.fetch = context?.fetch;
+
         return originalFactory(() => resolverParams)(root, args, context, info);
       },
     });
@@ -88,7 +89,7 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       }
     }
 
-    contextVariables.push('customFetch');
+    contextVariables.push('fetch', 'baseUrl');
 
     return {
       schema,

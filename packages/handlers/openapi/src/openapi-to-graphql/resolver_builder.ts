@@ -46,6 +46,7 @@ type GetResolverParams = {
   data: PreprocessingData;
   baseUrl?: string;
   requestOptions?: RequestInit;
+  fetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 };
 
 function headersToObject(headers: Headers) {
@@ -77,7 +78,15 @@ type ResolverFactory = typeof getResolver;
  * given GraphQL query
  */
 export function getResolver(getResolverParams: () => GetResolverParams): ResolveFunction {
-  let { operation, argsFromLink = {}, payloadName, data, baseUrl, requestOptions } = getResolverParams();
+  let {
+    operation,
+    argsFromLink = {},
+    payloadName,
+    data,
+    baseUrl,
+    requestOptions,
+    fetch: fetchFn = data.options.fetch,
+  } = getResolverParams();
   // Determine the appropriate URL:
   if (typeof baseUrl === 'undefined') {
     baseUrl = Oas3Tools.getBaseUrl(operation);
@@ -328,7 +337,7 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
 
     let response: Response;
     try {
-      response = await data.options.fetch(urlObject.href, options);
+      response = await fetchFn(urlObject.href, options);
     } catch (err) {
       httpLog(err);
       throw err;
