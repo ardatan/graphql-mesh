@@ -1226,6 +1226,7 @@ test('Error contains extension', () => {
       method: 'get',
       path: '/users/{username}',
       statusCode: 404,
+      statusText: 'Not Found',
       responseBody: {
         message: 'Wrong username',
       },
