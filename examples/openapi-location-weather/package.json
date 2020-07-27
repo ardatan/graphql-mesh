@@ -27,6 +27,6 @@
     "@graphql-mesh/transform-cache": "0.2.14",
     "express": "4.17.1",
     "express-graphql": "0.11.0",
-    "graphql": "15.1.0"
+    "graphql": "15.3.0"
   }
 }

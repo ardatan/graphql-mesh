@@ -10,6 +10,6 @@
     "@graphql-mesh/cli": "0.2.14",
     "@graphql-mesh/json-schema": "0.2.14",
     "@graphql-mesh/transform-mock": "0.2.14",
-    "graphql": "15.1.0"
+    "graphql": "15.3.0"
   }
 }
