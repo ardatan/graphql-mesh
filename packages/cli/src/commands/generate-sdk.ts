@@ -84,6 +84,7 @@ export async function generateSdk(
       namingConvention: {
         enumValues: 'keep',
       },
+      documentMode: 'documentNode',
     },
   });
 
