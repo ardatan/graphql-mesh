@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@types/mongoose": "5.7.32",
-    "@types/node": "14.0.24",
+    "@types/node": "14.0.26",
     "typescript": "3.9.7"
   },
   "dependencies": {
