@@ -141,8 +141,9 @@
           "description": "Enable GraphQL Subscriptions using WebSocket"
         },
         "customFetch": {
-          "type": "string",
-          "description": "Path to a custom W3 Compatible Fetch Implementation"
+          "description": "Path to a custom W3 Compatible Fetch Implementation (Unknown object)",
+          "type": "object",
+          "properties": {}
         },
         "webSocketImpl": {
           "type": "string",
@@ -873,6 +874,11 @@
           "type": "object",
           "properties": {},
           "description": "JSON object representing the query search parameters to add to the API calls"
+        },
+        "customFetch": {
+          "description": "W3 Compatible Fetch Implementation (Unknown object)",
+          "type": "object",
+          "properties": {}
         }
       },
       "required": [

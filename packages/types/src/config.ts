@@ -90,9 +90,11 @@ export interface GraphQLHandler {
    */
   enableSubscriptions?: boolean;
   /**
-   * Path to a custom W3 Compatible Fetch Implementation
+   * Path to a custom W3 Compatible Fetch Implementation (Unknown object)
    */
-  customFetch?: string;
+  customFetch?: {
+    [k: string]: any;
+  };
   /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
@@ -485,6 +487,12 @@ export interface OpenapiHandler {
    * JSON object representing the query search parameters to add to the API calls
    */
   qs?: {
+    [k: string]: any;
+  };
+  /**
+   * W3 Compatible Fetch Implementation (Unknown object)
+   */
+  customFetch?: {
     [k: string]: any;
   };
 }

@@ -33,7 +33,7 @@ type GraphQLHandler @md {
   """
   Path to a custom W3 Compatible Fetch Implementation
   """
-  customFetch: String
+  customFetch: Fetch
   """
   Path to a custom W3 Compatible WebSocket Implementation
   """
