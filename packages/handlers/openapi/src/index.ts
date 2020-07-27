@@ -60,8 +60,16 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
         const urlObj = new URL(resolverParams.baseUrl);
         searchParamsFactory(resolverData, urlObj.searchParams);
 
-        resolverParams.baseUrl = context?.baseUrl;
-        resolverParams.fetch = context?.fetch;
+        if (context?.baseUrl) {
+          resolverParams.baseUrl = context.baseUrl;
+        }
+        if (context?.fetch) {
+          resolverParams.fetch = context.fetch;
+        }
+
+        if (context?.qs) {
+          resolverParams.qs = context.qs;
+        }
 
         return originalFactory(() => resolverParams)(root, args, context, info);
       },

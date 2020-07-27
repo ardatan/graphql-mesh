@@ -41,12 +41,13 @@ type AuthOptions = {
 
 type GetResolverParams = {
   operation: Operation;
-  argsFromLink?: { [key: string]: string };
+  argsFromLink?: Record<string, string>;
   payloadName?: string;
   data: PreprocessingData;
   baseUrl?: string;
   requestOptions?: RequestInit;
   fetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+  qs?: Record<string, string>;
 };
 
 function headersToObject(headers: Headers) {
@@ -86,6 +87,7 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
     baseUrl,
     requestOptions,
     fetch: fetchFn = data.options.fetch,
+    qs: customQs,
   } = getResolverParams();
   // Determine the appropriate URL:
   if (typeof baseUrl === 'undefined') {
@@ -289,6 +291,13 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
           const val = data.options.qs[query];
           urlObject.searchParams.set(query, val);
         }
+      }
+    }
+
+    if (typeof customQs === 'object') {
+      for (const query in customQs) {
+        const val = customQs[query];
+        urlObject.searchParams.set(query, val);
       }
     }
 
