@@ -27,6 +27,7 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
           break;
         case 'function':
           fetch = config.customFetch as any;
+          break;
       }
     } else {
       fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
