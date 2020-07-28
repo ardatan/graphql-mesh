@@ -8,14 +8,14 @@
   },
   "devDependencies": {
     "@types/mongoose": "5.7.32",
-    "@types/node": "14.0.24",
+    "@types/node": "14.0.26",
     "typescript": "3.9.7"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.2.14",
     "@graphql-mesh/mongoose": "0.2.14",
-    "graphql": "15.1.0",
-    "mongoose": "5.9.25",
+    "graphql": "15.3.0",
+    "mongoose": "5.9.26",
     "ts-node": "8.10.2"
   }
 }

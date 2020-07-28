@@ -18,7 +18,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.2.14",
     "neo4j-driver": "4.1.1",
-    "neo4j-graphql-js": "2.14.4"
+    "neo4j-graphql-js": "2.15.0"
   },
   "publishConfig": {
     "access": "public",
