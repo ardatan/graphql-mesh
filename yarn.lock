@@ -1755,22 +1755,6 @@
     "@graphql-tools/utils" "^6.0.0"
     tslib "~2.0.0"
 
-"@graphql-codegen/plugin-helpers@1.17.3":
-  version "1.17.3"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.17.3.tgz#365b40aab3bd9263cbf5f4a153b8bbd7bc9fe5f6"
-  integrity sha512-bhEqPUKW4GrSk92GTwQV/B4jHuiyAqaz30cAnRwdwl7PUuSc2su81nOC33t9TXf9H0QD4QPfgklFGFcfAnSGQg==
-  dependencies:
-    "@graphql-tools/utils" "^6.0.0"
-    camel-case "4.1.1"
-    common-tags "1.8.0"
-    constant-case "3.0.3"
-    import-from "3.0.0"
-    lower-case "2.0.1"
-    param-case "3.0.3"
-    pascal-case "3.1.1"
-    tslib "~2.0.0"
-    upper-case "2.0.1"
-
 "@graphql-codegen/plugin-helpers@1.17.4":
   version "1.17.4"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.17.4.tgz#720fcd31126b0d2af6f820414ec88e4e6c230d79"
@@ -1815,14 +1799,14 @@
     auto-bind "~4.0.0"
     tslib "~2.0.0"
 
-"@graphql-codegen/typescript-operations@1.17.3":
-  version "1.17.3"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-1.17.3.tgz#ff67c67c73a30e54f6ccd2388a8d11da9198c3fa"
-  integrity sha512-L93rV9hS3L/qZQugGfH8AzCQXBUb7ueE9xrhxf910/HADymYTBtf4iLApw6/NTxJLI0H3kM2E2gzp8lS7q/1yg==
+"@graphql-codegen/typescript-operations@1.17.6":
+  version "1.17.6"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-1.17.6.tgz#bdb94a9dd20cd46d586919bf4762c67b073758b6"
+  integrity sha512-vlwq+P+ultbUEG79jUfYFFKAziVyIQtqk2sFHYan3n5ha21oWX67SHWLzQA/nXl/bdwEb0QQKViyOF3x4eTbSw==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.17.3"
-    "@graphql-codegen/typescript" "1.17.3"
-    "@graphql-codegen/visitor-plugin-common" "1.17.3"
+    "@graphql-codegen/plugin-helpers" "1.17.6"
+    "@graphql-codegen/typescript" "1.17.6"
+    "@graphql-codegen/visitor-plugin-common" "1.17.6"
     auto-bind "~4.0.0"
     tslib "~2.0.0"
 
@@ -1835,16 +1819,6 @@
     "@graphql-codegen/typescript" "1.17.6"
     "@graphql-codegen/visitor-plugin-common" "1.17.6"
     "@graphql-tools/utils" "^6.0.0"
-    auto-bind "~4.0.0"
-    tslib "~2.0.0"
-
-"@graphql-codegen/typescript@1.17.3":
-  version "1.17.3"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-1.17.3.tgz#3f162443578ea648689223fe8d4998e8ff6ca278"
-  integrity sha512-MHc37Tr1tl/LMuNms7TQmE52bOuvArlzrX6Znht/zeTD2T4IgZbgQ8IwNpecIv2oOO6wUreMmJuJhXwlQ/EErw==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "1.17.3"
-    "@graphql-codegen/visitor-plugin-common" "1.17.3"
     auto-bind "~4.0.0"
     tslib "~2.0.0"
 
@@ -1866,21 +1840,6 @@
     "@graphql-codegen/plugin-helpers" "1.17.6"
     "@graphql-codegen/visitor-plugin-common" "1.17.6"
     auto-bind "~4.0.0"
-    tslib "~2.0.0"
-
-"@graphql-codegen/visitor-plugin-common@1.17.3":
-  version "1.17.3"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-1.17.3.tgz#a81e1e0149a756df803ef1c0260afb76158ab0ac"
-  integrity sha512-v2odnsx8P5HUETXQOXD0wZE9LpPOSQDGdPkfolCvzUv6tPa8CtaeR/Gd9IvhjvLcIN7qoFWss0zZYe2AAybwGw==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "1.17.3"
-    "@graphql-tools/relay-operation-optimizer" "6.0.14"
-    array.prototype.flatmap "1.2.3"
-    auto-bind "~4.0.0"
-    dependency-graph "0.9.0"
-    graphql-tag "2.10.4"
-    parse-filepath "1.0.2"
-    pascal-case "3.1.1"
     tslib "~2.0.0"
 
 "@graphql-codegen/visitor-plugin-common@1.17.4":
@@ -2079,14 +2038,6 @@
     "@graphql-tools/schema" "6.0.15"
     "@graphql-tools/utils" "6.0.15"
     tslib "~2.0.0"
-
-"@graphql-tools/relay-operation-optimizer@6.0.14":
-  version "6.0.14"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/relay-operation-optimizer/-/relay-operation-optimizer-6.0.14.tgz#3cb4e9e646e70b1c6e80b51be50fbfac898a631f"
-  integrity sha512-H/b69WP71koOTrwgb2MaLKgE2p4ljKKyBI+i+oOCY8dork1zyi/jaBn9z3FKtLynPqovgMOm1UuKE1t4HVn2BA==
-  dependencies:
-    "@graphql-tools/utils" "6.0.14"
-    relay-compiler "10.0.0"
 
 "@graphql-tools/relay-operation-optimizer@6.0.15":
   version "6.0.15"
