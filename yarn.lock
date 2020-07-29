@@ -106,7 +106,7 @@
     "@algolia/logger-common" "4.3.1"
     "@algolia/requester-common" "4.3.1"
 
-"@apollo/federation@0.19.0":
+"@apollo/federation@0.19.0", "@apollo/federation@^0.19.0":
   version "0.19.0"
   resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.19.0.tgz#b0e43f034e31ef391f44be01db3a8ef0e0b4565b"
   integrity sha512-8cd8ftHgqaseDTN7RJrROT6FT1xy8RV2Qb9BGhhqPVMHqf08GtidBqQTk6hv1UDR0qu/TRZA6J4Kh7oXeMrPQg==
@@ -116,22 +116,12 @@
     core-js "^3.4.0"
     lodash.xorby "^4.7.0"
 
-"@apollo/federation@^0.18.1":
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.18.1.tgz#ece073f39f17c32aedf8cc63c75e4c979fc8490a"
-  integrity sha512-Loet3k2aO0PSXRSqeHIlnILB9JCvMZe4WagNOs0cf+CVe9VpsmpJv/cyUZfnZO/HUigyADI4pVq5D0QtLopMDA==
+"@apollo/gateway@0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.19.0.tgz#fc24c163813ce7db456cedd727034fd94889750f"
+  integrity sha512-uM+7VM4qqVDnIlgkqTqi1k3IzmXyYQ1sEfM/ODC+nWBr++rksaa7nj45BonfsJCgc2X1BpNbG+twBhP+NgjjPg==
   dependencies:
-    apollo-graphql "^0.5.0"
-    apollo-server-env "^2.4.5"
-    core-js "^3.4.0"
-    lodash.xorby "^4.7.0"
-
-"@apollo/gateway@0.18.1":
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.18.1.tgz#7d78e8aec12b41c7f8ee5598d350ef60f063b823"
-  integrity sha512-UqWe0yrGkJNBQ1Fw7t0hpCqgdm/dkZV800j3QNaiotpepSm+c8YlzL8irBya9MPIWXex0XmkvbTkivC0XhGTCw==
-  dependencies:
-    "@apollo/federation" "^0.18.1"
+    "@apollo/federation" "^0.19.0"
     "@types/node-fetch" "2.5.4"
     apollo-engine-reporting-protobuf "^0.5.2"
     apollo-env "^0.6.1"
