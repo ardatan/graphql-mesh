@@ -235,6 +235,8 @@ type Neo4jHandler @md {
 type ODataHandler @md {
   """Base URL for OData API"""
   baseUrl: String!
+  """Custom $metadata File or URL"""
+  metadata: String
   """Headers to be used with the operation requests"""
   operationHeaders: JSON
   """Headers to be used with the $metadata requests"""

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import { MeshHandlerLibrary, YamlConfig, ResolverData } from '@graphql-mesh/types';
-import { parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
+import { parseInterpolationStrings, getInterpolatedHeadersFactory, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { fetchache, Request, Response } from 'fetchache';
 import urljoin from 'url-join';
 import { JSDOM } from 'jsdom';
@@ -63,15 +63,13 @@ interface EntityTypeExtensions {
 const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
   async getMeshSource({ name, config, cache }) {
     const metadataUrl = urljoin(config.baseUrl, '$metadata');
-    const metadataRequest = new Request(metadataUrl, {
+    const metadataText = await readFileOrUrlWithCache<string>(config.metadata || metadataUrl, cache, {
       headers: config.schemaHeaders,
     });
 
-    const response = await fetchache(metadataRequest, cache);
-    const text = await response.text();
     const {
       window: { document: allDocument },
-    } = new JSDOM(text, {
+    } = new JSDOM(metadataText, {
       contentType: 'text/xml',
     });
 

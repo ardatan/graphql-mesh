@@ -815,6 +815,10 @@
           "type": "string",
           "description": "Base URL for OData API"
         },
+        "metadata": {
+          "type": "string",
+          "description": "Custom $metadata File or URL"
+        },
         "operationHeaders": {
           "type": "object",
           "properties": {},

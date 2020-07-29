@@ -11,6 +11,10 @@ type ODataHandler @md {
   """
   baseUrl: String!
   """
+  Custom $metadata File or URL
+  """
+  metadata: String
+  """
   Headers to be used with the operation requests
   """
   operationHeaders: JSON
