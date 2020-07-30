@@ -44,7 +44,7 @@ sources:
           - "@graphile/federation"
 ```
 
-> Use `FederationPlugin` only if you are using `federation` as merger as in [Federation Recipe](/recipes/federation)
+> Use `FederationPlugin` only if you are using `federation` as merger as in [Federation Recipe](/docs/recipes/federation)
 
 [Learn more about PostGraphile plugins](https://www.graphile.org/postgraphile/extending/)
 
