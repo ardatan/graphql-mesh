@@ -10,8 +10,6 @@ GraphQL Mesh allow you to do schema transformations easily, you can use one of t
 
 Each transformer can manipulate the schema the way it needs, and return the modified schema.
 
-You can find a [list of available transforms here](/docs/transforms/available-transforms).
-
 Transforms are specified as a list of objects, and they are executed in order, and you can apply them over a specific input source, or over the unified schema (after merging all sources).
 
 ## Handler-level transforms
