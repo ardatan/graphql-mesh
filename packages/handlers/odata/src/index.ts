@@ -13,15 +13,7 @@ import {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
 } from 'graphql-compose';
-import {
-  GraphQLBigInt,
-  GraphQLGUID,
-  GraphQLDateTime,
-  GraphQLJSON,
-  GraphQLDate,
-  GraphQLByte,
-  GraphQLUtcOffset,
-} from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLGUID, GraphQLDateTime, GraphQLJSON, GraphQLDate, GraphQLByte } from 'graphql-scalars';
 import { isListType, GraphQLResolveInfo, isAbstractType, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
@@ -40,7 +32,7 @@ const SCALARS = new Map<string, string>([
   ['Edm.Double', 'Float'],
   ['Edm.Boolean', 'Boolean'],
   ['Edm.Guid', 'GUID'],
-  ['Edm.DateTimeOffset', 'UtcOffset'],
+  ['Edm.DateTimeOffset', 'DateTime'],
   ['Edm.Date', 'Date'],
   ['Edm.TimeOfDay', 'String'],
   ['Edm.Single', 'Float'],
@@ -81,30 +73,43 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     schemaComposer.add(GraphQLJSON);
     schemaComposer.add(GraphQLByte);
     schemaComposer.add(GraphQLDate);
-    schemaComposer.add(GraphQLUtcOffset);
 
     const aliasNamespaceMap = new Map<string, string>();
 
     const schemas = allDocument.querySelectorAll('Schema');
     const multipleSchemas = schemas.length > 1;
+    const namespaces = new Set<string>();
+
+    function getNamespaceFromTypeRef(typeRef: string) {
+      let namespace = '';
+      namespaces.forEach(el => {
+        if (
+          typeRef.startsWith(el) &&
+          el.length > namespace.length && // It can be deeper namespace
+          !typeRef.replace(el + '.', '').includes('.') // Typename cannot have `.`
+        ) {
+          namespace = el;
+        }
+      });
+      return namespace;
+    }
 
     function getTypeNameFromRef({
       typeRef,
       isInput,
       isRequired,
-      schemaNamespace,
     }: {
       typeRef: string;
       isInput: boolean;
       isRequired: boolean;
-      schemaNamespace: string;
     }) {
       const typeRefArr = typeRef.split('Collection(');
       const arrayDepth = typeRefArr.length;
       let actualTypeRef = typeRefArr.join('').split(')').join('');
-      const alias = aliasNamespaceMap.get(schemaNamespace) || schemaNamespace;
-      if (typeRef.startsWith(schemaNamespace) && aliasNamespaceMap.has(schemaNamespace)) {
-        actualTypeRef = actualTypeRef.replace(schemaNamespace, alias);
+      const typeNamespace = getNamespaceFromTypeRef(actualTypeRef);
+      if (aliasNamespaceMap.has(typeNamespace)) {
+        const alias = aliasNamespaceMap.get(typeNamespace);
+        actualTypeRef = actualTypeRef.replace(typeNamespace, alias);
       }
       const actualTypeRefArr = actualTypeRef.split('.');
       const typeName = multipleSchemas
@@ -504,10 +509,15 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
 
     schemas.forEach(schemaElement => {
       const schemaNamespace = schemaElement.getAttribute('Namespace');
+      namespaces.add(schemaNamespace);
       const schemaAlias = schemaElement.getAttribute('Alias');
       if (schemaAlias) {
         aliasNamespaceMap.set(schemaNamespace, schemaAlias);
       }
+    });
+
+    schemas.forEach(schemaElement => {
+      const schemaNamespace = schemaElement.getAttribute('Namespace');
 
       schemaElement.querySelectorAll('EnumType').forEach(enumElement => {
         const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
@@ -556,7 +566,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                   typeRef: root['@odata.type'].replace('#', ''),
                   isInput: false,
                   isRequired: false,
-                  schemaNamespace,
                 });
                 return typeName;
               }
@@ -592,7 +601,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 typeRef: propertyTypeRef,
                 isInput: true,
                 isRequired,
-                schemaNamespace,
               }),
               extensions: { propertyElement },
             },
@@ -602,7 +610,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               typeRef: propertyTypeRef,
               isInput: false,
               isRequired,
-              schemaNamespace,
             }),
             extensions: { propertyElement },
           };
@@ -624,7 +631,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               typeRef: navigationPropertyTypeRef,
               isInput: false,
               isRequired,
-              schemaNamespace,
             }),
             args: {
               ...commonArgs,
@@ -692,7 +698,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           typeRef: returnTypeRef,
           isInput: false,
           isRequired: false,
-          schemaNamespace,
         });
         schemaComposer.Query.addFields({
           [functionName]: {
@@ -732,7 +737,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             typeRef: parameterTypeRef,
             isInput: true,
             isRequired,
-            schemaNamespace,
           });
           schemaComposer.Query.addFieldArgs(functionName, {
             [parameterName]: {
@@ -774,7 +778,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             typeRef: parameterTypeRef,
             isInput: true,
             isRequired,
-            schemaNamespace,
           });
           schemaComposer.Mutation.addFieldArgs(actionName, {
             [parameterName]: {
@@ -791,7 +794,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           typeRef: singletonTypeRef,
           isInput: false,
           isRequired: false,
-          schemaNamespace,
         });
         schemaComposer.Query.addFields({
           [singletonName]: {
@@ -829,7 +831,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           typeRef: returnTypeRef,
           isInput: false,
           isRequired: false,
-          schemaNamespace,
         });
         const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
           ...commonArgs,
@@ -843,7 +844,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             typeRef: parameterTypeRef,
             isInput: true,
             isRequired,
-            schemaNamespace,
           });
           // If entitySetPath is not available, take first parameter as entity
           entitySetPath = entitySetPath || parameterName;
@@ -852,7 +852,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               typeRef: parameterTypeRef,
               isInput: false,
               isRequired: false,
-              schemaNamespace,
             })
               .replace('[', '')
               .replace(']', '');
@@ -913,7 +912,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             typeRef: parameterTypeRef,
             isInput: true,
             isRequired,
-            schemaNamespace,
           });
           // If entitySetPath is not available, take first parameter as entity
           entitySetPath = entitySetPath || parameterName;
@@ -922,7 +920,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               typeRef: parameterTypeRef,
               isInput: false,
               isRequired: false,
-              schemaNamespace,
             })
               .replace('[', '')
               .replace(']', ''); // Todo temp workaround
@@ -978,7 +975,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           typeRef: baseTypeRef,
           isInput: false,
           isRequired: false,
-          schemaNamespace,
         });
         const baseInputType = schemaComposer.getAnyTC(baseTypeName + 'Input') as InputTypeComposer;
         const baseAbstractType = getTCByTypeNames('I' + baseTypeName, baseTypeName) as InterfaceTypeComposer;
@@ -1002,7 +998,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           typeRef: entitySetTypeRef,
           isInput: false,
           isRequired: false,
-          schemaNamespace,
         });
         const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
           | InterfaceTypeComposer
