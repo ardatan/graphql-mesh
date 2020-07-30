@@ -482,10 +482,21 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             const batchResponse = await fetchache(batchRequest, cache);
             const batchResponseText = await batchResponse.text();
             const batchResponseJson = JSON.parse(batchResponseText);
+            if ('error' in batchResponseJson) {
+              const error = new Error(batchResponseJson.error.message);
+              Object.assign(error, {
+                extensions: batchResponseJson.error,
+              });
+              throw error;
+            }
+            if (!('responses' in batchResponseJson)) {
+              const error = new Error(`Batch Request didn't return a valid response.`);
+              Object.assign(error, {
+                extensions: batchResponseJson,
+              });
+              throw error;
+            }
             return requests.map((_req, index) => {
-              if (!('responses' in batchResponseJson)) {
-                return batchResponse;
-              }
               const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
               return new Response(JSON.stringify(responseObj.body), {
                 status: responseObj.status,
