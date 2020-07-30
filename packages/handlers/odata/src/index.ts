@@ -20,6 +20,8 @@ import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { nativeFetch } from './native-fetch';
 import { pascalCase } from 'pascal-case';
+import { appendFileSync } from 'fs';
+import { join } from 'path';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -402,11 +404,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       multipart: (context: any) =>
         new DataLoader(
           async (requests: Request[]): Promise<Response[]> => {
-            if (process.env.MESH_DEBUG) {
-              console.info(`Requests with following batch requests; `);
-              console.table(requests);
-            }
-
             let requestBody = '';
             const requestBoundary = 'batch_' + Date.now();
             for (const requestIndex in requests) {
@@ -455,11 +452,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               });
             });
 
-            if (process.env.MESH_DEBUG) {
-              console.info(`Incoming Responses; `);
-              console.table(responses);
-            }
-
             return responses;
           }
         ),
@@ -489,14 +481,18 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             );
 
             if (process.env.MESH_DEBUG) {
-              console.info(`Outgoing requests for batch request: ${batchRequestId};`);
-              console.table(
-                outgoingRequests.map(({ id, url, method, body }) => ({
-                  id,
-                  url,
-                  method,
-                  body: JSON.stringify(body).substr(0, 170),
-                }))
+              appendFileSync(
+                join(process.cwd(), './mesh-log.txt'),
+                JSON.stringify(
+                  {
+                    batchRequestId,
+                    outgoingRequests,
+                    timestamp: new Date().toJSON(),
+                  },
+                  null,
+                  2
+                ),
+                'utf8'
               );
             }
             const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
@@ -509,6 +505,23 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             const batchResponse = await fetchache(batchRequest, cache);
             const batchResponseText = await batchResponse.text();
             const batchResponseJson = JSON.parse(batchResponseText);
+
+            if (process.env.MESH_DEBUG) {
+              appendFileSync(
+                join(process.cwd(), './mesh-log.txt'),
+                JSON.stringify(
+                  {
+                    batchRequestId,
+                    batchResponseJson,
+                    timestamp: new Date().toJSON(),
+                  },
+                  null,
+                  2
+                ),
+                'utf8'
+              );
+            }
+
             if ('error' in batchResponseJson) {
               const error = new Error(batchResponseJson.error.message);
               Object.assign(error, {
@@ -522,17 +535,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 extensions: batchResponseJson,
               });
               throw error;
-            }
-
-            if (process.env.MESH_DEBUG) {
-              console.info(`Incoming Responses for batch request: ${batchRequestId};`);
-              console.table(
-                batchResponseJson.responses.map(({ id, status, body }: any) => ({
-                  id,
-                  status,
-                  body: JSON.stringify(body).substr(0, 170),
-                }))
-              );
             }
 
             const responses = requests.map((_req, index) => {
