@@ -490,7 +490,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
 
             if (process.env.MESH_DEBUG) {
               console.info(`Outgoing requests for batch request: ${batchRequestId};`);
-              console.table(outgoingRequests.map(({ id, url, method, body }) => ({ id, url, method, body })));
+              console.table(
+                outgoingRequests.map(({ id, url, method, body }) => ({ id, url, method, body: JSON.stringify(body) }))
+              );
             }
             const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
               method: 'POST',
@@ -519,7 +521,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
 
             if (process.env.MESH_DEBUG) {
               console.info(`Incoming Responses for batch request: ${batchRequestId};`);
-              console.table(batchResponseJson.responses.map(({ id, status, body }: any) => ({ id, status, body })));
+              console.table(
+                batchResponseJson.responses.map(({ id, status, body }: any) => ({
+                  id,
+                  status,
+                  body: JSON.stringify(body),
+                }))
+              );
             }
 
             const responses = requests.map((_req, index) => {
