@@ -88,7 +88,6 @@ module.exports = {
       src: 'https://the-guild.dev/static/banner.js',
       // we may want to load it ASAP
       async: true,
-      defer: true,
     }
   ],
   presets: [
