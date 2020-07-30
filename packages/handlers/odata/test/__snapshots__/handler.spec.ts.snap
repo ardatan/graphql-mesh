@@ -177,8 +177,8 @@ type Trip implements ITrip {
   Budget: Float!
   Description: String
   Tags: [String]
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
   GetInvolvedPeople: [Person]
 }
@@ -190,8 +190,8 @@ interface ITrip {
   Budget: Float!
   Description: String
   Tags: [String]
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
   GetInvolvedPeople: [Person]
 }
@@ -202,23 +202,23 @@ A field whose value is a generic Globally Unique Identifier: https://en.wikipedi
 scalar GUID
 
 \\"\\"\\"
-A field whose value is a UTC Offset: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 \\"\\"\\"
-scalar UtcOffset
+scalar DateTime
 
 type PlanItem implements IPlanItem {
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   Duration: String!
 }
 
 interface IPlanItem {
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   Duration: String!
 }
 
@@ -227,8 +227,8 @@ type Event implements IPlanItem {
   Description: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   Duration: String!
 }
 
@@ -236,8 +236,8 @@ type PublicTransportation implements IPublicTransportation & IPlanItem {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   Duration: String!
 }
 
@@ -245,8 +245,8 @@ interface IPublicTransportation {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   Duration: String!
 }
 
@@ -258,8 +258,8 @@ type Flight implements IPublicTransportation {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
-  StartsAt: UtcOffset!
-  EndsAt: UtcOffset!
+  StartsAt: DateTime!
+  EndsAt: DateTime!
   Duration: String!
 }
 
