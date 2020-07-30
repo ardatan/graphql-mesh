@@ -57,7 +57,7 @@ export async function readUrlWithCache<T>(
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
   const response = await fetchache(new Request(path, config), cache);
-  const contentType = response.headers.get('content-type') || '';
+  const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
   if (/json$/.test(path) || contentType.startsWith('application/json')) {
     return JSON.parse(responseText);

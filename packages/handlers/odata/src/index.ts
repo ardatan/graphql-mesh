@@ -65,6 +65,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     const metadataUrl = urljoin(config.baseUrl, '$metadata');
     const metadataText = await readFileOrUrlWithCache<string>(config.metadata || metadataUrl, cache, {
       headers: config.schemaHeaders,
+      allowUnknownExtensions: true,
     });
 
     const {
