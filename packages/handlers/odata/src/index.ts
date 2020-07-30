@@ -402,7 +402,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       multipart: (context: any) =>
         new DataLoader(
           async (requests: Request[]): Promise<Response[]> => {
-            if (process.env.DEBUG) {
+            if (process.env.MESH_DEBUG) {
               console.info(`Requests with following batch requests; `);
               console.table(requests);
             }
@@ -455,7 +455,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               });
             });
 
-            if (process.env.DEBUG) {
+            if (process.env.MESH_DEBUG) {
               console.info(`Incoming Responses; `);
               console.table(responses);
             }
@@ -466,34 +466,36 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       json: (context: any) =>
         new DataLoader(
           async (requests: Request[]): Promise<Response[]> => {
-            if (process.env.DEBUG) {
-              console.info(`Requests with following batch requests; `);
-              console.table(requests);
-            }
-
+            const batchRequestId = Math.random().toString().replace('.', '');
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', 'application/json');
+            const outgoingRequests = await Promise.all(
+              requests.map(async (request, index) => {
+                const id = index.toString();
+                const url = request.url.replace(config.baseUrl, '');
+                const method = request.method;
+                const headers: HeadersInit = {};
+                request.headers.forEach((value, key) => {
+                  headers[key] = value;
+                });
+                return {
+                  id,
+                  url,
+                  method,
+                  body: request.body && (await request.json()),
+                  headers,
+                };
+              })
+            );
+
+            if (process.env.MESH_DEBUG) {
+              console.info(`Outgoing requests for batch request: ${batchRequestId};`);
+              console.table(outgoingRequests.map(({ id, url, method, body }) => ({ id, url, method, body })));
+            }
             const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
               method: 'POST',
               body: JSON.stringify({
-                requests: await Promise.all(
-                  requests.map(async (request, index) => {
-                    const id = index.toString();
-                    const url = request.url.replace(config.baseUrl, '');
-                    const method = request.method;
-                    const headers: HeadersInit = {};
-                    request.headers.forEach((value, key) => {
-                      headers[key] = value;
-                    });
-                    return {
-                      id,
-                      url,
-                      method,
-                      body: request.body && (await request.json()),
-                      headers,
-                    };
-                  })
-                ),
+                requests: outgoingRequests,
               }),
               headers: batchHeaders,
             });
@@ -514,6 +516,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               });
               throw error;
             }
+
+            if (process.env.MESH_DEBUG) {
+              console.info(`Incoming Responses for batch request: ${batchRequestId};`);
+              console.table(batchResponseJson.responses.map(({ id, status, body }: any) => ({ id, status, body })));
+            }
+
             const responses = requests.map((_req, index) => {
               const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
               return new Response(JSON.stringify(responseObj.body), {
@@ -521,11 +529,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 headers: responseObj.headers,
               });
             });
-
-            if (process.env.DEBUG) {
-              console.info(`Incoming Responses; `);
-              console.table(responses);
-            }
 
             return responses;
           }
