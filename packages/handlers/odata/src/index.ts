@@ -402,6 +402,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       multipart: (context: any) =>
         new DataLoader(
           async (requests: Request[]): Promise<Response[]> => {
+            if (process.env.DEBUG) {
+              console.info(`Requests with following batch requests; `);
+              console.table(requests);
+            }
+
             let requestBody = '';
             const requestBoundary = 'batch_' + Date.now();
             for (const requestIndex in requests) {
@@ -439,7 +444,8 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             }
             const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
             const responseTextArr = actualResponse.split(responseBoundary);
-            return responseTextArr.map(responseTextWithContentHeader => {
+
+            const responses = responseTextArr.map(responseTextWithContentHeader => {
               const responseText = responseTextWithContentHeader.split('\n').slice(4).join('\n');
               const { body, headers, statusCode, statusMessage } = parseResponse(responseText);
               return new Response(body, {
@@ -448,11 +454,23 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 statusText: statusMessage,
               });
             });
+
+            if (process.env.DEBUG) {
+              console.info(`Incoming Responses; `);
+              console.table(responses);
+            }
+
+            return responses;
           }
         ),
       json: (context: any) =>
         new DataLoader(
           async (requests: Request[]): Promise<Response[]> => {
+            if (process.env.DEBUG) {
+              console.info(`Requests with following batch requests; `);
+              console.table(requests);
+            }
+
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', 'application/json');
             const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
@@ -496,13 +514,20 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               });
               throw error;
             }
-            return requests.map((_req, index) => {
+            const responses = requests.map((_req, index) => {
               const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
               return new Response(JSON.stringify(responseObj.body), {
                 status: responseObj.status,
                 headers: responseObj.headers,
               });
             });
+
+            if (process.env.DEBUG) {
+              console.info(`Incoming Responses; `);
+              console.table(responses);
+            }
+
+            return responses;
           }
         ),
       none: () => ({
