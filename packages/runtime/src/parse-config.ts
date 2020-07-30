@@ -20,6 +20,7 @@ declare global {
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
+  importFn?: (moduleId: string) => Promise<any>;
 };
 
 export async function parseConfig(
@@ -43,8 +44,9 @@ export async function parseConfig(
 }
 
 export async function processConfig(config: YamlConfig.Config, options?: ConfigProcessOptions) {
-  const { dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
-  await Promise.all(config.require?.map(mod => import(mod)) || []);
+  const { dir = process.cwd(), ignoreAdditionalResolvers = false, importFn = (moduleId: string) => import(moduleId) } =
+    options || {};
+  await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, cache, merger] = await Promise.all([
     Promise.all(
@@ -52,14 +54,15 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
         const handlerName = Object.keys(source.handler)[0];
         const handlerConfig = source.handler[handlerName];
         const [handlerLibrary, transforms] = await Promise.all([
-          getHandler(handlerName),
+          getHandler(handlerName, importFn),
           Promise.all(
             (source.transforms || []).map(async t => {
               const transformName: keyof YamlConfig.Transform = Object.keys(t)[0];
               const transformConfig = t[transformName];
               const transformLibrary = await getPackage<ResolvedTransform['transformLibrary']>(
                 transformName,
-                'transform'
+                'transform',
+                importFn
               );
 
               return {
@@ -82,7 +85,11 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
       config.transforms?.map(async t => {
         const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
         const transformConfig = t[transformName];
-        const TransformLibrary = await getPackage<ResolvedTransform['transformLibrary']>(transformName, 'transform');
+        const TransformLibrary = await getPackage<ResolvedTransform['transformLibrary']>(
+          transformName,
+          'transform',
+          importFn
+        );
         return {
           config: transformConfig,
           transformLibrary: TransformLibrary,
@@ -90,9 +97,9 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
       }) || []
     ),
     resolveAdditionalTypeDefs(dir, config.additionalTypeDefs),
-    resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || []),
-    resolveCache(config.cache),
-    resolveMerger(config.merger),
+    resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || [], importFn),
+    resolveCache(config.cache, importFn),
+    resolveMerger(config.merger, importFn),
   ]);
 
   return {
