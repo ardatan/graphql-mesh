@@ -81,6 +81,12 @@ export async function generateSdk(
     config: {
       flattenGeneratedTypes: true,
       scalars: scalarsMap,
+      onlyOperationTypes: true,
+      preResolveTypes: true,
+      namingConvention: {
+        enumValues: 'keep',
+      },
+      documentMode: 'documentNode',
     },
   });
 

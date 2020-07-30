@@ -22,7 +22,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
       };
       const headers = getHeadersObject(headersFactory(resolverData));
       return urlLoader.getExecutorAndSubscriber(config.endpoint, {
-        customFetch,
+        customFetch: customFetch as any,
         ...config,
         headers,
       });

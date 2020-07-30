@@ -61,3 +61,5 @@ type AdditionalResolverObject {
   resultSelectionSet: String
   resultDepth: Int
 }
+
+scalar Fetch

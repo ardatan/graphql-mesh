@@ -186,11 +186,15 @@ export async function getMesh(
     });
   }
 
-  const localRequester: Requester = async <R, V>(document: DocumentNode, variables: V, context: any) => {
-    const executionResult = await meshExecute<V>(document, variables, context);
+  const localRequester: Requester = async <Result, TVariables, TContext, TRootValue>(
+    document: DocumentNode,
+    variables: TVariables,
+    context: TContext
+  ) => {
+    const executionResult = await meshExecute<TVariables, TContext, TRootValue>(document, variables, context);
 
     if (executionResult.data && !executionResult.errors) {
-      return executionResult.data as R;
+      return executionResult.data as Result;
     } else {
       throw new GraphQLMeshSdkError(
         executionResult.errors as ReadonlyArray<GraphQLError>,

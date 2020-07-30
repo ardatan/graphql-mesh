@@ -34,5 +34,10 @@
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "buildOptions": {
+    "external": [
+      "cross-fetch"
+    ]
   }
 }

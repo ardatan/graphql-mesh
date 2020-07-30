@@ -995,7 +995,7 @@ export function getArgs({ requestPayloadDef, parameters, operation, data }: GetA
     }
 
     // TODO: remove
-    const paramDef = createDataDef({ fromSchema: parameter.name }, schema as SchemaObject, true, data);
+    const paramDef = createDataDef({ fromSchema: parameter.name }, schema as SchemaObject, true, data, operation.oas);
 
     // @ts-ignore
     const type = getGraphQLType({

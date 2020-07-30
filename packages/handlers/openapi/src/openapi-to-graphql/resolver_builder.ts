@@ -41,11 +41,13 @@ type AuthOptions = {
 
 type GetResolverParams = {
   operation: Operation;
-  argsFromLink?: { [key: string]: string };
+  argsFromLink?: Record<string, string>;
   payloadName?: string;
   data: PreprocessingData;
   baseUrl?: string;
   requestOptions?: RequestInit;
+  fetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+  qs?: Record<string, string>;
 };
 
 function headersToObject(headers: Headers) {
@@ -77,7 +79,16 @@ type ResolverFactory = typeof getResolver;
  * given GraphQL query
  */
 export function getResolver(getResolverParams: () => GetResolverParams): ResolveFunction {
-  let { operation, argsFromLink = {}, payloadName, data, baseUrl, requestOptions } = getResolverParams();
+  let {
+    operation,
+    argsFromLink = {},
+    payloadName,
+    data,
+    baseUrl,
+    requestOptions,
+    fetch: fetchFn = data.options.fetch,
+    qs: customQs,
+  } = getResolverParams();
   // Determine the appropriate URL:
   if (typeof baseUrl === 'undefined') {
     baseUrl = Oas3Tools.getBaseUrl(operation);
@@ -283,6 +294,13 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
       }
     }
 
+    if (typeof customQs === 'object') {
+      for (const query in customQs) {
+        const val = customQs[query];
+        urlObject.searchParams.set(query, val);
+      }
+    }
+
     // Get authentication headers and query parameters
     if (root && typeof root === 'object' && typeof root._openAPIToGraphQL === 'object') {
       const { authHeaders, authQs, authCookie } = getAuthOptions(operation, root._openAPIToGraphQL, data);
@@ -328,7 +346,7 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
 
     let response: Response;
     try {
-      response = await data.options.fetch(urlObject.href, options);
+      response = await fetchFn(urlObject.href, options);
     } catch (err) {
       httpLog(err);
       throw err;
@@ -350,7 +368,7 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
         const extensions = {
           method: operation.method,
           path: operation.path,
-
+          statusText: response.statusText,
           statusCode: response.status,
           responseHeaders: headersToObject(response.headers),
           responseBody,

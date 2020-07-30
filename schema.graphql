@@ -55,7 +55,7 @@ type GraphQLHandler @md {
   """Enable GraphQL Subscriptions using WebSocket"""
   enableSubscriptions: Boolean
   """Path to a custom W3 Compatible Fetch Implementation"""
-  customFetch: String
+  customFetch: Fetch
   """Path to a custom W3 Compatible WebSocket Implementation"""
   webSocketImpl: String
   """Cache Introspection"""
@@ -264,7 +264,10 @@ type OpenapiHandler @md {
   baseUrl: String
   """Skip OpenAPI 3 Schema Validation"""
   skipSchemaValidation: Boolean
+  """JSON object representing the query search parameters to add to the API calls"""
   qs: JSON
+  """W3 Compatible Fetch Implementation"""
+  customFetch: Fetch
 }
 type PostGraphileHandler @md {
   """A connection string to your Postgres database"""
@@ -341,6 +344,7 @@ type AdditionalResolverObject {
   resultSelectionSet: String
   resultDepth: Int
 }
+scalar Fetch
 type SoapHandler @md {
   """A url to your WSDL"""
   wsdl: String!

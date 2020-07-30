@@ -5,6 +5,7 @@ import {
   getInterpolatedStringFactory,
   getHeadersObject,
   ResolverDataBasedFactory,
+  loadFromModuleExportExpression,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -18,8 +19,19 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       headers: config.schemaHeaders,
     });
 
-    const fetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
-      fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
+    let fetch: WindowOrWorkerGlobalScope['fetch'];
+    if (config.customFetch) {
+      switch (typeof config.customFetch) {
+        case 'string':
+          fetch = await loadFromModuleExportExpression(config.customFetch as any, 'default');
+          break;
+        case 'function':
+          fetch = config.customFetch as any;
+          break;
+      }
+    } else {
+      fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
+    }
 
     const headersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
     const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
@@ -48,6 +60,18 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
         };
         const urlObj = new URL(resolverParams.baseUrl);
         searchParamsFactory(resolverData, urlObj.searchParams);
+
+        if (context?.baseUrl) {
+          resolverParams.baseUrl = context.baseUrl;
+        }
+        if (context?.fetch) {
+          resolverParams.fetch = context.fetch;
+        }
+
+        if (context?.qs) {
+          resolverParams.qs = context.qs;
+        }
+
         return originalFactory(() => resolverParams)(root, args, context, info);
       },
     });
@@ -73,6 +97,8 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
         });
       }
     }
+
+    contextVariables.push('fetch', 'baseUrl');
 
     return {
       schema,
