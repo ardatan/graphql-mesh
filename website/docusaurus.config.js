@@ -7,7 +7,9 @@ module.exports = {
   organizationName: 'urigo',
   projectName: 'graphql-mesh',
   themeConfig: {
-    defaultDarkMode: true,
+    colorMode: {
+      defaultMode: 'dark'
+    },
     algolia: {
       apiKey: 'c028a32ff6167533a28b0c7e8bb250d9',
       indexName: 'graphql-mesh',
@@ -19,7 +21,7 @@ module.exports = {
         alt: 'GraphQL Mesh',
         src: 'img/mesh-logo.svg'
       },
-      links: [
+      items: [
         {
           to: 'docs/getting-started/introduction',
           activeBasePath: 'docs',
