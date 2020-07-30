@@ -411,7 +411,7 @@ export function getSchemaTargetGraphQLType(schema: SchemaObject, data: Preproces
   }
 
   // CASE: enum
-  if (schema.type === 'string' && Array.isArray(schema.enum)) {
+  if (schema.type !== 'integer' && Array.isArray(schema.enum)) {
     return 'enum';
   }
 
@@ -424,7 +424,7 @@ export function getSchemaTargetGraphQLType(schema: SchemaObject, data: Preproces
        * GraphQLFloat, which can support 64 bits:
        */
       if (schema.type === 'integer' && schema.format === 'int64') {
-        return 'number';
+        return 'int64';
 
         // CASE: id
       } else if (

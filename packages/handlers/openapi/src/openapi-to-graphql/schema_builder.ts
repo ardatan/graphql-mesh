@@ -38,7 +38,7 @@ import { getResolver } from './resolver_builder';
 import { createDataDef } from './preprocessor';
 import debug from 'debug';
 import { handleWarning, sortObject } from './utils';
-import { GraphQLJSON } from 'graphql-scalars';
+import { GraphQLJSON, GraphQLBigInt } from 'graphql-scalars';
 
 type GetArgsParams = {
   requestPayloadDef?: DataDefinition;
@@ -478,6 +478,9 @@ function getScalarType({ def }: CreateOrReuseSimpleTypeParams): GraphQLScalarTyp
       break;
     case 'integer':
       def.graphQLType = GraphQLInt;
+      break;
+    case 'int64':
+      def.graphQLType = GraphQLBigInt;
       break;
     case 'number':
       def.graphQLType = GraphQLFloat;

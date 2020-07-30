@@ -49,13 +49,13 @@ type Query {
     maxId: String
 
     \\"\\"\\"Return media before this UNIX timestamp.\\"\\"\\"
-    maxTimestamp: Float
+    maxTimestamp: BigInt
 
     \\"\\"\\"Return media before this \`min_id\`.\\"\\"\\"
     minId: String
 
     \\"\\"\\"Return media after this UNIX timestamp.\\"\\"\\"
-    minTimestamp: Float
+    minTimestamp: BigInt
   ): MediaListResponse
 
   \\"\\"\\"
@@ -156,12 +156,12 @@ type Query {
     \\"\\"\\"
     A unix timestamp. All media returned will be taken earlier than this timestamp.
     \\"\\"\\"
-    maxTimestamp: Float
+    maxTimestamp: BigInt
 
     \\"\\"\\"
     A unix timestamp. All media returned will be taken later than this timestamp.
     \\"\\"\\"
-    minTimestamp: Float
+    minTimestamp: BigInt
   ): MediaSearchResponse
 
   \\"\\"\\"
@@ -331,13 +331,13 @@ type Query {
     maxId: String
 
     \\"\\"\\"Return media before this UNIX timestamp.\\"\\"\\"
-    maxTimestamp: Float
+    maxTimestamp: BigInt
 
     \\"\\"\\"Return media later than this \`min_id\`.\\"\\"\\"
     minId: String
 
     \\"\\"\\"Return media after this UNIX timestamp.\\"\\"\\"
-    minTimestamp: Float
+    minTimestamp: BigInt
 
     \\"\\"\\"
     The ID of a user to get recent media of, or **self** to retrieve media of authenticated user.
@@ -533,6 +533,11 @@ type LocationInfoResponse {
   meta: MetaData
 }
 
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
 type LocationSearchResponse {
   \\"\\"\\"List of found locations\\"\\"\\"
   data: [LocationInfo]
@@ -570,7 +575,7 @@ type TagSearchResponse {
 
 type TagInfo {
   \\"\\"\\"Overall number of media entries taged with this name\\"\\"\\"
-  mediaCount: Float
+  mediaCount: BigInt
 
   \\"\\"\\"Tag name\\"\\"\\"
   name: String
