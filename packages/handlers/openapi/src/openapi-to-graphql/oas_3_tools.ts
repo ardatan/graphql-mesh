@@ -410,12 +410,13 @@ export function getSchemaTargetGraphQLType(schema: SchemaObject, data: Preproces
     return 'list';
   }
 
+  // CASE: enum
+  if (schema.type === 'string' && Array.isArray(schema.enum)) {
+    return 'enum';
+  }
+
   // CASE: a type is present
   if (typeof schema.type === 'string') {
-    // CASE: enum
-    if (Array.isArray(schema.enum)) {
-      return 'enum';
-    }
     // Special edge cases involving the schema format
     if (typeof schema.format === 'string') {
       /**
