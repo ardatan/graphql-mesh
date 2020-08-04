@@ -15,7 +15,7 @@
     "@graphql-mesh/cli": "0.2.15",
     "@graphql-mesh/mongoose": "0.2.15",
     "graphql": "15.3.0",
-    "mongoose": "5.9.26",
+    "mongoose": "5.9.27",
     "ts-node": "8.10.2"
   }
 }
