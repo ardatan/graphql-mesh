@@ -35,7 +35,7 @@ jobs:
         if: github.repository == 'urigo/graphql-mesh'
         with:
           npm-token: ${{ secrets.NODE_AUTH_TOKEN }}
-          npm-script: 'release:canary'
+          npm-script: 'yarn release:canary'
           changesets: true
       - name: Publish a message
         if: steps.canary.outputs.released
