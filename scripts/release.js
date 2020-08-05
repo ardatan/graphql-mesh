@@ -1,88 +1,67 @@
-const { argv } = require('yargs');
-const { sync: glob } = require('globby');
-const { writeFile } = require('fs-extra');
-const { resolve, dirname, join } = require('path');
+/* eslint-disable no-console */
 const semver = require('semver');
 const cp = require('child_process');
-const rootPackageJson = require('../package.json');
-const { cwd } = require('process');
+const { basename } = require('path');
 
-async function release() {
+const { read: readConfig } = require("@changesets/config");
+const readChangesets = require("@changesets/read").default;
+const assembleReleasePlan = require("@changesets/assemble-release-plan").default;
+const applyReleasePlan = require("@changesets/apply-release-plan").default;
+const { getPackages } = require("@manypkg/get-packages");
 
-    let version = process.env.RELEASE_VERSION || rootPackageJson.version;
-    if(version.startsWith('v')) {
-        version = version.replace('v', '')
-    }
-    let tag = argv.tag || 'latest';
-    if (argv.canary) {
-        const gitHash = cp.spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
-        version = semver.inc(version, 'prerelease', true, 'alpha-' + gitHash);
-        tag = 'canary';
-    }
-
-    console.info(`Version: ${version}`);
-    console.info(`Tag: ${tag}`);
-
-    const workspaceGlobs = rootPackageJson.workspaces.map(workspace => workspace + '/package.json');
-
-    const packageJsonPaths = glob(workspaceGlobs).map(packageJsonPath => resolve(cwd(), packageJsonPath));
-
-    const packageNames = packageJsonPaths.map(packageJsonPath => require(packageJsonPath).name);
-
-    rootPackageJson.version = version;
-    await writeFile(resolve(__dirname, '../package.json'), JSON.stringify(rootPackageJson, null, 2));
-    await Promise.all(packageJsonPaths.map(async packageJsonPath => {
-        const packageJson = require(packageJsonPath);
-        packageJson.version = version;
-        for (const dependency in packageJson.dependencies) {
-            if (packageNames.includes(dependency)) {
-                packageJson.dependencies[dependency] = version;
-            }
-        }
-        for (const dependency in packageJson.devDependencies) {
-            if (packageNames.includes(dependency)) {
-                packageJson.devDependencies[dependency] = version;
-            }
-        }
-        await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
-        if (!packageJson.private) {
-            const distDirName = (packageJson.publishConfig && packageJson.publishConfig.directory) || '';
-            const distPath = join(dirname(packageJsonPath), distDirName);
-
-            //Fix package.json in dist directory
-            const distPackageJsonPath = join(distPath, 'package.json');
-            const distPackageJson = require(distPackageJsonPath);
-            distPackageJson.name = packageJson.name;
-            distPackageJson.version = packageJson.version;
-            distPackageJson.dependencies = packageJson.dependencies;
-            distPackageJson.devDependencies = packageJson.devDependencies;
-            distPackageJson.publishConfig = {
-                access: (packageJson.publishConfig && packageJson.publishConfig.access) || 'public'
-            }
-            await writeFile(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
-            return new Promise((resolve, reject) => {
-                const publishSpawn = cp.spawn('npm', ['publish', distPath, '--tag', tag, '--access', distPackageJson.publishConfig.access]);
-                publishSpawn.stdout.on('data', (data) => {
-                    console.info(data.toString('utf8'));
-                })
-                publishSpawn.stderr.on('data', function(message) {
-                    console.error(message.toString('utf8'));
-                })
-                publishSpawn.on("exit", function(code, signal) {
-                    if (code !== 0) {
-                        reject(new Error(`npm publish exited with code: ${code} and signal: ${signal}`));
-                    } else {
-                        resolve();
-                    }
-                });
-            });
-        }
-    }))
-    console.info(`Released successfully!`);
-    console.info(`${tag} => ${version}`);
+function getNewVersion(version, type) {
+  const gitHash = cp.spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
+  
+  return semver.inc(version, `pre${type}`, true, 'alpha-' + gitHash);
 }
 
-release().catch(err => {
-    console.error(err);
+function getRelevantChangesets(baseBranch) {
+  const comparePoint = cp.spawnSync('git', ['merge-base', `origin/${baseBranch}`, 'HEAD']).stdout.toString().trim();
+  const listModifiedFiles = cp.spawnSync('git', ['diff', '--name-only', comparePoint]).stdout.toString().trim().split('\n');
+
+  return listModifiedFiles.filter(f => f.startsWith('.changeset')).map(f => basename(f, '.md'));
+}
+
+async function updateVersions() {
+  const cwd = process.cwd();
+  const packages = await getPackages(cwd);
+  const config = await readConfig(cwd, packages);
+  const modifiedChangesets = getRelevantChangesets(config.baseBranch);
+  const changesets = (await readChangesets(cwd)).filter(change => modifiedChangesets.includes(change.id));
+  
+  if (changesets.length === 0) {
+    console.warn(`Unable to find any relevant package for canary publishing. Please make sure changesets exists!`);
     process.exit(1);
+  } else {
+    const releasePlan = assembleReleasePlan(changesets, packages, config, [], false);
+    
+    if (releasePlan.releases.length === 0) {
+      console.warn(`Unable to find any relevant package for canary releasing. Please make sure changesets exists!`);
+      process.exit(1);
+    } else {
+      for (const release of releasePlan.releases) {
+        if (release.type !== 'none') {
+          release.newVersion = getNewVersion(release.oldVersion, release.type);
+        }
+      }
+
+      await applyReleasePlan(
+        releasePlan,
+        packages,
+        {
+          ...config,
+          commit: false,
+        },
+        false,
+        true
+      );
+    }
+  }
+}
+
+updateVersions().then(() => {
+  console.info(`Done!`)
+}).catch(err => {
+  console.error(err);
+  process.exit(1);
 });
