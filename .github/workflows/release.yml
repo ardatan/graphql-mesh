@@ -1,14 +1,15 @@
-name: NPM Release
+name: Release
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master
         uses: actions/checkout@v1
-      - name: Configure Git Credientials
+      - name: Configure Git Credentials
         run: |
           git config --global user.email "theguild-bot@users.noreply.github.com"
           git config --global user.name "theguild-bot"
@@ -40,17 +41,13 @@ jobs:
             ${{ runner.os }}-14-yarn-
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines && git checkout yarn.lock
-      - name: Build
-        run: yarn build
-      - name: Publish to NPM
-        run: npm run release
-        env:
-          RELEASE_VERSION: ${{ github.event.release.tag_name }}
-      - name: Commit updated package.json files
-        run: |
-          git add .
-          git commit -m "${{ github.event.release.tag_name }}"
-      - name: Push all the changes
-        uses: ad-m/github-push-action@master
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish: yarn release
+          commit: 'chore(release): update monorepo packages versions'
+          title: 'Upcoming Release Changes'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
