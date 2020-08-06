@@ -12363,23 +12363,23 @@ oas-linter@^3.1.3:
     should "^13.2.1"
     yaml "^1.8.3"
 
-oas-resolver@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.4.1.tgz#46948226f73e514ac6733f166cc559e800e4389b"
-  integrity sha512-rRmUv9mDTKPtsB2OGaoNMK4BC1Q/pL+tWRPKRjXJEBoLmfegJhecOZPBtIR0gKEVQb9iAA0MqulkgY43EiCFDg==
+oas-resolver@^2.4.1, oas-resolver@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.4.2.tgz#cf60f34bd0b1330329cb1cca898db14a72968258"
+  integrity sha512-iJo7wE/MhuCJefkcpCS/NlE8MunRgRvgPozpeLSZUg0zmU8PBkzUwdtzpmjGDd7QjEuUi0SZ/y1wIrFIH+FNiA==
   dependencies:
     node-fetch-h2 "^2.3.0"
     oas-kit-common "^1.0.8"
-    reftools "^1.1.3"
+    reftools "^1.1.4"
     yaml "^1.8.3"
     yargs "^15.3.1"
 
-oas-schema-walker@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/oas-schema-walker/-/oas-schema-walker-1.1.4.tgz#4b9d090c3622039741334d3e138510ff38197618"
-  integrity sha512-foVDDS0RJYMfhQEDh/WdBuCzydTcsCnGo9EeD8SpWq1uW10JXiz+8SfYVDA7LO87kjmlnTRZle/2gr5qxabaEA==
+oas-schema-walker@^1.1.4, oas-schema-walker@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/oas-schema-walker/-/oas-schema-walker-1.1.5.tgz#74c3cd47b70ff8e0b19adada14455b5d3ac38a22"
+  integrity sha512-2yucenq1a9YPmeNExoUa9Qwrt9RFkjqaMAA1X+U7sbb0AqBeTIdMHky9SQQ6iN94bO5NW0W4TRYXerG+BdAvAQ==
 
-oas-validator@4.0.6, oas-validator@^4.0.6:
+oas-validator@4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-4.0.6.tgz#a0f2d0d123dd220bb03865cd7d3ed47c23b6a54a"
   integrity sha512-WNKjQCw6UnbHRQM00stje0sn//OSzrhGWBD5s4p9dv3t8r3+CZcJgc/BcIPSM2IKaR2iOZWJjyfGGYzi6Hd5lQ==
@@ -12392,6 +12392,22 @@ oas-validator@4.0.6, oas-validator@^4.0.6:
     oas-resolver "^2.4.1"
     oas-schema-walker "^1.1.4"
     reftools "^1.1.3"
+    should "^13.2.1"
+    yaml "^1.8.3"
+
+oas-validator@^4.0.7:
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-4.0.7.tgz#c64e4228bc4cfbecb7b2e95c0f28070675a7dacb"
+  integrity sha512-ppSW68iIIhvzFwSvY51NJPLM0uFjkHKAdoXKO+Pq6Ej1qU5Nvi9I3dQt6W8y/B+UYIP8yXr9YTEuvzG7sQH/ww==
+  dependencies:
+    ajv "^5.5.2"
+    better-ajv-errors "^0.6.7"
+    call-me-maybe "^1.0.1"
+    oas-kit-common "^1.0.8"
+    oas-linter "^3.1.3"
+    oas-resolver "^2.4.2"
+    oas-schema-walker "^1.1.5"
+    reftools "^1.1.4"
     should "^13.2.1"
     yaml "^1.8.3"
 
@@ -14549,10 +14565,10 @@ reduce-flatten@^2.0.0:
   resolved "https://registry.yarnpkg.com/reduce-flatten/-/reduce-flatten-2.0.0.tgz#734fd84e65f375d7ca4465c69798c25c9d10ae27"
   integrity sha512-EJ4UNY/U1t2P/2k6oqotuX2Cc3T6nxJwsM0N0asT7dhrtH1ltUxDn4NalSYmPE2rCkVpcf/X6R0wDwcFpzhd4w==
 
-reftools@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.3.tgz#f430d11677d81ae97b8dbb3836713bb52b1cd0a7"
-  integrity sha512-JTlhKmSzqE/gt5Z5RX25yZDq67MlRRtTz1gLy/NY+wPDx1e1vEJsv1PoNrpKZBwitcEMXs2k7pzmbmraP1ZMAQ==
+reftools@^1.1.3, reftools@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.4.tgz#767f61941f30f47dccb8835e307ed57ac123baee"
+  integrity sha512-Y8VEk3OXPwuU+ZAAPiR0YhYy9iBSO3NBRnXHGfqW6c2mo2V+fQ0cwRA38Ny6z9ZzcAo6HjmVvAri+wz3+8fsdQ==
 
 regenerate-unicode-properties@^8.2.0:
   version "8.2.0"
@@ -16292,20 +16308,20 @@ svgo@^1.0.0, svgo@^1.2.2:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
-swagger2openapi@6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-6.2.1.tgz#16c0387640b5675f941863ea4efe7648ec022362"
-  integrity sha512-CY3miXK2YZ0rjvGkVBzJps8ohDR7zGmbFhCVynAGlxIKbLvBuD99aS2ikZcvSo09uVOKcb5FspmvF/PKWdYV1Q==
+swagger2openapi@6.2.2:
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-6.2.2.tgz#35edf0b52caa019db48704ee99e4202e82ccdfb2"
+  integrity sha512-A8RWwzkymhF/ZfO0AylEZ2eCaN2jvAJU3bdtXQzkW5QvuyBMUBcyfB2tkHMTpXWYDmt7uKHwPGRZ0doPejtARA==
   dependencies:
     better-ajv-errors "^0.6.1"
     call-me-maybe "^1.0.1"
     node-fetch-h2 "^2.3.0"
     node-readfiles "^0.2.0"
     oas-kit-common "^1.0.8"
-    oas-resolver "^2.4.1"
-    oas-schema-walker "^1.1.4"
-    oas-validator "^4.0.6"
-    reftools "^1.1.3"
+    oas-resolver "^2.4.2"
+    oas-schema-walker "^1.1.5"
+    oas-validator "^4.0.7"
+    reftools "^1.1.4"
     yaml "^1.8.3"
     yargs "^15.3.1"
 
