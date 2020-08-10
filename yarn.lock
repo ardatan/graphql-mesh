@@ -2129,12 +2129,12 @@
     "@graphql-tools/utils" "6.0.15"
     relay-compiler "10.0.0"
 
-"@graphql-tools/resolvers-composition@6.0.15":
-  version "6.0.15"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.15.tgz#8d1228c3598b595099ba7be1ba66c3d827dbc7f1"
-  integrity sha512-JQWA+Acw4QVz3eiHqEEtHunTksmVj6gRFelfHAZ7jB50Ig6GJ76AsycZqOq2aDW3IC6ygKXQlCgxzgZVQBwMqg==
+"@graphql-tools/resolvers-composition@6.0.16":
+  version "6.0.16"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.0.16.tgz#9440edf32145f694d8547ce9df954474ecefb5b1"
+  integrity sha512-NRyJyV7WqO1E3LoVk9Oy31SmWHbOAirKVsRQaTDbLjdJ7ZG3rOVSH9o6k8I348wtcRFrz1xhmCuVaeT8cTMfBw==
   dependencies:
-    "@graphql-tools/utils" "6.0.15"
+    "@graphql-tools/utils" "6.0.16"
     lodash "4.17.19"
 
 "@graphql-tools/schema@6.0.15":
