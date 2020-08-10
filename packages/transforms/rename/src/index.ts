@@ -1,6 +1,12 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { RenameTypes, RenameObjectFields, RenameRootFields, RenameRootTypes } from '@graphql-tools/wrap';
+import {
+  RenameTypes,
+  RenameObjectFields,
+  RenameRootFields,
+  RenameRootTypes,
+  RenameInputObjectFields,
+} from '@graphql-tools/wrap';
 import {
   applySchemaTransforms,
   applyRequestTransforms,
@@ -32,6 +38,11 @@ export default class RenameTransform implements MeshTransform {
         );
         this.transforms.push(
           new RenameObjectFields((typeName, fieldName) =>
+            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName
+          )
+        );
+        this.transforms.push(
+          new RenameInputObjectFields((typeName, fieldName) =>
             typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName
           )
         );
