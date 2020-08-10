@@ -81,3 +81,5 @@ export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
   [key: string]: APIContext;
 };
+
+export type ImportFn = (moduleId: string) => Promise<any>;

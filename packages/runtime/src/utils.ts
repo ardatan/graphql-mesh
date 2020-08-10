@@ -1,4 +1,4 @@
-import { GraphQLOperation } from './types';
+import { GraphQLOperation, ImportFn } from './types';
 import { DocumentNode, parse } from 'graphql';
 import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
@@ -10,7 +10,7 @@ import { get, set, kebabCase } from 'lodash';
 import { stringInterpolator } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
 
-export async function getPackage<T>(name: string, type: string): Promise<T> {
+export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
@@ -26,7 +26,7 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
 
   for (const moduleName of possibleModules) {
     try {
-      const exported = await import(moduleName);
+      const exported = await importFn(moduleName);
 
       return (exported.default || exported.parser || exported) as T;
     } catch (err) {
@@ -39,8 +39,8 @@ export async function getPackage<T>(name: string, type: string): Promise<T> {
   throw new Error(`Unable to find ${type} matching ${name}`);
 }
 
-export async function getHandler(name: string): Promise<MeshHandlerLibrary> {
-  const handlerFn = await getPackage<MeshHandlerLibrary>(name, 'handler');
+export async function getHandler(name: string, importFn: ImportFn): Promise<MeshHandlerLibrary> {
+  const handlerFn = await getPackage<MeshHandlerLibrary>(name, 'handler', importFn);
 
   return handlerFn;
 }
@@ -58,14 +58,15 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
 
 export async function resolveAdditionalResolvers(
   baseDir: string,
-  additionalResolvers: (string | YamlConfig.AdditionalResolverObject)[]
+  additionalResolvers: (string | YamlConfig.AdditionalResolverObject)[],
+  importFn: ImportFn
 ): Promise<IResolvers> {
   const loadedResolvers = await Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {
       if (typeof additionalResolver === 'string') {
         const filePath = additionalResolver;
 
-        const exported = await import(resolve(baseDir, filePath));
+        const exported = await importFn(resolve(baseDir, filePath));
         let resolvers = null;
 
         if (exported.default) {
@@ -120,13 +121,16 @@ export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
   return typeof document === 'string' ? parse(document) : document;
 }
 
-export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Promise<KeyValueCache | undefined> {
+export async function resolveCache(
+  cacheConfig: YamlConfig.Config['cache'],
+  importFn: ImportFn
+): Promise<KeyValueCache | undefined> {
   if (cacheConfig) {
     const cacheName = Object.keys(cacheConfig)[0];
     const config = cacheConfig[cacheName];
 
     const moduleName = kebabCase(cacheName);
-    const pkg = await getPackage<any>(moduleName, 'cache');
+    const pkg = await getPackage<any>(moduleName, 'cache', importFn);
     const Cache = pkg.default || pkg;
 
     return new Cache(config);
@@ -134,7 +138,7 @@ export async function resolveCache(cacheConfig?: YamlConfig.Config['cache']): Pr
   return undefined;
 }
 
-export async function resolveMerger(mergerConfig?: YamlConfig.Config['merger']): Promise<MergerFn> {
-  const pkg = await getPackage<any>(mergerConfig || 'stitching', 'merger');
+export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], importFn: ImportFn): Promise<MergerFn> {
+  const pkg = await getPackage<any>(mergerConfig || 'stitching', 'merger', importFn);
   return pkg.default || pkg;
 }
