@@ -58,12 +58,20 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
         resolverParams.requestOptions = {
           headers: getHeadersObject(headersFactory(resolverData)),
         };
-        const urlObj = new URL(resolverParams.baseUrl);
-        searchParamsFactory(resolverData, urlObj.searchParams);
 
         if (context?.baseUrl) {
           resolverParams.baseUrl = context.baseUrl;
         }
+
+        if (resolverParams.baseUrl) {
+          const urlObj = new URL(resolverParams.baseUrl);
+          searchParamsFactory(resolverData, urlObj.searchParams);
+        } else {
+          console.warn(
+            `There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
+          );
+        }
+
         if (context?.fetch) {
           resolverParams.fetch = context.fetch;
         }
