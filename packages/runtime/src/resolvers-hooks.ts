@@ -35,6 +35,7 @@ function createProxyInfo({
   args,
   selectedFields,
   selectionSet,
+  operationKind,
   info,
 }: {
   schema: GraphQLSchema;
@@ -46,6 +47,7 @@ function createProxyInfo({
   selectedFields?: SelectedFields;
   selectionSet?: string | DocumentNode;
   info: GraphQLResolveInfo;
+  operationKind: Operation;
 }): any {
   const actualReturnType = 'ofType' in info.returnType ? info.returnType.ofType : info.returnType;
   const returnType = 'ofType' in field.type ? field.type.ofType : field.type;
@@ -145,6 +147,7 @@ export function applyResolversHooksToResolvers(
                         selectedFields: fields,
                         selectionSet,
                         info,
+                        operationKind: operation,
                       });
                       return delegateToSchema({
                         schema: apiSchema,
