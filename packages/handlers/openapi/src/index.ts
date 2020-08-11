@@ -50,6 +50,7 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       baseUrl: config.baseUrl,
       operationIdFieldNames: true,
       fillEmptyResponses: true,
+      includeHttpDetails: config.includeHttpDetails,
       viewer: false,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };

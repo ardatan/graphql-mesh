@@ -31,4 +31,8 @@ type OpenapiHandler @md {
   W3 Compatible Fetch Implementation
   """
   customFetch: Fetch
+  """
+  Include HTTP Response details to the result object
+  """
+  includeHttpDetails: Boolean
 }
