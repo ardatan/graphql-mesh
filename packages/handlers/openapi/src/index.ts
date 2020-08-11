@@ -48,9 +48,9 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
       baseUrl: config.baseUrl,
-      skipSchemaValidation: config.skipSchemaValidation,
       operationIdFieldNames: true,
       fillEmptyResponses: true,
+      includeHttpDetails: config.includeHttpDetails,
       viewer: false,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };

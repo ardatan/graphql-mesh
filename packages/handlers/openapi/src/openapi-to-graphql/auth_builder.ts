@@ -22,8 +22,7 @@ import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessin
 // Imports:
 import { getGraphQLType } from './schema_builder';
 import * as Oas3Tools from './oas_3_tools';
-import debug from 'debug';
-import { handleWarning, sortObject } from './utils';
+import { handleWarning, sortObject, mockDebug as debug } from './utils';
 import { createDataDef } from './preprocessor';
 
 // Type definitions & exports:
@@ -45,7 +44,8 @@ const translationLog = debug('translation');
 export function createAndLoadViewer(
   queryFields: object,
   data: PreprocessingData,
-  isMutation = false
+  isMutation = false,
+  includeHttpDetails: boolean
 ): { [key: string]: Viewer } {
   const results = {};
   /**
@@ -122,7 +122,7 @@ export function createAndLoadViewer(
   const anyAuthObjectName = !isMutation ? 'viewerAnyAuth' : 'mutationViewerAnyAuth';
 
   // Add the AnyAuth object type to the specified root query object type
-  results[anyAuthObjectName] = getViewerAnyAuthOT(anyAuthObjectName, anyAuthFields, data);
+  results[anyAuthObjectName] = getViewerAnyAuthOT(anyAuthObjectName, anyAuthFields, data, includeHttpDetails);
 
   return results;
 }
@@ -204,7 +204,8 @@ const getViewerOT = (
 const getViewerAnyAuthOT = (
   name: string,
   queryFields: GraphQLFieldConfigMap<any, any>,
-  data: PreprocessingData
+  data: PreprocessingData,
+  includeHttpDetails: boolean
 ): Viewer => {
   let args = {};
   for (const protocolName in data.security) {
@@ -221,6 +222,7 @@ const getViewerAnyAuthOT = (
       def,
       data,
       isInputObjectType: true,
+      includeHttpDetails,
     });
 
     const saneProtocolName = Oas3Tools.sanitize(protocolName, Oas3Tools.CaseStyle.camelCase);

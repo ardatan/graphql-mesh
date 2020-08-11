@@ -211,9 +211,9 @@ export type Options = {
   equivalentToMessages?: boolean;
 
   /**
-   * Skips OAS Validation
+   * Includes HTTP Details to the result object
    */
-  skipSchemaValidation?: boolean;
+  includeHttpDetails?: boolean;
 
   /**
    * Custom fetch implementation
@@ -419,6 +419,11 @@ export type InternalOptions = {
    * Middlewares for Resolver Factory
    */
   resolverMiddleware: ResolverMiddleware;
+
+  /**
+   * Includes HTTP Details to the result object
+   */
+  includeHttpDetails?: boolean;
 };
 
 export type selectQueryOrMutationFieldType = {

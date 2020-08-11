@@ -36,8 +36,7 @@ import {
 import * as Oas3Tools from './oas_3_tools';
 import { getResolver } from './resolver_builder';
 import { createDataDef } from './preprocessor';
-import debug from 'debug';
-import { handleWarning, sortObject } from './utils';
+import { handleWarning, sortObject, mockDebug as debug } from './utils';
 import { GraphQLJSON, GraphQLBigInt } from 'graphql-scalars';
 
 type GetArgsParams = {
@@ -45,6 +44,7 @@ type GetArgsParams = {
   parameters: ParameterObject[];
   operation?: Operation;
   data: PreprocessingData;
+  includeHttpDetails: boolean;
 };
 
 type CreateOrReuseComplexTypeParams = {
@@ -53,6 +53,7 @@ type CreateOrReuseComplexTypeParams = {
   iteration?: number; // Count of recursions used to create type
   isInputObjectType?: boolean; // Does not require isInputObjectType because unions must be composed of objects
   data: PreprocessingData; // Data produced by preprocessing
+  includeHttpDetails: boolean;
 };
 
 type CreateOrReuseSimpleTypeParams = {
@@ -67,6 +68,7 @@ type CreateFieldsParams = {
   iteration: number;
   isInputObjectType: boolean;
   data: PreprocessingData;
+  includeHttpDetails: boolean;
 };
 
 type LinkOpRefToOpIdParams = {
@@ -87,6 +89,7 @@ export function getGraphQLType({
   data,
   iteration = 0,
   isInputObjectType = false,
+  includeHttpDetails,
 }: CreateOrReuseComplexTypeParams): GraphQLType {
   const name = isInputObjectType ? def.graphQLInputObjectTypeName : def.graphQLTypeName;
 
@@ -104,6 +107,7 @@ export function getGraphQLType({
         data,
         iteration,
         isInputObjectType,
+        includeHttpDetails,
       });
 
     // CASE: union - create union type
@@ -113,6 +117,7 @@ export function getGraphQLType({
         operation,
         data,
         iteration,
+        includeHttpDetails,
       });
 
     // CASE: list - create list type
@@ -123,6 +128,7 @@ export function getGraphQLType({
         data,
         iteration,
         isInputObjectType,
+        includeHttpDetails,
       });
 
     // CASE: enum - create enum type
@@ -162,6 +168,7 @@ function createOrReuseOt({
   data,
   iteration,
   isInputObjectType,
+  includeHttpDetails,
 }: CreateOrReuseComplexTypeParams): GraphQLObjectType | GraphQLInputObjectType | GraphQLScalarType {
   // Try to reuse a preexisting (input) object type
 
@@ -210,6 +217,7 @@ function createOrReuseOt({
           data,
           iteration,
           isInputObjectType: false,
+          includeHttpDetails,
         });
       },
     });
@@ -235,6 +243,7 @@ function createOrReuseOt({
           data,
           iteration,
           isInputObjectType: true,
+          includeHttpDetails,
         });
       },
     });
@@ -246,7 +255,13 @@ function createOrReuseOt({
 /**
  * Creates a union type or return an existing one, and stores it in data
  */
-function createOrReuseUnion({ def, operation, data, iteration }: CreateOrReuseComplexTypeParams): GraphQLUnionType {
+function createOrReuseUnion({
+  def,
+  operation,
+  data,
+  iteration,
+  includeHttpDetails,
+}: CreateOrReuseComplexTypeParams): GraphQLUnionType {
   // Try to reuse existing union type
   if (typeof def.graphQLType !== 'undefined') {
     translationLog(
@@ -273,6 +288,7 @@ function createOrReuseUnion({ def, operation, data, iteration }: CreateOrReuseCo
         data,
         iteration: iteration + 1,
         isInputObjectType: false,
+        includeHttpDetails,
       }) as GraphQLObjectType;
     });
 
@@ -385,6 +401,7 @@ function createOrReuseList({
   iteration,
   isInputObjectType,
   data,
+  includeHttpDetails,
 }: CreateOrReuseComplexTypeParams): GraphQLList<any> {
   const name = isInputObjectType ? def.graphQLInputObjectTypeName : def.graphQLTypeName;
 
@@ -414,6 +431,7 @@ function createOrReuseList({
     operation,
     iteration: iteration + 1,
     isInputObjectType,
+    includeHttpDetails,
   });
 
   if (itemsType !== null) {
@@ -511,8 +529,16 @@ function createFields({
   data,
   iteration,
   isInputObjectType,
+  includeHttpDetails,
 }: CreateFieldsParams): GraphQLFieldConfigMap<any, any> {
   let fields: GraphQLFieldConfigMap<any, any> = {};
+
+  if (includeHttpDetails && !isInputObjectType) {
+    fields.httpDetails = {
+      type: GraphQLJSON,
+      resolve: root => root?._openAPIToGraphQL?.data,
+    };
+  }
 
   const fieldTypeDefinitions = def.subDefinitions as {
     [fieldName: string]: DataDefinition;
@@ -530,6 +556,7 @@ function createFields({
       data,
       iteration: iteration + 1,
       isInputObjectType,
+      includeHttpDetails,
     });
 
     const requiredProperty = typeof def.required === 'object' && def.required.includes(fieldTypeKey);
@@ -629,6 +656,7 @@ function createFields({
             parameters: dynamicParams,
             operation: linkedOp,
             data,
+            includeHttpDetails,
           });
 
           // Get response object type
@@ -641,6 +669,7 @@ function createFields({
                   data,
                   iteration: iteration + 1,
                   isInputObjectType: false,
+                  includeHttpDetails,
                 });
 
           let description = link.description;
@@ -899,7 +928,7 @@ function linkOpRefToOpId({ links, linkKey, operation, data }: LinkOpRefToOpIdPar
 /**
  * Creates the arguments for resolving a field
  */
-export function getArgs({ requestPayloadDef, parameters, operation, data }: GetArgsParams): Args {
+export function getArgs({ requestPayloadDef, parameters, operation, data, includeHttpDetails }: GetArgsParams): Args {
   let args: any = {};
 
   // Handle params:
@@ -1077,6 +1106,7 @@ export function getArgs({ requestPayloadDef, parameters, operation, data }: GetA
       data,
       operation,
       isInputObjectType: true, // Request payloads will always be an input object type
+      includeHttpDetails,
     });
 
     // Sanitize the argument name

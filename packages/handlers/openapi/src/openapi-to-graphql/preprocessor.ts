@@ -12,8 +12,7 @@ import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessin
 // Imports:
 import * as Oas3Tools from './oas_3_tools';
 import deepEqual from 'deep-equal';
-import debug from 'debug';
-import { handleWarning, getCommonPropertyNames } from './utils';
+import { handleWarning, getCommonPropertyNames, mockDebug as debug } from './utils';
 import { GraphQLOperationType } from './types/graphql';
 
 const preprocessingLog = debug('preprocessing');
