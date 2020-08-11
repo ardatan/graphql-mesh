@@ -12,7 +12,7 @@
     "start-services": "concurrently \"npm:start-service-*\""
   },
   "devDependencies": {
-    "concurrently": "5.2.0",
+    "concurrently": "5.3.0",
     "nodemon": "2.0.4"
   },
   "dependencies": {
