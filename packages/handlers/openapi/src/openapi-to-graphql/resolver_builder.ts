@@ -18,7 +18,7 @@ import { PreprocessingData } from './types/preprocessing_data';
 // Imports:
 import * as Oas3Tools from './oas_3_tools';
 import * as JSONPath from 'jsonpath-plus';
-import { debug } from 'debug';
+import { mockDebug as debug } from './utils';
 import { GraphQLError, GraphQLResolveInfo } from 'graphql';
 import formurlencoded from 'form-urlencoded';
 import urlJoin from 'url-join';

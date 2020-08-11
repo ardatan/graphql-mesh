@@ -33,9 +33,7 @@ import { InternalOptions, Options } from './types/options';
 
 // Imports:
 import { convertObj as convertSwaggerObjToOpenAPI } from 'swagger2openapi';
-import { validate as oasValidate } from 'oas-validator';
-import debug from 'debug';
-import { handleWarning } from './utils';
+import { handleWarning, mockDebug as debug } from './utils';
 import * as pluralize from 'pluralize';
 
 // Type definitions & exports:
@@ -88,15 +86,6 @@ export async function getValidOAS3(spec: Oas2 | Oas3, options: Options): Promise
 
     // CASE: validate
   } else if (typeof (spec as Oas3).openapi === 'string' && /^3/.test((spec as Oas3).openapi)) {
-    if (!options.skipSchemaValidation) {
-      preprocessingLog(`Received OpenAPI Specification 3.0.x - going to validate...`);
-      const valid = await oasValidate(spec, {});
-      if (!valid) {
-        throw new Error(`Validation of OpenAPI Specification failed.`);
-      }
-      preprocessingLog(`OpenAPI Specification is validated`);
-    }
-
     return spec as Oas3;
   } else {
     throw new Error(`Invalid specification provided`);

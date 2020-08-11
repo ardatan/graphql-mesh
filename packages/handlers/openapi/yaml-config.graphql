@@ -24,10 +24,6 @@ type OpenapiHandler @md {
   """
   baseUrl: String
   """
-  Skip OpenAPI 3 Schema Validation
-  """
-  skipSchemaValidation: Boolean
-  """
   JSON object representing the query search parameters to add to the API calls
   """
   qs: JSON

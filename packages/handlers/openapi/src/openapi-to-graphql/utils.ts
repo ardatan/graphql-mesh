@@ -112,3 +112,9 @@ export function getCommonPropertyNames(object1: any, object2: any): string[] {
     return propertyName in object2;
   }) as string[];
 }
+
+// TODO: replace this with Mesh's logger
+export function mockDebug(..._: any[]) {
+  // do nothing
+  return (..._: any[]) => {};
+}

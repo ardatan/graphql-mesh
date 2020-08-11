@@ -46,9 +46,8 @@ import * as GraphQLTools from './graphql_tools';
 import { preprocessOas } from './preprocessor';
 import * as Oas3Tools from './oas_3_tools';
 import { createAndLoadViewer } from './auth_builder';
-import debug from 'debug';
 import { GraphQLSchemaConfig } from 'graphql/type/schema';
-import { sortObject, handleWarning } from './utils';
+import { sortObject, handleWarning, mockDebug as debug } from './utils';
 
 type Result = {
   schema: GraphQLSchema;
@@ -105,8 +104,7 @@ export async function createGraphQLSchema(spec: Oas3 | Oas2 | (Oas3 | Oas2)[], o
     numMutationsCreated: 0,
   };
 
-  options.skipSchemaValidation =
-    typeof options.skipSchemaValidation === 'boolean' ? options.skipSchemaValidation : false;
+  options.includeHttpDetails = typeof options.includeHttpDetails === 'boolean' ? options.includeHttpDetails : false;
 
   let oass: Oas3[];
 
@@ -153,6 +151,7 @@ async function translateOpenAPIToGraphQL(
     genericPayloadArgName,
     simpleNames,
     singularNames,
+    includeHttpDetails,
 
     // Resolver options
     headers,
@@ -186,6 +185,7 @@ async function translateOpenAPIToGraphQL(
     genericPayloadArgName,
     simpleNames,
     singularNames,
+    includeHttpDetails,
 
     // Resolver options
     headers,
@@ -226,7 +226,7 @@ async function translateOpenAPIToGraphQL(
   Object.entries(data.operations).forEach(([operationId, operation]) => {
     translationLog(`Process operation '${operation.operationString}'...`);
 
-    const field = getFieldForOperation(operation, options.baseUrl, data, requestOptions);
+    const field = getFieldForOperation(operation, options.baseUrl, data, requestOptions, includeHttpDetails);
 
     const saneOperationId = Oas3Tools.sanitize(operationId, Oas3Tools.CaseStyle.camelCase);
 
@@ -389,11 +389,11 @@ async function translateOpenAPIToGraphQL(
    * Organize created queries / mutations into viewer objects.
    */
   if (Object.keys(authQueryFields).length > 0) {
-    Object.assign(queryFields, createAndLoadViewer(authQueryFields, data, false));
+    Object.assign(queryFields, createAndLoadViewer(authQueryFields, data, false, includeHttpDetails));
   }
 
   if (Object.keys(authMutationFields).length > 0) {
-    Object.assign(mutationFields, createAndLoadViewer(authMutationFields, data, true));
+    Object.assign(mutationFields, createAndLoadViewer(authMutationFields, data, true, includeHttpDetails));
   }
 
   /**
@@ -444,13 +444,15 @@ function getFieldForOperation(
   operation: Operation,
   baseUrl: string,
   data: PreprocessingData,
-  requestOptions: RequestInit
+  requestOptions: RequestInit,
+  includeHttpDetails: boolean
 ): Field {
   // Create GraphQL Type for response:
   const type = getGraphQLType({
     def: operation.responseDefinition,
     data,
     operation,
+    includeHttpDetails,
   });
 
   // Create resolve function:
@@ -480,6 +482,7 @@ function getFieldForOperation(
 
     operation,
     data,
+    includeHttpDetails,
   });
 
   return {
