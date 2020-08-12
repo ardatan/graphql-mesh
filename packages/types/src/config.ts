@@ -934,6 +934,7 @@ export interface AdditionalResolverObject {
 export interface Cache {
   file?: FileCacheConfig;
   inMemoryLRU?: InMemoryLRUConfig;
+  localforage?: LocalforageConfig;
   redis?: RedisConfig;
 }
 export interface FileCacheConfig {
@@ -941,6 +942,17 @@ export interface FileCacheConfig {
 }
 export interface InMemoryLRUConfig {
   max?: number;
+}
+export interface LocalforageConfig {
+  /**
+   * Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE
+   */
+  driver?: 'WEBSQL' | 'INDEXEDDB' | 'LOCALSTORAGE';
+  name?: string;
+  version?: number;
+  size?: number;
+  storeName?: string;
+  description?: string;
 }
 export interface RedisConfig {
   host?: string;

@@ -1,0 +1,18 @@
+type Cache {
+  localforage: LocalforageConfig
+}
+
+type LocalforageConfig {
+  driver: LocalforageDriver
+  name: String
+  version: Float
+  size: Int
+  storeName: String
+  description: String
+}
+
+enum LocalforageDriver {
+  WEBSQL
+  INDEXEDDB
+  LOCALSTORAGE
+}

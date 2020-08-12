@@ -8,8 +8,9 @@ import {
   resolveMerger,
   resolveAdditionalTypeDefs,
 } from './utils';
-import { YamlConfig, getJsonSchema } from '@graphql-mesh/types';
+import { YamlConfig, getJsonSchema, Hooks } from '@graphql-mesh/types';
 import Ajv from 'ajv';
+import { EventEmitter } from 'events';
 
 declare global {
   interface ObjectConstructor {
@@ -102,6 +103,10 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     resolveMerger(config.merger, importFn),
   ]);
 
+  // TODO: Make hooks configurable
+  const hooks = new EventEmitter({ captureRejections: true }) as Hooks;
+  hooks.setMaxListeners(Infinity);
+
   return {
     sources,
     transforms,
@@ -110,6 +115,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     cache,
     merger,
     mergerType: config.merger,
+    hooks,
   };
 }
 

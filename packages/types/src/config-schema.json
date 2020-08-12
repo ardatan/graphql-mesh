@@ -11,6 +11,9 @@
         "inMemoryLRU": {
           "$ref": "#/definitions/InMemoryLRUConfig"
         },
+        "localforage": {
+          "$ref": "#/definitions/LocalforageConfig"
+        },
         "redis": {
           "$ref": "#/definitions/RedisConfig"
         }
@@ -33,6 +36,33 @@
       "properties": {
         "max": {
           "type": "integer"
+        }
+      }
+    },
+    "LocalforageConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LocalforageConfig",
+      "properties": {
+        "driver": {
+          "type": "string",
+          "enum": ["WEBSQL", "INDEXEDDB", "LOCALSTORAGE"],
+          "description": "Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "storeName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
         }
       }
     },

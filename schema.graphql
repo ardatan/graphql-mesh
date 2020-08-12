@@ -4,6 +4,7 @@ schema {
 type Cache {
   file: FileCacheConfig
   inMemoryLRU: InMemoryLRUConfig
+  localforage: LocalforageConfig
   redis: RedisConfig
 }
 type FileCacheConfig {
@@ -11,6 +12,19 @@ type FileCacheConfig {
 }
 type InMemoryLRUConfig {
   max: Int
+}
+type LocalforageConfig {
+  driver: LocalforageDriver
+  name: String
+  version: Float
+  size: Int
+  storeName: String
+  description: String
+}
+enum LocalforageDriver {
+  WEBSQL
+  INDEXEDDB
+  LOCALSTORAGE
 }
 type RedisConfig {
   host: String
