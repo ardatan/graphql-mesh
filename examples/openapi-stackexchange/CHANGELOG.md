@@ -1,6 +1,14 @@
 # openapi-stackexchange
 
+## 0.3.1
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.2.17
+- @graphql-mesh/openapi@0.3.1
+
 ## 0.3.0
+
 ### Minor Changes
 
 - ccede377: Introduce includeHttpDetails to include HTTP response details to the result
