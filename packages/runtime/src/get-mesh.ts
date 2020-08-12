@@ -12,9 +12,7 @@ import {
 import { ensureDocumentNode } from './utils';
 import { Hooks, KeyValueCache, RawSourceOutput, MeshTransform } from '@graphql-mesh/types';
 
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { applyResolversHooksToSchema } from './resolvers-hooks';
-import { EventEmitter } from 'events';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import { applySchemaTransforms } from '@graphql-tools/utils';
 
@@ -61,12 +59,8 @@ export async function getMesh(
   cache: KeyValueCache;
 }> {
   const rawSources: RawSourceOutput[] = [];
-  let hooks = options.hooks!;
-  if (!hooks) {
-    hooks = new EventEmitter({ captureRejections: true }) as Hooks;
-    hooks.setMaxListeners(Infinity);
-  }
-  const cache = options.cache || new InMemoryLRUCache();
+  const hooks = options.hooks;
+  const cache = options.cache;
 
   await Promise.all(
     options.sources.map(async apiSource => {

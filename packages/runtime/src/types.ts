@@ -21,8 +21,8 @@ export type GetMeshOptions = {
   transforms?: ResolvedTransform[];
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers;
-  cache?: KeyValueCache;
-  hooks?: Hooks;
+  cache: KeyValueCache;
+  hooks: Hooks;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
 };
