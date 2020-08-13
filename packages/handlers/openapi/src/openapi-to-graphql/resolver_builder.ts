@@ -231,10 +231,12 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
     if (requestOptions) {
       options = { ...requestOptions };
       options.method = operation.method;
-      if (options.headers) {
-        Object.assign(options.headers, headers);
-      } else {
-        options.headers = headers;
+      options.headers = options.headers || {};
+      for (const headerName in headers) {
+        const headerValue = headers[headerName];
+        if (headerValue) {
+          options.headers[headerName] = headerValue;
+        }
       }
     } else {
       options = {
@@ -245,7 +247,9 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
 
     for (const paramName in query) {
       const val = query[paramName];
-      urlObject.searchParams.set(paramName, val);
+      if (val) {
+        urlObject.searchParams.set(paramName, val);
+      }
     }
 
     /**
@@ -301,7 +305,9 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
     if (typeof customQs === 'object') {
       for (const query in customQs) {
         const val = customQs[query];
-        urlObject.searchParams.set(query, val);
+        if (val) {
+          urlObject.searchParams.set(query, val);
+        }
       }
     }
 
@@ -310,17 +316,22 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
       const { authHeaders, authQs, authCookie } = getAuthOptions(operation, root._openAPIToGraphQL, data);
 
       // ...and pass them to the options
-      Object.assign(options.headers, authHeaders);
+      for (const headerName in authHeaders) {
+        const headerValue = authHeaders[headerName];
+        if (headerValue) {
+          options.headers[headerName] = headerValue;
+        }
+      }
       for (const query in authQs) {
         const val = authQs[query];
-        urlObject.searchParams.set(query, val);
+        if (val) {
+          urlObject.searchParams.set(query, val);
+        }
       }
 
       // Add authentication cookie if created
       if (authCookie !== null) {
-        Object.assign(options.headers, {
-          cookie: authCookie,
-        });
+        options.headers.cookie = authCookie;
       }
     }
 
@@ -329,11 +340,18 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
       const oauthQueryObj = createOAuthQS(data, ctx);
       for (const query in oauthQueryObj) {
         const val = oauthQueryObj[query];
-        urlObject.searchParams.set(query, val);
+        if (val) {
+          urlObject.searchParams.set(query, val);
+        }
       }
     } else {
       const oauthHeader = createOAuthHeader(data, ctx);
-      Object.assign(options.headers, oauthHeader);
+      for (const headerName in oauthHeader) {
+        const headerValue = oauthHeader[headerName];
+        if (headerValue) {
+          options.headers[headerName] = headerValue;
+        }
+      }
     }
 
     const urlWithoutQuery = urlObject.href.replace(urlObject.search, '');
