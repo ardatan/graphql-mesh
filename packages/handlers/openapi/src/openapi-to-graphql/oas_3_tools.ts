@@ -335,21 +335,22 @@ export function instantiatePathAndGetQuery(
         !data.options.simpleNames ? CaseStyle.camelCase : CaseStyle.simple
       );
 
-      if (sanitizedParamName && sanitizedParamName in args) {
+      if (sanitizedParamName && sanitizedParamName in args && args[sanitizedParamName]) {
+        const argValue = args[sanitizedParamName];
         switch (param.in) {
           // Path parameters
           case 'path':
-            path = path.replace(`{${param.name}}`, args[sanitizedParamName]);
+            path = path.replace(`{${param.name}}`, argValue);
             break;
 
           // Query parameters
           case 'query':
-            query[param.name] = args[sanitizedParamName];
+            query[param.name] = argValue;
             break;
 
           // Header parameters
           case 'header':
-            headers[param.name] = args[sanitizedParamName];
+            headers[param.name] = argValue;
             break;
 
           // Cookie parameters
@@ -358,7 +359,7 @@ export function instantiatePathAndGetQuery(
               headers.cookie = '';
             }
 
-            headers.cookie += `${param.name}=${args[sanitizedParamName]}; `;
+            headers.cookie += `${param.name}=${argValue}; `;
             break;
 
           default:
