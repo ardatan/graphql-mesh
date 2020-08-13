@@ -1,5 +1,5 @@
 type Cache {
-  inMemoryLRU: InMemoryLRUConfig
+  inmemoryLRU: InMemoryLRUConfig
 }
 
 type InMemoryLRUConfig {
