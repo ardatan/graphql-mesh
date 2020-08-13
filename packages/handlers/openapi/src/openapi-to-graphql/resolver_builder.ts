@@ -282,14 +282,18 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
       if (typeof data.options.headers === 'object') {
         for (const header in data.options.headers) {
           const val = data.options.headers[header];
-          options.headers[header] = val;
+          if (val) {
+            options.headers[header] = val;
+          }
         }
       }
       // Query string:
       if (typeof data.options.qs === 'object') {
         for (const query in data.options.qs) {
           const val = data.options.qs[query];
-          urlObject.searchParams.set(query, val);
+          if (val) {
+            urlObject.searchParams.set(query, val);
+          }
         }
       }
     }
