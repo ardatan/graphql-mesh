@@ -1,7 +1,14 @@
 import { Metadata } from '@grpc/grpc-js';
 import { SchemaComposer } from 'graphql-compose';
 
-import { addMetaDataToCall, createEnum, createFieldsType, getTypeName, toSnakeCase } from '../src/utils';
+import {
+  addInputOutputFields,
+  addMetaDataToCall,
+  createEnum,
+  createFieldsType,
+  getTypeName,
+  toSnakeCase,
+} from '../src/utils';
 
 describe('grpc utils', () => {
   describe('addMetaDataToCall', () => {
@@ -133,6 +140,40 @@ describe('grpc utils', () => {
   describe('toSnakeCase', () => {
     test('should convert dot separated string to snake case', () => {
       expect(toSnakeCase('Sports.Baseball.Team')).toEqual('Sports_Baseball_Team');
+    });
+  });
+
+  describe('addInputOutputFields', () => {
+    test('should add `_` field for empty protos', async () => {
+      const schemaComposer = new SchemaComposer();
+      const inputTC = schemaComposer.createInputTC({
+        name: 'input',
+        fields: {},
+      });
+      const outputTC = schemaComposer.createObjectTC({
+        name: 'output',
+        fields: {},
+      });
+      const fields = {};
+      await addInputOutputFields(schemaComposer, inputTC, outputTC, fields);
+      expect(inputTC.getFields()).toHaveProperty('_', expect.anything());
+      expect(outputTC.getFields()).toHaveProperty('_', expect.anything());
+    });
+
+    test('should add not `_` field for non empty protos', async () => {
+      const schemaComposer = new SchemaComposer();
+      const inputTC = schemaComposer.createInputTC({
+        name: 'input',
+        fields: {},
+      });
+      const outputTC = schemaComposer.createObjectTC({
+        name: 'output',
+        fields: {},
+      });
+      const fields = { someField: { type: 'string', name: 'someField', id: 0 } };
+      await addInputOutputFields(schemaComposer, inputTC, outputTC, fields);
+      expect(inputTC.getFields()).not.toHaveProperty('_', expect.anything());
+      expect(outputTC.getFields()).not.toHaveProperty('_', expect.anything());
     });
   });
 });
