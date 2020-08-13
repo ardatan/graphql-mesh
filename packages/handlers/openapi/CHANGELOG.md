@@ -1,5 +1,12 @@
 # @graphql-mesh/openapi
 
+## 0.3.3
+
+### Patch Changes
+
+- 9dc140d0: fix(openapi): handle falsy arguments properly
+- 9dc140d0: fix(openapi): do not pass falsy values to query string and headers
+
 ## 0.3.2
 
 ### Patch Changes

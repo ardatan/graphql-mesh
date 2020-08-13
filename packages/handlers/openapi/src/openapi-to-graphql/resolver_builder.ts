@@ -331,7 +331,8 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
 
       // Add authentication cookie if created
       if (authCookie !== null) {
-        options.headers.cookie = authCookie;
+        const cookieHeaderName = 'cookie';
+        options.headers[cookieHeaderName] = authCookie;
       }
     }
 
