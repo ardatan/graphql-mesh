@@ -7,7 +7,7 @@
     "start": "graphql-mesh serve"
   },
   "devDependencies": {
-    "@types/mongoose": "5.7.34",
+    "@types/mongoose": "5.7.36",
     "@types/node": "14.0.27",
     "typescript": "3.9.7"
   },
