@@ -1,5 +1,17 @@
 # @graphql-mesh/postgraphile
 
+## 0.3.0
+
+### Minor Changes
+
+- 6f21094b: feat(postgraphile): add more configuration options
+
+### Patch Changes
+
+- Updated dependencies [854dc550]
+- Updated dependencies [6f21094b]
+  - @graphql-mesh/types@0.4.0
+
 ## 0.2.17
 
 ### Patch Changes
