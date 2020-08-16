@@ -1,5 +1,18 @@
 # grpc-example
 
+## 0.3.0
+
+### Minor Changes
+
+- 705c4626: introduce an independent config package
+
+### Patch Changes
+
+- Updated dependencies [705c4626]
+  - @graphql-mesh/cli@0.3.0
+  - @graphql-mesh/grpc@0.3.0
+  - @graphql-mesh/transform-naming-convention@0.3.0
+
 ## 0.2.20
 
 ### Patch Changes

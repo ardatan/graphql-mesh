@@ -1,5 +1,17 @@
 # @graphql-mesh/openapi
 
+## 0.4.0
+
+### Minor Changes
+
+- 705c4626: introduce an independent config package
+
+### Patch Changes
+
+- Updated dependencies [705c4626]
+  - @graphql-mesh/types@0.5.0
+  - @graphql-mesh/utils@0.3.0
+
 ## 0.3.4
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # postgres-geodb-example
 
+## 0.3.0
+
+### Minor Changes
+
+- 705c4626: introduce an independent config package
+
+### Patch Changes
+
+- Updated dependencies [705c4626]
+  - @graphql-mesh/cache-file@0.3.0
+  - @graphql-mesh/cli@0.3.0
+  - @graphql-mesh/config@0.4.0
+  - @graphql-mesh/graphql@0.3.0
+  - @graphql-mesh/postgraphile@0.4.0
+  - @graphql-mesh/runtime@0.3.0
+  - @graphql-mesh/transform-prefix@0.3.0
+
 ## 0.2.20
 
 ### Patch Changes
