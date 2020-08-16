@@ -76,7 +76,7 @@ query viewsInPastMonth {
 }
 ```
 
-> You can find the complete example [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/javascript-wiki)
+> You can find the complete example [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
 
 > You can use TypeScript to have full type-safety in additional resolvers. See [TypeScript Support](/docs/recipes/typescript) section to learn more.
 
