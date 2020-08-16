@@ -9,6 +9,7 @@
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { GraphQLSchema } from 'graphql';
+import fetch from 'cross-fetch';
 
 /**
  * Set up the schema first
@@ -17,7 +18,7 @@ const oas = require('./fixtures/weather_underground.json');
 
 let createdSchema: GraphQLSchema;
 beforeAll(() => {
-  return openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema, report }) => {
+  return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema, report }) => {
     createdSchema = schema;
   });
 });

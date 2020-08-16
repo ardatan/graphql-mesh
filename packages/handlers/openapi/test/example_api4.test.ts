@@ -9,6 +9,7 @@
 
 import { graphql, GraphQLSchema } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
+import fetch from 'cross-fetch';
 
 const oas = require('./fixtures/example_oas4.json');
 
@@ -20,7 +21,7 @@ let createdSchema: GraphQLSchema;
  * Set up the schema
  */
 beforeAll(() => {
-  return openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema, report }) => {
+  return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema, report }) => {
     createdSchema = schema;
   });
 });

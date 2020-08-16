@@ -12,6 +12,7 @@ import { GraphQLSchema } from 'graphql';
 const openAPIToGraphQL = require('../src/openapi-to-graphql/index');
 const Oas3Tools = require('../src/openapi-to-graphql/oas_3_tools');
 const { parse, validate } = require('graphql');
+import fetch from 'cross-fetch';
 
 /**
  * Set up the schema first
@@ -20,7 +21,7 @@ const oas = require('./fixtures/government_social_work.json');
 
 let createdSchema: GraphQLSchema;
 beforeAll(() => {
-  return openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema, report }: any) => {
+  return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema, report }: any) => {
     createdSchema = schema;
   });
 });

@@ -218,7 +218,7 @@ export type Options = {
   /**
    * Custom fetch implementation
    */
-  fetch?: typeof import('cross-fetch').fetch;
+  fetch: typeof import('cross-fetch').fetch;
 
   /**
    * Middlewares for Resolver Factory

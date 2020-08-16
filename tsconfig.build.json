@@ -1,7 +1,5 @@
 {
-    "extends": "./tsconfig.json",
-    "exclude": [
-        "**/test/*.ts",
-        "*.spec.ts"
-    ]
+  "extends": "./tsconfig.json",
+  "target": "es2018",
+  "exclude": ["**/test/*.ts", "*.spec.ts"]
 }
