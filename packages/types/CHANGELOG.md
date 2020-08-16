@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.5.0
+
+### Minor Changes
+
+- 705c4626: introduce an independent config package
+
 ## 0.4.0
 
 ### Minor Changes

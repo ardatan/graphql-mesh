@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-rename
 
+## 0.3.0
+
+### Minor Changes
+
+- 705c4626: introduce an independent config package
+
+### Patch Changes
+
+- Updated dependencies [705c4626]
+  - @graphql-mesh/types@0.5.0
+
 ## 0.2.19
 
 ### Patch Changes
