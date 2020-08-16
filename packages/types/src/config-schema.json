@@ -45,8 +45,13 @@
       "title": "LocalforageConfig",
       "properties": {
         "driver": {
-          "type": "string",
-          "enum": ["WEBSQL", "INDEXEDDB", "LOCALSTORAGE"],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["WEBSQL", "INDEXEDDB", "LOCALSTORAGE"],
+            "description": "Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE"
+          },
+          "additionalItems": false,
           "description": "Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE"
         },
         "name": {

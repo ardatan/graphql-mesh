@@ -947,7 +947,7 @@ export interface LocalforageConfig {
   /**
    * Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE
    */
-  driver?: 'WEBSQL' | 'INDEXEDDB' | 'LOCALSTORAGE';
+  driver?: ('WEBSQL' | 'INDEXEDDB' | 'LOCALSTORAGE')[];
   name?: string;
   version?: number;
   size?: number;

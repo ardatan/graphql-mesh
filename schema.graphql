@@ -14,7 +14,7 @@ type InMemoryLRUConfig {
   max: Int
 }
 type LocalforageConfig {
-  driver: LocalforageDriver
+  driver: [LocalforageDriver!]
   name: String
   version: Float
   size: Int
