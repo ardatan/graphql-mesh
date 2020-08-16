@@ -11,6 +11,7 @@ import { graphql, GraphQLSchema } from 'graphql';
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { startServer, stopServer } from './example_api2_server';
+import fetch from 'cross-fetch';
 
 const oas = require('./fixtures/example_oas2.json');
 const PORT = 3004;
@@ -32,7 +33,7 @@ let createdSchema: GraphQLSchema;
  */
 beforeAll(() => {
   return Promise.all([
-    openAPIToGraphQL.createGraphQLSchema(oas, { operationIdFieldNames: true }).then(({ schema, report }) => {
+    openAPIToGraphQL.createGraphQLSchema(oas, { operationIdFieldNames: true, fetch }).then(({ schema, report }) => {
       createdSchema = schema;
     }),
     startServer(PORT),

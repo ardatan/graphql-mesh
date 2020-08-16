@@ -9,6 +9,7 @@
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { GraphQLSchema, GraphQLObjectType } from 'graphql/type';
+import fetch from 'cross-fetch';
 
 /**
  * Set up the schema first
@@ -17,7 +18,7 @@ const oas = require('./fixtures/instagram.json');
 
 let createdSchema: GraphQLSchema;
 beforeAll(() => {
-  return openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema, report }) => {
+  return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema, report }) => {
     createdSchema = schema;
   });
 });

@@ -59,11 +59,7 @@ const translationLog = debug('translation');
 /**
  * Creates a GraphQL interface from the given OpenAPI Specification (2 or 3).
  */
-export async function createGraphQLSchema(spec: Oas3 | Oas2 | (Oas3 | Oas2)[], options?: Options): Promise<Result> {
-  if (typeof options === 'undefined') {
-    options = {};
-  }
-
+export async function createGraphQLSchema(spec: Oas3 | Oas2 | (Oas3 | Oas2)[], options: Options): Promise<Result> {
   // Setting default options
   options.strict = typeof options.strict === 'boolean' ? options.strict : false;
 
@@ -87,8 +83,6 @@ export async function createGraphQLSchema(spec: Oas3 | Oas2 | (Oas3 | Oas2)[], o
     typeof options.provideErrorExtensions === 'boolean' ? options.provideErrorExtensions : true;
   options.equivalentToMessages =
     typeof options.equivalentToMessages === 'boolean' ? options.equivalentToMessages : true;
-
-  options.fetch = typeof options.fetch === 'function' ? options.fetch : await import('cross-fetch').then(m => m.fetch);
 
   options.resolverMiddleware =
     typeof options.resolverMiddleware === 'function'

@@ -13,6 +13,8 @@ import { graphql, GraphQLSchema } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { startServer, stopServer } from './example_api_server';
 
+import fetch from 'cross-fetch';
+
 const oas = require('./fixtures/example_oas.json');
 const PORT = 3003;
 // update PORT for this test case:
@@ -25,7 +27,7 @@ let createdSchema: GraphQLSchema;
  */
 beforeAll(() => {
   return Promise.all([
-    openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema }) => {
+    openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema }) => {
       createdSchema = schema;
     }),
     startServer(PORT),
@@ -131,6 +133,7 @@ test('Get project using API key passed as option - viewer is disabled', async ()
     headers: {
       access_token: 'abcdef',
     },
+    fetch,
   });
   const query = `{
     projectWithId (projectId: 1) {
@@ -156,6 +159,7 @@ test('Get project using API key passed in the requestOptions - viewer is disable
         access_token: 'abcdef',
       },
     },
+    fetch,
   });
   const query = `{
     projectWithId (projectId: 1) {
@@ -277,6 +281,7 @@ test('Get project using API key 3 passed as option - viewer is disabled', async 
     headers: {
       cookie: 'access_token=abcdef',
     },
+    fetch,
   });
   const query = `{
     projectWithId (projectId: 1) {
@@ -302,6 +307,7 @@ test('Get project using API key 3 passed in the requestOptions - viewer is disab
         cookie: 'access_token=abcdef',
       },
     },
+    fetch,
   });
   const query = `{
     projectWithId (projectId: 1) {
@@ -460,6 +466,7 @@ test('Extract token from context', () => {
     .createGraphQLSchema(oas, {
       tokenJSONpath: '$.user.token',
       viewer: true,
+      fetch,
     })
     .then(({ schema }) => {
       return graphql(schema, query, null, { user: { token: 'abcdef' } }).then(result => {
