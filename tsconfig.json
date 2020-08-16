@@ -5,7 +5,7 @@
     "outDir": "dist",
     "baseUrl": ".",
 
-    "target": "esnext",
+    "target": "es2018",
     "module": "esnext",
     "moduleResolution": "node",
     "lib": ["esnext"],
