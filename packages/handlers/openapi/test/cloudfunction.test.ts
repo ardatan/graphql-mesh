@@ -9,13 +9,14 @@
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { GraphQLSchema, parse, validate } from 'graphql';
+import fetch from 'cross-fetch';
 
 const oas = require('./fixtures/cloudfunction.json');
 
 let createdSchema: GraphQLSchema;
 
 beforeAll(async () => {
-  const { schema } = await openAPIToGraphQL.createGraphQLSchema(oas);
+  const { schema } = await openAPIToGraphQL.createGraphQLSchema(oas, { fetch });
   createdSchema = schema;
 });
 

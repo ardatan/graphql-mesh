@@ -29,8 +29,13 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
     let writeCache: () => Promise<void>;
 
     const appendPlugins = await Promise.all<Plugin>(
-      (config.plugins || []).map(pluginName => loadFromModuleExportExpression(pluginName, 'default'))
+      (config.appendPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
     );
+    const skipPlugins = await Promise.all<Plugin>(
+      (config.skipPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
+    );
+    const options =
+      typeof config.options === 'string' ? await loadFromModuleExportExpression(config.options) : config.options;
 
     const builder = await getPostGraphileBuilder(pgPool, config.schemaName || 'public', {
       dynamicJson: true,
@@ -42,6 +47,8 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
         writeCache = fn;
       },
       appendPlugins,
+      skipPlugins,
+      ...options,
     });
 
     const graphileSchema = builder.buildSchema();

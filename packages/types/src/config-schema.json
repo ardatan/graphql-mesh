@@ -8,7 +8,7 @@
         "file": {
           "$ref": "#/definitions/FileCacheConfig"
         },
-        "inMemoryLRU": {
+        "inmemoryLRU": {
           "$ref": "#/definitions/InMemoryLRUConfig"
         },
         "localforage": {
@@ -899,13 +899,33 @@
           "type": "boolean",
           "description": "Cache Introspection"
         },
-        "plugins": {
+        "appendPlugins": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "additionalItems": false,
-          "description": "Extra Postgraphile Plugins"
+          "description": "Extra Postgraphile Plugins to append"
+        },
+        "skipPlugins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Postgraphile Plugins to skip (e.g. \"graphile-build#NodePlugin\")"
+        },
+        "options": {
+          "description": "Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. \"./my-config#options\"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information. (Any of: JSON, String)",
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       },
       "required": ["connectionString"]

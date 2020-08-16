@@ -518,9 +518,21 @@ export interface PostGraphileHandler {
    */
   cacheIntrospection?: boolean;
   /**
-   * Extra Postgraphile Plugins
+   * Extra Postgraphile Plugins to append
    */
-  plugins?: string[];
+  appendPlugins?: string[];
+  /**
+   * Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")
+   */
+  skipPlugins?: string[];
+  /**
+   * Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information. (Any of: JSON, String)
+   */
+  options?:
+    | {
+        [k: string]: any;
+      }
+    | string;
 }
 /**
  * Connection Pool settings
@@ -933,7 +945,7 @@ export interface AdditionalResolverObject {
  */
 export interface Cache {
   file?: FileCacheConfig;
-  inMemoryLRU?: InMemoryLRUConfig;
+  inmemoryLRU?: InMemoryLRUConfig;
   localforage?: LocalforageConfig;
   redis?: RedisConfig;
 }

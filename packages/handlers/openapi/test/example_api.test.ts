@@ -14,6 +14,7 @@ import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
 import { startServer, stopServer } from './example_api_server';
 import { GraphQLOperationType } from '../src/openapi-to-graphql/types/graphql';
+import fetch from 'cross-fetch';
 
 const oas = require('./fixtures/example_oas.json');
 const PORT = 3002;
@@ -30,6 +31,7 @@ beforeAll(() => {
     openAPIToGraphQL
       .createGraphQLSchema(oas, {
         fillEmptyResponses: true,
+        fetch,
       })
       .then(({ schema, report }) => {
         createdSchema = schema;
@@ -943,6 +945,7 @@ test('Define header and query options', () => {
     qs: {
       limit: '30',
     },
+    fetch,
   };
 
   const query = `{
@@ -1219,6 +1222,7 @@ test('Error contains extension', () => {
 test('Option provideErrorExtensions should prevent error extensions from being created', () => {
   const options: Options = {
     provideErrorExtensions: false,
+    fetch,
   };
 
   const query = `query {
@@ -1266,6 +1270,7 @@ test('Option customResolver', () => {
         },
       },
     },
+    fetch,
   };
 
   const query = `query {
@@ -1304,6 +1309,7 @@ test('Option customResolver with links', () => {
         },
       },
     },
+    fetch,
   };
 
   const query = `query {
@@ -1357,6 +1363,7 @@ test('Option customResolver using resolver arguments', () => {
         },
       },
     },
+    fetch,
   };
 
   const query = `query {
@@ -1395,6 +1402,7 @@ test('Option customResolver using resolver arguments that are sanitized', () => 
         },
       },
     },
+    fetch,
   };
 
   const query = `{
@@ -1422,6 +1430,7 @@ test('Option customResolver using resolver arguments that are sanitized', () => 
 test('Option addLimitArgument', () => {
   const options: Options = {
     addLimitArgument: true,
+    fetch,
   };
 
   const query = `query {
@@ -1647,6 +1656,7 @@ test('Generate "Equivalent to..." messages', () => {
   const options: Options = {
     // Used to simplify test. Otherwise viewers will polute query/mutation fields.
     viewer: false,
+    fetch,
   };
 
   // Check if query/mutation fields have the message
@@ -1737,6 +1747,7 @@ test('Withhold "Equivalent to..." messages', () => {
     // Used to simplify test. Otherwise viewers will polute query/mutation fields.
     viewer: false,
     equivalentToMessages: false,
+    fetch,
   };
 
   // Check query/mutation field descriptions
@@ -1844,6 +1855,7 @@ test('UUID format becomes GraphQL ID type', () => {
 test('Option idFormats', () => {
   const options: Options = {
     idFormats: ['specialIdFormat'],
+    fetch,
   };
 
   // Check query/mutation field descriptions
@@ -1937,6 +1949,7 @@ test('Option selectQueryOrMutationField', () => {
         },
       },
     },
+    fetch,
   };
 
   // The users (now named getUserByUsername) field should exist as a Mutation field
@@ -1972,6 +1985,7 @@ test('Header arguments are not created when they are provided through headers op
       snack_type: 'chips',
       snack_size: 'large',
     },
+    fetch,
   };
 
   const query = `{
@@ -2013,6 +2027,7 @@ test('Header arguments are not created when they are provided through requestOpt
         snack_size: 'large',
       },
     },
+    fetch,
   };
 
   const query = `{
@@ -2051,6 +2066,7 @@ test('Query string arguments are not created when they are provided through qs o
     qs: {
       limit: '10',
     },
+    fetch,
   };
 
   const query = `{
@@ -2123,6 +2139,7 @@ test('Option genericPayloadArgName', () => {
 
   const options: Options = {
     genericPayloadArgName: true,
+    fetch,
   };
 
   // The postUser field should now have a requestPody argument
@@ -2166,7 +2183,7 @@ test('Non-nullable properties from nested allOf', () => {
     }
   }`;
 
-  return openAPIToGraphQL.createGraphQLSchema(oas).then(({ schema }) => {
+  return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema }) => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
