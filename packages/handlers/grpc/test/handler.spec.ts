@@ -4,6 +4,7 @@ import { GraphQLSchema } from 'graphql';
 import handler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { EventEmitter } from 'events';
+import { validateSchema } from 'graphql';
 import { Hooks } from '@graphql-mesh/types';
 
 describe.each<[string, string, string]>([
@@ -29,5 +30,6 @@ describe.each<[string, string, string]>([
     };
     const { schema } = await handler.getMeshSource({ name: Date.now().toString(), config, cache, hooks });
     expect(schema).toBeInstanceOf(GraphQLSchema);
+    expect(validateSchema(schema)).toHaveLength(0);
   });
 });

@@ -135,7 +135,9 @@ export async function resolveCache(
 
     return new Cache(config);
   }
-  return undefined;
+  const InMemoryLRUCache = await import('@graphql-mesh/cache-inmemory-lru').then(m => m.default);
+  const cache = new InMemoryLRUCache();
+  return cache;
 }
 
 export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], importFn: ImportFn): Promise<MergerFn> {

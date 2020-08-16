@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-inmemory-lru
 
+## 0.2.18
+
+### Patch Changes
+
+- f650cd2f: fix(cache) handle default cache as inmemory-lru
+
 ## 0.2.17
 
 ### Patch Changes

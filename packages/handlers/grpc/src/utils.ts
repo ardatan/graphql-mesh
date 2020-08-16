@@ -118,7 +118,7 @@ export function createFieldsType(typeName: string): InputOutputTypes {
   };
 }
 
-async function addInputOutputFields(
+export async function addInputOutputFields(
   schemaComposer: SchemaComposer<unknown>,
   inputTC: InputTypeComposer,
   outputTC: ObjectTypeComposer,
@@ -128,7 +128,7 @@ async function addInputOutputFields(
   packageName: string
 ): Promise<void> {
   const fieldKeys = Object.keys(fields);
-  if (!fields.length) {
+  if (!fieldKeys.length) {
     // This is a empty proto type
     inputTC.addFields({
       _: {
