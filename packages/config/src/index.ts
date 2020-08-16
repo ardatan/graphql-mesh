@@ -1,5 +1,5 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { MeshResolvedSource, ResolvedTransform } from './types';
+import { MeshResolvedSource, ResolvedTransform } from '@graphql-mesh/runtime';
 import {
   getHandler,
   getPackage,

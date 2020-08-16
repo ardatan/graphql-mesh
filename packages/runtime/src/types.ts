@@ -6,6 +6,7 @@ import {
   MergerFn,
   MeshTransformLibrary,
   RawSourceOutput,
+  GraphQLOperation,
 } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
@@ -33,8 +34,6 @@ export type MeshResolvedSource<THandlerName extends keyof YamlConfig.Handler = k
   handlerConfig: YamlConfig.Handler[THandlerName];
   transforms?: ResolvedTransform[];
 };
-
-export type GraphQLOperation = DocumentNode | string;
 
 export type ExecuteMeshFn<TData = any, TVariables = any> = (
   document: GraphQLOperation,
@@ -81,5 +80,3 @@ export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
   [key: string]: APIContext;
 };
-
-export type ImportFn = (moduleId: string) => Promise<any>;

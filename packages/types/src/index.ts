@@ -90,3 +90,7 @@ export type RawSourceOutput = {
   contextVariables: (keyof any)[];
   handler: MeshHandlerLibrary;
 };
+
+export type GraphQLOperation = DocumentNode | string;
+
+export type ImportFn = (moduleId: string) => Promise<any>;

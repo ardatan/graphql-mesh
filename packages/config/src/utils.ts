@@ -1,6 +1,5 @@
-import { GraphQLOperation, ImportFn } from './types';
-import { DocumentNode, parse } from 'graphql';
-import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn } from '@graphql-mesh/types';
+import { parse } from 'graphql';
+import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn, ImportFn } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
@@ -117,10 +116,6 @@ export async function resolveAdditionalResolvers(
   return mergeResolvers(loadedResolvers);
 }
 
-export function ensureDocumentNode(document: GraphQLOperation): DocumentNode {
-  return typeof document === 'string' ? parse(document) : document;
-}
-
 export async function resolveCache(
   cacheConfig: YamlConfig.Config['cache'],
   importFn: ImportFn
@@ -141,6 +136,10 @@ export async function resolveCache(
 }
 
 export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], importFn: ImportFn): Promise<MergerFn> {
-  const pkg = await getPackage<any>(mergerConfig || 'stitching', 'merger', importFn);
-  return pkg.default || pkg;
+  if (mergerConfig) {
+    const pkg = await getPackage<any>(mergerConfig, 'merger', importFn);
+    return pkg.default || pkg;
+  }
+  const StitchingMerger = await import('@graphql-mesh/merger-stitching').then(m => m.default);
+  return StitchingMerger;
 }

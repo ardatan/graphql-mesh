@@ -1,5 +1,6 @@
 import { getSdk } from './sdk.generated';
-import { getMesh, findAndParseConfig } from '@graphql-mesh/runtime';
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { getMesh } from '@graphql-mesh/runtime';
 
 async function testSdk(city: string) {
   console.log(`Loading Mesh config...`);

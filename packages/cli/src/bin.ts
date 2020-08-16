@@ -1,4 +1,5 @@
-import { findAndParseConfig, getMesh } from '@graphql-mesh/runtime';
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { getMesh } from '@graphql-mesh/runtime';
 import * as yargs from 'yargs';
 import { createLogger, format, transports } from 'winston';
 import { generateTsTypes } from './commands/typescript';
