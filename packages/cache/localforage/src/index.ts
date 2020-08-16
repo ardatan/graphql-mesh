@@ -5,23 +5,33 @@ export default class LocalforageCache<V = string> implements KeyValueCache<V> {
   constructor(config: YamlConfig.LocalforageConfig) {
     const runtimeConfig = {
       ...config,
-      driver: localforage[config.driver],
+      driver: [
+        ...config.driver.map(driverName => localforage[driverName]),
+        localforage.INDEXEDDB,
+        localforage.WEBSQL,
+        localforage.LOCALSTORAGE,
+      ],
     };
     localforage.config(runtimeConfig);
   }
 
-  get(key: string) {
+  async get(key: string) {
+    const expiresAt = await localforage.getItem<number>(`${key}.expiresAt`);
+    if (expiresAt && Date.now() > expiresAt) {
+      await localforage.removeItem(key);
+    }
     return localforage.getItem<V>(key.toString());
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
-    await localforage.setItem<V>(key, value);
+    const jobs: Promise<any>[] = [localforage.setItem<V>(key, value)];
     if (options?.ttl) {
-      setTimeout(() => this.delete(key), options.ttl * 1000);
+      jobs.push(localforage.setItem(`${key}.expiresAt`, Date.now() + options.ttl * 1000));
     }
+    await Promise.all(jobs);
   }
 
-  async delete(key: string) {
-    await localforage.removeItem(key);
+  delete(key: string) {
+    return localforage.removeItem(key);
   }
 }
