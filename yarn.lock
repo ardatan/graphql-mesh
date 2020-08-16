@@ -1324,30 +1324,29 @@
     "@manypkg/get-packages" "^1.0.1"
     semver "^5.4.1"
 
-"@changesets/cli@^2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@changesets/cli/-/cli-2.10.0.tgz#353322d90a6ee3bca99244af641b936cda524cba"
-  integrity sha512-HVgfZrFlUbk34y+uYhgYnQsFRqjDDSxdhhZDQYtdMPprhXOmrCAih8frjSJl73sjU4s2TAlXb+d3/ZgTFeki9w==
+"@changesets/cli@2.9.2":
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/@changesets/cli/-/cli-2.9.2.tgz#895343c5e61ca6072d3faa3798be703ea230e518"
+  integrity sha512-1L9391G4YlofC1UbfwmBrsefwC03mJHK5Cn8oSozhQJMbRlCJLBJiOn5PHFruVMFcvACGER3R+2Yv62pGKneDw==
   dependencies:
-    "@babel/runtime" "^7.10.4"
+    "@babel/runtime" "^7.4.4"
     "@changesets/apply-release-plan" "^4.0.0"
     "@changesets/assemble-release-plan" "^3.0.0"
     "@changesets/config" "^1.3.0"
     "@changesets/errors" "^0.1.4"
     "@changesets/get-dependents-graph" "^1.1.3"
     "@changesets/get-release-plan" "^2.0.0"
-    "@changesets/git" "^1.0.6"
+    "@changesets/git" "^1.0.5"
     "@changesets/logger" "^0.0.5"
     "@changesets/pre" "^1.0.4"
     "@changesets/read" "^0.4.6"
-    "@changesets/types" "^3.1.1"
+    "@changesets/types" "^3.1.0"
     "@changesets/write" "^0.1.3"
     "@manypkg/get-packages" "^1.0.1"
     "@types/semver" "^6.0.0"
     boxen "^1.3.0"
     chalk "^2.1.0"
     enquirer "^2.3.0"
-    external-editor "^3.1.0"
     fs-extra "^7.0.1"
     human-id "^1.0.2"
     is-ci "^2.0.0"
@@ -1408,7 +1407,7 @@
   resolved "https://registry.npmjs.org/@changesets/get-version-range-type/-/get-version-range-type-0.3.2.tgz#8131a99035edd11aa7a44c341cbb05e668618c67"
   integrity sha512-SVqwYs5pULYjYT4op21F2pVbcrca4qA/bAA3FmFXKMN7Y+HcO8sbZUTx3TAy2VXulP2FACd1aC7f2nTuqSPbqg==
 
-"@changesets/git@^1.0.5", "@changesets/git@^1.0.6":
+"@changesets/git@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@changesets/git/-/git-1.0.6.tgz#057e627e5d3fcb74bf6c18d7284e130ba5a7632e"
   integrity sha512-e0M06XuME3W5lGhz+CO0vLc60u+hLk/pYjOx/6GXEWuQrwtGgeycFIfRgRt8qTs664o1oKtVHBbd7ItpoWgFfA==
@@ -7725,7 +7724,7 @@ extendable-error@^0.1.5:
   resolved "https://registry.yarnpkg.com/extendable-error/-/extendable-error-0.1.5.tgz#122308a7097bc89a263b2c4fbf089c78140e3b6d"
   integrity sha1-EiMIpwl7yJomOyxPvwiceBQOO20=
 
-external-editor@^3.0.3, external-editor@^3.1.0:
+external-editor@^3.0.3:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/external-editor/-/external-editor-3.1.0.tgz#cb03f740befae03ea4d283caed2741a83f335495"
   integrity sha512-hMQ4CX1p1izmuLYyZqLMO/qGNw10wSv9QDCPfzXfyFrOaCSSoRfqE1Kf1s5an66J5JZC62NewG+mK49jOCtQew==

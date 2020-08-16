@@ -292,9 +292,14 @@ type PostGraphileHandler @md {
   pool: PostGraphilePool
   """Cache Introspection"""
   cacheIntrospection: Boolean
-  """Extra Postgraphile Plugins"""
-  plugins: [String]
+  """Extra Postgraphile Plugins to append"""
+  appendPlugins: [String]
+  """Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")"""
+  skipPlugins: [String]
+  """Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information."""
+  options: PostgraphileExternalOptions
 }
+union PostgraphileExternalOptions = JSON | String
 type PostGraphilePool {
   user: String
   password: String
