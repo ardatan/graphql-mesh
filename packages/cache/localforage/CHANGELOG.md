@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-localforage
 
+## 0.3.1
+
+### Patch Changes
+
+- dde7878b: fix(runtime): handle empty arrays
+- Updated dependencies [dde7878b]
+  - @graphql-mesh/types@0.5.1
+
 ## 0.3.0
 
 ### Minor Changes

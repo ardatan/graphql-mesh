@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.5.1
+
+### Patch Changes
+
+- dde7878b: fix(runtime): handle empty arrays
+
 ## 0.5.0
 
 ### Minor Changes
