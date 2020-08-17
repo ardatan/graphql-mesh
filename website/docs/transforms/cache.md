@@ -25,7 +25,7 @@ yarn add @graphql-mesh/transform-cache
 To cache some of your queries, apply the following transform rule. This following example will cache all `Query.*` in your schema, forever:
 
 ```yml
-transform:
+transforms:
   - cache:
       - field: Query.*
 ```
@@ -33,7 +33,7 @@ transform:
 You can also apply it to a specific field, or multiple fields:
 
 ```yml
-transform:
+transforms:
   - cache:
       - field: Query.users
   - cache:
@@ -49,7 +49,7 @@ You can customize the `cacheKey` according to your needs, and you can use custom
 The following example creates a `cacheKey` by an GraphQL query argument called `userId`, per day:
 
 ```yml
-transform:
+transforms:
   - cache:
       - field: Query.user
         cacheKey: user-{args.id}-{yyyy-mm-dd | date}
@@ -62,7 +62,7 @@ transform:
 Invalidation by TTL is the simplest way to deal with your cache. You can specify any time (in seconds) to keep your cache. 
 
 ```yml
-transform:
+transforms:
   - cache:
       - field: Query.*
         invalidate:
@@ -101,7 +101,7 @@ input UpdateUserInput {
 You can set a simple caching, based on a user id: 
 
 ```yml
-transform:
+transforms:
   - cache:
       - field: Query.user
         cacheKey: user-{args.id}
@@ -110,7 +110,7 @@ transform:
 And you can add operation-based invalidation, so when `updateUser` is done successfully, it will invalidate the matching cache record to make sure the data will be fetched next time from the remote source:
 
 ```yml
-transform:
+transforms:
   - cache:
       - field: Query.user
         cacheKey: user-{args.id}
