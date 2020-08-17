@@ -95,7 +95,7 @@ export async function getMesh(
     hooks,
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
-    transforms: options.transforms.map(
+    transforms: options.transforms?.map(
       ({ transformLibrary: TransformCtor, config }) =>
         new TransformCtor({
           config,

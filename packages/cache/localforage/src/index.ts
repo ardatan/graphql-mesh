@@ -6,7 +6,7 @@ export default class LocalforageCache<V = string> implements KeyValueCache<V> {
     const runtimeConfig = {
       ...config,
       driver: [
-        ...config.driver.map(driverName => localforage[driverName]),
+        ...config.driver?.map(driverName => localforage[driverName]),
         localforage.INDEXEDDB,
         localforage.WEBSQL,
         localforage.LOCALSTORAGE,

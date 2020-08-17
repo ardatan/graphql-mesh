@@ -75,7 +75,7 @@ export type MergerFn = (options: {
   hooks: Hooks;
   typeDefs?: DocumentNode[];
   resolvers?: IResolvers;
-  transforms: Transform[];
+  transforms?: Transform[];
   executor?: Executor;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 
