@@ -2110,13 +2110,13 @@
     is-promise "4.0.0"
     tslib "~2.0.0"
 
-"@graphql-tools/graphql-file-loader@6.0.17":
-  version "6.0.17"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.0.17.tgz#0e6a013edbd42187450b29a72edc797ec790a8e5"
-  integrity sha512-eyQ7wS7uvQUW3lJgRhPIjALivN5VTORdKEzMTArVRhDBxRBsd9VDstn4IumuM8golTTKN+8DqQiNztfI/U0IMw==
+"@graphql-tools/graphql-file-loader@6.0.18":
+  version "6.0.18"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.0.18.tgz#f2541c87dd8d41d8e621dd8ae60d2e21733a99b8"
+  integrity sha512-9EduQkDbLf8aDEalIZFCD3W+WKnkEihBPMq28J0rrnkpxAqSke631AA8wNsXurVlld4KMuPCSTDhttZMP27frA==
   dependencies:
-    "@graphql-tools/import" "6.0.17"
-    "@graphql-tools/utils" "6.0.17"
+    "@graphql-tools/import" "6.0.18"
+    "@graphql-tools/utils" "6.0.18"
     fs-extra "9.0.1"
     tslib "~2.0.0"
 
@@ -2132,10 +2132,10 @@
   optionalDependencies:
     vue-template-compiler "^2.6.11"
 
-"@graphql-tools/import@6.0.17":
-  version "6.0.17"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/import/-/import-6.0.17.tgz#4a9d767325bf967d87be4583edd58ee6b4f249cd"
-  integrity sha512-FyqoWLt/T8UMrCZ7lIJVOBCDhtt+T2HxlOVK3j9FBlA/NtF/AM24NWrAnwMCDb4eahMZFIjlzuPlIIRO5wUlSQ==
+"@graphql-tools/import@6.0.18":
+  version "6.0.18"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/import/-/import-6.0.18.tgz#37d434ca2130ee3360446ce3cb0e35d9dc62f68c"
+  integrity sha512-qGbVJOlC6dy+eu0A+lg5dFAsqYOF4uLxIWbvdGHj+4bkevkfVDuXvd5dvV3PY1f9GRS6c5pCGqOY9MsZmBTGog==
   dependencies:
     fs-extra "9.0.1"
     resolve-from "5.0.0"
