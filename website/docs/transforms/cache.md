@@ -114,7 +114,7 @@ transforms:
   - cache:
       - field: Query.user
         cacheKey: user-{args.id}
-        invalidates:
+        invalidate:
           effectingOperations:
             - operation: Mutation.updateUser
               matchKey: {args.userIdToUpdate}
