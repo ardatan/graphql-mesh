@@ -117,7 +117,7 @@ transforms:
         invalidate:
           effectingOperations:
             - operation: Mutation.updateUser
-              matchKey: {args.userIdToUpdate}
+              matchKey: user-{args.userIdToUpdate}
 ```
 
 This way, when someone uses `updateUser` with a specific user id, it will update the data record, and then invalidate the cache automatically.
