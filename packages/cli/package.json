@@ -27,7 +27,7 @@
   "dependencies": {
     "@graphql-codegen/core": "1.17.6",
     "@graphql-codegen/typescript": "1.17.7",
-    "@graphql-codegen/typescript-generic-sdk": "1.17.7",
+    "@graphql-codegen/typescript-generic-sdk": "1.17.8",
     "@graphql-codegen/typescript-operations": "1.17.6",
     "@graphql-mesh/config": "0.4.1",
     "@graphql-codegen/typescript-resolvers": "1.17.8",
