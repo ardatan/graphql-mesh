@@ -17,7 +17,7 @@
     "@graphql-mesh/types": "0.5.1",
     "@graphql-mesh/utils": "0.3.0",
     "graphql-transform-federation": "2.1.0",
-    "lodash": "4.17.19"
+    "lodash": "4.17.20"
   },
   "publishConfig": {
     "access": "public",

@@ -25,7 +25,7 @@
     "@graphql-tools/load": "6.0.18",
     "@graphql-tools/graphql-file-loader": "6.0.18",
     "param-case": "3.0.3",
-    "lodash": "4.17.19"
+    "lodash": "4.17.20"
   },
   "devDependencies": {
     "@types/ajv": "1.0.0"
