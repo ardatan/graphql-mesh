@@ -6,3 +6,6 @@ sources:
         baseUrl: https://api.stripe.com
         operationHeaders:
           Authorization: 'Bearer ${STRIPE_TOKEN}'
+
+serve:
+  exampleQuery: get-customers.query.graphql

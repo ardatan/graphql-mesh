@@ -6,6 +6,7 @@
  */
 
 export interface Config {
+  serve?: ServeConfig;
   require?: string[];
   /**
    * Defines the list of your external data sources for your API mesh
@@ -28,6 +29,30 @@ export interface Config {
    * Merge method
    */
   merger?: string;
+}
+export interface ServeConfig {
+  /**
+   * Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)
+   */
+  fork?: number | boolean;
+  /**
+   * TCP Port to listen (default: `3000`)
+   */
+  port?: number;
+  /**
+   * Provide an example query or queries for GraphQL Playground
+   */
+  exampleQuery?: string;
+  cors?: CorsConfig;
+}
+export interface CorsConfig {
+  allowedOrigins?: string[];
+  allowedHeaders?: string[];
+  exposedHeaders?: string[];
+  credentials?: boolean;
+  maxAge?: number;
+  preflightContinue?: boolean;
+  optionsSuccessStatus?: number;
 }
 export interface Source {
   /**

@@ -44,3 +44,6 @@ transforms:
           faker: '{{name.jobTitle}}'
         - apply: Company.name
           faker: '{{company.companyName}}'
+
+serve:
+  exampleQuery: example-query.graphql

@@ -116,6 +116,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     merger,
     mergerType: config.merger,
     hooks,
+    config,
   };
 }
 

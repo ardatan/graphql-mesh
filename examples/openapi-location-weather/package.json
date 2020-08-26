@@ -9,8 +9,8 @@
     "prestart": "yarn mesh:ts",
     "start": "ts-node src/index.ts",
     "premesh:serve": "yarn mesh:ts",
-    "mesh:serve": "graphql-mesh serve",
-    "mesh:ts": "graphql-mesh typescript --output ./src/mesh/__generated__/types.ts"
+    "mesh:serve": "mesh serve",
+    "mesh:ts": "mesh typescript --output ./src/mesh/__generated__/types.ts"
   },
   "devDependencies": {
     "@types/express": "4.17.7",

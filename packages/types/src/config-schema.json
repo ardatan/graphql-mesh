@@ -87,6 +87,156 @@
         }
       }
     },
+    "ServeConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ServeConfig",
+      "properties": {
+        "fork": {
+          "description": "Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "port": {
+          "type": "integer",
+          "description": "TCP Port to listen (default: `3000`)"
+        },
+        "exampleQuery": {
+          "type": "string",
+          "description": "Provide an example query or queries for GraphQL Playground"
+        },
+        "cors": {
+          "$ref": "#/definitions/CorsConfig"
+        }
+      }
+    },
+    "CorsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CorsConfig",
+      "properties": {
+        "allowedOrigins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "allowedHeaders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "exposedHeaders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "credentials": {
+          "type": "boolean"
+        },
+        "maxAge": {
+          "type": "integer"
+        },
+        "preflightContinue": {
+          "type": "boolean"
+        },
+        "optionsSuccessStatus": {
+          "type": "integer"
+        }
+      }
+    },
+    "Source": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Source",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
+        },
+        "handler": {
+          "$ref": "#/definitions/Handler",
+          "description": "Point to the handler you wish to use, it can either be a predefined handler, or a custom"
+        },
+        "transforms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Transform"
+          },
+          "additionalItems": false,
+          "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
+        }
+      },
+      "required": ["name", "handler"]
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Transform",
+      "properties": {
+        "cache": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CacheTransformConfig"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply caching for your data sources"
+        },
+        "federation": {
+          "$ref": "#/definitions/FederationTransform"
+        },
+        "filterSchema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "mock": {
+          "$ref": "#/definitions/MockingConfig",
+          "description": "Mock configuration for your source"
+        },
+        "namingConvention": {
+          "$ref": "#/definitions/NamingConventionTransformConfig",
+          "description": "Transformer to apply naming convention to GraphQL Types"
+        },
+        "prefix": {
+          "$ref": "#/definitions/PrefixTransformConfig",
+          "description": "Prefix transform"
+        },
+        "rename": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply rename of a GraphQL type"
+        },
+        "resolversComposition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResolversCompositionTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply composition to resolvers"
+        },
+        "snapshot": {
+          "$ref": "#/definitions/SnapshotTransformConfig",
+          "description": "Configuration for Snapshot extension"
+        }
+      }
+    },
     "Handler": {
       "additionalProperties": false,
       "type": "object",
@@ -139,6 +289,46 @@
           "description": "Handler for SQLite database, based on `tuql`"
         }
       }
+    },
+    "AdditionalResolverObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "AdditionalResolverObject",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "requiredSelectionSet": {
+          "type": "string"
+        },
+        "targetSource": {
+          "type": "string"
+        },
+        "targetMethod": {
+          "type": "string"
+        },
+        "args": {
+          "type": "object",
+          "properties": {}
+        },
+        "returnData": {
+          "type": "string"
+        },
+        "resultSelectedFields": {
+          "type": "object",
+          "properties": {}
+        },
+        "resultSelectionSet": {
+          "type": "string"
+        },
+        "resultDepth": {
+          "type": "integer"
+        }
+      },
+      "required": ["type", "field", "targetSource", "targetMethod", "args"]
     },
     "GraphQLHandler": {
       "additionalProperties": false,
@@ -960,127 +1150,6 @@
         }
       }
     },
-    "Source": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Source",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name you wish to set to your remote API, this will be used for building the GraphQL context"
-        },
-        "handler": {
-          "$ref": "#/definitions/Handler",
-          "description": "Point to the handler you wish to use, it can either be a predefined handler, or a custom"
-        },
-        "transforms": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Transform"
-          },
-          "additionalItems": false,
-          "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
-        }
-      },
-      "required": ["name", "handler"]
-    },
-    "Transform": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Transform",
-      "properties": {
-        "cache": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/CacheTransformConfig"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply caching for your data sources"
-        },
-        "federation": {
-          "$ref": "#/definitions/FederationTransform"
-        },
-        "filterSchema": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "mock": {
-          "$ref": "#/definitions/MockingConfig",
-          "description": "Mock configuration for your source"
-        },
-        "namingConvention": {
-          "$ref": "#/definitions/NamingConventionTransformConfig",
-          "description": "Transformer to apply naming convention to GraphQL Types"
-        },
-        "prefix": {
-          "$ref": "#/definitions/PrefixTransformConfig",
-          "description": "Prefix transform"
-        },
-        "rename": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RenameTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply rename of a GraphQL type"
-        },
-        "resolversComposition": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ResolversCompositionTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply composition to resolvers"
-        },
-        "snapshot": {
-          "$ref": "#/definitions/SnapshotTransformConfig",
-          "description": "Configuration for Snapshot extension"
-        }
-      }
-    },
-    "AdditionalResolverObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "AdditionalResolverObject",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "field": {
-          "type": "string"
-        },
-        "requiredSelectionSet": {
-          "type": "string"
-        },
-        "targetSource": {
-          "type": "string"
-        },
-        "targetMethod": {
-          "type": "string"
-        },
-        "args": {
-          "type": "object",
-          "properties": {}
-        },
-        "returnData": {
-          "type": "string"
-        },
-        "resultSelectedFields": {
-          "type": "object",
-          "properties": {}
-        },
-        "resultSelectionSet": {
-          "type": "string"
-        },
-        "resultDepth": {
-          "type": "integer"
-        }
-      },
-      "required": ["type", "field", "targetSource", "targetMethod", "args"]
-    },
     "SoapHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -1592,6 +1661,9 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "required": ["sources"],
   "properties": {
+    "serve": {
+      "$ref": "#/definitions/ServeConfig"
+    },
     "require": {
       "type": "array",
       "items": {

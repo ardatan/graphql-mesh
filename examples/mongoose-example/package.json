@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "graphql-mesh serve"
+    "start": "mesh serve"
   },
   "devDependencies": {
     "@types/mongoose": "5.7.36",

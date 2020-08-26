@@ -6,3 +6,6 @@ sources:
         port: 4497
         user: rfamro
         database: Rfam
+
+serve:
+  exampleQuery: example-query.graphql

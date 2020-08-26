@@ -10,3 +10,6 @@ additionalTypeDefs: |
       }
 additionalResolvers:
   - ./src/mesh/additional-resolvers.js
+
+serve:
+  exampleQuery: example-queries/*.graphql

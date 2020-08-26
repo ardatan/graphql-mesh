@@ -9,19 +9,19 @@ import { playground } from './playground';
 import { graphqlHTTP } from 'express-graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { SubscriptionServer, OperationMessagePayload, ConnectionContext } from 'subscriptions-transport-ws';
+import { YamlConfig } from '@graphql-mesh/types';
+import cors from 'cors';
 
 export async function serveMesh(
   logger: Logger,
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
-  fork?: string | number,
-  port: string | number = 4000,
-  exampleQuery?: string
+  { fork, exampleQuery, port, cors: corsConfig }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const graphqlPath = '/graphql';
   if (isMaster && fork) {
-    fork = fork > 1 ? fork : cpus().length;
-    for (let i = 0; i < fork; i++) {
+    const forkNum = fork > 1 ? fork : cpus().length;
+    for (let i = 0; i < forkNum; i++) {
       clusterFork();
     }
     logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:${port}${graphqlPath} in ${fork} forks`);
@@ -29,6 +29,10 @@ export async function serveMesh(
     const app = express();
     app.set('trust proxy', 'loopback');
     const httpServer = createServer(app);
+
+    if (corsConfig) {
+      app.use(cors(corsConfig));
+    }
 
     if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
       const playgroundMiddleware = playground(exampleQuery, graphqlPath);
