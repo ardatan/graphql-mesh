@@ -1835,14 +1835,14 @@
   resolved "https://registry.yarnpkg.com/@graphile/lru/-/lru-4.5.0.tgz#e8fe036d322dfe1715675aab171979981e28ac9e"
   integrity sha512-OoIgewLowjegJzz3tpcRE5LpQKqsap1ETFaZtC1r9p36h5ieUJnWTxCTpB7XIsU9muMTt7MMt8x0E5apS47QIQ==
 
-"@graphql-codegen/core@1.17.6":
-  version "1.17.6"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/core/-/core-1.17.6.tgz#8f3bd27223f47b455cdc455d768fdd6238a6199d"
-  integrity sha512-m9wWTIR5SucEtsxQZUu1UxCR+XgcGox6+5aplzOxF3q4SYVZqLRcMA3WrHkV/2s57jAYQvrHj+4l5XtY/ErCzw==
+"@graphql-codegen/core@1.17.8":
+  version "1.17.8"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/core/-/core-1.17.8.tgz#d70281bcf9f4b7b560ab5b16f7fc7a2853c49a8a"
+  integrity sha512-HUntoeLhLZf6wroD1HYLsniz51N3zW7cjgwojGKgbUsI6Oa8pGsh+kKaN9xtvlb/hIpsRJ00q9LbPVIM/kXQtQ==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.17.6"
-    "@graphql-tools/merge" "^6.0.0"
-    "@graphql-tools/utils" "^6.0.0"
+    "@graphql-codegen/plugin-helpers" "^1.17.8"
+    "@graphql-tools/merge" "^6.0.18"
+    "@graphql-tools/utils" "^6.0.18"
     tslib "~2.0.0"
 
 "@graphql-codegen/plugin-helpers@1.17.6":
@@ -2164,7 +2164,7 @@
     "@graphql-tools/utils" "6.0.17"
     tslib "~2.0.0"
 
-"@graphql-tools/merge@6.0.18", "@graphql-tools/merge@^6.0.0":
+"@graphql-tools/merge@6.0.18", "@graphql-tools/merge@^6.0.18":
   version "6.0.18"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-6.0.18.tgz#d105e16c6f5f874ddfdba3f3f4a2f676a6d2d04a"
   integrity sha512-XAFbqMyXsExnuzgr5+JQC8mxsYp0aGIR0m+GbleQDZSlqDOL2maF5xM3dGOOkguz0Paa7ei/5UfnMXyRU3cW/w==
