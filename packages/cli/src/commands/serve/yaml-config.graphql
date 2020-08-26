@@ -21,7 +21,7 @@ type ServeConfig @md {
 union Fork = Int | Boolean
 
 type CorsConfig {
-  allowedOrigins: [String]
+  origin: [String]
   allowedHeaders: [String]
   exposedHeaders: [String]
   credentials: Boolean

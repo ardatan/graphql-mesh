@@ -121,7 +121,7 @@
       "type": "object",
       "title": "CorsConfig",
       "properties": {
-        "allowedOrigins": {
+        "origin": {
           "type": "array",
           "items": {
             "type": "string"

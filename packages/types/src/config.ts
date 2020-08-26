@@ -46,7 +46,7 @@ export interface ServeConfig {
   cors?: CorsConfig;
 }
 export interface CorsConfig {
-  allowedOrigins?: string[];
+  origin?: string[];
   allowedHeaders?: string[];
   exposedHeaders?: string[];
   credentials?: boolean;
