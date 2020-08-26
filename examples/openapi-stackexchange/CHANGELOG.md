@@ -1,5 +1,18 @@
 # openapi-stackexchange
 
+## 0.5.0
+
+### Minor Changes
+
+- a76d74bb: feat(config): able to configure serve command in mesh config file
+
+### Patch Changes
+
+- Updated dependencies [5067ac73]
+- Updated dependencies [a76d74bb]
+  - @graphql-mesh/cli@0.4.0
+  - @graphql-mesh/openapi@0.4.2
+
 ## 0.4.2
 
 ### Patch Changes

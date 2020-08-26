@@ -1,5 +1,14 @@
 # @graphql-mesh/odata
 
+## 0.3.2
+
+### Patch Changes
+
+- a7334094: fix(odata): add \$count to odata query options
+- Updated dependencies [5067ac73]
+- Updated dependencies [a76d74bb]
+  - @graphql-mesh/types@0.6.0
+
 ## 0.3.1
 
 ### Patch Changes

@@ -1,5 +1,23 @@
 # postgres-geodb-example
 
+## 0.4.0
+
+### Minor Changes
+
+- a76d74bb: feat(config): able to configure serve command in mesh config file
+
+### Patch Changes
+
+- Updated dependencies [5067ac73]
+- Updated dependencies [a76d74bb]
+  - @graphql-mesh/cli@0.4.0
+  - @graphql-mesh/config@0.5.0
+  - @graphql-mesh/cache-file@0.3.2
+  - @graphql-mesh/graphql@0.3.2
+  - @graphql-mesh/postgraphile@0.4.2
+  - @graphql-mesh/runtime@0.3.2
+  - @graphql-mesh/transform-prefix@0.3.2
+
 ## 0.3.2
 
 ### Patch Changes

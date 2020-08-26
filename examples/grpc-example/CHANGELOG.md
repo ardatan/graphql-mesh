@@ -1,5 +1,19 @@
 # grpc-example
 
+## 0.4.0
+
+### Minor Changes
+
+- a76d74bb: feat(config): able to configure serve command in mesh config file
+
+### Patch Changes
+
+- Updated dependencies [5067ac73]
+- Updated dependencies [a76d74bb]
+  - @graphql-mesh/cli@0.4.0
+  - @graphql-mesh/grpc@0.3.2
+  - @graphql-mesh/transform-naming-convention@0.3.2
+
 ## 0.3.2
 
 ### Patch Changes
