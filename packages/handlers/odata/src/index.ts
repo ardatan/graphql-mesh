@@ -346,6 +346,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         description:
           'A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.',
       },
+      count: {
+        type: 'Boolean',
+      },
     };
 
     schemaComposer.createInputTC({
