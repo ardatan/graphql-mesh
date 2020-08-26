@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.4.0
+
+### Minor Changes
+
+- a76d74bb: feat(config): able to configure serve command in mesh config file
+
+### Patch Changes
+
+- 5067ac73: fix(serve): fix typo
+- Updated dependencies [a76d74bb]
+  - @graphql-mesh/config@0.5.0
+  - @graphql-mesh/runtime@0.3.2
+
 ## 0.3.2
 
 ### Patch Changes

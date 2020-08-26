@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.6.0
+
+### Minor Changes
+
+- a76d74bb: feat(config): able to configure serve command in mesh config file
+
+### Patch Changes
+
+- 5067ac73: fix(serve): fix typo
+
 ## 0.5.1
 
 ### Patch Changes
