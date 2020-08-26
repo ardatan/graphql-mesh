@@ -1,0 +1,31 @@
+type Query {
+  serve: ServeConfig
+}
+
+type ServeConfig @md {
+  """
+  Spawn multiple server instances as node clusters (default: `1`)
+  """
+  fork: Fork
+  """
+  TCP Port to listen (default: `3000`)
+  """
+  port: Int
+  """
+  Provide an example query or queries for GraphQL Playground
+  """
+  exampleQuery: String
+  cors: CorsConfig
+}
+
+union Fork = Int | Boolean
+
+type CorsConfig {
+  allowedOrigins: [String]
+  allowedHeaders: [String]
+  exposedHeaders: [String]
+  credentials: Boolean
+  maxAge: Int
+  preflightContinue: Boolean
+  optionsSuccessStatus: Int
+}

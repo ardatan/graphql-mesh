@@ -10,3 +10,6 @@ sources:
             - Query.*
             - Mutation.*
           outputDir: __snapshots__
+
+serve:
+  exampleQuery: list-of-languages-by-name.graphql

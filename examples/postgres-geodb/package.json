@@ -6,8 +6,8 @@
   "scripts": {
     "pretest-sdk": "yarn mesh:sdk",
     "test-sdk": "ts-node src/test-sdk.ts London",
-    "mesh:serve": "graphql-mesh serve",
-    "mesh:sdk": "graphql-mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
+    "mesh:serve": "mesh serve",
+    "mesh:sdk": "mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
     "start": "yarn mesh:serve"
   },
   "devDependencies": {

@@ -3,3 +3,6 @@ sources:
     handler:
       openapi:
         source: https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml
+
+serve:
+  exampleQuery: get-questions.query.graphql

@@ -5,3 +5,6 @@ sources:
         baseUrl: https://services.odata.org/TripPinRESTierService
         batch: multipart
         expandNavProps: true
+
+serve:
+  exampleQuery: example-query.graphql

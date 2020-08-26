@@ -31,3 +31,6 @@ sources:
     handler:
       graphql:
         endpoint: http://localhost:4004/graphql
+
+serve:
+  exampleQuery: example-query.graphql

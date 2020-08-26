@@ -40,3 +40,6 @@ additionalResolvers:
     args:
       country: '{root.countryRegion}'
   - ./src/query-additional-resolvers.js
+
+serve:
+  exampleQuery: example-queries/*.graphql

@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "grpc:start": "node index.js",
-    "mesh:start": "graphql-mesh serve --example-query \"example-queries/*.graphql\"",
+    "mesh:start": "mesh serve",
     "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\""
   },
   "dependencies": {

@@ -20,3 +20,6 @@ sources:
     transforms:
       - namingConvention:
           fieldNames: camelCase
+
+serve:
+  exampleQuery: example-queries/*.graphql
