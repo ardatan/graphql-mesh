@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.7.0
+
+### Minor Changes
+
+- 718e7a16: fix(runtime): fix browser support
+
 ## 0.6.0
 
 ### Minor Changes

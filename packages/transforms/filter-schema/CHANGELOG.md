@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.4.0
+
+### Minor Changes
+
+- 718e7a16: fix(runtime): fix browser support
+
+### Patch Changes
+
+- Updated dependencies [718e7a16]
+  - @graphql-mesh/types@0.7.0
+  - @graphql-mesh/utils@0.4.0
+
 ## 0.3.2
 
 ### Patch Changes

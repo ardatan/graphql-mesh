@@ -1,5 +1,20 @@
 # @graphql-mesh/config
 
+## 0.6.0
+
+### Minor Changes
+
+- 718e7a16: fix(runtime): fix browser support
+
+### Patch Changes
+
+- Updated dependencies [718e7a16]
+  - @graphql-mesh/cache-inmemory-lru@0.4.0
+  - @graphql-mesh/merger-stitching@0.4.0
+  - @graphql-mesh/runtime@0.4.0
+  - @graphql-mesh/types@0.7.0
+  - @graphql-mesh/utils@0.4.0
+
 ## 0.5.0
 
 ### Minor Changes

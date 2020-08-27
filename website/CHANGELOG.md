@@ -1,5 +1,11 @@
 # @graphql-mesh/website
 
+## 0.5.0
+
+### Minor Changes
+
+- 718e7a16: fix(runtime): fix browser support
+
 ## 0.4.0
 
 ### Minor Changes
