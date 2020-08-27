@@ -48,7 +48,11 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["WEBSQL", "INDEXEDDB", "LOCALSTORAGE"],
+            "enum": [
+              "WEBSQL",
+              "INDEXEDDB",
+              "LOCALSTORAGE"
+            ],
             "description": "Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE"
           },
           "additionalItems": false,
@@ -178,7 +182,10 @@
           "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
         }
       },
-      "required": ["name", "handler"]
+      "required": [
+        "name",
+        "handler"
+      ]
     },
     "Transform": {
       "additionalProperties": false,
@@ -328,7 +335,13 @@
           "type": "integer"
         }
       },
-      "required": ["type", "field", "targetSource", "targetMethod", "args"]
+      "required": [
+        "type",
+        "field",
+        "targetSource",
+        "targetMethod",
+        "args"
+      ]
     },
     "GraphQLHandler": {
       "additionalProperties": false,
@@ -355,7 +368,10 @@
         },
         "method": {
           "type": "string",
-          "enum": ["GET", "POST"],
+          "enum": [
+            "GET",
+            "POST"
+          ],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
         "enableSubscriptions": {
@@ -376,7 +392,9 @@
           "description": "Cache Introspection"
         }
       },
-      "required": ["endpoint"]
+      "required": [
+        "endpoint"
+      ]
     },
     "GrpcHandler": {
       "additionalProperties": false,
@@ -420,7 +438,10 @@
           "description": "MetaData"
         }
       },
-      "required": ["endpoint", "protoFilePath"]
+      "required": [
+        "endpoint",
+        "protoFilePath"
+      ]
     },
     "LoadOptions": {
       "additionalProperties": false,
@@ -448,7 +469,9 @@
           "$ref": "#/definitions/LoadOptions"
         }
       },
-      "required": ["file"]
+      "required": [
+        "file"
+      ]
     },
     "GrpcCredentialsSsl": {
       "additionalProperties": false,
@@ -490,7 +513,10 @@
           "additionalItems": false
         }
       },
-      "required": ["baseUrl", "operations"]
+      "required": [
+        "baseUrl",
+        "operations"
+      ]
     },
     "JsonSchemaOperation": {
       "additionalProperties": false,
@@ -508,12 +534,20 @@
         },
         "type": {
           "type": "string",
-          "enum": ["Query", "Mutation"],
+          "enum": [
+            "Query",
+            "Mutation"
+          ],
           "description": "Allowed values: Query, Mutation"
         },
         "method": {
           "type": "string",
-          "enum": ["GET", "DELETE", "POST", "PUT"],
+          "enum": [
+            "GET",
+            "DELETE",
+            "POST",
+            "PUT"
+          ],
           "description": "Allowed values: GET, DELETE, POST, PUT"
         },
         "requestSchema": {
@@ -533,7 +567,12 @@
           "properties": {}
         }
       },
-      "required": ["field", "path", "type", "method"]
+      "required": [
+        "field",
+        "path",
+        "type",
+        "method"
+      ]
     },
     "MongooseHandler": {
       "additionalProperties": false,
@@ -574,7 +613,10 @@
           "$ref": "#/definitions/ComposeWithMongooseOpts"
         }
       },
-      "required": ["name", "path"]
+      "required": [
+        "name",
+        "path"
+      ]
     },
     "ComposeWithMongooseOpts": {
       "additionalProperties": false,
@@ -960,7 +1002,12 @@
           "type": "string"
         }
       },
-      "required": ["host", "port", "user", "database"]
+      "required": [
+        "host",
+        "port",
+        "user",
+        "database"
+      ]
     },
     "Neo4jHandler": {
       "additionalProperties": false,
@@ -992,7 +1039,11 @@
           "description": "Cache Introspection"
         }
       },
-      "required": ["url", "username", "password"]
+      "required": [
+        "url",
+        "username",
+        "password"
+      ]
     },
     "ODataHandler": {
       "additionalProperties": false,
@@ -1019,7 +1070,10 @@
         },
         "batch": {
           "type": "string",
-          "enum": ["multipart", "json"],
+          "enum": [
+            "multipart",
+            "json"
+          ],
           "description": "Enable batching (Allowed values: multipart, json)"
         },
         "expandNavProps": {
@@ -1027,7 +1081,9 @@
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
         }
       },
-      "required": ["baseUrl"]
+      "required": [
+        "baseUrl"
+      ]
     },
     "OpenapiHandler": {
       "additionalProperties": false,
@@ -1067,7 +1123,9 @@
           "description": "Include HTTP Response details to the result object"
         }
       },
-      "required": ["source"]
+      "required": [
+        "source"
+      ]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,
@@ -1123,7 +1181,9 @@
           ]
         }
       },
-      "required": ["connectionString"]
+      "required": [
+        "connectionString"
+      ]
     },
     "PostGraphilePool": {
       "additionalProperties": false,
@@ -1168,7 +1228,9 @@
           "description": "SSL Certificate Based Authentication Configuration\nIncluding public key, private key and password fields"
         }
       },
-      "required": ["wsdl"]
+      "required": [
+        "wsdl"
+      ]
     },
     "SoapSecurityBasicAuthConfig": {
       "additionalProperties": false,
@@ -1184,7 +1246,10 @@
           "description": "Password for Basic Authentication"
         }
       },
-      "required": ["username", "password"]
+      "required": [
+        "username",
+        "password"
+      ]
     },
     "SoapSecurityCertificateConfig": {
       "additionalProperties": false,
@@ -1240,7 +1305,11 @@
         },
         "protocol": {
           "type": "string",
-          "enum": ["binary", "compact", "json"],
+          "enum": [
+            "binary",
+            "compact",
+            "json"
+          ],
           "description": "Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: binary, compact, json)"
         },
         "serviceName": {
@@ -1262,7 +1331,12 @@
           "description": "Path to IDL file"
         }
       },
-      "required": ["hostName", "port", "serviceName", "idl"]
+      "required": [
+        "hostName",
+        "port",
+        "serviceName",
+        "idl"
+      ]
     },
     "CacheTransformConfig": {
       "additionalProperties": false,
@@ -1282,7 +1356,9 @@
           "description": "Invalidation rules"
         }
       },
-      "required": ["field"]
+      "required": [
+        "field"
+      ]
     },
     "CacheInvalidateConfig": {
       "additionalProperties": false,
@@ -1317,7 +1393,9 @@
           "description": "Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field."
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "FederationTransform": {
       "additionalProperties": false,
@@ -1345,7 +1423,9 @@
           "$ref": "#/definitions/FederationObjectConfig"
         }
       },
-      "required": ["name"]
+      "required": [
+        "name"
+      ]
     },
     "FederationObjectConfig": {
       "additionalProperties": false,
@@ -1411,7 +1491,11 @@
           "type": "integer"
         }
       },
-      "required": ["targetSource", "targetMethod", "args"]
+      "required": [
+        "targetSource",
+        "targetMethod",
+        "args"
+      ]
     },
     "FederationField": {
       "additionalProperties": false,
@@ -1425,7 +1509,10 @@
           "$ref": "#/definitions/FederationFieldConfig"
         }
       },
-      "required": ["name", "config"]
+      "required": [
+        "name",
+        "config"
+      ]
     },
     "FederationFieldConfig": {
       "additionalProperties": false,
@@ -1488,7 +1575,9 @@
           "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
         }
       },
-      "required": ["apply"]
+      "required": [
+        "apply"
+      ]
     },
     "NamingConventionTransformConfig": {
       "additionalProperties": false,
@@ -1591,7 +1680,10 @@
           "description": "The new name"
         }
       },
-      "required": ["from", "to"]
+      "required": [
+        "from",
+        "to"
+      ]
     },
     "ResolversCompositionTransformObject": {
       "additionalProperties": false,
@@ -1607,7 +1699,10 @@
           "description": "Path to the composer function\nExample: ./src/auth.js#authComposer"
         }
       },
-      "required": ["resolver", "composer"]
+      "required": [
+        "resolver",
+        "composer"
+      ]
     },
     "SnapshotTransformConfig": {
       "additionalProperties": false,
@@ -1638,7 +1733,10 @@
           "description": "Path to the directory of the generated snapshot files"
         }
       },
-      "required": ["apply", "outputDir"]
+      "required": [
+        "apply",
+        "outputDir"
+      ]
     },
     "TuqlHandler": {
       "additionalProperties": false,
@@ -1659,7 +1757,9 @@
   "title": "Config",
   "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "required": ["sources"],
+  "required": [
+    "sources"
+  ],
   "properties": {
     "serve": {
       "$ref": "#/definitions/ServeConfig"

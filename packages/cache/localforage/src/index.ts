@@ -2,15 +2,15 @@ import localforage from 'localforage';
 import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
 
 export default class LocalforageCache<V = string> implements KeyValueCache<V> {
-  constructor(config: YamlConfig.LocalforageConfig) {
+  constructor(config?: YamlConfig.LocalforageConfig) {
+    const driverNames = config?.driver || [
+      'INDEXEDDB',
+      'WEBSQL',
+      'LOCALSTORAGE'
+    ]
     const runtimeConfig = {
       ...config,
-      driver: [
-        ...config.driver?.map(driverName => localforage[driverName]),
-        localforage.INDEXEDDB,
-        localforage.WEBSQL,
-        localforage.LOCALSTORAGE,
-      ],
+      driver: driverNames.map(driverName => localforage[driverName]),
     };
     localforage.config(runtimeConfig);
   }

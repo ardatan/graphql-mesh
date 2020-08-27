@@ -1,0 +1,48 @@
+{
+  "name": "openapi-react-weatherbit",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.3",
+    "typescript": "~3.7.2",
+    "@graphql-mesh/runtime": "0.3.2",
+    "@graphql-mesh/openapi": "0.4.2",
+    "@graphql-mesh/cache-localforage": "0.3.2",
+    "@graphql-mesh/merger-stitching": "0.3.2"
+  },
+  "devDependencies": {
+    "@graphql-mesh/cli": "0.4.0",
+    "ts-node": "9.0.0"
+  },
+  "scripts": {
+    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "generate-sdk": "ts-node  -O \"{ \\\"module\\\": \\\"commonjs\\\", \\\"esModuleInterop\\\": true }\" scripts/generateSdk.ts"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
