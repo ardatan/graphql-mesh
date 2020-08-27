@@ -17,7 +17,8 @@
     "@graphql-mesh/runtime": "0.3.2",
     "@graphql-mesh/openapi": "0.4.2",
     "@graphql-mesh/cache-localforage": "0.3.2",
-    "@graphql-mesh/merger-stitching": "0.3.2"
+    "@graphql-mesh/merger-stitching": "0.3.2",
+    "graphql": "15.3.0"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.4.0",
