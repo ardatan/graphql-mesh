@@ -1,5 +1,17 @@
 # odata-microsoft-graph-example
 
+## 0.4.0
+
+### Minor Changes
+
+- 718e7a16: fix(runtime): fix browser support
+
+### Patch Changes
+
+- Updated dependencies [718e7a16]
+  - @graphql-mesh/odata@0.4.0
+  - @graphql-mesh/runtime@0.4.0
+
 ## 0.3.2
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # postgres-geodb-example
 
+## 0.5.0
+
+### Minor Changes
+
+- 718e7a16: fix(runtime): fix browser support
+
+### Patch Changes
+
+- Updated dependencies [718e7a16]
+  - @graphql-mesh/cache-file@0.4.0
+  - @graphql-mesh/cli@0.5.0
+  - @graphql-mesh/config@0.6.0
+  - @graphql-mesh/graphql@0.4.0
+  - @graphql-mesh/postgraphile@0.5.0
+  - @graphql-mesh/runtime@0.4.0
+  - @graphql-mesh/transform-prefix@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # covid-mesh
 
+## 0.5.0
+
+### Minor Changes
+
+- 718e7a16: fix(runtime): fix browser support
+
+### Patch Changes
+
+- Updated dependencies [718e7a16]
+  - @graphql-mesh/cli@0.5.0
+  - @graphql-mesh/graphql@0.4.0
+  - @graphql-mesh/json-schema@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes
