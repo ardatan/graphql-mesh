@@ -20,7 +20,7 @@
     "@graphql-mesh/utils": "0.3.0",
     "ajv": "6.12.3",
     "cosmiconfig": "7.0.0",
-    "@graphql-tools/merge": "6.0.18",
+    "@graphql-tools/merge": "6.1.0",
     "@graphql-tools/utils": "6.0.17",
     "@graphql-tools/load": "6.0.18",
     "@graphql-tools/graphql-file-loader": "6.0.18",
