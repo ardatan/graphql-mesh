@@ -10749,10 +10749,10 @@ graphql-relay@^0.6.0:
   dependencies:
     prettier "^1.16.0"
 
-graphql-scalars@1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.1.6.tgz#917560c22f4806a058ad75b870e995832c53c2d8"
-  integrity sha512-n8UIqzI5l2hyTdcH0pIVLEC/1iMJ7d+J2YR8rHiz2bNt4nOmFD6jibKSVpmxioD/4Uj0EsZzURxnphxGGTHPYw==
+graphql-scalars@1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.2.6.tgz#a934ed63c91054db00cde41b9beeddb09b606729"
+  integrity sha512-k/88kZVXIuUKQuVLokokkKU2lnFEZ9aTn7O0fDweJpISd0pP5fQU1wzPN0jarH4Lnadr4092PfyIUtCcKzkeAw==
 
 graphql-sequelize@^9.3.6:
   version "9.4.0"
