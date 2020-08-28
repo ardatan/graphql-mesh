@@ -23,7 +23,7 @@
     "deep-equal": "2.0.3",
     "form-urlencoded": "4.2.1",
     "jsonpath-plus": "4.0.0",
-    "graphql-scalars": "1.1.6",
+    "graphql-scalars": "1.2.6",
     "pluralize": "8.0.0",
     "swagger2openapi": "6.2.3",
     "url-join": "4.0.1"
