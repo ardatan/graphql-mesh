@@ -18,7 +18,7 @@
     "fs-extra": "9.0.1",
     "postgraphile-core": "4.8.0",
     "postgraphile": "4.8.0",
-    "pg": "8.3.0"
+    "pg": "8.3.3"
   },
   "publishConfig": {
     "access": "public",
