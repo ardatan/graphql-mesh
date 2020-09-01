@@ -85,6 +85,7 @@ export async function getMesh(
         transforms: wrapTransforms,
         contextVariables: source.contextVariables || [],
         handler: apiSource.handlerLibrary,
+        batch: 'batch' in source ? source.batch : true,
       });
     })
   );
