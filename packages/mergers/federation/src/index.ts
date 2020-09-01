@@ -2,9 +2,9 @@
 import { MergerFn, RawSourceOutput } from '@graphql-mesh/types';
 import { GraphQLSchema, print, graphql, extendSchema } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { ApolloGateway } from '@apollo/gateway';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { ApolloGateway, ServiceEndpointDefinition } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
+import objectHash from 'object-hash';
 
 const mergeUsingFederation: MergerFn = async function ({
   rawSources,
@@ -15,17 +15,19 @@ const mergeUsingFederation: MergerFn = async function ({
   transforms,
 }): Promise<GraphQLSchema> {
   const serviceMap = new Map<string, GraphQLSchema>();
-  const serviceList: { name: string; url: string }[] = [];
+  const serviceList: ServiceEndpointDefinition[] = [];
   const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
-  for (const rawSource of rawSources) {
-    const transformedSchema = wrapSchema(rawSource);
-    serviceMap.set(rawSource.name, transformedSchema);
-    sourceMap.set(rawSource, transformedSchema);
-    serviceList.push({
-      name: rawSource.name,
-      url: 'http://localhost/' + rawSource.name,
-    });
-  }
+  await Promise.all(
+    rawSources.map(async rawSource => {
+      const transformedSchema = wrapSchema(rawSource);
+      serviceMap.set(rawSource.name, transformedSchema);
+      sourceMap.set(rawSource, transformedSchema);
+      serviceList.push({
+        name: rawSource.name,
+        url: 'http://localhost/' + rawSource.name,
+      });
+    })
+  );
   const gateway = new ApolloGateway({
     serviceList,
     buildService({ name }) {
@@ -45,7 +47,7 @@ const mergeUsingFederation: MergerFn = async function ({
     },
   });
   const { schema, executor: gatewayExecutor } = await gateway.load();
-  const schemaHash: any = printSchemaWithDirectives(schema);
+  const schemaHash: any = objectHash({ schema }, { ignoreUnknown: true });
   let remoteSchema = wrapSchema({
     schema,
     executor: ({ document, info, variables, context }): any => {
@@ -62,7 +64,13 @@ const mergeUsingFederation: MergerFn = async function ({
         operationName: undefined,
         cache,
         context,
-        queryHash: documentStr + '_' + JSON.stringify(variables),
+        queryHash: objectHash(
+          {
+            document,
+            variables,
+          },
+          { ignoreUnknown: true }
+        ),
         logger: console,
         metrics: {},
         source: documentStr,

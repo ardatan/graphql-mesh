@@ -18,6 +18,7 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
   subscriber?: Subscriber;
   contextVariables?: (keyof InitialContext)[];
   contextBuilder?: (initialContextValue: InitialContext) => Promise<ContextType>;
+  batch?: boolean;
 };
 
 export type GetMeshSourceOptions<THandlerConfig> = {
@@ -89,6 +90,7 @@ export type RawSourceOutput = {
   transforms: MeshTransform[];
   contextVariables: (keyof any)[];
   handler: MeshHandlerLibrary;
+  batch: boolean;
 };
 
 export type GraphQLOperation = DocumentNode | string;

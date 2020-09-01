@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.7.0",
-    "@graphql-tools/wrap": "6.0.17",
-    "@graphql-tools/utils": "6.0.17",
+    "@graphql-tools/wrap": "6.2.0",
+    "@graphql-tools/utils": "6.2.0",
     "change-case": "4.1.1",
     "upper-case": "2.0.1",
     "lower-case": "2.0.1"
