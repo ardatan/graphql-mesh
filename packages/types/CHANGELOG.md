@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.8.0
+
+### Minor Changes
+
+- a789c312: feat(stitching): use batch execution
+
 ## 0.7.0
 
 ### Minor Changes

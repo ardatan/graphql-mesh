@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.6.0
+
+### Minor Changes
+
+- a789c312: feat(stitching): use batch execution
+
+### Patch Changes
+
+- Updated dependencies [a789c312]
+  - @graphql-mesh/config@0.7.0
+  - @graphql-mesh/runtime@0.5.0
+
 ## 0.5.0
 
 ### Minor Changes
