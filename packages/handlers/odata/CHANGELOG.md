@@ -1,5 +1,11 @@
 # @graphql-mesh/odata
 
+## 0.4.2
+
+### Patch Changes
+
+- 13941482: fix(odata): handle fields from abstract types properly
+
 ## 0.4.1
 
 ### Patch Changes
