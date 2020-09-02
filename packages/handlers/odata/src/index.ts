@@ -20,6 +20,7 @@ import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { nativeFetch } from './native-fetch';
 import { pascalCase } from 'pascal-case';
+import { EventEmitter } from 'events';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -48,8 +49,10 @@ interface EntityTypeExtensions {
     navigationFields: string[];
     identifierFieldName?: string;
     identifierFieldTypeRef?: string;
+    isOpenType: boolean;
   };
   typeElement: Element;
+  eventEmitter: EventEmitter;
 }
 
 const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
@@ -556,12 +559,16 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         const entityTypeName = buildName({ schemaNamespace, name: typeElement.getAttribute('Name') });
         const isOpenType = typeElement.getAttribute('OpenType') === 'true';
         const isAbstract = typeElement.getAttribute('Abstract') === 'true';
+        const eventEmitter = new EventEmitter();
+        eventEmitter.setMaxListeners(Infinity);
         const extensions: EntityTypeExtensions = {
           entityInfo: {
             actualFields: [],
             navigationFields: [],
+            isOpenType,
           },
           typeElement,
+          eventEmitter,
         };
         const inputType = schemaComposer.createInputTC({
           name: entityTypeName + 'Input',
@@ -681,6 +688,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           });
         });
         if (isOpenType || outputType.getFieldNames().length === 0) {
+          extensions.entityInfo.isOpenType = true;
           inputType.addFields({
             rest: {
               type: 'JSON',
@@ -984,7 +992,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         const abstractType = getTCByTypeNames('I' + typeName, typeName) as InterfaceTypeComposer;
         const outputType = getTCByTypeNames('T' + typeName, typeName) as ObjectTypeComposer;
         const baseTypeRef = typeElement.getAttribute('BaseType');
-        const { entityInfo } = outputType.getExtensions() as EntityTypeExtensions;
+        const { entityInfo, eventEmitter } = outputType.getExtensions() as EntityTypeExtensions;
         const baseTypeName = getTypeNameFromRef({
           typeRef: baseTypeRef,
           isInput: false,
@@ -993,16 +1001,25 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         const baseInputType = schemaComposer.getAnyTC(baseTypeName + 'Input') as InputTypeComposer;
         const baseAbstractType = getTCByTypeNames('I' + baseTypeName, baseTypeName) as InterfaceTypeComposer;
         const baseOutputType = getTCByTypeNames('T' + baseTypeName, baseTypeName) as ObjectTypeComposer;
-        inputType.addFields(baseInputType.getFields());
-        const { entityInfo: baseEntityInfo } = baseOutputType.getExtensions() as EntityTypeExtensions;
-        entityInfo.identifierFieldName = baseEntityInfo.identifierFieldName;
-        entityInfo.identifierFieldTypeRef = baseEntityInfo.identifierFieldTypeRef;
-        entityInfo.actualFields.unshift(...baseEntityInfo.actualFields);
-        abstractType?.addFields(baseAbstractType?.getFields());
-        outputType.addFields(baseOutputType.getFields());
-        if (baseAbstractType instanceof InterfaceTypeComposer) {
-          outputType.addInterface(baseAbstractType.getTypeName());
-        }
+        const {
+          entityInfo: baseEntityInfo,
+          eventEmitter: baseEventEmitter,
+        } = baseOutputType.getExtensions() as EntityTypeExtensions;
+        const baseEventEmitterListener = () => {
+          inputType.addFields(baseInputType.getFields());
+          entityInfo.identifierFieldName = baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;
+          entityInfo.identifierFieldTypeRef =
+            baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
+          entityInfo.actualFields.unshift(...baseEntityInfo.actualFields);
+          abstractType?.addFields(baseAbstractType?.getFields());
+          outputType.addFields(baseOutputType.getFields());
+          if (baseAbstractType instanceof InterfaceTypeComposer) {
+            outputType.addInterface(baseAbstractType.getTypeName());
+          }
+          eventEmitter.emit('onFieldChange');
+        };
+        baseEventEmitter.on('onFieldChange', baseEventEmitterListener);
+        baseEventEmitterListener();
       });
 
       schemaElement.querySelectorAll('EntitySet').forEach(entitySetElement => {
