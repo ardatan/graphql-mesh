@@ -1,7 +1,11 @@
 export const scalarsMap = {
-  BigInt: 'BigInt',
+  BigInt: 'bigint',
   Byte: 'Buffer',
   Date: 'Date',
   DateTime: 'Date',
-  GUID: 'String',
+  GUID: 'string',
+  UnsignedInt: 'number',
+  JSON: 'any',
+  Timestamp: 'Date',
+  Time: 'Date',
 };
