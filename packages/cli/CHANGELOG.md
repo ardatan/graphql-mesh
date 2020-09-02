@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.7.0
+
+### Minor Changes
+
+- f8c8d549: fix(cli): update scalars map for generated sdk and types
+
 ## 0.6.0
 
 ### Minor Changes
