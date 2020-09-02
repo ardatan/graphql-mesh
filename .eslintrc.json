@@ -17,7 +17,7 @@
     "no-prototype-builtins": "off",
     "no-useless-constructor": "off",
     "@typescript-eslint/ban-types": "warn",
-    "@typescript-eslint/no-unused-vars": ["error", {"args":  "none"}],
+    "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-empty-interface": "off",
@@ -30,7 +30,8 @@
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/return-await": "error",
     "@typescript-eslint/naming-convention": "off",
-    "no-eval": "off"
+    "no-eval": "off",
+    "no-use-before-define": "off"
   },
   "env": {
     "es6": true,
@@ -38,10 +39,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/test/**/*.{ts,js}",
-        "*.spec.ts"
-      ],
+      "files": ["**/test/**/*.{ts,js}", "*.spec.ts"],
       "env": {
         "jest": true
       },
@@ -51,7 +49,7 @@
     }
   ],
   "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts"],
-  "globals":{
+  "globals": {
     "BigInt": true
   }
 }
