@@ -979,6 +979,7 @@ export default class ODataHandler implements MeshHandler {
           abstractType?.addFields(baseAbstractType?.getFields());
           outputType.addFields(baseOutputType.getFields());
           if (baseAbstractType instanceof InterfaceTypeComposer) {
+            // abstractType.addInterface(baseAbstractType.getTypeName());
             outputType.addInterface(baseAbstractType.getTypeName());
           }
           eventEmitter.emit('onFieldChange');

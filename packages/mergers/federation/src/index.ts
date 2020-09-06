@@ -48,7 +48,11 @@ const mergeUsingFederation: MergerFn = async function ({
   });
   const { schema, executor: gatewayExecutor } = await gateway.load();
   const schemaHash: any = objectHash({ schema }, { ignoreUnknown: true });
-  let remoteSchema = wrapSchema({
+  let remoteSchema = schema;
+  typeDefs?.forEach(typeDef => {
+    remoteSchema = extendSchema(remoteSchema, typeDef);
+  });
+  remoteSchema = wrapSchema({
     schema,
     executor: ({ document, info, variables, context }): any => {
       const documentStr = print(document);
@@ -82,9 +86,6 @@ const mergeUsingFederation: MergerFn = async function ({
     transforms,
   });
   hooks.once('destroy', () => gateway.stop());
-  typeDefs?.forEach(typeDef => {
-    remoteSchema = extendSchema(remoteSchema, typeDef);
-  });
   if (resolvers) {
     remoteSchema = addResolversToSchema({
       schema: remoteSchema,
