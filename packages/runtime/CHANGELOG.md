@@ -1,5 +1,16 @@
 # @graphql-mesh/runtime
 
+## 0.6.0
+
+### Minor Changes
+
+- 6aef18be: refactor(runtime): do not configure handler and transforms
+
+### Patch Changes
+
+- Updated dependencies [d2e56567]
+  - @graphql-mesh/types@0.8.1
+
 ## 0.5.0
 
 ### Minor Changes

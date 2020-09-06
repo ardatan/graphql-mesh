@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.8.1
+
+### Patch Changes
+
+- d2e56567: fix(merging): prune schema while merging
+
 ## 0.8.0
 
 ### Minor Changes

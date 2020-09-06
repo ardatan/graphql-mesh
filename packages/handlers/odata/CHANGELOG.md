@@ -1,5 +1,13 @@
 # @graphql-mesh/odata
 
+## 0.4.3
+
+### Patch Changes
+
+- d2e56567: fix(merging): prune schema while merging
+- Updated dependencies [d2e56567]
+  - @graphql-mesh/types@0.8.1
+
 ## 0.4.2
 
 ### Patch Changes
