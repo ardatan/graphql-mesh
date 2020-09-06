@@ -1,38 +1,55 @@
 import { makeAugmentedSchema, inferSchema } from 'neo4j-graphql-js';
-import neo4j from 'neo4j-driver';
-import { YamlConfig, MeshHandlerLibrary } from '@graphql-mesh/types';
+import neo4j, { Driver } from 'neo4j-driver';
+import { YamlConfig, MeshHandler, GetMeshSourceOptions, KeyValueCache, Hooks } from '@graphql-mesh/types';
 
-const handler: MeshHandlerLibrary<YamlConfig.Neo4JHandler> = {
-  async getMeshSource({ name, cache, config, hooks }) {
-    const driver = neo4j.driver(config.url, neo4j.auth.basic(config.username, config.password));
+export default class Neo4JHandler implements MeshHandler {
+  private name: string;
+  private cache: KeyValueCache;
+  private config: YamlConfig.Neo4JHandler;
+  private hooks: Hooks;
 
-    hooks.on('destroy', () => driver.close());
+  constructor({ name, cache, config, hooks }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+    this.name = name;
+    this.cache = cache;
+    this.config = config;
+    this.hooks = hooks;
+  }
+
+  private driver: Driver;
+
+  getDriver() {
+    if (!this.driver) {
+      this.driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password));
+      this.hooks.once('destroy', () => this.driver.close());
+    }
+    return this.driver;
+  }
+
+  async getMeshSource() {
     let typeDefs: string;
 
-    if (config.cacheIntrospection) {
-      const cacheKey = name + '_introspection';
-      typeDefs = await cache.get(cacheKey);
-      if (!typeDefs) {
-        const inferredSchema = await inferSchema(driver, {
-          alwaysIncludeRelationships: config.alwaysIncludeRelationships,
-        });
-        typeDefs = inferredSchema.typeDefs;
-        await cache.set(cacheKey, typeDefs);
-      }
-    } else {
-      const inferredSchema = await inferSchema(driver, {
-        alwaysIncludeRelationships: config.alwaysIncludeRelationships,
+    const cacheKey = this.name + '_introspection';
+
+    if (this.config.cacheIntrospection) {
+      typeDefs = await this.cache.get(cacheKey);
+    }
+
+    if (!typeDefs) {
+      const inferredSchema = await inferSchema(this.getDriver(), {
+        alwaysIncludeRelationships: this.config.alwaysIncludeRelationships,
       });
       typeDefs = inferredSchema.typeDefs;
+
+      if (this.config.cacheIntrospection) {
+        await this.cache.set(cacheKey, typeDefs);
+      }
     }
 
     const schema = makeAugmentedSchema({ typeDefs });
 
     return {
       schema,
-      contextBuilder: async () => ({ driver, neo4jDatabase: config.database }),
+      contextBuilder: async () => ({ driver: this.getDriver(), neo4jDatabase: this.config.database }),
     };
-  },
-};
-
-export default handler;
+  }
+}

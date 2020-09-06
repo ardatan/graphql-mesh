@@ -1,5 +1,5 @@
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { MeshResolvedSource, ResolvedTransform } from '@graphql-mesh/runtime';
+import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   getHandler,
   getPackage,
@@ -8,7 +8,7 @@ import {
   resolveMerger,
   resolveAdditionalTypeDefs,
 } from './utils';
-import { YamlConfig, getJsonSchema, Hooks } from '@graphql-mesh/types';
+import { YamlConfig, getJsonSchema, Hooks, MeshTransformLibrary, MeshHandlerLibrary } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 import { EventEmitter } from 'events';
 
@@ -49,7 +49,13 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     options || {};
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
-  const [sources, transforms, additionalTypeDefs, additionalResolvers, cache, merger] = await Promise.all([
+  const cache = await resolveCache(config.cache, importFn);
+
+  // TODO: Make hooks configurable
+  const hooks = new EventEmitter({ captureRejections: true }) as Hooks;
+  hooks.setMaxListeners(Infinity);
+
+  const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
     Promise.all(
       config.sources.map<Promise<MeshResolvedSource>>(async source => {
         const handlerName = Object.keys(source.handler)[0];
@@ -58,26 +64,34 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
           getHandler(handlerName, importFn),
           Promise.all(
             (source.transforms || []).map(async t => {
-              const transformName: keyof YamlConfig.Transform = Object.keys(t)[0];
+              const transformName = Object.keys(t)[0];
               const transformConfig = t[transformName];
-              const transformLibrary = await getPackage<ResolvedTransform['transformLibrary']>(
-                transformName,
+              const TransformCtor = await getPackage<MeshTransformLibrary>(
+                transformName.toString(),
                 'transform',
                 importFn
               );
 
-              return {
+              return new TransformCtor({
+                apiName: source.name,
                 config: transformConfig,
-                transformLibrary,
-              };
+                cache,
+                hooks,
+              });
             })
           ),
         ]);
 
+        const HandlerCtor: MeshHandlerLibrary = handlerLibrary;
+
         return {
           name: source.name,
-          handlerConfig,
-          handlerLibrary,
+          handler: new HandlerCtor({
+            name: source.name,
+            cache,
+            hooks,
+            config: handlerConfig,
+          }),
           transforms,
         };
       })
@@ -86,26 +100,23 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
       config.transforms?.map(async t => {
         const transformName = Object.keys(t)[0] as keyof YamlConfig.Transform;
         const transformConfig = t[transformName];
-        const TransformLibrary = await getPackage<ResolvedTransform['transformLibrary']>(
-          transformName,
+        const TransformLibrary = await getPackage<MeshTransformLibrary>(
+          transformName.toString(),
           'transform',
           importFn
         );
-        return {
+        return new TransformLibrary({
+          apiName: '',
+          cache,
+          hooks,
           config: transformConfig,
-          transformLibrary: TransformLibrary,
-        };
+        });
       }) || []
     ),
     resolveAdditionalTypeDefs(dir, config.additionalTypeDefs),
     resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || [], importFn),
-    resolveCache(config.cache, importFn),
     resolveMerger(config.merger, importFn),
   ]);
-
-  // TODO: Make hooks configurable
-  const hooks = new EventEmitter({ captureRejections: true }) as Hooks;
-  hooks.setMaxListeners(Infinity);
 
   return {
     sources,
@@ -176,7 +187,7 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
     },
   });
   const results = await explorer.search(dir);
-  const config = results?.config;
+  const config = results.config;
   validateConfig(config);
   return processConfig(config, { dir, ignoreAdditionalResolvers });
 }

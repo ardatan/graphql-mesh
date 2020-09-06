@@ -29,9 +29,13 @@ export type GetMeshSourceOptions<THandlerConfig> = {
 };
 
 // Handlers
-export declare type MeshHandlerLibrary<THandlerConfig = any, TContext = any> = {
-  getMeshSource: (options: GetMeshSourceOptions<THandlerConfig>) => Promise<MeshSource<TContext>>;
-};
+export interface MeshHandler<TContext = any> {
+  getMeshSource: () => Promise<MeshSource<TContext>>;
+}
+
+export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
+  new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
+}
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any> = {
   root?: TParent;
@@ -89,7 +93,7 @@ export type RawSourceOutput = {
   subscriber?: Subscriber;
   transforms: MeshTransform[];
   contextVariables: (keyof any)[];
-  handler: MeshHandlerLibrary;
+  handler: MeshHandler;
   batch: boolean;
 };
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig, Hooks, KeyValueCache } from '@graphql-mesh/types';
 import { execute, subscribe } from 'graphql';
 import { withPostGraphileContext, Plugin } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
@@ -9,40 +9,56 @@ import { tmpdir } from 'os';
 import { readJSON, unlink } from 'fs-extra';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
-const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
-  async getMeshSource({ name, cache, config, hooks }) {
+export default class PostGraphileHandler implements MeshHandler {
+  private name: string;
+  private cache: KeyValueCache;
+  private config: YamlConfig.PostGraphileHandler;
+  private hooks: Hooks;
+
+  constructor({ name, cache, config, hooks }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
+    this.name = name;
+    this.cache = cache;
+    this.config = config;
+    this.hooks = hooks;
+  }
+
+  async getMeshSource(): Promise<MeshSource> {
     const pgPool = new Pool({
-      ...(config?.pool
+      ...(this.config?.pool
         ? {
-            ...config?.pool,
+            ...this.config?.pool,
           }
         : {
-            connectionString: config.connectionString,
+            connectionString: this.config.connectionString,
           }),
     });
 
-    const cacheKey = name + '_introspection';
+    this.hooks.once('destroy', () => pgPool.end());
+
+    const cacheKey = this.name + '_introspection';
 
     const tmpFile = join(tmpdir(), cacheKey);
-    const cachedIntrospection = config.cacheIntrospection && (await cache.get(cacheKey));
+    const cachedIntrospection = this.config.cacheIntrospection && (await this.cache.get(cacheKey));
 
     let writeCache: () => Promise<void>;
 
     const appendPlugins = await Promise.all<Plugin>(
-      (config.appendPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
+      (this.config.appendPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
     );
     const skipPlugins = await Promise.all<Plugin>(
-      (config.skipPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
+      (this.config.skipPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
     );
     const options =
-      typeof config.options === 'string' ? await loadFromModuleExportExpression(config.options) : config.options;
+      typeof this.config.options === 'string'
+        ? await loadFromModuleExportExpression(this.config.options)
+        : this.config.options;
 
-    const builder = await getPostGraphileBuilder(pgPool, config.schemaName || 'public', {
+    const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,
       subscriptions: true,
       live: true,
       readCache: cachedIntrospection,
-      writeCache: config.cacheIntrospection && !cachedIntrospection && tmpFile,
+      writeCache: this.config.cacheIntrospection && !cachedIntrospection && tmpFile,
       setWriteCacheCallback: fn => {
         writeCache = fn;
       },
@@ -51,57 +67,45 @@ const handler: MeshHandlerLibrary<YamlConfig.PostGraphileHandler> = {
       ...options,
     });
 
-    const graphileSchema = builder.buildSchema();
+    const schema = builder.buildSchema();
 
-    hooks.on('destroy', () => pgPool.end());
-
-    if (config.cacheIntrospection && !cachedIntrospection) {
+    if (this.config.cacheIntrospection && !cachedIntrospection) {
       await writeCache();
       const json = await readJSON(tmpFile);
-      await cache.set(cacheKey, json);
+      await this.cache.set(cacheKey, json);
       await unlink(tmpFile);
     }
 
     return {
-      schema: graphileSchema,
-      executor({ document, variables, context: meshContext }) {
-        return withPostGraphileContext(
-          {
-            pgPool,
-          },
-          async postgraphileContext => {
-            // Execute your GraphQL query in this function with the provided
-            // `context` object, which should NOT be used outside of this
-            // function.
-            return execute({
-              schema: graphileSchema, // The schema from `createPostGraphileSchema`
+      schema,
+      executor: ({ document, variables, context: meshContext }) =>
+        withPostGraphileContext(
+          { pgPool },
+          // Execute your GraphQL query in this function with the provided
+          // `context` object, which should NOT be used outside of this
+          // function.
+          postgraphileContext =>
+            execute({
+              schema, // The schema from `createPostGraphileSchema`
               document,
               contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
               variableValues: variables,
-            });
-          }
-        ) as any;
-      },
-      subscriber({ document, variables, context: meshContext }) {
-        return withPostGraphileContext(
-          {
-            pgPool,
-          },
-          async postgraphileContext => {
-            // Execute your GraphQL query in this function with the provided
-            // `context` object, which should NOT be used outside of this
-            // function.
-            return subscribe({
-              schema: graphileSchema, // The schema from `createPostGraphileSchema`
+            }) as any
+        ) as any,
+      subscriber: ({ document, variables, context: meshContext }) =>
+        withPostGraphileContext(
+          { pgPool },
+          // Execute your GraphQL query in this function with the provided
+          // `context` object, which should NOT be used outside of this
+          // function.
+          postgraphileContext =>
+            subscribe({
+              schema, // The schema from `createPostGraphileSchema`
               document,
               contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
               variableValues: variables,
-            }) as any;
-          }
-        ) as any;
-      },
+            }) as any
+        ) as any,
     };
-  },
-};
-
-export default handler;
+  }
+}

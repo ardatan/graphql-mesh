@@ -17,7 +17,7 @@
     "no-prototype-builtins": "off",
     "no-useless-constructor": "off",
     "@typescript-eslint/ban-types": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-empty-interface": "off",

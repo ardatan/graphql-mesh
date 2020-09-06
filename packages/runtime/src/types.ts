@@ -1,25 +1,19 @@
 import {
-  MeshHandlerLibrary,
-  YamlConfig,
   KeyValueCache,
   Hooks,
   MergerFn,
-  MeshTransformLibrary,
   RawSourceOutput,
   GraphQLOperation,
+  MeshHandler,
+  MeshTransform,
 } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 
-export type ResolvedTransform<TTransformName extends keyof YamlConfig.Transform = keyof YamlConfig.Transform> = {
-  transformLibrary: MeshTransformLibrary<YamlConfig.Transform[TTransformName]>;
-  config: YamlConfig.Transform[TTransformName];
-};
-
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
-  transforms?: ResolvedTransform[];
+  transforms?: MeshTransform[];
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers;
   cache: KeyValueCache;
@@ -28,11 +22,10 @@ export type GetMeshOptions = {
   merger: MergerFn;
 };
 
-export type MeshResolvedSource<THandlerName extends keyof YamlConfig.Handler = keyof YamlConfig.Handler> = {
+export type MeshResolvedSource<TContext = any> = {
   name: string;
-  handlerLibrary: MeshHandlerLibrary<YamlConfig.Handler[THandlerName]>;
-  handlerConfig: YamlConfig.Handler[THandlerName];
-  transforms?: ResolvedTransform[];
+  handler: MeshHandler<TContext>;
+  transforms?: MeshTransform[];
 };
 
 export type ExecuteMeshFn<TData = any, TVariables = any> = (

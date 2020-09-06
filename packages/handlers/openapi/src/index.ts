@@ -9,37 +9,51 @@ import {
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
-import { MeshHandlerLibrary, YamlConfig, ResolverData } from '@graphql-mesh/types';
+import {
+  MeshHandler,
+  YamlConfig,
+  ResolverData,
+  GetMeshSourceOptions,
+  MeshSource,
+  KeyValueCache,
+} from '@graphql-mesh/types';
 import { fetchache, Request } from 'fetchache';
 
-const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
-  async getMeshSource({ config, cache }) {
-    const path = config.source;
-    const spec = await readFileOrUrlWithCache<Oas3>(path, cache, {
-      headers: config.schemaHeaders,
+export default class OpenAPIHandler implements MeshHandler {
+  config: YamlConfig.OpenapiHandler;
+  cache: KeyValueCache;
+  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+    this.config = config;
+    this.cache = cache;
+  }
+
+  async getMeshSource(): Promise<MeshSource> {
+    const path = this.config.source;
+    const spec = await readFileOrUrlWithCache<Oas3>(path, this.cache, {
+      headers: this.config.schemaHeaders,
     });
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];
-    if (config.customFetch) {
-      switch (typeof config.customFetch) {
+    if (this.config.customFetch) {
+      switch (typeof this.config.customFetch) {
         case 'string':
-          fetch = await loadFromModuleExportExpression(config.customFetch as any, 'default');
+          fetch = await loadFromModuleExportExpression(this.config.customFetch as any, 'default');
           break;
         case 'function':
-          fetch = config.customFetch as any;
+          fetch = this.config.customFetch as any;
           break;
       }
     } else {
-      fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
+      fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
     }
 
-    const headersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
+    const headersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
-    for (const queryName in config.qs || {}) {
-      queryStringFactoryMap.set(queryName, getInterpolatedStringFactory(config.qs[queryName]));
+    for (const queryName in this.config.qs || {}) {
+      queryStringFactoryMap.set(queryName, getInterpolatedStringFactory(this.config.qs[queryName]));
     }
     const searchParamsFactory = (resolverData: ResolverData, searchParams: URLSearchParams) => {
-      for (const queryName in config.qs || {}) {
+      for (const queryName in this.config.qs || {}) {
         searchParams.set(queryName, queryStringFactoryMap.get(queryName)(resolverData));
       }
       return searchParams;
@@ -47,10 +61,10 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
 
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
-      baseUrl: config.baseUrl,
+      baseUrl: this.config.baseUrl,
       operationIdFieldNames: true,
       fillEmptyResponses: true,
-      includeHttpDetails: config.includeHttpDetails,
+      includeHttpDetails: this.config.includeHttpDetails,
       viewer: false,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };
@@ -84,7 +98,7 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       },
     });
 
-    const { args, contextVariables } = parseInterpolationStrings(Object.values(config.operationHeaders || {}));
+    const { args, contextVariables } = parseInterpolationStrings(Object.values(this.config.operationHeaders || {}));
 
     const rootFields = [
       ...Object.values(schema.getQueryType()?.getFields() || {}),
@@ -112,7 +126,5 @@ const handler: MeshHandlerLibrary<YamlConfig.OpenapiHandler> = {
       schema,
       contextVariables,
     };
-  },
-};
-
-export default handler;
+  }
+}

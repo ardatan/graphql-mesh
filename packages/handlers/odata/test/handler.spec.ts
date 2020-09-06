@@ -1,11 +1,11 @@
 import { Hooks, KeyValueCache } from '@graphql-mesh/types';
 import { printSchema, graphql } from 'graphql';
-import handler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addMock, resetMocks, Response } from 'fetchache';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
+import ODataHandler from '../src';
 declare module 'fetchache' {
   type FetchMockFn = (request: Request) => Promise<Response>;
   function addMock(url: string, mockFn: FetchMockFn): void;
@@ -26,7 +26,7 @@ describe('odata', () => {
   });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -34,6 +34,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     expect(printSchema(source.schema)).toMatchSnapshot();
   });
@@ -46,7 +47,7 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify({ value: [PersonMockData] }));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -54,6 +55,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -81,7 +83,7 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(PersonMockData));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -89,6 +91,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -125,7 +128,7 @@ describe('odata', () => {
         })
       );
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -133,6 +136,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -162,7 +166,7 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify({ value: [PersonMockData] }));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -170,6 +174,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -197,7 +202,7 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(20));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -205,6 +210,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -250,7 +256,7 @@ describe('odata', () => {
       bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new Response(JSON.stringify(bodyObj));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -258,6 +264,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -288,7 +295,7 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify({}));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -296,6 +303,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -326,7 +334,7 @@ describe('odata', () => {
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new Response(JSON.stringify(returnBody));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -334,6 +342,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -371,7 +380,7 @@ describe('odata', () => {
         })
       );
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -379,6 +388,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -419,7 +429,7 @@ describe('odata', () => {
         })
       );
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -427,6 +437,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -459,7 +470,7 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(true));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -467,6 +478,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,
@@ -498,7 +510,7 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(true));
     });
-    const source = await handler.getMeshSource({
+    const handler = new ODataHandler({
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
@@ -506,6 +518,7 @@ describe('odata', () => {
       hooks,
       cache,
     });
+    const source = await handler.getMeshSource();
 
     const graphqlResult = await graphql({
       schema: source.schema,

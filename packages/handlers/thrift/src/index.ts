@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, ThriftErrors, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
 import { readFileOrUrlWithCache, parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
@@ -20,7 +20,7 @@ import {
   GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
 } from 'graphql';
-import { GraphQLBigInt, GraphQLJSON, GraphQLByte } from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLJSON, GraphQLByte, GraphQLVoid } from 'graphql-scalars';
 import { createHttpClient } from '@creditkarma/thrift-client';
 import {
   ThriftClient,
@@ -38,11 +38,21 @@ import {
 } from '@creditkarma/thrift-server-core';
 import { pascalCase } from 'pascal-case';
 
-const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
-  async getMeshSource({ config, cache }) {
-    const rawThrift = await readFileOrUrlWithCache<string>(config.idl, cache, {
+export default class ThriftHandler implements MeshHandler {
+  config: YamlConfig.ThriftHandler;
+  cache: KeyValueCache;
+
+  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.ThriftHandler>) {
+    this.config = config;
+    this.cache = cache;
+  }
+
+  async getMeshSource() {
+    const { schemaHeaders, serviceName, operationHeaders } = this.config;
+
+    const rawThrift = await readFileOrUrlWithCache<string>(this.config.idl, this.cache, {
       allowUnknownExtensions: true,
-      headers: config.schemaHeaders,
+      headers: schemaHeaders,
     });
     const thriftAST: ThriftDocument | ThriftErrors = parse(rawThrift, { organize: false });
 
@@ -72,11 +82,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
     const topTypeMap: TypeMap = {};
 
     class MeshThriftClient<Context = any> extends ThriftClient<Context> {
-      public static readonly serviceName: string = config.serviceName;
+      public static readonly serviceName: string = serviceName;
       public static readonly annotations: IThriftAnnotations = annotations;
       public static readonly methodAnnotations: IMethodAnnotations = methodAnnotations;
       public static readonly methodNames: Array<string> = methodNames;
-      public readonly _serviceName: string = config.serviceName;
+      public readonly _serviceName: string = serviceName;
       public readonly _annotations: IThriftAnnotations = annotations;
       public readonly _methodAnnotations: IMethodAnnotations = methodAnnotations;
       public readonly _methodNames: Array<string> = methodNames;
@@ -271,9 +281,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       }
     }
     const thriftHttpClient = createHttpClient(MeshThriftClient, {
-      ...config,
+      ...this.config,
       requestOptions: {
-        headers: config.operationHeaders,
+        headers: operationHeaders,
       },
     });
 
@@ -301,8 +311,8 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
           break;
         case SyntaxType.VoidKeyword:
           typeVal = typeVal! || { type: TType.VOID };
-          inputType = GraphQLBoolean;
-          outputType = GraphQLBoolean;
+          inputType = GraphQLVoid;
+          outputType = GraphQLVoid;
           break;
         case SyntaxType.BoolKeyword:
           typeVal = typeVal! || { type: TType.BOOL };
@@ -385,11 +395,9 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       };
     }
 
-    const { args: commonArgs, contextVariables } = parseInterpolationStrings(
-      Object.values(config.operationHeaders || {})
-    );
+    const { args: commonArgs, contextVariables } = parseInterpolationStrings(Object.values(operationHeaders || {}));
 
-    const headersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
+    const headersFactory = getInterpolatedHeadersFactory(operationHeaders);
 
     switch (thriftAST.type) {
       case SyntaxType.ThriftDocument: {
@@ -534,7 +542,5 @@ const handler: MeshHandlerLibrary<YamlConfig.ThriftHandler> = {
       case SyntaxType.ThriftErrors:
         throw new AggregateError(thriftAST.errors);
     }
-  },
-};
-
-export default handler;
+  }
+}

@@ -1,4 +1,4 @@
-import thriftHandler from '../src';
+import ThriftHandler from '../src';
 import { Hooks } from '@graphql-mesh/types';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { join } from 'path';
@@ -7,7 +7,7 @@ import { EventEmitter } from 'events';
 
 describe('thrift', () => {
   it('should create a GraphQL Schema from Thrift IDL', async () => {
-    const source = await thriftHandler.getMeshSource({
+    const thriftHandler = new ThriftHandler({
       name: 'Twitter',
       config: {
         idl: join(__dirname, './fixtures/twitter.thrift'),
@@ -19,6 +19,7 @@ describe('thrift', () => {
       cache: new InMemoryLRUCache(),
       hooks: new EventEmitter() as Hooks,
     });
+    const source = await thriftHandler.getMeshSource();
     expect(printSchema(source.schema)).toMatchSnapshot();
   });
 });

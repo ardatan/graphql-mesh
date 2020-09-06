@@ -1,8 +1,7 @@
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
-import { SchemaComposer, ObjMap, ObjectTypeComposerFieldConfigDefinition } from 'graphql-compose';
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { SchemaComposer } from 'graphql-compose';
+import { GetMeshSourceOptions, Hooks, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { camelCase } from 'camel-case';
-import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
 import mongoose from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
@@ -19,75 +18,85 @@ const modelMutationOperations = [
   'removeMany',
 ];
 
-const handler: MeshHandlerLibrary<YamlConfig.MongooseHandler> = {
-  async getMeshSource({ config, hooks }) {
-    const schemaComposer = new SchemaComposer();
+export default class MongooseHandler implements MeshHandler {
+  private config: YamlConfig.MongooseHandler;
+  private hooks: Hooks;
 
-    if (config.connectionString) {
-      await mongoose.connect(config.connectionString, {
+  constructor({ config, hooks }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
+    this.config = config;
+    this.hooks = hooks;
+  }
+
+  async getMeshSource(): Promise<MeshSource> {
+    if (this.config.connectionString) {
+      await mongoose.connect(this.config.connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
+
+      this.hooks.once('destroy', () => mongoose.disconnect());
     }
 
-    const queryFields: ObjMap<ObjectTypeComposerFieldConfigDefinition<any, any, ArgsMap>> = {};
-    const mutationFields: ObjMap<ObjectTypeComposerFieldConfigDefinition<any, any, ArgsMap>> = {};
+    const schemaComposer = new SchemaComposer();
 
-    if (config.models) {
-      await Promise.all(
-        config.models.map(async modelConfig => {
+    await Promise.all([
+      Promise.all(
+        this.config.models?.map(async modelConfig => {
           const model = await loadFromModuleExportExpression(modelConfig.path, modelConfig.name);
           const modelTC = composeWithMongoose(model, modelConfig.options as any);
           await Promise.all([
             Promise.all(
-              modelQueryOperations.map(async queryOperation => {
-                queryFields[camelCase(`${modelConfig.name}_${queryOperation}`)] = modelTC.getResolver(queryOperation);
-              })
+              modelQueryOperations.map(async queryOperation =>
+                schemaComposer.Query.addFields({
+                  [camelCase(`${modelConfig.name}_${queryOperation}`)]: modelTC.getResolver(queryOperation),
+                })
+              )
             ),
             Promise.all(
-              modelMutationOperations.map(async mutationOperation => {
-                mutationFields[camelCase(`${modelConfig.name}_${mutationOperation}`)] = modelTC.getResolver(
-                  mutationOperation
-                );
-              })
+              modelMutationOperations.map(async mutationOperation =>
+                schemaComposer.Mutation.addFields({
+                  [camelCase(`${modelConfig.name}_${mutationOperation}`)]: modelTC.getResolver(mutationOperation),
+                })
+              )
             ),
           ]);
         })
-      );
-    }
-
-    if (config.discriminators) {
-      await Promise.all(
-        config.discriminators.map(async discriminatorConfig => {
+      ),
+      Promise.all(
+        this.config.discriminators.map(async discriminatorConfig => {
           const discriminator = await loadFromModuleExportExpression(
             discriminatorConfig.path,
             discriminatorConfig.name
           );
           const discriminatorTC = composeWithMongooseDiscriminators(discriminator, discriminatorConfig.options as any);
-          for (const queryOperation of modelQueryOperations) {
-            queryFields[camelCase(`${discriminatorConfig.name}_${queryOperation}`)] = discriminatorTC.getResolver(
-              queryOperation
-            );
-          }
-          for (const mutationOperation of modelMutationOperations) {
-            mutationFields[camelCase(`${discriminatorConfig.name}_${mutationOperation}`)] = discriminatorTC.getResolver(
-              mutationOperation
-            );
-          }
+          await Promise.all([
+            Promise.all(
+              modelQueryOperations.map(async queryOperation =>
+                schemaComposer.Query.addFields({
+                  [camelCase(`${discriminatorConfig.name}_${queryOperation}`)]: discriminatorTC.getResolver(
+                    queryOperation
+                  ),
+                })
+              )
+            ),
+            Promise.all(
+              modelMutationOperations.map(async mutationOperation =>
+                schemaComposer.Mutation.addFields({
+                  [camelCase(`${discriminatorConfig.name}_${mutationOperation}`)]: discriminatorTC.getResolver(
+                    mutationOperation
+                  ),
+                })
+              )
+            ),
+          ]);
         })
-      );
-    }
-    schemaComposer.Query.addFields(queryFields);
-    schemaComposer.Mutation.addFields(mutationFields);
+      ),
+    ]);
 
     const schema = schemaComposer.buildSchema();
-
-    hooks.on('destroy', () => mongoose.disconnect());
 
     return {
       schema,
     };
-  },
-};
-
-export default handler;
+  }
+}
