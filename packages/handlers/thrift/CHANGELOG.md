@@ -1,5 +1,16 @@
 # @graphql-mesh/thrift
 
+## 0.5.0
+
+### Minor Changes
+
+- 6aef18be: feat(thrift): support void type and use GraphQLVoid
+
+### Patch Changes
+
+- Updated dependencies [d2e56567]
+  - @graphql-mesh/types@0.8.1
+
 ## 0.4.1
 
 ### Patch Changes

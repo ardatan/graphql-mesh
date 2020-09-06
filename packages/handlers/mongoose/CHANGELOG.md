@@ -1,5 +1,16 @@
 # @graphql-mesh/mongoose
 
+## 0.5.0
+
+### Minor Changes
+
+- 6aef18be: enhance(mongoose): small performance improvements
+
+### Patch Changes
+
+- Updated dependencies [d2e56567]
+  - @graphql-mesh/types@0.8.1
+
 ## 0.4.1
 
 ### Patch Changes
