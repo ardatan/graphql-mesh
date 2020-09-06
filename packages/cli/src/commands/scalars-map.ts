@@ -8,4 +8,5 @@ export const scalarsMap = {
   JSON: 'any',
   Timestamp: 'Date',
   Time: 'Date',
+  Void: 'void',
 };

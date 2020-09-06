@@ -1,16 +1,26 @@
-import { MeshHandlerLibrary, ResolverData, YamlConfig } from '@graphql-mesh/types';
-import { fetchache, Request } from 'fetchache';
+import { GetMeshSourceOptions, MeshHandler, MeshSource, ResolverData, YamlConfig } from '@graphql-mesh/types';
+import { fetchache, KeyValueCache, Request } from 'fetchache';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildClientSchema, introspectionFromSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import { getInterpolatedHeadersFactory, ResolverDataBasedFactory, getHeadersObject } from '@graphql-mesh/utils';
 import { ExecutionParams } from '@graphql-tools/delegate';
 
-const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
-  async getMeshSource({ name, config, cache }) {
+export default class GraphQLHandler implements MeshHandler {
+  private name: string;
+  private config: YamlConfig.GraphQLHandler;
+  private cache: KeyValueCache;
+
+  constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
+    this.name = name;
+    this.config = config;
+    this.cache = cache;
+  }
+
+  async getMeshSource(): Promise<MeshSource> {
     const urlLoader = new UrlLoader();
     const customFetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
-      fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
+      fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
     const getExecutorAndSubscriberForParams = (
       params: ExecutionParams,
       headersFactory: ResolverDataBasedFactory<Headers>
@@ -21,17 +31,17 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
         context: params.context,
       };
       const headers = getHeadersObject(headersFactory(resolverData));
-      return urlLoader.getExecutorAndSubscriber(config.endpoint, {
+      return urlLoader.getExecutorAndSubscriber(this.config.endpoint, {
         customFetch: customFetch as any,
-        ...config,
+        ...this.config,
         headers,
       });
     };
     let schema: GraphQLSchema;
-    const schemaHeadersFactory = getInterpolatedHeadersFactory(config.schemaHeaders);
-    if (config.cacheIntrospection) {
-      const cacheKey = name + '_introspection';
-      const introspectionData: any = await cache.get(cacheKey);
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
+    if (this.config.cacheIntrospection) {
+      const cacheKey = this.name + '_introspection';
+      const introspectionData: any = await this.cache.get(cacheKey);
       if (introspectionData) {
         schema = buildClientSchema(introspectionData);
       } else {
@@ -39,7 +49,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
           const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory);
           return executor(params);
         });
-        await cache.set(cacheKey, introspectionFromSchema(schema) as any);
+        await this.cache.set(cacheKey, introspectionFromSchema(schema) as any);
       }
     } else {
       schema = await introspectSchema(async params => {
@@ -47,19 +57,17 @@ const handler: MeshHandlerLibrary<YamlConfig.GraphQLHandler> = {
         return executor(params);
       });
     }
-    const operationHeadersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
+    const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     return {
       schema,
       executor: async params => {
         const { executor } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory);
-        return executor(params);
+        return executor(params) as any;
       },
       subscriber: async params => {
         const { subscriber } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory);
         return subscriber(params);
       },
     };
-  },
-};
-
-export default handler;
+  }
+}

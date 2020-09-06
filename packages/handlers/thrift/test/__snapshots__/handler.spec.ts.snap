@@ -3,7 +3,7 @@
 exports[`thrift should create a GraphQL Schema from Thrift IDL 1`] = `
 "type Query {
   \\"\\"\\"\\"\\"\\"
-  ping: Boolean
+  ping: Void
 
   \\"\\"\\"\\"\\"\\"
   postTweet(tweet: TweetInput): Boolean
@@ -12,8 +12,11 @@ exports[`thrift should create a GraphQL Schema from Thrift IDL 1`] = `
   searchTweets(query: String): TweetSearchResult
 
   \\"\\"\\"\\"\\"\\"
-  zip: Boolean
+  zip: Void
 }
+
+\\"\\"\\"Represents NULL values\\"\\"\\"
+scalar Void
 
 \\"\\"\\"\\"\\"\\"
 input TweetInput {

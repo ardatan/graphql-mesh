@@ -38,8 +38,8 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   throw new Error(`Unable to find ${type} matching ${name}`);
 }
 
-export async function getHandler(name: string, importFn: ImportFn): Promise<MeshHandlerLibrary> {
-  const handlerFn = await getPackage<MeshHandlerLibrary>(name, 'handler', importFn);
+export async function getHandler(name: keyof YamlConfig.Handler, importFn: ImportFn): Promise<MeshHandlerLibrary> {
+  const handlerFn = await getPackage<MeshHandlerLibrary>(name.toString(), 'handler', importFn);
 
   return handlerFn;
 }
@@ -124,7 +124,7 @@ export async function resolveCache(
     const cacheName = Object.keys(cacheConfig)[0];
     const config = cacheConfig[cacheName];
 
-    const moduleName = kebabCase(cacheName);
+    const moduleName = kebabCase(cacheName.toString());
     const pkg = await getPackage<any>(moduleName, 'cache', importFn);
     const Cache = pkg.default || pkg;
 

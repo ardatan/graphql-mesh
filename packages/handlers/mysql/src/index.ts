@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, Hooks, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -99,10 +99,18 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
-const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
-  async getMeshSource({ config, hooks }) {
+export default class MySQLHandler implements MeshHandler {
+  config: YamlConfig.MySQLHandler;
+  hooks: Hooks;
+
+  constructor({ config, hooks }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+    this.config = config;
+    this.hooks = hooks;
+  }
+
+  async getMeshSource(): Promise<MeshSource> {
     const schemaComposer = new SchemaComposer<MysqlContext>();
-    const pool = createPool(config);
+    const pool = createPool(this.config);
     pool.on('connection', connection => {
       upgrade(connection);
       introspection(connection);
@@ -127,7 +135,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
         },
       },
     });
-    const tables = await introspectionConnection.getDatabaseTables(config.database);
+    const tables = await introspectionConnection.getDatabaseTables(this.config.database);
     await Promise.all(
       Object.keys(tables).map(async tableName => {
         const table = tables[tableName];
@@ -372,7 +380,7 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
         });
       })
     );
-    hooks.on('destroy', () => pool.end());
+    this.hooks.once('destroy', () => pool.end());
 
     const schema = schemaComposer.buildSchema();
 
@@ -382,17 +390,15 @@ const handler: MeshHandlerLibrary<YamlConfig.MySQLHandler> = {
       schema,
       async executor({ document, variables, context: meshContext }) {
         const mysqlConnection = await getPromisifiedConnection(pool);
-        const result = (await execute({
+        const result = await execute({
           schema,
           document,
           variableValues: variables,
           contextValue: { ...meshContext, mysqlConnection },
-        })) as any;
+        });
         mysqlConnection.connection.release();
-        return result;
+        return result as any;
       },
     };
-  },
-};
-
-export default handler;
+  }
+}

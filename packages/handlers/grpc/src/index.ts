@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { withCancel } from '@graphql-mesh/utils';
 import {
   ChannelCredentials,
@@ -28,6 +28,7 @@ import {
   getBuffer,
   getTypeName,
 } from './utils';
+
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
 }
@@ -37,20 +38,26 @@ interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable
   cancel(): void;
 }
 
-const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
-  async getMeshSource({ config, cache }) {
+export default class GrpcHandler implements MeshHandler {
+  private config: YamlConfig.GrpcHandler;
+  private cache: KeyValueCache;
+  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
     if (!config) {
       throw new Error('Config not specified!');
     }
+    this.config = config;
+    this.cache = cache;
+  }
 
+  async getMeshSource() {
     let creds: ChannelCredentials;
-    if (config.credentialsSsl) {
+    if (this.config.credentialsSsl) {
       const sslFiles = [
-        getBuffer(config.credentialsSsl.privateKey, cache),
-        getBuffer(config.credentialsSsl.certChain, cache),
+        getBuffer(this.config.credentialsSsl.privateKey, this.cache),
+        getBuffer(this.config.credentialsSsl.certChain, this.cache),
       ];
-      if (config.credentialsSsl.rootCA !== 'rootCA') {
-        sslFiles.unshift(getBuffer(config.credentialsSsl.rootCA, cache));
+      if (this.config.credentialsSsl.rootCA !== 'rootCA') {
+        sslFiles.unshift(getBuffer(this.config.credentialsSsl.rootCA, this.cache));
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
       creds = credentials.createSsl(rootCA, privateKey, certChain);
@@ -58,7 +65,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
       creds = credentials.createInsecure();
     }
 
-    config.requestTimeout = config.requestTimeout || 200000;
+    this.config.requestTimeout = this.config.requestTimeout || 200000;
 
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
@@ -76,11 +83,11 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     });
 
     const root = new Root();
-    let fileName = config.protoFilePath;
+    let fileName = this.config.protoFilePath;
     let options: LoadOptions = {};
-    if (typeof config.protoFilePath === 'object' && config.protoFilePath.file) {
-      fileName = config.protoFilePath.file;
-      options = config.protoFilePath.load;
+    if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
+      fileName = this.config.protoFilePath.file;
+      options = this.config.protoFilePath.load;
       if (options.includeDirs) {
         if (!Array.isArray(options.includeDirs)) {
           return Promise.reject(new Error('The includeDirs option must be an array'));
@@ -93,7 +100,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     const packageDefinition = await load(fileName as string, options);
     const grpcObject = loadPackageDefinition(packageDefinition);
 
-    async function visit(nested: AnyNestedObject, name: string, currentPath: string) {
+    const visit = async (nested: AnyNestedObject, name: string, currentPath: string) => {
       if ('nested' in nested) {
         await Promise.all(
           Object.keys(nested.nested).map(async (key: string) => {
@@ -103,34 +110,34 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         );
       }
       if ('values' in nested) {
-        if (config.packageName && currentPath && !currentPath.includes(config.packageName)) {
+        if (this.config.packageName && currentPath && !currentPath.includes(this.config.packageName)) {
           // outside value that needs to be scoped by package name to ensure there are no clashes
           const typeName = pascalCase(currentPath.split('.').join('_') + '_' + name);
           schemaComposer.createEnumTC(createEnum(typeName, nested.values));
         } else {
           const typeName = pascalCase(name);
-          if (currentPath && currentPath !== config.packageName) {
+          if (currentPath && currentPath !== this.config.packageName) {
             // this is a nested value, add both nested name and unnested name
-            const nestedName = config.packageName ? currentPath.split(config.packageName)[1] : currentPath;
+            const nestedName = this.config.packageName ? currentPath.split(this.config.packageName)[1] : currentPath;
             const typeName = pascalCase(nestedName.split('.').join('_') + '_' + name);
             schemaComposer.createEnumTC(createEnum(typeName, nested.values));
           }
           schemaComposer.createEnumTC(createEnum(typeName, nested.values));
         }
       } else if ('fields' in nested) {
-        if (config.packageName && currentPath && !currentPath.includes(config.packageName)) {
+        if (this.config.packageName && currentPath && !currentPath.includes(this.config.packageName)) {
           // outside message that needs to be scoped by package name to ensure there are no clashes
           const typeName = pascalCase(currentPath.split('.').join('_') + '_' + name);
-          createInputOutput(schemaComposer, typeName, currentPath, config.packageName, nested.fields);
+          createInputOutput(schemaComposer, typeName, currentPath, this.config.packageName, nested.fields);
         } else {
           const typeName = pascalCase(name);
-          if (currentPath && currentPath !== config.packageName) {
+          if (currentPath && currentPath !== this.config.packageName) {
             // this is a nested message, add both nested name and unnested name
-            const nestedName = config.packageName ? currentPath.split(config.packageName)[1] : currentPath;
+            const nestedName = this.config.packageName ? currentPath.split(this.config.packageName)[1] : currentPath;
             const typeName = pascalCase(nestedName.split('.').join('_') + '_' + name);
-            createInputOutput(schemaComposer, typeName, currentPath, config.packageName, nested.fields);
+            createInputOutput(schemaComposer, typeName, currentPath, this.config.packageName, nested.fields);
           }
-          createInputOutput(schemaComposer, typeName, currentPath, config.packageName, nested.fields);
+          createInputOutput(schemaComposer, typeName, currentPath, this.config.packageName, nested.fields);
         }
       } else if ('methods' in nested) {
         const objPath = currentPath ? currentPath + '.' + name : name;
@@ -138,7 +145,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
         if (typeof ServiceClient !== 'function') {
           throw new Error(`Object at path ${objPath} is not a Service constructor`);
         }
-        const client = new ServiceClient(config.endpoint, creds);
+        const client = new ServiceClient(this.config.endpoint, creds);
         const methods = nested.methods;
         await Promise.all(
           Object.keys(methods).map(async (methodName: string) => {
@@ -146,19 +153,19 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
             let rootFieldName = methodName;
             let responseType = method.responseType;
             let requestType = method.requestType;
-            if (name !== config.serviceName) {
+            if (name !== this.config.serviceName) {
               rootFieldName = camelCase(name + '_' + rootFieldName);
             }
-            if (currentPath !== config.packageName) {
+            if (currentPath !== this.config.packageName) {
               rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
               responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType);
               requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType);
             }
             const fieldConfig = {
-              type: () => getTypeName(schemaComposer, responseType, false, config.packageName),
+              type: () => getTypeName(schemaComposer, responseType, false, this.config.packageName),
               args: {
                 input: {
-                  type: () => getTypeName(schemaComposer, requestType, true, config.packageName),
+                  type: () => getTypeName(schemaComposer, requestType, true, this.config.packageName),
                   defaultValue: {},
                 },
               },
@@ -173,7 +180,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
                 [rootFieldName]: {
                   ...fieldConfig,
                   subscribe: (__, args: ArgsMap, context: Record<string, unknown>) =>
-                    addMetaDataToCall(clientMethod, args.input, context, config.metaData),
+                    addMetaDataToCall(clientMethod, args.input, context, this.config.metaData),
                   resolve: (payload: unknown) => payload,
                 },
               });
@@ -185,17 +192,17 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
                 [rootFieldName]: {
                   ...fieldConfig,
                   resolve: (_, args: ArgsMap, context: Record<string, unknown>) =>
-                    addMetaDataToCall(clientMethod, args.input, context, config.metaData),
+                    addMetaDataToCall(clientMethod, args.input, context, this.config.metaData),
                 },
               });
             }
           })
         );
         let rootPingFieldName = 'ping';
-        if (name !== config.serviceName) {
+        if (name !== this.config.serviceName) {
           rootPingFieldName = camelCase(name + '_' + rootPingFieldName);
         }
-        if (currentPath !== config.packageName) {
+        if (currentPath !== this.config.packageName) {
           rootPingFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootPingFieldName);
         }
         schemaComposer.Query.addFields({
@@ -205,7 +212,7 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
           },
         });
       }
-    }
+    };
     const rootNested = root.toJSON({
       keepComments: true,
     });
@@ -216,7 +223,5 @@ const handler: MeshHandlerLibrary<YamlConfig.GrpcHandler> = {
     return {
       schema,
     };
-  },
-};
-
-export default handler;
+  }
+}

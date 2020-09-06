@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-expressions */
-import { MeshHandlerLibrary, YamlConfig, ResolverData } from '@graphql-mesh/types';
+import { YamlConfig, ResolverData, MeshHandler, GetMeshSourceOptions, MeshSource } from '@graphql-mesh/types';
 import { parseInterpolationStrings, getInterpolatedHeadersFactory, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { fetchache, Request, Response } from 'fetchache';
+import { fetchache, KeyValueCache, Request, Response } from 'fetchache';
 import urljoin from 'url-join';
 import { JSDOM } from 'jsdom';
 import {
@@ -55,11 +54,52 @@ interface EntityTypeExtensions {
   eventEmitter: EventEmitter;
 }
 
-const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
-  async getMeshSource({ name, config, cache }) {
-    const metadataUrl = urljoin(config.baseUrl, '$metadata');
-    const metadataText = await readFileOrUrlWithCache<string>(config.metadata || metadataUrl, cache, {
-      headers: config.schemaHeaders,
+const queryOptionsFields = {
+  orderby: {
+    type: 'String',
+    description:
+      'A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.',
+  },
+  top: {
+    type: 'Int',
+    description:
+      'A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.',
+  },
+  skip: {
+    type: 'Int',
+    description:
+      'A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.',
+  },
+  filter: {
+    type: 'String',
+    description:
+      'A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.',
+  },
+  inlinecount: {
+    type: 'InlineCount',
+    description:
+      'A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.',
+  },
+  count: {
+    type: 'Boolean',
+  },
+};
+
+export default class ODataHandler implements MeshHandler {
+  private name: string;
+  private config: YamlConfig.ODataHandler;
+  private cache: KeyValueCache;
+
+  constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+    this.name = name;
+    this.config = config;
+    this.cache = cache;
+  }
+
+  async getMeshSource(): Promise<MeshSource> {
+    const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
+    const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
+      headers: this.config.schemaHeaders,
       allowUnknownExtensions: true,
     });
 
@@ -82,6 +122,8 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
     const schemas = allDocument.querySelectorAll('Schema');
     const multipleSchemas = schemas.length > 1;
     const namespaces = new Set<string>();
+
+    const contextDataloaderName = Symbol(`${this.name}DataLoader`);
 
     function getNamespaceFromTypeRef(typeRef: string) {
       let namespace = '';
@@ -132,52 +174,6 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
         realTypeName += '!';
       }
       return realTypeName;
-    }
-
-    function prepareSearchParams(fragment: ResolveTree, schema: GraphQLSchema) {
-      const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName) as string[];
-      const returnType = schema.getType(fragmentTypeNames[0]);
-      const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType);
-      const searchParams = new URLSearchParams();
-      if ('queryOptions' in args) {
-        const { queryOptions } = args as any;
-        for (const param in queryOptionsFields) {
-          if (param in queryOptions) {
-            searchParams.set('$' + param, queryOptions[param]);
-          }
-        }
-      }
-
-      // $select doesn't work with inherited types' fields. So if there is an inline fragment for
-      // implemented types, we cannot use $select
-      const isSelectable = !isAbstractType(returnType);
-
-      if (isSelectable) {
-        const { entityInfo } = returnType.extensions as EntityTypeExtensions;
-        const selectionFields: string[] = [];
-        const expandedFields: string[] = [];
-        for (const fieldName in fields) {
-          if (entityInfo.actualFields.includes(fieldName)) {
-            selectionFields.push(fieldName);
-          }
-          if (config.expandNavProps && entityInfo.navigationFields.includes(fieldName)) {
-            const searchParams = prepareSearchParams(fields[fieldName], schema);
-            const searchParamsStr = decodeURIComponent(searchParams.toString());
-            expandedFields.push(`${fieldName}(${searchParamsStr.split('&').join(';')})`);
-            selectionFields.push(fieldName);
-          }
-        }
-        if (!selectionFields.includes(entityInfo.identifierFieldName)) {
-          selectionFields.push(entityInfo.identifierFieldName);
-        }
-        if (selectionFields.length) {
-          searchParams.set('$select', selectionFields.join(','));
-        }
-        if (expandedFields.length) {
-          searchParams.set('$expand', expandedFields.join(','));
-        }
-      }
-      return searchParams;
     }
 
     function getUrlString(url: URL) {
@@ -323,43 +319,12 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       },
     });
 
-    const queryOptionsFields = {
-      orderby: {
-        type: 'String',
-        description:
-          'A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.',
-      },
-      top: {
-        type: 'Int',
-        description:
-          'A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.',
-      },
-      skip: {
-        type: 'Int',
-        description:
-          'A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.',
-      },
-      filter: {
-        type: 'String',
-        description:
-          'A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.',
-      },
-      inlinecount: {
-        type: 'InlineCount',
-        description:
-          'A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.',
-      },
-      count: {
-        type: 'Boolean',
-      },
-    };
-
     schemaComposer.createInputTC({
       name: 'QueryOptions',
       fields: queryOptionsFields,
     });
 
-    const origHeadersFactory = getInterpolatedHeadersFactory(config.operationHeaders);
+    const origHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     const headersFactory = (resolverData: ResolverData, method: string) => {
       const headers = origHeadersFactory(resolverData);
       if (!headers.has('Accept')) {
@@ -371,8 +336,8 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       return headers;
     };
     const { args: commonArgs, contextVariables } = parseInterpolationStrings([
-      ...Object.values(config.operationHeaders || {}),
-      config.baseUrl,
+      ...Object.values(this.config.operationHeaders || {}),
+      this.config.baseUrl,
     ]);
 
     function getTCByTypeNames(...typeNames: string[]) {
@@ -431,7 +396,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
             requestBody += `--${requestBoundary}--\n`;
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
-            const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
+            const batchRequest = new Request(urljoin(this.config.baseUrl, '$batch'), {
               method: 'POST',
               body: requestBody,
               headers: batchHeaders,
@@ -461,13 +426,13 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           async (requests: Request[]): Promise<Response[]> => {
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', 'application/json');
-            const batchRequest = new Request(urljoin(config.baseUrl, '$batch'), {
+            const batchRequest = new Request(urljoin(this.config.baseUrl, '$batch'), {
               method: 'POST',
               body: JSON.stringify({
                 requests: await Promise.all(
                   requests.map(async (request, index) => {
                     const id = index.toString();
-                    const url = request.url.replace(config.baseUrl, '');
+                    const url = request.url.replace(this.config.baseUrl, '');
                     const method = request.method;
                     const headers: HeadersInit = {};
                     request.headers.forEach((value, key) => {
@@ -485,7 +450,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               }),
               headers: batchHeaders,
             });
-            const batchResponse = await fetchache(batchRequest, cache);
+            const batchResponse = await fetchache(batchRequest, this.cache);
             const batchResponseText = await batchResponse.text();
             const batchResponseJson = JSON.parse(batchResponseText);
             if ('error' in batchResponseJson) {
@@ -512,11 +477,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
           }
         ),
       none: () => ({
-        load: (request: any) => fetchache(request, cache),
+        load: (request: any) => fetchache(request, this.cache),
       }),
     };
 
-    const dataLoaderFactory = DATALOADER_FACTORIES[config.batch || 'none'];
+    const dataLoaderFactory = DATALOADER_FACTORIES[this.config.batch || 'none'];
 
     function buildName({ schemaNamespace, name }: { schemaNamespace: string; name: string }) {
       const alias = aliasNamespaceMap.get(schemaNamespace) || schemaNamespace;
@@ -665,7 +630,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               const url = new URL(root['@odata.id']);
               url.href = urljoin(url.href, '/' + navigationPropertyName);
               const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
               searchParams.forEach((value, key) => {
                 url.searchParams.set(key, value);
               });
@@ -675,7 +640,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -728,14 +693,14 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + functionName);
               url.href += `(${Object.entries(args)
                 .filter(argEntry => argEntry[0] !== 'queryOptions')
                 .map(argEntry => argEntry.join(' = '))
                 .join(', ')})`;
               const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
               searchParams.forEach((value, key) => {
                 url.searchParams.set(key, value);
               });
@@ -745,7 +710,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -777,7 +742,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + actionName);
               const urlString = getUrlString(url);
               const method = 'POST';
@@ -786,7 +751,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 headers: headersFactory({ root, args, context, info }, method),
                 body: JSON.stringify(args),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -824,10 +789,10 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + singletonName);
               const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
               searchParams.forEach((value, key) => {
                 url.searchParams.set(key, value);
               });
@@ -837,7 +802,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -889,7 +854,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 const url = new URL(root['@odata.id']);
                 url.href = urljoin(url.href, '/' + functionRef);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-                const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
                 searchParams.forEach((value, key) => {
                   url.searchParams.set(key, value);
                 });
@@ -899,7 +864,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                   method,
                   headers: headersFactory({ root, args, context, info }, method),
                 });
-                const response = await context[`${name}DataLoader`].load(request);
+                const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
                 return handleResponseText(responseText, urlString, info);
               },
@@ -958,7 +923,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                   headers: headersFactory({ root, args, context, info }, method),
                   body: JSON.stringify(args),
                 });
-                const response = await context[`${name}DataLoader`].load(request);
+                const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
                 return handleResponseText(responseText, urlString, info);
               },
@@ -1046,10 +1011,10 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               queryOptions: { type: 'QueryOptions' },
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + entitySetName);
               const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
               searchParams.forEach((value, key) => {
                 url.searchParams.set(key, value);
               });
@@ -1059,7 +1024,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -1073,11 +1038,11 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               },
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + entitySetName);
               addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
               const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = prepareSearchParams(parsedInfoFragment, info.schema);
+              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
               searchParams.forEach((value, key) => {
                 url.searchParams.set(key, value);
               });
@@ -1087,7 +1052,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -1102,7 +1067,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               queryOptions: { type: 'QueryOptions' },
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, `/${entitySetName}/$count`);
               const urlString = getUrlString(url);
               const method = 'GET';
@@ -1110,7 +1075,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return responseText;
             },
@@ -1127,7 +1092,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               },
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + entitySetName);
               const urlString = getUrlString(url);
               rebuildOpenInputObjects(args.input);
@@ -1137,7 +1102,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 headers: headersFactory({ root, args, context, info }, method),
                 body: JSON.stringify(args.input),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -1151,7 +1116,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               },
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + entitySetName);
               addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
               const urlString = getUrlString(url);
@@ -1160,7 +1125,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -1177,7 +1142,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
               },
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(config.baseUrl);
+              const url = new URL(this.config.baseUrl);
               url.href = urljoin(url.href, '/' + entitySetName);
               addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
               const urlString = getUrlString(url);
@@ -1188,7 +1153,7 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
                 headers: headersFactory({ root, args, context, info }, method),
                 body: JSON.stringify(args.input),
               });
-              const response = await context[`${name}DataLoader`].load(request);
+              const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
               return handleResponseText(responseText, urlString, info);
             },
@@ -1203,10 +1168,54 @@ const handler: MeshHandlerLibrary<YamlConfig.ODataHandler> = {
       schema,
       contextVariables,
       contextBuilder: async context => ({
-        [`${name}DataLoader`]: dataLoaderFactory(context),
+        [contextDataloaderName]: dataLoaderFactory(context),
       }),
     };
-  },
-};
+  }
 
-export default handler;
+  private prepareSearchParams(fragment: ResolveTree, schema: GraphQLSchema) {
+    const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName) as string[];
+    const returnType = schema.getType(fragmentTypeNames[0]);
+    const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType);
+    const searchParams = new URLSearchParams();
+    if ('queryOptions' in args) {
+      const { queryOptions } = args as any;
+      for (const param in queryOptionsFields) {
+        if (param in queryOptions) {
+          searchParams.set('$' + param, queryOptions[param]);
+        }
+      }
+    }
+
+    // $select doesn't work with inherited types' fields. So if there is an inline fragment for
+    // implemented types, we cannot use $select
+    const isSelectable = !isAbstractType(returnType);
+
+    if (isSelectable) {
+      const { entityInfo } = returnType.extensions as EntityTypeExtensions;
+      const selectionFields: string[] = [];
+      const expandedFields: string[] = [];
+      for (const fieldName in fields) {
+        if (entityInfo.actualFields.includes(fieldName)) {
+          selectionFields.push(fieldName);
+        }
+        if (this.config.expandNavProps && entityInfo.navigationFields.includes(fieldName)) {
+          const searchParams = this.prepareSearchParams(fields[fieldName], schema);
+          const searchParamsStr = decodeURIComponent(searchParams.toString());
+          expandedFields.push(`${fieldName}(${searchParamsStr.split('&').join(';')})`);
+          selectionFields.push(fieldName);
+        }
+      }
+      if (!selectionFields.includes(entityInfo.identifierFieldName)) {
+        selectionFields.push(entityInfo.identifierFieldName);
+      }
+      if (selectionFields.length) {
+        searchParams.set('$select', selectionFields.join(','));
+      }
+      if (expandedFields.length) {
+        searchParams.set('$expand', expandedFields.join(','));
+      }
+    }
+    return searchParams;
+  }
+}

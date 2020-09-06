@@ -1,14 +1,19 @@
 import { buildSchemaFromDatabase, buildSchemaFromInfile } from 'tuql';
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 
-const handler: MeshHandlerLibrary<YamlConfig.TuqlHandler> = {
-  async getMeshSource({ config }) {
-    const schema = await (config.infile ? buildSchemaFromInfile(config.infile) : buildSchemaFromDatabase(config.db));
+export default class TuqlHandler implements MeshHandler {
+  private config: YamlConfig.TuqlHandler;
+  constructor({ config }: GetMeshSourceOptions<YamlConfig.TuqlHandler>) {
+    this.config = config;
+  }
+
+  async getMeshSource(): Promise<MeshSource> {
+    const schema = await (this.config.infile
+      ? buildSchemaFromInfile(this.config.infile)
+      : buildSchemaFromDatabase(this.config.db));
 
     return {
       schema,
     };
-  },
-};
-
-export default handler;
+  }
+}

@@ -81,6 +81,7 @@ export interface Handler {
   soap?: SoapHandler;
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
+  [k: string]: any;
 }
 /**
  * Handler for remote/local/third-party GraphQL schema
@@ -109,7 +110,7 @@ export interface GraphQLHandler {
   /**
    * HTTP method used for GraphQL operations (Allowed values: GET, POST)
    */
-  method?: "GET" | "POST";
+  method?: 'GET' | 'POST';
   /**
    * Enable GraphQL Subscriptions using WebSocket
    */
@@ -199,11 +200,11 @@ export interface JsonSchemaOperation {
   /**
    * Allowed values: Query, Mutation
    */
-  type: "Query" | "Mutation";
+  type: 'Query' | 'Mutation';
   /**
    * Allowed values: GET, DELETE, POST, PUT
    */
-  method: "GET" | "DELETE" | "POST" | "PUT";
+  method: 'GET' | 'DELETE' | 'POST' | 'PUT';
   requestSchema?: string;
   responseSchema?: string;
   requestSample?: string;
@@ -477,7 +478,7 @@ export interface ODataHandler {
   /**
    * Enable batching (Allowed values: multipart, json)
    */
-  batch?: "multipart" | "json";
+  batch?: 'multipart' | 'json';
   /**
    * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
    */
@@ -648,7 +649,7 @@ export interface ThriftHandler {
   /**
    * Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: binary, compact, json)
    */
-  protocol?: "binary" | "compact" | "json";
+  protocol?: 'binary' | 'compact' | 'json';
   /**
    * The name of your service. Used for logging.
    */
@@ -702,6 +703,7 @@ export interface Transform {
    */
   resolversComposition?: ResolversCompositionTransformObject[];
   snapshot?: SnapshotTransformConfig;
+  [k: string]: any;
 }
 export interface CacheTransformConfig {
   /**
@@ -840,53 +842,53 @@ export interface NamingConventionTransformConfig {
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   typeNames?:
-    | "camelCase"
-    | "capitalCase"
-    | "constantCase"
-    | "dotCase"
-    | "headerCase"
-    | "noCase"
-    | "paramCase"
-    | "pascalCase"
-    | "pathCase"
-    | "sentenceCase"
-    | "snakeCase"
-    | "upperCase"
-    | "lowerCase";
+    | 'camelCase'
+    | 'capitalCase'
+    | 'constantCase'
+    | 'dotCase'
+    | 'headerCase'
+    | 'noCase'
+    | 'paramCase'
+    | 'pascalCase'
+    | 'pathCase'
+    | 'sentenceCase'
+    | 'snakeCase'
+    | 'upperCase'
+    | 'lowerCase';
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   fieldNames?:
-    | "camelCase"
-    | "capitalCase"
-    | "constantCase"
-    | "dotCase"
-    | "headerCase"
-    | "noCase"
-    | "paramCase"
-    | "pascalCase"
-    | "pathCase"
-    | "sentenceCase"
-    | "snakeCase"
-    | "upperCase"
-    | "lowerCase";
+    | 'camelCase'
+    | 'capitalCase'
+    | 'constantCase'
+    | 'dotCase'
+    | 'headerCase'
+    | 'noCase'
+    | 'paramCase'
+    | 'pascalCase'
+    | 'pathCase'
+    | 'sentenceCase'
+    | 'snakeCase'
+    | 'upperCase'
+    | 'lowerCase';
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   enumValues?:
-    | "camelCase"
-    | "capitalCase"
-    | "constantCase"
-    | "dotCase"
-    | "headerCase"
-    | "noCase"
-    | "paramCase"
-    | "pascalCase"
-    | "pathCase"
-    | "sentenceCase"
-    | "snakeCase"
-    | "upperCase"
-    | "lowerCase";
+    | 'camelCase'
+    | 'capitalCase'
+    | 'constantCase'
+    | 'dotCase'
+    | 'headerCase'
+    | 'noCase'
+    | 'paramCase'
+    | 'pascalCase'
+    | 'pathCase'
+    | 'sentenceCase'
+    | 'snakeCase'
+    | 'upperCase'
+    | 'lowerCase';
 }
 /**
  * Prefix transform
@@ -973,6 +975,7 @@ export interface Cache {
   inmemoryLRU?: InMemoryLRUConfig;
   localforage?: LocalforageConfig;
   redis?: RedisConfig;
+  [k: string]: any;
 }
 export interface FileCacheConfig {
   path?: string;
@@ -984,7 +987,7 @@ export interface LocalforageConfig {
   /**
    * Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE
    */
-  driver?: ("WEBSQL" | "INDEXEDDB" | "LOCALSTORAGE")[];
+  driver?: ('WEBSQL' | 'INDEXEDDB' | 'LOCALSTORAGE')[];
   name?: string;
   version?: number;
   size?: number;

@@ -1,0 +1,422 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Interpreting Protos should load the Empty proto 1`] = `
+"type Query {
+  GetMovies(input: MovieRequestInput = {}): MoviesResult
+  GetEmpty(input: MovieRequestInput = {}): EmptyRequest
+  anotherExampleGetMovies(input: MovieRequestInput = {}): MoviesResult
+  ping: ServerStatus
+  anotherExamplePing: ServerStatus
+}
+
+type MoviesResult {
+  result: [Movie]
+}
+
+type Movie {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestamp
+  genre: Genre
+}
+
+type GoogleProtobufTimestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input MovieRequestInput {
+  movie: MovieInput
+}
+
+input MovieInput {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestampInput
+  genre: Genre
+}
+
+input GoogleProtobufTimestampInput {
+  seconds: BigInt
+  nanos: Int
+}
+
+type EmptyRequest {
+  _: Boolean
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  status: String
+}
+
+type Subscription {
+  SearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+}
+
+input SearchByCastRequestInput {
+  castName: String
+}
+"
+`;
+
+exports[`Interpreting Protos should load the Movie proto 1`] = `
+"type Query {
+  GetMovies(input: MovieRequestInput = {}): MoviesResult
+  anotherExampleGetMovies(input: MovieRequestInput = {}): MoviesResult
+  ping: ServerStatus
+  anotherExamplePing: ServerStatus
+}
+
+type MoviesResult {
+  result: [Movie]
+}
+
+type Movie {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestamp
+  genre: Genre
+}
+
+type GoogleProtobufTimestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input MovieRequestInput {
+  movie: MovieInput
+}
+
+input MovieInput {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestampInput
+  genre: Genre
+}
+
+input GoogleProtobufTimestampInput {
+  seconds: BigInt
+  nanos: Int
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  status: String
+}
+
+type Subscription {
+  SearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+}
+
+input SearchByCastRequestInput {
+  castName: String
+}
+"
+`;
+
+exports[`Interpreting Protos should load the Nested proto 1`] = `
+"type Query {
+  Get(input: TopLevelNestedInput = {}): Result
+  ping: ServerStatus
+}
+
+type Result {
+  result: [Item]
+}
+
+type Item {
+  name: String
+}
+
+input TopLevelNestedInput {
+  movie: ItemInput
+}
+
+input ItemInput {
+  name: String
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  status: String
+}
+"
+`;
+
+exports[`Interpreting Protos should load the No Package Nested proto 1`] = `
+"type Query {
+  Get(input: TopLevelNestedInput = {}): Result
+  ping: ServerStatus
+}
+
+type Result {
+  result: [Item]
+}
+
+type Item {
+  name: String
+}
+
+input TopLevelNestedInput {
+  movie: ItemInput
+}
+
+input ItemInput {
+  name: String
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  status: String
+}
+"
+`;
+
+exports[`Interpreting Protos should load the Outide proto 1`] = `
+"type Query {
+  GetMovies(input: MovieRequestInput = {}): MoviesResult
+  ioXtechGetMovies(input: IoXtechMovieRequestInput = {}): IoXtechMoviesResult
+  ioXtechAnotherExampleGetMovies(input: IoXtechMovieRequestInput = {}): IoXtechMoviesResult
+  ping: ServerStatus
+  ioXtechPing: ServerStatus
+  ioXtechAnotherExamplePing: ServerStatus
+}
+
+type MoviesResult {
+  result: [IoXtechMovie]
+}
+
+type IoXtechMovie {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestamp
+  genre: IoXtechGenre
+}
+
+type GoogleProtobufTimestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+enum IoXtechGenre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input MovieRequestInput {
+  movie: IoXtechMovieInput
+}
+
+input IoXtechMovieInput {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestampInput
+  genre: IoXtechGenre
+}
+
+input GoogleProtobufTimestampInput {
+  seconds: BigInt
+  nanos: Int
+}
+
+type IoXtechMoviesResult {
+  result: [IoXtechMovie]
+}
+
+input IoXtechMovieRequestInput {
+  movie: IoXtechMovieInput
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  status: String
+}
+
+type Subscription {
+  ioXtechSearchMoviesByCast(input: IoXtechSearchByCastRequestInput = {}): IoXtechMovie
+  ioXtechAnotherExampleSearchMoviesByCast(input: IoXtechSearchByCastRequestInput = {}): IoXtechMovie
+}
+
+input IoXtechSearchByCastRequestInput {
+  castName: String
+}
+"
+`;
+
+exports[`Interpreting Protos should load the With All Values proto 1`] = `
+"type Query {
+  get(input: ItemInput = {}): Result
+  ping: ServerStatus
+}
+
+type Result {
+  result: [Item]
+}
+
+type Item {
+  boolean: Boolean
+  bytesType: Byte
+  doubleNum: Float
+  fixedint32: Int
+  fixedint64: BigInt
+  floatNum: Float
+  integer32: Int
+  integer64: BigInt
+  sfixedint32: Int
+  sfixedint64: BigInt
+  sinteger32: Int
+  sinteger64: BigInt
+  str: String
+  uinteger32: UnsignedInt
+  uinteger64: BigInt
+}
+
+\\"\\"\\"The \`Byte\` scalar type represents byte value as a Buffer\\"\\"\\"
+scalar Byte
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+\\"\\"\\"Integers that will have a value of 0 or more.\\"\\"\\"
+scalar UnsignedInt
+
+input ItemInput {
+  boolean: Boolean
+  bytesType: Byte
+  doubleNum: Float
+  fixedint32: Int
+  fixedint64: BigInt
+  floatNum: Float
+  integer32: Int
+  integer64: BigInt
+  sfixedint32: Int
+  sfixedint64: BigInt
+  sinteger32: Int
+  sinteger64: BigInt
+  str: String
+  uinteger32: UnsignedInt
+  uinteger64: BigInt
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  status: String
+}
+"
+`;
+
+exports[`Interpreting Protos should load the With Underscores proto 1`] = `
+"type Query {
+  GetMovies(input: MovieRequestInput = {}): MoviesResult
+  anotherExampleGetMovies(input: MovieRequestInput = {}): MoviesResult
+  ping: ServerStatus
+  anotherExamplePing: ServerStatus
+}
+
+type MoviesResult {
+  result: [Movie]
+}
+
+type Movie {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestamp
+  genre: Genre
+}
+
+type GoogleProtobufTimestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input MovieRequestInput {
+  movie: MovieInput
+}
+
+input MovieInput {
+  name: String
+  year: Int
+  rating: Float
+  cast: [String]
+  time: GoogleProtobufTimestampInput
+  genre: Genre
+}
+
+input GoogleProtobufTimestampInput {
+  seconds: BigInt
+  nanos: Int
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  status: String
+}
+
+type Subscription {
+  SearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+}
+
+input SearchByCastRequestInput {
+  castName: String
+}
+"
+`;

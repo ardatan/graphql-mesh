@@ -81,7 +81,7 @@ const mergeUsingFederation: MergerFn = async function ({
     },
     transforms,
   });
-  hooks.on('destroy', () => gateway.stop());
+  hooks.once('destroy', () => gateway.stop());
   typeDefs?.forEach(typeDef => {
     remoteSchema = extendSchema(remoteSchema, typeDef);
   });

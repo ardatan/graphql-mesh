@@ -43,9 +43,9 @@ type Source {
   transforms: [Transform]
 }
 
-type Transform
-type Handler
-type Cache
+type Transform @withAdditionalProperties
+type Handler @withAdditionalProperties
+type Cache @withAdditionalProperties
 
 union AdditionalResolver = String | AdditionalResolverObject
 

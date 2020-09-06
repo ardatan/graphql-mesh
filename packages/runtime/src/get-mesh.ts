@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, Requester, ResolvedTransform, SubscribeMeshFn, MeshContext } from './types';
+import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn, MeshContext } from './types';
 import { Hooks, KeyValueCache, RawSourceOutput, MeshTransform, GraphQLOperation } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
@@ -8,26 +8,10 @@ import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import { applySchemaTransforms } from '@graphql-tools/utils';
 import { ensureDocumentNode } from '@graphql-mesh/utils';
 
-export function groupTransforms({
-  transforms,
-  apiName,
-  cache,
-  hooks,
-}: {
-  transforms: ResolvedTransform[];
-  apiName: string;
-  cache: KeyValueCache;
-  hooks: Hooks;
-}) {
+export function groupTransforms(transforms: MeshTransform[]) {
   const wrapTransforms: MeshTransform[] = [];
   const noWrapTransforms: MeshTransform[] = [];
-  transforms?.forEach(({ transformLibrary: TransformCtor, config }) => {
-    const transform = new TransformCtor({
-      apiName,
-      config,
-      cache,
-      hooks,
-    });
+  transforms?.forEach(transform => {
     if (transform.noWrap) {
       noWrapTransforms.push(transform);
     } else {
@@ -56,23 +40,13 @@ export async function getMesh(
 
   await Promise.all(
     options.sources.map(async apiSource => {
-      const source = await apiSource.handlerLibrary.getMeshSource({
-        name: apiSource.name,
-        config: apiSource.handlerConfig || {},
-        hooks,
-        cache,
-      });
+      const source = await apiSource.handler.getMeshSource();
 
       let apiSchema = source.schema;
 
       const apiName = apiSource.name;
 
-      const { wrapTransforms, noWrapTransforms } = groupTransforms({
-        transforms: apiSource.transforms,
-        apiName,
-        cache,
-        hooks,
-      });
+      const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
       apiSchema = applySchemaTransforms(apiSchema, noWrapTransforms);
 
@@ -84,7 +58,7 @@ export async function getMesh(
         subscriber: source.subscriber,
         transforms: wrapTransforms,
         contextVariables: source.contextVariables || [],
-        handler: apiSource.handlerLibrary,
+        handler: apiSource.handler,
         batch: 'batch' in source ? source.batch : true,
       });
     })
@@ -96,14 +70,7 @@ export async function getMesh(
     hooks,
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
-    transforms: options.transforms?.map(
-      ({ transformLibrary: TransformCtor, config }) =>
-        new TransformCtor({
-          config,
-          cache,
-          hooks,
-        })
-    ),
+    transforms: options.transforms,
   });
 
   hooks.emit('schemaReady', unifiedSchema);

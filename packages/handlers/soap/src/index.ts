@@ -1,15 +1,25 @@
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
 import { WSSecurityCert } from 'soap';
 import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { Request, fetchache } from 'fetchache';
 
-const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
-  async getMeshSource({ config, cache }) {
-    const soapClient = await createSoapClient(config.wsdl, {
-      basicAuth: config.basicAuth,
+type AnyFn = (...args: any[]) => any;
+
+export default class SoapHandler implements MeshHandler {
+  config: YamlConfig.SoapHandler;
+  cache: KeyValueCache;
+
+  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+    this.config = config;
+    this.cache = cache;
+  }
+
+  async getMeshSource() {
+    const soapClient = await createSoapClient(this.config.wsdl, {
+      basicAuth: this.config.basicAuth,
       options: {
-        request: ((requestObj: any, callback: Function) => {
+        request: ((requestObj: any, callback: AnyFn) => {
           let _request: any = null;
           const sendRequest = async () => {
             const req = new Request(requestObj.uri.href, {
@@ -17,7 +27,7 @@ const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
               method: requestObj.method,
               body: requestObj.body,
             });
-            const res = await fetchache(req, cache);
+            const res = await fetchache(req, this.cache);
             // eslint-disable-next-line dot-notation
             _request = res.body;
             const body = await res.text();
@@ -41,22 +51,22 @@ const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
       },
     });
 
-    if (config.securityCert) {
-      const securityCertConfig = config.securityCert;
+    if (this.config.securityCert) {
+      const securityCertConfig = this.config.securityCert;
       const [privateKey, publicKey, password] = await Promise.all([
         securityCertConfig.privateKey ||
           (securityCertConfig.privateKeyPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.privateKeyPath, cache, {
+            readFileOrUrlWithCache<string>(securityCertConfig.privateKeyPath, this.cache, {
               allowUnknownExtensions: true,
             })),
         securityCertConfig.publicKey ||
           (securityCertConfig.publicKeyPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.publicKeyPath, cache, {
+            readFileOrUrlWithCache<string>(securityCertConfig.publicKeyPath, this.cache, {
               allowUnknownExtensions: true,
             })),
         securityCertConfig.password ||
           (securityCertConfig.passwordPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.passwordPath, cache, {
+            readFileOrUrlWithCache<string>(securityCertConfig.passwordPath, this.cache, {
               allowUnknownExtensions: true,
             })),
       ]);
@@ -70,7 +80,5 @@ const handler: MeshHandlerLibrary<YamlConfig.SoapHandler> = {
     return {
       schema,
     };
-  },
-};
-
-export default handler;
+  }
+}

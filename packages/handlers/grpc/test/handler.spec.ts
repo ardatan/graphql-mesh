@@ -1,11 +1,10 @@
 import { join } from 'path';
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
-import handler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { EventEmitter } from 'events';
-import { validateSchema } from 'graphql';
 import { Hooks } from '@graphql-mesh/types';
+import GrpcHandler from '../src';
 
 describe.each<[string, string, string]>([
   ['Movie', 'io.xtech', 'movie.proto'],
@@ -28,8 +27,17 @@ describe.each<[string, string, string]>([
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },
     };
-    const { schema } = await handler.getMeshSource({ name: Date.now().toString(), config, cache, hooks });
+    const handler = new GrpcHandler({
+      name: Date.now().toString(),
+      config,
+      cache,
+      hooks,
+    });
+
+    const { schema } = await handler.getMeshSource();
+
     expect(schema).toBeInstanceOf(GraphQLSchema);
     expect(validateSchema(schema)).toHaveLength(0);
+    expect(printSchema(schema)).toMatchSnapshot();
   });
 });

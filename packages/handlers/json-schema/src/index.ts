@@ -1,4 +1,4 @@
-import { MeshHandlerLibrary, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { JSONSchemaVisitor, getFileName } from './json-schema-visitor';
 import urlJoin from 'url-join';
 import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings, isUrl } from '@graphql-mesh/utils';
@@ -22,39 +22,15 @@ import {
   GraphQLIPv6,
 } from 'graphql-scalars';
 
-async function generateJsonSchemaFromSample({
-  samplePath,
-  schemaPath,
-  cache,
-}: {
-  samplePath: string;
-  schemaPath?: string;
-  cache: KeyValueCache;
-}) {
-  if (!schemaPath || (!isUrl(schemaPath) && !(await pathExists(schemaPath)))) {
-    const sample = await readFileOrUrlWithCache(samplePath, cache);
-    const schema = toJsonSchema(sample, {
-      required: false,
-      objects: {
-        additionalProperties: false,
-      },
-      strings: {
-        detectFormat: true,
-      },
-      arrays: {
-        mode: 'first',
-      },
-    });
-    if (schemaPath) {
-      await writeJSON(schemaPath, schema);
-    }
-    return schema;
+export default class JsonSchemaHandler implements MeshHandler {
+  private config: YamlConfig.JsonSchemaHandler;
+  private cache: KeyValueCache;
+  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
+    this.config = config;
+    this.cache = cache;
   }
-  return null;
-}
 
-const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
-  async getMeshSource({ config, cache }) {
+  async getMeshSource() {
     const schemaComposer = new SchemaComposer();
 
     schemaComposer.add(GraphQLJSON);
@@ -76,31 +52,29 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
     const contextVariables: string[] = [];
 
     await Promise.all(
-      config.operations?.map(async operationConfig => {
+      this.config.operations?.map(async operationConfig => {
         let [requestSchema, responseSchema] = await Promise.all([
           operationConfig.requestSample &&
-            generateJsonSchemaFromSample({
+            this.generateJsonSchemaFromSample({
               samplePath: operationConfig.requestSample,
               schemaPath: operationConfig.requestSchema,
-              cache,
             }),
           operationConfig.responseSample &&
-            generateJsonSchemaFromSample({
+            this.generateJsonSchemaFromSample({
               samplePath: operationConfig.responseSample,
               schemaPath: operationConfig.responseSchema,
-              cache,
             }),
         ]);
         [requestSchema, responseSchema] = await Promise.all([
           requestSchema ||
             (operationConfig.requestSchema &&
-              readFileOrUrlWithCache(operationConfig.requestSchema, cache, {
-                headers: config.schemaHeaders,
+              readFileOrUrlWithCache(operationConfig.requestSchema, this.cache, {
+                headers: this.config.schemaHeaders,
               })),
           responseSchema ||
             (operationConfig.responseSchema &&
-              readFileOrUrlWithCache(operationConfig.responseSchema, cache, {
-                headers: config.schemaHeaders,
+              readFileOrUrlWithCache(operationConfig.responseSchema, this.cache, {
+                headers: this.config.schemaHeaders,
               })),
         ]);
         operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
@@ -117,7 +91,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
         );
 
         const { args, contextVariables: specificContextVariables } = parseInterpolationStrings([
-          ...Object.values(config.operationHeaders || {}),
+          ...Object.values(this.config.operationHeaders || {}),
           ...Object.values(operationConfig.headers || {}),
           operationConfig.path,
         ]);
@@ -149,10 +123,10 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
             resolve: async (root, args, context, info) => {
               const interpolationData = { root, args, context, info };
               const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
-              const fullPath = urlJoin(config.baseUrl, interpolatedPath);
+              const fullPath = urlJoin(this.config.baseUrl, interpolatedPath);
               const method = operationConfig.method;
               const headers = {
-                ...config.operationHeaders,
+                ...this.config.operationHeaders,
                 ...operationConfig?.headers,
               };
               for (const headerName in headers) {
@@ -184,7 +158,7 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
                 }
               }
               const request = new Request(urlObj.toString(), requestInit);
-              const response = await fetchache(request, cache);
+              const response = await fetchache(request, this.cache);
               const responseText = await response.text();
               let responseJson: any;
               try {
@@ -214,7 +188,28 @@ const handler: MeshHandlerLibrary<YamlConfig.JsonSchemaHandler> = {
       schema,
       contextVariables,
     };
-  },
-};
+  }
 
-export default handler;
+  private async generateJsonSchemaFromSample({ samplePath, schemaPath }: { samplePath: string; schemaPath?: string }) {
+    if (!schemaPath || (!isUrl(schemaPath) && !(await pathExists(schemaPath)))) {
+      const sample = await readFileOrUrlWithCache(samplePath, this.cache);
+      const schema = toJsonSchema(sample, {
+        required: false,
+        objects: {
+          additionalProperties: false,
+        },
+        strings: {
+          detectFormat: true,
+        },
+        arrays: {
+          mode: 'first',
+        },
+      });
+      if (schemaPath) {
+        await writeJSON(schemaPath, schema);
+      }
+      return schema;
+    }
+    return null;
+  }
+}
