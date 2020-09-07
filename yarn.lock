@@ -106,17 +106,7 @@
     "@algolia/logger-common" "4.3.1"
     "@algolia/requester-common" "4.3.1"
 
-"@apollo/federation@0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.19.0.tgz#b0e43f034e31ef391f44be01db3a8ef0e0b4565b"
-  integrity sha512-8cd8ftHgqaseDTN7RJrROT6FT1xy8RV2Qb9BGhhqPVMHqf08GtidBqQTk6hv1UDR0qu/TRZA6J4Kh7oXeMrPQg==
-  dependencies:
-    apollo-graphql "^0.5.0"
-    apollo-server-env "^2.4.5"
-    core-js "^3.4.0"
-    lodash.xorby "^4.7.0"
-
-"@apollo/federation@^0.20.0":
+"@apollo/federation@0.20.0", "@apollo/federation@^0.20.0":
   version "0.20.0"
   resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.20.0.tgz#59e084e73a0b5852d1de4da3bdafd5c94c757a83"
   integrity sha512-Q2eGSjrArtY04FSVIxUK3/JaVDDw4aJZBRl0+UZ1dwrpk6YtBpydW2u4X6dPTnBqRDpKVGVmc9gkQr8d3LpcKA==
