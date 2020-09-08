@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.8.0
+
+### Minor Changes
+
+- c8d9695e: feat(cli): support --require flag to load dotenv etc
+
+### Patch Changes
+
+- @graphql-mesh/config@0.8.1
+- @graphql-mesh/runtime@0.6.1
+
 ## 0.7.1
 
 ### Patch Changes

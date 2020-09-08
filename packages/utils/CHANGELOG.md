@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.5.1
+
+### Patch Changes
+
+- 8f53be10: fix(utils): do not try to parse empty strings
+
 ## 0.5.0
 
 ### Minor Changes
