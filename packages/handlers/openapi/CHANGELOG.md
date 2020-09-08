@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.5.3
+
+### Patch Changes
+
+- f5fcf8e9: fix(openapi): support arbitrary json references
+
 ## 0.5.2
 
 ### Patch Changes
