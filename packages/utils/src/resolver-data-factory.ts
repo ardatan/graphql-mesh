@@ -7,7 +7,7 @@ export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
 
 export function parseInterpolationStrings(interpolationStrings: string[]) {
   const interpolationKeys = interpolationStrings.reduce(
-    (keys, str) => [...keys, ...stringInterpolator.parseRules(str).map((match: any) => match.key)],
+    (keys, str) => [...keys, ...(str ? stringInterpolator.parseRules(str).map((match: any) => match.key) : [])],
     [] as string[]
   );
 
@@ -42,7 +42,10 @@ export function getInterpolatedHeadersFactory(
   return resolverData => {
     const headers = new Headers();
     for (const headerName in nonInterpolatedHeaders) {
-      headers.set(headerName, stringInterpolator.parse(nonInterpolatedHeaders[headerName], resolverData));
+      const headerValue = nonInterpolatedHeaders[headerName];
+      if (headerValue) {
+        headers.set(headerName, stringInterpolator.parse(headerValue, resolverData));
+      }
     }
     return headers;
   };
