@@ -20,7 +20,7 @@
     "@graphql-mesh/types": "0.8.1",
     "@graphql-mesh/utils": "0.5.0",
     "aggregate-error": "3.1.0",
-    "ajv": "6.12.3",
+    "ajv": "6.12.4",
     "fetchache": "0.0.3",
     "fs-extra": "9.0.1",
     "lodash": "4.17.20",
