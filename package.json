@@ -48,7 +48,7 @@
     "patch-package": "^6.2.2",
     "prettier": "2.1.1",
     "ts-jest": "26.3.0",
-    "ts-node-dev": "1.0.0-pre.61",
+    "ts-node-dev": "1.0.0-pre.62",
     "typescript": "3.9.7"
   },
   "husky": {
