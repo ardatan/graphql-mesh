@@ -1,5 +1,11 @@
 # @graphql-mesh/odata
 
+## 0.5.0
+
+### Minor Changes
+
+- e7cbdc0c: enhance(odata): parse xml into json instead of querying DOM
+
 ## 0.4.4
 
 ### Patch Changes
