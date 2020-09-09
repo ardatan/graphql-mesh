@@ -13,9 +13,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/graphql-fields": "1.3.3",
     "@types/http-string-parser": "0.0.29",
-    "@types/jsdom": "16.2.3",
     "@types/url-join": "4.0.0"
   },
   "dependencies": {
@@ -29,7 +27,6 @@
     "graphql-parse-resolve-info": "4.7.0",
     "graphql-scalars": "1.2.6",
     "pascal-case": "3.1.1",
-    "jsdom": "16.4.0",
     "url-join": "4.0.1"
   },
   "publishConfig": {
