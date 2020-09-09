@@ -3024,17 +3024,17 @@
     auto-bind "~4.0.0"
     tslib "~2.0.0"
 
-"@graphql-codegen/typescript-resolvers@1.17.8":
-  version "1.17.8"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-1.17.8.tgz#c10af67e54c00520aa33be0403c9e19981d820b5"
-  integrity sha512-0uMipQjqdRWCW/4I9ZmuZmPuR9jMqKqKph+G/9iAVkfRz3XEa8v1ho+pZ7NhJLWIeiW9NC7B/BKB1UUhKecysg==
+"@graphql-codegen/typescript-resolvers@1.17.9":
+  version "1.17.9"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-1.17.9.tgz#621778bc06f62998856c2209b5cccc506e74086e"
+  integrity sha512-JrH7YgGqKEkEbFGnf4YnBBEUA3WeVBM5nNDIAeoUeZR4lorxhcfSagcrRYAGWgZq5q2cGbKNyQvn/qSk2xJfsw==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^1.17.8"
     "@graphql-codegen/typescript" "^1.17.8"
     "@graphql-codegen/visitor-plugin-common" "^1.17.13"
     "@graphql-tools/utils" "^6.0.18"
     auto-bind "~4.0.0"
-    tslib "~2.0.0"
+    tslib "~2.0.1"
 
 "@graphql-codegen/typescript@1.17.6":
   version "1.17.6"
@@ -3345,7 +3345,7 @@
     "@ardatan/aggregate-error" "0.0.1"
     camel-case "4.1.1"
 
-"@graphql-tools/utils@6.1.0", "@graphql-tools/utils@^6.0.0", "@graphql-tools/utils@^6.0.18":
+"@graphql-tools/utils@6.1.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.1.0.tgz#a8ab67bb8d8a879f40d29b334f48de6e6be71c41"
   integrity sha512-YcyslZ/8rk5nQOGnkEDp/xi6Xphu0mgjh5LTZ1qUio5P+d95/9MW44cPdmi3Feg4kO8u+1GcPC+685hFpJlZJw==
@@ -3353,7 +3353,7 @@
     "@ardatan/aggregate-error" "0.0.1"
     camel-case "4.1.1"
 
-"@graphql-tools/utils@6.2.1":
+"@graphql-tools/utils@6.2.1", "@graphql-tools/utils@^6.0.0", "@graphql-tools/utils@^6.0.18":
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.2.1.tgz#07774dbcc7657d9f9b898721f10fc613ce116b56"
   integrity sha512-DZ6a2bjOH4sWKhNUachvYy+3ocXDvDcTtComOD/z7ncszdlZPU6RXNOgBTxh/bMVHBPqlEh/VjCVMwBysZRbJw==
