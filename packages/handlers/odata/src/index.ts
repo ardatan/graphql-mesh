@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { YamlConfig, ResolverData, MeshHandler, GetMeshSourceOptions, MeshSource } from '@graphql-mesh/types';
 import { parseInterpolationStrings, getInterpolatedHeadersFactory, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { fetchache, KeyValueCache, Request, Response } from 'fetchache';
@@ -131,7 +132,7 @@ export default class ODataHandler implements MeshHandler {
 
     function getNamespaceFromTypeRef(typeRef: string) {
       let namespace = '';
-      namespaces.forEach(el => {
+      namespaces?.forEach(el => {
         if (
           typeRef.startsWith(el) &&
           el.length > namespace.length && // It can be deeper namespace
@@ -386,7 +387,7 @@ export default class ODataHandler implements MeshHandler {
               requestBody += `Content-Transfer-Encoding:binary\n`;
               requestBody += `Content-ID: ${requestIndex}\n\n`;
               requestBody += `${request.method} ${request.url} HTTP/1.1\n`;
-              request.headers.forEach((value, key) => {
+              request.headers?.forEach((value, key) => {
                 requestBody += `${key}: ${value}\n`;
               });
               if (request.body) {
@@ -439,7 +440,7 @@ export default class ODataHandler implements MeshHandler {
                     const url = request.url.replace(this.config.baseUrl, '');
                     const method = request.method;
                     const headers: HeadersInit = {};
-                    request.headers.forEach((value, key) => {
+                    request.headers?.forEach((value, key) => {
                       headers[key] = value;
                     });
                     return {
@@ -493,7 +494,7 @@ export default class ODataHandler implements MeshHandler {
       return multipleSchemas ? pascalCase(ref.split('.').join('_')) : name;
     }
 
-    schemas.forEach((schemaObj: any) => {
+    schemas?.forEach((schemaObj: any) => {
       const schemaNamespace = schemaObj.attributes.Namespace;
       namespaces.add(schemaNamespace);
       const schemaAlias = schemaObj.attributes.Alias;
@@ -502,12 +503,12 @@ export default class ODataHandler implements MeshHandler {
       }
     });
 
-    schemas.forEach((schemaObj: any) => {
+    schemas?.forEach((schemaObj: any) => {
       const schemaNamespace = schemaObj.attributes.Namespace;
 
-      schemaObj.EnumType.forEach((enumObj: any) => {
+      schemaObj.EnumType?.forEach((enumObj: any) => {
         const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
-        enumObj.Member.forEach((memberObj: any) => {
+        enumObj.Member?.forEach((memberObj: any) => {
           const key = memberObj.attributes.Name;
           // This doesn't work.
           // const value = memberElement.getAttribute('Value')!;
@@ -524,7 +525,10 @@ export default class ODataHandler implements MeshHandler {
         });
       });
 
-      schemaObj.EntityType.concat(schemaObj.ComplexType).forEach((typeObj: any) => {
+      const allTypes = schemaObj.EntityType.concat(schemaObj.ComplexType);
+      const typesWithBaseType = allTypes.filter((typeObj: any) => typeObj.attributes.BaseType);
+
+      allTypes?.forEach((typeObj: any) => {
         const entityTypeName = buildName({ schemaNamespace, name: typeObj.attributes.Name });
         const isOpenType = typeObj.attributes.OpenType === 'true';
         const isAbstract = typeObj.attributes.Abstract === 'true';
@@ -545,7 +549,10 @@ export default class ODataHandler implements MeshHandler {
           extensions: () => extensions,
         });
         let abstractType: InterfaceTypeComposer;
-        if (schemaElement.querySelector(`[BaseType*=".${entityTypeName}"]`) || isAbstract) {
+        if (
+          typesWithBaseType.some((typeObj: any) => typeObj.attributes.BaseType.includes(`.${entityTypeName}`)) ||
+          isAbstract
+        ) {
           abstractType = schemaComposer.createInterfaceTC({
             name: isAbstract ? entityTypeName : `I${entityTypeName}`,
             extensions,
@@ -577,7 +584,7 @@ export default class ODataHandler implements MeshHandler {
           extensions.entityInfo.identifierFieldName = propertyRefObj.attributes.Name;
         }
 
-        typeObj.Property.forEach((propertyObj: any) => {
+        typeObj.Property?.forEach((propertyObj: any) => {
           const propertyName = propertyObj.attributes.Name;
           extensions.entityInfo.actualFields.push(propertyName);
           const propertyTypeRef = propertyObj.attributes.Type;
@@ -610,7 +617,7 @@ export default class ODataHandler implements MeshHandler {
             [propertyName]: field,
           });
         });
-        typeObj.NavigationProperty.forEach.forEach((navigationPropertyObj: any) => {
+        typeObj.NavigationProperty?.forEach((navigationPropertyObj: any) => {
           const navigationPropertyName = navigationPropertyObj.attributes.Name;
           extensions.entityInfo.navigationFields.push(navigationPropertyName);
           const navigationPropertyTypeRef = navigationPropertyObj.attributes.Type;
@@ -635,7 +642,7 @@ export default class ODataHandler implements MeshHandler {
               url.href = urljoin(url.href, '/' + navigationPropertyName);
               const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
               const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
-              searchParams.forEach((value, key) => {
+              searchParams?.forEach((value, key) => {
                 url.searchParams.set(key, value);
               });
               const urlString = getUrlString(url);
@@ -677,131 +684,35 @@ export default class ODataHandler implements MeshHandler {
           });
         }
         const updateInputType = inputType.clone(`${entityTypeName}UpdateInput`);
-        updateInputType.getFieldNames().forEach(fieldName => updateInputType.makeOptional(fieldName));
+        updateInputType.getFieldNames()?.forEach(fieldName => updateInputType.makeOptional(fieldName));
         // Types might be considered as unused implementations of interfaces so we must prevent that
         schemaComposer.addSchemaMustHaveType(outputType);
       });
 
-      schemaObj.Function.forEach((functionObj: any) => {
-        if (functionObj.attributes?.IsBound === 'true') {
-        } else {
-          const unboundFunctionObj = functionObj;
-          const functionName = unboundFunctionObj.attributes.Name;
-          const returnTypeRef = unboundFunctionElement.querySelector('ReturnType').getAttribute('Type');
-          const returnType = getTypeNameFromRef({
-            typeRef: returnTypeRef,
-            isInput: false,
-            isRequired: false,
-          });
-          schemaComposer.Query.addFields({
-            [functionName]: {
-              type: returnType,
-              args: {
-                ...commonArgs,
-              },
-              resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
-                url.href = urljoin(url.href, '/' + functionName);
-                url.href += `(${Object.entries(args)
-                  .filter(argEntry => argEntry[0] !== 'queryOptions')
-                  .map(argEntry => argEntry.join(' = '))
-                  .join(', ')})`;
-                const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
-                searchParams.forEach((value, key) => {
-                  url.searchParams.set(key, value);
-                });
-                const urlString = getUrlString(url);
-                const method = 'GET';
-                const request = new Request(urlString, {
-                  method,
-                  headers: headersFactory({ root, args, context, info }, method),
-                });
-                const response = await context[contextDataloaderName].load(request);
-                const responseText = await response.text();
-                return handleResponseText(responseText, urlString, info);
-              },
-            },
-          });
-          unboundFunctionElement.querySelectorAll('Parameter').forEach(parameterElement => {
-            const parameterName = parameterElement.getAttribute('Name');
-            const parameterTypeRef = parameterElement.getAttribute('Type');
-            const isRequired = parameterElement.getAttribute('Nullable') === 'false';
-            const parameterType = getTypeNameFromRef({
-              typeRef: parameterTypeRef,
-              isInput: true,
-              isRequired,
-            });
-            schemaComposer.Query.addFieldArgs(functionName, {
-              [parameterName]: {
-                type: parameterType,
-              },
-            });
-          });
-        }
-      });
-
-      schemaElement.querySelectorAll('Action:not([IsBound="true"])').forEach(unboundActionElement => {
-        const actionName = unboundActionElement.getAttribute('Name');
-        schemaComposer.Mutation.addFields({
-          [actionName]: {
-            type: 'JSON',
-            args: {
-              ...commonArgs,
-            },
-            resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, '/' + actionName);
-              const urlString = getUrlString(url);
-              const method = 'POST';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-                body: JSON.stringify(args),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return handleResponseText(responseText, urlString, info);
-            },
-          },
-        });
-        unboundActionElement.querySelectorAll('Parameter').forEach(parameterElement => {
-          const parameterName = parameterElement.getAttribute('Name');
-          const parameterTypeRef = parameterElement.getAttribute('Type');
-          const isRequired = parameterElement.getAttribute('Nullable') === 'false';
-          const parameterType = getTypeNameFromRef({
-            typeRef: parameterTypeRef,
-            isInput: true,
-            isRequired,
-          });
-          schemaComposer.Mutation.addFieldArgs(actionName, {
-            [parameterName]: {
-              type: parameterType,
-            },
-          });
-        });
-      });
-
-      schemaElement.querySelectorAll('Singleton').forEach(singletonElement => {
-        const singletonName = singletonElement.getAttribute('Name');
-        const singletonTypeRef = singletonElement.getAttribute('Type');
-        const singletonTypeName = getTypeNameFromRef({
-          typeRef: singletonTypeRef,
+      const handleUnboundFunctionObj = (unboundFunctionObj: any) => {
+        const functionName = unboundFunctionObj.attributes.Name;
+        const returnTypeRef = unboundFunctionObj.ReturnType[0].attributes.Type;
+        const returnType = getTypeNameFromRef({
+          typeRef: returnTypeRef,
           isInput: false,
           isRequired: false,
         });
         schemaComposer.Query.addFields({
-          [singletonName]: {
-            type: singletonTypeName,
+          [functionName]: {
+            type: returnType,
             args: {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
               const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, '/' + singletonName);
+              url.href = urljoin(url.href, '/' + functionName);
+              url.href += `(${Object.entries(args)
+                .filter(argEntry => argEntry[0] !== 'queryOptions')
+                .map(argEntry => argEntry.join(' = '))
+                .join(', ')})`;
               const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
               const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
-              searchParams.forEach((value, key) => {
+              searchParams?.forEach((value, key) => {
                 url.searchParams.set(key, value);
               });
               const urlString = getUrlString(url);
@@ -816,12 +727,27 @@ export default class ODataHandler implements MeshHandler {
             },
           },
         });
-      });
+        unboundFunctionObj.Parameter?.forEach((parameterObj: any) => {
+          const parameterName = parameterObj.attributes.Name;
+          const parameterTypeRef = parameterObj.attributes.Type;
+          const isRequired = parameterObj.attributes.Nullable === 'false';
+          const parameterType = getTypeNameFromRef({
+            typeRef: parameterTypeRef,
+            isInput: true,
+            isRequired,
+          });
+          schemaComposer.Query.addFieldArgs(functionName, {
+            [parameterName]: {
+              type: parameterType,
+            },
+          });
+        });
+      };
 
-      schemaElement.querySelectorAll(`Function[IsBound="true"]`).forEach(boundFunctionElement => {
-        const functionName = boundFunctionElement.getAttribute('Name');
+      const handleBoundFunctionObj = (boundFunctionObj: any) => {
+        const functionName = boundFunctionObj.attributes.Name;
         const functionRef = schemaNamespace + '.' + functionName;
-        const returnTypeRef = boundFunctionElement.querySelector('ReturnType').getAttribute('Type');
+        const returnTypeRef = boundFunctionObj.ReturnType[0].attributes.Type;
         const returnType = getTypeNameFromRef({
           typeRef: returnTypeRef,
           isInput: false,
@@ -830,11 +756,12 @@ export default class ODataHandler implements MeshHandler {
         const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
           ...commonArgs,
         };
-        let entitySetPath = boundFunctionElement.getAttribute('EntitySetPath');
-        boundFunctionElement.querySelectorAll('Parameter').forEach(parameterElement => {
-          const parameterName = parameterElement.getAttribute('Name');
-          const parameterTypeRef = parameterElement.getAttribute('Type');
-          const isRequired = parameterElement.getAttribute('Nullable') === 'false';
+        // eslint-disable-next-line prefer-const
+        let entitySetPath = boundFunctionObj.attributes.EntitySetPath;
+        boundFunctionObj.Parameter?.forEach((parameterObj: any) => {
+          const parameterName = parameterObj.attributes.Name;
+          const parameterTypeRef = parameterObj.attributes.Type;
+          const isRequired = parameterObj.attributes.Nullable === 'false';
           const parameterTypeName = getTypeNameFromRef({
             typeRef: parameterTypeRef,
             isInput: true,
@@ -863,7 +790,7 @@ export default class ODataHandler implements MeshHandler {
                 url.href = urljoin(url.href, '/' + functionRef);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
-                searchParams.forEach((value, key) => {
+                searchParams?.forEach((value, key) => {
                   url.searchParams.set(key, value);
                 });
                 const urlString = getUrlString(url);
@@ -888,21 +815,71 @@ export default class ODataHandler implements MeshHandler {
             type: parameterTypeName,
           };
         });
+      };
+
+      schemaObj.Function?.forEach((functionObj: any) => {
+        if (functionObj.attributes?.IsBound === 'true') {
+          handleBoundFunctionObj(functionObj);
+        } else {
+          handleUnboundFunctionObj(functionObj);
+        }
       });
 
-      schemaElement.querySelectorAll(`Action[IsBound="true"]`).forEach(boundActionElement => {
-        const actionName = boundActionElement.getAttribute('Name');
+      const handleUnboundActionObj = (unboundActionObj: any) => {
+        const actionName = unboundActionObj.attributes.Name;
+        schemaComposer.Mutation.addFields({
+          [actionName]: {
+            type: 'JSON',
+            args: {
+              ...commonArgs,
+            },
+            resolve: async (root, args, context, info) => {
+              const url = new URL(this.config.baseUrl);
+              url.href = urljoin(url.href, '/' + actionName);
+              const urlString = getUrlString(url);
+              const method = 'POST';
+              const request = new Request(urlString, {
+                method,
+                headers: headersFactory({ root, args, context, info }, method),
+                body: JSON.stringify(args),
+              });
+              const response = await context[contextDataloaderName].load(request);
+              const responseText = await response.text();
+              return handleResponseText(responseText, urlString, info);
+            },
+          },
+        });
+
+        unboundActionObj.Parameter?.forEach((parameterObj: any) => {
+          const parameterName = parameterObj.attributes.Name;
+          const parameterTypeRef = parameterObj.attributes.Type;
+          const isRequired = parameterObj.attributes.Nullable === 'false';
+          const parameterType = getTypeNameFromRef({
+            typeRef: parameterTypeRef,
+            isInput: true,
+            isRequired,
+          });
+          schemaComposer.Mutation.addFieldArgs(actionName, {
+            [parameterName]: {
+              type: parameterType,
+            },
+          });
+        });
+      };
+
+      const handleBoundActionObj = (boundActionObj: any) => {
+        const actionName = boundActionObj.attributes.Name;
         const actionRef = schemaNamespace + '.' + actionName;
         const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
           ...commonArgs,
         };
-        let entitySetPath = boundActionElement.getAttribute('EntitySetPath');
+        let entitySetPath = boundActionObj.attributes.EntitySetPath;
         let boundField: ObjectTypeComposerFieldConfigDefinition<any, any, any>;
         let boundEntityTypeName: string;
-        boundActionElement.querySelectorAll('Parameter').forEach(parameterElement => {
-          const parameterName = parameterElement.getAttribute('Name');
-          const parameterTypeRef = parameterElement.getAttribute('Type');
-          const isRequired = parameterElement.getAttribute('Nullable') === 'false';
+        boundActionObj.Parameter?.forEach((parameterObj: any) => {
+          const parameterName = parameterObj.attributes.Name;
+          const parameterTypeRef = parameterObj.attributes.Type;
+          const isRequired = parameterObj.attributes.Nullable === 'false';
           const parameterTypeName = getTypeNameFromRef({
             typeRef: parameterTypeRef,
             isInput: true,
@@ -952,19 +929,26 @@ export default class ODataHandler implements MeshHandler {
         otherType?.addFields({
           [actionName]: boundField,
         });
+      };
+
+      schemaObj.Action?.forEach((actionObj: any) => {
+        if (actionObj.attributes?.IsBound === 'true') {
+          handleBoundActionObj(actionObj);
+        } else {
+          handleUnboundActionObj(actionObj);
+        }
       });
 
       // Rearrange fields for base types and implementations
-
-      schemaElement.querySelectorAll('[BaseType]').forEach(typeElement => {
+      typesWithBaseType?.forEach((typeObj: any) => {
         const typeName = buildName({
           schemaNamespace,
-          name: typeElement.getAttribute('Name'),
+          name: typeObj.attributes.Name,
         });
         const inputType = schemaComposer.getITC(typeName + 'Input') as InputTypeComposer;
         const abstractType = getTCByTypeNames('I' + typeName, typeName) as InterfaceTypeComposer;
         const outputType = getTCByTypeNames('T' + typeName, typeName) as ObjectTypeComposer;
-        const baseTypeRef = typeElement.getAttribute('BaseType');
+        const baseTypeRef = typeObj.attributes.BaseType;
         const { entityInfo, eventEmitter } = outputType.getExtensions() as EntityTypeExtensions;
         const baseTypeName = getTypeNameFromRef({
           typeRef: baseTypeRef,
@@ -996,177 +980,215 @@ export default class ODataHandler implements MeshHandler {
         baseEventEmitterListener();
       });
 
-      schemaElement.querySelectorAll('EntitySet').forEach(entitySetElement => {
-        const entitySetName = entitySetElement.getAttribute('Name');
-        const entitySetTypeRef = entitySetElement.getAttribute('EntityType');
-        const entityTypeName = getTypeNameFromRef({
-          typeRef: entitySetTypeRef,
-          isInput: false,
-          isRequired: false,
+      schemaObj.EntityContainer?.forEach((entityContainerObj: any) => {
+        entityContainerObj.Singleton?.forEach((singletonObj: any) => {
+          const singletonName = singletonObj.attributes.Name;
+          const singletonTypeRef = singletonObj.attributes.Type;
+          const singletonTypeName = getTypeNameFromRef({
+            typeRef: singletonTypeRef,
+            isInput: false,
+            isRequired: false,
+          });
+          schemaComposer.Query.addFields({
+            [singletonName]: {
+              type: singletonTypeName,
+              args: {
+                ...commonArgs,
+              },
+              resolve: async (root, args, context, info) => {
+                const url = new URL(this.config.baseUrl);
+                url.href = urljoin(url.href, '/' + singletonName);
+                const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
+                searchParams?.forEach((value, key) => {
+                  url.searchParams.set(key, value);
+                });
+                const urlString = getUrlString(url);
+                const method = 'GET';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
+              },
+            },
+          });
         });
-        const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
-          | InterfaceTypeComposer
-          | ObjectTypeComposer;
-        const { entityInfo } = entityOutputTC.getExtensions() as EntityTypeExtensions;
-        const identifierFieldName = entityInfo.identifierFieldName;
-        const identifierFieldTypeRef = entityInfo.identifierFieldTypeRef;
-        const identifierFieldTypeName = entityOutputTC.getFieldTypeName(identifierFieldName);
-        const typeName = entityOutputTC.getTypeName();
-        const commonFields: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {
-          [entitySetName]: {
-            type: `[${typeName}]`,
-            args: {
-              ...commonArgs,
-              queryOptions: { type: 'QueryOptions' },
-            },
-            resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, '/' + entitySetName);
-              const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
-              searchParams.forEach((value, key) => {
-                url.searchParams.set(key, value);
-              });
-              const urlString = getUrlString(url);
-              const method = 'GET';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return handleResponseText(responseText, urlString, info);
-            },
-          },
-          [`${entitySetName}By${identifierFieldName}`]: {
-            type: typeName,
-            args: {
-              ...commonArgs,
-              [identifierFieldName]: {
-                type: identifierFieldTypeName,
+
+        entityContainerObj?.EntitySet?.forEach((entitySetObj: any) => {
+          const entitySetName = entitySetObj.attributes.Name;
+          const entitySetTypeRef = entitySetObj.attributes.EntityType;
+          const entityTypeName = getTypeNameFromRef({
+            typeRef: entitySetTypeRef,
+            isInput: false,
+            isRequired: false,
+          });
+          const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
+            | InterfaceTypeComposer
+            | ObjectTypeComposer;
+          const { entityInfo } = entityOutputTC.getExtensions() as EntityTypeExtensions;
+          const identifierFieldName = entityInfo.identifierFieldName;
+          const identifierFieldTypeRef = entityInfo.identifierFieldTypeRef;
+          const identifierFieldTypeName = entityOutputTC.getFieldTypeName(identifierFieldName);
+          const typeName = entityOutputTC.getTypeName();
+          const commonFields: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {
+            [entitySetName]: {
+              type: `[${typeName}]`,
+              args: {
+                ...commonArgs,
+                queryOptions: { type: 'QueryOptions' },
+              },
+              resolve: async (root, args, context, info) => {
+                const url = new URL(this.config.baseUrl);
+                url.href = urljoin(url.href, '/' + entitySetName);
+                const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
+                searchParams?.forEach((value, key) => {
+                  url.searchParams.set(key, value);
+                });
+                const urlString = getUrlString(url);
+                const method = 'GET';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
               },
             },
-            resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, '/' + entitySetName);
-              addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
-              const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
-              searchParams.forEach((value, key) => {
-                url.searchParams.set(key, value);
-              });
-              const urlString = getUrlString(url);
-              const method = 'GET';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return handleResponseText(responseText, urlString, info);
-            },
-          },
-        };
-        schemaComposer.Query.addFields({
-          ...commonFields,
-          [`${entitySetName}Count`]: {
-            type: 'Int',
-            args: {
-              ...commonArgs,
-              queryOptions: { type: 'QueryOptions' },
-            },
-            resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, `/${entitySetName}/$count`);
-              const urlString = getUrlString(url);
-              const method = 'GET';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return responseText;
-            },
-          },
-        });
-        schemaComposer.Mutation.addFields({
-          ...commonFields,
-          [`create${entitySetName}`]: {
-            type: typeName,
-            args: {
-              ...commonArgs,
-              input: {
-                type: entityTypeName + 'Input',
+            [`${entitySetName}By${identifierFieldName}`]: {
+              type: typeName,
+              args: {
+                ...commonArgs,
+                [identifierFieldName]: {
+                  type: identifierFieldTypeName,
+                },
+              },
+              resolve: async (root, args, context, info) => {
+                const url = new URL(this.config.baseUrl);
+                url.href = urljoin(url.href, '/' + entitySetName);
+                addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
+                const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
+                searchParams?.forEach((value, key) => {
+                  url.searchParams.set(key, value);
+                });
+                const urlString = getUrlString(url);
+                const method = 'GET';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
               },
             },
-            resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, '/' + entitySetName);
-              const urlString = getUrlString(url);
-              rebuildOpenInputObjects(args.input);
-              const method = 'POST';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-                body: JSON.stringify(args.input),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return handleResponseText(responseText, urlString, info);
-            },
-          },
-          [`delete${entitySetName}By${identifierFieldName}`]: {
-            type: 'JSON',
-            args: {
-              ...commonArgs,
-              [identifierFieldName]: {
-                type: identifierFieldTypeName,
+          };
+          schemaComposer.Query.addFields({
+            ...commonFields,
+            [`${entitySetName}Count`]: {
+              type: 'Int',
+              args: {
+                ...commonArgs,
+                queryOptions: { type: 'QueryOptions' },
+              },
+              resolve: async (root, args, context, info) => {
+                const url = new URL(this.config.baseUrl);
+                url.href = urljoin(url.href, `/${entitySetName}/$count`);
+                const urlString = getUrlString(url);
+                const method = 'GET';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return responseText;
               },
             },
-            resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, '/' + entitySetName);
-              addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
-              const urlString = getUrlString(url);
-              const method = 'DELETE';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return handleResponseText(responseText, urlString, info);
-            },
-          },
-          [`update${entitySetName}By${identifierFieldName}`]: {
-            type: typeName,
-            args: {
-              ...commonArgs,
-              [identifierFieldName]: {
-                type: identifierFieldTypeName,
+          });
+          schemaComposer.Mutation.addFields({
+            ...commonFields,
+            [`create${entitySetName}`]: {
+              type: typeName,
+              args: {
+                ...commonArgs,
+                input: {
+                  type: entityTypeName + 'Input',
+                },
               },
-              input: {
-                type: entityTypeName + 'UpdateInput',
+              resolve: async (root, args, context, info) => {
+                const url = new URL(this.config.baseUrl);
+                url.href = urljoin(url.href, '/' + entitySetName);
+                const urlString = getUrlString(url);
+                rebuildOpenInputObjects(args.input);
+                const method = 'POST';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                  body: JSON.stringify(args.input),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
               },
             },
-            resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
-              url.href = urljoin(url.href, '/' + entitySetName);
-              addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
-              const urlString = getUrlString(url);
-              rebuildOpenInputObjects(args.input);
-              const method = 'PATCH';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-                body: JSON.stringify(args.input),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return handleResponseText(responseText, urlString, info);
+            [`delete${entitySetName}By${identifierFieldName}`]: {
+              type: 'JSON',
+              args: {
+                ...commonArgs,
+                [identifierFieldName]: {
+                  type: identifierFieldTypeName,
+                },
+              },
+              resolve: async (root, args, context, info) => {
+                const url = new URL(this.config.baseUrl);
+                url.href = urljoin(url.href, '/' + entitySetName);
+                addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
+                const urlString = getUrlString(url);
+                const method = 'DELETE';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
+              },
             },
-          },
+            [`update${entitySetName}By${identifierFieldName}`]: {
+              type: typeName,
+              args: {
+                ...commonArgs,
+                [identifierFieldName]: {
+                  type: identifierFieldTypeName,
+                },
+                input: {
+                  type: entityTypeName + 'UpdateInput',
+                },
+              },
+              resolve: async (root, args, context, info) => {
+                const url = new URL(this.config.baseUrl);
+                url.href = urljoin(url.href, '/' + entitySetName);
+                addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
+                const urlString = getUrlString(url);
+                rebuildOpenInputObjects(args.input);
+                const method = 'PATCH';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                  body: JSON.stringify(args.input),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
+              },
+            },
+          });
         });
       });
     });
