@@ -42,7 +42,7 @@
     "globby": "11.0.1",
     "graphql": "15.3.0",
     "@ardatan/graphql-to-config-schema": "0.1.0",
-    "husky": "4.2.5",
+    "husky": "4.3.0",
     "jest": "26.4.2",
     "lint-staged": "10.3.0",
     "patch-package": "^6.2.2",
