@@ -143,34 +143,6 @@ type Airport {
   Location: AirportLocation
 }
 
-type Location implements ILocation {
-  Address: String
-  City: City
-}
-
-interface ILocation {
-  Address: String
-  City: City
-}
-
-type City {
-  Name: String
-  CountryRegion: String
-  Region: String
-}
-
-type AirportLocation implements ILocation {
-  Loc: String
-  Address: String
-  City: City
-}
-
-type EventLocation implements ILocation {
-  BuildingInfo: String
-  Address: String
-  City: City
-}
-
 type Trip implements ITrip {
   TripId: Int!
   ShareId: GUID!
@@ -309,6 +281,34 @@ type Manager implements IPerson {
   GetFriendsTrips: [Trip]
   UpdatePersonLastName: Boolean
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
+}
+
+type Location implements ILocation {
+  Address: String
+  City: City
+}
+
+interface ILocation {
+  Address: String
+  City: City
+}
+
+type City {
+  Name: String
+  CountryRegion: String
+  Region: String
+}
+
+type AirportLocation implements ILocation {
+  Loc: String
+  Address: String
+  City: City
+}
+
+type EventLocation implements ILocation {
+  BuildingInfo: String
+  Address: String
+  City: City
 }
 
 type Query {
