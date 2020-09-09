@@ -1,5 +1,17 @@
 # @graphql-mesh/types
 
+## 0.9.0
+
+### Minor Changes
+
+- c8d9695e: feat(cli): support --require flag to load dotenv etc
+
+## 0.8.1
+
+### Patch Changes
+
+- d2e56567: fix(merging): prune schema while merging
+
 ## 0.8.0
 
 ### Minor Changes

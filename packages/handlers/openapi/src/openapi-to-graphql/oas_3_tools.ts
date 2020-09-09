@@ -34,7 +34,8 @@ import { InternalOptions, Options } from './types/options';
 // Imports:
 import { convertObj as convertSwaggerObjToOpenAPI } from 'swagger2openapi';
 import { handleWarning, mockDebug as debug } from './utils';
-import * as pluralize from 'pluralize';
+import { singular } from 'pluralize';
+import { JsonPointer } from 'json-ptr';
 
 // Type definitions & exports:
 export type SchemaNames = {
@@ -156,35 +157,7 @@ export function countOperationsWithPayload(oas: Oas3): number {
  * Resolves the given reference in the given object.
  */
 export function resolveRef(ref: string, oas: Oas3): any {
-  // Break path into individual tokens
-  const parts = ref.split('/');
-  const resolvedObject = resolveRefHelper(oas, parts);
-
-  if (resolvedObject !== null) {
-    return resolvedObject;
-  } else {
-    throw new Error(`Could not resolve reference '${ref}'`);
-  }
-}
-
-/**
- * Helper for resolveRef
- *
- * @param parts The path to be resolved, but broken into tokens
- */
-function resolveRefHelper(obj: object, parts?: string[]): any {
-  if (parts.length === 0) {
-    return obj;
-  }
-
-  const firstElement = parts.splice(0, 1)[0];
-  if (firstElement in obj) {
-    return resolveRefHelper(obj[firstElement], parts);
-  } else if (firstElement === '#') {
-    return resolveRefHelper(obj, parts);
-  } else {
-    return null;
-  }
+  return JsonPointer.get(oas, ref);
 }
 
 /**
@@ -488,7 +461,7 @@ function isIdParam(part: string) {
 
 function isSingularParam(part: string, nextPart: string) {
   // eslint-disable-next-line no-useless-escape
-  return `\{${pluralize.singular(part)}\}` === nextPart;
+  return `\{${singular(part)}\}` === nextPart;
 }
 
 /**
@@ -501,7 +474,7 @@ export function inferResourceNameFromPath(path: string): string {
   const pathNoPathParams = parts.reduce((path, part, i) => {
     if (!/{/g.test(part)) {
       if (parts[i + 1] && (isIdParam(parts[i + 1]) || isSingularParam(part, parts[i + 1]))) {
-        return path + capitalize(pluralize.singular(part));
+        return path + capitalize(singular(part));
       } else {
         return path + capitalize(part);
       }

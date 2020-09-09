@@ -1,5 +1,33 @@
 # @graphql-mesh/config
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies [c8d9695e]
+- Updated dependencies [8f53be10]
+  - @graphql-mesh/types@0.9.0
+  - @graphql-mesh/utils@0.5.1
+  - @graphql-mesh/cache-inmemory-lru@0.4.3
+  - @graphql-mesh/merger-stitching@0.6.1
+  - @graphql-mesh/runtime@0.6.1
+
+## 0.8.0
+
+### Minor Changes
+
+- 6aef18be: enhance(config): support custom handlers, transforms and cache impl. in yaml/json config schema
+
+### Patch Changes
+
+- Updated dependencies [d2e56567]
+- Updated dependencies [6aef18be]
+- Updated dependencies [6aef18be]
+  - @graphql-mesh/merger-stitching@0.6.0
+  - @graphql-mesh/types@0.8.1
+  - @graphql-mesh/runtime@0.6.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.2
+
 ## 0.7.0
 
 ### Minor Changes

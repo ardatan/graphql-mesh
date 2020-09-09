@@ -1,5 +1,26 @@
 # @graphql-mesh/merger-stitching
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [c8d9695e]
+- Updated dependencies [8f53be10]
+  - @graphql-mesh/types@0.9.0
+  - @graphql-mesh/utils@0.5.1
+
+## 0.6.0
+
+### Minor Changes
+
+- 6aef18be: enhance(stitching): improve execution performance for single source by not wrapping schema
+
+### Patch Changes
+
+- d2e56567: fix(merging): prune schema while merging
+- Updated dependencies [d2e56567]
+  - @graphql-mesh/types@0.8.1
+
 ## 0.5.0
 
 ### Minor Changes
