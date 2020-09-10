@@ -4938,10 +4938,10 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/thrift@0.10.9":
-  version "0.10.9"
-  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.9.tgz#cdc1bb5fe8f55cc21175719781ae89db6bd2e7e5"
-  integrity sha512-uYgYqchB7jGmqJCokQuOdnkxEBAGOpaKSL5qN5C8mj50HkZdpJXQ42M80gYE1uK8QoG3vps7wjHkEkYhN4Mt0A==
+"@types/thrift@0.10.10":
+  version "0.10.10"
+  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.10.tgz#f90f6c84c8b003c79f54463f909b0a12a993029d"
+  integrity sha512-sEhRbmmQgiTn+JdophEPiuTFkc9QRl7R/Kxs/le5GXZAc2K1/VCHauW734nCwpu1cFI8jL1niyrqk7E4tGL92w==
   dependencies:
     "@types/node" "*"
     "@types/node-int64" "*"
