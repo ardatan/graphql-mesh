@@ -624,45 +624,126 @@ export default class ODataHandler implements MeshHandler {
           const navigationPropertyTypeRef = navigationPropertyObj.attributes.Type;
           const isRequired = navigationPropertyObj.attributes.Nullable === 'false';
           const isList = navigationPropertyTypeRef.startsWith('Collection(');
-          const field: ObjectTypeComposerFieldConfigDefinition<any, unknown> = {
-            type: getTypeNameFromRef({
-              typeRef: navigationPropertyTypeRef,
-              isInput: false,
-              isRequired,
-            }),
-            args: {
-              ...commonArgs,
-              ...(isList && { queryOptions: { type: 'QueryOptions' } }),
-            },
-            extensions: { navigationPropertyObj },
-            resolve: async (root, args, context, info) => {
-              if (navigationPropertyName in root) {
-                return root[navigationPropertyName];
-              }
-              const url = new URL(root['@odata.id']);
-              url.href = urljoin(url.href, '/' + navigationPropertyName);
-              const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
-              const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
-              searchParams?.forEach((value, key) => {
-                url.searchParams.set(key, value);
-              });
-              const urlString = getUrlString(url);
-              const method = 'GET';
-              const request = new Request(urlString, {
-                method,
-                headers: headersFactory({ root, args, context, info }, method),
-              });
-              const response = await context[contextDataloaderName].load(request);
-              const responseText = await response.text();
-              return handleResponseText(responseText, urlString, info);
-            },
-          };
-          abstractType?.addFields({
-            [navigationPropertyName]: field,
-          });
-          outputType.addFields({
-            [navigationPropertyName]: field,
-          });
+          if (isList) {
+            const singularField: ObjectTypeComposerFieldConfigDefinition<any, unknown> = {
+              type: getTypeNameFromRef({
+                typeRef: navigationPropertyTypeRef,
+                isInput: false,
+                isRequired,
+              }),
+              args: {
+                ...commonArgs,
+                id: {
+                  type: 'ID',
+                },
+              },
+              extensions: { navigationPropertyObj },
+              resolve: async (root, args, context, info) => {
+                if (navigationPropertyName in root) {
+                  return root[navigationPropertyName];
+                }
+                const url = new URL(root['@odata.id']);
+                url.href = urljoin(url.href, '/' + navigationPropertyName);
+                const returnType = info.returnType as GraphQLObjectType;
+                const { entityInfo } = returnType.extensions as EntityTypeExtensions;
+                addIdentifierToUrl(url, entityInfo.identifierFieldName, entityInfo.identifierFieldTypeRef, args);
+                const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
+                searchParams?.forEach((value, key) => {
+                  url.searchParams.set(key, value);
+                });
+                const urlString = getUrlString(url);
+                const method = 'GET';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
+              },
+            };
+            const pluralField: ObjectTypeComposerFieldConfigDefinition<any, unknown> = {
+              type: getTypeNameFromRef({
+                typeRef: navigationPropertyTypeRef,
+                isInput: false,
+                isRequired,
+              }),
+              args: {
+                ...commonArgs,
+                queryOptions: { type: 'QueryOptions' },
+              },
+              extensions: { navigationPropertyObj },
+              resolve: async (root, args, context, info) => {
+                if (navigationPropertyName in root) {
+                  return root[navigationPropertyName];
+                }
+                const url = new URL(root['@odata.id']);
+                url.href = urljoin(url.href, '/' + navigationPropertyName);
+                const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
+                searchParams?.forEach((value, key) => {
+                  url.searchParams.set(key, value);
+                });
+                const urlString = getUrlString(url);
+                const method = 'GET';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
+              },
+            };
+            abstractType?.addFields({
+              [navigationPropertyName]: pluralField,
+              [`${navigationPropertyName}ById`]: singularField,
+            });
+            outputType.addFields({
+              [navigationPropertyName]: pluralField,
+              [`${navigationPropertyName}ById`]: singularField,
+            });
+          } else {
+            const field: ObjectTypeComposerFieldConfigDefinition<any, unknown> = {
+              type: getTypeNameFromRef({
+                typeRef: navigationPropertyTypeRef,
+                isInput: false,
+                isRequired,
+              }),
+              args: {
+                ...commonArgs,
+              },
+              extensions: { navigationPropertyObj },
+              resolve: async (root, args, context, info) => {
+                if (navigationPropertyName in root) {
+                  return root[navigationPropertyName];
+                }
+                const url = new URL(root['@odata.id']);
+                url.href = urljoin(url.href, '/' + navigationPropertyName);
+                const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
+                const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
+                searchParams?.forEach((value, key) => {
+                  url.searchParams.set(key, value);
+                });
+                const urlString = getUrlString(url);
+                const method = 'GET';
+                const request = new Request(urlString, {
+                  method,
+                  headers: headersFactory({ root, args, context, info }, method),
+                });
+                const response = await context[contextDataloaderName].load(request);
+                const responseText = await response.text();
+                return handleResponseText(responseText, urlString, info);
+              },
+            };
+            abstractType?.addFields({
+              [navigationPropertyName]: field,
+            });
+            outputType.addFields({
+              [navigationPropertyName]: field,
+            });
+          }
         });
         if (isOpenType || outputType.getFieldNames().length === 0) {
           extensions.entityInfo.isOpenType = true;
