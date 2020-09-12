@@ -2,7 +2,7 @@ query fetchRecentEmails {
   me {
     displayName
     officeLocation
-    messages {
+    messages(queryOptions: { top: 3 }) {
       subject
       isRead
       from {

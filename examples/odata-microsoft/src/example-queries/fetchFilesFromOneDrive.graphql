@@ -6,7 +6,7 @@ query fetchFilesFromOneDrive {
         remaining
       }
       root {
-        children {
+        children(queryOptions: { top: 3 }) {
           name
           size
           lastModifiedDateTime
