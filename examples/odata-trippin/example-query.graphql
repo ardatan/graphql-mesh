@@ -1,5 +1,5 @@
-query GetPeople {
-  People(queryOptions: { top: 2 }) {
+query GetMe {
+  Me {
     UserName
     FirstName
     LastName
@@ -13,11 +13,8 @@ query GetPeople {
         CountryRegion
       }
     }
-    Trips {
+    Trips(queryOptions: { top: 1 }) {
       Description
-      GetInvolvedPeople {
-        UserName
-      }
     }
   }
 }
