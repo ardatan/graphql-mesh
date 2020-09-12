@@ -1,5 +1,16 @@
 # odata-trippin-example
 
+## 0.7.0
+
+### Minor Changes
+
+- 095b245e: Use a more performant query and increase the DNS lookup performance by defining the direct URL
+
+### Patch Changes
+
+- Updated dependencies [64fa3655]
+  - @graphql-mesh/odata@0.5.1
+
 ## 0.6.5
 
 ### Patch Changes
