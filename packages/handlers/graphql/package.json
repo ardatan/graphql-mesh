@@ -16,8 +16,8 @@
     "@graphql-mesh/types": "0.9.0",
     "@graphql-mesh/utils": "0.5.1",
     "fetchache": "0.0.3",
-    "@graphql-tools/url-loader": "6.2.1",
-    "@graphql-tools/wrap": "6.2.1"
+    "@graphql-tools/url-loader": "6.2.2",
+    "@graphql-tools/wrap": "6.2.2"
   },
   "publishConfig": {
     "access": "public",

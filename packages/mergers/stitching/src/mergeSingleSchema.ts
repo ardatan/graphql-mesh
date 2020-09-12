@@ -2,7 +2,6 @@ import { MergerFn } from '@graphql-mesh/types';
 import { extendSchema } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { pruneSchema } from '@graphql-tools/utils';
 
 export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) => {
   if (rawSources.length !== 1) {
@@ -33,5 +32,5 @@ export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, t
   Object.defineProperty(schema.extensions, 'sourceMap', {
     get: () => new Map([[source, source.schema]]),
   });
-  return pruneSchema(schema);
+  return schema;
 };

@@ -21,6 +21,7 @@ import { nativeFetch } from './native-fetch';
 import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
+import { pruneSchema } from '@graphql-tools/utils';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -1196,7 +1197,7 @@ export default class ODataHandler implements MeshHandler {
     const schema = schemaComposer.buildSchema();
 
     return {
-      schema,
+      schema: pruneSchema(schema),
       contextVariables,
       contextBuilder: async context => ({
         [contextDataloaderName]: dataLoaderFactory(context),
