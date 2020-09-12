@@ -1,5 +1,11 @@
 # @graphql-mesh/odata
 
+## 0.5.1
+
+### Patch Changes
+
+- 64fa3655: feat(odata): add an extra byId field for navigation properties
+
 ## 0.5.0
 
 ### Minor Changes
