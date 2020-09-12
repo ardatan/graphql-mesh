@@ -14,8 +14,10 @@ exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] =
   FavoriteFeature: Feature!
   Features: [Feature]!
   Friends(queryOptions: QueryOptions): [Person]
+  FriendsById(id: ID): [Person]
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
+  TripsById(id: ID): [Trip]
   GetFavoriteAirline: Airline
   GetFriendsTrips: [Trip]
   UpdatePersonLastName: Boolean
@@ -35,8 +37,10 @@ interface IPerson {
   FavoriteFeature: Feature!
   Features: [Feature]!
   Friends(queryOptions: QueryOptions): [Person]
+  FriendsById(id: ID): [Person]
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
+  TripsById(id: ID): [Trip]
   GetFavoriteAirline: Airline
   GetFriendsTrips: [Trip]
   UpdatePersonLastName: Boolean
@@ -153,6 +157,7 @@ type Trip implements ITrip {
   StartsAt: DateTime!
   EndsAt: DateTime!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
+  PlanItemsById(id: ID): [PlanItem]
   GetInvolvedPeople: [Person]
 }
 
@@ -166,6 +171,7 @@ interface ITrip {
   StartsAt: DateTime!
   EndsAt: DateTime!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
+  PlanItemsById(id: ID): [PlanItem]
   GetInvolvedPeople: [Person]
 }
 
@@ -239,6 +245,7 @@ type Flight implements IPublicTransportation {
 type Employee implements IPerson {
   Cost: BigInt!
   Peers(queryOptions: QueryOptions): [Person]
+  PeersById(id: ID): [Person]
   UserName: String!
   FirstName: String!
   LastName: String
@@ -251,8 +258,10 @@ type Employee implements IPerson {
   FavoriteFeature: Feature!
   Features: [Feature]!
   Friends(queryOptions: QueryOptions): [Person]
+  FriendsById(id: ID): [Person]
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
+  TripsById(id: ID): [Trip]
   GetFavoriteAirline: Airline
   GetFriendsTrips: [Trip]
   UpdatePersonLastName: Boolean
@@ -263,6 +272,7 @@ type Manager implements IPerson {
   Budget: BigInt!
   BossOffice: Location
   DirectReports(queryOptions: QueryOptions): [Person]
+  DirectReportsById(id: ID): [Person]
   UserName: String!
   FirstName: String!
   LastName: String
@@ -275,8 +285,10 @@ type Manager implements IPerson {
   FavoriteFeature: Feature!
   Features: [Feature]!
   Friends(queryOptions: QueryOptions): [Person]
+  FriendsById(id: ID): [Person]
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
+  TripsById(id: ID): [Trip]
   GetFavoriteAirline: Airline
   GetFriendsTrips: [Trip]
   UpdatePersonLastName: Boolean
