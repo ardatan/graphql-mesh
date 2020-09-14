@@ -10913,13 +10913,6 @@ graphql-iso-date@~3.3.0:
   resolved "https://registry.yarnpkg.com/graphql-iso-date/-/graphql-iso-date-3.3.0.tgz#cbe434b41e035e806338121b1b2b509a0f72bb80"
   integrity sha1-y+Q0tB4DXoBjOBIbGytQmg9yu4A=
 
-graphql-parse-resolve-info@4.7.0:
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.7.0.tgz#0f769684f5430f9d14964fb7dea56fbfaf54953f"
-  integrity sha512-vrfvITs1vQCmzasAnfpzjTnImfo1gSwBijJEo6PF+0ZP3cLgJsmsNBvc9VJaiXxdjShS6sWI4V7HTrlz+UjGGw==
-  dependencies:
-    debug "^4.1.1"
-
 graphql-parse-resolve-info@4.8.0-rc.0:
   version "4.8.0-rc.0"
   resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.8.0-rc.0.tgz#d0c4d8316f4bcee0de3c448052b33883eb3a673f"
@@ -10927,6 +10920,14 @@ graphql-parse-resolve-info@4.8.0-rc.0:
   dependencies:
     debug "^4.1.1"
     tslib "^1.13.0"
+
+graphql-parse-resolve-info@4.9.0:
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.9.0.tgz#e2a7f3b6c328aaf1c0b867102bb7207e03a98ef3"
+  integrity sha512-tJqpmG+t5e68ZUjlbNzZ6O6kjzULeVBa+2KOC0IwwxaajtnKpp1bzaZxteOvWATdPwuASfOFJA1epYiva6/ztQ==
+  dependencies:
+    debug "^4.1.1"
+    tslib "^2.0.1"
 
 graphql-relay@^0.6.0:
   version "0.6.0"
@@ -20262,7 +20263,7 @@ tslib@^1.10.0, tslib@^1.11.1, tslib@^1.13.0, tslib@^1.5.0, tslib@^1.8.1, tslib@^
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
 
-tslib@^2.0.0, tslib@~2.0.0, tslib@~2.0.1:
+tslib@^2.0.0, tslib@^2.0.1, tslib@~2.0.0, tslib@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.1.tgz#410eb0d113e5b6356490eec749603725b021b43e"
   integrity sha512-SgIkNheinmEBgx1IUNirK0TUD4X9yjjBRTqqjggWCU3pUEqIk3/Uwl3yRixYKT6WjQuGiwDv4NomL3wqRCj+CQ==
