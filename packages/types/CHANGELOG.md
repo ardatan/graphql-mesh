@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.9.1
+
+### Patch Changes
+
+- 93ad5255: fix(json-schema): update types
+
 ## 0.9.0
 
 ### Minor Changes
