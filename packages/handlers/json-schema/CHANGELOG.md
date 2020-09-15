@@ -1,5 +1,17 @@
 # @graphql-mesh/json-schema
 
+## 0.5.0
+
+### Minor Changes
+
+- 9900d2fa: feat(json-schema): ability to define custom type names
+
+### Patch Changes
+
+- Updated dependencies [9900d2fa]
+- Updated dependencies [9900d2fa]
+  - @graphql-mesh/utils@0.5.2
+
 ## 0.4.3
 
 ### Patch Changes

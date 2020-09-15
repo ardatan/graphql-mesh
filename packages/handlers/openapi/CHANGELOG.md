@@ -1,5 +1,14 @@
 # @graphql-mesh/openapi
 
+## 0.5.5
+
+### Patch Changes
+
+- 9900d2fa: enhance(openapi): small improvements
+- Updated dependencies [9900d2fa]
+- Updated dependencies [9900d2fa]
+  - @graphql-mesh/utils@0.5.2
+
 ## 0.5.4
 
 ### Patch Changes

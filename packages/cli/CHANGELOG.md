@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.8.1
+
+### Patch Changes
+
+- 9900d2fa: fix(cli-serve): show whole error stack trace
+- Updated dependencies [9900d2fa]
+  - @graphql-mesh/runtime@0.6.2
+  - @graphql-mesh/config@0.8.2
+
 ## 0.8.0
 
 ### Minor Changes

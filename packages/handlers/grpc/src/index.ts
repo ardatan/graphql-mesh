@@ -11,7 +11,6 @@ import {
 import { load } from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
 import { SchemaComposer } from 'graphql-compose';
-import { ArgsMap } from 'graphql-compose/lib/ObjectTypeComposer';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
 import { pascalCase } from 'pascal-case';
@@ -179,7 +178,7 @@ export default class GrpcHandler implements MeshHandler {
               schemaComposer.Subscription.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  subscribe: (__, args: ArgsMap, context: Record<string, unknown>) =>
+                  subscribe: (__, args: Record<string, unknown>, context: Record<string, unknown>) =>
                     addMetaDataToCall(clientMethod, args.input, context, this.config.metaData),
                   resolve: (payload: unknown) => payload,
                 },
@@ -191,7 +190,7 @@ export default class GrpcHandler implements MeshHandler {
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
-                  resolve: (_, args: ArgsMap, context: Record<string, unknown>) =>
+                  resolve: (_, args: Record<string, unknown>, context: Record<string, unknown>) =>
                     addMetaDataToCall(clientMethod, args.input, context, this.config.metaData),
                 },
               });
