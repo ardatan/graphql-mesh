@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-file
 
+## 0.4.4
+
+### Patch Changes
+
+- 9900d2fa: feat(cache-file): performance improvements
+
 ## 0.4.3
 
 ### Patch Changes

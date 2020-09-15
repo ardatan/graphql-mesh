@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-cache
 
+## 0.6.0
+
+### Minor Changes
+
+- 9900d2fa: fix(transform-cache): make cache transform noWrap
+
+### Patch Changes
+
+- Updated dependencies [9900d2fa]
+- Updated dependencies [9900d2fa]
+  - @graphql-mesh/utils@0.5.2
+
 ## 0.5.2
 
 ### Patch Changes

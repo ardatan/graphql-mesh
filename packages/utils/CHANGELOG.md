@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.5.2
+
+### Patch Changes
+
+- 9900d2fa: fix(runtime): handle noWrap transforms correctly
+- 9900d2fa: chore(utils): move groupTransforms under utils
+
 ## 0.5.1
 
 ### Patch Changes
