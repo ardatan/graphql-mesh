@@ -494,7 +494,7 @@ export function getRequestBodyObject(
   endpoint: OperationObject,
   oas: Oas3
 ): { payloadContentType: string; requestBodyObject: RequestBodyObject } | null {
-  if (typeof endpoint.requestBody === 'object') {
+  if (typeof endpoint.requestBody === 'object' && endpoint.requestBody !== null) {
     let requestBodyObject: RequestBodyObject | ReferenceObject = endpoint.requestBody;
 
     // Make sure we have a RequestBodyObject:

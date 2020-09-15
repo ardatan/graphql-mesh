@@ -1,25 +1,12 @@
 /* eslint-disable no-unused-expressions */
 import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn, MeshContext } from './types';
-import { Hooks, KeyValueCache, RawSourceOutput, MeshTransform, GraphQLOperation } from '@graphql-mesh/types';
+import { Hooks, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import { applySchemaTransforms } from '@graphql-tools/utils';
-import { ensureDocumentNode } from '@graphql-mesh/utils';
-
-export function groupTransforms(transforms: MeshTransform[]) {
-  const wrapTransforms: MeshTransform[] = [];
-  const noWrapTransforms: MeshTransform[] = [];
-  transforms?.forEach(transform => {
-    if (transform.noWrap) {
-      noWrapTransforms.push(transform);
-    } else {
-      wrapTransforms.push(transform);
-    }
-  });
-  return { wrapTransforms, noWrapTransforms };
-}
+import { ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
 
 export async function getMesh(
   options: GetMeshOptions

@@ -10,6 +10,7 @@ type JsonSchemaHandler @md {
   operationHeaders: JSON
   schemaHeaders: JSON
   operations: [JsonSchemaOperation!]!
+  disableTimestampScalar: Boolean
 }
 
 enum JsonSchemaOperationType {
@@ -22,6 +23,7 @@ enum JsonSchemaOperationMethod {
   DELETE
   POST
   PUT
+  PATCH
 }
 
 type JsonSchemaOperation {
@@ -30,9 +32,14 @@ type JsonSchemaOperation {
   description: String
   type: JsonSchemaOperationType!
   method: JsonSchemaOperationMethod!
+
   requestSchema: String
-  responseSchema: String
   requestSample: String
+  requestTypeName: String
+
   responseSample: String
+  responseSchema: String
+  responseTypeName: String
+
   headers: JSON
 }

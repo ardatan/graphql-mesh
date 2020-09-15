@@ -6,6 +6,7 @@ import { addResolversToSchema } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 
 export default class CacheTransform implements MeshTransform {
+  noWrap = true;
   constructor(private options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]>) {}
   transformSchema(schema: GraphQLSchema) {
     const { config, hooks, cache } = this.options;

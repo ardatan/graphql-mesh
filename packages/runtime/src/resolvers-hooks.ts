@@ -70,7 +70,7 @@ function createProxyInfo({
     (selectionSet?.definitions[0] as OperationDefinitionNode) ||
     buildOperationNodeForField({
       schema,
-      kind: 'query',
+      kind: operationKind,
       field: field.name,
       depthLimit,
       argNames: Object.keys(args),

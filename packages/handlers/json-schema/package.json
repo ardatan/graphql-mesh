@@ -28,7 +28,8 @@
     "graphql-scalars": "1.2.6",
     "pascal-case": "3.1.1",
     "url-join": "4.0.1",
-    "to-json-schema": "0.2.5"
+    "to-json-schema": "0.2.5",
+    "object-hash": "2.0.3"
   },
   "publishConfig": {
     "access": "public",
