@@ -192,6 +192,7 @@ export interface JsonSchemaHandler {
     [k: string]: any;
   };
   operations: JsonSchemaOperation[];
+  disableTimestampScalar?: boolean;
 }
 export interface JsonSchemaOperation {
   field: string;
@@ -202,13 +203,15 @@ export interface JsonSchemaOperation {
    */
   type: 'Query' | 'Mutation';
   /**
-   * Allowed values: GET, DELETE, POST, PUT
+   * Allowed values: GET, DELETE, POST, PUT, PATCH
    */
-  method: 'GET' | 'DELETE' | 'POST' | 'PUT';
+  method: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
   requestSchema?: string;
-  responseSchema?: string;
   requestSample?: string;
+  requestTypeName?: string;
   responseSample?: string;
+  responseSchema?: string;
+  responseTypeName?: string;
   headers?: {
     [k: string]: any;
   };

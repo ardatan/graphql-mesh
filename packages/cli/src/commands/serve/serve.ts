@@ -46,6 +46,33 @@ export async function serveMesh(
         schema,
         context: await contextBuilder(req),
         graphiql: false,
+        customFormatErrorFn: error => {
+          return {
+            extensions: error.extensions,
+            locations: error.locations,
+            message: error.message,
+            name: error.name,
+            nodes: error.nodes,
+            originalError: {
+              ...error?.originalError,
+              name: error?.originalError?.name,
+              message: error?.originalError?.message,
+              stack: error?.originalError?.stack.split('\n'),
+            },
+            path: error.path,
+            positions: error.positions,
+            source: {
+              body: error.source?.body?.split('\n'),
+              name: error.source?.name,
+              locationOffset: {
+                line: error.source?.locationOffset?.line,
+                column: error.source?.locationOffset?.column,
+              },
+            },
+            stack: error.stack?.split('\n'),
+            ...error,
+          };
+        },
       }))
     );
 

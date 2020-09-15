@@ -24,10 +24,10 @@ export default class FileCache<V = string> implements KeyValueCache<V> {
 
   async set(name: string, value: V) {
     set(this.json, name, value);
-    await this.writeDataLoader.load({});
+    this.writeDataLoader.load({});
   }
 
-  delete(name: string) {
-    return this.set(name, undefined);
+  async delete(name: string) {
+    this.set(name, undefined);
   }
 }

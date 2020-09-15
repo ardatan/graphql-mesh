@@ -488,6 +488,9 @@
             "$ref": "#/definitions/JsonSchemaOperation"
           },
           "additionalItems": false
+        },
+        "disableTimestampScalar": {
+          "type": "boolean"
         }
       },
       "required": ["baseUrl", "operations"]
@@ -513,19 +516,25 @@
         },
         "method": {
           "type": "string",
-          "enum": ["GET", "DELETE", "POST", "PUT"],
-          "description": "Allowed values: GET, DELETE, POST, PUT"
+          "enum": ["GET", "DELETE", "POST", "PUT", "PATCH"],
+          "description": "Allowed values: GET, DELETE, POST, PUT, PATCH"
         },
         "requestSchema": {
-          "type": "string"
-        },
-        "responseSchema": {
           "type": "string"
         },
         "requestSample": {
           "type": "string"
         },
+        "requestTypeName": {
+          "type": "string"
+        },
         "responseSample": {
+          "type": "string"
+        },
+        "responseSchema": {
+          "type": "string"
+        },
+        "responseTypeName": {
           "type": "string"
         },
         "headers": {

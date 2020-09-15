@@ -5,3 +5,4 @@ export * from './resolver-data-factory';
 export * from './with-cancel';
 export * from './extract-resolvers';
 export * from './ensure-document-node';
+export * from './group-transforms';

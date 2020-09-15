@@ -24,3 +24,5 @@ export default class ResolversCompositionTransform implements MeshTransform {
     });
   }
 }
+
+export { ResolversComposition } from '@graphql-tools/resolvers-composition';
