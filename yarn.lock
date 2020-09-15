@@ -10574,10 +10574,10 @@ graphql-compose-mongoose@7.4.1:
     graphql-compose-connection "^6.2.0"
     graphql-compose-pagination "^6.0.3"
 
-graphql-compose-pagination@7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-7.0.0.tgz#81edf2327416d10f237a3f1ff67990899a37b017"
-  integrity sha512-Rak7Dmkb5U4Kio+FgWSucVFho2xxRyCI+kNcZWhxJRVfZusw+VuhjkvxPUiKTiFEb+DtTrXUeetWT24plcC0fg==
+graphql-compose-pagination@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-8.0.1.tgz#785c4c83dec5c81dee7ce5baee71cdf5b7a55240"
+  integrity sha512-DxFVSFS9fuDdVOCUz6sr8r1wwwFytUUQ6a2ihQAEdXx7a7p3ZC797RWHdprnnKtLPrioHIIWPCbIoyn4c4kVgQ==
 
 graphql-compose-pagination@^6.0.3:
   version "6.0.3"
