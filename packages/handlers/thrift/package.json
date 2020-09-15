@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -21,7 +21,7 @@
     "@creditkarma/thrift-parser": "1.2.0",
     "@creditkarma/thrift-server-core": "0.16.1",
     "@graphql-mesh/types": "0.9.0",
-    "@graphql-mesh/utils": "0.5.1",
+    "@graphql-mesh/utils": "0.5.2",
     "aggregate-error": "3.1.0",
     "fetchache": "0.0.3",
     "graphql-scalars": "1.2.6",

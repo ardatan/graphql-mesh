@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-resolvers-composition
 
+## 0.5.3
+
+### Patch Changes
+
+- 9900d2fa: chore(resolvers-composition): export ResolversComposition type
+- Updated dependencies [9900d2fa]
+- Updated dependencies [9900d2fa]
+  - @graphql-mesh/utils@0.5.2
+
 ## 0.5.2
 
 ### Patch Changes
