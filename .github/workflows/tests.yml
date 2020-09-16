@@ -60,7 +60,7 @@ jobs:
 
   test:
     name: Testing on ${{matrix.os}} and Node ${{matrix.node_version}}
-    timeout-minutes: 10
+    timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
