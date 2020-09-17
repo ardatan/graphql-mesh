@@ -21,6 +21,7 @@ type ServeConfig @md {
 union Port = Int | String
 
 union Fork = Int | Boolean
+union Port = Int | String
 
 type CorsConfig {
   origin: [String]
