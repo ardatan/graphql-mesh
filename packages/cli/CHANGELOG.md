@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.8.3
+
+### Patch Changes
+
+- 89e1e028: fix(serve): allow string as port value
+  - @graphql-mesh/config@0.8.4
+  - @graphql-mesh/runtime@0.6.4
+
 ## 0.8.2
 
 ### Patch Changes

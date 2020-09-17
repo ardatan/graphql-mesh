@@ -1,5 +1,14 @@
 # @graphql-mesh/postgraphile
 
+## 0.5.6
+
+### Patch Changes
+
+- 2d5cc25b: fix(postgraphile): allow to provide custom configuration to postgres client
+- 2d5cc25b: chore(types): update config schema
+- Updated dependencies [2d5cc25b]
+  - @graphql-mesh/types@0.9.2
+
 ## 0.5.5
 
 ### Patch Changes
