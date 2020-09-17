@@ -9,7 +9,7 @@ type PostGraphileHandler @md {
   """
   A connection string to your Postgres database
   """
-  connectionString: String!
+  connectionString: String
   """
   An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema.
   """
@@ -17,7 +17,7 @@ type PostGraphileHandler @md {
   """
   Connection Pool settings
   """
-  pool: PostGraphilePool
+  pool: JSON
   """
   Cache Introspection
   """
@@ -37,12 +37,3 @@ type PostGraphileHandler @md {
 }
 
 union PostgraphileExternalOptions = JSON | String
-
-type PostGraphilePool {
-  user: String
-  password: String
-  database: String
-  host: String
-  port: Int
-  connectionString: String
-}

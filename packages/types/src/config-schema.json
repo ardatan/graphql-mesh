@@ -104,8 +104,15 @@
           ]
         },
         "port": {
-          "type": "integer",
-          "description": "TCP Port to listen (default: `3000`)"
+          "description": "TCP Port to listen (default: `3000`) (Any of: Int, String)",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "exampleQuery": {
           "type": "string",
@@ -1096,7 +1103,8 @@
           "description": "An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema."
         },
         "pool": {
-          "$ref": "#/definitions/PostGraphilePool",
+          "type": "object",
+          "properties": {},
           "description": "Connection Pool settings"
         },
         "cacheIntrospection": {
@@ -1130,32 +1138,6 @@
               "type": "string"
             }
           ]
-        }
-      },
-      "required": ["connectionString"]
-    },
-    "PostGraphilePool": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PostGraphilePool",
-      "properties": {
-        "user": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "database": {
-          "type": "string"
-        },
-        "host": {
-          "type": "string"
-        },
-        "port": {
-          "type": "integer"
-        },
-        "connectionString": {
-          "type": "string"
         }
       }
     },

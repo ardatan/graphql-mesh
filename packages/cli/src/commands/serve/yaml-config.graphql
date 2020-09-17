@@ -18,6 +18,8 @@ type ServeConfig @md {
   cors: CorsConfig
 }
 
+union Port = Int | String
+
 union Fork = Int | Boolean
 union Port = Int | String
 

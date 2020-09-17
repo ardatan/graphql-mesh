@@ -36,9 +36,9 @@ export interface ServeConfig {
    */
   fork?: number | boolean;
   /**
-   * TCP Port to listen (default: `3000`)
+   * TCP Port to listen (default: `3000`) (Any of: Int, String)
    */
-  port?: number;
+  port?: number | string;
   /**
    * Provide an example query or queries for GraphQL Playground
    */
@@ -536,12 +536,17 @@ export interface PostGraphileHandler {
   /**
    * A connection string to your Postgres database
    */
-  connectionString: string;
+  connectionString?: string;
   /**
    * An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema.
    */
   schemaName?: string[];
-  pool?: PostGraphilePool;
+  /**
+   * Connection Pool settings
+   */
+  pool?: {
+    [k: string]: any;
+  };
   /**
    * Cache Introspection
    */
@@ -562,17 +567,6 @@ export interface PostGraphileHandler {
         [k: string]: any;
       }
     | string;
-}
-/**
- * Connection Pool settings
- */
-export interface PostGraphilePool {
-  user?: string;
-  password?: string;
-  database?: string;
-  host?: string;
-  port?: number;
-  connectionString?: string;
 }
 /**
  * Handler for SOAP

@@ -24,13 +24,8 @@ export default class PostGraphileHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     const pgPool = new Pool({
-      ...(this.config?.pool
-        ? {
-            ...this.config?.pool,
-          }
-        : {
-            connectionString: this.config.connectionString,
-          }),
+      connectionString: this.config.connectionString,
+      ...this.config?.pool,
     });
 
     this.hooks.once('destroy', () => pgPool.end());
