@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.9.2
+
+### Patch Changes
+
+- 2d5cc25b: chore(types): update config schema
+
 ## 0.9.1
 
 ### Patch Changes

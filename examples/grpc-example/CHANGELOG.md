@@ -1,5 +1,14 @@
 # grpc-example
 
+## 0.5.7
+
+### Patch Changes
+
+- Updated dependencies [89e1e028]
+  - @graphql-mesh/cli@0.8.3
+  - @graphql-mesh/grpc@0.4.6
+  - @graphql-mesh/transform-naming-convention@0.5.4
+
 ## 0.5.6
 
 ### Patch Changes
