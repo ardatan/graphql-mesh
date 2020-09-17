@@ -10,7 +10,7 @@ type ServeConfig @md {
   """
   TCP Port to listen (default: `3000`)
   """
-  port: Int
+  port: Port
   """
   Provide an example query or queries for GraphQL Playground
   """
@@ -19,6 +19,7 @@ type ServeConfig @md {
 }
 
 union Fork = Int | Boolean
+union Port = Int | String
 
 type CorsConfig {
   origin: [String]
