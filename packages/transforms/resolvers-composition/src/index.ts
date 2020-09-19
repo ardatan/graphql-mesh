@@ -11,7 +11,8 @@ export default class ResolversCompositionTransform implements MeshTransform {
     const resolversComposition: ResolversComposerMapping = {};
 
     for (const { resolver, composer } of this.options.config) {
-      resolversComposition[resolver] = loadFromModuleExportExpressionSync(composer, 'default'); // Async is not available
+      resolversComposition[resolver] =
+        typeof composer === 'function' ? loadFromModuleExportExpressionSync(composer, 'default') : composer; // Async is not available
     }
 
     const resolvers = extractResolvers(schema);

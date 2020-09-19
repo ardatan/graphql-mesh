@@ -28,6 +28,8 @@ type Query {
 
 scalar JSON
 
+scalar Any
+
 type Source {
   """
   The name you wish to set to your remote API, this will be used for building the GraphQL context
@@ -61,5 +63,3 @@ type AdditionalResolverObject {
   resultSelectionSet: String
   resultDepth: Int
 }
-
-scalar Fetch
