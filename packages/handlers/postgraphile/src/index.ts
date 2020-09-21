@@ -38,15 +38,12 @@ export default class PostGraphileHandler implements MeshHandler {
     let writeCache: () => Promise<void>;
 
     const appendPlugins = await Promise.all<Plugin>(
-      (this.config.appendPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
+      (this.config.appendPlugins || []).map(pluginName => loadFromModuleExportExpression<any>(pluginName))
     );
     const skipPlugins = await Promise.all<Plugin>(
-      (this.config.skipPlugins || []).map(pluginName => loadFromModuleExportExpression(pluginName))
+      (this.config.skipPlugins || []).map(pluginName => loadFromModuleExportExpression<any>(pluginName))
     );
-    const options =
-      typeof this.config.options === 'string'
-        ? await loadFromModuleExportExpression(this.config.options)
-        : this.config.options;
+    const options = await loadFromModuleExportExpression<any>(this.config.options);
 
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,

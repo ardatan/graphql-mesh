@@ -15,5 +15,5 @@ type ResolversCompositionTransformObject @md {
   Path to the composer function
   Example: ./src/auth.js#authComposer
   """
-  composer: String!
+  composer: Any!
 }

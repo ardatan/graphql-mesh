@@ -35,6 +35,8 @@ export default class FederationTransform implements MeshTransform {
           const resolveReferenceConfig = type.config.resolveReference;
           if (typeof resolveReferenceConfig === 'string') {
             resolveReference = loadFromModuleExportExpressionSync(resolveReferenceConfig);
+          } else if (typeof resolveReferenceConfig === 'function') {
+            resolveReference = type.config.resolveReference;
           } else {
             const {
               args,

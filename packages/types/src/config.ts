@@ -116,11 +116,9 @@ export interface GraphQLHandler {
    */
   enableSubscriptions?: boolean;
   /**
-   * Path to a custom W3 Compatible Fetch Implementation (Unknown object)
+   * Path to a custom W3 Compatible Fetch Implementation
    */
-  customFetch?: {
-    [k: string]: any;
-  };
+  customFetch?: any;
   /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
@@ -519,11 +517,9 @@ export interface OpenapiHandler {
     [k: string]: any;
   };
   /**
-   * W3 Compatible Fetch Implementation (Unknown object)
+   * W3 Compatible Fetch Implementation
    */
-  customFetch?: {
-    [k: string]: any;
-  };
+  customFetch?: any;
   /**
    * Include HTTP Response details to the result object
    */
@@ -924,7 +920,7 @@ export interface ResolversCompositionTransformObject {
    * Path to the composer function
    * Example: ./src/auth.js#authComposer
    */
-  composer: string;
+  composer: any;
 }
 /**
  * Configuration for Snapshot extension

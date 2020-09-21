@@ -42,7 +42,7 @@ export default class MongooseHandler implements MeshHandler {
     await Promise.all([
       Promise.all(
         this.config.models?.map(async modelConfig => {
-          const model = await loadFromModuleExportExpression(modelConfig.path, modelConfig.name);
+          const model = await loadFromModuleExportExpression<any>(modelConfig.path, modelConfig.name);
           const modelTC = composeWithMongoose(model, modelConfig.options as any);
           await Promise.all([
             Promise.all(
@@ -64,7 +64,7 @@ export default class MongooseHandler implements MeshHandler {
       ),
       Promise.all(
         this.config.discriminators.map(async discriminatorConfig => {
-          const discriminator = await loadFromModuleExportExpression(
+          const discriminator = await loadFromModuleExportExpression<any>(
             discriminatorConfig.path,
             discriminatorConfig.name
           );
