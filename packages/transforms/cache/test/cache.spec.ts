@@ -17,7 +17,7 @@ import objectHash from 'object-hash';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 import { EventEmitter } from 'events';
-import { wrapSchema } from '@graphql-tools/wrap';
+import { applySchemaTransforms } from '@graphql-tools/utils';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 
@@ -156,43 +156,37 @@ describe('cache', () => {
     it('should replace resolvers correctly with a specific type and field', async () => {
       expect(schema.getQueryType()?.getFields()['user'].resolve).toBe(spies.Query.user);
 
-      const modifiedSchema = wrapSchema({
-        schema,
-        transforms: [
-          new CacheTransform({
-            cache,
-            config: [
-              {
-                field: 'Query.user',
-              },
-            ],
-            hooks,
-          }),
-        ],
-      });
+      const modifiedSchema = applySchemaTransforms(schema, [
+        new CacheTransform({
+          cache,
+          config: [
+            {
+              field: 'Query.user',
+            },
+          ],
+          hooks,
+        }),
+      ]);
 
       expect(modifiedSchema!.getQueryType()?.getFields()['user'].resolve).not.toBe(spies.Query.user);
-      expect(modifiedSchema!.getQueryType()?.getFields()['users'].resolve).not.toBe(spies.Query.users);
+      expect(modifiedSchema!.getQueryType()?.getFields()['users'].resolve).toBe(spies.Query.users);
     });
 
     it('should replace resolvers correctly with a wildcard', async () => {
       expect(schema.getQueryType()?.getFields()['user'].resolve).toBe(spies.Query.user);
       expect(schema.getQueryType()?.getFields()['users'].resolve).toBe(spies.Query.users);
 
-      const modifiedSchema = wrapSchema({
-        schema,
-        transforms: [
-          new CacheTransform({
-            cache,
-            config: [
-              {
-                field: 'Query.*',
-              },
-            ],
-            hooks,
-          }),
-        ],
-      });
+      const modifiedSchema = applySchemaTransforms(schema, [
+        new CacheTransform({
+          cache,
+          config: [
+            {
+              field: 'Query.*',
+            },
+          ],
+          hooks,
+        }),
+      ]);
 
       expect(modifiedSchema!.getQueryType()?.getFields()['user'].resolve).not.toBe(spies.Query.user);
       expect(modifiedSchema!.getQueryType()?.getFields()['users'].resolve).not.toBe(spies.Query.users);
@@ -201,16 +195,13 @@ describe('cache', () => {
 
   describe('Cache Wrapper', () => {
     const checkCache = async (config: YamlConfig.CacheTransformConfig[], cacheKeyToCheck?: string) => {
-      const modifiedSchema = wrapSchema({
-        schema,
-        transforms: [
-          new CacheTransform({
-            cache,
-            config,
-            hooks,
-          }),
-        ],
-      });
+      const modifiedSchema = applySchemaTransforms(schema, [
+        new CacheTransform({
+          cache,
+          config,
+          hooks,
+        }),
+      ]);
 
       const executeOptions = {
         schema: modifiedSchema!,
@@ -412,33 +403,30 @@ describe('cache', () => {
     it('Should invalidate cache when mutation is done based on key', async () => {
       const schemaWithHooks = applyResolversHooksToSchema(schema, hooks);
 
-      const schemaWithCache = wrapSchema({
-        schema: schemaWithHooks,
-        transforms: [
-          new CacheTransform({
-            config: [
-              {
-                field: 'Query.user',
-                cacheKey: 'query-user-{args.id}',
-                invalidate: {
-                  effectingOperations: [
-                    {
-                      operation: 'Mutation.updateUser',
-                      matchKey: 'query-user-{args.userId}',
-                    },
-                    {
-                      operation: 'Mutation.deleteUser',
-                      matchKey: 'query-user-{args.userIdToDelete}',
-                    },
-                  ],
-                },
+      const schemaWithCache = applySchemaTransforms(schemaWithHooks, [
+        new CacheTransform({
+          config: [
+            {
+              field: 'Query.user',
+              cacheKey: 'query-user-{args.id}',
+              invalidate: {
+                effectingOperations: [
+                  {
+                    operation: 'Mutation.updateUser',
+                    matchKey: 'query-user-{args.userId}',
+                  },
+                  {
+                    operation: 'Mutation.deleteUser',
+                    matchKey: 'query-user-{args.userIdToDelete}',
+                  },
+                ],
               },
-            ],
-            cache,
-            hooks,
-          }),
-        ],
-      });
+            },
+          ],
+          cache,
+          hooks,
+        }),
+      ]);
 
       const expectedCacheKey = `query-user-1`;
 
