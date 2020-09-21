@@ -25,7 +25,7 @@
     "fs-extra": "9.0.1",
     "lodash": "4.17.20",
     "graphql-compose": "7.21.1",
-    "graphql-scalars": "1.2.6",
+    "graphql-scalars": "1.2.7",
     "pascal-case": "3.1.1",
     "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
