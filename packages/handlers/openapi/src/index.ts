@@ -35,14 +35,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];
     if (this.config.customFetch) {
-      switch (typeof this.config.customFetch) {
-        case 'string':
-          fetch = await loadFromModuleExportExpression(this.config.customFetch as any, 'default');
-          break;
-        case 'function':
-          fetch = this.config.customFetch as any;
-          break;
-      }
+      fetch = await loadFromModuleExportExpression(this.config.customFetch as any, 'default');
     } else {
       fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
     }

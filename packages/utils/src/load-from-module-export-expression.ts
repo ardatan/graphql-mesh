@@ -1,6 +1,12 @@
 import { isAbsolute, join } from 'path';
 
-export async function loadFromModuleExportExpression(expression: string, defaultExportName?: string) {
+export async function loadFromModuleExportExpression<T>(
+  expression: T | string,
+  defaultExportName?: string
+): Promise<T> {
+  if (typeof expression !== 'string') {
+    return expression;
+  }
   const [modulePath, exportName = defaultExportName] = expression.split('#');
   const mod = await tryImport(modulePath);
 
@@ -31,7 +37,10 @@ async function tryImport(modulePath: string) {
   }
 }
 
-export function loadFromModuleExportExpressionSync(expression: string, defaultExportName?: string) {
+export function loadFromModuleExportExpressionSync<T>(expression: T | string, defaultExportName?: string): T {
+  if (typeof expression !== 'string') {
+    return expression;
+  }
   const [modulePath, exportName = defaultExportName] = expression.split('#');
   const mod = tryImportSync(modulePath);
 
