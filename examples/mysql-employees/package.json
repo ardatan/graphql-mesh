@@ -1,14 +1,14 @@
 {
   "name": "mysql-employees",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh serve"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.8.3",
-    "@graphql-mesh/mysql": "0.4.5",
+    "@graphql-mesh/cli": "0.8.4",
+    "@graphql-mesh/mysql": "0.4.6",
     "graphql": "15.3.0"
   }
 }

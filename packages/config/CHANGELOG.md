@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 0.9.0
+
+### Minor Changes
+
+- 79adf4b6: feat(config): support functions as config property
+
+### Patch Changes
+
+- Updated dependencies [79adf4b6]
+- Updated dependencies [79adf4b6]
+- Updated dependencies [2241323d]
+  - @graphql-mesh/utils@0.5.3
+  - @graphql-mesh/types@0.10.0
+  - @graphql-mesh/merger-stitching@0.6.5
+  - @graphql-mesh/runtime@0.6.5
+  - @graphql-mesh/cache-inmemory-lru@0.4.6
+
 ## 0.8.4
 
 ### Patch Changes
