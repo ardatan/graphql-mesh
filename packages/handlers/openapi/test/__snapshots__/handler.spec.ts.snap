@@ -1,8 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`openapi should create a GraphQL schema from a simple local swagger file 1`] = `
-"\\"\\"\\"The start of any query\\"\\"\\"
-type Query {
+"type Query {
   \\"\\"\\"
   Get recent media from a geography subscription that you created.
   **Note:** You can only access Geographies that were explicitly created by your OAuth client. Check the
@@ -49,13 +48,13 @@ type Query {
     maxId: String
 
     \\"\\"\\"Return media before this UNIX timestamp.\\"\\"\\"
-    maxTimestamp: BigInt
+    maxTimestamp: Float
 
     \\"\\"\\"Return media before this \`min_id\`.\\"\\"\\"
     minId: String
 
     \\"\\"\\"Return media after this UNIX timestamp.\\"\\"\\"
-    minTimestamp: BigInt
+    minTimestamp: Float
   ): MediaListResponse
 
   \\"\\"\\"
@@ -156,12 +155,12 @@ type Query {
     \\"\\"\\"
     A unix timestamp. All media returned will be taken earlier than this timestamp.
     \\"\\"\\"
-    maxTimestamp: BigInt
+    maxTimestamp: Float
 
     \\"\\"\\"
     A unix timestamp. All media returned will be taken later than this timestamp.
     \\"\\"\\"
-    minTimestamp: BigInt
+    minTimestamp: Float
   ): MediaSearchResponse
 
   \\"\\"\\"
@@ -331,13 +330,13 @@ type Query {
     maxId: String
 
     \\"\\"\\"Return media before this UNIX timestamp.\\"\\"\\"
-    maxTimestamp: BigInt
+    maxTimestamp: Float
 
     \\"\\"\\"Return media later than this \`min_id\`.\\"\\"\\"
     minId: String
 
     \\"\\"\\"Return media after this UNIX timestamp.\\"\\"\\"
-    minTimestamp: BigInt
+    minTimestamp: Float
 
     \\"\\"\\"
     The ID of a user to get recent media of, or **self** to retrieve media of authenticated user.
@@ -533,11 +532,6 @@ type LocationInfoResponse {
   meta: MetaData
 }
 
-\\"\\"\\"
-The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-\\"\\"\\"
-scalar BigInt
-
 type LocationSearchResponse {
   \\"\\"\\"List of found locations\\"\\"\\"
   data: [LocationInfo]
@@ -575,7 +569,7 @@ type TagSearchResponse {
 
 type TagInfo {
   \\"\\"\\"Overall number of media entries taged with this name\\"\\"\\"
-  mediaCount: BigInt
+  mediaCount: Float
 
   \\"\\"\\"Tag name\\"\\"\\"
   name: String
@@ -693,7 +687,6 @@ enum OutgoingStatus {
   REQUESTED
 }
 
-\\"\\"\\"The start of any mutation\\"\\"\\"
 type Mutation {
   \\"\\"\\"
   Remove a comment either on the authenticated user's media object or authored by the authenticated user.

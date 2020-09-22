@@ -4,7 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 
 // Type imports:
-import { Oas3, SchemaObject, LinkObject, ReferenceObject } from './types/oas3';
+import {
+  Oas3,
+  CallbackObject,
+  LinkObject,
+  OperationObject,
+  ReferenceObject,
+  SchemaObject,
+  PathItemObject,
+} from './types/oas3';
 import { InternalOptions } from './types/options';
 import { Operation, DataDefinition } from './types/operation';
 import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessing_data';
@@ -12,25 +20,156 @@ import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessin
 // Imports:
 import * as Oas3Tools from './oas_3_tools';
 import deepEqual from 'deep-equal';
-import { handleWarning, getCommonPropertyNames, mockDebug as debug } from './utils';
+import { handleWarning, getCommonPropertyNames, MitigationTypes, mockDebug as debug } from './utils';
 import { GraphQLOperationType } from './types/graphql';
+import { methodToHttpMethod } from './oas_3_tools';
 
 const preprocessingLog = debug('preprocessing');
+
+/**
+ * Given an operation object from the OAS, create an Operation, which contains
+ * the necessary data to create a GraphQL wrapper for said operation object.
+ *
+ * @param path The path of the operation object
+ * @param method The method of the operation object
+ * @param operationString A string representation of the path and the method (and the OAS title if applicable)
+ * @param operationType Whether the operation should be turned into a Query/Mutation/Subscription operation
+ * @param operation The operation object from the OAS
+ * @param pathItem The path item object from the OAS from which the operation object is derived from
+ * @param oas The OAS from which the path item and operation object are derived from
+ * @param data An assortment of data which at this point is mainly used enable logging
+ * @param options The options passed by the user
+ */
+function processOperation<TSource, TContext, TArgs>(
+  path: string,
+  method: Oas3Tools.HTTP_METHODS,
+  operationString: string,
+  operationType: GraphQLOperationType,
+  operation: OperationObject,
+  pathItem: PathItemObject,
+  oas: Oas3,
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  options: InternalOptions<TSource, TContext, TArgs>
+): Operation {
+  // Determine description
+  let description = operation.description;
+  if ((typeof description !== 'string' || description === '') && typeof operation.summary === 'string') {
+    description = operation.summary;
+  }
+
+  if (data.options.equivalentToMessages) {
+    // Description may not exist
+    if (typeof description !== 'string') {
+      description = '';
+    }
+
+    description += `\n\nEquivalent to ${operationString}`;
+  }
+
+  // Hold on to the operationId
+  const operationId =
+    typeof operation.operationId !== 'undefined' ? operation.operationId : Oas3Tools.generateOperationId(method, path);
+
+  // Request schema
+  const { payloadContentType, payloadSchema, payloadSchemaNames, payloadRequired } = Oas3Tools.getRequestSchemaAndNames(
+    path,
+    operation,
+    oas
+  );
+
+  const payloadDefinition =
+    payloadSchema && typeof payloadSchema !== 'undefined'
+      ? createDataDef(payloadSchemaNames, payloadSchema as SchemaObject, true, data, oas)
+      : undefined;
+
+  // Response schema
+  const { responseContentType, responseSchema, responseSchemaNames, statusCode } = Oas3Tools.getResponseSchemaAndNames(
+    path,
+    method,
+    operation,
+    oas,
+    data,
+    options
+  );
+
+  if (!responseSchema || typeof responseSchema !== 'object') {
+    handleWarning({
+      mitigationType: MitigationTypes.MISSING_RESPONSE_SCHEMA,
+      message:
+        `Operation ${operationString} has no (valid) response schema. ` +
+        `You can use the fillEmptyResponses option to create a ` +
+        `placeholder schema`,
+      data,
+      log: preprocessingLog,
+    });
+
+    return undefined;
+  }
+
+  // Links
+  const links = Oas3Tools.getLinks(path, method, operation, oas, data);
+
+  const responseDefinition = createDataDef(
+    responseSchemaNames,
+    responseSchema as SchemaObject,
+    false,
+    data,
+    oas,
+    links
+  );
+
+  // Parameters
+  const parameters = Oas3Tools.getParameters(path, method, operation, pathItem, oas);
+
+  // Security protocols
+  const securityRequirements = options.viewer ? Oas3Tools.getSecurityRequirements(operation, data.security, oas) : [];
+
+  // Servers
+  const servers = Oas3Tools.getServers(operation, pathItem, oas);
+
+  // Whether to place this operation into an authentication viewer
+  const inViewer = securityRequirements.length > 0 && data.options.viewer !== false;
+
+  return {
+    operationId,
+    operationString,
+    operationType,
+    description,
+    path,
+    method,
+    payloadContentType,
+    payloadDefinition,
+    payloadRequired,
+    responseContentType,
+    responseDefinition,
+    parameters,
+    securityRequirements,
+    servers,
+    inViewer,
+    statusCode,
+    oas,
+  };
+}
 
 /**
  * Extract information from the OAS and put it inside a data structure that
  * is easier for OpenAPI-to-GraphQL to use
  */
-export function preprocessOas(oass: Oas3[], options: InternalOptions): PreprocessingData {
-  const data: PreprocessingData = {
+export function preprocessOas<TSource, TContext, TArgs>(
+  oass: Oas3[],
+  options: InternalOptions<TSource, TContext, TArgs>
+): PreprocessingData<TSource, TContext, TArgs> {
+  const data: PreprocessingData<TSource, TContext, TArgs> = {
+    operations: {},
+    callbackOperations: {},
     usedTypeNames: [
       'Query', // Used by OpenAPI-to-GraphQL for root-level element
       'Mutation', // Used by OpenAPI-to-GraphQL for root-level element
+      'Subscription', // Used by OpenAPI-to-GraphQL for root-level element
     ],
     defs: [],
-    operations: {},
-    saneMap: {},
     security: {},
+    saneMap: {},
     options,
     oass,
   };
@@ -40,13 +179,18 @@ export function preprocessOas(oass: Oas3[], options: InternalOptions): Preproces
     data.options.report.numOps += Oas3Tools.countOperations(oas);
     data.options.report.numOpsMutation += Oas3Tools.countOperationsMutation(oas);
     data.options.report.numOpsQuery += Oas3Tools.countOperationsQuery(oas);
+    if (data.options.createSubscriptionsFromCallbacks) {
+      data.options.report.numOpsSubscription += Oas3Tools.countOperationsSubscription(oas);
+    } else {
+      data.options.report.numOpsSubscription = 0;
+    }
 
     // Get security schemes
     const currentSecurity = getProcessedSecuritySchemes(oas, data);
     const commonSecurityPropertyName = getCommonPropertyNames(data.security, currentSecurity);
     commonSecurityPropertyName.forEach(propertyName => {
       handleWarning({
-        typeKey: 'DUPLICATE_SECURITY_SCHEME',
+        mitigationType: MitigationTypes.DUPLICATE_SECURITY_SCHEME,
         message: `Multiple OASs share security schemes with the same name '${propertyName}'`,
         mitigationAddendum:
           `The security scheme from OAS ` + `'${currentSecurity[propertyName].oas.info.title}' will be ignored`,
@@ -60,154 +204,176 @@ export function preprocessOas(oass: Oas3[], options: InternalOptions): Preproces
 
     // Process all operations
     for (const path in oas.paths) {
-      for (const method in oas.paths[path]) {
-        // Only consider Operation Objects
-        if (!Oas3Tools.isOperation(method)) {
-          continue;
-        }
+      const pathItem = !('$ref' in oas.paths[path])
+        ? oas.paths[path]
+        : (Oas3Tools.resolveRef(oas.paths[path].$ref, oas) as PathItemObject);
 
-        const endpoint = oas.paths[path][method];
-        const operationString =
-          oass.length === 1
-            ? Oas3Tools.formatOperationString(method, path)
-            : Oas3Tools.formatOperationString(method, path, oas.info.title);
+      Object.keys(pathItem)
+        .filter(objectKey => {
+          /**
+           * Get only fields that contain operation objects
+           *
+           * Can also contain other fields such as summary or description
+           */
+          return Oas3Tools.isHttpMethod(objectKey);
+        })
+        .forEach(rawMethod => {
+          const operationString =
+            oass.length === 1
+              ? Oas3Tools.formatOperationString(rawMethod, path)
+              : Oas3Tools.formatOperationString(rawMethod, path, oas.info.title);
 
-        // Determine description
-        let description = endpoint.description;
-        if ((typeof description !== 'string' || description === '') && typeof endpoint.summary === 'string') {
-          description = endpoint.summary;
-        }
+          let httpMethod: Oas3Tools.HTTP_METHODS;
+          try {
+            httpMethod = methodToHttpMethod(rawMethod);
+          } catch (e) {
+            handleWarning({
+              mitigationType: MitigationTypes.INVALID_HTTP_METHOD,
+              message: `Invalid HTTP method '${rawMethod}' in operation '${operationString}'`,
+              data,
+              log: preprocessingLog,
+            });
 
-        if (data.options.equivalentToMessages) {
-          // Description may not exist
-          if (typeof description !== 'string') {
-            description = '';
+            return;
           }
 
-          description += `\n\nEquivalent to ${operationString}`;
-        }
+          const operation = pathItem[httpMethod] as OperationObject;
 
-        // Hold on to the operationId
-        const operationId =
-          typeof endpoint.operationId !== 'undefined'
-            ? endpoint.operationId
-            : Oas3Tools.generateOperationId(method, path);
+          let operationType =
+            httpMethod === Oas3Tools.HTTP_METHODS.get ? GraphQLOperationType.Query : GraphQLOperationType.Mutation;
 
-        // Request schema
-        const {
-          payloadContentType,
-          payloadSchema,
-          payloadSchemaNames,
-          payloadRequired,
-        } = Oas3Tools.getRequestSchemaAndNames(path, method, oas);
+          // Option selectQueryOrMutationField can override operation type
+          if (
+            typeof options.selectQueryOrMutationField === 'object' &&
+            typeof options.selectQueryOrMutationField[oas.info.title] === 'object' &&
+            typeof options.selectQueryOrMutationField[oas.info.title][path] === 'object' &&
+            typeof options.selectQueryOrMutationField[oas.info.title][path][httpMethod] === 'number' // This is an TS enum, which is translated to have a integer value
+          ) {
+            operationType =
+              options.selectQueryOrMutationField[oas.info.title][path][httpMethod] === GraphQLOperationType.Mutation
+                ? GraphQLOperationType.Mutation
+                : GraphQLOperationType.Query;
+          }
 
-        const payloadDefinition =
-          payloadSchema && typeof payloadSchema !== 'undefined'
-            ? createDataDef(payloadSchemaNames, payloadSchema as SchemaObject, true, data, oas)
-            : undefined;
-
-        // Response schema
-        const {
-          responseContentType,
-          responseSchema,
-          responseSchemaNames,
-          statusCode,
-        } = Oas3Tools.getResponseSchemaAndNames(path, method, oas, data, options);
-
-        if (!responseSchema || typeof responseSchema !== 'object') {
-          handleWarning({
-            typeKey: 'MISSING_RESPONSE_SCHEMA',
-            message:
-              `Operation ${operationString} has no (valid) response schema. ` +
-              `You can use the fillEmptyResponses option to create a ` +
-              `placeholder schema`,
+          const operationData = processOperation(
+            path,
+            httpMethod,
+            operationString,
+            operationType,
+            operation,
+            pathItem,
+            oas,
             data,
-            log: preprocessingLog,
-          });
-          continue;
-        }
+            options
+          );
 
-        // Links
-        const links = Oas3Tools.getEndpointLinks(path, method, oas, data);
+          if (operationData) {
+            /**
+             * Handle operationId property name collision
+             * May occur if multiple OAS are provided
+             */
+            if (operationData && !(operationData.operationId in data.operations)) {
+              data.operations[operationData.operationId] = operationData;
+            } else {
+              handleWarning({
+                mitigationType: MitigationTypes.DUPLICATE_OPERATIONID,
+                message: `Multiple OASs share operations with the same operationId '${operationData.operationId}'`,
+                mitigationAddendum: `The operation from the OAS '${operationData.oas.info.title}' will be ignored`,
+                data,
+                log: preprocessingLog,
+              });
+            }
+          }
 
-        const responseDefinition = createDataDef(
-          responseSchemaNames,
-          responseSchema as SchemaObject,
-          false,
-          data,
-          oas,
-          links
-        );
+          // Process all callbacks
+          if (data.options.createSubscriptionsFromCallbacks && operation.callbacks) {
+            Object.entries(operation.callbacks).forEach(([callbackName, callback]) => {
+              const resolvedCallback = !('$ref' in callback)
+                ? callback
+                : (Oas3Tools.resolveRef((callback as ReferenceObject).$ref, oas) as CallbackObject);
 
-        // Parameters
-        const parameters = Oas3Tools.getParameters(path, method, oas);
+              Object.entries(resolvedCallback).forEach(([callbackExpression, callbackPathItem]) => {
+                const resolvedCallbackPathItem = !('$ref' in callbackPathItem)
+                  ? callbackPathItem
+                  : Oas3Tools.resolveRef(callbackPathItem.$ref, oas);
 
-        // Security protocols
-        const securityRequirements = options.viewer
-          ? Oas3Tools.getSecurityRequirements(path, method, data.security, oas)
-          : [];
+                const callbackOperationObjectMethods = Object.keys(resolvedCallbackPathItem).filter(objectKey => {
+                  /**
+                   * Get only fields that contain operation objects
+                   *
+                   * Can also contain other fields such as summary or description
+                   */
+                  return Oas3Tools.isHttpMethod(objectKey.toString());
+                });
 
-        // Servers
-        const servers = Oas3Tools.getServers(path, method, oas);
+                if (callbackOperationObjectMethods.length > 0) {
+                  if (callbackOperationObjectMethods.length > 1) {
+                    handleWarning({
+                      mitigationType: MitigationTypes.CALLBACKS_MULTIPLE_OPERATION_OBJECTS,
+                      message: `Callback '${callbackExpression}' on operation '${operationString}' has multiple operation objects with the methods '${callbackOperationObjectMethods}'. OpenAPI-to-GraphQL can only utilize one of these operation objects.`,
+                      mitigationAddendum: `The operation with the method '${callbackOperationObjectMethods[0].toString()}' will be selected and all others will be ignored.`,
+                      data,
+                      log: preprocessingLog,
+                    });
+                  }
 
-        // Whether to place this operation into an authentication viewer
-        const inViewer = securityRequirements.length > 0 && data.options.viewer !== false;
+                  // Select only one of the operation object methods
+                  const callbackRawMethod = callbackOperationObjectMethods[0];
 
-        /**
-         * Whether the operation should be added as a Query or Mutation field.
-         * By default, all GET operations are Query fields and all other
-         * operations are Mutation fields.
-         */
-        let isMutation = method.toLowerCase() !== 'get';
+                  const callbackOperationString =
+                    oass.length === 1
+                      ? Oas3Tools.formatOperationString(httpMethod, callbackName)
+                      : Oas3Tools.formatOperationString(httpMethod, callbackName, oas.info.title);
 
-        // Option selectQueryOrMutationField can override isMutation
-        if (
-          typeof options.selectQueryOrMutationField === 'object' &&
-          typeof options.selectQueryOrMutationField[oas.info.title] === 'object' &&
-          typeof options.selectQueryOrMutationField[oas.info.title][path] === 'object' &&
-          typeof options.selectQueryOrMutationField[oas.info.title][path][method] === 'number' // This is an TS enum, which is translated to have a integer value
-        ) {
-          isMutation =
-            options.selectQueryOrMutationField[oas.info.title][path][method] === GraphQLOperationType.Mutation;
-        }
+                  let callbackHttpMethod: Oas3Tools.HTTP_METHODS;
 
-        // Store determined information for operation
-        const operation: Operation = {
-          operationId,
-          operationString,
-          description,
-          path,
-          method: method.toLowerCase(),
-          payloadContentType,
-          payloadDefinition,
-          payloadRequired,
-          responseContentType,
-          responseDefinition,
-          parameters,
-          securityRequirements,
-          servers,
-          inViewer,
-          isMutation,
-          statusCode,
-          oas,
-        };
+                  try {
+                    callbackHttpMethod = methodToHttpMethod(callbackRawMethod.toString());
+                  } catch (e) {
+                    handleWarning({
+                      mitigationType: MitigationTypes.INVALID_HTTP_METHOD,
+                      message: `Invalid HTTP method '${rawMethod}' in callback '${callbackOperationString}' in operation '${operationString}'`,
+                      data,
+                      log: preprocessingLog,
+                    });
 
-        /**
-         * Handle operationId property name collision
-         * May occur if multiple OAS are provided
-         */
-        if (operationId in data.operations) {
-          handleWarning({
-            typeKey: 'DUPLICATE_OPERATIONID',
-            message: `Multiple OASs share operations with the same operationId '${operationId}'`,
-            mitigationAddendum: `The operation from the OAS '${operation.oas.info.title}' will be ignored`,
-            data,
-            log: preprocessingLog,
-          });
-        } else {
-          data.operations[operationId] = operation;
-        }
-      }
+                    return;
+                  }
+
+                  const callbackOperation = processOperation(
+                    callbackExpression,
+                    callbackHttpMethod,
+                    callbackOperationString,
+                    GraphQLOperationType.Subscription,
+                    resolvedCallbackPathItem[callbackHttpMethod],
+                    callbackPathItem,
+                    oas,
+                    data,
+                    options
+                  );
+
+                  if (callbackOperation) {
+                    /**
+                     * Handle operationId property name collision
+                     * May occur if multiple OAS are provided
+                     */
+                    if (callbackOperation && !(callbackOperation.operationId in data.callbackOperations)) {
+                      data.callbackOperations[callbackOperation.operationId] = callbackOperation;
+                    } else {
+                      handleWarning({
+                        mitigationType: MitigationTypes.DUPLICATE_OPERATIONID,
+                        message: `Multiple OASs share callback operations with the same operationId '${callbackOperation.operationId}'`,
+                        mitigationAddendum: `The callback operation from the OAS '${operationData.oas.info.title}' will be ignored`,
+                        data,
+                        log: preprocessingLog,
+                      });
+                    }
+                  }
+                }
+              });
+            });
+          }
+        });
     }
   });
 
@@ -252,7 +418,10 @@ export function preprocessOas(oass: Oas3[], options: InternalOptions): Preproces
  *   }
  * }
  */
-function getProcessedSecuritySchemes(oas: Oas3, data: PreprocessingData): { [key: string]: ProcessedSecurityScheme } {
+function getProcessedSecuritySchemes<TSource, TContext, TArgs>(
+  oas: Oas3,
+  data: PreprocessingData<TSource, TContext, TArgs>
+): { [key: string]: ProcessedSecurityScheme } {
   const result = {};
   const security = Oas3Tools.getSecuritySchemes(oas);
 
@@ -317,7 +486,7 @@ function getProcessedSecuritySchemes(oas: Oas3, data: PreprocessingData): { [key
 
           default:
             handleWarning({
-              typeKey: 'UNSUPPORTED_HTTP_SECURITY_SCHEME',
+              mitigationType: MitigationTypes.UNSUPPORTED_HTTP_SECURITY_SCHEME,
               message:
                 `Currently unsupported HTTP authentication protocol ` +
                 `type 'http' and scheme '${protocol.scheme}' in OAS ` +
@@ -331,7 +500,7 @@ function getProcessedSecuritySchemes(oas: Oas3, data: PreprocessingData): { [key
       // TODO: Implement
       case 'openIdConnect':
         handleWarning({
-          typeKey: 'UNSUPPORTED_HTTP_SECURITY_SCHEME',
+          mitigationType: MitigationTypes.UNSUPPORTED_HTTP_SECURITY_SCHEME,
           message:
             `Currently unsupported HTTP authentication protocol ` + `type 'openIdConnect' in OAS '${oas.info.title}'`,
           data,
@@ -342,7 +511,7 @@ function getProcessedSecuritySchemes(oas: Oas3, data: PreprocessingData): { [key
 
       case 'oauth2':
         handleWarning({
-          typeKey: 'OAUTH_SECURITY_SCHEME',
+          mitigationType: MitigationTypes.OAUTH_SECURITY_SCHEME,
           message:
             `OAuth security scheme found in OAS '${oas.info.title}'. ` +
             `OAuth support is provided using the 'tokenJSONpath' option`,
@@ -355,7 +524,7 @@ function getProcessedSecuritySchemes(oas: Oas3, data: PreprocessingData): { [key
 
       default:
         handleWarning({
-          typeKey: 'UNSUPPORTED_HTTP_SECURITY_SCHEME',
+          mitigationType: MitigationTypes.UNSUPPORTED_HTTP_SECURITY_SCHEME,
           message: `Unsupported HTTP authentication protocol` + `type '${protocol.type}' in OAS '${oas.info.title}'`,
           data,
           log: preprocessingLog,
@@ -376,20 +545,14 @@ function getProcessedSecuritySchemes(oas: Oas3, data: PreprocessingData): { [key
 
 /**
  * Method to either create a new or reuse an existing, centrally stored data
- * definition. Data definitions are objects that hold a schema (= JSON schema),
- * an otName (= String to use as the name for object types), and an iotName
- * (= String to use as the name for input object types). Eventually, data
- * definitions also hold an ot (= the object type for the schema) and an iot
- * (= the input object type for the schema).
- *
- * Either names or preferredName should exist.
+ * definition.
  */
-export function createDataDef(
+export function createDataDef<TSource, TContext, TArgs>(
   names: Oas3Tools.SchemaNames,
   schema: SchemaObject,
   isInputObjectType: boolean,
-  data: PreprocessingData,
-  oas?: Oas3,
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  oas: Oas3,
   links?: { [key: string]: LinkObject }
 ): DataDefinition {
   const preferredName = getPreferredName(names);
@@ -397,7 +560,7 @@ export function createDataDef(
   // Basic validation test
   if (typeof schema !== 'object') {
     handleWarning({
-      typeKey: 'MISSING_SCHEMA',
+      mitigationType: MitigationTypes.MISSING_SCHEMA,
       message:
         `Could not create data definition for schema with ` +
         `preferred name '${preferredName}' and schema '${JSON.stringify(schema)}'`,
@@ -423,10 +586,10 @@ export function createDataDef(
 
     const saneLinks = {};
     if (typeof links === 'object') {
-      Object.keys(links).forEach((linkKey: string) => {
+      Object.keys(links).forEach(linkKey => {
         saneLinks[
           Oas3Tools.sanitize(
-            linkKey,
+            linkKey.toString(),
             !data.options.simpleNames ? Oas3Tools.CaseStyle.camelCase : Oas3Tools.CaseStyle.simple
           )
         ] = links[linkKey];
@@ -453,7 +616,7 @@ export function createDataDef(
               !deepEqual(existingDataDef.links[saneLinkKey], saneLinks[saneLinkKey])
             ) {
               handleWarning({
-                typeKey: 'DUPLICATE_LINK_KEY',
+                mitigationType: MitigationTypes.DUPLICATE_LINK_KEY,
                 message:
                   `Multiple operations with the same response body share the same sanitized ` +
                   `link key '${saneLinkKey}' but have different link definitions ` +
@@ -497,7 +660,7 @@ export function createDataDef(
        */
       const collapsedSchema = resolveAllOf(schema, {}, data, oas);
 
-      const targetGraphQLType = Oas3Tools.getSchemaTargetGraphQLType(collapsedSchema, data);
+      const targetGraphQLType = Oas3Tools.getSchemaTargetGraphQLType(collapsedSchema as SchemaObject, data);
 
       const def: DataDefinition = {
         preferredName,
@@ -536,7 +699,7 @@ export function createDataDef(
         hasNestedOneOfUsage(collapsedSchema, oas)
       ) {
         handleWarning({
-          typeKey: 'COMBINE_SCHEMAS',
+          mitigationType: MitigationTypes.COMBINE_SCHEMAS,
           message:
             `Schema '${JSON.stringify(schema)}' contains either both ` +
             `'anyOf' and 'oneOf' or nested 'anyOf' and 'oneOf' which ` +
@@ -552,15 +715,15 @@ export function createDataDef(
 
       // oneOf will ideally be turned into a union type
       if (Array.isArray(collapsedSchema.oneOf)) {
-        const oneOfDataDef = createDataDefFromOneOf({
+        const oneOfDataDef = createDataDefFromOneOf(
           saneName,
           saneInputName,
           collapsedSchema,
           isInputObjectType,
           def,
           data,
-          oas,
-        });
+          oas
+        );
         if (typeof oneOfDataDef === 'object') {
           return oneOfDataDef;
         }
@@ -572,15 +735,15 @@ export function createDataDef(
        * Fields common to all member schemas will be made non-null
        */
       if (Array.isArray(collapsedSchema.anyOf)) {
-        const anyOfDataDef = createDataDefFromAnyOf({
+        const anyOfDataDef = createDataDefFromAnyOf(
           saneName,
           saneInputName,
           collapsedSchema,
           isInputObjectType,
           def,
           data,
-          oas,
-        });
+          oas
+        );
         if (typeof anyOfDataDef === 'object') {
           return anyOfDataDef;
         }
@@ -621,7 +784,7 @@ export function createDataDef(
               addObjectPropertiesToDataDef(def, collapsedSchema, def.required, isInputObjectType, data, oas);
             } else {
               handleWarning({
-                typeKey: 'OBJECT_MISSING_PROPERTIES',
+                mitigationType: MitigationTypes.OBJECT_MISSING_PROPERTIES,
                 message: `Schema ${JSON.stringify(schema)} does not have ` + `any properties`,
                 data,
                 log: preprocessingLog,
@@ -636,7 +799,7 @@ export function createDataDef(
         // No target GraphQL type
 
         handleWarning({
-          typeKey: 'UNKNOWN_TARGET_TYPE',
+          mitigationType: MitigationTypes.UNKNOWN_TARGET_TYPE,
           message: `No GraphQL target type could be identified for schema '${JSON.stringify(schema)}'.`,
           data,
           log: preprocessingLog,
@@ -767,12 +930,12 @@ function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[]): strin
 /**
  * Recursively add all of the properties of an object to the data definition
  */
-function addObjectPropertiesToDataDef(
+function addObjectPropertiesToDataDef<TSource, TContext, TArgs>(
   def: DataDefinition,
   schema: SchemaObject,
   required: string[],
   isInputObjectType: boolean,
-  data: PreprocessingData,
+  data: PreprocessingData<TSource, TContext, TArgs>,
   oas: Oas3
 ) {
   /**
@@ -811,7 +974,7 @@ function addObjectPropertiesToDataDef(
       def.subDefinitions[propertyKey] = subDefinition;
     } else {
       handleWarning({
-        typeKey: 'DUPLICATE_FIELD_NAME',
+        mitigationType: MitigationTypes.DUPLICATE_FIELD_NAME,
         message:
           `By way of resolving 'allOf', multiple schemas contain ` +
           `properties with the same name, preventing consolidation. Cannot ` +
@@ -828,10 +991,10 @@ function addObjectPropertiesToDataDef(
  * Recursively traverse a schema and resolve allOf by appending the data to the
  * parent schema
  */
-function resolveAllOf(
+function resolveAllOf<TSource, TContext, TArgs>(
   schema: SchemaObject | ReferenceObject,
   references: { [reference: string]: SchemaObject },
-  data: PreprocessingData,
+  data: PreprocessingData<TSource, TContext, TArgs>,
   oas: Oas3
 ): SchemaObject {
   // Dereference schema
@@ -864,7 +1027,7 @@ function resolveAllOf(
           // Incompatible schema type
 
           handleWarning({
-            typeKey: 'UNRESOLVABLE_SCHEMA',
+            mitigationType: MitigationTypes.UNRESOLVABLE_SCHEMA,
             message:
               `Resolving 'allOf' field in schema '${collapsedSchema}' ` +
               `results in incompatible schema type from partial schema '${resolvedSchema}'.`,
@@ -885,7 +1048,7 @@ function resolveAllOf(
             // Conflicting property
 
             handleWarning({
-              typeKey: 'UNRESOLVABLE_SCHEMA',
+              mitigationType: MitigationTypes.UNRESOLVABLE_SCHEMA,
               message:
                 `Resolving 'allOf' field in schema '${collapsedSchema}' ` +
                 `results in incompatible property field from partial schema '${resolvedSchema}'.`,
@@ -948,9 +1111,9 @@ type MemberSchemaData = {
  * In the context of schemas that use keywords that combine member schemas,
  * collect data on certain aspects so it is all in one place for processing.
  */
-function getMemberSchemaData(
+function getMemberSchemaData<TSource, TContext, TArgs>(
   schemas: (SchemaObject | ReferenceObject)[],
-  data: PreprocessingData,
+  data: PreprocessingData<TSource, TContext, TArgs>,
   oas: Oas3
 ): MemberSchemaData {
   const result: MemberSchemaData = {
@@ -960,27 +1123,25 @@ function getMemberSchemaData(
   };
 
   schemas.forEach(schema => {
-    if (schema) {
-      // Dereference schemas
-      if ('$ref' in schema) {
-        schema = Oas3Tools.resolveRef(schema.$ref, oas) as SchemaObject;
-      }
+    // Dereference schemas
+    if ('$ref' in schema) {
+      schema = Oas3Tools.resolveRef(schema.$ref, oas) as SchemaObject;
+    }
 
-      // Consolidate target GraphQL type
-      const memberTargetGraphQLType = Oas3Tools.getSchemaTargetGraphQLType(schema, data);
-      if (memberTargetGraphQLType) {
-        result.allTargetGraphQLTypes.push(memberTargetGraphQLType);
-      }
+    // Consolidate target GraphQL type
+    const memberTargetGraphQLType = Oas3Tools.getSchemaTargetGraphQLType(schema, data);
+    if (memberTargetGraphQLType) {
+      result.allTargetGraphQLTypes.push(memberTargetGraphQLType);
+    }
 
-      // Consolidate properties
-      if (schema.properties) {
-        result.allProperties.push(schema.properties);
-      }
+    // Consolidate properties
+    if (schema.properties) {
+      result.allProperties.push(schema.properties);
+    }
 
-      // Consolidate required
-      if (schema.required) {
-        result.allRequired = result.allRequired.concat(schema.required);
-      }
+    // Consolidate required
+    if (schema.required) {
+      result.allRequired = result.allRequired.concat(schema.required);
     }
   });
 
@@ -997,9 +1158,6 @@ function hasNestedOneOfUsage(collapsedSchema: SchemaObject, oas: Oas3): boolean 
   return (
     Array.isArray(collapsedSchema.oneOf) &&
     collapsedSchema.oneOf.some(memberSchema => {
-      if (!memberSchema) {
-        return false;
-      }
       // anyOf and oneOf are nested
       if ('$ref' in memberSchema) {
         memberSchema = Oas3Tools.resolveRef(memberSchema.$ref, oas) as SchemaObject;
@@ -1038,23 +1196,15 @@ function hasNestedAnyOfUsage(collapsedSchema: SchemaObject, oas: Oas3): boolean 
  * anyOf should resolve into an object that contains the superset of all
  * properties from the member schemas
  */
-function createDataDefFromAnyOf({
-  saneName,
-  saneInputName,
-  collapsedSchema,
-  isInputObjectType,
-  def,
-  data,
-  oas,
-}: {
-  saneName: string;
-  saneInputName: string;
-  collapsedSchema: SchemaObject;
-  isInputObjectType: boolean;
-  def: DataDefinition;
-  data: PreprocessingData;
-  oas: Oas3;
-}): DataDefinition | void {
+function createDataDefFromAnyOf<TSource, TContext, TArgs>(
+  saneName: string,
+  saneInputName: string,
+  collapsedSchema: SchemaObject,
+  isInputObjectType: boolean,
+  def: DataDefinition,
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  oas: Oas3
+) {
   const anyOfData = getMemberSchemaData(collapsedSchema.anyOf, data, oas);
 
   if (
@@ -1069,7 +1219,7 @@ function createDataDefFromAnyOf({
       }) &&
       anyOfData.allProperties.length > 0 // Redundant check
     ) {
-      // Ensure that parent schema is compatiable with oneOf
+      // Ensure that parent schema is compatible with oneOf
       if (def.targetGraphQLType === null || def.targetGraphQLType === 'object') {
         const allProperties: {
           [propertyName: string]: (SchemaObject | ReferenceObject)[];
@@ -1090,16 +1240,16 @@ function createDataDefFromAnyOf({
 
         // Check if any member schema has conflicting properties
         anyOfData.allProperties.forEach(properties => {
-          Object.keys(properties).forEach((propertyName: string) => {
+          Object.keys(properties).forEach(propertyName => {
             if (
-              !incompatibleProperties.has(propertyName) && // Has not been already identified as a problematic property
+              !incompatibleProperties.has(propertyName.toString()) && // Has not been already identified as a problematic property
               typeof allProperties[propertyName] === 'object' &&
               allProperties[propertyName].some(property => {
                 // Property does not match a recorded one
                 return !deepEqual(property, properties[propertyName]);
               })
             ) {
-              incompatibleProperties.add(propertyName);
+              incompatibleProperties.add(propertyName.toString());
             }
 
             // Add property in the store
@@ -1117,14 +1267,14 @@ function createDataDefFromAnyOf({
         }
 
         anyOfData.allProperties.forEach(properties => {
-          Object.keys(properties).forEach((propertyName: string) => {
-            if (!incompatibleProperties.has(propertyName)) {
+          Object.keys(properties).forEach(propertyName => {
+            if (!incompatibleProperties.has(propertyName.toString())) {
               // Dereferenced by processing anyOfData
               const propertySchema = properties[propertyName] as SchemaObject;
 
               const subDefinition = createDataDef(
                 {
-                  fromRef: propertyName,
+                  fromRef: propertyName.toString(),
                   fromSchema: propertySchema.title, // TODO: Currently not utilized because of fromRef but arguably, propertyKey is a better field name and title is a better type name
                 },
                 propertySchema,
@@ -1161,7 +1311,7 @@ function createDataDefFromAnyOf({
         // The parent schema is incompatible with the member schemas
 
         handleWarning({
-          typeKey: 'COMBINE_SCHEMAS',
+          mitigationType: MitigationTypes.COMBINE_SCHEMAS,
           message:
             `Schema '${JSON.stringify(def.schema)}' contains 'anyOf' and ` +
             `some member schemas are object types so create a GraphQL ` +
@@ -1179,7 +1329,7 @@ function createDataDefFromAnyOf({
       // The member schemas are not all object types
 
       handleWarning({
-        typeKey: 'COMBINE_SCHEMAS',
+        mitigationType: MitigationTypes.COMBINE_SCHEMAS,
         message:
           `Schema '${def.schema}' contains 'anyOf' and ` +
           `some member schemas are object types so create a GraphQL ` +
@@ -1195,23 +1345,15 @@ function createDataDefFromAnyOf({
   }
 }
 
-function createDataDefFromOneOf({
-  saneName,
-  saneInputName,
-  collapsedSchema,
-  isInputObjectType,
-  def,
-  data,
-  oas,
-}: {
-  saneName: string;
-  saneInputName: string;
-  collapsedSchema: SchemaObject;
-  isInputObjectType: boolean;
-  def: DataDefinition;
-  data: PreprocessingData;
-  oas: Oas3;
-}): DataDefinition | void {
+function createDataDefFromOneOf<TSource, TContext, TArgs>(
+  saneName: string,
+  saneInputName: string,
+  collapsedSchema: SchemaObject,
+  isInputObjectType: boolean,
+  def: DataDefinition,
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  oas: Oas3
+) {
   const oneOfData = getMemberSchemaData(collapsedSchema.oneOf, data, oas);
 
   if (
@@ -1226,7 +1368,20 @@ function createDataDefFromOneOf({
       }) &&
       oneOfData.allProperties.length > 0 // Redundant check
     ) {
-      // Ensure that parent schema is compatiable with oneOf
+      // Input object types cannot be composed of unions
+      if (isInputObjectType) {
+        handleWarning({
+          mitigationType: MitigationTypes.INPUT_UNION,
+          message: `Input object types cannot be composed of union types.`,
+          data,
+          log: preprocessingLog,
+        });
+
+        def.targetGraphQLType = 'json';
+        return def;
+      }
+
+      // Ensure that parent schema is compatible with oneOf
       if (def.targetGraphQLType === null || def.targetGraphQLType === 'object') {
         def.subDefinitions = [];
 
@@ -1254,7 +1409,7 @@ function createDataDefFromOneOf({
             (def.subDefinitions as DataDefinition[]).push(subDefinition);
           } else {
             handleWarning({
-              typeKey: 'COMBINE_SCHEMAS',
+              mitigationType: MitigationTypes.COMBINE_SCHEMAS,
               message:
                 `Schema '${JSON.stringify(def.schema)}' contains 'oneOf' so ` +
                 `create a GraphQL union type but member schema '${JSON.stringify(memberSchema)}' ` +
@@ -1283,7 +1438,7 @@ function createDataDefFromOneOf({
           return def;
         } else {
           handleWarning({
-            typeKey: 'COMBINE_SCHEMAS',
+            mitigationType: MitigationTypes.COMBINE_SCHEMAS,
             message:
               `Schema '${JSON.stringify(def.schema)}' contains 'oneOf' so ` +
               `create a GraphQL union type but all member schemas are not` +
@@ -1301,7 +1456,7 @@ function createDataDefFromOneOf({
         // The parent schema is incompatible with the member schemas
 
         handleWarning({
-          typeKey: 'COMBINE_SCHEMAS',
+          mitigationType: MitigationTypes.COMBINE_SCHEMAS,
           message:
             `Schema '${JSON.stringify(def.schema)}' contains 'oneOf' so create ` +
             `a GraphQL union type but the parent schema is a non-object ` +
@@ -1318,7 +1473,7 @@ function createDataDefFromOneOf({
       // The member schemas are not all object types
 
       handleWarning({
-        typeKey: 'COMBINE_SCHEMAS',
+        mitigationType: MitigationTypes.COMBINE_SCHEMAS,
         message:
           `Schema '${JSON.stringify(def.schema)}' contains 'oneOf' so create ` +
           `a GraphQL union type but some member schemas are non-object ` +
