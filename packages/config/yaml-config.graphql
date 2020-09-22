@@ -24,6 +24,10 @@ type Query {
   Merge method
   """
   merger: String
+  """
+  PubSub Implementation
+  """
+  pubSub: PubSub
 }
 
 scalar JSON
@@ -49,9 +53,9 @@ type Transform @withAdditionalProperties
 type Handler @withAdditionalProperties
 type Cache @withAdditionalProperties
 
-union AdditionalResolver = String | AdditionalResolverObject
+union AdditionalResolver = String | AdditionalStitchingResolverObject | AdditionalSubscriptionObject
 
-type AdditionalResolverObject {
+type AdditionalStitchingResolverObject {
   type: String!
   field: String!
   requiredSelectionSet: String
@@ -62,4 +66,19 @@ type AdditionalResolverObject {
   resultSelectedFields: JSON
   resultSelectionSet: String
   resultDepth: Int
+}
+
+type AdditionalSubscriptionObject {
+  type: String!
+  field: String!
+  pubSubTopic: String!
+  returnData: String
+  filterBy: String
+}
+
+union PubSub = String | PubSubConfig
+
+type PubSubConfig {
+  name: String!
+  config: Any
 }

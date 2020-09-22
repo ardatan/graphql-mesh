@@ -28,7 +28,8 @@ enum JsonSchemaOperationMethod {
 
 type JsonSchemaOperation {
   field: String!
-  path: String!
+  path: String
+  pubSubTopic: String
   description: String
   type: JsonSchemaOperationType!
   method: JsonSchemaOperationMethod!

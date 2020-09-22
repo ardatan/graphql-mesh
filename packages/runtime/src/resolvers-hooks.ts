@@ -1,4 +1,4 @@
-import { Hooks } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/types';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -96,7 +96,7 @@ function createProxyInfo({
 export function applyResolversHooksToResolvers(
   unifiedSchema: GraphQLSchema,
   resolvers: IResolvers,
-  hooks: Hooks
+  pubSub: MeshPubSub
 ): IResolvers {
   return composeResolvers(resolvers, {
     '*.*': originalResolver => async (root, args, context = {}, info) => {
@@ -106,7 +106,7 @@ export function applyResolversHooksToResolvers(
         context,
         info,
       };
-      hooks.emit('resolverCalled', resolverData);
+      pubSub.publish('resolverCalled', { resolverData });
 
       try {
         const proxyContext = new Proxy(context, {
@@ -172,24 +172,24 @@ export function applyResolversHooksToResolvers(
 
         const result = await originalResolver(root, args, proxyContext, info);
 
-        hooks.emit('resolverDone', resolverData, result);
+        pubSub.publish('resolverDone', { resolverData, result });
 
         return result;
-      } catch (e) {
-        hooks.emit('resolverError', resolverData, e);
+      } catch (error) {
+        pubSub.publish('resolverError', { resolverData, error });
 
-        throw e;
+        throw error;
       }
     },
   });
 }
 
-export function applyResolversHooksToSchema(schema: GraphQLSchema, hooks: Hooks): GraphQLSchema {
+export function applyResolversHooksToSchema(schema: GraphQLSchema, pubSub: MeshPubSub): GraphQLSchema {
   const sourceResolvers = extractResolvers(schema);
 
   return addResolversToSchema({
     schema,
-    resolvers: applyResolversHooksToResolvers(schema, sourceResolvers, hooks),
+    resolvers: applyResolversHooksToResolvers(schema, sourceResolvers, pubSub),
     updateResolversInPlace: true,
   });
 }

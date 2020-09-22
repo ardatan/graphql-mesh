@@ -21,14 +21,18 @@ export interface Config {
    */
   additionalTypeDefs?: string;
   /**
-   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalResolverObject)
+   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)
    */
-  additionalResolvers?: (string | AdditionalResolverObject)[];
+  additionalResolvers?: (string | AdditionalStitchingResolverObject | AdditionalSubscriptionObject)[];
   cache?: Cache;
   /**
    * Merge method
    */
   merger?: string;
+  /**
+   * PubSub Implementation (Any of: String, PubSubConfig)
+   */
+  pubSub?: string | PubSubConfig;
 }
 export interface ServeConfig {
   /**
@@ -944,7 +948,7 @@ export interface SnapshotTransformConfig {
    */
   outputDir: string;
 }
-export interface AdditionalResolverObject {
+export interface AdditionalStitchingResolverObject {
   type: string;
   field: string;
   requiredSelectionSet?: string;
@@ -959,6 +963,13 @@ export interface AdditionalResolverObject {
   };
   resultSelectionSet?: string;
   resultDepth?: number;
+}
+export interface AdditionalSubscriptionObject {
+  type: string;
+  field: string;
+  pubSubTopic: string;
+  returnData?: string;
+  filterBy?: string;
 }
 /**
  * Backend cache
@@ -991,4 +1002,8 @@ export interface RedisConfig {
   host?: string;
   port?: number;
   password?: string;
+}
+export interface PubSubConfig {
+  name: string;
+  config?: any;
 }

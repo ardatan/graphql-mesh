@@ -1,18 +1,18 @@
 import { makeAugmentedSchema, inferSchema } from 'neo4j-graphql-js';
 import neo4j, { Driver } from 'neo4j-driver';
-import { YamlConfig, MeshHandler, GetMeshSourceOptions, KeyValueCache, Hooks } from '@graphql-mesh/types';
+import { YamlConfig, MeshHandler, GetMeshSourceOptions, KeyValueCache, MeshPubSub } from '@graphql-mesh/types';
 
 export default class Neo4JHandler implements MeshHandler {
   private name: string;
   private cache: KeyValueCache;
   private config: YamlConfig.Neo4JHandler;
-  private hooks: Hooks;
+  private pubSub: MeshPubSub;
 
-  constructor({ name, cache, config, hooks }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+  constructor({ name, cache, config, pubSub }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
     this.name = name;
     this.cache = cache;
     this.config = config;
-    this.hooks = hooks;
+    this.pubSub = pubSub;
   }
 
   private driver: Driver;
@@ -20,7 +20,7 @@ export default class Neo4JHandler implements MeshHandler {
   getDriver() {
     if (!this.driver) {
       this.driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password));
-      this.hooks.once('destroy', () => this.driver.close());
+      this.pubSub.subscribe('destroy', () => this.driver.close());
     }
     return this.driver;
   }

@@ -297,10 +297,10 @@
         }
       }
     },
-    "AdditionalResolverObject": {
+    "AdditionalStitchingResolverObject": {
       "additionalProperties": false,
       "type": "object",
-      "title": "AdditionalResolverObject",
+      "title": "AdditionalStitchingResolverObject",
       "properties": {
         "type": {
           "type": "string"
@@ -336,6 +336,43 @@
         }
       },
       "required": ["type", "field", "targetSource", "targetMethod", "args"]
+    },
+    "AdditionalSubscriptionObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "AdditionalSubscriptionObject",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "pubSubTopic": {
+          "type": "string"
+        },
+        "returnData": {
+          "type": "string"
+        },
+        "filterBy": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "field", "pubSubTopic"]
+    },
+    "PubSubConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PubSubConfig",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "type": "any"
+        }
+      },
+      "required": ["name"]
     },
     "GraphQLHandler": {
       "additionalProperties": false,
@@ -1683,18 +1720,21 @@
     "additionalResolvers": {
       "type": "array",
       "items": {
-        "description": "Any of: String, AdditionalResolverObject",
+        "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject",
         "anyOf": [
           {
             "type": "string"
           },
           {
-            "$ref": "#/definitions/AdditionalResolverObject"
+            "$ref": "#/definitions/AdditionalStitchingResolverObject"
+          },
+          {
+            "$ref": "#/definitions/AdditionalSubscriptionObject"
           }
         ]
       },
       "additionalItems": false,
-      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalResolverObject)"
+      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)"
     },
     "cache": {
       "$ref": "#/definitions/Cache",
@@ -1703,6 +1743,17 @@
     "merger": {
       "type": "string",
       "description": "Merge method"
+    },
+    "pubSub": {
+      "description": "PubSub Implementation (Any of: String, PubSubConfig)",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/PubSubConfig"
+        }
+      ]
     }
   },
   "additionalProperties": false

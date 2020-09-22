@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { IResolvers, Transform } from '@graphql-tools/utils';
-import { IEventEmitter } from 'tsee';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
@@ -23,7 +22,7 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
 
 export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
-  hooks: Hooks;
+  pubSub: MeshPubSub;
   config: THandlerConfig;
   cache: KeyValueCache;
 };
@@ -46,19 +45,30 @@ export type ResolverData<TParent = any, TArgs = any, TContext = any> = {
 
 // Hooks
 export type AllHooks = {
-  schemaReady: (schema: GraphQLSchema) => void;
-  destroy: () => void;
-  resolverCalled: (resolverData: ResolverData) => void;
-  resolverDone: (resolverData: ResolverData, result: any) => void;
-  resolverError: (resolverData: ResolverData, error: Error) => void;
+  schemaReady: { schema: GraphQLSchema };
+  destroy: void;
+  resolverCalled: { resolverData: ResolverData };
+  resolverDone: { resolverData: ResolverData; result: any };
+  resolverError: { resolverData: ResolverData; error: Error };
+  [key: string]: any;
 };
-export type Hooks = IEventEmitter<AllHooks>;
-export type HooksKeys = keyof AllHooks;
+export type HookName = keyof AllHooks;
+
+export interface MeshPubSub {
+  publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void>;
+  subscribe<THook extends HookName>(
+    triggerName: THook,
+    onMessage: (data: AllHooks[THook]) => void,
+    options?: any
+  ): Promise<number>;
+  unsubscribe(subId: number): void;
+  asyncIterator<THook extends HookName>(triggers: THook): AsyncIterator<AllHooks[THook]>;
+}
 
 export interface MeshTransformOptions<Config = any> {
   config: Config;
   cache: KeyValueCache;
-  hooks: Hooks;
+  pubSub: MeshPubSub;
   apiName?: string;
 }
 
@@ -77,7 +87,7 @@ export { KeyValueCache, KeyValueCacheSetOptions };
 export type MergerFn = (options: {
   rawSources: RawSourceOutput[];
   cache: KeyValueCache;
-  hooks: Hooks;
+  pubSub: MeshPubSub;
   typeDefs?: DocumentNode[];
   resolvers?: IResolvers;
   transforms?: Transform[];

@@ -1,6 +1,6 @@
 import {
   KeyValueCache,
-  Hooks,
+  MeshPubSub,
   MergerFn,
   RawSourceOutput,
   GraphQLOperation,
@@ -17,7 +17,7 @@ export type GetMeshOptions = {
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers;
   cache: KeyValueCache;
-  hooks: Hooks;
+  pubSub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
 };

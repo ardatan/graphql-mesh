@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn, MeshContext } from './types';
-import { Hooks, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
+import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
@@ -18,12 +18,11 @@ export async function getMesh(
   sdkRequester: Requester;
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   destroy: () => void;
-  hooks: Hooks;
+  pubSub: MeshPubSub;
   cache: KeyValueCache;
 }> {
   const rawSources: RawSourceOutput[] = [];
-  const hooks = options.hooks;
-  const cache = options.cache;
+  const { pubSub, cache } = options;
 
   await Promise.all(
     options.sources.map(async apiSource => {
@@ -54,15 +53,15 @@ export async function getMesh(
   let unifiedSchema = await options.merger({
     rawSources,
     cache,
-    hooks,
+    pubSub,
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
     transforms: options.transforms,
   });
 
-  hooks.emit('schemaReady', unifiedSchema);
+  pubSub.publish('schemaReady', { schema: unifiedSchema });
 
-  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, hooks);
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubSub);
 
   async function buildMeshContext<TAdditionalContext>(initialContextValue?: TAdditionalContext) {
     const context: MeshContext & TAdditionalContext = {
@@ -154,8 +153,8 @@ export async function getMesh(
     rawSources,
     sdkRequester: localRequester,
     cache,
-    hooks,
-    destroy: () => hooks.emit('destroy'),
+    pubSub,
+    destroy: () => pubSub.publish('destroy', undefined),
   };
 }
 

@@ -1,12 +1,12 @@
 import { getMesh } from '@graphql-mesh/runtime';
 import OpenAPIHandler from '@graphql-mesh/openapi';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
-import { EventEmitter } from 'events';
-import { Hooks } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/types';
 import { KeyValueCache } from '@graphql-mesh/types';
+import { PubSub } from 'graphql-subscriptions';
 
 export function getMeshInstance({ cache }: { cache: KeyValueCache }) {
-  const hooks = new EventEmitter() as Hooks;
+  const pubSub = new PubSub() as MeshPubSub;
   return getMesh({
     sources: [
       {
@@ -14,7 +14,7 @@ export function getMeshInstance({ cache }: { cache: KeyValueCache }) {
         handler: new OpenAPIHandler({
           name: 'Weatherbit',
           cache,
-          hooks,
+          pubSub,
           config: {
             source: 'https://www.weatherbit.io/static/swagger.json',
           },
@@ -22,7 +22,7 @@ export function getMeshInstance({ cache }: { cache: KeyValueCache }) {
       },
     ],
     cache,
-    hooks,
+    pubSub,
     merger: StitchingMerger,
   });
 }
