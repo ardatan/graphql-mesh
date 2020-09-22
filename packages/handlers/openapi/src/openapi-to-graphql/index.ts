@@ -48,6 +48,7 @@ import * as Oas3Tools from './oas_3_tools';
 import { createAndLoadViewer } from './auth_builder';
 import { GraphQLSchemaConfig } from 'graphql/type/schema';
 import { sortObject, handleWarning, mockDebug as debug, MitigationTypes } from './utils';
+import { MeshPubSub } from '@graphql-mesh/types';
 
 type Result = {
   schema: GraphQLSchema;
@@ -167,6 +168,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     customResolvers,
     fetch,
     resolverMiddleware,
+    pubSub,
 
     // Authentication options
     viewer,
@@ -203,6 +205,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     customResolvers,
     fetch,
     resolverMiddleware,
+    pubSub,
 
     // Authentication options
     viewer,
@@ -257,7 +260,8 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
       data,
       requestOptions,
       connectOptions,
-      includeHttpDetails
+      includeHttpDetails,
+      pubSub
     );
 
     const saneOperationId = Oas3Tools.sanitize(operationId, Oas3Tools.CaseStyle.camelCase);
@@ -399,7 +403,8 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
       data,
       requestOptions,
       connectOptions,
-      includeHttpDetails
+      includeHttpDetails,
+      pubSub
     );
 
     const saneOperationId = Oas3Tools.sanitize(operationId, Oas3Tools.CaseStyle.camelCase);
@@ -559,7 +564,8 @@ function getFieldForOperation<TSource, TContext, TArgs>(
   data: PreprocessingData<TSource, TContext, TArgs>,
   requestOptions: RequestOptions<TSource, TContext, TArgs>,
   connectOptions: ConnectOptions,
-  includeHttpDetails: boolean
+  includeHttpDetails: boolean,
+  pubSub: MeshPubSub
 ): GraphQLFieldConfig<TSource, TContext | SubscriptionContext, TArgs> {
   // Create GraphQL Type for response:
   const type = getGraphQLType({
@@ -601,6 +607,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
       data,
       baseUrl,
       connectOptions,
+      pubSub,
     });
 
     return {

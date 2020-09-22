@@ -1,5 +1,5 @@
 import { GraphQLSchema, execute, subscribe } from 'graphql';
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import { Logger } from 'winston';
 import { fork as clusterFork, isMaster } from 'cluster';
 import { cpus } from 'os';
@@ -9,14 +9,17 @@ import { playground } from './playground';
 import { graphqlHTTP } from 'express-graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { SubscriptionServer, OperationMessagePayload, ConnectionContext } from 'subscriptions-transport-ws';
-import { YamlConfig } from '@graphql-mesh/types';
+import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import cors from 'cors';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { get } from 'lodash';
 
 export async function serveMesh(
   logger: Logger,
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
-  { fork, exampleQuery, port = 4000, cors: corsConfig }: YamlConfig.ServeConfig = {}
+  pubSub: MeshPubSub,
+  { fork, exampleQuery, port = 4000, cors: corsConfig, handlers }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const graphqlPath = '/graphql';
   if (isMaster && fork) {
@@ -95,6 +98,21 @@ export async function serveMesh(
         path: graphqlPath,
       }
     );
+
+    for (const handlerConfig of handlers) {
+      if ('handler' in handlerConfig) {
+        const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
+        app.use(handlerConfig.path, handlerFn);
+      } else if ('pubSubTopic' in handlerConfig) {
+        app.use(handlerConfig.path, req => {
+          let payload = req.body;
+          if (handlerConfig.payload) {
+            payload = get(payload, handlerConfig.payload);
+          }
+          pubSub.publish(handlerConfig.pubSubTopic, payload);
+        });
+      }
+    }
 
     httpServer.listen(port.toString(), () => {
       if (!fork) {

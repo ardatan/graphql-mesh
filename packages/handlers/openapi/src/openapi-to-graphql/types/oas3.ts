@@ -4,8 +4,6 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import { Operation } from './operation';
-
 /**
  * Type definitions for the OpenAPI Specification 3.
  */

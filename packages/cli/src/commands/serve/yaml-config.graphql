@@ -16,6 +16,7 @@ type ServeConfig @md {
   """
   exampleQuery: String
   cors: CorsConfig
+  handlers: [ServeHandler]
 }
 
 union Port = Int | String
@@ -31,4 +32,17 @@ type CorsConfig {
   maxAge: Int
   preflightContinue: Boolean
   optionsSuccessStatus: Int
+}
+
+union ServeHandler = WebhookHandler | ExpressHandler
+
+type ExpressHandler {
+  path: String!
+  handler: String!
+}
+
+type WebhookHandler {
+  path: String!
+  pubSubTopic: String!
+  payload: String!
 }
