@@ -11,9 +11,6 @@ export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, t
   }
   const [source] = rawSources;
   let schema = source.schema;
-  typeDefs?.forEach(typeDef => {
-    schema = extendSchema(schema, typeDef);
-  });
 
   let wrapTransforms: MeshTransform[] = [];
   let noWrapTransforms: MeshTransform[] = [];
@@ -32,6 +29,9 @@ export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, t
       transforms
     );
   }
+  typeDefs?.forEach(typeDef => {
+    schema = extendSchema(schema, typeDef);
+  });
   if (resolvers) {
     schema = addResolversToSchema({
       schema,
