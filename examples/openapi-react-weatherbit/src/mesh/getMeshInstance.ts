@@ -6,7 +6,7 @@ import { KeyValueCache } from '@graphql-mesh/types';
 import { PubSub } from 'graphql-subscriptions';
 
 export function getMeshInstance({ cache }: { cache: KeyValueCache }) {
-  const pubSub = new PubSub() as MeshPubSub;
+  const pubsub = new PubSub() as MeshPubSub;
   return getMesh({
     sources: [
       {
@@ -14,7 +14,7 @@ export function getMeshInstance({ cache }: { cache: KeyValueCache }) {
         handler: new OpenAPIHandler({
           name: 'Weatherbit',
           cache,
-          pubSub,
+          pubsub,
           config: {
             source: 'https://www.weatherbit.io/static/swagger.json',
           },
@@ -22,7 +22,7 @@ export function getMeshInstance({ cache }: { cache: KeyValueCache }) {
       },
     ],
     cache,
-    pubSub,
+    pubsub,
     merger: StitchingMerger,
   });
 }

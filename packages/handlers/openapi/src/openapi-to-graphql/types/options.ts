@@ -306,5 +306,5 @@ export type InternalOptions<TSource, TContext, TArgs> = {
    * Includes HTTP Details to the result object
    */
   includeHttpDetails?: boolean;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
 };

@@ -106,7 +106,7 @@ const spies = {
 describe('cache', () => {
   let schema: GraphQLSchema;
   let cache: KeyValueCache;
-  let pubSub: MeshPubSub;
+  let pubsub: MeshPubSub;
 
   beforeEach(() => {
     const baseSchema = buildSchema(/* GraphQL */ `
@@ -146,7 +146,7 @@ describe('cache', () => {
     });
 
     cache = new InMemoryLRUCache();
-    pubSub = new PubSub() as MeshPubSub;
+    pubsub = new PubSub() as MeshPubSub;
 
     spies.Query.user.mockClear();
     spies.Query.users.mockClear();
@@ -164,7 +164,7 @@ describe('cache', () => {
               field: 'Query.user',
             },
           ],
-          pubSub,
+          pubsub,
         }),
       ]);
 
@@ -184,7 +184,7 @@ describe('cache', () => {
               field: 'Query.*',
             },
           ],
-          pubSub,
+          pubsub,
         }),
       ]);
 
@@ -199,7 +199,7 @@ describe('cache', () => {
         new CacheTransform({
           cache,
           config,
-          pubSub,
+          pubsub,
         }),
       ]);
 
@@ -401,7 +401,7 @@ describe('cache', () => {
 
   describe('Opration-based invalidation', () => {
     it('Should invalidate cache when mutation is done based on key', async () => {
-      const schemaWithHooks = applyResolversHooksToSchema(schema, pubSub);
+      const schemaWithHooks = applyResolversHooksToSchema(schema, pubsub);
 
       const schemaWithCache = applySchemaTransforms(schemaWithHooks, [
         new CacheTransform({
@@ -424,7 +424,7 @@ describe('cache', () => {
             },
           ],
           cache,
-          pubSub,
+          pubsub,
         }),
       ]);
 

@@ -22,7 +22,7 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
 
 export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
   config: THandlerConfig;
   cache: KeyValueCache;
 };
@@ -68,7 +68,7 @@ export interface MeshPubSub {
 export interface MeshTransformOptions<Config = any> {
   config: Config;
   cache: KeyValueCache;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
   apiName?: string;
 }
 
@@ -87,7 +87,7 @@ export { KeyValueCache, KeyValueCacheSetOptions };
 export type MergerFn = (options: {
   rawSources: RawSourceOutput[];
   cache: KeyValueCache;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
   typeDefs?: DocumentNode[];
   resolvers?: IResolvers;
   transforms?: Transform[];

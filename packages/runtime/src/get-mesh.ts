@@ -18,11 +18,11 @@ export async function getMesh(
   sdkRequester: Requester;
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   destroy: () => void;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
   cache: KeyValueCache;
 }> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubSub, cache } = options;
+  const { pubsub, cache } = options;
 
   await Promise.all(
     options.sources.map(async apiSource => {
@@ -53,19 +53,22 @@ export async function getMesh(
   let unifiedSchema = await options.merger({
     rawSources,
     cache,
-    pubSub,
+    pubsub,
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
     transforms: options.transforms,
   });
 
-  pubSub.publish('schemaReady', { schema: unifiedSchema });
+  pubsub.publish('schemaReady', { schema: unifiedSchema });
 
-  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubSub);
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
-  async function buildMeshContext<TAdditionalContext>(initialContextValue?: TAdditionalContext) {
-    const context: MeshContext & TAdditionalContext = {
+  async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
+    initialContextValue?: TAdditionalContext
+  ): Promise<TContext> {
+    const context: any = {
       ...initialContextValue,
+      pubsub,
       [MESH_CONTEXT_SYMBOL]: true,
     };
 
@@ -153,8 +156,8 @@ export async function getMesh(
     rawSources,
     sdkRequester: localRequester,
     cache,
-    pubSub,
-    destroy: () => pubSub.publish('destroy', undefined),
+    pubsub,
+    destroy: () => pubsub.publish('destroy', undefined),
   };
 }
 

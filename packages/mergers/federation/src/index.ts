@@ -9,7 +9,7 @@ import objectHash from 'object-hash';
 const mergeUsingFederation: MergerFn = async function ({
   rawSources,
   cache,
-  pubSub,
+  pubsub,
   typeDefs,
   resolvers,
   transforms,
@@ -85,7 +85,7 @@ const mergeUsingFederation: MergerFn = async function ({
     },
     transforms,
   });
-  pubSub.subscribe('destroy', () => gateway.stop());
+  pubsub.subscribe('destroy', () => gateway.stop());
   if (resolvers) {
     remoteSchema = addResolversToSchema({
       schema: remoteSchema,

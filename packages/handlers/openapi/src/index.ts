@@ -23,11 +23,11 @@ import { fetchache, Request } from 'fetchache';
 export default class OpenAPIHandler implements MeshHandler {
   config: YamlConfig.OpenapiHandler;
   cache: KeyValueCache;
-  pubSub: MeshPubSub;
-  constructor({ config, cache, pubSub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  pubsub: MeshPubSub;
+  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.cache = cache;
-    this.pubSub = pubSub;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -66,7 +66,7 @@ export default class OpenAPIHandler implements MeshHandler {
       viewer: false,
       equivalentToMessages: true,
       createSubscriptionsFromCallbacks: true,
-      pubSub: this.pubSub,
+      pubsub: this.pubsub,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };
         const resolverParams = getResolverParams();

@@ -17,7 +17,7 @@ describe.each<[string, string, string]>([
 ])('Interpreting Protos', (name, packageName, file) => {
   test(`should load the ${name} proto`, async () => {
     const cache = new InMemoryLRUCache();
-    const pubSub = new PubSub() as MeshPubSub;
+    const pubsub = new PubSub() as MeshPubSub;
     const config = {
       endpoint: 'localhost',
       serviceName: 'Example',
@@ -31,7 +31,7 @@ describe.each<[string, string, string]>([
       name: Date.now().toString(),
       config,
       cache,
-      pubSub,
+      pubsub,
     });
 
     const { schema } = await handler.getMeshSource();

@@ -168,7 +168,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     customResolvers,
     fetch,
     resolverMiddleware,
-    pubSub,
+    pubsub,
 
     // Authentication options
     viewer,
@@ -205,7 +205,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     customResolvers,
     fetch,
     resolverMiddleware,
-    pubSub,
+    pubsub,
 
     // Authentication options
     viewer,
@@ -261,7 +261,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
       requestOptions,
       connectOptions,
       includeHttpDetails,
-      pubSub
+      pubsub
     );
 
     const saneOperationId = Oas3Tools.sanitize(operationId, Oas3Tools.CaseStyle.camelCase);
@@ -404,7 +404,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
       requestOptions,
       connectOptions,
       includeHttpDetails,
-      pubSub
+      pubsub
     );
 
     const saneOperationId = Oas3Tools.sanitize(operationId, Oas3Tools.CaseStyle.camelCase);
@@ -565,7 +565,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
   requestOptions: RequestOptions<TSource, TContext, TArgs>,
   connectOptions: ConnectOptions,
   includeHttpDetails: boolean,
-  pubSub: MeshPubSub
+  pubsub: MeshPubSub
 ): GraphQLFieldConfig<TSource, TContext | SubscriptionContext, TArgs> {
   // Create GraphQL Type for response:
   const type = getGraphQLType({
@@ -607,7 +607,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
       data,
       baseUrl,
       connectOptions,
-      pubSub,
+      pubsub,
     });
 
     return {

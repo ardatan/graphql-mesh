@@ -6,13 +6,13 @@ export default class Neo4JHandler implements MeshHandler {
   private name: string;
   private cache: KeyValueCache;
   private config: YamlConfig.Neo4JHandler;
-  private pubSub: MeshPubSub;
+  private pubsub: MeshPubSub;
 
-  constructor({ name, cache, config, pubSub }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+  constructor({ name, cache, config, pubsub }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
     this.name = name;
     this.cache = cache;
     this.config = config;
-    this.pubSub = pubSub;
+    this.pubsub = pubsub;
   }
 
   private driver: Driver;
@@ -20,7 +20,7 @@ export default class Neo4JHandler implements MeshHandler {
   getDriver() {
     if (!this.driver) {
       this.driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password));
-      this.pubSub.subscribe('destroy', () => this.driver.close());
+      this.pubsub.subscribe('destroy', () => this.driver.close());
     }
     return this.driver;
   }

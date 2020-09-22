@@ -32,7 +32,7 @@ export interface Config {
   /**
    * PubSub Implementation (Any of: String, PubSubConfig)
    */
-  pubSub?: string | PubSubConfig;
+  pubsub?: string | PubSubConfig;
 }
 export interface ServeConfig {
   /**
@@ -64,7 +64,7 @@ export interface CorsConfig {
 }
 export interface WebhookHandler {
   path: string;
-  pubSubTopic: string;
+  pubsubTopic: string;
   payload: string;
 }
 export interface ExpressHandler {
@@ -212,7 +212,7 @@ export interface JsonSchemaHandler {
 export interface JsonSchemaOperation {
   field: string;
   path?: string;
-  pubSubTopic?: string;
+  pubsubTopic?: string;
   description?: string;
   /**
    * Allowed values: Query, Mutation, Subscription
@@ -981,7 +981,7 @@ export interface AdditionalStitchingResolverObject {
 export interface AdditionalSubscriptionObject {
   type: string;
   field: string;
-  pubSubTopic: string;
+  pubsubTopic: string;
   returnData?: string;
   filterBy?: string;
 }

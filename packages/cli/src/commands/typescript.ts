@@ -93,7 +93,7 @@ export function generateTsTypes(
       contextSdk: {
         plugin: async () => {
           const commonTypes = [
-            `import { MeshContext as OriginalMeshContext, ProjectionOptions } from '@graphql-mesh/runtime';`,
+            `import { MeshContext as BaseMeshContext, ProjectionOptions } from '@graphql-mesh/runtime';`,
           ];
           const sdkItems: string[] = [];
           const contextItems: string[] = [];
@@ -120,7 +120,7 @@ export function generateTsTypes(
           const contextType = `export type ${unifiedContextIdentifier} = ${results
             .map(r => r?.context?.identifier)
             .filter(Boolean)
-            .join(' & ')} & OriginalMeshContext;`;
+            .join(' & ')} & BaseMeshContext;`;
 
           return {
             content: [...commonTypes, ...sdkItems, ...contextItems, contextType].join('\n\n'),

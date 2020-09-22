@@ -101,11 +101,11 @@ type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 export default class MySQLHandler implements MeshHandler {
   config: YamlConfig.MySQLHandler;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
 
-  constructor({ config, pubSub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
     this.config = config;
-    this.pubSub = pubSub;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -380,7 +380,7 @@ export default class MySQLHandler implements MeshHandler {
         });
       })
     );
-    this.pubSub.subscribe('destroy', () => pool.end());
+    this.pubsub.subscribe('destroy', () => pool.end());
 
     const schema = schemaComposer.buildSchema();
 

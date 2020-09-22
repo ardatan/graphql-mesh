@@ -17,7 +17,7 @@ export type GetMeshOptions = {
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers;
   cache: KeyValueCache;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
 };
@@ -72,4 +72,4 @@ export type APIContext = {
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
   [key: string]: APIContext;
-};
+} & { pubsub: MeshPubSub };
