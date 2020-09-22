@@ -7,10 +7,10 @@ import {
   resolveCache,
   resolveMerger,
   resolveAdditionalTypeDefs,
+  resolvePubSub,
 } from './utils';
-import { YamlConfig, getJsonSchema, Hooks, MeshTransformLibrary, MeshHandlerLibrary } from '@graphql-mesh/types';
+import { YamlConfig, getJsonSchema, MeshTransformLibrary, MeshHandlerLibrary } from '@graphql-mesh/types';
 import Ajv from 'ajv';
-import { EventEmitter } from 'events';
 
 declare global {
   interface ObjectConstructor {
@@ -50,10 +50,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
   const cache = await resolveCache(config.cache, importFn);
-
-  // TODO: Make hooks configurable
-  const hooks = new EventEmitter({ captureRejections: true }) as Hooks;
-  hooks.setMaxListeners(Infinity);
+  const pubSub = await resolvePubSub(config.pubSub, importFn);
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
     Promise.all(
@@ -76,7 +73,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
                 apiName: source.name,
                 config: transformConfig,
                 cache,
-                hooks,
+                pubSub,
               });
             })
           ),
@@ -89,7 +86,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
           handler: new HandlerCtor({
             name: source.name,
             cache,
-            hooks,
+            pubSub,
             config: handlerConfig,
           }),
           transforms,
@@ -108,13 +105,18 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
         return new TransformLibrary({
           apiName: '',
           cache,
-          hooks,
+          pubSub,
           config: transformConfig,
         });
       }) || []
     ),
     resolveAdditionalTypeDefs(dir, config.additionalTypeDefs),
-    resolveAdditionalResolvers(dir, ignoreAdditionalResolvers ? [] : config.additionalResolvers || [], importFn),
+    resolveAdditionalResolvers(
+      dir,
+      ignoreAdditionalResolvers ? [] : config.additionalResolvers || [],
+      importFn,
+      pubSub
+    ),
     resolveMerger(config.merger, importFn),
   ]);
 
@@ -126,7 +128,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     cache,
     merger,
     mergerType: config.merger,
-    hooks,
+    pubSub,
     config,
   };
 }
