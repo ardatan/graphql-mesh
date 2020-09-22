@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn, MeshContext } from './types';
+import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
