@@ -10,22 +10,24 @@
  */
 
 // Type imports:
-import { SchemaObject } from './types/oas3';
+import { ParameterObject, SchemaObject } from './types/oas3';
 import { Operation } from './types/operation';
-import { ResolveFunction } from './types/graphql';
+import { ResolveFunction, SubscriptionContext } from './types/graphql';
 import { PreprocessingData } from './types/preprocessing_data';
 
 // Imports:
 import * as Oas3Tools from './oas_3_tools';
 import * as JSONPath from 'jsonpath-plus';
 import { mockDebug as debug } from './utils';
-import { GraphQLError, GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import formurlencoded from 'form-urlencoded';
 import urlJoin from 'url-join';
 import { Path } from 'graphql/jsutils/Path';
+import { ConnectOptions, RequestOptions } from './types/options';
 
 const translationLog = debug('translation');
 const httpLog = debug('http');
+const pubsubLog = debug('pubsub');
 
 // Type definitions & exports:
 type AuthReqAndProtcolName = {
@@ -39,13 +41,14 @@ type AuthOptions = {
   authCookie: string;
 };
 
-type GetResolverParams = {
+type GetResolverParams<TSource, TContext, TArgs> = {
   operation: Operation;
   argsFromLink?: Record<string, string>;
   payloadName?: string;
-  data: PreprocessingData;
+  responseName?: string;
+  data: PreprocessingData<TSource, TContext, TArgs>;
   baseUrl?: string;
-  requestOptions?: RequestInit;
+  requestOptions?: RequestOptions<TSource, TContext, TArgs>;
   fetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
   qs?: Record<string, string>;
 };
@@ -67,8 +70,202 @@ interface ResolveData {
   responseHeaders: HeadersInit;
 }
 
-export type ResolverMiddleware = (
-  getResolverParams: () => GetResolverParams,
+type GetSubscribeParams<TSource, TContext, TArgs> = {
+  operation: Operation;
+  argsFromLink?: { [key: string]: string };
+  payloadName?: string;
+  data: PreprocessingData<TSource, TContext, TArgs>;
+  baseUrl?: string;
+  connectOptions?: ConnectOptions;
+};
+
+/*
+ * If operationType is Subscription, creates and returns a resolver object that
+ * contains subscribe to perform subscription and resolve to execute payload
+ * transformation
+ */
+export function getSubscribe<TSource, TContext, TArgs>({
+  operation,
+  payloadName,
+  data,
+  baseUrl,
+  connectOptions,
+}: GetSubscribeParams<TSource, TContext, TArgs>): GraphQLFieldResolver<TSource, SubscriptionContext, TArgs> {
+  // Determine the appropriate URL:
+  if (typeof baseUrl === 'undefined') {
+    baseUrl = Oas3Tools.getBaseUrl(operation);
+  }
+
+  // Return custom resolver if it is defined
+  const customResolvers = data.options.customSubscriptionResolvers;
+  const title = operation.oas.info.title;
+  const path = operation.path;
+  const method = operation.method;
+
+  if (
+    typeof customResolvers === 'object' &&
+    typeof customResolvers[title] === 'object' &&
+    typeof customResolvers[title][path] === 'object' &&
+    typeof customResolvers[title][path][method] === 'object' &&
+    typeof customResolvers[title][path][method].subscribe === 'function'
+  ) {
+    translationLog(`Use custom publish resolver for ${operation.operationString}`);
+
+    return customResolvers[title][path][method].subscribe;
+  }
+
+  return (root, args, context, info) => {
+    /**
+     * Determine possible topic(s) by resolving callback path
+     *
+     * GraphQL produces sanitized payload names, so we have to sanitize before
+     * lookup here
+     */
+    const paramName = Oas3Tools.sanitize(payloadName, Oas3Tools.CaseStyle.camelCase);
+
+    const resolveData: any = {};
+
+    if (payloadName && typeof payloadName === 'string') {
+      // The option genericPayloadArgName will change the payload name to "requestBody"
+      const sanePayloadName = data.options.genericPayloadArgName
+        ? 'requestBody'
+        : Oas3Tools.sanitize(payloadName, Oas3Tools.CaseStyle.camelCase);
+
+      if (sanePayloadName in args) {
+        if (typeof args[sanePayloadName] === 'object') {
+          const rawPayload = Oas3Tools.desanitizeObjectKeys(args[sanePayloadName], data.saneMap);
+          resolveData.usedPayload = rawPayload;
+        } else {
+          const rawPayload = JSON.parse(args[sanePayloadName]);
+          resolveData.usedPayload = rawPayload;
+        }
+      }
+    }
+
+    if (connectOptions) {
+      resolveData.usedRequestOptions = connectOptions;
+    } else {
+      resolveData.usedRequestOptions = {
+        method: resolveData.usedPayload.method ? resolveData.usedPayload.method : method.toUpperCase(),
+      };
+    }
+
+    pubsubLog(`Subscription schema: ${JSON.stringify(resolveData.usedPayload)}`);
+
+    let value = path;
+    let paramNameWithoutLocation = paramName;
+    if (paramName.indexOf('.') !== -1) {
+      paramNameWithoutLocation = paramName.split('.')[1];
+    }
+
+    // See if the callback path contains constants expression
+    if (value.search(/{|}/) === -1) {
+      args[paramNameWithoutLocation] = isRuntimeExpression(value)
+        ? resolveRuntimeExpression(paramName, value, resolveData, root, args)
+        : value;
+    } else {
+      // Replace callback expression with appropriate values
+      const cbParams = value.match(/{([^}]*)}/g);
+      pubsubLog(`Analyzing subscription path: ${cbParams.toString()}`);
+
+      cbParams.forEach(cbParam => {
+        value = value.replace(
+          cbParam,
+          resolveRuntimeExpression(paramName, cbParam.substring(1, cbParam.length - 1), resolveData, root, args)
+        );
+      });
+      args[paramNameWithoutLocation] = value;
+    }
+
+    const topic = args[paramNameWithoutLocation] || 'test';
+    pubsubLog(`Subscribing to: ${topic}`);
+    return context.pubsub.asyncIterator(topic);
+  };
+}
+
+/*
+ * If operationType is Subscription, creates and returns a resolver function
+ * triggered after a message has been published to the corresponding subscribe
+ * topic(s) to execute payload transformation
+ */
+export function getPublishResolver<TSource, TContext, TArgs>({
+  operation,
+  responseName,
+  data,
+}: GetResolverParams<TSource, TContext, TArgs>): GraphQLFieldResolver<TSource, TContext, TArgs> {
+  // Return custom resolver if it is defined
+  const customResolvers = data.options.customSubscriptionResolvers;
+  const title = operation.oas.info.title;
+  const path = operation.path;
+  const method = operation.method;
+
+  if (
+    typeof customResolvers === 'object' &&
+    typeof customResolvers[title] === 'object' &&
+    typeof customResolvers[title][path] === 'object' &&
+    typeof customResolvers[title][path][method] === 'object' &&
+    typeof customResolvers[title][path][method].resolve === 'function'
+  ) {
+    translationLog(`Use custom publish resolver for ${operation.operationString}`);
+
+    return customResolvers[title][path][method].resolve;
+  }
+
+  return (payload, args, context, info) => {
+    // Validate and format based on operation.responseDefinition
+    const typeOfResponse = operation.responseDefinition.targetGraphQLType;
+    pubsubLog(`Message received: ${responseName}, ${typeOfResponse}, ${JSON.stringify(payload)}`);
+
+    let responseBody;
+    let saneData;
+
+    if (typeof payload === 'object') {
+      if (typeOfResponse === 'object') {
+        if (Buffer.isBuffer(payload)) {
+          try {
+            responseBody = JSON.parse(payload.toString());
+          } catch (e) {
+            const errorString =
+              `Cannot JSON parse payload` +
+              `operation ${operation.operationString} ` +
+              `even though it has content-type 'application/json'`;
+
+            pubsubLog(errorString);
+            return null;
+          }
+        } else {
+          responseBody = payload;
+        }
+        saneData = Oas3Tools.sanitizeObjectKeys(payload);
+      } else if ((Buffer.isBuffer(payload) || Array.isArray(payload)) && typeOfResponse === 'string') {
+        saneData = payload.toString();
+      }
+    } else if (typeof payload === 'string') {
+      if (typeOfResponse === 'object') {
+        try {
+          responseBody = JSON.parse(payload);
+          saneData = Oas3Tools.sanitizeObjectKeys(responseBody);
+        } catch (e) {
+          const errorString =
+            `Cannot JSON parse payload` +
+            `operation ${operation.operationString} ` +
+            `even though it has content-type 'application/json'`;
+
+          pubsubLog(errorString);
+          return null;
+        }
+      } else if (typeOfResponse === 'string') {
+        saneData = payload;
+      }
+    }
+
+    pubsubLog(`Message forwarded: ${JSON.stringify(saneData || payload)}`);
+    return saneData || payload;
+  };
+}
+
+export type ResolverMiddleware<TSource, TContext, TArgs> = (
+  getResolverParams: () => GetResolverParams<TSource, TContext, TArgs>,
   factory: ResolverFactory
 ) => ResolveFunction;
 
@@ -78,7 +275,9 @@ type ResolverFactory = typeof getResolver;
  * Creates and returns a resolver function that performs API requests for the
  * given GraphQL query
  */
-export function getResolver(getResolverParams: () => GetResolverParams): ResolveFunction {
+export function getResolver<TSource, TContext, TArgs>(
+  getResolverParams: () => GetResolverParams<TSource, TContext, TArgs>
+): ResolveFunction {
   let {
     operation,
     argsFromLink = {},
@@ -112,7 +311,7 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
   }
 
   // Return resolve function:
-  return async (root: any, args: any, ctx, info = {} as GraphQLResolveInfo) => {
+  return async (root: any, args: any, ctx: any, info = {} as GraphQLResolveInfo) => {
     /**
      * Retch resolveData from possibly existing _openAPIToGraphQL
      *
@@ -201,12 +400,7 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
     resolveData.usedParams = Object.assign(resolveData.usedParams, args);
 
     // Build URL (i.e., fill in path parameters):
-    const { path, query, headers } = Oas3Tools.instantiatePathAndGetQuery(
-      operation.path,
-      operation.parameters,
-      args,
-      data
-    );
+    const { path, qs: query, headers } = extractRequestDataFromArgs(operation.path, operation.parameters, args, data);
     const urlObject = new URL(urlJoin(baseUrl, path));
 
     /**
@@ -531,13 +725,16 @@ export function getResolver(getResolverParams: () => GetResolverParams): Resolve
  * Attempts to create an object to become an OAuth query string by extracting an
  * OAuth token from the ctx based on the JSON path provided in the options.
  */
-function createOAuthQS(data: PreprocessingData, ctx: object): { [key: string]: string } {
-  return typeof data.options.tokenJSONpath !== 'string' ? {} : extractToken(data, ctx);
+function createOAuthQS<TSource, TContext, TArgs>(
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  context: TContext
+): { [key: string]: string } {
+  return typeof data.options.tokenJSONpath !== 'string' ? {} : extractToken(data, context);
 }
 
-function extractToken(data: PreprocessingData, ctx: object) {
+function extractToken<TSource, TContext, TArgs>(data: PreprocessingData<TSource, TContext, TArgs>, ctx: TContext) {
   const tokenJSONpath = data.options.tokenJSONpath;
-  const tokens = JSONPath.JSONPath({ path: tokenJSONpath, json: ctx });
+  const tokens = JSONPath.JSONPath({ path: tokenJSONpath, json: ctx as any });
   if (Array.isArray(tokens) && tokens.length > 0) {
     const token = tokens[0];
     return {
@@ -553,14 +750,17 @@ function extractToken(data: PreprocessingData, ctx: object) {
  * Attempts to create an OAuth authorization header by extracting an OAuth token
  * from the ctx based on the JSON path provided in the options.
  */
-function createOAuthHeader(data: PreprocessingData, ctx: object): { [key: string]: string } {
+function createOAuthHeader<TSource, TContext, TArgs>(
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  ctx: TContext
+): { [key: string]: string } {
   if (typeof data.options.tokenJSONpath !== 'string') {
     return {};
   }
 
   // Extract token
   const tokenJSONpath = data.options.tokenJSONpath;
-  const tokens = JSONPath.JSONPath({ path: tokenJSONpath, json: ctx });
+  const tokens = JSONPath.JSONPath({ path: tokenJSONpath, json: ctx as any });
   if (Array.isArray(tokens) && tokens.length > 0) {
     const token = tokens[0];
     return {
@@ -579,7 +779,11 @@ function createOAuthHeader(data: PreprocessingData, ctx: object): { [key: string
  * which hold headers and query parameters respectively to authentication a
  * request.
  */
-function getAuthOptions(operation: Operation, _openAPIToGraphQL: any, data: PreprocessingData): AuthOptions {
+function getAuthOptions<TSource, TContext, TArgs>(
+  operation: Operation,
+  _openAPIToGraphQL: any,
+  data: PreprocessingData<TSource, TContext, TArgs>
+): AuthOptions {
   const authHeaders: any = {};
   const authQs = {};
   let authCookie = null;
@@ -763,6 +967,97 @@ function resolveLinkParameter(paramName: string, value: string, resolveData: Res
 }
 
 /**
+ * Given a link parameter or callback path, determine the value from the runtime
+ * expression
+ *
+ * The link parameter or callback path is a reference to data contained in the
+ * url/method/statuscode or response/request body/query/path/header
+ */
+function resolveRuntimeExpression(paramName: string, value: string, resolveData: any, root: any, args: any): any {
+  if (value === '$url') {
+    return resolveData.usedRequestOptions.url;
+  } else if (value === '$method') {
+    return resolveData.usedRequestOptions.method;
+  } else if (value === '$statusCode') {
+    return resolveData.usedStatusCode;
+  } else if (value.startsWith('$request.')) {
+    // CASE: parameter is previous body
+    if (value === '$request.body') {
+      return resolveData.usedPayload;
+
+      // CASE: parameter in previous body
+    } else if (value.startsWith('$request.body#')) {
+      const tokens = JSONPath.JSONPath({
+        path: value.split('body#/')[1],
+        json: resolveData.usedPayload,
+      });
+      if (Array.isArray(tokens) && tokens.length > 0) {
+        return tokens[0];
+      } else {
+        httpLog(`Warning: could not extract parameter '${paramName}' from link`);
+      }
+
+      // CASE: parameter in previous query parameter
+    } else if (value.startsWith('$request.query')) {
+      return resolveData.usedParams[Oas3Tools.sanitize(value.split('query.')[1], Oas3Tools.CaseStyle.camelCase)];
+
+      // CASE: parameter in previous path parameter
+    } else if (value.startsWith('$request.path')) {
+      return resolveData.usedParams[Oas3Tools.sanitize(value.split('path.')[1], Oas3Tools.CaseStyle.camelCase)];
+
+      // CASE: parameter in previous header parameter
+    } else if (value.startsWith('$request.header')) {
+      return resolveData.usedRequestOptions.headers[value.split('header.')[1]];
+    }
+  } else if (value.startsWith('$response.')) {
+    /**
+     * CASE: parameter is body
+     *
+     * NOTE: may not be used because it implies that the operation does not
+     * return a JSON object and OpenAPI-to-GraphQL does not create GraphQL
+     * objects for non-JSON data and links can only exists between objects.
+     */
+    if (value === '$response.body') {
+      const result = JSON.parse(JSON.stringify(root));
+      /**
+       * _openAPIToGraphQL contains data used by OpenAPI-to-GraphQL to create the GraphQL interface
+       * and should not be exposed
+       */
+      result._openAPIToGraphQL = undefined;
+      return result;
+
+      // CASE: parameter in body
+    } else if (value.startsWith('$response.body#')) {
+      const tokens = JSONPath.JSONPath({
+        path: value.split('body#/')[1],
+        json: root,
+      });
+      if (Array.isArray(tokens) && tokens.length > 0) {
+        return tokens[0];
+      } else {
+        httpLog(`Warning: could not extract parameter '${paramName}' from link`);
+      }
+
+      // CASE: parameter in query parameter
+    } else if (value.startsWith('$response.query')) {
+      // NOTE: handled the same way $request.query is handled
+      return resolveData.usedParams[Oas3Tools.sanitize(value.split('query.')[1], Oas3Tools.CaseStyle.camelCase)];
+
+      // CASE: parameter in path parameter
+    } else if (value.startsWith('$response.path')) {
+      // NOTE: handled the same way $request.path is handled
+      return resolveData.usedParams[Oas3Tools.sanitize(value.split('path.')[1], Oas3Tools.CaseStyle.camelCase)];
+
+      // CASE: parameter in header parameter
+    } else if (value.startsWith('$response.header')) {
+      return resolveData.responseHeaders[value.split('header.')[1]];
+    }
+  }
+
+  throw new Error(`Cannot create link because '${value}' is an invalid runtime expression`);
+}
+
+/**
  * Check if a string is a runtime expression in the context of link parameters
  */
 function isRuntimeExpression(str: string): boolean {
@@ -827,4 +1122,69 @@ function getIdentifierRecursive(path: Path): string {
  */
 function graphQLErrorWithExtensions(message: string, extensions: { [key: string]: any }): GraphQLError {
   return new GraphQLError(message, null, null, null, null, null, extensions);
+}
+
+/**
+ * Extracts data from the GraphQL arguments of a particular field
+ *
+ * Replaces the path parameter in the given path with values in the given args.
+ * Furthermore adds the query parameters for a request.
+ */
+export function extractRequestDataFromArgs<TSource, TContext, TArgs>(
+  path: string,
+  parameters: ParameterObject[],
+  args: TArgs, // NOTE: argument keys are sanitized!
+  data: PreprocessingData<TSource, TContext, TArgs>
+): {
+  path: string;
+  qs: { [key: string]: string };
+  headers: { [key: string]: string };
+} {
+  const qs = {};
+  const headers: any = {};
+
+  // Iterate parameters:
+  for (const param of parameters) {
+    const sanitizedParamName = Oas3Tools.sanitize(
+      param.name,
+      !data.options.simpleNames ? Oas3Tools.CaseStyle.camelCase : Oas3Tools.CaseStyle.simple
+    );
+
+    if (sanitizedParamName && sanitizedParamName in args) {
+      switch (param.in) {
+        // Path parameters
+        case 'path':
+          path = path.replace(`{${param.name}}`, args[sanitizedParamName]);
+          break;
+
+        // Query parameters
+        case 'query':
+          qs[param.name] = args[sanitizedParamName];
+          break;
+
+        // Header parameters
+        case 'header':
+          headers[param.name] = args[sanitizedParamName];
+          break;
+
+        // Cookie parameters
+        case 'cookie':
+          if (!('cookie' in headers)) {
+            headers.cookie = '';
+          }
+
+          headers.cookie += `${param.name}=${args[sanitizedParamName]}; `;
+          break;
+
+        default:
+          httpLog(
+            `Warning: The parameter location '${param.in}' in the ` +
+              `parameter '${param.name}' of operation '${path}' is not ` +
+              `supported`
+          );
+      }
+    }
+  }
+
+  return { path, qs, headers };
 }

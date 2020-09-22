@@ -5,14 +5,11 @@
 
 'use strict';
 
-import { GraphQLSchema } from 'graphql';
-
 /* globals beforeAll, test, expect */
 
-const openAPIToGraphQL = require('../src/openapi-to-graphql/index');
-const Oas3Tools = require('../src/openapi-to-graphql/oas_3_tools');
-const { parse, validate } = require('graphql');
-import fetch from 'cross-fetch';
+import { createGraphQLSchema } from '../src/openapi-to-graphql';
+import * as Oas3Tools from '../src/openapi-to-graphql/oas_3_tools';
+import { GraphQLSchema, parse, validate } from 'graphql';
 
 /**
  * Set up the schema first
@@ -20,10 +17,9 @@ import fetch from 'cross-fetch';
 const oas = require('./fixtures/government_social_work.json');
 
 let createdSchema: GraphQLSchema;
-beforeAll(() => {
-  return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema, report }: any) => {
-    createdSchema = schema;
-  });
+beforeAll(async () => {
+  const { schema } = await createGraphQLSchema(oas);
+  createdSchema = schema;
 });
 
 test('All query endpoints present', () => {
@@ -41,7 +37,7 @@ test('All mutation endpoints present', () => {
   let oasMutCount = 0;
   for (const path in oas.paths) {
     for (const method in oas.paths[path]) {
-      if (Oas3Tools.isOperation(method) && method !== 'get') oasMutCount++;
+      if (Oas3Tools.isHttpMethod(method) && method !== 'get') oasMutCount++;
     }
   }
   const gqlTypes = Object.keys(createdSchema.getMutationType().getFields()).length;

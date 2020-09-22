@@ -1,4 +1,5 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable no-useless-escape */
+/* eslint-disable @typescript-eslint/ban-types */
 // Copyright IBM Corp. 2018. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
@@ -29,13 +30,13 @@ import {
   SecurityRequirementObject,
 } from './types/oas3';
 import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessing_data';
-import { InternalOptions, Options } from './types/options';
+import { InternalOptions } from './types/options';
 
 // Imports:
-import { convertObj as convertSwaggerObjToOpenAPI } from 'swagger2openapi';
-import { handleWarning, mockDebug as debug } from './utils';
-import { singular } from 'pluralize';
-import { JsonPointer } from 'json-ptr';
+import * as Swagger2OpenAPI from 'swagger2openapi';
+import { handleWarning, MitigationTypes, mockDebug as debug } from './utils';
+import * as jsonptr from 'json-ptr';
+import * as pluralize from 'pluralize';
 
 // Type definitions & exports:
 export type SchemaNames = {
@@ -66,30 +67,63 @@ export type ResponseSchemaAndNames = {
 };
 
 const httpLog = debug('http');
-const preprocessingLog = debug('preprocessing');
 
 const translationLog = debug('translation');
 
 // OAS constants
-export const OAS_OPERATIONS = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head'];
+export enum HTTP_METHODS {
+  'get' = 'get',
+  'put' = 'put',
+  'post' = 'post',
+  'patch' = 'patch',
+  'delete' = 'delete',
+  'options' = 'options',
+  'head' = 'head',
+}
+
 export const SUCCESS_STATUS_RX = /2[0-9]{2}|2XX/;
+
+/**
+ * Given an HTTP method, convert it to the HTTP_METHODS enum
+ */
+export function methodToHttpMethod(method: string): HTTP_METHODS {
+  switch (method.toLowerCase()) {
+    case 'get':
+      return HTTP_METHODS.get;
+
+    case 'put':
+      return HTTP_METHODS.put;
+
+    case 'post':
+      return HTTP_METHODS.post;
+
+    case 'patch':
+      return HTTP_METHODS.patch;
+
+    case 'delete':
+      return HTTP_METHODS.delete;
+
+    case 'options':
+      return HTTP_METHODS.options;
+
+    case 'head':
+      return HTTP_METHODS.head;
+
+    default:
+      throw new Error(`Invalid HTTP method '${method}'`);
+  }
+}
 
 /**
  * Resolves on a validated OAS 3 for the given spec (OAS 2 or OAS 3), or rejects
  * if errors occur.
  */
-export async function getValidOAS3(spec: Oas2 | Oas3, options: Options): Promise<Oas3> {
-  // CASE: translate
+export async function getValidOAS3(spec: Oas2 | Oas3): Promise<Oas3> {
   if (typeof (spec as Oas2).swagger === 'string' && (spec as Oas2).swagger === '2.0') {
-    preprocessingLog(`Received OpenAPI Specification 2.0 - going to translate...`);
-    const result: { openapi: Oas3 } = await convertSwaggerObjToOpenAPI(spec, {});
-    return result.openapi;
-
-    // CASE: validate
-  } else if (typeof (spec as Oas3).openapi === 'string' && /^3/.test((spec as Oas3).openapi)) {
-    return spec as Oas3;
+    const { openapi } = await Swagger2OpenAPI.convertObj(spec, {});
+    return openapi;
   } else {
-    throw new Error(`Invalid specification provided`);
+    return spec as Oas3;
   }
 }
 
@@ -100,11 +134,19 @@ export function countOperations(oas: Oas3): number {
   let numOps = 0;
   for (const path in oas.paths) {
     for (const method in oas.paths[path]) {
-      if (isOperation(method)) {
+      if (isHttpMethod(method)) {
         numOps++;
+        if (oas.paths[path][method].callbacks) {
+          for (const cbName in oas.paths[path][method].callbacks) {
+            for (const _ in oas.paths[path][method].callbacks[cbName]) {
+              numOps++;
+            }
+          }
+        }
       }
     }
   }
+
   return numOps;
 }
 
@@ -115,7 +157,7 @@ export function countOperationsQuery(oas: Oas3): number {
   let numOps = 0;
   for (const path in oas.paths) {
     for (const method in oas.paths[path]) {
-      if (isOperation(method) && method.toLowerCase() === 'get') {
+      if (isHttpMethod(method) && method.toLowerCase() === HTTP_METHODS.get) {
         numOps++;
       }
     }
@@ -130,8 +172,27 @@ export function countOperationsMutation(oas: Oas3): number {
   let numOps = 0;
   for (const path in oas.paths) {
     for (const method in oas.paths[path]) {
-      if (isOperation(method) && method.toLowerCase() !== 'get') {
+      if (isHttpMethod(method) && method.toLowerCase() !== HTTP_METHODS.get) {
         numOps++;
+      }
+    }
+  }
+  return numOps;
+}
+
+/**
+ * Counts the number of operations that translate to subscriptions in an OAS.
+ */
+export function countOperationsSubscription(oas: Oas3): number {
+  let numOps = 0;
+  for (const path in oas.paths) {
+    for (const method in oas.paths[path]) {
+      if (isHttpMethod(method) && method.toLowerCase() !== HTTP_METHODS.get && oas.paths[path][method].callbacks) {
+        for (const cbName in oas.paths[path][method].callbacks) {
+          for (const _ in oas.paths[path][method].callbacks[cbName]) {
+            numOps++;
+          }
+        }
       }
     }
   }
@@ -145,7 +206,7 @@ export function countOperationsWithPayload(oas: Oas3): number {
   let numOps = 0;
   for (const path in oas.paths) {
     for (const method in oas.paths[path]) {
-      if (isOperation(method) && typeof oas.paths[path][method].requestBody === 'object') {
+      if (isHttpMethod(method) && typeof oas.paths[path][method].requestBody === 'object') {
         numOps++;
       }
     }
@@ -157,7 +218,7 @@ export function countOperationsWithPayload(oas: Oas3): number {
  * Resolves the given reference in the given object.
  */
 export function resolveRef(ref: string, oas: Oas3): any {
-  return JsonPointer.get(oas, ref);
+  return jsonptr.JsonPointer.get(oas, ref);
 }
 
 /**
@@ -283,80 +344,14 @@ export function desanitizeObjectKeys(obj: object | Array<any>, mapping: object =
 }
 
 /**
- * Replaces the path parameter in the given path with values in the given args.
- * Furthermore adds the query parameters for a request.
- */
-export function instantiatePathAndGetQuery(
-  path: string,
-  parameters: ParameterObject[],
-  args: object, // NOTE: argument keys are sanitized!
-  data: PreprocessingData
-): {
-  path: string;
-  query: { [key: string]: string };
-  headers: { [key: string]: string };
-} {
-  const query: any = {};
-  const headers: any = {};
-
-  // Case: nothing to do
-  if (Array.isArray(parameters)) {
-    // Iterate parameters:
-    for (const param of parameters) {
-      const sanitizedParamName = sanitize(
-        param.name,
-        !data.options.simpleNames ? CaseStyle.camelCase : CaseStyle.simple
-      );
-
-      if (sanitizedParamName && sanitizedParamName in args && args[sanitizedParamName]) {
-        const argValue = args[sanitizedParamName];
-        switch (param.in) {
-          // Path parameters
-          case 'path':
-            path = path.replace(`{${param.name}}`, argValue);
-            break;
-
-          // Query parameters
-          case 'query':
-            query[param.name] = argValue;
-            break;
-
-          // Header parameters
-          case 'header':
-            headers[param.name] = argValue;
-            break;
-
-          // Cookie parameters
-          case 'cookie':
-            if (!('cookie' in headers)) {
-              headers.cookie = '';
-            }
-
-            headers.cookie += `${param.name}=${argValue}; `;
-            break;
-
-          default:
-            httpLog(
-              `Warning: The parameter location '${param.in}' in the ` +
-                `parameter '${param.name}' of operation '${path}' is not ` +
-                `supported`
-            );
-        }
-      } else {
-        httpLog(`Warning: The parameter '${param.name}' of operation '${path}' ` + `could not be found`);
-      }
-    }
-  }
-
-  return { path, query, headers };
-}
-
-/**
  * Returns the GraphQL type that the provided schema should be made into
  *
  * Does not consider allOf, anyOf, oneOf, or not (handled separately)
  */
-export function getSchemaTargetGraphQLType(schema: SchemaObject, data: PreprocessingData): string | null {
+export function getSchemaTargetGraphQLType<TSource, TContext, TArgs>(
+  schema: SchemaObject,
+  data: PreprocessingData<TSource, TContext, TArgs>
+): string | null {
   // CASE: object
   if (schema.type === 'object' || typeof schema.properties === 'object') {
     // TODO: additionalProperties is more like a flag than a type itself
@@ -374,7 +369,7 @@ export function getSchemaTargetGraphQLType(schema: SchemaObject, data: Preproces
   }
 
   // CASE: enum
-  if (schema.type !== 'integer' && Array.isArray(schema.enum)) {
+  if (Array.isArray(schema.enum)) {
     return 'enum';
   }
 
@@ -387,7 +382,7 @@ export function getSchemaTargetGraphQLType(schema: SchemaObject, data: Preproces
        * GraphQLFloat, which can support 64 bits:
        */
       if (schema.type === 'integer' && schema.format === 'int64') {
-        return 'int64';
+        return 'number';
 
         // CASE: id
       } else if (
@@ -406,62 +401,12 @@ export function getSchemaTargetGraphQLType(schema: SchemaObject, data: Preproces
   return null;
 }
 
-/**
- * Identifies common path components in the given list of paths. Returns these
- * components as well as an updated list of paths where the common prefix was
- * removed.
- */
-export function extractBasePath(
-  paths: string[]
-): {
-  basePath: string;
-  updatedPaths: string[];
-} {
-  if (paths.length <= 1) {
-    return {
-      basePath: '/',
-      updatedPaths: paths,
-    };
-  }
-
-  let basePathComponents: string[] = paths[0].split('/');
-
-  for (const path of paths) {
-    if (basePathComponents.length === 0) {
-      break;
-    }
-    const pathComponents = path.split('/');
-    for (let i = 0; i < pathComponents.length; i++) {
-      if (i < basePathComponents.length) {
-        if (pathComponents[i] !== basePathComponents[i]) {
-          basePathComponents = basePathComponents.slice(0, i);
-        }
-      } else {
-        break;
-      }
-    }
-  }
-
-  const updatedPaths = paths.map(path => path.split('/').slice(basePathComponents.length).join('/'));
-
-  const basePath =
-    basePathComponents.length === 0 || (basePathComponents.length === 1 && basePathComponents[0] === '')
-      ? '/'
-      : basePathComponents.join('/');
-
-  return {
-    basePath,
-    updatedPaths,
-  };
-}
-
 function isIdParam(part: string) {
   return /^{.*(id|name|key).*}$/gi.test(part);
 }
 
 function isSingularParam(part: string, nextPart: string) {
-  // eslint-disable-next-line no-useless-escape
-  return `\{${singular(part)}\}` === nextPart;
+  return `\{${pluralize.singular(part)}\}` === nextPart;
 }
 
 /**
@@ -474,7 +419,7 @@ export function inferResourceNameFromPath(path: string): string {
   const pathNoPathParams = parts.reduce((path, part, i) => {
     if (!/{/g.test(part)) {
       if (parts[i + 1] && (isIdParam(parts[i + 1]) || isSingularParam(part, parts[i + 1]))) {
-        return path + capitalize(singular(part));
+        return path + capitalize(pluralize.singular(part));
       } else {
         return path + capitalize(part);
       }
@@ -487,15 +432,14 @@ export function inferResourceNameFromPath(path: string): string {
 }
 
 /**
- * Returns JSON-compatible schema required by the given endpoint - or null if it
- * does not exist.
+ * Returns JSON-compatible schema required by the given operation
  */
 export function getRequestBodyObject(
-  endpoint: OperationObject,
+  operation: OperationObject,
   oas: Oas3
 ): { payloadContentType: string; requestBodyObject: RequestBodyObject } | null {
-  if (typeof endpoint.requestBody === 'object' && endpoint.requestBody !== null) {
-    let requestBodyObject: RequestBodyObject | ReferenceObject = endpoint.requestBody;
+  if (typeof operation.requestBody === 'object') {
+    let requestBodyObject: RequestBodyObject | ReferenceObject = operation.requestBody;
 
     // Make sure we have a RequestBodyObject:
     if (typeof (requestBodyObject as ReferenceObject).$ref === 'string') {
@@ -533,13 +477,12 @@ export function getRequestBodyObject(
 }
 
 /**
- * Returns the request schema (if any) for an endpoint at given path and method,
+ * Returns the request schema (if any) for the given operation,
  * a dictionary of names from different sources (if available), and whether the
- * request schema is required for the endpoint.
+ * request schema is required for the operation.
  */
-export function getRequestSchemaAndNames(path: string, method: string, oas: Oas3): RequestSchemaAndNames {
-  const endpoint: OperationObject = oas.paths[path][method];
-  const { payloadContentType, requestBodyObject } = getRequestBodyObject(endpoint, oas);
+export function getRequestSchemaAndNames(path: string, operation: OperationObject, oas: Oas3): RequestSchemaAndNames {
+  const { payloadContentType, requestBodyObject } = getRequestBodyObject(operation, oas);
 
   if (payloadContentType) {
     let payloadSchema = requestBodyObject.content[payloadContentType].schema;
@@ -603,16 +546,15 @@ export function getRequestSchemaAndNames(path: string, method: string, oas: Oas3
 }
 
 /**
- * Returns JSON-compatible schema produced by the given endpoint - or null if it
- * does not exist.
+ * Returns JSON-compatible schema produced by the given operation
  */
 export function getResponseObject(
-  endpoint: OperationObject,
+  operation: OperationObject,
   statusCode: string,
   oas: Oas3
 ): { responseContentType: string; responseObject: ResponseObject } | null {
-  if (typeof endpoint.responses === 'object') {
-    const responses: ResponsesObject = endpoint.responses;
+  if (typeof operation.responses === 'object') {
+    const responses: ResponsesObject = operation.responses;
     if (typeof responses[statusCode] === 'object') {
       let responseObject: ResponseObject | ReferenceObject = responses[statusCode];
 
@@ -648,23 +590,23 @@ export function getResponseObject(
 }
 
 /**
- * Returns the response schema for endpoint at given path and method and with
- * the given status code, and a dictionary of names from different sources (if
- * available).
+ * Returns the response schema for the given operation,
+ * a successful  status code, and a dictionary of names from different sources
+ * (if available).
  */
-export function getResponseSchemaAndNames(
+export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
   path: string,
-  method: string,
+  method: HTTP_METHODS,
+  operation: OperationObject,
   oas: Oas3,
-  data: PreprocessingData,
-  options: InternalOptions
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  options: InternalOptions<TSource, TContext, TArgs>
 ): ResponseSchemaAndNames {
-  const endpoint: OperationObject = oas.paths[path][method];
-  const statusCode = getResponseStatusCode(path, method, oas, data);
+  const statusCode = getResponseStatusCode(path, method, operation, oas, data);
   if (!statusCode) {
     return {};
   }
-  const { responseContentType, responseObject } = getResponseObject(endpoint, statusCode, oas);
+  const { responseContentType, responseObject } = getResponseObject(operation, statusCode, oas);
 
   if (responseContentType) {
     let responseSchema = responseObject.content[responseContentType].schema;
@@ -719,7 +661,7 @@ export function getResponseSchemaAndNames(
         responseContentType: 'application/json',
         responseSchema: {
           description: 'Placeholder to support operations with no response schema',
-          type: 'string',
+          type: 'object',
         },
       };
     }
@@ -729,22 +671,25 @@ export function getResponseSchemaAndNames(
 }
 
 /**
- * Returns the success status code for the operation at the given path and
- * method (or null).
+ * Returns a success status code for the given operation
  */
-export function getResponseStatusCode(path: string, method: string, oas: Oas3, data: PreprocessingData): string | void {
-  const endpoint: OperationObject = oas.paths[path][method];
-
-  if (typeof endpoint.responses === 'object') {
-    const codes = Object.keys(endpoint.responses) as string[];
+export function getResponseStatusCode<TSource, TContext, TArgs>(
+  path: string,
+  method: string,
+  operation: OperationObject,
+  oas: Oas3,
+  data: PreprocessingData<TSource, TContext, TArgs>
+): string | void {
+  if (typeof operation.responses === 'object') {
+    const codes = Object.keys(operation.responses);
     const successCodes = codes.filter(code => {
-      return SUCCESS_STATUS_RX.test(code) || code === 'default';
+      return SUCCESS_STATUS_RX.test(code.toString());
     });
     if (successCodes.length === 1) {
-      return successCodes[0];
+      return successCodes[0].toString();
     } else if (successCodes.length > 1) {
       handleWarning({
-        typeKey: 'MULTIPLE_RESPONSES',
+        mitigationType: MitigationTypes.MULTIPLE_RESPONSES,
         message:
           `Operation '${formatOperationString(method, path, oas.info.title)}' ` +
           `contains multiple possible successful response object ` +
@@ -753,29 +698,29 @@ export function getResponseStatusCode(path: string, method: string, oas: Oas3, d
         data,
         log: translationLog,
       });
-      return successCodes[0];
+      return successCodes[0].toString();
     }
   }
   return null;
 }
 
 /**
- * Returns an hash containing the links defined in the given endpoint.
+ * Returns a hash containing the links in the given operation.
  */
-export function getEndpointLinks(
+export function getLinks<TSource, TContext, TArgs>(
   path: string,
-  method: string,
+  method: HTTP_METHODS,
+  operation: OperationObject,
   oas: Oas3,
-  data: PreprocessingData
+  data: PreprocessingData<TSource, TContext, TArgs>
 ): { [key: string]: LinkObject } {
   const links = {};
-  const endpoint: OperationObject = oas.paths[path][method];
-  const statusCode = getResponseStatusCode(path, method, oas, data);
+  const statusCode = getResponseStatusCode(path, method, operation, oas, data);
   if (!statusCode) {
     return links;
   }
-  if (typeof endpoint.responses === 'object') {
-    const responses: ResponsesObject = endpoint.responses;
+  if (typeof operation.responses === 'object') {
+    const responses: ResponsesObject = operation.responses;
     if (typeof responses[statusCode] === 'object') {
       let response: ResponseObject | ReferenceObject = responses[statusCode];
 
@@ -806,21 +751,24 @@ export function getEndpointLinks(
 }
 
 /**
- * Returns the list of parameters for the endpoint at the given method and path.
- * Resolves possible references.
+ * Returns the list of parameters in the given operation.
  */
-export function getParameters(path: string, method: string, oas: Oas3): ParameterObject[] {
-  let parameters: any[] = [];
+export function getParameters(
+  path: string,
+  method: HTTP_METHODS,
+  operation: OperationObject,
+  pathItem: PathItemObject,
+  oas: Oas3
+): ParameterObject[] {
+  let parameters: ParameterObject[] = [];
 
-  if (!isOperation(method)) {
+  if (!isHttpMethod(method)) {
     translationLog(`Warning: attempted to get parameters for ${method} ${path}, ` + `which is not an operation.`);
     return parameters;
   }
 
-  const pathItemObject: PathItemObject = oas.paths[path];
-  const pathParams = pathItemObject.parameters;
-
   // First, consider parameters in Path Item Object:
+  const pathParams = pathItem.parameters;
   if (Array.isArray(pathParams)) {
     const pathItemParameters: ParameterObject[] = pathParams.map(p => {
       if (typeof (p as ReferenceObject).$ref === 'string') {
@@ -835,11 +783,9 @@ export function getParameters(path: string, method: string, oas: Oas3): Paramete
   }
 
   // Second, consider parameters in Operation Object:
-  const opObject: OperationObject = oas.paths[path][method];
-  const opObjectParameters = opObject.parameters;
-
+  const opObjectParameters = operation.parameters;
   if (Array.isArray(opObjectParameters)) {
-    const opParameters: ParameterObject[] = opObjectParameters.map(p => {
+    const operationParameters: ParameterObject[] = opObjectParameters.map(p => {
       if (typeof (p as ReferenceObject).$ref === 'string') {
         // Here we know we have a parameter object:
         return resolveRef((p as ReferenceObject).$ref, oas) as ParameterObject;
@@ -848,35 +794,33 @@ export function getParameters(path: string, method: string, oas: Oas3): Paramete
         return p as ParameterObject;
       }
     });
-    parameters = parameters.concat(opParameters);
+    parameters = parameters.concat(operationParameters);
   }
 
   return parameters;
 }
 
 /**
- * Returns an array of server objects for the opeartion at the given path and
+ * Returns an array of server objects for the operation at the given path and
  * method. Considers in the following order: global server definitions,
  * definitions at the path item, definitions at the operation, or the OAS
  * default.
  */
-export function getServers(path: string, method: string, oas: Oas3): ServerObject[] {
-  let servers = [];
+export function getServers(operation: OperationObject, pathItem: PathItemObject, oas: Oas3): ServerObject[] {
+  let servers: ServerObject[] = [];
   // Global server definitions:
   if (Array.isArray(oas.servers) && oas.servers.length > 0) {
     servers = oas.servers;
   }
 
-  // Path item server definitions override global:
-  const pathItem = oas.paths[path];
+  // First, consider servers defined on the path
   if (Array.isArray(pathItem.servers) && pathItem.servers.length > 0) {
     servers = pathItem.servers;
   }
 
-  // Operation server definitions override path item:
-  const operationObj = pathItem[method];
-  if (Array.isArray(operationObj.servers) && operationObj.servers.length > 0) {
-    servers = operationObj.servers;
+  // Second, consider servers defined on the operation
+  if (Array.isArray(operation.servers) && operation.servers.length > 0) {
+    servers = operation.servers;
   }
 
   // Default, in case there is no server:
@@ -919,14 +863,13 @@ export function getSecuritySchemes(oas: Oas3): { [key: string]: SecuritySchemeOb
  * required by the operation at the given path and method.
  */
 export function getSecurityRequirements(
-  path: string,
-  method: string,
+  operation: OperationObject,
   securitySchemes: { [key: string]: ProcessedSecurityScheme },
   oas: Oas3
 ): string[] {
   const results: string[] = [];
 
-  // First, consider global requirements:
+  // First, consider global requirements
   const globalSecurity: SecurityRequirementObject[] = oas.security;
   if (globalSecurity && typeof globalSecurity !== 'undefined') {
     for (const secReq of globalSecurity) {
@@ -942,8 +885,7 @@ export function getSecurityRequirements(
     }
   }
 
-  // Local:
-  const operation: OperationObject = oas.paths[path][method];
+  // Second, consider operation requirements
   const localSecurity: SecurityRequirementObject[] = operation.security;
   if (localSecurity && typeof localSecurity !== 'undefined') {
     for (const secReq of localSecurity) {
@@ -1057,8 +999,8 @@ export function trim(str: string, length: number): string {
  * Determines if the given "method" is indeed an operation. Alternatively, the
  * method could point to other types of information (e.g., parameters, servers).
  */
-export function isOperation(method: string): boolean {
-  return OAS_OPERATIONS.includes(method.toLowerCase());
+export function isHttpMethod(method: string): boolean {
+  return Object.keys(HTTP_METHODS).includes(method.toLowerCase() as any);
 }
 
 /**
@@ -1092,6 +1034,6 @@ export function uncapitalize(str: string): string {
 /**
  * For operations that do not have an operationId, generate one
  */
-export function generateOperationId(method: string, path: string): string {
+export function generateOperationId(method: HTTP_METHODS, path: string): string {
   return sanitize(`${method} ${path}`, CaseStyle.camelCase);
 }
