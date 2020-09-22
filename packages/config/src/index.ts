@@ -50,7 +50,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
   const cache = await resolveCache(config.cache, importFn);
-  const pubSub = await resolvePubSub(config.pubSub, importFn);
+  const pubsub = await resolvePubSub(config.pubsub, importFn);
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
     Promise.all(
@@ -73,7 +73,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
                 apiName: source.name,
                 config: transformConfig,
                 cache,
-                pubSub,
+                pubsub,
               });
             })
           ),
@@ -86,7 +86,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
           handler: new HandlerCtor({
             name: source.name,
             cache,
-            pubSub,
+            pubsub,
             config: handlerConfig,
           }),
           transforms,
@@ -105,7 +105,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
         return new TransformLibrary({
           apiName: '',
           cache,
-          pubSub,
+          pubsub,
           config: transformConfig,
         });
       }) || []
@@ -115,7 +115,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
       dir,
       ignoreAdditionalResolvers ? [] : config.additionalResolvers || [],
       importFn,
-      pubSub
+      pubsub
     ),
     resolveMerger(config.merger, importFn),
   ]);
@@ -128,7 +128,7 @@ export async function processConfig(config: YamlConfig.Config, options?: ConfigP
     cache,
     merger,
     mergerType: config.merger,
-    pubSub,
+    pubsub,
     config,
   };
 }

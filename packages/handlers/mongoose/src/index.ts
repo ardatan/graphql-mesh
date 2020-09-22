@@ -20,11 +20,11 @@ const modelMutationOperations = [
 
 export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
-  private pubSub: MeshPubSub;
+  private pubsub: MeshPubSub;
 
-  constructor({ config, pubSub }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
+  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
-    this.pubSub = pubSub;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -34,7 +34,7 @@ export default class MongooseHandler implements MeshHandler {
         useUnifiedTopology: true,
       });
 
-      this.pubSub.subscribe('destroy', () => mongoose.disconnect());
+      this.pubsub.subscribe('destroy', () => mongoose.disconnect());
     }
 
     const schemaComposer = new SchemaComposer();

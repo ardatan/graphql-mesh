@@ -20,13 +20,13 @@ export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private cache: KeyValueCache;
   private config: YamlConfig.PostGraphileHandler;
-  private pubSub: MeshPubSub;
+  private pubsub: MeshPubSub;
 
-  constructor({ name, cache, config, pubSub }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
+  constructor({ name, cache, config, pubsub }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.cache = cache;
     this.config = config;
-    this.pubSub = pubSub;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -35,7 +35,7 @@ export default class PostGraphileHandler implements MeshHandler {
       ...this.config?.pool,
     });
 
-    this.pubSub.subscribe('destroy', () => pgPool.end());
+    this.pubsub.subscribe('destroy', () => pgPool.end());
 
     const cacheKey = this.name + '_introspection';
 

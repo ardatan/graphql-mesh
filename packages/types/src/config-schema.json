@@ -201,14 +201,14 @@
         "path": {
           "type": "string"
         },
-        "pubSubTopic": {
+        "pubsubTopic": {
           "type": "string"
         },
         "payload": {
           "type": "string"
         }
       },
-      "required": ["path", "pubSubTopic", "payload"]
+      "required": ["path", "pubsubTopic", "payload"]
     },
     "Source": {
       "additionalProperties": false,
@@ -395,7 +395,7 @@
         "field": {
           "type": "string"
         },
-        "pubSubTopic": {
+        "pubsubTopic": {
           "type": "string"
         },
         "returnData": {
@@ -405,7 +405,7 @@
           "type": "string"
         }
       },
-      "required": ["type", "field", "pubSubTopic"]
+      "required": ["type", "field", "pubsubTopic"]
     },
     "PubSubConfig": {
       "additionalProperties": false,
@@ -596,7 +596,7 @@
         "path": {
           "type": "string"
         },
-        "pubSubTopic": {
+        "pubsubTopic": {
           "type": "string"
         },
         "description": {
@@ -1794,7 +1794,7 @@
       "type": "string",
       "description": "Merge method"
     },
-    "pubSub": {
+    "pubsub": {
       "description": "PubSub Implementation (Any of: String, PubSubConfig)",
       "anyOf": [
         {

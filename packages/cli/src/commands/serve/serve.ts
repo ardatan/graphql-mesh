@@ -18,7 +18,7 @@ export async function serveMesh(
   logger: Logger,
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
-  pubSub: MeshPubSub,
+  pubsub: MeshPubSub,
   { fork, exampleQuery, port = 4000, cors: corsConfig, handlers }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const graphqlPath = '/graphql';
@@ -103,13 +103,13 @@ export async function serveMesh(
       if ('handler' in handlerConfig) {
         const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
         app.use(handlerConfig.path, handlerFn);
-      } else if ('pubSubTopic' in handlerConfig) {
+      } else if ('pubsubTopic' in handlerConfig) {
         app.use(handlerConfig.path, req => {
           let payload = req.body;
           if (handlerConfig.payload) {
             payload = get(payload, handlerConfig.payload);
           }
-          pubSub.publish(handlerConfig.pubSubTopic, payload);
+          pubsub.publish(handlerConfig.pubsubTopic, payload);
         });
       }
     }

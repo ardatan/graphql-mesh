@@ -25,11 +25,11 @@ import {
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
   private cache: KeyValueCache;
-  private pubSub: MeshPubSub;
-  constructor({ config, cache, pubSub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
+  private pubsub: MeshPubSub;
+  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
     this.config = config;
     this.cache = cache;
-    this.pubSub = pubSub;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource() {
@@ -148,9 +148,9 @@ export default class JsonSchemaHandler implements MeshHandler {
           args,
           resolve: async (root, args, context, info) => {
             const interpolationData = { root, args, context, info };
-            if (operationConfig.pubSubTopic) {
-              const pubSubTopic = stringInterpolator.parse(operationConfig.pubSubTopic, interpolationData);
-              return this.pubSub.asyncIterator(pubSubTopic);
+            if (operationConfig.pubsubTopic) {
+              const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
+              return this.pubsub.asyncIterator(pubsubTopic);
             } else if (operationConfig.path) {
               const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
               const fullPath = urlJoin(this.config.baseUrl, interpolatedPath);

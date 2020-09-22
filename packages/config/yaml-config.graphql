@@ -27,7 +27,7 @@ type Query {
   """
   PubSub Implementation
   """
-  pubSub: PubSub
+  pubsub: PubSub
 }
 
 scalar JSON
@@ -71,7 +71,7 @@ type AdditionalStitchingResolverObject {
 type AdditionalSubscriptionObject {
   type: String!
   field: String!
-  pubSubTopic: String!
+  pubsubTopic: String!
   returnData: String
   filterBy: String
 }

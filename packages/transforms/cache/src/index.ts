@@ -9,7 +9,7 @@ export default class CacheTransform implements MeshTransform {
   noWrap = true;
   constructor(private options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]>) {}
   transformSchema(schema: GraphQLSchema) {
-    const { config, pubSub, cache } = this.options;
+    const { config, pubsub, cache } = this.options;
     const sourceResolvers = extractResolvers(schema);
     const compositions: ResolversComposerMapping = {};
 
@@ -17,7 +17,7 @@ export default class CacheTransform implements MeshTransform {
       const effectingOperations = cacheItem.invalidate?.effectingOperations || [];
 
       if (effectingOperations.length > 0) {
-        pubSub.subscribe('resolverDone', async ({ resolverData }) => {
+        pubsub.subscribe('resolverDone', async ({ resolverData }) => {
           const effectingRule = effectingOperations.find(
             o => o.operation === `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`
           );

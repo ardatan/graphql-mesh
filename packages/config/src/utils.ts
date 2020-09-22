@@ -65,7 +65,7 @@ export async function resolveAdditionalResolvers(
     | YamlConfig.AdditionalSubscriptionObject
   )[],
   importFn: ImportFn,
-  pubSub: MeshPubSub
+  pubsub: MeshPubSub
 ): Promise<IResolvers> {
   const loadedResolvers = await Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {
@@ -93,15 +93,15 @@ export async function resolveAdditionalResolvers(
 
         return resolvers;
       } else {
-        if ('pubSubTopic' in additionalResolver) {
+        if ('pubsubTopic' in additionalResolver) {
           return {
             [additionalResolver.type]: {
               [additionalResolver.field]: {
                 subscribe: withFilter(
                   (root, args, context, info) => {
                     const resolverData = { root, args, context, info };
-                    const topic = stringInterpolator.parse(additionalResolver.pubSubTopic, resolverData);
-                    return pubSub.asyncIterator(topic);
+                    const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+                    return pubsub.asyncIterator(topic);
                   },
                   (root, args, context, info) => {
                     return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
@@ -167,30 +167,30 @@ export async function resolveCache(
 }
 
 export async function resolvePubSub(
-  pubSubYamlConfig: YamlConfig.Config['pubSub'],
+  pubsubYamlConfig: YamlConfig.Config['pubsub'],
   importFn: ImportFn
 ): Promise<MeshPubSub> {
-  if (pubSubYamlConfig) {
-    let pubSubName: string;
-    let pubSubConfig: any;
-    if (typeof pubSubYamlConfig === 'string') {
-      pubSubName = pubSubYamlConfig;
+  if (pubsubYamlConfig) {
+    let pubsubName: string;
+    let pubsubConfig: any;
+    if (typeof pubsubYamlConfig === 'string') {
+      pubsubName = pubsubYamlConfig;
     } else {
-      pubSubName = pubSubYamlConfig.name;
-      pubSubConfig = pubSubYamlConfig.config;
+      pubsubName = pubsubYamlConfig.name;
+      pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const moduleName = kebabCase(pubSubName.toString());
+    const moduleName = kebabCase(pubsubName.toString());
     const pkg = await getPackage<any>(moduleName, 'pubsub', importFn);
     const PubSub = pkg.default || pkg;
 
-    return new PubSub(pubSubConfig);
+    return new PubSub(pubsubConfig);
   } else {
     const eventEmitter = new EventEmitter({ captureRejections: true });
     eventEmitter.setMaxListeners(Infinity);
-    const pubSub = new PubSub({ eventEmitter }) as MeshPubSub;
+    const pubsub = new PubSub({ eventEmitter }) as MeshPubSub;
 
-    return pubSub;
+    return pubsub;
   }
 }
 

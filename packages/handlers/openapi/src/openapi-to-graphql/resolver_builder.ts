@@ -78,7 +78,7 @@ type GetSubscribeParams<TSource, TContext, TArgs> = {
   data: PreprocessingData<TSource, TContext, TArgs>;
   baseUrl?: string;
   connectOptions?: ConnectOptions;
-  pubSub: MeshPubSub;
+  pubsub: MeshPubSub;
 };
 
 /*
@@ -92,7 +92,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
   data,
   baseUrl,
   connectOptions,
-  pubSub,
+  pubsub,
 }: GetSubscribeParams<TSource, TContext, TArgs>): GraphQLFieldResolver<TSource, SubscriptionContext, TArgs> {
   // Determine the appropriate URL:
   if (typeof baseUrl === 'undefined') {
@@ -182,7 +182,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
 
     const topic = args[paramNameWithoutLocation] || 'test';
     pubsubLog(`Subscribing to: ${topic}`);
-    return pubSub.asyncIterator(topic);
+    return pubsub.asyncIterator(topic);
   };
 }
 
