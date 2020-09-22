@@ -7,6 +7,7 @@
 import { GraphQLOperationType, SubscriptionContext } from './graphql';
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { ResolverMiddleware } from '../resolver_builder';
+import { MeshPubSub } from '@graphql-mesh/types';
 
 /**
  * Type definition of the options that users can pass to OpenAPI-to-GraphQL.
@@ -305,4 +306,5 @@ export type InternalOptions<TSource, TContext, TArgs> = {
    * Includes HTTP Details to the result object
    */
   includeHttpDetails?: boolean;
+  pubSub: MeshPubSub;
 };

@@ -48,6 +48,10 @@ export interface ServeConfig {
    */
   exampleQuery?: string;
   cors?: CorsConfig;
+  /**
+   * Any of: WebhookHandler, ExpressHandler
+   */
+  handlers?: (WebhookHandler | ExpressHandler)[];
 }
 export interface CorsConfig {
   origin?: string[];
@@ -57,6 +61,15 @@ export interface CorsConfig {
   maxAge?: number;
   preflightContinue?: boolean;
   optionsSuccessStatus?: number;
+}
+export interface WebhookHandler {
+  path: string;
+  pubSubTopic: string;
+  payload: string;
+}
+export interface ExpressHandler {
+  path: string;
+  handler: string;
 }
 export interface Source {
   /**
@@ -198,12 +211,13 @@ export interface JsonSchemaHandler {
 }
 export interface JsonSchemaOperation {
   field: string;
-  path: string;
+  path?: string;
+  pubSubTopic?: string;
   description?: string;
   /**
-   * Allowed values: Query, Mutation
+   * Allowed values: Query, Mutation, Subscription
    */
-  type: 'Query' | 'Mutation';
+  type: 'Query' | 'Mutation' | 'Subscription';
   /**
    * Allowed values: GET, DELETE, POST, PUT, PATCH
    */

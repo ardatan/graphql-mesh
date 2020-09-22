@@ -1204,7 +1204,7 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
   def: DataDefinition,
   data: PreprocessingData<TSource, TContext, TArgs>,
   oas: Oas3
-) {
+): DataDefinition | void {
   const anyOfData = getMemberSchemaData(collapsedSchema.anyOf, data, oas);
 
   if (
@@ -1353,7 +1353,7 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
   def: DataDefinition,
   data: PreprocessingData<TSource, TContext, TArgs>,
   oas: Oas3
-) {
+): DataDefinition | void {
   const oneOfData = getMemberSchemaData(collapsedSchema.oneOf, data, oas);
 
   if (

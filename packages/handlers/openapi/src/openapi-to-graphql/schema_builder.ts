@@ -31,7 +31,6 @@ import {
   GraphQLFieldConfigMap,
   GraphQLOutputType,
   GraphQLUnionType,
-  GraphQLInputType,
   GraphQLInputFieldConfigMap,
 } from 'graphql';
 
@@ -722,7 +721,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
   linkKey,
   operation,
   data,
-}: LinkOpRefToOpIdParams<TSource, TContext, TArgs>): string {
+}: LinkOpRefToOpIdParams<TSource, TContext, TArgs>): string | void {
   const link = links[linkKey];
 
   if (typeof link.operationRef === 'string') {
@@ -763,7 +762,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
             log: translationLog,
           });
 
-          return;
+          return null;
         }
 
         linkLocation = operationRef.substring(0, firstPathIndex);
@@ -781,7 +780,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
           log: translationLog,
         });
 
-        return;
+        return null;
       }
     }
 
@@ -823,7 +822,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
               log: translationLog,
             });
 
-            return;
+            return null;
           }
 
           // There is no method at the end of the path
@@ -835,7 +834,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
             log: translationLog,
           });
 
-          return;
+          return null;
         }
 
         /**
@@ -890,7 +889,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
                 log: translationLog,
               });
 
-              return;
+              return null;
             }
 
             // Path and method could not be found
@@ -905,7 +904,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
               log: translationLog,
             });
 
-            return;
+            return null;
           }
 
           // External link could not be resolved
@@ -917,7 +916,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
             log: translationLog,
           });
 
-          return;
+          return null;
         }
 
         // Cannot split relative path into path and method sections
@@ -929,7 +928,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
           log: translationLog,
         });
 
-        return;
+        return null;
       }
 
       // Cannot extract relative path from absolute path
@@ -941,7 +940,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
         log: translationLog,
       });
 
-      return;
+      return null;
     }
   }
 }
@@ -1220,7 +1219,7 @@ function getOasFromLinkLocation<TSource, TContext, TArgs>(
   linkLocation: string,
   link: LinkObject,
   data: PreprocessingData<TSource, TContext, TArgs>
-): Oas3 {
+): Oas3 | void {
   // May be an external reference
   switch (getLinkLocationType(linkLocation)) {
     case 'title':

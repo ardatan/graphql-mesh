@@ -120,6 +120,22 @@
         },
         "cors": {
           "$ref": "#/definitions/CorsConfig"
+        },
+        "handlers": {
+          "type": "array",
+          "items": {
+            "description": "Any of: WebhookHandler, ExpressHandler",
+            "anyOf": [
+              {
+                "$ref": "#/definitions/WebhookHandler"
+              },
+              {
+                "$ref": "#/definitions/ExpressHandler"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "Any of: WebhookHandler, ExpressHandler"
         }
       }
     },
@@ -162,6 +178,37 @@
           "type": "integer"
         }
       }
+    },
+    "ExpressHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ExpressHandler",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "handler": {
+          "type": "string"
+        }
+      },
+      "required": ["path", "handler"]
+    },
+    "WebhookHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "WebhookHandler",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "pubSubTopic": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string"
+        }
+      },
+      "required": ["path", "pubSubTopic", "payload"]
     },
     "Source": {
       "additionalProperties": false,
@@ -549,13 +596,16 @@
         "path": {
           "type": "string"
         },
+        "pubSubTopic": {
+          "type": "string"
+        },
         "description": {
           "type": "string"
         },
         "type": {
           "type": "string",
-          "enum": ["Query", "Mutation"],
-          "description": "Allowed values: Query, Mutation"
+          "enum": ["Query", "Mutation", "Subscription"],
+          "description": "Allowed values: Query, Mutation, Subscription"
         },
         "method": {
           "type": "string",
@@ -585,7 +635,7 @@
           "properties": {}
         }
       },
-      "required": ["field", "path", "type", "method"]
+      "required": ["field", "type", "method"]
     },
     "MongooseHandler": {
       "additionalProperties": false,

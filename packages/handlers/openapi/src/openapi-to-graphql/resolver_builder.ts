@@ -24,6 +24,7 @@ import formurlencoded from 'form-urlencoded';
 import urlJoin from 'url-join';
 import { Path } from 'graphql/jsutils/Path';
 import { ConnectOptions, RequestOptions } from './types/options';
+import { MeshPubSub } from '@graphql-mesh/types';
 
 const translationLog = debug('translation');
 const httpLog = debug('http');
@@ -77,6 +78,7 @@ type GetSubscribeParams<TSource, TContext, TArgs> = {
   data: PreprocessingData<TSource, TContext, TArgs>;
   baseUrl?: string;
   connectOptions?: ConnectOptions;
+  pubSub: MeshPubSub;
 };
 
 /*
@@ -90,6 +92,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
   data,
   baseUrl,
   connectOptions,
+  pubSub,
 }: GetSubscribeParams<TSource, TContext, TArgs>): GraphQLFieldResolver<TSource, SubscriptionContext, TArgs> {
   // Determine the appropriate URL:
   if (typeof baseUrl === 'undefined') {
@@ -179,7 +182,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
 
     const topic = args[paramNameWithoutLocation] || 'test';
     pubsubLog(`Subscribing to: ${topic}`);
-    return context.pubsub.asyncIterator(topic);
+    return pubSub.asyncIterator(topic);
   };
 }
 

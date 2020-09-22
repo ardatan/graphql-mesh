@@ -16,6 +16,7 @@ type JsonSchemaHandler @md {
 enum JsonSchemaOperationType {
   Query
   Mutation
+  Subscription
 }
 
 enum JsonSchemaOperationMethod {
