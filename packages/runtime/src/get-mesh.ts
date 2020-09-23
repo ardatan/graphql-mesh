@@ -59,8 +59,6 @@ export async function getMesh(
     transforms: options.transforms,
   });
 
-  pubsub.publish('schemaReady', { schema: unifiedSchema });
-
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
   async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(

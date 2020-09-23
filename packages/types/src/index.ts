@@ -45,7 +45,6 @@ export type ResolverData<TParent = any, TArgs = any, TContext = any> = {
 
 // Hooks
 export type AllHooks = {
-  schemaReady: { schema: GraphQLSchema };
   destroy: void;
   resolverCalled: { resolverData: ResolverData };
   resolverDone: { resolverData: ResolverData; result: any };
