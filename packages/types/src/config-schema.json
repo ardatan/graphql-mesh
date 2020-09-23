@@ -208,7 +208,7 @@
           "type": "string"
         }
       },
-      "required": ["path", "pubsubTopic", "payload"]
+      "required": ["path", "pubsubTopic"]
     },
     "Source": {
       "additionalProperties": false,

@@ -44,5 +44,5 @@ type ExpressHandler {
 type WebhookHandler {
   path: String!
   pubsubTopic: String!
-  payload: String!
+  payload: String
 }

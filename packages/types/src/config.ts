@@ -65,7 +65,7 @@ export interface CorsConfig {
 export interface WebhookHandler {
   path: string;
   pubsubTopic: string;
-  payload: string;
+  payload?: string;
 }
 export interface ExpressHandler {
   path: string;

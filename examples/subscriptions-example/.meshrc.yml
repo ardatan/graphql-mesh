@@ -1,0 +1,31 @@
+sources:
+  - name: Example
+    handler:
+      jsonSchema:
+        baseUrl: http://localhost:4001
+        operations:
+          - type: Query
+            field: todos
+            path: /todos
+            method: GET
+            responseSample: ./todos.json
+          - type: Mutation
+            field: addTodo
+            requestSample: ./addTodo.json
+            responseSample: ./todo.json
+            responseTypeName: Todo
+
+additionalTypeDefs: |
+  type Subscription {
+    todoAdded: Todo
+  }
+additionalResolvers:
+  - type: Subscription
+    field: todoAdded
+    pubsubTopic: todoAdded
+
+serve:
+  port: 4000
+  handlers:
+    - path: /webhooks/todo_added
+      pubsubTopic: todoAdded
