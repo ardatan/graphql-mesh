@@ -111,6 +111,7 @@ export async function resolveAdditionalResolvers(
                   if (additionalResolver.returnData) {
                     return get(payload, additionalResolver.returnData);
                   }
+                  return payload;
                 },
               },
             },

@@ -181,10 +181,10 @@
   dependencies:
     tslib "~2.0.1"
 
-"@ardatan/graphql-to-config-schema@0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@ardatan/graphql-to-config-schema/-/graphql-to-config-schema-0.1.4.tgz#10899916f8318ebbc865165b6c96a1f0c3661c19"
-  integrity sha512-jVwQKtrFSrkscQtfbKOoUM0MJhjatCic8EzShlS5KRZTcknyHPEbbW/YvVgdBdjwch4eRConRMqIiS3jRDvlPQ==
+"@ardatan/graphql-to-config-schema@0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@ardatan/graphql-to-config-schema/-/graphql-to-config-schema-0.1.6.tgz#a8f8e14e1b0ee75fd5672faeb353d603fe33fe50"
+  integrity sha512-NhshYsYowNYf1jTl1ucgAeD9xxt3v8zgy8DrI39bv7+I69QZWUg611Klgh/MUprdVHmqkLEaI9QObAcZTgfIgw==
   dependencies:
     "@graphql-tools/graphql-file-loader" "~6.2.2"
     "@graphql-tools/json-file-loader" "~6.2.2"

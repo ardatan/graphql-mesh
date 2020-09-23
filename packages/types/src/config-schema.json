@@ -416,7 +416,8 @@
           "type": "string"
         },
         "config": {
-          "type": "any"
+          "type": "object",
+          "additionalProperties": true
         }
       },
       "required": ["name"]
@@ -454,7 +455,8 @@
           "description": "Enable GraphQL Subscriptions using WebSocket"
         },
         "customFetch": {
-          "type": "any",
+          "type": "object",
+          "additionalProperties": true,
           "description": "Path to a custom W3 Compatible Fetch Implementation"
         },
         "webSocketImpl": {
@@ -1160,7 +1162,8 @@
           "description": "JSON object representing the query search parameters to add to the API calls"
         },
         "customFetch": {
-          "type": "any",
+          "type": "object",
+          "additionalProperties": true,
           "description": "W3 Compatible Fetch Implementation"
         },
         "includeHttpDetails": {
@@ -1679,7 +1682,8 @@
           "description": "The GraphQL Resolver path\nExample: Query.users"
         },
         "composer": {
-          "type": "any",
+          "type": "object",
+          "additionalProperties": true,
           "description": "Path to the composer function\nExample: ./src/auth.js#authComposer"
         }
       },

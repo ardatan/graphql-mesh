@@ -13,6 +13,7 @@ import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import cors from 'cors';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { get } from 'lodash';
+import bodyParser from 'body-parser';
 
 export async function serveMesh(
   logger: Logger,
@@ -43,7 +44,10 @@ export async function serveMesh(
       app.get(graphqlPath, playgroundMiddleware);
     }
 
+    app.use(bodyParser.json());
+
     app.use(
+      graphqlPath,
       graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
       graphqlHTTP(async req => ({
         schema,
@@ -104,12 +108,13 @@ export async function serveMesh(
         const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
         app.use(handlerConfig.path, handlerFn);
       } else if ('pubsubTopic' in handlerConfig) {
-        app.use(handlerConfig.path, req => {
+        app.use(handlerConfig.path, (req, res) => {
           let payload = req.body;
           if (handlerConfig.payload) {
             payload = get(payload, handlerConfig.payload);
           }
           pubsub.publish(handlerConfig.pubsubTopic, payload);
+          res.end();
         });
       }
     }
