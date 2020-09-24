@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import { GraphQLSchema, execute, subscribe } from 'graphql';
 import express, { RequestHandler } from 'express';
 import { Logger } from 'winston';
@@ -106,6 +107,10 @@ export async function serveMesh(
     for (const handlerConfig of handlers) {
       if ('handler' in handlerConfig) {
         const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
+        app.use(handlerConfig.path, (req, _res, next) => {
+          req['pubsub'] = pubsub;
+          next();
+        });
         app.use(handlerConfig.path, handlerFn);
       } else if ('pubsubTopic' in handlerConfig) {
         app.use(handlerConfig.path, (req, res) => {
