@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.11.0
+
+### Minor Changes
+
+- 48d89de2: feat(runtime): replace hooks with pubsub logic
+
 ## 0.10.0
 
 ### Minor Changes
