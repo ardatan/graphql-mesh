@@ -67,3 +67,5 @@ module.exports = (req, res) => {
     res.end(); // Don't forget to finish the HTTP connection
 };
 ```
+
+> You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/subscriptions-example)
