@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.5.3
+
+### Patch Changes
+
+- 79adf4b6: fix(utils): loadModuleExpression keep value if not string
+
 ## 0.5.2
 
 ### Patch Changes

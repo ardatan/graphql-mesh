@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.10.0
+
+### Minor Changes
+
+- 79adf4b6: feat(config): support functions as config property
+
 ## 0.9.2
 
 ### Patch Changes

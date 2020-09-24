@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.5.7",
+  "version": "0.6.0",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -17,8 +17,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.9.2",
-    "@graphql-mesh/utils": "0.5.2",
+    "@graphql-mesh/types": "0.10.0",
+    "@graphql-mesh/utils": "0.5.3",
     "fetchache": "0.0.3",
     "deep-equal": "2.0.3",
     "form-urlencoded": "4.2.1",
@@ -27,7 +27,7 @@
     "graphql-scalars": "1.2.7",
     "graphql-subscriptions": "1.1.0",
     "pluralize": "8.0.0",
-    "swagger2openapi": "7.0.0",
+    "swagger2openapi": "7.0.2",
     "url-join": "4.0.1"
   },
   "publishConfig": {

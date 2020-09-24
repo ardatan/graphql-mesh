@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-resolvers-composition
 
+## 0.6.0
+
+### Minor Changes
+
+- 79adf4b6: feat(config): support functions as config property
+
+### Patch Changes
+
+- Updated dependencies [79adf4b6]
+- Updated dependencies [79adf4b6]
+  - @graphql-mesh/utils@0.5.3
+  - @graphql-mesh/types@0.10.0
+
 ## 0.5.5
 
 ### Patch Changes
