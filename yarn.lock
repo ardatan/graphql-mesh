@@ -15047,10 +15047,10 @@ oas-linter@^3.2.0:
     should "^13.2.1"
     yaml "^1.10.0"
 
-oas-resolver@^2.4.4:
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.4.4.tgz#d4161f0826a4ea77976608b68843d1cf8eca657b"
-  integrity sha512-670+SM5CXYrjI547cgUeQTdB1wJb2gyrJ7bnGywQMrmciKXhXj/EFbE/8c8wed+j1WmGAh7xS+QdQxiuIlNqlw==
+oas-resolver@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.5.1.tgz#d129b4f62bd21021184d765747b72d559e864c62"
+  integrity sha512-MdMY8YAnCdFTAt5+CTC/aYEOSIFt+ICOWxQvKKxsIHjc0/0tG6V4DzbkHW9SWWqUmDPiHDxJsi79kjsE/1PJ5g==
   dependencies:
     node-fetch-h2 "^2.3.0"
     oas-kit-common "^1.0.8"
@@ -15063,15 +15063,15 @@ oas-schema-walker@^1.1.5:
   resolved "https://registry.yarnpkg.com/oas-schema-walker/-/oas-schema-walker-1.1.5.tgz#74c3cd47b70ff8e0b19adada14455b5d3ac38a22"
   integrity sha512-2yucenq1a9YPmeNExoUa9Qwrt9RFkjqaMAA1X+U7sbb0AqBeTIdMHky9SQQ6iN94bO5NW0W4TRYXerG+BdAvAQ==
 
-oas-validator@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-5.0.0.tgz#0998a16b8e56952908418325040f77f77d19f7dc"
-  integrity sha512-eg09qYTb5xBNlQv4k+nICaMc7/RHZ9McOUma/zIBj/hzSDFCIFkKjJpJpVQw6wF4Z69AXl8fHShpAZY2rTe5kw==
+oas-validator@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-5.0.2.tgz#6c7d405fa0b1b144414c6319140e987d6d7dc683"
+  integrity sha512-KVyNNWtZut1sZVBy4mBt1Iq6vQt0km+vJvaPanx4xV33ylpWpuQnMsb9UNQ6MuZVmOzBLl9SbNyvlNjzicty9Q==
   dependencies:
     call-me-maybe "^1.0.1"
     oas-kit-common "^1.0.8"
     oas-linter "^3.2.0"
-    oas-resolver "^2.4.4"
+    oas-resolver "^2.5.1"
     oas-schema-walker "^1.1.5"
     reftools "^1.1.6"
     should "^13.2.1"
@@ -19424,18 +19424,18 @@ svgo@^1.0.0, svgo@^1.2.2:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
-swagger2openapi@7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-7.0.0.tgz#c1eb73348d8b6c7d9f09ebe69d7d7c5819783018"
-  integrity sha512-1sG0pl5mRRq5mld+m5Ja5R67pJAR383ExXP3h9Qu/elpadgU0vgAQhr+DvqlV6l63YF7fRCtHvrCVsHn5huQQw==
+swagger2openapi@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-7.0.2.tgz#598079039f025dd4a92f7128368e8b0ab65fad6a"
+  integrity sha512-EG9h+hq+mX4S6mh0IHf/K4Bd8cLFVvRFxt6YiuoQCKycbCoa8Cjr8hbzy1oDNpGYwjT29js/PrHffgJDuDlgQw==
   dependencies:
     call-me-maybe "^1.0.1"
     node-fetch-h2 "^2.3.0"
     node-readfiles "^0.2.0"
     oas-kit-common "^1.0.8"
-    oas-resolver "^2.4.4"
+    oas-resolver "^2.5.1"
     oas-schema-walker "^1.1.5"
-    oas-validator "^5.0.0"
+    oas-validator "^5.0.2"
     reftools "^1.1.6"
     yaml "^1.10.0"
     yargs "^15.3.1"
