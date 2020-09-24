@@ -1,5 +1,15 @@
 # @graphql-mesh/merger-stitching
 
+## 0.6.5
+
+### Patch Changes
+
+- 2241323d: fix(merging): apply additionalTypeDefs after wrapping the schema
+- Updated dependencies [79adf4b6]
+- Updated dependencies [79adf4b6]
+  - @graphql-mesh/utils@0.5.3
+  - @graphql-mesh/types@0.10.0
+
 ## 0.6.4
 
 ### Patch Changes
