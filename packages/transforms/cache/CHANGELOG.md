@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-cache
 
+## 0.7.0
+
+### Minor Changes
+
+- 48d89de2: feat(runtime): replace hooks with pubsub logic
+
+### Patch Changes
+
+- Updated dependencies [48d89de2]
+  - @graphql-mesh/types@0.11.0
+
 ## 0.6.3
 
 ### Patch Changes
