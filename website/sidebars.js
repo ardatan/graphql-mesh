@@ -38,7 +38,8 @@ module.exports = {
       'recipes/typescript', 
       'recipes/as-sdk', 
       'recipes/as-gateway',
-      'recipes/federation'
+      'recipes/federation',
+      'recipes/subscriptions-webhooks'
     ],
     // 'Extend Your Mesh': ['extend/custom-handler', 'extend/custom-transform']
   }

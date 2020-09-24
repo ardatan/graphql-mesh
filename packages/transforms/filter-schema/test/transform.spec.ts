@@ -1,13 +1,13 @@
 import { buildSchema, printSchema } from 'graphql';
 import FilterSchemaTransform from '../src';
-import { EventEmitter } from 'events';
+import { PubSub } from 'graphql-subscriptions';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { Hooks } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
-  const hooks = new EventEmitter() as Hooks;
+  const pubsub = new PubSub() as MeshPubSub;
   it('should filter out fields', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type User {
@@ -39,7 +39,7 @@ describe('filter', () => {
         new FilterSchemaTransform({
           config: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'],
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });
@@ -83,7 +83,7 @@ type Query {
         new FilterSchemaTransform({
           config: ['Mutation.!*'],
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });

@@ -16,6 +16,7 @@ type JsonSchemaHandler @md {
 enum JsonSchemaOperationType {
   Query
   Mutation
+  Subscription
 }
 
 enum JsonSchemaOperationMethod {
@@ -28,7 +29,8 @@ enum JsonSchemaOperationMethod {
 
 type JsonSchemaOperation {
   field: String!
-  path: String!
+  path: String
+  pubsubTopic: String
   description: String
   type: JsonSchemaOperationType!
   method: JsonSchemaOperationMethod!

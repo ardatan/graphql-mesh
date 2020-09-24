@@ -1,3 +1,4 @@
+/* eslint-disable no-extend-native */
 /* eslint-disable camelcase */
 // Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: openapi-to-graphql
@@ -633,19 +634,18 @@ test('Ensure good naming for operations with duplicated schemas', () => {
  * CASE: 64 bit int - return number instead of integer, leading to use of
  * GraphQLFloat, which can support 64 bits:
  */
-test('Get response containing 64-bit integer (using GraphQLBigInt)', () => {
+test('Get response containing 64-bit integer (using GraphQLBigInt)', async () => {
   const query = `{
     productReviews (id: "100") {
       timestamp
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
-    expect(result).toEqual({
-      data: {
-        productReviews: [{ timestamp: 1502787600000000n }, { timestamp: 1502787400000000n }],
-      },
-    });
+  const result = await graphql(createdSchema, query);
+  expect(result).toEqual({
+    data: {
+      productReviews: [{ timestamp: 1502787600000000 }, { timestamp: 1502787400000000 }],
+    },
   });
 });
 

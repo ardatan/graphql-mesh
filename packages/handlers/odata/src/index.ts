@@ -91,6 +91,7 @@ export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
   private cache: KeyValueCache;
+  private eventEmitterSet = new Set<EventEmitter>();
 
   constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
@@ -535,6 +536,7 @@ export default class ODataHandler implements MeshHandler {
         const isAbstract = typeObj.attributes.Abstract === 'true';
         const eventEmitter = new EventEmitter();
         eventEmitter.setMaxListeners(Infinity);
+        this.eventEmitterSet.add(eventEmitter);
         const extensions: EntityTypeExtensions = {
           entityInfo: {
             actualFields: [],
@@ -1276,6 +1278,8 @@ export default class ODataHandler implements MeshHandler {
     });
 
     const schema = schemaComposer.buildSchema();
+    this.eventEmitterSet.forEach(ee => ee.removeAllListeners());
+    this.eventEmitterSet.clear();
 
     return {
       schema: pruneSchema(schema),

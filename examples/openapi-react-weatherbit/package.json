@@ -18,6 +18,7 @@
     "@graphql-mesh/openapi": "0.6.0",
     "@graphql-mesh/cache-localforage": "0.4.6",
     "@graphql-mesh/merger-stitching": "0.6.5",
+    "graphql-subscriptions": "1.1.0",
     "graphql": "15.3.0"
   },
   "devDependencies": {

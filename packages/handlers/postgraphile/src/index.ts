@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig, Hooks, KeyValueCache } from '@graphql-mesh/types';
+import {
+  GetMeshSourceOptions,
+  MeshHandler,
+  MeshSource,
+  YamlConfig,
+  MeshPubSub,
+  KeyValueCache,
+} from '@graphql-mesh/types';
 import { execute, subscribe } from 'graphql';
 import { withPostGraphileContext, Plugin } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
@@ -13,13 +20,13 @@ export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private cache: KeyValueCache;
   private config: YamlConfig.PostGraphileHandler;
-  private hooks: Hooks;
+  private pubsub: MeshPubSub;
 
-  constructor({ name, cache, config, hooks }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
+  constructor({ name, cache, config, pubsub }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.cache = cache;
     this.config = config;
-    this.hooks = hooks;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -28,7 +35,7 @@ export default class PostGraphileHandler implements MeshHandler {
       ...this.config?.pool,
     });
 
-    this.hooks.once('destroy', () => pgPool.end());
+    this.pubsub.subscribe('destroy', () => pgPool.end());
 
     const cacheKey = this.name + '_introspection';
 

@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { JSONSchemaVisitor, getFileName } from './json-schema-visitor';
 import urlJoin from 'url-join';
 import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings, isUrl } from '@graphql-mesh/utils';
@@ -25,9 +25,11 @@ import {
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
   private cache: KeyValueCache;
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
+  private pubsub: MeshPubSub;
+  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
     this.config = config;
     this.cache = cache;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource() {
@@ -146,60 +148,65 @@ export default class JsonSchemaHandler implements MeshHandler {
           args,
           resolve: async (root, args, context, info) => {
             const interpolationData = { root, args, context, info };
-            const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
-            const fullPath = urlJoin(this.config.baseUrl, interpolatedPath);
-            const method = operationConfig.method;
-            const headers = {
-              ...this.config.operationHeaders,
-              ...operationConfig?.headers,
-            };
-            for (const headerName in headers) {
-              headers[headerName] = stringInterpolator.parse(headers[headerName], interpolationData);
-            }
-            const requestInit: RequestInit = {
-              method,
-              headers,
-            };
-            const urlObj = new URL(fullPath);
-            const input = args.input;
-            if (input) {
-              switch (method) {
-                case 'GET':
-                case 'DELETE': {
-                  const newSearchParams = new URLSearchParams(input);
-                  newSearchParams.forEach((value, key) => {
-                    urlObj.searchParams.set(key, value);
-                  });
-                  break;
-                }
-                case 'POST':
-                case 'PUT': {
-                  requestInit.body = JSON.stringify(input);
-                  break;
-                }
-                default:
-                  throw new Error(`Unknown method ${operationConfig.method}`);
+            if (operationConfig.pubsubTopic) {
+              const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
+              return this.pubsub.asyncIterator(pubsubTopic);
+            } else if (operationConfig.path) {
+              const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
+              const fullPath = urlJoin(this.config.baseUrl, interpolatedPath);
+              const method = operationConfig.method;
+              const headers = {
+                ...this.config.operationHeaders,
+                ...operationConfig?.headers,
+              };
+              for (const headerName in headers) {
+                headers[headerName] = stringInterpolator.parse(headers[headerName], interpolationData);
               }
+              const requestInit: RequestInit = {
+                method,
+                headers,
+              };
+              const urlObj = new URL(fullPath);
+              const input = args.input;
+              if (input) {
+                switch (method) {
+                  case 'GET':
+                  case 'DELETE': {
+                    const newSearchParams = new URLSearchParams(input);
+                    newSearchParams.forEach((value, key) => {
+                      urlObj.searchParams.set(key, value);
+                    });
+                    break;
+                  }
+                  case 'POST':
+                  case 'PUT': {
+                    requestInit.body = JSON.stringify(input);
+                    break;
+                  }
+                  default:
+                    throw new Error(`Unknown method ${operationConfig.method}`);
+                }
+              }
+              const request = new Request(urlObj.toString(), requestInit);
+              const response = await fetchache(request, this.cache);
+              const responseText = await response.text();
+              let responseJson: any;
+              try {
+                responseJson = JSON.parse(responseText);
+              } catch (e) {
+                throw responseText;
+              }
+              if (responseJson.errors) {
+                throw new AggregateError(responseJson.errors);
+              }
+              if (responseJson._errors) {
+                throw new AggregateError(responseJson._errors);
+              }
+              if (responseJson.error) {
+                throw responseJson.error;
+              }
+              return responseJson;
             }
-            const request = new Request(urlObj.toString(), requestInit);
-            const response = await fetchache(request, this.cache);
-            const responseText = await response.text();
-            let responseJson: any;
-            try {
-              responseJson = JSON.parse(responseText);
-            } catch (e) {
-              throw responseText;
-            }
-            if (responseJson.errors) {
-              throw new AggregateError(responseJson.errors);
-            }
-            if (responseJson._errors) {
-              throw new AggregateError(responseJson._errors);
-            }
-            if (responseJson.error) {
-              throw responseJson.error;
-            }
-            return responseJson;
           },
         },
       });

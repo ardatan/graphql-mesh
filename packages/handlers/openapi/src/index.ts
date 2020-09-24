@@ -16,15 +16,18 @@ import {
   GetMeshSourceOptions,
   MeshSource,
   KeyValueCache,
+  MeshPubSub,
 } from '@graphql-mesh/types';
 import { fetchache, Request } from 'fetchache';
 
 export default class OpenAPIHandler implements MeshHandler {
   config: YamlConfig.OpenapiHandler;
   cache: KeyValueCache;
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  pubsub: MeshPubSub;
+  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.cache = cache;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -62,6 +65,8 @@ export default class OpenAPIHandler implements MeshHandler {
       sendOAuthTokenInQuery: true,
       viewer: false,
       equivalentToMessages: true,
+      createSubscriptionsFromCallbacks: true,
+      pubsub: this.pubsub,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };
         const resolverParams = getResolverParams();

@@ -1,6 +1,6 @@
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import { SchemaComposer } from 'graphql-compose';
-import { GetMeshSourceOptions, Hooks, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { camelCase } from 'camel-case';
 import mongoose from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
@@ -20,11 +20,11 @@ const modelMutationOperations = [
 
 export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
-  private hooks: Hooks;
+  private pubsub: MeshPubSub;
 
-  constructor({ config, hooks }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
+  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
-    this.hooks = hooks;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -34,7 +34,7 @@ export default class MongooseHandler implements MeshHandler {
         useUnifiedTopology: true,
       });
 
-      this.hooks.once('destroy', () => mongoose.disconnect());
+      this.pubsub.subscribe('destroy', () => mongoose.disconnect());
     }
 
     const schemaComposer = new SchemaComposer();

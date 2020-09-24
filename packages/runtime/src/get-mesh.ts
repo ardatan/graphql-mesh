@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn, MeshContext } from './types';
-import { Hooks, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
+import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
+import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
@@ -18,12 +18,11 @@ export async function getMesh(
   sdkRequester: Requester;
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   destroy: () => void;
-  hooks: Hooks;
+  pubsub: MeshPubSub;
   cache: KeyValueCache;
 }> {
   const rawSources: RawSourceOutput[] = [];
-  const hooks = options.hooks;
-  const cache = options.cache;
+  const { pubsub, cache } = options;
 
   await Promise.all(
     options.sources.map(async apiSource => {
@@ -54,19 +53,20 @@ export async function getMesh(
   let unifiedSchema = await options.merger({
     rawSources,
     cache,
-    hooks,
+    pubsub,
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
     transforms: options.transforms,
   });
 
-  hooks.emit('schemaReady', unifiedSchema);
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
-  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, hooks);
-
-  async function buildMeshContext<TAdditionalContext>(initialContextValue?: TAdditionalContext) {
-    const context: MeshContext & TAdditionalContext = {
+  async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
+    initialContextValue?: TAdditionalContext
+  ): Promise<TContext> {
+    const context: any = {
       ...initialContextValue,
+      pubsub,
       [MESH_CONTEXT_SYMBOL]: true,
     };
 
@@ -154,8 +154,8 @@ export async function getMesh(
     rawSources,
     sdkRequester: localRequester,
     cache,
-    hooks,
-    destroy: () => hooks.emit('destroy'),
+    pubsub,
+    destroy: () => pubsub.publish('destroy', undefined),
   };
 }
 

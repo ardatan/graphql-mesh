@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, Hooks, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -101,11 +101,11 @@ type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 export default class MySQLHandler implements MeshHandler {
   config: YamlConfig.MySQLHandler;
-  hooks: Hooks;
+  pubsub: MeshPubSub;
 
-  constructor({ config, hooks }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
     this.config = config;
-    this.hooks = hooks;
+    this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -380,7 +380,7 @@ export default class MySQLHandler implements MeshHandler {
         });
       })
     );
-    this.hooks.once('destroy', () => pool.end());
+    this.pubsub.subscribe('destroy', () => pool.end());
 
     const schema = schemaComposer.buildSchema();
 

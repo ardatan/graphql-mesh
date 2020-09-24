@@ -2,8 +2,8 @@ import { join } from 'path';
 import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { EventEmitter } from 'events';
-import { Hooks } from '@graphql-mesh/types';
+import { PubSub } from 'graphql-subscriptions';
+import { MeshPubSub } from '@graphql-mesh/types';
 import GrpcHandler from '../src';
 
 describe.each<[string, string, string]>([
@@ -17,7 +17,7 @@ describe.each<[string, string, string]>([
 ])('Interpreting Protos', (name, packageName, file) => {
   test(`should load the ${name} proto`, async () => {
     const cache = new InMemoryLRUCache();
-    const hooks = new EventEmitter() as Hooks;
+    const pubsub = new PubSub() as MeshPubSub;
     const config = {
       endpoint: 'localhost',
       serviceName: 'Example',
@@ -31,7 +31,7 @@ describe.each<[string, string, string]>([
       name: Date.now().toString(),
       config,
       cache,
-      hooks,
+      pubsub,
     });
 
     const { schema } = await handler.getMeshSource();

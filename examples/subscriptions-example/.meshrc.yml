@@ -1,0 +1,40 @@
+sources:
+  - name: Example
+    handler:
+      jsonSchema:
+        baseUrl: http://localhost:4001
+        operationHeaders:
+          Content-Type: application/json
+        operations:
+          - type: Query
+            field: todos
+            path: /todos
+            method: GET
+            responseSample: ./todos.json
+          - type: Mutation
+            field: addTodo
+            path: /todo
+            method: POST
+            requestSample: ./addTodo.json
+            responseSample: ./todo.json
+            responseTypeName: Todo
+
+additionalTypeDefs: |
+  # If you don't have Subscription type defined anywhere
+  # You have to extend subscription definition
+  extend schema {
+    subscription: Subscription
+  }
+  type Subscription {
+    todoAdded: Todo
+  }
+additionalResolvers:
+  - type: Subscription
+    field: todoAdded
+    pubsubTopic: todoAdded
+
+serve:
+  port: 4000
+  handlers:
+    - path: /webhooks/todo_added
+      pubsubTopic: todoAdded

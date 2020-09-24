@@ -1,4 +1,4 @@
-import { YamlConfig, Hooks, KeyValueCache } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import {
@@ -16,7 +16,7 @@ import { computeCacheKey } from '../src/compute-cache-key';
 import objectHash from 'object-hash';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
-import { EventEmitter } from 'events';
+import { PubSub } from 'graphql-subscriptions';
 import { applySchemaTransforms } from '@graphql-tools/utils';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -106,7 +106,7 @@ const spies = {
 describe('cache', () => {
   let schema: GraphQLSchema;
   let cache: KeyValueCache;
-  let hooks: Hooks;
+  let pubsub: MeshPubSub;
 
   beforeEach(() => {
     const baseSchema = buildSchema(/* GraphQL */ `
@@ -146,7 +146,7 @@ describe('cache', () => {
     });
 
     cache = new InMemoryLRUCache();
-    hooks = new EventEmitter() as Hooks;
+    pubsub = new PubSub() as MeshPubSub;
 
     spies.Query.user.mockClear();
     spies.Query.users.mockClear();
@@ -164,7 +164,7 @@ describe('cache', () => {
               field: 'Query.user',
             },
           ],
-          hooks,
+          pubsub,
         }),
       ]);
 
@@ -184,7 +184,7 @@ describe('cache', () => {
               field: 'Query.*',
             },
           ],
-          hooks,
+          pubsub,
         }),
       ]);
 
@@ -199,7 +199,7 @@ describe('cache', () => {
         new CacheTransform({
           cache,
           config,
-          hooks,
+          pubsub,
         }),
       ]);
 
@@ -401,7 +401,7 @@ describe('cache', () => {
 
   describe('Opration-based invalidation', () => {
     it('Should invalidate cache when mutation is done based on key', async () => {
-      const schemaWithHooks = applyResolversHooksToSchema(schema, hooks);
+      const schemaWithHooks = applyResolversHooksToSchema(schema, pubsub);
 
       const schemaWithCache = applySchemaTransforms(schemaWithHooks, [
         new CacheTransform({
@@ -424,7 +424,7 @@ describe('cache', () => {
             },
           ],
           cache,
-          hooks,
+          pubsub,
         }),
       ]);
 

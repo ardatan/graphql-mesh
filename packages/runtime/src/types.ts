@@ -1,6 +1,6 @@
 import {
   KeyValueCache,
-  Hooks,
+  MeshPubSub,
   MergerFn,
   RawSourceOutput,
   GraphQLOperation,
@@ -17,7 +17,7 @@ export type GetMeshOptions = {
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers;
   cache: KeyValueCache;
-  hooks: Hooks;
+  pubsub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
 };
@@ -72,4 +72,4 @@ export type APIContext = {
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
   [key: string]: APIContext;
-};
+} & { pubsub: MeshPubSub };

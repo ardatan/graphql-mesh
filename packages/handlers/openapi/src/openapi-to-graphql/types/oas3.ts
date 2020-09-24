@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 // Copyright IBM Corp. 2018. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
@@ -154,7 +155,7 @@ export type OperationObject = {
   parameters?: Array<ParameterObject | ReferenceObject>;
   requestBody?: RequestBodyObject | ReferenceObject;
   responses?: ResponsesObject;
-  callbacks?: any; // TODO: extend?
+  callbacks?: CallbacksObject;
   deprecated?: boolean;
   security?: SecurityRequirementObject[];
   servers?: ServerObject[];
@@ -164,13 +165,28 @@ export type PathItemObject = {
   $ref?: string;
   summary?: string;
   description: string;
-  [key: string]: any;
+  get: OperationObject;
+  put: OperationObject;
+  post: OperationObject;
+  delete: OperationObject;
+  options: OperationObject;
+  head: OperationObject;
+  patch: OperationObject;
+  trace: OperationObject;
   servers?: ServerObject[];
   parameters?: [ParameterObject | ReferenceObject];
 };
 
 type PathsObject = {
   [key: string]: PathItemObject;
+};
+
+export type CallbackObject = {
+  [key: string]: PathItemObject;
+};
+
+export type CallbacksObject = {
+  [key: string]: CallbackObject | ReferenceObject;
 };
 
 type OAuthFlowObject = {
@@ -225,7 +241,7 @@ type ComponentsObject = {
   securitySchemes?: SecuritySchemesObject;
   links?: LinksObject;
   callbacks?: {
-    [key: string]: object | ReferenceObject;
+    [key: string]: CallbackObject | ReferenceObject;
   };
 };
 

@@ -21,14 +21,18 @@ export interface Config {
    */
   additionalTypeDefs?: string;
   /**
-   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalResolverObject)
+   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)
    */
-  additionalResolvers?: (string | AdditionalResolverObject)[];
+  additionalResolvers?: (string | AdditionalStitchingResolverObject | AdditionalSubscriptionObject)[];
   cache?: Cache;
   /**
    * Merge method
    */
   merger?: string;
+  /**
+   * PubSub Implementation (Any of: String, PubSubConfig)
+   */
+  pubsub?: string | PubSubConfig;
 }
 export interface ServeConfig {
   /**
@@ -44,6 +48,10 @@ export interface ServeConfig {
    */
   exampleQuery?: string;
   cors?: CorsConfig;
+  /**
+   * Any of: WebhookHandler, ExpressHandler
+   */
+  handlers?: (WebhookHandler | ExpressHandler)[];
 }
 export interface CorsConfig {
   origin?: string[];
@@ -53,6 +61,15 @@ export interface CorsConfig {
   maxAge?: number;
   preflightContinue?: boolean;
   optionsSuccessStatus?: number;
+}
+export interface WebhookHandler {
+  path: string;
+  pubsubTopic: string;
+  payload?: string;
+}
+export interface ExpressHandler {
+  path: string;
+  handler: string;
 }
 export interface Source {
   /**
@@ -110,7 +127,7 @@ export interface GraphQLHandler {
   /**
    * HTTP method used for GraphQL operations (Allowed values: GET, POST)
    */
-  method?: 'GET' | 'POST';
+  method?: "GET" | "POST";
   /**
    * Enable GraphQL Subscriptions using WebSocket
    */
@@ -194,16 +211,17 @@ export interface JsonSchemaHandler {
 }
 export interface JsonSchemaOperation {
   field: string;
-  path: string;
+  path?: string;
+  pubsubTopic?: string;
   description?: string;
   /**
-   * Allowed values: Query, Mutation
+   * Allowed values: Query, Mutation, Subscription
    */
-  type: 'Query' | 'Mutation';
+  type: "Query" | "Mutation" | "Subscription";
   /**
    * Allowed values: GET, DELETE, POST, PUT, PATCH
    */
-  method: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
+  method: "GET" | "DELETE" | "POST" | "PUT" | "PATCH";
   requestSchema?: string;
   requestSample?: string;
   requestTypeName?: string;
@@ -479,7 +497,7 @@ export interface ODataHandler {
   /**
    * Enable batching (Allowed values: multipart, json)
    */
-  batch?: 'multipart' | 'json';
+  batch?: "multipart" | "json";
   /**
    * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
    */
@@ -642,7 +660,7 @@ export interface ThriftHandler {
   /**
    * Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: binary, compact, json)
    */
-  protocol?: 'binary' | 'compact' | 'json';
+  protocol?: "binary" | "compact" | "json";
   /**
    * The name of your service. Used for logging.
    */
@@ -835,53 +853,53 @@ export interface NamingConventionTransformConfig {
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   typeNames?:
-    | 'camelCase'
-    | 'capitalCase'
-    | 'constantCase'
-    | 'dotCase'
-    | 'headerCase'
-    | 'noCase'
-    | 'paramCase'
-    | 'pascalCase'
-    | 'pathCase'
-    | 'sentenceCase'
-    | 'snakeCase'
-    | 'upperCase'
-    | 'lowerCase';
+    | "camelCase"
+    | "capitalCase"
+    | "constantCase"
+    | "dotCase"
+    | "headerCase"
+    | "noCase"
+    | "paramCase"
+    | "pascalCase"
+    | "pathCase"
+    | "sentenceCase"
+    | "snakeCase"
+    | "upperCase"
+    | "lowerCase";
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   fieldNames?:
-    | 'camelCase'
-    | 'capitalCase'
-    | 'constantCase'
-    | 'dotCase'
-    | 'headerCase'
-    | 'noCase'
-    | 'paramCase'
-    | 'pascalCase'
-    | 'pathCase'
-    | 'sentenceCase'
-    | 'snakeCase'
-    | 'upperCase'
-    | 'lowerCase';
+    | "camelCase"
+    | "capitalCase"
+    | "constantCase"
+    | "dotCase"
+    | "headerCase"
+    | "noCase"
+    | "paramCase"
+    | "pascalCase"
+    | "pathCase"
+    | "sentenceCase"
+    | "snakeCase"
+    | "upperCase"
+    | "lowerCase";
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   enumValues?:
-    | 'camelCase'
-    | 'capitalCase'
-    | 'constantCase'
-    | 'dotCase'
-    | 'headerCase'
-    | 'noCase'
-    | 'paramCase'
-    | 'pascalCase'
-    | 'pathCase'
-    | 'sentenceCase'
-    | 'snakeCase'
-    | 'upperCase'
-    | 'lowerCase';
+    | "camelCase"
+    | "capitalCase"
+    | "constantCase"
+    | "dotCase"
+    | "headerCase"
+    | "noCase"
+    | "paramCase"
+    | "pascalCase"
+    | "pathCase"
+    | "sentenceCase"
+    | "snakeCase"
+    | "upperCase"
+    | "lowerCase";
 }
 /**
  * Prefix transform
@@ -944,7 +962,7 @@ export interface SnapshotTransformConfig {
    */
   outputDir: string;
 }
-export interface AdditionalResolverObject {
+export interface AdditionalStitchingResolverObject {
   type: string;
   field: string;
   requiredSelectionSet?: string;
@@ -959,6 +977,13 @@ export interface AdditionalResolverObject {
   };
   resultSelectionSet?: string;
   resultDepth?: number;
+}
+export interface AdditionalSubscriptionObject {
+  type: string;
+  field: string;
+  pubsubTopic: string;
+  returnData?: string;
+  filterBy?: string;
 }
 /**
  * Backend cache
@@ -980,7 +1005,7 @@ export interface LocalforageConfig {
   /**
    * Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE
    */
-  driver?: ('WEBSQL' | 'INDEXEDDB' | 'LOCALSTORAGE')[];
+  driver?: ("WEBSQL" | "INDEXEDDB" | "LOCALSTORAGE")[];
   name?: string;
   version?: number;
   size?: number;
@@ -991,4 +1016,8 @@ export interface RedisConfig {
   host?: string;
   port?: number;
   password?: string;
+}
+export interface PubSubConfig {
+  name: string;
+  config?: any;
 }

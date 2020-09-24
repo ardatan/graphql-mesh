@@ -1,5 +1,5 @@
 import { parse } from 'graphql';
-import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn, ImportFn } from '@graphql-mesh/types';
+import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn, ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
@@ -8,6 +8,8 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { get, set, kebabCase } from 'lodash';
 import { stringInterpolator } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
+import { PubSub, withFilter } from 'graphql-subscriptions';
+import { EventEmitter } from 'events';
 
 export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
   const casedName = paramCase(name);
@@ -57,8 +59,13 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
 
 export async function resolveAdditionalResolvers(
   baseDir: string,
-  additionalResolvers: (string | YamlConfig.AdditionalResolverObject)[],
-  importFn: ImportFn
+  additionalResolvers: (
+    | string
+    | YamlConfig.AdditionalStitchingResolverObject
+    | YamlConfig.AdditionalSubscriptionObject
+  )[],
+  importFn: ImportFn,
+  pubsub: MeshPubSub
 ): Promise<IResolvers> {
   const loadedResolvers = await Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {
@@ -86,29 +93,54 @@ export async function resolveAdditionalResolvers(
 
         return resolvers;
       } else {
-        return {
-          [additionalResolver.type]: {
-            [additionalResolver.field]: {
-              selectionSet: additionalResolver.requiredSelectionSet,
-              resolve: async (root: any, args: any, context: any, info: any) => {
-                const resolverData = { root, args, context, info };
-                const methodArgs: any = {};
-                for (const argPath in additionalResolver.args) {
-                  set(methodArgs, argPath, stringInterpolator.parse(additionalResolver.args[argPath], resolverData));
-                }
-                const result = await context[additionalResolver.targetSource].api[additionalResolver.targetMethod](
-                  methodArgs,
-                  {
-                    selectedFields: additionalResolver.resultSelectedFields,
-                    selectionSet: additionalResolver.resultSelectionSet,
-                    depth: additionalResolver.resultDepth,
+        if ('pubsubTopic' in additionalResolver) {
+          return {
+            [additionalResolver.type]: {
+              [additionalResolver.field]: {
+                subscribe: withFilter(
+                  (root, args, context, info) => {
+                    const resolverData = { root, args, context, info };
+                    const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+                    return pubsub.asyncIterator(topic);
+                  },
+                  (root, args, context, info) => {
+                    return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
                   }
-                );
-                return additionalResolver.returnData ? get(result, additionalResolver.returnData) : result;
+                ),
+                resolve: (payload: any) => {
+                  if (additionalResolver.returnData) {
+                    return get(payload, additionalResolver.returnData);
+                  }
+                  return payload;
+                },
               },
             },
-          },
-        };
+          };
+        } else {
+          return {
+            [additionalResolver.type]: {
+              [additionalResolver.field]: {
+                selectionSet: additionalResolver.requiredSelectionSet,
+                resolve: async (root: any, args: any, context: any, info: any) => {
+                  const resolverData = { root, args, context, info };
+                  const methodArgs: any = {};
+                  for (const argPath in additionalResolver.args) {
+                    set(methodArgs, argPath, stringInterpolator.parse(additionalResolver.args[argPath], resolverData));
+                  }
+                  const result = await context[additionalResolver.targetSource].api[additionalResolver.targetMethod](
+                    methodArgs,
+                    {
+                      selectedFields: additionalResolver.resultSelectedFields,
+                      selectionSet: additionalResolver.resultSelectionSet,
+                      depth: additionalResolver.resultDepth,
+                    }
+                  );
+                  return additionalResolver.returnData ? get(result, additionalResolver.returnData) : result;
+                },
+              },
+            },
+          };
+        }
       }
     })
   );
@@ -133,6 +165,34 @@ export async function resolveCache(
   const InMemoryLRUCache = await import('@graphql-mesh/cache-inmemory-lru').then(m => m.default);
   const cache = new InMemoryLRUCache();
   return cache;
+}
+
+export async function resolvePubSub(
+  pubsubYamlConfig: YamlConfig.Config['pubsub'],
+  importFn: ImportFn
+): Promise<MeshPubSub> {
+  if (pubsubYamlConfig) {
+    let pubsubName: string;
+    let pubsubConfig: any;
+    if (typeof pubsubYamlConfig === 'string') {
+      pubsubName = pubsubYamlConfig;
+    } else {
+      pubsubName = pubsubYamlConfig.name;
+      pubsubConfig = pubsubYamlConfig.config;
+    }
+
+    const moduleName = kebabCase(pubsubName.toString());
+    const pkg = await getPackage<any>(moduleName, 'pubsub', importFn);
+    const PubSub = pkg.default || pkg;
+
+    return new PubSub(pubsubConfig);
+  } else {
+    const eventEmitter = new EventEmitter({ captureRejections: true });
+    eventEmitter.setMaxListeners(Infinity);
+    const pubsub = new PubSub({ eventEmitter }) as MeshPubSub;
+
+    return pubsub;
+  }
 }
 
 export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], importFn: ImportFn): Promise<MergerFn> {
