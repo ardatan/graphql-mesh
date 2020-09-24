@@ -1,5 +1,21 @@
 # @graphql-mesh/config
 
+## 0.10.0
+
+### Minor Changes
+
+- 48d89de2: feat(serve): able to provide custom handlers for webhooks
+- 48d89de2: feat(runtime): replace hooks with pubsub logic
+
+### Patch Changes
+
+- Updated dependencies [2e7d4fb0]
+- Updated dependencies [48d89de2]
+  - @graphql-mesh/runtime@0.7.0
+  - @graphql-mesh/types@0.11.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.7
+  - @graphql-mesh/merger-stitching@0.6.6
+
 ## 0.9.0
 
 ### Minor Changes

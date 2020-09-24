@@ -1,5 +1,21 @@
 # openapi-react-weatherbit
 
+## 0.3.0
+
+### Minor Changes
+
+- 48d89de2: feat(runtime): replace hooks with pubsub logic
+
+### Patch Changes
+
+- Updated dependencies [2e7d4fb0]
+- Updated dependencies [48d89de2]
+- Updated dependencies [48d89de2]
+  - @graphql-mesh/runtime@0.7.0
+  - @graphql-mesh/openapi@0.7.0
+  - @graphql-mesh/cache-localforage@0.4.7
+  - @graphql-mesh/merger-stitching@0.6.6
+
 ## 0.2.8
 
 ### Patch Changes
