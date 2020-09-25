@@ -104,25 +104,27 @@ export async function serveMesh(
       }
     );
 
-    for (const handlerConfig of handlers) {
-      if ('handler' in handlerConfig) {
-        const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
-        app.use(handlerConfig.path, (req, _res, next) => {
-          req['pubsub'] = pubsub;
-          next();
-        });
-        app.use(handlerConfig.path, handlerFn);
-      } else if ('pubsubTopic' in handlerConfig) {
-        app.use(handlerConfig.path, (req, res) => {
-          let payload = req.body;
-          if (handlerConfig.payload) {
-            payload = get(payload, handlerConfig.payload);
-          }
-          pubsub.publish(handlerConfig.pubsubTopic, payload);
-          res.end();
-        });
-      }
-    }
+    await Promise.all(
+      handlers?.map(async handlerConfig => {
+        if ('handler' in handlerConfig) {
+          const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
+          app.use(handlerConfig.path, (req, _res, next) => {
+            req['pubsub'] = pubsub;
+            next();
+          });
+          app.use(handlerConfig.path, handlerFn);
+        } else if ('pubsubTopic' in handlerConfig) {
+          app.use(handlerConfig.path, (req, res) => {
+            let payload = req.body;
+            if (handlerConfig.payload) {
+              payload = get(payload, handlerConfig.payload);
+            }
+            pubsub.publish(handlerConfig.pubsubTopic, payload);
+            res.end();
+          });
+        }
+      }) || []
+    );
 
     httpServer.listen(port.toString(), () => {
       if (!fork) {
