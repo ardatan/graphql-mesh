@@ -20,7 +20,7 @@
     "camel-case": "4.1.1",
     "fs-extra": "9.0.1",
     "graphql-scalars": "1.2.7",
-    "graphql-compose": "7.21.1",
+    "graphql-compose": "7.21.4",
     "protobufjs": "6.10.1",
     "pascal-case": "3.1.1",
     "lodash": "4.17.20"
