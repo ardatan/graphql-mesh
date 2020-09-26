@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.9.1
+
+### Patch Changes
+
+- cfae8d4d: fix(serve): fix handlers error
+
 ## 0.9.0
 
 ### Minor Changes
