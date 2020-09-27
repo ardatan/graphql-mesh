@@ -1,10 +1,10 @@
-import { Hooks, KeyValueCache } from '@graphql-mesh/types';
+import { MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
 import { printSchema, graphql } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addMock, resetMocks, Response } from 'fetchache';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { EventEmitter } from 'events';
+import { PubSub } from 'graphql-subscriptions';
 import ODataHandler from '../src';
 declare module 'fetchache' {
   type FetchMockFn = (request: Request) => Promise<Response>;
@@ -17,10 +17,10 @@ const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/ru
 const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip.json'), 'utf-8'));
 
 describe('odata', () => {
-  let hooks: Hooks;
+  let pubsub: MeshPubSub;
   let cache: KeyValueCache;
   beforeEach(() => {
-    hooks = new EventEmitter() as Hooks;
+    pubsub = new PubSub();
     cache = new InMemoryLRUCache();
     resetMocks();
   });
@@ -31,7 +31,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -52,7 +52,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -88,7 +88,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -133,7 +133,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -171,7 +171,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -207,7 +207,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -261,7 +261,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -300,7 +300,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -339,7 +339,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -385,7 +385,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -434,7 +434,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -475,7 +475,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();
@@ -515,7 +515,7 @@ describe('odata', () => {
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
       },
-      hooks,
+      pubsub,
       cache,
     });
     const source = await handler.getMeshSource();

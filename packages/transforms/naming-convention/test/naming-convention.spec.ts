@@ -1,8 +1,8 @@
 import NamingConventionTransform from '../src/index';
 import { buildSchema, printSchema, GraphQLObjectType, GraphQLEnumType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { Hooks } from '@graphql-mesh/types';
-import { EventEmitter } from 'events';
+import { MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from 'graphql-subscriptions';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
@@ -22,10 +22,10 @@ describe('namingConvention', () => {
     }
   `);
   let cache: InMemoryLRUCache;
-  let hooks: Hooks;
+  let pubsub: MeshPubSub;
   beforeEach(() => {
     cache = new InMemoryLRUCache();
-    hooks = new EventEmitter() as Hooks;
+    pubsub = new PubSub();
   });
 
   it('should change the name of a type', () => {
@@ -39,7 +39,7 @@ describe('namingConvention', () => {
             fieldNames: 'camelCase',
           },
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });
@@ -94,7 +94,7 @@ describe('namingConvention', () => {
       transforms: [
         new NamingConventionTransform({
           cache,
-          hooks,
+          pubsub,
           config: {
             fieldNames: 'camelCase',
           },

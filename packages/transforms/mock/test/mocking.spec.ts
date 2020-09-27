@@ -1,17 +1,17 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { YamlConfig, Hooks } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub } from '@graphql-mesh/types';
 import { graphql } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { EventEmitter } from 'events';
+import { PubSub } from 'graphql-subscriptions';
 import MockingTransform from '../src';
 
 describe('mocking', () => {
   let cache: InMemoryLRUCache;
-  let hooks: Hooks;
+  let pubsub: MeshPubSub;
   beforeEach(() => {
     cache = new InMemoryLRUCache();
-    hooks = new EventEmitter() as Hooks;
+    pubsub = new PubSub();
   });
   it('should mock fields and resolvers should not get called', async () => {
     let queryUserCalled = false;
@@ -56,7 +56,7 @@ describe('mocking', () => {
         new MockingTransform({
           config: mockingConfig,
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });

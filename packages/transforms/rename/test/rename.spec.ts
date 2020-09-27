@@ -1,8 +1,8 @@
 import RenameTransform from './../src/index';
 import { buildSchema, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { Hooks } from '@graphql-mesh/types';
-import { EventEmitter } from 'events';
+import { MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from 'graphql-subscriptions';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('rename', () => {
@@ -16,10 +16,10 @@ describe('rename', () => {
     }
   `);
   let cache: InMemoryLRUCache;
-  let hooks: Hooks;
+  let pubsub: MeshPubSub;
   beforeEach(() => {
     cache = new InMemoryLRUCache();
-    hooks = new EventEmitter() as Hooks;
+    pubsub = new PubSub();
   });
 
   it('should change the name of a type', () => {
@@ -34,7 +34,7 @@ describe('rename', () => {
             },
           ],
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });

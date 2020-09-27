@@ -3,11 +3,11 @@ import { YamlConfig, MeshTransform, MeshTransformOptions } from '@graphql-mesh/t
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
 import { isAbsolute, join } from 'path';
-import { ensureFile, writeJSON, pathExists, readJSON } from 'fs-extra';
+import { ensureFile, writeJSON, pathExists } from 'fs-extra';
 import { computeSnapshotFilePath } from './compute-snapshot-file-path';
 import { extractResolvers } from '@graphql-mesh/utils';
 
-const writeFile = async (path: string, json: any) => {
+const writeFile = async (path: string, json: any): Promise<void> => {
   try {
     await ensureFile(path);
     await writeJSON(path, json, {
@@ -19,6 +19,7 @@ const writeFile = async (path: string, json: any) => {
 };
 
 export default class SnapshotTransform implements MeshTransform {
+  noWrap = true;
   constructor(private options: MeshTransformOptions<YamlConfig.SnapshotTransformConfig>) {}
   transformSchema(schema: GraphQLSchema) {
     const { config } = this.options;
@@ -40,8 +41,8 @@ export default class SnapshotTransform implements MeshTransform {
           args,
           outputDir,
         });
-        if (await pathExists(snapshotFilePath)) {
-          return readJSON(snapshotFilePath);
+        if (snapshotFilePath in require.cache || (await pathExists(snapshotFilePath))) {
+          return import(snapshotFilePath);
         }
         const result = await next(root, args, context, info);
         await writeFile(snapshotFilePath, result);

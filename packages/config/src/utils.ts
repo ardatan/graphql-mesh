@@ -15,6 +15,7 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
+    name,
     `@graphql-mesh/${casedName}`,
     `@graphql-mesh/${casedName}-${casedType}`,
     `@graphql-mesh/${casedType}-${casedName}`,

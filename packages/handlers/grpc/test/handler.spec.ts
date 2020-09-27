@@ -3,7 +3,6 @@ import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { PubSub } from 'graphql-subscriptions';
-import { MeshPubSub } from '@graphql-mesh/types';
 import GrpcHandler from '../src';
 
 describe.each<[string, string, string]>([
@@ -17,7 +16,7 @@ describe.each<[string, string, string]>([
 ])('Interpreting Protos', (name, packageName, file) => {
   test(`should load the ${name} proto`, async () => {
     const cache = new InMemoryLRUCache();
-    const pubsub = new PubSub() as MeshPubSub;
+    const pubsub = new PubSub();
     const config = {
       endpoint: 'localhost',
       serviceName: 'Example',

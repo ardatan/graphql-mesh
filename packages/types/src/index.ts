@@ -51,7 +51,7 @@ export type AllHooks = {
   resolverError: { resolverData: ResolverData; error: Error };
   [key: string]: any;
 };
-export type HookName = keyof AllHooks;
+export type HookName = keyof AllHooks & string;
 
 export interface MeshPubSub {
   publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void>;

@@ -1,6 +1,6 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { EventEmitter } from 'events';
+import { PubSub } from 'graphql-subscriptions';
 import { join } from 'path';
 import ResolversCompositionTransform, { ResolversComposition } from '../src';
 import { applySchemaTransforms } from '@graphql-tools/utils';
@@ -10,7 +10,7 @@ describe('transform', () => {
   it('should handle composition functions from external modules', async () => {
     const transform = new ResolversCompositionTransform({
       cache: new InMemoryLRUCache(),
-      hooks: new EventEmitter() as any,
+      pubsub: new PubSub(),
       config: [
         {
           resolver: 'Query.foo',
@@ -45,7 +45,7 @@ describe('transform', () => {
     const composer: ResolversComposition = next => (root, args, context, info) => 'FOO';
     const transform = new ResolversCompositionTransform({
       cache: new InMemoryLRUCache(),
-      hooks: new EventEmitter() as any,
+      pubsub: new PubSub(),
       config: [
         {
           resolver: 'Query.foo',

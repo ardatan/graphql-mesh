@@ -1,9 +1,8 @@
-import { Hooks } from '@graphql-mesh/types';
 import { printSchema } from 'graphql';
 import OpenAPIHandler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { resolve } from 'path';
-import { EventEmitter } from 'events';
+import { PubSub } from 'graphql-subscriptions';
 
 describe('openapi', () => {
   it('should create a GraphQL schema from a simple local swagger file', async () => {
@@ -12,7 +11,7 @@ describe('openapi', () => {
       config: {
         source: resolve(__dirname, './fixtures/instagram.json'),
       },
-      hooks: new EventEmitter() as Hooks,
+      pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
     });
     const source = await handler.getMeshSource();

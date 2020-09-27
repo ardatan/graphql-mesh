@@ -1,14 +1,14 @@
 import PrefixTransform from '../src';
 import { buildSchema, printSchema, GraphQLSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { Hooks } from '@graphql-mesh/types';
-import { EventEmitter } from 'events';
+import { MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from 'graphql-subscriptions';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('prefix', () => {
   let schema: GraphQLSchema;
   let cache: InMemoryLRUCache;
-  let hooks: Hooks;
+  let pubsub: MeshPubSub;
 
   beforeEach(() => {
     schema = buildSchema(/* GraphQL */ `
@@ -21,7 +21,7 @@ describe('prefix', () => {
       }
     `);
     cache = new InMemoryLRUCache();
-    hooks = new EventEmitter() as Hooks;
+    pubsub = new PubSub();
   });
 
   it('should prefix all schema types when prefix is specified explicitly', () => {
@@ -33,7 +33,7 @@ describe('prefix', () => {
             value: 'T_',
           },
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });
@@ -52,7 +52,7 @@ describe('prefix', () => {
             value: 'T_',
           },
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });
@@ -69,7 +69,7 @@ describe('prefix', () => {
           apiName: 'MyApi',
           config: {},
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });
@@ -89,7 +89,7 @@ describe('prefix', () => {
             ignore: ['User'],
           },
           cache,
-          hooks,
+          pubsub,
         }),
       ],
     });

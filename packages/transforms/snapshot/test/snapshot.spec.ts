@@ -4,8 +4,8 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql } from 'graphql';
 import { readJSON, remove, mkdir } from 'fs-extra';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { Hooks } from '@graphql-mesh/types';
-import { EventEmitter } from 'events';
+import { MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from 'graphql-subscriptions';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { wrapSchema } from '@graphql-tools/wrap';
@@ -28,9 +28,9 @@ describe('snapshot', () => {
       address: 'Moon',
     },
   ];
-  let hooks: Hooks;
+  let pubsub: MeshPubSub;
   beforeEach(async () => {
-    hooks = new EventEmitter() as Hooks;
+    pubsub = new PubSub();
     await mkdir(outputDir);
   });
   afterEach(async () => {
@@ -64,7 +64,7 @@ describe('snapshot', () => {
             outputDir,
           },
           cache: new InMemoryLRUCache(),
-          hooks,
+          pubsub,
         }),
       ],
     });
@@ -126,7 +126,7 @@ describe('snapshot', () => {
             outputDir,
           },
           cache: new InMemoryLRUCache(),
-          hooks,
+          pubsub,
         }),
       ],
     });
