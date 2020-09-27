@@ -8,10 +8,6 @@ sources:
           Authorization: Bearer ${YOUTRACK_TOKEN}
         operationHeaders:
           Authorization: Bearer ${YOUTRACK_TOKEN}
-        # `license` field is not valid
-        # But it's ok because all YouTrack schemas are in the same structure
-        # So using this option is safe.
-        skipSchemaValidation: true
     transforms:
       # Each YouTrack needs `fields` query parameter
       # So thanks to GraphQL, we know which fields client needs

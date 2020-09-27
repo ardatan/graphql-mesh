@@ -173,7 +173,7 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
   ajv.addMetaSchema(metaSchema);
   const isValid = ajv.validate(getJsonSchema(), config);
   if (!isValid) {
-    throw new Error(`GraphQL Mesh Configuration is not valid: ${ajv.errorsText()}`);
+    console.warn(`GraphQL Mesh Configuration is not valid:\n${ajv.errorsText()}`);
   }
 }
 
