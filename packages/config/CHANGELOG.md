@@ -1,5 +1,16 @@
 # @graphql-mesh/config
 
+## 0.10.1
+
+### Patch Changes
+
+- 405cec23: enhance(types): improve typings for PubSub
+- Updated dependencies [405cec23]
+  - @graphql-mesh/types@0.11.1
+  - @graphql-mesh/cache-inmemory-lru@0.4.8
+  - @graphql-mesh/merger-stitching@0.6.7
+  - @graphql-mesh/runtime@0.7.1
+
 ## 0.10.0
 
 ### Minor Changes

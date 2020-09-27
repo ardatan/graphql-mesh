@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.11.1
+
+### Patch Changes
+
+- 405cec23: enhance(types): improve typings for PubSub
+
 ## 0.11.0
 
 ### Minor Changes

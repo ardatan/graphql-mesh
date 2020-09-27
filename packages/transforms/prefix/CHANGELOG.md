@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-prefix
 
+## 0.5.7
+
+### Patch Changes
+
+- 405cec23: enhance(types): improve typings for PubSub
+- Updated dependencies [405cec23]
+  - @graphql-mesh/types@0.11.1
+
 ## 0.5.6
 
 ### Patch Changes
