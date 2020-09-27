@@ -1,5 +1,16 @@
 # @graphql-mesh/config
 
+## 0.10.2
+
+### Patch Changes
+
+- 6d624576: fix(types): fix Any scalar type in json schema
+- Updated dependencies [6d624576]
+  - @graphql-mesh/types@0.11.2
+  - @graphql-mesh/cache-inmemory-lru@0.4.9
+  - @graphql-mesh/merger-stitching@0.6.8
+  - @graphql-mesh/runtime@0.7.2
+
 ## 0.10.1
 
 ### Patch Changes

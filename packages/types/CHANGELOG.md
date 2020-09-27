@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.11.2
+
+### Patch Changes
+
+- 6d624576: fix(types): fix Any scalar type in json schema
+
 ## 0.11.1
 
 ### Patch Changes
