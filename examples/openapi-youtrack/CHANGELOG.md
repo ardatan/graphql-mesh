@@ -1,5 +1,14 @@
 # openapi-youtrack
 
+## 0.5.13
+
+### Patch Changes
+
+- 6d624576: fix(types): fix Any scalar type in json schema
+  - @graphql-mesh/cli@0.9.3
+  - @graphql-mesh/openapi@0.7.2
+  - @graphql-mesh/transform-resolvers-composition@0.6.3
+
 ## 0.5.12
 
 ### Patch Changes
