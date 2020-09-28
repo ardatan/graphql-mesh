@@ -15,7 +15,6 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
-    name,
     `@graphql-mesh/${casedName}`,
     `@graphql-mesh/${casedName}-${casedType}`,
     `@graphql-mesh/${casedType}-${casedName}`,
@@ -24,6 +23,9 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
     `${casedType}-${casedName}`,
     casedType,
   ];
+  if (name.includes('-')) {
+    possibleNames.push(name);
+  }
   const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
 
   for (const moduleName of possibleModules) {
