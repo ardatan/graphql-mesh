@@ -26,7 +26,7 @@ export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, t
         ...source,
         schema,
       },
-      transforms
+      wrapTransforms
     );
   }
   typeDefs?.forEach(typeDef => {

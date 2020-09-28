@@ -6,6 +6,7 @@ import * as faker from 'faker';
 import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 
 export default class MockingTransform implements MeshTransform {
+  noWrap = true;
   constructor(private options: MeshTransformOptions<YamlConfig.MockingConfig>) {}
   transformSchema(schema: GraphQLSchema) {
     const { config } = this.options;
