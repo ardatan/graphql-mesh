@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-mock
 
+## 0.5.10
+
+### Patch Changes
+
+- 864ca71d: fix(mock): do not wrap the schema for mocking
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [2dedda3c]
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/types@0.11.3
+  - @graphql-mesh/utils@0.5.4
+
 ## 0.5.9
 
 ### Patch Changes

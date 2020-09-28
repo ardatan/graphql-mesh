@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 0.10.3
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [864ca71d]
+- Updated dependencies [2dedda3c]
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/merger-stitching@0.6.9
+  - @graphql-mesh/types@0.11.3
+  - @graphql-mesh/cache-inmemory-lru@0.4.10
+  - @graphql-mesh/runtime@0.7.3
+  - @graphql-mesh/utils@0.5.4
+
 ## 0.10.2
 
 ### Patch Changes

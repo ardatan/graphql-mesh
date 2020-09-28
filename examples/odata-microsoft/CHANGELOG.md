@@ -1,5 +1,15 @@
 # odata-microsoft-graph-example
 
+## 0.5.13
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/config@0.10.3
+  - @graphql-mesh/odata@0.5.9
+  - @graphql-mesh/runtime@0.7.3
+
 ## 0.5.12
 
 ### Patch Changes

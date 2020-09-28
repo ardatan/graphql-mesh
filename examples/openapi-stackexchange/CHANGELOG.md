@@ -1,5 +1,14 @@
 # openapi-stackexchange
 
+## 0.6.14
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/cli@0.9.4
+  - @graphql-mesh/openapi@0.7.3
+
 ## 0.6.13
 
 ### Patch Changes

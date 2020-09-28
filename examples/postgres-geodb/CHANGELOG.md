@@ -1,5 +1,19 @@
 # postgres-geodb-example
 
+## 0.5.13
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/config@0.10.3
+  - @graphql-mesh/cache-file@0.4.11
+  - @graphql-mesh/cli@0.9.4
+  - @graphql-mesh/graphql@0.6.4
+  - @graphql-mesh/postgraphile@0.6.3
+  - @graphql-mesh/runtime@0.7.3
+  - @graphql-mesh/transform-prefix@0.5.9
+
 ## 0.5.12
 
 ### Patch Changes

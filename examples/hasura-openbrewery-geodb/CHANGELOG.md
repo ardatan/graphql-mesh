@@ -1,5 +1,15 @@
 # hasura-openbrewery-geodb
 
+## 0.5.13
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [2dedda3c]
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/json-schema@0.6.3
+  - @graphql-mesh/cli@0.9.4
+
 ## 0.5.12
 
 ### Patch Changes

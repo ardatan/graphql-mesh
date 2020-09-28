@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-redis
 
+## 0.4.10
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [2dedda3c]
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/types@0.11.3
+
 ## 0.4.9
 
 ### Patch Changes
