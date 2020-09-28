@@ -1,5 +1,17 @@
 # openapi-react-weatherbit
 
+## 0.3.3
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [864ca71d]
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/merger-stitching@0.6.9
+  - @graphql-mesh/cache-localforage@0.4.10
+  - @graphql-mesh/openapi@0.7.3
+  - @graphql-mesh/runtime@0.7.3
+
 ## 0.3.2
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.11.3
+
+### Patch Changes
+
+- 2dedda3c: enhance(json-schema): support programmatic json schemas and improve caching
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+
 ## 0.11.2
 
 ### Patch Changes

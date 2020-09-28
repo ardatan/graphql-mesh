@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.9.4
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/config@0.10.3
+  - @graphql-mesh/runtime@0.7.3
+  - @graphql-mesh/utils@0.5.4
+
 ## 0.9.3
 
 ### Patch Changes

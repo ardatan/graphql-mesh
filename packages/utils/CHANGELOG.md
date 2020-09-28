@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.5.4
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+
 ## 0.5.3
 
 ### Patch Changes

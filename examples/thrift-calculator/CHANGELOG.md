@@ -1,5 +1,14 @@
 # thrift-calculator
 
+## 0.5.13
+
+### Patch Changes
+
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/cli@0.9.4
+  - @graphql-mesh/thrift@0.5.9
+
 ## 0.5.12
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # json-schema-example
 
+## 0.5.13
+
+### Patch Changes
+
+- 2dedda3c: enhance(json-schema): support programmatic json schemas and improve caching
+- a3b42cfd: fix(runtime): handle transforms correctly for single source
+- Updated dependencies [864ca71d]
+- Updated dependencies [2dedda3c]
+- Updated dependencies [a3b42cfd]
+  - @graphql-mesh/transform-mock@0.5.10
+  - @graphql-mesh/json-schema@0.6.3
+  - @graphql-mesh/cli@0.9.4
+
 ## 0.5.12
 
 ### Patch Changes
