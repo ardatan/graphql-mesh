@@ -18,7 +18,11 @@ export default class FilterTransform implements MeshTransform {
     const { config } = options;
     for (const filter of config) {
       const [typeName, fieldGlob] = filter.split('.');
-      const isMatch = matcher(fieldGlob.trim());
+      let fixedFieldGlob = fieldGlob;
+      if (fixedFieldGlob.includes('{') && !fixedFieldGlob.includes(',')) {
+        fixedFieldGlob = fieldGlob.replace('{', '').replace('}', '');
+      }
+      const isMatch = matcher(fixedFieldGlob.trim());
       this.transforms.push(
         new FilterRootFields((rootTypeName, rootFieldName) => {
           if (rootTypeName === typeName) {

@@ -95,4 +95,57 @@ type Query {
 }`.trim()
     );
   });
+  it('should filter out fields if array syntax is used only with one element', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        a: String
+        b: String
+        c: String
+        d: String
+        e: String
+      }
+
+      type Book {
+        id: ID
+        name: String
+        authorId: ID
+        author: User
+      }
+
+      type Query {
+        user: User
+        admin: User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['User.{id,username}', 'Query.!{admin}', 'Book.{id}'],
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  username: String
+}
+
+type Book {
+  id: ID
+}
+
+type Query {
+  user: User
+}
+`.trim()
+    );
+  });
 });
