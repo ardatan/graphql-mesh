@@ -33,6 +33,7 @@ additionalTypeDefs: |
   extend type Company {
     employers: [User]
   }
+
 transforms:
   - mock:
       mocks:

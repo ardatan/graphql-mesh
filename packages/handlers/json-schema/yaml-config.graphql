@@ -35,12 +35,12 @@ type JsonSchemaOperation {
   type: JsonSchemaOperationType!
   method: JsonSchemaOperationMethod!
 
-  requestSchema: String
-  requestSample: String
+  requestSchema: Any
+  requestSample: Any
   requestTypeName: String
 
-  responseSample: String
-  responseSchema: String
+  responseSample: Any
+  responseSchema: Any
   responseTypeName: String
 
   headers: JSON

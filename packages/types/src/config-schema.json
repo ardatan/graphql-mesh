@@ -629,19 +629,51 @@
           "description": "Allowed values: GET, DELETE, POST, PUT, PATCH"
         },
         "requestSchema": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "requestSample": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "requestTypeName": {
           "type": "string"
         },
         "responseSample": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "responseSchema": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "responseTypeName": {
           "type": "string"

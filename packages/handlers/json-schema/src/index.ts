@@ -6,7 +6,7 @@ import AggregateError from 'aggregate-error';
 import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
-import { pathExists, writeJSON } from 'fs-extra';
+import { pathExists, stat, writeJSON } from 'fs-extra';
 import toJsonSchema from 'to-json-schema';
 import {
   GraphQLJSON,
@@ -22,9 +22,14 @@ import {
   GraphQLIPv6,
 } from 'graphql-scalars';
 
+type CachedSchema = {
+  timestamp: number;
+  schema: any;
+};
+
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
-  private cache: KeyValueCache;
+  private cache: KeyValueCache<any>;
   private pubsub: MeshPubSub;
   constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
     this.config = config;
@@ -222,8 +227,35 @@ export default class JsonSchemaHandler implements MeshHandler {
     };
   }
 
+  private async isGeneratedJSONSchemaValid({ samplePath, schemaPath }: { samplePath: string; schemaPath?: string }) {
+    if (schemaPath || (!isUrl(schemaPath) && (await pathExists(schemaPath)))) {
+      const [schemaFileStat, sampleFileStat] = await Promise.all([stat(schemaPath), stat(samplePath)]);
+      if (schemaFileStat.mtime > sampleFileStat.mtime) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private async getValidCachedJSONSchema(samplePath: string) {
+    const cachedSchema: CachedSchema = await this.cache.get(samplePath);
+    if (cachedSchema) {
+      const sampleFileStat = await stat(samplePath);
+      if (cachedSchema.timestamp > sampleFileStat.mtime.getTime()) {
+        return cachedSchema.schema;
+      } else {
+        this.cache.delete(samplePath);
+      }
+    }
+    return null;
+  }
+
   private async generateJsonSchemaFromSample({ samplePath, schemaPath }: { samplePath: string; schemaPath?: string }) {
-    if (!schemaPath || (!isUrl(schemaPath) && !(await pathExists(schemaPath)))) {
+    if (!(await this.isGeneratedJSONSchemaValid({ samplePath, schemaPath }))) {
+      const cachedSample = await this.getValidCachedJSONSchema(samplePath);
+      if (cachedSample) {
+        return cachedSample;
+      }
       const sample = await readFileOrUrlWithCache(samplePath, this.cache);
       const schema = toJsonSchema(sample, {
         required: false,
@@ -238,7 +270,13 @@ export default class JsonSchemaHandler implements MeshHandler {
         },
       });
       if (schemaPath) {
-        await writeJSON(schemaPath, schema);
+        writeJSON(schemaPath, schema);
+      } else {
+        const cachedSchema = {
+          timestamp: Date.now(),
+          schema,
+        };
+        this.cache.set(samplePath, cachedSchema);
       }
       return schema;
     }
