@@ -382,7 +382,7 @@
           "type": "integer"
         }
       },
-      "required": ["type", "field", "targetSource", "targetMethod", "args"]
+      "required": ["type", "field", "targetSource", "targetMethod"]
     },
     "AdditionalSubscriptionObject": {
       "additionalProperties": false,

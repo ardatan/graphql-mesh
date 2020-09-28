@@ -61,7 +61,7 @@ type AdditionalStitchingResolverObject {
   requiredSelectionSet: String
   targetSource: String!
   targetMethod: String!
-  args: JSON!
+  args: JSON
   returnData: String
   resultSelectedFields: JSON
   resultSelectionSet: String

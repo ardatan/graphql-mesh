@@ -16,9 +16,11 @@
     "nodemon": "2.0.4"
   },
   "dependencies": {
-    "apollo-server": "2.18.1",
+    "apollo-server": "2.17.0",
     "@graphql-mesh/cli": "0.9.3",
     "@graphql-mesh/merger-federation": "0.6.2",
+    "@graphql-mesh/transform-federation": "0.4.10",
+    "@graphql-mesh/graphql": "0.6.3",
     "graphql": "15.3.0"
   }
 }

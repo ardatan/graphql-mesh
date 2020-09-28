@@ -968,7 +968,7 @@ export interface AdditionalStitchingResolverObject {
   requiredSelectionSet?: string;
   targetSource: string;
   targetMethod: string;
-  args: {
+  args?: {
     [k: string]: any;
   };
   returnData?: string;

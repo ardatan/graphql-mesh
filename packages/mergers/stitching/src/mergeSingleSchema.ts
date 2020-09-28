@@ -14,33 +14,40 @@ export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, t
 
   let wrapTransforms: MeshTransform[] = [];
   let noWrapTransforms: MeshTransform[] = [];
-  if (transforms?.length || source.transforms?.length) {
-    const transformGroups = groupTransforms([...(transforms || []), ...(source.transforms || [])]);
+
+  if (transforms?.length) {
+    const transformGroups = groupTransforms(transforms);
     wrapTransforms = transformGroups.wrapTransforms;
     noWrapTransforms = transformGroups.noWrapTransforms;
   }
 
-  if (source.executor || source.subscriber || wrapTransforms.length) {
-    schema = wrapSchema(
-      {
-        ...source,
-        schema,
-      },
-      wrapTransforms
-    );
-  }
-  typeDefs?.forEach(typeDef => {
-    schema = extendSchema(schema, typeDef);
-  });
-  if (resolvers) {
-    schema = addResolversToSchema({
+  if (source.executor || source.subscriber || source.transforms.length) {
+    const firstRoundTransforms = [...source.transforms];
+    if (!typeDefs && !resolvers) {
+      firstRoundTransforms.push(...wrapTransforms, ...noWrapTransforms);
+    }
+    schema = wrapSchema({
+      ...source,
       schema,
-      resolvers,
-      updateResolversInPlace: true,
+      transforms: firstRoundTransforms,
     });
   }
-  if (noWrapTransforms.length) {
-    schema = applySchemaTransforms(schema, noWrapTransforms);
+  if (typeDefs || resolvers) {
+    typeDefs?.forEach(typeDef => {
+      schema = extendSchema(schema, typeDef);
+    });
+    if (resolvers) {
+      schema = addResolversToSchema({
+        schema,
+        resolvers,
+        updateResolversInPlace: true,
+      });
+    }
+    if (wrapTransforms.length) {
+      schema = wrapSchema(schema, [...wrapTransforms, ...noWrapTransforms]);
+    } else if (noWrapTransforms.length) {
+      schema = applySchemaTransforms(schema, noWrapTransforms);
+    }
   }
   schema.extensions = schema.extensions || {};
   Object.defineProperty(schema.extensions, 'sourceMap', {
