@@ -124,7 +124,7 @@ type Query {
       schema,
       transforms: [
         new FilterSchemaTransform({
-          config: ['User.{id,username}', 'Query.!{admin}', 'Book.{id}'],
+          config: ['User.{id, username}', 'Query.!{admin}', 'Book.{id}'],
           cache,
           pubsub,
         }),

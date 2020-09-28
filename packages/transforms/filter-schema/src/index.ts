@@ -22,6 +22,7 @@ export default class FilterTransform implements MeshTransform {
       if (fixedFieldGlob.includes('{') && !fixedFieldGlob.includes(',')) {
         fixedFieldGlob = fieldGlob.replace('{', '').replace('}', '');
       }
+      fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
       const isMatch = matcher(fixedFieldGlob.trim());
       this.transforms.push(
         new FilterRootFields((rootTypeName, rootFieldName) => {
