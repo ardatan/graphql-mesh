@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.6.4
+
+### Patch Changes
+
+- 463932c9: fix(filter-schema): handle array globs with a single element correctly
+- da1d8d78: fix(filter-schema): trim glob elements
+
 ## 0.6.3
 
 ### Patch Changes
