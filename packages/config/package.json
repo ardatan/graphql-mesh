@@ -23,7 +23,7 @@
     "@graphql-tools/merge": "6.2.3",
     "@graphql-tools/utils": "6.2.2",
     "@graphql-tools/load": "6.2.3",
-    "@graphql-tools/graphql-file-loader": "6.2.2",
+    "@graphql-tools/graphql-file-loader": "6.2.3",
     "graphql-subscriptions": "1.1.0",
     "param-case": "3.0.3",
     "lodash": "4.17.20"
