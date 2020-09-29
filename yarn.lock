@@ -2360,82 +2360,6 @@
     "@francoischalifour/autocomplete-preset-algolia" "^1.0.0-alpha.28"
     algoliasearch "^4.0.0"
 
-"@docusaurus/core@2.0.0-alpha.61":
-  version "2.0.0-alpha.61"
-  resolved "https://registry.yarnpkg.com/@docusaurus/core/-/core-2.0.0-alpha.61.tgz#4b736d36687bd12fb9399f9ce352e87da4bf8fe7"
-  integrity sha512-Ev0v5J7L/Pm3VJMdhhyR8I9tUQo8MhVRUUT+Bf0W3TMYG6jp2cIXE88yCfxOsTDducS7EMrdtUXfvePGH9CE/A==
-  dependencies:
-    "@babel/core" "^7.9.0"
-    "@babel/plugin-proposal-nullish-coalescing-operator" "^7.10.1"
-    "@babel/plugin-proposal-optional-chaining" "^7.10.3"
-    "@babel/plugin-syntax-dynamic-import" "^7.8.3"
-    "@babel/plugin-transform-runtime" "^7.9.0"
-    "@babel/preset-env" "^7.9.0"
-    "@babel/preset-react" "^7.9.4"
-    "@babel/preset-typescript" "^7.9.0"
-    "@babel/runtime" "^7.9.2"
-    "@babel/runtime-corejs3" "^7.10.4"
-    "@docusaurus/types" "^2.0.0-alpha.61"
-    "@docusaurus/utils" "^2.0.0-alpha.61"
-    "@endiliey/static-site-generator-webpack-plugin" "^4.0.0"
-    "@hapi/joi" "^17.1.1"
-    "@svgr/webpack" "^5.4.0"
-    babel-loader "^8.1.0"
-    babel-plugin-dynamic-import-node "^2.3.0"
-    boxen "^4.2.0"
-    cache-loader "^4.1.0"
-    chalk "^3.0.0"
-    chokidar "^3.3.0"
-    commander "^4.0.1"
-    copy-webpack-plugin "^5.0.5"
-    core-js "^2.6.5"
-    css-loader "^3.4.2"
-    del "^5.1.0"
-    detect-port "^1.3.0"
-    eta "^1.1.1"
-    express "^4.17.1"
-    file-loader "^6.0.0"
-    fs-extra "^8.1.0"
-    globby "^10.0.1"
-    html-minifier-terser "^5.0.5"
-    html-tags "^3.1.0"
-    html-webpack-plugin "^4.0.4"
-    import-fresh "^3.2.1"
-    inquirer "^7.2.0"
-    is-root "^2.1.0"
-    lodash "^4.5.2"
-    lodash.has "^4.5.2"
-    lodash.isplainobject "^4.0.6"
-    lodash.isstring "^4.0.1"
-    mini-css-extract-plugin "^0.8.0"
-    nprogress "^0.2.0"
-    null-loader "^3.0.0"
-    optimize-css-assets-webpack-plugin "^5.0.3"
-    pnp-webpack-plugin "^1.6.4"
-    postcss-loader "^3.0.0"
-    postcss-preset-env "^6.7.0"
-    react-dev-utils "^10.2.1"
-    react-helmet "^6.0.0-beta"
-    react-loadable "^5.5.0"
-    react-loadable-ssr-addon "^0.2.3"
-    react-router "^5.1.2"
-    react-router-config "^5.1.1"
-    react-router-dom "^5.1.2"
-    resolve-pathname "^3.0.0"
-    semver "^6.3.0"
-    serve-handler "^6.1.3"
-    shelljs "^0.8.4"
-    std-env "^2.2.1"
-    terser-webpack-plugin "^2.3.5"
-    update-notifier "^4.1.0"
-    url-loader "^4.1.0"
-    wait-file "^1.0.5"
-    webpack "^4.41.2"
-    webpack-bundle-analyzer "^3.6.1"
-    webpack-dev-server "^3.11.0"
-    webpack-merge "^4.2.2"
-    webpackbar "^4.0.0"
-
 "@docusaurus/core@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
   resolved "https://registry.yarnpkg.com/@docusaurus/core/-/core-2.0.0-alpha.64.tgz#08031993fcfff78b395091ec06ed1ab38c06e689"
@@ -2538,7 +2462,7 @@
     unist-util-visit "^2.0.2"
     url-loader "^4.1.0"
 
-"@docusaurus/plugin-content-blog@2.0.0-alpha.64", "@docusaurus/plugin-content-blog@^2.0.0-alpha.60":
+"@docusaurus/plugin-content-blog@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
   resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-blog/-/plugin-content-blog-2.0.0-alpha.64.tgz#58242a77cc1258b39cbaf9d540aad3c963f7b7db"
   integrity sha512-BfQFgosFXxGdmsY9jzzXYA4JvPoqCd3QQtRx8RP/BFwiUgRZK9l0hD8yEBJb0f4m2KU0ZNsMT4VbAoimzCpGEA==
@@ -2559,7 +2483,7 @@
     remark-admonitions "^1.2.1"
     webpack "^4.44.1"
 
-"@docusaurus/plugin-content-docs@2.0.0-alpha.64", "@docusaurus/plugin-content-docs@^2.0.0-alpha.60":
+"@docusaurus/plugin-content-docs@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
   resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-docs/-/plugin-content-docs-2.0.0-alpha.64.tgz#a0508893395ae1eac44bdf9c99bdd5ef5010cf45"
   integrity sha512-3O2tHZd0OKLuGPfMTo3R5iMX/tM+QxB81uN0YBgyhwV7kKL46LpE+AYKYqk+oSCH0MfMBREcLgEyni4KgJNbHg==
@@ -2587,7 +2511,7 @@
     utility-types "^3.10.0"
     webpack "^4.44.1"
 
-"@docusaurus/plugin-content-pages@2.0.0-alpha.64", "@docusaurus/plugin-content-pages@^2.0.0-alpha.60":
+"@docusaurus/plugin-content-pages@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
   resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-pages/-/plugin-content-pages-2.0.0-alpha.64.tgz#78b99fed15eee099d7fef34a13a62d24cd5eebe5"
   integrity sha512-dPtFSELCRgZeB3bhEkTurY4yRKdpV0xjLhBejsdhCmwtsjQ4jf9ouzNuD55zSKUdAt7t4Magj8OqI51Z2AlFkQ==
@@ -2605,9 +2529,9 @@
     slash "^3.0.0"
     webpack "^4.44.1"
 
-"@docusaurus/plugin-debug@^2.0.0-alpha.60":
+"@docusaurus/plugin-debug@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-debug/-/plugin-debug-2.0.0-alpha.64.tgz#36074e82d2a2584c09df35ead1b6df380c122189"
+  resolved "https://registry.npmjs.org/@docusaurus/plugin-debug/-/plugin-debug-2.0.0-alpha.64.tgz#36074e82d2a2584c09df35ead1b6df380c122189"
   integrity sha512-3RKtMyQQN1NQaZoCxMnTbbGw7ldG/IT49fDi8jz8UJy8U/lN+cxAI2Js8EqI4EzkZs+pjazqdXDrW8BM33tiBA==
   dependencies:
     "@docusaurus/core" "2.0.0-alpha.64"
@@ -2615,23 +2539,23 @@
     "@docusaurus/utils" "2.0.0-alpha.64"
     react-json-view "^1.19.1"
 
-"@docusaurus/plugin-google-analytics@^2.0.0-alpha.60":
+"@docusaurus/plugin-google-analytics@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-analytics/-/plugin-google-analytics-2.0.0-alpha.64.tgz#c0e0a7cf1ec457a07a90be9593f823a432e264ab"
+  resolved "https://registry.npmjs.org/@docusaurus/plugin-google-analytics/-/plugin-google-analytics-2.0.0-alpha.64.tgz#c0e0a7cf1ec457a07a90be9593f823a432e264ab"
   integrity sha512-WiyF+OQYo/PqM376BObA5Js9eDAlYD4rMf3D7B59WKpCg+f532EABFFuurgkHAE7O73j6bbCpQ5HuunOgxvpDw==
   dependencies:
     "@docusaurus/core" "2.0.0-alpha.64"
 
-"@docusaurus/plugin-google-gtag@^2.0.0-alpha.60":
+"@docusaurus/plugin-google-gtag@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-gtag/-/plugin-google-gtag-2.0.0-alpha.64.tgz#18b3ff00b7151b8943443b231816dafd94198918"
+  resolved "https://registry.npmjs.org/@docusaurus/plugin-google-gtag/-/plugin-google-gtag-2.0.0-alpha.64.tgz#18b3ff00b7151b8943443b231816dafd94198918"
   integrity sha512-5wz4ciVBXKHyz5kkyDaDLAoSSMabuNBW413hDjh0CD4JdhJzyADW6FKypTx1dd3wELsEOUFWE+ltkKI/AA1cog==
   dependencies:
     "@docusaurus/core" "2.0.0-alpha.64"
 
-"@docusaurus/plugin-sitemap@^2.0.0-alpha.60":
+"@docusaurus/plugin-sitemap@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-sitemap/-/plugin-sitemap-2.0.0-alpha.64.tgz#02290b9f992169574e07df97effbe43f2373ab45"
+  resolved "https://registry.npmjs.org/@docusaurus/plugin-sitemap/-/plugin-sitemap-2.0.0-alpha.64.tgz#02290b9f992169574e07df97effbe43f2373ab45"
   integrity sha512-7IoR9/CpfA0IOMbORIz7esQUTETB6w6iRkmdGNnnvpi9onvm7vQe9LpLCDOHEFuip1GNZO9XSlyYmG9J7xqjLg==
   dependencies:
     "@docusaurus/core" "2.0.0-alpha.64"
@@ -2640,24 +2564,25 @@
     fs-extra "^8.1.0"
     sitemap "^3.2.2"
 
-"@docusaurus/preset-classic@2.0.0-alpha.60":
-  version "2.0.0-alpha.60"
-  resolved "https://registry.yarnpkg.com/@docusaurus/preset-classic/-/preset-classic-2.0.0-alpha.60.tgz#907e548399ed3f39dbe2298084f54bab40127cff"
-  integrity sha512-OVweILbKS/2iQafTT9qkkZQW1BBX6N4XccMOv1PcFQqwXdmM294Oo0VxYwSus67tOmdljpVCeeRWq/PY4jWR0g==
-  dependencies:
-    "@docusaurus/plugin-content-blog" "^2.0.0-alpha.60"
-    "@docusaurus/plugin-content-docs" "^2.0.0-alpha.60"
-    "@docusaurus/plugin-content-pages" "^2.0.0-alpha.60"
-    "@docusaurus/plugin-debug" "^2.0.0-alpha.60"
-    "@docusaurus/plugin-google-analytics" "^2.0.0-alpha.60"
-    "@docusaurus/plugin-google-gtag" "^2.0.0-alpha.60"
-    "@docusaurus/plugin-sitemap" "^2.0.0-alpha.60"
-    "@docusaurus/theme-classic" "^2.0.0-alpha.60"
-    "@docusaurus/theme-search-algolia" "^2.0.0-alpha.60"
-
-"@docusaurus/theme-classic@^2.0.0-alpha.60":
+"@docusaurus/preset-classic@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-classic/-/theme-classic-2.0.0-alpha.64.tgz#ace073ef48d1184e53ab4097a19779ece7b20fff"
+  resolved "https://registry.npmjs.org/@docusaurus/preset-classic/-/preset-classic-2.0.0-alpha.64.tgz#ce141f909a2071cf7b2736a3c35d9eb6226d61e2"
+  integrity sha512-j2L7WzLXRLQyDub/hALNZGfL/mNMuMpG+GhWgfHWi/Fb8BRppGMikVp9VqrnlJ8D8OWhkkVcruUkjFO0ODfXmQ==
+  dependencies:
+    "@docusaurus/core" "2.0.0-alpha.64"
+    "@docusaurus/plugin-content-blog" "2.0.0-alpha.64"
+    "@docusaurus/plugin-content-docs" "2.0.0-alpha.64"
+    "@docusaurus/plugin-content-pages" "2.0.0-alpha.64"
+    "@docusaurus/plugin-debug" "2.0.0-alpha.64"
+    "@docusaurus/plugin-google-analytics" "2.0.0-alpha.64"
+    "@docusaurus/plugin-google-gtag" "2.0.0-alpha.64"
+    "@docusaurus/plugin-sitemap" "2.0.0-alpha.64"
+    "@docusaurus/theme-classic" "2.0.0-alpha.64"
+    "@docusaurus/theme-search-algolia" "2.0.0-alpha.64"
+
+"@docusaurus/theme-classic@2.0.0-alpha.64":
+  version "2.0.0-alpha.64"
+  resolved "https://registry.npmjs.org/@docusaurus/theme-classic/-/theme-classic-2.0.0-alpha.64.tgz#ace073ef48d1184e53ab4097a19779ece7b20fff"
   integrity sha512-w1wUCV9hQU45ZfbWrOknsRxUF+VMZpyALQHbEYCFJdOFxVUMwukDHchDd4rt8Ur0TJy3MIFMVTNoasuJwQCM4w==
   dependencies:
     "@docusaurus/core" "2.0.0-alpha.64"
@@ -2682,9 +2607,9 @@
     react-toggle "^4.1.1"
     use-onclickoutside "^0.3.1"
 
-"@docusaurus/theme-search-algolia@^2.0.0-alpha.60":
+"@docusaurus/theme-search-algolia@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-search-algolia/-/theme-search-algolia-2.0.0-alpha.64.tgz#6778c2ec050529355c4e96a35ddbd19d14731b8f"
+  resolved "https://registry.npmjs.org/@docusaurus/theme-search-algolia/-/theme-search-algolia-2.0.0-alpha.64.tgz#6778c2ec050529355c4e96a35ddbd19d14731b8f"
   integrity sha512-cxFOzxOoXC+UrfaZ65PqrvfEu8supZevcBzVhI8cD+TJGZmtHzys0XveSAYJORPqEm6abh+BdSDQY7Wn4nhqYA==
   dependencies:
     "@docsearch/react" "^1.0.0-alpha.27"
@@ -2697,7 +2622,7 @@
     eta "^1.1.1"
     lodash "^4.17.19"
 
-"@docusaurus/types@2.0.0-alpha.64", "@docusaurus/types@^2.0.0-alpha.61":
+"@docusaurus/types@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
   resolved "https://registry.yarnpkg.com/@docusaurus/types/-/types-2.0.0-alpha.64.tgz#62e42beb222f7a73a5ec1218426dcdbe2ccb4294"
   integrity sha512-YBTRXHbZDWxGQ14ES62s5UnMA3MM9BuLS5EDseOPd8/GwMz6pws+N9QeLCUCEQQTbdTb2MZsQjdSGaHOMjbiEA==
@@ -2716,7 +2641,7 @@
     "@hapi/joi" "17.1.1"
     chalk "^3.0.0"
 
-"@docusaurus/utils@2.0.0-alpha.64", "@docusaurus/utils@^2.0.0-alpha.61":
+"@docusaurus/utils@2.0.0-alpha.64":
   version "2.0.0-alpha.64"
   resolved "https://registry.yarnpkg.com/@docusaurus/utils/-/utils-2.0.0-alpha.64.tgz#ed8da246504d68d4e817929806962cbee76e0b60"
   integrity sha512-rvRNTSNL0BQnO15/dZRO3MsZwcnglvm1aBl/9qbPVBVS82/VdoUB8YZ5QGrCQewXugQBkYqZU2cx+khDhNICvw==
@@ -6013,6 +5938,41 @@ babel-extract-comments@^1.0.0:
   dependencies:
     babylon "^6.18.0"
 
+babel-helper-evaluate-path@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/babel-helper-evaluate-path/-/babel-helper-evaluate-path-0.5.0.tgz#a62fa9c4e64ff7ea5cea9353174ef023a900a67c"
+  integrity sha512-mUh0UhS607bGh5wUMAQfOpt2JX2ThXMtppHRdRU1kL7ZLRWIXxoV2UIV1r2cAeeNeU1M5SB5/RSUgUxrK8yOkA==
+
+babel-helper-flip-expressions@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-helper-flip-expressions/-/babel-helper-flip-expressions-0.4.3.tgz#3696736a128ac18bc25254b5f40a22ceb3c1d3fd"
+  integrity sha1-NpZzahKKwYvCUlS19AoizrPB0/0=
+
+babel-helper-is-nodes-equiv@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.npmjs.org/babel-helper-is-nodes-equiv/-/babel-helper-is-nodes-equiv-0.0.1.tgz#34e9b300b1479ddd98ec77ea0bbe9342dfe39684"
+  integrity sha1-NOmzALFHnd2Y7HfqC76TQt/jloQ=
+
+babel-helper-is-void-0@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-helper-is-void-0/-/babel-helper-is-void-0-0.4.3.tgz#7d9c01b4561e7b95dbda0f6eee48f5b60e67313e"
+  integrity sha1-fZwBtFYee5Xb2g9u7kj1tg5nMT4=
+
+babel-helper-mark-eval-scopes@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-helper-mark-eval-scopes/-/babel-helper-mark-eval-scopes-0.4.3.tgz#d244a3bef9844872603ffb46e22ce8acdf551562"
+  integrity sha1-0kSjvvmESHJgP/tG4izorN9VFWI=
+
+babel-helper-remove-or-void@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-helper-remove-or-void/-/babel-helper-remove-or-void-0.4.3.tgz#a4f03b40077a0ffe88e45d07010dee241ff5ae60"
+  integrity sha1-pPA7QAd6D/6I5F0HAQ3uJB/1rmA=
+
+babel-helper-to-multiple-sequence-expressions@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/babel-helper-to-multiple-sequence-expressions/-/babel-helper-to-multiple-sequence-expressions-0.5.0.tgz#a3f924e3561882d42fcf48907aa98f7979a4588d"
+  integrity sha512-m2CvfDW4+1qfDdsrtf4dwOslQC3yhbgyBFptncp4wvtdrDHqueW7slsYv4gArie056phvQFhT2nRcGS4bnm6mA==
+
 babel-jest@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-24.9.0.tgz#3fc327cb8467b89d14d7bc70e315104a783ccd54"
@@ -6120,6 +6080,82 @@ babel-plugin-macros@2.8.0:
     cosmiconfig "^6.0.0"
     resolve "^1.12.0"
 
+babel-plugin-minify-builtins@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-builtins/-/babel-plugin-minify-builtins-0.5.0.tgz#31eb82ed1a0d0efdc31312f93b6e4741ce82c36b"
+  integrity sha512-wpqbN7Ov5hsNwGdzuzvFcjgRlzbIeVv1gMIlICbPj0xkexnfoIDe7q+AZHMkQmAE/F9R5jkrB6TLfTegImlXag==
+
+babel-plugin-minify-constant-folding@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-constant-folding/-/babel-plugin-minify-constant-folding-0.5.0.tgz#f84bc8dbf6a561e5e350ff95ae216b0ad5515b6e"
+  integrity sha512-Vj97CTn/lE9hR1D+jKUeHfNy+m1baNiJ1wJvoGyOBUx7F7kJqDZxr9nCHjO/Ad+irbR3HzR6jABpSSA29QsrXQ==
+  dependencies:
+    babel-helper-evaluate-path "^0.5.0"
+
+babel-plugin-minify-dead-code-elimination@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-dead-code-elimination/-/babel-plugin-minify-dead-code-elimination-0.5.1.tgz#1a0c68e44be30de4976ca69ffc535e08be13683f"
+  integrity sha512-x8OJOZIrRmQBcSqxBcLbMIK8uPmTvNWPXH2bh5MDCW1latEqYiRMuUkPImKcfpo59pTUB2FT7HfcgtG8ZlR5Qg==
+  dependencies:
+    babel-helper-evaluate-path "^0.5.0"
+    babel-helper-mark-eval-scopes "^0.4.3"
+    babel-helper-remove-or-void "^0.4.3"
+    lodash "^4.17.11"
+
+babel-plugin-minify-flip-comparisons@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-flip-comparisons/-/babel-plugin-minify-flip-comparisons-0.4.3.tgz#00ca870cb8f13b45c038b3c1ebc0f227293c965a"
+  integrity sha1-AMqHDLjxO0XAOLPB68DyJyk8llo=
+  dependencies:
+    babel-helper-is-void-0 "^0.4.3"
+
+babel-plugin-minify-guarded-expressions@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-guarded-expressions/-/babel-plugin-minify-guarded-expressions-0.4.4.tgz#818960f64cc08aee9d6c75bec6da974c4d621135"
+  integrity sha512-RMv0tM72YuPPfLT9QLr3ix9nwUIq+sHT6z8Iu3sLbqldzC1Dls8DPCywzUIzkTx9Zh1hWX4q/m9BPoPed9GOfA==
+  dependencies:
+    babel-helper-evaluate-path "^0.5.0"
+    babel-helper-flip-expressions "^0.4.3"
+
+babel-plugin-minify-infinity@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-infinity/-/babel-plugin-minify-infinity-0.4.3.tgz#dfb876a1b08a06576384ef3f92e653ba607b39ca"
+  integrity sha1-37h2obCKBldjhO8/kuZTumB7Oco=
+
+babel-plugin-minify-mangle-names@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-mangle-names/-/babel-plugin-minify-mangle-names-0.5.0.tgz#bcddb507c91d2c99e138bd6b17a19c3c271e3fd3"
+  integrity sha512-3jdNv6hCAw6fsX1p2wBGPfWuK69sfOjfd3zjUXkbq8McbohWy23tpXfy5RnToYWggvqzuMOwlId1PhyHOfgnGw==
+  dependencies:
+    babel-helper-mark-eval-scopes "^0.4.3"
+
+babel-plugin-minify-numeric-literals@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-numeric-literals/-/babel-plugin-minify-numeric-literals-0.4.3.tgz#8e4fd561c79f7801286ff60e8c5fd9deee93c0bc"
+  integrity sha1-jk/VYcefeAEob/YOjF/Z3u6TwLw=
+
+babel-plugin-minify-replace@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-replace/-/babel-plugin-minify-replace-0.5.0.tgz#d3e2c9946c9096c070efc96761ce288ec5c3f71c"
+  integrity sha512-aXZiaqWDNUbyNNNpWs/8NyST+oU7QTpK7J9zFEFSA0eOmtUNMU3fczlTTTlnCxHmq/jYNFEmkkSG3DDBtW3Y4Q==
+
+babel-plugin-minify-simplify@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-simplify/-/babel-plugin-minify-simplify-0.5.1.tgz#f21613c8b95af3450a2ca71502fdbd91793c8d6a"
+  integrity sha512-OSYDSnoCxP2cYDMk9gxNAed6uJDiDz65zgL6h8d3tm8qXIagWGMLWhqysT6DY3Vs7Fgq7YUDcjOomhVUb+xX6A==
+  dependencies:
+    babel-helper-evaluate-path "^0.5.0"
+    babel-helper-flip-expressions "^0.4.3"
+    babel-helper-is-nodes-equiv "^0.0.1"
+    babel-helper-to-multiple-sequence-expressions "^0.5.0"
+
+babel-plugin-minify-type-constructors@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-plugin-minify-type-constructors/-/babel-plugin-minify-type-constructors-0.4.3.tgz#1bc6f15b87f7ab1085d42b330b717657a2156500"
+  integrity sha1-G8bxW4f3qxCF1CszC3F2V6IVZQA=
+  dependencies:
+    babel-helper-is-void-0 "^0.4.3"
+
 babel-plugin-named-asset-import@^0.3.6:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/babel-plugin-named-asset-import/-/babel-plugin-named-asset-import-0.3.6.tgz#c9750a1b38d85112c9e166bf3ef7c5dbc605f4be"
@@ -6135,6 +6171,26 @@ babel-plugin-syntax-trailing-function-commas@^7.0.0-beta.0:
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-trailing-function-commas/-/babel-plugin-syntax-trailing-function-commas-7.0.0-beta.0.tgz#aa213c1435e2bffeb6fca842287ef534ad05d5cf"
   integrity sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ==
 
+babel-plugin-transform-inline-consecutive-adds@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-inline-consecutive-adds/-/babel-plugin-transform-inline-consecutive-adds-0.4.3.tgz#323d47a3ea63a83a7ac3c811ae8e6941faf2b0d1"
+  integrity sha1-Mj1Ho+pjqDp6w8gRro5pQfrysNE=
+
+babel-plugin-transform-member-expression-literals@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-member-expression-literals/-/babel-plugin-transform-member-expression-literals-6.9.4.tgz#37039c9a0c3313a39495faac2ff3a6b5b9d038bf"
+  integrity sha1-NwOcmgwzE6OUlfqsL/OmtbnQOL8=
+
+babel-plugin-transform-merge-sibling-variables@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-merge-sibling-variables/-/babel-plugin-transform-merge-sibling-variables-6.9.4.tgz#85b422fc3377b449c9d1cde44087203532401dae"
+  integrity sha1-hbQi/DN3tEnJ0c3kQIcgNTJAHa4=
+
+babel-plugin-transform-minify-booleans@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-minify-booleans/-/babel-plugin-transform-minify-booleans-6.9.4.tgz#acbb3e56a3555dd23928e4b582d285162dd2b198"
+  integrity sha1-rLs+VqNVXdI5KOS1gtKFFi3SsZg=
+
 babel-plugin-transform-object-rest-spread@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.26.0.tgz#0f36692d50fef6b7e2d4b3ac1478137a963b7b06"
@@ -6143,10 +6199,49 @@ babel-plugin-transform-object-rest-spread@^6.26.0:
     babel-plugin-syntax-object-rest-spread "^6.8.0"
     babel-runtime "^6.26.0"
 
+babel-plugin-transform-property-literals@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-property-literals/-/babel-plugin-transform-property-literals-6.9.4.tgz#98c1d21e255736573f93ece54459f6ce24985d39"
+  integrity sha1-mMHSHiVXNlc/k+zlRFn2ziSYXTk=
+  dependencies:
+    esutils "^2.0.2"
+
 babel-plugin-transform-react-remove-prop-types@0.4.24:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-react-remove-prop-types/-/babel-plugin-transform-react-remove-prop-types-0.4.24.tgz#f2edaf9b4c6a5fbe5c1d678bfb531078c1555f3a"
   integrity sha512-eqj0hVcJUR57/Ug2zE1Yswsw4LhuqqHhD+8v120T1cl3kjg76QwtyBrdIk4WVwK+lAhBJVYCd/v+4nc4y+8JsA==
+
+babel-plugin-transform-regexp-constructors@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-regexp-constructors/-/babel-plugin-transform-regexp-constructors-0.4.3.tgz#58b7775b63afcf33328fae9a5f88fbd4fb0b4965"
+  integrity sha1-WLd3W2OvzzMyj66aX4j71PsLSWU=
+
+babel-plugin-transform-remove-console@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-remove-console/-/babel-plugin-transform-remove-console-6.9.4.tgz#b980360c067384e24b357a588d807d3c83527780"
+  integrity sha1-uYA2DAZzhOJLNXpYjYB9PINSd4A=
+
+babel-plugin-transform-remove-debugger@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-remove-debugger/-/babel-plugin-transform-remove-debugger-6.9.4.tgz#42b727631c97978e1eb2d199a7aec84a18339ef2"
+  integrity sha1-QrcnYxyXl44estGZp67IShgznvI=
+
+babel-plugin-transform-remove-undefined@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-remove-undefined/-/babel-plugin-transform-remove-undefined-0.5.0.tgz#80208b31225766c630c97fa2d288952056ea22dd"
+  integrity sha512-+M7fJYFaEE/M9CXa0/IRkDbiV3wRELzA1kKQFCJ4ifhrzLKn/9VCCgj9OFmYWwBd8IB48YdgPkHYtbYq+4vtHQ==
+  dependencies:
+    babel-helper-evaluate-path "^0.5.0"
+
+babel-plugin-transform-simplify-comparison-operators@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-simplify-comparison-operators/-/babel-plugin-transform-simplify-comparison-operators-6.9.4.tgz#f62afe096cab0e1f68a2d753fdf283888471ceb9"
+  integrity sha1-9ir+CWyrDh9ootdT/fKDiIRxzrk=
+
+babel-plugin-transform-undefined-to-void@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-undefined-to-void/-/babel-plugin-transform-undefined-to-void-6.9.4.tgz#be241ca81404030678b748717322b89d0c8fe280"
+  integrity sha1-viQcqBQEAwZ4t0hxcyK4nQyP4oA=
 
 babel-preset-current-node-syntax@^0.1.3:
   version "0.1.3"
@@ -6213,6 +6308,35 @@ babel-preset-jest@^26.3.0:
   dependencies:
     babel-plugin-jest-hoist "^26.2.0"
     babel-preset-current-node-syntax "^0.1.3"
+
+babel-preset-minify@0.5.1:
+  version "0.5.1"
+  resolved "https://registry.npmjs.org/babel-preset-minify/-/babel-preset-minify-0.5.1.tgz#25f5d0bce36ec818be80338d0e594106e21eaa9f"
+  integrity sha512-1IajDumYOAPYImkHbrKeiN5AKKP9iOmRoO2IPbIuVp0j2iuCcj0n7P260z38siKMZZ+85d3mJZdtW8IgOv+Tzg==
+  dependencies:
+    babel-plugin-minify-builtins "^0.5.0"
+    babel-plugin-minify-constant-folding "^0.5.0"
+    babel-plugin-minify-dead-code-elimination "^0.5.1"
+    babel-plugin-minify-flip-comparisons "^0.4.3"
+    babel-plugin-minify-guarded-expressions "^0.4.4"
+    babel-plugin-minify-infinity "^0.4.3"
+    babel-plugin-minify-mangle-names "^0.5.0"
+    babel-plugin-minify-numeric-literals "^0.4.3"
+    babel-plugin-minify-replace "^0.5.0"
+    babel-plugin-minify-simplify "^0.5.1"
+    babel-plugin-minify-type-constructors "^0.4.3"
+    babel-plugin-transform-inline-consecutive-adds "^0.4.3"
+    babel-plugin-transform-member-expression-literals "^6.9.4"
+    babel-plugin-transform-merge-sibling-variables "^6.9.4"
+    babel-plugin-transform-minify-booleans "^6.9.4"
+    babel-plugin-transform-property-literals "^6.9.4"
+    babel-plugin-transform-regexp-constructors "^0.4.3"
+    babel-plugin-transform-remove-console "^6.9.4"
+    babel-plugin-transform-remove-debugger "^6.9.4"
+    babel-plugin-transform-remove-undefined "^0.5.0"
+    babel-plugin-transform-simplify-comparison-operators "^6.9.4"
+    babel-plugin-transform-undefined-to-void "^6.9.4"
+    lodash "^4.17.11"
 
 babel-preset-react-app@^9.1.2:
   version "9.1.2"
@@ -6706,7 +6830,7 @@ bytes@3.1.0:
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.1.0.tgz#f6cf7933a360e0588fa9fde85651cdc7f805d1f6"
   integrity sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg==
 
-cacache@^12.0.2, cacache@^12.0.3:
+cacache@^12.0.2:
   version "12.0.4"
   resolved "https://registry.yarnpkg.com/cacache/-/cacache-12.0.4.tgz#668bcbd105aeb5f1d92fe25570ec9525c8faa40c"
   integrity sha512-a0tMB40oefvuInr4Cwb3GerbL9xTj1D5yg0T5xrjGCGyfvbxseIXX7BAO/u/hIXdafzOI5JC3wDwHyf24buOAQ==
@@ -7676,24 +7800,6 @@ copy-text-to-clipboard@^2.2.0:
   resolved "https://registry.yarnpkg.com/copy-text-to-clipboard/-/copy-text-to-clipboard-2.2.0.tgz#329dd6daf8c42034c763ace567418401764579ae"
   integrity sha512-WRvoIdnTs1rgPMkgA2pUOa/M4Enh2uzCwdKsOMYNAJiz/4ZvEJgmbF4OmninPmlFdAWisfeh0tH+Cpf7ni3RqQ==
 
-copy-webpack-plugin@^5.0.5:
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/copy-webpack-plugin/-/copy-webpack-plugin-5.1.2.tgz#8a889e1dcafa6c91c6cd4be1ad158f1d3823bae2"
-  integrity sha512-Uh7crJAco3AjBvgAy9Z75CjK8IG+gxaErro71THQ+vv/bl4HaQcpkexAY8KVW/T6D2W2IRr+couF/knIRkZMIQ==
-  dependencies:
-    cacache "^12.0.3"
-    find-cache-dir "^2.1.0"
-    glob-parent "^3.1.0"
-    globby "^7.1.1"
-    is-glob "^4.0.1"
-    loader-utils "^1.2.3"
-    minimatch "^3.0.4"
-    normalize-path "^3.0.0"
-    p-limit "^2.2.1"
-    schema-utils "^1.0.0"
-    serialize-javascript "^4.0.0"
-    webpack-log "^2.0.0"
-
 copy-webpack-plugin@^6.0.3:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/copy-webpack-plugin/-/copy-webpack-plugin-6.1.0.tgz#5bde7f826d87e716d8d5e761ddd34bb675448458"
@@ -8597,13 +8703,6 @@ dir-glob@2.0.0:
   integrity sha512-37qirFDz8cA5fimp9feo43fSuRo2gHwaIn6dXL8Ber1dGwUosDrGZeCCXq57WnIqE4aQ+u3eQZzsk1yOzhdwag==
   dependencies:
     arrify "^1.0.1"
-    path-type "^3.0.0"
-
-dir-glob@^2.0.0:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/dir-glob/-/dir-glob-2.2.2.tgz#fa09f0694153c8918b18ba0deafae94769fc50c4"
-  integrity sha512-f9LBi5QWzIW3I6e//uxZoLBlUt9kcp66qo0sSCxL6YZKc75R1c4MFCoe/LaZiBGmgujvQdxc5Bn3QhfyvK5Hsw==
-  dependencies:
     path-type "^3.0.0"
 
 dir-glob@^3.0.1:
@@ -10539,18 +10638,6 @@ globby@^6.1.0:
     object-assign "^4.0.1"
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
-
-globby@^7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/globby/-/globby-7.1.1.tgz#fb2ccff9401f8600945dfada97440cca972b8680"
-  integrity sha1-+yzP+UAfhgCUXfral0QMypcrhoA=
-  dependencies:
-    array-union "^1.0.1"
-    dir-glob "^2.0.0"
-    glob "^7.1.2"
-    ignore "^3.3.5"
-    pify "^3.0.0"
-    slash "^1.0.0"
 
 good-listener@^1.2.2:
   version "1.2.2"
@@ -15492,7 +15579,7 @@ p-limit@^1.1.0:
   dependencies:
     p-try "^1.0.0"
 
-p-limit@^2.0.0, p-limit@^2.2.0, p-limit@^2.2.1, p-limit@^2.3.0:
+p-limit@^2.0.0, p-limit@^2.2.0, p-limit@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.3.0.tgz#3dd33c647a214fdfffd835933eb086da0dc21db1"
   integrity sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==
@@ -17282,11 +17369,6 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
-
-react-loadable-ssr-addon@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/react-loadable-ssr-addon/-/react-loadable-ssr-addon-0.2.3.tgz#55057abf95628d47727c68e966a6b3a53cde34e0"
-  integrity sha512-vPCqsmiafAMDcS9MLgXw3m4yMI40v1UeI8FTYJJkjf85LugKNnHf6D9yoDTzYwp8wEGF5viekwOD03ZPxSwnQQ==
 
 react-loadable-ssr-addon@^0.3.0:
   version "0.3.0"
@@ -19652,7 +19734,7 @@ terminal-link@^2.0.0:
     ansi-escapes "^4.2.1"
     supports-hyperlinks "^2.0.0"
 
-terser-webpack-plugin@2.3.8, terser-webpack-plugin@^2.3.5:
+terser-webpack-plugin@2.3.8:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-2.3.8.tgz#894764a19b0743f2f704e7c2a848c5283a696724"
   integrity sha512-/fKw3R+hWyHfYx7Bv6oPqmk4HGQcrWLtV3X6ggvPuwPNHSnzvVV51z6OaaCOus4YLjutYGOz3pEpbhe6Up2s1w==
@@ -20995,7 +21077,7 @@ webpack@4.42.0:
     watchpack "^1.6.0"
     webpack-sources "^1.4.1"
 
-webpack@^4.41.2, webpack@^4.44.1:
+webpack@^4.44.1:
   version "4.44.2"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.44.2.tgz#6bfe2b0af055c8b2d1e90ed2cd9363f841266b72"
   integrity sha512-6KJVGlCxYdISyurpQ0IPTklv+DULv05rs2hseIXer6D7KrUicRDLFb4IUM1S6LUAKypPM/nSiVSuv8jHu1m3/Q==
