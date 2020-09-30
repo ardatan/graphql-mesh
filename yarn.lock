@@ -2878,10 +2878,10 @@
     fs-extra "9.0.1"
     tslib "~2.0.1"
 
-"@graphql-tools/load-files@6.2.2":
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/load-files/-/load-files-6.2.2.tgz#8c67e28b714d2f7cced28066ec97a9472c6950f2"
-  integrity sha512-fyE8X2vohEHbHntyDHXXJaQkflHWaK8OkaIlbmi1A9CVuXdvhDcEBaUrbC69Wu02vOYeNgmwPB22qyeh6a3FHw==
+"@graphql-tools/load-files@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/load-files/-/load-files-6.2.3.tgz#f2b851911622e9f305fbb268a84876bf03062e01"
+  integrity sha512-VXl/dixmNCuxxa/1trjh2ogx967lwfZetWY3gN3ck2qWjd4ERmYFnsXd2xcXRRTK4SOZilEaFFXU2tmtYy23xg==
   dependencies:
     fs-extra "9.0.1"
     globby "11.0.1"
