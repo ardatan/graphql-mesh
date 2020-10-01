@@ -34,6 +34,7 @@ export default class OpenAPIHandler implements MeshHandler {
     const path = this.config.source;
     const spec = await readFileOrUrlWithCache<Oas3>(path, this.cache, {
       headers: this.config.schemaHeaders,
+      fallbackFormat: this.config.sourceFormat,
     });
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];

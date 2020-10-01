@@ -7,6 +7,7 @@ export { isUrl };
 
 interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
+  fallbackFormat?: 'json' | 'yaml';
 }
 
 export async function readFileOrUrlWithCache<T>(
@@ -41,6 +42,15 @@ export async function readFileWithCache<T>(
     result = JSON.parse(result);
   } else if (/yaml$/.test(filePath) || /yml$/.test(filePath)) {
     result = loadYaml(result);
+  } else if (config?.fallbackFormat) {
+    switch (config.fallbackFormat) {
+      case 'json':
+        result = JSON.parse(result);
+        break;
+      case 'yaml':
+        result = loadYaml(result);
+        break;
+    }
   } else if (!config?.allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${filePath}' has ` +
