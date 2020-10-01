@@ -21,7 +21,7 @@ export async function serveMesh(
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
   pubsub: MeshPubSub,
-  { fork, exampleQuery, port = 4000, cors: corsConfig, handlers }: YamlConfig.ServeConfig = {}
+  { fork, exampleQuery, port, cors: corsConfig, handlers }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const graphqlPath = '/graphql';
   if (isMaster && fork) {
