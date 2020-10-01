@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.9.5
+
+### Patch Changes
+
+- c4317b4e: enhance(serve): respect PORT env variable
+
 ## 0.9.4
 
 ### Patch Changes
