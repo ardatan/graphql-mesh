@@ -141,9 +141,13 @@ export interface GraphQLHandler {
    */
   webSocketImpl?: string;
   /**
-   * Cache Introspection
+   * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
    */
-  cacheIntrospection?: boolean;
+  cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
+}
+export interface GraphQLIntrospectionCachingOptions {
+  path?: string;
+  ttl?: number;
 }
 /**
  * Handler for gRPC and Protobuf schemas
@@ -562,10 +566,6 @@ export interface PostGraphileHandler {
     [k: string]: any;
   };
   /**
-   * Cache Introspection
-   */
-  cacheIntrospection?: boolean;
-  /**
    * Extra Postgraphile Plugins to append
    */
   appendPlugins?: string[];
@@ -581,6 +581,10 @@ export interface PostGraphileHandler {
         [k: string]: any;
       }
     | string;
+  /**
+   * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
+   */
+  cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
 }
 /**
  * Handler for SOAP

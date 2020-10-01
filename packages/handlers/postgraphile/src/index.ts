@@ -14,7 +14,7 @@ import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { readJSON, unlink } from 'fs-extra';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -29,6 +29,30 @@ export default class PostGraphileHandler implements MeshHandler {
     this.pubsub = pubsub;
   }
 
+  private async writeIntrospectionToMeshCache({
+    cacheKey,
+    writeCache,
+    cacheIntrospectionFile,
+    cachedIntrospection,
+    ifTmpFileUsed,
+  }: {
+    cacheKey: string;
+    writeCache: () => Promise<void>;
+    cacheIntrospectionFile: string;
+    cachedIntrospection: any;
+    ifTmpFileUsed: boolean;
+  }) {
+    if (this.config.cacheIntrospection && !cachedIntrospection) {
+      await writeCache();
+      if (!ifTmpFileUsed) {
+        const json = await readJSON(cacheIntrospectionFile);
+        const ttl = typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.ttl;
+        await this.cache.set(cacheKey, json, { ttl });
+        await unlink(cacheIntrospectionFile);
+      }
+    }
+  }
+
   async getMeshSource(): Promise<MeshSource> {
     const pgPool = new Pool({
       connectionString: this.config.connectionString,
@@ -39,8 +63,18 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const cacheKey = this.name + '_introspection';
 
-    const tmpFile = join(tmpdir(), cacheKey);
-    const cachedIntrospection = this.config.cacheIntrospection && (await this.cache.get(cacheKey));
+    let cacheIntrospectionFile = join(tmpdir(), cacheKey);
+    let cachedIntrospection;
+    let ifTmpFileUsed = false;
+    if (this.config.cacheIntrospection) {
+      if (typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.path) {
+        cacheIntrospectionFile = this.config.cacheIntrospection.path;
+        cachedIntrospection = await readFileOrUrlWithCache(this.config.cacheIntrospection.path, this.cache);
+        ifTmpFileUsed = true;
+      } else {
+        cachedIntrospection = await this.cache.get(cacheKey);
+      }
+    }
 
     let writeCache: () => Promise<void>;
 
@@ -57,7 +91,7 @@ export default class PostGraphileHandler implements MeshHandler {
       subscriptions: true,
       live: true,
       readCache: cachedIntrospection,
-      writeCache: this.config.cacheIntrospection && !cachedIntrospection && tmpFile,
+      writeCache: cacheIntrospectionFile,
       setWriteCacheCallback: fn => {
         writeCache = fn;
       },
@@ -68,12 +102,13 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const schema = builder.buildSchema();
 
-    if (this.config.cacheIntrospection && !cachedIntrospection) {
-      await writeCache();
-      const json = await readJSON(tmpFile);
-      await this.cache.set(cacheKey, json);
-      await unlink(tmpFile);
-    }
+    this.writeIntrospectionToMeshCache({
+      cacheKey,
+      writeCache,
+      cacheIntrospectionFile,
+      cachedIntrospection,
+      ifTmpFileUsed,
+    });
 
     return {
       schema,

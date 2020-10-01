@@ -478,11 +478,31 @@
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
         "cacheIntrospection": {
-          "type": "boolean",
-          "description": "Cache Introspection"
+          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         }
       },
       "required": ["endpoint"]
+    },
+    "GraphQLIntrospectionCachingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLIntrospectionCachingOptions",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "ttl": {
+          "type": "integer"
+        }
+      }
     },
     "GrpcHandler": {
       "additionalProperties": false,
@@ -1248,10 +1268,6 @@
           "properties": {},
           "description": "Connection Pool settings"
         },
-        "cacheIntrospection": {
-          "type": "boolean",
-          "description": "Cache Introspection"
-        },
         "appendPlugins": {
           "type": "array",
           "items": {
@@ -1277,6 +1293,17 @@
             },
             {
               "type": "string"
+            }
+          ]
+        },
+        "cacheIntrospection": {
+          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
+            },
+            {
+              "type": "boolean"
             }
           ]
         }
