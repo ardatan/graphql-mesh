@@ -1,5 +1,15 @@
 # @graphql-mesh/merger-stitching
 
+## 0.6.10
+
+### Patch Changes
+
+- 3b658014: fix(stitching): pass correct schema to the in-context sdk
+- Updated dependencies [e2b34219]
+- Updated dependencies [9a7a55c4]
+  - @graphql-mesh/types@0.12.0
+  - @graphql-mesh/utils@0.6.0
+
 ## 0.6.9
 
 ### Patch Changes

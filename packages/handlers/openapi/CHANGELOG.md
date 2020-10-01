@@ -1,5 +1,18 @@
 # @graphql-mesh/openapi
 
+## 0.8.0
+
+### Minor Changes
+
+- 9a7a55c4: feat(openapi): add sourceFormat option to provide schema format explicitly
+
+### Patch Changes
+
+- Updated dependencies [e2b34219]
+- Updated dependencies [9a7a55c4]
+  - @graphql-mesh/types@0.12.0
+  - @graphql-mesh/utils@0.6.0
+
 ## 0.7.3
 
 ### Patch Changes

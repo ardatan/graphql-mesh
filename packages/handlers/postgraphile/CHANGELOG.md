@@ -1,5 +1,18 @@
 # @graphql-mesh/postgraphile
 
+## 0.7.0
+
+### Minor Changes
+
+- e2b34219: improve introspection caching
+
+### Patch Changes
+
+- Updated dependencies [e2b34219]
+- Updated dependencies [9a7a55c4]
+  - @graphql-mesh/types@0.12.0
+  - @graphql-mesh/utils@0.6.0
+
 ## 0.6.3
 
 ### Patch Changes

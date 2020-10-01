@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.9.6
+
+### Patch Changes
+
+- 3b658014: fix(server): pass correct configuration
+- Updated dependencies [9a7a55c4]
+- Updated dependencies [3b658014]
+  - @graphql-mesh/utils@0.6.0
+  - @graphql-mesh/runtime@0.7.4
+  - @graphql-mesh/config@0.10.4
+
 ## 0.9.5
 
 ### Patch Changes

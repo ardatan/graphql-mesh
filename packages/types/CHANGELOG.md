@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.12.0
+
+### Minor Changes
+
+- e2b34219: improve introspection caching
+- 9a7a55c4: feat(openapi): add sourceFormat option to provide schema format explicitly
+
 ## 0.11.3
 
 ### Patch Changes
