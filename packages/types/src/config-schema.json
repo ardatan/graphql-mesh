@@ -477,12 +477,38 @@
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
+        "introspection": {
+          "type": "string",
+          "description": "Path to the introspection\nYou can seperately give schema introspection"
+        },
         "cacheIntrospection": {
-          "type": "boolean",
-          "description": "Cache Introspection"
+          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         }
       },
       "required": ["endpoint"]
+    },
+    "GraphQLIntrospectionCachingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLIntrospectionCachingOptions",
+      "properties": {
+        "ttl": {
+          "type": "integer",
+          "description": "Time to live of introspection cache"
+        },
+        "path": {
+          "type": "string",
+          "description": "Path to Introspection JSON File"
+        }
+      }
     },
     "GrpcHandler": {
       "additionalProperties": false,
@@ -1253,10 +1279,6 @@
           "properties": {},
           "description": "Connection Pool settings"
         },
-        "cacheIntrospection": {
-          "type": "boolean",
-          "description": "Cache Introspection"
-        },
         "appendPlugins": {
           "type": "array",
           "items": {
@@ -1282,6 +1304,17 @@
             },
             {
               "type": "string"
+            }
+          ]
+        },
+        "cacheIntrospection": {
+          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
+            },
+            {
+              "type": "boolean"
             }
           ]
         }
