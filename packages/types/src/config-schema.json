@@ -1188,6 +1188,11 @@
           "type": "string",
           "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         },
+        "sourceFormat": {
+          "type": "string",
+          "enum": ["json", "yaml"],
+          "description": "Format of the source file (Allowed values: json, yaml)"
+        },
         "operationHeaders": {
           "type": "object",
           "properties": {},

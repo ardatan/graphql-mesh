@@ -11,6 +11,10 @@ type OpenapiHandler @md {
   """
   source: String!
   """
+  Format of the source file
+  """
+  sourceFormat: SourceFormat
+  """
   JSON object representing the Headers to add to the runtime of the API calls
   """
   operationHeaders: JSON
@@ -35,4 +39,9 @@ type OpenapiHandler @md {
   Include HTTP Response details to the result object
   """
   includeHttpDetails: Boolean
+}
+
+enum SourceFormat {
+  json
+  yaml
 }

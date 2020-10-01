@@ -512,6 +512,10 @@ export interface OpenapiHandler {
    */
   source: string;
   /**
+   * Format of the source file (Allowed values: json, yaml)
+   */
+  sourceFormat?: 'json' | 'yaml';
+  /**
    * JSON object representing the Headers to add to the runtime of the API calls
    */
   operationHeaders?: {
