@@ -118,8 +118,8 @@ export function applyResolversHooksToResolvers(
                   get(apiContext, fieldName: string) {
                     const apiSchema: GraphQLSchema = unifiedSchema.extensions.sourceMap.get(apiContext.rawSource);
                     const rootTypes: Record<Operation, GraphQLObjectType> = {
-                      query: apiSchema.getQueryType(),
                       mutation: apiSchema.getMutationType(),
+                      query: apiSchema.getQueryType(),
                       subscription: apiSchema.getSubscriptionType(),
                     };
                     let parentType: GraphQLObjectType;
@@ -133,6 +133,10 @@ export function applyResolversHooksToResolvers(
                           operation = operationName as Operation;
                           field = fieldMap[fieldName];
                           parentType = rootType;
+                          // TODO: There might be collision here between the same field names in different root types
+                          if (operation === info.operation.operation) {
+                            break;
+                          }
                         }
                       }
                     }
