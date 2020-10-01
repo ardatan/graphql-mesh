@@ -53,10 +53,6 @@ union GraphQLCacheIntrospectionConfig = GraphQLIntrospectionCachingOptions | Boo
 
 type GraphQLIntrospectionCachingOptions {
   """
-  Path to Introspection JSON File
-  """
-  path: String
-  """
   Time to live of introspection cache
   """
   ttl: Int

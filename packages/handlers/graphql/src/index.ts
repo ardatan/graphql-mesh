@@ -3,16 +3,8 @@ import { fetchache, KeyValueCache, Request } from 'fetchache';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildClientSchema, introspectionFromSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import {
-  getInterpolatedHeadersFactory,
-  ResolverDataBasedFactory,
-  getHeadersObject,
-  readFileOrUrlWithCache,
-} from '@graphql-mesh/utils';
+import { getInterpolatedHeadersFactory, ResolverDataBasedFactory, getHeadersObject } from '@graphql-mesh/utils';
 import { ExecutionParams } from '@graphql-tools/delegate';
-import { writeJSON } from 'fs-extra';
-import { join } from 'path';
-import { cwd } from 'process';
 
 export default class GraphQLHandler implements MeshHandler {
   private name: string;
@@ -48,18 +40,15 @@ export default class GraphQLHandler implements MeshHandler {
     let schema: GraphQLSchema;
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     if (this.config.introspection) {
-      schema = await urlLoader.handleSDL(this.config.introspection, {
+      const result = await urlLoader.handleSDL(this.config.introspection, {
         customFetch: customFetch as any,
         ...this.config,
         headers: this.config.schemaHeaders,
       });
+      schema = result.schema;
     } else if (this.config.cacheIntrospection) {
       const cacheKey = this.name + '_introspection';
-      const customCachePath =
-        typeof this.config.cacheIntrospection === 'object' && join(cwd(), this.config.cacheIntrospection.path);
-      const introspectionData: any = customCachePath
-        ? await readFileOrUrlWithCache(customCachePath, this.cache)
-        : await this.cache.get(cacheKey);
+      const introspectionData: any = await this.cache.get(cacheKey);
       if (introspectionData) {
         schema = buildClientSchema(introspectionData);
       } else {
@@ -69,9 +58,6 @@ export default class GraphQLHandler implements MeshHandler {
         });
         const ttl = typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.ttl;
         const introspection = introspectionFromSchema(schema);
-        if (customCachePath) {
-          writeJSON(customCachePath, introspection);
-        }
         this.cache.set(cacheKey, introspection, { ttl });
       }
     } else {

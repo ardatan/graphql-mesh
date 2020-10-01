@@ -141,13 +141,24 @@ export interface GraphQLHandler {
    */
   webSocketImpl?: string;
   /**
+   * Path to the introspection
+   * You can seperately give schema introspection
+   */
+  introspection?: string;
+  /**
    * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
    */
   cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
 }
 export interface GraphQLIntrospectionCachingOptions {
-  path?: string;
+  /**
+   * Time to live of introspection cache
+   */
   ttl?: number;
+  /**
+   * Path to Introspection JSON File
+   */
+  path?: string;
 }
 /**
  * Handler for gRPC and Protobuf schemas

@@ -477,6 +477,10 @@
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
+        "introspection": {
+          "type": "string",
+          "description": "Path to the introspection\nYou can seperately give schema introspection"
+        },
         "cacheIntrospection": {
           "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
           "anyOf": [
@@ -496,11 +500,13 @@
       "type": "object",
       "title": "GraphQLIntrospectionCachingOptions",
       "properties": {
-        "path": {
-          "type": "string"
-        },
         "ttl": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Time to live of introspection cache"
+        },
+        "path": {
+          "type": "string",
+          "description": "Path to Introspection JSON File"
         }
       }
     },
