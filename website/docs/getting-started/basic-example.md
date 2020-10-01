@@ -17,7 +17,7 @@ sources:
 This demo will use the public API pf Wikipedia, which uses `openapi` spec, so we'll need to make sure we have `@graphql-mesh/openapi` handler installed as well:
 
 ```
-$ yarn add graphql @graphql-mesh/openapi
+yarn add graphql @graphql-mesh/openapi
 ```
 
 ### Try your new API
@@ -27,7 +27,7 @@ GraphQL Mesh comes with a built in GraphiQL interface, so it means that you can 
 To test your new GraphQL API based on your API specs, you can run:
 
 ```
-$ yarn graphql-mesh serve
+yarn graphql-mesh serve
 ```
 
 This will serve a GraphiQL interface with your schema, so you'll be able to test it right away, before intergrating it to your application, you can try to run a test query.
@@ -68,7 +68,7 @@ Start by load and parsing your configuration file, and pass it to `getMesh`, thi
 You need to install `@graphql-mesh/runtime` and `@graphql-mesh/config` to access GraphQL Mesh Schema inside your code.
 
 ```
-$ yarn add @graphql-mesh/runtime
+yarn add @graphql-mesh/runtime
 ```
 
 ```js
