@@ -55,7 +55,7 @@ query wikipediaMetrics {
 
 You can give it a try and run it directly in your browser.
 
-> You can find the complete example [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/javascript-wiki)
+> You can find the complete example [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
 
 ### Consuming Mesh Schema in code
 
