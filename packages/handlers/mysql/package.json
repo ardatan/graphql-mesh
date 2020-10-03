@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -16,7 +16,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.12.0",
+    "@graphql-mesh/types": "0.13.0",
     "graphql-compose": "7.21.4",
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",

@@ -1,5 +1,17 @@
 # odata-microsoft-graph-example
 
+## 0.6.0
+
+### Minor Changes
+
+- b50a68e3: feat(serve): support cookies and static file serving
+
+### Patch Changes
+
+- Updated dependencies [b50a68e3]
+  - @graphql-mesh/cli@0.10.0
+  - @graphql-mesh/odata@0.5.11
+
 ## 0.5.14
 
 ### Patch Changes

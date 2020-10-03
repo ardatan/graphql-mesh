@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.10.0
+
+### Minor Changes
+
+- b50a68e3: feat(serve): support cookies and static file serving
+
+### Patch Changes
+
+- @graphql-mesh/config@0.10.5
+- @graphql-mesh/runtime@0.7.5
+
 ## 0.9.6
 
 ### Patch Changes
