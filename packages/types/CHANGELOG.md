@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.13.0
+
+### Minor Changes
+
+- b50a68e3: feat(serve): support cookies and static file serving
+
 ## 0.12.0
 
 ### Minor Changes
