@@ -15,13 +15,17 @@ import cors from 'cors';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { get } from 'lodash';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import { join } from 'path';
+import { cwd } from 'process';
+import { pathExists } from 'fs-extra';
 
 export async function serveMesh(
   logger: Logger,
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
   pubsub: MeshPubSub,
-  { fork, exampleQuery, port, cors: corsConfig, handlers }: YamlConfig.ServeConfig = {}
+  { fork, exampleQuery, port, cors: corsConfig, handlers, staticFiles }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const graphqlPath = '/graphql';
   if (isMaster && fork) {
@@ -39,15 +43,18 @@ export async function serveMesh(
       app.use(cors(corsConfig));
     }
 
-    if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playground(exampleQuery, graphqlPath);
-      app.get('/', playgroundMiddleware);
-      app.get(graphqlPath, playgroundMiddleware);
+    app.use(bodyParser.json());
+    app.use(cookieParser());
+
+    if (staticFiles) {
+      app.use(express.static(staticFiles));
+      const indexPath = join(cwd(), staticFiles, 'index.html');
+      if (await pathExists(indexPath)) {
+        app.get('/', (_req, res) => res.sendFile(indexPath));
+      }
     }
 
-    app.use(bodyParser.json());
-
-    app.use(
+    app.post(
       graphqlPath,
       graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
       graphqlHTTP(async req => ({
@@ -104,15 +111,19 @@ export async function serveMesh(
       }
     );
 
+    const pubSubHandler: RequestHandler = (req, _res, next) => {
+      req['pubsub'] = pubsub;
+      next();
+    };
+    app.use(pubSubHandler);
+
+    const registeredPaths = new Set<string>();
     await Promise.all(
       handlers?.map(async handlerConfig => {
+        registeredPaths.add(handlerConfig.path);
         if ('handler' in handlerConfig) {
           const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
-          app.use(handlerConfig.path, (req, _res, next) => {
-            req['pubsub'] = pubsub;
-            next();
-          });
-          app.use(handlerConfig.path, handlerFn);
+          app[handlerConfig.method.toLowerCase() || 'use'](handlerConfig.path, handlerFn);
         } else if ('pubsubTopic' in handlerConfig) {
           app.use(handlerConfig.path, (req, res) => {
             let payload = req.body;
@@ -126,9 +137,17 @@ export async function serveMesh(
       }) || []
     );
 
+    if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
+      const playgroundMiddleware = playground(exampleQuery, graphqlPath);
+      if (!staticFiles) {
+        app.get('/', playgroundMiddleware);
+      }
+      app.get(graphqlPath, playgroundMiddleware);
+    }
+
     httpServer.listen(port.toString(), () => {
       if (!fork) {
-        logger.info(`🕸️ => Serving GraphQL Mesh Playground: http://localhost:${port}${graphqlPath}`);
+        logger.info(`🕸️ => Serving GraphQL Mesh: http://localhost:${port}`);
       }
     });
   }

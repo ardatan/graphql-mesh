@@ -70,6 +70,10 @@ export function playground(exampleQuery: string, graphqlPath: string): RequestHa
                         tab.endpoint = endpoint;
                     });
                 }
+                renderPageOptions.settings = {
+                  'request.credentials': 'same-origin',
+                  'schema.polling.enable': false,
+                };
                 GraphQLPlayground.init(document.getElementById('root'), renderPageOptions);
             });
             </script>

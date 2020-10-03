@@ -5,4 +5,9 @@ sources:
         baseUrl: https://graph.microsoft.com/${GRAPH_VERSION}
         batch: json
         operationHeaders:
-          Authorization: Bearer {context.accessToken}
+          Authorization: Bearer {context.cookies.accessToken}
+
+serve:
+  port: 4000
+  exampleQuery: example-queries/**/*.graphql
+  staticFiles: public

@@ -136,6 +136,9 @@
           },
           "additionalItems": false,
           "description": "Any of: WebhookHandler, ExpressHandler"
+        },
+        "staticFiles": {
+          "type": "string"
         }
       }
     },
@@ -189,6 +192,11 @@
         },
         "handler": {
           "type": "string"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "DELETE", "PATCH"],
+          "description": "Allowed values: GET, POST, DELETE, PATCH"
         }
       },
       "required": ["path", "handler"]

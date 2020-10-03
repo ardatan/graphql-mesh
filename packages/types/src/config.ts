@@ -52,6 +52,7 @@ export interface ServeConfig {
    * Any of: WebhookHandler, ExpressHandler
    */
   handlers?: (WebhookHandler | ExpressHandler)[];
+  staticFiles?: string;
 }
 export interface CorsConfig {
   origin?: string[];
@@ -70,6 +71,10 @@ export interface WebhookHandler {
 export interface ExpressHandler {
   path: string;
   handler: string;
+  /**
+   * Allowed values: GET, POST, DELETE, PATCH
+   */
+  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
 }
 export interface Source {
   /**

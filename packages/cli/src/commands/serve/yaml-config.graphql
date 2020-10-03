@@ -17,6 +17,7 @@ type ServeConfig @md {
   exampleQuery: String
   cors: CorsConfig
   handlers: [ServeHandler]
+  staticFiles: String
 }
 
 union Port = Int | String
@@ -39,6 +40,14 @@ union ServeHandler = WebhookHandler | ExpressHandler
 type ExpressHandler {
   path: String!
   handler: String!
+  method: ExpressHandlerMethod
+}
+
+enum ExpressHandlerMethod {
+  GET
+  POST
+  DELETE
+  PATCH
 }
 
 type WebhookHandler {
