@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-federation
 
+## 0.7.0
+
+### Minor Changes
+
+- 70278e95: chore(federation): bump federation packages
+
 ## 0.6.5
 
 ### Patch Changes
