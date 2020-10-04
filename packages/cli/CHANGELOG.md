@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.11.0
+
+### Minor Changes
+
+- e500313b: feat(odata): add Duration scalar for Edm.Duration type
+
+### Patch Changes
+
+- @graphql-mesh/config@0.10.6
+- @graphql-mesh/runtime@0.7.6
+
 ## 0.10.0
 
 ### Minor Changes

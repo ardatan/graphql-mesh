@@ -1,5 +1,15 @@
 # openapi-react-weatherbit
 
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies [e500313b]
+  - @graphql-mesh/openapi@0.8.2
+  - @graphql-mesh/cache-localforage@0.4.13
+  - @graphql-mesh/merger-stitching@0.6.12
+  - @graphql-mesh/runtime@0.7.6
+
 ## 0.3.5
 
 ### Patch Changes

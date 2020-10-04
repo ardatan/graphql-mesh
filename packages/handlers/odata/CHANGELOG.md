@@ -1,5 +1,16 @@
 # @graphql-mesh/odata
 
+## 0.6.0
+
+### Minor Changes
+
+- e500313b: feat(odata): add Duration scalar for Edm.Duration type
+
+### Patch Changes
+
+- Updated dependencies [1e0445ee]
+  - @graphql-mesh/types@0.14.0
+
 ## 0.5.11
 
 ### Patch Changes

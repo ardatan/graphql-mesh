@@ -1,5 +1,13 @@
 # @graphql-mesh/thrift
 
+## 0.5.12
+
+### Patch Changes
+
+- e500313b: chore(deps): bump graphql-scalars
+- Updated dependencies [1e0445ee]
+  - @graphql-mesh/types@0.14.0
+
 ## 0.5.11
 
 ### Patch Changes

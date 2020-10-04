@@ -1,5 +1,19 @@
 # neo4j-example
 
+## 0.6.0
+
+### Minor Changes
+
+- 1e0445ee: feat(neo4j): add typeDefs option to provide custom schema
+
+### Patch Changes
+
+- Updated dependencies [e500313b]
+- Updated dependencies [1e0445ee]
+  - @graphql-mesh/cli@0.11.0
+  - @graphql-mesh/neo4j@0.7.0
+  - @graphql-mesh/cache-file@0.4.14
+
 ## 0.5.16
 
 ### Patch Changes
