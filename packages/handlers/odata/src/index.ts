@@ -12,7 +12,15 @@ import {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
 } from 'graphql-compose';
-import { GraphQLBigInt, GraphQLGUID, GraphQLDateTime, GraphQLJSON, GraphQLDate, GraphQLByte } from 'graphql-scalars';
+import {
+  GraphQLBigInt,
+  GraphQLGUID,
+  GraphQLDateTime,
+  GraphQLJSON,
+  GraphQLDate,
+  GraphQLByte,
+  GraphQLISO8601Duration,
+} from 'graphql-scalars';
 import { isListType, GraphQLResolveInfo, isAbstractType, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
@@ -38,7 +46,7 @@ const SCALARS = new Map<string, string>([
   ['Edm.Date', 'Date'],
   ['Edm.TimeOfDay', 'String'],
   ['Edm.Single', 'Float'],
-  ['Edm.Duration', 'String'],
+  ['Edm.Duration', 'ISO8601Duration'],
   ['Edm.Decimal', 'Float'],
   ['Edm.SByte', 'Byte'],
   ['Edm.GeographyPoint', 'String'],
@@ -123,6 +131,7 @@ export default class ODataHandler implements MeshHandler {
     schemaComposer.add(GraphQLJSON);
     schemaComposer.add(GraphQLByte);
     schemaComposer.add(GraphQLDate);
+    schemaComposer.add(GraphQLISO8601Duration);
 
     const aliasNamespaceMap = new Map<string, string>();
 
