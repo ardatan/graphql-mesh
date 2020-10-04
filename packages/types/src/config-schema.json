@@ -1171,12 +1171,34 @@
           "type": "string",
           "description": "Specifies database name"
         },
+        "typeDefs": {
+          "type": "string",
+          "description": "Provide GraphQL Type Definitions instead of inferring"
+        },
         "cacheIntrospection": {
-          "type": "boolean",
-          "description": "Cache Introspection"
+          "description": "Cache Introspection (Any of: Neo4jIntrospectionCachingOptions, Boolean)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Neo4jIntrospectionCachingOptions"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         }
       },
       "required": ["url", "username", "password"]
+    },
+    "Neo4jIntrospectionCachingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Neo4jIntrospectionCachingOptions",
+      "properties": {
+        "ttl": {
+          "type": "integer",
+          "description": "Time to live of introspection cache"
+        }
+      }
     },
     "ODataHandler": {
       "additionalProperties": false,

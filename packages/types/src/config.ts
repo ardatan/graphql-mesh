@@ -486,9 +486,19 @@ export interface Neo4JHandler {
    */
   database?: string;
   /**
-   * Cache Introspection
+   * Provide GraphQL Type Definitions instead of inferring
    */
-  cacheIntrospection?: boolean;
+  typeDefs?: string;
+  /**
+   * Cache Introspection (Any of: Neo4jIntrospectionCachingOptions, Boolean)
+   */
+  cacheIntrospection?: Neo4JIntrospectionCachingOptions | boolean;
+}
+export interface Neo4JIntrospectionCachingOptions {
+  /**
+   * Time to live of introspection cache
+   */
+  ttl?: number;
 }
 /**
  * Handler for OData
