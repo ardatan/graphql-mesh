@@ -1,5 +1,13 @@
 # @graphql-mesh/openapi
 
+## 0.8.2
+
+### Patch Changes
+
+- e500313b: chore(deps): bump graphql-scalars
+- Updated dependencies [1e0445ee]
+  - @graphql-mesh/types@0.14.0
+
 ## 0.8.1
 
 ### Patch Changes

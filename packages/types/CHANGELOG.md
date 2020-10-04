@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.14.0
+
+### Minor Changes
+
+- 1e0445ee: feat(neo4j): add typeDefs option to provide custom schema
+
 ## 0.13.0
 
 ### Minor Changes
