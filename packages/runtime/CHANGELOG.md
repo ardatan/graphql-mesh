@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.7.7
+
+### Patch Changes
+
+- bd26407b: fix(runtime): apply transforms correctly in source level
+
 ## 0.7.6
 
 ### Patch Changes
