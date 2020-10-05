@@ -38,6 +38,7 @@ export async function getMesh(
       // The idea behind avoiding wrapping as much as possible is to decrease multiple rounds of graphqljs execution phase for performance
       if (wrapTransforms.length === 0 && !source.executor && !source.subscriber) {
         apiSchema = applySchemaTransforms(apiSchema, noWrapTransforms);
+      } else {
         wrapTransforms.push(...noWrapTransforms);
       }
 
