@@ -98,6 +98,13 @@ export function applyResolversHooksToResolvers(
   resolvers: IResolvers,
   pubsub: MeshPubSub
 ): IResolvers {
+  // TODO: We should find another way to map schema with rawSources
+  const nameSchemaMap = new Map<string, GraphQLSchema>();
+  if (unifiedSchema.extensions?.sourceMap) {
+    for (const [rawSource, schema] of unifiedSchema.extensions.sourceMap.entries()) {
+      nameSchemaMap.set(rawSource.name, schema);
+    }
+  }
   return composeResolvers(resolvers, {
     '*.*': originalResolver => async (root, args, context = {}, info) => {
       const resolverData = {
@@ -116,7 +123,7 @@ export function applyResolversHooksToResolvers(
               if (isAPIContext(apiContext)) {
                 const sdk = new Proxy(apiContext, {
                   get(apiContext, fieldName: string) {
-                    const apiSchema: GraphQLSchema = unifiedSchema.extensions.sourceMap.get(apiContext.rawSource);
+                    const apiSchema: GraphQLSchema = nameSchemaMap.get(apiContext.rawSource.name);
                     const rootTypes: Record<Operation, GraphQLObjectType> = {
                       mutation: apiSchema.getMutationType(),
                       query: apiSchema.getQueryType(),
