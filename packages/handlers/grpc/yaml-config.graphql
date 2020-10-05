@@ -34,6 +34,10 @@ type GrpcHandler @md {
   """
   credentialsSsl: GrpcCredentialsSsl
   """
+  Use https instead of http for gRPC connection
+  """
+  useHTTPS: Boolean
+  """
   MetaData
   """
   metaData: JSON

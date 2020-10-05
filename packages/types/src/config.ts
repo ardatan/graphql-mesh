@@ -189,6 +189,10 @@ export interface GrpcHandler {
   requestTimeout?: number;
   credentialsSsl?: GrpcCredentialsSsl;
   /**
+   * Use https instead of http for gRPC connection
+   */
+  useHTTPS?: boolean;
+  /**
    * MetaData
    */
   metaData?: {

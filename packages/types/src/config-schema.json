@@ -546,6 +546,10 @@
           "$ref": "#/definitions/GrpcCredentialsSsl",
           "description": "SSL Credentials"
         },
+        "useHTTPS": {
+          "type": "boolean",
+          "description": "Use https instead of http for gRPC connection"
+        },
         "metaData": {
           "type": "object",
           "properties": {},
