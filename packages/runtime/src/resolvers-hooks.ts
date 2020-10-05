@@ -100,8 +100,10 @@ export function applyResolversHooksToResolvers(
 ): IResolvers {
   // TODO: We should find another way to map schema with rawSources
   const nameSchemaMap = new Map<string, GraphQLSchema>();
-  for (const [rawSource, schema] of unifiedSchema.extensions.sourceMap.entries()) {
-    nameSchemaMap.set(rawSource.name, schema);
+  if (unifiedSchema.extensions?.sourceMap) {
+    for (const [rawSource, schema] of unifiedSchema.extensions.sourceMap.entries()) {
+      nameSchemaMap.set(rawSource.name, schema);
+    }
   }
   return composeResolvers(resolvers, {
     '*.*': originalResolver => async (root, args, context = {}, info) => {
