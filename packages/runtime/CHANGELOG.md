@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.7.8
+
+### Patch Changes
+
+- f6dae19b: fix(runtime): map schemas to rawSources correctly
+
 ## 0.7.7
 
 ### Patch Changes
