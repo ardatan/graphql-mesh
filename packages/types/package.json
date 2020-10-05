@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "fetchache": "0.0.3",
-    "@graphql-tools/delegate": "6.2.3",
+    "@graphql-tools/delegate": "6.2.4",
     "@graphql-tools/utils": "6.2.2"
   },
   "publishConfig": {
