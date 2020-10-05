@@ -60,6 +60,8 @@ export default class GrpcHandler implements MeshHandler {
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
       creds = credentials.createSsl(rootCA, privateKey, certChain);
+    } else if (this.config.useHTTPS) {
+      creds = credentials.createSsl();
     } else {
       creds = credentials.createInsecure();
     }
