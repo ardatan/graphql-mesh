@@ -15,7 +15,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.14.0",
     "@graphql-mesh/utils": "0.6.0",
-    "@graphql-tools/delegate": "6.2.3",
+    "@graphql-tools/delegate": "6.2.4",
     "@graphql-tools/resolvers-composition": "6.2.4",
     "@graphql-tools/schema": "6.2.2",
     "@graphql-tools/wrap": "6.2.3",
