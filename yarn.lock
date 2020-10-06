@@ -8395,7 +8395,7 @@ data-urls@^2.0.0:
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
 
-dataloader@2.0.0:
+dataloader@2.0.0, dataloader@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/dataloader/-/dataloader-2.0.0.tgz#41eaf123db115987e21ca93c005cd7753c55fe6f"
   integrity sha512-YzhyDAwA4TaQIhM5go+vCLmU0UikghC/t9DTQYZR2M/UvZ1MdOhPezSDZcjj9uqQJOMqjLcpWtyW2iNINdlatQ==
@@ -10834,28 +10834,19 @@ graphql-compose-connection@8.0.1:
   resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-8.0.1.tgz#6416ead781108a6628c542908f43cf89d3200222"
   integrity sha512-VBEdtzEp862TlV/uf7GDVYI0wwfTQAQlDXIZVl9IlYO5BcDD94kaPcrTuzQ/j991G09vx2ebqLu2zRI3uLZ7kg==
 
-graphql-compose-connection@^7.0.0:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-7.0.1.tgz#fd7be1e4dfa0b42e8aa22335bef4d9679d87a6fb"
-  integrity sha512-RYk1MkH5KisSWJCjk7AClI1y8qvkTYvEC5QnZdgduku0uqiEkwDSXz4lgGVfua6v/y/h/SHtxnna/nu/ZocyTg==
-
-graphql-compose-mongoose@8.0.3:
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-8.0.3.tgz#539ad0d69cbb7243c767fbe63ba77694b6d8c09d"
-  integrity sha512-Z7tj5NGhZqGEos7Pt0CBcDwyuoyQIZrTEa8dod5lXBijztVG96qFPJU+UsJmCifYkfAkDXyr0cCsJ6ff9nx47Q==
-  optionalDependencies:
-    graphql-compose-connection "^7.0.0"
-    graphql-compose-pagination "^7.0.0"
+graphql-compose-mongoose@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-9.0.0.tgz#60c6e81aa79dfc669f7fa20a52e6aa275273752b"
+  integrity sha512-THfMS2fc2tjG+B99Gf0MHj7+NBrOJ/LZCtXQM/ln2qnJnC3aBFwkWu9XQ3AVxxOrijPcTdie2TGyFnSowOVAJw==
+  dependencies:
+    dataloader "^2.0.0"
+    graphql-compose-connection "8.0.1"
+    graphql-compose-pagination "8.0.1"
 
 graphql-compose-pagination@8.0.1:
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-8.0.1.tgz#785c4c83dec5c81dee7ce5baee71cdf5b7a55240"
   integrity sha512-DxFVSFS9fuDdVOCUz6sr8r1wwwFytUUQ6a2ihQAEdXx7a7p3ZC797RWHdprnnKtLPrioHIIWPCbIoyn4c4kVgQ==
-
-graphql-compose-pagination@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-7.0.0.tgz#81edf2327416d10f237a3f1ff67990899a37b017"
-  integrity sha512-Rak7Dmkb5U4Kio+FgWSucVFho2xxRyCI+kNcZWhxJRVfZusw+VuhjkvxPUiKTiFEb+DtTrXUeetWT24plcC0fg==
 
 graphql-compose@7.21.4:
   version "7.21.4"
