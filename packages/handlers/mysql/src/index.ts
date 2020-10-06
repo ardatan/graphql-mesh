@@ -136,7 +136,7 @@ export default class MySQLHandler implements MeshHandler {
       },
     });
     
-    var requestedTables;
+    let requestedTables: Array<string>;
     if (this.config.tables) {
       requestedTables = this.config.tables.split(',');
     }
@@ -145,7 +145,7 @@ export default class MySQLHandler implements MeshHandler {
     await Promise.all(
       Object.keys(tables).map(async tableName => {
         
-        if (!requestedTables || requestedTables.indexOf(tableName) != -1 ) {
+        if (!requestedTables || requestedTables.indexOf(tableName) !== -1 ) {
           const table = tables[tableName];
           const objectTypeName = pascalCase(table.TABLE_NAME);
           const insertInputName = pascalCase(table.TABLE_NAME + '_InsertInput');
