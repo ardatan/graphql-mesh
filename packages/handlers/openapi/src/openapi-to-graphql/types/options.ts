@@ -168,14 +168,6 @@ export type InternalOptions<TSource, TContext, TArgs> = {
    */
   singularNames: boolean;
 
-  /**
-   * Allow to generate subscription fields from callback objects in the OAS.
-   *
-   * The keys (runtime expressions) of the callback object will be interpolated
-   * as the topic of publish/subscription connection.
-   */
-  createSubscriptionsFromCallbacks: boolean;
-
   // Resolver options
 
   /**

@@ -28,6 +28,18 @@ additionalResolvers:
 
 We're able to use existing types from our unified schema, and this root field is subscribed to our specific `topic` in our PubSub service.
 
+### Use JSON Schema Handler instead
+
+You can also use JSON Schema handler if you don't want to write an extra GraphQL type definitions. You can generate GraphQL type definitions from sample JSON response;
+
+Just add the following to your existing JSON schema handler configuration in `.meshrc.yml` file;
+```yml
+          - type: Subscription
+            field: todoAdded
+            pubsubTopic: todoAdded
+            responseSample: ./todo.json
+```
+
 ## Handle Webhook HTTP Requests
 
 Add custom express handler to listen specific path for your HTTP Webhook on Mesh CLI Server. You can do it either in a programmatic or declarative way.
@@ -68,4 +80,4 @@ module.exports = (req, res) => {
 };
 ```
 
-> You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/subscriptions-example)
+> You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/json-schema-subscriptions)

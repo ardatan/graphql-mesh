@@ -166,7 +166,11 @@ export function getCommonPropertyNames(
 }
 
 // TODO: replace this with Mesh's logger
-export function mockDebug(..._: any[]) {
+export function mockDebug(...args1: any[]) {
   // do nothing
-  return (..._: any[]) => {};
+  return (...args2: any[]) => {
+    if (process.env.DEBUG) {
+      console.debug(...args1, ...args2);
+    }
+  };
 }

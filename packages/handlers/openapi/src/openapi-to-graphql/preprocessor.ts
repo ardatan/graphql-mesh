@@ -179,11 +179,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
     data.options.report.numOps += Oas3Tools.countOperations(oas);
     data.options.report.numOpsMutation += Oas3Tools.countOperationsMutation(oas);
     data.options.report.numOpsQuery += Oas3Tools.countOperationsQuery(oas);
-    if (data.options.createSubscriptionsFromCallbacks) {
-      data.options.report.numOpsSubscription += Oas3Tools.countOperationsSubscription(oas);
-    } else {
-      data.options.report.numOpsSubscription = 0;
-    }
+    data.options.report.numOpsSubscription += Oas3Tools.countOperationsSubscription(oas);
 
     // Get security schemes
     const currentSecurity = getProcessedSecuritySchemes(oas, data);
@@ -286,7 +282,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
           }
 
           // Process all callbacks
-          if (data.options.createSubscriptionsFromCallbacks && operation.callbacks) {
+          if (operation.callbacks) {
             Object.entries(operation.callbacks).forEach(([callbackName, callback]) => {
               const resolvedCallback = !('$ref' in callback)
                 ? callback
@@ -351,6 +347,14 @@ export function preprocessOas<TSource, TContext, TArgs>(
                     data,
                     options
                   );
+
+                  callbackOperation.responseContentType = callbackOperation.payloadContentType;
+                  callbackOperation.responseDefinition = callbackOperation.payloadDefinition;
+
+                  callbackOperation.parameters = operationData.parameters;
+                  callbackOperation.payloadContentType = operationData.payloadContentType;
+                  callbackOperation.payloadDefinition = operationData.payloadDefinition;
+                  callbackOperation.payloadRequired = operationData.payloadRequired;
 
                   if (callbackOperation) {
                     /**

@@ -118,71 +118,76 @@ export function getSubscribe<TSource, TContext, TArgs>({
   }
 
   return (root, args, context, info) => {
-    /**
-     * Determine possible topic(s) by resolving callback path
-     *
-     * GraphQL produces sanitized payload names, so we have to sanitize before
-     * lookup here
-     */
-    const paramName = Oas3Tools.sanitize(payloadName, Oas3Tools.CaseStyle.camelCase);
+    try {
+      /**
+       * Determine possible topic(s) by resolving callback path
+       *
+       * GraphQL produces sanitized payload names, so we have to sanitize before
+       * lookup here
+       */
+      const paramName = Oas3Tools.sanitize(payloadName, Oas3Tools.CaseStyle.camelCase);
 
-    const resolveData: any = {};
+      const resolveData: any = {};
 
-    if (payloadName && typeof payloadName === 'string') {
-      // The option genericPayloadArgName will change the payload name to "requestBody"
-      const sanePayloadName = data.options.genericPayloadArgName
-        ? 'requestBody'
-        : Oas3Tools.sanitize(payloadName, Oas3Tools.CaseStyle.camelCase);
+      if (payloadName && typeof payloadName === 'string') {
+        // The option genericPayloadArgName will change the payload name to "requestBody"
+        const sanePayloadName = data.options.genericPayloadArgName
+          ? 'requestBody'
+          : Oas3Tools.sanitize(payloadName, Oas3Tools.CaseStyle.camelCase);
 
-      if (sanePayloadName in args) {
-        if (typeof args[sanePayloadName] === 'object') {
-          const rawPayload = Oas3Tools.desanitizeObjectKeys(args[sanePayloadName], data.saneMap);
-          resolveData.usedPayload = rawPayload;
-        } else {
-          const rawPayload = JSON.parse(args[sanePayloadName]);
-          resolveData.usedPayload = rawPayload;
+        if (sanePayloadName in args) {
+          if (typeof args[sanePayloadName] === 'object') {
+            const rawPayload = Oas3Tools.desanitizeObjectKeys(args[sanePayloadName], data.saneMap);
+            resolveData.usedPayload = rawPayload;
+          } else {
+            const rawPayload = JSON.parse(args[sanePayloadName]);
+            resolveData.usedPayload = rawPayload;
+          }
         }
       }
+
+      if (connectOptions) {
+        resolveData.usedRequestOptions = connectOptions;
+      } else {
+        resolveData.usedRequestOptions = {
+          method: resolveData.usedPayload.method ? resolveData.usedPayload.method : method.toUpperCase(),
+        };
+      }
+
+      pubsubLog(`Subscription schema: ${JSON.stringify(resolveData.usedPayload)}`);
+
+      let value = path;
+      let paramNameWithoutLocation = paramName;
+      if (paramName.indexOf('.') !== -1) {
+        paramNameWithoutLocation = paramName.split('.')[1];
+      }
+
+      // See if the callback path contains constants expression
+      if (value.search(/{|}/) === -1) {
+        args[paramNameWithoutLocation] = isRuntimeExpression(value)
+          ? resolveRuntimeExpression(paramName, value, resolveData, root, args)
+          : value;
+      } else {
+        // Replace callback expression with appropriate values
+        const cbParams = value.match(/{([^}]*)}/g);
+        pubsubLog(`Analyzing subscription path: ${cbParams.toString()}`);
+
+        cbParams.forEach(cbParam => {
+          value = value.replace(
+            cbParam,
+            resolveRuntimeExpression(paramName, cbParam.substring(1, cbParam.length - 1), resolveData, root, args)
+          );
+        });
+        args[paramNameWithoutLocation] = value;
+      }
+
+      const topic = args[paramNameWithoutLocation] || 'test';
+      pubsubLog(`Subscribing to: ${topic}`);
+      return pubsub.asyncIterator(topic);
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
-
-    if (connectOptions) {
-      resolveData.usedRequestOptions = connectOptions;
-    } else {
-      resolveData.usedRequestOptions = {
-        method: resolveData.usedPayload.method ? resolveData.usedPayload.method : method.toUpperCase(),
-      };
-    }
-
-    pubsubLog(`Subscription schema: ${JSON.stringify(resolveData.usedPayload)}`);
-
-    let value = path;
-    let paramNameWithoutLocation = paramName;
-    if (paramName.indexOf('.') !== -1) {
-      paramNameWithoutLocation = paramName.split('.')[1];
-    }
-
-    // See if the callback path contains constants expression
-    if (value.search(/{|}/) === -1) {
-      args[paramNameWithoutLocation] = isRuntimeExpression(value)
-        ? resolveRuntimeExpression(paramName, value, resolveData, root, args)
-        : value;
-    } else {
-      // Replace callback expression with appropriate values
-      const cbParams = value.match(/{([^}]*)}/g);
-      pubsubLog(`Analyzing subscription path: ${cbParams.toString()}`);
-
-      cbParams.forEach(cbParam => {
-        value = value.replace(
-          cbParam,
-          resolveRuntimeExpression(paramName, cbParam.substring(1, cbParam.length - 1), resolveData, root, args)
-        );
-      });
-      args[paramNameWithoutLocation] = value;
-    }
-
-    const topic = args[paramNameWithoutLocation] || 'test';
-    pubsubLog(`Subscribing to: ${topic}`);
-    return pubsub.asyncIterator(topic);
   };
 }
 

@@ -1,0 +1,5 @@
+subscription {
+  postRequestBodyCallbackUrlData(streamsInput: { callbackUrl: "http://localhost:4000/callback" }) {
+    userData
+  }
+}

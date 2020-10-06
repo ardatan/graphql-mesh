@@ -76,8 +76,6 @@ export async function createGraphQLSchema<TSource, TContext, TArgs>(
     typeof options.genericPayloadArgName === 'boolean' ? options.genericPayloadArgName : false;
   options.simpleNames = typeof options.simpleNames === 'boolean' ? options.simpleNames : false;
   options.singularNames = typeof options.singularNames === 'boolean' ? options.singularNames : false;
-  options.createSubscriptionsFromCallbacks =
-    typeof options.createSubscriptionsFromCallbacks === 'boolean' ? options.createSubscriptionsFromCallbacks : false;
 
   // Authentication options
   options.viewer = typeof options.viewer === 'boolean' ? options.viewer : true;
@@ -156,7 +154,6 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     genericPayloadArgName,
     simpleNames,
     singularNames,
-    createSubscriptionsFromCallbacks,
     includeHttpDetails,
 
     // Resolver options
@@ -193,7 +190,6 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     genericPayloadArgName,
     simpleNames,
     singularNames,
-    createSubscriptionsFromCallbacks,
     includeHttpDetails,
 
     // Resolver options
