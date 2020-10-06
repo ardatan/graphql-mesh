@@ -6,18 +6,19 @@ const app = express();
 app.use(bodyParser.json());
 
 app.post('/streams', async (req, res) => {
-  const {callbackUrl} = req.body;
+  const { callbackUrl } = req.body;
   setInterval(() => {
-    console.info('Webhook ping -> ', callbackUrl);
+    const body = JSON.stringify({
+      timestamp: new Date().toJSON(),
+      userData: 'RANDOM_DATA',
+    });
+    console.info('Webhook ping -> ', callbackUrl, body);
     fetch(callbackUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        timestamp: new Date().toJSON(),
-        userData: 'RANDOM_DATA',
-      }),
+      body,
     }).catch(console.log);
   }, 1000);
   res.json({
