@@ -25,6 +25,7 @@ sources:
         user: root
         password: passwd
         database: employees
+        tables: departements,title
 ```
 
 <iframe
