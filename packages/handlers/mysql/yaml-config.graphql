@@ -8,4 +8,5 @@ type MySQLHandler @md {
   user: String!
   password: String
   database: String!
+  tables: String!
 }

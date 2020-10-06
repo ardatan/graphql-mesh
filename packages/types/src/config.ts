@@ -464,6 +464,7 @@ export interface MySQLHandler {
   user: string;
   password?: string;
   database: string;
+  tables?: string;
 }
 /**
  * Handler for Neo4j

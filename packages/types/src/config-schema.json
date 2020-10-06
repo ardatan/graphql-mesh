@@ -1146,6 +1146,9 @@
         },
         "database": {
           "type": "string"
+        },
+        "tables": {
+          "type": "string"
         }
       },
       "required": ["host", "port", "user", "database"]
