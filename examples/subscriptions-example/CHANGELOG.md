@@ -1,5 +1,16 @@
 # subscriptions-example
 
+## 0.1.0
+
+### Minor Changes
+
+- 0f17c58c: feat(openapi): handle callbacks as subscriptions
+
+### Patch Changes
+
+- @graphql-mesh/json-schema@0.6.8
+- @graphql-mesh/cli@0.11.4
+
 ## 0.0.13
 
 ### Patch Changes

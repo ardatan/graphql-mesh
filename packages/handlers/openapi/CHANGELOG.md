@@ -1,5 +1,16 @@
 # @graphql-mesh/openapi
 
+## 0.9.0
+
+### Minor Changes
+
+- 0f17c58c: feat(openapi): handle callbacks as subscriptions
+
+### Patch Changes
+
+- Updated dependencies [0f17c58c]
+  - @graphql-mesh/types@0.15.0
+
 ## 0.8.3
 
 ### Patch Changes
