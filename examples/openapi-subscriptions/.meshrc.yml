@@ -1,0 +1,13 @@
+sources:
+  - name: OpenAPICallbackExample
+    handler:
+      openapi:
+        source: ./openapi.yml
+        baseUrl: http://localhost:4001
+
+serve:
+  port: 4000
+  handlers:
+    - path: /callback
+      pubsubTopic: http://localhost:4000/callback
+  exampleQuery: ./example-queries/**/*.graphql

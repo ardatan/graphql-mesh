@@ -66,7 +66,6 @@ export default class OpenAPIHandler implements MeshHandler {
       sendOAuthTokenInQuery: true,
       viewer: false,
       equivalentToMessages: true,
-      createSubscriptionsFromCallbacks: true,
       pubsub: this.pubsub,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };

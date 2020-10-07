@@ -2793,6 +2793,124 @@
     pascal-case "^3.1.1"
     tslib "~2.0.1"
 
+"@graphql-mesh/cache-inmemory-lru@0.4.13":
+  version "0.4.13"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/cache-inmemory-lru/-/cache-inmemory-lru-0.4.13.tgz#9ed59d89043961268fa801e61147f1d7ada523b2"
+  integrity sha512-MJQmFEO1ZWBA6fgoycYLEub4x2irNimLnHwd6G4IPzeqtnsjmjl4xJVdP0xwKuWjtW/Cxk8iNoaxawOMx0r0EA==
+  dependencies:
+    "@graphql-mesh/types" "0.14.0"
+    "@types/lru-cache" "5.1.0"
+    lru-cache "6.0.0"
+
+"@graphql-mesh/cli@0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/cli/-/cli-0.11.0.tgz#70f108cf181830c9898f3ef21e7d3d995fb71c8c"
+  integrity sha512-pUHhaItHigsxg0fjyuyQXN18/DOZanxE9utip5IA924jri6RONxsm3qeTJ/DtLug6vcIME8DTq//gWuUQ2JRNw==
+  dependencies:
+    "@graphql-codegen/core" "1.17.8"
+    "@graphql-codegen/typescript" "1.17.10"
+    "@graphql-codegen/typescript-generic-sdk" "1.17.8"
+    "@graphql-codegen/typescript-operations" "1.17.8"
+    "@graphql-codegen/typescript-resolvers" "1.17.9"
+    "@graphql-mesh/config" "0.10.6"
+    "@graphql-mesh/runtime" "0.7.6"
+    "@graphql-mesh/utils" "0.6.0"
+    "@graphql-tools/code-file-loader" "6.2.2"
+    "@graphql-tools/graphql-file-loader" "6.2.4"
+    "@graphql-tools/load" "6.2.3"
+    "@graphql-tools/utils" "6.2.2"
+    body-parser "1.19.0"
+    chalk "4.1.0"
+    change-case "4.1.1"
+    cookie-parser "1.4.5"
+    cors "2.8.5"
+    express "4.17.1"
+    express-graphql "0.11.0"
+    fs-extra "9.0.1"
+    graphql-upload "11.0.0"
+    js-yaml "3.14.0"
+    json-bigint-patch "0.0.4"
+    lodash "4.17.20"
+    mkdirp "1.0.4"
+    pascal-case "3.1.1"
+    subscriptions-transport-ws "0.9.18"
+    winston "3.3.3"
+    yargs "16.0.3"
+
+"@graphql-mesh/config@0.10.6":
+  version "0.10.6"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/config/-/config-0.10.6.tgz#28d569f0ad36398ba2aa98f8ac71d763052237b3"
+  integrity sha512-MOHTa3vlKThHOkIQNVlQS16gQnhmTcS9XquherlQx+s1GyoVT9vV8+FyUkGiv8e2WKqWZFFJGX5xbrYJx4J1tA==
+  dependencies:
+    "@graphql-mesh/cache-inmemory-lru" "0.4.13"
+    "@graphql-mesh/merger-stitching" "0.6.12"
+    "@graphql-mesh/runtime" "0.7.6"
+    "@graphql-mesh/types" "0.14.0"
+    "@graphql-mesh/utils" "0.6.0"
+    "@graphql-tools/graphql-file-loader" "6.2.4"
+    "@graphql-tools/load" "6.2.3"
+    "@graphql-tools/merge" "6.2.3"
+    "@graphql-tools/utils" "6.2.2"
+    ajv "6.12.5"
+    cosmiconfig "7.0.0"
+    graphql-subscriptions "1.1.0"
+    lodash "4.17.20"
+    param-case "3.0.3"
+
+"@graphql-mesh/json-schema@0.6.6":
+  version "0.6.6"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/json-schema/-/json-schema-0.6.6.tgz#fdd2eff96e1fc7229cbbc1dbb62b1b1e33894c6b"
+  integrity sha512-7wjhapL2AJslZWB9wh4mwkcSlaFCzsvss3kHnmcES3kArDztjGh7AK7fGeOmUZy5kPSvXqZwmvysALOD0y36yg==
+  dependencies:
+    "@graphql-mesh/types" "0.14.0"
+    "@graphql-mesh/utils" "0.6.0"
+    aggregate-error "3.1.0"
+    ajv "6.12.5"
+    fetchache "0.0.3"
+    fs-extra "9.0.1"
+    graphql-compose "7.21.4"
+    graphql-scalars "1.3.0"
+    lodash "4.17.20"
+    object-hash "2.0.3"
+    pascal-case "3.1.1"
+    to-json-schema "0.2.5"
+    url-join "4.0.1"
+
+"@graphql-mesh/merger-stitching@0.6.12":
+  version "0.6.12"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/merger-stitching/-/merger-stitching-0.6.12.tgz#4545c8d8d024592aa480d0ba516ab9461cb18e50"
+  integrity sha512-ECxdq4Vfno85h00Q+S1ub+d+JBqYP9bf5hh7QNjDc7JWuP9QUJBU/H7EidVM+nP5oaQApz3z2AaTbfnPgFxelw==
+  dependencies:
+    "@graphql-mesh/types" "0.14.0"
+    "@graphql-mesh/utils" "0.6.0"
+    "@graphql-tools/schema" "6.2.2"
+    "@graphql-tools/stitch" "6.2.4"
+    "@graphql-tools/utils" "6.2.2"
+    "@graphql-tools/wrap" "6.2.3"
+    fetchache "0.0.3"
+
+"@graphql-mesh/runtime@0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/runtime/-/runtime-0.7.6.tgz#28d81f6dd0e0ea4dbc52c6ae8b3328f3c66217f4"
+  integrity sha512-DWmPXuhhlpW2+RN+PMwa9AWuzlpZ840WM9gZLtFkcS2hu/PHLQQ7sB16q3yiaWQAanF1Lpai81acUtG3B2hRFg==
+  dependencies:
+    "@graphql-mesh/types" "0.14.0"
+    "@graphql-mesh/utils" "0.6.0"
+    "@graphql-tools/delegate" "6.2.3"
+    "@graphql-tools/resolvers-composition" "6.2.4"
+    "@graphql-tools/schema" "6.2.2"
+    "@graphql-tools/utils" "6.2.2"
+    "@graphql-tools/wrap" "6.2.3"
+
+"@graphql-mesh/types@0.14.0":
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/types/-/types-0.14.0.tgz#f02d54248a56668117420bc8ed2e77ba52a50d04"
+  integrity sha512-kPXFyJi7phjKXt0SF8o5SJNAMlz8E6HBQfpccwiXpnvjzpk/G2h7sI82qT3fZc3AjwCeVcG5R3/XrfJfEMMW/g==
+  dependencies:
+    "@graphql-tools/delegate" "6.2.3"
+    "@graphql-tools/utils" "6.2.2"
+    fetchache "0.0.3"
+
 "@graphql-tools/batch-delegate@^6.2.4":
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-6.2.4.tgz#8aab19ff69939c1a8bd3bebb4b1a3ff13c933559"
@@ -2800,6 +2918,16 @@
   dependencies:
     "@graphql-tools/delegate" "^6.2.4"
     dataloader "2.0.0"
+    tslib "~2.0.1"
+
+"@graphql-tools/code-file-loader@6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-6.2.2.tgz#9640a4e593ab4aa91b05adb0968ec8aeea969264"
+  integrity sha512-2EDdgNR2fu1aKnU77jpkfwuUNOOZjBe6VQW/hI//GSVK5AYh+a/zm2vusAwdJQdC4yt2A1zEY8095bk4i9XD7w==
+  dependencies:
+    "@graphql-tools/graphql-tag-pluck" "6.2.2"
+    "@graphql-tools/utils" "6.2.2"
+    fs-extra "9.0.1"
     tslib "~2.0.1"
 
 "@graphql-tools/code-file-loader@6.2.4":
@@ -2867,6 +2995,19 @@
     "@graphql-tools/utils" "^6.2.4"
     fs-extra "9.0.1"
     tslib "~2.0.1"
+
+"@graphql-tools/graphql-tag-pluck@6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-6.2.2.tgz#b6c2ef7fe04c58a3ef242926e0b7b7845e555b68"
+  integrity sha512-KH6QoJYo3WXtc4+3e2oTfm627oszRGsKVpMF7A0IvtiVUU0XxoXLAjmJBlNrGN/PdqpBDPEVSdz2VLX2eDkokw==
+  dependencies:
+    "@babel/parser" "7.11.5"
+    "@babel/traverse" "7.11.5"
+    "@babel/types" "7.11.5"
+    "@graphql-tools/utils" "6.2.2"
+    tslib "~2.0.1"
+  optionalDependencies:
+    vue-template-compiler "^2.6.12"
 
 "@graphql-tools/graphql-tag-pluck@^6.2.4":
   version "6.2.5"
