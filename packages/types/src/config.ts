@@ -252,6 +252,9 @@ export interface JsonSchemaOperation {
   responseSample?: any;
   responseSchema?: any;
   responseTypeName?: string;
+  argTypeMap?: {
+    [k: string]: any;
+  };
   headers?: {
     [k: string]: any;
   };

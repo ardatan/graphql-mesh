@@ -43,5 +43,7 @@ type JsonSchemaOperation {
   responseSchema: Any
   responseTypeName: String
 
+  argTypeMap: JSON
+
   headers: JSON
 }
