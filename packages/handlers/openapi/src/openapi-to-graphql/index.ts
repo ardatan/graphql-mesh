@@ -616,13 +616,16 @@ function getFieldForOperation<TSource, TContext, TArgs>(
 
     // Get resolver for Query and Mutation fields
   } else {
-    const resolve = getResolver(() => ({
-      operation,
-      payloadName: payloadSchemaName,
-      data,
-      baseUrl,
-      requestOptions,
-    }));
+    const resolve = data.options.resolverMiddleware(
+      () => ({
+        operation,
+        payloadName: payloadSchemaName,
+        data,
+        baseUrl,
+        requestOptions,
+      }),
+      getResolver
+    );
 
     return {
       type,
