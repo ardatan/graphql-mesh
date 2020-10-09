@@ -38,3 +38,4 @@ serve:
   handlers:
     - path: /webhooks/todo_added
       pubsubTopic: todoAdded
+  exampleQuery: ./example-queries/**/*.graphql

@@ -366,11 +366,7 @@ export default class ODataHandler implements MeshHandler {
     }
 
     function addIdentifierToUrl(url: URL, identifierFieldName: string, identifierFieldTypeRef: string, args: any) {
-      if (identifierFieldTypeRef.includes('String')) {
-        url.href += `('${args[identifierFieldName]}')`;
-      } else {
-        url.href += `(${args[identifierFieldName]})`;
-      }
+      url.href += `/${args[identifierFieldName]}/`;
     }
 
     function rebuildOpenInputObjects(input: any) {
@@ -641,7 +637,9 @@ export default class ODataHandler implements MeshHandler {
                 typeRef: navigationPropertyTypeRef,
                 isInput: false,
                 isRequired,
-              }),
+              })
+                .replace('[', '')
+                .replace(']', ''),
               args: {
                 ...commonArgs,
                 id: {
@@ -665,6 +663,7 @@ export default class ODataHandler implements MeshHandler {
                 });
                 const urlString = getUrlString(url);
                 const method = 'GET';
+                console.log(urlString);
                 const request = new Request(urlString, {
                   method,
                   headers: headersFactory({ root, args, context, info }, method),

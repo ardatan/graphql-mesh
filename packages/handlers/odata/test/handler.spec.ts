@@ -76,7 +76,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for requesting a single Entity by ID', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('SOMEID')`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -112,7 +112,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for requesting a complex property', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/Airports('KSFO')?$select=IcaoCode,Location`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/Airports/KSFO/?$select=IcaoCode,Location`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -288,7 +288,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for deleting an entity', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('SOMEID')`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/`;
     const correctMethod = 'DELETE';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -321,7 +321,7 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for updating an entity', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('SOMEID')`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/`;
     const correctMethod = 'PATCH';
     const correctBody = {
       FirstName: 'Mirs',
@@ -409,14 +409,14 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for invoking bound functions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips(0)/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople?$select=UserName`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips/0/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople?$select=UserName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')`, async () => {
+    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
       return new Response(JSON.stringify(PersonMockData));
     });
     addMock(
-      `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Trips?$filter=TripId eq 0&$select=TripId`,
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId eq 0&$select=TripId`,
       async () => {
         return new Response(JSON.stringify(TripMockData));
       }
@@ -496,14 +496,14 @@ describe('odata', () => {
   });
   it('should generate correct HTTP request for invoking bound actions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People('russellwhyte')/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip`;
     const correctMethod = 'POST';
     const correctBody = {
       userName: 'scottketchum',
       tripId: 0,
     };
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People('russellwhyte')`, async () => {
+    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
       return new Response(JSON.stringify(PersonMockData));
     });
     addMock(correctUrl, async request => {
