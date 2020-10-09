@@ -716,6 +716,10 @@
         "responseTypeName": {
           "type": "string"
         },
+        "argTypeMap": {
+          "type": "object",
+          "properties": {}
+        },
         "headers": {
           "type": "object",
           "properties": {}

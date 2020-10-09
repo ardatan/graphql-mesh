@@ -120,11 +120,14 @@ export default class JsonSchemaHandler implements MeshHandler {
         typeName: operationConfig.responseTypeName,
       });
 
-      const { args, contextVariables: specificContextVariables } = parseInterpolationStrings([
-        ...Object.values(this.config.operationHeaders || {}),
-        ...Object.values(operationConfig.headers || {}),
-        operationConfig.path,
-      ]);
+      const { args, contextVariables: specificContextVariables } = parseInterpolationStrings(
+        [
+          ...Object.values(this.config.operationHeaders || {}),
+          ...Object.values(operationConfig.headers || {}),
+          operationConfig.path,
+        ],
+        operationConfig.argTypeMap
+      );
 
       contextVariables.push(...specificContextVariables);
 
