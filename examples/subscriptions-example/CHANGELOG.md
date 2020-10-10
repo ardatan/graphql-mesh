@@ -1,5 +1,13 @@
 # subscriptions-example
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [3ee10180]
+  - @graphql-mesh/json-schema@0.7.0
+  - @graphql-mesh/cli@0.11.5
+
 ## 0.1.0
 
 ### Minor Changes

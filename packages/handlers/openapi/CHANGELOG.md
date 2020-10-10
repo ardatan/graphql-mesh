@@ -1,5 +1,13 @@
 # @graphql-mesh/openapi
 
+## 0.9.1
+
+### Patch Changes
+
+- e3021ba2: fix(openapi): handle operationHeaders properly
+- Updated dependencies [3ee10180]
+  - @graphql-mesh/types@0.16.0
+
 ## 0.9.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.16.0
+
+### Minor Changes
+
+- 3ee10180: feat(json-schema): add argTypeMap to operation config to provide custom types for args
+
 ## 0.15.0
 
 ### Minor Changes

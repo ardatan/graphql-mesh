@@ -1,6 +1,6 @@
 {
   "name": "federation-handler-example",
-  "version": "0.5.22",
+  "version": "0.5.23",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "apollo-server": "2.18.2",
-    "@graphql-mesh/cli": "0.11.4",
-    "@graphql-mesh/merger-federation": "0.7.3",
-    "@graphql-mesh/transform-federation": "0.4.16",
-    "@graphql-mesh/graphql": "0.7.4",
+    "@graphql-mesh/cli": "0.11.5",
+    "@graphql-mesh/merger-federation": "0.7.4",
+    "@graphql-mesh/transform-federation": "0.4.17",
+    "@graphql-mesh/graphql": "0.7.5",
     "graphql": "15.3.0"
   }
 }
