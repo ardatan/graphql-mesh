@@ -22,7 +22,11 @@ const mergeUsingStitching: MergerFn = async function (options) {
   if (transforms?.length) {
     const { noWrapTransforms, wrapTransforms } = groupTransforms(transforms);
     if (wrapTransforms.length) {
-      unifiedSchema = wrapSchema(unifiedSchema, wrapTransforms);
+      unifiedSchema = wrapSchema({
+        schema: unifiedSchema,
+        batch: true,
+        transforms: wrapTransforms,
+      });
     }
     if (noWrapTransforms.length) {
       unifiedSchema = applySchemaTransforms(unifiedSchema, noWrapTransforms);
