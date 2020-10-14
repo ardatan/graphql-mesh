@@ -931,6 +931,19 @@ export function sanitize(str: string, caseStyle: CaseStyle): string {
     caseStyle === CaseStyle.ALL_CAPS
       ? /[^a-zA-Z0-9_]/g // ALL_CAPS has underscores
       : /[^a-zA-Z0-9]/g;
+
+  const operators = {
+    '<=': 'less_than_or_equal_to',
+    '>=': 'greater_than_or_equal_to',
+    '<': 'less_than',
+    '>': 'greater_than',
+    '=': 'equal_to',
+  };
+
+  for (const operator in operators) {
+    str = str.replace(operator, operators[operator]);
+  }
+
   let sanitized = str.split(regex).reduce((path, part) => {
     if (caseStyle === CaseStyle.ALL_CAPS) {
       return path + '_' + part;

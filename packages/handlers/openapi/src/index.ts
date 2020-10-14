@@ -19,6 +19,7 @@ import {
   MeshPubSub,
 } from '@graphql-mesh/types';
 import { fetchache, Request } from 'fetchache';
+import { printSchema } from 'graphql';
 
 export default class OpenAPIHandler implements MeshHandler {
   config: YamlConfig.OpenapiHandler;
@@ -123,6 +124,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
     contextVariables.push('fetch', 'baseUrl');
 
+    console.log(printSchema(schema));
     return {
       schema,
       contextVariables,
