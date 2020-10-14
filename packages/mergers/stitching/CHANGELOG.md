@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-stitching
 
+## 0.6.16
+
+### Patch Changes
+
+- 8d2628b8: enhance(stitching): apply batching to root level transformed schema
+
 ## 0.6.15
 
 ### Patch Changes
