@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.10.0
+
+### Minor Changes
+
+- 66115a19: feat(openapi): represent math operators in text
+
 ## 0.9.1
 
 ### Patch Changes
