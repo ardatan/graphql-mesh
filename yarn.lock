@@ -11047,6 +11047,14 @@ graphql-compose@7.21.4:
     graphql-type-json "0.3.2"
     object-path "^0.11.4"
 
+graphql-compose@7.22.1:
+  version "7.22.1"
+  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-7.22.1.tgz#3d02ee59d33f4b6f6a55d91db2a2ffc1a75e7381"
+  integrity sha512-QZH4OprW1/hBXZS7NwaC6qhM2nAHsdpgbkAxeyOOO5AStqpF4tCWjMu4fQQo2gwiJyj/dMt0OEt/kKR99UW6Fg==
+  dependencies:
+    graphql-type-json "0.3.2"
+    object-path "^0.11.4"
+
 graphql-extensions@^0.12.5:
   version "0.12.5"
   resolved "https://registry.yarnpkg.com/graphql-extensions/-/graphql-extensions-0.12.5.tgz#b0e6b218f26f5aafe9dd73642410fec6beac0575"
