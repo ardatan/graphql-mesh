@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "concurrently": "5.3.0",
-    "nodemon": "2.0.4"
+    "nodemon": "2.0.5"
   },
   "dependencies": {
     "apollo-server": "2.18.2",
