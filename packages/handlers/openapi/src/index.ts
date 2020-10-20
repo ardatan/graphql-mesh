@@ -124,7 +124,6 @@ export default class OpenAPIHandler implements MeshHandler {
 
     contextVariables.push('fetch', 'baseUrl');
 
-    console.log(printSchema(schema));
     return {
       schema,
       contextVariables,

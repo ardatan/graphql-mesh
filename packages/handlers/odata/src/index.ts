@@ -663,7 +663,6 @@ export default class ODataHandler implements MeshHandler {
                 });
                 const urlString = getUrlString(url);
                 const method = 'GET';
-                console.log(urlString);
                 const request = new Request(urlString, {
                   method,
                   headers: headersFactory({ root, args, context, info }, method),
