@@ -1,8 +1,8 @@
-import { printSchema } from 'graphql';
 import OpenAPIHandler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { resolve } from 'path';
 import { PubSub } from 'graphql-subscriptions';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('openapi', () => {
   it('should create a GraphQL schema from a simple local swagger file', async () => {
@@ -16,6 +16,6 @@ describe('openapi', () => {
     });
     const source = await handler.getMeshSource();
 
-    expect(printSchema(source.schema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
   });
 });

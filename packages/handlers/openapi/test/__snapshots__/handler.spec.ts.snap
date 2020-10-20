@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`openapi should create a GraphQL schema from a simple local swagger file 1`] = `
-"type Query {
+"schema { query: Query
+mutation: Mutation }
+type Query {
   \\"\\"\\"
   Get recent media from a geography subscription that you created.
   **Note:** You can only access Geographies that were explicitly created by your OAuth client. Check the
@@ -17,14 +19,11 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getGeographiesGeoIdMediaRecent(
     \\"\\"\\"Max number of media to return.\\"\\"\\"
     count: Int
-
     \\"\\"\\"The geography ID.\\"\\"\\"
     geoId: String!
-
     \\"\\"\\"Return media before this \`min_id\`.\\"\\"\\"
     minId: String
   ): MediaListResponse
-
   \\"\\"\\"
   Get information about a location.
   
@@ -34,7 +33,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     \\"\\"\\"The location ID.\\"\\"\\"
     locationId: String!
   ): LocationInfoResponse
-
   \\"\\"\\"
   Get a list of recent media objects from a given location.
   
@@ -43,20 +41,15 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getLocationsLocationIdMediaRecent(
     \\"\\"\\"The location ID.\\"\\"\\"
     locationId: String!
-
     \\"\\"\\"Return media after this \`max_id\`.\\"\\"\\"
     maxId: String
-
     \\"\\"\\"Return media before this UNIX timestamp.\\"\\"\\"
     maxTimestamp: Float
-
     \\"\\"\\"Return media before this \`min_id\`.\\"\\"\\"
     minId: String
-
     \\"\\"\\"Return media after this UNIX timestamp.\\"\\"\\"
     minTimestamp: Float
   ): MediaListResponse
-
   \\"\\"\\"
   Search for a location by geographic coordinate.
   
@@ -65,33 +58,23 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getLocationsSearch(
     \\"\\"\\"Default is 1000m (distance=1000), max distance is 5000.\\"\\"\\"
     distance: Int
-
-    \\"\\"\\"
-    Returns a location mapped off of a Facebook places id. If used, a Foursquare id and \`lat\`, \`lng\` are not required.
-    \\"\\"\\"
+    \\"\\"\\"Returns a location mapped off of a Facebook places id. If used, a Foursquare id and \`lat\`, \`lng\` are not required.\\"\\"\\"
     facebookPlacesId: String
-
     \\"\\"\\"
     Returns a location mapped off of a foursquare v1 api location id. If used, you are not required to use
     \`lat\` and \`lng\`. Note that this method is deprecated; you should use the new foursquare IDs with V2 of their API.
-    
     \\"\\"\\"
     foursquareId: String
-
     \\"\\"\\"
     Returns a location mapped off of a foursquare v2 api location id. If used, you are not required to use
     \`lat\` and \`lng\`.
-    
     \\"\\"\\"
     foursquareV2Id: String
-
     \\"\\"\\"Latitude of the center search coordinate. If used, \`lng\` is required.\\"\\"\\"
     lat: Float
-
     \\"\\"\\"Longitude of the center search coordinate. If used, \`lat\` is required.\\"\\"\\"
     lng: Float
   ): LocationSearchResponse
-
   \\"\\"\\"
   Get information about a media object. The returned type key will allow you to differentiate between image and
   video media.
@@ -105,7 +88,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     \\"\\"\\"The ID of the media resource.\\"\\"\\"
     mediaId: String!
   ): MediaEntryResponse
-
   \\"\\"\\"
   Get a list of recent comments on a media object.
   
@@ -115,7 +97,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     \\"\\"\\"The ID of the media resource.\\"\\"\\"
     mediaId: String!
   ): CommentsResponse
-
   \\"\\"\\"
   Get a list of users who have liked this media.
   
@@ -125,7 +106,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     \\"\\"\\"The ID of the media resource.\\"\\"\\"
     mediaId: String!
   ): UsersInfoResponse
-
   \\"\\"\\"
   Get a list of what media is most popular at the moment. Can return mix of \`image\` and \`video\` types.
   **Warning:** [Deprecated](http://instagram.com/developer/changelog/) for Apps created **on or after** Nov 17, 2015
@@ -134,7 +114,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   Equivalent to GET /media/popular
   \\"\\"\\"
   getMediaPopular: MediaSearchResponse
-
   \\"\\"\\"
   Search for media in a given area. The default time span is set to 5 days. The time span must not exceed 7 days.
   Defaults time stamps cover the last 5 days. Can return mix of \`image\` and \`video\` types.
@@ -145,24 +124,15 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getMediaSearch(
     \\"\\"\\"Default is 1km (distance=1000), max distance is 5km.\\"\\"\\"
     distance: Int
-
     \\"\\"\\"Latitude of the center search coordinate. If used, \`lng\` is required.\\"\\"\\"
     lat: Float!
-
     \\"\\"\\"Longitude of the center search coordinate. If used, \`lat\` is required.\\"\\"\\"
     lng: Float!
-
-    \\"\\"\\"
-    A unix timestamp. All media returned will be taken earlier than this timestamp.
-    \\"\\"\\"
+    \\"\\"\\"A unix timestamp. All media returned will be taken earlier than this timestamp.\\"\\"\\"
     maxTimestamp: Float
-
-    \\"\\"\\"
-    A unix timestamp. All media returned will be taken later than this timestamp.
-    \\"\\"\\"
+    \\"\\"\\"A unix timestamp. All media returned will be taken later than this timestamp.\\"\\"\\"
     minTimestamp: Float
   ): MediaSearchResponse
-
   \\"\\"\\"
   This endpoint returns the same response as \`GET /media/{media-id}\`.
   A media object's shortcode can be found in its shortlink URL. An example shortlink is
@@ -175,7 +145,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     \\"\\"\\"The short code of the media resource.\\"\\"\\"
     shortcode: String!
   ): MediaEntryResponse
-
   \\"\\"\\"
   Search for tags by name.
   
@@ -185,7 +154,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     \\"\\"\\"A valid tag name without a leading \\\\#. (eg. snowy, nofilter)\\"\\"\\"
     q: String!
   ): TagSearchResponse
-
   \\"\\"\\"
   Get information about a tag object.
   
@@ -195,7 +163,6 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     \\"\\"\\"The tag name.\\"\\"\\"
     tagName: String!
   ): TagInfoResponse
-
   \\"\\"\\"
   Get a list of recently tagged media. Use the \`max_tag_id\` and \`min_tag_id\` parameters in the pagination
   response to paginate through these objects.
@@ -206,17 +173,13 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getTagsTagNameMediaRecent(
     \\"\\"\\"Count of tagged media to return.\\"\\"\\"
     count: Int
-
     \\"\\"\\"Return media after this \`max_tag_id\`.\\"\\"\\"
     maxTagId: String
-
     \\"\\"\\"Return media before this \`min_tag_id\`.\\"\\"\\"
     minTagId: String
-
     \\"\\"\\"The tag name.\\"\\"\\"
     tagName: String!
   ): TagMediaListResponse
-
   \\"\\"\\"
   Search for a user by name.
   
@@ -225,11 +188,9 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getUsersSearch(
     \\"\\"\\"Number of users to return.\\"\\"\\"
     count: Int
-
     \\"\\"\\"A query string.\\"\\"\\"
     q: String!
   ): UsersInfoResponse
-
   \\"\\"\\"
   See the authenticated user's feed.
   **Warning:** [Deprecated](http://instagram.com/developer/changelog/) for Apps created **on or after** Nov 17, 2015
@@ -240,14 +201,11 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getUsersSelfFeed(
     \\"\\"\\"Count of media to return.\\"\\"\\"
     count: Int
-
     \\"\\"\\"Return media earlier than this \`max_id\`.\\"\\"\\"
     maxId: String
-
     \\"\\"\\"Return media later than this \`min_id\`.\\"\\"\\"
     minId: String
   ): MediaListResponse
-
   \\"\\"\\"
   See the list of media liked by the authenticated user. Private media is returned as long as the authenticated
   user has permission to view that media. Liked media lists are only available for the currently authenticated
@@ -259,18 +217,15 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getUsersSelfMediaLiked(
     \\"\\"\\"Count of media to return.\\"\\"\\"
     count: Int
-
     \\"\\"\\"Return media liked before this id.\\"\\"\\"
     maxLikeId: String
   ): MediaListResponse
-
   \\"\\"\\"
   List the users who have requested this user's permission to follow.
   
   Equivalent to GET /users/self/requested-by
   \\"\\"\\"
   getUsersSelfRequestedBy: UsersInfoResponse
-
   \\"\\"\\"
   Get basic information about a user. To get information about the owner of the access token, you can use
   **self** instead of the \`user-id\`.
@@ -280,12 +235,9 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   Equivalent to GET /users/{user-id}
   \\"\\"\\"
   getUsersUserId(
-    \\"\\"\\"
-    The ID of a user to get information about, or **self** to retrieve information about authenticated user.
-    \\"\\"\\"
+    \\"\\"\\"The ID of a user to get information about, or **self** to retrieve information about authenticated user.\\"\\"\\"
     userId: String!
   ): UserResponse
-
   \\"\\"\\"
   Get the list of users this user is followed by. To get users followed by the owner of the access token, you
   can use **self** instead of the \`user-id\`.
@@ -294,12 +246,9 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   Equivalent to GET /users/{user-id}/followed-by
   \\"\\"\\"
   getUsersUserIdFollowedBy(
-    \\"\\"\\"
-    The ID of a user, or **self** to retrieve information about authenticated user.
-    \\"\\"\\"
+    \\"\\"\\"The ID of a user, or **self** to retrieve information about authenticated user.\\"\\"\\"
     userId: String!
   ): UsersPagingResponse
-
   \\"\\"\\"
   Get the list of users this user follows. To get follows of the owner of the access token, you can use **self**
   instead of the \`user-id\`.
@@ -308,12 +257,9 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   Equivalent to GET /users/{user-id}/follows
   \\"\\"\\"
   getUsersUserIdFollows(
-    \\"\\"\\"
-    The ID of a user, or **self** to retrieve information about authenticated user.
-    \\"\\"\\"
+    \\"\\"\\"The ID of a user, or **self** to retrieve information about authenticated user.\\"\\"\\"
     userId: String!
   ): UsersPagingResponse
-
   \\"\\"\\"
   Get the most recent media published by a user. To get the most recent media published by the owner of the
   access token, you can use **self** instead of the \`user-id\`.
@@ -325,25 +271,17 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
   getUsersUserIdMediaRecent(
     \\"\\"\\"Count of media to return.\\"\\"\\"
     count: Int
-
     \\"\\"\\"Return media earlier than this \`max_id\`.\\"\\"\\"
     maxId: String
-
     \\"\\"\\"Return media before this UNIX timestamp.\\"\\"\\"
     maxTimestamp: Float
-
     \\"\\"\\"Return media later than this \`min_id\`.\\"\\"\\"
     minId: String
-
     \\"\\"\\"Return media after this UNIX timestamp.\\"\\"\\"
     minTimestamp: Float
-
-    \\"\\"\\"
-    The ID of a user to get recent media of, or **self** to retrieve media of authenticated user.
-    \\"\\"\\"
+    \\"\\"\\"The ID of a user to get recent media of, or **self** to retrieve media of authenticated user.\\"\\"\\"
     userId: String!
   ): MediaListResponse
-
   \\"\\"\\"
   Get information about a relationship to another user.
   
@@ -354,339 +292,254 @@ exports[`openapi should create a GraphQL schema from a simple local swagger file
     userId: String!
   ): RelationshipResponse
 }
-
 type MediaListResponse {
   \\"\\"\\"List of media entries\\"\\"\\"
   data: [MediaEntry]
   meta: MetaData
   pagination: IdPaginationInfo
 }
-
 type MediaEntry {
   \\"\\"\\"??? Unknown ???\\"\\"\\"
   attribution: String
   caption: CaptionData
   comments: CommentsCollection
-
   \\"\\"\\"Media creation UNIX timestamp\\"\\"\\"
   createdTime: String
-
   \\"\\"\\"Filter of this media entry\\"\\"\\"
   filter: String
-
   \\"\\"\\"ID of a media entry\\"\\"\\"
   id: String
   images: ImagesData
   likes: LikesCollection
-
   \\"\\"\\"Fixed URL of this media entry\\"\\"\\"
   link: String
   location: LocationInfo
-
   \\"\\"\\"List of tags assigned to this media\\"\\"\\"
   tags: [String]
-
   \\"\\"\\"Type of this media entry\\"\\"\\"
   type: Type
   user: UserShortInfo
-
   \\"\\"\\"Indicates whether authenticated user has liked this media or not\\"\\"\\"
   userHasLiked: Boolean
-
   \\"\\"\\"Users located on this media entry\\"\\"\\"
   usersInPhoto: [UserInPhoto]
   videos: VideosData
 }
-
 type CaptionData {
   \\"\\"\\"Caption creation UNIX timestamp\\"\\"\\"
   createdTime: String
   from: UserShortInfo
-
   \\"\\"\\"ID of this caption\\"\\"\\"
   id: String
-
   \\"\\"\\"Caption text\\"\\"\\"
   text: String
 }
-
 type UserShortInfo {
   \\"\\"\\"User full name\\"\\"\\"
   fullName: String
-
   \\"\\"\\"User ID\\"\\"\\"
   id: String
-
   \\"\\"\\"URL to user profile picture\\"\\"\\"
   profilePicture: String
-
   \\"\\"\\"User name, nickname\\"\\"\\"
   username: String
 }
-
 type CommentsCollection {
-  \\"\\"\\"
-  Nember of comments available, data does not necessary contain all comments
-  \\"\\"\\"
+  \\"\\"\\"Nember of comments available, data does not necessary contain all comments\\"\\"\\"
   count: Int
-
-  \\"\\"\\"
-  Collection of comment entries; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)
-  \\"\\"\\"
+  \\"\\"\\"Collection of comment entries; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)\\"\\"\\"
   data: [CommentEntry]
 }
-
 type CommentEntry {
   \\"\\"\\"Comment creation UNIX timestamp\\"\\"\\"
   createdTime: String
   from: UserShortInfo
-
   \\"\\"\\"ID of this comment\\"\\"\\"
   id: String
-
   \\"\\"\\"Text of the comment\\"\\"\\"
   text: String
 }
-
 type ImagesData {
   lowResolution: ImageInfo
   standardResolution: ImageInfo
   thumbnail: ImageInfo
 }
-
 type ImageInfo {
   \\"\\"\\"Image/video height in pixels\\"\\"\\"
   height: Int
-
   \\"\\"\\"URL of the image/video resource\\"\\"\\"
   url: String
-
   \\"\\"\\"Image/video width in pixels\\"\\"\\"
   width: Int
 }
-
 type LikesCollection {
-  \\"\\"\\"
-  Nember of likes available, data does not necessary contain all comments
-  \\"\\"\\"
+  \\"\\"\\"Nember of likes available, data does not necessary contain all comments\\"\\"\\"
   count: Int
-
-  \\"\\"\\"
-  Collection of users who liked; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)
-  \\"\\"\\"
+  \\"\\"\\"Collection of users who liked; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)\\"\\"\\"
   data: [UserShortInfo]
 }
-
 type LocationInfo {
   \\"\\"\\"ID of this location (in some responses it has a type of 'integer')\\"\\"\\"
   id: String
-
   \\"\\"\\"Location latitude\\"\\"\\"
   latitude: Float
-
   \\"\\"\\"Location longitude\\"\\"\\"
   longitude: Float
-
   \\"\\"\\"Location name\\"\\"\\"
   name: String
 }
-
 enum Type {
   IMAGE
   VIDEO
 }
-
 type UserInPhoto {
   position: Position
   user: UserShortInfo
 }
-
 type Position {
   \\"\\"\\"X position (horizontal)\\"\\"\\"
   x: Float
-
   \\"\\"\\"Y position (vertical)\\"\\"\\"
   y: Float
 }
-
 type VideosData {
   lowResolution: ImageInfo
   standardResolution: ImageInfo
 }
-
 type MetaData {
   \\"\\"\\"HTTP result code\\"\\"\\"
   code: Int
 }
-
 type IdPaginationInfo {
   \\"\\"\\"The max ID of the next page\\"\\"\\"
   nextMaxId: String
-
   \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
   nextUrl: String
 }
-
 type LocationInfoResponse {
   data: LocationInfo
   meta: MetaData
 }
-
 type LocationSearchResponse {
   \\"\\"\\"List of found locations\\"\\"\\"
   data: [LocationInfo]
   meta: MetaData
 }
-
 type MediaEntryResponse {
   data: MediaEntry
   meta: MetaData
 }
-
 type CommentsResponse {
   \\"\\"\\"Collection of comments\\"\\"\\"
   data: [CommentEntry]
   meta: MetaData
 }
-
 type UsersInfoResponse {
   \\"\\"\\"User short information entries\\"\\"\\"
   data: [UserShortInfo]
   meta: MetaData
 }
-
 type MediaSearchResponse {
   \\"\\"\\"Found media entries; some end-points do not return likes informtaion\\"\\"\\"
   data: [MediaEntry]
   meta: MetaData
 }
-
 type TagSearchResponse {
   \\"\\"\\"List of found tags with brief statistics\\"\\"\\"
   data: [TagInfo]
   meta: MetaData
 }
-
 type TagInfo {
   \\"\\"\\"Overall number of media entries taged with this name\\"\\"\\"
   mediaCount: Float
-
   \\"\\"\\"Tag name\\"\\"\\"
   name: String
 }
-
 type TagInfoResponse {
   data: TagInfo
   meta: MetaData
 }
-
 type TagMediaListResponse {
   \\"\\"\\"List of media entries with this tag\\"\\"\\"
   data: [MediaEntry]
   meta: MetaData
   pagination: TagPaginationInfo
 }
-
 type TagPaginationInfo {
   \\"\\"\\"The deprication warning, if information is available\\"\\"\\"
   deprecationWarning: String
-
   \\"\\"\\"The min ID of a tag for the next page\\"\\"\\"
   minTagId: String
-
   \\"\\"\\"Depricated. Use min_tag_id instead\\"\\"\\"
   nextMaxId: String
-
   \\"\\"\\"The max ID of a tag for the next page\\"\\"\\"
   nextMaxTagId: String
-
   \\"\\"\\"Depricated. Use max_tag_id instead\\"\\"\\"
   nextMinId: String
-
   \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
   nextUrl: String
 }
-
 type UserResponse {
   data: UserInfo
   meta: MetaData
 }
-
 type UserInfo {
   \\"\\"\\"User biography\\"\\"\\"
   bio: String
   counts: UserCounts
-
   \\"\\"\\"User full name\\"\\"\\"
   fullName: String
-
   \\"\\"\\"User ID\\"\\"\\"
   id: String
-
   \\"\\"\\"URL to user profile picture\\"\\"\\"
   profilePicture: String
-
   \\"\\"\\"User name, nickname\\"\\"\\"
   username: String
-
   \\"\\"\\"URL to user web-site\\"\\"\\"
   website: String
 }
-
 type UserCounts {
   \\"\\"\\"Number of followers of this user\\"\\"\\"
   followedBy: Int
-
   \\"\\"\\"Number of users followed by this user\\"\\"\\"
   follows: Int
-
   \\"\\"\\"Number of user media\\"\\"\\"
   media: Int
 }
-
 type UsersPagingResponse {
   \\"\\"\\"List of user short information entries\\"\\"\\"
   data: [UserShortInfo]
   meta: MetaData
   pagination: CursorPaginationInfo
 }
-
 type CursorPaginationInfo {
   \\"\\"\\"The cursor ID of the next page\\"\\"\\"
   nextCursor: String
-
   \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
   nextUrl: String
 }
-
 type RelationshipResponse {
   data: RelationshipInfo
   meta: MetaData
 }
-
 type RelationshipInfo {
   \\"\\"\\"Status of incoming relationship\\"\\"\\"
   incomingStatus: IncomingStatus
-
   \\"\\"\\"Status of outgoing relationship\\"\\"\\"
   outgoingStatus: OutgoingStatus
-
   \\"\\"\\"Indicates whether target user is private or not\\"\\"\\"
   targetUserIsPrivate: Boolean
 }
-
 enum IncomingStatus {
   NONE
   FOLLOWED_BY
   REQUESTED_BY
 }
-
 enum OutgoingStatus {
   NONE
   FOLLOWS
   REQUESTED
 }
-
 type Mutation {
   \\"\\"\\"
   Remove a comment either on the authenticated user's media object or authored by the authenticated user.
@@ -697,11 +550,9 @@ type Mutation {
   deleteMediaMediaIdCommentsCommentId(
     \\"\\"\\"The ID of the comment entry.\\"\\"\\"
     commentId: String!
-
     \\"\\"\\"The ID of the media resource.\\"\\"\\"
     mediaId: String!
   ): StatusResponse
-
   \\"\\"\\"
   Remove a like on this media by the currently authenticated user.
   
@@ -711,7 +562,6 @@ type Mutation {
     \\"\\"\\"The ID of the media resource.\\"\\"\\"
     mediaId: String!
   ): StatusResponse
-
   \\"\\"\\"
   Create a comment on a media object with the following rules:
   
@@ -726,13 +576,9 @@ type Mutation {
   postMediaMediaIdComments(
     \\"\\"\\"The ID of the media resource.\\"\\"\\"
     mediaId: String!
-
-    \\"\\"\\"
-    Text to post as a comment on the media object as specified in \`media-id\`.
-    \\"\\"\\"
+    \\"\\"\\"Text to post as a comment on the media object as specified in \`media-id\`.\\"\\"\\"
     text: String!
   ): StatusResponse
-
   \\"\\"\\"
   Set a like on this media by the currently authenticated user.
   
@@ -742,7 +588,6 @@ type Mutation {
     \\"\\"\\"The ID of the media resource.\\"\\"\\"
     mediaId: String!
   ): StatusResponse
-
   \\"\\"\\"
   Modify the relationship between the current user and the target user.
   
@@ -751,28 +596,23 @@ type Mutation {
   postUsersUserIdRelationship(
     \\"\\"\\"Type of action to apply for relationship with the user.\\"\\"\\"
     action: Action!
-
     \\"\\"\\"The ID of the target user.\\"\\"\\"
     userId: String!
   ): RelationshipPostResponse
 }
-
 type StatusResponse {
   \\"\\"\\"No data - 'null'\\"\\"\\"
   data: String
   meta: MetaData
 }
-
 type RelationshipPostResponse {
   data: RelationshipStatus
   meta: MetaData
 }
-
 type RelationshipStatus {
   \\"\\"\\"Status of outgoing relationship\\"\\"\\"
   outgoingStatus: OutgoingStatus
 }
-
 enum Action {
   FOLLOW
   UNFOLLOW
@@ -780,6 +620,5 @@ enum Action {
   UNBLOCK
   APPROVE
   IGNORE
-}
-"
+}"
 `;
