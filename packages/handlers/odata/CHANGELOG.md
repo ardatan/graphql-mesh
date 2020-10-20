@@ -1,5 +1,11 @@
 # @graphql-mesh/odata
 
+## 0.6.4
+
+### Patch Changes
+
+- 8ffef9a5: fix(scalars): bump graphql-scalars to fix URL scalar issue
+
 ## 0.6.3
 
 ### Patch Changes

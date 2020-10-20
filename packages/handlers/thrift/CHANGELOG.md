@@ -1,5 +1,11 @@
 # @graphql-mesh/thrift
 
+## 0.5.16
+
+### Patch Changes
+
+- 8ffef9a5: fix(scalars): bump graphql-scalars to fix URL scalar issue
+
 ## 0.5.15
 
 ### Patch Changes
