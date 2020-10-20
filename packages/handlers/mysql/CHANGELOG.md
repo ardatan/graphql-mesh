@@ -1,5 +1,11 @@
 # @graphql-mesh/mysql
 
+## 0.5.10
+
+### Patch Changes
+
+- 8ffef9a5: fix(scalars): bump graphql-scalars to fix URL scalar issue
+
 ## 0.5.9
 
 ### Patch Changes
