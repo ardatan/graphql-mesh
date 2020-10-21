@@ -1,14 +1,7 @@
 import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { withCancel } from '@graphql-mesh/utils';
-import {
-  ChannelCredentials,
-  ClientReadableStream,
-  ClientUnaryCall,
-  Metadata,
-  credentials,
-  loadPackageDefinition,
-} from '@grpc/grpc-js';
-import { load } from '@grpc/proto-loader';
+import * as grpc from 'grpc';
+import { createPackageDefinition, load } from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
@@ -17,6 +10,7 @@ import { pascalCase } from 'pascal-case';
 import { AnyNestedObject, IParseOptions, Root } from 'protobufjs';
 import { Readable } from 'stream';
 import { promisify } from 'util';
+import grpcReflection from 'grpc-reflection-js';
 
 import {
   ClientMethod,
@@ -32,7 +26,7 @@ interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
 }
 
-interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable {
+interface GrpcResponseStream<T = grpc.ClientReadableStream<unknown>> extends Readable {
   [Symbol.asyncIterator](): AsyncIterableIterator<T>;
   cancel(): void;
 }
@@ -49,7 +43,7 @@ export default class GrpcHandler implements MeshHandler {
   }
 
   async getMeshSource() {
-    let creds: ChannelCredentials;
+    let creds: grpc.ChannelCredentials;
     if (this.config.credentialsSsl) {
       const sslFiles = [
         getBuffer(this.config.credentialsSsl.privateKey, this.cache),
@@ -59,11 +53,11 @@ export default class GrpcHandler implements MeshHandler {
         sslFiles.unshift(getBuffer(this.config.credentialsSsl.rootCA, this.cache));
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
-      creds = credentials.createSsl(rootCA, privateKey, certChain);
+      creds = grpc.credentials.createSsl(rootCA, privateKey, certChain);
     } else if (this.config.useHTTPS) {
-      creds = credentials.createSsl();
+      creds = grpc.credentials.createSsl();
     } else {
-      creds = credentials.createInsecure();
+      creds = grpc.credentials.createInsecure();
     }
 
     this.config.requestTimeout = this.config.requestTimeout || 200000;
@@ -84,22 +78,37 @@ export default class GrpcHandler implements MeshHandler {
     });
 
     const root = new Root();
-    let fileName = this.config.protoFilePath;
-    let options: LoadOptions = {};
-    if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
-      fileName = this.config.protoFilePath.file;
-      options = this.config.protoFilePath.load;
-      if (options.includeDirs) {
-        if (!Array.isArray(options.includeDirs)) {
-          return Promise.reject(new Error('The includeDirs option must be an array'));
+    let packageDefinition: grpc.PackageDefinition;
+    if (this.config.useReflection) {
+      const grpcReflectionServer = this.config.endpoint;
+      const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
+      const services = (await reflectionClient.listServices()) as string[];
+      const serviceRoots = await Promise.all(
+        services.map((service: string) => reflectionClient.fileContainingSymbol(service))
+      );
+      serviceRoots.forEach((serviceRoot: Root) => {
+        serviceRoot.name = this.config.serviceName || '';
+        root.add(serviceRoot);
+      });
+      packageDefinition = createPackageDefinition(root);
+    } else {
+      let fileName = this.config.protoFilePath;
+      let options: LoadOptions = {};
+      if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
+        fileName = this.config.protoFilePath.file;
+        options = this.config.protoFilePath.load;
+        if (options.includeDirs) {
+          if (!Array.isArray(options.includeDirs)) {
+            return Promise.reject(new Error('The includeDirs option must be an array'));
+          }
+          addIncludePathResolver(root, options.includeDirs);
         }
-        addIncludePathResolver(root, options.includeDirs);
       }
+      const protoDefinition = await root.load(fileName as string, options);
+      protoDefinition.resolveAll();
+      packageDefinition = await load(fileName as string, options);
     }
-    const protoDefinition = await root.load(fileName as string, options);
-    protoDefinition.resolveAll();
-    const packageDefinition = await load(fileName as string, options);
-    const grpcObject = loadPackageDefinition(packageDefinition);
+    const grpcObject = grpc.loadPackageDefinition(packageDefinition);
 
     const visit = async (nested: AnyNestedObject, name: string, currentPath: string) => {
       if ('nested' in nested) {
@@ -157,7 +166,14 @@ export default class GrpcHandler implements MeshHandler {
             if (name !== this.config.serviceName) {
               rootFieldName = camelCase(name + '_' + rootFieldName);
             }
-            if (currentPath !== this.config.packageName) {
+            if (this.config.useReflection) {
+              const reflectionPath = currentPath.replace(this.config.serviceName || '', '');
+              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
+              responseType = camelCase(
+                currentPath.split('.').join('_') + '_' + responseType.replace(reflectionPath, '')
+              );
+              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType.replace(reflectionPath, ''));
+            } else if (currentPath !== this.config.packageName) {
               rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
               responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType);
               requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType);
@@ -172,7 +188,7 @@ export default class GrpcHandler implements MeshHandler {
               },
             };
             if (method.responseStream) {
-              const clientMethod: ClientMethod = (input: unknown, metaData: Metadata) => {
+              const clientMethod: ClientMethod = (input: unknown, metaData: grpc.Metadata) => {
                 const responseStream = client[methodName](input, metaData) as GrpcResponseStream;
                 const test = withCancel(responseStream, () => responseStream.cancel());
                 return test;
@@ -186,7 +202,7 @@ export default class GrpcHandler implements MeshHandler {
                 },
               });
             } else {
-              const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
+              const clientMethod = promisify<grpc.ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
               const identifier = methodName.toLowerCase();
               const rootTC = (identifier.startsWith('get') || identifier.startsWith('list')) ? schemaComposer.Query : schemaComposer.Mutation;
               rootTC.addFields({

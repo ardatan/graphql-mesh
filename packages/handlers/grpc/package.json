@@ -20,6 +20,8 @@
     "camel-case": "4.1.2",
     "graphql-scalars": "1.7.0",
     "graphql-compose": "7.24.1",
+    "grpc": "1.24.4",
+    "grpc-reflection-js": "0.0.7",
     "protobufjs": "6.10.2",
     "pascal-case": "3.1.2",
     "lodash": "4.17.20"

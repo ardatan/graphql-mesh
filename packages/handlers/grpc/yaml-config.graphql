@@ -13,7 +13,7 @@ type GrpcHandler @md {
   """
   gRPC Proto file that contains your protobuf schema
   """
-  protoFilePath: ProtoFilePathOrString!
+  protoFilePath: ProtoFilePathOrString
   """
   Your base service name
   Used for naming only
@@ -41,6 +41,10 @@ type GrpcHandler @md {
   MetaData
   """
   metaData: JSON
+  """
+  Use gRPC reflection to automatically gather the connection
+  """
+  useReflection: Boolean
 }
 
 type LoadOptions {
