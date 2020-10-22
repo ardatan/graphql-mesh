@@ -2830,61 +2830,6 @@
     winston "3.3.3"
     yargs "16.0.3"
 
-"@graphql-mesh/cli@0.11.5":
-  version "0.11.5"
-  resolved "https://registry.yarnpkg.com/@graphql-mesh/cli/-/cli-0.11.5.tgz#330181fd1a318c1c0babbb91b3f096a00a593f71"
-  integrity sha512-3dIC99a4L0hFKE3YerlVKk87EJNeCH58n9PjJMSDPuLg3EQrlf0q/wUuo37hWeAvyWgjFlcBYVtgSVqOpWSz1w==
-  dependencies:
-    "@graphql-codegen/core" "1.17.8"
-    "@graphql-codegen/typescript" "1.17.10"
-    "@graphql-codegen/typescript-generic-sdk" "1.17.8"
-    "@graphql-codegen/typescript-operations" "1.17.8"
-    "@graphql-codegen/typescript-resolvers" "1.17.9"
-    "@graphql-mesh/config" "0.10.11"
-    "@graphql-mesh/runtime" "0.7.11"
-    "@graphql-mesh/utils" "0.6.0"
-    "@graphql-tools/code-file-loader" "6.2.4"
-    "@graphql-tools/graphql-file-loader" "6.2.4"
-    "@graphql-tools/load" "6.2.3"
-    "@graphql-tools/utils" "6.2.2"
-    body-parser "1.19.0"
-    chalk "4.1.0"
-    change-case "4.1.1"
-    cookie-parser "1.4.5"
-    cors "2.8.5"
-    express "4.17.1"
-    express-graphql "0.11.0"
-    fs-extra "9.0.1"
-    graphql-upload "11.0.0"
-    js-yaml "3.14.0"
-    json-bigint-patch "0.0.4"
-    lodash "4.17.20"
-    mkdirp "1.0.4"
-    pascal-case "3.1.1"
-    subscriptions-transport-ws "0.9.18"
-    winston "3.3.3"
-    yargs "16.0.3"
-
-"@graphql-mesh/config@0.10.11":
-  version "0.10.11"
-  resolved "https://registry.yarnpkg.com/@graphql-mesh/config/-/config-0.10.11.tgz#1fc08b100f0ec59954027419325a591054062952"
-  integrity sha512-KxKNC+whwOcUjFACVxwYwtk0PzpGJN9boMiiqE5UPaRn/fnpZ8Vj98a3UYZW/AP5qe2qFG9aZ8wMZB6GxVhOSg==
-  dependencies:
-    "@graphql-mesh/cache-inmemory-lru" "0.4.16"
-    "@graphql-mesh/merger-stitching" "0.6.15"
-    "@graphql-mesh/runtime" "0.7.11"
-    "@graphql-mesh/types" "0.16.0"
-    "@graphql-mesh/utils" "0.6.0"
-    "@graphql-tools/graphql-file-loader" "6.2.4"
-    "@graphql-tools/load" "6.2.3"
-    "@graphql-tools/merge" "6.2.3"
-    "@graphql-tools/utils" "6.2.2"
-    ajv "6.12.5"
-    cosmiconfig "7.0.0"
-    graphql-subscriptions "1.1.0"
-    lodash "4.17.20"
-    param-case "3.0.3"
-
 "@graphql-mesh/config@0.10.6":
   version "0.10.6"
   resolved "https://registry.yarnpkg.com/@graphql-mesh/config/-/config-0.10.6.tgz#28d569f0ad36398ba2aa98f8ac71d763052237b3"
@@ -2936,37 +2881,6 @@
     "@graphql-tools/utils" "6.2.2"
     "@graphql-tools/wrap" "6.2.3"
     fetchache "0.0.3"
-
-"@graphql-mesh/merger-stitching@0.6.15":
-  version "0.6.15"
-  resolved "https://registry.yarnpkg.com/@graphql-mesh/merger-stitching/-/merger-stitching-0.6.15.tgz#2897f4b3174f65ed1cdb69b3c4fed3e41f7b65ba"
-  integrity sha512-tTcOdXNSgP9EnT+QTqkQg+UsSOEBrTDSaTJC6KJSSvKBezDo6avaMeE9B90ij2tRhyB8uOIWyaguYkbo76drRQ==
-  dependencies:
-    "@graphql-mesh/types" "0.16.0"
-    "@graphql-mesh/utils" "0.6.0"
-    "@graphql-tools/schema" "6.2.2"
-    "@graphql-tools/stitch" "6.2.4"
-    "@graphql-tools/utils" "6.2.2"
-    "@graphql-tools/wrap" "6.2.3"
-    fetchache "0.0.3"
-
-"@graphql-mesh/openapi@0.9.1":
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/@graphql-mesh/openapi/-/openapi-0.9.1.tgz#2a10e45a874c335dbbf55cf4729830a21baf5ae4"
-  integrity sha512-4TM2Q4voj1ZOnUm79FLjrlripryyNDjRYf+ZEk9fk2OlkGgZiC5bZ9/TVBggzqSNOfgcVuqjTi0A3SBQSe+SsQ==
-  dependencies:
-    "@graphql-mesh/types" "0.16.0"
-    "@graphql-mesh/utils" "0.6.0"
-    deep-equal "2.0.4"
-    fetchache "0.0.3"
-    form-urlencoded "4.2.1"
-    graphql-scalars "1.3.0"
-    graphql-subscriptions "1.1.0"
-    json-ptr "1.3.2"
-    jsonpath-plus "4.0.0"
-    pluralize "8.0.0"
-    swagger2openapi "7.0.2"
-    url-join "4.0.1"
 
 "@graphql-mesh/runtime@0.7.6":
   version "0.7.6"
@@ -4335,10 +4249,10 @@
   resolved "https://registry.yarnpkg.com/@types/content-disposition/-/content-disposition-0.5.3.tgz#0aa116701955c2faa0717fc69cd1596095e49d96"
   integrity sha512-P1bffQfhD3O4LW0ioENXUhZ9OIa0Zn+P7M+pWgkCKaT53wVLSq0mrKksCID/FGHpFhRSxRGhgrQmfhRuzwtKdg==
 
-"@types/cookie-parser@1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@types/cookie-parser/-/cookie-parser-1.4.1.tgz#e88a39c41960f31549b4c52dd8620aa4a2feb4bb"
-  integrity sha512-iJY6B3ZGufLiDf2OCAgiAAQuj1sMKC/wz/7XCEjZ+/MDuultfFJuSwrBKcLSmJ5iYApLzCCYBYJZs0Ws8GPmwA==
+"@types/cookie-parser@1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@types/cookie-parser/-/cookie-parser-1.4.2.tgz#e4d5c5ffda82b80672a88a4281aaceefb1bd9df5"
+  integrity sha512-uwcY8m6SDQqciHsqcKDGbo10GdasYsPCYkH3hVegj9qAah6pX5HivOnOuI3WYmyQMnOATV39zv/Ybs0bC/6iVg==
   dependencies:
     "@types/express" "*"
 
