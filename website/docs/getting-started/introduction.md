@@ -19,8 +19,6 @@ You can use one of the handlers that we wrote (GraphQL, Apollo Federation, gRPC,
 
 ![GraphQL Mesh](/img/mesh-example.png)
 
-> Note: GraphQL Mesh doesn’t aim to magically create your utopic public GraphQL schema - it’s just an easy-to-use proxy to your data, and you should consider implementing another layer that exposes your public data the way you need it to be.
-
 ### How it works?
 
 The way GraphQL Mesh works is:
