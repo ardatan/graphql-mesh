@@ -1,6 +1,6 @@
 import { KeyValueCache } from '@graphql-mesh/types';
 import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import * as grpc from 'grpc';
+import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { existsSync } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
 import { InputTypeComposer, ObjectTypeComposer, SchemaComposer } from 'graphql-compose';
@@ -13,8 +13,8 @@ import { getGraphQLScalar, isScalarType } from './scalars';
 
 export type ClientMethod = (
   input: unknown,
-  metaData?: grpc.Metadata
-) => Promise<grpc.ClientUnaryCall> | AsyncIterator<grpc.ClientReadableStream<unknown>>;
+  metaData?: Metadata
+) => Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>>;
 
 interface InputOutputTypes {
   input: string;
@@ -50,9 +50,9 @@ export function addMetaDataToCall(
   input: unknown,
   context: Record<string, unknown>,
   metaData: Record<string, string | string[] | Buffer>
-): Promise<grpc.ClientUnaryCall> | AsyncIterator<grpc.ClientReadableStream<unknown>> {
+): Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>> {
   if (metaData) {
-    const meta = new grpc.Metadata();
+    const meta = new Metadata();
     for (const [key, value] of Object.entries(metaData)) {
       let metaValue: unknown = value;
       if (Array.isArray(value)) {
@@ -64,7 +64,7 @@ export function addMetaDataToCall(
         metaValue = JSON.stringify(metaValue);
       }
 
-      meta.add(key, metaValue as grpc.MetadataValue);
+      meta.add(key, metaValue as MetadataValue);
     }
 
     return call(input, meta);

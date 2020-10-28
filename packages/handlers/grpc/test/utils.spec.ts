@@ -1,4 +1,4 @@
-import * as grpc from 'grpc';
+import { Metadata } from '@grpc/grpc-js';
 import { SchemaComposer } from 'graphql-compose';
 
 import {
@@ -18,8 +18,8 @@ describe('grpc utils', () => {
     const binarySportsTeam = Buffer.from([68, 111, 100, 103, 101, 114, 115, 32, 82, 117, 108, 101, 33]);
     const binaryPlayer = Buffer.from([75, 101, 114, 115, 104, 97, 119]);
 
-    function createExpectedMetadata(key: string, value: string | Buffer): grpc.Metadata {
-      const meta = new grpc.Metadata();
+    function createExpectedMetadata(key: string, value: string | Buffer): Metadata {
+      const meta = new Metadata();
       meta.add(key, value);
 
       return meta;
@@ -30,7 +30,7 @@ describe('grpc utils', () => {
       expect(grpcClientMethod).toHaveBeenCalledWith(input);
     });
 
-    describe.each<[string, Record<string, string | Buffer | string[]>, grpc.Metadata]>([
+    describe.each<[string, Record<string, string | Buffer | string[]>, Metadata]>([
       ['static', { sportsTeam: 'Dodgers' }, createExpectedMetadata('sportsTeam', 'Dodgers')],
       ['static all lowercase', { sportsteam: 'Dodgers' }, createExpectedMetadata('sportsteam', 'Dodgers')],
       ['dynamic', { bestPlayer: ['players', 'pitcher'] }, createExpectedMetadata('bestplayer', 'Kershaw')],
