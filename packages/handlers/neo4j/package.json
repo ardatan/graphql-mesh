@@ -19,7 +19,7 @@
     "@graphql-tools/load": "6.2.5",
     "@graphql-tools/graphql-file-loader": "6.2.3",
     "@graphql-tools/code-file-loader": "6.2.4",
-    "@graphql-tools/merge": "6.2.4",
+    "@graphql-tools/merge": "6.2.5",
     "@graphql-mesh/types": "0.16.0",
     "neo4j-driver": "4.1.2",
     "neo4j-graphql-js": "2.16.4"
