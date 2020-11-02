@@ -120,8 +120,8 @@ async function test() {
   const sdk = getSdk(sdkRequester);
 
   // Execute `myQuery` and get a type-safe result
-  // Variables and result are typed: { data?: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] } }
-  const { data, errors } = await sdk.myQuery({ someVar: 'foo' });
+  // Variables and result are typed: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] }
+  const { getSomething } = await sdk.myQuery({ someVar: 'foo' });
 }
 ```
 
