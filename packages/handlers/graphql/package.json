@@ -15,7 +15,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.16.0",
     "@graphql-mesh/utils": "0.6.0",
-    "fetchache": "0.0.3",
+    "fetchache": "0.0.4",
     "@graphql-tools/url-loader": "6.3.0",
     "@graphql-tools/wrap": "6.2.3"
   },

@@ -19,7 +19,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.16.0",
     "@graphql-mesh/utils": "0.6.0",
-    "fetchache": "0.0.3",
+    "fetchache": "0.0.4",
     "deep-equal": "2.0.4",
     "form-urlencoded": "4.2.1",
     "jsonpath-plus": "4.0.0",

@@ -13,7 +13,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "fetchache": "0.0.3",
+    "fetchache": "0.0.4",
     "@graphql-tools/delegate": "6.2.4",
     "@graphql-tools/utils": "6.2.2"
   },
