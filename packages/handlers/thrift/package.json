@@ -23,7 +23,7 @@
     "@graphql-mesh/types": "0.16.0",
     "@graphql-mesh/utils": "0.6.0",
     "aggregate-error": "3.1.0",
-    "fetchache": "0.0.3",
+    "fetchache": "0.0.4",
     "graphql-scalars": "1.4.1",
     "url-join": "4.0.1",
     "thrift": "0.13.0"

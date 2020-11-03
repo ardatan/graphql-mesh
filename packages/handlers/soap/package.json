@@ -18,7 +18,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.16.0",
     "@graphql-mesh/utils": "0.6.0",
-    "fetchache": "0.0.3",
+    "fetchache": "0.0.4",
     "soap-graphql": "0.1.1",
     "soap": "0.33.0"
   },

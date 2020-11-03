@@ -23,7 +23,7 @@
     "http-string-parser": "0.0.6",
     "dataloader": "2.0.0",
     "fast-xml-parser": "3.17.4",
-    "fetchache": "0.0.3",
+    "fetchache": "0.0.4",
     "graphql-compose": "7.22.1",
     "graphql-parse-resolve-info": "4.9.0",
     "graphql-scalars": "1.4.1",

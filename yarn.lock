@@ -10233,6 +10233,14 @@ fetchache@0.0.3:
     cross-fetch "3.0.4"
     http-cache-semantics "4.1.0"
 
+fetchache@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.0.4.tgz#6da0c6de56547d894a005be3f48925096e46f5b3"
+  integrity sha512-pRK9fnr54S3orRp2ApQE0rVlrt5j4zAze4McogdEupN2oMPy+USPR1O1isYTuGNiNi5H4k725+1SCopD8LWWzw==
+  dependencies:
+    cross-fetch "3.0.6"
+    http-cache-semantics "4.1.0"
+
 figgy-pudding@^3.5.1:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/figgy-pudding/-/figgy-pudding-3.5.2.tgz#b4eee8148abb01dcf1d1ac34367d59e12fa61d6e"
