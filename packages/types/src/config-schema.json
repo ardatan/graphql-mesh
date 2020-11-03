@@ -485,6 +485,14 @@
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Paths to the schema"
+        },
         "introspection": {
           "type": "string",
           "description": "Path to the introspection\nYou can seperately give schema introspection"

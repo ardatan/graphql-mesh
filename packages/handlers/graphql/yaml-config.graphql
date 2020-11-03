@@ -39,6 +39,10 @@ type GraphQLHandler @md {
   """
   webSocketImpl: String
   """
+  Paths to the schema
+  """
+  schema: [String]
+  """
   Path to the introspection
   You can seperately give schema introspection
   """

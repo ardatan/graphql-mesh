@@ -1,10 +1,15 @@
 import { GetMeshSourceOptions, MeshHandler, MeshSource, ResolverData, YamlConfig } from '@graphql-mesh/types';
 import { fetchache, KeyValueCache, Request } from 'fetchache';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildClientSchema, introspectionFromSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import { getInterpolatedHeadersFactory, ResolverDataBasedFactory, getHeadersObject } from '@graphql-mesh/utils';
 import { ExecutionParams } from '@graphql-tools/delegate';
+import { loadSchema } from '@graphql-tools/load';
+
+const loaders = [new CodeFileLoader(), new GraphQLFileLoader(), new UrlLoader()];
 
 export default class GraphQLHandler implements MeshHandler {
   private name: string;
@@ -46,6 +51,13 @@ export default class GraphQLHandler implements MeshHandler {
         headers: this.config.schemaHeaders,
       });
       schema = result.schema;
+    } else if (this.config.schema) {
+      schema = await loadSchema(this.config.schema, {
+        loaders,
+        customFetch: customFetch as any,
+        ...this.config,
+        headers: this.config.schemaHeaders,
+      });
     } else if (this.config.cacheIntrospection) {
       const cacheKey = this.name + '_introspection';
       const introspectionData: any = await this.cache.get(cacheKey);

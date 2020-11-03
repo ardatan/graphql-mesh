@@ -146,6 +146,10 @@ export interface GraphQLHandler {
    */
   webSocketImpl?: string;
   /**
+   * Paths to the schema
+   */
+  schema?: string[];
+  /**
    * Path to the introspection
    * You can seperately give schema introspection
    */
