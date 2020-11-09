@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.16.1
+
+### Patch Changes
+
+- 3770af72: feat(openapi): addLinitArgument is configurable
+
+  fix(openapi): auto generated limit value is not mandatory
+
+  fix(openapi): generate limit parameter for composed types
+
 ## 0.16.0
 
 ### Minor Changes
