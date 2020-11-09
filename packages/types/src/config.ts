@@ -583,6 +583,11 @@ export interface OpenapiHandler {
    * Include HTTP Response details to the result object
    */
   includeHttpDetails?: boolean;
+  /**
+   * Auto-generate a 'limit' argument for all fields that return lists of
+   * objects, including ones produced by links
+   */
+  addLimitArgument?: boolean;
 }
 /**
  * Handler for Postgres database, based on `postgraphile`
