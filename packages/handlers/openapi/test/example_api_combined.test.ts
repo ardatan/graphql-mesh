@@ -55,3 +55,26 @@ test('addLimitArgument and allOf', () => {
     });
   });
 });
+
+test('addLimitArgument but no value provided', () => {
+  const options: Options<any, any, any> = {
+    addLimitArgument: true,
+    fetch,
+  };
+
+  const query = `query {
+    cars {
+      model
+    }
+  }`;
+
+  return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
+    const ast = parse(query);
+    const errors = validate(schema, ast);
+    expect(errors).toEqual([]);
+    return graphql(schema, query).then(result => {
+      expect(result.errors).toBeUndefined();
+      expect(result.data.cars.length).toEqual(4);
+    });
+  });
+});

@@ -684,20 +684,17 @@ export function getResolver<TSource, TContext, TArgs>(
             // Only array of objects/arrays
             saneData.some(data => {
               return typeof data === 'object';
-            })
+            }) &&
+            'limit' in args
           ) {
             let arraySaneData = saneData;
 
-            if ('limit' in args) {
-              const limit = args.limit;
+            const limit = args.limit;
 
-              if (limit >= 0) {
-                arraySaneData = arraySaneData.slice(0, limit);
-              } else {
-                throw new Error(`Auto-generated 'limit' argument must be greater than or equal to 0`);
-              }
+            if (limit >= 0) {
+              arraySaneData = arraySaneData.slice(0, limit);
             } else {
-              throw new Error(`Cannot get value for auto-generated 'limit' argument`);
+              throw new Error(`Auto-generated 'limit' argument must be greater than or equal to 0`);
             }
 
             saneData = arraySaneData;
