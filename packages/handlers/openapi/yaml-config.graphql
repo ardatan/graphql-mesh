@@ -39,6 +39,10 @@ type OpenapiHandler @md {
   Include HTTP Response details to the result object
   """
   includeHttpDetails: Boolean
+  """
+  Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
+  """
+  addLimitArgument: Boolean
 }
 
 enum SourceFormat {

@@ -1145,7 +1145,11 @@ export function getArgs<TSource, TContext, TArgs>({
     operation.responseDefinition.schema.type === 'array' &&
     // Only add limit argument to lists of object types, not to lists of scalar types
     ((operation.responseDefinition.subDefinitions as DataDefinition).schema.type === 'object' ||
-      (operation.responseDefinition.subDefinitions as DataDefinition).schema.type === 'array')
+      (operation.responseDefinition.subDefinitions as DataDefinition).schema.type === 'array' ||
+      ((operation.responseDefinition.subDefinitions as DataDefinition).schema.type === undefined &&
+        ((operation.responseDefinition.subDefinitions as DataDefinition).schema.allOf ||
+          (operation.responseDefinition.subDefinitions as DataDefinition).schema.anyOf ||
+          (operation.responseDefinition.subDefinitions as DataDefinition).schema.oneOf)))
   ) {
     // Make sure slicing arguments will not overwrite preexisting arguments
     if ('limit' in args) {
