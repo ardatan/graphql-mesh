@@ -97,11 +97,19 @@ export function generateTsTypes(
           ];
           const sdkItems: string[] = [];
           const contextItems: string[] = [];
-
           const results = await Promise.all(
             rawSources.map(source => {
+              const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
+              let sourceSchema = sourceMap.get(source);
+              if (!sourceSchema) {
+                for (const [keySource, valueSchema] of sourceMap.entries()) {
+                  if (keySource.name === source.name) {
+                    sourceSchema = valueSchema;
+                  }
+                }
+              }
               const item = generateTypesForApi({
-                schema: unifiedSchema.extensions.sourceMap.get(source),
+                schema: sourceSchema,
                 name: source.name,
               });
 
