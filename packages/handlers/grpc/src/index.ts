@@ -188,7 +188,7 @@ export default class GrpcHandler implements MeshHandler {
             } else {
               const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
               const identifier = methodName.toLowerCase();
-              const rootTC = identifier.startsWith('get') ? schemaComposer.Query : schemaComposer.Mutation;
+              const rootTC = (identifier.startsWith('get') || identifier.startsWith('list')) ? schemaComposer.Query : schemaComposer.Mutation;
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
