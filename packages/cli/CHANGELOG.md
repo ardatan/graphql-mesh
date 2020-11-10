@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.11.8
+
+### Patch Changes
+
+- 0ae7b154: fix(cli): generate typescript definitions properly
+
 ## 0.11.7
 
 ### Patch Changes
