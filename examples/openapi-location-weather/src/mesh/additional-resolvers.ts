@@ -12,7 +12,7 @@ export const resolvers: Resolvers = {
         }
       `,
       resolve: async (placeSummary, _, { Weather }) => {
-        const forecast = await Weather.api.getForecastDailyLatLatLonLon({
+        const forecast = await Weather.api.getForecastDailyLatequalToLatLonLon({
           lat: placeSummary.latitude!,
           lon: placeSummary.longitude!,
           key: WEATHER_API_KEY,
@@ -29,7 +29,7 @@ export const resolvers: Resolvers = {
         }
       `,
       resolve: async (placeSummary, _, { Weather }) => {
-        const forecast = await Weather.api.getForecastDailyLatLatLonLon({
+        const forecast = await Weather.api.getForecastDailyLatequalToLatLonLon({
           lat: placeSummary.latitude!,
           lon: placeSummary.longitude!,
           key: WEATHER_API_KEY,
