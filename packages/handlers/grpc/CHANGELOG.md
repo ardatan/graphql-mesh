@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.6.0
+
+### Minor Changes
+
+- 50cffde4: Added schemaComposer.Query for RPC methods starting with list
+
 ## 0.5.11
 
 ### Patch Changes
