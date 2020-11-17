@@ -1,0 +1,198 @@
+sources:
+  - name: FHIR
+    handler:
+      jsonSchema:
+        baseUrl: http://test.fhir.org/r4
+        baseSchema: ./fhir.schema.json
+        operations:
+          - type: Query
+            field: AllergyIntolerance
+            path: /AllergyIntolerance/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: AllergyIntolerance
+
+          - type: Query
+            field: Appointment
+            path: /Appointment/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Appointment
+
+          - type: Query
+            field: AuditEvent
+            path: /AuditEvent/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: AuditEvent
+
+          - type: Query
+            field: CapabilityStatement
+            path: /CapabilityStatement/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: CapabilityStatement
+
+          - type: Query
+            field: CodeSystem
+            path: /CodeSystem/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: CodeSystem
+
+          - type: Query
+            field: CompartmentDefinition
+            path: /CompartmentDefinition/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: CompartmentDefinition
+
+          - type: Query
+            field: ConceptMap
+            path: /ConceptMap/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: ConceptMap
+
+          - type: Query
+            field: Condition
+            path: /Condition/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Condition
+
+          - type: Query
+            field: DiagnosticReport
+            path: /DiagnosticReport/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: DiagnosticReport
+
+          - type: Query
+            field: DocumentReference
+            path: /DocumentReference/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: DocumentReference
+
+          - type: Query
+            field: Encounter
+            path: /Encounter/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Encounter
+
+          - type: Query
+            field: ImagingStudy
+            path: /ImagingStudy/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: ImagingStudy
+
+          - type: Query
+            field: Location
+            path: /Location/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Location
+
+          - type: Query
+            field: Medication
+            path: /Medication/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Medication
+
+          - type: Query
+            field: MedicationRequest
+            path: /MedicationRequest/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: MedicationRequest
+
+          - type: Query
+            field: MessageHeader
+            path: /MessageHeader/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: MessageHeader
+
+          - type: Query
+            field: NamingSystem
+            path: /NamingSystem/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: NamingSystem
+
+          - type: Query
+            field: Observation
+            path: /Observation/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Observation
+
+          - type: Query
+            field: OperationDefinition
+            path: /OperationDefinition/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: OperationDefinition
+
+          - type: Query
+            field: Organization
+            path: /Organization/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Organization
+
+          - type: Query
+            field: Patient
+            path: /Patient/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Patient
+
+          - type: Query
+            field: Practitioner
+            path: /Practitioner/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Practitioner
+
+          - type: Query
+            field: PractitionerRole
+            path: /PractitionerRole/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: PractitionerRole
+
+          - type: Query
+            field: Provenance
+            path: /Provenance/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Provenance
+
+          - type: Query
+            field: Questionnaire
+            path: /Questionnaire/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Questionnaire
+
+          - type: Query
+            field: RelatedPerson
+            path: /RelatedPerson/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: RelatedPerson
+
+          - type: Query
+            field: SearchParameter
+            path: /SearchParameter/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: SearchParameter
+
+          - type: Query
+            field: ServiceRequest
+            path: /ServiceRequest/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: ServiceRequest
+
+          - type: Query
+            field: StructureDefinition
+            path: /StructureDefinition/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: StructureDefinition
+
+          - type: Query
+            field: StructureMap
+            path: /StructureMap/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: StructureMap
+
+          - type: Query
+            field: Substance
+            path: /Substance/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: Substance
+
+          - type: Query
+            field: ValueSet
+            path: /ValueSet/{args.id}?_format=application/json
+            method: GET
+            responseTypeName: ValueSet
