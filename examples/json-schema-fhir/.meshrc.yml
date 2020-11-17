@@ -2,14 +2,14 @@ sources:
   - name: FHIR
     handler:
       jsonSchema:
-        baseUrl: http://test.fhir.org/r4
+        baseUrl: http://hapi.fhir.org/baseR4
         baseSchema: ./fhir.schema.json
         operations:
           - type: Query
-            field: search
-            path: /?_text={args.text}&_format=application/json
+            field: resource
+            path: /{args.type}/{args.id}?_format=application/json
             method: GET
-            responseTypeName: Bundle
+            responseTypeName: ResourceList
 
           - type: Query
             field: AllergyIntolerance
@@ -84,6 +84,12 @@ sources:
             responseTypeName: ImagingStudy
 
           - type: Query
+            field: searchLocation
+            path: /Location?name={args.name}&_format=application/json
+            method: GET
+            responseTypeName: Bundle
+
+          - type: Query
             field: Location
             path: /Location/{args.id}?_format=application/json
             method: GET
@@ -130,6 +136,12 @@ sources:
             path: /Organization/{args.id}?_format=application/json
             method: GET
             responseTypeName: Organization
+
+          - type: Query
+            field: searchPatient
+            path: /Patient?name={args.name}&_format=application/json
+            method: GET
+            responseTypeName: Bundle
 
           - type: Query
             field: Patient
@@ -203,5 +215,29 @@ sources:
             method: GET
             responseTypeName: ValueSet
 
+  - name: Covid
+    handler:
+      graphql:
+        endpoint: https://covid-19.dava.engineer/api/graphql
+additionalTypeDefs: |
+  extend type Reference {
+    resource: ResourceList
+  }
+  extend type Address {
+    case: Case
+  }
+additionalResolvers:
+  - ./resource.resolver.js # Programmatic API
+  - type: Address # Declarative API
+    field: case
+    requiredSelectionSet: |
+      {
+        country
+      }
+    targetSource: Covid
+    targetMethod: case
+    args:
+      countryRegion: '{root.country}'
+
 serve:
-  exampleQuery: ./example.query.graphql
+  exampleQuery: ./example-queries/*.graphql

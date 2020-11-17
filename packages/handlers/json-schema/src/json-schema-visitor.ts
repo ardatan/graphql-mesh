@@ -479,6 +479,9 @@ export class JSONSchemaVisitor<TContext> {
       name: unionName,
       types,
       resolveType: (root: any) => {
+        if (root.__typename) {
+          return root.__typename;
+        }
         for (const typeName of types) {
           const typeDef = this.schemaComposer.getAnyTC(typeName);
           const isValid = this.ajv.validate(typeDef.getExtension('objectDef'), root);
