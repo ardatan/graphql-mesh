@@ -6,6 +6,12 @@ sources:
         baseSchema: ./fhir.schema.json
         operations:
           - type: Query
+            field: search
+            path: /?_text={args.text}&_format=application/json
+            method: GET
+            responseTypeName: Bundle
+
+          - type: Query
             field: AllergyIntolerance
             path: /AllergyIntolerance/{args.id}?_format=application/json
             method: GET
@@ -196,3 +202,6 @@ sources:
             path: /ValueSet/{args.id}?_format=application/json
             method: GET
             responseTypeName: ValueSet
+
+serve:
+  exampleQuery: ./example.query.graphql

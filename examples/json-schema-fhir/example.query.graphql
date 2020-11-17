@@ -1,0 +1,31 @@
+query exampleQuery {
+  somePatient: search(text: "Jane") {
+    entry {
+      resource {
+        ... on Patient {
+          name {
+            given
+            family
+          }
+          birthDate
+        }
+      }
+    }
+  }
+  someLocation: search(text: "FAC1") {
+    entry {
+      resource {
+        ... on Location {
+          name
+          address {
+            line
+            postalCode
+            city
+            state
+            country
+          }
+        }
+      }
+    }
+  }
+}
