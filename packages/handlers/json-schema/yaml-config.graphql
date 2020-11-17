@@ -11,6 +11,7 @@ type JsonSchemaHandler @md {
   schemaHeaders: JSON
   operations: [JsonSchemaOperation!]!
   disableTimestampScalar: Boolean
+  baseSchema: Any
 }
 
 enum JsonSchemaOperationType {

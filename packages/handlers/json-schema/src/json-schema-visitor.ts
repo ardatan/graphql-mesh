@@ -56,7 +56,11 @@ export class JSONSchemaVisitor<TContext> {
   }
 
   // TODO: Should be improved!
+  private visitedRefNameMap = new Map<string, string>();
   createName({ ref, cwd }: { ref: string; cwd: string }) {
+    if (this.visitedRefNameMap.has(ref)) {
+      return this.visitedRefNameMap.get(ref)!;
+    }
     let [externalPath, internalRef] = ref.split('#');
     // If a reference
     if (internalRef) {
@@ -83,7 +87,9 @@ export class JSONSchemaVisitor<TContext> {
         propertyName: internalPropertyName,
         prefix: fileName,
         cwd: absolutePath,
+        typeName: internalRef.includes('definitions/') && internalPropertyName,
       });
+      this.visitedRefNameMap.set(ref, result);
       return result;
     } else {
       internalRef = ref;
@@ -92,14 +98,19 @@ export class JSONSchemaVisitor<TContext> {
     for (const sep of invalidSeperators) {
       internalRef = internalRef.split(sep).join('_');
     }
-    const name = pascalCase(internalRef);
+    let name = pascalCase(internalRef);
     if (this.schemaComposer.has(name)) {
       const fileNamePrefix = getFileName(cwd).split('.').join('_');
       return pascalCase(fileNamePrefix + '_' + name);
     }
+    if (/^[0-9]/.test(name) || name === '') {
+      name = '_' + name;
+    }
+    this.visitedRefNameMap.set(ref, name);
     return name;
   }
 
+  private namedVisitedDefs = new Set<string>();
   visit({
     def,
     propertyName,
@@ -115,6 +126,15 @@ export class JSONSchemaVisitor<TContext> {
     ignoreResult?: boolean;
     typeName?: string;
   }) {
+    if (typeName) {
+      if (typeName === 'Subscription') {
+        typeName = prefix + 'Subscription';
+      }
+      if (this.namedVisitedDefs.has(typeName)) {
+        return typeName;
+      }
+      this.namedVisitedDefs.add(typeName);
+    }
     def.type = Array.isArray(def.type) ? def.type[0] : def.type;
     const summary = JSON.stringify(def);
     if (this.cache.has(summary)) {
@@ -123,7 +143,7 @@ export class JSONSchemaVisitor<TContext> {
     if ('definitions' in def) {
       for (const propertyName in def.definitions) {
         const definition = def.definitions[propertyName];
-        this.visit({ def: definition, propertyName, prefix, cwd });
+        this.visit({ def: definition, propertyName, prefix, cwd, typeName: propertyName });
       }
     }
     if ('$defs' in def) {
@@ -159,7 +179,7 @@ export class JSONSchemaVisitor<TContext> {
       case 'any':
         result = this.visitAny();
         break;
-      case 'object':
+      default:
         if ('name' in def || 'title' in def) {
           result = this.visitTypedNamedObjectDefinition({ typedNamedObjectDef: def, cwd, typeName });
         } else if ('properties' in def) {
@@ -172,23 +192,21 @@ export class JSONSchemaVisitor<TContext> {
           });
         } else if (('additionalProperties' in def && def.additionalProperties) || Object.keys(def).length === 1) {
           result = this.visitAny();
-        }
-        break;
-      default:
-        if ('$ref' in def) {
+        } else if ('$ref' in def) {
           result = this.visitObjectReference({ objectRef: def, cwd, typeName });
+        } else if ('enum' in def) {
+          result = this.visitEnum({ enumDef: def, propertyName, prefix, cwd, typeName });
         }
-        break;
     }
     if ('oneOf' in def) {
       result = this.visitOneOfReference({ oneOfReference: def, propertyName, prefix, cwd, typeName });
     }
     if (!result && !ignoreResult) {
-      throw new Error(
-        `Unknown JSON Schema definition for (${typeName || prefix}, ${propertyName}): ${JSON.stringify(def, null, 2)}`
-      );
+      console.warn(`Unknown JSON Schema definition for (${typeName || prefix}, ${propertyName})`);
+      result = this.visitAny();
     }
     this.cache.set(summary, result);
+    this.namedVisitedDefs.add(result);
     return result;
   }
 

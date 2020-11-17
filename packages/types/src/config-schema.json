@@ -635,6 +635,17 @@
         },
         "disableTimestampScalar": {
           "type": "boolean"
+        },
+        "baseSchema": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       },
       "required": ["baseUrl", "operations"]
@@ -1291,6 +1302,10 @@
         "includeHttpDetails": {
           "type": "boolean",
           "description": "Include HTTP Response details to the result object"
+        },
+        "addLimitArgument": {
+          "type": "boolean",
+          "description": "Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links"
         }
       },
       "required": ["source"]

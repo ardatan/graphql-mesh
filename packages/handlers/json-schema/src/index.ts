@@ -73,6 +73,21 @@ export default class JsonSchemaHandler implements MeshHandler {
     const typeNamedOperations: YamlConfig.JsonSchemaOperation[] = [];
     const unnamedOperations: YamlConfig.JsonSchemaOperation[] = [];
 
+    if (this.config.baseSchema) {
+      const basedFilePath = this.config.baseSchema;
+      const baseSchema = await readFileOrUrlWithCache(basedFilePath, this.cache, {
+        headers: this.config.schemaHeaders,
+      });
+      externalFileCache.set(basedFilePath, baseSchema);
+      const baseFileName = getFileName(basedFilePath);
+      outputSchemaVisitor.visit({
+        def: baseSchema as JSONSchemaDefinition,
+        propertyName: 'Base',
+        prefix: baseFileName,
+        cwd: basedFilePath,
+      });
+    }
+
     this.config?.operations?.forEach(async operationConfig => {
       if (operationConfig.responseTypeName) {
         typeNamedOperations.push(operationConfig);
@@ -82,6 +97,8 @@ export default class JsonSchemaHandler implements MeshHandler {
     });
 
     const handleOperations = async (operationConfig: YamlConfig.JsonSchemaOperation) => {
+      let responseTypeName = operationConfig.responseTypeName;
+
       let [requestSchema, responseSchema] = await Promise.all([
         operationConfig.requestSample &&
           this.generateJsonSchemaFromSample({
@@ -108,17 +125,18 @@ export default class JsonSchemaHandler implements MeshHandler {
       ]);
       operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
       operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
-      const destination = operationConfig.type;
       const basedFilePath = operationConfig.responseSchema || operationConfig.responseSample;
-      externalFileCache.set(basedFilePath, responseSchema);
-      const responseFileName = getFileName(basedFilePath);
-      const type = outputSchemaVisitor.visit({
-        def: responseSchema as JSONSchemaDefinition,
-        propertyName: 'Response',
-        prefix: responseFileName,
-        cwd: basedFilePath,
-        typeName: operationConfig.responseTypeName,
-      });
+      if (basedFilePath) {
+        externalFileCache.set(basedFilePath, responseSchema);
+        const responseFileName = getFileName(basedFilePath);
+        responseTypeName = outputSchemaVisitor.visit({
+          def: responseSchema as JSONSchemaDefinition,
+          propertyName: 'Response',
+          prefix: responseFileName,
+          cwd: basedFilePath,
+          typeName: operationConfig.responseTypeName,
+        });
+      }
 
       const { args, contextVariables: specificContextVariables } = parseInterpolationStrings(
         [
@@ -131,28 +149,36 @@ export default class JsonSchemaHandler implements MeshHandler {
 
       contextVariables.push(...specificContextVariables);
 
+      let requestTypeName = operationConfig.requestTypeName;
+
       if (requestSchema) {
         const basedFilePath = operationConfig.requestSchema || operationConfig.requestSample;
         externalFileCache.set(basedFilePath, requestSchema);
         const requestFileName = getFileName(basedFilePath);
+        requestTypeName = inputSchemaVisitor.visit({
+          def: requestSchema as JSONSchemaDefinition,
+          propertyName: 'Request',
+          prefix: requestFileName,
+          cwd: basedFilePath,
+          typeName: operationConfig.requestTypeName,
+        });
+      }
+
+      if (requestTypeName) {
         args.input = {
-          type: inputSchemaVisitor.visit({
-            def: requestSchema as JSONSchemaDefinition,
-            propertyName: 'Request',
-            prefix: requestFileName,
-            cwd: basedFilePath,
-            typeName: operationConfig.requestTypeName,
-          }) as any,
+          type: requestTypeName as any,
+          description: requestSchema?.description,
         };
       }
 
+      const destination = operationConfig.type;
       schemaComposer[destination].addFields({
         [operationConfig.field]: {
           description:
             operationConfig.description ||
-            responseSchema.description ||
+            responseSchema?.description ||
             `${operationConfig.method} ${operationConfig.path}`,
-          type,
+          type: responseTypeName,
           args,
           resolve: async (root, args, context, info) => {
             const interpolationData = { root, args, context, info };

@@ -232,6 +232,7 @@ export interface JsonSchemaHandler {
   };
   operations: JsonSchemaOperation[];
   disableTimestampScalar?: boolean;
+  baseSchema?: any;
 }
 export interface JsonSchemaOperation {
   field: string;
@@ -584,8 +585,7 @@ export interface OpenapiHandler {
    */
   includeHttpDetails?: boolean;
   /**
-   * Auto-generate a 'limit' argument for all fields that return lists of
-   * objects, including ones produced by links
+   * Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
    */
   addLimitArgument?: boolean;
 }
