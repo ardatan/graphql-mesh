@@ -1,9 +1,10 @@
 {
-  "name": "ignored-demo",
-  "version": "0.0.1",
+  "name": "json-schema-fhir",
+  "private": true,
+  "version": "0.0.2",
   "dependencies": {
-    "@graphql-mesh/cli": "0.11.8",
-    "@graphql-mesh/json-schema": "0.7.2",
+    "@graphql-mesh/cli": "0.11.9",
+    "@graphql-mesh/json-schema": "0.8.0",
     "graphql": "15.4.0"
   },
   "scripts": {

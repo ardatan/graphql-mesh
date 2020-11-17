@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.17.0
+
+### Minor Changes
+
+- c26c8c56: feat(json-schema): support baseSchema
+
 ## 0.16.1
 
 ### Patch Changes
