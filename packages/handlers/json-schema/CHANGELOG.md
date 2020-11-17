@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.8.1
+
+### Patch Changes
+
+- 4d1cb923: fix(json-schema): handle oneOf definitions properly in stitching
+
 ## 0.8.0
 
 ### Minor Changes
