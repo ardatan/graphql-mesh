@@ -21,6 +21,6 @@
     "@graphql-mesh/merger-federation": "0.7.6",
     "@graphql-mesh/transform-federation": "0.4.19",
     "@graphql-mesh/graphql": "0.7.7",
-    "graphql": "15.3.0"
+    "graphql": "15.4.0"
   }
 }
