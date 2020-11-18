@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.8.3
+
+### Patch Changes
+
+- 0df2c644: feat(json-schema/fhir): improvements
+
 ## 0.8.2
 
 ### Patch Changes
