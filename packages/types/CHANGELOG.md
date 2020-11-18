@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.17.1
+
+### Patch Changes
+
+- 0560e806: feat(fhir): new FHIR handler
+
 ## 0.17.0
 
 ### Minor Changes
