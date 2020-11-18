@@ -9,14 +9,10 @@ sources:
       graphql:
         endpoint: https://covid-19.dava.engineer/api/graphql
 additionalTypeDefs: |
-  extend type Reference {
-    resource: ResourceList
-  }
   extend type Address {
     case: Case
   }
 additionalResolvers:
-  - ./resource.resolver.js # Programmatic API
   - type: Address # Declarative API
     field: case
     requiredSelectionSet: |

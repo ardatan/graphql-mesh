@@ -15,7 +15,9 @@
   "dependencies": {
     "@graphql-mesh/types": "0.17.1",
     "@graphql-mesh/utils": "0.6.0",
-    "@graphql-mesh/json-schema": "0.8.2"
+    "@graphql-mesh/json-schema": "0.8.2",
+    "fetchache": "0.0.4",
+    "url-join": "4.0.1"
   },
   "publishConfig": {
     "access": "public",

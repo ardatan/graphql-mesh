@@ -28,18 +28,19 @@ type CachedSchema = {
 };
 
 export default class JsonSchemaHandler implements MeshHandler {
-  private config: YamlConfig.JsonSchemaHandler;
-  private cache: KeyValueCache<any>;
-  private pubsub: MeshPubSub;
+  public config: YamlConfig.JsonSchemaHandler;
+  public cache: KeyValueCache<any>;
+  public pubsub: MeshPubSub;
   constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
     this.config = config;
     this.cache = cache;
     this.pubsub = pubsub;
   }
 
-  async getMeshSource() {
-    const schemaComposer = new SchemaComposer();
+  public schemaComposer = new SchemaComposer();
 
+  async getMeshSource() {
+    const schemaComposer = this.schemaComposer;
     schemaComposer.add(GraphQLJSON);
     schemaComposer.add(GraphQLVoid);
     schemaComposer.add(GraphQLDateTime);
