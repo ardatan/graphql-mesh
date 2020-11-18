@@ -91,6 +91,7 @@ export interface Source {
  * Point to the handler you wish to use, it can either be a predefined handler, or a custom
  */
 export interface Handler {
+  fhir?: FhirHandler;
   graphql?: GraphQLHandler;
   grpc?: GrpcHandler;
   jsonSchema?: JsonSchemaHandler;
@@ -104,6 +105,9 @@ export interface Handler {
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
   [k: string]: any;
+}
+export interface FhirHandler {
+  endpoint?: string;
 }
 /**
  * Handler for remote/local/third-party GraphQL schema

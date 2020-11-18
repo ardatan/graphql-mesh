@@ -1,0 +1,7 @@
+extend type Handler {
+  fhir: FhirHandler
+}
+
+type FhirHandler @md {
+  endpoint: String
+}

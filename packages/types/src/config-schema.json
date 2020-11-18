@@ -304,6 +304,9 @@
       "type": "object",
       "title": "Handler",
       "properties": {
+        "fhir": {
+          "$ref": "#/definitions/FhirHandler"
+        },
         "graphql": {
           "$ref": "#/definitions/GraphQLHandler",
           "description": "Handler for remote/local/third-party GraphQL schema"
@@ -436,6 +439,16 @@
         }
       },
       "required": ["name"]
+    },
+    "FhirHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FhirHandler",
+      "properties": {
+        "endpoint": {
+          "type": "string"
+        }
+      }
     },
     "GraphQLHandler": {
       "additionalProperties": false,
