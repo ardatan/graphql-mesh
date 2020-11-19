@@ -1,5 +1,14 @@
 # mysql-employees
 
+## 0.5.30
+
+### Patch Changes
+
+- c2d0e1e7: Fix incorrect usage of the pool schema in MySQLHandler
+- Updated dependencies [c2d0e1e7]
+  - @graphql-mesh/mysql@0.6.1
+  - @graphql-mesh/cli@0.11.12
+
 ## 0.5.29
 
 ### Patch Changes

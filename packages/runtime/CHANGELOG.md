@@ -1,5 +1,17 @@
 # @graphql-mesh/runtime
 
+## 0.8.0
+
+### Minor Changes
+
+- c1b073de: feat(runtime): support TypedDocumentNode
+
+### Patch Changes
+
+- Updated dependencies [c1b073de]
+  - @graphql-mesh/types@0.19.0
+  - @graphql-mesh/utils@0.7.0
+
 ## 0.7.15
 
 ### Patch Changes

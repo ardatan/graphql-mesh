@@ -1,5 +1,14 @@
 # @graphql-mesh/mysql
 
+## 0.6.1
+
+### Patch Changes
+
+- c2d0e1e7: Fix incorrect usage of the pool schema in MySQLHandler
+- Updated dependencies [c1b073de]
+  - @graphql-mesh/types@0.19.0
+  - @graphql-mesh/utils@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes

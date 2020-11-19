@@ -1,5 +1,12 @@
 # @graphql-mesh/neo4j
 
+## 0.7.8
+
+### Patch Changes
+
+- Updated dependencies [c1b073de]
+  - @graphql-mesh/types@0.19.0
+
 ## 0.7.7
 
 ### Patch Changes
