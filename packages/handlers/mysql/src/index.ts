@@ -15,6 +15,7 @@ import {
   GraphQLTime,
 } from 'graphql-scalars';
 import { execute } from 'graphql';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -110,7 +111,11 @@ export default class MySQLHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     const schemaComposer = new SchemaComposer<MysqlContext>();
-    const pool = createPool(this.config);
+    const pool: Pool = this.config.pool
+      ? typeof this.config.pool === 'string'
+        ? await loadFromModuleExportExpression(this.config.pool)
+        : this.config.pool
+      : createPool(this.config);
     pool.on('connection', connection => {
       upgrade(connection);
       introspection(connection);

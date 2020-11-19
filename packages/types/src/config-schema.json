@@ -1174,9 +1174,20 @@
         },
         "database": {
           "type": "string"
+        },
+        "pool": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Use existing `Pool` instance\nFormat: modulePath#exportName"
         }
-      },
-      "required": ["host", "port", "user", "database"]
+      }
     },
     "Neo4jHandler": {
       "additionalProperties": false,

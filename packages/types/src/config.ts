@@ -467,11 +467,16 @@ export interface TypeConverterResolversOpts1 {
   pagination?: boolean | PaginationResolverOpts;
 }
 export interface MySQLHandler {
-  host: string;
-  port: number;
-  user: string;
+  host?: string;
+  port?: number;
+  user?: string;
   password?: string;
-  database: string;
+  database?: string;
+  /**
+   * Use existing `Pool` instance
+   * Format: modulePath#exportName
+   */
+  pool?: any;
 }
 /**
  * Handler for Neo4j
