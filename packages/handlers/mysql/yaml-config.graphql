@@ -3,9 +3,14 @@ extend type Handler {
 }
 
 type MySQLHandler @md {
-  host: String!
-  port: Int!
-  user: String!
+  host: String
+  port: Int
+  user: String
   password: String
-  database: String!
+  database: String
+  """
+  Use existing `Pool` instance
+  Format: modulePath#exportName
+  """
+  pool: Any
 }
