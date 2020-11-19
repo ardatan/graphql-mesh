@@ -2,7 +2,7 @@ import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
 import Redis, { RedisOptions } from 'ioredis';
 import DataLoader from 'dataloader';
 
-export default class RedisCache implements KeyValueCache<string> {
+export default class RedisCache<V = string> implements KeyValueCache<V> {
   readonly client: Redis.Redis;
 
   private loader: DataLoader<string, string | null>;
@@ -15,15 +15,17 @@ export default class RedisCache implements KeyValueCache<string> {
     });
   }
 
-  async set(key: string, value: string, options?: KeyValueCacheSetOptions): Promise<void> {
+  async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
     const ttl = options?.ttl || 300;
-    await this.client.set(key, value, 'EX', ttl);
+    const stringifiedValue = JSON.stringify(value);
+    await this.client.set(key, stringifiedValue, 'EX', ttl);
   }
 
-  async get(key: string): Promise<string | undefined> {
+  async get(key: string): Promise<V | undefined> {
     const reply = await this.loader.load(key);
     if (reply !== null) {
-      return reply;
+      const value = JSON.parse(reply);
+      return value;
     }
     return undefined;
   }
