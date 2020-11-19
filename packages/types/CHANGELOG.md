@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.18.0
+
+### Minor Changes
+
+- 5628fb14: feat(mysql): add an ability to use existing Pool instance
+
 ## 0.17.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-resolvers-composition
 
+## 0.6.14
+
+### Patch Changes
+
+- Updated dependencies [5628fb14]
+  - @graphql-mesh/types@0.18.0
+
 ## 0.6.13
 
 ### Patch Changes
