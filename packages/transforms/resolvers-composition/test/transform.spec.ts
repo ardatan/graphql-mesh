@@ -3,7 +3,6 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PubSub } from 'graphql-subscriptions';
 import { join } from 'path';
 import ResolversCompositionTransform, { ResolversComposition } from '../src';
-import { applySchemaTransforms } from '@graphql-tools/utils';
 import { execute, parse } from 'graphql';
 
 describe('transform', () => {
@@ -30,7 +29,7 @@ describe('transform', () => {
         },
       },
     });
-    const transformedSchema = applySchemaTransforms(schema, [transform]);
+    const transformedSchema = transform.transformSchema(schema);
     const result = await execute({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
@@ -65,7 +64,7 @@ describe('transform', () => {
         },
       },
     });
-    const transformedSchema = applySchemaTransforms(schema, [transform]);
+    const transformedSchema = transform.transformSchema(schema);
     const result = await execute({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `

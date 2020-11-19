@@ -6,7 +6,7 @@ import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { loadDocuments as loadDocumentsToolkit } from '@graphql-tools/load';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { buildOperationNodeForField, Operation, Source } from '@graphql-tools/utils';
+import { buildOperationNodeForField, Source } from '@graphql-tools/utils';
 import { scalarsMap } from './scalars-map';
 
 export async function generateSdk(
@@ -39,7 +39,7 @@ export async function generateSdk(
           const operation = buildOperationNodeForField({
             schema,
             field: fieldName,
-            kind: operationType as Operation,
+            kind: operationType as any,
             depthLimit,
           });
           const document = {

@@ -18,8 +18,8 @@
   "dependencies": {
     "@graphql-mesh/types": "0.19.0",
     "@apollo/gateway": "0.21.0",
-    "@graphql-tools/wrap": "6.2.3",
-    "@graphql-tools/schema": "6.2.2",
+    "@graphql-tools/wrap": "7.0.1",
+    "@graphql-tools/schema": "7.0.0",
     "object-hash": "2.0.3"
   },
   "publishConfig": {

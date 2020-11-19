@@ -92,7 +92,9 @@ type Query {
 type Query {
   foo: String
   bar: String
-}`.trim()
+}
+
+type Mutation`.trim()
     );
   });
   it('should filter out fields if array syntax is used only with one element', async () => {

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
-import { IResolvers, Transform } from '@graphql-tools/utils';
+import { IResolvers } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
-import { Executor, Subscriber } from '@graphql-tools/delegate';
+import { Executor, Subscriber, Transform } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 export { YamlConfig };
