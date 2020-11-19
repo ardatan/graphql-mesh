@@ -99,18 +99,27 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
+type MySQLHandlerProgrammaticConfig = Partial<YamlConfig.MySQLHandler & { pool?: Pool }>;
+
 export default class MySQLHandler implements MeshHandler {
-  config: YamlConfig.MySQLHandler;
+  poolConfig?: YamlConfig.MySQLHandler;
+  pool?: Pool;
+
   pubsub: MeshPubSub;
 
-  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
-    this.config = config;
+  constructor({ config, pubsub }: GetMeshSourceOptions<MySQLHandlerProgrammaticConfig>) {
+    const { pool, ...poolConfig } = config;
+
+    this.pool = pool;
+    this.poolConfig = poolConfig as YamlConfig.MySQLHandler;
     this.pubsub = pubsub;
   }
 
+  private buildPool = (): Pool => this.pool || createPool(this.poolConfig);
+
   async getMeshSource(): Promise<MeshSource> {
     const schemaComposer = new SchemaComposer<MysqlContext>();
-    const pool = createPool(this.config);
+    const pool = this.buildPool();
     pool.on('connection', connection => {
       upgrade(connection);
       introspection(connection);
@@ -135,7 +144,7 @@ export default class MySQLHandler implements MeshHandler {
         },
       },
     });
-    const tables = await introspectionConnection.getDatabaseTables(this.config.database);
+    const tables = await introspectionConnection.getDatabaseTables(this.poolConfig.database);
     await Promise.all(
       Object.keys(tables).map(async tableName => {
         const table = tables[tableName];

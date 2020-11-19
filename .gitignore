@@ -10,3 +10,4 @@ temp
 ignored-demo
 package-lock.json
 .bob
+.history
