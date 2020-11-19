@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-redis
 
+## 0.4.21
+
+### Patch Changes
+
+- aa359dc5: fix(redis-cache): stringify before saving values
+- Updated dependencies [c1b073de]
+  - @graphql-mesh/types@0.19.0
+
 ## 0.4.20
 
 ### Patch Changes
