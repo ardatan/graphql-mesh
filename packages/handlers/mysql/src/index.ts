@@ -111,7 +111,7 @@ export default class MySQLHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     const schemaComposer = new SchemaComposer<MysqlContext>();
-    const pool = this.config.pool
+    const pool: Pool = this.config.pool
       ? typeof this.config.pool === 'string'
         ? await loadFromModuleExportExpression(this.config.pool)
         : this.config.pool

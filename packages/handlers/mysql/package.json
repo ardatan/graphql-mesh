@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.17.1",
+    "@graphql-mesh/utils": "0.6.0",
     "graphql-compose": "7.22.1",
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",
