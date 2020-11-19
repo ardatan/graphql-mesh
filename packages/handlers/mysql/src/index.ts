@@ -140,7 +140,7 @@ export default class MySQLHandler implements MeshHandler {
         },
       },
     });
-    const tables = await introspectionConnection.getDatabaseTables(this.config.database);
+    const tables = await introspectionConnection.getDatabaseTables(pool.config.connectionConfig.database);
     await Promise.all(
       Object.keys(tables).map(async tableName => {
         const table = tables[tableName];
