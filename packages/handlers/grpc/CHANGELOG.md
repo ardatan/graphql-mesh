@@ -1,5 +1,12 @@
 # @graphql-mesh/grpc
 
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies [5628fb14]
+  - @graphql-mesh/types@0.18.0
+
 ## 0.6.2
 
 ### Patch Changes
