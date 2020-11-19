@@ -99,8 +99,8 @@ export async function getMesh(
     return context;
   }
 
-  async function meshExecute<TVariables = any, TContext = any, TRootValue = any>(
-    document: GraphQLOperation,
+  async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
+    document: GraphQLOperation<TData, TVariables>,
     variables?: TVariables,
     context?: TContext,
     rootValue?: TRootValue
@@ -116,8 +116,8 @@ export async function getMesh(
     });
   }
 
-  async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any>(
-    document: GraphQLOperation,
+  async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
+    document: GraphQLOperation<TData, TVariables>,
     variables?: TVariables,
     context?: TContext,
     rootValue?: TRootValue

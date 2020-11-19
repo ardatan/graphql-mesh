@@ -10,6 +10,6 @@
     "@graphql-mesh/cli": "0.11.11",
     "@graphql-mesh/soap": "0.4.21",
     "@graphql-mesh/transform-snapshot": "0.5.20",
-    "graphql": "15.3.0"
+    "graphql": "15.4.0"
   }
 }

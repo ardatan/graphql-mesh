@@ -4,6 +4,7 @@ import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Executor, Subscriber } from '@graphql-tools/delegate';
+import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 export { YamlConfig };
 
@@ -106,6 +107,6 @@ export type RawSourceOutput = {
   batch: boolean;
 };
 
-export type GraphQLOperation = DocumentNode | string;
+export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
 export type ImportFn = (moduleId: string) => Promise<any>;

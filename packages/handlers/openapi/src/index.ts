@@ -116,6 +116,7 @@ export default class OpenAPIHandler implements MeshHandler {
           defaultValue: undefined,
           extensions: undefined,
           astNode: undefined,
+          deprecationReason: undefined,
           ...argConfig,
         });
       }

@@ -29,12 +29,12 @@ export type MeshResolvedSource<TContext = any> = {
 };
 
 export type ExecuteMeshFn<TData = any, TVariables = any> = (
-  document: GraphQLOperation,
+  document: GraphQLOperation<TData, TVariables>,
   variables: TVariables
 ) => Promise<TData | null | undefined>;
 
 export type SubscribeMeshFn<TData = any, TVariables = any> = (
-  document: GraphQLOperation,
+  document: GraphQLOperation<TData, TVariables>,
   variables: TVariables
 ) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
 
