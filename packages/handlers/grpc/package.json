@@ -21,7 +21,7 @@
     "fs-extra": "9.0.1",
     "graphql-scalars": "1.4.1",
     "graphql-compose": "7.22.1",
-    "protobufjs": "6.10.1",
+    "protobufjs": "6.10.2",
     "pascal-case": "3.1.1",
     "lodash": "4.17.20"
   },
