@@ -14996,10 +14996,10 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-mysql-utilities@1.1.0-alpha.6:
-  version "1.1.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/mysql-utilities/-/mysql-utilities-1.1.0-alpha.6.tgz#d68469bfbab4a3aa7780ef5ab9b2e2eb26b2b8d3"
-  integrity sha512-vFzvYEyzpkVZx78HVScJmkclDkaZ7ucQbX1Y1AziQ258id0/I9ftfUxCkcKdJYfm9xQn9gZvJrKm1/8d0p1r+A==
+mysql-utilities@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/mysql-utilities/-/mysql-utilities-1.1.1.tgz#a9da26aa440f1b55cfebce09f1323b670aa8cc00"
+  integrity sha512-7SshYK3c92iCZ6vNZcVNuikZRbtJfaQkTUKkJpIOSeJsx5CDOW/PTvni952iTr29ZBMbR0XPe7hySuaZpWte1A==
   dependencies:
     mysql "^2.18.1"
 
