@@ -195,6 +195,10 @@ export interface GrpcHandler {
    */
   protoFilePath?: ProtoFilePath | string;
   /**
+   * Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
+   */
+  descriptorSetFilePath?: ProtoFilePath | string;
+  /**
    * Your base service name
    * Used for naming only
    */

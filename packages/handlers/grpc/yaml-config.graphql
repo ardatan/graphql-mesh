@@ -15,6 +15,10 @@ type GrpcHandler @md {
   """
   protoFilePath: ProtoFilePathOrString
   """
+  Use a binary-encoded or JSON file descriptor set file
+  """
+  descriptorSetFilePath: ProtoFilePathOrString
+  """
   Your base service name
   Used for naming only
   """

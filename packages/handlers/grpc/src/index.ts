@@ -8,13 +8,15 @@ import {
   credentials,
   loadPackageDefinition,
 } from '@grpc/grpc-js';
-import { createPackageDefinition, load, PackageDefinition } from '@grpc/proto-loader';
+import { PackageDefinition, load, loadFileDescriptorSetFile, loadFileDescriptorSet } from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
+import { readFile } from 'fs-extra';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
 import { pascalCase } from 'pascal-case';
-import { AnyNestedObject, IParseOptions, Root } from 'protobufjs';
+import { AnyNestedObject, IParseOptions, Root, RootConstructor } from 'protobufjs';
+import {} from 'protobufjs/ext/descriptor';
 import { Readable } from 'stream';
 import { promisify } from 'util';
 import grpcReflection from 'grpc-reflection-js';
@@ -97,7 +99,21 @@ export default class GrpcHandler implements MeshHandler {
         serviceRoot.name = this.config.serviceName || '';
         root.add(serviceRoot);
       });
-      packageDefinition = createPackageDefinition(root);
+      root.resolveAll();
+      const descriptorSetRoot = root.toDescriptor('proto3');
+      packageDefinition = await loadFileDescriptorSet(descriptorSetRoot);
+    } else if (this.config.descriptorSetFilePath) {
+      let fileName = this.config.descriptorSetFilePath;
+      let options: LoadOptions = {};
+      if (typeof this.config.descriptorSetFilePath === 'object' && this.config.descriptorSetFilePath.file) {
+        fileName = this.config.descriptorSetFilePath.file;
+        options = this.config.descriptorSetFilePath.load;
+      }
+      const descriptorSetBuffer = await readFile(fileName as string);
+      const descriptorSetRoot = (Root as RootConstructor).fromDescriptor(descriptorSetBuffer);
+      descriptorSetRoot.name = this.config.serviceName || '';
+      root.add(descriptorSetRoot);
+      packageDefinition = await loadFileDescriptorSetFile(fileName as string, options);
     } else {
       let fileName = this.config.protoFilePath;
       let options: LoadOptions = {};
@@ -173,7 +189,7 @@ export default class GrpcHandler implements MeshHandler {
             if (name !== this.config.serviceName) {
               rootFieldName = camelCase(name + '_' + rootFieldName);
             }
-            if (this.config.useReflection) {
+            if (this.config.descriptorSetFilePath || this.config.useReflection) {
               const reflectionPath = currentPath.replace(this.config.serviceName || '', '');
               rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
               responseType = camelCase(
@@ -211,7 +227,10 @@ export default class GrpcHandler implements MeshHandler {
             } else {
               const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
               const identifier = methodName.toLowerCase();
-              const rootTC = (identifier.startsWith('get') || identifier.startsWith('list')) ? schemaComposer.Query : schemaComposer.Mutation;
+              const rootTC =
+                identifier.startsWith('get') || identifier.startsWith('list')
+                  ? schemaComposer.Query
+                  : schemaComposer.Mutation;
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
