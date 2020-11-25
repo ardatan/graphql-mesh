@@ -23,10 +23,12 @@ export default class FederationTransform implements MeshTransform {
         if (type.config?.keyFields) {
           for (const fieldName of type.config.keyFields) {
             const objectType = schema.getType(type.name) as GraphQLObjectType;
-            const existingType = objectType.getFields()[fieldName].type;
-            objectType.getFields()[fieldName].type = isNonNullType(existingType)
-              ? GraphQLNonNull(GraphQLID)
-              : GraphQLID;
+            if (objectType) {
+              const existingType = objectType.getFields()[fieldName].type;
+              objectType.getFields()[fieldName].type = isNonNullType(existingType)
+                ? GraphQLNonNull(GraphQLID)
+                : GraphQLID;
+            }
           }
         }
 
