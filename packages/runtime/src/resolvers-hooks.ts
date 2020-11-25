@@ -121,59 +121,12 @@ export function applyResolversHooksToResolvers(
             if (isMeshContext(context)) {
               const apiContext = context[apiName];
               if (isAPIContext(apiContext)) {
-                const sdk = new Proxy(apiContext, {
-                  get(apiContext, fieldName: string) {
-                    const apiSchema: GraphQLSchema = nameSchemaMap.get(apiContext.rawSource.name);
-                    const rootTypes: Record<Operation, GraphQLObjectType> = {
-                      mutation: apiSchema.getMutationType(),
-                      query: apiSchema.getQueryType(),
-                      subscription: apiSchema.getSubscriptionType(),
-                    };
-                    let parentType: GraphQLObjectType;
-                    let operation: Operation;
-                    let field: GraphQLField<any, any>;
-                    for (const operationName in rootTypes) {
-                      const rootType = rootTypes[operationName as Operation];
-                      if (rootType) {
-                        const fieldMap = rootType.getFields();
-                        if (fieldName in fieldMap) {
-                          operation = operationName as Operation;
-                          field = fieldMap[fieldName];
-                          parentType = rootType;
-                          // TODO: There might be collision here between the same field names in different root types
-                          if (operation === info.operation.operation) {
-                            break;
-                          }
-                        }
-                      }
-                    }
-                    return (methodArgs: any = {}, { depth, fields, selectionSet }: any = {}) => {
-                      const proxyInfo = createProxyInfo({
-                        schema: apiSchema,
-                        parentType,
-                        field,
-                        depthLimit: depth,
-                        root,
-                        args: methodArgs,
-                        selectedFields: fields,
-                        selectionSet,
-                        info,
-                        operationKind: operation,
-                      });
-                      return delegateToSchema({
-                        schema: apiSchema,
-                        operation,
-                        fieldName,
-                        args: methodArgs,
-                        context,
-                        info: proxyInfo,
-                      });
-                    };
-                  },
-                });
                 return {
                   ...apiContext,
-                  api: sdk,
+                  api: getSdk(apiContext, nameSchemaMap, info, root, context, 'all'), // To keep to not have breaking changes
+                  apiQuery: getSdk(apiContext, nameSchemaMap, info, root, context, 'query'),
+                  apiMutation: getSdk(apiContext, nameSchemaMap, info, root, context, 'mutation'),
+                  apiSubscription: getSdk(apiContext, nameSchemaMap, info, root, context, 'subscription'),
                 };
               }
             }
@@ -191,6 +144,93 @@ export function applyResolversHooksToResolvers(
 
         throw error;
       }
+    },
+  });
+}
+
+function getSdk(
+  apiContext: APIContext,
+  nameSchemaMap: Map<string, GraphQLSchema>,
+  info: GraphQLResolveInfo,
+  root: any,
+  context: MeshContext,
+  focusOnRootType: 'query' | 'mutation' | 'subscription' | 'all'
+) {
+  return new Proxy(apiContext, {
+    get(apiContext, fieldName: string) {
+      const apiSchema: GraphQLSchema = nameSchemaMap.get(apiContext.rawSource.name);
+      let rootTypes: Record<Operation, GraphQLObjectType> = { query: null, mutation: null, subscription: null };
+      switch (focusOnRootType) {
+        case 'query':
+          rootTypes = {
+            query: apiSchema.getQueryType(),
+            mutation: null,
+            subscription: null,
+          };
+          break;
+        case 'mutation':
+          rootTypes = {
+            query: null,
+            mutation: apiSchema.getMutationType(),
+            subscription: null,
+          };
+          break;
+        case 'subscription':
+          rootTypes = {
+            query: null,
+            mutation: null,
+            subscription: apiSchema.getSubscriptionType(),
+          };
+          break;
+        default:
+          rootTypes = {
+            query: apiSchema.getQueryType(),
+            mutation: apiSchema.getMutationType(),
+            subscription: apiSchema.getSubscriptionType(),
+          };
+          break;
+      }
+      let parentType: GraphQLObjectType;
+      let operation: Operation;
+      let field: GraphQLField<any, any>;
+      for (const operationName in rootTypes) {
+        const rootType = rootTypes[operationName as Operation];
+        if (rootType) {
+          const fieldMap = rootType.getFields();
+          if (fieldName in fieldMap) {
+            operation = operationName as Operation;
+            field = fieldMap[fieldName];
+            parentType = rootType;
+            // TODO: There might be collision here between the same field names in different root types
+            // JYC Fix: collision only in 'all' mode, not in other modes
+            if (operation === info.operation.operation) {
+              break;
+            }
+          }
+        }
+      }
+      return (methodArgs: any = {}, { depth, fields, selectionSet }: any = {}) => {
+        const proxyInfo = createProxyInfo({
+          schema: apiSchema,
+          parentType,
+          field,
+          depthLimit: depth,
+          root,
+          args: methodArgs,
+          selectedFields: fields,
+          selectionSet,
+          info,
+          operationKind: operation,
+        });
+        return delegateToSchema({
+          schema: apiSchema,
+          operation,
+          fieldName,
+          args: methodArgs,
+          context,
+          info: proxyInfo,
+        });
+      };
     },
   });
 }
