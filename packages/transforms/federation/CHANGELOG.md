@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-federation
 
+## 0.4.23
+
+### Patch Changes
+
+- 648cc1b0: fix(federation-transform): do not search for unavailable type
+
 ## 0.4.22
 
 ### Patch Changes
