@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.11.13
+
+### Patch Changes
+
+- 5df99891: Fix generated code IsTypeOfResolverFn type arguments
+- Updated dependencies [c9a272f7]
+  - @graphql-mesh/runtime@0.9.0
+  - @graphql-mesh/config@0.10.18
+
 ## 0.11.12
 
 ### Patch Changes

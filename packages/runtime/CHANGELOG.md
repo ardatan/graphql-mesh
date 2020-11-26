@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.9.0
+
+### Minor Changes
+
+- c9a272f7: split api in apiQuery, apiMutation, apiSubscription
+
 ## 0.8.0
 
 ### Minor Changes
