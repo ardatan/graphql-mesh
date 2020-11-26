@@ -30,7 +30,7 @@
     "@graphql-codegen/typescript-generic-sdk": "1.17.8",
     "@graphql-codegen/typescript-operations": "1.17.8",
     "@graphql-mesh/config": "0.10.17",
-    "@graphql-codegen/typescript-resolvers": "1.17.9",
+    "@graphql-codegen/typescript-resolvers": "1.17.10",
     "@graphql-mesh/runtime": "0.8.0",
     "@graphql-mesh/utils": "0.7.0",
     "@graphql-tools/code-file-loader": "6.2.5",
