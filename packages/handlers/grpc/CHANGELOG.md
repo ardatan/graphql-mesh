@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.7.0
+
+### Minor Changes
+
+- 835c34f0: Add defaults to gRPC LoadOptions
+
 ## 0.6.4
 
 ### Patch Changes
