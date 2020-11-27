@@ -24,9 +24,10 @@ union Port = Int | String
 
 union Fork = Int | Boolean
 union Port = Int | String
+union Origin = [String] | String
 
 type CorsConfig {
-  origin: [String] | String
+  origin: Origin
   allowedHeaders: [String]
   exposedHeaders: [String]
   credentials: Boolean
