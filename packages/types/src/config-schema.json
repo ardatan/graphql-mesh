@@ -148,11 +148,15 @@
       "title": "CorsConfig",
       "properties": {
         "origin": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "allowedHeaders": {
           "type": "array",
@@ -584,6 +588,9 @@
       "type": "object",
       "title": "LoadOptions",
       "properties": {
+        "defaults": {
+          "type": "boolean"
+        },
         "includeDirs": {
           "type": "array",
           "items": {

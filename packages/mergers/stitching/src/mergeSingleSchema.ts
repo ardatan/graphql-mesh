@@ -2,8 +2,7 @@ import { MergerFn, MeshTransform } from '@graphql-mesh/types';
 import { extendSchema } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { groupTransforms } from '@graphql-mesh/utils';
-import { applySchemaTransforms } from '@graphql-tools/utils';
+import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
 export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) => {
   if (rawSources.length !== 1) {
@@ -44,9 +43,12 @@ export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, t
       });
     }
     if (wrapTransforms.length) {
-      schema = wrapSchema(schema, [...wrapTransforms, ...noWrapTransforms]);
+      schema = wrapSchema({
+        schema,
+        transforms: [...wrapTransforms, ...noWrapTransforms],
+      });
     } else if (noWrapTransforms.length) {
-      schema = applySchemaTransforms(schema, noWrapTransforms);
+      schema = applySchemaTransforms(schema, undefined, schema, noWrapTransforms);
     }
   }
   schema.extensions = schema.extensions || {};
