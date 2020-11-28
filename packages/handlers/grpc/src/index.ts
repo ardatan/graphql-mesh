@@ -97,11 +97,17 @@ export default class GrpcHandler implements MeshHandler {
       );
       serviceRoots.forEach((serviceRoot: Root) => {
         serviceRoot.name = this.config.serviceName || '';
-        root.add(serviceRoot);
+        if (serviceRoot.nested) {
+          for (const namespace in serviceRoot.nested) {
+            if (Object.prototype.hasOwnProperty.call(serviceRoot.nested, namespace)) {
+              root.add(serviceRoot.nested[namespace]);
+            }
+          }
+        }
       });
       root.resolveAll();
       const descriptorSetRoot = root.toDescriptor('proto3');
-      packageDefinition = await loadFileDescriptorSet(descriptorSetRoot);
+      packageDefinition = loadFileDescriptorSet(descriptorSetRoot);
     } else if (this.config.descriptorSetFilePath) {
       let fileName = this.config.descriptorSetFilePath;
       let options: LoadOptions = {};
