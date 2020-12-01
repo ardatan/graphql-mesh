@@ -251,7 +251,7 @@ export interface JsonSchemaOperation {
   /**
    * Allowed values: GET, DELETE, POST, PUT, PATCH
    */
-  method: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
+  method?: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;

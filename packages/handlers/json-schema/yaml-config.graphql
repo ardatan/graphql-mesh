@@ -34,7 +34,7 @@ type JsonSchemaOperation {
   pubsubTopic: String
   description: String
   type: JsonSchemaOperationType!
-  method: JsonSchemaOperationMethod!
+  method: JsonSchemaOperationMethod
 
   requestSchema: Any
   requestSample: Any

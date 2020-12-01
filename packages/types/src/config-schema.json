@@ -756,7 +756,7 @@
           "properties": {}
         }
       },
-      "required": ["field", "type", "method"]
+      "required": ["field", "type"]
     },
     "MongooseHandler": {
       "additionalProperties": false,

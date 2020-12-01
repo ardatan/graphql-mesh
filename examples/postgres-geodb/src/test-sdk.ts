@@ -6,7 +6,7 @@ async function testSdk(city: string) {
   console.log(`Loading Mesh config...`);
   const meshConfig = await findAndParseConfig();
   console.log(`Loading Mesh schema...`);
-  const { sdkRequester, destroy } = await getMesh(meshConfig);
+  const { sdkRequester } = await getMesh(meshConfig);
   try {
     const sdk = getSdk(sdkRequester);
     console.log(`Running query, looking for GitHub developers from ${city}...`);
@@ -16,8 +16,6 @@ async function testSdk(city: string) {
   } catch (e) {
     console.error(e);
   }
-  // Force database connections to finish (not necessary)
-  destroy();
 }
 
 testSdk(process.argv[2]).catch(e => console.error(e));
