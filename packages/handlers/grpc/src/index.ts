@@ -100,10 +100,11 @@ export default class GrpcHandler implements MeshHandler {
       const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
       const services = (await reflectionClient.listServices()) as string[];
       const serviceRoots = await Promise.all(
-        services.map((service: string) => reflectionClient.fileContainingSymbol(service))
+        services
+          .filter(s => s && s !== 'grpc.reflection.v1alpha.ServerReflection')
+          .map((service: string) => reflectionClient.fileContainingSymbol(service))
       );
       serviceRoots.forEach((serviceRoot: Root) => {
-        serviceRoot.name = this.config.serviceName || '';
         if (serviceRoot.nested) {
           for (const namespace in serviceRoot.nested) {
             if (Object.prototype.hasOwnProperty.call(serviceRoot.nested, namespace)) {
@@ -113,8 +114,8 @@ export default class GrpcHandler implements MeshHandler {
         }
       });
       root.resolveAll();
-      const descriptorSetRoot = root.toDescriptor('proto3').toJSON();
-      packageDefinition = loadFileDescriptorSetFromObject(descriptorSetRoot);
+      const descriptorSet = root.toDescriptor('proto3');
+      packageDefinition = loadFileDescriptorSetFromObject(descriptorSet.toJSON());
     } else if (this.config.descriptorSetFilePath) {
       // We have to use an ol' fashioned require here :(
       // Needed for descriptor.FileDescriptorSet
@@ -137,7 +138,6 @@ export default class GrpcHandler implements MeshHandler {
         packageDefinition = await loadFileDescriptorSetFromBuffer(descriptorSetBuffer, options);
       }
       const descriptorSetRoot = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
-      descriptorSetRoot.name = this.config.serviceName || '';
       root.add(descriptorSetRoot);
     } else {
       let fileName = this.config.protoFilePath;
@@ -214,7 +214,11 @@ export default class GrpcHandler implements MeshHandler {
             if (name !== this.config.serviceName) {
               rootFieldName = camelCase(name + '_' + rootFieldName);
             }
-            if (this.config.descriptorSetFilePath || this.config.useReflection) {
+            if (!this.config.serviceName && this.config.useReflection) {
+              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
+              responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType.replace(currentPath, ''));
+              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType.replace(currentPath, ''));
+            } else if (this.config.descriptorSetFilePath && currentPath !== this.config.packageName) {
               const reflectionPath = currentPath.replace(this.config.serviceName || '', '');
               rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
               responseType = camelCase(
