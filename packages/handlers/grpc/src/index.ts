@@ -8,18 +8,23 @@ import {
   credentials,
   loadPackageDefinition,
 } from '@grpc/grpc-js';
-import { PackageDefinition, load, loadFileDescriptorSetFile, loadFileDescriptorSet } from '@grpc/proto-loader';
+import {
+  PackageDefinition,
+  load,
+  loadFileDescriptorSetFromBuffer,
+  loadFileDescriptorSetFromObject,
+} from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
 import { readFile } from 'fs-extra';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
 import { pascalCase } from 'pascal-case';
-import { AnyNestedObject, IParseOptions, Root, RootConstructor } from 'protobufjs';
-import {} from 'protobufjs/ext/descriptor';
+import { AnyNestedObject, IParseOptions, Message, Root, RootConstructor } from 'protobufjs';
 import { Readable } from 'stream';
 import { promisify } from 'util';
 import grpcReflection from 'grpc-reflection-js';
+import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 
 import {
   ClientMethod,
@@ -39,6 +44,8 @@ interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable
   [Symbol.asyncIterator](): AsyncIterableIterator<T>;
   cancel(): void;
 }
+
+type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
@@ -106,9 +113,13 @@ export default class GrpcHandler implements MeshHandler {
         }
       });
       root.resolveAll();
-      const descriptorSetRoot = root.toDescriptor('proto3');
-      packageDefinition = loadFileDescriptorSet(descriptorSetRoot);
+      const descriptorSetRoot = root.toDescriptor('proto3').toJSON();
+      packageDefinition = loadFileDescriptorSetFromObject(descriptorSetRoot);
     } else if (this.config.descriptorSetFilePath) {
+      // We have to use an ol' fashioned require here :(
+      // Needed for descriptor.FileDescriptorSet
+      const descriptor = require('protobufjs/ext/descriptor');
+
       let fileName = this.config.descriptorSetFilePath;
       let options: LoadOptions = {};
       if (typeof this.config.descriptorSetFilePath === 'object' && this.config.descriptorSetFilePath.file) {
@@ -116,10 +127,18 @@ export default class GrpcHandler implements MeshHandler {
         options = this.config.descriptorSetFilePath.load;
       }
       const descriptorSetBuffer = await readFile(fileName as string);
-      const descriptorSetRoot = (Root as RootConstructor).fromDescriptor(descriptorSetBuffer);
+      let decodedDescriptorSet: DecodedDescriptorSet;
+      try {
+        const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
+        decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(descriptorSetJSON) as DecodedDescriptorSet;
+        packageDefinition = await loadFileDescriptorSetFromObject(descriptorSetJSON, options);
+      } catch (e) {
+        decodedDescriptorSet = descriptor.FileDescriptorSet.decode(descriptorSetBuffer) as DecodedDescriptorSet;
+        packageDefinition = await loadFileDescriptorSetFromBuffer(descriptorSetBuffer, options);
+      }
+      const descriptorSetRoot = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
       descriptorSetRoot.name = this.config.serviceName || '';
       root.add(descriptorSetRoot);
-      packageDefinition = await loadFileDescriptorSetFile(fileName as string, options);
     } else {
       let fileName = this.config.protoFilePath;
       let options: LoadOptions = {};
