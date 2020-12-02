@@ -148,4 +148,183 @@ type Query {
 `.trim()
     );
   });
+
+  it('should filter out types', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        a: String
+        b: String
+        c: String
+        d: String
+        e: String
+      }
+
+      type Book {
+        id: ID
+        name: String
+        authorId: ID
+        author: User
+      }
+
+      type Query {
+        user: User
+        admin: User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['Book'],
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  a: String
+  b: String
+  c: String
+  d: String
+  e: String
+}
+
+type Query {
+  user: User
+  admin: User
+}
+`.trim()
+    );
+  });
+
+  it('should filter out fields of filtered types', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        a: String
+        b: String
+        c: String
+        d: String
+        e: String
+      }
+
+      type Book {
+        id: ID
+        name: String
+        authorId: ID
+        author: User
+      }
+
+      type Query {
+        user: User
+        admin: User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['User'],
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type Book {
+  id: ID
+  name: String
+  authorId: ID
+}
+`.trim()
+    );
+  });
+
+  it('should filter out directive fields of filtered types', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      input AuthRule {
+        and: [AuthRule]
+        or: [AuthRule]
+        not: AuthRule
+        rule: String
+      }
+
+      directive @auth(query: AuthRule, add: AuthRule, update: AuthRule, delete: AuthRule, role: String!) on OBJECT
+
+      type User {
+        id: ID
+        name: String
+        username: String
+        a: String
+        b: String
+        c: String
+        d: String
+        e: String
+      }
+
+      type Book {
+        id: ID
+        name: String
+        authorId: ID
+        author: User
+      }
+
+      type Query {
+        user: User
+        admin: User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['AuthRule'],
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+directive @auth(role: String!) on OBJECT
+
+type User {
+  id: ID
+  name: String
+  username: String
+  a: String
+  b: String
+  c: String
+  d: String
+  e: String
+}
+
+type Book {
+  id: ID
+  name: String
+  authorId: ID
+  author: User
+}
+
+type Query {
+  user: User
+  admin: User
+}
+`.trim()
+    );
+  });
 });
