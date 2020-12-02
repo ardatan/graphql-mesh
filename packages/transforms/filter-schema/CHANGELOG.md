@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.7.0
+
+### Minor Changes
+
+- 9730efe9: allow to filter schema by type
+
 ## 0.6.15
 
 ### Patch Changes
