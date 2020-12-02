@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.10.19
+
+### Patch Changes
+
+- bf3e1d3a: feat(config): support code files in additionalTypeDefs
+
 ## 0.10.18
 
 ### Patch Changes
