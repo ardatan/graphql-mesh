@@ -2,7 +2,7 @@ import { matcher } from 'micromatch';
 
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { FilterRootFields, FilterObjectFields, FilterInputObjectFields } from '@graphql-tools/wrap';
+import { FilterRootFields, FilterObjectFields, FilterInputObjectFields, FilterTypes } from '@graphql-tools/wrap';
 import {
   applySchemaTransforms,
   applyRequestTransforms,
@@ -18,6 +18,15 @@ export default class FilterTransform implements MeshTransform {
     const { config } = options;
     for (const filter of config) {
       const [typeName, fieldGlob] = filter.split('.');
+      if (!fieldGlob) {
+        const isMatch = matcher(typeName);
+        this.transforms.push(
+          new FilterTypes(type => {
+            return !isMatch(type.name);
+          })
+        );
+        continue;
+      }
       let fixedFieldGlob = fieldGlob;
       if (fixedFieldGlob.includes('{') && !fixedFieldGlob.includes(',')) {
         fixedFieldGlob = fieldGlob.replace('{', '').replace('}', '');
