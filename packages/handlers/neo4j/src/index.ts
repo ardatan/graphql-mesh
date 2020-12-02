@@ -37,7 +37,7 @@ export default class Neo4JHandler implements MeshHandler {
 
     if (this.config.typeDefs) {
       const typeDefsArr = await loadTypedefs(this.config.typeDefs, {
-        loaders: [new GraphQLFileLoader(), new CodeFileLoader()],
+        loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
         assumeValid: true,
         assumeValidSDL: true,
       });

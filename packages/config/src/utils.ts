@@ -10,6 +10,7 @@ import { stringInterpolator } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 
 export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
   const casedName = paramCase(name);
@@ -53,7 +54,7 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
   if (additionalTypeDefs) {
     const sources = await loadTypedefs(additionalTypeDefs, {
       cwd: baseDir,
-      loaders: [new GraphQLFileLoader()],
+      loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
     });
     return sources.map(source => source.document || parse(source.rawSDL || printSchemaWithDirectives(source.schema)));
   }
