@@ -11,7 +11,7 @@ import {
   GraphQLResolveInfo,
 } from 'graphql';
 import { composeResolvers } from '@graphql-tools/resolvers-composition';
-import { IResolvers, Operation, buildOperationNodeForField, SelectedFields } from '@graphql-tools/utils';
+import { IResolvers, buildOperationNodeForField, SelectedFields } from '@graphql-tools/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import { MeshContext, APIContext } from './types';
@@ -25,6 +25,8 @@ function isMeshContext(context: any): context is MeshContext {
 function isAPIContext(apiContext: any): apiContext is APIContext {
   return !!apiContext && typeof apiContext === 'object' && MESH_API_CONTEXT_SYMBOL in apiContext;
 }
+
+type Operation = 'query' | 'mutation' | 'subscription';
 
 function createProxyInfo({
   schema,

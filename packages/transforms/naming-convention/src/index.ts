@@ -9,14 +9,9 @@ import {
   TransformEnumValues,
   RenameInterfaceFields,
 } from '@graphql-tools/wrap';
-import {
-  applySchemaTransforms,
-  applyRequestTransforms,
-  Request,
-  applyResultTransforms,
-  Result,
-  Transform,
-} from '@graphql-tools/utils';
+import { ExecutionResult, Request } from '@graphql-tools/utils';
+import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
+import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
 import {
   camelCase,
@@ -86,15 +81,23 @@ export default class NamingConventionTransform implements MeshTransform {
     }
   }
 
-  transformSchema(schema: GraphQLSchema) {
-    return applySchemaTransforms(schema, this.transforms);
+  transformSchema(
+    originalWrappingSchema: GraphQLSchema,
+    subschemaConfig: SubschemaConfig,
+    transformedSchema?: GraphQLSchema
+  ) {
+    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
   }
 
-  transformRequest(request: Request) {
-    return applyRequestTransforms(request, this.transforms);
+  transformRequest(
+    originalRequest: Request,
+    delegationContext: DelegationContext,
+    transformationContext: Record<string, any>
+  ) {
+    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
   }
 
-  transformResult(result: Result) {
-    return applyResultTransforms(result, this.transforms);
+  transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
+    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
   }
 }

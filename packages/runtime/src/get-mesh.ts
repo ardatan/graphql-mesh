@@ -5,8 +5,7 @@ import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@g
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
-import { applySchemaTransforms } from '@graphql-tools/utils';
-import { ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
+import { applySchemaTransforms, ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -37,7 +36,7 @@ export async function getMesh(
       // If schema is going to be wrapped already we can use noWrapTransforms as wrapTransforms on source level
       // The idea behind avoiding wrapping as much as possible is to decrease multiple rounds of graphqljs execution phase for performance
       if (wrapTransforms.length === 0 && !source.executor && !source.subscriber) {
-        apiSchema = applySchemaTransforms(apiSchema, noWrapTransforms);
+        apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
       } else {
         wrapTransforms.push(...noWrapTransforms);
       }

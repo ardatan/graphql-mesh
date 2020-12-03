@@ -55,7 +55,7 @@ export interface ServeConfig {
   staticFiles?: string;
 }
 export interface CorsConfig {
-  origin?: string[];
+  origin?: any;
   allowedHeaders?: string[];
   exposedHeaders?: string[];
   credentials?: boolean;
@@ -213,6 +213,7 @@ export interface ProtoFilePath {
   load?: LoadOptions;
 }
 export interface LoadOptions {
+  defaults?: boolean;
   includeDirs?: string[];
 }
 /**
@@ -250,7 +251,7 @@ export interface JsonSchemaOperation {
   /**
    * Allowed values: GET, DELETE, POST, PUT, PATCH
    */
-  method: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
+  method?: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;

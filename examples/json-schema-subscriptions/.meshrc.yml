@@ -17,21 +17,10 @@ sources:
             method: POST
             requestSample: ./addTodo.json
             responseSample: ./todo.json
-            responseTypeName: Todo
-
-additionalTypeDefs: |
-  # If you don't have Subscription type defined anywhere
-  # You have to extend subscription definition
-  extend schema {
-    subscription: Subscription
-  }
-  type Subscription {
-    todoAdded: Todo
-  }
-additionalResolvers:
-  - type: Subscription
-    field: todoAdded
-    pubsubTopic: todoAdded
+          - type: Subscription
+            field: todoAdded
+            pubsubTopic: todoAdded
+            responseSample: ./todo.json
 
 serve:
   port: 4000

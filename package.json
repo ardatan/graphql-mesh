@@ -12,7 +12,7 @@
     "build": "tsc --project tsconfig.build.json && bob build",
     "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
     "fix-bin": "node scripts/fix-bin.js",
-    "copy-playground-html": "cp ./packages/cli/src/commands/serve/playground.html ./packages/cli/dist",
+    "copy-playground-html": "cp ./packages/cli/src/commands/serve/playground.html ./packages/cli/dist && cp -R ./packages/cli/src/commands/serve/public ./packages/cli/dist",
     "copy-fhir-schema": "cp ./packages/handlers/fhir/src/fhir.schema.json ./packages/handlers/fhir/dist",
     "postbuild": "yarn copy-config-schema && yarn copy-playground-html && yarn copy-fhir-schema && yarn fix-bin",
     "lint": "eslint --ext .ts \"./packages/**/src/*.ts\"",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "2.9.2",
-    "@graphql-tools/schema": "6.2.2",
+    "@graphql-tools/schema": "7.0.0",
     "@types/jest": "26.0.14",
     "@types/node": "14.14.3",
     "@typescript-eslint/eslint-plugin": "4.4.1",

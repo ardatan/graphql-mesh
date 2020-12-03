@@ -2,8 +2,7 @@ import { MergerFn } from '@graphql-mesh/types';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { mergeSingleSchema } from './mergeSingleSchema';
-import { groupTransforms } from '@graphql-mesh/utils';
-import { applySchemaTransforms } from '@graphql-tools/utils';
+import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
 const mergeUsingStitching: MergerFn = async function (options) {
   if (options.rawSources.length === 1) {
@@ -29,7 +28,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
       });
     }
     if (noWrapTransforms.length) {
-      unifiedSchema = applySchemaTransforms(unifiedSchema, noWrapTransforms);
+      unifiedSchema = applySchemaTransforms(unifiedSchema, { schema: unifiedSchema }, null, noWrapTransforms);
     }
   }
   return unifiedSchema;

@@ -31,7 +31,7 @@ export default class GraphQLHandler implements MeshHandler {
         context: params.context,
       };
       const headers = getHeadersObject(headersFactory(resolverData));
-      return urlLoader.getExecutorAndSubscriber(this.config.endpoint, {
+      return urlLoader.getExecutorAndSubscriberAsync(this.config.endpoint, {
         customFetch: customFetch as any,
         ...this.config,
         headers,
@@ -40,7 +40,7 @@ export default class GraphQLHandler implements MeshHandler {
     let schema: GraphQLSchema;
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     if (this.config.introspection) {
-      const result = await urlLoader.handleSDL(this.config.introspection, {
+      const result = await urlLoader.handleSDLAsync(this.config.introspection, {
         customFetch: customFetch as any,
         ...this.config,
         headers: this.config.schemaHeaders,
