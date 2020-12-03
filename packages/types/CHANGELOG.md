@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.20.0
+
+### Minor Changes
+
+- 2d14fcc3: bump graphql-tools to v7
+
+### Patch Changes
+
+- 2d14fcc3: fix(json-schema): make method optional to create nonexecutable schema
+
 ## 0.19.0
 
 ### Minor Changes
