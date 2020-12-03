@@ -17,7 +17,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { cwd } from 'process';
-import { pathExists, readFileSync } from 'fs-extra';
+import { pathExists } from 'fs-extra';
 import { graphqlHandler } from './graphql-handler';
 
 export async function serveMesh(
@@ -108,12 +108,7 @@ export async function serveMesh(
         app.get('/', playgroundMiddleware);
       }
       app.get(graphqlPath, playgroundMiddleware);
-      app.get('/middleware.js', (req, res) => {
-        res.end(readFileSync(join(__dirname, './middleware.js'), 'utf-8'));
-      });
-      app.get('/middleware.js.map', (req, res) => {
-        res.end(readFileSync(join(__dirname, './middleware.js.map'), 'utf-8'));
-      });
+      app.use(express.static(join(__dirname, './public')));
     }
 
     httpServer.listen(port.toString(), () => {
