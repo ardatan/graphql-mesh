@@ -1,5 +1,18 @@
 # @graphql-mesh/odata
 
+## 0.7.0
+
+### Minor Changes
+
+- 2d14fcc3: bump graphql-tools to v7
+
+### Patch Changes
+
+- Updated dependencies [2d14fcc3]
+- Updated dependencies [2d14fcc3]
+  - @graphql-mesh/types@0.20.0
+  - @graphql-mesh/utils@0.8.0
+
 ## 0.6.9
 
 ### Patch Changes
