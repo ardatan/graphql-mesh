@@ -1,5 +1,13 @@
 # @graphql-mesh/graphql
 
+## 0.8.1
+
+### Patch Changes
+
+- 1e7fd602: feat(graphql): add `multipart` option to support file uploads
+- Updated dependencies [1e7fd602]
+  - @graphql-mesh/types@0.20.1
+
 ## 0.8.0
 
 ### Minor Changes

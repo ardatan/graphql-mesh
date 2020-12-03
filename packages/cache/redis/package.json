@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.4.22",
+  "version": "0.4.23",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -13,7 +13,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.20.0",
+    "@graphql-mesh/types": "0.20.1",
     "@types/ioredis": "4.17.4",
     "dataloader": "2.0.0",
     "ioredis": "4.17.3"
