@@ -20,7 +20,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.20.1",
     "@graphql-mesh/utils": "0.8.0",
-    "camel-case": "4.1.1",
+    "camel-case": "4.1.2",
     "graphql-compose": "7.22.1",
     "graphql-compose-mongoose": "9.0.0",
     "graphql-compose-connection": "8.0.1",
