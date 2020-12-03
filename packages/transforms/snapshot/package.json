@@ -13,7 +13,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/fs-extra": "9.0.1",
+    "@types/fs-extra": "9.0.4",
     "@types/object-hash": "1.3.4"
   },
   "dependencies": {
