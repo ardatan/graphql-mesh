@@ -1,5 +1,21 @@
 # @graphql-mesh/config
 
+## 0.11.0
+
+### Minor Changes
+
+- 2d14fcc3: bump graphql-tools to v7
+
+### Patch Changes
+
+- Updated dependencies [2d14fcc3]
+- Updated dependencies [2d14fcc3]
+  - @graphql-mesh/types@0.20.0
+  - @graphql-mesh/merger-stitching@0.7.0
+  - @graphql-mesh/runtime@0.10.0
+  - @graphql-mesh/utils@0.8.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.22
+
 ## 0.10.19
 
 ### Patch Changes

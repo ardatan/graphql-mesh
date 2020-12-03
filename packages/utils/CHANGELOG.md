@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.8.0
+
+### Minor Changes
+
+- 2d14fcc3: bump graphql-tools to v7
+
 ## 0.7.0
 
 ### Minor Changes

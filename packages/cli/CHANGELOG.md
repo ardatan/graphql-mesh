@@ -1,5 +1,19 @@
 # @graphql-mesh/cli
 
+## 0.12.0
+
+### Minor Changes
+
+- 2d14fcc3: bump graphql-tools to v7
+- 2d14fcc3: feat(graphql): use graphql-ws instead of subscriptions-transport-ws
+
+### Patch Changes
+
+- Updated dependencies [2d14fcc3]
+  - @graphql-mesh/config@0.11.0
+  - @graphql-mesh/runtime@0.10.0
+  - @graphql-mesh/utils@0.8.0
+
 ## 0.11.14
 
 ### Patch Changes
