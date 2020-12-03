@@ -7,9 +7,8 @@ import { cpus } from 'os';
 import 'json-bigint-patch';
 import { createServer } from 'http';
 import { playground } from './playground';
-import { graphqlHTTP } from 'express-graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
-import { SubscriptionServer, OperationMessagePayload, ConnectionContext } from 'subscriptions-transport-ws';
+import ws from 'ws';
 import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import cors from 'cors';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
@@ -18,7 +17,8 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { cwd } from 'process';
-import { pathExists } from 'fs-extra';
+import { pathExists, readFileSync } from 'fs-extra';
+import { graphqlHandler } from './graphql-handler';
 
 export async function serveMesh(
   logger: Logger,
@@ -27,6 +27,7 @@ export async function serveMesh(
   pubsub: MeshPubSub,
   { fork, exampleQuery, port, cors: corsConfig, handlers, staticFiles }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
+  const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
   const graphqlPath = '/graphql';
   if (isMaster && fork) {
     const forkNum = fork > 1 ? fork : cpus().length;
@@ -57,58 +58,22 @@ export async function serveMesh(
     app.post(
       graphqlPath,
       graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
-      graphqlHTTP(async req => ({
-        schema,
-        context: await contextBuilder(req),
-        graphiql: false,
-        customFormatErrorFn: error => {
-          return {
-            extensions: error.extensions,
-            locations: error.locations,
-            message: error.message,
-            name: error.name,
-            nodes: error.nodes,
-            originalError: {
-              ...error?.originalError,
-              name: error?.originalError?.name,
-              message: error?.originalError?.message,
-              stack: error?.originalError?.stack.split('\n'),
-            },
-            path: error.path,
-            positions: error.positions,
-            source: {
-              body: error.source?.body?.split('\n'),
-              name: error.source?.name,
-              locationOffset: {
-                line: error.source?.locationOffset?.line,
-                column: error.source?.locationOffset?.column,
-              },
-            },
-            stack: error.stack?.split('\n'),
-            ...error,
-          };
-        },
-      }))
+      graphqlHandler(schema, contextBuilder)
     );
 
-    SubscriptionServer.create(
+    const wsServer = new ws.Server({
+      path: graphqlPath,
+      server: httpServer,
+    });
+
+    useServer(
       {
         schema,
         execute,
         subscribe,
-        onConnect: async function (
-          _params: OperationMessagePayload,
-          _webSocket: WebSocket,
-          connectionContext: ConnectionContext
-        ) {
-          const context = await contextBuilder(connectionContext.request);
-          return context;
-        },
+        context: ctx => contextBuilder(ctx.extra.request),
       },
-      {
-        server: httpServer,
-        path: graphqlPath,
-      }
+      wsServer
     );
 
     const pubSubHandler: RequestHandler = (req, _res, next) => {
@@ -143,6 +108,12 @@ export async function serveMesh(
         app.get('/', playgroundMiddleware);
       }
       app.get(graphqlPath, playgroundMiddleware);
+      app.get('/middleware.js', (req, res) => {
+        res.end(readFileSync(join(__dirname, './middleware.js'), 'utf-8'));
+      });
+      app.get('/middleware.js.map', (req, res) => {
+        res.end(readFileSync(join(__dirname, './middleware.js.map'), 'utf-8'));
+      });
     }
 
     httpServer.listen(port.toString(), () => {

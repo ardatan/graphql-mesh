@@ -175,9 +175,11 @@ export default class JsonSchemaHandler implements MeshHandler {
       const destination = operationConfig.type;
       const fieldConfig: ObjectTypeComposerFieldConfigDefinition<any, any> = {
         description:
-          operationConfig.description ||
-          responseSchema?.description ||
-          `${operationConfig.method} ${operationConfig.path}`,
+          operationConfig.description || responseSchema?.description || operationConfig.path
+            ? `${operationConfig.method} ${operationConfig.path}`
+            : operationConfig.pubsubTopic
+            ? `PubSub Topic: ${operationConfig.pubsubTopic}`
+            : '',
         type: responseTypeName,
         args,
       };
