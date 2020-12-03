@@ -158,6 +158,10 @@ export interface GraphQLHandler {
    * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
    */
   cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
+  /**
+   * Enable multipart/formdata in order to support file uploads
+   */
+  multipart?: boolean;
 }
 export interface GraphQLIntrospectionCachingOptions {
   /**

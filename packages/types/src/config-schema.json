@@ -516,6 +516,10 @@
               "type": "boolean"
             }
           ]
+        },
+        "multipart": {
+          "type": "boolean",
+          "description": "Enable multipart/formdata in order to support file uploads"
         }
       },
       "required": ["endpoint"]

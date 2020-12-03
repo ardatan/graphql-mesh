@@ -47,6 +47,10 @@ type GraphQLHandler @md {
   Cache Introspection
   """
   cacheIntrospection: GraphQLCacheIntrospectionConfig
+  """
+  Enable multipart/formdata in order to support file uploads
+  """
+  multipart: Boolean
 }
 
 union GraphQLCacheIntrospectionConfig = GraphQLIntrospectionCachingOptions | Boolean
