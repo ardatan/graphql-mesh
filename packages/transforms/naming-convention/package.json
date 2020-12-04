@@ -19,7 +19,7 @@
     "@graphql-tools/delegate": "7.0.5",
     "@graphql-tools/utils": "7.0.2",
     "change-case": "4.1.2",
-    "upper-case": "2.0.1",
+    "upper-case": "2.0.2",
     "lower-case": "2.0.2"
   },
   "publishConfig": {
