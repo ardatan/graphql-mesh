@@ -3636,7 +3636,7 @@
   dependencies:
     "@types/koa" "*"
 
-"@types/koa@*", "@types/koa@^2.0.44":
+"@types/koa@*":
   version "2.11.6"
   resolved "https://registry.yarnpkg.com/@types/koa/-/koa-2.11.6.tgz#b7030caa6b44af801c2aea13ba77d74aff7484d5"
   integrity sha512-BhyrMj06eQkk04C97fovEDQMpLpd2IxCB4ecitaXwOKGq78Wi2tooaDOWOFGajPk8IkQOAtMppApgSVkYe1F/A==
@@ -10035,21 +10035,6 @@ graphile-build-pg@4.10.0:
     lru-cache ">=4 <5"
     pg-sql2 "4.9.0"
 
-graphile-build-pg@4.9.2:
-  version "4.9.2"
-  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-4.9.2.tgz#5a56b01076814e0df8da8d63f1e8efecce77c345"
-  integrity sha512-Am9FV7/XQx1Al3xuiRiCLUmR5wAa/TZosaHvIJzEjc9UjIGRq+to96L16RP2SGWqjXdEuAeR8jWzda0lC825Hg==
-  dependencies:
-    "@graphile/lru" "4.9.0"
-    chalk "^2.4.2"
-    debug "^4.1.1"
-    graphile-build "4.9.0"
-    graphql-iso-date "^3.6.0"
-    jsonwebtoken "^8.5.1"
-    lodash ">=4 <5"
-    lru-cache ">=4 <5"
-    pg-sql2 "4.9.0"
-
 graphile-build@4.10.0:
   version "4.10.0"
   resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-4.10.0.tgz#f54346f23bb625af362b6b9a2487569ec43dd064"
@@ -10065,28 +10050,13 @@ graphile-build@4.10.0:
     pluralize "^7.0.0"
     semver "^6.0.0"
 
-graphile-build@4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-4.9.0.tgz#547da79ceb2526a55691d41f8cd79e3361f99300"
-  integrity sha512-OEM9wfHuA1i7ZYd2k9TfHtFUm+uy805E/bnQo1dyJh165BywI6zvOmle7oYbK1y83qSDvS3z9gh4f4JYY5LEBA==
-  dependencies:
-    "@graphile/lru" "4.9.0"
-    chalk "^2.4.2"
-    debug "^4.1.1"
-    graphql-parse-resolve-info "4.9.0"
-    iterall "^1.2.2"
-    lodash ">=4 <5"
-    lru-cache "^5.0.0"
-    pluralize "^7.0.0"
-    semver "^6.0.0"
-
-graphile-utils@^4.9.2:
-  version "4.9.2"
-  resolved "https://registry.yarnpkg.com/graphile-utils/-/graphile-utils-4.9.2.tgz#5285cec40dfba4732ddd177454d8d8d7afc5c02d"
-  integrity sha512-Dva5W4vzLAzXkqBf6ahQlNDyUTBWrdAy8fCSAwgDZRsc35paB4klXwb20urOChoQdExp7e+3ReQa9C4uVgBlBA==
+graphile-utils@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphile-utils/-/graphile-utils-4.10.0.tgz#70780b0456d80d51e91f4b39a5187356e2256e1d"
+  integrity sha512-SYgguryvu6bhsNn5hUO2VQe3dYl6Ov1vlEWqajiX3XfG0zZTz3KhUZHJ7Usjb1VoiPD0vLZ3EcGybsuVq0acTA==
   dependencies:
     debug "^4.1.1"
-    graphql ">=0.9 <0.14 || ^14.0.2"
+    graphql ">=0.9 <0.14 || ^14.0.2 || ^15.4.0"
     tslib "^2.0.1"
 
 graphiql@^0.17.5:
@@ -10199,14 +10169,6 @@ graphql-parse-resolve-info@4.10.0:
   version "4.10.0"
   resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.10.0.tgz#3f61fa4bcbcad65d017f503fac4075f07624a69f"
   integrity sha512-4KWA4oiVnC1bduPZzmuUsTT9SZf/sbdrOAtOsHz747H6Azs4xPgj7/DPXCgdYvKrd4Ci9fNDcem4mOVV2Lct1w==
-  dependencies:
-    debug "^4.1.1"
-    tslib "^2.0.1"
-
-graphql-parse-resolve-info@4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.9.0.tgz#e2a7f3b6c328aaf1c0b867102bb7207e03a98ef3"
-  integrity sha512-tJqpmG+t5e68ZUjlbNzZ6O6kjzULeVBa+2KOC0IwwxaajtnKpp1bzaZxteOvWATdPwuASfOFJA1epYiva6/ztQ==
   dependencies:
     debug "^4.1.1"
     tslib "^2.0.1"
@@ -10354,7 +10316,7 @@ graphql-ws@2.0.1:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-2.0.1.tgz#36971e5453dbf0a59c5674460f7067011e7d6cd7"
   integrity sha512-K8eaR00TZHFMVw2viZfjDxLWdF1hUIR8xY9Zow6tLI2CLT3E4homJ4XZNRrxEoQjAXEQoUHPcmGkDDynWivNrQ==
 
-graphql@15.4.0, "graphql@>=0.9 <0.14 || ^14.0.2", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2", graphql@^14.2.1, graphql@^14.5.3, graphql@^15.3.0:
+graphql@15.4.0, "graphql@>=0.9 <0.14 || ^14.0.2 || ^15.4.0", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0", graphql@^14.2.1, graphql@^14.5.3, graphql@^15.3.0:
   version "15.4.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.4.0.tgz#e459dea1150da5a106486ba7276518b5295a4347"
   integrity sha512-EB3zgGchcabbsU9cFe1j+yxdzKQKAbGUWRb13DsrsMN1yyfmmIq+2+L5MqVWcDCE4V89R5AyUOi7sMOGxdsYtA==
@@ -15996,24 +15958,14 @@ postgraphile-core@4.10.0:
     graphile-build-pg "4.10.0"
     tslib "^2.0.1"
 
-postgraphile-core@4.9.2:
-  version "4.9.2"
-  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-4.9.2.tgz#7a102d9629b003d6afa6417b244ee0e83410b308"
-  integrity sha512-eA52SIY32VdfmjZ40kkel0GeUEs9bcGKdoA9t2eTH8paoykdjnHwvprtRHUbs2bsomobWEZsxNfW8NcZ9yZhSQ==
-  dependencies:
-    graphile-build "4.9.0"
-    graphile-build-pg "4.9.2"
-    tslib "^2.0.1"
-
-postgraphile@4.9.2:
-  version "4.9.2"
-  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.9.2.tgz#1216f52877326f424d59fe912ab1d09075bbca04"
-  integrity sha512-64pVBA9foqlwF8B7cMjvcMlZvz4MUX4y+gnLte9XUoJUweRmH8nhA82JntFqOqP9U+zXxZZc1HsSYbj3uDWfGA==
+postgraphile@4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.10.0.tgz#051271d4fdddb8330a484843e7415a8fc7154bb2"
+  integrity sha512-Yc+EyqvsFU2bkeCpSMJ7u9HkrPWcxgcE09NaexSsCIEgT2PYdoHwQvk1Q2BoF2ddixCEQTLbzkcdC/4KJ6VNhg==
   dependencies:
     "@graphile/lru" "4.9.0"
     "@types/json5" "^0.0.30"
     "@types/jsonwebtoken" "^8.3.2"
-    "@types/koa" "^2.0.44"
     "@types/pg" "^7.4.10"
     "@types/ws" "^6.0.1"
     body-parser "^1.15.2"
@@ -16021,8 +15973,8 @@ postgraphile@4.9.2:
     commander "^2.19.0"
     debug "^4.1.1"
     finalhandler "^1.0.6"
-    graphile-utils "^4.9.2"
-    graphql "^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2"
+    graphile-utils "^4.10.0"
+    graphql "^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0"
     http-errors "^1.5.1"
     iterall "^1.0.2"
     json5 "^2.1.1"
@@ -16031,7 +15983,7 @@ postgraphile@4.9.2:
     pg ">=6.1.0 <9"
     pg-connection-string "^2.0.0"
     pg-sql2 "4.9.0"
-    postgraphile-core "4.9.2"
+    postgraphile-core "4.10.0"
     subscriptions-transport-ws "^0.9.15"
     tslib "^2.0.1"
     ws "^6.1.3"

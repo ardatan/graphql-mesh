@@ -17,7 +17,7 @@
     "@graphql-mesh/utils": "0.8.0",
     "fs-extra": "9.0.1",
     "postgraphile-core": "4.10.0",
-    "postgraphile": "4.9.2",
+    "postgraphile": "4.10.0",
     "pg": "8.5.1"
   },
   "publishConfig": {
