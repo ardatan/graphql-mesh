@@ -10020,21 +10020,20 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-graphile-build-pg@4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-4.9.0.tgz#1b5b323c7f917d76764ebbcecf05c24353cf85fb"
-  integrity sha512-DhQ/T7cSEwWEQIAUeLH5cnrpXNBhrjMUJW0EOK0B/pCYTrhzO+GPn/3Fa6DeraFeHndojbmOE4t9LGy6vmP+gg==
+graphile-build-pg@4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-4.10.0.tgz#d0371f63d7470a3241ac80b9a3105f35c682d89a"
+  integrity sha512-hKuRjh/bx0tUh8c62G+NZDE4vJybkpLAXNdXW49WMQnF72krit7YaerU9dbGa/ve1U2DOHE1MkDJscWyU26Jvg==
   dependencies:
     "@graphile/lru" "4.9.0"
     chalk "^2.4.2"
     debug "^4.1.1"
-    graphile-build "4.9.0"
+    graphile-build "4.10.0"
     graphql-iso-date "^3.6.0"
     jsonwebtoken "^8.5.1"
     lodash ">=4 <5"
     lru-cache ">=4 <5"
     pg-sql2 "4.9.0"
-    postgres-interval "^2.1.0"
 
 graphile-build-pg@4.9.2:
   version "4.9.2"
@@ -10050,6 +10049,21 @@ graphile-build-pg@4.9.2:
     lodash ">=4 <5"
     lru-cache ">=4 <5"
     pg-sql2 "4.9.0"
+
+graphile-build@4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-4.10.0.tgz#f54346f23bb625af362b6b9a2487569ec43dd064"
+  integrity sha512-Ev0OJu5dHVFAjPB5gpaZXoK6Fmu6tilHabo/zc6FZOwVpMz5WAWXW8X04IIGLYAgZz7O4oBDYxvgBPc5C1QZZQ==
+  dependencies:
+    "@graphile/lru" "4.9.0"
+    chalk "^2.4.2"
+    debug "^4.1.1"
+    graphql-parse-resolve-info "4.10.0"
+    iterall "^1.2.2"
+    lodash ">=4 <5"
+    lru-cache "^5.0.0"
+    pluralize "^7.0.0"
+    semver "^6.0.0"
 
 graphile-build@4.9.0:
   version "4.9.0"
@@ -15973,13 +15987,13 @@ postcss@^8.1.0:
     nanoid "^3.1.16"
     source-map "^0.6.1"
 
-postgraphile-core@4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-4.9.0.tgz#fbc1d17e0d71a5a1b6266681fa88ea8225edfb45"
-  integrity sha512-mOisw9XoLhsgOutWfD7bAlH55jgxvfHgV4JGfHlvg7avW2eJK6nPkRB69ARvbBmsM7yB0lwetpAN2YbBq/YtdQ==
+postgraphile-core@4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-4.10.0.tgz#eea2672413d85d62da1670db141fc9e4f709b52b"
+  integrity sha512-AX2a8Xzk+6VwgCNuiUINs8DAC4Oq+b3D1NmA8d4Tzh9yoZlKp2tJ+oqEsCdcnzSHAVn6nIH2JgMqu481DxOHiw==
   dependencies:
-    graphile-build "4.9.0"
-    graphile-build-pg "4.9.0"
+    graphile-build "4.10.0"
+    graphile-build-pg "4.10.0"
     tslib "^2.0.1"
 
 postgraphile-core@4.9.2:
@@ -16043,11 +16057,6 @@ postgres-interval@^1.1.0:
   integrity sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==
   dependencies:
     xtend "^4.0.0"
-
-postgres-interval@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/postgres-interval/-/postgres-interval-2.1.0.tgz#6ba9dffa13edf7863984adef041e757f12edc264"
-  integrity sha512-LM7OHNmCxmFZkxCran7gu2S2sm1FxXrUCcasE3PkuIQS0pm0xGk4iTfEzrDghFSSRkAtNDbLuYevvKrjhAHZBQ==
 
 preferred-pm@^3.0.0:
   version "3.0.2"
