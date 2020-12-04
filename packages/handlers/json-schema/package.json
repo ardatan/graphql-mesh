@@ -26,7 +26,7 @@
     "lodash": "4.17.20",
     "graphql-compose": "7.23.0",
     "graphql-scalars": "1.5.0",
-    "pascal-case": "3.1.1",
+    "pascal-case": "3.1.2",
     "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
     "object-hash": "2.0.3"
