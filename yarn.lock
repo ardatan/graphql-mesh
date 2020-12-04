@@ -125,23 +125,23 @@
     "@algolia/logger-common" "4.8.0"
     "@algolia/requester-common" "4.8.0"
 
-"@apollo/federation@0.20.6", "@apollo/federation@^0.20.6":
-  version "0.20.6"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.20.6.tgz#f0b48177bb73214b256e5139736b3c9ace9aaf4a"
-  integrity sha512-ofk2bF+nRvbTZBgguSBm7lYRdbrG1w27OCRZo9qFpX9PxyQMMCB1FLOQXbeT+4QgjFuJhIZg6/LGnXd13o5uJw==
+"@apollo/federation@0.20.7", "@apollo/federation@^0.20.7":
+  version "0.20.7"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.20.7.tgz#0d26dcc3bbc92c168dc40d4f407f56d26338ef7a"
+  integrity sha512-URIayksqBaJ+xlcJmyGCf+OqHP60lX2CYGv9fDWQ1KM48sEN1ABHGXkEa0vwgWMH0XUVo94lYDVY11BAJUsuCw==
   dependencies:
     apollo-graphql "^0.6.0"
     apollo-server-env "^2.4.5"
     core-js "^3.4.0"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.21.3":
-  version "0.21.3"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.21.3.tgz#51f50fd9ba569045e901792dcb509b9835ace052"
-  integrity sha512-KCnBRzccC65DByTjdfTXnq0A7nq5lDr065pwBweSErrBD2W3N713auU+8kyuMURqXgSZGIxaqifXcAdXRvb5yQ==
+"@apollo/gateway@0.21.4":
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.21.4.tgz#8dcec7d94e89ee13a52571d16d477d4869ccc4b2"
+  integrity sha512-e8NpehH+0pQYr2wYeqRyB9i7WaTzWJw16hoI3xVJK1r4DVoSzXqjPyPv00MIBjaCHhq2vlwIe+mupjHC/aMF0g==
   dependencies:
-    "@apollo/federation" "^0.20.6"
-    "@apollo/query-planner-wasm" "^0.0.8"
+    "@apollo/federation" "^0.20.7"
+    "@apollo/query-planner-wasm" "^0.0.9"
     "@types/node-fetch" "2.5.4"
     apollo-graphql "^0.6.0"
     apollo-reporting-protobuf "^0.6.0"
@@ -173,10 +173,10 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-planner-wasm@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner-wasm/-/query-planner-wasm-0.0.8.tgz#2554955e5d639506fd12a2b7d743def6166689b8"
-  integrity sha512-6DGtcGpnXvxKBYB2sVs01lEOVIwtRvUkG0yDhk4Ts/NvQQDV61Z9Zi/ALqtvFjrPVFh5k8xEvTbMnjGUvWvQVw==
+"@apollo/query-planner-wasm@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner-wasm/-/query-planner-wasm-0.0.9.tgz#a6640421855a86be740941779c19c1cec0d25b6b"
+  integrity sha512-PT4Dled36Ci6VwGUs4CBsv9RPL4kpAPZ+V/1aH69Ox5IlejEzt1is7SESm9e/rht2tW8ADWJX70EW7Kx/gY+rg==
 
 "@apollographql/apollo-tools@^0.4.3":
   version "0.4.8"
