@@ -10291,10 +10291,10 @@ graphql-tools@^4.0.0, graphql-tools@^4.0.7:
     iterall "^1.1.3"
     uuid "^3.1.0"
 
-graphql-transform-federation@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/graphql-transform-federation/-/graphql-transform-federation-2.1.0.tgz#ff95d5a3be982f047cd5604cd2a866d49bd26827"
-  integrity sha512-mpTfWKLBJXr/b6OmwWEa4M5vA6OdNGFszEZMHUwgd0eD0/khDQK+aaks0Ufl/bRd01K1h9N+n1pf8DQcXXPjGg==
+graphql-transform-federation@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/graphql-transform-federation/-/graphql-transform-federation-2.2.0.tgz#b7939ec978bace6f7e7c8be5f6900b3096820bd7"
+  integrity sha512-BYyh5teDshQvh3mE/7xUSr9GnO8G8qC47MxXE5ELoA3htfkBGo8I1rXks8bowu644NMcIINJFJrIgn4tJVZ/uQ==
 
 graphql-type-json@0.3.2:
   version "0.3.2"
