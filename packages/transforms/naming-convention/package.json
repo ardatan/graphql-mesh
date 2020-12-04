@@ -20,7 +20,7 @@
     "@graphql-tools/utils": "7.0.2",
     "change-case": "4.1.2",
     "upper-case": "2.0.1",
-    "lower-case": "2.0.1"
+    "lower-case": "2.0.2"
   },
   "publishConfig": {
     "access": "public",
