@@ -20069,7 +20069,7 @@ upper-case@2.0.1, upper-case@^2.0.1:
   dependencies:
     tslib "^1.10.0"
 
-upper-case@^2.0.2:
+upper-case@2.0.2, upper-case@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/upper-case/-/upper-case-2.0.2.tgz#d89810823faab1df1549b7d97a76f8662bae6f7a"
   integrity sha512-KgdgDGJt2TpuwBUIjgG6lzw2GWFRCW9Qkfkiv0DxqHHLYJHmtmdUIKcZd8rHgFSjopVTlw6ggzCm1b8MFQwikg==
