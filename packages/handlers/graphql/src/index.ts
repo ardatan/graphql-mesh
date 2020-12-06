@@ -4,7 +4,7 @@ import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildClientSchema, introspectionFromSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import { getInterpolatedHeadersFactory, ResolverDataBasedFactory, getHeadersObject } from '@graphql-mesh/utils';
-import { ExecutionParams } from '@graphql-tools/delegate';
+import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
 export default class GraphQLHandler implements MeshHandler {
   private name: string;
@@ -39,6 +39,10 @@ export default class GraphQLHandler implements MeshHandler {
     };
     let schema: GraphQLSchema;
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
+    const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
+      const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory);
+      return executor(params);
+    };
     if (this.config.introspection) {
       const result = await urlLoader.handleSDLAsync(this.config.introspection, {
         customFetch: customFetch as any,
@@ -52,19 +56,13 @@ export default class GraphQLHandler implements MeshHandler {
       if (introspectionData) {
         schema = buildClientSchema(introspectionData);
       } else {
-        schema = await introspectSchema(async params => {
-          const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory);
-          return executor(params);
-        });
+        schema = await introspectSchema(introspectionExecutor);
         const ttl = typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.ttl;
         const introspection = introspectionFromSchema(schema);
         this.cache.set(cacheKey, introspection, { ttl });
       }
     } else {
-      schema = await introspectSchema(async params => {
-        const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory);
-        return executor(params);
-      });
+      schema = await introspectSchema(introspectionExecutor);
     }
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     return {
