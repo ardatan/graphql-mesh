@@ -16,7 +16,7 @@
     "@graphql-mesh/types": "0.20.1",
     "@graphql-mesh/utils": "0.8.0",
     "@graphql-tools/resolvers-composition": "6.2.5",
-    "@graphql-tools/schema": "7.0.0"
+    "@graphql-tools/schema": "7.1.2"
   },
   "publishConfig": {
     "access": "public",
