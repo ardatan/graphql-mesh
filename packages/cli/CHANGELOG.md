@@ -1,5 +1,12 @@
 # @graphql-mesh/cli
 
+## 0.12.4
+
+### Patch Changes
+
+- @graphql-mesh/config@0.11.4
+- @graphql-mesh/runtime@0.10.4
+
 ## 0.12.3
 
 ### Patch Changes

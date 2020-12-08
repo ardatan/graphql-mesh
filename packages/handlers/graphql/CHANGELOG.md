@@ -1,5 +1,16 @@
 # @graphql-mesh/graphql
 
+## 0.10.0
+
+### Minor Changes
+
+- 2fd59a83: feat(graphql): add useSSEForSubscription option to use SSE for Subscriptions instead of WebSocket
+
+### Patch Changes
+
+- Updated dependencies [2fd59a83]
+  - @graphql-mesh/types@0.22.0
+
 ## 0.9.2
 
 ### Patch Changes
