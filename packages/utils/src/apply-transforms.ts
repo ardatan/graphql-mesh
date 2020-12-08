@@ -20,7 +20,7 @@ export function applyRequestTransforms(
   transformationContext: Record<string, any>,
   transforms: Transform[]
 ) {
-  return transforms.reduce(
+  return transforms.reduceRight(
     (request, transform) =>
       'transformRequest' in transform
         ? transform.transformRequest(request, delegationContext, transformationContext)

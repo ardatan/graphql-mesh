@@ -1,9 +1,9 @@
 import GroupTransform from '../src/index';
-import { buildSchema, execute, parse, printSchema } from 'graphql';
+import { execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from 'graphql-subscriptions';
-import { wrapSchema, WrapType } from '@graphql-tools/wrap';
+import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('group', () => {
@@ -17,6 +17,10 @@ describe('group', () => {
       type Mutation {
         doSomething: String
         doSomethingElse: String
+      }
+
+      type Subscription {
+        notify: String!
       }
     `,
     resolvers: {
@@ -33,7 +37,61 @@ describe('group', () => {
     pubsub = new PubSub();
   });
 
-  it('should group root operations under a specific type', async () => {
+  it('should wrap the schema and group Mutation correctly', async () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new GroupTransform({
+          config: [],
+          cache,
+          pubsub,
+          apiName: 'test',
+        }),
+      ],
+    });
+
+    expect(newSchema.getMutationType().getFields().test).toBeDefined();
+    expect(newSchema.getMutationType().getFields().notify).not.toBeDefined();
+    expect(newSchema.getMutationType().getFields().test.type.toString()).toBe('testMutation');
+  });
+
+  it('should wrap the schema and group Subscription correctly', async () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new GroupTransform({
+          config: [],
+          cache,
+          pubsub,
+          apiName: 'test',
+        }),
+      ],
+    });
+
+    expect(newSchema.getSubscriptionType().getFields().test).toBeDefined();
+    expect(newSchema.getSubscriptionType().getFields().getSomething).not.toBeDefined();
+    expect(newSchema.getSubscriptionType().getFields().test.type.toString()).toBe('testSubscription');
+  });
+
+  it('should wrap the schema and group Query correctly', async () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new GroupTransform({
+          config: [],
+          cache,
+          pubsub,
+          apiName: 'test',
+        }),
+      ],
+    });
+
+    expect(newSchema.getQueryType().getFields().test).toBeDefined();
+    expect(newSchema.getQueryType().getFields().getSomething).not.toBeDefined();
+    expect(newSchema.getQueryType().getFields().test.type.toString()).toBe('testQuery');
+  });
+
+  it('should execute the same way and preserve execution flow', async () => {
     const { data: resultBefore } = await execute({
       schema,
       document: parse(`{ getSomething }`),
@@ -43,7 +101,6 @@ describe('group', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        // new WrapType('Query', 'testQuery', 'test'),
         new GroupTransform({
           config: [],
           cache,
@@ -58,7 +115,6 @@ describe('group', () => {
       document: parse(`{ test { getSomething } }`),
     });
 
-    // Here, "resultAfter.test" is null
     expect(resultAfter.test.getSomething).toBe('boop');
   });
 });
