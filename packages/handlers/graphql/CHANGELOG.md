@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.9.2
+
+### Patch Changes
+
+- 86f359cb: fix(graphql): fix handling urls
+
 ## 0.9.1
 
 ### Patch Changes
