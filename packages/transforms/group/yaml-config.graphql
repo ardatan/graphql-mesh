@@ -1,0 +1,23 @@
+extend type Transform {
+  """
+  Transformer to apply grouping to the entire Mesh layer, by API source
+  """
+  group: [GroupTransformObject!]
+}
+
+type GroupTransformObject @md {
+  """
+  Optional, name to use for grouping under the root types. If not specific, the API name is used.
+  """
+  name: String
+  """
+  Allow you to choose which root operations you would like to apply. By default, it's applied to all root types.
+  """
+  applyTo: GroupTransformApplyTo
+}
+
+type GroupTransformApplyTo {
+  query: Boolean
+  mutation: Boolean
+  subscription: Boolean
+}

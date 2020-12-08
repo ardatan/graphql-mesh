@@ -764,6 +764,10 @@ export interface Transform {
   cache?: CacheTransformConfig[];
   federation?: FederationTransform;
   filterSchema?: string[];
+  /**
+   * Transformer to apply grouping to the entire Mesh layer, by API source
+   */
+  group?: GroupTransformObject[];
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -861,6 +865,21 @@ export interface ResolveReferenceObject {
   };
   resultSelectionSet?: string;
   resultDepth?: number;
+}
+export interface GroupTransformObject {
+  /**
+   * Optional, name to use for grouping under the root types. If not specific, the API name is used.
+   */
+  name?: string;
+  applyTo?: GroupTransformApplyTo;
+}
+/**
+ * Allow you to choose which root operations you would like to apply. By default, it's applied to all root types.
+ */
+export interface GroupTransformApplyTo {
+  query?: boolean;
+  mutation?: boolean;
+  subscription?: boolean;
 }
 /**
  * Mock configuration for your source

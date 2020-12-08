@@ -269,6 +269,14 @@
           },
           "additionalItems": false
         },
+        "group": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GroupTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply grouping to the entire Mesh layer, by API source"
+        },
         "mock": {
           "$ref": "#/definitions/MockingConfig",
           "description": "Mock configuration for your source"
@@ -1698,6 +1706,37 @@
         },
         "required": {
           "type": "string"
+        }
+      }
+    },
+    "GroupTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GroupTransformObject",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Optional, name to use for grouping under the root types. If not specific, the API name is used."
+        },
+        "applyTo": {
+          "$ref": "#/definitions/GroupTransformApplyTo",
+          "description": "Allow you to choose which root operations you would like to apply. By default, it's applied to all root types."
+        }
+      }
+    },
+    "GroupTransformApplyTo": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GroupTransformApplyTo",
+      "properties": {
+        "query": {
+          "type": "boolean"
+        },
+        "mutation": {
+          "type": "boolean"
+        },
+        "subscription": {
+          "type": "boolean"
         }
       }
     },
