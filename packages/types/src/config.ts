@@ -114,7 +114,9 @@ export interface FhirHandler {
  */
 export interface GraphQLHandler {
   /**
-   * A url to your remote GraphQL endpoint
+   * A url or file path to your remote GraphQL endpoint.
+   * If you provide a path to a code file(js or ts),
+   * other options will be ignored and the schema exported from the file will be used directly.
    */
   endpoint: string;
   /**

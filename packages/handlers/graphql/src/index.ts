@@ -1,9 +1,14 @@
 import { GetMeshSourceOptions, MeshHandler, MeshSource, ResolverData, YamlConfig } from '@graphql-mesh/types';
 import { fetchache, KeyValueCache, Request } from 'fetchache';
 import { UrlLoader } from '@graphql-tools/url-loader';
-import { GraphQLSchema, buildClientSchema, introspectionFromSchema } from 'graphql';
+import { GraphQLSchema, buildClientSchema, introspectionFromSchema, buildSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import { getInterpolatedHeadersFactory, ResolverDataBasedFactory, getHeadersObject } from '@graphql-mesh/utils';
+import {
+  getInterpolatedHeadersFactory,
+  ResolverDataBasedFactory,
+  getHeadersObject,
+  loadFromModuleExportExpression,
+} from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
 export default class GraphQLHandler implements MeshHandler {
@@ -18,6 +23,18 @@ export default class GraphQLHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
+    if (this.config.endpoint.endsWith('js') || this.config.endpoint.endsWith('ts')) {
+      const schema = await loadFromModuleExportExpression<GraphQLSchema>(this.config.endpoint);
+      return {
+        schema,
+      };
+    } else if (this.config.endpoint.endsWith('graphql') || this.config.endpoint.endsWith('graphql')) {
+      const rawSDL = await loadFromModuleExportExpression<string>(this.config.endpoint);
+      const schema = buildSchema(rawSDL);
+      return {
+        schema,
+      };
+    }
     const urlLoader = new UrlLoader();
     const customFetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
       fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
