@@ -1,6 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { RenameTypes, WrapType } from '@graphql-tools/wrap';
+import { WrapType } from '@graphql-tools/wrap';
 import { ExecutionResult, Request } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
