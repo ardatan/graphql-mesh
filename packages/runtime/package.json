@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -13,8 +13,8 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.21.0",
-    "@graphql-mesh/utils": "0.8.0",
+    "@graphql-mesh/types": "0.21.1",
+    "@graphql-mesh/utils": "0.8.1",
     "@graphql-tools/delegate": "7.0.7",
     "@graphql-tools/resolvers-composition": "6.2.5",
     "@graphql-tools/schema": "7.1.2",

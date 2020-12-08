@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.21.1
+
+### Patch Changes
+
+- c064e3a8: Fix minor issues with schema wrapping, updated types
+
 ## 0.21.0
 
 ### Minor Changes
