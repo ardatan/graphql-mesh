@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.12.2
+
+### Patch Changes
+
+- 1f0b2f1f: enhance(cli): improve error messages
+- Updated dependencies [1f0b2f1f]
+  - @graphql-mesh/runtime@0.10.2
+  - @graphql-mesh/config@0.11.2
+
 ## 0.12.1
 
 ### Patch Changes

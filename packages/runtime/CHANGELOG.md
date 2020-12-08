@@ -1,5 +1,13 @@
 # @graphql-mesh/runtime
 
+## 0.10.2
+
+### Patch Changes
+
+- 1f0b2f1f: fix(stitching): fix stitching resolvers issue
+- Updated dependencies [03f41cd0]
+  - @graphql-mesh/types@0.21.0
+
 ## 0.10.1
 
 ### Patch Changes

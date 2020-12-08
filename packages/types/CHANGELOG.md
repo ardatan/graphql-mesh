@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.21.0
+
+### Minor Changes
+
+- 03f41cd0: feat(graphql): support exported GraphQLSchema from code files
+
 ## 0.20.1
 
 ### Patch Changes
