@@ -64,15 +64,20 @@
       "prettier --write"
     ]
   },
-  "workspaces": [
-    "./packages/*",
-    "./packages/cache/*",
-    "./packages/handlers/*",
-    "./packages/transforms/*",
-    "./packages/mergers/*",
-    "./examples/*",
-    "./website"
-  ],
+  "workspaces": {
+    "packages": [
+      "./packages/*",
+      "./packages/cache/*",
+      "./packages/handlers/*",
+      "./packages/transforms/*",
+      "./packages/mergers/*",
+      "./examples/*",
+      "./website"
+    ],
+    "nohoist": [
+      "@graphql-mesh/website/@docusaurus/*"
+    ]
+  },
   "resolutions": {
     "graphql": "15.4.0"
   }
