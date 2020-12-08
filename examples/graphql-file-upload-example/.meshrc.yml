@@ -1,0 +1,29 @@
+sources:
+  - name: UploadFiles
+    handler:
+      graphql:
+        endpoint: http://localhost:3001/graphql
+        multipart: true
+  - name: ResizeImages
+    handler:
+      graphql:
+        endpoint: http://localhost:3002/graphql
+
+additionalTypeDefs: |
+  extend type File {
+    thumbnailImage(width: Int, height: Int): String
+  }
+additionalResolvers:
+  - type: File
+    field: thumbnailImage
+    requiredSelectionSet: '{ base64 }'
+    targetSource: ResizeImages
+    targetMethod: resizeImage
+    args:
+      image: '{root.base64}'
+      width: '{args.width}'
+      height: '{args.height}'
+
+serve:
+  cors:
+    origin: '*'
