@@ -1,5 +1,17 @@
 # @graphql-mesh/graphql
 
+## 0.9.0
+
+### Minor Changes
+
+- 03f41cd0: feat(graphql): support exported GraphQLSchema from code files
+
+### Patch Changes
+
+- 1f0b2f1f: fix(graphql): fix multipart issues
+- Updated dependencies [03f41cd0]
+  - @graphql-mesh/types@0.21.0
+
 ## 0.8.1
 
 ### Patch Changes
