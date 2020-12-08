@@ -2140,16 +2140,6 @@
     pascal-case "^3.1.1"
     tslib "~2.0.1"
 
-"@graphql-mesh/types@0.20.1":
-  version "0.20.1"
-  resolved "https://registry.yarnpkg.com/@graphql-mesh/types/-/types-0.20.1.tgz#280a71bd547a188c537bb0bbd4f9963bd052ce2f"
-  integrity sha512-Re7f6BzSlYCRDyDCjNe05Hx62psBk+qHq3rkKzvRfnMl2oXbgzCtLRkhnPsQyBmmBBaSq2Qmjrl0rCJUspmwQg==
-  dependencies:
-    "@graphql-tools/delegate" "7.0.5"
-    "@graphql-tools/utils" "7.0.2"
-    "@graphql-typed-document-node/core" "3.1.0"
-    fetchache "0.0.4"
-
 "@graphql-tools/batch-delegate@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-7.0.0.tgz#860f03d8ded5e9e7e9b14e2205dfd64da8e3e6c0"
@@ -2178,19 +2168,6 @@
     "@graphql-tools/utils" "^7.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/delegate@7.0.5", "@graphql-tools/delegate@^7.0.0":
-  version "7.0.5"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-7.0.5.tgz#624a536255ec4adee7f237821a30003fcb41f7cb"
-  integrity sha512-wkB/L9cRxlPB4m9k9WQJZYPbnRxfEu2bkxvI9pVGHMsmoQxMZiM2GkhCBHDTBYJb7cxCS6Wv3LJb1w0iEqw24w==
-  dependencies:
-    "@ardatan/aggregate-error" "0.0.6"
-    "@graphql-tools/batch-execute" "^7.0.0"
-    "@graphql-tools/schema" "^7.0.0"
-    "@graphql-tools/utils" "^7.0.2"
-    dataloader "2.0.0"
-    is-promise "4.0.0"
-    tslib "~2.0.1"
-
 "@graphql-tools/delegate@7.0.7", "@graphql-tools/delegate@^7.0.1", "@graphql-tools/delegate@^7.0.6", "@graphql-tools/delegate@^7.0.7":
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-7.0.7.tgz#276fd3f22183857c17ed0d37eac95f91bc982ac5"
@@ -2212,6 +2189,19 @@
     "@ardatan/aggregate-error" "0.0.6"
     "@graphql-tools/schema" "^6.2.4"
     "@graphql-tools/utils" "^6.2.4"
+    dataloader "2.0.0"
+    is-promise "4.0.0"
+    tslib "~2.0.1"
+
+"@graphql-tools/delegate@^7.0.0":
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-7.0.5.tgz#624a536255ec4adee7f237821a30003fcb41f7cb"
+  integrity sha512-wkB/L9cRxlPB4m9k9WQJZYPbnRxfEu2bkxvI9pVGHMsmoQxMZiM2GkhCBHDTBYJb7cxCS6Wv3LJb1w0iEqw24w==
+  dependencies:
+    "@ardatan/aggregate-error" "0.0.6"
+    "@graphql-tools/batch-execute" "^7.0.0"
+    "@graphql-tools/schema" "^7.0.0"
+    "@graphql-tools/utils" "^7.0.2"
     dataloader "2.0.0"
     is-promise "4.0.0"
     tslib "~2.0.1"
@@ -2417,15 +2407,6 @@
     valid-url "1.0.9"
     websocket "1.0.32"
 
-"@graphql-tools/utils@7.0.2", "@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.0.2.tgz#1977d3277158bf32df792a5ff76d3fdc04647a64"
-  integrity sha512-VQQ7krHeoXO0FS3qbWsb/vZb8c8oyiCYPIH4RSgeK9SKOUpatWYt3DW4jmLmyHZLVVMk0yjUbsOhKTBEMejKSA==
-  dependencies:
-    "@ardatan/aggregate-error" "0.0.6"
-    camel-case "4.1.1"
-    tslib "~2.0.1"
-
 "@graphql-tools/utils@7.1.4", "@graphql-tools/utils@^7.1.2", "@graphql-tools/utils@^7.1.4":
   version "7.1.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.1.4.tgz#5baf27e908aa56c44ed3992f4607718a37f186a0"
@@ -2439,6 +2420,15 @@
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.2.4.tgz#38a2314d2e5e229ad4f78cca44e1199e18d55856"
   integrity sha512-ybgZ9EIJE3JMOtTrTd2VcIpTXtDrn2q6eiYkeYMKRVh3K41+LZa6YnR2zKERTXqTWqhobROwLt4BZbw2O3Aeeg==
+  dependencies:
+    "@ardatan/aggregate-error" "0.0.6"
+    camel-case "4.1.1"
+    tslib "~2.0.1"
+
+"@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.0.2.tgz#1977d3277158bf32df792a5ff76d3fdc04647a64"
+  integrity sha512-VQQ7krHeoXO0FS3qbWsb/vZb8c8oyiCYPIH4RSgeK9SKOUpatWYt3DW4jmLmyHZLVVMk0yjUbsOhKTBEMejKSA==
   dependencies:
     "@ardatan/aggregate-error" "0.0.6"
     camel-case "4.1.1"
@@ -3726,10 +3716,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.8.tgz#2127bd81949a95c8b7d3240f3254352d72563aec"
   integrity sha512-z/5Yd59dCKI5kbxauAJgw6dLPzW+TNOItNE00PkpzNwUIEwdj/Lsqwq94H5DdYBX7C13aRA0CY32BK76+neEUA==
 
-"@types/node@14.14.10":
-  version "14.14.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.10.tgz#5958a82e41863cfc71f2307b3748e3491ba03785"
-  integrity sha512-J32dgx2hw8vXrSbu4ZlVhn1Nm3GbeCFNw2FWL8S5QKucHGY0cyNwjdQdO+KMBZ4wpmC7KhLCiNsdk1RFRIYUQQ==
+"@types/node@14.14.11":
+  version "14.14.11"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.11.tgz#fc25a4248a5e8d0837019b1d170146d07334abe0"
+  integrity sha512-BJ97wAUuU3NUiUCp44xzUFquQEvnk1wu7q4CMEUYKJWjdkr0YWYDsm4RFtAvxYsNjLsKcrFt6RvK8r+mnzMbEQ==
 
 "@types/node@14.14.3":
   version "14.14.3"
