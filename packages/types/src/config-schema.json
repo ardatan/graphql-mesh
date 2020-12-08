@@ -490,9 +490,9 @@
           "enum": ["GET", "POST"],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
-        "enableSubscriptions": {
+        "useSSEForSubscription": {
           "type": "boolean",
-          "description": "Enable GraphQL Subscriptions using WebSocket"
+          "description": "Use Server Sent Events instead of WebSocket for Subscriptions"
         },
         "customFetch": {
           "anyOf": [

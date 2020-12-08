@@ -29,9 +29,9 @@ type GraphQLHandler @md {
   """
   method: GraphQLHandlerHTTPMethod
   """
-  Enable GraphQL Subscriptions using WebSocket
+  Use Server Sent Events instead of WebSocket for Subscriptions
   """
-  enableSubscriptions: Boolean
+  useSSEForSubscription: Boolean
   """
   Path to a custom W3 Compatible Fetch Implementation
   """

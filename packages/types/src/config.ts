@@ -140,9 +140,9 @@ export interface GraphQLHandler {
    */
   method?: 'GET' | 'POST';
   /**
-   * Enable GraphQL Subscriptions using WebSocket
+   * Use Server Sent Events instead of WebSocket for Subscriptions
    */
-  enableSubscriptions?: boolean;
+  useSSEForSubscription?: boolean;
   /**
    * Path to a custom W3 Compatible Fetch Implementation
    */
