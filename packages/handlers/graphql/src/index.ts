@@ -23,12 +23,12 @@ export default class GraphQLHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    if (this.config.endpoint.endsWith('js') || this.config.endpoint.endsWith('ts')) {
+    if (this.config.endpoint.endsWith('.js') || this.config.endpoint.endsWith('.ts')) {
       const schema = await loadFromModuleExportExpression<GraphQLSchema>(this.config.endpoint);
       return {
         schema,
       };
-    } else if (this.config.endpoint.endsWith('graphql') || this.config.endpoint.endsWith('graphql')) {
+    } else if (this.config.endpoint.endsWith('.graphql')) {
       const rawSDL = await loadFromModuleExportExpression<string>(this.config.endpoint);
       const schema = buildSchema(rawSDL);
       return {
