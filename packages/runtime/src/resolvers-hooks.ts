@@ -225,7 +225,7 @@ function getSdk(
           operationKind: operation,
         });
         return delegateToSchema({
-          schema: apiSchema,
+          schema: apiContext.rawSource,
           operation,
           fieldName,
           args: methodArgs,

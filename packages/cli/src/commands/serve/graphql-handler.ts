@@ -36,6 +36,33 @@ export const graphqlHandler = (
     // We set the provided status and headers and just the send the payload back to the client
     result.headers.forEach(({ name, value }) => res.setHeader(name, value));
     res.status(result.status);
+    if (result.payload.errors?.length) {
+      result.payload.errors = result.payload.errors.map(error => ({
+        extensions: error.extensions,
+        locations: error.locations,
+        message: error.message,
+        name: error.name,
+        nodes: error.nodes,
+        originalError: {
+          ...error?.originalError,
+          name: error?.originalError?.name,
+          message: error?.originalError?.message,
+          stack: error?.originalError?.stack.split('\n'),
+        },
+        path: error.path,
+        positions: error.positions,
+        source: {
+          body: error.source?.body?.split('\n'),
+          name: error.source?.name,
+          locationOffset: {
+            line: error.source?.locationOffset?.line,
+            column: error.source?.locationOffset?.column,
+          },
+        },
+        stack: error.stack?.split('\n'),
+        ...error,
+      })) as any;
+    }
     res.json(result.payload);
   } else if (result.type === 'MULTIPART_RESPONSE') {
     // Indicate we're sending a multipart response
