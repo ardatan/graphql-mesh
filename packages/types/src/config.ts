@@ -762,12 +762,12 @@ export interface Transform {
    * Transformer to apply caching for your data sources
    */
   cache?: CacheTransformConfig[];
+  /**
+   * Transformer to apply encapsulation to the API source, by creating a field for it under the root query
+   */
+  encapsulate?: EncapsulateTransformObject[];
   federation?: FederationTransform;
   filterSchema?: string[];
-  /**
-   * Transformer to apply grouping to the entire Mesh layer, by API source
-   */
-  group?: GroupTransformObject[];
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -828,6 +828,21 @@ export interface CacheEffectingOperationConfig {
    */
   matchKey?: string;
 }
+export interface EncapsulateTransformObject {
+  /**
+   * Optional, name to use for grouping under the root types. If not specific, the API name is used.
+   */
+  name?: string;
+  applyTo?: EncapsulateTransformApplyTo;
+}
+/**
+ * Allow you to choose which root operations you would like to apply. By default, it's applied to all root types.
+ */
+export interface EncapsulateTransformApplyTo {
+  query?: boolean;
+  mutation?: boolean;
+  subscription?: boolean;
+}
 export interface FederationTransform {
   types?: FederationTransformType[];
 }
@@ -865,21 +880,6 @@ export interface ResolveReferenceObject {
   };
   resultSelectionSet?: string;
   resultDepth?: number;
-}
-export interface GroupTransformObject {
-  /**
-   * Optional, name to use for grouping under the root types. If not specific, the API name is used.
-   */
-  name?: string;
-  applyTo?: GroupTransformApplyTo;
-}
-/**
- * Allow you to choose which root operations you would like to apply. By default, it's applied to all root types.
- */
-export interface GroupTransformApplyTo {
-  query?: boolean;
-  mutation?: boolean;
-  subscription?: boolean;
 }
 /**
  * Mock configuration for your source

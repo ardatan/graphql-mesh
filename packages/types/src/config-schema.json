@@ -259,6 +259,14 @@
           "additionalItems": false,
           "description": "Transformer to apply caching for your data sources"
         },
+        "encapsulate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EncapsulateTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer to apply encapsulation to the API source, by creating a field for it under the root query"
+        },
         "federation": {
           "$ref": "#/definitions/FederationTransform"
         },
@@ -268,14 +276,6 @@
             "type": "string"
           },
           "additionalItems": false
-        },
-        "group": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GroupTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply grouping to the entire Mesh layer, by API source"
         },
         "mock": {
           "$ref": "#/definitions/MockingConfig",
@@ -1585,6 +1585,37 @@
       },
       "required": ["operation"]
     },
+    "EncapsulateTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "EncapsulateTransformObject",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Optional, name to use for grouping under the root types. If not specific, the API name is used."
+        },
+        "applyTo": {
+          "$ref": "#/definitions/EncapsulateTransformApplyTo",
+          "description": "Allow you to choose which root operations you would like to apply. By default, it's applied to all root types."
+        }
+      }
+    },
+    "EncapsulateTransformApplyTo": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "EncapsulateTransformApplyTo",
+      "properties": {
+        "query": {
+          "type": "boolean"
+        },
+        "mutation": {
+          "type": "boolean"
+        },
+        "subscription": {
+          "type": "boolean"
+        }
+      }
+    },
     "FederationTransform": {
       "additionalProperties": false,
       "type": "object",
@@ -1706,37 +1737,6 @@
         },
         "required": {
           "type": "string"
-        }
-      }
-    },
-    "GroupTransformObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GroupTransformObject",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Optional, name to use for grouping under the root types. If not specific, the API name is used."
-        },
-        "applyTo": {
-          "$ref": "#/definitions/GroupTransformApplyTo",
-          "description": "Allow you to choose which root operations you would like to apply. By default, it's applied to all root types."
-        }
-      }
-    },
-    "GroupTransformApplyTo": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GroupTransformApplyTo",
-      "properties": {
-        "query": {
-          "type": "boolean"
-        },
-        "mutation": {
-          "type": "boolean"
-        },
-        "subscription": {
-          "type": "boolean"
         }
       }
     },

@@ -11,16 +11,16 @@ const DEFUALT_APPLY_TO = {
   subscription: true,
 };
 
-export default class GroupTransform implements MeshTransform {
+export default class EncapsulateTransform implements MeshTransform {
   private transforms: Transform[] = [];
 
-  constructor(options: MeshTransformOptions<YamlConfig.Transform['group']>) {
+  constructor(options: MeshTransformOptions<YamlConfig.Transform['encapsulate']>) {
     const config = (options.config || [])[0] || {};
     const name = config.name || options.apiName;
 
     if (!name) {
       throw new Error(
-        `Unable to execute group transform without a name. Please make sure to use it over a specific schema, or specify a name in your configuration!`
+        `Unable to execute encapsulate transform without a name. Please make sure to use it over a specific schema, or specify a name in your configuration!`
       );
     }
 

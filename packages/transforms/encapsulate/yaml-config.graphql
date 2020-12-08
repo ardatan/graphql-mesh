@@ -1,11 +1,11 @@
 extend type Transform {
   """
-  Transformer to apply grouping to the entire Mesh layer, by API source
+  Transformer to apply encapsulation to the API source, by creating a field for it under the root query
   """
-  group: [GroupTransformObject!]
+  encapsulate: [EncapsulateTransformObject!]
 }
 
-type GroupTransformObject @md {
+type EncapsulateTransformObject @md {
   """
   Optional, name to use for grouping under the root types. If not specific, the API name is used.
   """
@@ -13,10 +13,10 @@ type GroupTransformObject @md {
   """
   Allow you to choose which root operations you would like to apply. By default, it's applied to all root types.
   """
-  applyTo: GroupTransformApplyTo
+  applyTo: EncapsulateTransformApplyTo
 }
 
-type GroupTransformApplyTo {
+type EncapsulateTransformApplyTo {
   query: Boolean
   mutation: Boolean
   subscription: Boolean

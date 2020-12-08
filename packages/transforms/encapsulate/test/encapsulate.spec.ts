@@ -1,4 +1,4 @@
-import GroupTransform from '../src/index';
+import Transform from '../src/index';
 import { execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
@@ -6,7 +6,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-describe('group', () => {
+describe('encapsulate', () => {
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {
@@ -41,7 +41,7 @@ describe('group', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new GroupTransform({
+        new Transform({
           config: [],
           cache,
           pubsub,
@@ -59,7 +59,7 @@ describe('group', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new GroupTransform({
+        new Transform({
           config: [],
           cache,
           pubsub,
@@ -77,7 +77,7 @@ describe('group', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new GroupTransform({
+        new Transform({
           config: [],
           cache,
           pubsub,
@@ -101,7 +101,7 @@ describe('group', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new GroupTransform({
+        new Transform({
           config: [],
           cache,
           pubsub,
