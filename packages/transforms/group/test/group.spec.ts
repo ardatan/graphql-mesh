@@ -3,7 +3,7 @@ import { buildSchema, execute, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from 'graphql-subscriptions';
-import { wrapSchema } from '@graphql-tools/wrap';
+import { wrapSchema, WrapType } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('group', () => {
@@ -43,6 +43,7 @@ describe('group', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
+        // new WrapType('Query', 'testQuery', 'test'),
         new GroupTransform({
           config: [],
           cache,
