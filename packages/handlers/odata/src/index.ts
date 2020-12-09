@@ -488,9 +488,11 @@ export default class ODataHandler implements MeshHandler {
             });
           }
         ),
-      none: () => ({
-        load: (request: any) => fetchache(request, this.cache),
-      }),
+      none: () =>
+        new DataLoader(
+          (requests: Request[]): Promise<Response[]> =>
+            Promise.all(requests.map(request => fetchache(request, this.cache)))
+        ),
     };
 
     const dataLoaderFactory = DATALOADER_FACTORIES[this.config.batch || 'none'];
