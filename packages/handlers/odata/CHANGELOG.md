@@ -1,5 +1,11 @@
 # @graphql-mesh/odata
 
+## 0.7.5
+
+### Patch Changes
+
+- 953d2ebd: fix(odata): handle metadata if no entitytype is given
+
 ## 0.7.4
 
 ### Patch Changes
