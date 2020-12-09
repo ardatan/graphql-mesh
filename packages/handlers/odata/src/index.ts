@@ -532,7 +532,7 @@ export default class ODataHandler implements MeshHandler {
         });
       });
 
-      const allTypes = schemaObj.EntityType.concat(schemaObj.ComplexType);
+      const allTypes = (schemaObj.EntityType || []).concat(schemaObj.ComplexType || []);
       const typesWithBaseType = allTypes.filter((typeObj: any) => typeObj.attributes.BaseType);
 
       allTypes?.forEach((typeObj: any) => {
