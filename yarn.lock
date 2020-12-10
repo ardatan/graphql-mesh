@@ -19610,10 +19610,10 @@ ts-node-dev@1.0.0:
     ts-node "^9.0.0"
     tsconfig "^7.0.0"
 
-ts-node-dev@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/ts-node-dev/-/ts-node-dev-1.1.0.tgz#e839855ed6450695ec25cafa234fdc967503064b"
-  integrity sha512-1h/2IOEbGsmzW0bjG33yj6Xndic9IsqmGbd9u9AwvUXXZm3SSImNh9zdZfkDJdV6SZBYEb+lAQrjLvtSfgEvNQ==
+ts-node-dev@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/ts-node-dev/-/ts-node-dev-1.1.1.tgz#b7602929395b1616b4aa99a3be0a4e121742283d"
+  integrity sha512-kAO8LUZgXZSY0+PucMPsQ0Bbdv0x+lgbN7j8gcD4PuTI4uKC6YchekaspmYTBNilkiu+rQYkWJA7cK+Q8/B0tQ==
   dependencies:
     chokidar "^3.4.0"
     dateformat "~1.0.4-1.2.3"
