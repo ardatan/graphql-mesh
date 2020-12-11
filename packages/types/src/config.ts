@@ -1000,14 +1000,24 @@ export interface PrefixTransformConfig {
   includeRootOperations?: boolean;
 }
 export interface RenameTransformObject {
+  from: RenameConfig;
+  to: RenameConfig1;
   /**
-   * The GraphQL type to rename
+   * Use Regular Expression for type names
    */
-  from: string;
+  useRegExpForTypes?: boolean;
   /**
-   * The new name
+   * Use Regular Expression for field names
    */
-  to: string;
+  useRegExpForFields?: boolean;
+}
+export interface RenameConfig {
+  type?: string;
+  field?: string;
+}
+export interface RenameConfig1 {
+  type?: string;
+  field?: string;
 }
 export interface ResolversCompositionTransformObject {
   /**

@@ -6,12 +6,19 @@ extend type Transform {
 }
 
 type RenameTransformObject @md {
+  from: RenameConfig!
+  to: RenameConfig!
   """
-  The GraphQL type to rename
+  Use Regular Expression for type names
   """
-  from: String!
+  useRegExpForTypes: Boolean
   """
-  The new name
+  Use Regular Expression for field names
   """
-  to: String!
+  useRegExpForFields: Boolean
+}
+
+type RenameConfig {
+  type: String
+  field: String
 }

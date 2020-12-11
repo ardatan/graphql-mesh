@@ -17,8 +17,27 @@ Add the following configuration to your Mesh config file:
 ```yml
 transforms:
   - rename:
-      - from: ApiUser
-        to: User
+      - from: 
+          type: ApiUser
+        to: 
+          type: User
+      - from: 
+          type: Query
+          field: apiUser
+        to: 
+          type: Query
+          field: user
+```
+
+or you can use regular expressions to rename multiple types, fields or both
+
+```yml
+  - rename:
+      from: 
+        type: Api(.*)
+      to: 
+        type: $1
+      useRegExpForType: true
 ```
 
 ## Config API Reference
