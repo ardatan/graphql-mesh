@@ -33,18 +33,20 @@ or you can use regular expressions to rename multiple types, fields or both
 
 ```yml
   - rename:
-      from: 
-        type: Api(.*)
-      to: 
-        type: $1
-      useRegExpForTypes: true
+
+      - from: 
+          type: Api(.*)
+        to: 
+          type: $1
+        useRegExpForTypes: true
+
       - from: 
           type: Query
           field: api(.*)
         to: 
           type: Query
           field: $1
-      useRegExpForFields: true
+        useRegExpForFields: true
 
 ```
 
