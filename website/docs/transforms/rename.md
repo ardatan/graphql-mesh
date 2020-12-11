@@ -37,7 +37,15 @@ or you can use regular expressions to rename multiple types, fields or both
         type: Api(.*)
       to: 
         type: $1
-      useRegExpForType: true
+      useRegExpForTypes: true
+      - from: 
+          type: Query
+          field: api(.*)
+        to: 
+          type: Query
+          field: $1
+      useRegExpForFields: true
+
 ```
 
 ## Config API Reference
