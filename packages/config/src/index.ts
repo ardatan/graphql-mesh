@@ -1,16 +1,27 @@
-import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
+import {
+  getJsonSchema,
+  MergerFn,
+  MeshHandlerLibrary,
+  MeshPubSub,
+  MeshTransform,
+  MeshTransformLibrary,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { IResolvers } from '@graphql-tools/utils';
+import Ajv from 'ajv';
+import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
+import { KeyValueCache } from 'fetchache';
+import { DocumentNode } from 'graphql';
 import {
   getHandler,
   getPackage,
   resolveAdditionalResolvers,
+  resolveAdditionalTypeDefs,
   resolveCache,
   resolveMerger,
-  resolveAdditionalTypeDefs,
   resolvePubSub,
 } from './utils';
-import { YamlConfig, getJsonSchema, MeshTransformLibrary, MeshHandlerLibrary } from '@graphql-mesh/types';
-import Ajv from 'ajv';
 
 declare global {
   interface ObjectConstructor {
@@ -44,7 +55,22 @@ export async function parseConfig(
   return processConfig(config, options);
 }
 
-export async function processConfig(config: YamlConfig.Config, options?: ConfigProcessOptions) {
+export type ProcessedConfig = {
+  sources: MeshResolvedSource<any>[];
+  transforms: MeshTransform[];
+  additionalTypeDefs: DocumentNode[];
+  additionalResolvers: IResolvers;
+  cache: KeyValueCache<string>;
+  merger: MergerFn;
+  mergerType: string;
+  pubsub: MeshPubSub;
+  config: YamlConfig.Config;
+};
+
+export async function processConfig(
+  config: YamlConfig.Config,
+  options?: ConfigProcessOptions
+): Promise<ProcessedConfig> {
   const { dir = process.cwd(), ignoreAdditionalResolvers = false, importFn = (moduleId: string) => import(moduleId) } =
     options || {};
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
