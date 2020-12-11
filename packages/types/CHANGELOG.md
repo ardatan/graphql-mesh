@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.23.0
+
+### Minor Changes
+
+- e5cd44f5: feat(rename): support rename transform
+
 ## 0.22.0
 
 ### Minor Changes

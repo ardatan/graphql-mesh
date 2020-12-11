@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-rename
 
+## 0.7.0
+
+### Minor Changes
+
+- e5cd44f5: feat(rename): support rename transform
+
+### Patch Changes
+
+- Updated dependencies [e5cd44f5]
+  - @graphql-mesh/types@0.23.0
+
 ## 0.6.4
 
 ### Patch Changes

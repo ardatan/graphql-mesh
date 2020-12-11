@@ -1,5 +1,12 @@
 # @graphql-mesh/thrift
 
+## 0.5.27
+
+### Patch Changes
+
+- Updated dependencies [e5cd44f5]
+  - @graphql-mesh/types@0.23.0
+
 ## 0.5.26
 
 ### Patch Changes

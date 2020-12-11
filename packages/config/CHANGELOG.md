@@ -1,5 +1,16 @@
 # @graphql-mesh/config
 
+## 0.11.5
+
+### Patch Changes
+
+- 0129bebb: fixed generated .d.ts files for the config package
+- Updated dependencies [e5cd44f5]
+  - @graphql-mesh/types@0.23.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.27
+  - @graphql-mesh/merger-stitching@0.7.5
+  - @graphql-mesh/runtime@0.10.5
+
 ## 0.11.4
 
 ### Patch Changes
