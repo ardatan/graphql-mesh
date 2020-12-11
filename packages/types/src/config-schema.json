@@ -1880,15 +1880,34 @@
       "title": "RenameTransformObject",
       "properties": {
         "from": {
-          "type": "string",
-          "description": "The GraphQL type to rename"
+          "$ref": "#/definitions/RenameConfig"
         },
         "to": {
-          "type": "string",
-          "description": "The new name"
+          "$ref": "#/definitions/RenameConfig"
+        },
+        "useRegExpForTypes": {
+          "type": "boolean",
+          "description": "Use Regular Expression for type names"
+        },
+        "useRegExpForFields": {
+          "type": "boolean",
+          "description": "Use Regular Expression for field names"
         }
       },
       "required": ["from", "to"]
+    },
+    "RenameConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RenameConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        }
+      }
     },
     "ResolversCompositionTransformObject": {
       "additionalProperties": false,

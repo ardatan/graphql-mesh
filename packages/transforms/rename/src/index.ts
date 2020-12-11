@@ -17,30 +17,39 @@ export default class RenameTransform implements MeshTransform {
   constructor(options: MeshTransformOptions<YamlConfig.RenameTransformObject[]>) {
     const { config } = options;
     for (const change of config) {
-      const [fromTypeName, fromFieldName] = change.from.split('.');
-      const [toTypeName, toFieldName] = change.to.split('.');
+      const {
+        from: { type: fromTypeName, field: fromFieldName },
+        to: { type: toTypeName, field: toFieldName },
+        useRegExpForTypes,
+        useRegExpForFields,
+      } = change;
 
       if (fromTypeName !== toTypeName) {
-        this.transforms.push(new RenameRootTypes(t => (t === fromTypeName ? toTypeName : t)));
-        this.transforms.push(new RenameTypes(t => (t === fromTypeName ? toTypeName : t)));
+        let replaceTypeNameFn: (t: string) => string;
+        if (useRegExpForTypes) {
+          const typeNameRegExp = new RegExp(fromTypeName);
+          replaceTypeNameFn = (t: string) => t.replace(typeNameRegExp, toTypeName);
+        } else {
+          replaceTypeNameFn = t => (t === fromTypeName ? toTypeName : t);
+        }
+        this.transforms.push(new RenameRootTypes(replaceTypeNameFn));
+        this.transforms.push(new RenameTypes(replaceTypeNameFn));
       }
 
       if (fromFieldName && toFieldName && fromFieldName !== toFieldName) {
-        this.transforms.push(
-          new RenameRootFields((typeName, fieldName) =>
-            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName
-          )
-        );
-        this.transforms.push(
-          new RenameObjectFields((typeName, fieldName) =>
-            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName
-          )
-        );
-        this.transforms.push(
-          new RenameInputObjectFields((typeName, fieldName) =>
-            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName
-          )
-        );
+        let replaceFieldNameFn: (typeName: string, fieldName: string) => string;
+
+        if (useRegExpForFields) {
+          const fieldNameRegExp = new RegExp(fromFieldName);
+          replaceFieldNameFn = (typeName, fieldName) =>
+            typeName === toTypeName && fieldName.replace(fieldNameRegExp, toFieldName);
+        } else {
+          replaceFieldNameFn = (typeName, fieldName) =>
+            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName;
+        }
+        this.transforms.push(new RenameRootFields(replaceFieldNameFn));
+        this.transforms.push(new RenameObjectFields(replaceFieldNameFn));
+        this.transforms.push(new RenameInputObjectFields(replaceFieldNameFn));
       }
     }
   }
