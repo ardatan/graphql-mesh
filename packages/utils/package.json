@@ -18,7 +18,7 @@
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.8",
     "@graphql-tools/delegate": "7.0.7",
-    "@graphql-tools/utils": "7.1.4",
+    "@graphql-tools/utils": "7.1.5",
     "@graphql-typed-document-node/core": "3.1.0",
     "date-fns": "2.16.1",
     "fetchache": "0.0.4",
