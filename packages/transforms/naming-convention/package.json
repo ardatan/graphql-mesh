@@ -17,7 +17,7 @@
     "@graphql-mesh/utils": "0.8.1",
     "@graphql-tools/wrap": "7.0.4",
     "@graphql-tools/delegate": "7.0.7",
-    "@graphql-tools/utils": "7.1.4",
+    "@graphql-tools/utils": "7.1.5",
     "change-case": "4.1.2",
     "upper-case": "2.0.2",
     "lower-case": "2.0.2"
