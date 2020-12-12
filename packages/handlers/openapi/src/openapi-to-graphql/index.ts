@@ -651,7 +651,7 @@ function checkCustomResolversStructure<TSource, TContext, TArgs>(
       .filter(title => {
         // If no OAS contains this title
         return !data.oass.some(oas => {
-          return title === oas.info.title;
+          return title === oas.info?.title;
         });
       })
       .forEach(title => {
@@ -667,7 +667,7 @@ function checkCustomResolversStructure<TSource, TContext, TArgs>(
     Object.keys(customResolvers).forEach(title => {
       // Get all operations from a particular OAS
       const operations = Object.values(data.operations).filter(operation => {
-        return title === operation.oas.info.title;
+        return title === operation.oas.info?.title;
       });
 
       Object.keys(customResolvers[title]).forEach(path => {
@@ -702,7 +702,7 @@ function preliminaryChecks<TSource, TContext, TArgs>(
 ): void {
   // Check if OASs have unique titles
   const titles = data.oass.map(oas => {
-    return oas.info.title;
+    return oas.info?.title;
   });
 
   // Find duplicates among titles

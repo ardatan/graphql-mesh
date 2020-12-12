@@ -183,8 +183,8 @@ function getViewerOT<TSource, TContext, TArgs>(
         `'${protocolName}', which is of type '${securityType}'`;
 
   if (data.oass.length !== 1) {
-    typeDescription += ` in OAS '${scheme.oas.info.title}'`;
-    description = `, in OAS '${scheme.oas.info.title}`;
+    typeDescription += ` in OAS '${scheme.oas.info?.title}'`;
+    description = `, in OAS '${scheme.oas.info?.title}`;
   }
 
   return {

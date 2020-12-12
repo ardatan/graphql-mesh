@@ -962,7 +962,7 @@ function skipArg<TSource, TContext, TArgs>(
         if (typeof data.options.headers === 'object' && parameter.name in data.options.headers) {
           return true;
         } else if (typeof data.options.headers === 'function') {
-          const headers = data.options.headers(operation.method, operation.path, operation.oas.info.title);
+          const headers = data.options.headers(operation.method, operation.path, operation.oas.info?.title);
 
           if (typeof headers === 'object') {
             return true;
@@ -981,7 +981,7 @@ function skipArg<TSource, TContext, TArgs>(
             const headers = data.options.requestOptions.headers(
               operation.method,
               operation.path,
-              operation.oas.info.title
+              operation.oas.info?.title
             )
 
             if (typeof headers === 'object') {
@@ -1229,7 +1229,7 @@ function getOasFromLinkLocation<TSource, TContext, TArgs>(
     case 'title':
       // Get the possible
       const possibleOass = data.oass.filter(oas => {
-        return oas.info.title === linkLocation;
+        return oas.info?.title === linkLocation;
       });
 
       // Check if there are an ambiguous OASs

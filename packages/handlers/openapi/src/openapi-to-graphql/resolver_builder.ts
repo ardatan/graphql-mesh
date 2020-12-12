@@ -101,7 +101,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
 
   // Return custom resolver if it is defined
   const customResolvers = data.options.customSubscriptionResolvers;
-  const title = operation.oas.info.title;
+  const title = operation.oas.info?.title;
   const path = operation.path;
   const method = operation.method;
 
@@ -203,7 +203,7 @@ export function getPublishResolver<TSource, TContext, TArgs>({
 }: GetResolverParams<TSource, TContext, TArgs>): GraphQLFieldResolver<TSource, TContext, TArgs> {
   // Return custom resolver if it is defined
   const customResolvers = data.options.customSubscriptionResolvers;
-  const title = operation.oas.info.title;
+  const title = operation.oas.info?.title;
   const path = operation.path;
   const method = operation.method;
 
@@ -303,7 +303,7 @@ export function getResolver<TSource, TContext, TArgs>(
 
   // Return custom resolver if it is defined
   const customResolvers = data.options.customResolvers;
-  const title = operation.oas.info.title;
+  const title = operation.oas.info?.title;
   const path = operation.path;
   const method = operation.method;
 

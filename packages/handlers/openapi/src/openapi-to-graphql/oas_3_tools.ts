@@ -691,7 +691,7 @@ export function getResponseStatusCode<TSource, TContext, TArgs>(
       handleWarning({
         mitigationType: MitigationTypes.MULTIPLE_RESPONSES,
         message:
-          `Operation '${formatOperationString(method, path, oas.info.title)}' ` +
+          `Operation '${formatOperationString(method, path, oas.info?.title)}' ` +
           `contains multiple possible successful response object ` +
           `(HTTP code 200-299 or 2XX). Only one can be chosen.`,
         mitigationAddendum: `The response object with the HTTP code ` + `${successCodes[0]} will be selected`,
