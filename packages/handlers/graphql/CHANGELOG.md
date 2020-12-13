@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.10.2
+
+### Patch Changes
+
+- 44e14ca5: fix(graphql): handle null variables in multipart requests
+
 ## 0.10.1
 
 ### Patch Changes
