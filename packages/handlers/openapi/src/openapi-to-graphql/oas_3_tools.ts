@@ -120,7 +120,10 @@ export function methodToHttpMethod(method: string): HTTP_METHODS {
  */
 export async function getValidOAS3(spec: Oas2 | Oas3): Promise<Oas3> {
   if (typeof (spec as Oas2).swagger === 'string' && (spec as Oas2).swagger === '2.0') {
-    const { openapi } = await Swagger2OpenAPI.convertObj(spec, {});
+    const { openapi } = await Swagger2OpenAPI.convertObj(spec, {
+      patch: true,
+      warnOnly: true,
+    });
     return openapi;
   } else {
     return spec as Oas3;
