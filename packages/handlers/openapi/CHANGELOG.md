@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.10.14
+
+### Patch Changes
+
+- 0031c62f: fix(openapi): fix swagger documents automatically
+
 ## 0.10.13
 
 ### Patch Changes
