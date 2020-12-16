@@ -167,7 +167,7 @@ test('anyOf test with the same nested member schemas\n\nEquivalent to GET /anyOf
           {
             name: 'commonAttribute',
             type: {
-              name: 'CommonAttribute',
+              name: 'CommonAttribute5',
             },
           },
         ],
@@ -201,13 +201,13 @@ test('anyOf test with different nested member schemas\n\nEquivalent to GET /anyO
           {
             name: 'commonAttribute',
             type: {
-              name: 'CommonAttribute',
+              name: 'CommonAttribute5',
             },
           },
           {
             name: 'differentAttribute',
             type: {
-              name: 'DifferentAttribute',
+              name: 'DifferentAttribute3',
             },
           },
         ],

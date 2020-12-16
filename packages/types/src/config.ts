@@ -762,10 +762,7 @@ export interface Transform {
    * Transformer to apply caching for your data sources
    */
   cache?: CacheTransformConfig[];
-  /**
-   * Transformer to apply encapsulation to the API source, by creating a field for it under the root query
-   */
-  encapsulate?: EncapsulateTransformObject[];
+  encapsulate: EncapsulateTransformObject;
   federation?: FederationTransform;
   filterSchema?: string[];
   mock?: MockingConfig;
@@ -828,6 +825,9 @@ export interface CacheEffectingOperationConfig {
    */
   matchKey?: string;
 }
+/**
+ * Transformer to apply encapsulation to the API source, by creating a field for it under the root query
+ */
 export interface EncapsulateTransformObject {
   /**
    * Optional, name to use for grouping under the root types. If not specific, the API name is used.

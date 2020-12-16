@@ -15,8 +15,8 @@ export default class EncapsulateTransform implements MeshTransform {
   private transforms: Transform[] = [];
 
   constructor(options: MeshTransformOptions<YamlConfig.Transform['encapsulate']>) {
-    const config = (options.config || [])[0] || {};
-    const name = config.name || options.apiName;
+    const config = options.config;
+    const name = config?.name || options.apiName;
 
     if (!name) {
       throw new Error(
@@ -24,7 +24,7 @@ export default class EncapsulateTransform implements MeshTransform {
       );
     }
 
-    const applyTo = { ...DEFUALT_APPLY_TO, ...(config.applyTo || {}) };
+    const applyTo = { ...DEFUALT_APPLY_TO, ...(config?.applyTo || {}) };
 
     if (applyTo.query) {
       this.transforms.push(new WrapType('Query', `${name}Query`, name));

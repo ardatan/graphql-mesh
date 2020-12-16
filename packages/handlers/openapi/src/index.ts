@@ -44,6 +44,8 @@ export default class OpenAPIHandler implements MeshHandler {
       fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
     }
 
+    const baseUrlFactory = getInterpolatedStringFactory(this.config.baseUrl);
+
     const headersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
     for (const queryName in this.config.qs || {}) {
@@ -76,6 +78,10 @@ export default class OpenAPIHandler implements MeshHandler {
 
         if (context?.baseUrl) {
           resolverParams.baseUrl = context.baseUrl;
+        }
+
+        if (!resolverParams.baseUrl && this.config.baseUrl) {
+          resolverParams.baseUrl = baseUrlFactory(resolverData);
         }
 
         if (resolverParams.baseUrl) {

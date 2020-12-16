@@ -990,6 +990,11 @@ export function storeSaneName(saneStr: string, str: string, mapping: { [key: str
       `Warning: '${str}' and '${mapping[saneStr]}' both sanitize ` +
         `to '${saneStr}' - collision possible. Desanitize to '${str}'.`
     );
+    let appendix = 2;
+    while (`${saneStr}${appendix}` in mapping) {
+      appendix++;
+    }
+    return storeSaneName(`${saneStr}${appendix}`, str, mapping);
   }
   mapping[saneStr] = str;
 

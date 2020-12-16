@@ -647,15 +647,14 @@ export function createDataDef<TSource, TContext, TArgs>(
       return existingDataDef;
     } else {
       // Else, define a new name, store the def, and return it
-      const name = getSchemaName(names, data.usedTypeNames);
+      const usedNames = [...data.usedTypeNames, ...Object.keys(data.saneMap)];
+      const caseStyle = data.options.simpleNames ? Oas3Tools.CaseStyle.simple : Oas3Tools.CaseStyle.PascalCase;
+      const name = getSchemaName(names, usedNames as string[], caseStyle);
 
       // Store and sanitize the name
-      const saneName = !data.options.simpleNames
-        ? Oas3Tools.sanitize(name, Oas3Tools.CaseStyle.PascalCase)
-        : Oas3Tools.capitalize(Oas3Tools.sanitize(name, Oas3Tools.CaseStyle.simple));
+      let saneName = Oas3Tools.sanitize(name, caseStyle);
+      saneName = Oas3Tools.storeSaneName(saneName, name, data.saneMap);
       const saneInputName = Oas3Tools.capitalize(saneName + 'Input');
-
-      Oas3Tools.storeSaneName(saneName, name, data.saneMap);
 
       /**
        * TODO: is there a better way of copying the schema object?
@@ -869,7 +868,7 @@ function getPreferredName(names: Oas3Tools.SchemaNames): string {
  * Determines name to use for schema from previously determined schemaNames and
  * considering not reusing existing names.
  */
-function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[]): string {
+function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[], caseStyle: Oas3Tools.CaseStyle): string {
   if (Object.keys(names).length === 1 && typeof names.preferred === 'string') {
     throw new Error(`Cannot create data definition without name(s), excluding the preferred name.`);
   }
@@ -878,7 +877,7 @@ function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[]): strin
 
   // CASE: name from reference
   if (typeof names.fromRef === 'string') {
-    const saneName = Oas3Tools.sanitize(names.fromRef, Oas3Tools.CaseStyle.PascalCase);
+    const saneName = Oas3Tools.sanitize(names.fromRef, caseStyle);
     if (!usedNames.includes(saneName)) {
       schemaName = names.fromRef;
     }
@@ -886,7 +885,7 @@ function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[]): strin
 
   // CASE: name from schema (i.e., "title" property in schema)
   if (!schemaName && typeof names.fromSchema === 'string') {
-    const saneName = Oas3Tools.sanitize(names.fromSchema, Oas3Tools.CaseStyle.PascalCase);
+    const saneName = Oas3Tools.sanitize(names.fromSchema, caseStyle);
     if (!usedNames.includes(saneName)) {
       schemaName = names.fromSchema;
     }
@@ -894,7 +893,7 @@ function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[]): strin
 
   // CASE: name from path
   if (!schemaName && typeof names.fromPath === 'string') {
-    const saneName = Oas3Tools.sanitize(names.fromPath, Oas3Tools.CaseStyle.PascalCase);
+    const saneName = Oas3Tools.sanitize(names.fromPath, caseStyle);
     if (!usedNames.includes(saneName)) {
       schemaName = names.fromPath;
     }
@@ -910,7 +909,7 @@ function getSchemaName(names: Oas3Tools.SchemaNames, usedNames: string[]): strin
         : typeof names.fromPath === 'string'
         ? names.fromPath
         : 'PlaceholderName',
-      Oas3Tools.CaseStyle.PascalCase
+      caseStyle
     );
   }
 
