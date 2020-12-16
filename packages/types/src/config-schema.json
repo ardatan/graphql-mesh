@@ -260,11 +260,7 @@
           "description": "Transformer to apply caching for your data sources"
         },
         "encapsulate": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EncapsulateTransformObject"
-          },
-          "additionalItems": false,
+          "$ref": "#/definitions/EncapsulateTransformObject",
           "description": "Transformer to apply encapsulation to the API source, by creating a field for it under the root query"
         },
         "federation": {
@@ -309,7 +305,8 @@
           "$ref": "#/definitions/SnapshotTransformConfig",
           "description": "Configuration for Snapshot extension"
         }
-      }
+      },
+      "required": ["encapsulate"]
     },
     "Handler": {
       "additionalProperties": true,
