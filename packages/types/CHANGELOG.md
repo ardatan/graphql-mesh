@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.23.1
+
+### Patch Changes
+
+- 59d77fb8: fix(encapsulate): fix transform config
+
 ## 0.23.0
 
 ### Minor Changes

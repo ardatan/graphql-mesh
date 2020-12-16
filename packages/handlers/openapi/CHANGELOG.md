@@ -1,5 +1,16 @@
 # @graphql-mesh/openapi
 
+## 0.11.0
+
+### Minor Changes
+
+- 59d77fb8: enhance(openapi): improve sanitizing and prevent conflict between sanitized names
+
+### Patch Changes
+
+- Updated dependencies [59d77fb8]
+  - @graphql-mesh/types@0.23.1
+
 ## 0.10.14
 
 ### Patch Changes
