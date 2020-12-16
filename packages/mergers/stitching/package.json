@@ -17,7 +17,7 @@
     "@graphql-mesh/utils": "0.8.1",
     "fetchache": "0.0.4",
     "@graphql-tools/schema": "7.1.2",
-    "@graphql-tools/stitch": "7.1.5",
+    "@graphql-tools/stitch": "7.1.6",
     "@graphql-tools/wrap": "7.0.4",
     "@graphql-tools/utils": "7.1.6"
   },
