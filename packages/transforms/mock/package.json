@@ -18,7 +18,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.23.1",
     "@graphql-mesh/utils": "0.8.1",
-    "@graphql-tools/utils": "7.1.5",
+    "@graphql-tools/utils": "7.1.6",
     "@graphql-tools/mock": "7.0.0",
     "faker": "5.1.0"
   },
