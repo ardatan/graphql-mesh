@@ -519,7 +519,7 @@ test('Nested links with constants and variables', () => {
 
 test('Link parameters as constants and variables with request payload', () => {
   const query = `mutation {
-    postScanner(query: "query", path: "path", textPlainInput: "body") {
+    postScanner(query: "query", path: "path", textPlain2Input: "body") {
       body
       everythingLink2 {
         body
