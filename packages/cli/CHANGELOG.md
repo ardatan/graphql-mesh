@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.13.0
+
+### Minor Changes
+
+- c8389f64: feat(generate-sdk): add flattenTypes option to generate sdk smaller
+
 ## 0.12.6
 
 ### Patch Changes

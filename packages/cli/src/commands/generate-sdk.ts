@@ -88,7 +88,7 @@ export async function generateSdk(
       namingConvention: {
         enumValues: 'keep',
       },
-      documentMode: flattenTypes ? 'documentNode' : 'gqlImport',
+      documentMode: 'documentNode',
     },
   });
 
