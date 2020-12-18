@@ -39,7 +39,7 @@ export async function graphqlMesh() {
         }
       }
     )
-    .command<{ operations: string[]; output: string }>(
+    .command<{ operations: string[]; output: string; depth: number; 'flatten-types': boolean }>(
       'generate-sdk',
       'Generates fully type-safe SDK based on unifid GraphQL schema and GraphQL operations',
       builder => {
@@ -53,6 +53,9 @@ export async function graphqlMesh() {
           .option('output', {
             required: true,
             type: 'string',
+          })
+          .option('flatten-types', {
+            type: 'boolean',
           });
       },
       async args => {

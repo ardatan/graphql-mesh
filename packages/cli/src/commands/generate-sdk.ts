@@ -14,9 +14,11 @@ export async function generateSdk(
   {
     operations: operationsPaths = [],
     depth: depthLimit = 1,
+    'flatten-types': flattenTypes,
   }: {
     operations?: string[];
     depth?: number;
+    'flatten-types': boolean;
   }
 ): Promise<string> {
   let sources: Source[] = [];
@@ -79,14 +81,14 @@ export async function generateSdk(
       },
     ],
     config: {
-      flattenGeneratedTypes: true,
+      flattenGeneratedTypes: flattenTypes,
       scalars: scalarsMap,
-      onlyOperationTypes: true,
-      preResolveTypes: true,
+      onlyOperationTypes: flattenTypes,
+      preResolveTypes: flattenTypes,
       namingConvention: {
         enumValues: 'keep',
       },
-      documentMode: 'documentNode',
+      documentMode: flattenTypes ? 'documentNode' : 'gqlImport',
     },
   });
 
