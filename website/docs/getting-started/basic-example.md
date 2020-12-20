@@ -22,7 +22,7 @@ yarn add graphql @graphql-mesh/openapi
 
 ### Try your new API
 
-GraphQL Mesh comes with a built in GraphiQL interface, so it means that you can try your newly-created GraphQL before writing any line of code. All you need to get started is the configuration file. 
+GraphQL Mesh comes with a built in GraphiQL interface, so it means that you can try your newly-created GraphQL before writing any line of code. All you need to get started is the configuration file.
 
 To test your new GraphQL API based on your API specs, you can run:
 
@@ -59,9 +59,9 @@ You can give it a try and run it directly in your browser.
 
 ### Consuming Mesh Schema in code
 
-After you have tested your new API, you can use it directly in your app in order to fetch data. 
+After you have tested your new API, you can use it directly in your app in order to fetch data.
 
-You can use the Mesh `GraphQLSchema` instance to query your data from your application code by using `getMesh` with your configuration object. 
+You can use the Mesh `GraphQLSchema` instance to query your data from your application code by using `getMesh` with your configuration object.
 
 Start by load and parsing your configuration file, and pass it to `getMesh`, this will return for your a modified version of GraphQL's `execute`, so you can use it directly to fetch your data:
 
@@ -72,7 +72,7 @@ yarn add @graphql-mesh/runtime
 ```
 
 ```js
-const { findAndParseConfig } = require('@graphql-mesh/config')
+const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 
 async function test() {
@@ -99,3 +99,21 @@ async function test() {
   `);
 }
 ```
+
+### Introspecting your Mesh
+
+Since GraphQL-Mesh schema is created during runtime (based on your external API sources), it's not possible to access it without serving it.
+
+If you need to get the GraphQL schema SDL or GraphQL schema introspection, you can use the following command to generate a static file:
+
+```
+yarn graphql-mesh schema --output ./schema.graphql
+```
+
+Or, for introspection JSON:
+
+```
+yarn graphql-mesh schema --output ./schema.json
+```
+
+This is useful if you need to feed other tools (like [graphql-codegen](https://graphql-code-generator.com/), [graphql-eslint](https://github.com/dotansimha/graphql-eslint), [graphql-inspector](https://graphql-inspector.com/) and more) with the static GraphQL schema.

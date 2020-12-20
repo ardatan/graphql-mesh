@@ -7,6 +7,7 @@ import { serveMesh } from './commands/serve/serve';
 import { resolve } from 'path';
 import { writeFile, ensureFile } from 'fs-extra';
 import { logger } from './logger';
+import { introspectionFromSchema, printSchema } from 'graphql';
 export * from './commands/generate-sdk';
 
 export async function graphqlMesh() {
@@ -67,6 +68,29 @@ export async function graphqlMesh() {
         const outFile = resolve(process.cwd(), args.output);
         await ensureFile(outFile);
         await writeFile(outFile, result);
+        destroy();
+      }
+    )
+    .command<{ output: string }>(
+      'schema',
+      'Generates a JSON introspection / GraphQL SDL schema file from your mesh.',
+      builder => {
+        builder.option('output', {
+          required: true,
+          type: 'string',
+        });
+      },
+      async args => {
+        const meshConfig = await findAndParseConfig({
+          ignoreAdditionalResolvers: true,
+        });
+        const { schema, destroy } = await getMesh(meshConfig);
+        const output = args.output.endsWith('.json')
+          ? JSON.stringify(introspectionFromSchema(schema), null, 2)
+          : printSchema(schema);
+        const outFile = resolve(process.cwd(), args.output);
+        await ensureFile(outFile);
+        await writeFile(outFile, output);
         destroy();
       }
     )
