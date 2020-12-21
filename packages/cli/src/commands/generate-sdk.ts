@@ -8,6 +8,7 @@ import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { buildOperationNodeForField, Source } from '@graphql-tools/utils';
 import { scalarsMap } from './scalars-map';
+import { logger } from '../logger';
 
 export async function generateSdk(
   schema: GraphQLSchema,
@@ -29,6 +30,9 @@ export async function generateSdk(
       cwd: process.cwd(),
     });
   } else {
+    logger.warn(`You didn't provide operations for SDK! 
+Mesh CLI will try to generate operations for you but this might not be efficient for production usage. 
+See more: https://graphql-mesh.com/docs/recipes/as-sdk`);
     const rootTypeMap = {
       query: schema.getQueryType(),
       mutation: schema.getMutationType(),
