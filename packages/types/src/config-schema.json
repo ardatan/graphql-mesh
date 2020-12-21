@@ -305,8 +305,7 @@
           "$ref": "#/definitions/SnapshotTransformConfig",
           "description": "Configuration for Snapshot extension"
         }
-      },
-      "required": ["encapsulate"]
+      }
     },
     "Handler": {
       "additionalProperties": true,

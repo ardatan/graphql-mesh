@@ -762,7 +762,7 @@ export interface Transform {
    * Transformer to apply caching for your data sources
    */
   cache?: CacheTransformConfig[];
-  encapsulate: EncapsulateTransformObject;
+  encapsulate?: EncapsulateTransformObject;
   federation?: FederationTransform;
   filterSchema?: string[];
   mock?: MockingConfig;
