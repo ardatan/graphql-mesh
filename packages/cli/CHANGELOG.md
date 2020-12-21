@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.14.0
+
+### Minor Changes
+
+- 1ba078b8: Added a new cli command for printing the static mesh schema to a file
+
+### Patch Changes
+
+- 438b5250: feat(cli): rename schema dump command
+  - @graphql-mesh/config@0.11.7
+  - @graphql-mesh/runtime@0.10.7
+
 ## 0.13.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.23.2
+
+### Patch Changes
+
+- c614e796: fix(types): fix config schema
+
 ## 0.23.1
 
 ### Patch Changes
