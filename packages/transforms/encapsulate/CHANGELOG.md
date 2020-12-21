@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-encapsulate
 
+## 0.1.4
+
+### Patch Changes
+
+- c614e796: fix(types): fix config schema
+- Updated dependencies [c614e796]
+  - @graphql-mesh/types@0.23.2
+
 ## 0.1.3
 
 ### Patch Changes
