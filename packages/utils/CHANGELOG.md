@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.8.2
+
+### Patch Changes
+
+- c85a54eb: fix(utils): handle multiple transforms properly
+
 ## 0.8.1
 
 ### Patch Changes

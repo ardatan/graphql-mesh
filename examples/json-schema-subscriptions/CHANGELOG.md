@@ -1,5 +1,12 @@
 # json-schema-subscriptions
 
+## 0.0.28
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.14.1
+- @graphql-mesh/json-schema@0.8.14
+
 ## 0.0.27
 
 ### Patch Changes
