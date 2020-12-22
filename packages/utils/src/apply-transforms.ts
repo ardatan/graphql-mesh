@@ -20,10 +20,20 @@ export function applyRequestTransforms(
   transformationContext: Record<string, any>,
   transforms: Transform[]
 ) {
+  transformationContext.contextMap = transformationContext.contextMap || new WeakMap();
+  const contextMap: WeakMap<Transform, Record<string, any>> = transformationContext.contextMap;
+  transforms?.forEach(transform => {
+    if (!contextMap.has(transform)) {
+      contextMap.set(transform, {
+        nextIndex: 0,
+        paths: {},
+      });
+    }
+  });
   return transforms.reduceRight(
     (request, transform) =>
       'transformRequest' in transform
-        ? transform.transformRequest(request, delegationContext, transformationContext)
+        ? transform.transformRequest(request, delegationContext, contextMap.get(transform))
         : request,
     originalRequest
   );
@@ -31,13 +41,14 @@ export function applyRequestTransforms(
 export function applyResultTransforms(
   originalResult: ExecutionResult,
   delegationContext: DelegationContext,
-  transformationContext: any,
+  transformationContext: Record<string, any>,
   transforms: Transform[]
 ) {
-  return transforms.reduce(
+  const contextMap: WeakMap<Transform, Record<string, any>> = transformationContext.contextMap;
+  return transforms.reduceRight(
     (result, transform) =>
       'transformResult' in transform
-        ? transform.transformResult(result, delegationContext, transformationContext)
+        ? transform.transformResult(result, delegationContext, contextMap.get(transform))
         : result,
     originalResult
   );
