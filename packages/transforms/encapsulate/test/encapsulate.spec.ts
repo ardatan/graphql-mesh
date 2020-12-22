@@ -27,6 +27,9 @@ describe('encapsulate', () => {
       Query: {
         getSomething: () => 'boop',
       },
+      Mutation: {
+        doSomething: () => 'noop',
+      },
     },
   });
   let cache: InMemoryLRUCache;
@@ -42,7 +45,7 @@ describe('encapsulate', () => {
       schema,
       transforms: [
         new Transform({
-          config: [],
+          config: {},
           cache,
           pubsub,
           apiName: 'test',
@@ -60,7 +63,7 @@ describe('encapsulate', () => {
       schema,
       transforms: [
         new Transform({
-          config: [],
+          config: {},
           cache,
           pubsub,
           apiName: 'test',
@@ -78,7 +81,7 @@ describe('encapsulate', () => {
       schema,
       transforms: [
         new Transform({
-          config: [],
+          config: {},
           cache,
           pubsub,
           apiName: 'test',
@@ -91,7 +94,7 @@ describe('encapsulate', () => {
     expect(newSchema.getQueryType().getFields().test.type.toString()).toBe('testQuery');
   });
 
-  it('should execute the same way and preserve execution flow', async () => {
+  it('should execute queries the same way and preserve execution flow', async () => {
     const { data: resultBefore } = await execute({
       schema,
       document: parse(`{ getSomething }`),
@@ -102,7 +105,7 @@ describe('encapsulate', () => {
       schema,
       transforms: [
         new Transform({
-          config: [],
+          config: {},
           cache,
           pubsub,
           apiName: 'test',
@@ -116,5 +119,32 @@ describe('encapsulate', () => {
     });
 
     expect(resultAfter.test.getSomething).toBe('boop');
+  });
+
+  it('should execute mutations the same way and preserve execution flow', async () => {
+    const { data: resultBefore } = await execute({
+      schema,
+      document: parse(`mutation { doSomething }`),
+    });
+    expect(resultBefore.getSomething).toBe('noop');
+
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new Transform({
+          config: {},
+          cache,
+          pubsub,
+          apiName: 'test',
+        }),
+      ],
+    });
+
+    const { data: resultAfter } = await execute({
+      schema: newSchema,
+      document: parse(`mutation { test { doSomething } }`),
+    });
+
+    expect(resultAfter.test.getSomething).toBe('noop');
   });
 });
