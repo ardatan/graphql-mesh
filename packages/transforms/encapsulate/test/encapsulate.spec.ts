@@ -126,7 +126,7 @@ describe('encapsulate', () => {
       schema,
       document: parse(`mutation { doSomething }`),
     });
-    expect(resultBefore.getSomething).toBe('noop');
+    expect(resultBefore.doSomething).toBe('noop');
 
     const newSchema = wrapSchema({
       schema,
@@ -145,6 +145,6 @@ describe('encapsulate', () => {
       document: parse(`mutation { test { doSomething } }`),
     });
 
-    expect(resultAfter.test.getSomething).toBe('noop');
+    expect(resultAfter.test.doSomething).toBe('noop');
   });
 });
