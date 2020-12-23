@@ -9,7 +9,7 @@ import { writeFile, ensureFile } from 'fs-extra';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-export * from './commands/generate-sdk';
+export { generateSdk, serveMesh };
 
 export async function graphqlMesh() {
   return yargs
