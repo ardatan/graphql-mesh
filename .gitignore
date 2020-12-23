@@ -11,3 +11,4 @@ ignored-demo
 package-lock.json
 .bob
 .history
+.DS_Store
