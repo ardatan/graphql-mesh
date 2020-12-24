@@ -21,7 +21,7 @@
     "micromatch": "4.0.2",
     "@graphql-tools/wrap": "7.0.5",
     "@graphql-tools/delegate": "7.0.8",
-    "@graphql-tools/utils": "7.2.1"
+    "@graphql-tools/utils": "7.2.2"
   },
   "publishConfig": {
     "access": "public",
