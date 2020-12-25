@@ -24,7 +24,7 @@
     "@graphql-tools/schema": "7.1.2",
     "@graphql-tools/utils": "7.2.3",
     "graphql-fields": "2.0.3",
-    "object-hash": "2.0.3"
+    "object-hash": "2.1.1"
   },
   "publishConfig": {
     "access": "public",
