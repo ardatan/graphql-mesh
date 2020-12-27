@@ -12,7 +12,7 @@ This is possible because GraphQL Mesh will make sure to expose all available ser
 
 It's named the same as the API name, so to access the API of `Wiki` source, you can use `context.Wiki.api` and use the methods you need. It's useful when you need add custom behaviours, fields and types, and also for linking types between schemas.
 
-In the following example, we will add take the query we has in the [previous example](/docs/getting-started/basic-example), and simplify it by adding a new root operation to `Query` type, and automate the variables that it needs, in order to create a simpler version of it for the consumers.
+In the following example, we will add take the query we had in the [previous example](/docs/getting-started/basic-example), and simplify it by adding a new root operation to `Query` type, and automate the variables that it needs, in order to create a simpler version of it for the consumers.
 
 To add a new simple field, that just returns the amount of views for the past month, you can wrap it as following in your GraphQL config file, and add custom resolvers file using `additionalResolvers` field:
 
