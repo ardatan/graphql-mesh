@@ -61,7 +61,7 @@ export default class Neo4JHandler implements MeshHandler {
       }
     }
 
-    const schema = makeAugmentedSchema({ typeDefs });
+    const schema = makeAugmentedSchema({ typeDefs, config: { experimental: true } });
 
     return {
       schema,
