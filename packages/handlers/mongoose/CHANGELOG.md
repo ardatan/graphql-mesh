@@ -1,5 +1,11 @@
 # @graphql-mesh/mongoose
 
+## 0.6.24
+
+### Patch Changes
+
+- 0b20271d: fix(mongoose): ignore discriminators if not provided
+
 ## 0.6.23
 
 ### Patch Changes
