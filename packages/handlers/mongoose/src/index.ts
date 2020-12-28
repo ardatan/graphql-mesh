@@ -63,7 +63,7 @@ export default class MongooseHandler implements MeshHandler {
         })
       ),
       Promise.all(
-        this.config.discriminators.map(async discriminatorConfig => {
+        this.config.discriminators?.map(async discriminatorConfig => {
           const discriminator = await loadFromModuleExportExpression<any>(
             discriminatorConfig.path,
             discriminatorConfig.name
