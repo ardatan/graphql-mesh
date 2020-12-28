@@ -1,5 +1,11 @@
 # @graphql-mesh/neo4j
 
+## 0.8.0
+
+### Minor Changes
+
+- 679013f7: feat(neo4j): able to search for any fields in a document
+
 ## 0.7.16
 
 ### Patch Changes
