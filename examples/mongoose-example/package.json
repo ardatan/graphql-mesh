@@ -6,16 +6,10 @@
   "scripts": {
     "start": "mesh serve"
   },
-  "devDependencies": {
-    "@types/mongoose": "5.7.36",
-    "@types/node": "14.14.3",
-    "typescript": "4.0.5"
-  },
   "dependencies": {
     "@graphql-mesh/cli": "0.15.0",
     "@graphql-mesh/mongoose": "0.6.24",
     "graphql": "15.4.0",
-    "mongoose": "5.10.9",
-    "ts-node": "8.10.2"
+    "mongoose": "5.10.9"
   }
 }

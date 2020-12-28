@@ -29,10 +29,12 @@ export default class MongooseHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     if (this.config.connectionString) {
-      await mongoose.connect(this.config.connectionString, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      mongoose
+        .connect(this.config.connectionString, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        })
+        .catch(e => console.error(e));
 
       this.pubsub.subscribe('destroy', () => mongoose.disconnect());
     }
@@ -60,7 +62,7 @@ export default class MongooseHandler implements MeshHandler {
               )
             ),
           ]);
-        })
+        }) || []
       ),
       Promise.all(
         this.config.discriminators?.map(async discriminatorConfig => {
@@ -89,7 +91,7 @@ export default class MongooseHandler implements MeshHandler {
               )
             ),
           ]);
-        })
+        }) || []
       ),
     ]);
 
