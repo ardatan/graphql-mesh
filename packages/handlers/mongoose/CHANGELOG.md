@@ -1,5 +1,11 @@
 # @graphql-mesh/mongoose
 
+## 0.6.25
+
+### Patch Changes
+
+- d4e8d1ba: fix(mongoose): fix iteration issue
+
 ## 0.6.24
 
 ### Patch Changes
