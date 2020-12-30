@@ -1,4 +1,4 @@
-import { GraphQLSchema, Kind, parse, print } from 'graphql';
+import { GraphQLSchema, Kind, print } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 import * as tsPlugin from '@graphql-codegen/typescript';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
@@ -6,7 +6,7 @@ import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { loadDocuments as loadDocumentsToolkit } from '@graphql-tools/load';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { buildOperationNodeForField, Source, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { buildOperationNodeForField, Source } from '@graphql-tools/utils';
 import { scalarsMap } from './scalars-map';
 import { logger } from '../logger';
 
