@@ -93,6 +93,7 @@ See more: https://graphql-mesh.com/docs/recipes/as-sdk`);
         enumValues: 'keep',
       },
       documentMode: 'documentNode',
+      respectEnumValuesFromSchema: false,
     },
   });
 
