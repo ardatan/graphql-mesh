@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.11.0
+
+### Minor Changes
+
+- 7140ef09: feat(graphql): support custom variables in endpoint url
+
 ## 0.10.5
 
 ### Patch Changes
