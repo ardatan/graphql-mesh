@@ -24,7 +24,7 @@
     "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag alpha) || echo Skipping Canary..."
   },
   "devDependencies": {
-    "patch-package": "6.2.2",
+    "@ardatan/graphql-to-config-schema": "0.1.7",
     "@changesets/cli": "2.12.0",
     "@graphql-tools/schema": "7.1.2",
     "@types/jest": "26.0.19",
@@ -42,10 +42,10 @@
     "fs-extra": "9.0.1",
     "globby": "11.0.1",
     "graphql": "15.4.0",
-    "@ardatan/graphql-to-config-schema": "0.1.7",
     "husky": "4.3.6",
     "jest": "26.6.3",
     "lint-staged": "10.5.3",
+    "patch-package": "6.2.2",
     "prettier": "2.2.1",
     "ts-jest": "26.4.4",
     "ts-node-dev": "1.1.1",
