@@ -75,7 +75,9 @@ See more: https://graphql-mesh.com/docs/recipes/as-sdk`);
     schemaAst: schema,
     plugins: [
       {
-        typescript: {},
+        typescript: {
+          ignoreEnumValuesFromSchema: true,
+        },
       },
       {
         typescriptOperations: {},
