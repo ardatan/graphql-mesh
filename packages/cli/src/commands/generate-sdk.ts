@@ -71,10 +71,13 @@ See more: https://graphql-mesh.com/docs/recipes/as-sdk`);
     },
     documents: sources,
     skipDocumentsValidation: true,
-    schema: parse(printSchemaWithDirectives(schema)), // This is not necessary on codegen.
+    schema: undefined as any, // This is not necessary on codegen.
+    schemaAst: schema,
     plugins: [
       {
-        typescript: {},
+        typescript: {
+          ignoreEnumValuesFromSchema: true,
+        },
       },
       {
         typescriptOperations: {},
@@ -92,7 +95,6 @@ See more: https://graphql-mesh.com/docs/recipes/as-sdk`);
         enumValues: 'keep',
       },
       documentMode: 'documentNode',
-      respectEnumValuesFromSchema: false,
     },
   });
 
