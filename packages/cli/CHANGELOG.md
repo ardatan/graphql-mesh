@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.15.1
+
+### Patch Changes
+
+- a7dcd2d9: fix(cli): fix enum values mismatch in generated sdk
+
 ## 0.15.0
 
 ### Minor Changes
