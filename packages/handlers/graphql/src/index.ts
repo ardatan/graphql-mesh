@@ -8,6 +8,7 @@ import {
   ResolverDataBasedFactory,
   getHeadersObject,
   loadFromModuleExportExpression,
+  getInterpolatedStringFactory,
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
@@ -40,7 +41,8 @@ export default class GraphQLHandler implements MeshHandler {
       fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
     const getExecutorAndSubscriberForParams = (
       params: ExecutionParams,
-      headersFactory: ResolverDataBasedFactory<Headers>
+      headersFactory: ResolverDataBasedFactory<Headers>,
+      endpointFactory: ResolverDataBasedFactory<string>
     ) => {
       const resolverData: ResolverData = {
         root: {},
@@ -48,7 +50,8 @@ export default class GraphQLHandler implements MeshHandler {
         context: params.context,
       };
       const headers = getHeadersObject(headersFactory(resolverData));
-      return urlLoader.getExecutorAndSubscriberAsync(this.config.endpoint, {
+      const endpoint = endpointFactory(resolverData);
+      return urlLoader.getExecutorAndSubscriberAsync(endpoint, {
         customFetch: customFetch as any,
         ...this.config,
         headers,
@@ -57,7 +60,11 @@ export default class GraphQLHandler implements MeshHandler {
     let schema: GraphQLSchema;
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
-      const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory);
+      const { executor } = await getExecutorAndSubscriberForParams(
+        params,
+        schemaHeadersFactory,
+        () => this.config.endpoint
+      );
       return executor(params);
     };
     if (this.config.introspection) {
@@ -82,14 +89,19 @@ export default class GraphQLHandler implements MeshHandler {
       schema = await introspectSchema(introspectionExecutor);
     }
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
+    const endpointFactory = getInterpolatedStringFactory(this.config.endpoint);
     return {
       schema,
       executor: async params => {
-        const { executor } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory);
+        const { executor } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory, endpointFactory);
         return executor(params) as any;
       },
       subscriber: async params => {
-        const { subscriber } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory);
+        const { subscriber } = await getExecutorAndSubscriberForParams(
+          params,
+          operationHeadersFactory,
+          endpointFactory
+        );
         return subscriber(params);
       },
     };
