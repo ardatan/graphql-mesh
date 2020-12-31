@@ -1,5 +1,12 @@
 # @graphql-mesh/runtime
 
+## 0.10.10
+
+### Patch Changes
+
+- Updated dependencies [b6262481]
+  - @graphql-mesh/types@0.24.0
+
 ## 0.10.9
 
 ### Patch Changes
