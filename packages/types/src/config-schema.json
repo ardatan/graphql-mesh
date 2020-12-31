@@ -1959,6 +1959,10 @@
         "outputDir": {
           "type": "string",
           "description": "Path to the directory of the generated snapshot files"
+        },
+        "respectSelectionSet": {
+          "type": "boolean",
+          "description": "Take snapshots by respecting the requested selection set.\nThis might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation. "
         }
       },
       "required": ["apply", "outputDir"]

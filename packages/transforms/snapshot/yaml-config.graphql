@@ -23,6 +23,11 @@ type SnapshotTransformConfig @md {
   Path to the directory of the generated snapshot files
   """
   outputDir: String!
+  """
+  Take snapshots by respecting the requested selection set.
+  This might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation.
+  """
+  respectSelectionSet: Boolean
 }
 
 union If = String | Boolean

@@ -32,7 +32,8 @@ module.exports = {
       'transforms/resolvers-composition',
       'transforms/federation',
       'transforms/filter-schema',
-      'transforms/naming-convention'
+      'transforms/naming-convention',
+      'transforms/extend'
     ],
     // 'API Reference': ['api/cli', 'api/runtime'],
     Recipes: [

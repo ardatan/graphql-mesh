@@ -36,10 +36,10 @@ export default class SnapshotTransform implements MeshTransform {
 
       const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
         const snapshotFilePath = computeSnapshotFilePath({
-          typeName: info.parentType.name,
-          fieldName: info.fieldName,
+          info,
           args,
           outputDir,
+          respectSelectionSet: config.respectSelectionSet,
         });
         if (snapshotFilePath in require.cache || (await pathExists(snapshotFilePath))) {
           return import(snapshotFilePath);

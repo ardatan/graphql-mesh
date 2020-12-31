@@ -1053,6 +1053,11 @@ export interface SnapshotTransformConfig {
    * Path to the directory of the generated snapshot files
    */
   outputDir: string;
+  /**
+   * Take snapshots by respecting the requested selection set.
+   * This might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation.
+   */
+  respectSelectionSet?: boolean;
 }
 export interface ExtendTransform {
   typeDefs?: any;
