@@ -777,6 +777,7 @@ export interface Transform {
    */
   resolversComposition?: ResolversCompositionTransformObject[];
   snapshot?: SnapshotTransformConfig;
+  extend?: ExtendTransform;
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1052,6 +1053,10 @@ export interface SnapshotTransformConfig {
    * Path to the directory of the generated snapshot files
    */
   outputDir: string;
+}
+export interface ExtendTransform {
+  typeDefs?: any;
+  resolvers?: any;
 }
 export interface AdditionalStitchingResolverObject {
   type: string;

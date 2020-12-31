@@ -304,6 +304,9 @@
         "snapshot": {
           "$ref": "#/definitions/SnapshotTransformConfig",
           "description": "Configuration for Snapshot extension"
+        },
+        "extend": {
+          "$ref": "#/definitions/ExtendTransform"
         }
       }
     },
@@ -1972,6 +1975,35 @@
         "infile": {
           "type": "string",
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
+        }
+      }
+    },
+    "ExtendTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ExtendTransform",
+      "properties": {
+        "typeDefs": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "resolvers": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       }
     }

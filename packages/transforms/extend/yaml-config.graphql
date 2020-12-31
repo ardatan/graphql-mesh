@@ -1,0 +1,8 @@
+extend type Transform {
+  extend: ExtendTransform
+}
+
+type ExtendTransform @md {
+  typeDefs: Any
+  resolvers: Any
+}
