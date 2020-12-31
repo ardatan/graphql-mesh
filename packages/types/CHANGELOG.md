@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.23.3
+
+### Patch Changes
+
+- e5b38574: introduce extend transform
+
 ## 0.23.2
 
 ### Patch Changes
