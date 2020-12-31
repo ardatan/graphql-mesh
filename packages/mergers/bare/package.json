@@ -1,0 +1,27 @@
+{
+  "name": "@graphql-mesh/merger-bare",
+  "version": "0.7.9",
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.24.0",
+    "@graphql-mesh/utils": "0.8.2",
+    "fetchache": "0.0.4",
+    "@graphql-tools/merge": "6.2.6",
+    "@graphql-tools/wrap": "7.0.5",
+    "@graphql-tools/utils": "7.2.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}
