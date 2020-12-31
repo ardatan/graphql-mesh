@@ -1,5 +1,11 @@
 # @graphql-mesh/website
 
+## 0.7.0
+
+### Minor Changes
+
+- b6262481: feat(snapshot): add respectSelectionSet for advanced snapshot
+
 ## 0.6.0
 
 ### Minor Changes

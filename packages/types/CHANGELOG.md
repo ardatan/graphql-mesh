@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.24.0
+
+### Minor Changes
+
+- b6262481: feat(snapshot): add respectSelectionSet for advanced snapshot
+
 ## 0.23.3
 
 ### Patch Changes
