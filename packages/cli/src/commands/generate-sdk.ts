@@ -7,7 +7,7 @@ import { loadDocuments as loadDocumentsToolkit } from '@graphql-tools/load';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { buildOperationNodeForField, Source } from '@graphql-tools/utils';
-import { scalarsMap } from './scalars-map';
+import { clientSideScalarsMap } from './scalars-map';
 import { logger } from '../logger';
 
 export async function generateSdk(
@@ -88,7 +88,7 @@ See more: https://graphql-mesh.com/docs/recipes/as-sdk`);
     ],
     config: {
       flattenGeneratedTypes: flattenTypes,
-      scalars: scalarsMap,
+      scalars: clientSideScalarsMap,
       onlyOperationTypes: flattenTypes,
       preResolveTypes: flattenTypes,
       namingConvention: {

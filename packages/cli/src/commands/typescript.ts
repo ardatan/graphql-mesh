@@ -3,7 +3,7 @@ import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
-import { scalarsMap } from './scalars-map';
+import { serverSideScalarsMap } from './scalars-map';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -82,7 +82,7 @@ export function generateTsTypes(
     filename: 'types.ts',
     documents: [],
     config: {
-      scalars: scalarsMap,
+      scalars: serverSideScalarsMap,
       skipTypename: true,
     },
     schemaAst: unifiedSchema,

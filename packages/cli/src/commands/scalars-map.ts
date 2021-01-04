@@ -1,4 +1,4 @@
-export const scalarsMap = {
+export const serverSideScalarsMap = {
   BigInt: 'bigint',
   Byte: 'Buffer',
   Date: 'Date',
@@ -10,4 +10,11 @@ export const scalarsMap = {
   Timestamp: 'Date',
   Time: 'Date',
   Void: 'void',
+};
+
+export const clientSideScalarsMap = {
+  ...serverSideScalarsMap,
+  Date: 'string',
+  Timestamp: 'number',
+  Time: 'string',
 };
