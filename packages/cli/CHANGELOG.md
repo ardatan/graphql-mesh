@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.15.4
+
+### Patch Changes
+
+- 0b08b2a6: fix(generate-sdk): fix mismatch TS definitions for scalars
+
 ## 0.15.3
 
 ### Patch Changes
