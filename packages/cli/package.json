@@ -48,7 +48,7 @@
     "graphql-ws": "3.2.0",
     "chalk": "4.1.0",
     "change-case": "4.1.2",
-    "js-yaml": "3.14.1",
+    "js-yaml": "4.0.0",
     "json-bigint-patch": "0.0.4",
     "lodash": "4.17.20",
     "mkdirp": "1.0.4",
