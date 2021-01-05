@@ -107,13 +107,13 @@ Since GraphQL-Mesh schema is created during runtime (based on your external API 
 If you need to get the GraphQL schema SDL or GraphQL schema introspection, you can use the following command to generate a static file:
 
 ```
-yarn graphql-mesh schema --output ./schema.graphql
+yarn graphql-mesh dump-schema --output ./schema.graphql
 ```
 
 Or, for introspection JSON:
 
 ```
-yarn graphql-mesh schema --output ./schema.json
+yarn graphql-mesh dump-schema --output ./schema.json
 ```
 
 This is useful if you need to feed other tools (like [graphql-codegen](https://graphql-code-generator.com/), [graphql-eslint](https://github.com/dotansimha/graphql-eslint), [graphql-inspector](https://graphql-inspector.com/) and more) with the static GraphQL schema.
