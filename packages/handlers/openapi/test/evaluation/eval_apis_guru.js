@@ -314,7 +314,7 @@ function readFile(path) {
     if (/json$/.test(path)) {
       doc = JSON.parse(fs.readFileSync(path, 'utf8'))
     } else if (/yaml$|yml$/.test(path)) {
-      doc = YAML.safeLoad(fs.readFileSync(path, 'utf8'))
+      doc = YAML.load(fs.readFileSync(path, 'utf8'))
     }
     return doc
   } catch (e) {

@@ -108,4 +108,6 @@ module.exports = {
       },
     ],
   ],
+  onBrokenLinks: 'warn',
+  onBrokenMarkdownLinks: 'warn',
 };

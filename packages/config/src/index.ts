@@ -193,11 +193,12 @@ function customLoader(ext: 'json' | 'yaml' | 'js') {
 }
 
 export function validateConfig(config: any): asserts config is YamlConfig.Config {
-  const ajv = new Ajv({ schemaId: 'auto' });
-  // Settings for draft-04
-  const metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
-  ajv.addMetaSchema(metaSchema);
-  const isValid = ajv.validate(getJsonSchema(), config);
+  const ajv = new Ajv({
+    strict: false,
+  });
+  const jsonSchema = getJsonSchema();
+  jsonSchema.$schema = undefined;
+  const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
     console.warn(`GraphQL Mesh Configuration is not valid:\n${ajv.errorsText()}`);
   }
