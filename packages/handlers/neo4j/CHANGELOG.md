@@ -1,5 +1,11 @@
 # @graphql-mesh/neo4j
 
+## 0.9.0
+
+### Minor Changes
+
+- d6102f1f: fix(neo4j): fix graphql v15 support
+
 ## 0.8.2
 
 ### Patch Changes
