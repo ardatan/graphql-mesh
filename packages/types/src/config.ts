@@ -763,6 +763,7 @@ export interface Transform {
    */
   cache?: CacheTransformConfig[];
   encapsulate?: EncapsulateTransformObject;
+  extend?: ExtendTransform;
   federation?: FederationTransform;
   filterSchema?: string[];
   mock?: MockingConfig;
@@ -777,7 +778,6 @@ export interface Transform {
    */
   resolversComposition?: ResolversCompositionTransformObject[];
   snapshot?: SnapshotTransformConfig;
-  extend?: ExtendTransform;
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -843,6 +843,10 @@ export interface EncapsulateTransformApplyTo {
   query?: boolean;
   mutation?: boolean;
   subscription?: boolean;
+}
+export interface ExtendTransform {
+  typeDefs?: any;
+  resolvers?: any;
 }
 export interface FederationTransform {
   types?: FederationTransformType[];
@@ -1058,10 +1062,6 @@ export interface SnapshotTransformConfig {
    * This might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation.
    */
   respectSelectionSet?: boolean;
-}
-export interface ExtendTransform {
-  typeDefs?: any;
-  resolvers?: any;
 }
 export interface AdditionalStitchingResolverObject {
   type: string;

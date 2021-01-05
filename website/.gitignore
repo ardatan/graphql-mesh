@@ -21,3 +21,5 @@ yarn-error.log*
 
 
 docs/generated-markdown/
+docs/api
+api-sidebar.json

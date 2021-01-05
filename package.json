@@ -4,11 +4,12 @@
   "version": "0.2.15",
   "private": true,
   "scripts": {
-    "predeploy:website": "yarn generate-config-schema",
+    "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
     "deploy:website": "cd website && yarn deploy",
     "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/types/src",
     "prebuild": "yarn generate-config-schema",
     "build": "tsc --project tsconfig.build.json && bob build",
+    "build:api-docs": "node scripts/build-api-docs.js",
     "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
     "fix-bin": "node scripts/fix-bin.js",
     "copy-playground-html": "cp ./packages/cli/src/commands/serve/playground.html ./packages/cli/dist && cp -R ./packages/cli/src/commands/serve/public ./packages/cli/dist",
@@ -49,6 +50,8 @@
     "prettier": "2.2.1",
     "ts-jest": "26.4.4",
     "ts-node-dev": "1.1.1",
+    "typedoc": "0.20.12",
+    "typedoc-plugin-markdown": "3.2.1",
     "typescript": "4.1.3"
   },
   "husky": {

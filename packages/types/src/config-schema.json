@@ -263,6 +263,9 @@
           "$ref": "#/definitions/EncapsulateTransformObject",
           "description": "Transformer to apply encapsulation to the API source, by creating a field for it under the root query"
         },
+        "extend": {
+          "$ref": "#/definitions/ExtendTransform"
+        },
         "federation": {
           "$ref": "#/definitions/FederationTransform"
         },
@@ -304,9 +307,6 @@
         "snapshot": {
           "$ref": "#/definitions/SnapshotTransformConfig",
           "description": "Configuration for Snapshot extension"
-        },
-        "extend": {
-          "$ref": "#/definitions/ExtendTransform"
         }
       }
     },
@@ -1615,6 +1615,35 @@
         }
       }
     },
+    "ExtendTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ExtendTransform",
+      "properties": {
+        "typeDefs": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "resolvers": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
     "FederationTransform": {
       "additionalProperties": false,
       "type": "object",
@@ -1962,7 +1991,7 @@
         },
         "respectSelectionSet": {
           "type": "boolean",
-          "description": "Take snapshots by respecting the requested selection set.\nThis might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation. "
+          "description": "Take snapshots by respecting the requested selection set.\nThis might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation."
         }
       },
       "required": ["apply", "outputDir"]
@@ -1979,35 +2008,6 @@
         "infile": {
           "type": "string",
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
-        }
-      }
-    },
-    "ExtendTransform": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ExtendTransform",
-      "properties": {
-        "typeDefs": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "resolvers": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            }
-          ]
         }
       }
     }
