@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.8.3
+
+### Patch Changes
+
+- 08c2966e: chore(config): update js-yaml
+
 ## 0.8.2
 
 ### Patch Changes
