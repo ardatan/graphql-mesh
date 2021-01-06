@@ -58,7 +58,17 @@ export default class GraphQLHandler implements MeshHandler {
       });
     };
     let schema: GraphQLSchema;
-    const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
+    let schemaHeaders =
+      typeof this.config.schemaHeaders === 'string'
+        ? await loadFromModuleExportExpression(this.config.schemaHeaders)
+        : this.config.schemaHeaders;
+    if (typeof schemaHeaders === 'function') {
+      schemaHeaders = schemaHeaders();
+    }
+    if ('then' in schemaHeaders) {
+      schemaHeaders = await schemaHeaders;
+    }
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
     const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
       const { executor } = await getExecutorAndSubscriberForParams(
         params,
@@ -71,7 +81,7 @@ export default class GraphQLHandler implements MeshHandler {
       const result = await urlLoader.handleSDLAsync(this.config.introspection, {
         customFetch: customFetch as any,
         ...this.config,
-        headers: this.config.schemaHeaders,
+        headers: schemaHeaders,
       });
       schema = result.schema;
     } else if (this.config.cacheIntrospection) {

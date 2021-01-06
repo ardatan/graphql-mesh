@@ -471,9 +471,16 @@
           "description": "A url or file path to your remote GraphQL endpoint.\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
         },
         "schemaHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
         },
         "operationHeaders": {
           "type": "object",
