@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { useMeshSdk } from './mesh/useMeshSdk';
-import { GetDailyForecastByCoordinatesQuery } from './mesh/sdk';
+import { GetDailyForecastByCoordinatesQuery } from './mesh/sdk.generated';
 
 function App() {
   const [forecastData, setForecastData] = useState<GetDailyForecastByCoordinatesQuery['forecastData']>();
@@ -9,11 +9,13 @@ function App() {
   const sdk = useMeshSdk();
 
   useEffect(() => {
-      sdk?.getDailyForecastByCoordinates({
+    sdk
+      ?.getDailyForecastByCoordinates({
         lat: 41.01384,
-        lng:  28.94966,
+        lng: 28.94966,
         apiKey: '88dcfb1c31054b3b8841d753f3245da9',
-      }).then(({ forecastData }) => {
+      })
+      .then(({ forecastData }) => {
         setForecastData(forecastData);
       });
   }, [sdk]);
@@ -31,17 +33,16 @@ function App() {
             </tr>
           </thead>
           <tbody>
-          {forecastData?.data?.map(dailyData => (
-            <tr key={dailyData?.datetime}>
-              <td>{dailyData?.datetime}</td>
-              <td>{dailyData?.minTemp}</td>
-              <td>{dailyData?.maxTemp}</td>
-            </tr>
-          ))}
+            {forecastData?.data?.map(dailyData => (
+              <tr key={dailyData?.datetime}>
+                <td>{dailyData?.datetime}</td>
+                <td>{dailyData?.minTemp}</td>
+                <td>{dailyData?.maxTemp}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
-        <ul>
-        </ul>
+        <ul></ul>
       </header>
     </div>
   );

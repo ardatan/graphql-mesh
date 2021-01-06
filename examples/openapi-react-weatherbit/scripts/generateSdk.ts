@@ -10,9 +10,10 @@ async function main() {
   });
   const sdkCode = await generateSdk(mesh.schema, {
     operations: [join(process.cwd(), './mesh-operations/**/*.graphql')],
+    'flatten-types': true,
   });
   mesh.destroy();
-  writeFileSync(join(process.cwd(), './src/mesh/sdk.ts'), sdkCode, 'utf8');
+  writeFileSync(join(process.cwd(), './src/mesh/sdk.generated.ts'), sdkCode, 'utf8');
 }
 
 main().catch(error => {

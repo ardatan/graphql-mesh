@@ -1,6 +1,6 @@
 import { getMeshInstance } from './getMeshInstance';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
-import { getSdk, Sdk } from './sdk';
+import { getSdk, Sdk } from './sdk.generated';
 import { useEffect, useState } from 'react';
 
 export function useMeshSdk() {

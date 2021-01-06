@@ -1,19 +1,12 @@
-query getDailyForecastByCoordinates(
-  $lat: Float!,
-  $lng: Float!,
-  $apiKey: String!
-) {
-  forecastData: getForecastDailyLatLatLonLon(
-    lat: $lat, 
-    lon: $lng,
-  	key: $apiKey){
-    	cityName
-    	countryCode
-    	stateCode
-    	data{
-        datetime
-        minTemp
-        maxTemp
-      }
+query getDailyForecastByCoordinates($lat: Float!, $lng: Float!, $apiKey: String!) {
+  forecastData: getForecastDailyLatequalToLatLonLon(lat: $lat, lon: $lng, key: $apiKey) {
+    cityName
+    countryCode
+    stateCode
+    data {
+      datetime
+      minTemp
+      maxTemp
+    }
   }
 }
