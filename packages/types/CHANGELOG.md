@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.25.0
+
+### Minor Changes
+
+- 0df817d0: feat(graphql): support exported schemaHeaders
+
 ## 0.24.0
 
 ### Minor Changes
