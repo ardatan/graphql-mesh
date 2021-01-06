@@ -1,14 +1,14 @@
 {
   "name": "subscriptions-example",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "private": true,
   "scripts": {
     "start:api": "node api.js",
     "start:mesh": "mesh serve"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.15.5",
-    "@graphql-mesh/json-schema": "0.8.17",
+    "@graphql-mesh/cli": "0.15.6",
+    "@graphql-mesh/json-schema": "0.8.18",
     "graphql": "15.4.0",
     "body-parser": "1.19.0",
     "express": "4.17.1",

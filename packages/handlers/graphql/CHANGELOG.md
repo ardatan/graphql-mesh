@@ -1,5 +1,16 @@
 # @graphql-mesh/graphql
 
+## 0.12.0
+
+### Minor Changes
+
+- 0df817d0: feat(graphql): support exported schemaHeaders
+
+### Patch Changes
+
+- Updated dependencies [0df817d0]
+  - @graphql-mesh/types@0.25.0
+
 ## 0.11.3
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # openapi-stackexchange
 
+## 0.6.52
+
+### Patch Changes
+
+- @graphql-mesh/openapi@0.11.6
+- @graphql-mesh/cli@0.15.6
+
 ## 0.6.51
 
 ### Patch Changes
