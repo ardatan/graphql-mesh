@@ -37,7 +37,7 @@ export const getFileName = (filePath: string) => {
 
 export class JSONSchemaVisitor<TContext> {
   private cache: Map<string, string>;
-  private ajv: Ajv.Ajv;
+  private ajv: Ajv;
   constructor(
     private schemaComposer: SchemaComposer<TContext>,
     private isInput: boolean,
@@ -45,13 +45,9 @@ export class JSONSchemaVisitor<TContext> {
     private disableTimestamp = false
   ) {
     this.ajv = new Ajv({
-      schemaId: 'auto',
-      missingRefs: 'ignore',
+      strict: false,
       logger: false,
     });
-    // Settings for draft-04
-    const metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
-    this.ajv.addMetaSchema(metaSchema);
     this.cache = new Map();
   }
 
@@ -484,6 +480,8 @@ export class JSONSchemaVisitor<TContext> {
         }
         for (const typeName of types) {
           const typeDef = this.schemaComposer.getAnyTC(typeName);
+          const jsonSchema = typeDef.getExtension('objectDef');
+          jsonSchema.$schema = undefined;
           const isValid = this.ajv.validate(typeDef.getExtension('objectDef'), root);
           if (isValid) {
             return typeName;
