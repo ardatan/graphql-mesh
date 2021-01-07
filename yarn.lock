@@ -2480,7 +2480,21 @@
     "@graphql-tools/utils" "^7.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/stitch@7.1.6", "@graphql-tools/stitch@^7.0.1":
+"@graphql-tools/stitch@7.1.7":
+  version "7.1.7"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-7.1.7.tgz#09eba74fbbbaa3866ff86a84313ed40c0e40a4d8"
+  integrity sha512-LKGENRCypspDJa9ZMi3mS6nkVpM2Vb9V1pft0zweVtkEdFFpTm6ugWya0VA3HaBhggJkkQ1pK7je/eImruQLgw==
+  dependencies:
+    "@graphql-tools/batch-delegate" "^7.0.0"
+    "@graphql-tools/delegate" "^7.0.8"
+    "@graphql-tools/merge" "^6.2.6"
+    "@graphql-tools/schema" "^7.1.2"
+    "@graphql-tools/utils" "^7.1.6"
+    "@graphql-tools/wrap" "^7.0.3"
+    is-promise "4.0.0"
+    tslib "~2.1.0"
+
+"@graphql-tools/stitch@^7.0.1":
   version "7.1.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-7.1.6.tgz#2577420785b2ccf18bf154ab2278f1b50003a1fd"
   integrity sha512-aRdzvEV84LiIn+SmTpba587QClHyO69akX6MPgLuTOCz51kDtXpewMFE0aHf6KgCIykn51XprG5uySq7EbPaBA==
@@ -20117,6 +20131,11 @@ tslib@^2.0.1, tslib@^2.0.3, tslib@~2.0.1, tslib@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
   integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==
+
+tslib@~2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
+  integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
 
 tsutils@^3.17.1:
   version "3.17.1"
