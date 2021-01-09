@@ -10386,10 +10386,10 @@ graphql-fields@2.0.3:
   resolved "https://registry.yarnpkg.com/graphql-fields/-/graphql-fields-2.0.3.tgz#5e68dff7afbb202be4f4f40623e983b22c96ab8f"
   integrity sha512-x3VE5lUcR4XCOxPIqaO4CE+bTK8u6gVouOdpQX9+EKHr+scqtK5Pp/l8nIGqIpN1TUlkKE6jDCCycm/WtLRAwA==
 
-graphql-helix@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.2.1.tgz#b0c9255fbf05fe84a2b8a0c33053d625a6c4dc53"
-  integrity sha512-pnlXKSW6qrU/SLfKHvoWicYsmTk2IDjANv/Kdq9kDpT3e0Ajl+fdG+xmNhpjieHPzoOry97CBS2/2qT3qspcsQ==
+graphql-helix@1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.2.3.tgz#eaad4db338e2cdf6f5799478d1b05125ff19cd04"
+  integrity sha512-psBs23Md/Nt0qsNOv5K+MqqsJ09lTyYtoujGAlFuE1+twUBQiKyanOYk3cqs9BtnJ7JsS+JlsS2/0ceE+20RCA==
 
 graphql-iso-date@^3.6.0:
   version "3.6.1"
