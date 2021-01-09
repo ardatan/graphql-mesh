@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.12.1
+
+### Patch Changes
+
+- d4ed4e89: fix(graphql): schemaHeaders bug
+
 ## 0.12.0
 
 ### Minor Changes
