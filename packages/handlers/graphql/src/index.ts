@@ -65,10 +65,10 @@ export default class GraphQLHandler implements MeshHandler {
     if (typeof schemaHeaders === 'function') {
       schemaHeaders = schemaHeaders();
     }
-    if ('then' in schemaHeaders) {
+    if (schemaHeaders && 'then' in schemaHeaders) {
       schemaHeaders = await schemaHeaders;
     }
-    const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
     const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
       const { executor } = await getExecutorAndSubscriberForParams(
         params,
