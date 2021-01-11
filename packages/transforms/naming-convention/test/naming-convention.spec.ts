@@ -1,7 +1,7 @@
 import NamingConventionTransform from '../src/index';
 import { buildSchema, printSchema, GraphQLObjectType, GraphQLEnumType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/utils';
 import { PubSub } from 'graphql-subscriptions';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';

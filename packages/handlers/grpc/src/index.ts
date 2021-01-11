@@ -1,5 +1,4 @@
-import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
-import { withCancel } from '@graphql-mesh/utils';
+import { withCancel, MeshHandler, YamlConfig } from '@graphql-mesh/utils';
 import {
   ChannelCredentials,
   ClientReadableStream,
@@ -24,7 +23,6 @@ import {
   addMetaDataToCall,
   createEnum,
   createInputOutput,
-  getBuffer,
   getTypeName,
 } from './utils';
 
@@ -37,26 +35,26 @@ interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable
   cancel(): void;
 }
 
-export default class GrpcHandler implements MeshHandler {
-  private config: YamlConfig.GrpcHandler;
-  private cache: KeyValueCache;
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
-    if (!config) {
-      throw new Error('Config not specified!');
+export default class GrpcHandler extends MeshHandler<YamlConfig.GrpcHandler> {
+  private async getBuffer(path: string) {
+    if (path) {
+      const result = await this.readFileOrUrl<string>(path, {
+        allowUnknownExtensions: true,
+      });
+      return Buffer.from(result);
     }
-    this.config = config;
-    this.cache = cache;
+    return undefined;
   }
 
   async getMeshSource() {
     let creds: ChannelCredentials;
     if (this.config.credentialsSsl) {
       const sslFiles = [
-        getBuffer(this.config.credentialsSsl.privateKey, this.cache),
-        getBuffer(this.config.credentialsSsl.certChain, this.cache),
+        this.getBuffer(this.config.credentialsSsl.privateKey),
+        this.getBuffer(this.config.credentialsSsl.certChain),
       ];
       if (this.config.credentialsSsl.rootCA !== 'rootCA') {
-        sslFiles.unshift(getBuffer(this.config.credentialsSsl.rootCA, this.cache));
+        sslFiles.unshift(this.getBuffer(this.config.credentialsSsl.rootCA));
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
       creds = credentials.createSsl(rootCA, privateKey, certChain);
@@ -188,7 +186,10 @@ export default class GrpcHandler implements MeshHandler {
             } else {
               const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
               const identifier = methodName.toLowerCase();
-              const rootTC = (identifier.startsWith('get') || identifier.startsWith('list')) ? schemaComposer.Query : schemaComposer.Mutation;
+              const rootTC =
+                identifier.startsWith('get') || identifier.startsWith('list')
+                  ? schemaComposer.Query
+                  : schemaComposer.Mutation;
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,

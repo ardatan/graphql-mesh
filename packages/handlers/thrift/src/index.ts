@@ -1,6 +1,5 @@
-import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, ThriftErrors, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
-import { readFileOrUrlWithCache, parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
+import { MeshHandler, YamlConfig, parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import {
   GraphQLEnumType,
@@ -38,19 +37,11 @@ import {
 } from '@creditkarma/thrift-server-core';
 import { pascalCase } from 'pascal-case';
 
-export default class ThriftHandler implements MeshHandler {
-  config: YamlConfig.ThriftHandler;
-  cache: KeyValueCache;
-
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.ThriftHandler>) {
-    this.config = config;
-    this.cache = cache;
-  }
-
+export default class ThriftHandler extends MeshHandler<YamlConfig.ThriftHandler> {
   async getMeshSource() {
     const { schemaHeaders, serviceName, operationHeaders } = this.config;
 
-    const rawThrift = await readFileOrUrlWithCache<string>(this.config.idl, this.cache, {
+    const rawThrift = await this.readFileOrUrl<string>(this.config.idl, {
       allowUnknownExtensions: true,
       headers: schemaHeaders,
     });

@@ -1,5 +1,3 @@
-import { KeyValueCache } from '@graphql-mesh/types';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { pathExistsSync } from 'fs-extra';
 import { GraphQLEnumTypeConfig } from 'graphql';
@@ -70,16 +68,6 @@ export function addMetaDataToCall(
     return call(input, meta);
   }
   return call(input);
-}
-
-export async function getBuffer(path: string, cache: KeyValueCache): Promise<Buffer> {
-  if (path) {
-    const result = await readFileOrUrlWithCache<string>(path, cache, {
-      allowUnknownExtensions: true,
-    });
-    return Buffer.from(result);
-  }
-  return undefined;
 }
 
 export function getTypeName(

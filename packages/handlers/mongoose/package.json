@@ -18,7 +18,6 @@
     "mongoose": "5.11.10"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.24.0",
     "@graphql-mesh/utils": "0.8.3",
     "camel-case": "4.1.2",
     "graphql-compose": "7.23.0",

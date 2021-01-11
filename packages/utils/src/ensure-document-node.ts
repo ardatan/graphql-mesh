@@ -1,5 +1,5 @@
 import { parse } from 'graphql';
-import { GraphQLOperation } from '@graphql-mesh/types';
+import { GraphQLOperation } from '@graphql-mesh/utils';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 export function ensureDocumentNode<TData = any, TVariables = any>(

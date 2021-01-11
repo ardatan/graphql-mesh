@@ -1,5 +1,6 @@
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
+  FetchFn,
   getJsonSchema,
   MergerFn,
   MeshHandlerLibrary,
@@ -7,11 +8,12 @@ import {
   MeshTransform,
   MeshTransformLibrary,
   YamlConfig,
-} from '@graphql-mesh/types';
+  KeyValueCache,
+  MeshHandlerContext,
+} from '@graphql-mesh/utils';
 import { IResolvers } from '@graphql-tools/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { KeyValueCache } from 'fetchache';
 import { DocumentNode } from 'graphql';
 import {
   getHandler,
@@ -19,6 +21,7 @@ import {
   resolveAdditionalResolvers,
   resolveAdditionalTypeDefs,
   resolveCache,
+  resolveFetch,
   resolveMerger,
   resolvePubSub,
 } from './utils';
@@ -64,6 +67,7 @@ export type ProcessedConfig = {
   merger: MergerFn;
   mergerType: string;
   pubsub: MeshPubSub;
+  fetch: FetchFn;
   config: YamlConfig.Config;
 };
 
@@ -77,6 +81,13 @@ export async function processConfig(
 
   const cache = await resolveCache(config.cache, importFn);
   const pubsub = await resolvePubSub(config.pubsub, importFn);
+  const fetch = await resolveFetch(config.fetch, cache, importFn);
+
+  const handlerContext: MeshHandlerContext = {
+    cache,
+    pubsub,
+    fetch,
+  };
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
     Promise.all(
@@ -107,14 +118,10 @@ export async function processConfig(
 
         const HandlerCtor: MeshHandlerLibrary = handlerLibrary;
 
+        const handler = new HandlerCtor(source.name, handlerConfig);
         return {
           name: source.name,
-          handler: new HandlerCtor({
-            name: source.name,
-            cache,
-            pubsub,
-            config: handlerConfig,
-          }),
+          handler,
           transforms,
         };
       })
@@ -155,6 +162,7 @@ export async function processConfig(
     merger,
     mergerType: config.merger,
     pubsub,
+    fetch,
     config,
   };
 }

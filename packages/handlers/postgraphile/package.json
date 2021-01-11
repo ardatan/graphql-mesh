@@ -13,7 +13,6 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.24.0",
     "@graphql-mesh/utils": "0.8.3",
     "fs-extra": "9.0.1",
     "postgraphile-core": "4.10.0",

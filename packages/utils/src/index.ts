@@ -1,4 +1,4 @@
-export * from './read-file-or-url';
+export * from './MeshHandlerLibrary';
 export * from './string-interpolator';
 export * from './load-from-module-export-expression';
 export * from './resolver-data-factory';
@@ -7,3 +7,6 @@ export * from './extract-resolvers';
 export * from './ensure-document-node';
 export * from './group-transforms';
 export * from './apply-transforms';
+export * from './types';
+export * as YamlConfig from './config';
+export { Request, Response } from 'fetchache';

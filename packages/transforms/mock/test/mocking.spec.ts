@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { YamlConfig, MeshPubSub } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub } from '@graphql-mesh/utils';
 import { graphql } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { PubSub } from 'graphql-subscriptions';

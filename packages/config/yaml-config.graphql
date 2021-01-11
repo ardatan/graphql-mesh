@@ -28,6 +28,10 @@ type Query {
   PubSub Implementation
   """
   pubsub: PubSub
+  """
+  Custom W3 Compatible Fetch Implementation
+  """
+  fetch: Any
 }
 
 scalar JSON

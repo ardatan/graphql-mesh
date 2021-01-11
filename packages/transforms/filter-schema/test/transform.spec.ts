@@ -2,7 +2,7 @@ import { buildSchema, printSchema } from 'graphql';
 import FilterSchemaTransform from '../src';
 import { PubSub } from 'graphql-subscriptions';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('filter', () => {

@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLObjectType, GraphQLID, isNonNullType, GraphQLNonNull } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { MeshTransform, YamlConfig, MeshTransformOptions , loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+
 import { transformSchemaFederation, FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { get, set } from 'lodash';
 

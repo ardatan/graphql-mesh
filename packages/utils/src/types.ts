@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { IResolvers } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
-import * as YamlConfig from './config';
-import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
+import { fetch, KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Executor, Subscriber, Transform } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
-
-export { YamlConfig };
+import { MeshHandler } from './MeshHandlerLibrary';
 
 export function getJsonSchema() {
   return require('./config-schema.json');
@@ -21,20 +19,16 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
   batch?: boolean;
 };
 
-export type GetMeshSourceOptions<THandlerConfig> = {
-  name: string;
-  pubsub: MeshPubSub;
-  config: THandlerConfig;
-  cache: KeyValueCache;
-};
+export type FetchFn = typeof fetch;
 
-// Handlers
-export interface MeshHandler<TContext = any> {
-  getMeshSource: () => Promise<MeshSource<TContext>>;
+export interface MeshHandlerContext {
+  pubsub: MeshPubSub;
+  cache: KeyValueCache;
+  fetch: FetchFn;
 }
 
-export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
-  new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
+export interface MeshHandlerLibrary<THandlerConfig = any, TContext = any> {
+  new (name: string, config: THandlerConfig): MeshHandler<TContext>;
 }
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any> = {

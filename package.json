@@ -6,11 +6,11 @@
   "scripts": {
     "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
     "deploy:website": "cd website && yarn deploy",
-    "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/types/src",
+    "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/utils/src/config-schema.json --typings ./packages/utils/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/utils/src",
     "prebuild": "yarn generate-config-schema",
     "build": "tsc --project tsconfig.build.json && bob build",
     "build:api-docs": "node scripts/build-api-docs.js",
-    "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
+    "copy-config-schema": "cp ./packages/utils/src/config-schema.json ./packages/utils/dist/",
     "fix-bin": "node scripts/fix-bin.js",
     "copy-playground-html": "cp ./packages/cli/src/commands/serve/playground.html ./packages/cli/dist && cp -R ./packages/cli/src/commands/serve/public ./packages/cli/dist",
     "copy-fhir-schema": "cp ./packages/handlers/fhir/src/fhir.schema.json ./packages/handlers/fhir/dist",

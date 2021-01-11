@@ -13,7 +13,6 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.24.0",
     "@graphql-mesh/utils": "0.8.3",
     "@graphql-tools/wrap": "7.0.5",
     "@graphql-tools/delegate": "7.0.8",

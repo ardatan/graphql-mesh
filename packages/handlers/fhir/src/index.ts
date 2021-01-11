@@ -1,13 +1,13 @@
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
-import { GetMeshSourceOptions, YamlConfig } from '@graphql-mesh/types';
+import { YamlConfig } from '@graphql-mesh/utils';
 import { join } from 'path';
-import { fetchache, Request } from 'fetchache';
 import urljoin from 'url-join';
 
 const fhirSchema = require('./fhir.schema.json');
 
 export default class FhirHandler extends JsonSchemaHandler {
-  constructor(options: GetMeshSourceOptions<YamlConfig.FhirHandler>) {
+  private endpoint: string;
+  constructor(name: string, config: YamlConfig.FhirHandler) {
     const operations: YamlConfig.JsonSchemaOperation[] = [
       {
         type: 'Query' as any,
@@ -36,14 +36,12 @@ export default class FhirHandler extends JsonSchemaHandler {
         });
       }
     });
-    super({
-      ...options,
-      config: {
-        baseUrl: options.config.endpoint,
-        baseSchema: join(__dirname, './fhir.schema.json'),
-        operations,
-      },
+    super(name, {
+      baseUrl: config.endpoint,
+      baseSchema: join(__dirname, './fhir.schema.json'),
+      operations,
     });
+    this.endpoint = config.endpoint;
   }
 
   async getMeshSource(): Promise<any> {
@@ -54,14 +52,16 @@ export default class FhirHandler extends JsonSchemaHandler {
         type: 'ResourceList',
         resolve: async ({ reference }: any) => {
           const [type, id] = reference.split('/');
-          const request = new Request(urljoin(this.config.baseUrl, `/${type}/${id}?_format=application/json`), {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          });
-          const response = await fetchache(request, this.cache);
+          const response = await this.handlerContext.fetch(
+            urljoin(this.endpoint, `/${type}/${id}?_format=application/json`),
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+            }
+          );
           return response.json();
         },
       },

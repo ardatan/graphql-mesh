@@ -1,4 +1,4 @@
-import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
+import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/utils';
 import Redis, { RedisOptions } from 'ioredis';
 import DataLoader from 'dataloader';
 

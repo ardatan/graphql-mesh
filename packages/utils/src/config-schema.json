@@ -493,18 +493,6 @@
           "type": "boolean",
           "description": "Use Server Sent Events instead of WebSocket for Subscriptions"
         },
-        "customFetch": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Path to a custom W3 Compatible Fetch Implementation"
-        },
         "webSocketImpl": {
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
@@ -1370,9 +1358,16 @@
           "description": "An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema."
         },
         "pool": {
-          "type": "object",
-          "properties": {},
-          "description": "Connection Pool settings"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Connection Pool settings or path to exported Connection Pool instance"
         },
         "appendPlugins": {
           "type": "array",
@@ -2084,6 +2079,18 @@
           "$ref": "#/definitions/PubSubConfig"
         }
       ]
+    },
+    "fetch": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Custom W3 Compatible Fetch Implementation"
     }
   },
   "additionalProperties": false

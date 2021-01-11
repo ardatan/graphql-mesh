@@ -1,11 +1,10 @@
-import { MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
 import { printSchema, graphql } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { addMock, resetMocks, Response } from 'fetchache';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { PubSub } from 'graphql-subscriptions';
 import ODataHandler from '../src';
+import { fetchache, addMock, resetMocks, Request, Response } from 'fetchache';
 declare module 'fetchache' {
   type FetchMockFn = (request: Request) => Promise<Response>;
   function addMock(url: string, mockFn: FetchMockFn): void;
@@ -17,26 +16,24 @@ const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/ru
 const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip.json'), 'utf-8'));
 
 describe('odata', () => {
-  let pubsub: MeshPubSub;
-  let cache: KeyValueCache;
+  let handler: ODataHandler;
   beforeEach(() => {
-    pubsub = new PubSub();
-    cache = new InMemoryLRUCache();
+    handler = new ODataHandler('TripPin', {
+      baseUrl: 'https://services.odata.org/TripPinRESTierService',
+    });
+    const cache = new InMemoryLRUCache();
+    handler.setHandlerContext({
+      pubsub: new PubSub(),
+      cache,
+      fetch: (...args: any[]) => fetchache(args[0] instanceof Request ? args[0] : new Request(args[0], args[1]), cache),
+    });
     resetMocks();
   });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
     const source = await handler.getMeshSource();
-
-    expect(printSchema(source.schema)).toMatchSnapshot();
+    const schema = source.schema;
+    expect(printSchema(schema)).toMatchSnapshot();
   });
   it('should generate correct HTTP request for requesting an EntitySet', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -47,18 +44,12 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify({ value: [PersonMockData] }));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         {
           People {
@@ -67,7 +58,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -83,18 +74,12 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(PersonMockData));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         {
           PeopleByUserName(UserName: "SOMEID") {
@@ -103,7 +88,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -128,18 +113,12 @@ describe('odata', () => {
         })
       );
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         {
           AirportsByIcaoCode(IcaoCode: "KSFO") {
@@ -150,7 +129,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -166,18 +145,12 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify({ value: [PersonMockData] }));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         {
           People(queryOptions: { filter: "FirstName eq 'Scott'" }) {
@@ -186,7 +159,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -202,24 +175,18 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(20));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         {
           PeopleCount
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -256,18 +223,12 @@ describe('odata', () => {
       bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new Response(JSON.stringify(bodyObj));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       variableValues: {
         input: correctBody,
       },
@@ -278,7 +239,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -295,24 +256,18 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify({}));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         mutation {
           deletePeopleByUserName(UserName: "SOMEID")
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -334,18 +289,12 @@ describe('odata', () => {
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new Response(JSON.stringify(returnBody));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       variableValues: {
         UserName: 'SOMEID',
         input: correctBody,
@@ -357,7 +306,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -380,18 +329,12 @@ describe('odata', () => {
         })
       );
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         {
           GetNearestAirport(lat: 33, lon: -118) {
@@ -400,7 +343,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -429,18 +372,12 @@ describe('odata', () => {
         })
       );
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         {
           PeopleByUserName(UserName: "russellwhyte") {
@@ -454,7 +391,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -470,24 +407,18 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(true));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         mutation {
           ResetDataSource
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -510,18 +441,12 @@ describe('odata', () => {
       sentRequest = request;
       return new Response(JSON.stringify(true));
     });
-    const handler = new ODataHandler({
-      name: 'TripPin',
-      config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-      },
-      pubsub,
-      cache,
-    });
-    const source = await handler.getMeshSource();
 
+    const source = await handler.getMeshSource();
+    const schema = source.schema;
+    const contextValue = await source.contextBuilder({});
     const graphqlResult = await graphql({
-      schema: source.schema,
+      schema,
       source: /* GraphQL */ `
         mutation {
           PeopleByUserName(UserName: "russellwhyte") {
@@ -529,7 +454,7 @@ describe('odata', () => {
           }
         }
       `,
-      contextValue: await source.contextBuilder({}),
+      contextValue,
     });
 
     expect(graphqlResult.errors).toBeFalsy();

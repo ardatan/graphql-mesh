@@ -1,9 +1,9 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig, MeshTransformOptions , applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { WrapType } from '@graphql-tools/wrap';
 import { ExecutionResult, Request } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+
 
 const DEFUALT_APPLY_TO = {
   query: true,

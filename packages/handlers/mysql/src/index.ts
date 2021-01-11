@@ -1,4 +1,3 @@
-import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -15,7 +14,7 @@ import {
   GraphQLTime,
 } from 'graphql-scalars';
 import { execute } from 'graphql';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { MeshHandler, MeshSource, YamlConfig, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -100,15 +99,7 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
-export default class MySQLHandler implements MeshHandler {
-  config: YamlConfig.MySQLHandler;
-  pubsub: MeshPubSub;
-
-  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
-    this.config = config;
-    this.pubsub = pubsub;
-  }
-
+export default class MySQLHandler extends MeshHandler<YamlConfig.MySQLHandler> {
   async getMeshSource(): Promise<MeshSource> {
     const schemaComposer = new SchemaComposer<MysqlContext>();
     const pool: Pool = this.config.pool
@@ -385,7 +376,7 @@ export default class MySQLHandler implements MeshHandler {
         });
       })
     );
-    this.pubsub.subscribe('destroy', () => pool.end());
+    this.handlerContext.pubsub.subscribe('destroy', () => pool.end());
 
     const schema = schemaComposer.buildSchema();
 

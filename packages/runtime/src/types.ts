@@ -6,7 +6,8 @@ import {
   GraphQLOperation,
   MeshHandler,
   MeshTransform,
-} from '@graphql-mesh/types';
+  FetchFn,
+} from '@graphql-mesh/utils';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
@@ -18,6 +19,7 @@ export type GetMeshOptions = {
   additionalResolvers?: IResolvers;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  fetch: FetchFn;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
 };

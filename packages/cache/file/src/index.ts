@@ -1,4 +1,4 @@
-import { KeyValueCache } from '@graphql-mesh/types';
+import { KeyValueCache } from '@graphql-mesh/utils';
 import { isAbsolute, join } from 'path';
 import { cwd } from 'process';
 import { get, set } from 'lodash';

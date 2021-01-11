@@ -1,9 +1,8 @@
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import { SchemaComposer } from 'graphql-compose';
-import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { camelCase } from 'camel-case';
 import mongoose from 'mongoose';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/utils';
 
 const modelQueryOperations = ['findById', 'findByIds', 'findOne', 'findMany', 'count', 'connection', 'pagination'];
 
@@ -18,15 +17,7 @@ const modelMutationOperations = [
   'removeMany',
 ];
 
-export default class MongooseHandler implements MeshHandler {
-  private config: YamlConfig.MongooseHandler;
-  private pubsub: MeshPubSub;
-
-  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
-    this.config = config;
-    this.pubsub = pubsub;
-  }
-
+export default class MongooseHandler extends MeshHandler<YamlConfig.MongooseHandler> {
   async getMeshSource(): Promise<MeshSource> {
     if (this.config.connectionString) {
       mongoose
@@ -36,7 +27,7 @@ export default class MongooseHandler implements MeshHandler {
         })
         .catch(e => console.error(e));
 
-      this.pubsub.subscribe('destroy', () => mongoose.disconnect());
+      this.handlerContext.pubsub.subscribe('destroy', () => mongoose.disconnect());
     }
 
     const schemaComposer = new SchemaComposer();

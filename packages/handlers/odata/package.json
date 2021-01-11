@@ -17,7 +17,6 @@
     "@types/url-join": "4.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.24.0",
     "@graphql-mesh/utils": "0.8.3",
     "@graphql-tools/utils": "7.2.3",
     "http-string-parser": "0.0.6",

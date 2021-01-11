@@ -16,7 +16,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.24.0",
+    "@graphql-mesh/utils": "0.8.3",
     "tuql": "1.7.0"
   },
   "publishConfig": {

@@ -1,5 +1,5 @@
 import LRUCache from 'lru-cache';
-import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
+import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/utils';
 
 // Based on https://github.com/apollographql/apollo-server/blob/master/packages/apollo-datasource-rest/src/HTTPCache.ts
 

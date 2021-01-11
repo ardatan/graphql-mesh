@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig, MeshTransformOptions , applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import {
   RenameTypes,
   RenameObjectFields,
@@ -9,7 +9,7 @@ import {
 } from '@graphql-tools/wrap';
 import { ExecutionResult, Request } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+
 
 export default class RenameTransform implements MeshTransform {
   private transforms: Transform[] = [];

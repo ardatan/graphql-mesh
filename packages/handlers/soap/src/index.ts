@@ -1,20 +1,10 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
+import { MeshHandler, YamlConfig } from '@graphql-mesh/utils';
 import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
 import { WSSecurityCert } from 'soap';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { Request, fetchache } from 'fetchache';
 
 type AnyFn = (...args: any[]) => any;
 
-export default class SoapHandler implements MeshHandler {
-  config: YamlConfig.SoapHandler;
-  cache: KeyValueCache;
-
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
-    this.config = config;
-    this.cache = cache;
-  }
-
+export default class SoapHandler extends MeshHandler<YamlConfig.SoapHandler> {
   async getMeshSource() {
     const soapClient = await createSoapClient(this.config.wsdl, {
       basicAuth: this.config.basicAuth,
@@ -22,12 +12,11 @@ export default class SoapHandler implements MeshHandler {
         request: ((requestObj: any, callback: AnyFn) => {
           let _request: any = null;
           const sendRequest = async () => {
-            const req = new Request(requestObj.uri.href, {
+            const res = await this.handlerContext.fetch(requestObj.uri.href, {
               headers: requestObj.headers,
               method: requestObj.method,
               body: requestObj.body,
             });
-            const res = await fetchache(req, this.cache);
             // eslint-disable-next-line dot-notation
             _request = res.body;
             const body = await res.text();
@@ -56,17 +45,17 @@ export default class SoapHandler implements MeshHandler {
       const [privateKey, publicKey, password] = await Promise.all([
         securityCertConfig.privateKey ||
           (securityCertConfig.privateKeyPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.privateKeyPath, this.cache, {
+            this.readFileOrUrl<string>(securityCertConfig.privateKeyPath, {
               allowUnknownExtensions: true,
             })),
         securityCertConfig.publicKey ||
           (securityCertConfig.publicKeyPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.publicKeyPath, this.cache, {
+            this.readFileOrUrl<string>(securityCertConfig.publicKeyPath, {
               allowUnknownExtensions: true,
             })),
         securityCertConfig.password ||
           (securityCertConfig.passwordPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.passwordPath, this.cache, {
+            this.readFileOrUrl<string>(securityCertConfig.passwordPath, {
               allowUnknownExtensions: true,
             })),
       ]);

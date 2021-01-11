@@ -4,7 +4,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql, GraphQLResolveInfo } from 'graphql';
 import { readJSON, remove, mkdir } from 'fs-extra';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/utils';
 import { PubSub } from 'graphql-subscriptions';
 import { join } from 'path';
 import { tmpdir } from 'os';

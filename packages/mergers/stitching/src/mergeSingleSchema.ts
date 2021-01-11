@@ -1,8 +1,8 @@
-import { MergerFn, MeshTransform } from '@graphql-mesh/types';
+import { MergerFn, MeshTransform , groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { extendSchema } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+
 
 export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) => {
   if (rawSources.length !== 1) {

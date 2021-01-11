@@ -1,9 +1,7 @@
-import { GetMeshSourceOptions, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { JSONSchemaVisitor, getFileName } from './json-schema-visitor';
 import urlJoin from 'url-join';
-import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings, isUrl } from '@graphql-mesh/utils';
+import { stringInterpolator, parseInterpolationStrings, MeshHandler, YamlConfig } from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
-import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { ObjectTypeComposerFieldConfigDefinition, SchemaComposer } from 'graphql-compose';
 import { pathExists, stat, writeJSON } from 'fs-extra';
@@ -27,16 +25,7 @@ type CachedSchema = {
   schema: any;
 };
 
-export default class JsonSchemaHandler implements MeshHandler {
-  public config: YamlConfig.JsonSchemaHandler;
-  public cache: KeyValueCache<any>;
-  public pubsub: MeshPubSub;
-  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
-    this.config = config;
-    this.cache = cache;
-    this.pubsub = pubsub;
-  }
-
+export default class JsonSchemaHandler extends MeshHandler<YamlConfig.JsonSchemaHandler> {
   public schemaComposer = new SchemaComposer();
 
   async getMeshSource() {
@@ -76,7 +65,7 @@ export default class JsonSchemaHandler implements MeshHandler {
 
     if (this.config.baseSchema) {
       const basedFilePath = this.config.baseSchema;
-      const baseSchema = await readFileOrUrlWithCache(basedFilePath, this.cache, {
+      const baseSchema = await this.readFileOrUrl(basedFilePath, {
         headers: this.config.schemaHeaders,
       });
       externalFileCache.set(basedFilePath, baseSchema);
@@ -115,12 +104,12 @@ export default class JsonSchemaHandler implements MeshHandler {
       [requestSchema, responseSchema] = await Promise.all([
         requestSchema ||
           (operationConfig.requestSchema &&
-            readFileOrUrlWithCache(operationConfig.requestSchema, this.cache, {
+            this.readFileOrUrl(operationConfig.requestSchema, {
               headers: this.config.schemaHeaders,
             })),
         responseSchema ||
           (operationConfig.responseSchema &&
-            readFileOrUrlWithCache(operationConfig.responseSchema, this.cache, {
+            this.readFileOrUrl(operationConfig.responseSchema, {
               headers: this.config.schemaHeaders,
             })),
       ]);
@@ -187,7 +176,7 @@ export default class JsonSchemaHandler implements MeshHandler {
         fieldConfig.subscribe = (root, args, context, info) => {
           const interpolationData = { root, args, context, info };
           const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
-          return this.pubsub.asyncIterator(pubsubTopic);
+          return this.handlerContext.pubsub.asyncIterator(pubsubTopic);
         };
         fieldConfig.resolve = root => root;
       } else {
@@ -228,8 +217,7 @@ export default class JsonSchemaHandler implements MeshHandler {
                 throw new Error(`Unknown method ${operationConfig.method}`);
             }
           }
-          const request = new Request(urlObj.toString(), requestInit);
-          const response = await fetchache(request, this.cache);
+          const response = await this.handlerContext.fetch(urlObj.toString(), requestInit);
           const responseText = await response.text();
           let responseJson: any;
           try {
@@ -265,7 +253,7 @@ export default class JsonSchemaHandler implements MeshHandler {
   }
 
   private async isGeneratedJSONSchemaValid({ samplePath, schemaPath }: { samplePath: string; schemaPath?: string }) {
-    if (schemaPath || (!isUrl(schemaPath) && (await pathExists(schemaPath)))) {
+    if (schemaPath || (!this.isUrl(schemaPath) && (await pathExists(schemaPath)))) {
       const [schemaFileStat, sampleFileStat] = await Promise.all([stat(schemaPath), stat(samplePath)]);
       if (schemaFileStat.mtime > sampleFileStat.mtime) {
         return true;
@@ -275,13 +263,14 @@ export default class JsonSchemaHandler implements MeshHandler {
   }
 
   private async getValidCachedJSONSchema(samplePath: string) {
-    const cachedSchema: CachedSchema = await this.cache.get(samplePath);
+    const cachedSchemaStr = await this.handlerContext.cache.get(samplePath);
+    const cachedSchema: CachedSchema = JSON.parse(cachedSchemaStr);
     if (cachedSchema) {
       const sampleFileStat = await stat(samplePath);
       if (cachedSchema.timestamp > sampleFileStat.mtime.getTime()) {
         return cachedSchema.schema;
       } else {
-        this.cache.delete(samplePath);
+        this.handlerContext.cache.delete(samplePath);
       }
     }
     return null;
@@ -293,7 +282,7 @@ export default class JsonSchemaHandler implements MeshHandler {
       if (cachedSample) {
         return cachedSample;
       }
-      const sample = await readFileOrUrlWithCache(samplePath, this.cache);
+      const sample = await this.readFileOrUrl(samplePath);
       const schema = toJsonSchema(sample, {
         required: false,
         objects: {
@@ -313,7 +302,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           timestamp: Date.now(),
           schema,
         };
-        this.cache.set(samplePath, cachedSchema);
+        this.handlerContext.cache.set(samplePath, JSON.stringify(cachedSchema));
       }
       return schema;
     }

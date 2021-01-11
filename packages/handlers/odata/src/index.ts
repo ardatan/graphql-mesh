@@ -1,7 +1,13 @@
 /* eslint-disable prefer-const */
-import { YamlConfig, ResolverData, MeshHandler, GetMeshSourceOptions, MeshSource } from '@graphql-mesh/types';
-import { parseInterpolationStrings, getInterpolatedHeadersFactory, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { fetchache, KeyValueCache, Request, Response } from 'fetchache';
+import {
+  parseInterpolationStrings,
+  getInterpolatedHeadersFactory,
+  YamlConfig,
+  ResolverData,
+  MeshHandler,
+  MeshSource,
+} from '@graphql-mesh/utils';
+import { Request, Response } from 'fetchache';
 import urljoin from 'url-join';
 import {
   SchemaComposer,
@@ -95,21 +101,12 @@ const queryOptionsFields = {
   },
 };
 
-export default class ODataHandler implements MeshHandler {
-  private name: string;
-  private config: YamlConfig.ODataHandler;
-  private cache: KeyValueCache;
+export default class ODataHandler extends MeshHandler<YamlConfig.ODataHandler> {
   private eventEmitterSet = new Set<EventEmitter>();
-
-  constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
-    this.name = name;
-    this.config = config;
-    this.cache = cache;
-  }
 
   async getMeshSource(): Promise<MeshSource> {
     const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
-    const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
+    const metadataText = await this.readFileOrUrl<string>(this.config.metadata || metadataUrl, {
       headers: this.config.schemaHeaders,
       allowUnknownExtensions: true,
     });
@@ -462,7 +459,7 @@ export default class ODataHandler implements MeshHandler {
               }),
               headers: batchHeaders,
             });
-            const batchResponse = await fetchache(batchRequest, this.cache);
+            const batchResponse = await this.handlerContext.fetch(batchRequest);
             const batchResponseText = await batchResponse.text();
             const batchResponseJson = JSON.parse(batchResponseText);
             if ('error' in batchResponseJson) {
@@ -491,7 +488,7 @@ export default class ODataHandler implements MeshHandler {
       none: () =>
         new DataLoader(
           (requests: Request[]): Promise<Response[]> =>
-            Promise.all(requests.map(request => fetchache(request, this.cache)))
+            Promise.all(requests.map(request => this.handlerContext.fetch(request)))
         ),
     };
 

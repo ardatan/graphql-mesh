@@ -28,7 +28,6 @@
       "@graphql-mesh/cli": ["packages/cli/src/index.ts"],
       "@graphql-mesh/runtime": ["packages/runtime/src/index.ts"],
       "@graphql-mesh/config": ["packages/config/src/index.ts"],
-      "@graphql-mesh/types": ["packages/types/src/index.ts"],
       "@graphql-mesh/utils": ["packages/utils/src/index.ts"],
       "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
       "@graphql-mesh/handler-*": ["packages/handlers/*/src/index.ts"],

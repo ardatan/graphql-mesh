@@ -1,8 +1,8 @@
-import { MergerFn } from '@graphql-mesh/types';
+import { MergerFn , groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { mergeSingleSchema } from './mergeSingleSchema';
-import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+
 import { StitchingInfo } from '@graphql-tools/stitch/types';
 
 const mergeUsingStitching: MergerFn = async function (options) {

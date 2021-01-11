@@ -1,4 +1,4 @@
-import { MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub , extractResolvers } from '@graphql-mesh/utils';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -16,7 +16,7 @@ import { addResolversToSchema } from '@graphql-tools/schema';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import { MeshContext, APIContext } from './types';
 import { delegateToSchema } from '@graphql-tools/delegate';
-import { extractResolvers } from '@graphql-mesh/utils';
+
 
 function isMeshContext(context: any): context is MeshContext {
   return !!context && typeof context === 'object' && MESH_CONTEXT_SYMBOL in context;

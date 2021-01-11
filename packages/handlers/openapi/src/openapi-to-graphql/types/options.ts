@@ -7,7 +7,7 @@
 import { GraphQLOperationType, SubscriptionContext } from './graphql';
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { ResolverMiddleware } from '../resolver_builder';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/utils';
 
 /**
  * Type definition of the options that users can pass to OpenAPI-to-GraphQL.

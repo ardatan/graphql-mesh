@@ -33,6 +33,10 @@ export interface Config {
    * PubSub Implementation (Any of: String, PubSubConfig)
    */
   pubsub?: string | PubSubConfig;
+  /**
+   * Custom W3 Compatible Fetch Implementation
+   */
+  fetch?: any;
 }
 export interface ServeConfig {
   /**
@@ -143,10 +147,6 @@ export interface GraphQLHandler {
    * Use Server Sent Events instead of WebSocket for Subscriptions
    */
   useSSEForSubscription?: boolean;
-  /**
-   * Path to a custom W3 Compatible Fetch Implementation
-   */
-  customFetch?: any;
   /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
@@ -618,11 +618,9 @@ export interface PostGraphileHandler {
    */
   schemaName?: string[];
   /**
-   * Connection Pool settings
+   * Connection Pool settings or path to exported Connection Pool instance
    */
-  pool?: {
-    [k: string]: any;
-  };
+  pool?: any;
   /**
    * Extra Postgraphile Plugins to append
    */

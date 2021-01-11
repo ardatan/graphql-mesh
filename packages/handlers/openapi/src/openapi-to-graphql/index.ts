@@ -48,7 +48,7 @@ import * as Oas3Tools from './oas_3_tools';
 import { createAndLoadViewer } from './auth_builder';
 import { GraphQLSchemaConfig } from 'graphql/type/schema';
 import { sortObject, handleWarning, mockDebug as debug, MitigationTypes } from './utils';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/utils';
 
 type Result = {
   schema: GraphQLSchema;

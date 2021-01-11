@@ -1,14 +1,16 @@
+import { ImportFn } from '@graphql-mesh/utils';
 import { isAbsolute, join } from 'path';
 
 export async function loadFromModuleExportExpression<T>(
   expression: T | string,
-  defaultExportName?: string
+  defaultExportName?: string,
+  importFn?: ImportFn
 ): Promise<T> {
   if (typeof expression !== 'string') {
     return expression;
   }
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = await tryImport(modulePath);
+  const mod = await tryImport(modulePath, importFn);
 
   if (exportName === 'default' || !exportName) {
     return mod.default || mod;
@@ -17,14 +19,14 @@ export async function loadFromModuleExportExpression<T>(
   }
 }
 
-async function tryImport(modulePath: string) {
+async function tryImport(modulePath: string, importFn: ImportFn) {
   try {
-    return await import(modulePath);
+    return await importFn(modulePath);
   } catch (e1) {
     if (!isAbsolute(modulePath)) {
       try {
         const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(process.cwd(), modulePath);
-        return await import(absoluteModulePath);
+        return await importFn(absoluteModulePath);
       } catch (e2) {
         if (e2.message.includes('Cannot find module')) {
           throw e1;

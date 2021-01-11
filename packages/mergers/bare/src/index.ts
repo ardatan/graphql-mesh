@@ -1,6 +1,6 @@
-import { MergerFn, MeshTransform } from '@graphql-mesh/types';
+import { MergerFn, MeshTransform , groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+
 import { mergeSchemas } from '@graphql-tools/merge';
 
 const mergeBare: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) => {

@@ -1,16 +1,25 @@
 import { parse } from 'graphql';
-import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn, ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import {
+  MeshHandlerLibrary,
+  KeyValueCache,
+  YamlConfig,
+  MergerFn,
+  ImportFn,
+  MeshPubSub,
+  FetchFn,
+ loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
 import { resolve } from 'path';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { get, set, kebabCase } from 'lodash';
-import { stringInterpolator } from '@graphql-mesh/utils';
+
 import { mergeResolvers } from '@graphql-tools/merge';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import fetchache, { Request } from 'fetchache';
 
 export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
   const casedName = paramCase(name);
@@ -107,7 +116,7 @@ export async function resolveAdditionalResolvers(
                     const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
                     return pubsub.asyncIterator(topic);
                   },
-                  (root, args, context, info) => {
+                  () => {
                     return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
                   }
                 ),
@@ -206,4 +215,16 @@ export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], i
   }
   const StitchingMerger = await import('@graphql-mesh/merger-stitching').then(m => m.default);
   return StitchingMerger;
+}
+
+export async function resolveFetch(
+  fetchConfig: YamlConfig.Config['fetch'],
+  cache: KeyValueCache,
+  importFn: ImportFn
+): Promise<FetchFn> {
+  if (fetchConfig) {
+    const mod = await loadFromModuleExportExpression(fetchConfig, 'default', importFn);
+    return mod.default || mod;
+  }
+  return (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), cache);
 }

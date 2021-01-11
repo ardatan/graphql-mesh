@@ -1,4 +1,4 @@
-import { MergerFn, RawSourceOutput } from '@graphql-mesh/types';
+import { MergerFn, RawSourceOutput } from '@graphql-mesh/utils';
 import { GraphQLSchema, print, graphql, extendSchema } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway, ServiceEndpointDefinition } from '@apollo/gateway';

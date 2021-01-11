@@ -1,4 +1,4 @@
-import { YamlConfig, MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, KeyValueCache } from '@graphql-mesh/utils';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import {

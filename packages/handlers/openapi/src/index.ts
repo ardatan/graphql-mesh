@@ -1,48 +1,24 @@
-import {
-  readFileOrUrlWithCache,
-  parseInterpolationStrings,
-  getInterpolatedHeadersFactory,
-  getInterpolatedStringFactory,
-  getHeadersObject,
-  ResolverDataBasedFactory,
-  loadFromModuleExportExpression,
-} from '@graphql-mesh/utils';
 import { createGraphQLSchema } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
 import {
   MeshHandler,
   YamlConfig,
   ResolverData,
-  GetMeshSourceOptions,
   MeshSource,
-  KeyValueCache,
-  MeshPubSub,
-} from '@graphql-mesh/types';
-import { fetchache, Request } from 'fetchache';
+  parseInterpolationStrings,
+  getInterpolatedHeadersFactory,
+  getInterpolatedStringFactory,
+  getHeadersObject,
+  ResolverDataBasedFactory,
+} from '@graphql-mesh/utils';
 
-export default class OpenAPIHandler implements MeshHandler {
-  config: YamlConfig.OpenapiHandler;
-  cache: KeyValueCache;
-  pubsub: MeshPubSub;
-  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
-    this.config = config;
-    this.cache = cache;
-    this.pubsub = pubsub;
-  }
-
+export default class OpenAPIHandler extends MeshHandler<YamlConfig.OpenapiHandler> {
   async getMeshSource(): Promise<MeshSource> {
     const path = this.config.source;
-    const spec = await readFileOrUrlWithCache<Oas3>(path, this.cache, {
+    const spec = await this.readFileOrUrl<Oas3>(path, {
       headers: this.config.schemaHeaders,
       fallbackFormat: this.config.sourceFormat,
     });
-
-    let fetch: WindowOrWorkerGlobalScope['fetch'];
-    if (this.config.customFetch) {
-      fetch = await loadFromModuleExportExpression(this.config.customFetch as any, 'default');
-    } else {
-      fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
-    }
 
     const baseUrlFactory = getInterpolatedStringFactory(this.config.baseUrl);
 
@@ -59,7 +35,7 @@ export default class OpenAPIHandler implements MeshHandler {
     };
 
     const { schema } = await createGraphQLSchema(spec, {
-      fetch,
+      fetch: this.handlerContext.fetch,
       baseUrl: this.config.baseUrl,
       operationIdFieldNames: true,
       fillEmptyResponses: true,
@@ -68,7 +44,7 @@ export default class OpenAPIHandler implements MeshHandler {
       sendOAuthTokenInQuery: true,
       viewer: false,
       equivalentToMessages: true,
-      pubsub: this.pubsub,
+      pubsub: this.handlerContext.pubsub,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info };
         const resolverParams = getResolverParams();

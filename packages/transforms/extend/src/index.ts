@@ -1,5 +1,5 @@
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { MeshTransform, MeshTransformOptions, YamlConfig , loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';

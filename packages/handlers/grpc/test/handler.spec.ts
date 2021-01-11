@@ -1,8 +1,6 @@
 import { join } from 'path';
 import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { PubSub } from 'graphql-subscriptions';
 import GrpcHandler from '../src';
 
 describe.each<[string, string, string]>([
@@ -15,8 +13,6 @@ describe.each<[string, string, string]>([
   ['Outide', 'io.outside', 'outside.proto'],
 ])('Interpreting Protos', (name, packageName, file) => {
   test(`should load the ${name} proto`, async () => {
-    const cache = new InMemoryLRUCache();
-    const pubsub = new PubSub();
     const config = {
       endpoint: 'localhost',
       serviceName: 'Example',
@@ -26,12 +22,7 @@ describe.each<[string, string, string]>([
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },
     };
-    const handler = new GrpcHandler({
-      name: Date.now().toString(),
-      config,
-      cache,
-      pubsub,
-    });
+    const handler = new GrpcHandler(Date.now().toString(), config);
 
     const { schema } = await handler.getMeshSource();
 

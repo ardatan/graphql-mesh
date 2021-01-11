@@ -24,7 +24,7 @@ import formurlencoded from 'form-urlencoded';
 import urlJoin from 'url-join';
 import { Path } from 'graphql/jsutils/Path';
 import { ConnectOptions, RequestOptions } from './types/options';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/utils';
 
 const translationLog = debug('translation');
 const httpLog = debug('http');

@@ -1,7 +1,7 @@
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, YamlConfig , extractResolvers } from '@graphql-mesh/utils';
 import { ResolversComposerMapping, ResolversComposition, composeResolvers } from '@graphql-tools/resolvers-composition';
 import { computeCacheKey } from './compute-cache-key';
-import { extractResolvers } from '@graphql-mesh/utils';
+
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 

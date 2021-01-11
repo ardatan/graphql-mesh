@@ -15,9 +15,9 @@ type PostGraphileHandler @md {
   """
   schemaName: [String!]
   """
-  Connection Pool settings
+  Connection Pool settings or path to exported Connection Pool instance
   """
-  pool: JSON
+  pool: Any
   """
   Extra Postgraphile Plugins to append
   """

@@ -1,11 +1,11 @@
 import { GraphQLSchema } from 'graphql';
-import { YamlConfig, MeshTransform, MeshTransformOptions } from '@graphql-mesh/types';
+import { YamlConfig, MeshTransform, MeshTransformOptions , extractResolvers } from '@graphql-mesh/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
 import { isAbsolute, join } from 'path';
 import { ensureFile, writeJSON, pathExists } from 'fs-extra';
 import { computeSnapshotFilePath } from './compute-snapshot-file-path';
-import { extractResolvers } from '@graphql-mesh/utils';
+
 
 const writeFile = async (path: string, json: any): Promise<void> => {
   try {

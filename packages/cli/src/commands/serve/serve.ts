@@ -9,9 +9,9 @@ import { createServer } from 'http';
 import { playground } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
-import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { MeshPubSub, YamlConfig , loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import cors from 'cors';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+
 import { get } from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';

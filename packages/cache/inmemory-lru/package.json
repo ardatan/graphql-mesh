@@ -13,7 +13,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.24.0",
+    "@graphql-mesh/utils": "0.8.3",
     "@types/lru-cache": "5.1.0",
     "lru-cache": "6.0.0"
   },

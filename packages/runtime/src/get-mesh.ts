@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
-import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
+import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation , applySchemaTransforms, ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
-import { applySchemaTransforms, ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
+
 
 export async function getMesh(
   options: GetMeshOptions
@@ -21,10 +21,15 @@ export async function getMesh(
   cache: KeyValueCache;
 }> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubsub, cache } = options;
+  const { pubsub, cache, fetch } = options;
 
   await Promise.all(
     options.sources.map(async apiSource => {
+      apiSource.handler.setHandlerContext({
+        pubsub,
+        cache,
+        fetch,
+      });
       const source = await apiSource.handler.getMeshSource();
 
       let apiSchema = source.schema;
