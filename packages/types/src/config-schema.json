@@ -1377,9 +1377,16 @@
           "description": "An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema."
         },
         "pool": {
-          "type": "object",
-          "properties": {},
-          "description": "Connection Pool settings"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Connection Pool instance or settings or you can provide the path of a code file that exports any of those"
         },
         "appendPlugins": {
           "type": "array",

@@ -617,11 +617,9 @@ export interface PostGraphileHandler {
    */
   schemaName?: string[];
   /**
-   * Connection Pool settings
+   * Connection Pool instance or settings or you can provide the path of a code file that exports any of those
    */
-  pool?: {
-    [k: string]: any;
-  };
+  pool?: any;
   /**
    * Extra Postgraphile Plugins to append
    */
