@@ -10629,10 +10629,10 @@ graphql-ws@3.1.0:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-3.1.0.tgz#cd09d385a21ab88af4c226da79c19351df9b27e8"
   integrity sha512-zbex3FSiFz0iRgfkzDNWpOY/sYWoX+iZ5XUhakaDwOh99HSuk8rPt5suuxdXUVzEg5TGQ9rwzNaz/+mTPtS0yg==
 
-graphql-ws@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-3.2.0.tgz#76a3813202701297d91eb1c8cff47042416caec6"
-  integrity sha512-IQBTRZRVDm784IoxRG6rAsGvAEtytWtXt55jVIhz7LwKiPqE4S4ClrOlt61aLoWswod56xdzujGANcfXJtVvGw==
+graphql-ws@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-4.1.0.tgz#cebe281474b5501d7be66210fb5711633b27fd78"
+  integrity sha512-DxJP1y2YzCqVLy7DrQN0iuR2l48vMOBWukX2d/J9aN2o5x9un5psIIq/2UFRh91UGARmfvPH86y1p4qbC1dITg==
 
 graphql@15.4.0, "graphql@>=0.9 <0.14 || ^14.0.2 || ^15.4.0", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0", graphql@^14.5.3, graphql@^15.3.0, graphql@^15.4.0:
   version "15.4.0"
