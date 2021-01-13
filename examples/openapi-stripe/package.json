@@ -9,7 +9,6 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.15.6",
     "@graphql-mesh/openapi": "0.11.6",
-    "graphql": "15.4.0",
-    "graphql-fields": "2.0.3"
+    "graphql": "15.4.0"
   }
 }

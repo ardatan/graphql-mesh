@@ -22,6 +22,42 @@ sources:
       odata:
         baseUrl: https://services.odata.org/TripPinRESTierService/
 ```
+## Dynamic Header Values
+
+Mesh can take dynamic values from the GraphQL Context or the environmental variables. If you use `mesh serve`, GraphQL Context will be the incoming HTTP request.
+
+The expression inside dynamic values should be as in JS.
+
+### From Context (HTTP Header for `mesh serve`)
+
+```yml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      odata:
+        baseUrl: https://graph.microsoft.com/v1.0
+        operationHeaders:
+          # Please do not use capital letters while getting the headers
+          Authorization: Bearer {context.headers['x-my-api-token']} 
+          # You can also access to the cookies like below;
+          # Authorization: Bearer {context.cookies.myApiToken}
+```
+
+And for `mesh serve`, you can pass the value using `x-my-graphql-api-token` HTTP header.
+
+### From Environmental Variable
+
+`MY_API_TOKEN` is the name of the environmental variable you have the value.
+
+```yml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      odata:
+        baseUrl: https://graph.microsoft.com/v1.0
+        operationHeaders:
+          Authorization: Bearer ${MY_API_TOKEN}
+```
 
 ## Codesandbox Example
 

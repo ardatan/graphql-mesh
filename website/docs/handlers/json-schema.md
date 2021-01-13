@@ -30,6 +30,63 @@ sources:
             method: GET
             responseSchema: ./json-schemas/users.json
 ```
+## Dynamic Values
+
+Mesh can take dynamic values from the GraphQL Context or the environmental variables. If you use `mesh serve`, GraphQL Context will be the incoming HTTP request.
+
+The expression inside dynamic values should be as in JS.
+
+### From Context (HTTP Header for `mesh serve`)
+
+```yml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      jsonSchema:
+        baseUrl: https://some-service-url/endpoint-path/
+        operationHeaders:
+          # Please do not use capital letters while getting the headers
+          Authorization: Bearer {context.headers['x-my-api-token']} 
+```
+
+And for `mesh serve`, you can pass the value using `x-my-graphql-api-token` HTTP header.
+
+### From Environmental Variable
+
+`MY_API_TOKEN` is the name of the environmental variable you have the value.
+
+```yml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      jsonSchema:
+        baseUrl: https://some-service-url/endpoint-path/
+        operationHeaders:
+          Authorization: Bearer ${MY_API_TOKEN}
+          # You can also access to the cookies like below;
+          # Authorization: Bearer {context.cookies.myApiToken}
+```
+
+### From Arguments
+
+Mesh automatically generates arguments for operations if needed;
+
+```yml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      jsonSchema:
+        baseUrl: https://some-service-url/endpoint-path/
+        operations:
+          - type: Query
+            field: user
+            path: /user/{args.id}
+            method: GET
+            responseSchema: ./json-schemas/user.json
+```
+
+This example operation definition will generate a root field with `id: ID` argument, then Mesh will interpolate the expression in `path` to get `id` value from `args`.
+
 
 ## Codesandbox Example
 
