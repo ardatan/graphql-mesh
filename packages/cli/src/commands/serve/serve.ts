@@ -6,7 +6,7 @@ import { fork as clusterFork, isMaster } from 'cluster';
 import { cpus } from 'os';
 import 'json-bigint-patch';
 import { createServer } from 'http';
-import { playground } from './playground';
+import { playground as playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
@@ -25,7 +25,7 @@ export async function serveMesh(
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
   pubsub: MeshPubSub,
-  { fork, exampleQuery, port, cors: corsConfig, handlers, staticFiles }: YamlConfig.ServeConfig = {}
+  { fork, exampleQuery, port, cors: corsConfig, handlers, staticFiles, playground }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
   const graphqlPath = '/graphql';
@@ -102,8 +102,8 @@ export async function serveMesh(
       }) || []
     );
 
-    if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playground(exampleQuery, graphqlPath);
+    if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
+      const playgroundMiddleware = playgroundMiddlewareFactory(exampleQuery, graphqlPath);
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
       }

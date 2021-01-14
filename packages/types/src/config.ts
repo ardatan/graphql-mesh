@@ -53,6 +53,10 @@ export interface ServeConfig {
    */
   handlers?: (WebhookHandler | ExpressHandler)[];
   staticFiles?: string;
+  /**
+   * Show playground
+   */
+  playground?: boolean;
 }
 export interface CorsConfig {
   origin?: any;

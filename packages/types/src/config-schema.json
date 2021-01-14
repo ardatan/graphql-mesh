@@ -139,6 +139,10 @@
         },
         "staticFiles": {
           "type": "string"
+        },
+        "playground": {
+          "type": "boolean",
+          "description": "Show playground"
         }
       }
     },
@@ -537,7 +541,7 @@
         },
         "batch": {
           "type": "boolean",
-          "description": "Batch requests "
+          "description": "Batch requests"
         }
       },
       "required": ["endpoint"]

@@ -18,6 +18,10 @@ type ServeConfig @md {
   cors: CorsConfig
   handlers: [ServeHandler]
   staticFiles: String
+  """
+  Show playground
+  """
+  playground: Boolean
 }
 
 union Port = Int | String
