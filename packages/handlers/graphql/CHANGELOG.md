@@ -1,5 +1,17 @@
 # @graphql-mesh/graphql
 
+## 0.13.0
+
+### Minor Changes
+
+- 75f6dff9: feat(graphql): ability to disable batch execution
+
+### Patch Changes
+
+- Updated dependencies [75f6dff9]
+- Updated dependencies [c4f207a7]
+  - @graphql-mesh/types@0.26.0
+
 ## 0.12.1
 
 ### Patch Changes

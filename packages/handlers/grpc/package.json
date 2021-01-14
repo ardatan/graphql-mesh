@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.7.13",
+  "version": "0.7.14",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -13,7 +13,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.25.0",
+    "@graphql-mesh/types": "0.26.0",
     "@graphql-mesh/utils": "0.8.3",
     "@grpc/grpc-js": "1.2.3",
     "@grpc/proto-loader": "0.5.5",
