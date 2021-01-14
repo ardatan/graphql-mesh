@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.16.0
+
+### Minor Changes
+
+- c1de3e43: feat(cli): add `playground` option to serve configuration
+
+### Patch Changes
+
+- @graphql-mesh/config@0.11.14
+- @graphql-mesh/runtime@0.10.14
+
 ## 0.15.7
 
 ### Patch Changes

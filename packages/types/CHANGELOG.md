@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.27.0
+
+### Minor Changes
+
+- c1de3e43: feat(cli): add `playground` option to serve configuration
+
 ## 0.26.0
 
 ### Minor Changes
