@@ -4,8 +4,9 @@ const rimraf = require('rimraf');
 const TypeDoc = require('typedoc');
 const { execSync } = require('child_process');
 const fsPromises = require('fs/promises');
+const workspacePackageJson = require('../package.json');
 
-const MONOREPO = 'graphql-mesh';
+const MONOREPO = workspacePackageJson.name.replace('-monorepo', '');
 
 async function buildApiDocs() {
   // Where to generate the API docs
@@ -25,7 +26,6 @@ async function buildApiDocs() {
 
   // An array of tuples where the first element is the package's name and the
   // the second element is the relative path to the package's entry point
-  const workspacePackageJson = require('../package.json');
   const packageJsonFiles = require('globby').sync(
     workspacePackageJson.workspaces.packages.map(f => `${f}/package.json`)
   );
