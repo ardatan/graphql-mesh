@@ -54,6 +54,10 @@ type GraphQLHandler @md {
   Enable multipart/formdata in order to support file uploads
   """
   multipart: Boolean
+  """
+  Batch requests
+  """
+  batch: Boolean
 }
 
 union GraphQLCacheIntrospectionConfig = GraphQLIntrospectionCachingOptions | Boolean

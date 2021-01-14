@@ -114,6 +114,7 @@ export default class GraphQLHandler implements MeshHandler {
         );
         return subscriber(params);
       },
+      batch: 'batch' in this.config ? this.config.batch : true,
     };
   }
 }

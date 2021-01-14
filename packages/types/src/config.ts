@@ -163,6 +163,10 @@ export interface GraphQLHandler {
    * Enable multipart/formdata in order to support file uploads
    */
   multipart?: boolean;
+  /**
+   * Batch requests
+   */
+  batch?: boolean;
 }
 export interface GraphQLIntrospectionCachingOptions {
   /**

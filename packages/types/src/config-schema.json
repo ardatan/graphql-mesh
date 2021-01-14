@@ -534,6 +534,10 @@
         "multipart": {
           "type": "boolean",
           "description": "Enable multipart/formdata in order to support file uploads"
+        },
+        "batch": {
+          "type": "boolean",
+          "description": "Batch requests "
         }
       },
       "required": ["endpoint"]
