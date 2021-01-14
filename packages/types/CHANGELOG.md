@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.26.0
+
+### Minor Changes
+
+- 75f6dff9: feat(graphql): ability to disable batch execution
+- c4f207a7: feat(postgraphile): ability to provide custom pgPool instance
+
 ## 0.25.0
 
 ### Minor Changes

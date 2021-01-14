@@ -1,5 +1,17 @@
 # @graphql-mesh/postgraphile
 
+## 0.8.0
+
+### Minor Changes
+
+- c4f207a7: feat(postgraphile): ability to provide custom pgPool instance
+
+### Patch Changes
+
+- Updated dependencies [75f6dff9]
+- Updated dependencies [c4f207a7]
+  - @graphql-mesh/types@0.26.0
+
 ## 0.7.23
 
 ### Patch Changes
