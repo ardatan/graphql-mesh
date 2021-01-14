@@ -64,6 +64,8 @@ export default class OpenAPIHandler implements MeshHandler {
       operationIdFieldNames: true,
       fillEmptyResponses: true,
       includeHttpDetails: this.config.includeHttpDetails,
+      genericPayloadArgName: this.config.genericPayloadArgName === undefined ? false : this.config.genericPayloadArgName,
+      selectQueryOrMutationField: this.config.selectQueryOrMutationField === undefined ? {} : this.config.selectQueryOrMutationField,
       addLimitArgument: this.config.addLimitArgument === undefined ? true : this.config.addLimitArgument,
       sendOAuthTokenInQuery: true,
       viewer: false,

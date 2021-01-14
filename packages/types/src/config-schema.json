@@ -1363,6 +1363,22 @@
         "addLimitArgument": {
           "type": "boolean",
           "description": "Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links"
+        },
+        "genericPayloadArgName": {
+          "type": "boolean",
+          "description": "Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname"
+        },
+        "selectQueryOrMutationField": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Allows to explicitly override the default operation (Query or Mutation) for any OAS operation"
         }
       },
       "required": ["source"]
@@ -1550,6 +1566,21 @@
         }
       },
       "required": ["hostName", "port", "serviceName", "idl"]
+    },
+    "TuqlHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TuqlHandler",
+      "properties": {
+        "db": {
+          "type": "string",
+          "description": "Pointer to your SQLite database"
+        },
+        "infile": {
+          "type": "string",
+          "description": "Path to the SQL Dump file if you want to build a in-memory database"
+        }
+      }
     },
     "CacheTransformConfig": {
       "additionalProperties": false,
@@ -2017,21 +2048,6 @@
         }
       },
       "required": ["apply", "outputDir"]
-    },
-    "TuqlHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TuqlHandler",
-      "properties": {
-        "db": {
-          "type": "string",
-          "description": "Pointer to your SQLite database"
-        },
-        "infile": {
-          "type": "string",
-          "description": "Path to the SQL Dump file if you want to build a in-memory database"
-        }
-      }
     }
   },
   "title": "Config",
