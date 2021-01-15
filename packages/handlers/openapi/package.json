@@ -22,7 +22,7 @@
     "fetchache": "0.0.4",
     "deep-equal": "2.0.5",
     "form-urlencoded": "4.2.1",
-    "jsonpath-plus": "4.0.0",
+    "jsonpath-plus": "5.0.2",
     "json-ptr": "2.0.0",
     "graphql-scalars": "1.7.0",
     "graphql-subscriptions": "1.1.0",
