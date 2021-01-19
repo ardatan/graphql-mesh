@@ -22,7 +22,7 @@
     "aggregate-error": "3.1.0",
     "ajv": "7.0.3",
     "fetchache": "0.0.4",
-    "fs-extra": "9.0.1",
+    "fs-extra": "9.1.0",
     "lodash": "4.17.20",
     "graphql-compose": "7.24.1",
     "graphql-scalars": "1.7.0",

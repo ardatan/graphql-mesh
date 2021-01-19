@@ -22,7 +22,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.28.0",
     "@graphql-mesh/utils": "0.8.3",
-    "fs-extra": "9.0.1",
+    "fs-extra": "9.1.0",
     "@graphql-tools/resolvers-composition": "6.2.5",
     "@graphql-tools/schema": "7.1.2",
     "@graphql-tools/utils": "7.2.4",
