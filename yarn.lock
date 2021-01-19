@@ -3749,10 +3749,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.29.tgz#0256e22f357a2e822ac8b848b545e06153c32ede"
   integrity sha1-AlbiLzV6LoIqyLhItUXgYVPDLt4=
 
-"@types/ioredis@4.19.0":
-  version "4.19.0"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.19.0.tgz#4855bd477536c0e38df08c7e54d5bf6890d81ada"
-  integrity sha512-fi6Jy3eV4B27TRKxjL2vjLSIRo7qfKK7fweYKPMrRW3HXK/g8Jn3YTe2H+14qperWEEBC9S5KKc/FW2k22UIPg==
+"@types/ioredis@4.19.1":
+  version "4.19.1"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.19.1.tgz#354c4907498b90fe14c2edff8e8ea9e5aea9821f"
+  integrity sha512-+q10eLAgjbYJMY/fAM7+zmNBegCAk3FZwcvgjdsPy5xK4MzFcVXB6yxa69bTB5Ouz24WqJiub6lPzasLE5BYZQ==
   dependencies:
     "@types/node" "*"
 
