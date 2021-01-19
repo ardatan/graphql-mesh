@@ -611,6 +611,23 @@ export interface OpenapiHandler {
    * Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
    */
   addLimitArgument?: boolean;
+  /**
+   * Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname
+   */
+  genericPayloadArgName?: boolean;
+  /**
+   * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
+   */
+  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
+}
+export interface SelectQueryOrMutationFieldConfig {
+  title?: string;
+  path?: string;
+  /**
+   * Allowed values: Query, Mutation
+   */
+  type?: 'Query' | 'Mutation';
+  method?: string;
 }
 /**
  * Handler for Postgres database, based on `postgraphile`

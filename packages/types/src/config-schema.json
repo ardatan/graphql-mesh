@@ -1363,9 +1363,42 @@
         "addLimitArgument": {
           "type": "boolean",
           "description": "Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links"
+        },
+        "genericPayloadArgName": {
+          "type": "boolean",
+          "description": "Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname"
+        },
+        "selectQueryOrMutationField": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SelectQueryOrMutationFieldConfig"
+          },
+          "additionalItems": false,
+          "description": "Allows to explicitly override the default operation (Query or Mutation) for any OAS operation"
         }
       },
       "required": ["source"]
+    },
+    "SelectQueryOrMutationFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SelectQueryOrMutationFieldConfig",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["Query", "Mutation"],
+          "description": "Allowed values: Query, Mutation"
+        },
+        "method": {
+          "type": "string"
+        }
+      }
     },
     "PostGraphileHandler": {
       "additionalProperties": false,

@@ -25,6 +25,28 @@ sources:
         source: ./my-schema.json
 ```
 
+## Overriding default Query/Mutation operations
+By default OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option you can manually override this process.  
+The operation is identifed first by the title of the OAS, then the path of the operation, and lastly the method of the operation.  
+In order to switch between Query and Mutation operations you should change the value of the method to an integer corresponding to either 0, or 1; which stands to Query or Mutation respectively.
+
+```yaml
+sources:
+  - name: MyOpenapiApi
+    handler:
+      openapi:
+        source: ./my-schema.json
+        selectQueryOrMutationField:
+          - title: "Weather Service v1" # OAS title
+            path: /weather/current # operation path
+            method: post
+            type: Query # switch method POST from default Mutation into Query
+          - title: "Weather Service v1" # OAS title
+            path: /weather/forecast # operation path
+            method: get
+            type: Mutation # switch method POST from default Mutation into Query
+```
+
 ## Dynamic Header Values
 
 Mesh can take dynamic values from the GraphQL Context or the environmental variables. If you use `mesh serve`, GraphQL Context will be the incoming HTTP request.

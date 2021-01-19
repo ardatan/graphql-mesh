@@ -43,9 +43,41 @@ type OpenapiHandler @md {
   Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
   """
   addLimitArgument: Boolean
+  """
+  Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname
+  """
+  genericPayloadArgName: Boolean
+  """
+  Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
+  """
+  selectQueryOrMutationField: [SelectQueryOrMutationFieldConfig]
 }
 
 enum SourceFormat {
   json
   yaml
+}
+
+type SelectQueryOrMutationFieldConfig {
+  """
+  OAS Title
+  """
+  title: String
+  """
+  Operation Path
+  """
+  path: String
+  """
+  Target Root Type for this operation
+  """
+  type: QueryOrMutation
+  """
+  Which method is used for this operation
+  """
+  method: String
+}
+
+enum QueryOrMutation {
+  Query
+  Mutation
 }
