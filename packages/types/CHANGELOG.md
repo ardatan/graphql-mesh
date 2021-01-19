@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.28.0
+
+### Minor Changes
+
+- a22fc6f3: feat(openapi): customize target root type for an operation and generic payload argument name
+
 ## 0.27.0
 
 ### Minor Changes
