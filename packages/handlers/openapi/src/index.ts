@@ -7,7 +7,7 @@ import {
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
 } from '@graphql-mesh/utils';
-import { createGraphQLSchema } from './openapi-to-graphql';
+import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
 import {
   MeshHandler,
@@ -19,6 +19,8 @@ import {
   MeshPubSub,
 } from '@graphql-mesh/types';
 import { fetchache, Request } from 'fetchache';
+import { set } from 'lodash';
+import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 
 export default class OpenAPIHandler implements MeshHandler {
   config: YamlConfig.OpenapiHandler;
@@ -64,8 +66,24 @@ export default class OpenAPIHandler implements MeshHandler {
       operationIdFieldNames: true,
       fillEmptyResponses: true,
       includeHttpDetails: this.config.includeHttpDetails,
-      genericPayloadArgName: this.config.genericPayloadArgName === undefined ? false : this.config.genericPayloadArgName,
-      selectQueryOrMutationField: this.config.selectQueryOrMutationField === undefined ? {} : this.config.selectQueryOrMutationField,
+      genericPayloadArgName:
+        this.config.genericPayloadArgName === undefined ? false : this.config.genericPayloadArgName,
+      selectQueryOrMutationField:
+        this.config.selectQueryOrMutationField === undefined
+          ? {}
+          : this.config.selectQueryOrMutationField.reduce((acc, curr) => {
+              let operationType: GraphQLOperationType;
+              switch (curr.type) {
+                case 'Query':
+                  operationType = GraphQLOperationType.Query;
+                  break;
+                case 'Mutation':
+                  operationType = GraphQLOperationType.Mutation;
+                  break;
+              }
+              set(acc, `${curr.title}.${curr.path}.${curr.method}`, operationType);
+              return acc;
+            }, {} as OasTitlePathMethodObject<GraphQLOperationType>),
       addLimitArgument: this.config.addLimitArgument === undefined ? true : this.config.addLimitArgument,
       sendOAuthTokenInQuery: true,
       viewer: false,

@@ -1369,19 +1369,36 @@
           "description": "Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname"
         },
         "selectQueryOrMutationField": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            }
-          ],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SelectQueryOrMutationFieldConfig"
+          },
+          "additionalItems": false,
           "description": "Allows to explicitly override the default operation (Query or Mutation) for any OAS operation"
         }
       },
       "required": ["source"]
+    },
+    "SelectQueryOrMutationFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SelectQueryOrMutationFieldConfig",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["Query", "Mutation"],
+          "description": "Allowed values: Query, Mutation"
+        },
+        "method": {
+          "type": "string"
+        }
+      }
     },
     "PostGraphileHandler": {
       "additionalProperties": false,
@@ -1566,21 +1583,6 @@
         }
       },
       "required": ["hostName", "port", "serviceName", "idl"]
-    },
-    "TuqlHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TuqlHandler",
-      "properties": {
-        "db": {
-          "type": "string",
-          "description": "Pointer to your SQLite database"
-        },
-        "infile": {
-          "type": "string",
-          "description": "Path to the SQL Dump file if you want to build a in-memory database"
-        }
-      }
     },
     "CacheTransformConfig": {
       "additionalProperties": false,
@@ -2048,6 +2050,21 @@
         }
       },
       "required": ["apply", "outputDir"]
+    },
+    "TuqlHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TuqlHandler",
+      "properties": {
+        "db": {
+          "type": "string",
+          "description": "Pointer to your SQLite database"
+        },
+        "infile": {
+          "type": "string",
+          "description": "Path to the SQL Dump file if you want to build a in-memory database"
+        }
+      }
     }
   },
   "title": "Config",

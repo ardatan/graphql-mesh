@@ -37,11 +37,14 @@ sources:
       openapi:
         source: ./my-schema.json
         selectQueryOrMutationField:
-          "Weather Service v1": # OAS title
-            /weather/current: # operation path
-              post: 0 # switch method POST from default Mutation into Query
-            /weather/forecast: # operation path
-              get: 1 # switch method GET from default Query into Mutation
+          - title: "Weather Service v1" # OAS title
+            path: /weather/current # operation path
+            method: post
+            type: Query # switch method POST from default Mutation into Query
+          - title: "Weather Service v1" # OAS title
+            path: /weather/forecast # operation path
+            method: get
+            type: Mutation # switch method POST from default Mutation into Query
 ```
 
 ## Dynamic Header Values

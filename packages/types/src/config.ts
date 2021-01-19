@@ -618,7 +618,16 @@ export interface OpenapiHandler {
   /**
    * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
    */
-  selectQueryOrMutationField?: any;
+  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
+}
+export interface SelectQueryOrMutationFieldConfig {
+  title?: string;
+  path?: string;
+  /**
+   * Allowed values: Query, Mutation
+   */
+  type?: 'Query' | 'Mutation';
+  method?: string;
 }
 /**
  * Handler for Postgres database, based on `postgraphile`
