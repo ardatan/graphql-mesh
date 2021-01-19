@@ -22,7 +22,7 @@
     "@graphql-typed-document-node/core": "3.1.0",
     "date-fns": "2.16.1",
     "fetchache": "0.0.4",
-    "fs-extra": "9.0.1",
+    "fs-extra": "9.1.0",
     "is-url": "1.2.4",
     "js-yaml": "4.0.0",
     "object-hash": "2.1.1"
