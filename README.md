@@ -55,38 +55,10 @@ Then, this handler will be available for you to use in your config file.
 </p>
 </details>
 
-<details>
-<summary><strong>Basic Usage</strong></summary>
-<p>
+[Basic Usage](https://graphql-mesh.com/docs/getting-started/basic-example)
 
-https://graphql-mesh.com/docs/getting-started/basic-example
+[Supported APIs](https://graphql-mesh.com/docs/handlers/available-handlers)
 
-</p>
-</details>
+[Schema Transformations](https://graphql-mesh.com/docs/getting-started/mesh-transforms)
 
-<details>
-<summary><strong>Supported APIs</strong></summary>
-<p>
-
-https://graphql-mesh.com/docs/handlers/available-handlers
-
-</p>
-</details>
-
-<details>
-<summary><strong>Schema Transformations</strong></summary>
-<p>
-
-https://graphql-mesh.com/docs/getting-started/mesh-transforms
-
-</p>
-</details>
-
-<details>
-<summary><strong>TypeScript Support</strong></summary>
-<p>
-
-https://graphql-mesh.com/docs/recipes/typescript
-
-</p>
-</details>
+[TypeScript Support](https://graphql-mesh.com/docs/recipes/typescript)
