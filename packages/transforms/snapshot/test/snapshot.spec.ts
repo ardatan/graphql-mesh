@@ -13,7 +13,23 @@ import { pick } from 'lodash';
 import graphqlFields from 'graphql-fields';
 import { readJSON, mkdir } from '@graphql-mesh/utils';
 
-const { rmdir } = fsPromises;
+const { readdir, unlink, rmdir } = fsPromises;
+
+async function rmdirs(dir: string) {
+  let entries = await readdir(dir, { withFileTypes: true });
+  let results = await Promise.all(
+    entries.map(entry => {
+      let fullPath = join(dir, entry.name);
+      let task = entry.isDirectory() ? rmdirs(fullPath) : unlink(fullPath);
+      return task.catch(error => ({ error }));
+    })
+  );
+  results.forEach(result => {
+    // Ignore missing files/directories; bail on other errors
+    if (result && result.error.code !== 'ENOENT') throw result.error;
+  });
+  await rmdir(dir);
+}
 
 describe('snapshot', () => {
   const outputDir = join(tmpdir(), '__snapshots__');
@@ -39,7 +55,7 @@ describe('snapshot', () => {
     await mkdir(outputDir);
   });
   afterEach(async () => {
-    await rmdir(outputDir, { recursive: true });
+    await rmdirs(outputDir);
   });
   it('it writes correct output', async () => {
     const schema = wrapSchema({
