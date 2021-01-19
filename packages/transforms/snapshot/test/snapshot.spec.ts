@@ -2,7 +2,7 @@ import SnapshotTransform from '../src';
 import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql, GraphQLResolveInfo } from 'graphql';
-import { readJSON, remove, mkdir } from 'fs-extra';
+import { promises as fsPromises } from 'fs';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from 'graphql-subscriptions';
@@ -11,6 +11,9 @@ import { tmpdir } from 'os';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { pick } from 'lodash';
 import graphqlFields from 'graphql-fields';
+import { readJSON, mkdir } from '@graphql-mesh/utils';
+
+const { rmdir } = fsPromises;
 
 describe('snapshot', () => {
   const outputDir = join(tmpdir(), '__snapshots__');
@@ -36,7 +39,7 @@ describe('snapshot', () => {
     await mkdir(outputDir);
   });
   afterEach(async () => {
-    await remove(outputDir);
+    await rmdir(outputDir, { recursive: true });
   });
   it('it writes correct output', async () => {
     const schema = wrapSchema({

@@ -1,5 +1,5 @@
 import { generateSdk } from '@graphql-mesh/cli';
-import { writeFileSync } from 'fs-extra';
+import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { getMeshInstance } from '../src/mesh/getMeshInstance';
 import InmemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';

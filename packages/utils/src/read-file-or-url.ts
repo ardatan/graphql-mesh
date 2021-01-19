@@ -2,6 +2,9 @@ import { fetchache, KeyValueCache, Request } from 'fetchache';
 import isUrl from 'is-url';
 import { load as loadYaml } from 'js-yaml';
 import { isAbsolute, resolve } from 'path';
+import { promises as fsPromises } from 'fs';
+
+const { readFile, stat } = fsPromises;
 
 export { isUrl };
 
@@ -27,7 +30,6 @@ export async function readFileWithCache<T>(
   cache: KeyValueCache,
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
-  const { readFile, stat } = await import('fs-extra');
   const actualPath = isAbsolute ? filePath : resolve(process.cwd(), filePath);
   const cachedObjStr = await cache.get(actualPath);
   const stats = await stat(actualPath);

@@ -5,11 +5,13 @@ import { generateTsTypes } from './commands/typescript';
 import { generateSdk } from './commands/generate-sdk';
 import { serveMesh } from './commands/serve/serve';
 import { resolve } from 'path';
-import { writeFile, ensureFile } from 'fs-extra';
+import { promises as fsPromises } from 'fs';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 export { generateSdk, serveMesh };
+
+const { writeFile } = fsPromises;
 
 export async function graphqlMesh() {
   return yargs
@@ -67,7 +69,6 @@ export async function graphqlMesh() {
         const { schema, destroy } = await getMesh(meshConfig);
         const result = await generateSdk(schema, args);
         const outFile = resolve(process.cwd(), args.output);
-        await ensureFile(outFile);
         await writeFile(outFile, result);
         destroy();
       }
@@ -105,7 +106,6 @@ export async function graphqlMesh() {
           return;
         }
         const absoluteOutputFilePath = resolve(process.cwd(), outputFileName);
-        await ensureFile(absoluteOutputFilePath);
         await writeFile(absoluteOutputFilePath, outputFileContent);
         destroy();
       }
@@ -126,7 +126,6 @@ export async function graphqlMesh() {
         const { schema, rawSources, destroy } = await getMesh(meshConfig);
         const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
         const outFile = resolve(process.cwd(), args.output);
-        await ensureFile(outFile);
         await writeFile(outFile, result);
         destroy();
       }

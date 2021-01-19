@@ -1,7 +1,7 @@
 import { KeyValueCache } from '@graphql-mesh/types';
 import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
-import { pathExistsSync } from 'fs-extra';
+import { existsSync } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
 import { InputTypeComposer, ObjectTypeComposer, SchemaComposer } from 'graphql-compose';
 import { get } from 'lodash';
@@ -33,7 +33,7 @@ export function addIncludePathResolver(root: Root, includePaths: string[]): void
     }
     for (const directory of includePaths) {
       const fullPath: string = join(directory, target);
-      if (pathExistsSync(fullPath)) {
+      if (existsSync(fullPath)) {
         return fullPath;
       }
     }

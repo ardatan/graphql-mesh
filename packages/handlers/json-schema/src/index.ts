@@ -1,12 +1,18 @@
 import { GetMeshSourceOptions, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { JSONSchemaVisitor, getFileName } from './json-schema-visitor';
 import urlJoin from 'url-join';
-import { readFileOrUrlWithCache, stringInterpolator, parseInterpolationStrings, isUrl } from '@graphql-mesh/utils';
+import {
+  readFileOrUrlWithCache,
+  stringInterpolator,
+  parseInterpolationStrings,
+  isUrl,
+  pathExists,
+  writeJSON,
+} from '@graphql-mesh/utils';
 import AggregateError from 'aggregate-error';
 import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { ObjectTypeComposerFieldConfigDefinition, SchemaComposer } from 'graphql-compose';
-import { pathExists, stat, writeJSON } from 'fs-extra';
 import toJsonSchema from 'to-json-schema';
 import {
   GraphQLJSON,
@@ -21,6 +27,9 @@ import {
   GraphQLIPv4,
   GraphQLIPv6,
 } from 'graphql-scalars';
+import { promises as fsPromises } from 'fs';
+
+const { stat } = fsPromises;
 
 type CachedSchema = {
   timestamp: number;
@@ -307,7 +316,7 @@ export default class JsonSchemaHandler implements MeshHandler {
         },
       });
       if (schemaPath) {
-        writeJSON(schemaPath, schema);
+        writeJSON(schemaPath, schema).catch(e => `JSON Schema for ${samplePath} couldn't get cached: ${e.message}`);
       } else {
         const cachedSchema = {
           timestamp: Date.now(),
