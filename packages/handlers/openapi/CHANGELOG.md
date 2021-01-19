@@ -1,5 +1,16 @@
 # @graphql-mesh/openapi
 
+## 0.12.0
+
+### Minor Changes
+
+- a22fc6f3: feat(openapi): customize target root type for an operation and generic payload argument name
+
+### Patch Changes
+
+- Updated dependencies [a22fc6f3]
+  - @graphql-mesh/types@0.28.0
+
 ## 0.11.8
 
 ### Patch Changes
