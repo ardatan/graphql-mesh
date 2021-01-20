@@ -15,7 +15,7 @@ import {
   loadFileDescriptorSetFromObject,
 } from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
-import { readFile } from 'fs-extra';
+import { promises as fsPromises } from 'fs';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
@@ -35,6 +35,8 @@ import {
   getBuffer,
   getTypeName,
 } from './utils';
+
+const { readFile } = fsPromises || {};
 
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
@@ -97,7 +99,7 @@ export default class GrpcHandler implements MeshHandler {
     let packageDefinition: PackageDefinition;
     if (this.config.useReflection) {
       const grpcReflectionServer = this.config.endpoint;
-      const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
+      const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds as any);
       const services = (await reflectionClient.listServices()) as string[];
       const serviceRoots = await Promise.all(
         services
