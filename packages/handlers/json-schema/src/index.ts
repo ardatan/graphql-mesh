@@ -229,7 +229,8 @@ export default class JsonSchemaHandler implements MeshHandler {
                 break;
               }
               case 'POST':
-              case 'PUT': {
+              case 'PUT':
+              case 'PATCH': {
                 requestInit.body = JSON.stringify(input);
                 break;
               }
