@@ -1,5 +1,17 @@
 # openapi-react-weatherbit
 
+## 0.3.38
+
+### Patch Changes
+
+- c767df01: fix(fs): fix fs handling issues for non Node environments
+- Updated dependencies [c767df01]
+  - @graphql-mesh/runtime@0.10.16
+  - @graphql-mesh/cache-localforage@0.4.36
+  - @graphql-mesh/openapi@0.12.1
+  - @graphql-mesh/merger-bare@0.8.6
+  - @graphql-mesh/transform-cache@0.8.16
+
 ## 0.3.37
 
 ### Patch Changes

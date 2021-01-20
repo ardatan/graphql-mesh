@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.8.4
+
+### Patch Changes
+
+- c767df01: fix(fs): fix fs handling issues for non Node environments
+- b3d7ecbf: chore(deps): replace fs-extra with native fs
+
 ## 0.8.3
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/runtime
 
+## 0.10.16
+
+### Patch Changes
+
+- c767df01: fix(fs): fix fs handling issues for non Node environments
+- Updated dependencies [c767df01]
+- Updated dependencies [183cfa96]
+- Updated dependencies [b3d7ecbf]
+  - @graphql-mesh/types@0.29.0
+  - @graphql-mesh/utils@0.8.4
+
 ## 0.10.15
 
 ### Patch Changes
