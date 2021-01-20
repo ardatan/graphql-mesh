@@ -1,6 +1,6 @@
 import { MakeDirectoryOptions, promises as fsPromises, readFileSync } from 'fs';
 
-const { stat, writeFile, readFile, mkdir: fsMkdir } = fsPromises;
+const { stat, writeFile, readFile, mkdir: fsMkdir } = fsPromises || {};
 
 export async function pathExists(path: string) {
   try {

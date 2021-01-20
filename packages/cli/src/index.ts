@@ -11,7 +11,7 @@ import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 export { generateSdk, serveMesh };
 
-const { writeFile } = fsPromises;
+const { writeFile } = fsPromises || {};
 
 export async function graphqlMesh() {
   return yargs

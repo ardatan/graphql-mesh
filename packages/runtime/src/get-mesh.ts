@@ -72,6 +72,7 @@ export async function getMesh(
     const context: any = {
       ...initialContextValue,
       pubsub,
+      cache,
       [MESH_CONTEXT_SYMBOL]: true,
     };
 

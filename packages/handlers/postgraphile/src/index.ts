@@ -16,7 +16,7 @@ import { tmpdir } from 'os';
 import { promises as fsPromises } from 'fs';
 import { loadFromModuleExportExpression, readFileOrUrlWithCache, readJSON } from '@graphql-mesh/utils';
 
-const { unlink } = fsPromises;
+const { unlink } = fsPromises || {};
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;

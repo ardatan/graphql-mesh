@@ -1385,18 +1385,21 @@
       "title": "SelectQueryOrMutationFieldConfig",
       "properties": {
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "OAS Title"
         },
         "path": {
-          "type": "string"
+          "type": "string",
+          "description": "Operation Path"
         },
         "type": {
           "type": "string",
           "enum": ["Query", "Mutation"],
-          "description": "Allowed values: Query, Mutation"
+          "description": "Target Root Type for this operation (Allowed values: Query, Mutation)"
         },
         "method": {
-          "type": "string"
+          "type": "string",
+          "description": "Which method is used for this operation"
         }
       }
     },

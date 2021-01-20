@@ -13,7 +13,7 @@ import { pick } from 'lodash';
 import graphqlFields from 'graphql-fields';
 import { readJSON, mkdir } from '@graphql-mesh/utils';
 
-const { readdir, unlink, rmdir } = fsPromises;
+const { readdir, unlink, rmdir } = fsPromises || {};
 
 async function rmdirs(dir: string) {
   let entries = await readdir(dir, { withFileTypes: true });

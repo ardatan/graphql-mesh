@@ -72,4 +72,4 @@ export type APIContext = {
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
   [key: string]: APIContext;
-} & { pubsub: MeshPubSub };
+} & { pubsub: MeshPubSub; cache: KeyValueCache };

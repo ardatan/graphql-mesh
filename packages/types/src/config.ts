@@ -621,12 +621,21 @@ export interface OpenapiHandler {
   selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
 }
 export interface SelectQueryOrMutationFieldConfig {
+  /**
+   * OAS Title
+   */
   title?: string;
+  /**
+   * Operation Path
+   */
   path?: string;
   /**
-   * Allowed values: Query, Mutation
+   * Target Root Type for this operation (Allowed values: Query, Mutation)
    */
   type?: 'Query' | 'Mutation';
+  /**
+   * Which method is used for this operation
+   */
   method?: string;
 }
 /**

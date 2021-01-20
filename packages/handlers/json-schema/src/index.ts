@@ -29,7 +29,7 @@ import {
 } from 'graphql-scalars';
 import { promises as fsPromises } from 'fs';
 
-const { stat } = fsPromises;
+const { stat } = fsPromises || {};
 
 type CachedSchema = {
   timestamp: number;

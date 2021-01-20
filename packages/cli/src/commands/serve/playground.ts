@@ -5,7 +5,7 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { basename, resolve } from 'path';
 import { promises as fsPromises } from 'fs';
 
-const { readFile } = fsPromises;
+const { readFile } = fsPromises || {};
 
 export function playground(exampleQuery: string, graphqlPath: string): RequestHandler {
   return async (req: Request, res: Response, next) => {
