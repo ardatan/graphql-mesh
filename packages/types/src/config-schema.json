@@ -581,6 +581,17 @@
             }
           ]
         },
+        "descriptorSetFilePath": {
+          "description": "Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ProtoFilePath"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
         "serviceName": {
           "type": "string",
           "description": "Your base service name\nUsed for naming only"
@@ -605,9 +616,13 @@
           "type": "object",
           "properties": {},
           "description": "MetaData"
+        },
+        "useReflection": {
+          "type": "boolean",
+          "description": "Use gRPC reflection to automatically gather the connection"
         }
       },
-      "required": ["endpoint", "protoFilePath"]
+      "required": ["endpoint"]
     },
     "LoadOptions": {
       "additionalProperties": false,

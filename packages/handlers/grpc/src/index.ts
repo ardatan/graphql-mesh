@@ -8,15 +8,23 @@ import {
   credentials,
   loadPackageDefinition,
 } from '@grpc/grpc-js';
-import { load } from '@grpc/proto-loader';
+import {
+  PackageDefinition,
+  load,
+  loadFileDescriptorSetFromBuffer,
+  loadFileDescriptorSetFromObject,
+} from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
+import { promises as fsPromises } from 'fs';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
 import { pascalCase } from 'pascal-case';
-import { AnyNestedObject, IParseOptions, Root } from 'protobufjs';
+import { AnyNestedObject, IParseOptions, Message, Root, RootConstructor } from 'protobufjs';
 import { Readable } from 'stream';
 import { promisify } from 'util';
+import grpcReflection from 'grpc-reflection-js';
+import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 
 import {
   ClientMethod,
@@ -28,6 +36,8 @@ import {
   getTypeName,
 } from './utils';
 
+const { readFile } = fsPromises || {};
+
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
 }
@@ -36,6 +46,8 @@ interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable
   [Symbol.asyncIterator](): AsyncIterableIterator<T>;
   cancel(): void;
 }
+
+type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
@@ -84,21 +96,68 @@ export default class GrpcHandler implements MeshHandler {
     });
 
     const root = new Root();
-    let fileName = this.config.protoFilePath;
-    let options: LoadOptions = {};
-    if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
-      fileName = this.config.protoFilePath.file;
-      options = this.config.protoFilePath.load;
-      if (options.includeDirs) {
-        if (!Array.isArray(options.includeDirs)) {
-          return Promise.reject(new Error('The includeDirs option must be an array'));
+    let packageDefinition: PackageDefinition;
+    if (this.config.useReflection) {
+      const grpcReflectionServer = this.config.endpoint;
+      const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds as any);
+      const services = (await reflectionClient.listServices()) as string[];
+      const serviceRoots = await Promise.all(
+        services
+          .filter(s => s && s !== 'grpc.reflection.v1alpha.ServerReflection')
+          .map((service: string) => reflectionClient.fileContainingSymbol(service))
+      );
+      serviceRoots.forEach((serviceRoot: Root) => {
+        if (serviceRoot.nested) {
+          for (const namespace in serviceRoot.nested) {
+            if (Object.prototype.hasOwnProperty.call(serviceRoot.nested, namespace)) {
+              root.add(serviceRoot.nested[namespace]);
+            }
+          }
         }
-        addIncludePathResolver(root, options.includeDirs);
+      });
+      root.resolveAll();
+      const descriptorSet = root.toDescriptor('proto3');
+      packageDefinition = loadFileDescriptorSetFromObject(descriptorSet.toJSON());
+    } else if (this.config.descriptorSetFilePath) {
+      // We have to use an ol' fashioned require here :(
+      // Needed for descriptor.FileDescriptorSet
+      const descriptor = require('protobufjs/ext/descriptor');
+
+      let fileName = this.config.descriptorSetFilePath;
+      let options: LoadOptions = {};
+      if (typeof this.config.descriptorSetFilePath === 'object' && this.config.descriptorSetFilePath.file) {
+        fileName = this.config.descriptorSetFilePath.file;
+        options = this.config.descriptorSetFilePath.load;
       }
+      const descriptorSetBuffer = await readFile(fileName as string);
+      let decodedDescriptorSet: DecodedDescriptorSet;
+      try {
+        const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
+        decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(descriptorSetJSON) as DecodedDescriptorSet;
+        packageDefinition = await loadFileDescriptorSetFromObject(descriptorSetJSON, options);
+      } catch (e) {
+        decodedDescriptorSet = descriptor.FileDescriptorSet.decode(descriptorSetBuffer) as DecodedDescriptorSet;
+        packageDefinition = await loadFileDescriptorSetFromBuffer(descriptorSetBuffer, options);
+      }
+      const descriptorSetRoot = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
+      root.add(descriptorSetRoot);
+    } else {
+      let fileName = this.config.protoFilePath;
+      let options: LoadOptions = {};
+      if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
+        fileName = this.config.protoFilePath.file;
+        options = this.config.protoFilePath.load;
+        if (options.includeDirs) {
+          if (!Array.isArray(options.includeDirs)) {
+            return Promise.reject(new Error('The includeDirs option must be an array'));
+          }
+          addIncludePathResolver(root, options.includeDirs);
+        }
+      }
+      const protoDefinition = await root.load(fileName as string, options);
+      protoDefinition.resolveAll();
+      packageDefinition = await load(fileName as string, options);
     }
-    const protoDefinition = await root.load(fileName as string, options);
-    protoDefinition.resolveAll();
-    const packageDefinition = await load(fileName as string, options);
     const grpcObject = loadPackageDefinition(packageDefinition);
 
     const visit = async (nested: AnyNestedObject, name: string, currentPath: string) => {
@@ -157,7 +216,18 @@ export default class GrpcHandler implements MeshHandler {
             if (name !== this.config.serviceName) {
               rootFieldName = camelCase(name + '_' + rootFieldName);
             }
-            if (currentPath !== this.config.packageName) {
+            if (!this.config.serviceName && this.config.useReflection) {
+              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
+              responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType.replace(currentPath, ''));
+              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType.replace(currentPath, ''));
+            } else if (this.config.descriptorSetFilePath && currentPath !== this.config.packageName) {
+              const reflectionPath = currentPath.replace(this.config.serviceName || '', '');
+              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
+              responseType = camelCase(
+                currentPath.split('.').join('_') + '_' + responseType.replace(reflectionPath, '')
+              );
+              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType.replace(reflectionPath, ''));
+            } else if (currentPath !== this.config.packageName) {
               rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
               responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType);
               requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType);
@@ -188,7 +258,10 @@ export default class GrpcHandler implements MeshHandler {
             } else {
               const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
               const identifier = methodName.toLowerCase();
-              const rootTC = (identifier.startsWith('get') || identifier.startsWith('list')) ? schemaComposer.Query : schemaComposer.Mutation;
+              const rootTC =
+                identifier.startsWith('get') || identifier.startsWith('list')
+                  ? schemaComposer.Query
+                  : schemaComposer.Mutation;
               rootTC.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,

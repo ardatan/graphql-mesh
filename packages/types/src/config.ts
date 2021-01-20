@@ -193,7 +193,11 @@ export interface GrpcHandler {
   /**
    * gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)
    */
-  protoFilePath: ProtoFilePath | string;
+  protoFilePath?: ProtoFilePath | string;
+  /**
+   * Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
+   */
+  descriptorSetFilePath?: ProtoFilePath | string;
   /**
    * Your base service name
    * Used for naming only
@@ -220,6 +224,10 @@ export interface GrpcHandler {
   metaData?: {
     [k: string]: any;
   };
+  /**
+   * Use gRPC reflection to automatically gather the connection
+   */
+  useReflection?: boolean;
 }
 export interface ProtoFilePath {
   file: string;
