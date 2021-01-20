@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.16.2
+
+### Patch Changes
+
+- c767df01: fix(fs): fix fs handling issues for non Node environments
+- b3d7ecbf: chore(deps): replace fs-extra with native fs
+- Updated dependencies [c767df01]
+- Updated dependencies [b3d7ecbf]
+  - @graphql-mesh/runtime@0.10.16
+  - @graphql-mesh/utils@0.8.4
+  - @graphql-mesh/config@0.11.16
+
 ## 0.16.1
 
 ### Patch Changes

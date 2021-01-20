@@ -1,5 +1,21 @@
 # @graphql-mesh/json-schema
 
+## 0.9.0
+
+### Minor Changes
+
+- f575515f: feat(json-schema): support PATCH method
+
+### Patch Changes
+
+- c767df01: fix(fs): fix fs handling issues for non Node environments
+- b3d7ecbf: chore(deps): replace fs-extra with native fs
+- Updated dependencies [c767df01]
+- Updated dependencies [183cfa96]
+- Updated dependencies [b3d7ecbf]
+  - @graphql-mesh/types@0.29.0
+  - @graphql-mesh/utils@0.8.4
+
 ## 0.8.21
 
 ### Patch Changes
