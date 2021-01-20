@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.8.5
+
+### Patch Changes
+
+- 8d345721: fix(utils): fix pathExists issue
+
 ## 0.8.4
 
 ### Patch Changes

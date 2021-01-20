@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-stitching",
-  "version": "0.7.16",
+  "version": "0.7.17",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.29.0",
-    "@graphql-mesh/utils": "0.8.4",
+    "@graphql-mesh/utils": "0.8.5",
     "fetchache": "0.0.4",
     "@graphql-tools/schema": "7.1.2",
     "@graphql-tools/stitch": "7.2.0",
