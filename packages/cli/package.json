@@ -41,7 +41,6 @@
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
     "express": "4.17.1",
-    "fs-extra": "9.1.0",
     "graphql-helix": "1.2.3",
     "graphql-playground-react": "1.7.27",
     "graphql-upload": "11.0.0",

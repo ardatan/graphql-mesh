@@ -13,8 +13,10 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { readJSON, unlink } from 'fs-extra';
-import { loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { promises as fsPromises } from 'fs';
+import { loadFromModuleExportExpression, readFileOrUrlWithCache, readJSON } from '@graphql-mesh/utils';
+
+const { unlink } = fsPromises;
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;

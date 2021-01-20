@@ -12,10 +12,10 @@ import {
 import { SchemaComposer } from 'graphql-compose';
 import { pascalCase } from 'pascal-case';
 import { join, isAbsolute, dirname } from 'path';
-import { readJSONSync } from 'fs-extra';
 import { camelCase, flatten, get } from 'lodash';
 import { RegularExpression } from 'graphql-scalars';
 import Ajv from 'ajv';
+import { readJSONSync } from '@graphql-mesh/utils';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
   if (Array.isArray(maybeArray)) {

@@ -3,7 +3,9 @@ import { loadDocuments } from '@graphql-tools/load';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { basename, resolve } from 'path';
-import { readFile } from 'fs-extra';
+import { promises as fsPromises } from 'fs';
+
+const { readFile } = fsPromises;
 
 export function playground(exampleQuery: string, graphqlPath: string): RequestHandler {
   return async (req: Request, res: Response, next) => {

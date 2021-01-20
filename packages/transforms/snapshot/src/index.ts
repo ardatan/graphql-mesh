@@ -3,16 +3,12 @@ import { YamlConfig, MeshTransform, MeshTransformOptions } from '@graphql-mesh/t
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
 import { isAbsolute, join } from 'path';
-import { ensureFile, writeJSON, pathExists } from 'fs-extra';
 import { computeSnapshotFilePath } from './compute-snapshot-file-path';
-import { extractResolvers } from '@graphql-mesh/utils';
+import { extractResolvers, writeJSON, pathExists } from '@graphql-mesh/utils';
 
 const writeFile = async (path: string, json: any): Promise<void> => {
   try {
-    await ensureFile(path);
-    await writeJSON(path, json, {
-      spaces: 2,
-    });
+    await writeJSON(path, json, null, 2);
   } catch (e) {
     console.error(`Snapshot cannot saved to ${path}: ${e.message}`);
   }

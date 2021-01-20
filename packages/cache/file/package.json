@@ -15,7 +15,6 @@
   "dependencies": {
     "@graphql-mesh/types": "0.28.0",
     "dataloader": "2.0.0",
-    "fs-extra": "9.1.0",
     "lodash": "4.17.20"
   },
   "publishConfig": {

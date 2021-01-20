@@ -11,13 +11,12 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import cors from 'cors';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
 import { get } from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { cwd } from 'process';
-import { pathExists } from 'fs-extra';
 import { graphqlHandler } from './graphql-handler';
 
 export async function serveMesh(
