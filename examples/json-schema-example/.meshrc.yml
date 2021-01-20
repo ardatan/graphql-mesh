@@ -25,7 +25,7 @@ sources:
             path: /user/{args.id}
             method: POST
             requestSample: ./json-samples/user-input.json
-            responseSchema: ./json-schemas/user.json
+            responseSchema: ./json-schemas/user.json # This can be `responseSample` with a sample JSON file
 additionalTypeDefs: |
   extend type User {
     company: Company
