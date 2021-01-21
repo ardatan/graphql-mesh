@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-snapshot
 
+## 0.7.8
+
+### Patch Changes
+
+- Updated dependencies [e8994875]
+  - @graphql-mesh/types@0.29.1
+
 ## 0.7.7
 
 ### Patch Changes
