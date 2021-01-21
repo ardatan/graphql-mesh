@@ -1,5 +1,14 @@
 # @graphql-mesh/config
 
+## 0.11.19
+
+### Patch Changes
+
+- Updated dependencies [7e970f09]
+  - @graphql-mesh/utils@0.8.6
+  - @graphql-mesh/merger-stitching@0.7.19
+  - @graphql-mesh/runtime@0.10.19
+
 ## 0.11.18
 
 ### Patch Changes

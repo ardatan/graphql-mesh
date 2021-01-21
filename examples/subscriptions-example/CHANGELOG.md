@@ -1,5 +1,12 @@
 # subscriptions-example
 
+## 0.1.37
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.17.1
+- @graphql-mesh/json-schema@0.9.3
+
 ## 0.1.36
 
 ### Patch Changes

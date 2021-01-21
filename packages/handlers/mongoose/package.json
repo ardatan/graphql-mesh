@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.6.35",
+  "version": "0.6.36",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.29.1",
-    "@graphql-mesh/utils": "0.8.5",
+    "@graphql-mesh/utils": "0.8.6",
     "camel-case": "4.1.2",
     "graphql-compose": "7.24.1",
     "graphql-compose-mongoose": "9.0.0",
