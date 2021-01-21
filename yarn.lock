@@ -232,10 +232,12 @@
     mkdirp "1.0.3"
     yargs "15.3.1"
 
-"@ardatan/string-interpolation@1.2.8":
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/@ardatan/string-interpolation/-/string-interpolation-1.2.8.tgz#27c9390f0b46a12cd9876c5793422d5bc2150023"
-  integrity sha512-B1i8YLbcIGE6VOtB8S80WGq0zKzJUyC5/M8HXGy2ReJ1vqyg0UeJx66zLdPLuqX7GdKmJTAnrD4QStfE6IOwjQ==
+"@ardatan/string-interpolation@1.2.11":
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/@ardatan/string-interpolation/-/string-interpolation-1.2.11.tgz#5a0ea807e55f1faf79a0ec7b809953d6e1e31c81"
+  integrity sha512-MHp6DPMIlSgCwZwcNuev1wbWFKbizCGNwKvWd6CR7jXGpSnlE6FPUhWtH5xGalWY/OyOnUOfV2Tj9+2STnTMZg==
+  dependencies:
+    lodash "4.17.20"
 
 "@babel/code-frame@7.10.4", "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.5.5":
   version "7.10.4"
