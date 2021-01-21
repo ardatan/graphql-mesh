@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-prefix
 
+## 0.6.19
+
+### Patch Changes
+
+- Updated dependencies [7e970f09]
+  - @graphql-mesh/utils@0.8.6
+
 ## 0.6.18
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @graphql-mesh/postgraphile
 
+## 0.8.6
+
+### Patch Changes
+
+- Updated dependencies [7e970f09]
+  - @graphql-mesh/utils@0.8.6
+
 ## 0.8.5
 
 ### Patch Changes

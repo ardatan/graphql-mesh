@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.8.6
+
+### Patch Changes
+
+- 7e970f09: fix(utils): handle more complex interpolation strings
+
 ## 0.8.5
 
 ### Patch Changes
