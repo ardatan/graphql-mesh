@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.17.0
+
+### Minor Changes
+
+- e8994875: feat(serve): ability to change maxFileSize and maxFiles for graphql-upload
+
+### Patch Changes
+
+- @graphql-mesh/config@0.11.18
+- @graphql-mesh/runtime@0.10.18
+
 ## 0.16.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.29.1
+
+### Patch Changes
+
+- e8994875: feat(serve): ability to change maxFileSize and maxFiles for graphql-upload
+
 ## 0.29.0
 
 ### Minor Changes
