@@ -24,7 +24,17 @@ export async function serveMesh(
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
   pubsub: MeshPubSub,
-  { fork, exampleQuery, port, cors: corsConfig, handlers, staticFiles, playground }: YamlConfig.ServeConfig = {}
+  {
+    fork,
+    exampleQuery,
+    port,
+    cors: corsConfig,
+    handlers,
+    staticFiles,
+    playground,
+    maxFileSize = 10000000,
+    maxFiles = 10,
+  }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
   const graphqlPath = '/graphql';
@@ -54,11 +64,7 @@ export async function serveMesh(
       }
     }
 
-    app.post(
-      graphqlPath,
-      graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
-      graphqlHandler(schema, contextBuilder)
-    );
+    app.post(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(schema, contextBuilder));
 
     const wsServer = new ws.Server({
       path: graphqlPath,

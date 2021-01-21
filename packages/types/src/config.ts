@@ -57,6 +57,14 @@ export interface ServeConfig {
    * Show playground
    */
   playground?: boolean;
+  /**
+   * Maximum File Size for GraphQL Upload (default: '100000000')
+   */
+  maxFileSize?: number;
+  /**
+   * Maximum number of files for GraphQL Upload (default: '10')
+   */
+  maxFiles?: number;
 }
 export interface CorsConfig {
   origin?: any;

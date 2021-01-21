@@ -22,6 +22,14 @@ type ServeConfig @md {
   Show playground
   """
   playground: Boolean
+  """
+  Maximum File Size for GraphQL Upload (default: '100000000')
+  """
+  maxFileSize: Int
+  """
+  Maximum number of files for GraphQL Upload (default: '10')
+  """
+  maxFiles: Int
 }
 
 union Port = Int | String
