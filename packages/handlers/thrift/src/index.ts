@@ -1,7 +1,7 @@
 import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, ThriftErrors, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
 import { readFileOrUrlWithCache, parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
-import AggregateError from 'aggregate-error';
+import AggregateError from '@ardatan/aggregate-error';
 import {
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,

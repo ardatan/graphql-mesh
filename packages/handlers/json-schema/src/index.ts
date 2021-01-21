@@ -9,7 +9,7 @@ import {
   pathExists,
   writeJSON,
 } from '@graphql-mesh/utils';
-import AggregateError from 'aggregate-error';
+import AggregateError from '@ardatan/aggregate-error';
 import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { ObjectTypeComposerFieldConfigDefinition, SchemaComposer } from 'graphql-compose';
