@@ -2529,10 +2529,10 @@
     "@graphql-tools/utils" "^7.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/stitch@7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-7.2.0.tgz#ab078f3ea1c20c94c5107b129f7b01baeb90575c"
-  integrity sha512-jkrfyc8CvujrHhYuE19DGS6YYlS/nJQd1iTRPkQbCwBKem6fuTQCr/eRWWOoedN1XX1XLT/5IAb5rsBO+nMj0g==
+"@graphql-tools/stitch@7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-7.2.1.tgz#8849fb2f52593a16a5e28ee40aa3d9a3a7f72d13"
+  integrity sha512-7iEMrbNk3lQbkg4BhTPZ0pPL78cy7odfr0fBJRC7VxpneOYleg9CucbQ/xHLh7Q8fHRBGPHPrFKHvX7+NbgpYA==
   dependencies:
     "@graphql-tools/batch-delegate" "^7.0.0"
     "@graphql-tools/delegate" "^7.0.9"
