@@ -34,6 +34,7 @@ export async function serveMesh(
     playground,
     maxFileSize = 10000000,
     maxFiles = 10,
+    maxRequestBodySize = '100kb',
   }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
@@ -53,7 +54,11 @@ export async function serveMesh(
       app.use(cors(corsConfig));
     }
 
-    app.use(bodyParser.json());
+    app.use(
+      bodyParser.json({
+        limit: maxRequestBodySize,
+      })
+    );
     app.use(cookieParser());
 
     if (staticFiles) {

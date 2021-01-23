@@ -65,6 +65,10 @@ export interface ServeConfig {
    * Maximum number of files for GraphQL Upload (default: '10')
    */
   maxFiles?: number;
+  /**
+   * Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
+   */
+  maxRequestBodySize?: number | string;
 }
 export interface CorsConfig {
   origin?: any;
