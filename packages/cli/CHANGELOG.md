@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.18.0
+
+### Minor Changes
+
+- 8e8848e1: feat(serve): ability to change maxRequestBodySize
+
+### Patch Changes
+
+- @graphql-mesh/config@0.11.20
+- @graphql-mesh/runtime@0.10.20
+
 ## 0.17.1
 
 ### Patch Changes
