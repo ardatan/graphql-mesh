@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.9.5
+
+### Patch Changes
+
+- 79b2c291: fix(json-schema): get type name from property name of definitions array"
+
 ## 0.9.4
 
 ### Patch Changes
