@@ -2740,10 +2740,10 @@
     google-auth-library "^6.0.0"
     semver "^6.2.0"
 
-"@grpc/grpc-js@1.2.4":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.2.4.tgz#04f0bbefb2636296d17e821f3d52152fbe2f6989"
-  integrity sha512-z+EI20HYHLd3/uERtwOqP8Q4EPhGbz5RKUpiyo6xPWfR3pcjpf8sfNvY9XytDQ4xo1wNz7NqH1kh2UBonwzbfg==
+"@grpc/grpc-js@1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.2.5.tgz#d1ef9ae8b99c3b46bb6cc8c82be1aa80080b7300"
+  integrity sha512-CBCNwedw8McnEBq9jvoiJikws16WN0OiHFejQPovY71XkFWSiIqgvydYiDwpvIYDJmhPQ7qZNzW9BPndhXbx1Q==
   dependencies:
     "@types/node" "^12.12.47"
     google-auth-library "^6.1.1"
