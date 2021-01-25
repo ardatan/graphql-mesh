@@ -138,14 +138,16 @@ export class JSONSchemaVisitor<TContext> {
     }
     if ('definitions' in def) {
       for (const propertyName in def.definitions) {
-        const definition = def.definitions[propertyName];
+        const definition: any = def.definitions[propertyName];
+        definition.name = definition.name || propertyName;
         this.visit({ def: definition, propertyName, prefix, cwd, typeName: propertyName });
       }
     }
     if ('$defs' in def) {
       for (const propertyName in def.$defs) {
-        const definition = def.$defs[propertyName];
-        this.visit({ def: definition, propertyName, prefix, cwd });
+        const definition: any = def.$defs[propertyName];
+        definition.name = definition.name || propertyName;
+        this.visit({ def: definition, propertyName, prefix, cwd, typeName: propertyName });
       }
     }
     let result: string;
