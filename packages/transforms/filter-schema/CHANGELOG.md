@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.8.21
+
+### Patch Changes
+
+- 56f4001c: fix(filterSchema): remove types if there is no fields left
+
 ## 0.8.20
 
 ### Patch Changes
