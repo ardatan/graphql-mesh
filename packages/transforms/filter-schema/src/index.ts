@@ -3,7 +3,7 @@ import { matcher } from 'micromatch';
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { FilterRootFields, FilterObjectFields, FilterInputObjectFields, FilterTypes } from '@graphql-tools/wrap';
-import { ExecutionResult, Request } from '@graphql-tools/utils';
+import { ExecutionResult, Request, pruneSchema } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
@@ -13,11 +13,11 @@ export default class FilterTransform implements MeshTransform {
     const { config } = options;
     for (const filter of config) {
       const [typeName, fieldGlob] = filter.split('.');
+      const isTypeMatch = matcher(typeName);
       if (!fieldGlob) {
-        const isMatch = matcher(typeName);
         this.transforms.push(
           new FilterTypes(type => {
-            return !isMatch(type.name);
+            return !isTypeMatch(type.name);
           })
         );
       } else {
@@ -29,7 +29,7 @@ export default class FilterTransform implements MeshTransform {
         const isMatch = matcher(fixedFieldGlob.trim());
         this.transforms.push(
           new FilterRootFields((rootTypeName, rootFieldName) => {
-            if (rootTypeName === typeName) {
+            if (isTypeMatch(rootTypeName)) {
               return isMatch(rootFieldName);
             }
             return true;
@@ -37,7 +37,7 @@ export default class FilterTransform implements MeshTransform {
         );
         this.transforms.push(
           new FilterObjectFields((objectTypeName, objectFieldName) => {
-            if (objectTypeName === typeName) {
+            if (isTypeMatch(objectTypeName)) {
               return isMatch(objectFieldName);
             }
             return true;
@@ -45,7 +45,7 @@ export default class FilterTransform implements MeshTransform {
         );
         this.transforms.push(
           new FilterInputObjectFields((inputObjectTypeName, inputObjectFieldName) => {
-            if (inputObjectTypeName === typeName) {
+            if (isTypeMatch(inputObjectTypeName)) {
               return isMatch(inputObjectFieldName);
             }
             return true;
@@ -60,7 +60,19 @@ export default class FilterTransform implements MeshTransform {
     subschemaConfig: SubschemaConfig,
     transformedSchema?: GraphQLSchema
   ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    const returnedSchema = applySchemaTransforms(
+      originalWrappingSchema,
+      subschemaConfig,
+      transformedSchema,
+      this.transforms
+    );
+    // TODO: Need a better solution
+    return pruneSchema(returnedSchema, {
+      skipEmptyCompositeTypePruning: false,
+      skipEmptyUnionPruning: true,
+      skipUnimplementedInterfacesPruning: true,
+      skipUnusedTypesPruning: true,
+    });
   }
 
   transformRequest(

@@ -93,8 +93,7 @@ type Query {
   foo: String
   bar: String
 }
-
-type Mutation`.trim()
+`.trim()
     );
   });
   it('should filter out fields if array syntax is used only with one element', async () => {
@@ -229,6 +228,7 @@ type Query {
       }
 
       type Query {
+        book: Book
         user: User
         admin: User
       }
@@ -253,7 +253,9 @@ type Book {
   authorId: ID
 }
 
-type Query
+type Query {
+  book: Book
+}
 `.trim()
     );
   });
