@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
 import { GraphQLSchema } from 'graphql';
-import { getGraphQLParameters, processRequest } from 'graphql-helix';
+import { getGraphQLParameters, processRequest, shouldRenderGraphiQL } from 'graphql-helix';
 
 export const graphqlHandler = (
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>
-): RequestHandler => async (req, res) => {
+): RequestHandler => async (req, res, next) => {
   // Create a generic Request object that can be consumed by Graphql Helix's API
   const request = {
     body: req.body,
@@ -13,6 +13,11 @@ export const graphqlHandler = (
     method: req.method,
     query: req.query,
   };
+
+  if (shouldRenderGraphiQL(request)) {
+    next();
+    return;
+  }
 
   // Determine whether we should render GraphiQL instead of returning an API response
   // Extract the GraphQL parameters from the request

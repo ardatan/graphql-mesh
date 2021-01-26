@@ -67,24 +67,17 @@ async function startServer() {
       console.log('call started');
       console.log('called with MetaData:', JSON.stringify(call.metadata.getMap()));
       const input = call.request;
-      let i = 1;
       call.on('error', error => {
         console.error(error);
         call.end();
       });
-      const intervals = Movies.map(movie => {
+      Movies.forEach((movie, i) => {
         if (movie.cast.indexOf(input.castName) > -1) {
-          const interval = setInterval(() => {
-            console.log(movie.name);
-            if (call.cancelled || call.destroyed) {
-              intervals.forEach(clearInterval);
-              console.log('call ended');
-              return;
+          setTimeout(() => {
+            if (!call.cancelled && !call.destroyed) {
+              call.write(movie);
             }
-            call.write(movie);
           }, i * 1000);
-          i += 1;
-          return interval;
         }
       });
     },
