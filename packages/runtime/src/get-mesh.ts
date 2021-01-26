@@ -67,14 +67,13 @@ export async function getMesh(
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
   async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
-    initialContextValue?: TAdditionalContext
+    context: TAdditionalContext = {} as any
   ): Promise<TContext> {
-    const context: any = {
-      ...initialContextValue,
+    Object.assign(context, {
       pubsub,
       cache,
       [MESH_CONTEXT_SYMBOL]: true,
-    };
+    });
 
     await Promise.all(
       rawSources.map(async rawSource => {

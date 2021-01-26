@@ -11,6 +11,7 @@ sources:
     handler:
       graphql:
         endpoint: https://api.github.com/graphql
+        introspection: https://raw.githubusercontent.com/octokit/graphql-schema/master/schema.graphql
         operationHeaders:
           Authorization: bearer ${GH_ACCESS_TOKEN}
         cacheIntrospection: true
