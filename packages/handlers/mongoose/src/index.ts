@@ -4,6 +4,7 @@ import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig }
 import { camelCase } from 'camel-case';
 import mongoose from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { specifiedDirectives } from 'graphql';
 
 const modelQueryOperations = ['findById', 'findByIds', 'findOne', 'findMany', 'count', 'connection', 'pagination'];
 
@@ -94,6 +95,9 @@ export default class MongooseHandler implements MeshHandler {
         }) || []
       ),
     ]);
+
+    // graphql-compose doesn't add @defer and @stream to the schema
+    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const schema = schemaComposer.buildSchema();
 

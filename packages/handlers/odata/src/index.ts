@@ -21,7 +21,14 @@ import {
   GraphQLByte,
   GraphQLISO8601Duration,
 } from 'graphql-scalars';
-import { isListType, GraphQLResolveInfo, isAbstractType, GraphQLObjectType, GraphQLSchema } from 'graphql';
+import {
+  isListType,
+  GraphQLResolveInfo,
+  isAbstractType,
+  GraphQLObjectType,
+  GraphQLSchema,
+  specifiedDirectives,
+} from 'graphql';
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
@@ -1285,6 +1292,9 @@ export default class ODataHandler implements MeshHandler {
         });
       });
     });
+
+    // graphql-compose doesn't add @defer and @stream to the schema
+    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const schema = schemaComposer.buildSchema();
     this.eventEmitterSet.forEach(ee => ee.removeAllListeners());

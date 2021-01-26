@@ -28,6 +28,7 @@ import {
   GraphQLIPv6,
 } from 'graphql-scalars';
 import { promises as fsPromises } from 'fs';
+import { specifiedDirectives } from 'graphql';
 
 const { stat } = fsPromises || {};
 
@@ -266,6 +267,9 @@ export default class JsonSchemaHandler implements MeshHandler {
 
     await Promise.all(typeNamedOperations.map(handleOperations));
     await Promise.all(unnamedOperations.map(handleOperations));
+
+    // graphql-compose doesn't add @defer and @stream to the schema
+    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const schema = schemaComposer.buildSchema();
     return {

@@ -5,7 +5,7 @@ import { Logger } from 'winston';
 import { fork as clusterFork, isMaster } from 'cluster';
 import { cpus } from 'os';
 import 'json-bigint-patch';
-import { createServer as createHTTPServer , Server } from 'http';
+import { createServer as createHTTPServer, Server } from 'http';
 import { playground as playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
@@ -37,7 +37,7 @@ export async function serveMesh(
     handlers,
     staticFiles,
     playground,
-    upload: { maxFileSize = 10000000, maxFiles = 10 },
+    upload: { maxFileSize = 10000000, maxFiles = 10 } = {},
     maxRequestBodySize = '100kb',
     sslCredentials,
   }: YamlConfig.ServeConfig = {}

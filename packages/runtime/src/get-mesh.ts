@@ -139,15 +139,19 @@ export async function getMesh(
   ) => {
     const executionResult = await meshExecute<TVariables, TContext, TRootValue>(document, variables, context);
 
-    if (executionResult.data && !executionResult.errors) {
-      return executionResult.data as Result;
+    if ('data' in executionResult) {
+      if (executionResult.data && !executionResult.errors) {
+        return executionResult.data as Result;
+      } else {
+        throw new GraphQLMeshSdkError(
+          executionResult.errors as ReadonlyArray<GraphQLError>,
+          document,
+          variables,
+          executionResult.data
+        );
+      }
     } else {
-      throw new GraphQLMeshSdkError(
-        executionResult.errors as ReadonlyArray<GraphQLError>,
-        document,
-        variables,
-        executionResult.data
-      );
+      throw new Error('Not implemented');
     }
   };
 

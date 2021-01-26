@@ -35,6 +35,7 @@ import {
   getBuffer,
   getTypeName,
 } from './utils';
+import { specifiedDirectives } from 'graphql';
 
 const { readFile } = fsPromises || {};
 
@@ -291,6 +292,9 @@ export default class GrpcHandler implements MeshHandler {
       keepComments: true,
     });
     await visit(rootNested, '', '');
+
+    // graphql-compose doesn't add @defer and @stream to the schema
+    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const schema = schemaComposer.buildSchema();
 
