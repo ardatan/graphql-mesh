@@ -67,9 +67,9 @@ export async function getMesh(
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
   async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
-    context: TAdditionalContext = {} as any
+    additionalContext: TAdditionalContext = {} as any
   ): Promise<TContext> {
-    Object.assign(context, {
+    const context: TContext = Object.assign(additionalContext as any, {
       pubsub,
       cache,
       [MESH_CONTEXT_SYMBOL]: true,
