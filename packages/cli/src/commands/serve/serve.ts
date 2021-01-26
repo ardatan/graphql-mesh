@@ -5,7 +5,7 @@ import { Logger } from 'winston';
 import { fork as clusterFork, isMaster } from 'cluster';
 import { cpus } from 'os';
 import 'json-bigint-patch';
-import { createServer } from 'http';
+import { createServer as createHTTPServer , Server } from 'http';
 import { playground as playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
@@ -18,6 +18,11 @@ import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { cwd } from 'process';
 import { graphqlHandler } from './graphql-handler';
+
+import { createServer as createHTTPSServer } from 'https';
+import { promises as fsPromises } from 'fs';
+
+const { readFile } = fsPromises;
 
 export async function serveMesh(
   logger: Logger,
@@ -32,9 +37,9 @@ export async function serveMesh(
     handlers,
     staticFiles,
     playground,
-    maxFileSize = 10000000,
-    maxFiles = 10,
+    upload: { maxFileSize = 10000000, maxFiles = 10 },
     maxRequestBodySize = '100kb',
+    sslCredentials,
   }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
   const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
@@ -48,7 +53,17 @@ export async function serveMesh(
   } else {
     const app = express();
     app.set('trust proxy', 'loopback');
-    const httpServer = createServer(app);
+    let httpServer: Server;
+
+    if (sslCredentials) {
+      const [key, cert] = await Promise.all([
+        readFile(sslCredentials.key, 'utf-8'),
+        readFile(sslCredentials.cert, 'utf-8'),
+      ]);
+      httpServer = createHTTPSServer({ key, cert }, app);
+    } else {
+      httpServer = createHTTPServer(app);
+    }
 
     if (corsConfig) {
       app.use(cors(corsConfig));
@@ -69,7 +84,7 @@ export async function serveMesh(
       }
     }
 
-    app.post(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(schema, contextBuilder));
+    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(schema, contextBuilder));
 
     const wsServer = new ws.Server({
       path: graphqlPath,
