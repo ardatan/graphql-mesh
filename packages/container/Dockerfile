@@ -13,4 +13,4 @@ EXPOSE 4000
 USER mesh
 WORKDIR /home/mesh
 
-CMD yarn start
+CMD yarn start --dir /config
