@@ -1,15 +1,14 @@
-FROM node:14-slim 
+FROM node:14-alpine 
 
-RUN groupadd -r mesh
-RUN useradd --no-log-init -r -u 999 -g mesh mesh
+RUN addgroup -S mesh && adduser -S mesh -G mesh
 
 WORKDIR /home/mesh
 COPY package.json ./
-COPY config/.meshrc.yaml ./
+COPY config/.meshrc.yaml /config
 
 RUN yarn install --production
 
-EXPOSE 3000
+EXPOSE 4000
 
 USER mesh
 WORKDIR /home/mesh
