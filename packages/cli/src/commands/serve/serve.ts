@@ -116,10 +116,14 @@ export async function serveMesh(
       app.use(express.static(join(__dirname, './public')));
     }
 
-    httpServer.listen(port.toString(), () => {
-      if (!fork) {
-        logger.info(`🕸️ => Serving GraphQL Mesh: http://localhost:${port}`);
-      }
-    });
+    httpServer
+      .listen(port.toString(), () => {
+        if (!fork) {
+          logger.info(`🕸️ => Serving GraphQL Mesh: http://localhost:${port}`);
+        }
+      })
+      .on('error', e => {
+        logger.error(`Unable to start GraphQL-Mesh: ${e.message}`);
+      });
   }
 }
