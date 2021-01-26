@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.10.21
+
+### Patch Changes
+
+- bf6c517d: fix(runtime): mutate incoming context object instead of creating a new one
+
 ## 0.10.20
 
 ### Patch Changes
