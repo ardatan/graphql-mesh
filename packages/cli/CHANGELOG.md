@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.19.0
+
+### Minor Changes
+
+- 63e12ef3: Better config validations, allow to set --dir in cli for base path
+
+### Patch Changes
+
+- Updated dependencies [63e12ef3]
+  - @graphql-mesh/config@0.12.0
+
 ## 0.18.0
 
 ### Minor Changes
