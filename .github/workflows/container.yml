@@ -25,4 +25,4 @@ jobs:
           push: true
           tags: theguild/graphql-mesh:latest
           context: ./packages/container
-          file: ./Dockerfile
+          file: ./packages/container/Dockerfile
