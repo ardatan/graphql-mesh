@@ -334,4 +334,57 @@ type Query {
 `.trim()
     );
   });
+
+  it('should filter out arguments of root field', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+      }
+
+      type Book {
+        id: ID
+        name: String
+        author: User
+      }
+
+      type Query {
+        user(pk: ID!, name: String): User
+        book: Book
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['Query.user(!pk)'],
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    console.log(printSchema(schema));
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+}
+
+type Book {
+  id: ID
+  name: String
+  author: User
+}
+
+type Query {
+  user(name: String): User
+}
+`.trim()
+    );
+  });
 });

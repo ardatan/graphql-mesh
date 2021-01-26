@@ -6,6 +6,7 @@ import { FilterRootFields, FilterObjectFields, FilterInputObjectFields, FilterTy
 import { ExecutionResult, Request, pruneSchema } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+import { FilterRootFieldArguments } from './filter-arguments';
 
 export default class FilterTransform implements MeshTransform {
   private transforms: Transform[] = [];
@@ -20,12 +21,34 @@ export default class FilterTransform implements MeshTransform {
             return !isTypeMatch(type.name);
           })
         );
+      } else if (fieldGlob.includes('(')) {
+        const parts = fieldGlob.split('(');
+        const fixedFieldGlob = parts[0];
+        let fixedArgGlob = parts[1];
+
+        if (!fixedArgGlob.includes(',')) {
+          fixedArgGlob = fixedArgGlob.replace('(', '').replace(')', '');
+        }
+
+        fixedArgGlob = fixedArgGlob.replace(', ', ',');
+
+        const isMatch = matcher(fixedFieldGlob.trim());
+        const isArgumentMatch = matcher(fixedArgGlob.trim());
+        this.transforms.push(
+          new FilterRootFieldArguments((rootTypeName, rootFieldName) => {
+            if (isTypeMatch(rootTypeName)) {
+              return isMatch(rootFieldName);
+            }
+            return true;
+          }, isArgumentMatch)
+        );
       } else {
         let fixedFieldGlob = fieldGlob;
         if (fixedFieldGlob.includes('{') && !fixedFieldGlob.includes(',')) {
           fixedFieldGlob = fieldGlob.replace('{', '').replace('}', '');
         }
         fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
+
         const isMatch = matcher(fixedFieldGlob.trim());
         this.transforms.push(
           new FilterRootFields((rootTypeName, rootFieldName) => {
