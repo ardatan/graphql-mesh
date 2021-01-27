@@ -248,8 +248,9 @@ export default class MySQLHandler implements MeshHandler {
         await Promise.all(
           Object.keys(tableForeigns).map(async foreignName => {
             const tableForeign = tableForeigns[foreignName];
+            const columnName = tableForeign.COLUMN_NAME;
             const foreignTableName = tableForeign.REFERENCED_TABLE_NAME;
-            const foreignColumnName = tableForeign.COLUMN_NAME;
+            const foreignColumnName = tableForeign.REFERENCED_COLUMN_NAME;
             const foreignTypeName = pascalCase(foreignTableName);
             tableTC.addFields({
               [foreignTableName]: {
@@ -275,7 +276,7 @@ export default class MySQLHandler implements MeshHandler {
                     fieldName => Object.keys(fieldMap[fieldName]).length === 0
                   );
                   const where = {
-                    [foreignColumnName]: root[foreignColumnName],
+                    [foreignColumnName]: root[columnName],
                     ...args?.where,
                   };
                   // Generate limit statement
