@@ -1,11 +1,11 @@
 import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { RootFieldFilter } from '@graphql-tools/utils';
 import { TransformRootFields } from '@graphql-tools/wrap';
-import { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLSchema } from 'graphql';
+import { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
 
-export type FieldArgumentFilter = (argName: string) => boolean;
+import { FieldArgumentFilter, filterFieldArguments } from './common';
 
-export class FilterRootFieldArguments implements Transform {
+export class FilterRootFieldsAndArguments implements Transform {
   private readonly transformer: TransformRootFields;
 
   constructor(fieldFilter: RootFieldFilter, argFilter: FieldArgumentFilter) {
@@ -16,14 +16,7 @@ export class FilterRootFieldArguments implements Transform {
         fieldConfig: GraphQLFieldConfig<any, any>
       ) => {
         if (fieldFilter(operation, fieldName, fieldConfig)) {
-          const args = Object.keys(fieldConfig.args)
-            .filter((argName: string) => argFilter(argName))
-            .reduce((prev, key) => {
-              prev[key] = fieldConfig.args[key];
-              return prev;
-            }, {} as GraphQLFieldConfigArgumentMap);
-
-          return { ...fieldConfig, args };
+          return filterFieldArguments(fieldName, fieldConfig, argFilter);
         }
 
         return null;
