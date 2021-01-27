@@ -1,5 +1,11 @@
 # @graphql-mesh/container
 
+## 0.0.4
+
+### Patch Changes
+
+- bddceed2: TEST
+
 ## 0.0.3
 
 ### Patch Changes
