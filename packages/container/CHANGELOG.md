@@ -1,5 +1,11 @@
 # @graphql-mesh/container
 
+## 0.0.5
+
+### Patch Changes
+
+- 53617369: Added missing packages, fixes for config dir setup
+
 ## 0.0.4
 
 ### Patch Changes
