@@ -1,5 +1,11 @@
 # @graphql-mesh/mysql
 
+## 0.6.23
+
+### Patch Changes
+
+- 28b0feb0: fix(mysql): fix foreign table references
+
 ## 0.6.22
 
 ### Patch Changes
