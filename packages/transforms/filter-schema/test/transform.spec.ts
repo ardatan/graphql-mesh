@@ -350,22 +350,20 @@ type Query {
       }
 
       type Query {
-        user(pk: ID!, name: String): User
-        book: Book
+        user(pk: ID!, name: String, age: Int): User
+        book(pk: ID!): Book
       }
     `);
     schema = wrapSchema({
       schema,
       transforms: [
         new FilterSchemaTransform({
-          config: ['Query.user(!pk)'],
+          config: ['Query.{user(!{pk, name}), book(!pk)}'],
           cache,
           pubsub,
         }),
       ],
     });
-
-    console.log(printSchema(schema));
 
     expect(printSchema(schema).trim()).toBe(
       /* GraphQL */ `
@@ -382,7 +380,8 @@ type Book {
 }
 
 type Query {
-  user(name: String): User
+  user(age: Int): User
+  book: Book
 }
 `.trim()
     );
