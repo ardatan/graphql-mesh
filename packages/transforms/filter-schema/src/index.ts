@@ -17,7 +17,7 @@ export default class FilterTransform implements MeshTransform {
       if (!fieldGlob) {
         this.transforms.push(
           new FilterTypes(type => {
-            return !isTypeMatch(type.name);
+            return isTypeMatch(type.name);
           })
         );
       } else {
