@@ -30,7 +30,8 @@ export async function readFileWithCache<T>(
   cache: KeyValueCache,
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
-  const actualPath = isAbsolute ? filePath : resolve(process.cwd(), filePath);
+  const { readFile, stat } = await import('fs-extra');
+  const actualPath = isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
   const cachedObjStr = await cache.get(actualPath);
   const stats = await stat(actualPath);
   if (cachedObjStr) {
