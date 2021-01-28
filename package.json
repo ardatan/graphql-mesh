@@ -4,6 +4,7 @@
   "version": "0.2.15",
   "private": true,
   "scripts": {
+    "postinstall": "patch-package",
     "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
     "deploy:website": "cd website && yarn deploy",
     "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/types/src",
@@ -81,6 +82,7 @@
     ]
   },
   "resolutions": {
+    "@changesets/git": "1.1.0",
     "graphql": "15.5.0"
   }
 }
