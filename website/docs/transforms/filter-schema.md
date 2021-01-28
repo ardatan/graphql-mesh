@@ -17,6 +17,7 @@ Add the following configuration to your Mesh config file:
 ```yml
 transforms:
   - filterSchema:
+    - !User # <-- This will remove `User` type
     - Query.!admins # <-- This will remove field `admins` from `Query` type
     - Mutation.!{addUser, removeUser} # <-- This will remove fields `addUser` and `removeUser` from `Mutation` type
     - User.{id,username,name,age} # <-- This will remove fields except `id`, `username`, `name` and `age`

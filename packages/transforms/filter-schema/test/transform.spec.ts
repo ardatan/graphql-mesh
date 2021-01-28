@@ -179,7 +179,7 @@ type Query {
       schema,
       transforms: [
         new FilterSchemaTransform({
-          config: ['Book'],
+          config: ['!Book'],
           cache,
           pubsub,
         }),
@@ -237,7 +237,7 @@ type Query {
       schema,
       transforms: [
         new FilterSchemaTransform({
-          config: ['User'],
+          config: ['!User'],
           cache,
           pubsub,
         }),
@@ -298,7 +298,7 @@ type Query {
       schema,
       transforms: [
         new FilterSchemaTransform({
-          config: ['AuthRule'],
+          config: ['!AuthRule'],
           cache,
           pubsub,
         }),
