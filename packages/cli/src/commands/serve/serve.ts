@@ -32,6 +32,7 @@ export async function serveMesh(
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
   pubsub: MeshPubSub,
+  baseDir = process.cwd(),
   {
     fork,
     exampleQuery,
@@ -81,7 +82,7 @@ export async function serveMesh(
 
     if (staticFiles) {
       app.use(express.static(staticFiles));
-      const indexPath = join(cwd(), staticFiles, 'index.html');
+      const indexPath = join(baseDir, staticFiles, 'index.html');
       if (await pathExists(indexPath)) {
         app.get('/', (_req, res) => res.sendFile(indexPath));
       }
@@ -135,7 +136,7 @@ export async function serveMesh(
       if (exampleQuery) {
         const documents = await loadDocuments(exampleQuery, {
           loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-          cwd: process.cwd(),
+          cwd: baseDir,
         });
 
         defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
