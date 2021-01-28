@@ -1,20 +1,20 @@
 import { Request, Response, RequestHandler } from 'express';
 import { renderGraphiQL } from 'graphql-helix';
 
-export function playground({
+export const playgroundMiddlewareFactory = ({
   defaultQuery,
   graphqlPath,
 }: {
   defaultQuery: string;
   graphqlPath: string;
-}): RequestHandler {
-  return async (req: Request, res: Response, next) => {
-    if (req.query.query) {
-      next();
-      return;
-    }
+}): RequestHandler => (req: Request, res: Response, next) => {
+  if (req.query.query) {
+    next();
+    return;
+  }
 
-    res.send(`
+  res.send(
+    `
   <script>
     let fakeStorageObj = {};
     const fakeStorageInstance = {
@@ -41,10 +41,9 @@ export function playground({
       value: fakeStorageInstance,
     });
   </script>` +
-        renderGraphiQL({
-          defaultQuery,
-          endpoint: graphqlPath,
-        })
-    );
-  };
-}
+      renderGraphiQL({
+        defaultQuery,
+        endpoint: graphqlPath,
+      })
+  );
+};

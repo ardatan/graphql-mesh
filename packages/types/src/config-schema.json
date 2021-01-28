@@ -114,6 +114,10 @@
             }
           ]
         },
+        "hostname": {
+          "type": "string",
+          "description": "The binding hostname (default: `localhost`)"
+        },
         "exampleQuery": {
           "type": "string",
           "description": "Provide an example query or queries for GraphQL Playground\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.\nBut TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)"

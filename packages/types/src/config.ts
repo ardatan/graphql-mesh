@@ -48,6 +48,10 @@ export interface ServeConfig {
    */
   port?: number | string;
   /**
+   * The binding hostname (default: `localhost`)
+   */
+  hostname?: string;
+  /**
    * Provide an example query or queries for GraphQL Playground
    * The value can be the file path, glob expression for the file paths or the SDL.
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.

@@ -53,7 +53,7 @@ export async function graphqlMesh() {
           const { schema, contextBuilder, pubsub } = await getMesh(meshConfig);
           const serveConfig = meshConfig.config.serve || {};
           serveConfig.port = args.port || parseInt(process.env.PORT) || serveConfig.port || 4000;
-          await serveMesh(logger, schema, contextBuilder, pubsub, serveConfig);
+          await serveMesh(logger, schema, contextBuilder, pubsub, baseDir, serveConfig);
         } catch (e) {
           logger.error('Unable to serve mesh: ', e);
         }
