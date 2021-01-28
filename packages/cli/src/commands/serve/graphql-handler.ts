@@ -14,12 +14,12 @@ export const graphqlHandler = (
     query: req.query,
   };
 
+  // Determine whether we should render GraphiQL instead of returning an API response
   if (shouldRenderGraphiQL(request)) {
     next();
     return;
   }
 
-  // Determine whether we should render GraphiQL instead of returning an API response
   // Extract the GraphQL parameters from the request
   const { operationName, query, variables } = getGraphQLParameters(request);
 

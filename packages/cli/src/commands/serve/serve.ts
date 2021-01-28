@@ -21,6 +21,9 @@ import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
 import { promises as fsPromises } from 'fs';
+import { loadDocuments } from '@graphql-tools/load';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 
 const { readFile } = fsPromises;
 
@@ -128,7 +131,16 @@ export async function serveMesh(
     );
 
     if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playgroundMiddlewareFactory(exampleQuery, graphqlPath);
+      let defaultQuery: string;
+      if (exampleQuery) {
+        const documents = await loadDocuments(exampleQuery, {
+          loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
+          cwd: process.cwd(),
+        });
+
+        defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
+      }
+      const playgroundMiddleware = playgroundMiddlewareFactory({ defaultQuery, graphqlPath });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
       }
