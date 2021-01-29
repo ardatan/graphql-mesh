@@ -10717,6 +10717,14 @@ graphql-parse-resolve-info@4.10.0:
     debug "^4.1.1"
     tslib "^2.0.1"
 
+graphql-parse-resolve-info@4.11.0:
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.11.0.tgz#e2c67080ab01876faec8a1067c6df3db6526e67b"
+  integrity sha512-vIylHwlhtUz7y4UkXlwGRNIf1O2GhONRsZPYcz8SP+zI5Klp0aiulM4sQ7aEVJNbrqvzGj6cxthJLm+sys0dog==
+  dependencies:
+    debug "^4.1.1"
+    tslib "^2.0.1"
+
 graphql-playground-react@1.7.27:
   version "1.7.27"
   resolved "https://registry.yarnpkg.com/graphql-playground-react/-/graphql-playground-react-1.7.27.tgz#0d0e2c14a9a1fe3583917c9eb2cecc22b9e342e4"
