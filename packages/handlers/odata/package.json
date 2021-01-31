@@ -19,7 +19,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.29.2",
     "@graphql-mesh/utils": "0.8.7",
-    "@graphql-tools/utils": "7.2.4",
+    "@graphql-tools/utils": "7.2.5",
     "http-string-parser": "0.0.6",
     "dataloader": "2.0.0",
     "fast-xml-parser": "3.17.6",
