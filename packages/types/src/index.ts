@@ -30,7 +30,11 @@ export type GetMeshSourceOptions<THandlerConfig> = {
 
 // Handlers
 export interface MeshHandler<TContext = any> {
-  getMeshSource: () => Promise<MeshSource<TContext>>;
+  config: TContext;
+  pubsub: MeshPubSub;
+  cache: KeyValueCache;
+  getRawSource: () => Promise<RawSource>;
+  getMeshSource: (options?: MeshSourceArgs) => Promise<MeshSource<TContext>>;
 }
 
 export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
@@ -105,6 +109,15 @@ export type RawSourceOutput = {
   contextVariables: (keyof any)[];
   handler: MeshHandler;
   batch: boolean;
+};
+
+export type RawSource = {
+  source: string;
+  format: string;
+};
+
+export type MeshSourceArgs = {
+  rawSourcePath: string;
 };
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;

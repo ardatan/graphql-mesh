@@ -39,6 +39,7 @@ module.exports = {
       'recipes/typescript',
       'recipes/as-sdk',
       'recipes/as-gateway',
+      'recipes/build-time-prepare',
       'recipes/federation',
       'recipes/subscriptions-webhooks',
     ],

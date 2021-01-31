@@ -1,6 +1,10 @@
 type Query {
   require: [String]
   """
+  Directory where to store raw sources specifications, in order to reduce potential third-party failures at runtime
+  """
+  rawSourcesDir: String
+  """
   Defines the list of your external data sources for your API mesh
   """
   sources: [Source!]!

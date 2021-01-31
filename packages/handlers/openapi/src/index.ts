@@ -15,6 +15,8 @@ import {
   ResolverData,
   GetMeshSourceOptions,
   MeshSource,
+  MeshSourceArgs,
+  RawSource,
   KeyValueCache,
   MeshPubSub,
 } from '@graphql-mesh/types';
@@ -26,15 +28,31 @@ export default class OpenAPIHandler implements MeshHandler {
   config: YamlConfig.OpenapiHandler;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  rawSourceFormat: string;
   constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.cache = cache;
     this.pubsub = pubsub;
+    this.rawSourceFormat = 'json';
   }
 
-  async getMeshSource(): Promise<MeshSource> {
+  async getRawSource(): Promise<RawSource> {
     const path = this.config.source;
-    const spec = await readFileOrUrlWithCache<Oas3>(path, this.cache, {
+    const source = await readFileOrUrlWithCache<Oas3>(path, this.cache, {
+      headers: this.config.schemaHeaders,
+      fallbackFormat: this.config.sourceFormat,
+    });
+
+    return {
+      source: JSON.stringify(source, null, 2),
+      format: this.rawSourceFormat,
+    };
+  }
+
+  async getMeshSource({ rawSourcePath }: MeshSourceArgs): Promise<MeshSource> {
+    const path = this.config.source;
+    const rawSourceFile = rawSourcePath && `${rawSourcePath}.${this.rawSourceFormat}`;
+    const spec = await readFileOrUrlWithCache<Oas3>(rawSourceFile || path, this.cache, {
       headers: this.config.schemaHeaders,
       fallbackFormat: this.config.sourceFormat,
     });

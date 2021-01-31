@@ -5,7 +5,7 @@ import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@g
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
-import { applySchemaTransforms, ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
+import { applySchemaTransforms, ensureDocumentNode, groupTransforms, isUrl } from '@graphql-mesh/utils';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -21,16 +21,19 @@ export async function getMesh(
   cache: KeyValueCache;
 }> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubsub, cache } = options;
+  const {
+    config: { rawSourcesDir },
+    pubsub,
+    cache,
+  } = options;
 
   await Promise.all(
     options.sources.map(async apiSource => {
-      const source = await apiSource.handler.getMeshSource();
-
-      let apiSchema = source.schema;
-
       const apiName = apiSource.name;
-
+      const rawSourcePath =
+        rawSourcesDir && isUrl(apiSource.handler.config.source) && `${rawSourcesDir}/${apiSource.name}`;
+      const source = await apiSource.handler.getMeshSource({ rawSourcePath });
+      let apiSchema = source.schema;
       const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
       // If schema is going to be wrapped already we can use noWrapTransforms as wrapTransforms on source level

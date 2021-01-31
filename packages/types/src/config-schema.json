@@ -1621,6 +1621,21 @@
       },
       "required": ["hostName", "port", "serviceName", "idl"]
     },
+    "TuqlHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TuqlHandler",
+      "properties": {
+        "db": {
+          "type": "string",
+          "description": "Pointer to your SQLite database"
+        },
+        "infile": {
+          "type": "string",
+          "description": "Path to the SQL Dump file if you want to build a in-memory database"
+        }
+      }
+    },
     "CacheTransformConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -2087,21 +2102,6 @@
         }
       },
       "required": ["apply", "outputDir"]
-    },
-    "TuqlHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TuqlHandler",
-      "properties": {
-        "db": {
-          "type": "string",
-          "description": "Pointer to your SQLite database"
-        },
-        "infile": {
-          "type": "string",
-          "description": "Path to the SQL Dump file if you want to build a in-memory database"
-        }
-      }
     }
   },
   "title": "Config",
@@ -2118,6 +2118,10 @@
         "type": "string"
       },
       "additionalItems": false
+    },
+    "rawSourcesDir": {
+      "type": "string",
+      "description": "Directory where to store raw sources specifications, in order to reduce potential third-party failures at runtime"
     },
     "sources": {
       "type": "array",

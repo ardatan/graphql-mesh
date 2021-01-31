@@ -6,12 +6,14 @@ import {
   GraphQLOperation,
   MeshHandler,
   MeshTransform,
+  YamlConfig,
 } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 
 export type GetMeshOptions = {
+  config: YamlConfig.Config;
   sources: MeshResolvedSource[];
   transforms?: MeshTransform[];
   additionalTypeDefs?: DocumentNode[];

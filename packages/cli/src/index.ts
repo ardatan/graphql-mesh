@@ -5,7 +5,7 @@ import { generateTsTypes } from './commands/typescript';
 import { generateSdk } from './commands/generate-sdk';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve } from 'path';
-import { promises as fsPromises } from 'fs';
+import { existsSync, readdirSync, unlinkSync, promises as fsPromises } from 'fs';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -147,6 +147,40 @@ export async function graphqlMesh() {
         const outFile = resolve(process.cwd(), args.output);
         await writeFile(outFile, result);
         destroy();
+      }
+    )
+    .command(
+      'prepare-raw-sources',
+      'Download raw sources into given folder so they are prepared for runtime schema generation',
+      async () => {
+        const meshConfig = await findAndParseConfig({
+          dir: baseDir,
+          ignoreAdditionalResolvers: true,
+        });
+        const {
+          sources,
+          config: { rawSourcesDir: providedRawSourcesDir },
+        } = meshConfig;
+
+        if (!providedRawSourcesDir) {
+          logger.error(`Missing "rawSourcesDir" property in Mesh Configuration`);
+        }
+
+        const rawSourcesDir = providedRawSourcesDir && resolve(process.cwd(), providedRawSourcesDir);
+
+        if (!existsSync(rawSourcesDir)) {
+          logger.error(`Provided "rawSourcesDir" does not exist: ${rawSourcesDir}`);
+        }
+
+        // cleanup directory by removing existing files
+        const files = readdirSync(rawSourcesDir);
+        files.forEach(file => unlinkSync(resolve(rawSourcesDir, file)));
+
+        sources.forEach(async ({ name, handler }) => {
+          const { source, format } = await handler.getRawSource();
+          const outFile = resolve(rawSourcesDir, `${name}.${format}`);
+          await writeFile(outFile, source, 'utf8');
+        });
       }
     ).argv;
 }

@@ -56,6 +56,7 @@ export async function parseConfig(
 }
 
 export type ProcessedConfig = {
+  rawSourcesDir: string;
   sources: MeshResolvedSource<any>[];
   transforms: MeshTransform[];
   additionalTypeDefs: DocumentNode[];
@@ -147,6 +148,7 @@ export async function processConfig(
   ]);
 
   return {
+    rawSourcesDir: config.rawSourcesDir,
     sources,
     transforms,
     additionalTypeDefs,

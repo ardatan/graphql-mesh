@@ -1,3 +1,3 @@
 describe('transform-federation', () => {
-    it('dummy', () => {});
+  it('dummy', () => {});
 });
