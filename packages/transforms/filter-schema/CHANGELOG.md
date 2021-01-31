@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.8.22
+
+### Patch Changes
+
+- aba42c70: fix(filter-schema): handle in correct way glob expressions for type filtering
+- Updated dependencies [69d2198d]
+  - @graphql-mesh/utils@0.8.7
+
 ## 0.8.21
 
 ### Patch Changes

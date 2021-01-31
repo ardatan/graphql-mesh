@@ -4,6 +4,7 @@
   "version": "0.2.15",
   "private": true,
   "scripts": {
+    "postinstall": "patch-package",
     "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
     "deploy:website": "cd website && yarn deploy",
     "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/types/src",
@@ -33,7 +34,7 @@
     "@typescript-eslint/eslint-plugin": "4.14.1",
     "@typescript-eslint/parser": "4.14.1",
     "bob-the-bundler": "1.1.0",
-    "eslint": "7.18.0",
+    "eslint": "7.19.0",
     "eslint-config-prettier": "7.2.0",
     "eslint-config-standard": "16.0.2",
     "eslint-plugin-import": "2.22.1",
@@ -47,9 +48,9 @@
     "lint-staged": "10.5.3",
     "patch-package": "6.2.2",
     "prettier": "2.2.1",
-    "ts-jest": "26.4.4",
+    "ts-jest": "26.5.0",
     "ts-node-dev": "1.1.1",
-    "typedoc": "0.20.19",
+    "typedoc": "0.20.20",
     "typedoc-plugin-markdown": "3.4.5",
     "typescript": "4.1.3"
   },
@@ -81,6 +82,7 @@
     ]
   },
   "resolutions": {
+    "@changesets/git": "1.1.0",
     "graphql": "15.5.0"
   }
 }

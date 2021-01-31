@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-snapshot",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -20,10 +20,10 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.29.2",
-    "@graphql-mesh/utils": "0.8.6",
+    "@graphql-mesh/utils": "0.8.7",
     "@graphql-tools/resolvers-composition": "6.2.5",
     "@graphql-tools/schema": "7.1.2",
-    "@graphql-tools/utils": "7.2.4",
+    "@graphql-tools/utils": "7.2.5",
     "object-hash": "2.1.1"
   },
   "publishConfig": {

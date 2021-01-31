@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.8.7
+
+### Patch Changes
+
+- 69d2198d: fix readFileWithCache: isAbsolute issue (https://github.com/Urigo/graphql-mesh/issues/1505)
+
 ## 0.8.6
 
 ### Patch Changes
