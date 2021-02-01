@@ -1,4 +1,5 @@
 import {
+  isUrl,
   readFileOrUrlWithCache,
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
@@ -28,16 +29,22 @@ export default class OpenAPIHandler implements MeshHandler {
   config: YamlConfig.OpenapiHandler;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  rawSourceFormat: string;
-  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  private name: string;
+  private rawSourceFormat: string;
+
+  constructor({ name, config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+    this.name = name;
     this.config = config;
     this.cache = cache;
     this.pubsub = pubsub;
     this.rawSourceFormat = 'json';
   }
 
-  async getRawSource(): Promise<RawSource> {
+  async getRawSource(): Promise<RawSource | null> {
     const path = this.config.source;
+
+    if (!isUrl(path)) return null; // only process remote sources
+
     const source = await readFileOrUrlWithCache<Oas3>(path, this.cache, {
       headers: this.config.schemaHeaders,
       fallbackFormat: this.config.sourceFormat,
@@ -49,8 +56,9 @@ export default class OpenAPIHandler implements MeshHandler {
     };
   }
 
-  async getMeshSource({ rawSourcePath }: MeshSourceArgs): Promise<MeshSource> {
+  async getMeshSource({ rawSourcesDir }: MeshSourceArgs): Promise<MeshSource> {
     const path = this.config.source;
+    const rawSourcePath = rawSourcesDir && isUrl(this.config.source) && `${rawSourcesDir}/${this.name}`;
     const rawSourceFile = rawSourcePath && `${rawSourcePath}.${this.rawSourceFormat}`;
     const spec = await readFileOrUrlWithCache<Oas3>(rawSourceFile || path, this.cache, {
       headers: this.config.schemaHeaders,

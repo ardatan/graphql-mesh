@@ -6,7 +6,7 @@ sidebar_label: Build-time preparation
 
 By default GraphQL Mesh downloads the schemas for your data sources at runtime before proceeding to build your GraphQL schema.  
 However, in order to reduce dependencies at runtime, GraphQL Mesh allows you to download the specifications for your data sources at build time.  
-The advantage to this approach is to remove dependencies at runtime. If, for instance, one of the data sources you consume is experiencing downtime when you start your GraphQL Mesh server, this would cause a failure and will ultimately force you to restart your server ultimately making this unavailable until you're able to start it successfully.  
+The advantage to this approach is to remove dependencies at runtime. If, for instance, one of the data sources you consume is experiencing downtime when you start your GraphQL Mesh server, this would cause a failure and will ultimately force you to restart your server; effectively making this unavailable until you're able to start it successfully (only when all your data sources are able to provide their specifications).  
 By following the steps below you can instead move the dependencies to build-time and so get a failure before attempting to deploy your build to Production.
 
 In order to achieve this, you just need to:

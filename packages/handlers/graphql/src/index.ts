@@ -1,9 +1,20 @@
-import { GetMeshSourceOptions, MeshHandler, MeshSource, ResolverData, YamlConfig } from '@graphql-mesh/types';
+import { readFileSync } from 'fs';
+import {
+  GetMeshSourceOptions,
+  MeshHandler,
+  MeshSource,
+  MeshSourceArgs,
+  RawSource,
+  ResolverData,
+  YamlConfig,
+  MeshPubSub,
+} from '@graphql-mesh/types';
 import { fetchache, KeyValueCache, Request } from 'fetchache';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildClientSchema, introspectionFromSchema, buildSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
+  isUrl,
   getInterpolatedHeadersFactory,
   ResolverDataBasedFactory,
   getHeadersObject,
@@ -11,26 +22,57 @@ import {
   getInterpolatedStringFactory,
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
+interface GraphQLHandlerMeshSourceArgs extends MeshSourceArgs {
+  rawSDLOnly: boolean;
+}
 export default class GraphQLHandler implements MeshHandler {
+  config: YamlConfig.GraphQLHandler;
+  cache: KeyValueCache<any>;
+  pubsub: MeshPubSub;
   private name: string;
-  private config: YamlConfig.GraphQLHandler;
-  private cache: KeyValueCache<any>;
+  private rawSourceFormat: string;
 
   constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
     this.name = name;
     this.config = config;
     this.cache = cache;
+    this.rawSourceFormat = 'graphql';
   }
 
-  async getMeshSource(): Promise<MeshSource> {
-    if (this.config.endpoint.endsWith('.js') || this.config.endpoint.endsWith('.ts')) {
-      const schema = await loadFromModuleExportExpression<GraphQLSchema>(this.config.endpoint);
+  async getRawSource(): Promise<RawSource> {
+    const path = this.config.endpoint;
+
+    if (!isUrl(path)) return null; // only process remote sources
+
+    const { schema } = await this.getMeshSource({ rawSDLOnly: true });
+
+    return {
+      source: printSchemaWithDirectives(schema),
+      format: this.rawSourceFormat,
+    };
+  }
+
+  async getMeshSource({ rawSourcesDir, rawSDLOnly }: GraphQLHandlerMeshSourceArgs): Promise<MeshSource> {
+    const path = this.config.endpoint;
+    const rawSourcePath = rawSourcesDir && isUrl(path) && `${rawSourcesDir}/${this.name}`;
+    const rawSourceFile = rawSourcePath && `${rawSourcePath}.${this.rawSourceFormat}`;
+
+    if (rawSourceFile) {
+      const rawSDL = readFileSync(rawSourceFile, 'utf8');
+      const schema = buildSchema(rawSDL);
       return {
         schema,
       };
-    } else if (this.config.endpoint.endsWith('.graphql')) {
-      const rawSDL = await loadFromModuleExportExpression<string>(this.config.endpoint);
+    }
+    if (path.endsWith('.js') || path.endsWith('.ts')) {
+      const schema = await loadFromModuleExportExpression<GraphQLSchema>(path);
+      return {
+        schema,
+      };
+    } else if (path.endsWith('.graphql')) {
+      const rawSDL = await loadFromModuleExportExpression<string>(path);
       const schema = buildSchema(rawSDL);
       return {
         schema,
@@ -70,11 +112,7 @@ export default class GraphQLHandler implements MeshHandler {
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
     const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
-      const { executor } = await getExecutorAndSubscriberForParams(
-        params,
-        schemaHeadersFactory,
-        () => this.config.endpoint
-      );
+      const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory, () => path);
       return executor(params);
     };
     if (this.config.introspection) {
@@ -98,8 +136,13 @@ export default class GraphQLHandler implements MeshHandler {
     } else {
       schema = await introspectSchema(introspectionExecutor);
     }
+
+    if (rawSDLOnly) {
+      return { schema };
+    }
+
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
-    const endpointFactory = getInterpolatedStringFactory(this.config.endpoint);
+    const endpointFactory = getInterpolatedStringFactory(path);
     return {
       schema,
       executor: async params => {

@@ -29,10 +29,8 @@ export async function getMesh(
 
   await Promise.all(
     options.sources.map(async apiSource => {
+      const source = await apiSource.handler.getMeshSource({ rawSourcesDir });
       const apiName = apiSource.name;
-      const rawSourcePath =
-        rawSourcesDir && isUrl(apiSource.handler.config.source) && `${rawSourcesDir}/${apiSource.name}`;
-      const source = await apiSource.handler.getMeshSource({ rawSourcePath });
       let apiSchema = source.schema;
       const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
