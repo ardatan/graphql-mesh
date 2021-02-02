@@ -54,7 +54,7 @@
     "pascal-case": "3.1.2",
     "winston": "3.3.3",
     "yargs": "16.2.0",
-    "ws": "7.4.2"
+    "ws": "7.4.3"
   },
   "devDependencies": {
     "@types/cors": "2.8.9",
