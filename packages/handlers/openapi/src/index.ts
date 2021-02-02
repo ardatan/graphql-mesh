@@ -58,8 +58,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
   async getMeshSource({ rawSourcesDir }: MeshSourceArgs): Promise<MeshSource> {
     const path = this.config.source;
-    const rawSourcePath = rawSourcesDir && isUrl(this.config.source) && `${rawSourcesDir}/${this.name}`;
-    const rawSourceFile = rawSourcePath && `${rawSourcePath}.${this.rawSourceFormat}`;
+    const rawSourceFile = rawSourcesDir && isUrl(path) && `${rawSourcesDir}/${this.name}.${this.rawSourceFormat}`;
     const spec = await readFileOrUrlWithCache<Oas3>(rawSourceFile || path, this.cache, {
       headers: this.config.schemaHeaders,
       fallbackFormat: this.config.sourceFormat,

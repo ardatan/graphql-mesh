@@ -56,16 +56,7 @@ export default class GraphQLHandler implements MeshHandler {
 
   async getMeshSource({ rawSourcesDir, rawSDLOnly }: GraphQLHandlerMeshSourceArgs): Promise<MeshSource> {
     const path = this.config.endpoint;
-    const rawSourcePath = rawSourcesDir && isUrl(path) && `${rawSourcesDir}/${this.name}`;
-    const rawSourceFile = rawSourcePath && `${rawSourcePath}.${this.rawSourceFormat}`;
 
-    if (rawSourceFile) {
-      const rawSDL = readFileSync(rawSourceFile, 'utf8');
-      const schema = buildSchema(rawSDL);
-      return {
-        schema,
-      };
-    }
     if (path.endsWith('.js') || path.endsWith('.ts')) {
       const schema = await loadFromModuleExportExpression<GraphQLSchema>(path);
       return {
@@ -115,7 +106,11 @@ export default class GraphQLHandler implements MeshHandler {
       const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory, () => path);
       return executor(params);
     };
-    if (this.config.introspection) {
+    if (rawSourcesDir && isUrl(path)) {
+      const rawSourceFile = `${rawSourcesDir}/${this.name}.${this.rawSourceFormat}`;
+      const rawSourceSchema = rawSourceFile && readFileSync(rawSourceFile, 'utf8');
+      schema = buildSchema(rawSourceSchema);
+    } else if (this.config.introspection) {
       const result = await urlLoader.handleSDLAsync(this.config.introspection, {
         customFetch: customFetch as any,
         ...this.config,
