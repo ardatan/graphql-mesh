@@ -10965,10 +10965,10 @@ graphiql@^0.17.5:
     markdown-it "^10.0.0"
     regenerator-runtime "^0.13.3"
 
-graphql-auth-directives@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/graphql-auth-directives/-/graphql-auth-directives-2.2.1.tgz#42e29431910e5205b752c378e6a344fa527ba4e8"
-  integrity sha512-8tOb1fG09u9DTSdxfPA+zjG8E3q7YfcSFWF39XVg9Puht7zZaiwUiRtEPGP3kmfivXCevrzYkeoeDnyaPJEpBA==
+graphql-auth-directives@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/graphql-auth-directives/-/graphql-auth-directives-2.2.2.tgz#5844a8dcdc159437decd60cc6f9fa82d08f51f7c"
+  integrity sha512-Pt+h1NJzEzP2oq2jl7pDjV6oMufvkyWiCFbHJG2IBHZXDi5JyjgSLok31jFGsX6kTRsuW4nTgSFrrgBQsdlYJQ==
   dependencies:
     apollo-errors "^1.9.0"
     graphql-tools "^4.0.7"
@@ -15108,17 +15108,17 @@ neo4j-driver@^4.2.1:
     text-encoding-utf-8 "^1.0.2"
     uri-js "^4.4.0"
 
-neo4j-graphql-js@2.19.1:
-  version "2.19.1"
-  resolved "https://registry.yarnpkg.com/neo4j-graphql-js/-/neo4j-graphql-js-2.19.1.tgz#141a71af25ae09b2fc476cd8e97f270d4d2f755b"
-  integrity sha512-ad1cy86xXlafyHoO5wsxVnlYwb+DNj514bfQhThLF3CW7MVJl0jetoSla1dr6ReVIKCJ0u8lMm6bhagPJWoAnA==
+neo4j-graphql-js@2.19.2:
+  version "2.19.2"
+  resolved "https://registry.yarnpkg.com/neo4j-graphql-js/-/neo4j-graphql-js-2.19.2.tgz#0f2d14317646ee8cdb52822723c9dff857a5d43f"
+  integrity sha512-V6RVPt+4fNS6rr2FQY0YWq9de/WFNI8fL0+6hVBBY8TUZaDzioBVML73/M6UOOh/+idLKTPT0opXAam33y305Q==
   dependencies:
     "@babel/runtime" "^7.5.5"
     "@babel/runtime-corejs2" "^7.5.5"
     apollo-server-errors "^2.4.1"
     debug "^4.1.1"
     graphql "^15.4.0"
-    graphql-auth-directives "^2.2.1"
+    graphql-auth-directives "^2.2.2"
     graphql-tools "^7.0.2"
     lodash "^4.17.19"
     neo4j-driver "^4.2.1"
