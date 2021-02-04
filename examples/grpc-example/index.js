@@ -1,4 +1,6 @@
-const { readFileSync } = require('fs');
+const {
+  promises: { readFile },
+} = require('fs');
 const { Server, loadPackageDefinition, ServerCredentials } = require('@grpc/grpc-js');
 const { load } = require('@grpc/proto-loader');
 
@@ -71,27 +73,38 @@ async function startServer() {
         console.error(error);
         call.end();
       });
-      Movies.forEach((movie, i) => {
-        if (movie.cast.indexOf(input.castName) > -1) {
-          setTimeout(() => {
-            if (!call.cancelled && !call.destroyed) {
+      const interval = setInterval(() => {
+        Movies.forEach((movie, i) => {
+          if (movie.cast.indexOf(input.castName) > -1) {
+            setTimeout(() => {
+              if (call.cancelled || call.destroyed) {
+                console.log('call ended')
+                clearInterval(interval);
+                return;
+              }
+              console.log('call received', movie);
               call.write(movie);
-            }
-          }, i * 1000);
-        }
-      });
+            }, i * 1000);
+          }
+        });
+      }, (1000 * (Movies.length + 1)));
     },
   });
-  const rootCA = readFileSync('./certs/ca.crt');
-  const certChain = readFileSync('./certs/server.crt');
-  const privateKey = readFileSync('./certs/server.key');
+  const [rootCA, cert_chain, private_key] = await Promise.all([
+    readFile('./certs/ca.crt'),
+    readFile('./certs/server.crt'),
+    readFile('./certs/server.key'),
+  ]);
   server.bindAsync(
     '0.0.0.0:50051',
-    ServerCredentials.createSsl(rootCA, [{ private_key: privateKey, cert_chain: certChain }]),
-    () => {
+    ServerCredentials.createSsl(rootCA, [{ private_key, cert_chain }]),
+    (error, port) => {
+      if (error) {
+        throw error;
+      }
       server.start();
 
-      console.log('Server started, listening: 0.0.0.0:50051');
+      console.log('Server started, listening: 0.0.0.0:' + port);
     }
   );
 }

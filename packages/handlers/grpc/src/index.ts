@@ -21,7 +21,6 @@ import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars'
 import { get } from 'lodash';
 import { pascalCase } from 'pascal-case';
 import { AnyNestedObject, IParseOptions, Message, Root, RootConstructor } from 'protobufjs';
-import { Readable } from 'stream';
 import { promisify } from 'util';
 import grpcReflection from 'grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
@@ -41,11 +40,6 @@ const { readFile } = fsPromises || {};
 
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
-}
-
-interface GrpcResponseStream<T = ClientReadableStream<unknown>> extends Readable {
-  [Symbol.asyncIterator](): AsyncIterableIterator<T>;
-  cancel(): void;
 }
 
 type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
@@ -244,9 +238,15 @@ export default class GrpcHandler implements MeshHandler {
             };
             if (method.responseStream) {
               const clientMethod: ClientMethod = (input: unknown, metaData: Metadata) => {
-                const responseStream = client[methodName](input, metaData) as GrpcResponseStream;
-                const test = withCancel(responseStream, () => responseStream.cancel());
-                return test;
+                const responseStream = client[methodName](input, metaData) as ClientReadableStream<any>;
+                let isCancelled = false;
+                const responseStreamWithCancel = withCancel(responseStream, () => {
+                  if (!isCancelled) {
+                    responseStream.call?.cancelWithStatus(0, 'Cancelled by GraphQL Mesh');
+                    isCancelled = true;
+                  }
+                });
+                return responseStreamWithCancel;
               };
               schemaComposer.Subscription.addFields({
                 [rootFieldName]: {
