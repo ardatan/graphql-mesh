@@ -1,6 +1,6 @@
 {
   "name": "odata-microsoft-graph-example",
-  "version": "0.6.45",
+  "version": "0.6.46",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start:beta": "cross-env GRAPH_VERSION=\"beta\" mesh serve"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.19.2",
-    "@graphql-mesh/odata": "0.7.22",
+    "@graphql-mesh/cli": "0.20.0",
+    "@graphql-mesh/odata": "0.7.23",
     "graphql": "15.4.0",
     "cross-env": "7.0.2"
   }

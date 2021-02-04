@@ -1,5 +1,15 @@
 # @graphql-mesh/odata
 
+## 0.7.23
+
+### Patch Changes
+
+- a02d86c3: fix(runtime): patch graphql-compose schemas to support @defer and @stream
+- Updated dependencies [a02d86c3]
+- Updated dependencies [a02d86c3]
+- Updated dependencies [a02d86c3]
+  - @graphql-mesh/types@0.29.3
+
 ## 0.7.22
 
 ### Patch Changes

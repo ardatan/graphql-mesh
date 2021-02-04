@@ -1,5 +1,20 @@
 # @graphql-mesh/cli
 
+## 0.20.0
+
+### Minor Changes
+
+- a02d86c3: feat(serve): add HTTPS support
+- a02d86c3: feat(serve): use GraphQL Helix's version of GraphiQL for playground
+- a02d86c3: feat(serve): ability to change binding hostname
+
+### Patch Changes
+
+- a02d86c3: fix(runtime): patch graphql-compose schemas to support @defer and @stream
+- Updated dependencies [a02d86c3]
+  - @graphql-mesh/runtime@0.10.23
+  - @graphql-mesh/config@0.12.3
+
 ## 0.19.2
 
 ### Patch Changes
