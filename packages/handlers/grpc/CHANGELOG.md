@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.8.7
+
+### Patch Changes
+
+- 3155cce1: fix(grpc): cancel grpc connection properly
+
 ## 0.8.6
 
 ### Patch Changes
