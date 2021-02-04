@@ -1,4 +1,4 @@
-{
+query ExampleMeQuery {
   me {
     firstName
     lastName

@@ -1,8 +1,10 @@
 import { generateSdk } from '@graphql-mesh/cli';
-import { writeFileSync } from 'fs';
+import { promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { getMeshInstance } from '../src/mesh/getMeshInstance';
 import InmemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+
+const { writeFile } = fsPromises;
 
 async function main() {
   const mesh = await getMeshInstance({
@@ -13,7 +15,7 @@ async function main() {
     'flatten-types': true,
   });
   mesh.destroy();
-  writeFileSync(join(process.cwd(), './src/mesh/sdk.generated.ts'), sdkCode, 'utf8');
+  await writeFile(join(process.cwd(), './src/mesh/sdk.generated.ts'), sdkCode, 'utf8');
 }
 
 main().catch(error => {

@@ -14,7 +14,7 @@ import {
   GraphQLTimestamp,
   GraphQLTime,
 } from 'graphql-scalars';
-import { execute } from 'graphql';
+import { execute, specifiedDirectives } from 'graphql';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const SCALARS = {
@@ -387,6 +387,9 @@ export default class MySQLHandler implements MeshHandler {
       })
     );
     this.pubsub.subscribe('destroy', () => pool.end());
+
+    // graphql-compose doesn't add @defer and @stream to the schema
+    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const schema = schemaComposer.buildSchema();
 

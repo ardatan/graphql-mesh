@@ -5,8 +5,8 @@ import { Logger } from 'winston';
 import { fork as clusterFork, isMaster } from 'cluster';
 import { cpus } from 'os';
 import 'json-bigint-patch';
-import { createServer } from 'http';
-import { playground as playgroundMiddlewareFactory } from './playground';
+import { createServer as createHTTPServer, Server } from 'http';
+import { playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
@@ -16,39 +16,60 @@ import { get } from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
-import { cwd } from 'process';
 import { graphqlHandler } from './graphql-handler';
+
+import { createServer as createHTTPSServer } from 'https';
+import { promises as fsPromises } from 'fs';
+import { loadDocuments } from '@graphql-tools/load';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+
+const { readFile } = fsPromises;
 
 export async function serveMesh(
   logger: Logger,
   schema: GraphQLSchema,
   contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
   pubsub: MeshPubSub,
+  baseDir = process.cwd(),
   {
     fork,
     exampleQuery,
     port,
+    hostname = 'localhost',
     cors: corsConfig,
     handlers,
     staticFiles,
     playground,
-    maxFileSize = 10000000,
-    maxFiles = 10,
+    upload: { maxFileSize = 10000000, maxFiles = 10 } = {},
     maxRequestBodySize = '100kb',
+    sslCredentials,
   }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
-  const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
+  const protocol = sslCredentials ? 'https' : 'http';
   const graphqlPath = '/graphql';
+  const serverUrl = `${protocol}://${hostname}:${port}${graphqlPath}`;
+  const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
   if (isMaster && fork) {
     const forkNum = fork > 1 ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {
       clusterFork();
     }
-    logger.info(`🕸️ => Serving GraphQL Mesh GraphiQL: http://localhost:${port}${graphqlPath} in ${fork} forks`);
+    logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
   } else {
     const app = express();
     app.set('trust proxy', 'loopback');
-    const httpServer = createServer(app);
+    let httpServer: Server;
+
+    if (sslCredentials) {
+      const [key, cert] = await Promise.all([
+        readFile(sslCredentials.key, 'utf-8'),
+        readFile(sslCredentials.cert, 'utf-8'),
+      ]);
+      httpServer = createHTTPSServer({ key, cert }, app);
+    } else {
+      httpServer = createHTTPServer(app);
+    }
 
     if (corsConfig) {
       app.use(cors(corsConfig));
@@ -63,13 +84,13 @@ export async function serveMesh(
 
     if (staticFiles) {
       app.use(express.static(staticFiles));
-      const indexPath = join(cwd(), staticFiles, 'index.html');
+      const indexPath = join(baseDir, staticFiles, 'index.html');
       if (await pathExists(indexPath)) {
         app.get('/', (_req, res) => res.sendFile(indexPath));
       }
     }
 
-    app.post(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(schema, contextBuilder));
+    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(schema, contextBuilder));
 
     const wsServer = new ws.Server({
       path: graphqlPath,
@@ -113,7 +134,16 @@ export async function serveMesh(
     );
 
     if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playgroundMiddlewareFactory(exampleQuery, graphqlPath);
+      let defaultQuery: string;
+      if (exampleQuery) {
+        const documents = await loadDocuments(exampleQuery, {
+          loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
+          cwd: baseDir,
+        });
+
+        defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
+      }
+      const playgroundMiddleware = playgroundMiddlewareFactory({ defaultQuery, graphqlPath });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
       }
@@ -122,9 +152,9 @@ export async function serveMesh(
     }
 
     httpServer
-      .listen(port.toString(), () => {
+      .listen(parseInt(port.toString()), hostname, () => {
         if (!fork) {
-          logger.info(`🕸️ => Serving GraphQL Mesh: http://localhost:${port}`);
+          logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
         }
       })
       .on('error', e => {

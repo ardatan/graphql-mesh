@@ -1,4 +1,8 @@
 type Query {
+  """
+  Configuration for `mesh serve` command.
+  Those commands won't be available in programmatic usage.
+  """
   serve: ServeConfig
 }
 
@@ -12,28 +16,45 @@ type ServeConfig @md {
   """
   port: Port
   """
+  The binding hostname (default: `localhost`)
+  """
+  hostname: String
+  """
   Provide an example query or queries for GraphQL Playground
+  The value can be the file path, glob expression for the file paths or the SDL.
+  (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
+  But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
   """
   exampleQuery: String
+  """
+  Configuration for CORS
+  """
   cors: CorsConfig
+  """
+  Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server
+  """
   handlers: [ServeHandler]
+  """
+  Path to your static files you want to be served with GraphQL Mesh HTTP Server
+  """
   staticFiles: String
   """
-  Show playground
+  Show GraphiQL Playground
   """
   playground: Boolean
-  """
-  Maximum File Size for GraphQL Upload (default: '100000000')
-  """
-  maxFileSize: Int
-  """
-  Maximum number of files for GraphQL Upload (default: '10')
-  """
-  maxFiles: Int
   """
   Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'.
   """
   maxRequestBodySize: RequestBodySize
+  """
+  Configuration for GraphQL File Upload
+  """
+  upload: UploadOptions
+  """
+  SSL Credentials for HTTPS Server
+  If this is provided, Mesh will be served via HTTPS
+  """
+  sslCredentials: HTTPSConfig
 }
 
 union Port = Int | String
@@ -55,8 +76,17 @@ type CorsConfig {
 union ServeHandler = WebhookHandler | ExpressHandler
 
 type ExpressHandler {
+  """
+  Path that the handler will control
+  """
   path: String!
+  """
+  Path of the handler's code
+  """
   handler: String!
+  """
+  HTTP Method that the handler will control
+  """
   method: ExpressHandlerMethod
 }
 
@@ -68,7 +98,32 @@ enum ExpressHandlerMethod {
 }
 
 type WebhookHandler {
+  """
+  Path that remote API will ping
+  """
   path: String!
+  """
+  Name of the topic you want to pass incoming payload
+  """
   pubsubTopic: String!
+  """
+  Part of the object you want to pass (e.g. `data.messages`)
+  """
   payload: String
+}
+
+type UploadOptions {
+  """
+  Maximum File Size for GraphQL Upload (default: `100000000`)
+  """
+  maxFileSize: Int
+  """
+  Maximum number of files for GraphQL Upload (default: `10`)
+  """
+  maxFiles: Int
+}
+
+type HTTPSConfig {
+  key: String!
+  cert: String!
 }

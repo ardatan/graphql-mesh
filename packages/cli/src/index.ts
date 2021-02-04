@@ -53,7 +53,7 @@ export async function graphqlMesh() {
           const { schema, contextBuilder, pubsub } = await getMesh(meshConfig);
           const serveConfig = meshConfig.config.serve || {};
           serveConfig.port = args.port || parseInt(process.env.PORT) || serveConfig.port || 4000;
-          await serveMesh(logger, schema, contextBuilder, pubsub, serveConfig);
+          await serveMesh(logger, schema, contextBuilder, pubsub, baseDir, serveConfig);
         } catch (e) {
           logger.error('Unable to serve mesh: ', e);
         }
@@ -85,7 +85,7 @@ export async function graphqlMesh() {
         });
         const { schema, destroy } = await getMesh(meshConfig);
         const result = await generateSdk(schema, args);
-        const outFile = resolve(process.cwd(), args.output);
+        const outFile = resolve(baseDir, args.output);
         await writeFile(outFile, result);
         destroy();
       }
@@ -123,7 +123,7 @@ export async function graphqlMesh() {
           destroy();
           return;
         }
-        const absoluteOutputFilePath = resolve(process.cwd(), outputFileName);
+        const absoluteOutputFilePath = resolve(baseDir, outputFileName);
         await writeFile(absoluteOutputFilePath, outputFileContent);
         destroy();
       }
@@ -144,7 +144,7 @@ export async function graphqlMesh() {
         });
         const { schema, rawSources, destroy } = await getMesh(meshConfig);
         const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
-        const outFile = resolve(process.cwd(), args.output);
+        const outFile = resolve(baseDir, args.output);
         await writeFile(outFile, result);
         destroy();
       }

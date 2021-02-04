@@ -40,7 +40,7 @@ const mergeUsingFederation: MergerFn = async function ({
             context.graphqlContext || context,
             request.variables,
             request.operationName
-          );
+          ) as any;
         },
       };
     },

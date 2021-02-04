@@ -34,6 +34,10 @@ export interface Config {
    */
   pubsub?: string | PubSubConfig;
 }
+/**
+ * Configuration for `mesh serve` command.
+ * Those commands won't be available in programmatic usage.
+ */
 export interface ServeConfig {
   /**
    * Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)
@@ -44,32 +48,39 @@ export interface ServeConfig {
    */
   port?: number | string;
   /**
+   * The binding hostname (default: `localhost`)
+   */
+  hostname?: string;
+  /**
    * Provide an example query or queries for GraphQL Playground
+   * The value can be the file path, glob expression for the file paths or the SDL.
+   * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
+   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
    */
   exampleQuery?: string;
   cors?: CorsConfig;
   /**
-   * Any of: WebhookHandler, ExpressHandler
+   * Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)
    */
   handlers?: (WebhookHandler | ExpressHandler)[];
+  /**
+   * Path to your static files you want to be served with GraphQL Mesh HTTP Server
+   */
   staticFiles?: string;
   /**
-   * Show playground
+   * Show GraphiQL Playground
    */
   playground?: boolean;
-  /**
-   * Maximum File Size for GraphQL Upload (default: '100000000')
-   */
-  maxFileSize?: number;
-  /**
-   * Maximum number of files for GraphQL Upload (default: '10')
-   */
-  maxFiles?: number;
   /**
    * Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
    */
   maxRequestBodySize?: number | string;
+  upload?: UploadOptions;
+  sslCredentials?: HTTPSConfig;
 }
+/**
+ * Configuration for CORS
+ */
 export interface CorsConfig {
   origin?: any;
   allowedHeaders?: string[];
@@ -80,17 +91,53 @@ export interface CorsConfig {
   optionsSuccessStatus?: number;
 }
 export interface WebhookHandler {
+  /**
+   * Path that remote API will ping
+   */
   path: string;
+  /**
+   * Name of the topic you want to pass incoming payload
+   */
   pubsubTopic: string;
+  /**
+   * Part of the object you want to pass (e.g. `data.messages`)
+   */
   payload?: string;
 }
 export interface ExpressHandler {
+  /**
+   * Path that the handler will control
+   */
   path: string;
+  /**
+   * Path of the handler's code
+   */
   handler: string;
   /**
-   * Allowed values: GET, POST, DELETE, PATCH
+   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
    */
   method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
+}
+/**
+ * Configuration for GraphQL File Upload
+ */
+export interface UploadOptions {
+  /**
+   * Maximum File Size for GraphQL Upload (default: `100000000`)
+   */
+  maxFileSize?: number;
+  /**
+   * Maximum number of files for GraphQL Upload (default: `10`)
+   */
+  maxFiles?: number;
+}
+/**
+ * SSL Credentials for HTTPS Server
+ * If this is provided, Mesh will be served via HTTPS
+ */
+export interface HTTPSConfig {
+  key: string;
+  cert: string;
 }
 export interface Source {
   /**
