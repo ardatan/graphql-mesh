@@ -1,5 +1,13 @@
 # @graphql-mesh/types
 
+## 0.29.3
+
+### Patch Changes
+
+- a02d86c3: feat(serve): add HTTPS support
+- a02d86c3: fix(runtime): patch graphql-compose schemas to support @defer and @stream
+- a02d86c3: feat(serve): ability to change binding hostname
+
 ## 0.29.2
 
 ### Patch Changes
