@@ -22,7 +22,7 @@
     "@graphql-tools/utils": "7.2.5",
     "http-string-parser": "0.0.6",
     "dataloader": "2.0.0",
-    "fast-xml-parser": "3.17.6",
+    "fast-xml-parser": "3.18.0",
     "fetchache": "0.0.4",
     "graphql-compose": "7.24.4",
     "graphql-parse-resolve-info": "4.11.0",
