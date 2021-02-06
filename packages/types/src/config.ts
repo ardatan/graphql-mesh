@@ -868,6 +868,10 @@ export interface Transform {
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
   /**
+   * Transformer rename a GraphQL type or field on bare schema (no-wrapping)
+   */
+  renameBare?: RenameBareTransformObject[];
+  /**
    * Transformer to apply rename of a GraphQL type
    */
   rename?: RenameTransformObject[];
@@ -1101,6 +1105,18 @@ export interface PrefixTransformConfig {
    * Changes root types and changes the field names
    */
   includeRootOperations?: boolean;
+}
+export interface RenameBareTransformObject {
+  from: RenameBareConfig;
+  to: RenameBareConfig1;
+}
+export interface RenameBareConfig {
+  type?: string;
+  field?: string;
+}
+export interface RenameBareConfig1 {
+  type?: string;
+  field?: string;
 }
 export interface RenameTransformObject {
   from: RenameConfig;

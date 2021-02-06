@@ -351,6 +351,14 @@
           "$ref": "#/definitions/PrefixTransformConfig",
           "description": "Prefix transform"
         },
+        "renameBare": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameBareTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Transformer rename a GraphQL type or field on bare schema (no-wrapping)"
+        },
         "rename": {
           "type": "array",
           "items": {
@@ -2031,6 +2039,33 @@
         "includeRootOperations": {
           "type": "boolean",
           "description": "Changes root types and changes the field names"
+        }
+      }
+    },
+    "RenameBareTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RenameBareTransformObject",
+      "properties": {
+        "from": {
+          "$ref": "#/definitions/RenameBareConfig"
+        },
+        "to": {
+          "$ref": "#/definitions/RenameBareConfig"
+        }
+      },
+      "required": ["from", "to"]
+    },
+    "RenameBareConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RenameBareConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
         }
       }
     },
