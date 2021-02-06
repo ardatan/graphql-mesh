@@ -11823,10 +11823,10 @@ invariant@2.2.1:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis@4.21.0:
-  version "4.21.0"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.21.0.tgz#763ee176cb0be31b94edc3202786aa7a5ae5004a"
-  integrity sha512-+JFMyRqN56DsEj2OTKp+dukEGv1AmPOvieE1S8rB2czRZFpnAS7HGhHm5/KUa+HoajJdmz14wu7cdv48xL9e0g==
+ioredis@4.22.0:
+  version "4.22.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.22.0.tgz#a2e18a29300ffb759670d7ed7023fcf6592031a2"
+  integrity sha512-mtC+jNFMPRxReWx0HodDbcwj34Gj5pK/P4+aE6Nh0pdqgtZKvxUh4z2lVtLjqnRIvMhKaBnIgMYFR8qH/xtttA==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.1.1"
