@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-mock",
-  "version": "0.6.22",
+  "version": "0.6.23",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -16,7 +16,7 @@
     "@types/faker": "5.1.6"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.29.3",
+    "@graphql-mesh/types": "0.29.4",
     "@graphql-mesh/utils": "0.8.7",
     "@graphql-tools/utils": "7.2.5",
     "@graphql-tools/mock": "7.0.0",

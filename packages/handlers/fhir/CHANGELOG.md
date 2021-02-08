@@ -1,5 +1,15 @@
 # @graphql-mesh/fhir
 
+## 0.8.29
+
+### Patch Changes
+
+- 1d21d02a: fix(fhir): handle fhir schema correctly
+- Updated dependencies [8ef29de1]
+- Updated dependencies [1d21d02a]
+  - @graphql-mesh/types@0.29.4
+  - @graphql-mesh/json-schema@0.9.8
+
 ## 0.8.28
 
 ### Patch Changes
