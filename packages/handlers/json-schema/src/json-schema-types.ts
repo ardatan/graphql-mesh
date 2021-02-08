@@ -121,5 +121,11 @@ export interface JSONSchemaNullDefinition {
 
 export interface JSONSchemaOneOfDefinition {
   title?: string;
+  discriminator?: { propertyName: string; mapping: Record<string, string> };
   oneOf: JSONSchemaNonRootDefinition[];
+}
+
+export interface JSONSchemaConstDefinition {
+  const: string;
+  description?: string;
 }
