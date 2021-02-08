@@ -20,6 +20,15 @@ type SoapHandler @md {
   Including public key, private key and password fields
   """
   securityCert: SoapSecurityCertificateConfig
+  """
+  JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
+  You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
+  """
+  schemaHeaders: Any
+  """
+  JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
+  """
+  operationHeaders: JSON
 }
 
 type SoapSecurityBasicAuthConfig {

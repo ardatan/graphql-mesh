@@ -1563,6 +1563,23 @@
         "securityCert": {
           "$ref": "#/definitions/SoapSecurityCertificateConfig",
           "description": "SSL Certificate Based Authentication Configuration\nIncluding public key, private key and password fields"
+        },
+        "schemaHeaders": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
         }
       },
       "required": ["wsdl"]
