@@ -1,5 +1,13 @@
 # @graphql-mesh/mongoose
 
+## 0.6.40
+
+### Patch Changes
+
+- 8ef29de1: fix(mongoose): throw errors if model is not valid
+- Updated dependencies [8ef29de1]
+  - @graphql-mesh/types@0.29.4
+
 ## 0.6.39
 
 ### Patch Changes
