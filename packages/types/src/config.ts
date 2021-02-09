@@ -868,7 +868,7 @@ export interface Transform {
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
   /**
-   * Transformer rename a GraphQL type or field on bare schema (no-wrapping)
+   * Transformer to rename a GraphQL type or field on bare schema (no-wrapping)
    */
   renameBare?: RenameBareTransformObject[];
   /**

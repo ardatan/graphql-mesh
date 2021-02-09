@@ -1,11 +1,12 @@
 import { GraphQLSchema, GraphQLFieldConfig } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { IResolvers, renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { mergeSchemas } from '@graphql-tools/merge';
 
 export default class RenameBareTransform implements MeshTransform {
   noWrap = true;
   typesMap: Map<string, string>;
-  fieldsMap: Map<string, string>;
+  fieldsMap: Map<string, { [name: string]: string }>;
 
   constructor(options: MeshTransformOptions<YamlConfig.RenameBareTransformObject[]>) {
     const { config } = options;
@@ -21,12 +22,16 @@ export default class RenameBareTransform implements MeshTransform {
         this.typesMap.set(fromTypeName, toTypeName);
       }
       if (fromTypeName && fromFieldName && toTypeName && toFieldName && fromFieldName !== toFieldName) {
-        this.fieldsMap.set(`${fromTypeName}_${fromFieldName}`, toFieldName);
+        const entry = { [fromFieldName]: toFieldName };
+        this.fieldsMap.set(
+          fromTypeName,
+          this.fieldsMap.has(fromTypeName) ? { ...this.fieldsMap.get(fromTypeName), ...entry } : entry
+        );
       }
     }
   }
 
-  renameType(type) {
+  renameType(type: any) {
     const newTypeName = this.typesMap.get(type.toString());
 
     if (newTypeName) {
@@ -35,7 +40,7 @@ export default class RenameBareTransform implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
-    return mapSchema(schema, {
+    const renamedSchema = mapSchema(schema, {
       [MapperKind.TYPE]: type => this.renameType(type),
       [MapperKind.ROOT_OBJECT]: type => this.renameType(type),
       [MapperKind.COMPOSITE_FIELD]: (
@@ -43,12 +48,37 @@ export default class RenameBareTransform implements MeshTransform {
         fieldName: string,
         typeName: string
       ) => {
-        const newFieldName = this.fieldsMap.get(`${typeName}_${fieldName}`);
+        const newFieldName = this.fieldsMap.has(typeName) && this.fieldsMap.get(typeName)[fieldName];
 
         if (newFieldName) {
           return [newFieldName, fieldConfig];
         }
       },
     });
+
+    // Root fields always have a default resolver and so don't need mapping
+    this.fieldsMap.delete('Query');
+    this.fieldsMap.delete('Mutation');
+    this.fieldsMap.delete('Subscription');
+
+    const resolvers: IResolvers | IResolvers[] = [];
+
+    if (this.fieldsMap.size) {
+      for (const [type, fields] of this.fieldsMap.entries()) {
+        const typeName = this.typesMap.get(type) || type;
+        const typeResolvers = Object.entries(fields).reduce((fieldResolvers, [oldName, newName]) => {
+          fieldResolvers[newName] = (object: any) => object[oldName];
+          return fieldResolvers;
+        }, {});
+        resolvers.push({ [typeName]: typeResolvers });
+      }
+    }
+
+    return resolvers.length
+      ? mergeSchemas({
+          schemas: [renamedSchema],
+          resolvers,
+        })
+      : renamedSchema;
   }
 }

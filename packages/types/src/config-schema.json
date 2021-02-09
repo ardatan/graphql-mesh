@@ -357,7 +357,7 @@
             "$ref": "#/definitions/RenameBareTransformObject"
           },
           "additionalItems": false,
-          "description": "Transformer rename a GraphQL type or field on bare schema (no-wrapping)"
+          "description": "Transformer to rename a GraphQL type or field on bare schema (no-wrapping)"
         },
         "rename": {
           "type": "array",
