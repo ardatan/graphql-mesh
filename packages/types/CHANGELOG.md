@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.29.4
+
+### Patch Changes
+
+- 8ef29de1: feat(soap): ability to provide custom headers
+
 ## 0.29.3
 
 ### Patch Changes

@@ -33,7 +33,7 @@ async function buildApiDocs() {
   for (const packageJsonPath of packageJsonFiles) {
     const packageJsonContent = require(path.join(__dirname, '..', packageJsonPath));
     // Do not include private and large npm package that contains rest
-    if (!packageJsonContent.private && packageJsonContent.name !== MONOREPO) {
+    if (!packageJsonContent.private && packageJsonContent.name !== MONOREPO && !packageJsonContent.name.endsWith('/container')) {
       modules.push([
         packageJsonContent.name,
         packageJsonPath.replace('./', '').replace('package.json', 'src/index.ts'),

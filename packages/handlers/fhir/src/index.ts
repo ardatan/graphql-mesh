@@ -66,6 +66,7 @@ export default class FhirHandler extends JsonSchemaHandler {
         },
       },
     });
+    this.schemaComposer.getUTC('ResourceList').setResolveType(root => root.resourceType);
     source.schema = this.schemaComposer.buildSchema();
     return source;
   }
