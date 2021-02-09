@@ -46,6 +46,7 @@ export async function serveMesh(
     sslCredentials,
   }: YamlConfig.ServeConfig = {}
 ): Promise<void> {
+  let readyFlag = false;
   const protocol = sslCredentials ? 'https' : 'http';
   const graphqlPath = '/graphql';
   const serverUrl = `${protocol}://${hostname}:${port}${graphqlPath}`;
@@ -81,6 +82,29 @@ export async function serveMesh(
       })
     );
     app.use(cookieParser());
+
+    app.get('/healthcheck', (_req, res) => res.sendStatus(200));
+    app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
+
+    httpServer
+      .listen(parseInt(port.toString()), hostname, () => {
+        if (!fork) {
+          logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
+        }
+      })
+      .on('error', e => {
+        logger.error(`Unable to start GraphQL-Mesh: ${e.message}`);
+      });
+
+    httpServer
+      .listen(parseInt(port.toString()), hostname, () => {
+        if (!fork) {
+          logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
+        }
+      })
+      .on('error', e => {
+        logger.error(`Unable to start GraphQL-Mesh: ${e.message}`);
+      });
 
     if (staticFiles) {
       app.use(express.static(staticFiles));
@@ -151,14 +175,6 @@ export async function serveMesh(
       app.use(express.static(join(__dirname, './public')));
     }
 
-    httpServer
-      .listen(parseInt(port.toString()), hostname, () => {
-        if (!fork) {
-          logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
-        }
-      })
-      .on('error', e => {
-        logger.error(`Unable to start GraphQL-Mesh: ${e.message}`);
-      });
+    readyFlag = true;
   }
 }
