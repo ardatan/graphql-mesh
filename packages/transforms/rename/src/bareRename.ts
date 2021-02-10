@@ -8,12 +8,12 @@ export default class RenameBareTransform implements MeshTransform {
   typesMap: Map<string, string>;
   fieldsMap: Map<string, { [name: string]: string }>;
 
-  constructor(options: MeshTransformOptions<YamlConfig.RenameBareTransformObject[]>) {
+  constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
     const { config } = options;
     this.typesMap = new Map();
     this.fieldsMap = new Map();
 
-    for (const rename of config) {
+    for (const rename of config.renames) {
       const {
         from: { type: fromTypeName, field: fromFieldName },
         to: { type: toTypeName, field: toFieldName },
@@ -33,10 +33,7 @@ export default class RenameBareTransform implements MeshTransform {
 
   renameType(type: any) {
     const newTypeName = this.typesMap.get(type.toString());
-
-    if (newTypeName) {
-      return renameType(type, newTypeName);
-    }
+    return newTypeName ? renameType(type, newTypeName) : undefined;
   }
 
   transformSchema(schema: GraphQLSchema) {
@@ -49,17 +46,12 @@ export default class RenameBareTransform implements MeshTransform {
         typeName: string
       ) => {
         const newFieldName = this.fieldsMap.has(typeName) && this.fieldsMap.get(typeName)[fieldName];
-
-        if (newFieldName) {
-          return [newFieldName, fieldConfig];
-        }
+        return newFieldName ? [newFieldName, fieldConfig] : undefined;
       },
     });
 
     // Root fields always have a default resolver and so don't need mapping
-    this.fieldsMap.delete('Query');
-    this.fieldsMap.delete('Mutation');
-    this.fieldsMap.delete('Subscription');
+    ['Query', 'Mutation', 'Subscription'].forEach(type => this.fieldsMap.delete(type));
 
     const resolvers: IResolvers | IResolvers[] = [];
 

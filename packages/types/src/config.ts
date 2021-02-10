@@ -867,14 +867,7 @@ export interface Transform {
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
-  /**
-   * Transformer to rename a GraphQL type or field on bare schema (no-wrapping)
-   */
-  renameBare?: RenameBareTransformObject[];
-  /**
-   * Transformer to apply rename of a GraphQL type
-   */
-  rename?: RenameTransformObject[];
+  rename?: RenameTransform;
   /**
    * Transformer to apply composition to resolvers
    */
@@ -1106,17 +1099,18 @@ export interface PrefixTransformConfig {
    */
   includeRootOperations?: boolean;
 }
-export interface RenameBareTransformObject {
-  from: RenameBareConfig;
-  to: RenameBareConfig1;
-}
-export interface RenameBareConfig {
-  type?: string;
-  field?: string;
-}
-export interface RenameBareConfig1 {
-  type?: string;
-  field?: string;
+/**
+ * Transformer to rename GraphQL types and fields
+ */
+export interface RenameTransform {
+  /**
+   * Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of rename rules
+   */
+  renames: RenameTransformObject[];
 }
 export interface RenameTransformObject {
   from: RenameConfig;

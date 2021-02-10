@@ -1,8 +1,19 @@
 extend type Transform {
   """
-  Transformer to apply rename of a GraphQL type
+  Transformer to rename GraphQL types and fields
   """
-  rename: [RenameTransformObject!]
+  rename: RenameTransform
+}
+
+type RenameTransform @md {
+  """
+  Specify to apply rename transforms to bare schema or by wrapping original schema
+  """
+  mode: RenameTransformMode
+  """
+  Array of rename rules
+  """
+  renames: [RenameTransformObject!]!
 }
 
 type RenameTransformObject @md {
@@ -21,4 +32,9 @@ type RenameTransformObject @md {
 type RenameConfig {
   type: String
   field: String
+}
+
+enum RenameTransformMode {
+  bare
+  wrap
 }

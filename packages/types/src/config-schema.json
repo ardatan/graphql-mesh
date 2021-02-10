@@ -351,21 +351,9 @@
           "$ref": "#/definitions/PrefixTransformConfig",
           "description": "Prefix transform"
         },
-        "renameBare": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RenameBareTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to rename a GraphQL type or field on bare schema (no-wrapping)"
-        },
         "rename": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RenameTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply rename of a GraphQL type"
+          "$ref": "#/definitions/RenameTransform",
+          "description": "Transformer to rename GraphQL types and fields"
         },
         "resolversComposition": {
           "type": "array",
@@ -2042,32 +2030,26 @@
         }
       }
     },
-    "RenameBareTransformObject": {
+    "RenameTransform": {
       "additionalProperties": false,
       "type": "object",
-      "title": "RenameBareTransformObject",
+      "title": "RenameTransform",
       "properties": {
-        "from": {
-          "$ref": "#/definitions/RenameBareConfig"
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
-        "to": {
-          "$ref": "#/definitions/RenameBareConfig"
+        "renames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of rename rules"
         }
       },
-      "required": ["from", "to"]
-    },
-    "RenameBareConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "RenameBareConfig",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "field": {
-          "type": "string"
-        }
-      }
+      "required": ["renames"]
     },
     "RenameTransformObject": {
       "additionalProperties": false,
