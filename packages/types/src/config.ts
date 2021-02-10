@@ -318,6 +318,10 @@ export interface JsonSchemaHandler {
   operations: JsonSchemaOperation[];
   disableTimestampScalar?: boolean;
   baseSchema?: any;
+  /**
+   * Field name of your custom error object (default: 'message')
+   */
+  errorMessageField?: string;
 }
 export interface JsonSchemaOperation {
   field: string;

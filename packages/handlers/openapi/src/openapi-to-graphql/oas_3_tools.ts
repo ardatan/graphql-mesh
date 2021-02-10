@@ -686,7 +686,7 @@ export function getResponseStatusCode<TSource, TContext, TArgs>(
   if (typeof operation.responses === 'object') {
     const codes = Object.keys(operation.responses);
     const successCodes = codes.filter(code => {
-      return SUCCESS_STATUS_RX.test(code.toString());
+      return code === 'default' || SUCCESS_STATUS_RX.test(code.toString());
     });
     if (successCodes.length === 1) {
       return successCodes[0].toString();
