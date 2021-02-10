@@ -21,10 +21,14 @@ import { promises as fsPromises } from 'fs';
 import { findAndParseConfig } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
 import { logger } from '../../logger';
+import { handleFatalError } from '../../handleFatalError';
+import { spinner } from '../../spinner';
+import open from 'open';
 
 const { readFile } = fsPromises;
 
 export async function serveMesh(baseDir: string, argsPort?: number): Promise<void> {
+  spinner.start();
   let readyFlag = false;
 
   const meshConfig = await findAndParseConfig({
@@ -33,12 +37,14 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
   const mesh$ = getMesh(meshConfig)
     .then(mesh => {
       readyFlag = true;
+      if (spinner.isSpinning) {
+        if (!fork) {
+          spinner.succeed(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
+        }
+      }
       return mesh;
     })
-    .catch(error => {
-      logger.error(error);
-      process.exit(1);
-    });
+    .catch(handleFatalError);
   const {
     fork,
     exampleQuery,
@@ -171,12 +177,10 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
-        if (!fork) {
-          logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
+        if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
+          open(serverUrl);
         }
       })
-      .on('error', e => {
-        logger.error(`Unable to start GraphQL-Mesh: ${e.message}`);
-      });
+      .on('error', handleFatalError);
   }
 }

@@ -3,8 +3,7 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadDocuments } from '@graphql-tools/load';
 import { Request, Response, RequestHandler } from 'express';
 import { renderGraphiQL } from 'graphql-helix';
-
-let defaultQuery$: Promise<string>;
+import { handleFatalError } from '../../handleFatalError';
 
 export const playgroundMiddlewareFactory = ({
   baseDir,
@@ -14,22 +13,25 @@ export const playgroundMiddlewareFactory = ({
   baseDir: string;
   exampleQuery: string;
   graphqlPath: string;
-}): RequestHandler =>
-  function (req: Request, res: Response, next) {
+}): RequestHandler => {
+  let defaultQuery$: Promise<string>;
+  return function (req: Request, res: Response, next) {
     defaultQuery$ =
       defaultQuery$ ||
-      Promise.resolve().then(async () => {
-        let defaultQuery: string;
-        if (exampleQuery) {
-          const documents = await loadDocuments(exampleQuery, {
-            loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-            cwd: baseDir,
-          });
+      Promise.resolve()
+        .then(async () => {
+          let defaultQuery: string;
+          if (exampleQuery) {
+            const documents = await loadDocuments(exampleQuery, {
+              loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
+              cwd: baseDir,
+            });
 
-          defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
-        }
-        return defaultQuery;
-      });
+            defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
+          }
+          return defaultQuery;
+        })
+        .catch(handleFatalError);
     if (req.query.query) {
       next();
       return;
@@ -71,3 +73,4 @@ export const playgroundMiddlewareFactory = ({
       );
     });
   };
+};

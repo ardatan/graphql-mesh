@@ -1,8 +1,6 @@
 import { graphqlMesh } from '.';
-import { logger } from './logger';
+import { handleFatalError } from './handleFatalError';
 
 graphqlMesh()
   .then(() => {})
-  .catch(e => {
-    logger.error(e);
-  });
+  .catch(handleFatalError);
