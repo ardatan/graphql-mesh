@@ -1,7 +1,6 @@
 /* eslint-disable dot-notation */
-import { GraphQLSchema, execute, subscribe } from 'graphql';
+import { execute, subscribe } from 'graphql';
 import express, { RequestHandler } from 'express';
-import { Logger } from 'winston';
 import { fork as clusterFork, isMaster } from 'cluster';
 import { cpus } from 'os';
 import 'json-bigint-patch';
@@ -9,7 +8,6 @@ import { createServer as createHTTPServer, Server } from 'http';
 import { playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
-import { MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import cors from 'cors';
 import { loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
 import { get } from 'lodash';
@@ -20,22 +18,24 @@ import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
 import { promises as fsPromises } from 'fs';
-import { loadDocuments } from '@graphql-tools/load';
-import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { getMesh } from '@graphql-mesh/runtime';
+import { logger } from '../../logger';
 
 const { readFile } = fsPromises;
 
-export async function serveMesh(
-  logger: Logger,
-  schema: GraphQLSchema,
-  contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>,
-  pubsub: MeshPubSub,
-  baseDir = process.cwd(),
-  {
+export async function serveMesh(baseDir: string, argsPort?: number): Promise<void> {
+  let readyFlag = false;
+
+  const meshConfig = await findAndParseConfig({
+    dir: baseDir,
+  });
+  const mesh$ = getMesh(meshConfig);
+  mesh$.then(() => (readyFlag = true));
+  const {
     fork,
     exampleQuery,
-    port,
+    port: configPort,
     hostname = 'localhost',
     cors: corsConfig,
     handlers,
@@ -44,8 +44,9 @@ export async function serveMesh(
     upload: { maxFileSize = 10000000, maxFiles = 10 } = {},
     maxRequestBodySize = '100kb',
     sslCredentials,
-  }: YamlConfig.ServeConfig = {}
-): Promise<void> {
+  } = meshConfig.config.serve || {};
+  const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
+
   const protocol = sslCredentials ? 'https' : 'http';
   const graphqlPath = '/graphql';
   const serverUrl = `${protocol}://${hostname}:${port}${graphqlPath}`;
@@ -82,6 +83,9 @@ export async function serveMesh(
     );
     app.use(cookieParser());
 
+    app.get('/healthcheck', (_req, res) => res.sendStatus(200));
+    app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
+
     if (staticFiles) {
       app.use(express.static(staticFiles));
       const indexPath = join(baseDir, staticFiles, 'index.html');
@@ -90,7 +94,7 @@ export async function serveMesh(
       }
     }
 
-    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(schema, contextBuilder));
+    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
 
     const wsServer = new ws.Server({
       path: graphqlPath,
@@ -99,17 +103,34 @@ export async function serveMesh(
 
     useServer(
       {
-        schema,
-        execute,
-        subscribe,
-        context: ctx => contextBuilder(ctx.extra.request),
+        execute: async args => {
+          const { schema } = await mesh$;
+          return execute({
+            ...args,
+            schema,
+          });
+        },
+        subscribe: async args => {
+          const { schema } = await mesh$;
+          return subscribe({
+            ...args,
+            schema,
+          });
+        },
+        context: async ctx => {
+          const { contextBuilder } = await mesh$;
+          return contextBuilder(ctx.extra.request);
+        },
       },
       wsServer
     );
 
     const pubSubHandler: RequestHandler = (req, _res, next) => {
-      req['pubsub'] = pubsub;
-      next();
+      Promise.resolve().then(async () => {
+        const { pubsub } = await mesh$;
+        req['pubsub'] = pubsub;
+        next();
+      });
     };
     app.use(pubSubHandler);
 
@@ -126,7 +147,7 @@ export async function serveMesh(
             if (handlerConfig.payload) {
               payload = get(payload, handlerConfig.payload);
             }
-            pubsub.publish(handlerConfig.pubsubTopic, payload);
+            req['pubsub'].publish(handlerConfig.pubsubTopic, payload);
             res.end();
           });
         }
@@ -134,21 +155,11 @@ export async function serveMesh(
     );
 
     if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
-      let defaultQuery: string;
-      if (exampleQuery) {
-        const documents = await loadDocuments(exampleQuery, {
-          loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-          cwd: baseDir,
-        });
-
-        defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
-      }
-      const playgroundMiddleware = playgroundMiddlewareFactory({ defaultQuery, graphqlPath });
+      const playgroundMiddleware = playgroundMiddlewareFactory({ baseDir, exampleQuery, graphqlPath });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
       }
       app.get(graphqlPath, playgroundMiddleware);
-      app.use(express.static(join(__dirname, './public')));
     }
 
     httpServer

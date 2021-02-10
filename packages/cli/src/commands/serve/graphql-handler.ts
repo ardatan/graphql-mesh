@@ -1,11 +1,8 @@
+import { getMesh } from '@graphql-mesh/runtime';
 import { RequestHandler } from 'express';
-import { GraphQLSchema } from 'graphql';
 import { getGraphQLParameters, processRequest, shouldRenderGraphiQL } from 'graphql-helix';
 
-export const graphqlHandler = (
-  schema: GraphQLSchema,
-  contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>
-): RequestHandler =>
+export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandler =>
   function (req, res, next) {
     Promise.resolve().then(async function () {
       // Create a generic Request object that can be consumed by Graphql Helix's API
@@ -24,6 +21,8 @@ export const graphqlHandler = (
 
       // Extract the GraphQL parameters from the request
       const { operationName, query, variables } = getGraphQLParameters(request);
+
+      const { schema, contextBuilder } = await mesh$;
 
       // Validate and execute the query
       const result = await processRequest({
