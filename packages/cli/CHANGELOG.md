@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.22.0
+
+### Minor Changes
+
+- 970c43e2: feat(serve): better error handling, progress bar etc
+
+### Patch Changes
+
+- 2cfa421a: fix(serve): better error handling for schema generation errors
+
 ## 0.21.0
 
 ### Minor Changes
