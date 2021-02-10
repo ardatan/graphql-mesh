@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.12.10
+
+### Patch Changes
+
+- 9354aeba: fix(openapi): remove misleading baseUrl warning
+
 ## 0.12.9
 
 ### Patch Changes
