@@ -6,8 +6,7 @@
   "scripts": {
     "predev": "yarn mesh:ts",
     "dev": "ts-node-dev src/index.ts",
-    "prestart": "yarn mesh:ts",
-    "start": "ts-node src/index.ts",
+    "start": "ts-node src/index.ts --transpileOnly",
     "premesh:serve": "yarn mesh:ts",
     "mesh:serve": "mesh serve",
     "mesh:ts": "mesh typescript --output ./src/mesh/__generated__/types.ts"
