@@ -96,16 +96,6 @@ export async function serveMesh(
         logger.error(`Unable to start GraphQL-Mesh: ${e.message}`);
       });
 
-    httpServer
-      .listen(parseInt(port.toString()), hostname, () => {
-        if (!fork) {
-          logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
-        }
-      })
-      .on('error', e => {
-        logger.error(`Unable to start GraphQL-Mesh: ${e.message}`);
-      });
-
     if (staticFiles) {
       app.use(express.static(staticFiles));
       const indexPath = join(baseDir, staticFiles, 'index.html');
