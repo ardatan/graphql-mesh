@@ -109,11 +109,11 @@ export default class OpenAPIHandler implements MeshHandler {
         if (resolverParams.baseUrl) {
           const urlObj = new URL(resolverParams.baseUrl);
           searchParamsFactory(resolverData, urlObj.searchParams);
-        } else {
+        } /* else {
           console.warn(
             `There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
           );
-        }
+        } */
 
         if (context?.fetch) {
           resolverParams.fetch = context.fetch;
