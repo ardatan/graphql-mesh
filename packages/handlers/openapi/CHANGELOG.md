@@ -1,5 +1,13 @@
 # @graphql-mesh/openapi
 
+## 0.12.9
+
+### Patch Changes
+
+- 938cca26: fix(openapi): fix handling default success code and no more get baseUrl from context
+- Updated dependencies [938cca26]
+  - @graphql-mesh/types@0.30.0
+
 ## 0.12.8
 
 ### Patch Changes

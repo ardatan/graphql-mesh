@@ -1,5 +1,16 @@
 # @graphql-mesh/json-schema
 
+## 0.10.0
+
+### Minor Changes
+
+- 938cca26: feat(json-schema): allow custom error property with errorMessageField
+
+### Patch Changes
+
+- Updated dependencies [938cca26]
+  - @graphql-mesh/types@0.30.0
+
 ## 0.9.8
 
 ### Patch Changes
