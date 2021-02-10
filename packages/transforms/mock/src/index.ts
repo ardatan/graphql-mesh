@@ -20,7 +20,7 @@ export default class MockingTransform implements MeshTransform {
             mocks[typeName] = mocks[typeName] || (() => ({}));
             if (fieldName) {
               if (fieldConfig.faker) {
-                const prevFn = mocks[typeName];
+                const prevFn: any = mocks[typeName];
                 let fakerFn: Function;
                 const [service, method] = fieldConfig.faker.split('.');
                 if (service in faker) {
@@ -28,15 +28,15 @@ export default class MockingTransform implements MeshTransform {
                 } else {
                   fakerFn = () => faker.fake(fieldConfig.faker || '');
                 }
-                mocks[typeName] = (...args) => {
+                mocks[typeName] = (...args: any[]) => {
                   const prevObj = prevFn(...args);
                   prevObj[fieldName] = fakerFn;
                   return prevObj;
                 };
               } else if (fieldConfig.custom) {
                 const exportedVal = loadFromModuleExportExpressionSync(fieldConfig.custom);
-                const prevFn = mocks[typeName];
-                mocks[typeName] = (...args) => {
+                const prevFn: any = mocks[typeName];
+                mocks[typeName] = (...args: any[]) => {
                   const prevObj = prevFn(...args);
                   prevObj[fieldName] = typeof exportedVal === 'function' ? exportedVal : () => exportedVal;
                   return prevObj;
