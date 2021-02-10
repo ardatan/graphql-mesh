@@ -11,7 +11,7 @@ import { ExecutionResult, Request } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
-export default class RenameWrapTransform implements MeshTransform {
+export default class WrapRename implements MeshTransform {
   private transforms: Transform[] = [];
 
   constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {

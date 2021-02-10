@@ -1,12 +1,11 @@
 import { GraphQLSchema, GraphQLFieldConfig } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { IResolvers, renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { mergeSchemas } from '@graphql-tools/merge';
+import { renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
 
-export default class RenameBareTransform implements MeshTransform {
+export default class BareRename implements MeshTransform {
   noWrap = true;
   typesMap: Map<string, string>;
-  fieldsMap: Map<string, { [name: string]: string }>;
+  fieldsMap: Map<string, string>;
 
   constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
     const { config } = options;
@@ -22,11 +21,7 @@ export default class RenameBareTransform implements MeshTransform {
         this.typesMap.set(fromTypeName, toTypeName);
       }
       if (fromTypeName && fromFieldName && toTypeName && toFieldName && fromFieldName !== toFieldName) {
-        const entry = { [fromFieldName]: toFieldName };
-        this.fieldsMap.set(
-          fromTypeName,
-          this.fieldsMap.has(fromTypeName) ? { ...this.fieldsMap.get(fromTypeName), ...entry } : entry
-        );
+        this.fieldsMap.set(`${fromTypeName}_${fromFieldName}`, toFieldName);
       }
     }
   }
@@ -37,7 +32,9 @@ export default class RenameBareTransform implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
-    const renamedSchema = mapSchema(schema, {
+    const rootFields = ['Query', 'Mutation', 'Subscription'];
+
+    return mapSchema(schema, {
       [MapperKind.TYPE]: type => this.renameType(type),
       [MapperKind.ROOT_OBJECT]: type => this.renameType(type),
       [MapperKind.COMPOSITE_FIELD]: (
@@ -45,32 +42,15 @@ export default class RenameBareTransform implements MeshTransform {
         fieldName: string,
         typeName: string
       ) => {
-        const newFieldName = this.fieldsMap.has(typeName) && this.fieldsMap.get(typeName)[fieldName];
-        return newFieldName ? [newFieldName, fieldConfig] : undefined;
+        const newFieldName = this.fieldsMap.get(`${typeName}_${fieldName}`);
+        if (!newFieldName) return undefined;
+
+        // Root fields always have a default resolver and so don't need mapping
+        if (!rootFields.includes(typeName)) {
+          fieldConfig.resolve = source => source[fieldName];
+        }
+        return [newFieldName, fieldConfig];
       },
     });
-
-    // Root fields always have a default resolver and so don't need mapping
-    ['Query', 'Mutation', 'Subscription'].forEach(type => this.fieldsMap.delete(type));
-
-    const resolvers: IResolvers | IResolvers[] = [];
-
-    if (this.fieldsMap.size) {
-      for (const [type, fields] of this.fieldsMap.entries()) {
-        const typeName = this.typesMap.get(type) || type;
-        const typeResolvers = Object.entries(fields).reduce((fieldResolvers, [oldName, newName]) => {
-          fieldResolvers[newName] = (object: any) => object[oldName];
-          return fieldResolvers;
-        }, {});
-        resolvers.push({ [typeName]: typeResolvers });
-      }
-    }
-
-    return resolvers.length
-      ? mergeSchemas({
-          schemas: [renamedSchema],
-          resolvers,
-        })
-      : renamedSchema;
   }
 }
