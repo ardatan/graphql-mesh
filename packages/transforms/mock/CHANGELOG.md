@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-mock
 
+## 0.7.0
+
+### Minor Changes
+
+- 3f307c8c: feat(mock): use new stateful mock
+
 ## 0.6.25
 
 ### Patch Changes
