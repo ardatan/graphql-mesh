@@ -184,6 +184,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -508,6 +512,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         }
@@ -541,6 +549,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
@@ -571,6 +583,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Path to a custom W3 Compatible Fetch Implementation"
@@ -764,6 +780,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -809,6 +829,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -820,6 +844,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -834,6 +862,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -845,6 +877,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -1294,6 +1330,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Use existing `Pool` instance\nFormat: modulePath#exportName"
@@ -1430,6 +1470,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "W3 Compatible Fetch Implementation"
@@ -1506,6 +1550,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Connection Pool instance or settings or you can provide the path of a code file that exports any of those"
@@ -1576,6 +1624,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
@@ -1781,6 +1833,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -1792,6 +1848,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         }
@@ -2107,6 +2167,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Path to the composer function\nExample: ./src/auth.js#authComposer"
