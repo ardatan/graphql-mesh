@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.21.0
+
+### Minor Changes
+
+- ea3a183b: Added health checks /healthcheck /readiness
+
 ## 0.20.2
 
 ### Patch Changes
