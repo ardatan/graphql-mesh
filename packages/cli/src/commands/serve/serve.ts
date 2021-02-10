@@ -30,8 +30,15 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
   const meshConfig = await findAndParseConfig({
     dir: baseDir,
   });
-  const mesh$ = getMesh(meshConfig);
-  mesh$.then(() => (readyFlag = true));
+  const mesh$ = getMesh(meshConfig)
+    .then(mesh => {
+      readyFlag = true;
+      return mesh;
+    })
+    .catch(error => {
+      logger.error(error);
+      process.exit(1);
+    });
   const {
     fork,
     exampleQuery,
