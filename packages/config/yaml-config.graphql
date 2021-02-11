@@ -28,6 +28,10 @@ type Query {
   PubSub Implementation
   """
   pubsub: PubSub
+  """
+  Live Query Invalidations
+  """
+  liveQueryInvalidations: [LiveQueryInvalidation]
 }
 
 scalar JSON
@@ -81,4 +85,9 @@ union PubSub = String | PubSubConfig
 type PubSubConfig {
   name: String!
   config: Any
+}
+
+type LiveQueryInvalidation {
+  field: String!
+  invalidate: String!
 }

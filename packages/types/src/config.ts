@@ -33,6 +33,10 @@ export interface Config {
    * PubSub Implementation (Any of: String, PubSubConfig)
    */
   pubsub?: string | PubSubConfig;
+  /**
+   * Live Query Invalidations
+   */
+  liveQueryInvalidations?: LiveQueryInvalidation[];
 }
 /**
  * Configuration for `mesh serve` command.
@@ -1234,4 +1238,8 @@ export interface RedisConfig {
 export interface PubSubConfig {
   name: string;
   config?: any;
+}
+export interface LiveQueryInvalidation {
+  field: string;
+  invalidate: string;
 }

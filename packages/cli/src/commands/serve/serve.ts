@@ -1,5 +1,4 @@
 /* eslint-disable dot-notation */
-import { execute, subscribe } from 'graphql';
 import express, { RequestHandler } from 'express';
 import { fork as clusterFork, isMaster } from 'cluster';
 import { cpus } from 'os';
@@ -116,20 +115,12 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
 
     useServer(
       {
-        execute: async args => {
-          const { schema } = await mesh$;
-          return execute({
-            ...args,
-            schema,
-          });
-        },
-        subscribe: async args => {
-          const { schema } = await mesh$;
-          return subscribe({
-            ...args,
-            schema,
-          });
-        },
+        execute: args =>
+          mesh$.then(({ execute }) => execute(args.document, args.variableValues, args.contextValue, args.rootValue)),
+        subscribe: args =>
+          mesh$.then(({ subscribe }) =>
+            subscribe(args.document, args.variableValues, args.contextValue, args.rootValue)
+          ),
         context: async ctx => {
           const { contextBuilder } = await mesh$;
           return contextBuilder(ctx.extra.request);

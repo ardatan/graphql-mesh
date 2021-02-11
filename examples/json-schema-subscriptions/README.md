@@ -11,3 +11,7 @@ Everytime you call `/todo` endpoint, it sends `Todo` as a payload
 
 You can run API server with `yarn start:api` command and Mesh with `yarn start:mesh` then you can try the example queries you see in the playground.
 You can go to the GraphQL Playground with this URL; `http://localhost:4000/graphql`
+
+#### Extra: Live Queries
+
+This example also shows Live Queries instead of Subscriptions

@@ -64,6 +64,7 @@ export type ProcessedConfig = {
   merger: MergerFn;
   mergerType: string;
   pubsub: MeshPubSub;
+  liveQueryInvalidations: YamlConfig.LiveQueryInvalidation[];
   config: YamlConfig.Config;
 };
 
@@ -155,6 +156,7 @@ export async function processConfig(
     merger,
     mergerType: config.merger,
     pubsub,
+    liveQueryInvalidations: config.liveQueryInvalidations,
     config,
   };
 }
