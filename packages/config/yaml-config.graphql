@@ -89,5 +89,5 @@ type PubSubConfig {
 
 type LiveQueryInvalidation {
   field: String!
-  invalidate: String!
+  invalidate: [String!]!
 }

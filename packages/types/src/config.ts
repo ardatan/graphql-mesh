@@ -1241,5 +1241,5 @@ export interface PubSubConfig {
 }
 export interface LiveQueryInvalidation {
   field: string;
-  invalidate: string;
+  invalidate: string[];
 }

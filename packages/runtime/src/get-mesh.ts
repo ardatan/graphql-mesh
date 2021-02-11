@@ -5,7 +5,13 @@ import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@g
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
-import { applySchemaTransforms, ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
+import {
+  applySchemaTransforms,
+  ensureDocumentNode,
+  getInterpolatedStringFactory,
+  groupTransforms,
+  ResolverDataBasedFactory,
+} from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 
@@ -78,17 +84,24 @@ export async function getMesh(
 
   const liveQueryStore = new InMemoryLiveQueryStore();
 
-  const liveQueryInvalidationMap = new Map<string, string>();
+  const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
 
   options.liveQueryInvalidations?.forEach(liveQueryInvalidation => {
-    liveQueryInvalidationMap.set(liveQueryInvalidation.field, liveQueryInvalidation.invalidate);
+    const rawInvalidationPaths = liveQueryInvalidation.invalidate;
+    const factories = rawInvalidationPaths.map(rawInvalidationPath =>
+      getInterpolatedStringFactory(rawInvalidationPath)
+    );
+    liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
   });
 
-  pubsub.subscribe('resolverDone', ({ resolverData }) => {
+  pubsub.subscribe('resolverDone', ({ result, resolverData }) => {
     const path = `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`;
-    if (liveQueryInvalidationMap.has(path)) {
-      const invalidationPath = liveQueryInvalidationMap.get(path);
-      liveQueryStore.invalidate(invalidationPath);
+    if (liveQueryInvalidationFactoryMap.has(path)) {
+      const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
+      const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
+        invalidationPathFactory({ ...resolverData, result })
+      );
+      liveQueryStore.invalidate(invalidationPaths);
     }
   });
 

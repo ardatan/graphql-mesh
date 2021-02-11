@@ -31,4 +31,5 @@ serve:
 
 liveQueryInvalidations:
   - field: Mutation.addTodo
-    invalidate: Query.todos
+    invalidate:
+      - Query.todos

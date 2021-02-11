@@ -531,7 +531,11 @@
           "type": "string"
         },
         "invalidate": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         }
       },
       "required": ["field", "invalidate"]
