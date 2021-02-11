@@ -4,6 +4,11 @@ title: Apollo Federation
 sidebar_label: Apollo Federation
 ---
 
+<p align="center">
+  <img src="https://storage.googleapis.com/xebia-blog/1/2019/10/apollo-federation.jpg" width="300" alt="Apollo Federation" />
+<br/>
+</p>
+
 You can use Apollo Federation as a merging strategy in favor of Schema Stitching approach.
 
 To get started, install the merger library from NPM:

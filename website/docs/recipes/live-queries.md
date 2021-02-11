@@ -4,9 +4,14 @@ title: Live Queries
 sidebar_label: Live Queries
 ---
 
-![image](https://raw.githubusercontent.com/n1ru4l/graphql-live-query/main/assets/logo.svg)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/n1ru4l/graphql-live-query/main/assets/logo.svg" width="300" alt="GraphQL Live Query" />
+  <br/>
+</p>
 
-[Laurin Quast](https://github.com/n1ru4l)'s GraphQL Live Query implementation can be used in GraphQL Mesh with a few addition in the configuration.
+GraphQL Live Query implementation from [Laurin Quast](https://github.com/n1ru4l) can be used in GraphQL Mesh with a few addition in the configuration.
+
+### Basic Usage
 
 Let's say you have a `Query` root field that returns all `Todo` entities from your data source like below;
 
