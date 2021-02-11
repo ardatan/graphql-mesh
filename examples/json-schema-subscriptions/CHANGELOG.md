@@ -1,5 +1,17 @@
 # json-schema-subscriptions
 
+## 0.1.0
+
+### Minor Changes
+
+- 77327988: feat(runtime): Live Queries Support
+
+### Patch Changes
+
+- Updated dependencies [77327988]
+  - @graphql-mesh/cli@0.23.0
+  - @graphql-mesh/json-schema@0.10.2
+
 ## 0.0.53
 
 ### Patch Changes
