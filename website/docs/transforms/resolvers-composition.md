@@ -24,12 +24,14 @@ transforms:
 ```
 
 ```ts
-export const isAuth = next => (root, args, context, info) => {
-    if(!context.currentUser) {
-        throw new Error('Unauthorized');
-    }
-    return next(root, args, context, info);
-}
+module.exports = {
+  isAuth: next => (root, args, context, info) => {
+      if(!context.currentUser) {
+          throw new Error('Unauthorized');
+      }
+      return next(root, args, context, info);
+  }
+};
 ```
 
 
