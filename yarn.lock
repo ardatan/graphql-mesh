@@ -152,13 +152,13 @@
     apollo-graphql "^0.6.0"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.22.0":
-  version "0.22.0"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.22.0.tgz#71747c3aad143e45542e27d4c86ed5f3f194e6dc"
-  integrity sha512-MH40gOXpRt4iXJQQzTFwNTuYM6gTgTVUcKp2K8bsV0zxkHr6y1TsiajZiNyTpKxHmXN/6QLm7Am3c5mXvQgMKg==
+"@apollo/gateway@0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.23.0.tgz#12f29491ace5e0abe2b89175a229043b306c615e"
+  integrity sha512-Fwz3TlvWQhRMyVgAWuHuY2Cnm8uXvuH1xVZDGRX6+obE38khWRFAAsATrEpR0l7ifhzYi0rmi1s6K/Bi8BbW9w==
   dependencies:
     "@apollo/federation" "^0.21.0"
-    "@apollo/query-planner-wasm" "^0.0.10"
+    "@apollo/query-planner-wasm" "^0.1.0"
     "@types/node-fetch" "2.5.4"
     apollo-graphql "^0.6.0"
     apollo-reporting-protobuf "^0.6.0"
@@ -190,10 +190,10 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-planner-wasm@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner-wasm/-/query-planner-wasm-0.0.10.tgz#282f74853f8bdb9cab6184c43114627b958febc5"
-  integrity sha512-eyBeJY0hHNJbO2FskFiBZ+Q8MVG/8Z9ioiuA5cQQilDl1s3YeTBlvizV3yqdenp5+utI3lMmCJgYNKdnUsBPvw==
+"@apollo/query-planner-wasm@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner-wasm/-/query-planner-wasm-0.1.0.tgz#440974216458ec9528218631d245816b9c41d82c"
+  integrity sha512-i6VnCKRvugXb5M8ISStmY4E2n5brEV7ks+Z9O3TF2uZ6Em98oAVBDhc2xwjFxDXeCl6qEBa27WTY9MiMlOAwgw==
 
 "@apollographql/apollo-tools@^0.4.3":
   version "0.4.8"
