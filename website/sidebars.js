@@ -41,6 +41,7 @@ module.exports = {
       'recipes/as-gateway',
       'recipes/federation',
       'recipes/subscriptions-webhooks',
+      'recipes/live-queries'
     ],
     "API Reference": require('./api-sidebar.json')
     // 'Extend Your Mesh': ['extend/custom-handler', 'extend/custom-transform']

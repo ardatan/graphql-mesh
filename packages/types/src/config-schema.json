@@ -522,6 +522,24 @@
       },
       "required": ["name"]
     },
+    "LiveQueryInvalidation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryInvalidation",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "invalidate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["field", "invalidate"]
+    },
     "FhirHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -2302,6 +2320,14 @@
           "$ref": "#/definitions/PubSubConfig"
         }
       ]
+    },
+    "liveQueryInvalidations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/LiveQueryInvalidation"
+      },
+      "additionalItems": false,
+      "description": "Live Query Invalidations"
     }
   },
   "additionalProperties": false
