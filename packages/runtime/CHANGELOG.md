@@ -1,5 +1,16 @@
 # @graphql-mesh/runtime
 
+## 0.11.0
+
+### Minor Changes
+
+- 77327988: feat(runtime): Live Queries Support
+
+### Patch Changes
+
+- Updated dependencies [77327988]
+  - @graphql-mesh/types@0.31.0
+
 ## 0.10.26
 
 ### Patch Changes
