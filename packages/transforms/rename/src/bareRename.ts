@@ -51,8 +51,6 @@ export default class BareRename implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
-    const rootFields = ['Query', 'Mutation', 'Subscription'];
-
     return mapSchema(schema, {
       [MapperKind.TYPE]: type => this.renameType(type),
       [MapperKind.ROOT_OBJECT]: type => this.renameType(type),
@@ -68,8 +66,8 @@ export default class BareRename implements MeshTransform {
         // Rename rules for type might have been emptied by matchInMap, in which case we can cleanup
         if (!mapType.size) this.fieldsMap.delete(typeName);
 
-        // Root fields always have a default resolver, so their value doesn't need to be mapped
-        if (!rootFields.includes(typeName)) fieldConfig.resolve = source => source[fieldName];
+        // Fields that don't have a custom resolver will need to map response to old field name
+        if (!fieldConfig.resolve) fieldConfig.resolve = source => source[fieldName];
 
         return [newFieldName, fieldConfig];
       },
