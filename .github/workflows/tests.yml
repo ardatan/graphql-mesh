@@ -32,7 +32,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-15-yarn-
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install && git checkout yarn.lock
       - name: Lint
         run: yarn lint
   build:
@@ -58,7 +58,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-15-yarn-
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install && git checkout yarn.lock
       - name: Build
         run: yarn build
 
@@ -90,7 +90,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{matrix.node_version}}-yarn-
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install && git checkout yarn.lock
       - name: Cache Jest
         uses: actions/cache@v2
         with:

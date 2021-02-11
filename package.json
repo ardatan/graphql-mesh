@@ -74,6 +74,7 @@
       "./packages/transforms/*",
       "./packages/mergers/*",
       "./examples/*",
+      "./examples/federation-example/services/*",
       "./website"
     ],
     "nohoist": [
