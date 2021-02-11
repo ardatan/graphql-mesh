@@ -12,8 +12,9 @@ module.exports = {
       defaultMode: 'dark',
     },
     algolia: {
-      apiKey: 'c028a32ff6167533a28b0c7e8bb250d9',
-      indexName: 'graphql-mesh',
+      appId: 'ANRJKXZTRW',
+      apiKey: '811d453fc7f80306044dd5cc4b87e064',
+      indexName: 'theguild',
       algoliaOptions: {},
     },
     navbar: {
