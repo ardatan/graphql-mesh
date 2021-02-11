@@ -24,7 +24,7 @@
     "dataloader": "2.0.0",
     "fast-xml-parser": "3.18.0",
     "fetchache": "0.0.4",
-    "graphql-compose": "7.24.4",
+    "graphql-compose": "7.25.0",
     "graphql-parse-resolve-info": "4.11.0",
     "graphql-scalars": "1.7.0",
     "pascal-case": "3.1.2",
