@@ -62,3 +62,19 @@ Then, this handler will be available for you to use in your config file.
 [Schema Transformations](https://graphql-mesh.com/docs/getting-started/mesh-transforms)
 
 [TypeScript Support](https://graphql-mesh.com/docs/recipes/typescript)
+
+## Contributions
+
+Contributions, issues and feature requests are very welcome. If you are using this package and fixed a bug for yourself, please consider submitting a PR!
+
+And if this is your first time contributing to this project, please do read our [Contributor Workflow Guide](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md) before you get started off.
+
+### Code of Conduct
+
+Help us keep GraphQL Mesh open and inclusive. Please read and follow our [Code of Conduct](https://github.com/the-guild-org/Stack/blob/master/CODE_OF_CONDUCT.md) as adopted from [Contributor Covenant](https://www.contributor-covenant.org/)
+
+### License
+
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollostack/apollo-ios/master/LICENSE)
+
+MIT
