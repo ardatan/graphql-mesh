@@ -70,6 +70,16 @@ liveQueryInvalidations:
         - Todo:{args.id}
 ```
 
+In a case where the field resolver resolve null but might resolve to an object type later, e.g. because the visibility got updates the field that uses a specific id argument can be invalidated in the following way:
+
+```yml
+liveQueryInvalidations:
+    - field: Mutation.editTodo
+      invalidate:
+        - Query.todo(id:"{args.id}")
+```
+
+
 ### Programmatic Usage
 
 `liveQueryStore` is available in GraphQL Context so you can access it in resolvers composition functions that wrap existing resolvers or additional resolvers;
