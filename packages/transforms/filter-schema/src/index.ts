@@ -1,11 +1,13 @@
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionResult, pruneSchema, Request } from '@graphql-tools/utils';
+import { FilterInputObjectFields, FilterTypes } from '@graphql-tools/wrap';
+import { GraphQLSchema } from 'graphql';
 import { matcher } from 'micromatch';
 
-import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { FilterRootFields, FilterObjectFields, FilterInputObjectFields, FilterTypes } from '@graphql-tools/wrap';
-import { ExecutionResult, Request, pruneSchema } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+import FilterObjectFieldsAndArguments from './FilterObjectFieldsAndArguments';
+import { FilterRootFieldsAndArguments } from './FilterRootFieldsAndArguments';
 
 export default class FilterTransform implements MeshTransform {
   private transforms: Transform[] = [];
@@ -21,28 +23,79 @@ export default class FilterTransform implements MeshTransform {
           })
         );
       } else {
-        let fixedFieldGlob = fieldGlob;
-        if (fixedFieldGlob.includes('{') && !fixedFieldGlob.includes(',')) {
-          fixedFieldGlob = fieldGlob.replace('{', '').replace('}', '');
+        // returns a match where second match = '{' or '!{' and third match being the content of the array
+        const outerArrayMatch = fieldGlob.match(/^(\{|!{)(.*)(?=\}$)/);
+        const fieldGlobStripped = outerArrayMatch ? outerArrayMatch[2] : fieldGlob;
+
+        // split field parts (might include argument filter)
+        const fieldPatterns = fieldGlobStripped.match(/[\w-!*?[\]]+(\(.*?\))?/g);
+
+        // extract field names only
+        let fixedFieldGlob = fieldPatterns.map(i => i.split('(')[0].trim()).join(',');
+
+        // if input was glob glob array
+        if (outerArrayMatch) {
+          // strip array for single field inputs
+          if (fieldPatterns.length === 1) {
+            fixedFieldGlob = `${outerArrayMatch[1].replace('{', '')}${fixedFieldGlob}`;
+          } else {
+            fixedFieldGlob = `${outerArrayMatch[1]}${fixedFieldGlob}}`;
+          }
         }
-        fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
+
+        const fieldArgsPatternMap = fieldPatterns.reduce((prev, match) => {
+          const fieldParts = match.split('(');
+
+          if (fieldParts.length !== 2) {
+            return prev;
+          }
+
+          const fieldName = fieldParts[0].replace(/!{|{|}/g, '').trim();
+          const fixedArgGlob = fieldParts[1]
+            .split(')')[0]
+            .split(',')
+            .map(i => i.trim())
+            .join(',');
+
+          prev[fieldName] = fixedArgGlob;
+          return prev;
+        }, {});
+
         const isMatch = matcher(fixedFieldGlob.trim());
         this.transforms.push(
-          new FilterRootFields((rootTypeName, rootFieldName) => {
-            if (isTypeMatch(rootTypeName)) {
-              return isMatch(rootFieldName);
+          new FilterRootFieldsAndArguments(
+            (rootTypeName, rootFieldName) => {
+              if (isTypeMatch(rootTypeName)) {
+                return isMatch(rootFieldName);
+              }
+              return true;
+            },
+            (fieldName, argName) => {
+              if (!fieldArgsPatternMap[fieldName]) {
+                return true;
+              }
+              return matcher(fieldArgsPatternMap[fieldName])(argName);
             }
-            return true;
-          })
+          )
         );
+
         this.transforms.push(
-          new FilterObjectFields((objectTypeName, objectFieldName) => {
-            if (isTypeMatch(objectTypeName)) {
-              return isMatch(objectFieldName);
+          new FilterObjectFieldsAndArguments(
+            (rootTypeName, rootFieldName) => {
+              if (isTypeMatch(rootTypeName)) {
+                return isMatch(rootFieldName);
+              }
+              return true;
+            },
+            (fieldName, argName) => {
+              if (!fieldArgsPatternMap[fieldName]) {
+                return true;
+              }
+              return matcher(fieldArgsPatternMap[fieldName])(argName);
             }
-            return true;
-          })
+          )
         );
+
         this.transforms.push(
           new FilterInputObjectFields((inputObjectTypeName, inputObjectFieldName) => {
             if (isTypeMatch(inputObjectTypeName)) {

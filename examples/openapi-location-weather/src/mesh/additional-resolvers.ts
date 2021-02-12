@@ -35,7 +35,9 @@ export const resolvers: Resolvers = {
           key: WEATHER_API_KEY,
         });
 
-        return forecast.data![0]!;
+        if (forecast?.data?.length) {
+          return forecast.data[0];
+        }
       },
     },
   },

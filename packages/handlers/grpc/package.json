@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.8.7",
+  "version": "0.8.11",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -13,13 +13,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.29.3",
+    "@graphql-mesh/types": "0.31.0",
     "@graphql-mesh/utils": "0.8.7",
     "@grpc/grpc-js": "1.2.6",
     "@grpc/proto-loader": "0.5.6",
     "camel-case": "4.1.2",
     "graphql-scalars": "1.7.0",
-    "graphql-compose": "7.24.4",
+    "graphql-compose": "7.25.0",
     "grpc-reflection-js": "0.0.7",
     "protobufjs": "6.10.2",
     "pascal-case": "3.1.2",

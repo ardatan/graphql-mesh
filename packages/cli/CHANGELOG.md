@@ -1,5 +1,54 @@
 # @graphql-mesh/cli
 
+## 0.23.0
+
+### Minor Changes
+
+- 77327988: feat(runtime): Live Queries Support
+
+### Patch Changes
+
+- Updated dependencies [77327988]
+  - @graphql-mesh/config@0.13.0
+  - @graphql-mesh/runtime@0.11.0
+
+## 0.22.1
+
+### Patch Changes
+
+- @graphql-mesh/config@0.12.6
+- @graphql-mesh/runtime@0.10.26
+
+## 0.22.0
+
+### Minor Changes
+
+- 970c43e2: feat(serve): better error handling, progress bar etc
+
+### Patch Changes
+
+- 2cfa421a: fix(serve): better error handling for schema generation errors
+
+## 0.21.0
+
+### Minor Changes
+
+- ea3a183b: Added health checks /healthcheck /readiness
+
+## 0.20.2
+
+### Patch Changes
+
+- @graphql-mesh/config@0.12.5
+- @graphql-mesh/runtime@0.10.25
+
+## 0.20.1
+
+### Patch Changes
+
+- @graphql-mesh/config@0.12.4
+- @graphql-mesh/runtime@0.10.24
+
 ## 0.20.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
 import { WSSecurityCert } from 'soap';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { Request, fetchache } from 'fetchache';
 
 type AnyFn = (...args: any[]) => any;
@@ -16,14 +16,28 @@ export default class SoapHandler implements MeshHandler {
   }
 
   async getMeshSource() {
+    let schemaHeaders =
+      typeof this.config.schemaHeaders === 'string'
+        ? await loadFromModuleExportExpression(this.config.schemaHeaders)
+        : this.config.schemaHeaders;
+    if (typeof schemaHeaders === 'function') {
+      schemaHeaders = schemaHeaders();
+    }
+    if (schemaHeaders && 'then' in schemaHeaders) {
+      schemaHeaders = await schemaHeaders;
+    }
     const soapClient = await createSoapClient(this.config.wsdl, {
       basicAuth: this.config.basicAuth,
       options: {
         request: ((requestObj: any, callback: AnyFn) => {
           let _request: any = null;
           const sendRequest = async () => {
+            const headers = {
+              ...requestObj.headers,
+              ...(requestObj.uri.href === this.config.wsdl ? schemaHeaders : this.config.operationHeaders),
+            };
             const req = new Request(requestObj.uri.href, {
-              headers: requestObj.headers,
+              headers,
               method: requestObj.method,
               body: requestObj.body,
             });

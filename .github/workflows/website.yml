@@ -42,8 +42,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-15-yarn-
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install && git checkout yarn.lock
       - name: Deploy 🚀
         run: yarn deploy:website
         env:
           GIT_USER: ${{github.actor}}
+      - name: Index Docs
+        uses: darrenjennings/algolia-docsearch-action@master
+        env:
+          ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
+        if: env.ALGOLIA_API_KEY != null
+        with:
+          algolia_api_key: ${{ secrets.ALGOLIA_API_KEY }}
+          algolia_application_id: ${{ secrets.ALGOLIA_APPLICATION_ID }}
+          file: algolia/config.json

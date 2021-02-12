@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-localforage",
-  "version": "0.4.39",
+  "version": "0.4.43",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -13,8 +13,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.29.3",
-    "@types/localforage": "0.0.34",
+    "@graphql-mesh/types": "0.31.0",
     "localforage": "1.9.0"
   },
   "publishConfig": {

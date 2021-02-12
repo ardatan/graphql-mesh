@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.9.7",
+  "version": "0.10.2",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -17,13 +17,13 @@
     "@types/url-join": "4.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.29.3",
+    "@graphql-mesh/types": "0.31.0",
     "@graphql-mesh/utils": "0.8.7",
     "@ardatan/aggregate-error": "0.0.6",
-    "ajv": "7.0.4",
+    "ajv": "7.1.0",
     "fetchache": "0.0.4",
     "lodash": "4.17.20",
-    "graphql-compose": "7.24.4",
+    "graphql-compose": "7.25.0",
     "graphql-scalars": "1.7.0",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",

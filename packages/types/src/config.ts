@@ -33,6 +33,10 @@ export interface Config {
    * PubSub Implementation (Any of: String, PubSubConfig)
    */
   pubsub?: string | PubSubConfig;
+  /**
+   * Live Query Invalidations
+   */
+  liveQueryInvalidations?: LiveQueryInvalidation[];
 }
 /**
  * Configuration for `mesh serve` command.
@@ -318,6 +322,10 @@ export interface JsonSchemaHandler {
   operations: JsonSchemaOperation[];
   disableTimestampScalar?: boolean;
   baseSchema?: any;
+  /**
+   * Field name of your custom error object (default: 'message')
+   */
+  errorMessageField?: string;
 }
 export interface JsonSchemaOperation {
   field: string;
@@ -752,6 +760,17 @@ export interface SoapHandler {
   wsdl: string;
   basicAuth?: SoapSecurityBasicAuthConfig;
   securityCert?: SoapSecurityCertificateConfig;
+  /**
+   * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
+   * You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
+   */
+  schemaHeaders?: any;
+  /**
+   * JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
+   */
+  operationHeaders?: {
+    [k: string]: any;
+  };
 }
 /**
  * Basic Authentication Configuration
@@ -1229,4 +1248,8 @@ export interface RedisConfig {
 export interface PubSubConfig {
   name: string;
   config?: any;
+}
+export interface LiveQueryInvalidation {
+  field: string;
+  invalidate: string[];
 }

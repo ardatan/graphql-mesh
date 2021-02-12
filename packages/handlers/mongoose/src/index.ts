@@ -46,6 +46,9 @@ export default class MongooseHandler implements MeshHandler {
       Promise.all(
         this.config.models?.map(async modelConfig => {
           const model = await loadFromModuleExportExpression<any>(modelConfig.path, modelConfig.name);
+          if (!model) {
+            throw new Error(`Model ${modelConfig.name} cannot be imported ${modelConfig.path}!`);
+          }
           const modelTC = composeWithMongoose(model, modelConfig.options as any);
           await Promise.all([
             Promise.all(

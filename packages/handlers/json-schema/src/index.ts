@@ -248,14 +248,22 @@ export default class JsonSchemaHandler implements MeshHandler {
           } catch (e) {
             throw responseText;
           }
-          if (responseJson.errors) {
-            throw new AggregateError(responseJson.errors);
+          const errorMessageField = this.config.errorMessageField || 'message';
+          function normalizeError(error: any): Error {
+            if (typeof error === 'object' && errorMessageField in error) {
+              const errorObj = new Error(error[errorMessageField]);
+              Object.assign(errorObj, error);
+              return errorObj;
+            } else {
+              return error;
+            }
           }
-          if (responseJson._errors) {
-            throw new AggregateError(responseJson._errors);
+          const errors = responseJson.errors || responseJson._errors;
+          if (errors) {
+            throw new AggregateError(errors.map(normalizeError));
           }
           if (responseJson.error) {
-            throw responseJson.error;
+            throw normalizeError(responseJson.error);
           }
           return responseJson;
         };

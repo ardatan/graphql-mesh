@@ -1,6 +1,8 @@
 import { ApolloServer } from 'apollo-server';
 import { findAndParseConfig } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 async function main() {
   const meshConfig = await findAndParseConfig();
@@ -9,6 +11,14 @@ async function main() {
   const apolloServer = new ApolloServer({
     schema,
     context: contextBuilder,
+    playground: {
+      tabs: [
+        {
+          endpoint: '/graphql',
+          query: readFileSync(join(__dirname, '../example-query.graphql'), 'utf-8'),
+        },
+      ],
+    },
   });
 
   const { url } = await apolloServer.listen(4000);

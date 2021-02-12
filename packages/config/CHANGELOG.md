@@ -1,5 +1,49 @@
 # @graphql-mesh/config
 
+## 0.13.0
+
+### Minor Changes
+
+- 77327988: feat(runtime): Live Queries Support
+
+### Patch Changes
+
+- Updated dependencies [77327988]
+  - @graphql-mesh/runtime@0.11.0
+  - @graphql-mesh/types@0.31.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.43
+  - @graphql-mesh/merger-stitching@0.7.26
+
+## 0.12.6
+
+### Patch Changes
+
+- Updated dependencies [48f38a4a]
+  - @graphql-mesh/types@0.30.1
+  - @graphql-mesh/cache-inmemory-lru@0.4.42
+  - @graphql-mesh/merger-stitching@0.7.25
+  - @graphql-mesh/runtime@0.10.26
+
+## 0.12.5
+
+### Patch Changes
+
+- Updated dependencies [938cca26]
+  - @graphql-mesh/types@0.30.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.41
+  - @graphql-mesh/merger-stitching@0.7.24
+  - @graphql-mesh/runtime@0.10.25
+
+## 0.12.4
+
+### Patch Changes
+
+- Updated dependencies [8ef29de1]
+  - @graphql-mesh/types@0.29.4
+  - @graphql-mesh/cache-inmemory-lru@0.4.40
+  - @graphql-mesh/merger-stitching@0.7.23
+  - @graphql-mesh/runtime@0.10.24
+
 ## 0.12.3
 
 ### Patch Changes

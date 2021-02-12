@@ -37,11 +37,12 @@ export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
   new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
 }
 
-export type ResolverData<TParent = any, TArgs = any, TContext = any> = {
+export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {
   root?: TParent;
   args?: TArgs;
   context?: TContext;
   info?: GraphQLResolveInfo;
+  result?: TResult;
 };
 
 // Hooks
