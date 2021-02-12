@@ -1,4 +1,4 @@
-query getTodos {
+query getTodos @live {
   todos {
     id
     name

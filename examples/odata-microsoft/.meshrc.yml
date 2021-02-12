@@ -11,4 +11,3 @@ serve:
   port: 4000
   exampleQuery: example-queries/**/*.graphql
   staticFiles: public
-  fork: true

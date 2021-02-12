@@ -1,21 +1,45 @@
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadDocuments } from '@graphql-tools/load';
 import { Request, Response, RequestHandler } from 'express';
 import { renderGraphiQL } from 'graphql-helix';
+import { handleFatalError } from '../../handleFatalError';
 
 export const playgroundMiddlewareFactory = ({
-  defaultQuery,
+  baseDir,
+  exampleQuery,
   graphqlPath,
 }: {
-  defaultQuery: string;
+  baseDir: string;
+  exampleQuery: string;
   graphqlPath: string;
-}): RequestHandler =>
-  function (req: Request, res: Response, next) {
+}): RequestHandler => {
+  let defaultQuery$: Promise<string>;
+  return function (req: Request, res: Response, next) {
+    defaultQuery$ =
+      defaultQuery$ ||
+      Promise.resolve()
+        .then(async () => {
+          let defaultQuery: string;
+          if (exampleQuery) {
+            const documents = await loadDocuments(exampleQuery, {
+              loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
+              cwd: baseDir,
+            });
+
+            defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
+          }
+          return defaultQuery;
+        })
+        .catch(handleFatalError);
     if (req.query.query) {
       next();
       return;
     }
 
-    res.send(
-      `
+    defaultQuery$.then(defaultQuery => {
+      res.send(
+        `
   <script>
     let fakeStorageObj = {};
     const fakeStorageInstance = {
@@ -42,9 +66,11 @@ export const playgroundMiddlewareFactory = ({
       value: fakeStorageInstance,
     });
   </script>` +
-        renderGraphiQL({
-          defaultQuery,
-          endpoint: graphqlPath,
-        })
-    );
+          renderGraphiQL({
+            defaultQuery,
+            endpoint: graphqlPath,
+          })
+      );
+    });
   };
+};

@@ -1,5 +1,23 @@
 # @graphql-mesh/types
 
+## 0.31.0
+
+### Minor Changes
+
+- 77327988: feat(runtime): Live Queries Support
+
+## 0.30.1
+
+### Patch Changes
+
+- 48f38a4a: fix(config): allow array of strings in cors configuration
+
+## 0.30.0
+
+### Minor Changes
+
+- 938cca26: feat(json-schema): allow custom error property with errorMessageField
+
 ## 0.29.4
 
 ### Patch Changes

@@ -1,5 +1,32 @@
 # @graphql-mesh/transform-mock
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [77327988]
+  - @graphql-mesh/types@0.31.0
+
+## 0.7.0
+
+### Minor Changes
+
+- 3f307c8c: feat(mock): use new stateful mock
+
+## 0.6.25
+
+### Patch Changes
+
+- Updated dependencies [48f38a4a]
+  - @graphql-mesh/types@0.30.1
+
+## 0.6.24
+
+### Patch Changes
+
+- Updated dependencies [938cca26]
+  - @graphql-mesh/types@0.30.0
+
 ## 0.6.23
 
 ### Patch Changes

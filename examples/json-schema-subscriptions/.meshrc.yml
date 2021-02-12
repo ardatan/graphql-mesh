@@ -28,3 +28,8 @@ serve:
     - path: /webhooks/todo_added
       pubsubTopic: todoAdded
   exampleQuery: ./example-queries/**/*.graphql
+
+liveQueryInvalidations:
+  - field: Mutation.addTodo
+    invalidate:
+      - Query.todos

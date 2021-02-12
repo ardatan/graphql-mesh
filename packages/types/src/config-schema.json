@@ -184,6 +184,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -508,11 +512,33 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         }
       },
       "required": ["name"]
+    },
+    "LiveQueryInvalidation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryInvalidation",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "invalidate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["field", "invalidate"]
     },
     "FhirHandler": {
       "additionalProperties": false,
@@ -541,6 +567,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
@@ -571,6 +601,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Path to a custom W3 Compatible Fetch Implementation"
@@ -764,8 +798,16 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
+        },
+        "errorMessageField": {
+          "type": "string",
+          "description": "Field name of your custom error object (default: 'message')"
         }
       },
       "required": ["baseUrl", "operations"]
@@ -805,6 +847,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -816,6 +862,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -830,6 +880,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -841,6 +895,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -1290,6 +1348,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Use existing `Pool` instance\nFormat: modulePath#exportName"
@@ -1426,6 +1488,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "W3 Compatible Fetch Implementation"
@@ -1502,6 +1568,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Connection Pool instance or settings or you can provide the path of a code file that exports any of those"
@@ -1572,6 +1642,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
@@ -1777,6 +1851,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         },
@@ -1788,6 +1866,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ]
         }
@@ -2103,6 +2185,10 @@
             },
             {
               "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
             }
           ],
           "description": "Path to the composer function\nExample: ./src/auth.js#authComposer"
@@ -2234,6 +2320,14 @@
           "$ref": "#/definitions/PubSubConfig"
         }
       ]
+    },
+    "liveQueryInvalidations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/LiveQueryInvalidation"
+      },
+      "additionalItems": false,
+      "description": "Live Query Invalidations"
     }
   },
   "additionalProperties": false

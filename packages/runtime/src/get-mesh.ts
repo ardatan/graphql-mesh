@@ -1,11 +1,19 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, execute, DocumentNode, GraphQLError, subscribe } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
-import { applySchemaTransforms, ensureDocumentNode, groupTransforms } from '@graphql-mesh/utils';
+import {
+  applySchemaTransforms,
+  ensureDocumentNode,
+  getInterpolatedStringFactory,
+  groupTransforms,
+  ResolverDataBasedFactory,
+} from '@graphql-mesh/utils';
+
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -19,6 +27,7 @@ export async function getMesh(
   destroy: () => void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
+  liveQueryStore: InMemoryLiveQueryStore;
 }> {
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache } = options;
@@ -55,6 +64,13 @@ export async function getMesh(
     })
   );
 
+  options.additionalTypeDefs = options.additionalTypeDefs || [];
+  options.additionalTypeDefs.push(
+    parse(/* GraphQL */ `
+      directive @live on QUERY
+    `)
+  );
+
   let unifiedSchema = await options.merger({
     rawSources,
     cache,
@@ -66,12 +82,36 @@ export async function getMesh(
 
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
+  const liveQueryStore = new InMemoryLiveQueryStore();
+
+  const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
+
+  options.liveQueryInvalidations?.forEach(liveQueryInvalidation => {
+    const rawInvalidationPaths = liveQueryInvalidation.invalidate;
+    const factories = rawInvalidationPaths.map(rawInvalidationPath =>
+      getInterpolatedStringFactory(rawInvalidationPath)
+    );
+    liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
+  });
+
+  pubsub.subscribe('resolverDone', ({ result, resolverData }) => {
+    const path = `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`;
+    if (liveQueryInvalidationFactoryMap.has(path)) {
+      const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
+      const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
+        invalidationPathFactory({ ...resolverData, result })
+      );
+      liveQueryStore.invalidate(invalidationPaths);
+    }
+  });
+
   async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
     additionalContext: TAdditionalContext = {} as any
   ): Promise<TContext> {
     const context: TContext = Object.assign(additionalContext as any, {
       pubsub,
       cache,
+      liveQueryStore,
       [MESH_CONTEXT_SYMBOL]: true,
     });
 
@@ -102,16 +142,18 @@ export async function getMesh(
     document: GraphQLOperation<TData, TVariables>,
     variables?: TVariables,
     context?: TContext,
-    rootValue?: TRootValue
+    rootValue?: TRootValue,
+    operationName?: string
   ) {
-    const contextValue = await buildMeshContext(context);
+    const contextValue = context && context[MESH_CONTEXT_SYMBOL] ? context : await buildMeshContext(context);
 
-    return execute({
+    return liveQueryStore.execute({
       document: ensureDocumentNode(document),
       contextValue,
       rootValue: rootValue || {},
       variableValues: variables || {},
       schema: unifiedSchema,
+      operationName,
     });
   }
 
@@ -119,9 +161,10 @@ export async function getMesh(
     document: GraphQLOperation<TData, TVariables>,
     variables?: TVariables,
     context?: TContext,
-    rootValue?: TRootValue
+    rootValue?: TRootValue,
+    operationName?: string
   ) {
-    const contextValue = await buildMeshContext(context);
+    const contextValue = context && context[MESH_CONTEXT_SYMBOL] ? context : await buildMeshContext(context);
 
     return subscribe({
       document: ensureDocumentNode(document),
@@ -129,15 +172,24 @@ export async function getMesh(
       rootValue: rootValue || {},
       variableValues: variables || {},
       schema: unifiedSchema,
+      operationName,
     });
   }
 
   const localRequester: Requester = async <Result, TVariables, TContext, TRootValue>(
     document: DocumentNode,
     variables: TVariables,
-    context: TContext
+    contextValue?: TContext,
+    rootValue?: TRootValue,
+    operationName?: string
   ) => {
-    const executionResult = await meshExecute<TVariables, TContext, TRootValue>(document, variables, context);
+    const executionResult = await meshExecute<TVariables, TContext, TRootValue>(
+      document,
+      variables,
+      contextValue,
+      rootValue,
+      operationName
+    );
 
     if ('data' in executionResult) {
       if (executionResult.data && !executionResult.errors) {
@@ -165,6 +217,7 @@ export async function getMesh(
     cache,
     pubsub,
     destroy: () => pubsub.publish('destroy', undefined),
+    liveQueryStore,
   };
 }
 

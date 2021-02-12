@@ -96,9 +96,11 @@ export default class OpenAPIHandler implements MeshHandler {
           headers: getHeadersObject(headersFactory(resolverData)),
         };
 
+        /* FIXME: baseUrl is coming from Fastify Request
         if (context?.baseUrl) {
           resolverParams.baseUrl = context.baseUrl;
         }
+        */
 
         if (!resolverParams.baseUrl && this.config.baseUrl) {
           resolverParams.baseUrl = baseUrlFactory(resolverData);
@@ -107,11 +109,11 @@ export default class OpenAPIHandler implements MeshHandler {
         if (resolverParams.baseUrl) {
           const urlObj = new URL(resolverParams.baseUrl);
           searchParamsFactory(resolverData, urlObj.searchParams);
-        } else {
+        } /* else {
           console.warn(
             `There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
           );
-        }
+        } */
 
         if (context?.fetch) {
           resolverParams.fetch = context.fetch;
@@ -148,7 +150,7 @@ export default class OpenAPIHandler implements MeshHandler {
       }
     }
 
-    contextVariables.push('fetch', 'baseUrl');
+    contextVariables.push('fetch' /*, 'baseUrl' */);
 
     return {
       schema,

@@ -6,6 +6,7 @@ import {
   GraphQLOperation,
   MeshHandler,
   MeshTransform,
+  YamlConfig,
 } from '@graphql-mesh/types';
 import { DocumentNode } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
@@ -20,6 +21,7 @@ export type GetMeshOptions = {
   pubsub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
+  liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
 };
 
 export type MeshResolvedSource<TContext = any> = {
@@ -28,14 +30,20 @@ export type MeshResolvedSource<TContext = any> = {
   transforms?: MeshTransform[];
 };
 
-export type ExecuteMeshFn<TData = any, TVariables = any> = (
+export type ExecuteMeshFn<TData = any, TVariables = any, TContext = any, TRootValue = any> = (
   document: GraphQLOperation<TData, TVariables>,
-  variables: TVariables
+  variables: TVariables,
+  context?: TContext,
+  rootValue?: TRootValue,
+  operationName?: string
 ) => Promise<TData | null | undefined>;
 
-export type SubscribeMeshFn<TData = any, TVariables = any> = (
+export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, TData = any> = (
   document: GraphQLOperation<TData, TVariables>,
-  variables: TVariables
+  variables?: TVariables,
+  context?: TContext,
+  rootValue?: TRootValue,
+  operationName?: string
 ) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
 
 export type Requester<C = any> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
