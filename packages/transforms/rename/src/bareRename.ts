@@ -52,25 +52,27 @@ export default class BareRename implements MeshTransform {
 
   transformSchema(schema: GraphQLSchema) {
     return mapSchema(schema, {
-      [MapperKind.TYPE]: type => this.renameType(type),
-      [MapperKind.ROOT_OBJECT]: type => this.renameType(type),
-      [MapperKind.COMPOSITE_FIELD]: (
-        fieldConfig: GraphQLFieldConfig<any, any>,
-        fieldName: string,
-        typeName: string
-      ) => {
-        const mapType = this.fieldsMap.get(typeName);
-        const newFieldName = mapType && this.matchInMap(mapType, fieldName);
-        if (!newFieldName) return undefined;
+      ...(this.typesMap.size && { [MapperKind.TYPE]: type => this.renameType(type) }),
+      ...(this.typesMap.size && { [MapperKind.ROOT_OBJECT]: type => this.renameType(type) }),
+      ...(this.fieldsMap.size && {
+        [MapperKind.COMPOSITE_FIELD]: (
+          fieldConfig: GraphQLFieldConfig<any, any>,
+          fieldName: string,
+          typeName: string
+        ) => {
+          const mapType = this.fieldsMap.get(typeName);
+          const newFieldName = mapType && this.matchInMap(mapType, fieldName);
+          if (!newFieldName) return undefined;
 
-        // Rename rules for type might have been emptied by matchInMap, in which case we can cleanup
-        if (!mapType.size) this.fieldsMap.delete(typeName);
+          // Rename rules for type might have been emptied by matchInMap, in which case we can cleanup
+          if (!mapType.size) this.fieldsMap.delete(typeName);
 
-        // Fields that don't have a custom resolver will need to map response to old field name
-        if (!fieldConfig.resolve) fieldConfig.resolve = source => source[fieldName];
+          // Fields that don't have a custom resolver will need to map response to old field name
+          if (!fieldConfig.resolve) fieldConfig.resolve = source => source[fieldName];
 
-        return [newFieldName, fieldConfig];
-      },
+          return [newFieldName, fieldConfig];
+        },
+      }),
     });
   }
 }
