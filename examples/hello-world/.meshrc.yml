@@ -1,5 +1,5 @@
 sources:
-  - name: Fake API
+  - name: Hello World
     handler:
       jsonSchema:
         operations:
