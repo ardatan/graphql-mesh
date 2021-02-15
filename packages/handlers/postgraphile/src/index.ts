@@ -101,7 +101,7 @@ export default class PostGraphileHandler implements MeshHandler {
       subscriptions: true,
       live: true,
       readCache: cachedIntrospection,
-      writeCache: cacheIntrospectionFile,
+      writeCache: !cachedIntrospection && cacheIntrospectionFile,
       setWriteCacheCallback: fn => {
         writeCache = fn;
       },
