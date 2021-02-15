@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.23.1
+
+### Patch Changes
+
+- f9985ac8: fix(serve): ignore if xdg-open not available
+
 ## 0.23.0
 
 ### Minor Changes

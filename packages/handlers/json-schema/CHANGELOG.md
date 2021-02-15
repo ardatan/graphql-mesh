@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.10.3
+
+### Patch Changes
+
+- f9985ac8: fix(json-schema): do not add resolver if baseUrl and path not defined
+
 ## 0.10.2
 
 ### Patch Changes
