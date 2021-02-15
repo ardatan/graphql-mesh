@@ -1,0 +1,18 @@
+sources:
+  - name: Fake API
+    handler:
+      jsonSchema:
+        operations:
+          - type: Query
+            field: greeting
+            method: GET
+            responseTypeName: String
+transforms:
+  - mock:
+      mocks:
+        - apply: Query.greeting
+serve:
+  exampleQuery: |
+    query HelloWorld {
+      greeting
+    }

@@ -169,7 +169,7 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
         if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
-          open(serverUrl);
+          open(serverUrl).catch(() => {});
         }
       })
       .on('error', handleFatalError);

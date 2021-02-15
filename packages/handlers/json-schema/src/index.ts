@@ -200,7 +200,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           return this.pubsub.asyncIterator(pubsubTopic);
         };
         fieldConfig.resolve = root => root;
-      } else {
+      } else if (operationConfig.path) {
         fieldConfig.resolve = async (root, args, context, info) => {
           const interpolationData = { root, args, context, info };
           const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
