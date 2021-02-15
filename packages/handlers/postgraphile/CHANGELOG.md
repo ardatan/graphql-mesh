@@ -1,5 +1,13 @@
 # @graphql-mesh/postgraphile
 
+## 0.8.14
+
+### Patch Changes
+
+- 212f2d66: fix(postgraphile): caching
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
 ## 0.8.13
 
 ### Patch Changes
