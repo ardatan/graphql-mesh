@@ -34,6 +34,18 @@ export default class FhirHandler extends JsonSchemaHandler {
           method: 'GET',
           responseTypeName: 'Bundle',
         });
+        fhirSchema.definitions.ResourceList.oneOf.forEach(({ $ref: $ref2 }: any) => {
+          const resourceName2 = $ref2.split('/').pop();
+          if (resourceName2 !== 'Subscription') {
+            operations.push({
+              type: 'Query' as any,
+              field: `${resourceName}By${resourceName2}`,
+              path: `/${resourceName}?subject=${resourceName2}/{args.${resourceName2}ID}`,
+              method: 'GET',
+              responseTypeName: 'Bundle',
+            });
+          }
+        });
       }
     });
     super({
