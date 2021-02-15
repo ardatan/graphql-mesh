@@ -1,5 +1,11 @@
 # @graphql-mesh/fhir
 
+## 0.9.0
+
+### Minor Changes
+
+- e04755d8: feat(fhir): ability to make relational queries
+
 ## 0.8.32
 
 ### Patch Changes
