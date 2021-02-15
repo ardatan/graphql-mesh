@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.31.1
+
+### Patch Changes
+
+- 212f2d66: fix(postgraphile): caching
+
 ## 0.31.0
 
 ### Minor Changes
