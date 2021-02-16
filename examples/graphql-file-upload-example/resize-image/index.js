@@ -22,6 +22,7 @@ const schema = makeExecutableSchema({
 });
 
 express()
+  .use(require('body-parser')({ limit: '10mb' }))
   .use('/graphql', graphqlHTTP({ schema }))
   .listen(3002, () => {
     console.info(`ResizeImage GraphQL API listening on 3002`);
