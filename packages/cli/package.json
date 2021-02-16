@@ -33,7 +33,7 @@
     "@graphql-codegen/typescript-resolvers": "1.18.2",
     "@graphql-mesh/runtime": "0.11.1",
     "@graphql-mesh/utils": "0.8.7",
-    "@graphql-tools/code-file-loader": "6.3.0",
+    "@graphql-tools/code-file-loader": "6.3.1",
     "@graphql-tools/utils": "7.2.6",
     "@graphql-tools/load": "6.2.5",
     "@graphql-tools/graphql-file-loader": "6.2.7",
