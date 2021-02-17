@@ -2,6 +2,7 @@ import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig }
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
+import { upgrade as upgradeMariaDB, introspection as introspectionMariaDB } from 'mariadb-utilities';
 import { promisify } from 'util';
 import { pascalCase } from 'pascal-case';
 import graphqlFields from 'graphql-fields';
@@ -117,8 +118,13 @@ export default class MySQLHandler implements MeshHandler {
         : this.config.pool
       : createPool(this.config);
     pool.on('connection', connection => {
-      upgrade(connection);
-      introspection(connection);
+      if (this.config.mariadb) {
+        upgradeMariaDB(connection);
+        introspectionMariaDB(connection);
+      } else {
+        upgrade(connection);
+        introspection(connection);
+      }
     });
 
     const introspectionConnection = await getPromisifiedConnection(pool);

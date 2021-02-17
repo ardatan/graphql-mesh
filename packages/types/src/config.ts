@@ -566,6 +566,10 @@ export interface MySQLHandler {
    * Format: modulePath#exportName
    */
   pool?: any;
+  /**
+   * Enable MariaDB Compability Mode
+   */
+  mariadb?: boolean;
 }
 /**
  * Handler for Neo4j

@@ -21,6 +21,7 @@
     "graphql-compose": "7.25.0",
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",
+    "mariadb-utilities": "1.0.1",
     "mysql-utilities": "1.1.2",
     "camel-case": "4.1.2",
     "pascal-case": "3.1.2",

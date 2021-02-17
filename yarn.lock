@@ -6490,6 +6490,11 @@ big.js@^5.2.2:
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
 
+bignumber.js@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-2.0.0.tgz#9fca55e6c73e1ba5d294bda9983180e947e2119c"
+  integrity sha1-n8pV5sc+G6XSlL2pmDGA6UfiEZw=
+
 bignumber.js@9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
@@ -14156,6 +14161,13 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+mariadb-utilities@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/mariadb-utilities/-/mariadb-utilities-1.0.1.tgz#5205d8dff7098ae7f124fd28ee96dcedd8acd848"
+  integrity sha1-UgXY3/cJiufxJP0o7pbc7dis2Eg=
+  dependencies:
+    mysql "2.5.x"
+
 markdown-escapes@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/markdown-escapes/-/markdown-escapes-1.0.4.tgz#c95415ef451499d7602b91095f3c8e8975f78535"
@@ -14780,6 +14792,15 @@ mysql@2.18.1, mysql@^2.18.1:
     readable-stream "2.3.7"
     safe-buffer "5.1.2"
     sqlstring "2.3.1"
+
+mysql@2.5.x:
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/mysql/-/mysql-2.5.5.tgz#02a1c4d0617fb771d85c15fcf24d108f5a62f648"
+  integrity sha1-AqHE0GF/t3HYXBX88k0Qj1pi9kg=
+  dependencies:
+    bignumber.js "2.0.0"
+    readable-stream "~1.1.13"
+    require-all "~1.0.0"
 
 mz@^2.7.0:
   version "2.7.0"
@@ -17768,6 +17789,16 @@ readable-stream@^3.0.0, readable-stream@^3.0.6, readable-stream@^3.1.1, readable
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
 
+readable-stream@~1.1.13:
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.1.14.tgz#7cf4c54ef648e3813084c636dd2079e166c081d9"
+  integrity sha1-fPTFTvZI44EwhMY23SB54WbAgdk=
+  dependencies:
+    core-util-is "~1.0.0"
+    inherits "~2.0.1"
+    isarray "0.0.1"
+    string_decoder "~0.10.x"
+
 readdirp@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/readdirp/-/readdirp-2.2.1.tgz#0e87622a3325aa33e892285caf8b4e846529a525"
@@ -18178,6 +18209,11 @@ request@>=2.9.0, request@^2.88.0, request@^2.88.2:
     tough-cookie "~2.5.0"
     tunnel-agent "^0.6.0"
     uuid "^3.3.2"
+
+require-all@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/require-all/-/require-all-1.0.0.tgz#8483708e7ce4c6dfad988b5080f97829b92d2227"
+  integrity sha1-hINwjnzkxt+tmItQgPl4KbktIic=
 
 require-directory@^2.1.1:
   version "2.1.1"
@@ -19649,6 +19685,11 @@ string_decoder@^1.0.0, string_decoder@^1.1.1:
   integrity sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==
   dependencies:
     safe-buffer "~5.2.0"
+
+string_decoder@~0.10.x:
+  version "0.10.31"
+  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
+  integrity sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ=
 
 string_decoder@~1.1.1:
   version "1.1.1"

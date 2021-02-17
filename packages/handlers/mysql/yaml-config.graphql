@@ -13,4 +13,8 @@ type MySQLHandler @md {
   Format: modulePath#exportName
   """
   pool: Any
+  """
+  Enable MariaDB Compability Mode
+  """
+  mariadb: Boolean
 }

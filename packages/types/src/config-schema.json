@@ -1355,6 +1355,10 @@
             }
           ],
           "description": "Use existing `Pool` instance\nFormat: modulePath#exportName"
+        },
+        "mariadb": {
+          "type": "boolean",
+          "description": "Enable MariaDB Compability Mode"
         }
       }
     },
