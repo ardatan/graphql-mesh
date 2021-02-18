@@ -21,10 +21,13 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: 15
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
-          path: node_modules
+          path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-15-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-15-yarn-
@@ -44,10 +47,13 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: 15
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
-          path: node_modules
+          path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-15-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-15-yarn-
@@ -73,10 +79,13 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: ${{ matrix.node_version }}
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
-          path: node_modules
+          path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-${{matrix.node_version}}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{matrix.node_version}}-yarn-
