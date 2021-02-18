@@ -1,5 +1,12 @@
 # @graphql-mesh/cache-inmemory-lru
 
+## 0.4.45
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
 ## 0.4.44
 
 ### Patch Changes
