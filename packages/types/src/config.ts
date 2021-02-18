@@ -749,6 +749,14 @@ export interface PostGraphileHandler {
    * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
    */
   cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
+  /**
+   * Enable GraphQL websocket transport support for subscriptions (default: true)
+   */
+  subscriptions?: boolean;
+  /**
+   * Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
+   */
+  live?: boolean;
 }
 /**
  * Handler for SOAP

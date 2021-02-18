@@ -1614,6 +1614,14 @@
               "type": "boolean"
             }
           ]
+        },
+        "subscriptions": {
+          "type": "boolean",
+          "description": "Enable GraphQL websocket transport support for subscriptions (default: true)"
+        },
+        "live": {
+          "type": "boolean",
+          "description": "Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)"
         }
       }
     },

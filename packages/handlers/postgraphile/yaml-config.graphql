@@ -34,6 +34,14 @@ type PostGraphileHandler @md {
   Cache Introspection
   """
   cacheIntrospection: GraphQLCacheIntrospectionConfig
+  """
+  Enable GraphQL websocket transport support for subscriptions (default: true)
+  """
+  subscriptions: Boolean
+  """
+  Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
+  """
+  live: Boolean
 }
 
 union GraphQLCacheIntrospectionConfig = GraphQLIntrospectionCachingOptions | Boolean

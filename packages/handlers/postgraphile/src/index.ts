@@ -98,8 +98,8 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,
-      subscriptions: true,
-      live: true,
+      subscriptions: 'subscriptions' in this.config ? this.config.subscriptions : true,
+      live: 'live' in this.config ? this.config.live : true,
       readCache: cachedIntrospection,
       writeCache: !cachedIntrospection && cacheIntrospectionFile,
       setWriteCacheCallback: fn => {
