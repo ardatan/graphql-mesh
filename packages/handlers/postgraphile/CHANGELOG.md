@@ -1,5 +1,16 @@
 # @graphql-mesh/postgraphile
 
+## 0.9.0
+
+### Minor Changes
+
+- 68d6b117: feat(postgraphile): add ability to disable live queries and subscriptions
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
 ## 0.8.14
 
 ### Patch Changes
