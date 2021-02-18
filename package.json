@@ -75,6 +75,7 @@
       "./packages/mergers/*",
       "./examples/*",
       "./examples/federation-example/services/*",
+      "./examples/graphql-file-upload-example/frontend",
       "./website"
     ],
     "nohoist": [
