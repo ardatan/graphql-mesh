@@ -22,7 +22,7 @@
     "@ardatan/aggregate-error": "0.0.6",
     "ajv": "7.1.1",
     "fetchache": "0.0.4",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "graphql-compose": "7.25.0",
     "graphql-scalars": "1.7.1",
     "pascal-case": "3.1.2",
