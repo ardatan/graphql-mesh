@@ -341,11 +341,27 @@
           "$ref": "#/definitions/FederationTransform"
         },
         "filterSchema": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
+          "description": "Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FilterSchemaTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "mock": {
           "$ref": "#/definitions/MockingConfig",
@@ -2025,6 +2041,27 @@
           "type": "string"
         }
       }
+    },
+    "FilterSchemaTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FilterSchemaTransform",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
+        "filters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Array of filter rules"
+        }
+      },
+      "required": ["filters"]
     },
     "MockingConfig": {
       "additionalProperties": false,
