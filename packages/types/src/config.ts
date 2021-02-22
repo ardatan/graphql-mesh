@@ -81,6 +81,10 @@ export interface ServeConfig {
   maxRequestBodySize?: number | string;
   upload?: UploadOptions;
   sslCredentials?: HTTPSConfig;
+  /**
+   * Path to GraphQL Endpoint (default: /graphql)
+   */
+  endpoint?: string;
 }
 /**
  * Configuration for CORS

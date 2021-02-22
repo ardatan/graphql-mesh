@@ -56,11 +56,11 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
     upload: { maxFileSize = 10000000, maxFiles = 10 } = {},
     maxRequestBodySize = '100kb',
     sslCredentials,
+    endpoint: graphqlPath = '/graphql',
   } = meshConfig.config.serve || {};
   const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
-  const graphqlPath = '/graphql';
   const serverUrl = `${protocol}://${hostname}:${port}${graphqlPath}`;
   const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
   if (isMaster && fork) {

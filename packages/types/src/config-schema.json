@@ -168,6 +168,10 @@
         "sslCredentials": {
           "$ref": "#/definitions/HTTPSConfig",
           "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Path to GraphQL Endpoint (default: /graphql)"
         }
       }
     },

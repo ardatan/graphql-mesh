@@ -55,6 +55,10 @@ type ServeConfig @md {
   If this is provided, Mesh will be served via HTTPS
   """
   sslCredentials: HTTPSConfig
+  """
+  Path to GraphQL Endpoint (default: /graphql)
+  """
+  endpoint: String
 }
 
 union Port = Int | String
