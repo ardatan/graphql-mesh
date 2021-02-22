@@ -890,7 +890,10 @@ export interface Transform {
   encapsulate?: EncapsulateTransformObject;
   extend?: ExtendTransform;
   federation?: FederationTransform;
-  filterSchema?: FilterSchemaTransform;
+  /**
+   * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
+   */
+  filterSchema?: FilterSchemaTransform | any;
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -1011,9 +1014,6 @@ export interface ResolveReferenceObject {
   resultSelectionSet?: string;
   resultDepth?: number;
 }
-/**
- * Transformer to filter (white/black list) GraphQL types, fields and arguments
- */
 export interface FilterSchemaTransform {
   /**
    * Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)

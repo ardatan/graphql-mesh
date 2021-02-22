@@ -337,8 +337,27 @@
           "$ref": "#/definitions/FederationTransform"
         },
         "filterSchema": {
-          "$ref": "#/definitions/FilterSchemaTransform",
-          "description": "Transformer to filter (white/black list) GraphQL types, fields and arguments"
+          "description": "Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FilterSchemaTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "mock": {
           "$ref": "#/definitions/MockingConfig",
