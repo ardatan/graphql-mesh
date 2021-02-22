@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.24.0
+
+### Minor Changes
+
+- 76051dd7: feat(serve): ability to change GraphQL endpoint path
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.4
+- @graphql-mesh/runtime@0.11.4
+
 ## 0.23.4
 
 ### Patch Changes

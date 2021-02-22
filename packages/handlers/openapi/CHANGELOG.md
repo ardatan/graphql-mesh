@@ -1,5 +1,12 @@
 # @graphql-mesh/openapi
 
+## 0.12.16
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
 ## 0.12.15
 
 ### Patch Changes
