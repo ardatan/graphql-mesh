@@ -2607,6 +2607,25 @@
     pascal-case "^3.1.1"
     tslib "~2.1.0"
 
+"@graphql-mesh/cache-inmemory-lru@0.4.46":
+  version "0.4.46"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/cache-inmemory-lru/-/cache-inmemory-lru-0.4.46.tgz#94a0ba26078686d9de06e90b5f35c4dee10790e9"
+  integrity sha512-yTxwb+itgjMc8FJv0ob/duzKgmiSTzBAzY4q4upN9271y+XnROZmsbvTuC7Ff66xlxprxy+GDnVtlFMCbzR2mA==
+  dependencies:
+    "@graphql-mesh/types" "0.33.0"
+    "@types/lru-cache" "5.1.0"
+    lru-cache "6.0.0"
+
+"@graphql-mesh/types@0.33.0":
+  version "0.33.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/types/-/types-0.33.0.tgz#0d2d89601fdad957a3374cd2f193da9bbffe93c7"
+  integrity sha512-WSinfYnKJz4QQnxgATw7kdgbngpy/RfSmIvK326ualfBX/m/Hu+cSQ6+o6vIpnXXTOj50cIUuvKm1H96gdI1Nw==
+  dependencies:
+    "@graphql-tools/delegate" "7.0.10"
+    "@graphql-tools/utils" "7.5.0"
+    "@graphql-typed-document-node/core" "3.1.0"
+    fetchache "0.0.4"
+
 "@graphql-tools/batch-delegate@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-7.0.0.tgz#860f03d8ded5e9e7e9b14e2205dfd64da8e3e6c0"
