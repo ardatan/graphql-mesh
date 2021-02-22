@@ -8,6 +8,181 @@ import { wrapSchema } from '@graphql-tools/wrap';
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
   const pubsub = new PubSub() as MeshPubSub;
+
+  it('filters correctly with array of rules', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+        comments: [Comment]
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Query {
+        user(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it('filters correctly with declarative syntax', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+        comments: [Comment]
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Query {
+        user(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: { filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'] },
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it('filters correctly on "bare" mode', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+        comments: [Comment]
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Query {
+        user(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: { mode: 'bare', filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'] },
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
   it('should filter out fields', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type User {
