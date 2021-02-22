@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.33.0
+
+### Minor Changes
+
+- 646d6bdb: feat(rename-transform): add bare option
+
 ## 0.32.0
 
 ### Minor Changes
