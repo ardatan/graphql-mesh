@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-rename
 
+## 0.8.0
+
+### Minor Changes
+
+- 646d6bdb: feat(rename-transform): add bare option
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
 ## 0.7.23
 
 ### Patch Changes

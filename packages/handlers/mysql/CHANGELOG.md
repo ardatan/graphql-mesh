@@ -1,5 +1,12 @@
 # @graphql-mesh/mysql
 
+## 0.6.32
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
 ## 0.6.31
 
 ### Patch Changes
