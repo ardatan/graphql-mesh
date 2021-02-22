@@ -351,14 +351,14 @@ type Query {
 
       type Query {
         user(pk: ID!, name: String, age: Int): User
-        book(pk: ID!): Book
+        book(pk: ID!, title: String): Book
       }
     `);
     schema = wrapSchema({
       schema,
       transforms: [
         new FilterSchemaTransform({
-          config: ['Query.{user(!{pk, name}), book(!pk)}'],
+          config: ['Query.user.!{pk, age}', 'Query.book.title'],
           cache,
           pubsub,
         }),
@@ -380,8 +380,8 @@ type Book {
 }
 
 type Query {
-  user(age: Int): User
-  book: Book
+  user(name: String): User
+  book(title: String): Book
 }
 `.trim()
     );
