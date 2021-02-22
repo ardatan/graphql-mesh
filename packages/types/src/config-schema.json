@@ -356,12 +356,27 @@
           "description": "Prefix transform"
         },
         "rename": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RenameTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply rename of a GraphQL type"
+          "description": "Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RenameTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "resolversComposition": {
           "type": "array",
@@ -2140,6 +2155,27 @@
           "description": "Changes root types and changes the field names"
         }
       }
+    },
+    "RenameTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RenameTransform",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
+        "renames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of rename rules"
+        }
+      },
+      "required": ["renames"]
     },
     "RenameTransformObject": {
       "additionalProperties": false,

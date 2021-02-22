@@ -32,16 +32,18 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          config: [
-            {
-              from: {
-                type: 'MyUser',
+          config: {
+            renames: [
+              {
+                from: {
+                  type: 'MyUser',
+                },
+                to: {
+                  type: 'User',
+                },
               },
-              to: {
-                type: 'User',
-              },
-            },
-          ],
+            ],
+          },
           cache,
           pubsub,
         }),
@@ -57,20 +59,23 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          config: [
-            {
-              from: {
-                type: 'Query',
-                field: 'my_user',
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  type: 'Query',
+                  field: 'my_user',
+                },
+                to: {
+                  type: 'Query',
+                  field: 'user',
+                },
               },
-              to: {
-                type: 'Query',
-                field: 'user',
-              },
-            },
-          ],
-          cache,
-          pubsub,
+            ],
+            cache,
+            pubsub,
+          },
         }),
       ],
     });
@@ -82,22 +87,26 @@ describe('rename', () => {
     expect(fieldMap.user).toBeDefined();
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
+
   it('should change the name of multiple type names', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
         new RenameTransform({
-          config: [
-            {
-              from: {
-                type: 'My(.*)',
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  type: 'My(.*)',
+                },
+                to: {
+                  type: '$1',
+                },
+                useRegExpForTypes: true,
               },
-              to: {
-                type: '$1',
-              },
-              useRegExpForTypes: true,
-            },
-          ],
+            ],
+          },
           cache,
           pubsub,
         }),
@@ -115,19 +124,21 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          config: [
-            {
-              from: {
-                type: 'Query',
-                field: 'my_(.*)',
+          config: {
+            renames: [
+              {
+                from: {
+                  type: 'Query',
+                  field: 'my_(.*)',
+                },
+                to: {
+                  type: 'Query',
+                  field: '$1',
+                },
+                useRegExpForFields: true,
               },
-              to: {
-                type: 'Query',
-                field: '$1',
-              },
-              useRegExpForFields: true,
-            },
-          ],
+            ],
+          },
           cache,
           pubsub,
         }),
