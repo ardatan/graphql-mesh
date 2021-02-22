@@ -2,8 +2,10 @@ extend type Transform {
   """
   Transformer to rename GraphQL types and fields
   """
-  rename: RenameTransform
+  rename: RenameTransformConfig
 }
+
+union RenameTransformConfig = RenameTransform | Any
 
 type RenameTransform @md {
   """

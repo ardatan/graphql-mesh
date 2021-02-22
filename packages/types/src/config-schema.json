@@ -356,8 +356,27 @@
           "description": "Prefix transform"
         },
         "rename": {
-          "$ref": "#/definitions/RenameTransform",
-          "description": "Transformer to rename GraphQL types and fields"
+          "description": "Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RenameTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "resolversComposition": {
           "type": "array",
