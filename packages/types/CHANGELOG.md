@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.34.1
+
+### Patch Changes
+
+- 55327fd6: fix(config): support arrays and singular values for additionalTypeDefs
+
 ## 0.34.0
 
 ### Minor Changes
