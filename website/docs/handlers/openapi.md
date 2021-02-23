@@ -26,9 +26,9 @@ sources:
 ```
 
 ## Overriding default Query/Mutation operations
-By default OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option you can manually override this process.  
-The operation is identifed first by the title of the OAS, then the path of the operation, and lastly the method of the operation.  
-In order to switch between Query and Mutation operations you should change the value of the method to an integer corresponding to either 0, or 1; which stands to Query or Mutation respectively.
+By default OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option you can manually override this process.
+In order to switch between Query and Mutation operations, and vice versa, you need to define a rule per override, consisting of: OAS title, path of the operation, method of the operation and finally the destination type (e.g. Query or Mutation).
+See example below:
 
 ```yaml
 sources:
@@ -44,7 +44,7 @@ sources:
           - title: "Weather Service v1" # OAS title
             path: /weather/forecast # operation path
             method: get
-            type: Mutation # switch method POST from default Mutation into Query
+            type: Mutation # switch method GET from default Query into Mutation
 ```
 
 ## Dynamic Header Values
