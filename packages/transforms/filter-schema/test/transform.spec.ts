@@ -132,6 +132,8 @@ type Query {
         name: String
         username: String
         posts: [Post]
+        notifications: [Notification]
+        mentions: [Mention]
       }
 
       type Post {
@@ -146,6 +148,21 @@ type Query {
         message: String
       }
 
+      type Notification {
+        type: Int
+        content: String
+      }
+
+      type Mention {
+        reference: ID
+        link: String
+      }
+
+      type LooseType {
+        foo: String
+        bar: String
+      }
+
       type Query {
         user(pk: ID!, name: String, age: Int): User
       }
@@ -154,7 +171,17 @@ type Query {
       schema,
       transforms: [
         new FilterSchemaTransform({
-          config: { mode: 'bare', filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'] },
+          config: {
+            mode: 'bare',
+            filters: [
+              '!Comment',
+              'Type.!LooseType',
+              'Type.!{Notification, Mention}',
+              'Query.user.!{notifications, mentions}',
+              'User.posts.{message, author}',
+              'Query.user.!pk',
+            ],
+          },
           cache,
           pubsub,
         }),
@@ -325,7 +352,7 @@ type Query {
     );
   });
 
-  it('should filter out types', async () => {
+  it('should filter out single type, with pending-deprecation syntax', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type User {
         id: ID
@@ -377,6 +404,141 @@ type User {
 type Query {
   user: User
   admin: User
+}
+`.trim()
+    );
+  });
+
+  it('filters out single type and multiple types rules', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Notification {
+        type: Int
+        content: String
+      }
+
+      type Mention {
+        reference: ID
+        link: String
+      }
+
+      type Query {
+        user(id: ID!): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          config: { mode: 'bare', filters: ['Type.!Comment', 'Type.!{Notification, Mention}'] },
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(id: ID!): User
+}
+`.trim()
+    );
+  });
+
+  it('handles whitelist filtering for types correctly', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Notification {
+        type: Int
+        content: String
+      }
+
+      type Mention {
+        reference: ID
+        link: String
+      }
+
+      type Query {
+        user(id: ID!): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new FilterSchemaTransform({
+          // bizarre case, but logic should still work
+          config: { mode: 'bare', filters: ['Type.{Query, User, Post, String, ID}'] },
+          cache,
+          pubsub,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(id: ID!): User
 }
 `.trim()
     );

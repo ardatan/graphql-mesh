@@ -19,7 +19,8 @@ transforms:
   - filterSchema:
       mode: bare | wrap
       filters:
-        - "!User" # <-- This will remove `User` type
+        - "Type.!User" # <-- This will remove `User` type
+        - "Type.!{User, Post}" # <-- This will remove `User` and `Post` types
 
         - Query.!admins # <-- This will remove field `admins` from `Query` type
         - Mutation.!{addUser, removeUser} # <-- This will remove fields `addUser` and `removeUser` from `Mutation` type
@@ -55,6 +56,11 @@ type User {
   age: Int
   ipAddress: String
 }
+
+type LooseType {
+  foo: String
+  bar: String
+}
 ```
 
 With the following Filter Schema config,
@@ -63,11 +69,11 @@ transforms:
   - filterSchema:
       mode: bare | wrap
       filters:
+        - Type.!LooseType
         - Query.!admins
         - Mutation.!{addUser, removeUser}
-        - User.{username, name, age} # <-- This will remove all fields, from User type, except `id`, `username`, `name` and `age`
-
-        - Query.user.!name # <-- This will remove argument `id` from field `user`, in Query type
+        - User.{username, name, age}
+        - Query.user.!name
 ```
 
 It would become the following schema:

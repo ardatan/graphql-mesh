@@ -20,18 +20,25 @@ export default class BareFilter implements MeshTransform {
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
 
+      // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
         this.typeGlobs.push(typeName);
         continue;
       }
 
       const rawGlob = argsGlob || fieldNameOrGlob;
-      const mapName = argsGlob ? 'argsMap' : 'fieldsMap';
-      const mapKey = argsGlob ? `${typeName}_${fieldNameOrGlob}` : typeName;
-      const currentRules = this[mapName].get(mapKey) || [];
       const fixedGlob =
         rawGlob.includes('{') && !rawGlob.includes(',') ? rawGlob.replace('{', '').replace('}', '') : rawGlob;
       const polishedGlob = fixedGlob.split(', ').join(',').trim();
+
+      if (typeName === 'Type') {
+        this.typeGlobs.push(polishedGlob);
+        continue;
+      }
+
+      const mapName = argsGlob ? 'argsMap' : 'fieldsMap';
+      const mapKey = argsGlob ? `${typeName}_${fieldNameOrGlob}` : typeName;
+      const currentRules = this[mapName].get(mapKey) || [];
 
       this[mapName].set(mapKey, [...currentRules, polishedGlob]);
     }

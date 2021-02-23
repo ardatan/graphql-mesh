@@ -18,10 +18,12 @@ export default class WrapFilter implements MeshTransform {
     const {
       config: { filters },
     } = options;
+
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
       const isTypeMatch = matcher(typeName);
 
+      // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
         this.transforms.push(
           new FilterTypes(type => {
@@ -38,6 +40,15 @@ export default class WrapFilter implements MeshTransform {
       fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
 
       const isMatch = matcher(fixedFieldGlob.trim());
+
+      if (typeName === 'Type') {
+        this.transforms.push(
+          new FilterTypes(type => {
+            return isMatch(type.name);
+          })
+        );
+        continue;
+      }
 
       if (argsGlob) {
         const isFieldMatch = matcher(fieldNameOrGlob);
@@ -58,6 +69,7 @@ export default class WrapFilter implements MeshTransform {
         continue;
       }
 
+      // If the glob is not for Types nor Args, finally we register Fields filters
       this.transforms.push(
         new FilterRootFields((rootTypeName, rootFieldName) => {
           if (isTypeMatch(rootTypeName)) {
