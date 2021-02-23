@@ -95,19 +95,6 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
     );
     app.use(cookieParser());
 
-    app.get('/healthcheck', (_req, res) => res.sendStatus(200));
-    app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
-
-    if (staticFiles) {
-      app.use(express.static(staticFiles));
-      const indexPath = join(baseDir, staticFiles, 'index.html');
-      if (await pathExists(indexPath)) {
-        app.get('/', (_req, res) => res.sendFile(indexPath));
-      }
-    }
-
-    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
-
     const wsServer = new ws.Server({
       path: graphqlPath,
       server: httpServer,
@@ -157,6 +144,19 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
         }
       }) || []
     );
+
+    app.get('/healthcheck', (_req, res) => res.sendStatus(200));
+    app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
+
+    if (staticFiles) {
+      app.use(express.static(staticFiles));
+      const indexPath = join(baseDir, staticFiles, 'index.html');
+      if (await pathExists(indexPath)) {
+        app.get('/', (_req, res) => res.sendFile(indexPath));
+      }
+    }
+
+    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
 
     if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
       const playgroundMiddleware = playgroundMiddlewareFactory({ baseDir, exampleQuery, graphqlPath });
