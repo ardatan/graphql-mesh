@@ -11,7 +11,7 @@ type Query {
   """
   Additional type definitions, or type definitions overrides you wish to add to the schema mesh
   """
-  additionalTypeDefs: String
+  additionalTypeDefs: Any
   """
   Additional resolvers, or resolvers overrides you wish to add to the schema mesh
   """

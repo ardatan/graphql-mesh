@@ -19,7 +19,7 @@ export interface Config {
   /**
    * Additional type definitions, or type definitions overrides you wish to add to the schema mesh
    */
-  additionalTypeDefs?: string;
+  additionalTypeDefs?: any;
   /**
    * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)
    */

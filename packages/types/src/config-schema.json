@@ -2365,7 +2365,19 @@
       "description": "Transform to apply to the unified mesh schema"
     },
     "additionalTypeDefs": {
-      "type": "string",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
       "description": "Additional type definitions, or type definitions overrides you wish to add to the schema mesh"
     },
     "additionalResolvers": {
