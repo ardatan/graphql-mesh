@@ -31,9 +31,6 @@ const EXAMPLES = {
     'Apollo Federation': {
         'Apollo Federation Example': 'federation-example'
     },
-    'gRPC': {
-        'Movies': 'grpc-example'
-    },
     'Apache Thrift': {
         'Calculator': 'thrift-calculator'
     }
