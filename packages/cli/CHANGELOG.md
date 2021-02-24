@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.25.2
+
+### Patch Changes
+
+- cf58cd5c: enhance(serve): improve logging
+- Updated dependencies [cf58cd5c]
+  - @graphql-mesh/runtime@0.11.7
+  - @graphql-mesh/config@0.13.7
+
 ## 0.25.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.11.7
+
+### Patch Changes
+
+- cf58cd5c: fix(runtime): deduplicate live directive
+
 ## 0.11.6
 
 ### Patch Changes
