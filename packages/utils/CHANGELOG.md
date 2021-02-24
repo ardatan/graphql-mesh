@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.8.8
+
+### Patch Changes
+
+- ec89a923: fix(utils): ensure directory exists in writeJSON
+
 ## 0.8.7
 
 ### Patch Changes
