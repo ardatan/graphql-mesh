@@ -2607,6 +2607,18 @@
     pascal-case "^3.1.1"
     tslib "~2.1.0"
 
+"@graphql-mesh/transform-filter-schema@0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/transform-filter-schema/-/transform-filter-schema-0.9.1.tgz#71b583c24020cecc6cf6f6ec7910fbfe0f388b75"
+  integrity sha512-8cCIo67Qsbb2thV9gBfu1BURc7+b9CdbqKG3fuP3r9FYtRkFAV2xmUSYgRUj2IKW7dp1P273aeYsxnpRPV+miQ==
+  dependencies:
+    "@graphql-mesh/types" "0.34.1"
+    "@graphql-mesh/utils" "0.8.7"
+    "@graphql-tools/delegate" "7.0.10"
+    "@graphql-tools/utils" "7.5.0"
+    "@graphql-tools/wrap" "7.0.5"
+    micromatch "4.0.2"
+
 "@graphql-tools/batch-delegate@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-7.0.0.tgz#860f03d8ded5e9e7e9b14e2205dfd64da8e3e6c0"
