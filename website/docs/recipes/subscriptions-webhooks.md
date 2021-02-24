@@ -85,4 +85,11 @@ module.exports = (req, res) => {
 };
 ```
 
-> You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/json-schema-subscriptions)
+> You can check out our example
+
+<iframe
+     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-subscriptions?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
+     title="json-schema-subscriptions"
+     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" />
