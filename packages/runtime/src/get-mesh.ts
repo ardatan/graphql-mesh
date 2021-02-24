@@ -42,12 +42,8 @@ export async function getMesh(
 
       const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
-      // If schema is going to be wrapped already we can use noWrapTransforms as wrapTransforms on source level
-      // The idea behind avoiding wrapping as much as possible is to decrease multiple rounds of graphqljs execution phase for performance
-      if (wrapTransforms.length === 0 && !source.executor && !source.subscriber) {
+      if (noWrapTransforms?.length) {
         apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
-      } else {
-        wrapTransforms.push(...noWrapTransforms);
       }
 
       rawSources.push({
