@@ -1,5 +1,13 @@
 # @graphql-mesh/runtime
 
+## 0.11.6
+
+### Patch Changes
+
+- ec89a923: fix(runtime): respect noWrap transforms at source level
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/utils@0.8.8
+
 ## 0.11.5
 
 ### Patch Changes
