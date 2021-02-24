@@ -32,6 +32,7 @@ export async function getMesh(
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache } = options;
 
+  let hasLiveDirective = false;
   await Promise.all(
     options.sources.map(async apiSource => {
       const source = await apiSource.handler.getMeshSource();
@@ -45,6 +46,8 @@ export async function getMesh(
       if (noWrapTransforms?.length) {
         apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
       }
+
+      hasLiveDirective = hasLiveDirective || !!apiSchema.getDirective('live');
 
       rawSources.push({
         name: apiName,
@@ -61,11 +64,13 @@ export async function getMesh(
   );
 
   options.additionalTypeDefs = options.additionalTypeDefs || [];
-  options.additionalTypeDefs.push(
-    parse(/* GraphQL */ `
-      directive @live on QUERY
-    `)
-  );
+  if (!hasLiveDirective) {
+    options.additionalTypeDefs.push(
+      parse(/* GraphQL */ `
+        directive @live on QUERY
+      `)
+    );
+  }
 
   let unifiedSchema = await options.merger({
     rawSources,
