@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse, Kind } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
@@ -14,8 +14,6 @@ import {
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { astFromDirective } from 'packages/cli/node_modules/@graphql-tools/utils';
-import { GraphQLLiveDirective } from '@n1ru4l/graphql-live-query';
 
 export async function getMesh(
   options: GetMeshOptions
