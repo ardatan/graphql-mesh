@@ -15,7 +15,7 @@ enum Genre {
  */
 message Movie {
     string name = 1;
-    int32 year = 2;
+    int64 year = 2;
     float rating = 3;
 
     /**
