@@ -27,7 +27,7 @@ import open from 'open';
 const { readFile } = fsPromises;
 
 export async function serveMesh(baseDir: string, argsPort?: number): Promise<void> {
-  spinner.start();
+  spinner.start('Generating Mesh schema...');
   let readyFlag = false;
 
   const meshConfig = await findAndParseConfig({
@@ -38,7 +38,7 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
       readyFlag = true;
       if (spinner.isSpinning) {
         if (!fork) {
-          spinner.succeed(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
+          spinner.succeed(`Serving GraphQL Mesh: ${serverUrl}`);
         }
       }
       return mesh;
@@ -68,7 +68,7 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
     for (let i = 0; i < forkNum; i++) {
       clusterFork();
     }
-    logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
+    logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
   } else {
     const app = express();
     app.set('trust proxy', 'loopback');

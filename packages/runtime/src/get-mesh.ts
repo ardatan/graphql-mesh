@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse, Kind } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
@@ -14,6 +14,8 @@ import {
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { astFromDirective } from 'packages/cli/node_modules/@graphql-tools/utils';
+import { GraphQLLiveDirective } from '@n1ru4l/graphql-live-query';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -32,6 +34,7 @@ export async function getMesh(
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache } = options;
 
+  let hasLiveDirective = false;
   await Promise.all(
     options.sources.map(async apiSource => {
       const source = await apiSource.handler.getMeshSource();
@@ -45,6 +48,8 @@ export async function getMesh(
       if (noWrapTransforms?.length) {
         apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
       }
+
+      hasLiveDirective = hasLiveDirective || !!apiSchema.getDirective('live');
 
       rawSources.push({
         name: apiName,
@@ -61,11 +66,13 @@ export async function getMesh(
   );
 
   options.additionalTypeDefs = options.additionalTypeDefs || [];
-  options.additionalTypeDefs.push(
-    parse(/* GraphQL */ `
-      directive @live on QUERY
-    `)
-  );
+  if (!hasLiveDirective) {
+    options.additionalTypeDefs.push(
+      parse(/* GraphQL */ `
+        directive @live on QUERY
+      `)
+    );
+  }
 
   let unifiedSchema = await options.merger({
     rawSources,
