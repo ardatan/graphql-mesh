@@ -13,9 +13,8 @@ export async function loadFromModuleExportExpression<T>(
     return expression;
   }
 
-  const { defaultExportName, cwd } = options;
-  const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = await tryImport(modulePath, cwd);
+  const [modulePath, exportName = options?.defaultExportName] = expression.split('#');
+  const mod = await tryImport(modulePath, options?.cwd);
 
   if (exportName === 'default' || !exportName) {
     return mod.default || mod;
@@ -52,9 +51,8 @@ export function loadFromModuleExportExpressionSync<T>(
     return expression;
   }
 
-  const { defaultExportName, cwd } = options;
-  const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = tryImportSync(modulePath, cwd);
+  const [modulePath, exportName = options?.defaultExportName] = expression.split('#');
+  const mod = tryImportSync(modulePath, options?.cwd);
 
   if (exportName === 'default' || !exportName) {
     return mod.default || mod;

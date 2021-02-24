@@ -72,10 +72,11 @@ export function addMetaDataToCall(
   return call(input);
 }
 
-export async function getBuffer(path: string, cache: KeyValueCache): Promise<Buffer> {
+export async function getBuffer(path: string, cache: KeyValueCache, cwd: string): Promise<Buffer> {
   if (path) {
     const result = await readFileOrUrlWithCache<string>(path, cache, {
       allowUnknownExtensions: true,
+      cwd,
     });
     return Buffer.from(result);
   }

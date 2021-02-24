@@ -93,9 +93,10 @@ export async function processConfig(
           name: source.name,
           handler: new HandlerCtor({
             name: source.name,
+            config: handlerConfig,
+            baseDir: dir,
             cache,
             pubsub,
-            config: handlerConfig,
           }),
           transforms,
         };

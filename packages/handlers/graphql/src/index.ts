@@ -15,22 +15,26 @@ import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 export default class GraphQLHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.GraphQLHandler;
+  private baseDir: string;
   private cache: KeyValueCache<any>;
 
-  constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
+  constructor({ name, config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
     this.name = name;
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    if (this.config.endpoint.endsWith('.js') || this.config.endpoint.endsWith('.ts')) {
-      const schema = await loadFromModuleExportExpression<GraphQLSchema>(this.config.endpoint);
+    const { endpoint, schemaHeaders: configHeaders, cacheIntrospection, introspection } = this.config;
+
+    if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
+      const schema = await loadFromModuleExportExpression<GraphQLSchema>(endpoint, { cwd: this.baseDir });
       return {
         schema,
       };
-    } else if (this.config.endpoint.endsWith('.graphql')) {
-      const rawSDL = await loadFromModuleExportExpression<string>(this.config.endpoint);
+    } else if (endpoint.endsWith('.graphql')) {
+      const rawSDL = await loadFromModuleExportExpression<string>(endpoint, { cwd: this.baseDir });
       const schema = buildSchema(rawSDL);
       return {
         schema,
@@ -59,9 +63,9 @@ export default class GraphQLHandler implements MeshHandler {
     };
     let schema: GraphQLSchema;
     let schemaHeaders =
-      typeof this.config.schemaHeaders === 'string'
-        ? await loadFromModuleExportExpression(this.config.schemaHeaders)
-        : this.config.schemaHeaders;
+      typeof configHeaders === 'string'
+        ? await loadFromModuleExportExpression(configHeaders, { cwd: this.baseDir })
+        : configHeaders;
     if (typeof schemaHeaders === 'function') {
       schemaHeaders = schemaHeaders();
     }
@@ -70,28 +74,24 @@ export default class GraphQLHandler implements MeshHandler {
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
     const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
-      const { executor } = await getExecutorAndSubscriberForParams(
-        params,
-        schemaHeadersFactory,
-        () => this.config.endpoint
-      );
+      const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory, () => endpoint);
       return executor(params);
     };
-    if (this.config.introspection) {
-      const result = await urlLoader.handleSDLAsync(this.config.introspection, {
+    if (introspection) {
+      const result = await urlLoader.handleSDLAsync(introspection, {
         customFetch: customFetch as any,
         ...this.config,
         headers: schemaHeaders,
       });
       schema = result.schema;
-    } else if (this.config.cacheIntrospection) {
+    } else if (cacheIntrospection) {
       const cacheKey = this.name + '_introspection';
       const introspectionData: any = await this.cache.get(cacheKey);
       if (introspectionData) {
         schema = buildClientSchema(introspectionData);
       } else {
         schema = await introspectSchema(introspectionExecutor);
-        const ttl = typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.ttl;
+        const ttl = typeof cacheIntrospection === 'object' && cacheIntrospection.ttl;
         const introspection = introspectionFromSchema(schema);
         this.cache.set(cacheKey, introspection, { ttl });
       }
@@ -99,7 +99,7 @@ export default class GraphQLHandler implements MeshHandler {
       schema = await introspectSchema(introspectionExecutor);
     }
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
-    const endpointFactory = getInterpolatedStringFactory(this.config.endpoint);
+    const endpointFactory = getInterpolatedStringFactory(endpoint);
     return {
       schema,
       executor: async params => {

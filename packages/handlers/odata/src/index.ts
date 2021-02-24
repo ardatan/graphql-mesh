@@ -1,4 +1,4 @@
-/* eslint-disable prefer-const */
+import { isAbsolute, join } from 'path';
 import { YamlConfig, ResolverData, MeshHandler, GetMeshSourceOptions, MeshSource } from '@graphql-mesh/types';
 import { parseInterpolationStrings, getInterpolatedHeadersFactory, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { fetchache, KeyValueCache, Request, Response } from 'fetchache';
@@ -105,20 +105,24 @@ const queryOptionsFields = {
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
+  private baseDir: string;
   private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
 
-  constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({ name, config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
+    const { baseUrl, operationHeaders } = this.config;
+    const metadataUrl = urljoin(baseUrl, '$metadata');
     const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
-      headers: this.config.schemaHeaders,
       allowUnknownExtensions: true,
+      cwd: this.baseDir,
+      headers: this.config.schemaHeaders,
     });
 
     const metadataJson = parseXML(metadataText, {
@@ -347,7 +351,7 @@ export default class ODataHandler implements MeshHandler {
       fields: queryOptionsFields,
     });
 
-    const origHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
+    const origHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const headersFactory = (resolverData: ResolverData, method: string) => {
       const headers = origHeadersFactory(resolverData);
       if (!headers.has('Accept')) {
@@ -359,8 +363,8 @@ export default class ODataHandler implements MeshHandler {
       return headers;
     };
     const { args: commonArgs, contextVariables } = parseInterpolationStrings([
-      ...Object.values(this.config.operationHeaders || {}),
-      this.config.baseUrl,
+      ...Object.values(operationHeaders || {}),
+      baseUrl,
     ]);
 
     function getTCByTypeNames(...typeNames: string[]) {
@@ -415,7 +419,7 @@ export default class ODataHandler implements MeshHandler {
             requestBody += `--${requestBoundary}--\n`;
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
-            const batchRequest = new Request(urljoin(this.config.baseUrl, '$batch'), {
+            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
               method: 'POST',
               body: requestBody,
               headers: batchHeaders,
@@ -445,13 +449,13 @@ export default class ODataHandler implements MeshHandler {
           async (requests: Request[]): Promise<Response[]> => {
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', 'application/json');
-            const batchRequest = new Request(urljoin(this.config.baseUrl, '$batch'), {
+            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
               method: 'POST',
               body: JSON.stringify({
                 requests: await Promise.all(
                   requests.map(async (request, index) => {
                     const id = index.toString();
-                    const url = request.url.replace(this.config.baseUrl, '');
+                    const url = request.url.replace(baseUrl, '');
                     const method = request.method;
                     const headers: HeadersInit = {};
                     request.headers?.forEach((value, key) => {
@@ -804,7 +808,7 @@ export default class ODataHandler implements MeshHandler {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
+              const url = new URL(baseUrl);
               url.href = urljoin(url.href, '/' + functionName);
               url.href += `(${Object.entries(args)
                 .filter(argEntry => argEntry[0] !== 'queryOptions')
@@ -934,7 +938,7 @@ export default class ODataHandler implements MeshHandler {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
+              const url = new URL(baseUrl);
               url.href = urljoin(url.href, '/' + actionName);
               const urlString = getUrlString(url);
               const method = 'POST';
@@ -1096,7 +1100,7 @@ export default class ODataHandler implements MeshHandler {
                 ...commonArgs,
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + singletonName);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -1141,7 +1145,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -1168,7 +1172,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
@@ -1197,7 +1201,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, `/${entitySetName}/$count`);
                 const urlString = getUrlString(url);
                 const method = 'GET';
@@ -1222,7 +1226,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 const urlString = getUrlString(url);
                 rebuildOpenInputObjects(args.input);
@@ -1246,7 +1250,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const urlString = getUrlString(url);
@@ -1272,7 +1276,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const urlString = getUrlString(url);

@@ -11,6 +11,7 @@ export { isUrl };
 interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml';
+  cwd?: string;
 }
 
 export async function readFileOrUrlWithCache<T>(
@@ -30,7 +31,7 @@ export async function readFileWithCache<T>(
   cache: KeyValueCache,
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
-  const actualPath = isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
+  const actualPath = isAbsolute(filePath) ? filePath : resolve(config?.cwd || process.cwd(), filePath);
   const cachedObjStr = await cache.get(actualPath);
   const stats = await stat(actualPath);
   if (cachedObjStr) {

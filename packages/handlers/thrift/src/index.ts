@@ -39,11 +39,13 @@ import {
 import { pascalCase } from 'pascal-case';
 
 export default class ThriftHandler implements MeshHandler {
-  config: YamlConfig.ThriftHandler;
-  cache: KeyValueCache;
+  private config: YamlConfig.ThriftHandler;
+  private baseDir: string;
+  private cache: KeyValueCache;
 
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.ThriftHandler>) {
+  constructor({ config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.ThriftHandler>) {
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
   }
 
@@ -52,6 +54,7 @@ export default class ThriftHandler implements MeshHandler {
 
     const rawThrift = await readFileOrUrlWithCache<string>(this.config.idl, this.cache, {
       allowUnknownExtensions: true,
+      cwd: this.baseDir,
       headers: schemaHeaders,
     });
     const thriftAST: ThriftDocument | ThriftErrors = parse(rawThrift, { organize: false });
