@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "graphql": "15.5.0",
-    "@graphql-mesh/cli": "0.25.1",
+    "@graphql-mesh/cli": "0.25.1-alpha-cbb435e3.0",
     "@graphql-mesh/config": "0.13.6",
     "@graphql-mesh/runtime": "0.11.6",
     "@graphql-mesh/openapi": "0.12.18",

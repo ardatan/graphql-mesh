@@ -2607,6 +2607,107 @@
     pascal-case "^3.1.1"
     tslib "~2.1.0"
 
+"@graphql-mesh/cli@0.25.1-alpha-cbb435e3.0":
+  version "0.25.1-alpha-cbb435e3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/cli/-/cli-0.25.1-alpha-cbb435e3.0.tgz#2684eef34c995cd23dc219de793873bdb6d266f1"
+  integrity sha512-rZrgvhadSrONr0lL2SjpAY+oRpCbMzqycrFzsvq6PuFoAwi7xwfMCl3s5Vm9RJLVx+H7K807CPRCYTM4iw5dYA==
+  dependencies:
+    "@graphql-codegen/core" "1.17.9"
+    "@graphql-codegen/typescript" "1.21.0"
+    "@graphql-codegen/typescript-generic-sdk" "1.17.9"
+    "@graphql-codegen/typescript-operations" "1.17.14"
+    "@graphql-codegen/typescript-resolvers" "1.18.2"
+    "@graphql-mesh/config" "0.13.6-alpha-cbb435e3.0"
+    "@graphql-mesh/runtime" "0.11.6-alpha-cbb435e3.0"
+    "@graphql-mesh/utils" "0.8.8-alpha-cbb435e3.0"
+    "@graphql-tools/code-file-loader" "6.3.1"
+    "@graphql-tools/graphql-file-loader" "6.2.7"
+    "@graphql-tools/load" "6.2.7"
+    "@graphql-tools/utils" "7.5.0"
+    body-parser "1.19.0"
+    chalk "4.1.0"
+    change-case "4.1.2"
+    cookie-parser "1.4.5"
+    cors "2.8.5"
+    express "4.17.1"
+    graphql-helix "1.2.3"
+    graphql-upload "11.0.0"
+    graphql-ws "4.1.6"
+    js-yaml "4.0.0"
+    json-bigint-patch "0.0.4"
+    lodash "4.17.21"
+    mkdirp "1.0.4"
+    open "7.4.2"
+    ora "5.3.0"
+    pascal-case "3.1.2"
+    winston "3.3.3"
+    ws "7.4.3"
+    yargs "16.2.0"
+
+"@graphql-mesh/config@0.13.6-alpha-cbb435e3.0":
+  version "0.13.6-alpha-cbb435e3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/config/-/config-0.13.6-alpha-cbb435e3.0.tgz#7f52f28e27422a2a4f5808e93f1cfbcdbe2197d1"
+  integrity sha512-5LGOZzKrg8CbaMYrqMr7d/WipE/DEVlaV/IVkudPCw09JlS0tFqXsccU/ddSHIXlbWiuxPwIzPcIVvDzTk/JAA==
+  dependencies:
+    "@graphql-mesh/cache-inmemory-lru" "0.4.48"
+    "@graphql-mesh/merger-stitching" "0.7.32-alpha-cbb435e3.0"
+    "@graphql-mesh/runtime" "0.11.6-alpha-cbb435e3.0"
+    "@graphql-mesh/types" "0.34.1"
+    "@graphql-mesh/utils" "0.8.8-alpha-cbb435e3.0"
+    "@graphql-tools/code-file-loader" "6.3.1"
+    "@graphql-tools/graphql-file-loader" "6.2.7"
+    "@graphql-tools/load" "6.2.7"
+    "@graphql-tools/merge" "6.2.10"
+    "@graphql-tools/utils" "7.5.0"
+    ajv "7.1.1"
+    cosmiconfig "7.0.0"
+    graphql-subscriptions "1.2.0"
+    lodash "4.17.21"
+    param-case "3.0.4"
+
+"@graphql-mesh/merger-stitching@0.7.32-alpha-cbb435e3.0":
+  version "0.7.32-alpha-cbb435e3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/merger-stitching/-/merger-stitching-0.7.32-alpha-cbb435e3.0.tgz#ab1bd579ad92ee31c5dcf9c2b724b45142d3ca76"
+  integrity sha512-+JbcZnVTjOaGXXOiASAxRI8JfrduGs444dx6sJXoiYP49HCmFIXsKOoW2hlZ1ig3Tpapd+vEtBlYkXUWPVR8ng==
+  dependencies:
+    "@graphql-mesh/types" "0.34.1"
+    "@graphql-mesh/utils" "0.8.8-alpha-cbb435e3.0"
+    "@graphql-tools/schema" "7.1.3"
+    "@graphql-tools/stitch" "7.4.0"
+    "@graphql-tools/utils" "7.5.0"
+    "@graphql-tools/wrap" "7.0.5"
+    fetchache "0.0.4"
+
+"@graphql-mesh/runtime@0.11.6-alpha-cbb435e3.0":
+  version "0.11.6-alpha-cbb435e3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/runtime/-/runtime-0.11.6-alpha-cbb435e3.0.tgz#4c4bd3132ed1f09a17300ceac23c5e1bbc80cbbb"
+  integrity sha512-eLStmUddbQvFTFUTz3noXJa9WCTjSHZJ1QC4Nz6vUbjBEK5LxCnvJ2sT11hm8Fns+JtFy++bj5ocMsjEKQyYWQ==
+  dependencies:
+    "@graphql-mesh/types" "0.34.1"
+    "@graphql-mesh/utils" "0.8.8-alpha-cbb435e3.0"
+    "@graphql-tools/delegate" "7.0.10"
+    "@graphql-tools/resolvers-composition" "6.2.6"
+    "@graphql-tools/schema" "7.1.3"
+    "@graphql-tools/utils" "7.5.0"
+    "@graphql-tools/wrap" "7.0.5"
+    "@n1ru4l/graphql-live-query" "0.7.1"
+    "@n1ru4l/in-memory-live-query-store" "0.6.0"
+
+"@graphql-mesh/utils@0.8.8-alpha-cbb435e3.0":
+  version "0.8.8-alpha-cbb435e3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/utils/-/utils-0.8.8-alpha-cbb435e3.0.tgz#c7f1409ecf042d8d87d48a9c711baa7634c8008a"
+  integrity sha512-4onaHb2SCBYUJ9wfRAPhfXiEovm+bQ2HrV9Y8XnobFptn6OD9InjI/9P6Z1cQ0juJny92TgO5rjzXshgnGvPZA==
+  dependencies:
+    "@ardatan/string-interpolation" "1.2.11"
+    "@graphql-tools/delegate" "7.0.10"
+    "@graphql-tools/utils" "7.5.0"
+    "@graphql-typed-document-node/core" "3.1.0"
+    date-fns "2.17.0"
+    fetchache "0.0.4"
+    is-url "1.2.4"
+    js-yaml "4.0.0"
+    object-hash "2.1.1"
+
 "@graphql-tools/batch-delegate@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-7.0.0.tgz#860f03d8ded5e9e7e9b14e2205dfd64da8e3e6c0"
