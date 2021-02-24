@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.10.0
+
+### Minor Changes
+
+- a70f9072: feat(filter-schema): Introduce new declarative syntax for filtering Types
+
 ## 0.9.1
 
 ### Patch Changes

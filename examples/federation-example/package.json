@@ -1,6 +1,6 @@
 {
   "name": "federation-handler-example",
-  "version": "0.5.78",
+  "version": "0.5.79",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -18,7 +18,7 @@
     "nodemon": "2.0.6"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.24.1",
+    "@graphql-mesh/cli": "0.25.0",
     "@graphql-mesh/graphql": "0.13.18",
     "@graphql-mesh/merger-federation": "0.8.26",
     "@graphql-mesh/transform-federation": "0.4.55",

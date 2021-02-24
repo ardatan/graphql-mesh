@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.25.0
+
+### Minor Changes
+
+- b52859c6: enhance(serve): run custom handlers before anything else
+
 ## 0.24.1
 
 ### Patch Changes
