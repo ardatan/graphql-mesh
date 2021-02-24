@@ -1,6 +1,4 @@
-import { isAbsolute, join } from 'path';
 import {
-  isUrl,
   readFileOrUrlWithCache,
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
@@ -48,8 +46,7 @@ export default class OpenAPIHandler implements MeshHandler {
       selectQueryOrMutationField,
       source,
     } = this.config;
-    const sourcePath = !isUrl(source) && isAbsolute(source) ? source : join(this.baseDir, source);
-    const spec = await readFileOrUrlWithCache<Oas3>(sourcePath || source, this.cache, {
+    const spec = await readFileOrUrlWithCache<Oas3>(source || source, this.cache, {
       cwd: this.baseDir,
       fallbackFormat: this.config.sourceFormat,
       headers: this.config.schemaHeaders,

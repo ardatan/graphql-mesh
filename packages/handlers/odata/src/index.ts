@@ -1,4 +1,3 @@
-import { isAbsolute, join } from 'path';
 import { YamlConfig, ResolverData, MeshHandler, GetMeshSourceOptions, MeshSource } from '@graphql-mesh/types';
 import { parseInterpolationStrings, getInterpolatedHeadersFactory, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { fetchache, KeyValueCache, Request, Response } from 'fetchache';
