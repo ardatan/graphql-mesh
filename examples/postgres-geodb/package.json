@@ -1,6 +1,6 @@
 {
   "name": "postgres-geodb-example",
-  "version": "0.5.76",
+  "version": "0.5.77",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -16,7 +16,7 @@
     "typescript": "4.0.5"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.24.1",
+    "@graphql-mesh/cli": "0.25.0",
     "@graphql-mesh/transform-prefix": "0.6.31",
     "@graphql-mesh/graphql": "0.13.18",
     "@graphql-mesh/postgraphile": "0.9.3",
