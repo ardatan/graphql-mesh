@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.9.1
+
+### Patch Changes
+
+- 191a663a: fix(grpc): respect baseUrl instead of process.cwd
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
 ## 0.9.0
 
 ### Minor Changes

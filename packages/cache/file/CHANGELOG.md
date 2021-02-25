@@ -1,5 +1,12 @@
 # @graphql-mesh/cache-file
 
+## 0.4.55
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
 ## 0.4.54
 
 ### Patch Changes
