@@ -29,7 +29,7 @@ fetchache.resetMocks = () => {
 fetchache.fetchache = async (request) => {
     const responseFn = mocks[request.url];
     if (!responseFn) {
-        throw new Error(request.url + ` Not Found!`);
+        return require('cross-fetch')(request.url, request);
     }
     return responseFn(request);
 };

@@ -1,0 +1,3 @@
+{
+    "preset": "@shelf/jest-mongodb"
+}

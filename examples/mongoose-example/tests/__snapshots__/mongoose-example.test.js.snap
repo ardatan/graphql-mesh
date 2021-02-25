@@ -1,0 +1,1325 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Mongoose should generate correct schema 1`] = `
+"directive @live on QUERY
+
+type Query {
+  userFindById(_id: MongoID!): User
+  userFindByIds(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsUserInput): [User!]!
+  userFindOne(
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterFindOneUserInput
+    skip: Int
+    sort: SortFindOneUserInput
+  ): User
+  userFindMany(
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterFindManyUserInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyUserInput
+  ): [User!]!
+  userCount(
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterCountUserInput
+  ): Int
+  userConnection(
+    \\"\\"\\"Forward pagination argument for returning at most first edges\\"\\"\\"
+    first: Int
+
+    \\"\\"\\"Forward pagination argument for returning at most first edges\\"\\"\\"
+    after: String
+
+    \\"\\"\\"Backward pagination argument for returning at most last edges\\"\\"\\"
+    last: Int
+
+    \\"\\"\\"Backward pagination argument for returning at most last edges\\"\\"\\"
+    before: String
+
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterFindManyUserInput
+
+    \\"\\"\\"Sort argument for data ordering\\"\\"\\"
+    sort: SortConnectionUserEnum = _ID_DESC
+  ): UserConnection
+  userPagination(
+    \\"\\"\\"Page number for displaying\\"\\"\\"
+    page: Int
+
+    \\"\\"\\"\\"\\"\\"
+    perPage: Int = 20
+
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterFindManyUserInput
+    sort: SortFindManyUserInput
+  ): UserPagination
+}
+
+type User {
+  name: String
+  age: Float
+  languages: [UserLanguages]
+  contacts: UserContacts
+  gender: EnumUserGender
+  address: UserAddress
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID!
+}
+
+type UserLanguages {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+enum EnumUserLanguagesSkill {
+  basic
+  fluent
+  native
+}
+
+type UserContacts {
+  email: String
+  phones: [String]
+}
+
+enum EnumUserGender {
+  male
+  female
+  not_specified
+}
+
+type UserAddress {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"
+The \`ID\` scalar type represents a unique MongoDB identifier in collection. MongoDB by default use 12-byte ObjectId value (https://docs.mongodb.com/manual/reference/bson-types/#objectid). But MongoDB also may accepts string or integer as correct values for _id field.
+\\"\\"\\"
+scalar MongoID
+
+\\"\\"\\"
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+\\"\\"\\"
+scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+
+\\"\\"\\"
+The \`Decimal\` scalar type uses the IEEE 754 decimal128 decimal-based floating-point numbering format. Supports 34 decimal digits of precision, a max value of approximately 10^6145, and min value of approximately -10^6145
+\\"\\"\\"
+scalar BSONDecimal
+
+enum SortFindByIdsUserInput {
+  _ID_ASC
+  _ID_DESC
+  NAME_ASC
+  NAME_DESC
+  AGE_ASC
+  AGE_DESC
+  SALARYDECIMAL_ASC
+  SALARYDECIMAL_DESC
+  GENDER_ASC
+  GENDER_DESC
+  GENDER__AGE_ASC
+  GENDER__AGE_DESC
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindOneUserInput {
+  name: String
+  age: Float
+  languages: [FilterFindOneUserLanguagesInput]
+  contacts: FilterFindOneUserContactsInput
+  gender: EnumUserGender
+  address: FilterFindOneUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID
+
+  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  _operators: FilterFindOneUserOperatorsInput
+  OR: [FilterFindOneUserInput!]
+  AND: [FilterFindOneUserInput!]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindOneUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindOneUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindOneUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+input FilterFindOneUserOperatorsInput {
+  name: FilterFindOneUserNameOperatorsInput
+  age: FilterFindOneUserAgeOperatorsInput
+  gender: FilterFindOneUserGenderOperatorsInput
+  salaryDecimal: FilterFindOneUserSalaryDecimalOperatorsInput
+  _id: FilterFindOneUser_idOperatorsInput
+}
+
+input FilterFindOneUserNameOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+\\"\\"\\"
+The string representation of JavaScript regexp. You may provide it with flags \\"/^abc.*/i\\" or without flags like \\"^abc.*\\". More info about RegExp characters and flags: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+\\"\\"\\"
+scalar RegExpAsString @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf\\")
+
+input FilterFindOneUserAgeOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterFindOneUserGenderOperatorsInput {
+  gt: EnumUserGender
+  gte: EnumUserGender
+  lt: EnumUserGender
+  lte: EnumUserGender
+  ne: EnumUserGender
+  in: [EnumUserGender]
+  nin: [EnumUserGender]
+  exists: Boolean
+}
+
+input FilterFindOneUserSalaryDecimalOperatorsInput {
+  gt: BSONDecimal
+  gte: BSONDecimal
+  lt: BSONDecimal
+  lte: BSONDecimal
+  ne: BSONDecimal
+  in: [BSONDecimal]
+  nin: [BSONDecimal]
+  exists: Boolean
+}
+
+input FilterFindOneUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindOneUserInput {
+  _ID_ASC
+  _ID_DESC
+  NAME_ASC
+  NAME_DESC
+  AGE_ASC
+  AGE_DESC
+  SALARYDECIMAL_ASC
+  SALARYDECIMAL_DESC
+  GENDER_ASC
+  GENDER_DESC
+  GENDER__AGE_ASC
+  GENDER__AGE_DESC
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindManyUserInput {
+  name: String
+  age: Float
+  languages: [FilterFindManyUserLanguagesInput]
+  contacts: FilterFindManyUserContactsInput
+  gender: EnumUserGender
+  address: FilterFindManyUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID
+
+  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  _operators: FilterFindManyUserOperatorsInput
+  OR: [FilterFindManyUserInput!]
+  AND: [FilterFindManyUserInput!]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindManyUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindManyUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterFindManyUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+input FilterFindManyUserOperatorsInput {
+  name: FilterFindManyUserNameOperatorsInput
+  age: FilterFindManyUserAgeOperatorsInput
+  gender: FilterFindManyUserGenderOperatorsInput
+  salaryDecimal: FilterFindManyUserSalaryDecimalOperatorsInput
+  _id: FilterFindManyUser_idOperatorsInput
+}
+
+input FilterFindManyUserNameOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterFindManyUserAgeOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterFindManyUserGenderOperatorsInput {
+  gt: EnumUserGender
+  gte: EnumUserGender
+  lt: EnumUserGender
+  lte: EnumUserGender
+  ne: EnumUserGender
+  in: [EnumUserGender]
+  nin: [EnumUserGender]
+  exists: Boolean
+}
+
+input FilterFindManyUserSalaryDecimalOperatorsInput {
+  gt: BSONDecimal
+  gte: BSONDecimal
+  lt: BSONDecimal
+  lte: BSONDecimal
+  ne: BSONDecimal
+  in: [BSONDecimal]
+  nin: [BSONDecimal]
+  exists: Boolean
+}
+
+input FilterFindManyUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindManyUserInput {
+  _ID_ASC
+  _ID_DESC
+  NAME_ASC
+  NAME_DESC
+  AGE_ASC
+  AGE_DESC
+  SALARYDECIMAL_ASC
+  SALARYDECIMAL_DESC
+  GENDER_ASC
+  GENDER_DESC
+  GENDER__AGE_ASC
+  GENDER__AGE_DESC
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterCountUserInput {
+  name: String
+  age: Float
+  languages: [FilterCountUserLanguagesInput]
+  contacts: FilterCountUserContactsInput
+  gender: EnumUserGender
+  address: FilterCountUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID
+
+  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  _operators: FilterCountUserOperatorsInput
+  OR: [FilterCountUserInput!]
+  AND: [FilterCountUserInput!]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterCountUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterCountUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterCountUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+input FilterCountUserOperatorsInput {
+  name: FilterCountUserNameOperatorsInput
+  age: FilterCountUserAgeOperatorsInput
+  gender: FilterCountUserGenderOperatorsInput
+  salaryDecimal: FilterCountUserSalaryDecimalOperatorsInput
+  _id: FilterCountUser_idOperatorsInput
+}
+
+input FilterCountUserNameOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterCountUserAgeOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterCountUserGenderOperatorsInput {
+  gt: EnumUserGender
+  gte: EnumUserGender
+  lt: EnumUserGender
+  lte: EnumUserGender
+  ne: EnumUserGender
+  in: [EnumUserGender]
+  nin: [EnumUserGender]
+  exists: Boolean
+}
+
+input FilterCountUserSalaryDecimalOperatorsInput {
+  gt: BSONDecimal
+  gte: BSONDecimal
+  lt: BSONDecimal
+  lte: BSONDecimal
+  ne: BSONDecimal
+  in: [BSONDecimal]
+  nin: [BSONDecimal]
+  exists: Boolean
+}
+
+input FilterCountUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+\\"\\"\\"A connection to a list of items.\\"\\"\\"
+type UserConnection {
+  \\"\\"\\"Total object count.\\"\\"\\"
+  count: Int!
+
+  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  pageInfo: PageInfo!
+
+  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  edges: [UserEdge!]!
+}
+
+\\"\\"\\"Information about pagination in a connection.\\"\\"\\"
+type PageInfo {
+  \\"\\"\\"When paginating forwards, are there more items?\\"\\"\\"
+  hasNextPage: Boolean!
+
+  \\"\\"\\"When paginating backwards, are there more items?\\"\\"\\"
+  hasPreviousPage: Boolean!
+
+  \\"\\"\\"When paginating backwards, the cursor to continue.\\"\\"\\"
+  startCursor: String
+
+  \\"\\"\\"When paginating forwards, the cursor to continue.\\"\\"\\"
+  endCursor: String
+}
+
+\\"\\"\\"An edge in a connection.\\"\\"\\"
+type UserEdge {
+  \\"\\"\\"The item at the end of the edge\\"\\"\\"
+  node: User!
+
+  \\"\\"\\"A cursor for use in pagination\\"\\"\\"
+  cursor: String!
+}
+
+enum SortConnectionUserEnum {
+  _ID_DESC
+  _ID_ASC
+}
+
+\\"\\"\\"List of items with pagination.\\"\\"\\"
+type UserPagination {
+  \\"\\"\\"Total object count.\\"\\"\\"
+  count: Int
+
+  \\"\\"\\"Array of objects.\\"\\"\\"
+  items: [User!]
+
+  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  pageInfo: PaginationInfo!
+}
+
+type PaginationInfo {
+  currentPage: Int!
+  perPage: Int!
+  pageCount: Int
+  itemCount: Int
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type Mutation {
+  \\"\\"\\"
+  Create one document with mongoose defaults, setters, hooks and validation
+  \\"\\"\\"
+  userCreateOne(record: CreateOneUserInput!): CreateOneUserPayload
+
+  \\"\\"\\"
+  Creates Many documents with mongoose defaults, setters, hooks and validation
+  \\"\\"\\"
+  userCreateMany(records: [CreateManyUserInput!]!): CreateManyUserPayload
+
+  \\"\\"\\"
+  Update one document: 1) Retrieve one document by findById. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  \\"\\"\\"
+  userUpdateById(_id: MongoID!, record: UpdateByIdUserInput!): UpdateByIdUserPayload
+
+  \\"\\"\\"
+  Update one document: 1) Retrieve one document via findOne. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  \\"\\"\\"
+  userUpdateOne(
+    record: UpdateOneUserInput!
+
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterUpdateOneUserInput
+    sort: SortUpdateOneUserInput
+    skip: Int
+  ): UpdateOneUserPayload
+
+  \\"\\"\\"
+  Update many documents without returning them: Use Query.update mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  \\"\\"\\"
+  userUpdateMany(
+    record: UpdateManyUserInput!
+
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterUpdateManyUserInput
+    sort: SortUpdateManyUserInput
+    skip: Int
+    limit: Int = 100
+  ): UpdateManyUserPayload
+
+  \\"\\"\\"
+  Remove one document: 1) Retrieve one document and remove with hooks via findByIdAndRemove. 2) Return removed document.
+  \\"\\"\\"
+  userRemoveById(_id: MongoID!): RemoveByIdUserPayload
+
+  \\"\\"\\"
+  Remove one document: 1) Remove with hooks via findOneAndRemove. 2) Return removed document.
+  \\"\\"\\"
+  userRemoveOne(
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterRemoveOneUserInput
+    sort: SortRemoveOneUserInput
+  ): RemoveOneUserPayload
+
+  \\"\\"\\"
+  Remove many documents without returning them: Use Query.remove mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  \\"\\"\\"
+  userRemoveMany(
+    \\"\\"\\"Filter by fields\\"\\"\\"
+    filter: FilterRemoveManyUserInput!
+    limit: Int = 100
+  ): RemoveManyUserPayload
+}
+
+type CreateOneUserPayload {
+  \\"\\"\\"Document ID\\"\\"\\"
+  recordId: MongoID
+
+  \\"\\"\\"Created document\\"\\"\\"
+  record: User
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+interface ErrorInterface {
+  \\"\\"\\"Generic error message\\"\\"\\"
+  message: String
+}
+
+\\"\\"\\"\\"\\"\\"
+input CreateOneUserInput {
+  name: String
+  age: Float
+  languages: [UserLanguagesInput]
+  contacts: UserContactsInput
+  gender: EnumUserGender
+  address: UserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+}
+
+input UserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+input UserContactsInput {
+  email: String
+  phones: [String]
+}
+
+input UserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+type CreateManyUserPayload {
+  \\"\\"\\"Documents IDs\\"\\"\\"
+  recordIds: [MongoID!]!
+
+  \\"\\"\\"Created documents\\"\\"\\"
+  records: [User!]
+
+  \\"\\"\\"Number of created documents\\"\\"\\"
+  createdCount: Int!
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+\\"\\"\\"\\"\\"\\"
+input CreateManyUserInput {
+  name: String
+  age: Float
+  languages: [UserLanguagesInput]
+  contacts: UserContactsInput
+  gender: EnumUserGender
+  address: UserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+}
+
+type UpdateByIdUserPayload {
+  \\"\\"\\"Document ID\\"\\"\\"
+  recordId: MongoID
+
+  \\"\\"\\"Updated document\\"\\"\\"
+  record: User
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateByIdUserInput {
+  name: String
+  age: Float
+  languages: [UpdateByIdUserLanguagesInput]
+  contacts: UpdateByIdUserContactsInput
+  gender: EnumUserGender
+  address: UpdateByIdUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateByIdUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateByIdUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateByIdUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+type UpdateOneUserPayload {
+  \\"\\"\\"Document ID\\"\\"\\"
+  recordId: MongoID
+
+  \\"\\"\\"Updated document\\"\\"\\"
+  record: User
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateOneUserInput {
+  name: String
+  age: Float
+  languages: [UpdateOneUserLanguagesInput]
+  contacts: UpdateOneUserContactsInput
+  gender: EnumUserGender
+  address: UpdateOneUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateOneUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateOneUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateOneUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateOneUserInput {
+  name: String
+  age: Float
+  languages: [FilterUpdateOneUserLanguagesInput]
+  contacts: FilterUpdateOneUserContactsInput
+  gender: EnumUserGender
+  address: FilterUpdateOneUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID
+
+  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  _operators: FilterUpdateOneUserOperatorsInput
+  OR: [FilterUpdateOneUserInput!]
+  AND: [FilterUpdateOneUserInput!]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateOneUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateOneUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateOneUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+input FilterUpdateOneUserOperatorsInput {
+  name: FilterUpdateOneUserNameOperatorsInput
+  age: FilterUpdateOneUserAgeOperatorsInput
+  gender: FilterUpdateOneUserGenderOperatorsInput
+  salaryDecimal: FilterUpdateOneUserSalaryDecimalOperatorsInput
+  _id: FilterUpdateOneUser_idOperatorsInput
+}
+
+input FilterUpdateOneUserNameOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterUpdateOneUserAgeOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterUpdateOneUserGenderOperatorsInput {
+  gt: EnumUserGender
+  gte: EnumUserGender
+  lt: EnumUserGender
+  lte: EnumUserGender
+  ne: EnumUserGender
+  in: [EnumUserGender]
+  nin: [EnumUserGender]
+  exists: Boolean
+}
+
+input FilterUpdateOneUserSalaryDecimalOperatorsInput {
+  gt: BSONDecimal
+  gte: BSONDecimal
+  lt: BSONDecimal
+  lte: BSONDecimal
+  ne: BSONDecimal
+  in: [BSONDecimal]
+  nin: [BSONDecimal]
+  exists: Boolean
+}
+
+input FilterUpdateOneUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateOneUserInput {
+  _ID_ASC
+  _ID_DESC
+  NAME_ASC
+  NAME_DESC
+  AGE_ASC
+  AGE_DESC
+  SALARYDECIMAL_ASC
+  SALARYDECIMAL_DESC
+  GENDER_ASC
+  GENDER_DESC
+  GENDER__AGE_ASC
+  GENDER__AGE_DESC
+}
+
+type UpdateManyUserPayload {
+  \\"\\"\\"Affected documents number\\"\\"\\"
+  numAffected: Int
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateManyUserInput {
+  name: String
+  age: Float
+  languages: [UpdateManyUserLanguagesInput]
+  contacts: UpdateManyUserContactsInput
+  gender: EnumUserGender
+  address: UpdateManyUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateManyUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateManyUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input UpdateManyUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateManyUserInput {
+  name: String
+  age: Float
+  languages: [FilterUpdateManyUserLanguagesInput]
+  contacts: FilterUpdateManyUserContactsInput
+  gender: EnumUserGender
+  address: FilterUpdateManyUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID
+
+  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  _operators: FilterUpdateManyUserOperatorsInput
+  OR: [FilterUpdateManyUserInput!]
+  AND: [FilterUpdateManyUserInput!]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateManyUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateManyUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterUpdateManyUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+input FilterUpdateManyUserOperatorsInput {
+  name: FilterUpdateManyUserNameOperatorsInput
+  age: FilterUpdateManyUserAgeOperatorsInput
+  gender: FilterUpdateManyUserGenderOperatorsInput
+  salaryDecimal: FilterUpdateManyUserSalaryDecimalOperatorsInput
+  _id: FilterUpdateManyUser_idOperatorsInput
+}
+
+input FilterUpdateManyUserNameOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterUpdateManyUserAgeOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterUpdateManyUserGenderOperatorsInput {
+  gt: EnumUserGender
+  gte: EnumUserGender
+  lt: EnumUserGender
+  lte: EnumUserGender
+  ne: EnumUserGender
+  in: [EnumUserGender]
+  nin: [EnumUserGender]
+  exists: Boolean
+}
+
+input FilterUpdateManyUserSalaryDecimalOperatorsInput {
+  gt: BSONDecimal
+  gte: BSONDecimal
+  lt: BSONDecimal
+  lte: BSONDecimal
+  ne: BSONDecimal
+  in: [BSONDecimal]
+  nin: [BSONDecimal]
+  exists: Boolean
+}
+
+input FilterUpdateManyUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateManyUserInput {
+  _ID_ASC
+  _ID_DESC
+  NAME_ASC
+  NAME_DESC
+  AGE_ASC
+  AGE_DESC
+  SALARYDECIMAL_ASC
+  SALARYDECIMAL_DESC
+  GENDER_ASC
+  GENDER_DESC
+  GENDER__AGE_ASC
+  GENDER__AGE_DESC
+}
+
+type RemoveByIdUserPayload {
+  \\"\\"\\"Document ID\\"\\"\\"
+  recordId: MongoID
+
+  \\"\\"\\"Removed document\\"\\"\\"
+  record: User
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+type RemoveOneUserPayload {
+  \\"\\"\\"Document ID\\"\\"\\"
+  recordId: MongoID
+
+  \\"\\"\\"Removed document\\"\\"\\"
+  record: User
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveOneUserInput {
+  name: String
+  age: Float
+  languages: [FilterRemoveOneUserLanguagesInput]
+  contacts: FilterRemoveOneUserContactsInput
+  gender: EnumUserGender
+  address: FilterRemoveOneUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID
+
+  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  _operators: FilterRemoveOneUserOperatorsInput
+  OR: [FilterRemoveOneUserInput!]
+  AND: [FilterRemoveOneUserInput!]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveOneUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveOneUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveOneUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+input FilterRemoveOneUserOperatorsInput {
+  name: FilterRemoveOneUserNameOperatorsInput
+  age: FilterRemoveOneUserAgeOperatorsInput
+  gender: FilterRemoveOneUserGenderOperatorsInput
+  salaryDecimal: FilterRemoveOneUserSalaryDecimalOperatorsInput
+  _id: FilterRemoveOneUser_idOperatorsInput
+}
+
+input FilterRemoveOneUserNameOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterRemoveOneUserAgeOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterRemoveOneUserGenderOperatorsInput {
+  gt: EnumUserGender
+  gte: EnumUserGender
+  lt: EnumUserGender
+  lte: EnumUserGender
+  ne: EnumUserGender
+  in: [EnumUserGender]
+  nin: [EnumUserGender]
+  exists: Boolean
+}
+
+input FilterRemoveOneUserSalaryDecimalOperatorsInput {
+  gt: BSONDecimal
+  gte: BSONDecimal
+  lt: BSONDecimal
+  lte: BSONDecimal
+  ne: BSONDecimal
+  in: [BSONDecimal]
+  nin: [BSONDecimal]
+  exists: Boolean
+}
+
+input FilterRemoveOneUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortRemoveOneUserInput {
+  _ID_ASC
+  _ID_DESC
+  NAME_ASC
+  NAME_DESC
+  AGE_ASC
+  AGE_DESC
+  SALARYDECIMAL_ASC
+  SALARYDECIMAL_DESC
+  GENDER_ASC
+  GENDER_DESC
+  GENDER__AGE_ASC
+  GENDER__AGE_DESC
+}
+
+type RemoveManyUserPayload {
+  \\"\\"\\"Affected documents number\\"\\"\\"
+  numAffected: Int
+
+  \\"\\"\\"
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
+  \\"\\"\\"
+  error: ErrorInterface
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveManyUserInput {
+  name: String
+  age: Float
+  languages: [FilterRemoveManyUserLanguagesInput]
+  contacts: FilterRemoveManyUserContactsInput
+  gender: EnumUserGender
+  address: FilterRemoveManyUserAddressInput
+
+  \\"\\"\\"Some dynamic data\\"\\"\\"
+  someMixed: JSON
+  salaryDecimal: BSONDecimal
+  _id: MongoID
+
+  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  _operators: FilterRemoveManyUserOperatorsInput
+  OR: [FilterRemoveManyUserInput!]
+  AND: [FilterRemoveManyUserInput!]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveManyUserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveManyUserContactsInput {
+  email: String
+  phones: [String]
+}
+
+\\"\\"\\"\\"\\"\\"
+input FilterRemoveManyUserAddressInput {
+  street: String
+  geo: [Float]
+  _id: MongoID
+}
+
+\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+input FilterRemoveManyUserOperatorsInput {
+  name: FilterRemoveManyUserNameOperatorsInput
+  age: FilterRemoveManyUserAgeOperatorsInput
+  gender: FilterRemoveManyUserGenderOperatorsInput
+  salaryDecimal: FilterRemoveManyUserSalaryDecimalOperatorsInput
+  _id: FilterRemoveManyUser_idOperatorsInput
+}
+
+input FilterRemoveManyUserNameOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterRemoveManyUserAgeOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterRemoveManyUserGenderOperatorsInput {
+  gt: EnumUserGender
+  gte: EnumUserGender
+  lt: EnumUserGender
+  lte: EnumUserGender
+  ne: EnumUserGender
+  in: [EnumUserGender]
+  nin: [EnumUserGender]
+  exists: Boolean
+}
+
+input FilterRemoveManyUserSalaryDecimalOperatorsInput {
+  gt: BSONDecimal
+  gte: BSONDecimal
+  lt: BSONDecimal
+  lte: BSONDecimal
+  ne: BSONDecimal
+  in: [BSONDecimal]
+  nin: [BSONDecimal]
+  exists: Boolean
+}
+
+input FilterRemoveManyUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+"
+`;
+
+exports[`Mongoose should give correct response for example queries 1`] = `
+Object {
+  "data": Object {
+    "userCreateOne": null,
+  },
+  "errors": Array [
+    [GraphQLError: Argument "record" has invalid value {name: "John Doe", age: 25, languages: [{language: "English", skill: "native"}], contacts: {email: "john@doe.com", phones: ["+000000000000"]}, gender: male, street: "Not Existed St."}.],
+  ],
+}
+`;

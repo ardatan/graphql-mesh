@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Hello World should generate correct schema 1`] = `
+"schema { query: Query }
+type Query {
+  \\"\\"\\"\\"\\"\\"
+  greeting: String
+}
+directive @live on QUERY"
+`;
+
+exports[`Hello World should give correct response 1`] = `
+Object {
+  "data": Object {
+    "greeting": "Hello World",
+  },
+}
+`;

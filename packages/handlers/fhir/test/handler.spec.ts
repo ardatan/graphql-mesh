@@ -10,6 +10,7 @@ describe('fhir', () => {
       config: {},
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
+      baseDir: __dirname,
     });
     const { schema } = await handler.getMeshSource();
     expect(

@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JSON Schema Covid should generate correct schema 1`] = `
+"directive @live on QUERY
+
+\\"\\"\\"\\"\\"\\"
+type Query {
+  \\"\\"\\"
+  GET /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
+  \\"\\"\\"
+  population(country: String): ApiPopulation
+
+  \\"\\"\\"\\"\\"\\"
+  cases: [Case]
+
+  \\"\\"\\"\\"\\"\\"
+  case(countryRegion: String): Case
+
+  \\"\\"\\"\\"\\"\\"
+  daily: [Daily]
+
+  \\"\\"\\"\\"\\"\\"
+  count: Count
+  stat(country: String!): Stat
+}
+
+type ApiPopulation {
+  records: [Result]
+}
+
+type Result {
+  fields: ResultFields
+}
+
+type ResultFields {
+  country_name: String
+  value: Float
+  year: String
+}
+
+\\"\\"\\"\\"\\"\\"
+type Case {
+  \\"\\"\\"\\"\\"\\"
+  provinceState: String
+
+  \\"\\"\\"\\"\\"\\"
+  countryRegion: String
+
+  \\"\\"\\"\\"\\"\\"
+  lastUpdate: Date
+
+  \\"\\"\\"\\"\\"\\"
+  lat: Float
+
+  \\"\\"\\"\\"\\"\\"
+  long: Float
+
+  \\"\\"\\"\\"\\"\\"
+  confirmed: Int
+
+  \\"\\"\\"\\"\\"\\"
+  recovered: Int
+
+  \\"\\"\\"\\"\\"\\"
+  deaths: Int
+
+  \\"\\"\\"\\"\\"\\"
+  active: Int
+
+  \\"\\"\\"\\"\\"\\"
+  admin2: Int
+
+  \\"\\"\\"\\"\\"\\"
+  fips: Int
+
+  \\"\\"\\"\\"\\"\\"
+  combinedKey: Int
+
+  \\"\\"\\"\\"\\"\\"
+  iso2: String
+
+  \\"\\"\\"\\"\\"\\"
+  iso3: String
+  population: ApiPopulation
+}
+
+\\"\\"\\"\\"\\"\\"
+scalar Date
+
+\\"\\"\\"\\"\\"\\"
+type Daily {
+  \\"\\"\\"\\"\\"\\"
+  reportDate: Date
+
+  \\"\\"\\"\\"\\"\\"
+  mainlandChina: Int
+
+  \\"\\"\\"\\"\\"\\"
+  otherLocations: Int
+
+  \\"\\"\\"\\"\\"\\"
+  totalConfirmed: Int
+
+  \\"\\"\\"\\"\\"\\"
+  totalRecovered: Int
+
+  \\"\\"\\"\\"\\"\\"
+  reportDateString: String
+
+  \\"\\"\\"\\"\\"\\"
+  deltaConfirmed: Int
+
+  \\"\\"\\"\\"\\"\\"
+  deltaRecovered: Int
+
+  \\"\\"\\"\\"\\"\\"
+  objectid: Int
+}
+
+\\"\\"\\"\\"\\"\\"
+type Count {
+  \\"\\"\\"\\"\\"\\"
+  confirmed: Int
+
+  \\"\\"\\"\\"\\"\\"
+  recovered: Int
+
+  \\"\\"\\"\\"\\"\\"
+  deaths: Int
+}
+
+\\"\\"\\"\\"\\"\\"
+enum CacheControlScope {
+  \\"\\"\\"\\"\\"\\"
+  PUBLIC
+
+  \\"\\"\\"\\"\\"\\"
+  PRIVATE
+}
+
+\\"\\"\\"The \`Upload\` scalar type represents a file upload.\\"\\"\\"
+scalar Upload
+
+type Stat {
+  confirmedRatio: Float
+  deathRatio: Float
+  recoveredRatio: Float
+  case: Case
+  population: ApiPopulation
+}
+"
+`;
