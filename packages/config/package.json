@@ -13,7 +13,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.4.50",
+    "@graphql-mesh/cache-inmemory-lru": "0.4.50-alpha-eedbc92a.0",
     "@graphql-mesh/merger-stitching": "0.7.34",
     "@graphql-mesh/runtime": "0.11.9",
     "@graphql-mesh/types": "0.35.1",
