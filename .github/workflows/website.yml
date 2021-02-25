@@ -36,7 +36,6 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-15-node-modules-${{ hashFiles('**/yarn.lock') }}
-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Deploy 🚀
