@@ -5,6 +5,14 @@ import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { loadDocuments } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import thriftServer from '../src/main';
+import { mkdirSync, writeFileSync } from 'fs';
+
+const problematicModulePath = join(__dirname, '../../../node_modules/core-js/modules');
+const emptyModuleContent = 'module.exports = {};';
+
+// Fix core-js issue
+mkdirSync(problematicModulePath, { recursive: true });
+writeFileSync(join(problematicModulePath, './es.array.join.js'), emptyModuleContent);
 
 const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
