@@ -79,7 +79,7 @@ export async function graphqlMesh() {
         });
         const { schema, destroy } = await getMesh(meshConfig);
         const result = await generateSdk(schema, args);
-        const outFile = resolve(baseDir, args.output);
+        const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
         await writeFile(outFile, result);
         destroy();
       }
@@ -99,26 +99,26 @@ export async function graphqlMesh() {
           ignoreAdditionalResolvers: true,
         });
         const { schema, destroy } = await getMesh(meshConfig);
-        let outputFileContent: string;
-        const outputFileName = args.output;
-        if (outputFileName.endsWith('.json')) {
+        let fileContent: string;
+        const fileName = args.output;
+        if (fileName.endsWith('.json')) {
           const introspection = introspectionFromSchema(schema);
-          outputFileContent = JSON.stringify(introspection, null, 2);
+          fileContent = JSON.stringify(introspection, null, 2);
         } else if (
-          outputFileName.endsWith('.graphql') ||
-          outputFileName.endsWith('.graphqls') ||
-          outputFileName.endsWith('.gql') ||
-          outputFileName.endsWith('.gqls')
+          fileName.endsWith('.graphql') ||
+          fileName.endsWith('.graphqls') ||
+          fileName.endsWith('.gql') ||
+          fileName.endsWith('.gqls')
         ) {
           const printedSchema = printSchemaWithDirectives(schema);
-          outputFileContent = printedSchema;
+          fileContent = printedSchema;
         } else {
-          logger.error(`Invalid file extension ${outputFileName}`);
+          logger.error(`Invalid file extension ${fileName}`);
           destroy();
           return;
         }
-        const absoluteOutputFilePath = resolve(baseDir, outputFileName);
-        await writeFile(absoluteOutputFilePath, outputFileContent);
+        const outFile = isAbsolute(fileName) ? fileName : resolve(process.cwd(), fileName);
+        await writeFile(outFile, fileContent);
         destroy();
       }
     )
@@ -138,7 +138,7 @@ export async function graphqlMesh() {
         });
         const { schema, rawSources, destroy } = await getMesh(meshConfig);
         const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
-        const outFile = resolve(baseDir, args.output);
+        const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
         await writeFile(outFile, result);
         destroy();
       }
