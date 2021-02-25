@@ -1,7 +1,7 @@
 const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { join } = require('path');
-const { printSchema } = require('graphql');
+const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
 const { readFile } = require('fs-extra');
 
 const config$ = findAndParseConfig({
@@ -12,8 +12,11 @@ const mesh$ = config$.then(config => getMesh(config));
 describe('JSON Schema Covid', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    const printedSchema = printSchema(schema);
-    expect(printedSchema).toMatchSnapshot();
+    expect(
+      introspectionFromSchema(lexicographicSortSchema(schema), {
+        descriptions: false,
+      })
+    ).toMatchSnapshot();
   });
   it('should give correct response for STEP 1: 2 sources side by side', async () => {
       const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');

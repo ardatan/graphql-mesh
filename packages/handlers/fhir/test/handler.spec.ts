@@ -1,7 +1,7 @@
 import FhirHandler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { PubSub } from 'graphql-subscriptions';
-import { introspectionFromSchema } from 'graphql';
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 
 describe('fhir', () => {
   it('can generate valid fhir schema', async () => {
@@ -10,13 +10,12 @@ describe('fhir', () => {
       config: {},
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
-      baseDir: __dirname,
     });
     const { schema } = await handler.getMeshSource();
     expect(
-      introspectionFromSchema(schema, {
+      introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
-    ).toMatchSnapshot('fhir-graphql-schema');
+    ).toMatchSnapshot();
   });
 });

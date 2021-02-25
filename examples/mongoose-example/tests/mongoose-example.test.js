@@ -1,7 +1,7 @@
 const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { join } = require('path');
-const { printSchema } = require('graphql');
+const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
 const { loadDocuments } = require('@graphql-tools/load');
 const { GraphQLFileLoader } = require('@graphql-tools/graphql-file-loader');
 
@@ -13,8 +13,11 @@ const mesh$ = config$.then(config => getMesh(config));
 describe('Mongoose', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    const printedSchema = printSchema(schema);
-    expect(printedSchema).toMatchSnapshot();
+    expect(
+      introspectionFromSchema(lexicographicSortSchema(schema), {
+        descriptions: false,
+      })
+    ).toMatchSnapshot();
   });
   it('should give correct response for example queries', async () => {
     const {
@@ -31,5 +34,5 @@ describe('Mongoose', () => {
       expect(result).toMatchSnapshot();
     }
   });
-  afterAll(() => mesh.destroy());
+  afterAll(() => mesh$.then(mesh => mesh.destroy()));
 });
