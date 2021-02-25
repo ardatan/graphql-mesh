@@ -1,0 +1,27 @@
+mutation CreateUser {
+  userCreateOne(
+    record: {
+      name: "John Doe"
+      age: 25
+      languages: [{ language: "English", skill: native }]
+      contacts: { email: "john@doe.com", phones: ["+000000000000"] }
+      gender: male
+      street: "Not Existed St."
+    }
+  ) {
+    record {
+      name
+      age
+      languages {
+        language
+        skill
+      }
+      contacts {
+        email
+        phones
+      }
+      gender
+      street
+    }
+  }
+}

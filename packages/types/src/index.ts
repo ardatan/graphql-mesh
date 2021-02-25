@@ -24,7 +24,7 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
 export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   config: THandlerConfig;
-  baseDir: string;
+  baseDir?: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
 };

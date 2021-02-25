@@ -2,7 +2,7 @@ import * as express from 'express';
 import { createThriftServer } from '@creditkarma/thrift-server-express';
 import { Calculator } from './codegen';
 
-const PORT = 8080;
+const PORT = 9876;
 
 const serviceHandlers: Calculator.IHandler<express.Request> = {
   add(request, context?: express.Request): number {
@@ -21,6 +21,6 @@ const app: express.Application = createThriftServer({
   },
 });
 
-app.listen(PORT, () => {
+export default app.listen(PORT, () => {
   console.log(`Express server listening on port: ${PORT}`);
 });

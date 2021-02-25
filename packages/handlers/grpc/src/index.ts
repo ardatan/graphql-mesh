@@ -15,7 +15,6 @@ import {
   loadFileDescriptorSetFromObject,
 } from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
-import { promises as fsPromises } from 'fs';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
@@ -35,8 +34,7 @@ import {
   getTypeName,
 } from './utils';
 import { specifiedDirectives } from 'graphql';
-
-const { readFile } = fsPromises || {};
+import { join, isAbsolute } from 'path';
 
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
@@ -127,7 +125,7 @@ export default class GrpcHandler implements MeshHandler {
         fileName = this.config.descriptorSetFilePath.file;
         options = this.config.descriptorSetFilePath.load;
       }
-      const descriptorSetBuffer = await readFile(fileName as string);
+      const descriptorSetBuffer = await getBuffer(fileName as string, this.cache, this.baseDir);
       let decodedDescriptorSet: DecodedDescriptorSet;
       try {
         const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
@@ -144,7 +142,12 @@ export default class GrpcHandler implements MeshHandler {
       let options: LoadOptions = {};
       if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
         fileName = this.config.protoFilePath.file;
-        options = this.config.protoFilePath.load;
+        options = {
+          ...this.config.protoFilePath.load,
+          includeDirs: this.config.protoFilePath.load.includeDirs?.map(includeDir =>
+            isAbsolute(includeDir) ? includeDir : join(this.baseDir || process.cwd(), includeDir)
+          ),
+        };
         if (options.includeDirs) {
           if (!Array.isArray(options.includeDirs)) {
             return Promise.reject(new Error('The includeDirs option must be an array'));
@@ -152,8 +155,10 @@ export default class GrpcHandler implements MeshHandler {
           addIncludePathResolver(root, options.includeDirs);
         }
       }
+
       const protoDefinition = await root.load(fileName as string, options);
       protoDefinition.resolveAll();
+
       packageDefinition = await load(fileName as string, options);
     }
     const grpcObject = loadPackageDefinition(packageDefinition);

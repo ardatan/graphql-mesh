@@ -35,8 +35,8 @@ jobs:
         run: yarn install && git checkout yarn.lock
       - name: Lint
         run: yarn lint
-  build:
-    name: Build
+  typecheck:
+    name: TypeScript Type Checking
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master
@@ -60,7 +60,7 @@ jobs:
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Build
-        run: yarn build
+        run: yarn transpile-ts --noEmit
 
   test:
     name: Testing on ${{matrix.os}} and Node ${{matrix.node_version}}
@@ -99,4 +99,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{matrix.node_version}}-jest-
       - name: Test
-        run: yarn test --logHeapUsage
+        run: yarn test --logHeapUsage --ci
