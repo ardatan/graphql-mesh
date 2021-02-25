@@ -25,7 +25,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
@@ -47,7 +47,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Build
@@ -74,14 +74,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-${{matrix.node_version}}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{matrix.node_version}}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Cache Jest
         uses: actions/cache@v2
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
       - name: Test
         run: yarn test
         env:
