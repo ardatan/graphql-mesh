@@ -1,3 +1,4 @@
+import { isAbsolute } from 'path';
 import { makeAugmentedSchema, inferSchema } from 'neo4j-graphql-js';
 import neo4j, { Driver } from 'neo4j-driver';
 import { YamlConfig, MeshHandler, GetMeshSourceOptions, KeyValueCache, MeshPubSub } from '@graphql-mesh/types';
@@ -9,14 +10,16 @@ import { DocumentNode } from 'graphql';
 
 export default class Neo4JHandler implements MeshHandler {
   private name: string;
-  private cache: KeyValueCache<any>;
   private config: YamlConfig.Neo4JHandler;
+  private baseDir: string;
+  private cache: KeyValueCache<any>;
   private pubsub: MeshPubSub;
 
-  constructor({ name, cache, config, pubsub }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+  constructor({ name, config, baseDir, cache, pubsub }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
     this.name = name;
-    this.cache = cache;
     this.config = config;
+    this.baseDir = baseDir;
+    this.cache = cache;
     this.pubsub = pubsub;
   }
 
@@ -37,6 +40,7 @@ export default class Neo4JHandler implements MeshHandler {
 
     if (this.config.typeDefs) {
       const typeDefsArr = await loadTypedefs(this.config.typeDefs, {
+        cwd: isAbsolute(this.config.typeDefs) ? null : this.baseDir,
         loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
         assumeValid: true,
         assumeValidSDL: true,

@@ -1,4 +1,4 @@
-extend type Handler {  
+extend type Handler {
   """
   Handler for OData
   """
@@ -25,11 +25,11 @@ type ThriftHandler @md {
   """
   Name of the Thrift protocol type to use. Defaults to 'binary'.
   """
-  protocol: ThriftProtocolType 
+  protocol: ThriftProtocolType
   """
   The name of your service. Used for logging.
   """
-  serviceName: String!  
+  serviceName: String!
   """
   JSON object representing the Headers to add to the runtime of the API calls
   """

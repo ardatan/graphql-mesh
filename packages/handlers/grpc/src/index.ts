@@ -46,12 +46,15 @@ type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
+  private baseDir: string;
   private cache: KeyValueCache;
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
+
+  constructor({ config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
     if (!config) {
       throw new Error('Config not specified!');
     }
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
   }
 
@@ -59,11 +62,11 @@ export default class GrpcHandler implements MeshHandler {
     let creds: ChannelCredentials;
     if (this.config.credentialsSsl) {
       const sslFiles = [
-        getBuffer(this.config.credentialsSsl.privateKey, this.cache),
-        getBuffer(this.config.credentialsSsl.certChain, this.cache),
+        getBuffer(this.config.credentialsSsl.privateKey, this.cache, this.baseDir),
+        getBuffer(this.config.credentialsSsl.certChain, this.cache, this.baseDir),
       ];
       if (this.config.credentialsSsl.rootCA !== 'rootCA') {
-        sslFiles.unshift(getBuffer(this.config.credentialsSsl.rootCA, this.cache));
+        sslFiles.unshift(getBuffer(this.config.credentialsSsl.rootCA, this.cache, this.baseDir));
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
       creds = credentials.createSsl(rootCA, privateKey, certChain);

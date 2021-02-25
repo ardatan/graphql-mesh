@@ -5,13 +5,19 @@ import { transformSchemaFederation, FederationConfig, FederationFieldsConfig } f
 import { get, set } from 'lodash';
 
 export default class FederationTransform implements MeshTransform {
-  constructor(private options: MeshTransformOptions<YamlConfig.Transform['federation']>) {}
+  private config: YamlConfig.Transform['federation'];
+  private baseDir: string;
+
+  constructor({ baseDir, config }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+    this.config = config;
+    this.baseDir = baseDir;
+  }
+
   transformSchema(schema: GraphQLSchema) {
-    const { config } = this.options;
     const federationConfig: FederationConfig<any> = {};
 
-    if (config?.types) {
-      for (const type of config.types) {
+    if (this.config?.types) {
+      for (const type of this.config.types) {
         const fields: FederationFieldsConfig = {};
         if (type.config?.fields) {
           for (const field of type.config.fields) {
@@ -36,7 +42,7 @@ export default class FederationTransform implements MeshTransform {
         if (type.config?.resolveReference) {
           const resolveReferenceConfig = type.config.resolveReference;
           if (typeof resolveReferenceConfig === 'string') {
-            resolveReference = loadFromModuleExportExpressionSync(resolveReferenceConfig);
+            resolveReference = loadFromModuleExportExpressionSync(resolveReferenceConfig, { cwd: this.baseDir });
           } else if (typeof resolveReferenceConfig === 'function') {
             resolveReference = type.config.resolveReference;
           } else {
