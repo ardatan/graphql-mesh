@@ -8,7 +8,7 @@ sidebar_label: Extend
 
 **Note:** This transform is not able to access other sources, it can be only used in the source level.
 
-> Please DO NOT use this transform unless you know what you're doing! We strongly recommend you to extend the schema using `additionalTypeDefs` and `additionalResolvers` as described in [Extend Schema](https://graphql-mesh.com/docs/getting-started/multiple-apis) part in this documentation.
+> Please DO NOT use this transform unless you know what you're doing! We strongly recommend you to extend the schema using `additionalTypeDefs` and `additionalResolvers` as described in [Extend Schema](/docs/getting-started/multiple-apis) part in this documentation.
 
 ## How to use?
 
@@ -16,26 +16,26 @@ Add the following configuration under the source configuration;
 
 ```yml
 transforms:
-  - extend: 
-        typeDefs: ./someTypeDefs.graphql
-        resolvers: ./someResolvers.js
+  - extend:
+      typeDefs: ./someTypeDefs.graphql
+      resolvers: ./someResolvers.js
 ```
 
 You can extend the existing types in `someTypeDefs.graphql`;
 
 ```graphql
-    extend type User {
-        fullName: String
-    }
+extend type User {
+  fullName: String
+}
 ```
 
 And define resolvers for those types;
 
 ```js
 module.exports = {
-    User: {
-        fullName: user => `${user.firstName} ${user.lastName}` // e.g. `user` is the raw result returned by your data source
-    }
+  User: {
+    fullName: user => `${user.firstName} ${user.lastName}`, // e.g. `user` is the raw result returned by your data source
+  },
 }
 ```
 

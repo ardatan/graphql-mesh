@@ -19,8 +19,8 @@ transforms:
   - filterSchema:
       mode: bare | wrap
       filters:
-        - "Type.!User" # <-- This will remove `User` type
-        - "Type.!{User, Post}" # <-- This will remove `User` and `Post` types
+        - Type.!User # <-- This will remove `User` type
+        - Type.!{User, Post} # <-- This will remove `User` and `Post` types
 
         - Query.!admins # <-- This will remove field `admins` from `Query` type
         - Mutation.!{addUser, removeUser} # <-- This will remove fields `addUser` and `removeUser` from `Mutation` type
@@ -64,6 +64,7 @@ type LooseType {
 ```
 
 With the following Filter Schema config,
+
 ```yaml
 transforms:
   - filterSchema:
@@ -96,7 +97,7 @@ type User {
 }
 ```
 
-> For information about "bare" and "wrap" modes, please read the [dedicated section](https://graphql-mesh.com/docs/getting-started/mesh-transforms#two-different-modes).
+> For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/getting-started/mesh-transforms#two-different-modes).
 
 ## Config API Reference
 
