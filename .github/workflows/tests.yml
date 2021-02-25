@@ -100,3 +100,5 @@ jobs:
             ${{ runner.os }}-${{matrix.node_version}}-jest-
       - name: Test
         run: yarn test --logHeapUsage --ci
+        env:
+          CI: true

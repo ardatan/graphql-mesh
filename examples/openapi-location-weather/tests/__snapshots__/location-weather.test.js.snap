@@ -15320,21 +15320,3 @@ Object {
   },
 }
 `;
-
-exports[`Location Weather should give correct response for example queries: example-query.graphql-location-weather-result 1`] = `
-Object {
-  "data": Object {
-    "findCitiesUsingGET": Object {
-      "data": Array [
-        Object {
-          "name": "Istanbul",
-          "todayForecast": Object {
-            "maxTemp": 10.9,
-            "minTemp": 6.3,
-          },
-        },
-      ],
-    },
-  },
-}
-`;

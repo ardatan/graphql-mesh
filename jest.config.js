@@ -1,5 +1,6 @@
 const { resolve } = require('path');
 const { pathsToModuleNameMapper } = require('ts-jest/utils');
+const CI = !!process.env.CI;
 
 const ROOT_DIR = __dirname;
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
@@ -13,5 +14,5 @@ module.exports = {
   modulePathIgnorePatterns: ['dist'],
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: `${ROOT_DIR}/` }),
   collectCoverage: false,
-  cacheDirectory: '.cache/jest',
+  cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
 };
