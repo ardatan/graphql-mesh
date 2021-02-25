@@ -1,5 +1,20 @@
 # @graphql-mesh/config
 
+## 0.14.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+  - @graphql-mesh/utils@0.9.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.49
+  - @graphql-mesh/merger-stitching@0.7.33
+  - @graphql-mesh/runtime@0.11.8
+
 ## 0.13.7
 
 ### Patch Changes

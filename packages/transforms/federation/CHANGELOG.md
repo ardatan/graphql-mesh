@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-federation
 
+## 0.5.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+  - @graphql-mesh/utils@0.9.0
+
 ## 0.4.56
 
 ### Patch Changes
