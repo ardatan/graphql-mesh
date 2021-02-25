@@ -36,6 +36,7 @@ export type ConfigProcessOptions = {
   importFn?: (moduleId: string) => Promise<any>;
 };
 
+// TODO: deprecate this in next major release as dscussed in #1687
 export async function parseConfig(
   rawConfig: YamlConfig.Config | string,
   options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions
