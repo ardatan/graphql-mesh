@@ -26,7 +26,7 @@ import open from 'open';
 
 const { readFile } = fsPromises;
 
-export async function serveMesh(baseDir: string, argsPort?: number): Promise<void> {
+export async function serveMesh(baseDir: string, argsPort?: number) {
   spinner.start('Generating Mesh schema...');
   let readyFlag = false;
 
@@ -173,5 +173,14 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
         }
       })
       .on('error', handleFatalError);
+
+    return mesh$.then(mesh => ({
+      mesh,
+      httpServer,
+      app,
+      readyFlag,
+      logger,
+    }));
   }
+  return null;
 }

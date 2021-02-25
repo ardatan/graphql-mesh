@@ -9,6 +9,7 @@ const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
 });
 const mesh$ = config$.then(config => getMesh(config));
+jest.setTimeout(15000);
 
 describe('JSON Schema FHIR', () => {
   it('should generate correct schema', async () => {
@@ -17,7 +18,7 @@ describe('JSON Schema FHIR', () => {
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
-    ).toMatchSnapshot();
+    ).toMatchSnapshot('fhir-schema');
   });
   it('should give correct response for example queries', async () => {
     const {
@@ -31,7 +32,7 @@ describe('JSON Schema FHIR', () => {
     const { execute } = await mesh$;
     for (const source of sources) {
       const result = await execute(source.document);
-      expect(result).toMatchSnapshot();
+      expect(result).toMatchSnapshot(source.location + '-fhir-example-result');
     }
   });
   afterAll(() => mesh$.then(mesh => mesh.destroy()));

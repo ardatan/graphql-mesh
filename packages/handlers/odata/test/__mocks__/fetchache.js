@@ -10,6 +10,7 @@ fetchache.Request = function(url, config) {
     return {
         url,
         ...config,
+        text: async () => config.body,
     };
 }
 fetchache.Response = function(body) {
