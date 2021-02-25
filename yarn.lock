@@ -20821,12 +20821,12 @@ ts-node-dev@1.0.0:
     ts-node "^9.0.0"
     tsconfig "^7.0.0"
 
-ts-node-dev@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/ts-node-dev/-/ts-node-dev-1.1.1.tgz#b7602929395b1616b4aa99a3be0a4e121742283d"
-  integrity sha512-kAO8LUZgXZSY0+PucMPsQ0Bbdv0x+lgbN7j8gcD4PuTI4uKC6YchekaspmYTBNilkiu+rQYkWJA7cK+Q8/B0tQ==
+ts-node-dev@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/ts-node-dev/-/ts-node-dev-1.1.2.tgz#935e547103616c6e5530c2287b5f71efe7e53e39"
+  integrity sha512-9EOZgYVS1dn/QPGJ5vXz7KxvBYTWpjSfQHRE0ryFsn8EpOLb5tuJakVp9Y4amQWsivTptNdzOu6dEjI0vtS0hA==
   dependencies:
-    chokidar "^3.4.0"
+    chokidar "^3.5.1"
     dateformat "~1.0.4-1.2.3"
     dynamic-dedupe "^0.3.0"
     minimist "^1.2.5"
