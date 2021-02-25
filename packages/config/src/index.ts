@@ -36,6 +36,29 @@ export type ConfigProcessOptions = {
   importFn?: (moduleId: string) => Promise<any>;
 };
 
+export async function parseConfig(
+  rawConfig: YamlConfig.Config | string,
+  options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions
+) {
+  let config: YamlConfig.Config;
+  const { configFormat = 'object', dir: configDir = '' } = options || {}
+  const dir = isAbsolute(configDir) ? configDir : join(process.cwd(), configDir);
+
+  switch (configFormat) {
+    case 'yaml':
+      config = defaultLoaders['.yaml']('.meshrc.yml', rawConfig as string);
+      break;
+    case 'json':
+      config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
+      break;
+    case 'object':
+      config = rawConfig as YamlConfig.Config;
+      break;
+  }
+
+  return processConfig(config, { ...options, dir });
+}
+
 export type ProcessedConfig = {
   sources: MeshResolvedSource<any>[];
   transforms: MeshTransform[];
