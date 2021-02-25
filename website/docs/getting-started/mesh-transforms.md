@@ -192,8 +192,11 @@ Being a recent addition, "bare" mode is not available to all transforms yet.
 The table below gives you the list of transforms that support "bare" mode. Transforms not listed here do not support "bare", and so only implement default "wrap" mode.  
 If you have use cases where you believe "bare" mode should be added to a transform not listed here, feel free to [open a feature request](https://github.com/Urigo/graphql-mesh/issues/new/choose).
 
-|  Transform      |  Bare  |  Wrap  |
-|-----------------|:------:|:------:|
-|  Extend         |   ✅   |   ❌   |
-|  Rename         |   ✅   |   ✅   |
-|  Filter Schema  |   ✅   |   ✅   |
+| Transform             | Bare | Wrap |                      Docs                      |
+| --------------------- | :--: | :--: | :--------------------------------------------: |
+| Cache                 |  ✅  |  ❌  | [docs](/docs/transforms/cache)                 |
+| Extend                |  ✅  |  ❌  | [docs](/docs/transforms/extend)                |
+| Filter Schema         |  ✅  |  ✅  | [docs](/docs/transforms/filter-schema)         |
+| Rename                |  ✅  |  ✅  | [docs](/docs/transforms/rename)                |
+| Resolvers Composition |  ✅  |  ❌  | [docs](/docs/transforms/resolvers-composition) |
+| Snapshot              |  ✅  |  ❌  | [docs](/docs/transforms/snapshot)              |
