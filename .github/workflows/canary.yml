@@ -32,10 +32,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-node-modules-15-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-15-node-modules-
+            ${{ runner.os }}-node-modules-15-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-node-modules-15-
+            ${{ runner.os }}-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock && yarn patch-package
       - name: Release Canary
