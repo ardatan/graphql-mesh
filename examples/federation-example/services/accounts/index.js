@@ -49,6 +49,7 @@ const server = new ApolloServer({
   }
 });
 
-server.listen({ port: 4001 }).then(({ url }) => {
+module.exports = server.listen({ port: 9871 }).then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
+  return server;
 });
