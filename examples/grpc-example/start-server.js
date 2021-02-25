@@ -46,7 +46,7 @@ const Movies = [
   },
 ];
 
-module.exports = async function startServer() {
+module.exports = async function startServer(subscriptionInterval = 1000) {
   const server = new Server();
 
   const packageDefinition = await load('./io/xtech/service.proto', {
@@ -85,10 +85,10 @@ module.exports = async function startServer() {
               }
               console.log('call received', movie);
               call.write(movie);
-            }, i * 1000);
+            }, i * subscriptionInterval);
           }
         });
-      }, 1000 * (Movies.length + 1));
+      }, subscriptionInterval * (Movies.length + 1));
     },
   });
   const [rootCA, cert_chain, private_key] = await Promise.all([

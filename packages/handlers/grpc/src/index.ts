@@ -155,13 +155,11 @@ export default class GrpcHandler implements MeshHandler {
           addIncludePathResolver(root, options.includeDirs);
         }
       }
-      console.log('OK');
+
       const protoDefinition = await root.load(fileName as string, options);
-      console.log('OK2');
       protoDefinition.resolveAll();
-      console.log('OK3');
+
       packageDefinition = await load(fileName as string, options);
-      console.log('OK4');
     }
     const grpcObject = loadPackageDefinition(packageDefinition);
 

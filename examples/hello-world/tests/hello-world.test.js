@@ -24,7 +24,8 @@ describe('Hello World', () => {
         greeting
       }
     `);
-    expect(result).toMatchSnapshot();
+    expect(result?.errors).toBeFalsy();
+expect(result).toMatchSnapshot();
   });
   afterAll(() => mesh$.then(mesh => mesh.destroy()));
 });

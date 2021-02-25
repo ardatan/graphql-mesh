@@ -20,5 +20,4 @@ module.exports = {
   modulePathIgnorePatterns: ['dist'],
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: `${ROOT_DIR}/` }),
   collectCoverage: false,
-  preset: '@shelf/jest-mongodb',
 };
