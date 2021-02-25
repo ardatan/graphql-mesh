@@ -6,15 +6,8 @@ const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
 const tsconfig = require(TSCONFIG);
 
 module.exports = {
-  transform: { '^.+\\.tsx?$': 'ts-jest' },
   testEnvironment: 'node',
   rootDir: ROOT_DIR,
-  globals: {
-    'ts-jest': {
-      diagnostics: false,
-      tsConfig: TSCONFIG,
-    },
-  },
   restoreMocks: true,
   reporters: ['default'],
   modulePathIgnorePatterns: ['dist'],
