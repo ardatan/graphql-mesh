@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.35.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
 ## 0.34.1
 
 ### Patch Changes
