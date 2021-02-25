@@ -1,6 +1,6 @@
 import { findAndParseConfig } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
-import { join } from 'path';
+import { basename, join } from 'path';
 import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { loadDocuments } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -33,7 +33,7 @@ describe('Thrift Calculator', () => {
     const { execute } = await mesh$;
     for (const source of sources) {
       const result = await execute(source.document, {});
-      expect(result).toMatchSnapshot(source.location + '-thrift-calculator-result');
+      expect(result).toMatchSnapshot(basename(source.location) + '-thrift-calculator-result');
     }
   });
   afterAll(() => {

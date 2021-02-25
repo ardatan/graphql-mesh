@@ -1,6 +1,7 @@
 const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
-const { join } = require('path');
+const { basename, join } = require('path');
+
 const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
 const { loadDocuments } = require('@graphql-tools/load');
 const { GraphQLFileLoader } = require('@graphql-tools/graphql-file-loader');
@@ -32,7 +33,7 @@ describe('Location Weather', () => {
     const { execute } = await mesh$;
     for (const source of sources) {
       const result = await execute(source.document);
-      expect(result).toMatchSnapshot(source.location + '-location-weather-result');
+      expect(result).toMatchSnapshot(basename(source.location) + '-location-weather-result');
     }
   });
   afterAll(() => mesh$.then(mesh => mesh.destroy()));

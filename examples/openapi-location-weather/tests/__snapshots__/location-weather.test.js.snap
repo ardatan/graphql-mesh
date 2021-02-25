@@ -15288,7 +15288,7 @@ Object {
 }
 `;
 
-exports[`Location Weather should give correct response for example queries: /home/ardat_000/Guild/graphql-mesh/examples/openapi-location-weather/example-query.graphql-location-weather-result 1`] = `
+exports[`Location Weather should give correct response for example queries: example-query.graphql-location-weather-result 1`] = `
 Object {
   "data": Object {
     "findCitiesUsingGET": Object {

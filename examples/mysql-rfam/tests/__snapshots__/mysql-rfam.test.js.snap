@@ -40942,7 +40942,7 @@ Object {
 }
 `;
 
-exports[`MySQL Rfam should give correct response for example queries: /home/ardat_000/Guild/graphql-mesh/examples/mysql-rfam/example-query.graphql-query-result 1`] = `
+exports[`MySQL Rfam should give correct response for example queries: example-query.graphql-query-result 1`] = `
 Object {
   "data": Object {
     "getAlignmentAndTree": Array [

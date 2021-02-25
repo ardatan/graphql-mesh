@@ -1088,7 +1088,7 @@ Object {
 }
 `;
 
-exports[`Thrift Calculator should give correct response for example queries: /home/ardat_000/Guild/graphql-mesh/examples/thrift-calculator/example-query.graphql-thrift-calculator-result 1`] = `
+exports[`Thrift Calculator should give correct response for example queries: example-query.graphql-thrift-calculator-result 1`] = `
 Object {
   "data": Object {
     "add": null,

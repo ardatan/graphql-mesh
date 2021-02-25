@@ -1,7 +1,8 @@
 const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { readFile } = require('fs-extra');
-const { join } = require('path');
+const { basename, join } = require('path');
+
 const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
 
 const mesh$ = findAndParseConfig({

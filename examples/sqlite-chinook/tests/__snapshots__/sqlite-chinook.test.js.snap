@@ -5552,7 +5552,7 @@ Object {
 }
 `;
 
-exports[`SQLite Chinook should give correct response for example queries: /home/ardat_000/Guild/graphql-mesh/examples/sqlite-chinook/example-query.graphql-sqlite-chinook-result 1`] = `
+exports[`SQLite Chinook should give correct response for example queries: example-query.graphql-sqlite-chinook-result 1`] = `
 Object {
   "data": Object {
     "albums": Array [

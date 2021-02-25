@@ -5479,7 +5479,7 @@ Object {
 }
 `;
 
-exports[`OData TripPin should give correct response for example queries: /home/ardat_000/Guild/graphql-mesh/examples/odata-trippin/example-query.graphql-query-result 1`] = `
+exports[`OData TripPin should give correct response for example queries: example-query.graphql-query-result 1`] = `
 Object {
   "data": Object {
     "Me": null,
