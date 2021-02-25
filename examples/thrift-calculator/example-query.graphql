@@ -1,0 +1,3 @@
+query ExampleQuery {
+  add(x: 2, y: 3)
+}

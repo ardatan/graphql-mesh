@@ -9,7 +9,7 @@ const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
 });
 const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(15000);
+jest.setTimeout(30000);
 
 describe('JSON Schema FHIR', () => {
   it('should generate correct schema', async () => {

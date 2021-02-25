@@ -4,6 +4,9 @@ sources:
       thrift:
         idl: ./src/thrift/calculator.thrift
         hostName: localhost
-        port: 8080
+        port: 9876
         path: /thrift
         serviceName: calculator-service
+
+serve:
+  exampleQuery: ./example-query.graphql
