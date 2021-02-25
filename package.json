@@ -4,7 +4,7 @@
   "version": "0.2.15",
   "private": true,
   "scripts": {
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && husky install",
     "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
     "deploy:website": "cd website && yarn deploy",
     "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/types/src",
@@ -48,7 +48,7 @@
     "eslint-plugin-standard": "4.1.0",
     "globby": "11.0.2",
     "graphql": "15.5.0",
-    "husky": "4.3.8",
+    "husky": "5.1.1",
     "jest": "26.6.3",
     "lint-staged": "10.5.4",
     "patch-package": "6.2.2",
