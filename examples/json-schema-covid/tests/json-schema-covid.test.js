@@ -9,6 +9,7 @@ const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
 });
 const mesh$ = config$.then(config => getMesh(config));
+jest.setTimeout(30000);
 
 describe('JSON Schema Covid', () => {
   it('should generate correct schema', async () => {
@@ -17,7 +18,7 @@ describe('JSON Schema Covid', () => {
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
-    ).toMatchSnapshot();
+    ).toMatchSnapshot('json-schema-covid-schema');
   });
   it('should give correct response for STEP 1: 2 sources side by side', async () => {
       const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');

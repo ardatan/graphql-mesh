@@ -1091,10 +1091,7 @@ Object {
 exports[`Thrift Calculator should give correct response for example queries: example-query.graphql-thrift-calculator-result 1`] = `
 Object {
   "data": Object {
-    "add": null,
+    "add": 5,
   },
-  "errors": Array [
-    [GraphQLError: Unable to read Add__Args from input],
-  ],
 }
 `;

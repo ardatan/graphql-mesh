@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`JSON Schema Covid should generate correct schema 1`] = `
+exports[`JSON Schema Covid should generate correct schema: json-schema-covid-schema 1`] = `
 Object {
   "__schema": Object {
     "directives": Array [

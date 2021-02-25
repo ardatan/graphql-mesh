@@ -33,6 +33,7 @@ describe('Thrift Calculator', () => {
     const { execute } = await mesh$;
     for (const source of sources) {
       const result = await execute(source.document, {});
+      expect(result.errors).toBeFalsy();
       expect(result).toMatchSnapshot(basename(source.location) + '-thrift-calculator-result');
     }
   });
