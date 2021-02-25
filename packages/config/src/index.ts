@@ -41,7 +41,7 @@ export async function parseConfig(
   options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions
 ) {
   let config: YamlConfig.Config;
-  const { configFormat = 'object', dir: configDir = '' } = options || {}
+  const { configFormat = 'object', dir: configDir = '' } = options || {};
   const dir = isAbsolute(configDir) ? configDir : join(process.cwd(), configDir);
 
   switch (configFormat) {
