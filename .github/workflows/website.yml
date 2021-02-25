@@ -31,16 +31,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '15.x'
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-15-yarn-${{ hashFiles('yarn.lock') }}
+          path: '**/node_modules'
+          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('**/package.json') }}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-yarn-
+            ${{ runner.os }}-15-node-modules-${{ hashFiles('**/package.json') }}-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-15-node-modules-${{ hashFiles('**/package.json') }}-
+            ${{ runner.os }}-15-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Deploy 🚀
