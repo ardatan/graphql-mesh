@@ -9,7 +9,7 @@ sources:
           apply:
             - Query.*
             - Mutation.*
-          outputDir: __snapshots__
+          outputDir: snapshots
 
 serve:
   exampleQuery: list-of-languages-by-name.graphql
