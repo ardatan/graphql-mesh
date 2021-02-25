@@ -1,5 +1,13 @@
 # @graphql-mesh/tuql
 
+## 0.4.50
+
+### Patch Changes
+
+- 191a663a: fix(tuql): respect baseUrl instead of process.cwd
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
 ## 0.4.49
 
 ### Patch Changes

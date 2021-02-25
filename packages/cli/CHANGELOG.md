@@ -1,5 +1,25 @@
 # @graphql-mesh/cli
 
+## 0.26.0
+
+### Minor Changes
+
+- 7efbf045: Fix CLI usage of base-dir
+
+  **Breaking changes**
+  This is technically just a bug fix, but it corrects a behaviour that will break if you relied on it.
+  When using CLI commands with the `--dir` option, those commands were using your given `--dir` as the base directory.
+
+  Now CLI commands always use the Current Working Directory (CWD) as the base directory and so the given `--dir` is used to only get the Mesh Config file and process any local file eventually defined in the Config.
+
+- 191a663a: feat(cli): return server and express app from serveMesh
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/config@0.14.1
+  - @graphql-mesh/runtime@0.11.9
+
 ## 0.25.3
 
 ### Patch Changes
