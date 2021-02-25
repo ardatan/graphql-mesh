@@ -500,6 +500,39 @@ Object {
         "specifiedByUrl": null,
       },
       Object {
+        "enumValues": null,
+        "fields": Array [
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "code",
+            "type": Object {
+              "kind": "ENUM",
+              "name": "ErrorCode",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "message",
+            "type": Object {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": Array [],
+        "kind": "OBJECT",
+        "name": "CitiesError",
+        "possibleTypes": null,
+        "specifiedByUrl": null,
+      },
+      Object {
         "enumValues": Array [
           Object {
             "deprecationReason": null,
@@ -1463,7 +1496,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -1618,7 +1651,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -1718,7 +1751,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -2262,7 +2295,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -2299,7 +2332,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -2900,39 +2933,6 @@ Object {
         "interfaces": Array [],
         "kind": "OBJECT",
         "name": "EnergyObsSeries",
-        "possibleTypes": null,
-        "specifiedByUrl": null,
-      },
-      Object {
-        "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "code",
-            "type": Object {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "message",
-            "type": Object {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "inputFields": null,
-        "interfaces": Array [],
-        "kind": "OBJECT",
-        "name": "Error",
         "possibleTypes": null,
         "specifiedByUrl": null,
       },
@@ -4913,7 +4913,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -5035,7 +5035,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -5312,7 +5312,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -5532,7 +5532,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -7446,7 +7446,7 @@ Object {
             "name": "getBulkFilesFile",
             "type": Object {
               "kind": "OBJECT",
-              "name": "Error",
+              "name": "WeatherError",
               "ofType": null,
             },
           },
@@ -13726,7 +13726,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -13833,7 +13833,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -13906,7 +13906,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -13991,7 +13991,7 @@ Object {
               "name": null,
               "ofType": Object {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "CitiesError",
                 "ofType": null,
               },
             },
@@ -14454,6 +14454,39 @@ Object {
         "interfaces": Array [],
         "kind": "OBJECT",
         "name": "WeatherAlertGroup",
+        "possibleTypes": null,
+        "specifiedByUrl": null,
+      },
+      Object {
+        "enumValues": null,
+        "fields": Array [
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "code",
+            "type": Object {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "message",
+            "type": Object {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": Array [],
+        "kind": "OBJECT",
+        "name": "WeatherError",
         "possibleTypes": null,
         "specifiedByUrl": null,
       },
