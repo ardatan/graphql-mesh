@@ -24,7 +24,7 @@
     "fetchache": "0.0.4",
     "lodash": "4.17.21",
     "graphql-compose": "7.25.0",
-    "graphql-scalars": "1.7.1",
+    "graphql-scalars": "1.8.0",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
