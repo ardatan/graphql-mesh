@@ -4247,10 +4247,10 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.7.1.tgz#c020d017c3ed6bcfdde49a7106ba035e4d0774f5"
   integrity sha512-5kJPe2FkPNsCGu9tocKIzUSNO986qAqdnbk8hIFqWlpVPBAmEAOYb1mr6PA18FYAlu7ojWm9Hm13k29aj2GGlQ==
 
-"@n1ru4l/in-memory-live-query-store@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.6.0.tgz#37803d8a269da9d2f145edec5d163fcdb333a0d5"
-  integrity sha512-zBGXCq8yih6GbXOnouUejqZnfGmXGX5BTIURv0e28fVpWVEXpMVax+jAvyN9DdBTbFWuI6k2MR56BPP5LF1smg==
+"@n1ru4l/in-memory-live-query-store@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.6.1.tgz#87abf15f4f24d0d093050c70a083a2ec7be1cf86"
+  integrity sha512-LX3kdwDeh7NAXCyYKEvD+ifqsPiyFraFgih/uZ76Mm/MtYXiXDeFOofT+G/5sWZ8W4KaLYzj+wpTaDqIKYiDFw==
   dependencies:
     "@graphql-tools/wrap" "^7.0.3"
     "@n1ru4l/graphql-live-query" "0.7.1"
