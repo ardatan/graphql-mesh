@@ -7,16 +7,8 @@ const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
 const tsconfig = require(TSCONFIG);
 
 module.exports = {
-  transform: { '^.+\\.tsx?$': 'ts-jest', '^.+\\.jsx?$': 'babel-jest' },
   testEnvironment: 'node',
   rootDir: ROOT_DIR,
-  globals: {
-    'ts-jest': {
-      diagnostics: false,
-      tsconfig: TSCONFIG,
-      babelConfig: true,
-    },
-  },
   restoreMocks: true,
   reporters: ['default'],
   modulePathIgnorePatterns: ['dist'],

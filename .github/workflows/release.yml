@@ -35,10 +35,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('**/package.json') }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-node-modules-${{ hashFiles('**/package.json') }}-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-15-node-modules-${{ hashFiles('**/package.json') }}-
+            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
             ${{ runner.os }}-15-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock && yarn patch-package
