@@ -24,7 +24,7 @@
     "form-urlencoded": "4.2.1",
     "jsonpath-plus": "5.0.3",
     "json-ptr": "2.0.0",
-    "graphql-scalars": "1.7.1",
+    "graphql-scalars": "1.8.0",
     "graphql-subscriptions": "1.2.0",
     "lodash": "4.17.21",
     "pluralize": "8.0.0",

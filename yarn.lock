@@ -11867,10 +11867,10 @@ graphql-relay@^0.6.0:
   dependencies:
     prettier "^1.16.0"
 
-graphql-scalars@1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.7.1.tgz#1894b216fc9d1c9a9a552554557a884a45503bd5"
-  integrity sha512-Z5Iy2Wo+AyjS5x27QnZewbro/xnfclfTGRhSrDva6BOhQws3+RAberK36DC+1hSO+6bIAwnaz1EQ0qkV5ENA4w==
+graphql-scalars@1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.8.0.tgz#bdbe78ef799fd18a6fded27c81bee711ca7b3204"
+  integrity sha512-XBFQmvOFspiIj+qEQe7mPBN0abn7N8UkKHqJffMJgt7UQx+WExg0GaiJta5iTrFYl1y63EaFZnG4FtHbMZAD0Q==
   dependencies:
     tslib "~2.1.0"
 
