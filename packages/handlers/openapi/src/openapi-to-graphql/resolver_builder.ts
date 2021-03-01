@@ -468,9 +468,9 @@ export function getResolver<TSource, TContext, TArgs>(
         : Oas3Tools.sanitize(payloadName, Oas3Tools.CaseStyle.camelCase);
 
       let rawPayload;
-      if (operation.payloadContentType === 'application/json') {
+      if (operation.payloadContentType.includes('application/json') || operation.payloadContentType.includes('*/*')) {
         rawPayload = JSON.stringify(Oas3Tools.desanitizeObjectKeys(args[sanePayloadName], data.saneMap));
-      } else if (operation.payloadContentType === 'application/x-www-form-urlencoded') {
+      } else if (operation.payloadContentType.includes('application/x-www-form-urlencoded')) {
         rawPayload = formurlencoded(Oas3Tools.desanitizeObjectKeys(args[sanePayloadName], data.saneMap));
       } else {
         // Payload is not an object

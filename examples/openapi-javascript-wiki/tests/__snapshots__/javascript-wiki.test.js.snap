@@ -368,6 +368,112 @@ Object {
       },
       Object {
         "enumValues": null,
+        "fields": Array [
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "inTheNews",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "LIST",
+                "name": null,
+                "ofType": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "mostRead",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "LIST",
+                "name": null,
+                "ofType": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "onThisDay",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "LIST",
+                "name": null,
+                "ofType": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "pictureOfTheDay",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "LIST",
+                "name": null,
+                "ofType": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "todaysFeaturedArticle",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "LIST",
+                "name": null,
+                "ofType": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": Array [],
+        "kind": "OBJECT",
+        "name": "Availability",
+        "possibleTypes": null,
+        "specifiedByUrl": null,
+      },
+      Object {
+        "enumValues": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -2881,8 +2987,8 @@ Object {
             "isDeprecated": false,
             "name": "getFeedAvailability",
             "type": Object {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "OBJECT",
+              "name": "Availability",
               "ofType": null,
             },
           },
