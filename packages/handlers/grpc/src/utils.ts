@@ -93,7 +93,11 @@ export function getTypeName(
   if (isScalarType(typePath)) {
     return getGraphQLScalar(typePath);
   }
-  let baseTypeName = pascalCase(toSnakeCase(typePath.replace(packageName + '.', '')));
+  let baseTypeName = pascalCase(typePath);
+  const packageNamePrefix = pascalCase(packageName);
+  if (baseTypeName.startsWith(packageNamePrefix)) {
+    baseTypeName = baseTypeName.replace(packageNamePrefix, '');
+  }
   if (isInput && !schemaComposer.isEnumType(baseTypeName)) {
     baseTypeName += 'Input';
   }
