@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.13.2
+
+### Patch Changes
+
+- e1eca62e: fix(openapi): treat json-like content types as json
+
 ## 0.13.1
 
 ### Patch Changes
