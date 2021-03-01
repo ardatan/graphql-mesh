@@ -33,7 +33,6 @@ export function addIncludePathResolver(root: Root, includePaths: string[]): void
     }
     for (const directory of includePaths) {
       const fullPath: string = join(directory, target);
-      console.log(fullPath);
       if (existsSync(fullPath)) {
         return fullPath;
       }
