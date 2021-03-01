@@ -1,27 +1,34 @@
 const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
 
 const typeDefs = gql`
-  type Review @key(fields: "id") {
+  type Query {
+    reviewById: Review
+  }
+
+  type Review {
     id: ID!
     body: String
-    author: User @provides(fields: "username")
+    author: User
     product: Product
   }
 
-  extend type User @key(fields: "id") {
-    id: ID! @external
-    username: String @external
+  type User {
+    id: ID!
+    username: String
+    numberOfReviews: Int
     reviews: [Review]
   }
 
-  extend type Product @key(fields: "upc") {
-    upc: String! @external
+  type Product {
+    upc: ID!
     reviews: [Review]
   }
 `;
 
 const resolvers = {
+  Query: {
+    reviewById: (_,{ id }) => reviews.find(review => review.id === id)
+  },
   Review: {
     author(review) {
       return { __typename: "User", id: review.authorID };
@@ -47,12 +54,8 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      typeDefs,
-      resolvers
-    }
-  ])
+  typeDefs,
+  resolvers,
 });
 
 module.exports = server.listen({ port: 9874 }).then(({ url }) => {

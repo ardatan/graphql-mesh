@@ -38,5 +38,5 @@ type FederationField {
 type FederationFieldConfig {
   external: Boolean
   provides: String
-  required: String
+  requires: String
 }

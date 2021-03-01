@@ -7,9 +7,11 @@ sources:
     transforms:
       - federation:
           types:
+            # extend type Query
             - name: Query
               config:
                 extend: true
+            # type User @key(fields: "id")
             - name: User
               config:
                 keyFields:
@@ -22,7 +24,55 @@ sources:
   - name: reviews
     handler:
       graphql:
-        endpoint: http://localhost:9872/graphql
+        endpoint: http://localhost:9874/graphql
+    transforms:
+      - federation:
+          types:
+            # extend type Query
+            - name: Query
+              config:
+                extend: true
+            - name: Review
+              config:
+                # type Review @key(fields: "id")
+                keyFields:
+                  - id
+                fields:
+                  # author: User @provides(fields: "username")
+                  - name: author
+                    config:
+                      provides: username
+                resolveReference:
+                  targetSource: reviews
+                  targetMethod: reviewById
+                  args:
+                    id: root.id
+            - name: User
+              config:
+                # extend type User @key(fields: "id")
+                extend: true
+                keyFields:
+                  - id
+                fields:
+                  # id: ID! @external
+                  - name: id
+                    config:
+                      external: true
+                  # username: String @external
+                  - name: username
+                    config:
+                      external: true
+            - name: Product
+              config:
+                # extend type Product @key(fields: "upc")
+                extend: true
+                keyFields:
+                  - upc
+                fields:
+                  # upc: String! @external
+                  - name: upc
+                    config:
+                      external: true
   - name: products
     handler:
       graphql:
@@ -30,7 +80,7 @@ sources:
   - name: inventory
     handler:
       graphql:
-        endpoint: http://localhost:9874/graphql
+        endpoint: http://localhost:9872/graphql
 
 serve:
   exampleQuery: example-query.graphql

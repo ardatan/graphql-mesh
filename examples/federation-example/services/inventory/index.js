@@ -3,7 +3,7 @@ const { buildFederatedSchema } = require("@apollo/federation");
 
 const typeDefs = gql`
   extend type Product @key(fields: "upc") {
-    upc: String! @external
+    upc: ID! @external
     weight: Int @external
     price: Int @external
     inStock: Boolean
