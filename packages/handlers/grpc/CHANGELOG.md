@@ -1,5 +1,12 @@
 # @graphql-mesh/grpc
 
+## 0.9.2
+
+### Patch Changes
+
+- c8d03d21: fix(grpc): handle packageName correctly
+- c8d03d21: fix(grpc): remove unnecessary console.log
+
 ## 0.9.1
 
 ### Patch Changes
