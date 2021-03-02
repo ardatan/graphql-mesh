@@ -3951,10 +3951,10 @@
     google-auth-library "^6.0.0"
     semver "^6.2.0"
 
-"@grpc/grpc-js@1.2.8":
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.2.8.tgz#7e1aab8fd4d576b8ee6e73bba475d94a67ffd07d"
-  integrity sha512-9C1xiCbnYe/3OFpSuRqz2JgFSOxv6+SlqFhXgRC1nHfXYbLnXvtmsI/NpaMs6k9ZNyV4gyaOOh5Z4McfegQGew==
+"@grpc/grpc-js@1.2.9":
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.2.9.tgz#ad99bba6b23bb7a2d39703b88c10d7a867dc4f87"
+  integrity sha512-hUNM2G8EP/dHN6cLFk8BXV6ae8zR7A0TPXGCERdwUiJv9yb6BL7FrTb73gUrrx4Dje6tUeomH6urSDEDz5mE7g==
   dependencies:
     "@types/node" ">=12.12.47"
     google-auth-library "^6.1.1"
