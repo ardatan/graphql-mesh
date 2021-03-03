@@ -70,13 +70,19 @@ export async function readUrlWithCache<T>(
   cache: KeyValueCache,
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
-  const { allowUnknownExtensions } = config || {};
+  const { allowUnknownExtensions, fallbackFormat } = config || {};
   const response = await fetchache(new Request(path, config), cache);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
-  if (/json$/.test(path) || contentType.startsWith('application/json')) {
+  if (/json$/.test(path) || contentType.startsWith('application/json') || fallbackFormat === 'json') {
     return JSON.parse(responseText);
-  } else if (/yaml$/.test(path) || /yml$/.test(path) || contentType.includes('yaml') || contentType.includes('yml')) {
+  } else if (
+    /yaml$/.test(path) ||
+    /yml$/.test(path) ||
+    contentType.includes('yaml') ||
+    contentType.includes('yml') ||
+    fallbackFormat === 'yaml'
+  ) {
     return (loadYaml(responseText) as any) as T;
   } else if (!allowUnknownExtensions) {
     throw new Error(
