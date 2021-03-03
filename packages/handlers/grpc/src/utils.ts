@@ -33,7 +33,6 @@ export function addIncludePathResolver(root: Root, includePaths: string[]): void
     }
     for (const directory of includePaths) {
       const fullPath: string = join(directory, target);
-      console.log(fullPath);
       if (existsSync(fullPath)) {
         return fullPath;
       }
@@ -93,7 +92,11 @@ export function getTypeName(
   if (isScalarType(typePath)) {
     return getGraphQLScalar(typePath);
   }
-  let baseTypeName = pascalCase(toSnakeCase(typePath.replace(packageName + '.', '')));
+  let baseTypeName = pascalCase(typePath);
+  const packageNamePrefix = pascalCase(packageName);
+  if (baseTypeName.startsWith(packageNamePrefix)) {
+    baseTypeName = baseTypeName.replace(packageNamePrefix, '');
+  }
   if (isInput && !schemaComposer.isEnumType(baseTypeName)) {
     baseTypeName += 'Input';
   }

@@ -1542,17 +1542,6 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "capital",
-            "type": Object {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [],
-            "deprecationReason": null,
-            "isDeprecated": false,
             "name": "code",
             "type": Object {
               "kind": "SCALAR",
@@ -8681,6 +8670,55 @@ Object {
             "type": Object {
               "kind": "OBJECT",
               "name": "DistanceResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "asciiMode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "cityId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "languageCode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "getCityLocatedInUsingGET",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "PopulatedPlaceResponse",
               "ofType": null,
             },
           },

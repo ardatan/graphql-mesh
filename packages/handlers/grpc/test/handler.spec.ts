@@ -5,21 +5,22 @@ import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { PubSub } from 'graphql-subscriptions';
 import GrpcHandler from '../src';
 
-describe.each<[string, string, string]>([
-  ['Movie', 'io.xtech', 'movie.proto'],
-  ['Empty', 'io.xtech', 'empty.proto'],
-  ['Nested', 'io.xtech', 'nested.proto'],
-  ['With All Values', 'io.xtech', 'allvalues.proto'],
-  ['No Package Nested', '', 'nopackage-nested.proto'],
-  ['With Underscores', 'io.xtech', 'underscores.proto'],
-  ['Outide', 'io.outside', 'outside.proto'],
-])('Interpreting Protos', (name, packageName, file) => {
+describe.each<[string, string, string, string]>([
+  ['Movie', 'Example', 'io.xtech', 'movie.proto'],
+  ['Empty', 'Example', 'io.xtech', 'empty.proto'],
+  ['Nested', 'Example', 'io.xtech', 'nested.proto'],
+  ['With All Values', 'Example', 'io.xtech', 'allvalues.proto'],
+  ['No Package Nested', 'Example', '', 'nopackage-nested.proto'],
+  ['With Underscores', 'Example', 'io.xtech', 'underscores.proto'],
+  ['Outide', 'Example', 'io.outside', 'outside.proto'],
+  ['Custom Message', 'BamService', 'foos', 'custom-message.proto'],
+])('Interpreting Protos', (name, serviceName, packageName, file) => {
   test(`should load the ${name} proto`, async () => {
     const cache = new InMemoryLRUCache();
     const pubsub = new PubSub();
     const config = {
       endpoint: 'localhost',
-      serviceName: 'Example',
+      serviceName,
       packageName,
       protoFilePath: {
         file,
