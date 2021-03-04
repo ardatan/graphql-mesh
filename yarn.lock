@@ -7417,10 +7417,10 @@ bn.js@^5.0.0, bn.js@^5.1.1:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.3.tgz#beca005408f642ebebea80b042b4d18d2ac0ee6b"
   integrity sha512-GkTiFpjFtUzU9CbMeJ5iazkCzGL3jrhzerzZIuqLABjbwRaFt33I9tUdSNryIptM+RxDet6OKm2WnLXzW51KsQ==
 
-bob-the-bundler@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.1.0.tgz#fd7cd427f754bf95826055ee356d64a67406387f"
-  integrity sha512-qqstwyxR7YX3Im8jY3vTV4FwnpuRS8AQclZwR9kg3SaWqZnzvEfJKO+JOf3Kbr1/48Zu6O1qPeKmEHesAyR3uw==
+bob-the-bundler@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.2.0.tgz#a69a5695ac4e7aff8e34c8433517ae8c9823982c"
+  integrity sha512-bBz5RiQw326NG/Tdbg+RzM5Aldz6WUYdxf0ZSqTpOiwj8dHqyqZNWi4fDLjUMwL6BRq9HaXyWaqs26iQQfjtzw==
   dependencies:
     "@rollup/plugin-node-resolve" "7.1.1"
     consola "2.11.3"
@@ -7432,6 +7432,7 @@ bob-the-bundler@1.1.0:
     minimatch "3.0.4"
     mkdirp "1.0.4"
     p-limit "2.2.2"
+    param-case "3.0.4"
     rollup "2.3.2"
     rollup-plugin-auto-external "2.0.0"
     rollup-plugin-generate-package-json "3.2.0"
