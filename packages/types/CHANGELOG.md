@@ -1,5 +1,47 @@
 # @graphql-mesh/types
 
+## 0.35.1
+
+### Patch Changes
+
+- 191a663a: fix(types): baseUrl doesn't need to be required
+
+## 0.35.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+## 0.34.1
+
+### Patch Changes
+
+- 55327fd6: fix(config): support arrays and singular values for additionalTypeDefs
+
+## 0.34.0
+
+### Minor Changes
+
+- 76051dd7: feat(serve): ability to change GraphQL endpoint path
+
+## 0.33.0
+
+### Minor Changes
+
+- 646d6bdb: feat(rename-transform): add bare option
+
+## 0.32.0
+
+### Minor Changes
+
+- 68d6b117: feat(postgraphile): add ability to disable live queries and subscriptions
+
+## 0.31.1
+
+### Patch Changes
+
+- 212f2d66: fix(postgraphile): caching
+
 ## 0.31.0
 
 ### Minor Changes

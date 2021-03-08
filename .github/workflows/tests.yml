@@ -21,22 +21,20 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: 15
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-15-yarn-${{ hashFiles('yarn.lock') }}
+          path: '**/node_modules'
+          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-yarn-
+            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-15-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Lint
         run: yarn lint
-  build:
-    name: Build
+  typecheck:
+    name: TypeScript Type Checking
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master
@@ -47,20 +45,18 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: 15
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-15-yarn-${{ hashFiles('yarn.lock') }}
+          path: '**/node_modules'
+          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-yarn-
+            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-15-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Build
-        run: yarn build
+        run: yarn transpile-ts --noEmit
 
   test:
     name: Testing on ${{matrix.os}} and Node ${{matrix.node_version}}
@@ -79,16 +75,14 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: ${{ matrix.node_version }}
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{matrix.node_version}}-yarn-${{ hashFiles('yarn.lock') }}
+          path: '**/node_modules'
+          key: ${{ runner.os }}-${{matrix.node_version}}-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{matrix.node_version}}-yarn-
+            ${{ runner.os }}-${{matrix.node_version}}-node-modules-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-${{matrix.node_version}}-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Cache Jest
@@ -97,6 +91,9 @@ jobs:
           path: .cache/jest
           key: ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
           restore-keys: |
+            ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
             ${{ runner.os }}-${{matrix.node_version}}-jest-
       - name: Test
-        run: yarn test --logHeapUsage
+        run: yarn test
+        env:
+          CI: true

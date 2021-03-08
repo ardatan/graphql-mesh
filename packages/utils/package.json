@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.8.7",
+  "version": "0.9.0",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -18,9 +18,9 @@
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.11",
     "@graphql-tools/delegate": "7.0.10",
-    "@graphql-tools/utils": "7.2.5",
+    "@graphql-tools/utils": "7.5.0",
     "@graphql-typed-document-node/core": "3.1.0",
-    "date-fns": "2.17.0",
+    "date-fns": "2.19.0",
     "fetchache": "0.0.4",
     "is-url": "1.2.4",
     "js-yaml": "4.0.0",

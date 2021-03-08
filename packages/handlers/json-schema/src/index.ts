@@ -39,10 +39,13 @@ type CachedSchema = {
 
 export default class JsonSchemaHandler implements MeshHandler {
   public config: YamlConfig.JsonSchemaHandler;
+  private baseDir: string;
   public cache: KeyValueCache<any>;
   public pubsub: MeshPubSub;
-  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
+
+  constructor({ config, baseDir, cache, pubsub }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
   }
@@ -87,6 +90,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     if (this.config.baseSchema) {
       const basedFilePath = this.config.baseSchema;
       const baseSchema = await readFileOrUrlWithCache(basedFilePath, this.cache, {
+        cwd: this.baseDir,
         headers: this.config.schemaHeaders,
       });
       externalFileCache.set(basedFilePath, baseSchema);
@@ -126,11 +130,13 @@ export default class JsonSchemaHandler implements MeshHandler {
         requestSchema ||
           (operationConfig.requestSchema &&
             readFileOrUrlWithCache(operationConfig.requestSchema, this.cache, {
+              cwd: this.baseDir,
               headers: this.config.schemaHeaders,
             })),
         responseSchema ||
           (operationConfig.responseSchema &&
             readFileOrUrlWithCache(operationConfig.responseSchema, this.cache, {
+              cwd: this.baseDir,
               headers: this.config.schemaHeaders,
             })),
       ]);
@@ -200,7 +206,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           return this.pubsub.asyncIterator(pubsubTopic);
         };
         fieldConfig.resolve = root => root;
-      } else {
+      } else if (operationConfig.path) {
         fieldConfig.resolve = async (root, args, context, info) => {
           const interpolationData = { root, args, context, info };
           const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
@@ -315,7 +321,7 @@ export default class JsonSchemaHandler implements MeshHandler {
       if (cachedSample) {
         return cachedSample;
       }
-      const sample = await readFileOrUrlWithCache(samplePath, this.cache);
+      const sample = await readFileOrUrlWithCache(samplePath, this.cache, { cwd: this.baseDir });
       const schema = toJsonSchema(sample, {
         required: false,
         objects: {

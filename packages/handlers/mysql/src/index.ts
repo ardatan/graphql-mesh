@@ -101,20 +101,23 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 export default class MySQLHandler implements MeshHandler {
-  config: YamlConfig.MySQLHandler;
-  pubsub: MeshPubSub;
+  private config: YamlConfig.MySQLHandler;
+  private baseDir: string;
+  private pubsub: MeshPubSub;
 
-  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({ config, baseDir, pubsub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
     this.config = config;
+    this.baseDir = baseDir;
     this.pubsub = pubsub;
   }
 
   async getMeshSource(): Promise<MeshSource> {
+    const { pool: configPool } = this.config;
     const schemaComposer = new SchemaComposer<MysqlContext>();
-    const pool: Pool = this.config.pool
-      ? typeof this.config.pool === 'string'
-        ? await loadFromModuleExportExpression(this.config.pool)
-        : this.config.pool
+    const pool: Pool = configPool
+      ? typeof configPool === 'string'
+        ? await loadFromModuleExportExpression(configPool, { cwd: this.baseDir })
+        : configPool
       : createPool(this.config);
     pool.on('connection', connection => {
       upgrade(connection);

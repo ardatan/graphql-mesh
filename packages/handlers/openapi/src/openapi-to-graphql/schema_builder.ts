@@ -1057,11 +1057,16 @@ export function getArgs<TSource, TContext, TArgs>({
     if (typeof parameter.schema === 'object') {
       schema = parameter.schema;
     } else if (typeof parameter.content === 'object') {
+      const contentTypes = Object.keys(parameter.content);
+      const jsonContentType = contentTypes.find(
+        contentType => contentType.toString().includes('application/json') || contentType.toString().includes('*/*')
+      );
       if (
-        typeof parameter.content['application/json'] === 'object' &&
-        typeof parameter.content['application/json'].schema === 'object'
+        jsonContentType &&
+        typeof parameter.content[jsonContentType] === 'object' &&
+        typeof parameter.content[jsonContentType].schema === 'object'
       ) {
-        schema = parameter.content['application/json'].schema;
+        schema = parameter.content[jsonContentType].schema;
       } else {
         handleWarning({
           mitigationType: MitigationTypes.NON_APPLICATION_JSON_SCHEMA,

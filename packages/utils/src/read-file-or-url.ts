@@ -11,6 +11,7 @@ export { isUrl };
 interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml';
+  cwd?: string;
 }
 
 export async function readFileOrUrlWithCache<T>(
@@ -30,7 +31,8 @@ export async function readFileWithCache<T>(
   cache: KeyValueCache,
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
-  const actualPath = isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
+  const { allowUnknownExtensions, cwd, fallbackFormat } = config || {};
+  const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
   const cachedObjStr = await cache.get(actualPath);
   const stats = await stat(actualPath);
   if (cachedObjStr) {
@@ -44,8 +46,8 @@ export async function readFileWithCache<T>(
     result = JSON.parse(result);
   } else if (/yaml$/.test(filePath) || /yml$/.test(filePath)) {
     result = loadYaml(result);
-  } else if (config?.fallbackFormat) {
-    switch (config.fallbackFormat) {
+  } else if (fallbackFormat) {
+    switch (fallbackFormat) {
       case 'json':
         result = JSON.parse(result);
         break;
@@ -53,7 +55,7 @@ export async function readFileWithCache<T>(
         result = loadYaml(result);
         break;
     }
-  } else if (!config?.allowUnknownExtensions) {
+  } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${filePath}' has ` +
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`
@@ -68,6 +70,7 @@ export async function readUrlWithCache<T>(
   cache: KeyValueCache,
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
+  const { allowUnknownExtensions } = config || {};
   const response = await fetchache(new Request(path, config), cache);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
@@ -75,7 +78,7 @@ export async function readUrlWithCache<T>(
     return JSON.parse(responseText);
   } else if (/yaml$/.test(path) || /yml$/.test(path) || contentType.includes('yaml') || contentType.includes('yml')) {
     return (loadYaml(responseText) as any) as T;
-  } else if (!config?.allowUnknownExtensions) {
+  } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure URL '${path}' has ` +
         `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`

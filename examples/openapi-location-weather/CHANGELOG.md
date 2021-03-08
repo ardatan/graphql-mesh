@@ -1,5 +1,123 @@
 # typescript-location-weather-example
 
+## 0.5.83
+
+### Patch Changes
+
+- Updated dependencies [e1eca62e]
+  - @graphql-mesh/openapi@0.13.2
+
+## 0.5.82
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+- Updated dependencies [7efbf045]
+- Updated dependencies [191a663a]
+  - @graphql-mesh/config@0.14.1
+  - @graphql-mesh/cli@0.26.0
+  - @graphql-mesh/openapi@0.13.1
+  - @graphql-mesh/runtime@0.11.9
+  - @graphql-mesh/transform-cache@0.8.34
+  - @graphql-mesh/transform-rename@0.8.5
+
+## 0.5.81
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/config@0.14.0
+  - @graphql-mesh/openapi@0.13.0
+  - @graphql-mesh/cli@0.25.3
+  - @graphql-mesh/runtime@0.11.8
+  - @graphql-mesh/transform-cache@0.8.33
+
+## 0.5.80
+
+### Patch Changes
+
+- Updated dependencies [cf58cd5c]
+- Updated dependencies [cf58cd5c]
+  - @graphql-mesh/cli@0.25.2
+  - @graphql-mesh/runtime@0.11.7
+  - @graphql-mesh/config@0.13.7
+
+## 0.5.79
+
+### Patch Changes
+
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/runtime@0.11.6
+  - @graphql-mesh/cli@0.25.1
+  - @graphql-mesh/config@0.13.6
+  - @graphql-mesh/openapi@0.12.18
+  - @graphql-mesh/transform-cache@0.8.32
+
+## 0.5.78
+
+### Patch Changes
+
+- Updated dependencies [b52859c6]
+  - @graphql-mesh/cli@0.25.0
+
+## 0.5.77
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.5
+- @graphql-mesh/openapi@0.12.17
+- @graphql-mesh/runtime@0.11.5
+- @graphql-mesh/transform-cache@0.8.31
+- @graphql-mesh/cli@0.24.1
+
+## 0.5.76
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/cli@0.24.0
+  - @graphql-mesh/config@0.13.4
+  - @graphql-mesh/openapi@0.12.16
+  - @graphql-mesh/runtime@0.11.4
+  - @graphql-mesh/transform-cache@0.8.30
+
+## 0.5.75
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.3
+- @graphql-mesh/openapi@0.12.15
+- @graphql-mesh/runtime@0.11.3
+- @graphql-mesh/transform-cache@0.8.29
+- @graphql-mesh/cli@0.23.4
+
+## 0.5.74
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.2
+- @graphql-mesh/openapi@0.12.14
+- @graphql-mesh/runtime@0.11.2
+- @graphql-mesh/transform-cache@0.8.28
+- @graphql-mesh/cli@0.23.3
+
+## 0.5.73
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.1
+- @graphql-mesh/openapi@0.12.13
+- @graphql-mesh/runtime@0.11.1
+- @graphql-mesh/transform-cache@0.8.27
+- @graphql-mesh/cli@0.23.2
+
+## 0.5.72
+
+### Patch Changes
+
+- Updated dependencies [f9985ac8]
+  - @graphql-mesh/cli@0.23.1
+
 ## 0.5.71
 
 ### Patch Changes

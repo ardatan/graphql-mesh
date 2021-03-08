@@ -23,9 +23,10 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
 
 export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
-  pubsub: MeshPubSub;
   config: THandlerConfig;
+  baseDir?: string;
   cache: KeyValueCache;
+  pubsub: MeshPubSub;
 };
 
 // Handlers
@@ -67,10 +68,11 @@ export interface MeshPubSub {
 }
 
 export interface MeshTransformOptions<Config = any> {
+  apiName?: string;
   config: Config;
+  baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  apiName?: string;
 }
 
 export interface MeshTransformLibrary<Config = any> {

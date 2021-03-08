@@ -43,7 +43,7 @@ const UserSchema = new Schema(
     gender: {
       // enum field with values
       type: String,
-      enum: ['male', 'female', 'ladyboy'],
+      enum: ['male', 'female', 'not-specified'],
     },
     address: {
       type: AddressSchema,

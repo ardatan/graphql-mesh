@@ -10,6 +10,7 @@ fetchache.Request = function(url, config) {
     return {
         url,
         ...config,
+        text: async () => config.body,
     };
 }
 fetchache.Response = function(body) {
@@ -29,7 +30,7 @@ fetchache.resetMocks = () => {
 fetchache.fetchache = async (request) => {
     const responseFn = mocks[request.url];
     if (!responseFn) {
-        throw new Error(request.url + ` Not Found!`);
+        return require('cross-fetch')(request.url, request);
     }
     return responseFn(request);
 };

@@ -1,5 +1,72 @@
 # @graphql-mesh/json-schema
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
+## 0.11.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+  - @graphql-mesh/utils@0.9.0
+
+## 0.10.9
+
+### Patch Changes
+
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/utils@0.8.8
+
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies [55327fd6]
+  - @graphql-mesh/types@0.34.1
+
+## 0.10.7
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
+## 0.10.6
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
+## 0.10.5
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
+## 0.10.4
+
+### Patch Changes
+
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
+## 0.10.3
+
+### Patch Changes
+
+- f9985ac8: fix(json-schema): do not add resolver if baseUrl and path not defined
+
 ## 0.10.2
 
 ### Patch Changes

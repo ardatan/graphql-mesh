@@ -1,10 +1,12 @@
 {
   "name": "federation-handler-example",
-  "version": "0.5.72",
+  "version": "0.5.83",
   "license": "MIT",
   "private": true,
   "scripts": {
+    "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
     "start-gateway": "mesh serve",
+    "start-gateway-delayed": "delay 1 && npm run start-gateway",
     "start-service-accounts": "nodemon services/accounts/index.js",
     "start-service-reviews": "nodemon services/reviews/index.js",
     "start-service-products": "nodemon services/products/index.js",
@@ -16,11 +18,12 @@
     "nodemon": "2.0.6"
   },
   "dependencies": {
-    "apollo-server": "2.19.0",
-    "@graphql-mesh/cli": "0.23.0",
-    "@graphql-mesh/merger-federation": "0.8.21",
-    "@graphql-mesh/transform-federation": "0.4.50",
-    "@graphql-mesh/graphql": "0.13.13",
+    "@graphql-mesh/cli": "0.26.0",
+    "@graphql-mesh/graphql": "0.14.1",
+    "@graphql-mesh/merger-federation": "0.8.28",
+    "@graphql-mesh/transform-federation": "0.5.1",
+    "apollo-server": "2.21.0",
+    "delay-cli": "^1.1.0",
     "graphql": "15.4.0"
   }
 }

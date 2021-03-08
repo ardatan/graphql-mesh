@@ -26,8 +26,8 @@ import open from 'open';
 
 const { readFile } = fsPromises;
 
-export async function serveMesh(baseDir: string, argsPort?: number): Promise<void> {
-  spinner.start();
+export async function serveMesh(baseDir: string, argsPort?: number) {
+  spinner.start('Generating Mesh schema...');
   let readyFlag = false;
 
   const meshConfig = await findAndParseConfig({
@@ -38,7 +38,7 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
       readyFlag = true;
       if (spinner.isSpinning) {
         if (!fork) {
-          spinner.succeed(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
+          spinner.succeed(`Serving GraphQL Mesh: ${serverUrl}`);
         }
       }
       return mesh;
@@ -56,11 +56,11 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
     upload: { maxFileSize = 10000000, maxFiles = 10 } = {},
     maxRequestBodySize = '100kb',
     sslCredentials,
+    endpoint: graphqlPath = '/graphql',
   } = meshConfig.config.serve || {};
   const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
-  const graphqlPath = '/graphql';
   const serverUrl = `${protocol}://${hostname}:${port}${graphqlPath}`;
   const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
   if (isMaster && fork) {
@@ -68,7 +68,7 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
     for (let i = 0; i < forkNum; i++) {
       clusterFork();
     }
-    logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
+    logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
   } else {
     const app = express();
     app.set('trust proxy', 'loopback');
@@ -94,19 +94,6 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
       })
     );
     app.use(cookieParser());
-
-    app.get('/healthcheck', (_req, res) => res.sendStatus(200));
-    app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
-
-    if (staticFiles) {
-      app.use(express.static(staticFiles));
-      const indexPath = join(baseDir, staticFiles, 'index.html');
-      if (await pathExists(indexPath)) {
-        app.get('/', (_req, res) => res.sendFile(indexPath));
-      }
-    }
-
-    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
 
     const wsServer = new ws.Server({
       path: graphqlPath,
@@ -158,6 +145,19 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
       }) || []
     );
 
+    app.get('/healthcheck', (_req, res) => res.sendStatus(200));
+    app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
+
+    if (staticFiles) {
+      app.use(express.static(staticFiles));
+      const indexPath = join(baseDir, staticFiles, 'index.html');
+      if (await pathExists(indexPath)) {
+        app.get('/', (_req, res) => res.sendFile(indexPath));
+      }
+    }
+
+    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
+
     if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
       const playgroundMiddleware = playgroundMiddlewareFactory({ baseDir, exampleQuery, graphqlPath });
       if (!staticFiles) {
@@ -169,9 +169,18 @@ export async function serveMesh(baseDir: string, argsPort?: number): Promise<voi
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
         if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
-          open(serverUrl);
+          open(serverUrl).catch(() => {});
         }
       })
       .on('error', handleFatalError);
+
+    return mesh$.then(mesh => ({
+      mesh,
+      httpServer,
+      app,
+      readyFlag,
+      logger,
+    }));
   }
+  return null;
 }

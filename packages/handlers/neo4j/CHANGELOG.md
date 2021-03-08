@@ -1,5 +1,58 @@
 # @graphql-mesh/neo4j
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
+## 0.10.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+
+## 0.9.17
+
+### Patch Changes
+
+- Updated dependencies [55327fd6]
+  - @graphql-mesh/types@0.34.1
+
+## 0.9.16
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
+## 0.9.15
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
+## 0.9.14
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
+## 0.9.13
+
+### Patch Changes
+
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
 ## 0.9.12
 
 ### Patch Changes

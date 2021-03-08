@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rename should change the name of a field 1`] = `
+"type Query {
+  user: MyUser!
+  my_book: MyBook!
+}
+
+type MyUser {
+  id: ID!
+}
+
+type MyBook {
+  id: ID!
+}
+"
+`;
+
+exports[`rename should change the name of a type 1`] = `
+"type Query {
+  my_user: User!
+  my_book: MyBook!
+}
+
+type User {
+  id: ID!
+}
+
+type MyBook {
+  id: ID!
+}
+"
+`;
+
+exports[`rename should change the name of multiple fields 1`] = `
+"type Query {
+  user: MyUser!
+  book: MyBook!
+}
+
+type MyUser {
+  false: ID!
+}
+
+type MyBook {
+  false: ID!
+}
+"
+`;
+
+exports[`rename should change the name of multiple type names 1`] = `
+"type Query {
+  my_user: User!
+  my_book: Book!
+}
+
+type User {
+  id: ID!
+}
+
+type Book {
+  id: ID!
+}
+"
+`;

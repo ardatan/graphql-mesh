@@ -1,3 +1,4 @@
+import { isAbsolute, join } from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   getJsonSchema,
@@ -35,12 +36,15 @@ export type ConfigProcessOptions = {
   importFn?: (moduleId: string) => Promise<any>;
 };
 
+// TODO: deprecate this in next major release as dscussed in #1687
 export async function parseConfig(
   rawConfig: YamlConfig.Config | string,
   options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions
 ) {
   let config: YamlConfig.Config;
-  const { configFormat = 'object' } = options || {};
+  const { configFormat = 'object', dir: configDir = '' } = options || {};
+  const dir = isAbsolute(configDir) ? configDir : join(process.cwd(), configDir);
+
   switch (configFormat) {
     case 'yaml':
       config = defaultLoaders['.yaml']('.meshrc.yml', rawConfig as string);
@@ -52,7 +56,8 @@ export async function parseConfig(
       config = rawConfig as YamlConfig.Config;
       break;
   }
-  return processConfig(config, options);
+
+  return processConfig(config, { ...options, dir });
 }
 
 export type ProcessedConfig = {
@@ -72,8 +77,7 @@ export async function processConfig(
   config: YamlConfig.Config,
   options?: ConfigProcessOptions
 ): Promise<ProcessedConfig> {
-  const { dir = process.cwd(), ignoreAdditionalResolvers = false, importFn = (moduleId: string) => import(moduleId) } =
-    options || {};
+  const { dir, ignoreAdditionalResolvers = false, importFn = (moduleId: string) => import(moduleId) } = options || {};
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
   const cache = await resolveCache(config.cache, importFn);
@@ -99,6 +103,7 @@ export async function processConfig(
               return new TransformCtor({
                 apiName: source.name,
                 config: transformConfig,
+                baseDir: dir,
                 cache,
                 pubsub,
               });
@@ -112,9 +117,10 @@ export async function processConfig(
           name: source.name,
           handler: new HandlerCtor({
             name: source.name,
+            config: handlerConfig,
+            baseDir: dir,
             cache,
             pubsub,
-            config: handlerConfig,
           }),
           transforms,
         };
@@ -131,9 +137,10 @@ export async function processConfig(
         );
         return new TransformLibrary({
           apiName: '',
+          config: transformConfig,
+          baseDir: dir,
           cache,
           pubsub,
-          config: transformConfig,
         });
       }) || []
     ),
@@ -207,7 +214,8 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
 }
 
 export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions) {
-  const { configName = 'mesh', dir = process.cwd(), ignoreAdditionalResolvers = false } = options || {};
+  const { configName = 'mesh', dir: configDir = '', ignoreAdditionalResolvers = false } = options || {};
+  const dir = isAbsolute(configDir) ? configDir : join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     loaders: {
       '.json': customLoader('json'),

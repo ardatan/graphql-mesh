@@ -1,5 +1,104 @@
 # @graphql-mesh/cli
 
+## 0.26.0
+
+### Minor Changes
+
+- 7efbf045: Fix CLI usage of base-dir
+
+  **Breaking changes**
+  This is technically just a bug fix, but it corrects a behaviour that will break if you relied on it.
+  When using CLI commands with the `--dir` option, those commands were using your given `--dir` as the base directory.
+
+  Now CLI commands always use the Current Working Directory (CWD) as the base directory and so the given `--dir` is used to only get the Mesh Config file and process any local file eventually defined in the Config.
+
+- 191a663a: feat(cli): return server and express app from serveMesh
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/config@0.14.1
+  - @graphql-mesh/runtime@0.11.9
+
+## 0.25.3
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/config@0.14.0
+  - @graphql-mesh/utils@0.9.0
+  - @graphql-mesh/runtime@0.11.8
+
+## 0.25.2
+
+### Patch Changes
+
+- cf58cd5c: enhance(serve): improve logging
+- Updated dependencies [cf58cd5c]
+  - @graphql-mesh/runtime@0.11.7
+  - @graphql-mesh/config@0.13.7
+
+## 0.25.1
+
+### Patch Changes
+
+- Updated dependencies [ec89a923]
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/utils@0.8.8
+  - @graphql-mesh/runtime@0.11.6
+  - @graphql-mesh/config@0.13.6
+
+## 0.25.0
+
+### Minor Changes
+
+- b52859c6: enhance(serve): run custom handlers before anything else
+
+## 0.24.1
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.5
+- @graphql-mesh/runtime@0.11.5
+
+## 0.24.0
+
+### Minor Changes
+
+- 76051dd7: feat(serve): ability to change GraphQL endpoint path
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.4
+- @graphql-mesh/runtime@0.11.4
+
+## 0.23.4
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.3
+- @graphql-mesh/runtime@0.11.3
+
+## 0.23.3
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.2
+- @graphql-mesh/runtime@0.11.2
+
+## 0.23.2
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.1
+- @graphql-mesh/runtime@0.11.1
+
+## 0.23.1
+
+### Patch Changes
+
+- f9985ac8: fix(serve): ignore if xdg-open not available
+
 ## 0.23.0
 
 ### Minor Changes

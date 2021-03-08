@@ -1,5 +1,93 @@
 # neo4j-example
 
+## 0.6.62
+
+### Patch Changes
+
+- Updated dependencies [7efbf045]
+- Updated dependencies [191a663a]
+  - @graphql-mesh/cli@0.26.0
+  - @graphql-mesh/cache-file@0.4.55
+  - @graphql-mesh/neo4j@0.10.1
+
+## 0.6.61
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/neo4j@0.10.0
+  - @graphql-mesh/cli@0.25.3
+  - @graphql-mesh/cache-file@0.4.54
+
+## 0.6.60
+
+### Patch Changes
+
+- Updated dependencies [cf58cd5c]
+  - @graphql-mesh/cli@0.25.2
+
+## 0.6.59
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.4.53
+- @graphql-mesh/cli@0.25.1
+
+## 0.6.58
+
+### Patch Changes
+
+- Updated dependencies [b52859c6]
+  - @graphql-mesh/cli@0.25.0
+
+## 0.6.57
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.4.52
+- @graphql-mesh/neo4j@0.9.17
+- @graphql-mesh/cli@0.24.1
+
+## 0.6.56
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/cli@0.24.0
+  - @graphql-mesh/cache-file@0.4.51
+  - @graphql-mesh/neo4j@0.9.16
+
+## 0.6.55
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.4.50
+- @graphql-mesh/neo4j@0.9.15
+- @graphql-mesh/cli@0.23.4
+
+## 0.6.54
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.4.49
+- @graphql-mesh/neo4j@0.9.14
+- @graphql-mesh/cli@0.23.3
+
+## 0.6.53
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.4.48
+- @graphql-mesh/neo4j@0.9.13
+- @graphql-mesh/cli@0.23.2
+
+## 0.6.52
+
+### Patch Changes
+
+- Updated dependencies [f9985ac8]
+  - @graphql-mesh/cli@0.23.1
+
 ## 0.6.51
 
 ### Patch Changes

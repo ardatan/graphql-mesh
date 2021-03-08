@@ -1,5 +1,94 @@
 # country-info-example
 
+## 0.5.77
+
+### Patch Changes
+
+- Updated dependencies [7efbf045]
+- Updated dependencies [191a663a]
+  - @graphql-mesh/cli@0.26.0
+  - @graphql-mesh/soap@0.6.1
+  - @graphql-mesh/transform-snapshot@0.8.1
+
+## 0.5.76
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/soap@0.6.0
+  - @graphql-mesh/transform-snapshot@0.8.0
+  - @graphql-mesh/cli@0.25.3
+
+## 0.5.75
+
+### Patch Changes
+
+- Updated dependencies [cf58cd5c]
+  - @graphql-mesh/cli@0.25.2
+
+## 0.5.74
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.25.1
+- @graphql-mesh/soap@0.5.9
+- @graphql-mesh/transform-snapshot@0.7.22
+
+## 0.5.73
+
+### Patch Changes
+
+- Updated dependencies [b52859c6]
+  - @graphql-mesh/cli@0.25.0
+
+## 0.5.72
+
+### Patch Changes
+
+- @graphql-mesh/soap@0.5.8
+- @graphql-mesh/transform-snapshot@0.7.21
+- @graphql-mesh/cli@0.24.1
+
+## 0.5.71
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/cli@0.24.0
+  - @graphql-mesh/soap@0.5.7
+  - @graphql-mesh/transform-snapshot@0.7.20
+
+## 0.5.70
+
+### Patch Changes
+
+- @graphql-mesh/soap@0.5.6
+- @graphql-mesh/transform-snapshot@0.7.19
+- @graphql-mesh/cli@0.23.4
+
+## 0.5.69
+
+### Patch Changes
+
+- @graphql-mesh/soap@0.5.5
+- @graphql-mesh/transform-snapshot@0.7.18
+- @graphql-mesh/cli@0.23.3
+
+## 0.5.68
+
+### Patch Changes
+
+- @graphql-mesh/soap@0.5.4
+- @graphql-mesh/transform-snapshot@0.7.17
+- @graphql-mesh/cli@0.23.2
+
+## 0.5.67
+
+### Patch Changes
+
+- Updated dependencies [f9985ac8]
+  - @graphql-mesh/cli@0.23.1
+
 ## 0.5.66
 
 ### Patch Changes

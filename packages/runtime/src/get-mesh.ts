@@ -32,6 +32,7 @@ export async function getMesh(
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache } = options;
 
+  let hasLiveDirective = false;
   await Promise.all(
     options.sources.map(async apiSource => {
       const source = await apiSource.handler.getMeshSource();
@@ -42,13 +43,11 @@ export async function getMesh(
 
       const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
-      // If schema is going to be wrapped already we can use noWrapTransforms as wrapTransforms on source level
-      // The idea behind avoiding wrapping as much as possible is to decrease multiple rounds of graphqljs execution phase for performance
-      if (wrapTransforms.length === 0 && !source.executor && !source.subscriber) {
+      if (noWrapTransforms?.length) {
         apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
-      } else {
-        wrapTransforms.push(...noWrapTransforms);
       }
+
+      hasLiveDirective = hasLiveDirective || !!apiSchema.getDirective('live');
 
       rawSources.push({
         name: apiName,
@@ -65,11 +64,13 @@ export async function getMesh(
   );
 
   options.additionalTypeDefs = options.additionalTypeDefs || [];
-  options.additionalTypeDefs.push(
-    parse(/* GraphQL */ `
-      directive @live on QUERY
-    `)
-  );
+  if (!hasLiveDirective) {
+    options.additionalTypeDefs.push(
+      parse(/* GraphQL */ `
+        directive @live on QUERY
+      `)
+    );
+  }
 
   let unifiedSchema = await options.merger({
     rawSources,

@@ -19,7 +19,7 @@ export interface Config {
   /**
    * Additional type definitions, or type definitions overrides you wish to add to the schema mesh
    */
-  additionalTypeDefs?: string;
+  additionalTypeDefs?: any;
   /**
    * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)
    */
@@ -81,6 +81,10 @@ export interface ServeConfig {
   maxRequestBodySize?: number | string;
   upload?: UploadOptions;
   sslCredentials?: HTTPSConfig;
+  /**
+   * Path to GraphQL Endpoint (default: /graphql)
+   */
+  endpoint?: string;
 }
 /**
  * Configuration for CORS
@@ -312,7 +316,7 @@ export interface GrpcCredentialsSsl {
  * Handler for JSON Schema specification. Source could be a local json file, or a url to it.
  */
 export interface JsonSchemaHandler {
-  baseUrl: string;
+  baseUrl?: string;
   operationHeaders?: {
     [k: string]: any;
   };
@@ -749,6 +753,14 @@ export interface PostGraphileHandler {
    * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
    */
   cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
+  /**
+   * Enable GraphQL websocket transport support for subscriptions (default: true)
+   */
+  subscriptions?: boolean;
+  /**
+   * Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
+   */
+  live?: boolean;
 }
 /**
  * Handler for SOAP
@@ -882,14 +894,17 @@ export interface Transform {
   encapsulate?: EncapsulateTransformObject;
   extend?: ExtendTransform;
   federation?: FederationTransform;
-  filterSchema?: string[];
+  /**
+   * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
+   */
+  filterSchema?: FilterSchemaTransform | any;
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
   /**
-   * Transformer to apply rename of a GraphQL type
+   * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
-  rename?: RenameTransformObject[];
+  rename?: RenameTransform | any;
   /**
    * Transformer to apply composition to resolvers
    */
@@ -1002,6 +1017,16 @@ export interface ResolveReferenceObject {
   };
   resultSelectionSet?: string;
   resultDepth?: number;
+}
+export interface FilterSchemaTransform {
+  /**
+   * Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of filter rules
+   */
+  filters: string[];
 }
 /**
  * Mock configuration for your source
@@ -1120,6 +1145,16 @@ export interface PrefixTransformConfig {
    * Changes root types and changes the field names
    */
   includeRootOperations?: boolean;
+}
+export interface RenameTransform {
+  /**
+   * Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of rename rules
+   */
+  renames: RenameTransformObject[];
 }
 export interface RenameTransformObject {
   from: RenameConfig;

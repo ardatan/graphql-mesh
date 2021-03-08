@@ -1,5 +1,71 @@
 # @graphql-mesh/postgraphile
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
+## 0.10.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+  - @graphql-mesh/utils@0.9.0
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/utils@0.8.8
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies [55327fd6]
+  - @graphql-mesh/types@0.34.1
+
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
+## 0.9.0
+
+### Minor Changes
+
+- 68d6b117: feat(postgraphile): add ability to disable live queries and subscriptions
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
+## 0.8.14
+
+### Patch Changes
+
+- 212f2d66: fix(postgraphile): caching
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
 ## 0.8.13
 
 ### Patch Changes

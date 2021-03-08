@@ -1,4 +1,4 @@
-import { isAbsolute, join } from 'path';
+import { join } from 'path';
 import objectHash from 'object-hash';
 import { GraphQLResolveInfo } from 'graphql';
 
@@ -18,6 +18,5 @@ export function computeSnapshotFilePath(options: {
     : options.args;
   const hash = objectHash(hashObj, { ignoreUnknown: true });
   const fileName = [typeName, fieldName, hash].join('_') + '.json';
-  const absoluteOutputDir = isAbsolute(options.outputDir) ? options.outputDir : join(process.cwd(), options.outputDir);
-  return join(absoluteOutputDir, fileName);
+  return join(options.outputDir, fileName);
 }
