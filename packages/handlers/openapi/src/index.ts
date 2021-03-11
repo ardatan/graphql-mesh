@@ -107,6 +107,7 @@ export default class OpenAPIHandler implements MeshHandler {
         resolverParams.requestOptions = {
           headers: getHeadersObject(headersFactory(resolverData)),
         };
+        resolverParams.qs = qs;
 
         /* FIXME: baseUrl is coming from Fastify Request
         if (context?.baseUrl) {
