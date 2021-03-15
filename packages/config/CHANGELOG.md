@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.14.2
+
+### Patch Changes
+
+- 939f9beb5: fix(config): move Object.keys fix outside of source code
+
 ## 0.14.1
 
 ### Patch Changes
