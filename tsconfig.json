@@ -37,6 +37,6 @@
       "@graphql-mesh/merger-*": ["packages/mergers/*/src/index.ts"]
     }
   },
-  "include": ["packages"],
+  "include": ["./declarations.d.ts", "packages"],
   "exclude": ["**/node_modules", "**/dist"]
 }

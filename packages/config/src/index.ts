@@ -24,12 +24,6 @@ import {
   resolvePubSub,
 } from './utils';
 
-declare global {
-  interface ObjectConstructor {
-    keys<T>(obj: T): Array<keyof T>;
-  }
-}
-
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
