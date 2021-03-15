@@ -36,6 +36,6 @@
       "@graphql-mesh/*": ["packages/handlers/*/src/index.ts"]
     }
   },
-  "include": ["packages"],
+  "include": ["./declarations.d.ts", "packages"],
   "exclude": ["**/node_modules", "**/dist"]
 }
