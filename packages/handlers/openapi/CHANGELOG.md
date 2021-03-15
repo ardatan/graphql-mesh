@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.13.3
+
+### Patch Changes
+
+- f3731f584: use qs
+
 ## 0.13.2
 
 ### Patch Changes
