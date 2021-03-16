@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
@@ -32,7 +32,6 @@ export async function getMesh(
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache } = options;
 
-  let hasLiveDirective = false;
   await Promise.all(
     options.sources.map(async apiSource => {
       const source = await apiSource.handler.getMeshSource();
@@ -47,8 +46,6 @@ export async function getMesh(
         apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
       }
 
-      hasLiveDirective = hasLiveDirective || !!apiSchema.getDirective('live');
-
       rawSources.push({
         name: apiName,
         contextBuilder: source.contextBuilder || null,
@@ -62,15 +59,6 @@ export async function getMesh(
       });
     })
   );
-
-  options.additionalTypeDefs = options.additionalTypeDefs || [];
-  if (!hasLiveDirective) {
-    options.additionalTypeDefs.push(
-      parse(/* GraphQL */ `
-        directive @live on QUERY
-      `)
-    );
-  }
 
   let unifiedSchema = await options.merger({
     rawSources,
