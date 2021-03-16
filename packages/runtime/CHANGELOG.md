@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.12.0
+
+### Minor Changes
+
+- 0b175305a: feat(runtime): add @live directive on demand
+
 ## 0.11.9
 
 ### Patch Changes
