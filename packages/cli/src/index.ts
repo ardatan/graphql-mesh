@@ -11,7 +11,11 @@ import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 export { generateSdk, serveMesh };
 
-const { writeFile } = fsPromises || {};
+const { writeFile: _writeFile, mkdir: _mkdir } = fsPromises || {};
+const writeFile: typeof _writeFile = async (path, ...args) => {
+  await _mkdir(path, { recursive: true });
+  return _writeFile(path, ...args);
+};
 
 export async function graphqlMesh() {
   let baseDir = process.cwd();
