@@ -46,7 +46,7 @@ export default class OpenAPIHandler implements MeshHandler {
       selectQueryOrMutationField,
       source,
     } = this.config;
-    const spec = await readFileOrUrlWithCache<Oas3>(source || source, this.cache, {
+    const spec = typeof source !== 'string' ? source : await readFileOrUrlWithCache<Oas3>(source, this.cache, {
       cwd: this.baseDir,
       fallbackFormat: this.config.sourceFormat,
       headers: this.config.schemaHeaders,

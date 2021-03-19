@@ -650,7 +650,7 @@ export interface OpenapiHandler {
   /**
    * A pointer to your API source - could be a local file, remote file or url endpoint
    */
-  source: string;
+  source: any;
   /**
    * Format of the source file (Allowed values: json, yaml)
    */
