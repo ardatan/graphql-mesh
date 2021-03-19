@@ -11690,10 +11690,10 @@ graphql-compose-connection@8.0.1:
   resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-8.0.1.tgz#6416ead781108a6628c542908f43cf89d3200222"
   integrity sha512-VBEdtzEp862TlV/uf7GDVYI0wwfTQAQlDXIZVl9IlYO5BcDD94kaPcrTuzQ/j991G09vx2ebqLu2zRI3uLZ7kg==
 
-graphql-compose-mongoose@9.1.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-9.1.0.tgz#92aed721f252b9298ccaaf61a056b461e2a3e2fc"
-  integrity sha512-wM22PDallN3bdAxSl/c3/iCAHPhSkXBP7FHIJPGzWTGWL2KBNvojUE6KYXzBoVVIzgDTGOSOSit8ILt28S41kw==
+graphql-compose-mongoose@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-9.2.0.tgz#148855d420d02e6570949b6835416496f595b31d"
+  integrity sha512-BAHRGjCShnzouDb33kjAnPT1jF+j06Fezwg1mdA7msWSm3MRFM5Zc3ZJMd2LGTR3+eY8GTUM7F6GgzI9tpWf0g==
   dependencies:
     dataloader "^2.0.0"
     graphql-compose-connection "8.0.1"
