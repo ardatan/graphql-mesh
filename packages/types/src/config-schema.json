@@ -1488,7 +1488,19 @@
       "title": "OpenapiHandler",
       "properties": {
         "source": {
-          "type": "string",
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
           "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         },
         "sourceFormat": {
