@@ -84,6 +84,97 @@ sources:
           Authorization: Bearer ${MY_API_TOKEN}
 ```
 
+## Advanced cookies handling
+
+When building a web application, for security reasons, cookies are often used for authentication. Mobile applications on the other end, tend to use a HTTP header.
+
+This section shows how to configure GraphQL Mesh to accept either, and also how to use GraphQL Mesh to set / unset cookies on the login & logout mutations.
+
+### Accepting either a cookie or a header
+
+We want to accept either a `accessToken` cookie or a `Authorization` header, and transmit it to the Rest API as a `Authorization` header. GraphQL Mesh does not allow dynamic selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
+
+```yml
+sources:
+  - name: Rest
+    handler:
+      openapi:
+        source: ./openapi.yaml
+        baseUrl: ${REST_API_URL}/api/
+        operationHeaders:
+          Authorization-Header: "{context.headers['authorization']}"
+          Authorization-Cookie: Bearer {context.cookies.accessToken}
+        customFetch: ./src/custom-fetch.js
+```
+
+Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the header in `Authorization-Header`. Now to introduce the logic needed to generate the proper `Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the `fetch` used by GraphQL Mesh to call the Rest API.
+
+```js
+const fetch = require('node-fetch')
+
+module.exports = function (url, args) {
+  // Set Authorization header dynamically to either the input cookie or input header
+  args.headers['authorization'] = args.headers['authorization-cookie'] ?? args.headers['authorization-header'];
+  // Clean up headers forwarded to the Rest API
+  delete args.headers['authorization-cookie'];
+  delete args.headers['authorization-header'];
+  // Execute the fetch with the new headers
+  return fetch(url, args)
+}
+```
+
+Of course, `node-fetch` needs to be added to your project: `npm add node-fetch`.
+
+### Setting / Unsetting the cookie
+
+Of course, being able to use GraphQL Mesh as a Gateway for both the mobile application and web application is nice, but there's one thing missing: the setting of the cookie for the web application.
+
+For that, we need to access the HTTP response that is sent back to the client. Luckily, we can do so in `additionalResolvers`. So we need to create two new resolvers, one for login and one for logout, and manage the cookie in their code.
+
+The first step is to edit the `meshrc.yaml` file, add this at the end:
+
+```yml
+additionalTypeDefs: |
+  extend type Mutation {
+    login(credentials: Credentials!): String
+    logout: Boolean
+  }
+additionalResolvers:
+  - ./src/additional-resolvers.js
+```
+
+Then manage the cookie in the new resolvers:
+
+```js
+// lifespan of our cookie
+const oneYear = 365 * 24 * 3600
+
+const resolvers = {
+  Mutation: {
+    login: async (_root, args, { Rest, res }) => {
+      // Call the Rest API's login operation
+      const result = await Rest.api.accountLogin(args.credentials)
+      // if `result` contains a JWT token, you could instead decode it and set `Expires`
+      // to the JWT token's expiration date
+      res.set('Set-Cookie', `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`)
+
+      return result
+    },
+    logout: async (_root, _args, { res }) => {
+      // use old date to unset cookie
+      res.set('Set-Cookie', `accessToken=logout; Path=/; Secure; HttpOnly; Expires=Thu, 1 Jan 1970 00:00:00 GMT;`)
+
+      return true
+    },
+  },
+}
+
+module.exports = { resolvers }
+```
+
+There's a caveat: the Rest API's login operation cannot have the same name as the additional login mutation. In this example we assumed that the login operation of the Rest API was named `accountLogin`, thus avoiding the name conflict.
+
+
 > We have a lot of examples for OpenAPI Handler;
 - [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
 - [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather)
