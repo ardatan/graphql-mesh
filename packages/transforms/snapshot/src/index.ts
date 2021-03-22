@@ -6,7 +6,7 @@ import { isAbsolute, join } from 'path';
 import { computeSnapshotFilePath } from './compute-snapshot-file-path';
 import { extractResolvers, writeJSON, pathExists } from '@graphql-mesh/utils';
 
-const writeFile = async (path: string, json: any): Promise<void> => {
+const writeSnapshotFile = async (path: string, json: any): Promise<void> => {
   try {
     await writeJSON(path, json, null, 2);
   } catch (e) {
@@ -52,7 +52,7 @@ export default class SnapshotTransform implements MeshTransform {
           return import(snapshotFilePath);
         }
         const result = await next(root, args, context, info);
-        await writeFile(snapshotFilePath, result);
+        await writeSnapshotFile(snapshotFilePath, result);
         return result;
       };
 
