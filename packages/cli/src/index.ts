@@ -9,7 +9,7 @@ import { promises as fsPromises } from 'fs';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { writeJSON } from 'packages/utils/src/fs-operations';
+import { writeJSON } from '@graphql-mesh/utils';
 export { generateSdk, serveMesh };
 
 const { writeFile } = fsPromises || {};

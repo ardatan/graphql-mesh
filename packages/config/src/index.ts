@@ -86,7 +86,7 @@ export async function processConfig(
   const pubsub = await resolvePubSub(config.pubsub, importFn);
   const introspectionCache = ignoreIntrospectionCache
     ? {}
-    : await resolveIntrospectionCache(config.introspectionCache, dir, importFn);
+    : await resolveIntrospectionCache(config.introspectionCache, dir);
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
     Promise.all(

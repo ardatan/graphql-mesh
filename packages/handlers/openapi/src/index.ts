@@ -49,7 +49,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
   private async getCachedSpec(): Promise<Oas3> {
     const { source } = this.config;
-    if (!this.introspectionCache) {
+    if (!this.introspectionCache.spec) {
       this.introspectionCache.spec =
         typeof source !== 'string'
           ? source

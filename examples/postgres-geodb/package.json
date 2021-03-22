@@ -8,7 +8,8 @@
     "test-sdk": "ts-node src/test-sdk.ts London",
     "mesh:serve": "mesh serve",
     "mesh:sdk": "mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
-    "start": "yarn mesh:serve"
+    "start": "yarn mesh:serve",
+    "invalidate-introspection-cache": "mesh invalidate-introspection-cache"
   },
   "devDependencies": {
     "@types/node": "14.14.3",
