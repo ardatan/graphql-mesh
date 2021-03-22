@@ -9,7 +9,7 @@
     "mesh:serve": "mesh serve",
     "mesh:sdk": "mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
     "start": "yarn mesh:serve",
-    "invalidate-introspection-cache": "mesh invalidate-introspection-cache"
+    "write-introspection-cache": "mesh write-introspection-cache"
   },
   "devDependencies": {
     "@types/node": "14.14.3",

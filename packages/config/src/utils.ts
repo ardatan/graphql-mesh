@@ -220,8 +220,7 @@ export async function resolveIntrospectionCache(
       ? introspectionCacheConfig
       : join(dir, introspectionCacheConfig);
     if (await pathExists(absolutePath)) {
-      const importedMod = await readJSON(absolutePath);
-      return importedMod.default || importedMod;
+      return readJSON(absolutePath);
     }
   }
   return {};

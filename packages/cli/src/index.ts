@@ -145,8 +145,8 @@ export async function graphqlMesh() {
       }
     )
     .command(
-      'invalidate-introspection-cache',
-      'Invalidates introspection cache and creates it from scratch',
+      'write-introspection-cache',
+      'Writes introspection cache and creates it from scratch',
       builder => {},
       async () => {
         const meshConfig = await findAndParseConfig({
