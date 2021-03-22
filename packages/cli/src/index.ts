@@ -5,13 +5,11 @@ import { generateTsTypes } from './commands/typescript';
 import { generateSdk } from './commands/generate-sdk';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve } from 'path';
-import { promises as fsPromises } from 'fs';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { writeFile } from '@graphql-mesh/utils';
 export { generateSdk, serveMesh };
-
-const { writeFile } = fsPromises || {};
 
 export async function graphqlMesh() {
   let baseDir = process.cwd();
