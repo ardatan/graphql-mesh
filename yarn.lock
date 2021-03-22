@@ -15587,10 +15587,10 @@ mongoose@5.10.9:
     sift "7.0.1"
     sliced "1.0.1"
 
-mongoose@5.12.1:
-  version "5.12.1"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.12.1.tgz#9aace8ac783b239906253396a98f2a56c0964b8b"
-  integrity sha512-g/oIEvQQrK1XcICS/PfzU1Gu1s6Uw1rgJP7/SfC3Ru6pTLa1dH2Lb+iJipNWqChbrykE78j/wwBVSsbyCZRl5Q==
+mongoose@5.12.2:
+  version "5.12.2"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.12.2.tgz#3274630dfb9a8e63dbda0c6e7124fd475623c6ff"
+  integrity sha512-kT9t6Nvu9WPsfssn7Gzke446Il8UdMilY7Sa5vALtwoOoNOGtZEVjekZBFwsBFzTWtBA/x5gBmJoYFP+1LeDlg==
   dependencies:
     "@types/mongodb" "^3.5.27"
     bson "^1.1.4"
