@@ -20,6 +20,7 @@ import {
   resolveAdditionalResolvers,
   resolveAdditionalTypeDefs,
   resolveCache,
+  resolveIntrospectionCache,
   resolveMerger,
   resolvePubSub,
 } from './utils';
@@ -27,6 +28,7 @@ import {
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
+  ignoreIntrospectionCache?: boolean;
   importFn?: (moduleId: string) => Promise<any>;
 };
 
@@ -65,17 +67,26 @@ export type ProcessedConfig = {
   pubsub: MeshPubSub;
   liveQueryInvalidations: YamlConfig.LiveQueryInvalidation[];
   config: YamlConfig.Config;
+  introspectionCache: Record<string, any>;
 };
 
 export async function processConfig(
   config: YamlConfig.Config,
   options?: ConfigProcessOptions
 ): Promise<ProcessedConfig> {
-  const { dir, ignoreAdditionalResolvers = false, importFn = (moduleId: string) => import(moduleId) } = options || {};
+  const {
+    dir,
+    ignoreAdditionalResolvers = false,
+    importFn = (moduleId: string) => import(moduleId),
+    ignoreIntrospectionCache = false,
+  } = options || {};
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
   const cache = await resolveCache(config.cache, importFn);
   const pubsub = await resolvePubSub(config.pubsub, importFn);
+  const introspectionCache = ignoreIntrospectionCache
+    ? {}
+    : await resolveIntrospectionCache(config.introspectionCache, dir, importFn);
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
     Promise.all(
@@ -107,6 +118,8 @@ export async function processConfig(
 
         const HandlerCtor: MeshHandlerLibrary = handlerLibrary;
 
+        introspectionCache[source.name] = introspectionCache[source.name] || {};
+        const handlerIntrospectionCache = introspectionCache[source.name];
         return {
           name: source.name,
           handler: new HandlerCtor({
@@ -115,6 +128,7 @@ export async function processConfig(
             baseDir: dir,
             cache,
             pubsub,
+            introspectionCache: handlerIntrospectionCache,
           }),
           transforms,
         };
@@ -159,6 +173,7 @@ export async function processConfig(
     pubsub,
     liveQueryInvalidations: config.liveQueryInvalidations,
     config,
+    introspectionCache,
   };
 }
 

@@ -32,6 +32,10 @@ type Query {
   Live Query Invalidations
   """
   liveQueryInvalidations: [LiveQueryInvalidation]
+  """
+  Path to the file containing the introspection cache
+  """
+  introspectionCache: String
 }
 
 scalar JSON

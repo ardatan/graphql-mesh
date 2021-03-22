@@ -9,6 +9,7 @@ import { promises as fsPromises } from 'fs';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { writeJSON } from 'packages/utils/src/fs-operations';
 export { generateSdk, serveMesh };
 
 const { writeFile } = fsPromises || {};
@@ -140,6 +141,24 @@ export async function graphqlMesh() {
         const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
         const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
         await writeFile(outFile, result);
+        destroy();
+      }
+    )
+    .command(
+      'invalidate-introspection-cache',
+      'Invalidates introspection cache and creates it from scratch',
+      builder => {},
+      async () => {
+        const meshConfig = await findAndParseConfig({
+          dir: baseDir,
+          ignoreIntrospectionCache: true,
+          ignoreAdditionalResolvers: true,
+        });
+        const { destroy } = await getMesh(meshConfig);
+        const outFile = isAbsolute(meshConfig.config.introspectionCache)
+          ? meshConfig.config.introspectionCache
+          : resolve(process.cwd(), meshConfig.config.introspectionCache);
+        await writeJSON(outFile, meshConfig.introspectionCache);
         destroy();
       }
     ).argv;

@@ -22,17 +22,44 @@ import { fetchache, Request } from 'fetchache';
 import { set } from 'lodash';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 
+interface OpenAPIIntrospectionCache {
+  spec: Oas3;
+}
+
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
   private baseDir: string;
   private cache: KeyValueCache;
   private pubsub: MeshPubSub;
+  private introspectionCache: OpenAPIIntrospectionCache;
 
-  constructor({ config, baseDir, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  constructor({
+    config,
+    baseDir,
+    cache,
+    pubsub,
+    introspectionCache,
+  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler, OpenAPIIntrospectionCache>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
+    this.introspectionCache = introspectionCache;
+  }
+
+  private async getCachedSpec(): Promise<Oas3> {
+    const { source } = this.config;
+    if (!this.introspectionCache) {
+      this.introspectionCache.spec =
+        typeof source !== 'string'
+          ? source
+          : await readFileOrUrlWithCache<Oas3>(source, this.cache, {
+              cwd: this.baseDir,
+              fallbackFormat: this.config.sourceFormat,
+              headers: this.config.schemaHeaders,
+            });
+    }
+    return this.introspectionCache.spec;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -44,13 +71,9 @@ export default class OpenAPIHandler implements MeshHandler {
       operationHeaders,
       qs,
       selectQueryOrMutationField,
-      source,
     } = this.config;
-    const spec = typeof source !== 'string' ? source : await readFileOrUrlWithCache<Oas3>(source, this.cache, {
-      cwd: this.baseDir,
-      fallbackFormat: this.config.sourceFormat,
-      headers: this.config.schemaHeaders,
-    });
+
+    const spec = await this.getCachedSpec();
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];
     if (customFetch) {

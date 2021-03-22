@@ -47,10 +47,6 @@ type GraphQLHandler @md {
   """
   introspection: String
   """
-  Cache Introspection
-  """
-  cacheIntrospection: GraphQLCacheIntrospectionConfig
-  """
   Enable multipart/formdata in order to support file uploads
   """
   multipart: Boolean
@@ -58,15 +54,6 @@ type GraphQLHandler @md {
   Batch requests
   """
   batch: Boolean
-}
-
-union GraphQLCacheIntrospectionConfig = GraphQLIntrospectionCachingOptions | Boolean
-
-type GraphQLIntrospectionCachingOptions {
-  """
-  Time to live of introspection cache
-  """
-  ttl: Int
 }
 
 enum GraphQLHandlerHTTPMethod {

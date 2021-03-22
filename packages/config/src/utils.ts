@@ -5,13 +5,14 @@ import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { get, set, kebabCase } from 'lodash';
+import { get, set, kebabCase, join } from 'lodash';
 import { stringInterpolator } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
+import { isAbsolute } from 'node:path';
 
 export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
   const casedName = paramCase(name);
@@ -209,4 +210,19 @@ export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], i
     return pkg.default || pkg;
   }
   return StitchingMerger;
+}
+
+export async function resolveIntrospectionCache(
+  introspectionCacheConfig: YamlConfig.Config['introspectionCache'],
+  dir: string,
+  importFn: ImportFn
+): Promise<any> {
+  if (introspectionCacheConfig) {
+    const absolutePath = isAbsolute(introspectionCacheConfig)
+      ? introspectionCacheConfig
+      : join(dir, introspectionCacheConfig);
+    const importedMod = await importFn(absolutePath);
+    return importedMod.default || importedMod;
+  }
+  return {};
 }
