@@ -3,8 +3,6 @@ sources:
     handler:
       postgraphile:
         connectionString: postgres://postgres:docker@localhost:5432/postgres
-        cacheIntrospection: 
-          ttl: 3600
     transforms:
       - prefix:
           value: Geo
@@ -15,8 +13,6 @@ sources:
         introspection: https://raw.githubusercontent.com/octokit/graphql-schema/master/schema.graphql
         operationHeaders:
           Authorization: bearer ${GH_ACCESS_TOKEN}
-        cacheIntrospection: 
-          ttl: 3600
     transforms:
       - prefix:
           value: Github

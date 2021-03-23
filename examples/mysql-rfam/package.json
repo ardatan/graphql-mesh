@@ -4,11 +4,15 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "mesh serve"
+    "start": "mesh serve",
+    "test": "jest"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.26.2",
     "@graphql-mesh/mysql": "0.7.1",
     "graphql": "15.4.0"
+  },
+  "devDependencies": {
+    "jest": "26.6.3"
   }
 }

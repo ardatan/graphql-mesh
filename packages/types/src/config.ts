@@ -37,6 +37,10 @@ export interface Config {
    * Live Query Invalidations
    */
   liveQueryInvalidations?: LiveQueryInvalidation[];
+  /**
+   * Path to the file containing the introspection cache
+   */
+  introspectionCache?: string;
 }
 /**
  * Configuration for `mesh serve` command.
@@ -227,10 +231,6 @@ export interface GraphQLHandler {
    */
   introspection?: string;
   /**
-   * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
-   */
-  cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
-  /**
    * Enable multipart/formdata in order to support file uploads
    */
   multipart?: boolean;
@@ -238,16 +238,6 @@ export interface GraphQLHandler {
    * Batch requests
    */
   batch?: boolean;
-}
-export interface GraphQLIntrospectionCachingOptions {
-  /**
-   * Time to live of introspection cache
-   */
-  ttl?: number;
-  /**
-   * Path to Introspection JSON File
-   */
-  path?: string;
 }
 /**
  * Handler for gRPC and Protobuf schemas
@@ -749,10 +739,6 @@ export interface PostGraphileHandler {
         [k: string]: any;
       }
     | string;
-  /**
-   * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
-   */
-  cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
   /**
    * Enable GraphQL websocket transport support for subscriptions (default: true)
    */

@@ -13,10 +13,11 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { promises as fsPromises } from 'fs';
-import { loadFromModuleExportExpression, readFileOrUrlWithCache, readJSON } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 
-const { unlink } = fsPromises || {};
+interface PostGraphileIntrospection {
+  pgCache?: any;
+}
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -24,37 +25,22 @@ export default class PostGraphileHandler implements MeshHandler {
   private baseDir: string;
   private cache: KeyValueCache;
   private pubsub: MeshPubSub;
+  private introspectionCache: PostGraphileIntrospection;
 
-  constructor({ name, config, baseDir, cache, pubsub }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    cache,
+    pubsub,
+    introspectionCache = {},
+  }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler, PostGraphileIntrospection>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
-  }
-
-  private async writeIntrospectionToMeshCache({
-    cacheKey,
-    writeCache,
-    cacheIntrospectionFile,
-    cachedIntrospection,
-    ifTmpFileUsed,
-  }: {
-    cacheKey: string;
-    writeCache: () => Promise<void>;
-    cacheIntrospectionFile: string;
-    cachedIntrospection: any;
-    ifTmpFileUsed: boolean;
-  }) {
-    if (this.config.cacheIntrospection && !cachedIntrospection) {
-      await writeCache();
-      if (!ifTmpFileUsed) {
-        const json = await readJSON(cacheIntrospectionFile);
-        const ttl = typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.ttl;
-        await this.cache.set(cacheKey, json, { ttl });
-        await unlink(cacheIntrospectionFile);
-      }
-    }
+    this.introspectionCache = introspectionCache;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -75,20 +61,8 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const cacheKey = this.name + '_introspection';
 
-    let cacheIntrospectionFile = join(tmpdir(), cacheKey);
-    let cachedIntrospection;
-    let ifTmpFileUsed = false;
-    if (this.config.cacheIntrospection) {
-      if (typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.path) {
-        cacheIntrospectionFile = this.config.cacheIntrospection.path;
-        cachedIntrospection = await readFileOrUrlWithCache(this.config.cacheIntrospection.path, this.cache, {
-          cwd: this.baseDir,
-        });
-        ifTmpFileUsed = true;
-      } else {
-        cachedIntrospection = await this.cache.get(cacheKey);
-      }
-    }
+    const dummyCacheFilePath = join(tmpdir(), cacheKey);
+    const cachedIntrospection = this.introspectionCache;
 
     let writeCache: () => Promise<void>;
 
@@ -109,7 +83,7 @@ export default class PostGraphileHandler implements MeshHandler {
       subscriptions: 'subscriptions' in this.config ? this.config.subscriptions : true,
       live: 'live' in this.config ? this.config.live : true,
       readCache: cachedIntrospection,
-      writeCache: !cachedIntrospection && cacheIntrospectionFile,
+      writeCache: !cachedIntrospection && dummyCacheFilePath,
       setWriteCacheCallback: fn => {
         writeCache = fn;
       },
@@ -120,13 +94,13 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const schema = builder.buildSchema();
 
-    this.writeIntrospectionToMeshCache({
-      cacheKey,
-      writeCache,
-      cacheIntrospectionFile,
-      cachedIntrospection,
-      ifTmpFileUsed,
-    });
+    if (!cachedIntrospection) {
+      await writeCache();
+      const writtenCache = await readFileOrUrlWithCache(cacheKey, this.cache, {
+        cwd: this.baseDir,
+      });
+      this.introspectionCache.pgCache = writtenCache;
+    }
 
     return {
       schema,

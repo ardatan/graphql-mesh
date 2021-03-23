@@ -21,12 +21,13 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
   batch?: boolean;
 };
 
-export type GetMeshSourceOptions<THandlerConfig> = {
+export type GetMeshSourceOptions<THandlerConfig, TIntrospectionCache = never> = {
   name: string;
   config: THandlerConfig;
   baseDir?: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  introspectionCache?: TIntrospectionCache;
 };
 
 // Handlers
@@ -34,8 +35,8 @@ export interface MeshHandler<TContext = any> {
   getMeshSource: () => Promise<MeshSource<TContext>>;
 }
 
-export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
-  new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
+export interface MeshHandlerLibrary<TConfig = any, TContext = any, TIntrospectionCache = any> {
+  new (options: GetMeshSourceOptions<TConfig, TIntrospectionCache>): MeshHandler<TContext>;
 }
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {

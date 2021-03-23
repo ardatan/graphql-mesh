@@ -8,7 +8,8 @@ import { isAbsolute, resolve } from 'path';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { writeFile } from '@graphql-mesh/utils';
+import { writeFile, writeJSON } from '@graphql-mesh/utils';
+
 export { generateSdk, serveMesh };
 
 export async function graphqlMesh() {
@@ -138,6 +139,24 @@ export async function graphqlMesh() {
         const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
         const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
         await writeFile(outFile, result);
+        destroy();
+      }
+    )
+    .command(
+      'write-introspection-cache',
+      'Writes introspection cache and creates it from scratch',
+      builder => {},
+      async () => {
+        const meshConfig = await findAndParseConfig({
+          dir: baseDir,
+          ignoreIntrospectionCache: true,
+          ignoreAdditionalResolvers: true,
+        });
+        const { destroy } = await getMesh(meshConfig);
+        const outFile = isAbsolute(meshConfig.config.introspectionCache)
+          ? meshConfig.config.introspectionCache
+          : resolve(process.cwd(), meshConfig.config.introspectionCache);
+        await writeJSON(outFile, meshConfig.introspectionCache);
         destroy();
       }
     ).argv;

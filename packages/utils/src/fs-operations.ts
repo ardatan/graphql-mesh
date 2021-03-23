@@ -19,12 +19,12 @@ export async function pathExists(path: string) {
   }
 }
 
-export function readJSONSync(path: string) {
+export function readJSONSync<T = any>(path: string): T {
   const fileContent = readFileSync(path, 'utf-8');
   return JSON.parse(fileContent);
 }
 
-export async function readJSON(path: string) {
+export async function readJSON<T = any>(path: string): Promise<T> {
   const fileContent = await readFile(path, 'utf-8');
   return JSON.parse(fileContent);
 }
