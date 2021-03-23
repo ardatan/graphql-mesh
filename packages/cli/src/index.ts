@@ -7,7 +7,8 @@ import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve } from 'path';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
-import { printSchemaWithDirectives, writeFile, writeJSON } from '@graphql-tools/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { writeFile, writeJSON } from '@graphql-mesh/utils';
 
 export { generateSdk, serveMesh };
 
