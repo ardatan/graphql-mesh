@@ -1,11 +1,11 @@
 import { parse } from 'graphql';
 import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn, ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { resolve, isAbsolute } from 'path';
+import { resolve, isAbsolute, join } from 'path';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { get, set, kebabCase, join } from 'lodash';
+import { get, set, kebabCase } from 'lodash';
 import { stringInterpolator, pathExists, readJSON } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
 import { PubSub, withFilter } from 'graphql-subscriptions';

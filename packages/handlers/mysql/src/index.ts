@@ -65,38 +65,8 @@ const SCALARS = {
   year: 'Int',
 };
 
-async function getPromisifiedConnection(pool: Pool) {
-  const getConnection = promisify(pool.getConnection.bind(pool));
-
-  const connection = await getConnection();
-
-  const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
-  const getTableFields = promisify(connection.fields.bind(connection));
-  const getTableForeigns = promisify(connection.foreign.bind(connection));
-  const getTablePrimaryKeyMetadata = promisify(connection.primary.bind(connection));
-
-  const selectLimit = promisify(connection.selectLimit.bind(connection));
-  const select = promisify(connection.select.bind(connection));
-  const insert = promisify(connection.insert.bind(connection));
-  const update = promisify(connection.update.bind(connection));
-  const deleteRow = promisify(connection.delete.bind(connection));
-
-  return {
-    connection,
-    getDatabaseTables,
-    getTableFields,
-    getTableForeigns,
-    getTablePrimaryKeyMetadata,
-    selectLimit,
-    select,
-    insert,
-    update,
-    deleteRow,
-  };
-}
-
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnection>>;
+type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof MySQLHandler.prototype.getPromisifiedConnection>>;
 
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
@@ -104,11 +74,70 @@ export default class MySQLHandler implements MeshHandler {
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
+  private introspectionCache: any;
 
-  constructor({ config, baseDir, pubsub }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({ config, baseDir, pubsub, introspectionCache }: GetMeshSourceOptions<YamlConfig.MySQLHandler, any>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
+    this.introspectionCache = introspectionCache;
+  }
+
+  async getPromisifiedConnection(pool: Pool) {
+    const getConnection = promisify(pool.getConnection.bind(pool));
+
+    const connection = await getConnection();
+
+    const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
+    const getTableFields = promisify(connection.fields.bind(connection));
+    const getTableForeigns = promisify(connection.foreign.bind(connection));
+    const getTablePrimaryKeyMetadata = promisify(connection.primary.bind(connection));
+
+    const selectLimit = promisify(connection.selectLimit.bind(connection));
+    const select = promisify(connection.select.bind(connection));
+    const insert = promisify(connection.insert.bind(connection));
+    const update = promisify(connection.update.bind(connection));
+    const deleteRow = promisify(connection.delete.bind(connection));
+
+    return {
+      connection,
+      getDatabaseTables,
+      getTableFields,
+      getTableForeigns,
+      getTablePrimaryKeyMetadata,
+      selectLimit,
+      select,
+      insert,
+      update,
+      deleteRow,
+    };
+  }
+
+  private getCachedIntrospectionConnection(pool: Pool) {
+    let promisiedConnection$: Promise<MysqlPromisifiedConnection>;
+    return new Proxy<MysqlPromisifiedConnection>({} as any, {
+      get: (_, methodName) => {
+        if (methodName === 'connection') {
+          return {
+            release: () => promisiedConnection$?.then(promisiedConnection => promisiedConnection?.connection.release()),
+          };
+        }
+        return (...args: any[]) => {
+          const cacheKey = [methodName, ...args].join('_');
+          if (cacheKey in this.introspectionCache) {
+            return this.introspectionCache[cacheKey];
+          } else {
+            promisiedConnection$ = promisiedConnection$ || this.getPromisifiedConnection(pool);
+            return promisiedConnection$
+              .then(promisiedConnection => promisiedConnection[methodName](...args))
+              .then(result => {
+                this.introspectionCache[cacheKey] = result;
+                return result;
+              });
+          }
+        };
+      },
+    });
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -119,12 +148,13 @@ export default class MySQLHandler implements MeshHandler {
         ? await loadFromModuleExportExpression(configPool, { cwd: this.baseDir })
         : configPool
       : createPool(this.config);
+
     pool.on('connection', connection => {
       upgrade(connection);
       introspection(connection);
     });
 
-    const introspectionConnection = await getPromisifiedConnection(pool);
+    const introspectionConnection = this.getCachedIntrospectionConnection(pool);
 
     schemaComposer.add(GraphQLBigInt);
     schemaComposer.add(GraphQLJSON);
@@ -400,8 +430,8 @@ export default class MySQLHandler implements MeshHandler {
 
     return {
       schema,
-      async executor({ document, variables, context: meshContext }) {
-        const mysqlConnection = await getPromisifiedConnection(pool);
+      executor: async ({ document, variables, context: meshContext }) => {
+        const mysqlConnection = await this.getPromisifiedConnection(pool);
         const result = await execute({
           schema,
           document,
