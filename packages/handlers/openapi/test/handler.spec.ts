@@ -13,7 +13,6 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
-      introspectionCache: {} as any,
     });
     const source = await handler.getMeshSource();
 
@@ -28,7 +27,6 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
-      introspectionCache: {} as any,
     });
     const source = await handler.getMeshSource();
     expect(
@@ -48,7 +46,6 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
-      introspectionCache: {} as any,
     });
     const source = await handler.getMeshSource();
     expect(

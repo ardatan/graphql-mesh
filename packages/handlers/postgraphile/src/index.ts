@@ -16,7 +16,7 @@ import { tmpdir } from 'os';
 import { loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 
 interface PostGraphileIntrospection {
-  pgCache: any;
+  pgCache?: any;
 }
 
 export default class PostGraphileHandler implements MeshHandler {
@@ -33,7 +33,7 @@ export default class PostGraphileHandler implements MeshHandler {
     baseDir,
     cache,
     pubsub,
-    introspectionCache,
+    introspectionCache = {},
   }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler, PostGraphileIntrospection>) {
     this.name = name;
     this.config = config;

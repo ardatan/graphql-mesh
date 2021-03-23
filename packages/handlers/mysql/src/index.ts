@@ -65,6 +65,12 @@ const SCALARS = {
   year: 'Int',
 };
 
+type MySQLIntrospectionCache = {
+  [Key in keyof MysqlPromisifiedConnection]?: MysqlPromisifiedConnection[Key] extends (...args: any[]) => any
+    ? ThenArg<ReturnType<MysqlPromisifiedConnection[Key]>>
+    : never;
+};
+
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof MySQLHandler.prototype.getPromisifiedConnection>>;
 
@@ -74,9 +80,14 @@ export default class MySQLHandler implements MeshHandler {
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
-  private introspectionCache: any;
+  private introspectionCache: MySQLIntrospectionCache;
 
-  constructor({ config, baseDir, pubsub, introspectionCache }: GetMeshSourceOptions<YamlConfig.MySQLHandler, any>) {
+  constructor({
+    config,
+    baseDir,
+    pubsub,
+    introspectionCache = {},
+  }: GetMeshSourceOptions<YamlConfig.MySQLHandler, MySQLIntrospectionCache>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;

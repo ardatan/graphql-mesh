@@ -27,7 +27,7 @@ export type GetMeshSourceOptions<THandlerConfig, TIntrospectionCache = never> = 
   baseDir?: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  introspectionCache: TIntrospectionCache;
+  introspectionCache?: TIntrospectionCache;
 };
 
 // Handlers

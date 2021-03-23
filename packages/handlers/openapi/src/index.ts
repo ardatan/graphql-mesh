@@ -23,7 +23,7 @@ import { set } from 'lodash';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 
 interface OpenAPIIntrospectionCache {
-  spec: Oas3;
+  spec?: Oas3;
 }
 
 export default class OpenAPIHandler implements MeshHandler {
@@ -38,7 +38,7 @@ export default class OpenAPIHandler implements MeshHandler {
     baseDir,
     cache,
     pubsub,
-    introspectionCache,
+    introspectionCache = {},
   }: GetMeshSourceOptions<YamlConfig.OpenapiHandler, OpenAPIIntrospectionCache>) {
     this.config = config;
     this.baseDir = baseDir;

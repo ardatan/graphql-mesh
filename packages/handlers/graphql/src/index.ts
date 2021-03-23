@@ -13,7 +13,7 @@ import {
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
 export interface GraphQLHandlerIntrospection {
-  introspection: IntrospectionQuery;
+  introspection?: IntrospectionQuery;
 }
 
 export default class GraphQLHandler implements MeshHandler {
@@ -26,7 +26,7 @@ export default class GraphQLHandler implements MeshHandler {
     config,
     baseDir,
     cache,
-    introspectionCache,
+    introspectionCache = {},
   }: GetMeshSourceOptions<YamlConfig.GraphQLHandler, GraphQLHandlerIntrospection>) {
     this.config = config;
     this.baseDir = baseDir;
