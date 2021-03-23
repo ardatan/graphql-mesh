@@ -13,6 +13,7 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
+      introspectionCache: {} as any,
     });
     const source = await handler.getMeshSource();
 
@@ -27,13 +28,14 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
+      introspectionCache: {} as any,
     });
     const source = await handler.getMeshSource();
     expect(
       source.schema
         .getQueryType()
         .getFields()
-        ['getAllCars'].args.some(it => it.name === 'limit')
+        .getAllCars.args.some(it => it.name === 'limit')
     ).toBe(true);
   });
 
@@ -46,13 +48,14 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
+      introspectionCache: {} as any,
     });
     const source = await handler.getMeshSource();
     expect(
       source.schema
         .getQueryType()
         .getFields()
-        ['getAllCars'].args.some(it => it.name === 'limit')
+        .getAllCars.args.some(it => it.name === 'limit')
     ).toBe(false);
   });
 });
