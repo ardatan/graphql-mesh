@@ -1,5 +1,4 @@
 import { logger } from './logger';
-import { spinner } from './spinner';
 
 export function handleFatalError(e: Error): any {
   logger.error(

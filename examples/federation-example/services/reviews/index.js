@@ -27,7 +27,9 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    reviewById: (_,{ id }) => reviews.find(review => review.id === id)
+    reviewById: (_,{ id }) => {
+      return reviews.find(review => review.id === id);
+    }
   },
   Review: {
     author(review) {
@@ -42,8 +44,7 @@ const resolvers = {
       return reviews.filter(review => review.authorID === user.id).length;
     },
     username(user) {
-      const found = usernames.find(username => username.id === user.id);
-      return found ? found.username : null;
+      return usernames.find(username => username.id === user.id)?.username;
     }
   },
   Product: {

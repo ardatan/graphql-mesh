@@ -2012,7 +2012,7 @@
         "provides": {
           "type": "string"
         },
-        "required": {
+        "requires": {
           "type": "string"
         }
       }

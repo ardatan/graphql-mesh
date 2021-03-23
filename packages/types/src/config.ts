@@ -989,7 +989,7 @@ export interface FederationField {
 export interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
-  required?: string;
+  requires?: string;
 }
 export interface ResolveReferenceObject {
   targetSource: string;
