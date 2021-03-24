@@ -17,7 +17,7 @@
     "@graphql-mesh/merger-stitching": "0.7.36",
     "@graphql-mesh/runtime": "0.13.1",
     "@graphql-mesh/types": "0.36.1",
-    "@graphql-mesh/utils": "0.9.2",
+    "@graphql-mesh/utils": "0.9.3",
     "ajv": "7.2.3",
     "cosmiconfig": "7.0.0",
     "@graphql-tools/merge": "6.2.11",
