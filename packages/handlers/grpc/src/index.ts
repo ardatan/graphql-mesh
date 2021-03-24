@@ -57,6 +57,7 @@ export default class GrpcHandler implements MeshHandler {
   }
 
   async getMeshSource() {
+    this.config.packageName = this.config.packageName || '';
     let creds: ChannelCredentials;
     if (this.config.credentialsSsl) {
       const sslFiles = [
