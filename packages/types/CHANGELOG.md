@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.36.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+
 ## 0.36.0
 
 ### Minor Changes

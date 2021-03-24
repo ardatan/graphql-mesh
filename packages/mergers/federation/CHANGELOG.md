@@ -1,5 +1,13 @@
 # @graphql-mesh/merger-federation
 
+## 0.8.30
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/types@0.36.1
+
 ## 0.8.29
 
 ### Patch Changes

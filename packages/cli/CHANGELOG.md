@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.27.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/config@0.15.1
+  - @graphql-mesh/runtime@0.13.1
+  - @graphql-mesh/utils@0.9.2
+
 ## 0.27.0
 
 ### Minor Changes

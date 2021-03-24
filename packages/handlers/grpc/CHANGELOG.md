@@ -1,5 +1,14 @@
 # @graphql-mesh/grpc
 
+## 0.9.4
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/types@0.36.1
+  - @graphql-mesh/utils@0.9.2
+
 ## 0.9.3
 
 ### Patch Changes

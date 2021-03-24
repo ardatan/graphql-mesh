@@ -1,5 +1,13 @@
 # @graphql-mesh/neo4j
 
+## 0.10.3
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/types@0.36.1
+
 ## 0.10.2
 
 ### Patch Changes

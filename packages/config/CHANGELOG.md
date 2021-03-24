@@ -1,5 +1,17 @@
 # @graphql-mesh/config
 
+## 0.15.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/cache-inmemory-lru@0.4.52
+  - @graphql-mesh/merger-stitching@0.7.36
+  - @graphql-mesh/runtime@0.13.1
+  - @graphql-mesh/types@0.36.1
+  - @graphql-mesh/utils@0.9.2
+
 ## 0.15.0
 
 ### Minor Changes
