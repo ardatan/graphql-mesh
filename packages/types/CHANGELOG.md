@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.36.0
+
+### Minor Changes
+
+- 634a8a134: feat(config): introduce introspection cache
+
+### Patch Changes
+
+- 6b8b23a4e: feat(openapi): allow source spec inline injection
+
 ## 0.35.1
 
 ### Patch Changes
