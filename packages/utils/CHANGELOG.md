@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.9.2
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+
 ## 0.9.1
 
 ### Patch Changes
