@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.27.2
+
+### Patch Changes
+
+- e7c3de4ae: fix(cli): use baseDir for path defined in config file
+
 ## 0.27.1
 
 ### Patch Changes
