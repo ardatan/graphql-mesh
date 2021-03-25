@@ -155,7 +155,7 @@ export async function graphqlMesh() {
         const { destroy } = await getMesh(meshConfig);
         const outFile = isAbsolute(meshConfig.config.introspectionCache)
           ? meshConfig.config.introspectionCache
-          : resolve(process.cwd(), meshConfig.config.introspectionCache);
+          : resolve(baseDir, meshConfig.config.introspectionCache);
         await writeJSON(outFile, meshConfig.introspectionCache);
         destroy();
       }
