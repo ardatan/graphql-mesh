@@ -1,5 +1,17 @@
 # @graphql-mesh/json-schema
 
+## 0.12.0
+
+### Minor Changes
+
+- 4b57f7496: feat(json-schema): support introspection cache
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
 ## 0.11.3
 
 ### Patch Changes

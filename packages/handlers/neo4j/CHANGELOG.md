@@ -1,5 +1,17 @@
 # @graphql-mesh/neo4j
 
+## 0.11.0
+
+### Minor Changes
+
+- 4b57f7496: support introspection cache
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
 ## 0.10.3
 
 ### Patch Changes

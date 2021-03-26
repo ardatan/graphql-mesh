@@ -1,5 +1,17 @@
 # @graphql-mesh/grpc
 
+## 0.10.0
+
+### Minor Changes
+
+- 4b57f7496: feat(grpc): support introspection cache
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
 ## 0.9.4
 
 ### Patch Changes
