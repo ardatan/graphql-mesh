@@ -101,38 +101,58 @@ const queryOptionsFields = {
   },
 };
 
+export interface ODataIntrospectionCache {
+  metadataJson: any;
+}
+
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
   private baseDir: string;
   private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
+  private introspectionCache: ODataIntrospectionCache;
 
-  constructor({ name, config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    cache,
+    introspectionCache,
+  }: GetMeshSourceOptions<YamlConfig.ODataHandler, ODataIntrospectionCache>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
+    this.introspectionCache = introspectionCache || {
+      metadataJson: null,
+    };
+  }
+
+  async getCachedMetadataJson() {
+    if (!this.introspectionCache.metadataJson) {
+      const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
+      const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
+        allowUnknownExtensions: true,
+        cwd: this.baseDir,
+        headers: this.config.schemaHeaders,
+      });
+
+      this.introspectionCache.metadataJson = parseXML(metadataText, {
+        attributeNamePrefix: '',
+        attrNodeName: 'attributes',
+        textNodeName: 'innerText',
+        ignoreAttributes: false,
+        ignoreNameSpace: true,
+        arrayMode: true,
+        allowBooleanAttributes: true,
+      });
+    }
+    return this.introspectionCache.metadataJson;
   }
 
   async getMeshSource(): Promise<MeshSource> {
     const { baseUrl, operationHeaders } = this.config;
-    const metadataUrl = urljoin(baseUrl, '$metadata');
-    const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
-      allowUnknownExtensions: true,
-      cwd: this.baseDir,
-      headers: this.config.schemaHeaders,
-    });
-
-    const metadataJson = parseXML(metadataText, {
-      attributeNamePrefix: '',
-      attrNodeName: 'attributes',
-      textNodeName: 'innerText',
-      ignoreAttributes: false,
-      ignoreNameSpace: true,
-      arrayMode: true,
-      allowBooleanAttributes: true,
-    });
 
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
@@ -145,6 +165,7 @@ export default class ODataHandler implements MeshHandler {
 
     const aliasNamespaceMap = new Map<string, string>();
 
+    const metadataJson = await this.getCachedMetadataJson();
     const schemas = metadataJson.Edmx[0].DataServices[0].Schema;
     const multipleSchemas = schemas.length > 1;
     const namespaces = new Set<string>();

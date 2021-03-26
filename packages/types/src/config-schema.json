@@ -172,6 +172,17 @@
         "endpoint": {
           "type": "string",
           "description": "Path to GraphQL Endpoint (default: /graphql)"
+        },
+        "browser": {
+          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disable by passing `false` (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         }
       }
     },
@@ -1395,31 +1406,9 @@
         "typeDefs": {
           "type": "string",
           "description": "Provide GraphQL Type Definitions instead of inferring"
-        },
-        "cacheIntrospection": {
-          "description": "Cache Introspection (Any of: Neo4jIntrospectionCachingOptions, Boolean)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Neo4jIntrospectionCachingOptions"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
         }
       },
       "required": ["url", "username", "password"]
-    },
-    "Neo4jIntrospectionCachingOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Neo4jIntrospectionCachingOptions",
-      "properties": {
-        "ttl": {
-          "type": "integer",
-          "description": "Time to live of introspection cache"
-        }
-      }
     },
     "ODataHandler": {
       "additionalProperties": false,

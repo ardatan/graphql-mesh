@@ -89,6 +89,11 @@ export interface ServeConfig {
    * Path to GraphQL Endpoint (default: /graphql)
    */
   endpoint?: string;
+  /**
+   * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
+   * This feature can be disable by passing `false` (Any of: String, Boolean)
+   */
+  browser?: string | boolean;
 }
 /**
  * Configuration for CORS
@@ -589,16 +594,6 @@ export interface Neo4JHandler {
    * Provide GraphQL Type Definitions instead of inferring
    */
   typeDefs?: string;
-  /**
-   * Cache Introspection (Any of: Neo4jIntrospectionCachingOptions, Boolean)
-   */
-  cacheIntrospection?: Neo4JIntrospectionCachingOptions | boolean;
-}
-export interface Neo4JIntrospectionCachingOptions {
-  /**
-   * Time to live of introspection cache
-   */
-  ttl?: number;
 }
 /**
  * Handler for OData

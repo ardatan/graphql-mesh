@@ -57,6 +57,7 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
     maxRequestBodySize = '100kb',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
+    browser,
   } = meshConfig.config.serve || {};
   const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
 
@@ -168,8 +169,8 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
-        if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
-          open(serverUrl).catch(() => {});
+        if (process.env.NODE_ENV?.toLowerCase() !== 'production' || !browser) {
+          open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
         }
       })
       .on('error', handleFatalError);

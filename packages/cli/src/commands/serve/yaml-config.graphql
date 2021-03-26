@@ -59,6 +59,11 @@ type ServeConfig @md {
   Path to GraphQL Endpoint (default: /graphql)
   """
   endpoint: String
+  """
+  Path to the browser that will be used by `mesh serve` to open a playground window in development mode
+  This feature can be disable by passing `false`
+  """
+  browser: Browser
 }
 
 union Port = Int | String
@@ -66,6 +71,8 @@ union Port = Int | String
 union Fork = Int | Boolean
 
 union RequestBodySize = Int | String
+
+union Browser = String | Boolean
 
 type CorsConfig {
   origin: Any
