@@ -1,5 +1,17 @@
 # @graphql-mesh/odata
 
+## 0.9.0
+
+### Minor Changes
+
+- 4b57f7496: support introspection cache
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
 ## 0.8.3
 
 ### Patch Changes

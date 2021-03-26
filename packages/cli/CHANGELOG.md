@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.28.0
+
+### Minor Changes
+
+- 4b57f7496: feat(serve): ability to configure opening browser window feature
+
+### Patch Changes
+
+- @graphql-mesh/config@0.15.2
+- @graphql-mesh/runtime@0.13.2
+
 ## 0.27.2
 
 ### Patch Changes

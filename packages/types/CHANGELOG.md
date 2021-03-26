@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.37.0
+
+### Minor Changes
+
+- 4b57f7496: feat(serve): ability to configure opening browser window feature
+- 4b57f7496: support introspection cache
+
 ## 0.36.1
 
 ### Patch Changes
