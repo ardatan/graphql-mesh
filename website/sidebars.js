@@ -40,6 +40,7 @@ module.exports = {
       'recipes/as-sdk',
       'recipes/as-gateway',
       'recipes/federation',
+      'recipes/introspection-cache',
       'recipes/subscriptions-webhooks',
       'recipes/live-queries'
     ],
