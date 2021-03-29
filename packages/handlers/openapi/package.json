@@ -21,7 +21,7 @@
     "@graphql-mesh/utils": "0.9.3",
     "fetchache": "0.0.4",
     "deep-equal": "2.0.5",
-    "form-urlencoded": "4.2.1",
+    "form-urlencoded": "4.4.2",
     "jsonpath-plus": "5.0.4",
     "json-ptr": "2.0.0",
     "graphql-scalars": "1.9.0",
