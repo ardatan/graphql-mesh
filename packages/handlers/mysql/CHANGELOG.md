@@ -1,5 +1,11 @@
 # @graphql-mesh/mysql
 
+## 0.9.0
+
+### Minor Changes
+
+- ca1d568a4: feat(mysql): add count query
+
 ## 0.8.2
 
 ### Patch Changes
