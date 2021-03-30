@@ -64,13 +64,7 @@ const mergeUsingFederation: MergerFn = async function ({
         operationName: undefined,
         cache,
         context,
-        queryHash: objectHash(
-          {
-            document,
-            variables,
-          },
-          { ignoreUnknown: true }
-        ),
+        queryHash: documentStr,
         logger: console,
         metrics: {},
         source: documentStr,

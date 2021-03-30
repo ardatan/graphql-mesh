@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, DocumentNode, GraphQLError, subscribe } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, ExecutionArgs, print } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
@@ -9,11 +9,13 @@ import {
   applySchemaTransforms,
   ensureDocumentNode,
   getInterpolatedStringFactory,
+  globalLruCache,
   groupTransforms,
   ResolverDataBasedFactory,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { compileQuery, isCompiledQuery } from 'graphql-jit';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -71,7 +73,23 @@ export async function getMesh(
 
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
-  const liveQueryStore = new InMemoryLiveQueryStore();
+  const liveQueryStore = new InMemoryLiveQueryStore({
+    includeIdentifierExtension: true,
+    execute: (args: any) => {
+      const { document, contextValue, rootValue, variableValues, schema, operationName }: ExecutionArgs = args;
+      const documentStr = typeof document === 'string' ? document : print(document);
+      const cacheKey = [documentStr, operationName].join('_');
+      let compiledQuery = globalLruCache.get(cacheKey);
+      if (!compiledQuery) {
+        compiledQuery = compileQuery(schema, document, operationName);
+        globalLruCache.set(cacheKey, compiledQuery);
+      }
+      if (isCompiledQuery(compiledQuery)) {
+        return compiledQuery.query(rootValue, contextValue, variableValues);
+      }
+      return compiledQuery;
+    },
+  });
 
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
 

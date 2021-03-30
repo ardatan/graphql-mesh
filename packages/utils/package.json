@@ -24,7 +24,8 @@
     "fetchache": "0.0.4",
     "is-url": "1.2.4",
     "js-yaml": "4.0.0",
-    "object-hash": "2.1.1"
+    "object-hash": "2.1.1",
+    "tiny-lru": "7.0.6"
   },
   "publishConfig": {
     "access": "public",

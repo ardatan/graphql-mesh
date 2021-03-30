@@ -1,5 +1,8 @@
 ---
-'@graphql-mesh/mysql': minor
+'@graphql-mesh/postgraphile': patch
+'@graphql-mesh/mysql': patch
+'@graphql-mesh/runtime': patch
 ---
 
-feat(mysql): add count query
+Use GraphQL JIT for faster GraphQL Executions
+

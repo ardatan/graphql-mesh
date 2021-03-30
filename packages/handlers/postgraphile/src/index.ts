@@ -7,13 +7,15 @@ import {
   MeshPubSub,
   KeyValueCache,
 } from '@graphql-mesh/types';
-import { execute, subscribe } from 'graphql';
+import { subscribe, print } from 'graphql';
 import { withPostGraphileContext, Plugin } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { globalLruCache, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { compileQuery, isCompiledQuery } from 'graphql-jit';
+import { ExecutionParams } from '@graphql-tools/delegate';
 
 interface PostGraphileIntrospection {
   pgCache?: any;
@@ -102,22 +104,34 @@ export default class PostGraphileHandler implements MeshHandler {
       this.introspectionCache.pgCache = writtenCache;
     }
 
-    return {
-      schema,
-      executor: ({ document, variables, context: meshContext }) =>
-        withPostGraphileContext(
-          { pgPool },
+    const executor: any = ({ document, variables, context: meshContext, info }: ExecutionParams) => {
+      const operationName = info?.operation?.name?.value;
+      const documentStr = typeof document === 'string' ? document : print(document);
+      const cacheKey = [documentStr, operationName].join('_');
+      if (!globalLruCache.has(cacheKey)) {
+        const compiledQuery = compileQuery(schema, document, operationName);
+        globalLruCache.set(cacheKey, compiledQuery);
+      }
+      const cachedQuery = globalLruCache.get(cacheKey);
+      if (isCompiledQuery(cachedQuery)) {
+        return withPostGraphileContext({ pgPool }, async postgraphileContext => {
           // Execute your GraphQL query in this function with the provided
           // `context` object, which should NOT be used outside of this
           // function.
-          postgraphileContext =>
-            execute({
-              schema, // The schema from `createPostGraphileSchema`
-              document,
-              contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
-              variableValues: variables,
-            }) as any
-        ) as any,
+          const cachedQuery = globalLruCache.get(cacheKey);
+          if (isCompiledQuery(cachedQuery)) {
+            const contextValue = { ...meshContext, ...postgraphileContext };
+            return cachedQuery.query(info?.rootValue, contextValue, variables);
+          }
+          return cachedQuery;
+        });
+      }
+      return cachedQuery;
+    };
+
+    return {
+      schema,
+      executor,
       subscriber: ({ document, variables, context: meshContext }) =>
         withPostGraphileContext(
           { pgPool },

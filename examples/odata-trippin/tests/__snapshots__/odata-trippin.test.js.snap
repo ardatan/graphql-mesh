@@ -5474,10 +5474,28 @@ Object {
 exports[`OData TripPin should give correct response for example queries: example-query.graphql-query-result 1`] = `
 Object {
   "data": Object {
-    "Me": null,
+    "Me": Object {
+      "AddressInfo": Array [
+        Object {
+          "Address": "P.O. Box 555",
+          "City": Object {
+            "CountryRegion": "United States",
+            "Name": "Lander",
+            "Region": "WY",
+          },
+        },
+      ],
+      "FavoriteFeature": "Feature1",
+      "FirstName": "April",
+      "Gender": "Female",
+      "LastName": "Cline",
+      "Trips": Array [
+        Object {
+          "Description": "Trip in US",
+        },
+      ],
+      "UserName": "aprilcline",
+    },
   },
-  "errors": Array [
-    [GraphQLError: Cannot return null for non-nullable field Person.UserName.],
-  ],
 }
 `;

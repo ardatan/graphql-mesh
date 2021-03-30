@@ -412,6 +412,30 @@ export default class ODataHandler implements MeshHandler {
       }
     }
 
+    function handleBatchJsonResults(batchResponseJson: any, requests: Request[]) {
+      if ('error' in batchResponseJson) {
+        const error = new Error(batchResponseJson.error.message);
+        Object.assign(error, {
+          extensions: batchResponseJson.error,
+        });
+        throw error;
+      }
+      if (!('responses' in batchResponseJson)) {
+        const error = new Error(`Batch Request didn't return a valid response.`);
+        Object.assign(error, {
+          extensions: batchResponseJson,
+        });
+        throw error;
+      }
+      return requests.map((_req, index) => {
+        const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
+        return new Response(JSON.stringify(responseObj.body), {
+          status: responseObj.status,
+          headers: responseObj.headers,
+        });
+      });
+    }
+
     const DATALOADER_FACTORIES = {
       multipart: (context: any) =>
         new DataLoader(
@@ -446,11 +470,12 @@ export default class ODataHandler implements MeshHandler {
             });
             const batchResponse = await nativeFetch(batchRequest);
             const batchResponseText = await batchResponse.text();
+            if (!batchResponseText.startsWith('--')) {
+              const batchResponseJson = JSON.parse(batchResponseText);
+              return handleBatchJsonResults(batchResponseJson, requests);
+            }
             const responseLines = batchResponseText.split('\n');
             const responseBoundary = responseLines[0];
-            if (!responseBoundary.startsWith('--')) {
-              return requests.map(() => batchResponse);
-            }
             const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
             const responseTextArr = actualResponse.split(responseBoundary);
             return responseTextArr.map(responseTextWithContentHeader => {
@@ -496,27 +521,7 @@ export default class ODataHandler implements MeshHandler {
             const batchResponse = await fetchache(batchRequest, this.cache);
             const batchResponseText = await batchResponse.text();
             const batchResponseJson = JSON.parse(batchResponseText);
-            if ('error' in batchResponseJson) {
-              const error = new Error(batchResponseJson.error.message);
-              Object.assign(error, {
-                extensions: batchResponseJson.error,
-              });
-              throw error;
-            }
-            if (!('responses' in batchResponseJson)) {
-              const error = new Error(`Batch Request didn't return a valid response.`);
-              Object.assign(error, {
-                extensions: batchResponseJson,
-              });
-              throw error;
-            }
-            return requests.map((_req, index) => {
-              const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
-              return new Response(JSON.stringify(responseObj.body), {
-                status: responseObj.status,
-                headers: responseObj.headers,
-              });
-            });
+            return handleBatchJsonResults(batchResponseJson, requests);
           }
         ),
       none: () =>

@@ -9,7 +9,7 @@ export function handleFatalError(e: Error): any {
     logger.error(errorText);
   }
   if (process.env.DEBUG) {
-    logger.debug(
+    logger.error(
       JSON.stringify({
         ...e,
         name: e.name,

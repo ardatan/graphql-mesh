@@ -14,8 +14,10 @@ import {
   GraphQLTimestamp,
   GraphQLTime,
 } from 'graphql-scalars';
-import { execute, specifiedDirectives } from 'graphql';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { print, specifiedDirectives } from 'graphql';
+import { globalLruCache, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { ExecutionParams } from '@graphql-tools/delegate';
+import { compileQuery, isCompiledQuery } from 'graphql-jit';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -454,19 +456,28 @@ export default class MySQLHandler implements MeshHandler {
 
     introspectionConnection.connection.release();
 
+    const executor: any = async ({ document, variables, context: meshContext, info }: ExecutionParams) => {
+      const operationName = info?.operation.name?.value;
+      const documentStr = typeof document === 'string' ? document : print(document);
+      const cacheKey = [documentStr, operationName].join('_');
+      if (!globalLruCache.has(cacheKey)) {
+        const compiledQuery = compileQuery(schema, document, operationName);
+        globalLruCache.set(cacheKey, compiledQuery);
+      }
+      const cachedQuery = globalLruCache.get(cacheKey);
+      if (isCompiledQuery(cachedQuery)) {
+        const mysqlConnection = await this.getPromisifiedConnection(pool);
+        const contextValue = { ...meshContext, mysqlConnection };
+        const result = await cachedQuery.query(info?.rootValue, contextValue, variables);
+        mysqlConnection.connection.release();
+        return result;
+      }
+      return cachedQuery;
+    };
+
     return {
       schema,
-      executor: async ({ document, variables, context: meshContext }) => {
-        const mysqlConnection = await this.getPromisifiedConnection(pool);
-        const result = await execute({
-          schema,
-          document,
-          variableValues: variables,
-          contextValue: { ...meshContext, mysqlConnection },
-        });
-        mysqlConnection.connection.release();
-        return result as any;
-      },
+      executor,
     };
   }
 }
