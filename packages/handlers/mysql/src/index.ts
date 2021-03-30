@@ -109,6 +109,7 @@ export default class MySQLHandler implements MeshHandler {
     const insert = promisify(connection.insert.bind(connection));
     const update = promisify(connection.update.bind(connection));
     const deleteRow = promisify(connection.delete.bind(connection));
+    const count = promisify(connection.count.bind(connection));
 
     return {
       connection,
@@ -121,6 +122,7 @@ export default class MySQLHandler implements MeshHandler {
       insert,
       update,
       deleteRow,
+      count,
     };
   }
 
@@ -374,6 +376,19 @@ export default class MySQLHandler implements MeshHandler {
               } else {
                 return mysqlConnection.select(tableName, fields, args.where, args?.orderBy);
               }
+            },
+          },
+        });
+        schemaComposer.Query.addFields({
+          [camelCase(`count_${tableName}`)]: {
+            type: 'Int',
+            args: {
+              where: {
+                type: whereInputName,
+              },
+            },
+            resolve: async (root, args, { mysqlConnection }, info) => {
+              return mysqlConnection.count(tableName, args.where);
             },
           },
         });

@@ -79,5 +79,6 @@ declare module 'mysql' {
     insert(tableName: string, record: Record<string, any>, callback: Callback<{ recordId: string | number }>);
     update(tableName: string, input: any, where: any, callback: Callback<{ affectedRows: any }>);
     delete(tableName: string, where: any, callback: Callback<{ affectedRows: any }>);
+    count(tableName: string, where: any, callback: Callback<number>);
   }
 }
