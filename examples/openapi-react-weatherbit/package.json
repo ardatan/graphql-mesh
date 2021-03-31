@@ -23,7 +23,7 @@
     "graphql": "15.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.29.0",
+    "@graphql-mesh/cli": "0.29.1",
     "ts-node": "9.0.0"
   },
   "scripts": {
