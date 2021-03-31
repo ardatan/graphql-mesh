@@ -1,5 +1,17 @@
 # @graphql-mesh/cache-file
 
+## 0.5.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+  - @graphql-mesh/utils@0.10.0
+
 ## 0.4.58
 
 ### Patch Changes

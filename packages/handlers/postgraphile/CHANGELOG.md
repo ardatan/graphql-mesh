@@ -1,5 +1,14 @@
 # @graphql-mesh/postgraphile
 
+## 0.11.3
+
+### Patch Changes
+
+- f89497389: Use GraphQL JIT for faster GraphQL Executions
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+  - @graphql-mesh/utils@0.10.0
+
 ## 0.11.2
 
 ### Patch Changes
