@@ -17,7 +17,7 @@
     "@graphql-mesh/utils": "0.10.0",
     "@types/ioredis": "4.22.2",
     "dataloader": "2.0.0",
-    "ioredis": "4.24.5"
+    "ioredis": "4.24.6"
   },
   "publishConfig": {
     "access": "public",
