@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.29.1
+
+### Patch Changes
+
+- 1c8b460d1: fix(serve) fix browser flag
+
 ## 0.29.0
 
 ### Minor Changes
