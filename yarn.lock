@@ -11136,12 +11136,12 @@ feed@^4.2.2:
   dependencies:
     xml-js "^1.6.11"
 
-fetchache@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.0.4.tgz#6da0c6de56547d894a005be3f48925096e46f5b3"
-  integrity sha512-pRK9fnr54S3orRp2ApQE0rVlrt5j4zAze4McogdEupN2oMPy+USPR1O1isYTuGNiNi5H4k725+1SCopD8LWWzw==
+fetchache@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.1.1.tgz#013eef193b4a219a355dea5ca02a720565d8bcdc"
+  integrity sha512-ots7Jv408zPDxCaKGTeRajzuiullinmfzzLV/dA+U81BQTtbspCiy/GTHPekIIyWAkKvP/GYP0WVKzF6ljtdEg==
   dependencies:
-    cross-fetch "3.0.6"
+    flatstr "1.0.12"
     http-cache-semantics "4.1.0"
 
 figgy-pudding@^3.5.1:
@@ -11320,6 +11320,11 @@ flat-cache@^3.0.4:
   dependencies:
     flatted "^3.1.0"
     rimraf "^3.0.2"
+
+flatstr@1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/flatstr/-/flatstr-1.0.12.tgz#c2ba6a08173edbb6c9640e3055b95e287ceb5931"
+  integrity sha512-4zPxDyhCyiN2wIAtSLI6gc82/EjqZc1onI4Mz/l0pWrAlsSfYH/2ZIcU+e3oA2wDwbzIWNKwa23F8rh6+DRWkw==
 
 flatted@^2.0.0:
   version "2.0.2"

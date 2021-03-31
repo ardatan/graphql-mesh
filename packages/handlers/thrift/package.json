@@ -23,7 +23,7 @@
     "@creditkarma/thrift-server-core": "0.16.1",
     "@graphql-mesh/types": "0.37.0",
     "@graphql-mesh/utils": "0.9.3",
-    "fetchache": "0.0.4",
+    "fetchache": "0.1.1",
     "graphql-scalars": "1.9.0",
     "url-join": "4.0.1",
     "thrift": "0.14.1"
