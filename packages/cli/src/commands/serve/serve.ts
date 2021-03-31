@@ -169,7 +169,7 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
-        if (process.env.NODE_ENV?.toLowerCase() !== 'production' || !browser) {
+        if (process.env.NODE_ENV?.toLowerCase() !== 'production' && browser) {
           open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
         }
       })
