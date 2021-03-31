@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.10.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
 ## 0.9.2
 
 ### Patch Changes

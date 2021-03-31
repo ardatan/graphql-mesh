@@ -1,5 +1,19 @@
 # @graphql-mesh/cli
 
+## 0.29.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+- Updated dependencies [f89497389]
+  - @graphql-mesh/utils@0.10.0
+  - @graphql-mesh/runtime@0.13.3
+  - @graphql-mesh/config@0.15.3
+
 ## 0.28.0
 
 ### Minor Changes

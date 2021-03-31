@@ -1,5 +1,17 @@
 # @graphql-mesh/merger-bare
 
+## 0.9.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+  - @graphql-mesh/utils@0.10.0
+
 ## 0.8.27
 
 ### Patch Changes

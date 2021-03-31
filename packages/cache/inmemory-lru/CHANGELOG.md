@@ -1,5 +1,16 @@
 # @graphql-mesh/cache-inmemory-lru
 
+## 0.5.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+
 ## 0.4.53
 
 ### Patch Changes

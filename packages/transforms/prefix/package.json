@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-prefix",
-  "version": "0.6.37",
+  "version": "0.6.38",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -13,8 +13,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.37.0",
-    "@graphql-mesh/utils": "0.9.3",
+    "@graphql-mesh/types": "0.38.0",
+    "@graphql-mesh/utils": "0.10.0",
     "@graphql-tools/delegate": "7.1.1",
     "@graphql-tools/wrap": "7.0.5",
     "@graphql-tools/utils": "7.7.1"

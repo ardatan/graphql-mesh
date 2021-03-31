@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.38.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
 ## 0.37.0
 
 ### Minor Changes
