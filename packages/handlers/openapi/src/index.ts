@@ -6,6 +6,7 @@ import {
   getHeadersObject,
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
+  getCachedFetch,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -18,7 +19,6 @@ import {
   KeyValueCache,
   MeshPubSub,
 } from '@graphql-mesh/types';
-import { fetchache, Request } from 'fetchache';
 import { set } from 'lodash';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 
@@ -79,7 +79,7 @@ export default class OpenAPIHandler implements MeshHandler {
     if (customFetch) {
       fetch = await loadFromModuleExportExpression(customFetch, { defaultExportName: 'default', cwd: this.baseDir });
     } else {
-      fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
+      fetch = getCachedFetch(this.cache);
     }
 
     const baseUrlFactory = getInterpolatedStringFactory(baseUrl);

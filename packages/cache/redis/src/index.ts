@@ -1,6 +1,7 @@
 import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
 import Redis, { RedisOptions } from 'ioredis';
 import DataLoader from 'dataloader';
+import { jsonFlatStringify } from '@graphql-mesh/utils';
 
 export default class RedisCache<V = string> implements KeyValueCache<V> {
   readonly client: Redis.Redis;
@@ -17,7 +18,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
     const ttl = options?.ttl || 300;
-    const stringifiedValue = JSON.stringify(value);
+    const stringifiedValue = jsonFlatStringify(value);
     await this.client.set(key, stringifiedValue, 'EX', ttl);
   }
 

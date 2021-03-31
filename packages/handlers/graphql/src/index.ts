@@ -1,5 +1,11 @@
-import { GetMeshSourceOptions, MeshHandler, MeshSource, ResolverData, YamlConfig } from '@graphql-mesh/types';
-import { fetchache, KeyValueCache, Request } from 'fetchache';
+import {
+  GetMeshSourceOptions,
+  MeshHandler,
+  MeshSource,
+  ResolverData,
+  YamlConfig,
+  KeyValueCache,
+} from '@graphql-mesh/types';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildClientSchema, introspectionFromSchema, buildSchema, IntrospectionQuery } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
@@ -9,6 +15,7 @@ import {
   getHeadersObject,
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
+  getCachedFetch,
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
@@ -36,6 +43,7 @@ export default class GraphQLHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     const { endpoint, schemaHeaders: configHeaders, introspection } = this.config;
+    const customFetch = getCachedFetch(this.cache);
 
     if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
       const schema = await loadFromModuleExportExpression<GraphQLSchema>(endpoint, { cwd: this.baseDir });
@@ -50,8 +58,6 @@ export default class GraphQLHandler implements MeshHandler {
       };
     }
     const urlLoader = new UrlLoader();
-    const customFetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
-      fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
     const getExecutorAndSubscriberForParams = (
       params: ExecutionParams,
       headersFactory: ResolverDataBasedFactory<Headers>,
@@ -65,7 +71,7 @@ export default class GraphQLHandler implements MeshHandler {
       const headers = getHeadersObject(headersFactory(resolverData));
       const endpoint = endpointFactory(resolverData);
       return urlLoader.getExecutorAndSubscriberAsync(endpoint, {
-        customFetch: customFetch as any,
+        customFetch,
         ...this.config,
         headers,
       });
@@ -88,7 +94,7 @@ export default class GraphQLHandler implements MeshHandler {
       };
       if (introspection) {
         const result = await urlLoader.handleSDLAsync(introspection, {
-          customFetch: customFetch as any,
+          customFetch,
           ...this.config,
           headers: schemaHeaders,
         });

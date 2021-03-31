@@ -5,7 +5,7 @@ import { existsSync } from 'fs';
 import DataLoader from 'dataloader';
 import { readJSONSync, writeJSON } from '@graphql-mesh/utils';
 
-export default class FileCache<V = string> implements KeyValueCache<V> {
+export default class FileCache<V = any> implements KeyValueCache<V> {
   json: Record<string, V>;
   absolutePath: string;
   writeDataLoader: DataLoader<any, any>;

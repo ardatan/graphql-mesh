@@ -1,5 +1,6 @@
 import { MakeDirectoryOptions, promises as fsPromises, readFileSync } from 'fs';
 import { dirname } from 'path';
+import { jsonFlatStringify } from './flat-string';
 
 const { stat, writeFile: fsWriteFile, readFile, mkdir: fsMkdir } = fsPromises || {};
 
@@ -35,7 +36,7 @@ export function writeJSON<T>(
   replacer?: (this: any, key: string, value: any) => any,
   space?: string | number
 ) {
-  const stringified = JSON.stringify(data, replacer, space);
+  const stringified = jsonFlatStringify(data, replacer, space);
   return writeFile(path, stringified, 'utf-8');
 }
 

@@ -15,7 +15,7 @@ import { join, isAbsolute, dirname } from 'path';
 import { camelCase, flatten, get } from 'lodash';
 import { RegularExpression } from 'graphql-scalars';
 import Ajv from 'ajv';
-import { readJSONSync } from '@graphql-mesh/utils';
+import { jsonFlatStringify, readJSONSync } from '@graphql-mesh/utils';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
   if (Array.isArray(maybeArray)) {
@@ -131,7 +131,7 @@ export class JSONSchemaVisitor<TContext> {
       this.namedVisitedDefs.add(typeName);
     }
     def.type = Array.isArray(def.type) ? def.type[0] : def.type;
-    const summary = JSON.stringify(def);
+    const summary = jsonFlatStringify(def);
     if (this.summaryCache.has(summary)) {
       return this.summaryCache.get(summary);
     }

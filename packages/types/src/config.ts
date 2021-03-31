@@ -627,6 +627,10 @@ export interface ODataHandler {
    * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
    */
   expandNavProps?: boolean;
+  /**
+   * Custom Fetch
+   */
+  customFetch?: any;
 }
 /**
  * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.

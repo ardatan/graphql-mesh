@@ -1,4 +1,5 @@
 import { getMesh } from '@graphql-mesh/runtime';
+import { flatString, jsonFlatStringify } from '@graphql-mesh/utils';
 import { RequestHandler } from 'express';
 import { GraphQLError } from 'graphql';
 import { getGraphQLParameters, processRequest, shouldRenderGraphiQL } from 'graphql-helix';
@@ -98,7 +99,7 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
           // call. Once we're done executing the request and there are no more results to send
           // to the client, the Promise returned by subscribe will resolve and we can end the response.
           await result.subscribe(result => {
-            const chunk = Buffer.from(JSON.stringify(result), 'utf8');
+            const chunk = Buffer.from(jsonFlatStringify(result), 'utf8');
             const data = [
               '',
               'Content-Type: application/json; charset=utf-8',
@@ -131,7 +132,8 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
 
           // We subscribe to the event stream and push any new events to the client
           await result.subscribe(result => {
-            res.write(`data: ${JSON.stringify(result)}\n\n`);
+            const chunk = flatString(`data: ${JSON.stringify(result)}\n\n`);
+            res.write(chunk);
           });
         }
       });

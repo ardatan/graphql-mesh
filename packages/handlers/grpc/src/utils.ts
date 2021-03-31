@@ -1,5 +1,5 @@
 import { KeyValueCache } from '@graphql-mesh/types';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { jsonFlatStringify, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { existsSync } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
@@ -61,7 +61,7 @@ export function addMetaDataToCall(
       }
       // Ensure that the metadata is compatible with what node-grpc expects
       if (typeof metaValue !== 'string' && !(metaValue instanceof Buffer)) {
-        metaValue = JSON.stringify(metaValue);
+        metaValue = jsonFlatStringify(metaValue);
       }
 
       meta.add(key, metaValue as MetadataValue);

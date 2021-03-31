@@ -1,7 +1,7 @@
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
 import { GetMeshSourceOptions, YamlConfig } from '@graphql-mesh/types';
 import { join } from 'path';
-import { fetchache, Request } from 'fetchache';
+import { getCachedFetch } from '@graphql-mesh/utils';
 import urljoin from 'url-join';
 
 const fhirSchema = require('./fhir.schema.json');
@@ -61,19 +61,19 @@ export default class FhirHandler extends JsonSchemaHandler {
   async getMeshSource(): Promise<any> {
     const source = await super.getMeshSource();
     const ReferenceOTS = this.schemaComposer.getOTC('Reference');
+    const fetch = getCachedFetch(this.cache);
     ReferenceOTS.addFields({
       resource: {
         type: 'ResourceList',
         resolve: async ({ reference }: any) => {
           const [type, id] = reference.split('/');
-          const request = new Request(urljoin(this.config.baseUrl, `/${type}/${id}?_format=application/json`), {
+          const response = await fetch(urljoin(this.config.baseUrl, `/${type}/${id}?_format=application/json`), {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',
             },
           });
-          const response = await fetchache(request, this.cache);
           return response.json();
         },
       },

@@ -8,7 +8,7 @@ import { isAbsolute, resolve } from 'path';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { writeFile, writeJSON } from '@graphql-mesh/utils';
+import { jsonFlatStringify, writeFile, writeJSON } from '@graphql-mesh/utils';
 
 export { generateSdk, serveMesh };
 
@@ -102,7 +102,7 @@ export async function graphqlMesh() {
         const fileName = args.output;
         if (fileName.endsWith('.json')) {
           const introspection = introspectionFromSchema(schema);
-          fileContent = JSON.stringify(introspection, null, 2);
+          fileContent = jsonFlatStringify(introspection, null, 2);
         } else if (
           fileName.endsWith('.graphql') ||
           fileName.endsWith('.graphqls') ||

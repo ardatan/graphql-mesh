@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, MeshPubSub, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
 import { JSONSchemaVisitor, getFileName } from './json-schema-visitor';
 import urlJoin from 'url-join';
 import {
@@ -8,9 +8,10 @@ import {
   isUrl,
   pathExists,
   writeJSON,
+  jsonFlatStringify,
+  getCachedFetch,
 } from '@graphql-mesh/utils';
 import AggregateError from '@ardatan/aggregate-error';
-import { fetchache, Request, KeyValueCache } from 'fetchache';
 import { JSONSchemaDefinition } from './json-schema-types';
 import { ObjectTypeComposerFieldConfigDefinition, SchemaComposer } from 'graphql-compose';
 import toJsonSchema from 'to-json-schema';
@@ -64,6 +65,7 @@ export default class JsonSchemaHandler implements MeshHandler {
   public schemaComposer = new SchemaComposer();
 
   async getMeshSource() {
+    const fetch = getCachedFetch(this.cache);
     const schemaComposer = this.schemaComposer;
     schemaComposer.add(GraphQLJSON);
     schemaComposer.add(GraphQLVoid);
@@ -251,15 +253,14 @@ export default class JsonSchemaHandler implements MeshHandler {
               case 'POST':
               case 'PUT':
               case 'PATCH': {
-                requestInit.body = JSON.stringify(input);
+                requestInit.body = jsonFlatStringify(input);
                 break;
               }
               default:
                 throw new Error(`Unknown method ${operationConfig.method}`);
             }
           }
-          const request = new Request(urlObj.toString(), requestInit);
-          const response = await fetchache(request, this.cache);
+          const response = await fetch(urlObj.toString(), requestInit);
           const responseText = await response.text();
           let responseJson: any;
           try {

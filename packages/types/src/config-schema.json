@@ -1441,6 +1441,22 @@
         "expandNavProps": {
           "type": "boolean",
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
+        },
+        "customFetch": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Custom Fetch"
         }
       },
       "required": ["baseUrl"]
