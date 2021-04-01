@@ -18,7 +18,7 @@
     "@graphql-mesh/runtime": "0.13.3",
     "@graphql-mesh/types": "0.38.0",
     "@graphql-mesh/utils": "0.10.0",
-    "ajv": "8.0.2",
+    "ajv": "8.0.3",
     "cosmiconfig": "7.0.0",
     "@graphql-tools/merge": "6.2.11",
     "@graphql-tools/utils": "7.7.1",
