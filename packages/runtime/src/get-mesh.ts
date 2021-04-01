@@ -48,7 +48,8 @@ export function groupTransforms({
 }
 
 export async function getMesh(
-  options: GetMeshOptions
+  options: GetMeshOptions,
+  dir: string = process.cwd();
 ): Promise<{
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
@@ -60,6 +61,12 @@ export async function getMesh(
   hooks: Hooks;
   cache: KeyValueCache;
 }> {
+  const originalCwd = process.cwd();
+  
+  if(dir !== originalCwd){
+    process.chdir(dir);
+  }  
+  
   const rawSources: RawSourceOutput[] = [];
   let hooks = options.hooks!;
   if (!hooks) {
@@ -200,6 +207,10 @@ export async function getMesh(
       );
     }
   };
+  
+  if(dir !== originalCwd){
+    process.chdir(originalCwd);
+  }
 
   return {
     execute: meshExecute,
