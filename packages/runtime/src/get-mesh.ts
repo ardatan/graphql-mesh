@@ -49,7 +49,7 @@ export function groupTransforms({
 
 export async function getMesh(
   options: GetMeshOptions,
-  dir: string = process.cwd();
+  dir: string = process.cwd()
 ): Promise<{
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
@@ -63,7 +63,7 @@ export async function getMesh(
 }> {
   const originalCwd = process.cwd();
   
-  if(dir !== originalCwd){
+  if(dir !== originalCwd) {
     process.chdir(dir);
   }  
   
@@ -208,7 +208,7 @@ export async function getMesh(
     }
   };
   
-  if(dir !== originalCwd){
+  if(dir !== originalCwd) {
     process.chdir(originalCwd);
   }
 
