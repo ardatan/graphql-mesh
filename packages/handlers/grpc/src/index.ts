@@ -79,7 +79,7 @@ export default class GrpcHandler implements MeshHandler {
         const services = (await reflectionClient.listServices()) as string[];
         const serviceRoots = await Promise.all(
           services
-            .filter(s => s?.startsWith('grpc.'))
+            .filter(s => !s?.startsWith('grpc.'))
             .map((service: string) => reflectionClient.fileContainingSymbol(service))
         );
         serviceRoots.forEach((serviceRoot: Root) => {
