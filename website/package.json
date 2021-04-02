@@ -15,7 +15,7 @@
     "@docusaurus/core": "2.0.0-alpha.ffe8b6106",
     "@docusaurus/preset-classic": "2.0.0-alpha.ffe8b6106",
     "babel-preset-minify": "0.5.1",
-    "classnames": "2.3.0",
+    "classnames": "2.3.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "remark-code-import": "0.2.0",
