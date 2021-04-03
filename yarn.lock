@@ -2928,10 +2928,10 @@
     "@types/lodash" "^4.14.136"
     lodash "^4.17.15"
 
-"@creditkarma/thrift-server-core@0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-0.16.1.tgz#90ac060878b84214816e7b7b72dcf98d5429b735"
-  integrity sha512-rbzmS46vH6oth1I7zcSLcTslRlzolAiD9TSCNoxZHdnwfM65QJQIVCJ8Tz3l/78fzZAiZ71+9wZAuf61jl0Wzg==
+"@creditkarma/thrift-server-core@0.17.2":
+  version "0.17.2"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-0.17.2.tgz#115630f6cc5b608706eff3d3173595e7d363e9cb"
+  integrity sha512-ohrTJIisrJpTSrRSkSn9UmE4xMj0Q72UP+UfhIWvLE9GuOJ7zMk1PihvYy04+767Y4/POxEsGTCiOHAS8lublQ==
   dependencies:
     "@types/lodash" "^4.14.136"
     lodash "^4.17.15"
