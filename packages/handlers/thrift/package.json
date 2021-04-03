@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@ardatan/aggregate-error": "0.0.6",
-    "@creditkarma/thrift-client": "0.16.1",
+    "@creditkarma/thrift-client": "0.17.1",
     "@creditkarma/thrift-parser": "1.2.0",
     "@creditkarma/thrift-server-core": "0.16.1",
     "@graphql-mesh/types": "0.38.0",
