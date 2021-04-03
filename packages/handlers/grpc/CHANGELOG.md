@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.12.0
+
+### Minor Changes
+
+- d82d2cc11: feat(grpc): ignore packages starts with `grpc.*`
+
 ## 0.11.0
 
 ### Minor Changes
