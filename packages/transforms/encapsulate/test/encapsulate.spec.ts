@@ -7,6 +7,7 @@ import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('encapsulate', () => {
+  const baseDir: string = undefined;
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {
@@ -48,6 +49,7 @@ describe('encapsulate', () => {
           config: {},
           cache,
           pubsub,
+          baseDir,
           apiName: 'test',
         }),
       ],
@@ -66,6 +68,7 @@ describe('encapsulate', () => {
           config: {},
           cache,
           pubsub,
+          baseDir,
           apiName: 'test',
         }),
       ],
@@ -84,6 +87,7 @@ describe('encapsulate', () => {
           config: {},
           cache,
           pubsub,
+          baseDir,
           apiName: 'test',
         }),
       ],
@@ -108,6 +112,7 @@ describe('encapsulate', () => {
           config: {},
           cache,
           pubsub,
+          baseDir,
           apiName: 'test',
         }),
       ],
@@ -135,6 +140,7 @@ describe('encapsulate', () => {
           config: {},
           cache,
           pubsub,
+          baseDir,
           apiName: 'test',
         }),
       ],

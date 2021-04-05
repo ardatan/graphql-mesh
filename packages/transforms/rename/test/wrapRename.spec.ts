@@ -22,6 +22,8 @@ describe('rename', () => {
   `);
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
+  const baseDir: string = undefined;
+
   beforeEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
@@ -31,7 +33,7 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new RenameTransform({
+        RenameTransform({
           config: {
             renames: [
               {
@@ -46,6 +48,7 @@ describe('rename', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -58,7 +61,7 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new RenameTransform({
+        RenameTransform({
           config: {
             mode: 'wrap',
             renames: [
@@ -73,9 +76,10 @@ describe('rename', () => {
                 },
               },
             ],
-            cache,
-            pubsub,
           },
+          cache,
+          pubsub,
+          baseDir,
         }),
       ],
     });
@@ -92,7 +96,7 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new RenameTransform({
+        RenameTransform({
           config: {
             mode: 'wrap',
             renames: [
@@ -109,6 +113,7 @@ describe('rename', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -123,7 +128,7 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new RenameTransform({
+        RenameTransform({
           config: {
             renames: [
               {
@@ -141,6 +146,7 @@ describe('rename', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
