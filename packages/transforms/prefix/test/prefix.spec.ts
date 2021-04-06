@@ -9,6 +9,7 @@ describe('prefix', () => {
   let schema: GraphQLSchema;
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
+  const baseDir: string = undefined;
 
   beforeEach(() => {
     schema = buildSchema(/* GraphQL */ `
@@ -34,6 +35,7 @@ describe('prefix', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -53,6 +55,7 @@ describe('prefix', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -70,6 +73,7 @@ describe('prefix', () => {
           config: {},
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -90,6 +94,7 @@ describe('prefix', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });

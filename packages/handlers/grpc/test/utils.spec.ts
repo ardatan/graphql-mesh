@@ -155,7 +155,7 @@ describe('grpc utils', () => {
         fields: {},
       });
       const fields = {};
-      await addInputOutputFields(schemaComposer, inputTC, outputTC, fields);
+      await addInputOutputFields(schemaComposer, inputTC, outputTC, fields, undefined, undefined, undefined);
       expect(inputTC.getFields()).toHaveProperty('_', expect.anything());
       expect(outputTC.getFields()).toHaveProperty('_', expect.anything());
     });
@@ -171,7 +171,7 @@ describe('grpc utils', () => {
         fields: {},
       });
       const fields = { someField: { type: 'string', name: 'someField', id: 0 } };
-      await addInputOutputFields(schemaComposer, inputTC, outputTC, fields);
+      await addInputOutputFields(schemaComposer, inputTC, outputTC, fields, undefined, undefined, undefined);
       expect(inputTC.getFields()).not.toHaveProperty('_', expect.anything());
       expect(outputTC.getFields()).not.toHaveProperty('_', expect.anything());
     });
