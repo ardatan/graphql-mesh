@@ -57,7 +57,7 @@
     "ts-node-dev": "1.1.6",
     "typedoc": "0.20.35",
     "typedoc-plugin-markdown": "3.6.1",
-    "typescript": "4.2.3"
+    "typescript": "4.2.4"
   },
   "husky": {
     "hooks": {
