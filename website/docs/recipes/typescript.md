@@ -4,14 +4,23 @@ title: TypeScript Support
 sidebar_label: TypeScript Support
 ---
 
-GraphQL Mesh supports TypeScript, and you can easily use it to generate typings for the fetched data, or for you custom resolvers that specific under `additionalResolvers`
+GraphQL Mesh supports TypeScript, and you can easily use it to generate typings for the fetched data, and for you custom resolvers that specific under `additionalResolvers`
 
 ## Type safety for custom resolvers
 
-GraphQL Mesh allow API handler packages to provide TypeScript typings in order to have types support in your code.
+GraphQL Mesh allows for API handler packages to provide TypeScript typings in order to have types support in your code.
 
-In order to use the TypeScript support, use the CLI to generate typings file based on your unified GraphQL schema:
+In order to use the TypeScript support, make sure you have the `require` section set in your config file (to allow for the GraphQL Mesh to compile TypeScript files):
 
+```yaml
+require:
+  - ts-node/register/transpile-only
+
+additionalResolvers:
+  - ./src/mesh-resolvers.ts  
+```
+
+Then, use the CLI command to generate the typings file based on your unified GraphQL schema:
 ```
 graphql-mesh typescript --output ./src/generated/mesh.ts
 ```
@@ -26,14 +35,6 @@ export const resolvers: Resolvers = {
 };
 ```
 
-And make sure you have `require` section set in your config file (to allow GraphQL Mesh to compile TypeScript files):
-
-```yaml
-require:
-  - ts-node/register/transpile-only
-additionalResolvers:
-  - ./src/mesh-resolvers.ts  
-```
 
 ## Type safety for fetched data
 
