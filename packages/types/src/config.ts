@@ -891,9 +891,9 @@ export interface Transform {
    */
   rename?: RenameTransform | any;
   /**
-   * Transformer to apply composition to resolvers
+   * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
-  resolversComposition?: ResolversCompositionTransformObject[];
+  resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   [k: string]: any;
 }
@@ -1160,6 +1160,16 @@ export interface RenameConfig {
 export interface RenameConfig1 {
   type?: string;
   field?: string;
+}
+export interface ResolversCompositionTransform {
+  /**
+   * Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of resolver/composer to apply
+   */
+  compositions: ResolversCompositionTransformObject[];
 }
 export interface ResolversCompositionTransformObject {
   /**
