@@ -14548,10 +14548,10 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jsonpath-plus@5.0.5:
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/jsonpath-plus/-/jsonpath-plus-5.0.5.tgz#897bf0a37147b5030c72534a93ad5029ab359aca"
-  integrity sha512-+CKwx2vb0rGrHvHoC5vXqgWcxhmu+CMjvK4u0GIwzgcSHFibaqoMG/w3ZY0gbBmj1+GieBoeXkm2k5AggiOnng==
+jsonpath-plus@5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/jsonpath-plus/-/jsonpath-plus-5.0.6.tgz#f8374b76b9f390496cb583ad67141090183a3c09"
+  integrity sha512-SZQLxQSlAQW+n2j0LTB+6mgL+EkPVOdetIHXMJ8dfHes9sFB9iRUHnYHq2KSqMKXxpZszmPMmRx6uCrn0e359A==
 
 jsonwebtoken@^8.0.0, jsonwebtoken@^8.3.0, jsonwebtoken@^8.5.1:
   version "8.5.1"
