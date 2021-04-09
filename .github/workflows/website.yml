@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
             ${{ runner.os }}-15-node-modules-
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install && git checkout yarn.lock
       - name: Deploy 🚀
         run: yarn deploy:website
         env:
