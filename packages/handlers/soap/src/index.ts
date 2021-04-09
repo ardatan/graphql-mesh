@@ -1,24 +1,25 @@
 import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
 import { WSSecurityCert } from 'soap';
-import { loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { Request, fetchache } from 'fetchache';
+import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 
 type AnyFn = (...args: any[]) => any;
 
 export default class SoapHandler implements MeshHandler {
-  config: YamlConfig.SoapHandler;
-  cache: KeyValueCache;
+  private config: YamlConfig.SoapHandler;
+  private baseDir: string;
+  private cache: KeyValueCache;
 
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
   }
 
   async getMeshSource() {
     let schemaHeaders =
       typeof this.config.schemaHeaders === 'string'
-        ? await loadFromModuleExportExpression(this.config.schemaHeaders)
+        ? await loadFromModuleExportExpression(this.config.schemaHeaders, { cwd: this.baseDir })
         : this.config.schemaHeaders;
     if (typeof schemaHeaders === 'function') {
       schemaHeaders = schemaHeaders();
@@ -26,6 +27,7 @@ export default class SoapHandler implements MeshHandler {
     if (schemaHeaders && 'then' in schemaHeaders) {
       schemaHeaders = await schemaHeaders;
     }
+    const fetch = getCachedFetch(this.cache);
     const soapClient = await createSoapClient(this.config.wsdl, {
       basicAuth: this.config.basicAuth,
       options: {
@@ -36,12 +38,11 @@ export default class SoapHandler implements MeshHandler {
               ...requestObj.headers,
               ...(requestObj.uri.href === this.config.wsdl ? schemaHeaders : this.config.operationHeaders),
             };
-            const req = new Request(requestObj.uri.href, {
+            const res = await fetch(requestObj.uri.href, {
               headers,
               method: requestObj.method,
               body: requestObj.body,
             });
-            const res = await fetchache(req, this.cache);
             // eslint-disable-next-line dot-notation
             _request = res.body;
             const body = await res.text();
@@ -72,16 +73,19 @@ export default class SoapHandler implements MeshHandler {
           (securityCertConfig.privateKeyPath &&
             readFileOrUrlWithCache<string>(securityCertConfig.privateKeyPath, this.cache, {
               allowUnknownExtensions: true,
+              cwd: this.baseDir,
             })),
         securityCertConfig.publicKey ||
           (securityCertConfig.publicKeyPath &&
             readFileOrUrlWithCache<string>(securityCertConfig.publicKeyPath, this.cache, {
               allowUnknownExtensions: true,
+              cwd: this.baseDir,
             })),
         securityCertConfig.password ||
           (securityCertConfig.passwordPath &&
             readFileOrUrlWithCache<string>(securityCertConfig.passwordPath, this.cache, {
               allowUnknownExtensions: true,
+              cwd: this.baseDir,
             })),
       ]);
       soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password));

@@ -37,8 +37,9 @@ const server = new ApolloServer({
   ])
 });
 
-server.listen({ port: 4004 }).then(({ url }) => {
+module.exports = server.listen({ port: 9872 }).then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
+  return server;
 });
 
 const inventory = [

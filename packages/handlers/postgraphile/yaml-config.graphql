@@ -31,22 +31,13 @@ type PostGraphileHandler @md {
   """
   options: PostgraphileExternalOptions
   """
-  Cache Introspection
+  Enable GraphQL websocket transport support for subscriptions (default: true)
   """
-  cacheIntrospection: GraphQLCacheIntrospectionConfig
-}
-
-union GraphQLCacheIntrospectionConfig = GraphQLIntrospectionCachingOptions | Boolean
-
-type GraphQLIntrospectionCachingOptions {
+  subscriptions: Boolean
   """
-  Path to Introspection JSON File
+  Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
   """
-  path: String
-  """
-  Time to live of introspection cache
-  """
-  ttl: Int
+  live: Boolean
 }
 
 union PostgraphileExternalOptions = JSON | String

@@ -26,7 +26,8 @@ transforms:
 ```ts
 module.exports = {
   isAuth: next => (root, args, context, info) => {
-      if(!context.currentUser) {
+      // Check if Authorization header is present
+      if(!context.headers.authorization) {
           throw new Error('Unauthorized');
       }
       return next(root, args, context, info);

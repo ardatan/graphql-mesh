@@ -1,0 +1,3 @@
+query ExampleQuery {
+  add(request: { left: 2, right: 3 })
+}

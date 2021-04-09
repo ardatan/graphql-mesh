@@ -21,10 +21,12 @@ const modelMutationOperations = [
 
 export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
+  private baseDir: string;
   private pubsub: MeshPubSub;
 
-  constructor({ config, pubsub }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
+  constructor({ config, baseDir, pubsub }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
+    this.baseDir = baseDir;
     this.pubsub = pubsub;
   }
 
@@ -45,7 +47,10 @@ export default class MongooseHandler implements MeshHandler {
     await Promise.all([
       Promise.all(
         this.config.models?.map(async modelConfig => {
-          const model = await loadFromModuleExportExpression<any>(modelConfig.path, modelConfig.name);
+          const model = await loadFromModuleExportExpression<any>(modelConfig.path, {
+            defaultExportName: modelConfig.name,
+            cwd: this.baseDir,
+          });
           if (!model) {
             throw new Error(`Model ${modelConfig.name} cannot be imported ${modelConfig.path}!`);
           }
@@ -70,10 +75,10 @@ export default class MongooseHandler implements MeshHandler {
       ),
       Promise.all(
         this.config.discriminators?.map(async discriminatorConfig => {
-          const discriminator = await loadFromModuleExportExpression<any>(
-            discriminatorConfig.path,
-            discriminatorConfig.name
-          );
+          const discriminator = await loadFromModuleExportExpression<any>(discriminatorConfig.path, {
+            defaultExportName: discriminatorConfig.name,
+            cwd: this.baseDir,
+          });
           const discriminatorTC = composeWithMongooseDiscriminators(discriminator, discriminatorConfig.options as any);
           await Promise.all([
             Promise.all(

@@ -15,7 +15,7 @@ import { join, isAbsolute, dirname } from 'path';
 import { camelCase, flatten, get } from 'lodash';
 import { RegularExpression } from 'graphql-scalars';
 import Ajv from 'ajv';
-import { readJSONSync } from '@graphql-mesh/utils';
+import { jsonFlatStringify, readJSONSync } from '@graphql-mesh/utils';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
   if (Array.isArray(maybeArray)) {
@@ -36,19 +36,18 @@ export const getFileName = (filePath: string) => {
 };
 
 export class JSONSchemaVisitor<TContext> {
-  private cache: Map<string, string>;
+  private summaryCache: Map<string, string> = new Map();
   private ajv: Ajv;
   constructor(
     private schemaComposer: SchemaComposer<TContext>,
     private isInput: boolean,
-    private externalFileCache = new Map<string, any>(),
+    private externalFileCache: Record<string, any> = {},
     private disableTimestamp = false
   ) {
     this.ajv = new Ajv({
       strict: false,
       logger: false,
     });
-    this.cache = new Map();
   }
 
   // TODO: Should be improved!
@@ -63,9 +62,9 @@ export class JSONSchemaVisitor<TContext> {
       const cwdDir = dirname(cwd);
       const absolutePath = externalPath ? (isAbsolute(externalPath) ? externalPath : join(cwdDir, externalPath)) : cwd;
       const fileName = getFileName(absolutePath);
-      if (!this.externalFileCache.has(absolutePath)) {
+      if (!(absolutePath in this.externalFileCache)) {
         const externalSchema = readJSONSync(absolutePath);
-        this.externalFileCache.set(absolutePath, externalSchema);
+        this.externalFileCache[absolutePath] = externalSchema;
         this.visit({
           def: externalSchema,
           propertyName: this.isInput ? 'Request' : 'Response',
@@ -77,7 +76,7 @@ export class JSONSchemaVisitor<TContext> {
       const internalRefArr = internalRef.split('/').filter(Boolean);
       const internalPath = internalRefArr.join('.');
       const internalPropertyName = internalRefArr[internalRefArr.length - 1];
-      const internalDef = get(this.externalFileCache.get(absolutePath), internalPath);
+      const internalDef = get(this.externalFileCache[absolutePath], internalPath);
       const result = this.visit({
         def: internalDef,
         propertyName: internalPropertyName,
@@ -132,9 +131,9 @@ export class JSONSchemaVisitor<TContext> {
       this.namedVisitedDefs.add(typeName);
     }
     def.type = Array.isArray(def.type) ? def.type[0] : def.type;
-    const summary = JSON.stringify(def);
-    if (this.cache.has(summary)) {
-      return this.cache.get(summary);
+    const summary = jsonFlatStringify(def);
+    if (this.summaryCache.has(summary)) {
+      return this.summaryCache.get(summary);
     }
     if ('definitions' in def) {
       for (const propertyName in def.definitions) {
@@ -206,7 +205,7 @@ export class JSONSchemaVisitor<TContext> {
       console.warn(`Unknown JSON Schema definition for (${typeName || prefix}, ${propertyName})`);
       result = this.visitAny();
     }
-    this.cache.set(summary, result);
+    this.summaryCache.set(summary, result);
     this.namedVisitedDefs.add(result);
     return result;
   }

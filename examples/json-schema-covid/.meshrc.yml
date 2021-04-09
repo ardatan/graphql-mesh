@@ -2,7 +2,7 @@ sources:
   - name: Covid
     handler:
       graphql:
-        endpoint: https://covid-19.dava.engineer/api/graphql
+        endpoint: https://covid-19-two-rust.vercel.app/api/graphql
   - name: WorldPop
     handler:
       jsonSchema:

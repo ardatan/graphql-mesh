@@ -27,3 +27,4 @@ additionalResolvers:
 serve:
   cors:
     origin: '*'
+  maxRequestBodySize: 10mb

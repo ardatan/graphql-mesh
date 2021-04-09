@@ -37,6 +37,7 @@ import * as Swagger2OpenAPI from 'swagger2openapi';
 import { handleWarning, MitigationTypes, mockDebug as debug } from './utils';
 import * as jsonptr from 'json-ptr';
 import * as pluralize from 'pluralize';
+import { jsonFlatStringify } from '@graphql-mesh/utils';
 
 // Type definitions & exports:
 export type SchemaNames = {
@@ -454,23 +455,26 @@ export function getRequestBodyObject(
     if (typeof requestBodyObject.content === 'object') {
       const content: MediaTypesObject = requestBodyObject.content;
 
+      const contentTypes = Object.keys(content);
+      const isJsonContent = contentTypes.some(contentType => contentType.toString().includes('application/json'));
+      const isFormData = contentTypes.some(contentType =>
+        contentType.toString().includes('application/x-www-form-urlencoded')
+      );
+
       // Prioritize content-type JSON
-      if (Object.keys(content).includes('application/json')) {
+      if (isJsonContent) {
         return {
           payloadContentType: 'application/json',
           requestBodyObject,
         };
-      } else if (Object.keys(content).includes('application/x-www-form-urlencoded')) {
+      } else if (isFormData) {
         return {
           payloadContentType: 'application/x-www-form-urlencoded',
           requestBodyObject,
         };
       } else {
-        // Pick first (random) content type
-        const randomContentType = Object.keys(content)[0].toString();
-
         return {
-          payloadContentType: randomContentType,
+          payloadContentType: contentTypes[0].toString(),
           requestBodyObject,
         };
       }
@@ -513,7 +517,11 @@ export function getRequestSchemaAndNames(path: string, operation: OperationObjec
      * Instead, treat the request body as a black box and send it as a string
      * with the proper content-type header
      */
-    if (payloadContentType !== 'application/json' && payloadContentType !== 'application/x-www-form-urlencoded') {
+    if (
+      !payloadContentType.includes('application/json') &&
+      !payloadContentType.includes('application/x-www-form-urlencoded') &&
+      !payloadContentType.includes('*/*')
+    ) {
       const saneContentTypeName = uncapitalize(
         payloadContentType.split('/').reduce((name, term) => {
           return name + capitalize(term);
@@ -571,15 +579,17 @@ export function getResponseObject(
       if (responseObject.content && typeof responseObject.content !== 'undefined') {
         const content: MediaTypesObject = responseObject.content;
 
+        const contentTypes = Object.keys(content);
+        const isJsonContent = contentTypes.some(contentType => contentType.toString().includes('application/json'));
         // Prioritize content-type JSON
-        if (Object.keys(content).includes('application/json')) {
+        if (isJsonContent) {
           return {
             responseContentType: 'application/json',
             responseObject,
           };
         } else {
           // Pick first (random) content type
-          const randomContentType = Object.keys(content)[0].toString();
+          const randomContentType = contentTypes[0].toString();
 
           return {
             responseContentType: randomContentType,
@@ -612,7 +622,11 @@ export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
   const { responseContentType, responseObject } = getResponseObject(operation, statusCode, oas);
 
   if (responseContentType) {
-    let responseSchema = responseObject.content[responseContentType].schema;
+    const contentTypes = Object.keys(responseObject.content);
+    const availableSimilarContentType = contentTypes.find(contentType =>
+      contentType.toString().includes(responseContentType)
+    );
+    let responseSchema = responseObject.content[availableSimilarContentType || contentTypes[0]].schema;
     let fromRef: string;
     if ('$ref' in responseSchema) {
       fromRef = responseSchema.$ref.split('/').pop();
@@ -629,7 +643,7 @@ export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
      * Edge case: if response body content-type is not application/json, do not
      * parse.
      */
-    if (responseContentType !== 'application/json') {
+    if (!responseContentType.includes('application/json') && !responseContentType.includes('*/*')) {
       let description = 'Placeholder to access non-application/json response bodies';
 
       if ('description' in responseSchema && typeof responseSchema.description === 'string') {
@@ -1006,7 +1020,7 @@ export function storeSaneName(saneStr: string, str: string, mapping: { [key: str
  */
 export function trim(str: string, length: number): string {
   if (typeof str !== 'string') {
-    str = JSON.stringify(str);
+    str = jsonFlatStringify(str);
   }
 
   if (str && str.length > length) {

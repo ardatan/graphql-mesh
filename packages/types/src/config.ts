@@ -19,7 +19,7 @@ export interface Config {
   /**
    * Additional type definitions, or type definitions overrides you wish to add to the schema mesh
    */
-  additionalTypeDefs?: string;
+  additionalTypeDefs?: any;
   /**
    * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)
    */
@@ -37,6 +37,10 @@ export interface Config {
    * Live Query Invalidations
    */
   liveQueryInvalidations?: LiveQueryInvalidation[];
+  /**
+   * Path to the file containing the introspection cache
+   */
+  introspectionCache?: string;
 }
 /**
  * Configuration for `mesh serve` command.
@@ -81,6 +85,15 @@ export interface ServeConfig {
   maxRequestBodySize?: number | string;
   upload?: UploadOptions;
   sslCredentials?: HTTPSConfig;
+  /**
+   * Path to GraphQL Endpoint (default: /graphql)
+   */
+  endpoint?: string;
+  /**
+   * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
+   * This feature can be disable by passing `false` (Any of: String, Boolean)
+   */
+  browser?: string | boolean;
 }
 /**
  * Configuration for CORS
@@ -223,10 +236,6 @@ export interface GraphQLHandler {
    */
   introspection?: string;
   /**
-   * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
-   */
-  cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
-  /**
    * Enable multipart/formdata in order to support file uploads
    */
   multipart?: boolean;
@@ -234,16 +243,6 @@ export interface GraphQLHandler {
    * Batch requests
    */
   batch?: boolean;
-}
-export interface GraphQLIntrospectionCachingOptions {
-  /**
-   * Time to live of introspection cache
-   */
-  ttl?: number;
-  /**
-   * Path to Introspection JSON File
-   */
-  path?: string;
 }
 /**
  * Handler for gRPC and Protobuf schemas
@@ -312,7 +311,7 @@ export interface GrpcCredentialsSsl {
  * Handler for JSON Schema specification. Source could be a local json file, or a url to it.
  */
 export interface JsonSchemaHandler {
-  baseUrl: string;
+  baseUrl?: string;
   operationHeaders?: {
     [k: string]: any;
   };
@@ -595,16 +594,6 @@ export interface Neo4JHandler {
    * Provide GraphQL Type Definitions instead of inferring
    */
   typeDefs?: string;
-  /**
-   * Cache Introspection (Any of: Neo4jIntrospectionCachingOptions, Boolean)
-   */
-  cacheIntrospection?: Neo4JIntrospectionCachingOptions | boolean;
-}
-export interface Neo4JIntrospectionCachingOptions {
-  /**
-   * Time to live of introspection cache
-   */
-  ttl?: number;
 }
 /**
  * Handler for OData
@@ -638,6 +627,10 @@ export interface ODataHandler {
    * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
    */
   expandNavProps?: boolean;
+  /**
+   * Custom Fetch
+   */
+  customFetch?: any;
 }
 /**
  * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
@@ -646,7 +639,7 @@ export interface OpenapiHandler {
   /**
    * A pointer to your API source - could be a local file, remote file or url endpoint
    */
-  source: string;
+  source: any;
   /**
    * Format of the source file (Allowed values: json, yaml)
    */
@@ -746,9 +739,13 @@ export interface PostGraphileHandler {
       }
     | string;
   /**
-   * Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)
+   * Enable GraphQL websocket transport support for subscriptions (default: true)
    */
-  cacheIntrospection?: GraphQLIntrospectionCachingOptions | boolean;
+  subscriptions?: boolean;
+  /**
+   * Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
+   */
+  live?: boolean;
 }
 /**
  * Handler for SOAP
@@ -882,14 +879,17 @@ export interface Transform {
   encapsulate?: EncapsulateTransformObject;
   extend?: ExtendTransform;
   federation?: FederationTransform;
-  filterSchema?: string[];
+  /**
+   * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
+   */
+  filterSchema?: FilterSchemaTransform | any;
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
   /**
-   * Transformer to apply rename of a GraphQL type
+   * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
-  rename?: RenameTransformObject[];
+  rename?: RenameTransform | any;
   /**
    * Transformer to apply composition to resolvers
    */
@@ -1002,6 +1002,16 @@ export interface ResolveReferenceObject {
   };
   resultSelectionSet?: string;
   resultDepth?: number;
+}
+export interface FilterSchemaTransform {
+  /**
+   * Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of filter rules
+   */
+  filters: string[];
 }
 /**
  * Mock configuration for your source
@@ -1120,6 +1130,16 @@ export interface PrefixTransformConfig {
    * Changes root types and changes the field names
    */
   includeRootOperations?: boolean;
+}
+export interface RenameTransform {
+  /**
+   * Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of rename rules
+   */
+  renames: RenameTransformObject[];
 }
 export interface RenameTransformObject {
   from: RenameConfig;

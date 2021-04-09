@@ -23,6 +23,8 @@ describe('namingConvention', () => {
   `);
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
+  const baseDir: string = undefined;
+
   beforeEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
@@ -40,6 +42,7 @@ describe('namingConvention', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -98,6 +101,7 @@ describe('namingConvention', () => {
           config: {
             fieldNames: 'camelCase',
           },
+          baseDir,
         }),
       ],
     });

@@ -108,18 +108,18 @@ additionalTypeDefs: |
 additionalResolvers:
   - type: PopulatedPlaceSummary
     field: dailyForecast
-    requiredSelectionSet: |
+    requiredSelectionSet: | # latitude and longitude will be request if dailyForecast is requested on PopulatedPlaceSummary level
       {
         latitude
         longitude
       }
-    targetSource: Weather
-    targetMethod: getForecastDailyLatLatLonLon
-    returnData: data
+    targetSource: Weather ## Target Source Name
+    targetMethod: getForecastDailyLatLatLonLon # Target root field of that source
+    returnData: data # Return `data` property of returned data
     args:
-      lat: "{root.latitude}"
+      lat: "{root.latitude}" # Access required fields and pass those to args of getForecastDailyLatLatLonLon
       lon: "{root.longitude}"
-      key: "{context.weatherApiKey}"
+      key: "{context.headers['x-weather-api-key']}" # x-weather-api-key coming from HTTP Headers
   - type: PopulatedPlaceSummary
     field: todayForecast
     requiredSelectionSet: |
@@ -132,6 +132,48 @@ additionalResolvers:
     returnData: data[0]
     args:
       lat: "{root.latitude}"
-      lon: "{root.longitude}"
-      key: "{context.weatherApiKey}"
+      lon: "{root.longitude}"      
+      key: "{context.headers['x-weather-api-key']}"
+```
+
+The declaration above equals to the following;
+
+```js
+module.exports = {
+  PopulatedPlaceSummary: {
+    dailyForecast: {
+      selectionSet: `
+        {
+          latitude
+          longitude
+        }
+      `,
+      resolve: async (root, args, context, info) => {
+        const result = await context.Weather.api.getForecastDailyLatLatLonLon({
+          lat: root.latitude,
+          lon: root.longitude,
+          key: context.headers['x-weather-api-key']
+        });
+        return result?.data;
+      },
+    },    
+    todayForecast: {
+      selectionSet: `
+        {
+          latitude
+          longitude
+        }
+      `,
+      resolve: (root, args, context, info) => {        
+        const result = await context.Weather.api.getForecastDailyLatLatLonLon({
+          lat: root.latitude,
+          lon: root.longitude,
+          key: context.headers['x-weather-api-key']
+        });
+        return result?.data?.length && result.data[0];
+      },
+    }
+
+  }
+}
 ```

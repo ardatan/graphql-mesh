@@ -168,6 +168,21 @@
         "sslCredentials": {
           "$ref": "#/definitions/HTTPSConfig",
           "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Path to GraphQL Endpoint (default: /graphql)"
+        },
+        "browser": {
+          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disable by passing `false` (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         }
       }
     },
@@ -337,11 +352,27 @@
           "$ref": "#/definitions/FederationTransform"
         },
         "filterSchema": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
+          "description": "Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FilterSchemaTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "mock": {
           "$ref": "#/definitions/MockingConfig",
@@ -356,12 +387,27 @@
           "description": "Prefix transform"
         },
         "rename": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RenameTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply rename of a GraphQL type"
+          "description": "Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RenameTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "resolversComposition": {
           "type": "array",
@@ -617,17 +663,6 @@
           "type": "string",
           "description": "Path to the introspection\nYou can seperately give schema introspection"
         },
-        "cacheIntrospection": {
-          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
-        },
         "multipart": {
           "type": "boolean",
           "description": "Enable multipart/formdata in order to support file uploads"
@@ -638,21 +673,6 @@
         }
       },
       "required": ["endpoint"]
-    },
-    "GraphQLIntrospectionCachingOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GraphQLIntrospectionCachingOptions",
-      "properties": {
-        "ttl": {
-          "type": "integer",
-          "description": "Time to live of introspection cache"
-        },
-        "path": {
-          "type": "string",
-          "description": "Path to Introspection JSON File"
-        }
-      }
     },
     "GrpcHandler": {
       "additionalProperties": false,
@@ -810,7 +830,7 @@
           "description": "Field name of your custom error object (default: 'message')"
         }
       },
-      "required": ["baseUrl", "operations"]
+      "required": ["operations"]
     },
     "JsonSchemaOperation": {
       "additionalProperties": false,
@@ -1386,31 +1406,9 @@
         "typeDefs": {
           "type": "string",
           "description": "Provide GraphQL Type Definitions instead of inferring"
-        },
-        "cacheIntrospection": {
-          "description": "Cache Introspection (Any of: Neo4jIntrospectionCachingOptions, Boolean)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Neo4jIntrospectionCachingOptions"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
         }
       },
       "required": ["url", "username", "password"]
-    },
-    "Neo4jIntrospectionCachingOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Neo4jIntrospectionCachingOptions",
-      "properties": {
-        "ttl": {
-          "type": "integer",
-          "description": "Time to live of introspection cache"
-        }
-      }
     },
     "ODataHandler": {
       "additionalProperties": false,
@@ -1443,6 +1441,22 @@
         "expandNavProps": {
           "type": "boolean",
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
+        },
+        "customFetch": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Custom Fetch"
         }
       },
       "required": ["baseUrl"]
@@ -1453,7 +1467,19 @@
       "title": "OpenapiHandler",
       "properties": {
         "source": {
-          "type": "string",
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
           "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         },
         "sourceFormat": {
@@ -1604,16 +1630,13 @@
             }
           ]
         },
-        "cacheIntrospection": {
-          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
+        "subscriptions": {
+          "type": "boolean",
+          "description": "Enable GraphQL websocket transport support for subscriptions (default: true)"
+        },
+        "live": {
+          "type": "boolean",
+          "description": "Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)"
         }
       }
     },
@@ -1999,6 +2022,27 @@
         }
       }
     },
+    "FilterSchemaTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FilterSchemaTransform",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
+        "filters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Array of filter rules"
+        }
+      },
+      "required": ["filters"]
+    },
     "MockingConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -2132,6 +2176,27 @@
           "description": "Changes root types and changes the field names"
         }
       }
+    },
+    "RenameTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RenameTransform",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
+        "renames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RenameTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of rename rules"
+        }
+      },
+      "required": ["renames"]
     },
     "RenameTransformObject": {
       "additionalProperties": false,
@@ -2280,7 +2345,19 @@
       "description": "Transform to apply to the unified mesh schema"
     },
     "additionalTypeDefs": {
-      "type": "string",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
       "description": "Additional type definitions, or type definitions overrides you wish to add to the schema mesh"
     },
     "additionalResolvers": {
@@ -2328,6 +2405,10 @@
       },
       "additionalItems": false,
       "description": "Live Query Invalidations"
+    },
+    "introspectionCache": {
+      "type": "string",
+      "description": "Path to the file containing the introspection cache"
     }
   },
   "additionalProperties": false

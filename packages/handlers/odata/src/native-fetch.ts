@@ -1,6 +1,6 @@
 import { request as httpRequest, RequestOptions as HTTPRequestOptions } from 'http';
 import { request as httpsRequest, RequestOptions as HTTPSRequestOptions } from 'https';
-import { Request, Response } from 'fetchache';
+import { Request, Response } from 'cross-fetch';
 
 export function nativeFetch(request: Request): Promise<Response> {
   return new Promise((resolve, reject) => {

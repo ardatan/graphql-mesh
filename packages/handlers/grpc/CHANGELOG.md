@@ -1,5 +1,125 @@
 # @graphql-mesh/grpc
 
+## 0.12.0
+
+### Minor Changes
+
+- d82d2cc11: feat(grpc): ignore packages starts with `grpc.*`
+
+## 0.11.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+  - @graphql-mesh/utils@0.10.0
+
+## 0.10.0
+
+### Minor Changes
+
+- 4b57f7496: feat(grpc): support introspection cache
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
+## 0.9.4
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/types@0.36.1
+  - @graphql-mesh/utils@0.9.2
+
+## 0.9.3
+
+### Patch Changes
+
+- 136eece82: fix(grpc): handle empty packageName correctly
+- Updated dependencies [634a8a134]
+- Updated dependencies [6b8b23a4e]
+- Updated dependencies [2c3312f1a]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/types@0.36.0
+  - @graphql-mesh/utils@0.9.1
+
+## 0.9.2
+
+### Patch Changes
+
+- c8d03d21: fix(grpc): handle packageName correctly
+- c8d03d21: fix(grpc): remove unnecessary console.log
+
+## 0.9.1
+
+### Patch Changes
+
+- 191a663a: fix(grpc): respect baseUrl instead of process.cwd
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
+## 0.9.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+  - @graphql-mesh/utils@0.9.0
+
+## 0.8.17
+
+### Patch Changes
+
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/utils@0.8.8
+
+## 0.8.16
+
+### Patch Changes
+
+- Updated dependencies [55327fd6]
+  - @graphql-mesh/types@0.34.1
+
+## 0.8.15
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
+## 0.8.14
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
+## 0.8.13
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
+## 0.8.12
+
+### Patch Changes
+
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
 ## 0.8.11
 
 ### Patch Changes

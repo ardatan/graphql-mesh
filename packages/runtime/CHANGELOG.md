@@ -1,5 +1,116 @@
 # @graphql-mesh/runtime
 
+## 0.13.3
+
+### Patch Changes
+
+- f89497389: Use GraphQL JIT for faster GraphQL Executions
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+  - @graphql-mesh/utils@0.10.0
+
+## 0.13.2
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
+## 0.13.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/types@0.36.1
+  - @graphql-mesh/utils@0.9.2
+
+## 0.13.0
+
+### Minor Changes
+
+- 634a8a134: feat(config): introduce introspection cache
+
+### Patch Changes
+
+- Updated dependencies [634a8a134]
+- Updated dependencies [6b8b23a4e]
+- Updated dependencies [2c3312f1a]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/types@0.36.0
+  - @graphql-mesh/utils@0.9.1
+
+## 0.12.0
+
+### Minor Changes
+
+- 0b175305a: feat(runtime): add @live directive on demand
+
+## 0.11.9
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
+## 0.11.8
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+  - @graphql-mesh/utils@0.9.0
+
+## 0.11.7
+
+### Patch Changes
+
+- cf58cd5c: fix(runtime): deduplicate live directive
+
+## 0.11.6
+
+### Patch Changes
+
+- ec89a923: fix(runtime): respect noWrap transforms at source level
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/utils@0.8.8
+
+## 0.11.5
+
+### Patch Changes
+
+- Updated dependencies [55327fd6]
+  - @graphql-mesh/types@0.34.1
+
+## 0.11.4
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
+## 0.11.3
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
+## 0.11.2
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
 ## 0.11.0
 
 ### Minor Changes

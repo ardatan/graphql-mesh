@@ -1,5 +1,93 @@
 # @graphql-mesh/neo4j
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+
+## 0.11.0
+
+### Minor Changes
+
+- 4b57f7496: support introspection cache
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
+## 0.10.3
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/types@0.36.1
+
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies [634a8a134]
+- Updated dependencies [6b8b23a4e]
+  - @graphql-mesh/types@0.36.0
+
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
+## 0.10.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+
+## 0.9.17
+
+### Patch Changes
+
+- Updated dependencies [55327fd6]
+  - @graphql-mesh/types@0.34.1
+
+## 0.9.16
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
+## 0.9.15
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
+## 0.9.14
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
+## 0.9.13
+
+### Patch Changes
+
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
 ## 0.9.12
 
 ### Patch Changes

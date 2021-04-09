@@ -106,6 +106,7 @@ describe('cache', () => {
   let schema: GraphQLSchema;
   let cache: KeyValueCache;
   let pubsub: MeshPubSub;
+  const baseDir: string = undefined;
 
   beforeEach(() => {
     const baseSchema = buildSchema(/* GraphQL */ `
@@ -163,6 +164,7 @@ describe('cache', () => {
           },
         ],
         pubsub,
+        baseDir,
       });
       const modifiedSchema = transform.transformSchema(schema);
 
@@ -182,6 +184,7 @@ describe('cache', () => {
           },
         ],
         pubsub,
+        baseDir,
       });
 
       const modifiedSchema = transform.transformSchema(schema);
@@ -197,6 +200,7 @@ describe('cache', () => {
         cache,
         config,
         pubsub,
+        baseDir,
       });
 
       const modifiedSchema = transform.transformSchema(schema);
@@ -422,6 +426,7 @@ describe('cache', () => {
         ],
         cache,
         pubsub,
+        baseDir,
       });
 
       const schemaWithCache = transform.transformSchema(schemaWithHooks);

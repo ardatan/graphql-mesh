@@ -9,10 +9,13 @@ import MockingTransform from '../src';
 describe('mocking', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
+  const baseDir: string = undefined;
+
   beforeEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
+
   it('should mock fields and resolvers should not get called', async () => {
     let queryUserCalled = false;
     let userFullNameCalled = false;
@@ -57,6 +60,7 @@ describe('mocking', () => {
           config: mockingConfig,
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });

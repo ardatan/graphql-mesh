@@ -1,7 +1,13 @@
-import { GetMeshSourceOptions, MeshHandler, MeshSource, ResolverData, YamlConfig } from '@graphql-mesh/types';
-import { fetchache, KeyValueCache, Request } from 'fetchache';
+import {
+  GetMeshSourceOptions,
+  MeshHandler,
+  MeshSource,
+  ResolverData,
+  YamlConfig,
+  KeyValueCache,
+} from '@graphql-mesh/types';
 import { UrlLoader } from '@graphql-tools/url-loader';
-import { GraphQLSchema, buildClientSchema, introspectionFromSchema, buildSchema } from 'graphql';
+import { GraphQLSchema, buildClientSchema, introspectionFromSchema, buildSchema, IntrospectionQuery } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
   getInterpolatedHeadersFactory,
@@ -9,36 +15,49 @@ import {
   getHeadersObject,
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
+  getCachedFetch,
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
-export default class GraphQLHandler implements MeshHandler {
-  private name: string;
-  private config: YamlConfig.GraphQLHandler;
-  private cache: KeyValueCache<any>;
+export interface GraphQLHandlerIntrospection {
+  introspection?: IntrospectionQuery;
+}
 
-  constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
-    this.name = name;
+export default class GraphQLHandler implements MeshHandler {
+  private config: YamlConfig.GraphQLHandler;
+  private baseDir: string;
+  private cache: KeyValueCache<any>;
+  private introspectionCache: GraphQLHandlerIntrospection;
+
+  constructor({
+    config,
+    baseDir,
+    cache,
+    introspectionCache = {},
+  }: GetMeshSourceOptions<YamlConfig.GraphQLHandler, GraphQLHandlerIntrospection>) {
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
+    this.introspectionCache = introspectionCache;
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    if (this.config.endpoint.endsWith('.js') || this.config.endpoint.endsWith('.ts')) {
-      const schema = await loadFromModuleExportExpression<GraphQLSchema>(this.config.endpoint);
+    const { endpoint, schemaHeaders: configHeaders, introspection } = this.config;
+    const customFetch = getCachedFetch(this.cache);
+
+    if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
+      const schema = await loadFromModuleExportExpression<GraphQLSchema>(endpoint, { cwd: this.baseDir });
       return {
         schema,
       };
-    } else if (this.config.endpoint.endsWith('.graphql')) {
-      const rawSDL = await loadFromModuleExportExpression<string>(this.config.endpoint);
+    } else if (endpoint.endsWith('.graphql')) {
+      const rawSDL = await loadFromModuleExportExpression<string>(endpoint, { cwd: this.baseDir });
       const schema = buildSchema(rawSDL);
       return {
         schema,
       };
     }
     const urlLoader = new UrlLoader();
-    const customFetch: WindowOrWorkerGlobalScope['fetch'] = (...args) =>
-      fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
     const getExecutorAndSubscriberForParams = (
       params: ExecutionParams,
       headersFactory: ResolverDataBasedFactory<Headers>,
@@ -52,16 +71,15 @@ export default class GraphQLHandler implements MeshHandler {
       const headers = getHeadersObject(headersFactory(resolverData));
       const endpoint = endpointFactory(resolverData);
       return urlLoader.getExecutorAndSubscriberAsync(endpoint, {
-        customFetch: customFetch as any,
+        customFetch,
         ...this.config,
         headers,
       });
     };
-    let schema: GraphQLSchema;
     let schemaHeaders =
-      typeof this.config.schemaHeaders === 'string'
-        ? await loadFromModuleExportExpression(this.config.schemaHeaders)
-        : this.config.schemaHeaders;
+      typeof configHeaders === 'string'
+        ? await loadFromModuleExportExpression(configHeaders, { cwd: this.baseDir })
+        : configHeaders;
     if (typeof schemaHeaders === 'function') {
       schemaHeaders = schemaHeaders();
     }
@@ -69,39 +87,27 @@ export default class GraphQLHandler implements MeshHandler {
       schemaHeaders = await schemaHeaders;
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
-    const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
-      const { executor } = await getExecutorAndSubscriberForParams(
-        params,
-        schemaHeadersFactory,
-        () => this.config.endpoint
-      );
-      return executor(params);
-    };
-    if (this.config.introspection) {
-      const result = await urlLoader.handleSDLAsync(this.config.introspection, {
-        customFetch: customFetch as any,
-        ...this.config,
-        headers: schemaHeaders,
-      });
-      schema = result.schema;
-    } else if (this.config.cacheIntrospection) {
-      const cacheKey = this.name + '_introspection';
-      const introspectionData: any = await this.cache.get(cacheKey);
-      if (introspectionData) {
-        schema = buildClientSchema(introspectionData);
+    if (!this.introspectionCache.introspection) {
+      const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
+        const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory, () => endpoint);
+        return executor(params);
+      };
+      if (introspection) {
+        const result = await urlLoader.handleSDLAsync(introspection, {
+          customFetch,
+          ...this.config,
+          headers: schemaHeaders,
+        });
+        this.introspectionCache.introspection = introspectionFromSchema(result.schema);
       } else {
-        schema = await introspectSchema(introspectionExecutor);
-        const ttl = typeof this.config.cacheIntrospection === 'object' && this.config.cacheIntrospection.ttl;
-        const introspection = introspectionFromSchema(schema);
-        this.cache.set(cacheKey, introspection, { ttl });
+        this.introspectionCache.introspection = introspectionFromSchema(await introspectSchema(introspectionExecutor));
       }
-    } else {
-      schema = await introspectSchema(introspectionExecutor);
     }
+    const nonExecutableSchema = buildClientSchema(this.introspectionCache.introspection);
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
-    const endpointFactory = getInterpolatedStringFactory(this.config.endpoint);
+    const endpointFactory = getInterpolatedStringFactory(endpoint);
     return {
-      schema,
+      schema: nonExecutableSchema,
       executor: async params => {
         const { executor } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory, endpointFactory);
         return executor(params) as any;

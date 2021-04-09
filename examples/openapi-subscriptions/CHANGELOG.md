@@ -1,5 +1,160 @@
 # openapi-subscriptions
 
+## 0.0.81
+
+### Patch Changes
+
+- Updated dependencies [1c8b460d1]
+  - @graphql-mesh/cli@0.29.1
+
+## 0.0.80
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/cli@0.29.0
+  - @graphql-mesh/openapi@0.15.0
+
+## 0.0.79
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/cli@0.28.0
+  - @graphql-mesh/openapi@0.14.2
+
+## 0.0.78
+
+### Patch Changes
+
+- Updated dependencies [e7c3de4ae]
+  - @graphql-mesh/cli@0.27.2
+
+## 0.0.77
+
+### Patch Changes
+
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/cli@0.27.1
+  - @graphql-mesh/openapi@0.14.1
+
+## 0.0.76
+
+### Patch Changes
+
+- Updated dependencies [634a8a134]
+- Updated dependencies [6b8b23a4e]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/cli@0.27.0
+  - @graphql-mesh/openapi@0.14.0
+
+## 0.0.75
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.26.2
+
+## 0.0.74
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.26.1
+
+## 0.0.73
+
+### Patch Changes
+
+- Updated dependencies [f3731f584]
+  - @graphql-mesh/openapi@0.13.3
+
+## 0.0.72
+
+### Patch Changes
+
+- Updated dependencies [e1eca62e]
+  - @graphql-mesh/openapi@0.13.2
+
+## 0.0.71
+
+### Patch Changes
+
+- Updated dependencies [7efbf045]
+- Updated dependencies [191a663a]
+  - @graphql-mesh/cli@0.26.0
+  - @graphql-mesh/openapi@0.13.1
+
+## 0.0.70
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/openapi@0.13.0
+  - @graphql-mesh/cli@0.25.3
+
+## 0.0.69
+
+### Patch Changes
+
+- Updated dependencies [cf58cd5c]
+  - @graphql-mesh/cli@0.25.2
+
+## 0.0.68
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.25.1
+- @graphql-mesh/openapi@0.12.18
+
+## 0.0.67
+
+### Patch Changes
+
+- Updated dependencies [b52859c6]
+  - @graphql-mesh/cli@0.25.0
+
+## 0.0.66
+
+### Patch Changes
+
+- @graphql-mesh/openapi@0.12.17
+- @graphql-mesh/cli@0.24.1
+
+## 0.0.65
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/cli@0.24.0
+  - @graphql-mesh/openapi@0.12.16
+
+## 0.0.64
+
+### Patch Changes
+
+- @graphql-mesh/openapi@0.12.15
+- @graphql-mesh/cli@0.23.4
+
+## 0.0.63
+
+### Patch Changes
+
+- @graphql-mesh/openapi@0.12.14
+- @graphql-mesh/cli@0.23.3
+
+## 0.0.62
+
+### Patch Changes
+
+- @graphql-mesh/openapi@0.12.13
+- @graphql-mesh/cli@0.23.2
+
+## 0.0.61
+
+### Patch Changes
+
+- Updated dependencies [f9985ac8]
+  - @graphql-mesh/cli@0.23.1
+
 ## 0.0.60
 
 ### Patch Changes

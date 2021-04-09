@@ -1,5 +1,182 @@
 # @graphql-mesh/cli
 
+## 0.29.1
+
+### Patch Changes
+
+- 1c8b460d1: fix(serve) fix browser flag
+
+## 0.29.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+- Updated dependencies [f89497389]
+  - @graphql-mesh/utils@0.10.0
+  - @graphql-mesh/runtime@0.13.3
+  - @graphql-mesh/config@0.15.3
+
+## 0.28.0
+
+### Minor Changes
+
+- 4b57f7496: feat(serve): ability to configure opening browser window feature
+
+### Patch Changes
+
+- @graphql-mesh/config@0.15.2
+- @graphql-mesh/runtime@0.13.2
+
+## 0.27.2
+
+### Patch Changes
+
+- e7c3de4ae: fix(cli): use baseDir for path defined in config file
+
+## 0.27.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/config@0.15.1
+  - @graphql-mesh/runtime@0.13.1
+  - @graphql-mesh/utils@0.9.2
+
+## 0.27.0
+
+### Minor Changes
+
+- 634a8a134: feat(config): introduce introspection cache
+
+### Patch Changes
+
+- d12c7d978: fix(utils): use mkdir before emit output
+- Updated dependencies [634a8a134]
+- Updated dependencies [2c3312f1a]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/config@0.15.0
+  - @graphql-mesh/runtime@0.13.0
+  - @graphql-mesh/utils@0.9.1
+
+## 0.26.2
+
+### Patch Changes
+
+- Updated dependencies [0b175305a]
+  - @graphql-mesh/runtime@0.12.0
+  - @graphql-mesh/config@0.14.3
+
+## 0.26.1
+
+### Patch Changes
+
+- Updated dependencies [939f9beb5]
+  - @graphql-mesh/config@0.14.2
+
+## 0.26.0
+
+### Minor Changes
+
+- 7efbf045: Fix CLI usage of base-dir
+
+  **Breaking changes**
+  This is technically just a bug fix, but it corrects a behaviour that will break if you relied on it.
+  When using CLI commands with the `--dir` option, those commands were using your given `--dir` as the base directory.
+
+  Now CLI commands always use the Current Working Directory (CWD) as the base directory and so the given `--dir` is used to only get the Mesh Config file and process any local file eventually defined in the Config.
+
+- 191a663a: feat(cli): return server and express app from serveMesh
+
+### Patch Changes
+
+- Updated dependencies [191a663a]
+  - @graphql-mesh/config@0.14.1
+  - @graphql-mesh/runtime@0.11.9
+
+## 0.25.3
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/config@0.14.0
+  - @graphql-mesh/utils@0.9.0
+  - @graphql-mesh/runtime@0.11.8
+
+## 0.25.2
+
+### Patch Changes
+
+- cf58cd5c: enhance(serve): improve logging
+- Updated dependencies [cf58cd5c]
+  - @graphql-mesh/runtime@0.11.7
+  - @graphql-mesh/config@0.13.7
+
+## 0.25.1
+
+### Patch Changes
+
+- Updated dependencies [ec89a923]
+- Updated dependencies [ec89a923]
+  - @graphql-mesh/utils@0.8.8
+  - @graphql-mesh/runtime@0.11.6
+  - @graphql-mesh/config@0.13.6
+
+## 0.25.0
+
+### Minor Changes
+
+- b52859c6: enhance(serve): run custom handlers before anything else
+
+## 0.24.1
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.5
+- @graphql-mesh/runtime@0.11.5
+
+## 0.24.0
+
+### Minor Changes
+
+- 76051dd7: feat(serve): ability to change GraphQL endpoint path
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.4
+- @graphql-mesh/runtime@0.11.4
+
+## 0.23.4
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.3
+- @graphql-mesh/runtime@0.11.3
+
+## 0.23.3
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.2
+- @graphql-mesh/runtime@0.11.2
+
+## 0.23.2
+
+### Patch Changes
+
+- @graphql-mesh/config@0.13.1
+- @graphql-mesh/runtime@0.11.1
+
+## 0.23.1
+
+### Patch Changes
+
+- f9985ac8: fix(serve): ignore if xdg-open not available
+
 ## 0.23.0
 
 ### Minor Changes

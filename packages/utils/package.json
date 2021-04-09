@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.8.7",
+  "version": "0.10.0",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -17,14 +17,17 @@
   },
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.11",
-    "@graphql-tools/delegate": "7.0.10",
-    "@graphql-tools/utils": "7.2.5",
+    "@graphql-tools/delegate": "7.1.2",
+    "@graphql-tools/utils": "7.7.1",
     "@graphql-typed-document-node/core": "3.1.0",
-    "date-fns": "2.17.0",
-    "fetchache": "0.0.4",
+    "cross-fetch": "3.1.4",
+    "date-fns": "2.20.0",
+    "fetchache": "0.1.1",
+    "flatstr": "1.0.12",
     "is-url": "1.2.4",
     "js-yaml": "4.0.0",
-    "object-hash": "2.1.1"
+    "object-hash": "2.1.1",
+    "tiny-lru": "7.0.6"
   },
   "publishConfig": {
     "access": "public",

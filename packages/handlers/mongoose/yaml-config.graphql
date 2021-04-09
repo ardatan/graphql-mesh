@@ -55,9 +55,7 @@ type TypeConverterResolversOpts {
   pagination: PaginationResolverFlag
 }
 
-union ComposeWithMongooseResolverFlag =
-    Boolean
-  | ComposeWithMongooseResolverOpts
+union ComposeWithMongooseResolverFlag = Boolean | ComposeWithMongooseResolverOpts
 
 type ComposeWithMongooseResolverOpts {
   filter: FilterHelperArgsOpts

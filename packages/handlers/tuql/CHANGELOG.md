@@ -1,5 +1,86 @@
 # @graphql-mesh/tuql
 
+## 0.4.54
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/types@0.38.0
+
+## 0.4.53
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+
+## 0.4.52
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/types@0.36.1
+
+## 0.4.51
+
+### Patch Changes
+
+- Updated dependencies [634a8a134]
+- Updated dependencies [6b8b23a4e]
+  - @graphql-mesh/types@0.36.0
+
+## 0.4.50
+
+### Patch Changes
+
+- 191a663a: fix(tuql): respect baseUrl instead of process.cwd
+- Updated dependencies [191a663a]
+  - @graphql-mesh/types@0.35.1
+
+## 0.4.49
+
+### Patch Changes
+
+- Updated dependencies [b9ca0c30]
+  - @graphql-mesh/types@0.35.0
+
+## 0.4.48
+
+### Patch Changes
+
+- Updated dependencies [55327fd6]
+  - @graphql-mesh/types@0.34.1
+
+## 0.4.47
+
+### Patch Changes
+
+- Updated dependencies [76051dd7]
+  - @graphql-mesh/types@0.34.0
+
+## 0.4.46
+
+### Patch Changes
+
+- Updated dependencies [646d6bdb]
+  - @graphql-mesh/types@0.33.0
+
+## 0.4.45
+
+### Patch Changes
+
+- Updated dependencies [68d6b117]
+  - @graphql-mesh/types@0.32.0
+
+## 0.4.44
+
+### Patch Changes
+
+- Updated dependencies [212f2d66]
+  - @graphql-mesh/types@0.31.1
+
 ## 0.4.43
 
 ### Patch Changes

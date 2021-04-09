@@ -32,6 +32,7 @@ async function rmdirs(dir: string) {
 }
 
 describe('snapshot', () => {
+  const baseDir: string = undefined;
   const outputDir = join(tmpdir(), '__snapshots__');
   const users = [
     {
@@ -86,6 +87,7 @@ describe('snapshot', () => {
           },
           cache: new InMemoryLRUCache(),
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -152,6 +154,7 @@ describe('snapshot', () => {
           },
           cache: new InMemoryLRUCache(),
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -215,6 +218,7 @@ describe('snapshot', () => {
           },
           cache: new InMemoryLRUCache(),
           pubsub,
+          baseDir,
         }),
       ],
     });

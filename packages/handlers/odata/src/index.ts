@@ -1,7 +1,19 @@
-/* eslint-disable prefer-const */
-import { YamlConfig, ResolverData, MeshHandler, GetMeshSourceOptions, MeshSource } from '@graphql-mesh/types';
-import { parseInterpolationStrings, getInterpolatedHeadersFactory, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { fetchache, KeyValueCache, Request, Response } from 'fetchache';
+import {
+  YamlConfig,
+  ResolverData,
+  MeshHandler,
+  GetMeshSourceOptions,
+  MeshSource,
+  KeyValueCache,
+} from '@graphql-mesh/types';
+import {
+  parseInterpolationStrings,
+  getInterpolatedHeadersFactory,
+  readFileOrUrlWithCache,
+  jsonFlatStringify,
+  getCachedFetch,
+  loadFromModuleExportExpression,
+} from '@graphql-mesh/utils';
 import urljoin from 'url-join';
 import {
   SchemaComposer,
@@ -37,6 +49,7 @@ import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
 import { pruneSchema } from '@graphql-tools/utils';
+import { Request, Response } from 'cross-fetch';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -102,34 +115,69 @@ const queryOptionsFields = {
   },
 };
 
+export interface ODataIntrospectionCache {
+  metadataJson: any;
+}
+
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
+  private baseDir: string;
   private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
+  private introspectionCache: ODataIntrospectionCache;
 
-  constructor({ name, config, cache }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    cache,
+    introspectionCache,
+  }: GetMeshSourceOptions<YamlConfig.ODataHandler, ODataIntrospectionCache>) {
     this.name = name;
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
+    this.introspectionCache = introspectionCache || {
+      metadataJson: null,
+    };
+  }
+
+  async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
+    if (!this.introspectionCache.metadataJson) {
+      const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
+      const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
+        allowUnknownExtensions: true,
+        cwd: this.baseDir,
+        headers: this.config.schemaHeaders,
+        fetch,
+      });
+
+      this.introspectionCache.metadataJson = parseXML(metadataText, {
+        attributeNamePrefix: '',
+        attrNodeName: 'attributes',
+        textNodeName: 'innerText',
+        ignoreAttributes: false,
+        ignoreNameSpace: true,
+        arrayMode: true,
+        allowBooleanAttributes: true,
+      });
+    }
+    return this.introspectionCache.metadataJson;
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
-    const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
-      headers: this.config.schemaHeaders,
-      allowUnknownExtensions: true,
-    });
+    let fetch: ReturnType<typeof getCachedFetch>;
+    if (this.config.customFetch) {
+      fetch =
+        typeof this.config.customFetch === 'string'
+          ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch)
+          : this.config.customFetch;
+    } else {
+      fetch = getCachedFetch(this.cache);
+    }
 
-    const metadataJson = parseXML(metadataText, {
-      attributeNamePrefix: '',
-      attrNodeName: 'attributes',
-      textNodeName: 'innerText',
-      ignoreAttributes: false,
-      ignoreNameSpace: true,
-      arrayMode: true,
-      allowBooleanAttributes: true,
-    });
+    const { baseUrl, operationHeaders } = this.config;
 
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
@@ -142,6 +190,7 @@ export default class ODataHandler implements MeshHandler {
 
     const aliasNamespaceMap = new Map<string, string>();
 
+    const metadataJson = await this.getCachedMetadataJson(fetch);
     const schemas = metadataJson.Edmx[0].DataServices[0].Schema;
     const multipleSchemas = schemas.length > 1;
     const namespaces = new Set<string>();
@@ -347,7 +396,7 @@ export default class ODataHandler implements MeshHandler {
       fields: queryOptionsFields,
     });
 
-    const origHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
+    const origHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const headersFactory = (resolverData: ResolverData, method: string) => {
       const headers = origHeadersFactory(resolverData);
       if (!headers.has('Accept')) {
@@ -359,8 +408,8 @@ export default class ODataHandler implements MeshHandler {
       return headers;
     };
     const { args: commonArgs, contextVariables } = parseInterpolationStrings([
-      ...Object.values(this.config.operationHeaders || {}),
-      this.config.baseUrl,
+      ...Object.values(operationHeaders || {}),
+      baseUrl,
     ]);
 
     function getTCByTypeNames(...typeNames: string[]) {
@@ -386,6 +435,30 @@ export default class ODataHandler implements MeshHandler {
           rebuildOpenInputObjects(input[fieldName]);
         }
       }
+    }
+
+    function handleBatchJsonResults(batchResponseJson: any, requests: Request[]) {
+      if ('error' in batchResponseJson) {
+        const error = new Error(batchResponseJson.error.message);
+        Object.assign(error, {
+          extensions: batchResponseJson.error,
+        });
+        throw error;
+      }
+      if (!('responses' in batchResponseJson)) {
+        const error = new Error(`Batch Request didn't return a valid response.`);
+        Object.assign(error, {
+          extensions: batchResponseJson,
+        });
+        throw error;
+      }
+      return requests.map((_req, index) => {
+        const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
+        return new Response(jsonFlatStringify(responseObj.body), {
+          status: responseObj.status,
+          headers: responseObj.headers,
+        });
+      });
     }
 
     const DATALOADER_FACTORIES = {
@@ -415,18 +488,19 @@ export default class ODataHandler implements MeshHandler {
             requestBody += `--${requestBoundary}--\n`;
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
-            const batchRequest = new Request(urljoin(this.config.baseUrl, '$batch'), {
+            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
               method: 'POST',
               body: requestBody,
               headers: batchHeaders,
             });
             const batchResponse = await nativeFetch(batchRequest);
             const batchResponseText = await batchResponse.text();
+            if (!batchResponseText.startsWith('--')) {
+              const batchResponseJson = JSON.parse(batchResponseText);
+              return handleBatchJsonResults(batchResponseJson, requests);
+            }
             const responseLines = batchResponseText.split('\n');
             const responseBoundary = responseLines[0];
-            if (!responseBoundary.startsWith('--')) {
-              return requests.map(() => batchResponse);
-            }
             const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
             const responseTextArr = actualResponse.split(responseBoundary);
             return responseTextArr.map(responseTextWithContentHeader => {
@@ -445,13 +519,13 @@ export default class ODataHandler implements MeshHandler {
           async (requests: Request[]): Promise<Response[]> => {
             const batchHeaders = headersFactory({ context }, 'POST');
             batchHeaders.set('Content-Type', 'application/json');
-            const batchRequest = new Request(urljoin(this.config.baseUrl, '$batch'), {
+            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
               method: 'POST',
-              body: JSON.stringify({
+              body: jsonFlatStringify({
                 requests: await Promise.all(
                   requests.map(async (request, index) => {
                     const id = index.toString();
-                    const url = request.url.replace(this.config.baseUrl, '');
+                    const url = request.url.replace(baseUrl, '');
                     const method = request.method;
                     const headers: HeadersInit = {};
                     request.headers?.forEach((value, key) => {
@@ -469,36 +543,15 @@ export default class ODataHandler implements MeshHandler {
               }),
               headers: batchHeaders,
             });
-            const batchResponse = await fetchache(batchRequest, this.cache);
+            const batchResponse = await fetch(batchRequest);
             const batchResponseText = await batchResponse.text();
             const batchResponseJson = JSON.parse(batchResponseText);
-            if ('error' in batchResponseJson) {
-              const error = new Error(batchResponseJson.error.message);
-              Object.assign(error, {
-                extensions: batchResponseJson.error,
-              });
-              throw error;
-            }
-            if (!('responses' in batchResponseJson)) {
-              const error = new Error(`Batch Request didn't return a valid response.`);
-              Object.assign(error, {
-                extensions: batchResponseJson,
-              });
-              throw error;
-            }
-            return requests.map((_req, index) => {
-              const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
-              return new Response(JSON.stringify(responseObj.body), {
-                status: responseObj.status,
-                headers: responseObj.headers,
-              });
-            });
+            return handleBatchJsonResults(batchResponseJson, requests);
           }
         ),
       none: () =>
         new DataLoader(
-          (requests: Request[]): Promise<Response[]> =>
-            Promise.all(requests.map(request => fetchache(request, this.cache)))
+          (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => fetch(request)))
         ),
     };
 
@@ -804,7 +857,7 @@ export default class ODataHandler implements MeshHandler {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
+              const url = new URL(baseUrl);
               url.href = urljoin(url.href, '/' + functionName);
               url.href += `(${Object.entries(args)
                 .filter(argEntry => argEntry[0] !== 'queryOptions')
@@ -934,14 +987,14 @@ export default class ODataHandler implements MeshHandler {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(this.config.baseUrl);
+              const url = new URL(baseUrl);
               url.href = urljoin(url.href, '/' + actionName);
               const urlString = getUrlString(url);
               const method = 'POST';
               const request = new Request(urlString, {
                 method,
                 headers: headersFactory({ root, args, context, info }, method),
-                body: JSON.stringify(args),
+                body: jsonFlatStringify(args),
               });
               const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
@@ -1006,7 +1059,7 @@ export default class ODataHandler implements MeshHandler {
                 const request = new Request(urlString, {
                   method,
                   headers: headersFactory({ root, args, context, info }, method),
-                  body: JSON.stringify(args),
+                  body: jsonFlatStringify(args),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1096,7 +1149,7 @@ export default class ODataHandler implements MeshHandler {
                 ...commonArgs,
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + singletonName);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -1141,7 +1194,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -1168,7 +1221,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
@@ -1197,7 +1250,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, `/${entitySetName}/$count`);
                 const urlString = getUrlString(url);
                 const method = 'GET';
@@ -1222,7 +1275,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 const urlString = getUrlString(url);
                 rebuildOpenInputObjects(args.input);
@@ -1230,7 +1283,7 @@ export default class ODataHandler implements MeshHandler {
                 const request = new Request(urlString, {
                   method,
                   headers: headersFactory({ root, args, context, info }, method),
-                  body: JSON.stringify(args.input),
+                  body: jsonFlatStringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1246,7 +1299,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const urlString = getUrlString(url);
@@ -1272,7 +1325,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(this.config.baseUrl);
+                const url = new URL(baseUrl);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const urlString = getUrlString(url);
@@ -1281,7 +1334,7 @@ export default class ODataHandler implements MeshHandler {
                 const request = new Request(urlString, {
                   method,
                   headers: headersFactory({ root, args, context, info }, method),
-                  body: JSON.stringify(args.input),
+                  body: jsonFlatStringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();

@@ -8,6 +8,212 @@ import { wrapSchema } from '@graphql-tools/wrap';
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
   const pubsub = new PubSub() as MeshPubSub;
+  const baseDir: string = undefined;
+
+  it('filters correctly with array of rules', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+        comments: [Comment]
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Query {
+        user(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it('filters correctly with declarative syntax', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+        comments: [Comment]
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Query {
+        user(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: { filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'] },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it("filters correctly on 'bare' mode", async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+        notifications: [Notification]
+        mentions: [Mention]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+        comments: [Comment]
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Notification {
+        type: Int
+        content: String
+      }
+
+      type Mention {
+        reference: ID
+        link: String
+      }
+
+      type LooseType {
+        foo: String
+        bar: String
+      }
+
+      type Query {
+        user(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: {
+            mode: 'bare',
+            filters: [
+              '!Comment',
+              'Type.!LooseType',
+              'Type.!{Notification, Mention}',
+              'Query.user.!{notifications, mentions}',
+              'User.posts.{message, author}',
+              'Query.user.!pk',
+            ],
+          },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
   it('should filter out fields', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type User {
@@ -36,10 +242,11 @@ describe('filter', () => {
     schema = wrapSchema({
       schema,
       transforms: [
-        new FilterSchemaTransform({
+        FilterSchemaTransform({
           config: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'],
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -80,10 +287,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        new FilterSchemaTransform({
+        FilterSchemaTransform({
           config: ['Mutation.!*'],
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -124,10 +332,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        new FilterSchemaTransform({
+        FilterSchemaTransform({
           config: ['User.{id, username}', 'Query.!{admin}', 'Book.{id}'],
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -150,7 +359,7 @@ type Query {
     );
   });
 
-  it('should filter out types', async () => {
+  it('should filter out single type, with pending-deprecation syntax', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type User {
         id: ID
@@ -178,10 +387,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        new FilterSchemaTransform({
+        FilterSchemaTransform({
           config: ['!Book'],
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -202,6 +412,143 @@ type User {
 type Query {
   user: User
   admin: User
+}
+`.trim()
+    );
+  });
+
+  it('filters out single type and multiple types rules', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Notification {
+        type: Int
+        content: String
+      }
+
+      type Mention {
+        reference: ID
+        link: String
+      }
+
+      type Query {
+        user(id: ID!): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: { mode: 'bare', filters: ['Type.!Comment', 'Type.!{Notification, Mention}'] },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(id: ID!): User
+}
+`.trim()
+    );
+  });
+
+  it('handles whitelist filtering for types correctly', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+        posts: [Post]
+      }
+
+      type Post {
+        id: ID
+        message: String
+        author: User
+      }
+
+      type Comment {
+        id: ID
+        message: String
+      }
+
+      type Notification {
+        type: Int
+        content: String
+      }
+
+      type Mention {
+        reference: ID
+        link: String
+      }
+
+      type Query {
+        user(id: ID!): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          // bizarre case, but logic should still work
+          config: { mode: 'bare', filters: ['Type.{Query, User, Post, String, ID}'] },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID
+  message: String
+  author: User
+}
+
+type Query {
+  user(id: ID!): User
 }
 `.trim()
     );
@@ -236,10 +583,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        new FilterSchemaTransform({
+        FilterSchemaTransform({
           config: ['!User'],
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -297,10 +645,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        new FilterSchemaTransform({
+        FilterSchemaTransform({
           config: ['!AuthRule'],
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -351,16 +700,17 @@ type Query {
 
       type Query {
         user(pk: ID!, name: String, age: Int): User
-        book(pk: ID!): Book
+        book(pk: ID!, title: String): Book
       }
     `);
     schema = wrapSchema({
       schema,
       transforms: [
-        new FilterSchemaTransform({
-          config: ['Query.{user(!{pk, name}), book(!pk)}'],
+        FilterSchemaTransform({
+          config: ['Query.user.!{pk, age}', 'Query.book.title'],
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -380,8 +730,8 @@ type Book {
 }
 
 type Query {
-  user(age: Int): User
-  book: Book
+  user(name: String): User
+  book(title: String): Book
 }
 `.trim()
     );

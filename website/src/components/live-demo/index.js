@@ -13,6 +13,7 @@ const EXAMPLES = {
     'JSON Schema': {
         'Fake API': 'json-schema-example',
         'Covid-19 Statistics': 'json-schema-covid',
+        'Subscriptions, Webhooks & Live Queries': 'json-schema-subscriptions'
     },
     'OData':{
         'TripPin': 'odata-trippin',
@@ -26,6 +27,12 @@ const EXAMPLES = {
     },
     'SQLite': {
         'Chinook': 'sqlite-chinook'
+    },
+    'Apollo Federation': {
+        'Apollo Federation Example': 'federation-example'
+    },
+    'Apache Thrift': {
+        'Calculator': 'thrift-calculator'
     }
 };
 

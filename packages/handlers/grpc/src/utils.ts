@@ -1,5 +1,5 @@
 import { KeyValueCache } from '@graphql-mesh/types';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { jsonFlatStringify, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { existsSync } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
@@ -61,7 +61,7 @@ export function addMetaDataToCall(
       }
       // Ensure that the metadata is compatible with what node-grpc expects
       if (typeof metaValue !== 'string' && !(metaValue instanceof Buffer)) {
-        metaValue = JSON.stringify(metaValue);
+        metaValue = jsonFlatStringify(metaValue);
       }
 
       meta.add(key, metaValue as MetadataValue);
@@ -72,10 +72,11 @@ export function addMetaDataToCall(
   return call(input);
 }
 
-export async function getBuffer(path: string, cache: KeyValueCache): Promise<Buffer> {
+export async function getBuffer(path: string, cache: KeyValueCache, cwd: string): Promise<Buffer> {
   if (path) {
     const result = await readFileOrUrlWithCache<string>(path, cache, {
       allowUnknownExtensions: true,
+      cwd,
     });
     return Buffer.from(result);
   }
@@ -91,7 +92,11 @@ export function getTypeName(
   if (isScalarType(typePath)) {
     return getGraphQLScalar(typePath);
   }
-  let baseTypeName = pascalCase(toSnakeCase(typePath.replace(packageName + '.', '')));
+  let baseTypeName = pascalCase(typePath);
+  const packageNamePrefix = pascalCase(packageName);
+  if (baseTypeName.startsWith(packageNamePrefix)) {
+    baseTypeName = baseTypeName.replace(packageNamePrefix, '');
+  }
   if (isInput && !schemaComposer.isEnumType(baseTypeName)) {
     baseTypeName += 'Input';
   }

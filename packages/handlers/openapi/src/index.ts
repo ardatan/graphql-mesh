@@ -6,6 +6,7 @@ import {
   getHeadersObject,
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
+  getCachedFetch,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -18,43 +19,78 @@ import {
   KeyValueCache,
   MeshPubSub,
 } from '@graphql-mesh/types';
-import { fetchache, Request } from 'fetchache';
 import { set } from 'lodash';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 
+interface OpenAPIIntrospectionCache {
+  spec?: Oas3;
+}
+
 export default class OpenAPIHandler implements MeshHandler {
-  config: YamlConfig.OpenapiHandler;
-  cache: KeyValueCache;
-  pubsub: MeshPubSub;
-  constructor({ config, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  private config: YamlConfig.OpenapiHandler;
+  private baseDir: string;
+  private cache: KeyValueCache;
+  private pubsub: MeshPubSub;
+  private introspectionCache: OpenAPIIntrospectionCache;
+
+  constructor({
+    config,
+    baseDir,
+    cache,
+    pubsub,
+    introspectionCache = {},
+  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler, OpenAPIIntrospectionCache>) {
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
+    this.introspectionCache = introspectionCache;
+  }
+
+  private async getCachedSpec(): Promise<Oas3> {
+    const { source } = this.config;
+    if (!this.introspectionCache.spec) {
+      this.introspectionCache.spec =
+        typeof source !== 'string'
+          ? source
+          : await readFileOrUrlWithCache<Oas3>(source, this.cache, {
+              cwd: this.baseDir,
+              fallbackFormat: this.config.sourceFormat,
+              headers: this.config.schemaHeaders,
+            });
+    }
+    return this.introspectionCache.spec;
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const path = this.config.source;
-    const spec = await readFileOrUrlWithCache<Oas3>(path, this.cache, {
-      headers: this.config.schemaHeaders,
-      fallbackFormat: this.config.sourceFormat,
-    });
+    const {
+      addLimitArgument,
+      baseUrl,
+      customFetch,
+      genericPayloadArgName,
+      operationHeaders,
+      qs,
+      selectQueryOrMutationField,
+    } = this.config;
+
+    const spec = await this.getCachedSpec();
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];
-    if (this.config.customFetch) {
-      fetch = await loadFromModuleExportExpression(this.config.customFetch as any, 'default');
+    if (customFetch) {
+      fetch = await loadFromModuleExportExpression(customFetch, { defaultExportName: 'default', cwd: this.baseDir });
     } else {
-      fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
+      fetch = getCachedFetch(this.cache);
     }
 
-    const baseUrlFactory = getInterpolatedStringFactory(this.config.baseUrl);
+    const baseUrlFactory = getInterpolatedStringFactory(baseUrl);
 
-    const headersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
+    const headersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
-    for (const queryName in this.config.qs || {}) {
-      queryStringFactoryMap.set(queryName, getInterpolatedStringFactory(this.config.qs[queryName]));
+    for (const queryName in qs || {}) {
+      queryStringFactoryMap.set(queryName, getInterpolatedStringFactory(qs[queryName]));
     }
     const searchParamsFactory = (resolverData: ResolverData, searchParams: URLSearchParams) => {
-      for (const queryName in this.config.qs || {}) {
+      for (const queryName in qs || {}) {
         searchParams.set(queryName, queryStringFactoryMap.get(queryName)(resolverData));
       }
       return searchParams;
@@ -62,16 +98,15 @@ export default class OpenAPIHandler implements MeshHandler {
 
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
-      baseUrl: this.config.baseUrl,
+      baseUrl: baseUrl,
       operationIdFieldNames: true,
       fillEmptyResponses: true,
       includeHttpDetails: this.config.includeHttpDetails,
-      genericPayloadArgName:
-        this.config.genericPayloadArgName === undefined ? false : this.config.genericPayloadArgName,
+      genericPayloadArgName: genericPayloadArgName === undefined ? false : genericPayloadArgName,
       selectQueryOrMutationField:
-        this.config.selectQueryOrMutationField === undefined
+        selectQueryOrMutationField === undefined
           ? {}
-          : this.config.selectQueryOrMutationField.reduce((acc, curr) => {
+          : selectQueryOrMutationField.reduce((acc, curr) => {
               let operationType: GraphQLOperationType;
               switch (curr.type) {
                 case 'Query':
@@ -84,7 +119,7 @@ export default class OpenAPIHandler implements MeshHandler {
               set(acc, `${curr.title}.${curr.path}.${curr.method}`, operationType);
               return acc;
             }, {} as OasTitlePathMethodObject<GraphQLOperationType>),
-      addLimitArgument: this.config.addLimitArgument === undefined ? true : this.config.addLimitArgument,
+      addLimitArgument: addLimitArgument === undefined ? true : addLimitArgument,
       sendOAuthTokenInQuery: true,
       viewer: false,
       equivalentToMessages: true,
@@ -95,6 +130,7 @@ export default class OpenAPIHandler implements MeshHandler {
         resolverParams.requestOptions = {
           headers: getHeadersObject(headersFactory(resolverData)),
         };
+        resolverParams.qs = qs;
 
         /* FIXME: baseUrl is coming from Fastify Request
         if (context?.baseUrl) {
@@ -102,7 +138,7 @@ export default class OpenAPIHandler implements MeshHandler {
         }
         */
 
-        if (!resolverParams.baseUrl && this.config.baseUrl) {
+        if (!resolverParams.baseUrl && baseUrl) {
           resolverParams.baseUrl = baseUrlFactory(resolverData);
         }
 
@@ -127,7 +163,7 @@ export default class OpenAPIHandler implements MeshHandler {
       },
     });
 
-    const { args, contextVariables } = parseInterpolationStrings(Object.values(this.config.operationHeaders || {}));
+    const { args, contextVariables } = parseInterpolationStrings(Object.values(operationHeaders || {}));
 
     const rootFields = [
       ...Object.values(schema.getQueryType()?.getFields() || {}),

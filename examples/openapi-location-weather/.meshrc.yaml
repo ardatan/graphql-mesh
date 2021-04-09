@@ -5,14 +5,28 @@ sources:
         source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
         operationHeaders:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
+    transforms:
+      - rename:
+          - from: 
+              type: Error
+            to: 
+              type: CitiesError
+
   - name: Weather
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+    transforms:
+      - rename:
+          - from: 
+              type: Error
+            to: 
+              type: WeatherError
+
 
 transforms:
   - cache:
-      # Geo data doesn't change frequntly, so we can cache it forever
+      # Geo data doesn't change frequently, so we can cache it forever
       - field: Query.*
       # Forcast data might change, so we can cache it for 1 hour only
       - field: PopulatedPlaceSummary.dailyForecast
@@ -32,3 +46,7 @@ require:
 additionalResolvers:
   - ./src/mesh/additional-resolvers.ts
 
+serve:
+  exampleQuery: ./example-query.graphql
+
+introspectionCache: ./introspection-cache.json

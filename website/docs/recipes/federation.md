@@ -55,5 +55,11 @@ sources:
 > You can [check out documentation of federation transformer](/docs/transforms/federation) to learn more about adding federation metadata to a non-federated GraphQL Schema.
 
 > You can check out our example that uses Federation as a merging strategy.
-[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/federation-example)
+
+<iframe
+     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/federation-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
+     title="federation-example"
+     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" />
 

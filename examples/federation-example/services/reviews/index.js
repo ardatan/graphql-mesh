@@ -55,8 +55,9 @@ const server = new ApolloServer({
   ])
 });
 
-server.listen({ port: 4002 }).then(({ url }) => {
+module.exports = server.listen({ port: 9874 }).then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
+  return server;
 });
 
 const usernames = [

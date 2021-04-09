@@ -9,7 +9,7 @@ import {
   GraphQLInt,
 } from 'graphql';
 import { stringInterpolator } from './string-interpolator';
-import { Headers } from 'fetchache';
+import { Headers } from 'cross-fetch';
 import { ResolverData } from '@graphql-mesh/types';
 
 export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;

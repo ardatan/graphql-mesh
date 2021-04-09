@@ -5,13 +5,12 @@ import { generateTsTypes } from './commands/typescript';
 import { generateSdk } from './commands/generate-sdk';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve } from 'path';
-import { promises as fsPromises } from 'fs';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-export { generateSdk, serveMesh };
+import { jsonFlatStringify, writeFile, writeJSON } from '@graphql-mesh/utils';
 
-const { writeFile } = fsPromises || {};
+export { generateSdk, serveMesh };
 
 export async function graphqlMesh() {
   let baseDir = process.cwd();
@@ -79,7 +78,7 @@ export async function graphqlMesh() {
         });
         const { schema, destroy } = await getMesh(meshConfig);
         const result = await generateSdk(schema, args);
-        const outFile = resolve(baseDir, args.output);
+        const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
         await writeFile(outFile, result);
         destroy();
       }
@@ -99,26 +98,26 @@ export async function graphqlMesh() {
           ignoreAdditionalResolvers: true,
         });
         const { schema, destroy } = await getMesh(meshConfig);
-        let outputFileContent: string;
-        const outputFileName = args.output;
-        if (outputFileName.endsWith('.json')) {
+        let fileContent: string;
+        const fileName = args.output;
+        if (fileName.endsWith('.json')) {
           const introspection = introspectionFromSchema(schema);
-          outputFileContent = JSON.stringify(introspection, null, 2);
+          fileContent = jsonFlatStringify(introspection, null, 2);
         } else if (
-          outputFileName.endsWith('.graphql') ||
-          outputFileName.endsWith('.graphqls') ||
-          outputFileName.endsWith('.gql') ||
-          outputFileName.endsWith('.gqls')
+          fileName.endsWith('.graphql') ||
+          fileName.endsWith('.graphqls') ||
+          fileName.endsWith('.gql') ||
+          fileName.endsWith('.gqls')
         ) {
           const printedSchema = printSchemaWithDirectives(schema);
-          outputFileContent = printedSchema;
+          fileContent = printedSchema;
         } else {
-          logger.error(`Invalid file extension ${outputFileName}`);
+          logger.error(`Invalid file extension ${fileName}`);
           destroy();
           return;
         }
-        const absoluteOutputFilePath = resolve(baseDir, outputFileName);
-        await writeFile(absoluteOutputFilePath, outputFileContent);
+        const outFile = isAbsolute(fileName) ? fileName : resolve(process.cwd(), fileName);
+        await writeFile(outFile, fileContent);
         destroy();
       }
     )
@@ -138,8 +137,26 @@ export async function graphqlMesh() {
         });
         const { schema, rawSources, destroy } = await getMesh(meshConfig);
         const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
-        const outFile = resolve(baseDir, args.output);
+        const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
         await writeFile(outFile, result);
+        destroy();
+      }
+    )
+    .command(
+      'write-introspection-cache',
+      'Writes introspection cache and creates it from scratch',
+      builder => {},
+      async () => {
+        const meshConfig = await findAndParseConfig({
+          dir: baseDir,
+          ignoreIntrospectionCache: true,
+          ignoreAdditionalResolvers: true,
+        });
+        const { destroy } = await getMesh(meshConfig);
+        const outFile = isAbsolute(meshConfig.config.introspectionCache)
+          ? meshConfig.config.introspectionCache
+          : resolve(baseDir, meshConfig.config.introspectionCache);
+        await writeJSON(outFile, meshConfig.introspectionCache);
         destroy();
       }
     ).argv;

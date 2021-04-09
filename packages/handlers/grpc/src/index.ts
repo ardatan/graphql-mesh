@@ -8,19 +8,13 @@ import {
   credentials,
   loadPackageDefinition,
 } from '@grpc/grpc-js';
-import {
-  PackageDefinition,
-  load,
-  loadFileDescriptorSetFromBuffer,
-  loadFileDescriptorSetFromObject,
-} from '@grpc/proto-loader';
+import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
 import { camelCase } from 'camel-case';
-import { promises as fsPromises } from 'fs';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
 import { get } from 'lodash';
 import { pascalCase } from 'pascal-case';
-import { AnyNestedObject, IParseOptions, Message, Root, RootConstructor } from 'protobufjs';
+import { AnyNestedObject, INamespace, IParseOptions, Message, Root, RootConstructor } from 'protobufjs';
 import { promisify } from 'util';
 import grpcReflection from 'grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
@@ -35,8 +29,11 @@ import {
   getTypeName,
 } from './utils';
 import { specifiedDirectives } from 'graphql';
+import { join, isAbsolute } from 'path';
 
-const { readFile } = fsPromises || {};
+// We have to use an ol' fashioned require here :(
+// Needed for descriptor.FileDescriptorSet
+const descriptor = require('protobufjs/ext/descriptor');
 
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
@@ -44,26 +41,113 @@ interface LoadOptions extends IParseOptions {
 
 type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
+interface GrpcHandlerIntrospectionCache {
+  rootJson: INamespace;
+  descriptorSetJson: any;
+}
+
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
+  private baseDir: string;
   private cache: KeyValueCache;
-  constructor({ config, cache }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
+  private introspectionCache: GrpcHandlerIntrospectionCache;
+
+  constructor({
+    config,
+    baseDir,
+    cache,
+    introspectionCache,
+  }: GetMeshSourceOptions<YamlConfig.GrpcHandler, GrpcHandlerIntrospectionCache>) {
     if (!config) {
       throw new Error('Config not specified!');
     }
     this.config = config;
+    this.baseDir = baseDir;
     this.cache = cache;
+    this.introspectionCache = introspectionCache || {
+      rootJson: null,
+      descriptorSetJson: null,
+    };
+  }
+
+  async getCachedRootJson(creds: ChannelCredentials) {
+    if (!this.introspectionCache.rootJson || !this.introspectionCache.descriptorSetJson) {
+      const root = new Root();
+      if (this.config.useReflection) {
+        const grpcReflectionServer = this.config.endpoint;
+        const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
+        const services = (await reflectionClient.listServices()) as string[];
+        const serviceRoots = await Promise.all(
+          services
+            .filter(s => !s?.startsWith('grpc.'))
+            .map((service: string) => reflectionClient.fileContainingSymbol(service))
+        );
+        serviceRoots.forEach((serviceRoot: Root) => {
+          if (serviceRoot.nested) {
+            for (const namespace in serviceRoot.nested) {
+              if (Object.prototype.hasOwnProperty.call(serviceRoot.nested, namespace)) {
+                root.add(serviceRoot.nested[namespace]);
+              }
+            }
+          }
+        });
+        root.resolveAll();
+      } else if (this.config.descriptorSetFilePath) {
+        let fileName = this.config.descriptorSetFilePath;
+        if (typeof this.config.descriptorSetFilePath === 'object' && this.config.descriptorSetFilePath.file) {
+          fileName = this.config.descriptorSetFilePath.file;
+        }
+        const descriptorSetBuffer = await getBuffer(fileName as string, this.cache, this.baseDir);
+        let decodedDescriptorSet: DecodedDescriptorSet;
+        try {
+          const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
+          decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(descriptorSetJSON) as DecodedDescriptorSet;
+        } catch (e) {
+          decodedDescriptorSet = descriptor.FileDescriptorSet.decode(descriptorSetBuffer) as DecodedDescriptorSet;
+        }
+        const descriptorSetRoot = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
+        root.add(descriptorSetRoot);
+      } else {
+        let fileName = this.config.protoFilePath;
+        let options: LoadOptions = {};
+        if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
+          fileName = this.config.protoFilePath.file;
+          options = {
+            ...this.config.protoFilePath.load,
+            includeDirs: this.config.protoFilePath.load.includeDirs?.map(includeDir =>
+              isAbsolute(includeDir) ? includeDir : join(this.baseDir || process.cwd(), includeDir)
+            ),
+          };
+          if (options.includeDirs) {
+            if (!Array.isArray(options.includeDirs)) {
+              return Promise.reject(new Error('The includeDirs option must be an array'));
+            }
+            addIncludePathResolver(root, options.includeDirs);
+          }
+        }
+
+        const protoDefinition = await root.load(fileName as string, options);
+        protoDefinition.resolveAll();
+      }
+      this.introspectionCache.rootJson = root.toJSON({
+        keepComments: true,
+      });
+      this.introspectionCache.descriptorSetJson = root.toDescriptor('proto3').toJSON();
+    }
+
+    return this.introspectionCache;
   }
 
   async getMeshSource() {
+    this.config.packageName = this.config.packageName || '';
     let creds: ChannelCredentials;
     if (this.config.credentialsSsl) {
       const sslFiles = [
-        getBuffer(this.config.credentialsSsl.privateKey, this.cache),
-        getBuffer(this.config.credentialsSsl.certChain, this.cache),
+        getBuffer(this.config.credentialsSsl.privateKey, this.cache, this.baseDir),
+        getBuffer(this.config.credentialsSsl.certChain, this.cache, this.baseDir),
       ];
       if (this.config.credentialsSsl.rootCA !== 'rootCA') {
-        sslFiles.unshift(getBuffer(this.config.credentialsSsl.rootCA, this.cache));
+        sslFiles.unshift(getBuffer(this.config.credentialsSsl.rootCA, this.cache, this.baseDir));
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
       creds = credentials.createSsl(rootCA, privateKey, certChain);
@@ -90,69 +174,10 @@ export default class GrpcHandler implements MeshHandler {
       },
     });
 
-    const root = new Root();
-    let packageDefinition: PackageDefinition;
-    if (this.config.useReflection) {
-      const grpcReflectionServer = this.config.endpoint;
-      const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds as any);
-      const services = (await reflectionClient.listServices()) as string[];
-      const serviceRoots = await Promise.all(
-        services
-          .filter(s => s && s !== 'grpc.reflection.v1alpha.ServerReflection')
-          .map((service: string) => reflectionClient.fileContainingSymbol(service))
-      );
-      serviceRoots.forEach((serviceRoot: Root) => {
-        if (serviceRoot.nested) {
-          for (const namespace in serviceRoot.nested) {
-            if (Object.prototype.hasOwnProperty.call(serviceRoot.nested, namespace)) {
-              root.add(serviceRoot.nested[namespace]);
-            }
-          }
-        }
-      });
-      root.resolveAll();
-      const descriptorSet = root.toDescriptor('proto3');
-      packageDefinition = loadFileDescriptorSetFromObject(descriptorSet.toJSON());
-    } else if (this.config.descriptorSetFilePath) {
-      // We have to use an ol' fashioned require here :(
-      // Needed for descriptor.FileDescriptorSet
-      const descriptor = require('protobufjs/ext/descriptor');
+    const { rootJson, descriptorSetJson } = await this.getCachedRootJson(creds);
+    const decodedDescriptorSet = await descriptor.FileDescriptorSet.fromObject(descriptorSetJson);
+    const packageDefinition = await loadFileDescriptorSetFromObject(decodedDescriptorSet);
 
-      let fileName = this.config.descriptorSetFilePath;
-      let options: LoadOptions = {};
-      if (typeof this.config.descriptorSetFilePath === 'object' && this.config.descriptorSetFilePath.file) {
-        fileName = this.config.descriptorSetFilePath.file;
-        options = this.config.descriptorSetFilePath.load;
-      }
-      const descriptorSetBuffer = await readFile(fileName as string);
-      let decodedDescriptorSet: DecodedDescriptorSet;
-      try {
-        const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
-        decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(descriptorSetJSON) as DecodedDescriptorSet;
-        packageDefinition = await loadFileDescriptorSetFromObject(descriptorSetJSON, options);
-      } catch (e) {
-        decodedDescriptorSet = descriptor.FileDescriptorSet.decode(descriptorSetBuffer) as DecodedDescriptorSet;
-        packageDefinition = await loadFileDescriptorSetFromBuffer(descriptorSetBuffer, options);
-      }
-      const descriptorSetRoot = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
-      root.add(descriptorSetRoot);
-    } else {
-      let fileName = this.config.protoFilePath;
-      let options: LoadOptions = {};
-      if (typeof this.config.protoFilePath === 'object' && this.config.protoFilePath.file) {
-        fileName = this.config.protoFilePath.file;
-        options = this.config.protoFilePath.load;
-        if (options.includeDirs) {
-          if (!Array.isArray(options.includeDirs)) {
-            return Promise.reject(new Error('The includeDirs option must be an array'));
-          }
-          addIncludePathResolver(root, options.includeDirs);
-        }
-      }
-      const protoDefinition = await root.load(fileName as string, options);
-      protoDefinition.resolveAll();
-      packageDefinition = await load(fileName as string, options);
-    }
     const grpcObject = loadPackageDefinition(packageDefinition);
 
     const visit = async (nested: AnyNestedObject, name: string, currentPath: string) => {
@@ -288,10 +313,7 @@ export default class GrpcHandler implements MeshHandler {
         });
       }
     };
-    const rootNested = root.toJSON({
-      keepComments: true,
-    });
-    await visit(rootNested, '', '');
+    await visit(rootJson, '', '');
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));

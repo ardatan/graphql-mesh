@@ -27,6 +27,31 @@ sources:
         database: employees
 ```
 
+### How does `where` work?
+
+Every CRUD operation has `where` field in their input so you can see all the columns of a table. `where` works like below;
+```graphql
+{
+  getProduct(where: {
+    id: 5,
+    year: '>2010',
+    price: '100..200',
+    level: '<=3',
+    sn: '\*str?',
+    label: 'str',
+    code: '(1,2,4,10,11)'
+  }) {
+    id
+    name
+  }
+}
+```
+
+This GraphQL operation will send the following query to your MySQL database;
+```sql
+SELECT id, name FROM product WHERE id = 5 AND year > '2010' AND (price BETWEEN '100' AND '200') AND level <= '3' AND sn LIKE '%str\_' AND label = 'str' AND code IN (1,2,4,10,11)
+```
+
 <iframe
      src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/mysql-rfam?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
      style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}

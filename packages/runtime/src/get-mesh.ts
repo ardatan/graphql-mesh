@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, ExecutionArgs, print } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
@@ -9,11 +9,13 @@ import {
   applySchemaTransforms,
   ensureDocumentNode,
   getInterpolatedStringFactory,
+  globalLruCache,
   groupTransforms,
   ResolverDataBasedFactory,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { compileQuery, isCompiledQuery } from 'graphql-jit';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -42,12 +44,8 @@ export async function getMesh(
 
       const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
-      // If schema is going to be wrapped already we can use noWrapTransforms as wrapTransforms on source level
-      // The idea behind avoiding wrapping as much as possible is to decrease multiple rounds of graphqljs execution phase for performance
-      if (wrapTransforms.length === 0 && !source.executor && !source.subscriber) {
+      if (noWrapTransforms?.length) {
         apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
-      } else {
-        wrapTransforms.push(...noWrapTransforms);
       }
 
       rawSources.push({
@@ -64,13 +62,6 @@ export async function getMesh(
     })
   );
 
-  options.additionalTypeDefs = options.additionalTypeDefs || [];
-  options.additionalTypeDefs.push(
-    parse(/* GraphQL */ `
-      directive @live on QUERY
-    `)
-  );
-
   let unifiedSchema = await options.merger({
     rawSources,
     cache,
@@ -82,7 +73,23 @@ export async function getMesh(
 
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
-  const liveQueryStore = new InMemoryLiveQueryStore();
+  const liveQueryStore = new InMemoryLiveQueryStore({
+    includeIdentifierExtension: true,
+    execute: (args: any) => {
+      const { document, contextValue, rootValue, variableValues, schema, operationName }: ExecutionArgs = args;
+      const documentStr = typeof document === 'string' ? document : print(document);
+      const cacheKey = [documentStr, operationName].join('_');
+      let compiledQuery = globalLruCache.get(cacheKey);
+      if (!compiledQuery) {
+        compiledQuery = compileQuery(schema, document, operationName);
+        globalLruCache.set(cacheKey, compiledQuery);
+      }
+      if (isCompiledQuery(compiledQuery)) {
+        return compiledQuery.query(rootValue, contextValue, variableValues);
+      }
+      return compiledQuery;
+    },
+  });
 
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
 

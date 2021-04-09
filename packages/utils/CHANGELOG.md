@@ -1,5 +1,36 @@
 # @graphql-mesh/utils
 
+## 0.10.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+## 0.9.2
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+
+## 0.9.1
+
+### Patch Changes
+
+- 2c3312f1a: use fallbackFormat in readUrlWithCache
+- d12c7d978: fix(utils): use mkdir before emit output
+
+## 0.9.0
+
+### Minor Changes
+
+- b9ca0c30: Make Transforms and Handlers base-dir aware
+
+## 0.8.8
+
+### Patch Changes
+
+- ec89a923: fix(utils): ensure directory exists in writeJSON
+
 ## 0.8.7
 
 ### Patch Changes

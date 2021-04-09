@@ -1,14 +1,21 @@
 import { isAbsolute, join } from 'path';
 
+type loadFromModuleExportExpressionOptions = {
+  defaultExportName?: string;
+  cwd?: string;
+};
+
 export async function loadFromModuleExportExpression<T>(
   expression: T | string,
-  defaultExportName?: string
+  options?: loadFromModuleExportExpressionOptions
 ): Promise<T> {
   if (typeof expression !== 'string') {
     return expression;
   }
+
+  const { defaultExportName, cwd } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = await tryImport(modulePath);
+  const mod = await tryImport(modulePath, cwd);
 
   if (exportName === 'default' || !exportName) {
     return mod.default || mod;
@@ -17,13 +24,13 @@ export async function loadFromModuleExportExpression<T>(
   }
 }
 
-async function tryImport(modulePath: string) {
+async function tryImport(modulePath: string, cwd: string) {
   try {
     return await import(modulePath);
   } catch (e1) {
     if (!isAbsolute(modulePath)) {
       try {
-        const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(process.cwd(), modulePath);
+        const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd || process.cwd(), modulePath);
         return await import(absoluteModulePath);
       } catch (e2) {
         if (e2.message.includes('Cannot find module')) {
@@ -37,12 +44,17 @@ async function tryImport(modulePath: string) {
   }
 }
 
-export function loadFromModuleExportExpressionSync<T>(expression: T | string, defaultExportName?: string): T {
+export function loadFromModuleExportExpressionSync<T>(
+  expression: T | string,
+  options?: loadFromModuleExportExpressionOptions
+): T {
   if (typeof expression !== 'string') {
     return expression;
   }
+
+  const { defaultExportName, cwd } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = tryImportSync(modulePath);
+  const mod = tryImportSync(modulePath, cwd);
 
   if (exportName === 'default' || !exportName) {
     return mod.default || mod;
@@ -51,13 +63,13 @@ export function loadFromModuleExportExpressionSync<T>(expression: T | string, de
   }
 }
 
-function tryImportSync(modulePath: string) {
+function tryImportSync(modulePath: string, cwd: string) {
   try {
     return require(modulePath);
   } catch (e1) {
     if (!isAbsolute(modulePath)) {
       try {
-        const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(process.cwd(), modulePath);
+        const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd || process.cwd(), modulePath);
         return require(absoluteModulePath);
       } catch (e2) {
         if (e2.message.includes('Cannot find module')) {
