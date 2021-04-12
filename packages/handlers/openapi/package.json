@@ -21,7 +21,7 @@
     "@graphql-mesh/utils": "0.10.0",
     "deep-equal": "2.0.5",
     "form-urlencoded": "4.4.2",
-    "jsonpath-plus": "5.0.6",
+    "jsonpath-plus": "5.0.7",
     "json-ptr": "2.0.0",
     "graphql-scalars": "1.9.0",
     "graphql-subscriptions": "1.2.1",
