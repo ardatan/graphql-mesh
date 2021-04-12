@@ -47,7 +47,7 @@ export default class OpenAPIHandler implements MeshHandler {
     this.introspectionCache = introspectionCache;
   }
 
-  private async getCachedSpec(): Promise<Oas3> {
+  private async getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3> {
     const { source } = this.config;
     if (!this.introspectionCache.spec) {
       this.introspectionCache.spec =
@@ -57,6 +57,7 @@ export default class OpenAPIHandler implements MeshHandler {
               cwd: this.baseDir,
               fallbackFormat: this.config.sourceFormat,
               headers: this.config.schemaHeaders,
+              fetch,
             });
     }
     return this.introspectionCache.spec;
@@ -73,14 +74,14 @@ export default class OpenAPIHandler implements MeshHandler {
       selectQueryOrMutationField,
     } = this.config;
 
-    const spec = await this.getCachedSpec();
-
     let fetch: WindowOrWorkerGlobalScope['fetch'];
     if (customFetch) {
       fetch = await loadFromModuleExportExpression(customFetch, { defaultExportName: 'default', cwd: this.baseDir });
     } else {
       fetch = getCachedFetch(this.cache);
     }
+
+    const spec = await this.getCachedSpec(fetch);
 
     const baseUrlFactory = getInterpolatedStringFactory(baseUrl);
 
