@@ -410,12 +410,27 @@
           ]
         },
         "resolversComposition": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ResolversCompositionTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply composition to resolvers"
+          "description": "Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ResolversCompositionTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "snapshot": {
           "$ref": "#/definitions/SnapshotTransformConfig",
@@ -2232,6 +2247,27 @@
           "type": "string"
         }
       }
+    },
+    "ResolversCompositionTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResolversCompositionTransform",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
+        "compositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResolversCompositionTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of resolver/composer to apply"
+        }
+      },
+      "required": ["compositions"]
     },
     "ResolversCompositionTransformObject": {
       "additionalProperties": false,

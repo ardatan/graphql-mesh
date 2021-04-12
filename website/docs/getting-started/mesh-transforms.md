@@ -186,17 +186,21 @@ transforms:
             field: code
 ```
 
-### Transforms supporting "bare" mode
+### Modes support
 
-Being a recent addition, "bare" mode is not available to all transforms yet.  
-The table below gives you the list of transforms that support "bare" mode. Transforms not listed here do not support "bare", and so only implement default "wrap" mode.  
-If you have use cases where you believe "bare" mode should be added to a transform not listed here, feel free to [open a feature request](https://github.com/Urigo/graphql-mesh/issues/new/choose).
+The table below illustrates how "bare" and "wrap" modes are supported across all transforms.  
+If you have use cases for which you would require to introduce either "bare" or "wrap" mode to one of the transforms, feel free to [open a feature request](https://github.com/Urigo/graphql-mesh/issues/new/choose).
 
 | Transform             | Bare | Wrap |                      Docs                      |
 | --------------------- | :--: | :--: | :--------------------------------------------: |
 | Cache                 |  ✅  |  ❌  | [docs](/docs/transforms/cache)                 |
+| Encapsulate           |  ❌  |  ✅  | [docs](/docs/transforms/encapsulate)           |
 | Extend                |  ✅  |  ❌  | [docs](/docs/transforms/extend)                |
+| Federation            |  ❌  |  ✅  | [docs](/docs/transforms/federation)            |
 | Filter Schema         |  ✅  |  ✅  | [docs](/docs/transforms/filter-schema)         |
+| Mock                  |  ❌  |  ✅  | [docs](/docs/transforms/mock)                  |
+| Naming Convention     |  ❌  |  ✅  | [docs](/docs/transforms/naming-convention)     |
+| Prefix                |  ❌  |  ✅  | [docs](/docs/transforms/prefix)                |
 | Rename                |  ✅  |  ✅  | [docs](/docs/transforms/rename)                |
-| Resolvers Composition |  ✅  |  ❌  | [docs](/docs/transforms/resolvers-composition) |
+| Resolvers Composition |  ✅  |  ✅  | [docs](/docs/transforms/resolvers-composition) |
 | Snapshot              |  ✅  |  ❌  | [docs](/docs/transforms/snapshot)              |

@@ -5,19 +5,20 @@ import { composeResolvers, ResolversComposerMapping } from '@graphql-tools/resol
 import { extractResolvers, loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 
 export default class ResolversCompositionTransform implements MeshTransform {
-  public noWrap = true;
-  private config: YamlConfig.Transform['resolversComposition'];
+  public noWrap: boolean;
+  private compositions: YamlConfig.ResolversCompositionTransform['compositions'];
   private baseDir: string;
 
   constructor({ baseDir, config }: MeshTransformOptions<YamlConfig.Transform['resolversComposition']>) {
-    this.config = config;
+    this.noWrap = config.mode ? config.mode !== 'wrap' : false; // use config.mode value or default to false
+    this.compositions = Array.isArray(config) ? config : config.compositions;
     this.baseDir = baseDir;
   }
 
   transformSchema(schema: GraphQLSchema) {
     const resolversComposition: ResolversComposerMapping = {};
 
-    for (const { resolver, composer } of this.config) {
+    for (const { resolver, composer } of this.compositions) {
       resolversComposition[resolver] = loadFromModuleExportExpressionSync(composer, {
         defaultExportName: 'default',
         cwd: this.baseDir,
