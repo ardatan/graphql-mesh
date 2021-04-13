@@ -18,7 +18,7 @@
     "classnames": "2.3.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "remark-code-import": "0.2.0",
+    "remark-code-import": "0.3.0",
     "remark-import-partial": "0.0.2"
   },
   "browserslist": {
