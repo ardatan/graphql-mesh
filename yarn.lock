@@ -4164,10 +4164,10 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
-"@grpc/proto-loader@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.6.0.tgz#75d5e39bbb8f694d725d7eb1067e4eebcbe91745"
-  integrity sha512-JwWZwGuN1nQuPdeL1d94hNGtnRtiOuy+SkdVUU8IwwQzksvdWvgKHyGDCesvAD0tndQTm1YUZHJw+JDTIDALyQ==
+"@grpc/proto-loader@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.6.1.tgz#ad63e8c7d2a23b0175c78eebc26dedf6b0af0b0b"
+  integrity sha512-4DIvEOZhw5nGj3RQngIoiMXRsre3InEH136krZTcirs/G2em3WMXdtx4Lqlnb4E2ertbWGs5gPeVDKU5BHffXw==
   dependencies:
     "@types/long" "^4.0.1"
     lodash.camelcase "^4.3.0"
