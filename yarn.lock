@@ -11515,10 +11515,10 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-form-urlencoded@4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-4.5.0.tgz#aec76af421e75ac8ab3794585f3d56488c76c3a5"
-  integrity sha512-iv4Vc+xD37MULhC7DBgSq/GBp2mZMh7Q19ErhAqCX9trPc7Ix8P7x+KZojTmEpxtajzpCm153sxrXKDbNxkBNQ==
+form-urlencoded@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-6.0.0.tgz#c3d7c5b470664175fd3f8756fd05b46d86c6dc50"
+  integrity sha512-X8AvXpvwMZwbd3/qIegrkZLzPos6djGYaL0bm2nVREzEB/05csjKmdAPTDZMGcFYfVtV9hx5kbpo5Ze87n3HWA==
 
 format-util@^1.0.3:
   version "1.0.5"
