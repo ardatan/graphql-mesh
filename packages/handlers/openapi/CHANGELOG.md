@@ -1,5 +1,17 @@
 # @graphql-mesh/openapi
 
+## 0.16.0
+
+### Minor Changes
+
+- 978d1db7a: feat(openapi): respect customFetch for schema fetching
+
+### Patch Changes
+
+- 474bd4bed: Fixed open api to graph ql mesh to handle successful responses that have no content. For Example 204-No Content.
+- Updated dependencies [6c90e0e39]
+  - @graphql-mesh/types@0.39.0
+
 ## 0.15.0
 
 ### Minor Changes
