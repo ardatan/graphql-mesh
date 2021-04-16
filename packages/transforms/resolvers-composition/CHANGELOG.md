@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-resolvers-composition
 
+## 0.9.0
+
+### Minor Changes
+
+- 6c90e0e39: Add wrap mode to resolvers-composition transform (#1928)
+
+### Patch Changes
+
+- Updated dependencies [6c90e0e39]
+  - @graphql-mesh/types@0.39.0
+
 ## 0.8.5
 
 ### Patch Changes
