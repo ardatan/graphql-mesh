@@ -5079,10 +5079,10 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
-"@types/faker@5.5.1":
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-5.5.1.tgz#9fff6bf7bbaa13b1069c4e534c45610603a48bc5"
-  integrity sha512-JXGjV76oEUZUOSAr3bP5txETYoq0XDOQA8BpOz8Wc3EuvfF7sUVquf/EvM3aphuVKuVaYDSDu523/mAHnqrcvg==
+"@types/faker@5.5.2":
+  version "5.5.2"
+  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-5.5.2.tgz#71084b72b5ac18bdb3404b9b29db010ba74136e8"
+  integrity sha512-KRBp6Cb2BsC/mz1m2oRp79KlEViX/nTZSunRPltXHpxEEEvFg1wQbgGJeJY+TGQHHZCx0F+jskPDwrkEovbvwA==
 
 "@types/form-urlencoded@2.0.1":
   version "2.0.1"
