@@ -15,7 +15,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.39.0",
     "@graphql-mesh/utils": "0.10.0",
-    "@grpc/grpc-js": "^1.1.7",
+    "@grpc/grpc-js": "^1.2.3",
     "@grpc/proto-loader": "0.6.1",
     "camel-case": "4.1.2",
     "graphql-scalars": "1.9.0",
