@@ -100,6 +100,11 @@ const spies = {
       });
     }),
   },
+  User: {
+    friend: jest.fn().mockImplementation((_, { id }) => {
+      return MOCK_DATA.find(u => u.id.toString() === id.toString());
+    }),
+  },
 };
 
 describe('cache', () => {
@@ -132,6 +137,7 @@ describe('cache', () => {
         username: String!
         email: String!
         profile: Profile!
+        friend(id: ID!): User
       }
 
       type Profile {
@@ -475,6 +481,59 @@ describe('cache', () => {
       await execute(executeOptions);
       expect(await cache.get(expectedCacheKey)).toBeDefined();
       expect(spies.Query.user.mock.calls.length).toBe(2);
+    });
+
+    describe('Subfields', () => {
+      it('Should cache queries including subfield arguments', async () => {
+        const transform = new CacheTransform({
+          config: [{ field: 'Query.user' }],
+          cache,
+          pubsub,
+          baseDir,
+        });
+        const schemaWithCache = transform.transformSchema(schema);
+
+        // First query should call resolver and fill cache
+        const executeOptions1 = {
+          schema: schemaWithCache,
+          document: parse(/* GraphQL */ `
+            query {
+              user(id: 1) {
+                friend(id: 2) {
+                  id
+                }
+              }
+            }
+          `),
+        };
+        const { data: actual1 } = await execute(executeOptions1);
+        expect(spies.Query.user.mock.calls.length).toBe(1);
+        expect(actual1.user.friend.id).toBe('2');
+
+        // Second query should call resolver and also fill cache
+        const executeOptions2 = {
+          schema: schemaWithCache,
+          document: parse(/* GraphQL */ `
+            query {
+              user(id: 1) {
+                friend(id: 3) {
+                  id
+                }
+              }
+            }
+          `),
+        };
+        const { data: actual2 } = await execute(executeOptions2);
+        expect(spies.Query.user.mock.calls.length).toBe(2);
+        expect(actual2.user.friend.id).toBe('3');
+
+        // Repeat both queries, no new calls for resolver
+        const { data: repeat1 } = await execute(executeOptions1);
+        const { data: repeat2 } = await execute(executeOptions2);
+        expect(spies.Query.user.mock.calls.length).toBe(2);
+        expect(repeat1.user.friend.id).toBe('2');
+        expect(repeat2.user.friend.id).toBe('3');
+      });
     });
   });
 });

@@ -9,7 +9,7 @@ export function computeCacheKey(options: {
   info: GraphQLResolveInfo;
 }): string {
   const argsHash = options.args ? objectHash(options.args, { ignoreUnknown: true }) : '';
-  const fieldsObj = graphqlFields(options.info);
+  const fieldsObj = graphqlFields(options.info, {}, { processArguments: true });
   const fieldNamesHash = objectHash(fieldsObj, { ignoreUnknown: true });
 
   if (!options.keyStr) {
