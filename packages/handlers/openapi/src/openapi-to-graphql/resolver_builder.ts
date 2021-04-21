@@ -629,6 +629,7 @@ export function getResolver<TSource, TContext, TArgs>(
           }
 
           resolveData.responseHeaders = headersToObject(response.headers);
+          ctx.openApiResponseHeaders = headersToObject(response.headers);
 
           // Deal with the fact that the server might send unsanitized data
           let saneData = Oas3Tools.sanitizeObjectKeys(
