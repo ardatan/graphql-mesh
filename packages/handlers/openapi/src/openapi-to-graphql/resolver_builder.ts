@@ -278,6 +278,9 @@ export type ResolverMiddleware<TSource, TContext, TArgs> = (
 ) => ResolveFunction;
 
 type ResolverFactory = typeof getResolver;
+interface GraphQLResolveInfoWithHttpDetails extends GraphQLResolveInfo {
+  httpDetails?: Record<string, string>;
+}
 
 /**
  * Creates and returns a resolver function that performs API requests for the
@@ -319,7 +322,12 @@ export function getResolver<TSource, TContext, TArgs>(
   }
 
   // Return resolve function:
-  return async (root: any, args: any, ctx: any, info = {} as GraphQLResolveInfo) => {
+  return async (
+    root: any,
+    args: any,
+    ctx: any,
+    info: GraphQLResolveInfoWithHttpDetails = {} as GraphQLResolveInfoWithHttpDetails
+  ) => {
     /**
      * Retch resolveData from possibly existing _openAPIToGraphQL
      *
@@ -629,7 +637,7 @@ export function getResolver<TSource, TContext, TArgs>(
           }
 
           resolveData.responseHeaders = headersToObject(response.headers);
-          ctx.openApiResponseHeaders = headersToObject(response.headers);
+          info.httpDetails = headersToObject(response.headers);
 
           // Deal with the fact that the server might send unsanitized data
           let saneData = Oas3Tools.sanitizeObjectKeys(
