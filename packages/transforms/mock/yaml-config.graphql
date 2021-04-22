@@ -47,4 +47,20 @@ type MockingFieldConfig {
   Both "moduleName#exportName" or only "moduleName" would work
   """
   custom: String
+  """
+  Length of the mock list
+  For the list types `[ObjectType]`, how many `ObjectType` you want to return?
+  default: 2
+  """
+  length: Int
+  """
+  Get the data from the mock store
+  """
+  store: GetFromMockStoreConfig
+}
+
+type GetFromMockStoreConfig {
+  type: String
+  key: ID
+  fieldName: String
 }

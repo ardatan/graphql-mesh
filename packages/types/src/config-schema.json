@@ -2217,9 +2217,33 @@
         "custom": {
           "type": "string",
           "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
+        },
+        "length": {
+          "type": "integer",
+          "description": "Length of the mock list\nFor the list types `[ObjectType]`, how many `ObjectType` you want to return?\ndefault: 2"
+        },
+        "store": {
+          "$ref": "#/definitions/GetFromMockStoreConfig",
+          "description": "Get the data from the mock store"
         }
       },
       "required": ["apply"]
+    },
+    "GetFromMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GetFromMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        }
+      }
     },
     "NamingConventionTransformConfig": {
       "additionalProperties": false,

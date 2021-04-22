@@ -1066,6 +1066,21 @@ export interface MockingFieldConfig {
    * Both "moduleName#exportName" or only "moduleName" would work
    */
   custom?: string;
+  /**
+   * Length of the mock list
+   * For the list types `[ObjectType]`, how many `ObjectType` you want to return?
+   * default: 2
+   */
+  length?: number;
+  store?: GetFromMockStoreConfig;
+}
+/**
+ * Get the data from the mock store
+ */
+export interface GetFromMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
 }
 /**
  * Transformer to apply naming convention to GraphQL Types

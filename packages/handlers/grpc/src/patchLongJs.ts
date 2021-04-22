@@ -1,4 +1,4 @@
-function patchLongBits() {
+function patchLongJs() {
   const Long = require('long');
   const originalLongFromValue = Long.fromValue.bind(Long);
   Long.fromValue = (value: any) => {
@@ -8,4 +8,4 @@ function patchLongBits() {
     return originalLongFromValue(value);
   };
 }
-patchLongBits();
+patchLongJs();

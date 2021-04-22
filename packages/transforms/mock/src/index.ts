@@ -1,8 +1,8 @@
-import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
+import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { addMocksToSchema, IMocks } from '@graphql-tools/mock';
+import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
 import * as faker from 'faker';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { getInterpolatedStringFactory, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 export default class MockingTransform implements MeshTransform {
   private config: YamlConfig.MockingConfig;
@@ -16,6 +16,7 @@ export default class MockingTransform implements MeshTransform {
   transformSchema(schema: GraphQLSchema) {
     const configIf = 'if' in this.config ? this.config.if : true;
     if (configIf) {
+      const store = createMockStore({ schema });
       const mocks: IMocks = {};
       const resolvers: any = {};
       if (this.config.mocks) {
@@ -36,11 +37,27 @@ export default class MockingTransform implements MeshTransform {
                 resolvers[typeName][fieldName] = fakerFn;
               } else if (fieldConfig.custom) {
                 resolvers[typeName] = resolvers[typeName] || {};
-                resolvers[typeName][fieldName] = async () => {
+                resolvers[typeName][fieldName] = async (
+                  root: any,
+                  args: any,
+                  context: any,
+                  info: GraphQLResolveInfo
+                ) => {
+                  context.mockStore = store;
                   const exportedVal = await loadFromModuleExportExpression<any>(fieldConfig.custom, {
                     cwd: this.baseDir,
                   });
-                  return typeof exportedVal === 'function' ? exportedVal() : exportedVal;
+                  return typeof exportedVal === 'function' ? exportedVal(root, args, context, info) : exportedVal;
+                };
+              } else if ('length' in fieldConfig) {
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = () => new Array(fieldConfig.length).fill({});
+              } else if ('store' in fieldConfig) {
+                const keyFactory = getInterpolatedStringFactory(fieldConfig.store.key);
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+                  const key = keyFactory({ root, args, context, info });
+                  return store.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
                 };
               }
             } else {
@@ -65,6 +82,7 @@ export default class MockingTransform implements MeshTransform {
       }
       return addMocksToSchema({
         schema,
+        store,
         mocks,
         resolvers,
         preserveResolvers: this.config?.preserveResolvers,
