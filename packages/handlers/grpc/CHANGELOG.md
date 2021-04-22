@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.12.2
+
+### Patch Changes
+
+- b9a8b348b: fix(grpc): apply patch to protobufjs to support bigint
+
 ## 0.12.1
 
 ### Patch Changes

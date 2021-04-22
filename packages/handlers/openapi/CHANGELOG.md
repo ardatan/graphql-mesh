@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.16.1
+
+### Patch Changes
+
+- 58e6ab59e: Fix object nesting for selectQueryOrMutationField option on openapi-to-graphql
+
 ## 0.16.0
 
 ### Minor Changes
