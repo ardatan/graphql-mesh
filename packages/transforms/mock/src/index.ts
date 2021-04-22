@@ -2,7 +2,7 @@ import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { addMocksToSchema, IMocks } from '@graphql-tools/mock';
 import * as faker from 'faker';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 export default class MockingTransform implements MeshTransform {
   private config: YamlConfig.MockingConfig;
@@ -25,7 +25,6 @@ export default class MockingTransform implements MeshTransform {
             const [typeName, fieldName] = fieldConfig.apply.split('.');
             if (fieldName) {
               if (fieldConfig.faker) {
-                const prevFn: any = mocks[typeName];
                 let fakerFn: Function; // eslint-disable-line
                 const [service, method] = fieldConfig.faker.split('.');
                 if (service in faker) {
@@ -36,10 +35,13 @@ export default class MockingTransform implements MeshTransform {
                 resolvers[typeName] = resolvers[typeName] || {};
                 resolvers[typeName][fieldName] = fakerFn;
               } else if (fieldConfig.custom) {
-                const exportedVal = loadFromModuleExportExpressionSync<any>(fieldConfig.custom, { cwd: this.baseDir });
-                const prevFn: any = mocks[typeName];
                 resolvers[typeName] = resolvers[typeName] || {};
-                resolvers[typeName][fieldName] = typeof exportedVal === 'function' ? exportedVal : () => exportedVal;
+                resolvers[typeName][fieldName] = async () => {
+                  const exportedVal = await loadFromModuleExportExpression<any>(fieldConfig.custom, {
+                    cwd: this.baseDir,
+                  });
+                  return typeof exportedVal === 'function' ? exportedVal() : exportedVal;
+                };
               }
             } else {
               if (fieldConfig.faker) {
