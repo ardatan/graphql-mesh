@@ -82,7 +82,7 @@ transforms:
   - mock:
       mocks: 
         - apply: User.fullName
-          custom: ./user-mocks#fullName
+          faker: '{{name.fullName}}'
         - apply: Query.users
           length: 3
 ```
