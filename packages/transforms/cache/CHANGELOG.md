@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-cache
 
+## 0.8.40
+
+### Patch Changes
+
+- 9f204b0cf: Ensure cache transform respects subfield arguments.
+
 ## 0.8.39
 
 ### Patch Changes
