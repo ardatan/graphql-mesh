@@ -19,7 +19,6 @@ import {
   KeyValueCache,
   MeshPubSub,
 } from '@graphql-mesh/types';
-import { set } from 'lodash';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 
 interface OpenAPIIntrospectionCache {
@@ -117,8 +116,16 @@ export default class OpenAPIHandler implements MeshHandler {
                   operationType = GraphQLOperationType.Mutation;
                   break;
               }
-              set(acc, `${curr.title}.${curr.path}.${curr.method}`, operationType);
-              return acc;
+              return {
+                ...acc,
+                [curr.title]: {
+                  ...acc[curr.title],
+                  [curr.path]: {
+                    ...((acc[curr.title] && acc[curr.title][curr.path]) || {}),
+                    [curr.method]: operationType,
+                  },
+                },
+              };
             }, {} as OasTitlePathMethodObject<GraphQLOperationType>),
       addLimitArgument: addLimitArgument === undefined ? true : addLimitArgument,
       sendOAuthTokenInQuery: true,
