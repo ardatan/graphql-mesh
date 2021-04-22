@@ -156,7 +156,7 @@ type Query {
 transforms:
   - mock:
       mocks: 
-        - mutation: Query.user
+        - apply: Query.user
           store:
             type: User
             key: "{args.id}" 
