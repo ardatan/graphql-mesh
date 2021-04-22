@@ -25,7 +25,6 @@
     "json-ptr": "2.0.0",
     "graphql-scalars": "1.9.0",
     "graphql-subscriptions": "1.2.1",
-    "lodash": "4.17.21",
     "pluralize": "8.0.0",
     "swagger2openapi": "7.0.5",
     "url-join": "4.0.1"
