@@ -76,12 +76,82 @@ describe('mocking', () => {
       `,
       contextValue: {},
     });
-    expect(result?.data?.users).toBeTruthy();
-    const user = result.data?.users[0];
-    expect(user).toBeTruthy();
-    expect(user.id).not.toBe('NOTID');
-    expect(result.data?.users[0].fullName).not.toBe('fullName');
+
+    const users = result.data?.users;
+    expect(users).toBeTruthy();
+    expect(users).toHaveLength(1);
+    expect(users[0]).toBeTruthy();
+    expect(users[0].id).not.toBe('NOTID');
+    expect(users[0].fullName).not.toBe('fullName');
     expect(queryUserCalled).toBeFalsy();
     expect(userFullNameCalled).toBeFalsy();
+  });
+
+  it('should mock fields by using the "custom" property', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type User {
+          id: ID
+          fullName: String
+        }
+        type Query {
+          users: [User]
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [],
+        },
+        User: {
+          id: () => 'sample-id-coming-from-the-resolver',
+          fullName: () => 'Sample name coming from the resolver',
+        },
+      },
+    });
+
+    const mockingConfig: YamlConfig.MockingConfig = {
+      mocks: [
+        {
+          apply: 'User.id',
+          custom: './packages/transforms/mock/test/mocks.ts#id',
+        },
+        {
+          apply: 'User.fullName',
+          custom: './packages/transforms/mock/test/mocks.ts#fullName',
+        },
+      ],
+    };
+
+    const transformedSchema = await wrapSchema({
+      schema,
+      transforms: [
+        new MockingTransform({
+          config: mockingConfig,
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    const result = await graphql({
+      schema: transformedSchema,
+      source: /* GraphQL */ `
+        {
+          users {
+            id
+            fullName
+          }
+        }
+      `,
+      contextValue: {},
+    });
+
+    const users = result.data?.users;
+    expect(users).toBeTruthy();
+    expect(users).toHaveLength(1);
+    expect(users[0]).toBeTruthy();
+    expect(users[0].id).toBe('sample-id');
+    expect(users[0].fullName).toBe('John Snow');
   });
 });
