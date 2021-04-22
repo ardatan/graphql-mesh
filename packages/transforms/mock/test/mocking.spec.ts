@@ -79,7 +79,6 @@ describe('mocking', () => {
 
     const users = result.data?.users;
     expect(users).toBeTruthy();
-    expect(users).toHaveLength(1);
     expect(users[0]).toBeTruthy();
     expect(users[0].id).not.toBe('NOTID');
     expect(users[0].fullName).not.toBe('fullName');
@@ -149,7 +148,6 @@ describe('mocking', () => {
 
     const users = result.data?.users;
     expect(users).toBeTruthy();
-    expect(users).toHaveLength(1);
     expect(users[0]).toBeTruthy();
     expect(users[0].id).toBe('sample-id');
     expect(users[0].fullName).toBe('John Snow');

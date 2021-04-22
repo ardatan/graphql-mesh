@@ -17,12 +17,12 @@ export default class MockingTransform implements MeshTransform {
     const configIf = 'if' in this.config ? this.config.if : true;
     if (configIf) {
       const mocks: IMocks = {};
+      const resolvers: any = {};
       if (this.config.mocks) {
         for (const fieldConfig of this.config.mocks) {
           const fieldConfigIf = 'if' in fieldConfig ? fieldConfig.if : true;
           if (fieldConfigIf) {
             const [typeName, fieldName] = fieldConfig.apply.split('.');
-            mocks[typeName] = mocks[typeName] || (() => ({}));
             if (fieldName) {
               if (fieldConfig.faker) {
                 const prevFn: any = mocks[typeName];
@@ -33,19 +33,13 @@ export default class MockingTransform implements MeshTransform {
                 } else {
                   fakerFn = () => faker.fake(fieldConfig.faker || '');
                 }
-                mocks[typeName] = (...args: any[]) => {
-                  const prevObj = prevFn(...args);
-                  prevObj[fieldName] = fakerFn;
-                  return prevObj;
-                };
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = fakerFn;
               } else if (fieldConfig.custom) {
-                const exportedVal = loadFromModuleExportExpressionSync(fieldConfig.custom, { cwd: this.baseDir });
+                const exportedVal = loadFromModuleExportExpressionSync<any>(fieldConfig.custom, { cwd: this.baseDir });
                 const prevFn: any = mocks[typeName];
-                mocks[typeName] = (...args: any[]) => {
-                  const prevObj = prevFn(...args);
-                  prevObj[fieldName] = typeof exportedVal === 'function' ? exportedVal : () => exportedVal;
-                  return prevObj;
-                };
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = typeof exportedVal === 'function' ? exportedVal : () => exportedVal;
               }
             } else {
               if (fieldConfig.faker) {
@@ -70,6 +64,7 @@ export default class MockingTransform implements MeshTransform {
       return addMocksToSchema({
         schema,
         mocks,
+        resolvers,
         preserveResolvers: this.config?.preserveResolvers,
       });
     }

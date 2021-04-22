@@ -1,4 +1,2 @@
-export default {
-  id: 'sample-id',
-  fullName: 'John Snow',
-};
+export const id = 'sample-id';
+export const fullName = 'John Snow';
