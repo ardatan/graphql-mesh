@@ -18,7 +18,7 @@
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "0.6.1",
     "camel-case": "4.1.2",
-    "graphql-scalars": "1.9.0",
+    "graphql-scalars": "1.9.1",
     "graphql-compose": "7.25.1",
     "grpc-reflection-js": "0.1.1",
     "protobufjs": "6.10.2",
