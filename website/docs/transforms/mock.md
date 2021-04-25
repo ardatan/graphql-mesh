@@ -150,6 +150,9 @@ You can also implement `*ById` field declaratively like below;
 type Query {
   user(id:ID) : User
 }
+type Mutation {
+  updateUser(id: ID, name: String): User
+}
 ```
 
 ```yml
@@ -160,6 +163,17 @@ transforms:
           store:
             type: User
             key: "{args.id}" 
+        - apply: Mutation.updateUser
+          custom: ./mocks#updateUser
+```
+
+And in `mocks.js`;
+
+```js
+module.exports.updateUser = (_, { id, name }, { mockStore }) => {
+  mockStore.set('User', id, { name });
+  return mockStore.get('User', id);
+}
 ```
 
 > Learn more about GraphQL Tools Mocking; https://www.graphql-tools.com/docs/mocking
