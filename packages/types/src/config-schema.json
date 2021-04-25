@@ -2194,6 +2194,22 @@
           },
           "additionalItems": false,
           "description": "Mock configurations"
+        },
+        "initializeStore": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "The path to the code runs before the store is attached to the schema"
         }
       }
     },

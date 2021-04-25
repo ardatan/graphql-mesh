@@ -1040,6 +1040,10 @@ export interface MockingConfig {
    * Mock configurations
    */
   mocks?: MockingFieldConfig[];
+  /**
+   * The path to the code runs before the store is attached to the schema
+   */
+  initializeStore?: any;
 }
 export interface MockingFieldConfig {
   /**

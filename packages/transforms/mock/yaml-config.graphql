@@ -20,6 +20,10 @@ type MockingConfig @md {
   Mock configurations
   """
   mocks: [MockingFieldConfig]
+  """
+  The path to the code runs before the store is attached to the schema
+  """
+  initializeStore: Any
 }
 
 type MockingFieldConfig {

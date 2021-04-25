@@ -23,6 +23,10 @@ export default class MockingTransform implements MeshTransform {
       const store = createMockStore({ schema });
       const mocks: IMocks = {};
       const resolvers: any = {};
+      if (this.config.initializeStore) {
+        const initializeStore = loadFromModuleExportExpressionSync(this.config.initializeStore);
+        initializeStore(store);
+      }
       if (this.config.mocks) {
         for (const fieldConfig of this.config.mocks) {
           const fieldConfigIf = 'if' in fieldConfig ? fieldConfig.if : true;
