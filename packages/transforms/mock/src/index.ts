@@ -2,7 +2,11 @@ import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
 import * as faker from 'faker';
-import { getInterpolatedStringFactory, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import {
+  getInterpolatedStringFactory,
+  loadFromModuleExportExpression,
+  loadFromModuleExportExpressionSync,
+} from '@graphql-mesh/utils';
 
 export default class MockingTransform implements MeshTransform {
   private config: YamlConfig.MockingConfig;
@@ -90,10 +94,10 @@ export default class MockingTransform implements MeshTransform {
                 }
                 mocks[typeName] = fakerFn;
               } else if (fieldConfig.custom) {
-                const [moduleName, exportName] = fieldConfig.custom.split('#');
-                const m = require(moduleName);
-                const exportedVal = m[exportName] || (m.default && m.default[exportName]);
-                mocks[typeName] = typeof exportedVal === 'function' ? exportedVal : () => exportedVal;
+                mocks[typeName] = () => {
+                  const exportedVal = loadFromModuleExportExpressionSync<any>(fieldConfig.custom);
+                  mocks[typeName] = typeof exportedVal === 'function' ? exportedVal(store) : exportedVal;
+                };
               }
             }
           }
