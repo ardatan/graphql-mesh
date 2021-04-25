@@ -2225,6 +2225,14 @@
         "store": {
           "$ref": "#/definitions/GetFromMockStoreConfig",
           "description": "Get the data from the mock store"
+        },
+        "updateStore": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UpdateMockStoreConfig"
+          },
+          "additionalItems": false,
+          "description": "Update the data on the mock store"
         }
       },
       "required": ["apply"]
@@ -2241,6 +2249,25 @@
           "type": "string"
         },
         "fieldName": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "UpdateMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        },
+        "value": {
           "type": "string"
         }
       }

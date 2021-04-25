@@ -152,7 +152,81 @@ describe('mocking', () => {
     expect(users[0].id).toBe('sample-id');
     expect(users[0].fullName).toBe('John Snow');
   });
-  it('should work with mock store', async () => {
+  it('should custom resolvers work with mock store', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        user(id: ID): User
+      }
+      type Mutation {
+        addUser(name: String): User
+        updateUser(id: ID, name: String): User
+      }
+      type User {
+        id: ID
+        name: String
+      }
+    `);
+    const mockedSchema = wrapSchema({
+      schema,
+      transforms: [
+        new MockingTransform({
+          config: {
+            mocks: [
+              {
+                apply: 'Query.user',
+                custom: './packages/transforms/mock/test/mocks.ts#GetUserMock',
+              },
+              {
+                apply: 'Mutation.addUser',
+                custom: './packages/transforms/mock/test/mocks.ts#AddUserMock',
+              },
+              {
+                apply: 'Mutation.updateUser',
+                custom: './packages/transforms/mock/test/mocks.ts#UpdateUserMock',
+              },
+            ],
+          },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+    const ADD_USER = /* GraphQL */ parse(`
+      mutation AddUser {
+        addUser(name: "John Doe") {
+          id
+          name
+        }
+      }
+    `);
+    const addUserResult = await execute(mockedSchema, ADD_USER);
+    expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
+    const addedUserId = addUserResult.data.addUser.id;
+    const GET_USER = /* GraphQL */ parse(`
+      query GetUser {
+        user(id: "${addedUserId}") {
+          id
+          name
+        }
+      }
+    `);
+    const getUserResult = await execute(mockedSchema, GET_USER);
+    expect(getUserResult?.data?.user?.id).toBe(addedUserId);
+    expect(getUserResult?.data?.user?.name).toBe('John Doe');
+    const UPDATE_USER = /* GraphQL */ parse(`
+      mutation UpdateUser {
+        updateUser(id: "${addedUserId}", name: "Jane Doe") {
+          id
+          name
+        }
+      }
+    `);
+    const updateUserResult = await execute(mockedSchema, UPDATE_USER);
+    expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
+    expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
+  });
+  it('should declarative API work with mock store', async () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {
         user(id: ID): User
@@ -181,11 +255,33 @@ describe('mocking', () => {
               },
               {
                 apply: 'Mutation.addUser',
-                custom: './packages/transforms/mock/test/mocks.ts#AddUserMock',
+                updateStore: [
+                  {
+                    type: 'User',
+                    key: '{random}',
+                    fieldName: 'name',
+                    value: '{args.name}',
+                  },
+                ],
+                store: {
+                  type: 'User',
+                  key: '{random}',
+                },
               },
               {
                 apply: 'Mutation.updateUser',
-                custom: './packages/transforms/mock/test/mocks.ts#UpdateUserMock',
+                updateStore: [
+                  {
+                    type: 'User',
+                    key: '{args.id}',
+                    fieldName: 'name',
+                    value: '{args.name}',
+                  },
+                ],
+                store: {
+                  type: 'User',
+                  key: '{args.id}',
+                },
               },
             ],
           },

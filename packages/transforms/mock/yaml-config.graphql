@@ -57,10 +57,21 @@ type MockingFieldConfig {
   Get the data from the mock store
   """
   store: GetFromMockStoreConfig
+  """
+  Update the data on the mock store
+  """
+  updateStore: [UpdateMockStoreConfig]
 }
 
 type GetFromMockStoreConfig {
   type: String
   key: ID
   fieldName: String
+}
+
+type UpdateMockStoreConfig {
+  type: String
+  key: ID
+  fieldName: String
+  value: String
 }

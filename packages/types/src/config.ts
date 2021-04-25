@@ -1073,6 +1073,10 @@ export interface MockingFieldConfig {
    */
   length?: number;
   store?: GetFromMockStoreConfig;
+  /**
+   * Update the data on the mock store
+   */
+  updateStore?: UpdateMockStoreConfig[];
 }
 /**
  * Get the data from the mock store
@@ -1081,6 +1085,12 @@ export interface GetFromMockStoreConfig {
   type?: string;
   key?: string;
   fieldName?: string;
+}
+export interface UpdateMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
+  value?: string;
 }
 /**
  * Transformer to apply naming convention to GraphQL Types

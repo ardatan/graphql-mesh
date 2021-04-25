@@ -163,8 +163,27 @@ transforms:
           store:
             type: User
             key: "{args.id}" 
+        - apply: Mutation.addUser
+          updateStore:
+            type: User
+            key: "{random}"
+            fieldName: name
+            value: "{args.name}"
+          store: # return created user
+            type: User
+            key: "{random}"
         - apply: Mutation.updateUser
           custom: ./mocks#updateUser
+        # or you can do the following
+          updateStore:
+            type: User
+            key: "{args.id}"
+            fieldName: name
+            value: "{args.name}"
+          store: # return updated user
+            type: User
+            key: "{args.id}"
+
 ```
 
 And in `mocks.js`;
@@ -175,6 +194,7 @@ module.exports.updateUser = (_, { id, name }, { mockStore }) => {
   return mockStore.get('User', id);
 }
 ```
+
 
 > Learn more about GraphQL Tools Mocking; https://www.graphql-tools.com/docs/mocking
 

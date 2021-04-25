@@ -53,6 +53,24 @@ export default class MockingTransform implements MeshTransform {
               } else if ('length' in fieldConfig) {
                 resolvers[typeName] = resolvers[typeName] || {};
                 resolvers[typeName][fieldName] = () => new Array(fieldConfig.length).fill({});
+              } else if ('updateStore' in fieldConfig) {
+                const getFromStoreKeyFactory = getInterpolatedStringFactory(fieldConfig.store.key);
+                const updateStoreFactories = fieldConfig.updateStore.map(updateStoreConfig => ({
+                  updateStoreConfig,
+                  keyFactory: getInterpolatedStringFactory(updateStoreConfig.key),
+                  valueFactory: getInterpolatedStringFactory(updateStoreConfig.value),
+                }));
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+                  const resolverData = { root, args, context, info, random: Date.now().toString() };
+                  updateStoreFactories.forEach(({ updateStoreConfig, keyFactory, valueFactory }) => {
+                    const key = keyFactory(resolverData);
+                    const value = valueFactory(resolverData);
+                    store.set(updateStoreConfig.type, key, updateStoreConfig.fieldName, value);
+                  });
+                  const key = getFromStoreKeyFactory(resolverData);
+                  return store.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
+                };
               } else if ('store' in fieldConfig) {
                 const keyFactory = getInterpolatedStringFactory(fieldConfig.store.key);
                 resolvers[typeName] = resolvers[typeName] || {};
