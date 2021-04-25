@@ -43,6 +43,7 @@ export default class MockingTransform implements MeshTransform {
                   context: any,
                   info: GraphQLResolveInfo
                 ) => {
+                  context = context || {};
                   context.mockStore = store;
                   const exportedVal = await loadFromModuleExportExpression<any>(fieldConfig.custom, {
                     cwd: this.baseDir,
