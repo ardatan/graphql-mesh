@@ -152,7 +152,7 @@ describe('mocking', () => {
     expect(users[0].id).toBe('sample-id');
     expect(users[0].fullName).toBe('John Snow');
   });
-  it('should handle resolvers properly', async () => {
+  it('should work with mock store', async () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {
         user(id: ID): User
