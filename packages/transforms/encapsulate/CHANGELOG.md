@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-encapsulate
 
+## 0.1.37
+
+### Patch Changes
+
+- c10d8aac0: Ignore not-defined/empty root type on encapsulate transform
+
 ## 0.1.36
 
 ### Patch Changes
