@@ -12,12 +12,6 @@ module.exports = {
       defaultMode: 'dark',
       disableSwitch: true,
     },
-    // algolia: {
-    //   appId: 'ANRJKXZTRW',
-    //   apiKey: '811d453fc7f80306044dd5cc4b87e064',
-    //   indexName: 'theguild',
-    //   algoliaOptions: {},
-    // },
     navbar: {
       title: 'GraphQL Mesh',
       logo: {
@@ -88,7 +82,6 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`,
     },
   },
-  scripts: [],
   presets: [
     [
       '@docusaurus/preset-classic',
