@@ -22043,10 +22043,10 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-the-guild-components@1.0.14:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/the-guild-components/-/the-guild-components-1.0.14.tgz#204b756e49bf52aeae1d0251f1780539a08fa44f"
-  integrity sha512-Wauro/erA0KtHGSmubB6PeXYzpzAmitewU5C770sA4bO76NTgF3Na5G+eD70zlJRyMgeUq/pbCUdfjQQxgsx8w==
+the-guild-components@1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/the-guild-components/-/the-guild-components-1.0.15.tgz#1b7185140745aa61f41eb3f2dac6718c9ff03b97"
+  integrity sha512-G/pTdkDhKKcudaG4KxSPLXVTAIOUiPKaZiiqmGt3ufuBF1pslPdSAfJ+0dTjHL6oZPsG7KYdSA6pyLmNomupfA==
   dependencies:
     algoliasearch "^4.9.0"
     core-js "^3.8.3"
