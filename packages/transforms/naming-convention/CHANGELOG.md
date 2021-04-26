@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.6.40
+
+### Patch Changes
+
+- c24e17fca: Skip naming convention transform if the result gonna be empty string
+
 ## 0.6.39
 
 ### Patch Changes
