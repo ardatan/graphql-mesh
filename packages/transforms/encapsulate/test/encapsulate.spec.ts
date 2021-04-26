@@ -1,5 +1,5 @@
 import Transform from '../src/index';
-import { execute, parse } from 'graphql';
+import { execute, parse, getIntrospectionQuery } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from 'graphql-subscriptions';
@@ -152,5 +152,41 @@ describe('encapsulate', () => {
     });
 
     expect(resultAfter.test.doSomething).toBe('noop');
+  });
+
+  it("should be able to introspect even it's partial", async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          getSomething: String
+          getSomethingElse: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          getSomething: () => 'boop',
+        },
+      },
+    });
+
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new Transform({
+          config: {},
+          cache,
+          pubsub,
+          baseDir,
+          apiName: 'test',
+        }),
+      ],
+    });
+
+    const { data } = await execute({
+      schema: newSchema,
+      document: parse(getIntrospectionQuery()),
+    });
+
+    expect(data).not.toBeNull();
   });
 });
