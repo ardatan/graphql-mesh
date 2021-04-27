@@ -23,7 +23,7 @@
     "form-urlencoded": "6.0.3",
     "jsonpath-plus": "5.0.7",
     "json-ptr": "2.0.0",
-    "graphql-scalars": "1.9.3",
+    "graphql-scalars": "1.9.1",
     "graphql-subscriptions": "1.2.1",
     "pluralize": "8.0.0",
     "swagger2openapi": "7.0.5",
