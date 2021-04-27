@@ -8,6 +8,7 @@ import {
   JSONSchemaTypedObjectDefinition,
   JSONSchemaStringDefinition,
   JSONSchemaOneOfDefinition,
+  JSONSchemaNumberDefinition,
 } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
 import { pascalCase } from 'pascal-case';
@@ -161,7 +162,7 @@ export class JSONSchemaVisitor<TContext> {
         result = this.visitInteger();
         break;
       case 'number':
-        result = this.visitNumber();
+        result = this.visitNumber({ numberDef: def, propertyName, prefix, cwd, typeName });
         break;
       case 'string':
         if ('enum' in def) {
@@ -239,7 +240,30 @@ export class JSONSchemaVisitor<TContext> {
     return 'Int';
   }
 
-  visitNumber() {
+  visitNumber({
+    numberDef,
+    propertyName,
+    prefix,
+    cwd,
+    typeName,
+  }: {
+    numberDef: JSONSchemaNumberDefinition;
+    propertyName: string;
+    prefix: string;
+    cwd: string;
+    typeName?: string;
+  }) {
+    if (numberDef.pattern) {
+      let refName = `${prefix}_${propertyName}`;
+      if ('format' in numberDef) {
+        refName = numberDef.format;
+      }
+      const scalarName = typeName || this.createName({ ref: refName, cwd });
+      this.schemaComposer.add(new RegularExpression(scalarName, new RegExp(numberDef.pattern)), {
+        description: numberDef.description,
+      });
+      return scalarName;
+    }
     return 'Float';
   }
 
@@ -262,7 +286,9 @@ export class JSONSchemaVisitor<TContext> {
         refName = stringDef.format;
       }
       const scalarName = typeName || this.createName({ ref: refName, cwd });
-      this.schemaComposer.add(new RegularExpression(scalarName, new RegExp(stringDef.pattern)));
+      this.schemaComposer.add(new RegularExpression(scalarName, new RegExp(stringDef.pattern)), {
+        description: stringDef.description,
+      });
       return scalarName;
     }
     if (stringDef.format) {

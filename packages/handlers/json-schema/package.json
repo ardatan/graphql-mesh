@@ -23,7 +23,7 @@
     "ajv": "8.1.0",
     "lodash": "4.17.21",
     "graphql-compose": "7.25.1",
-    "graphql-scalars": "1.9.1",
+    "graphql-scalars": "1.9.3",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
     "to-json-schema": "0.2.5",

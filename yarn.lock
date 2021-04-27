@@ -12576,10 +12576,10 @@ graphql-relay@^0.6.0:
   dependencies:
     prettier "^1.16.0"
 
-graphql-scalars@1.9.1:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.9.1.tgz#905a7e1c129194e248e0d4b3dbbbe466850806f2"
-  integrity sha512-UHOrd8WUhfgP4/MFfj+W0cpl9yJw8W5Zph5s2DskfnmCeefg4lmlm84kb6sDHttwAprXpGGdo2dQXubE6vx0Cw==
+graphql-scalars@1.9.3:
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.9.3.tgz#84d27e42d280a16821ab0ef59cddaac84f798575"
+  integrity sha512-vP71Og4ALfe3PCk6T+B7LcJHH55gL0tYidmAE/kWT3ScE2FUCFS7iiMXFQXjCaYLi8nZcRLn9HuejGcjZ8kRug==
   dependencies:
     tslib "~2.2.0"
 
@@ -12979,6 +12979,12 @@ hastscript@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/hastscript/-/hastscript-6.0.0.tgz#e8768d7eac56c3fdeac8a92830d58e811e5bf640"
   integrity sha512-nDM6bvd7lIqDUiYEiu5Sl/+6ReP0BMk/2f4U/Rooccxkj0P5nm+acM5PrGJ/t5I8qPGiqZSE6hVAwZEdZIvP4w==
+  dependencies:
+    "@types/hast" "^2.0.0"
+    comma-separated-tokens "^1.0.0"
+    hast-util-parse-selector "^2.0.0"
+    property-information "^5.0.0"
+    space-separated-tokens "^1.0.0"
 
 he@^1.1.0, he@^1.2.0:
   version "1.2.0"
