@@ -14,7 +14,8 @@ const DEFUALT_APPLY_TO = {
 type RootType = 'Query' | 'Mutation' | 'Subscription';
 
 export default class EncapsulateTransform implements MeshTransform {
-  private transforms: Partial<Record<RootType, Transform>> = {};
+  private transformMap: Partial<Record<RootType, Transform>> = {};
+  private transforms: Transform[] = [];
 
   constructor(options: MeshTransformOptions<YamlConfig.Transform['encapsulate']>) {
     const config = options.config;
@@ -29,21 +30,21 @@ export default class EncapsulateTransform implements MeshTransform {
     const applyTo = { ...DEFUALT_APPLY_TO, ...(config?.applyTo || {}) };
 
     if (applyTo.query) {
-      this.transforms.Query = new WrapType('Query', `${name}Query`, name);
+      this.transformMap.Query = new WrapType('Query', `${name}Query`, name);
     }
     if (applyTo.mutation) {
-      this.transforms.Mutation = new WrapType('Mutation', `${name}Mutation`, name);
+      this.transformMap.Mutation = new WrapType('Mutation', `${name}Mutation`, name);
     }
     if (applyTo.subscription) {
-      this.transforms.Subscription = new WrapType('Subscription', `${name}Subscription`, name);
+      this.transformMap.Subscription = new WrapType('Subscription', `${name}Subscription`, name);
     }
   }
 
   *generateSchemaTransforms(originalWrappingSchema: GraphQLSchema) {
-    for (const typeName of Object.keys(this.transforms)) {
+    for (const typeName of Object.keys(this.transformMap)) {
       const fieldConfigMap = selectObjectFields(originalWrappingSchema, typeName, () => true);
       if (Object.keys(fieldConfigMap).length) {
-        yield this.transforms[typeName];
+        yield this.transformMap[typeName];
       }
     }
   }
@@ -53,9 +54,8 @@ export default class EncapsulateTransform implements MeshTransform {
     subschemaConfig: SubschemaConfig,
     transformedSchema?: GraphQLSchema
   ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, [
-      ...this.generateSchemaTransforms(originalWrappingSchema),
-    ]);
+    this.transforms = [...this.generateSchemaTransforms(originalWrappingSchema)];
+    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
   }
 
   transformRequest(
@@ -63,20 +63,10 @@ export default class EncapsulateTransform implements MeshTransform {
     delegationContext: DelegationContext,
     transformationContext: Record<string, any>
   ) {
-    return applyRequestTransforms(
-      originalRequest,
-      delegationContext,
-      transformationContext,
-      Object.values(this.transforms)
-    );
+    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
   }
 
   transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
-    return applyResultTransforms(
-      originalResult,
-      delegationContext,
-      transformationContext,
-      Object.values(this.transforms)
-    );
+    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
   }
 }
