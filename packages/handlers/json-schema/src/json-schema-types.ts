@@ -41,6 +41,8 @@ export interface JSONSchemaIntegerDefinition {
 export interface JSONSchemaNumberDefinition {
   type: 'number';
   description?: string;
+  pattern?: string;
+  format?: string;
 }
 
 export interface JSONSchemaStringDefinition {
