@@ -2139,7 +2139,7 @@ Object {
         "kind": "SCALAR",
         "name": "JSON",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByUrl": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
       },
       Object {
         "enumValues": null,
