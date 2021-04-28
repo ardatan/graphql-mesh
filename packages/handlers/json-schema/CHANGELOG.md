@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.14.0
+
+### Minor Changes
+
+- efae58591: feat(json-schema): support custom number scalars
+
 ## 0.13.1
 
 ### Patch Changes
