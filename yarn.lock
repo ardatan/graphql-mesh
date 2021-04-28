@@ -12709,10 +12709,10 @@ graphql-ws@3.1.0:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-3.1.0.tgz#cd09d385a21ab88af4c226da79c19351df9b27e8"
   integrity sha512-zbex3FSiFz0iRgfkzDNWpOY/sYWoX+iZ5XUhakaDwOh99HSuk8rPt5suuxdXUVzEg5TGQ9rwzNaz/+mTPtS0yg==
 
-graphql-ws@4.4.3:
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-4.4.3.tgz#9f93a1e9cbf670aaf12cb21b1e407e72f9010f9d"
-  integrity sha512-ScOHcOorfE3fsmdRe21G6cXUmX7ANVB6tUWJXQVo5V5dilQHR/3CI/r/kB2g0JLgSuKOt9kXZotGbe64Igsm0Q==
+graphql-ws@4.4.4:
+  version "4.4.4"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-4.4.4.tgz#0a8a90bd66a4d5cc42723364e38c8c7bec9af10d"
+  integrity sha512-GuKIn9PlSC5a1G7wEkLEsFmNGWXiPOXo7MfSk35fMEEJhJSKRa3dMW1JWaNvDZNXF2lLrZ6fal8+kOyDuBHpcg==
 
 graphql-ws@^4.1.1:
   version "4.1.2"
