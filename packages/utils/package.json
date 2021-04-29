@@ -24,6 +24,7 @@
     "date-fns": "2.21.1",
     "fetchache": "0.1.1",
     "flatstr": "1.0.12",
+    "graphql-jit": "0.5.0",
     "is-url": "1.2.4",
     "js-yaml": "4.1.0",
     "object-hash": "2.1.1",

@@ -17,8 +17,7 @@
     "@graphql-mesh/utils": "0.10.0",
     "postgraphile-core": "4.11.2",
     "postgraphile": "4.11.0",
-    "pg": "^8.6.0",
-    "graphql-jit": "0.5.0"
+    "pg": "^8.6.0"
   },
   "publishConfig": {
     "access": "public",

@@ -7,14 +7,13 @@ import {
   MeshPubSub,
   KeyValueCache,
 } from '@graphql-mesh/types';
-import { subscribe, print } from 'graphql';
+import { subscribe } from 'graphql';
 import { withPostGraphileContext, Plugin } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { globalLruCache, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { compileQuery, isCompiledQuery } from 'graphql-jit';
+import { loadFromModuleExportExpression, readFileOrUrlWithCache, jitExecutorFactory } from '@graphql-mesh/utils';
 import { ExecutionParams } from '@graphql-tools/delegate';
 
 interface PostGraphileIntrospection {
@@ -104,30 +103,19 @@ export default class PostGraphileHandler implements MeshHandler {
       this.introspectionCache.pgCache = writtenCache;
     }
 
-    const executor: any = ({ document, variables, context: meshContext, info }: ExecutionParams) => {
-      const operationName = info?.operation?.name?.value;
-      const documentStr = typeof document === 'string' ? document : print(document);
-      const cacheKey = [documentStr, operationName].join('_');
-      if (!globalLruCache.has(cacheKey)) {
-        const compiledQuery = compileQuery(schema, document, operationName);
-        globalLruCache.set(cacheKey, compiledQuery);
-      }
-      const cachedQuery = globalLruCache.get(cacheKey);
-      if (isCompiledQuery(cachedQuery)) {
-        return withPostGraphileContext({ pgPool }, async postgraphileContext => {
-          // Execute your GraphQL query in this function with the provided
-          // `context` object, which should NOT be used outside of this
-          // function.
-          const cachedQuery = globalLruCache.get(cacheKey);
-          if (isCompiledQuery(cachedQuery)) {
-            const contextValue = { ...meshContext, ...postgraphileContext };
-            return cachedQuery.query(info?.rootValue, contextValue, variables);
-          }
-          return cachedQuery;
-        });
-      }
-      return cachedQuery;
-    };
+    const jitExecutor = jitExecutorFactory(schema, this.name);
+    const executor: any = ({ document, variables, context: meshContext, info }: ExecutionParams) =>
+      withPostGraphileContext({ pgPool }, async postgraphileContext =>
+        jitExecutor({
+          document,
+          variables,
+          context: {
+            ...meshContext,
+            ...postgraphileContext,
+          },
+          info,
+        })
+      );
 
     return {
       schema,

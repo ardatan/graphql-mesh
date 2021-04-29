@@ -22773,6 +22773,11 @@ underscore@~1.8.3:
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
   integrity sha1-Tz+1OxBuYJf8+ctBCfKl6b36UCI=
 
+undici@3.3.6:
+  version "3.3.6"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-3.3.6.tgz#06d3b97b7eeff46bce6f8a71079c09f64dd59dc1"
+  integrity sha512-/j3YTZ5AobMB4ZrTY72mzM54uFUX32v0R/JRW9G2vOyF1uSKYAx+WT8dMsAcRS13TOFISv094TxIyWYk+WEPsA==
+
 unherit@^1.0.4:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/unherit/-/unherit-1.1.3.tgz#6c9b503f2b41b262330c80e91c8614abdaa69c22"

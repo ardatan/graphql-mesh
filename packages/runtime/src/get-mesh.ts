@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, ExecutionArgs, print } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, ExecutionArgs } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
@@ -9,13 +9,12 @@ import {
   applySchemaTransforms,
   ensureDocumentNode,
   getInterpolatedStringFactory,
-  globalLruCache,
   groupTransforms,
   ResolverDataBasedFactory,
+  jitExecutorFactory,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { compileQuery, isCompiledQuery } from 'graphql-jit';
 
 export async function getMesh(
   options: GetMeshOptions
@@ -73,21 +72,21 @@ export async function getMesh(
 
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
+  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified');
+
   const liveQueryStore = new InMemoryLiveQueryStore({
     includeIdentifierExtension: true,
     execute: (args: any) => {
-      const { document, contextValue, rootValue, variableValues, schema, operationName }: ExecutionArgs = args;
-      const documentStr = typeof document === 'string' ? document : print(document);
-      const cacheKey = [documentStr, operationName].join('_');
-      let compiledQuery = globalLruCache.get(cacheKey);
-      if (!compiledQuery) {
-        compiledQuery = compileQuery(schema, document, operationName);
-        globalLruCache.set(cacheKey, compiledQuery);
-      }
-      if (isCompiledQuery(compiledQuery)) {
-        return compiledQuery.query(rootValue, contextValue, variableValues);
-      }
-      return compiledQuery;
+      const { document, contextValue, variableValues, rootValue, operationName }: ExecutionArgs = args;
+      return jitExecutor(
+        {
+          document,
+          context: contextValue,
+          variables: variableValues,
+        },
+        operationName,
+        rootValue
+      );
     },
   });
 

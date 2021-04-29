@@ -10,6 +10,15 @@ const mergeUsingStitching: MergerFn = async function (options) {
     return mergeSingleSchema(options);
   }
   const { rawSources, typeDefs, resolvers, transforms } = options;
+  /*
+    rawSources.forEach(rawSource => {
+      if (!rawSource.executor) {
+        const originalSchema = rawSource.schema;
+        rawSource.executor = jitExecutorFactory(originalSchema, rawSource.name) as any;
+        rawSource.schema = buildSchema(printSchema(originalSchema));
+      }
+    });
+  */
   let unifiedSchema = stitchSchemas({
     subschemas: rawSources,
     typeDefs,
