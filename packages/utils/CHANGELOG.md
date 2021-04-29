@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.11.0
+
+### Minor Changes
+
+- 1caa8ffd3: enhance(runtime): use graphql-jit to improve the performance
+
 ## 0.10.0
 
 ### Minor Changes

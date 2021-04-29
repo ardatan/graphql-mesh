@@ -1,5 +1,16 @@
 # @graphql-mesh/mysql
 
+## 0.10.0
+
+### Minor Changes
+
+- 1caa8ffd3: enhance(runtime): use graphql-jit to improve the performance
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/utils@0.11.0
+
 ## 0.9.2
 
 ### Patch Changes

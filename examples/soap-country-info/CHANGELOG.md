@@ -1,5 +1,13 @@
 # country-info-example
 
+## 0.5.87
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.3
+- @graphql-mesh/soap@0.7.2
+- @graphql-mesh/transform-snapshot@0.9.5
+
 ## 0.5.86
 
 ### Patch Changes
