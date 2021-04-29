@@ -406,13 +406,13 @@
     apollo-graphql "^0.9.2"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.26.3":
-  version "0.26.3"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.26.3.tgz#0d17acd8c09bc25351f2dc1773767a3642e04b80"
-  integrity sha512-gpjF3X5QQxh/suvQIt3dWOhSeO48LK4HiGNrwtGrLx6g7gJhqD/bS+/0vSfJLl9GFZPZ9Zg4pYYf3r+fT2FLzQ==
+"@apollo/gateway@0.27.1":
+  version "0.27.1"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.27.1.tgz#d76295e84cf4317de75e87a02e5172ddf245e72a"
+  integrity sha512-qXOtVYzwTFaDbLKYs3v7bQfCmepUq/QQUh8C7rRR3uBewv0NwWs+t7RpTvRkumusyz+KpoXDvneZB2Wo6MTI0Q==
   dependencies:
     "@apollo/federation" "^0.23.2"
-    "@apollo/query-planner" "^0.1.2"
+    "@apollo/query-planner" "^0.1.4"
     "@types/node-fetch" "2.5.10"
     apollo-graphql "^0.9.2"
     apollo-reporting-protobuf "^0.6.0"
@@ -444,12 +444,13 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-planner@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.1.2.tgz#e6beba7ef8f3b114ceaca30f118f27720fe47512"
-  integrity sha512-RXcutdAsvKehjsE42nFaL6OD8vaYd65Jf/E+mVOMz82L3wV/k8uhWG0Sj5QcoC8ndoVG3O5xyeIIlI+iIb8u/g==
+"@apollo/query-planner@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.1.4.tgz#f00fb89547cb03be9b91c399611a460693e0a2f7"
+  integrity sha512-d/kWRBVdQlssMPlprOYc31Wq64TAc9ITah+61rJXHiQmZIN6CefwEdY6QnSa84TimEQE9gjgWz7Q96i8cuV49A==
   dependencies:
     chalk "^4.1.0"
+    deep-equal "^2.0.5"
     pretty-format "^26.0.0"
 
 "@apollographql/apollo-tools@^0.4.3":
@@ -10122,7 +10123,7 @@ dedent@^0.7.0:
   resolved "https://registry.yarnpkg.com/dedent/-/dedent-0.7.0.tgz#2495ddbaf6eb874abb0e1be9df22d2e5a544326c"
   integrity sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw=
 
-deep-equal@2.0.5:
+deep-equal@2.0.5, deep-equal@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-2.0.5.tgz#55cd2fe326d83f9cbf7261ef0e060b3f724c5cb9"
   integrity sha512-nPiRgmbAtm1a3JsnLCf6/SLfXcjyN5v8L1TXzdCmHrXJ4hx+gW/w1YCcn7z8gJtSiDArZCgYtbao3QqLm/N1Sw==
