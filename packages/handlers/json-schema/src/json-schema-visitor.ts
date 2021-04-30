@@ -526,7 +526,7 @@ export class JSONSchemaVisitor<TContext> {
         }
         for (const typeName of types) {
           const typeDef = this.schemaComposer.getAnyTC(typeName);
-          const jsonSchema = typeDef.getExtension('objectDef');
+          const jsonSchema: any = typeDef.getExtension('objectDef');
           jsonSchema.$schema = undefined;
           const isValid = this.ajv.validate(typeDef.getExtension('objectDef'), root);
           if (isValid) {

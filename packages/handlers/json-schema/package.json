@@ -22,7 +22,7 @@
     "@ardatan/aggregate-error": "0.0.6",
     "ajv": "8.2.0",
     "lodash": "4.17.21",
-    "graphql-compose": "7.25.1",
+    "graphql-compose": "8.0.1",
     "graphql-scalars": "1.9.3",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
