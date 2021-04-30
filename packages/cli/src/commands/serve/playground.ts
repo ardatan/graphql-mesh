@@ -69,6 +69,7 @@ export const playgroundMiddlewareFactory = ({
           renderGraphiQL({
             defaultQuery,
             endpoint: graphqlPath,
+            subscriptionsEndpoint: graphqlPath
           })
       );
     });
