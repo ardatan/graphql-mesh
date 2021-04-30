@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.14.0
+
+### Minor Changes
+
+- 5198e7ab7: chore(grpc): align protobufjs versions
+
 ## 0.13.0
 
 ### Minor Changes
