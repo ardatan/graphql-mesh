@@ -12556,6 +12556,11 @@ graphql-compose-connection@8.0.1:
   resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-8.0.1.tgz#6416ead781108a6628c542908f43cf89d3200222"
   integrity sha512-VBEdtzEp862TlV/uf7GDVYI0wwfTQAQlDXIZVl9IlYO5BcDD94kaPcrTuzQ/j991G09vx2ebqLu2zRI3uLZ7kg==
 
+graphql-compose-connection@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-8.1.0.tgz#868a224b0491b4a4f94748fe76fa4bb0a7e96538"
+  integrity sha512-CoWIj58IJj0pCKf6tahKyU5Wx71lT9H7NNGvgDsgoHVZNsqLl57wtLT3YPnNEpBPeb1IR/Wi9gR/dse952+FhQ==
+
 graphql-compose-mongoose@9.2.2:
   version "9.2.2"
   resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-9.2.2.tgz#ef31e3ab6c12e2f372f142ecca0f00e19b3a1c13"
