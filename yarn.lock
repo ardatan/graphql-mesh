@@ -16344,7 +16344,26 @@ property-information@^5.0.0, property-information@^5.3.0:
   dependencies:
     xtend "^4.0.0"
 
-protobufjs@6.11.2, protobufjs@^6.10.0, protobufjs@^6.8.6, protobufjs@^6.9.0:
+protobufjs@6.11.1:
+  version "6.11.1"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.1.tgz#327dcee492fbcd421a6cd6200f79bfed6efb2405"
+  integrity sha512-7KCLPvNGF/oDv/OXz+Zn2ViJx8x9WUKs5HrxZ5Gz0F2LD8jSTcsA1z9tBtOlPVVnJELOaFL+zj+oLc/WWSqlzw==
+  dependencies:
+    "@protobufjs/aspromise" "^1.1.2"
+    "@protobufjs/base64" "^1.1.2"
+    "@protobufjs/codegen" "^2.0.4"
+    "@protobufjs/eventemitter" "^1.1.0"
+    "@protobufjs/fetch" "^1.1.0"
+    "@protobufjs/float" "^1.0.2"
+    "@protobufjs/inquire" "^1.1.0"
+    "@protobufjs/path" "^1.1.2"
+    "@protobufjs/pool" "^1.1.0"
+    "@protobufjs/utf8" "^1.1.0"
+    "@types/long" "^4.0.1"
+    "@types/node" ">=13.7.0"
+    long "^4.0.0"
+
+protobufjs@^6.10.0, protobufjs@^6.8.6, protobufjs@^6.9.0:
   version "6.11.2"
   resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.2.tgz#de39fabd4ed32beaa08e9bb1e30d08544c1edf8b"
   integrity sha512-4BQJoPooKJl2G9j3XftkIXjoC9C0Av2NOrWmbLWT1vH32GcSUHjM0Arra6UfTsVyfMAuFzaLucXn1sadxJydAw==
