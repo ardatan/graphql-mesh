@@ -1,10 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import createApolloServer from './server';
 
-type ApolloServerHandlerType = (
-  req: NextApiRequest,
-  res: NextApiResponse,
-) => Promise<void>;
+type ApolloServerHandlerType = (req: NextApiRequest, res: NextApiResponse) => Promise<void>;
 
 declare global {
   // NOTE: This actually needs to be a "var", let/const won't work here.
@@ -20,12 +17,9 @@ const startApolloServer = async () => {
   }
 };
 
-export async function getApolloServerHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function getApolloServerHandler(req: NextApiRequest, res: NextApiResponse) {
   if (!global.cachedApolloServerHandler) {
-    await startApolloServer().catch((e) => {
+    await startApolloServer().catch(e => {
       console.error(e);
     });
   }
