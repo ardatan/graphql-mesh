@@ -2699,10 +2699,10 @@
     "@ardatan/aggregate-error" "0.0.1"
     camel-case "4.1.1"
 
-"@graphql-tools/utils@7.8.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.8.0.tgz#74290863b5c84c1bf1d8749e7a05b1b029a0c55e"
-  integrity sha512-nORIltDwBdsc3Ew+vuXISTZw6gpRd3UkK+6HNY3knNca6apTDj7ygcJmgsFKjSyUf7xtukddTcF6Js9kPuJr6g==
+"@graphql-tools/utils@7.8.1", "@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.1", "@graphql-tools/utils@^7.1.0", "@graphql-tools/utils@^7.1.2", "@graphql-tools/utils@^7.1.5", "@graphql-tools/utils@^7.5.0", "@graphql-tools/utils@^7.7.0", "@graphql-tools/utils@^7.7.1", "@graphql-tools/utils@^7.8.1":
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.8.1.tgz#caa9f0f1b3c7ef12f48dc66215ef5413f288e131"
+  integrity sha512-LDbOweemjxPYgJuHXK5XZJgObsBkiD92ul98lcuZxgA49IzQazHho5Y1Hs3MluD93YtZpxsQg/f7gNPnAyR6yw==
   dependencies:
     "@ardatan/aggregate-error" "0.0.6"
     camel-case "4.1.2"
@@ -2717,15 +2717,6 @@
     camel-case "4.1.1"
     tslib "~2.0.1"
 
-"@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.1", "@graphql-tools/utils@^7.1.0", "@graphql-tools/utils@^7.1.2", "@graphql-tools/utils@^7.1.5", "@graphql-tools/utils@^7.2.1", "@graphql-tools/utils@^7.5.0", "@graphql-tools/utils@^7.7.0", "@graphql-tools/utils@^7.7.1", "@graphql-tools/utils@^7.8.1":
-  version "7.8.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.8.1.tgz#caa9f0f1b3c7ef12f48dc66215ef5413f288e131"
-  integrity sha512-LDbOweemjxPYgJuHXK5XZJgObsBkiD92ul98lcuZxgA49IzQazHho5Y1Hs3MluD93YtZpxsQg/f7gNPnAyR6yw==
-  dependencies:
-    "@ardatan/aggregate-error" "0.0.6"
-    camel-case "4.1.2"
-    tslib "~2.2.0"
-
 "@graphql-tools/wrap@6.1.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-6.1.0.tgz#52451574dc667a423b66ad05720add03cbecb7b8"
@@ -2738,18 +2729,7 @@
     is-promise "4.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/wrap@7.0.6":
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-7.0.6.tgz#a2d150e82d538a84f0b8abb6a84a2d8269e76403"
-  integrity sha512-f3jPAHp4taSFIrv3rRsZvdKDrECoYLxdoP5KTrJDDLl2+xiTaiex+wXlNEm3tOnYvxgSQnXPf8iDSdqyd6Q1pg==
-  dependencies:
-    "@graphql-tools/delegate" "^7.1.4"
-    "@graphql-tools/schema" "^7.1.4"
-    "@graphql-tools/utils" "^7.2.1"
-    tslib "~2.2.0"
-    value-or-promise "~1.0.5"
-
-"@graphql-tools/wrap@^7.0.0", "@graphql-tools/wrap@^7.0.4", "@graphql-tools/wrap@^7.0.6":
+"@graphql-tools/wrap@7.0.7", "@graphql-tools/wrap@^7.0.0", "@graphql-tools/wrap@^7.0.4", "@graphql-tools/wrap@^7.0.6":
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-7.0.7.tgz#38e395aa2e201178e505dfae7ad411ea5c07c3f0"
   integrity sha512-tVgv3SKsaddnb1rPUAQY9vxUXj15o8h4TfSUjSkHa/4AaB7Vgxv6pEE+J1zwIFpO+6feMP482dRFSg096uH/Kw==

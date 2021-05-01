@@ -18,8 +18,8 @@
     "fetchache": "0.1.1",
     "@graphql-tools/schema": "7.1.4",
     "@graphql-tools/stitch": "7.5.2",
-    "@graphql-tools/wrap": "7.0.6",
-    "@graphql-tools/utils": "7.8.0"
+    "@graphql-tools/wrap": "7.0.7",
+    "@graphql-tools/utils": "7.8.1"
   },
   "publishConfig": {
     "access": "public",
