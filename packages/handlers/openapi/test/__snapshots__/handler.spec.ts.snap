@@ -1,8 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`openapi should create a GraphQL schema from a simple local swagger file 1`] = `
-"schema { query: Query
-mutation: Mutation }
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
 type Query {
   \\"\\"\\"
   Get recent media from a geography subscription that you created.
@@ -63,11 +66,13 @@ type Query {
     \\"\\"\\"
     Returns a location mapped off of a foursquare v1 api location id. If used, you are not required to use
     \`lat\` and \`lng\`. Note that this method is deprecated; you should use the new foursquare IDs with V2 of their API.
+    
     \\"\\"\\"
     foursquareId: String
     \\"\\"\\"
     Returns a location mapped off of a foursquare v2 api location id. If used, you are not required to use
     \`lat\` and \`lng\`.
+    
     \\"\\"\\"
     foursquareV2Id: String
     \\"\\"\\"Latitude of the center search coordinate. If used, \`lng\` is required.\\"\\"\\"
@@ -292,12 +297,14 @@ type Query {
     userId: String!
   ): RelationshipResponse
 }
+
 type MediaListResponse {
   \\"\\"\\"List of media entries\\"\\"\\"
   data: [MediaEntry]
   meta: MetaData
   pagination: IdPaginationInfo
 }
+
 type MediaEntry {
   \\"\\"\\"??? Unknown ???\\"\\"\\"
   attribution: String
@@ -325,6 +332,7 @@ type MediaEntry {
   usersInPhoto: [UserInPhoto]
   videos: VideosData
 }
+
 type CaptionData {
   \\"\\"\\"Caption creation UNIX timestamp\\"\\"\\"
   createdTime: String
@@ -334,6 +342,7 @@ type CaptionData {
   \\"\\"\\"Caption text\\"\\"\\"
   text: String
 }
+
 type UserShortInfo {
   \\"\\"\\"User full name\\"\\"\\"
   fullName: String
@@ -344,12 +353,14 @@ type UserShortInfo {
   \\"\\"\\"User name, nickname\\"\\"\\"
   username: String
 }
+
 type CommentsCollection {
   \\"\\"\\"Nember of comments available, data does not necessary contain all comments\\"\\"\\"
   count: Int
   \\"\\"\\"Collection of comment entries; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)\\"\\"\\"
   data: [CommentEntry]
 }
+
 type CommentEntry {
   \\"\\"\\"Comment creation UNIX timestamp\\"\\"\\"
   createdTime: String
@@ -359,11 +370,13 @@ type CommentEntry {
   \\"\\"\\"Text of the comment\\"\\"\\"
   text: String
 }
+
 type ImagesData {
   lowResolution: ImageInfo
   standardResolution: ImageInfo
   thumbnail: ImageInfo
 }
+
 type ImageInfo {
   \\"\\"\\"Image/video height in pixels\\"\\"\\"
   height: Int
@@ -372,12 +385,14 @@ type ImageInfo {
   \\"\\"\\"Image/video width in pixels\\"\\"\\"
   width: Int
 }
+
 type LikesCollection {
   \\"\\"\\"Nember of likes available, data does not necessary contain all comments\\"\\"\\"
   count: Int
   \\"\\"\\"Collection of users who liked; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)\\"\\"\\"
   data: [UserShortInfo]
 }
+
 type LocationInfo {
   \\"\\"\\"ID of this location (in some responses it has a type of 'integer')\\"\\"\\"
   id: String
@@ -388,83 +403,100 @@ type LocationInfo {
   \\"\\"\\"Location name\\"\\"\\"
   name: String
 }
+
 enum Type {
   IMAGE
   VIDEO
 }
+
 type UserInPhoto {
   position: Position
   user: UserShortInfo
 }
+
 type Position {
   \\"\\"\\"X position (horizontal)\\"\\"\\"
   x: Float
   \\"\\"\\"Y position (vertical)\\"\\"\\"
   y: Float
 }
+
 type VideosData {
   lowResolution: ImageInfo
   standardResolution: ImageInfo
 }
+
 type MetaData {
   \\"\\"\\"HTTP result code\\"\\"\\"
   code: Int
 }
+
 type IdPaginationInfo {
   \\"\\"\\"The max ID of the next page\\"\\"\\"
   nextMaxId: String
   \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
   nextUrl: String
 }
+
 type LocationInfoResponse {
   data: LocationInfo
   meta: MetaData
 }
+
 type LocationSearchResponse {
   \\"\\"\\"List of found locations\\"\\"\\"
   data: [LocationInfo]
   meta: MetaData
 }
+
 type MediaEntryResponse {
   data: MediaEntry
   meta: MetaData
 }
+
 type CommentsResponse {
   \\"\\"\\"Collection of comments\\"\\"\\"
   data: [CommentEntry]
   meta: MetaData
 }
+
 type UsersInfoResponse {
   \\"\\"\\"User short information entries\\"\\"\\"
   data: [UserShortInfo]
   meta: MetaData
 }
+
 type MediaSearchResponse {
   \\"\\"\\"Found media entries; some end-points do not return likes informtaion\\"\\"\\"
   data: [MediaEntry]
   meta: MetaData
 }
+
 type TagSearchResponse {
   \\"\\"\\"List of found tags with brief statistics\\"\\"\\"
   data: [TagInfo]
   meta: MetaData
 }
+
 type TagInfo {
   \\"\\"\\"Overall number of media entries taged with this name\\"\\"\\"
   mediaCount: Float
   \\"\\"\\"Tag name\\"\\"\\"
   name: String
 }
+
 type TagInfoResponse {
   data: TagInfo
   meta: MetaData
 }
+
 type TagMediaListResponse {
   \\"\\"\\"List of media entries with this tag\\"\\"\\"
   data: [MediaEntry]
   meta: MetaData
   pagination: TagPaginationInfo
 }
+
 type TagPaginationInfo {
   \\"\\"\\"The deprication warning, if information is available\\"\\"\\"
   deprecationWarning: String
@@ -479,10 +511,12 @@ type TagPaginationInfo {
   \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
   nextUrl: String
 }
+
 type UserResponse {
   data: UserInfo
   meta: MetaData
 }
+
 type UserInfo {
   \\"\\"\\"User biography\\"\\"\\"
   bio: String
@@ -498,6 +532,7 @@ type UserInfo {
   \\"\\"\\"URL to user web-site\\"\\"\\"
   website: String
 }
+
 type UserCounts {
   \\"\\"\\"Number of followers of this user\\"\\"\\"
   followedBy: Int
@@ -506,22 +541,26 @@ type UserCounts {
   \\"\\"\\"Number of user media\\"\\"\\"
   media: Int
 }
+
 type UsersPagingResponse {
   \\"\\"\\"List of user short information entries\\"\\"\\"
   data: [UserShortInfo]
   meta: MetaData
   pagination: CursorPaginationInfo
 }
+
 type CursorPaginationInfo {
   \\"\\"\\"The cursor ID of the next page\\"\\"\\"
   nextCursor: String
   \\"\\"\\"URL to retrieve next page of entries\\"\\"\\"
   nextUrl: String
 }
+
 type RelationshipResponse {
   data: RelationshipInfo
   meta: MetaData
 }
+
 type RelationshipInfo {
   \\"\\"\\"Status of incoming relationship\\"\\"\\"
   incomingStatus: IncomingStatus
@@ -530,16 +569,19 @@ type RelationshipInfo {
   \\"\\"\\"Indicates whether target user is private or not\\"\\"\\"
   targetUserIsPrivate: Boolean
 }
+
 enum IncomingStatus {
   NONE
   FOLLOWED_BY
   REQUESTED_BY
 }
+
 enum OutgoingStatus {
   NONE
   FOLLOWS
   REQUESTED
 }
+
 type Mutation {
   \\"\\"\\"
   Remove a comment either on the authenticated user's media object or authored by the authenticated user.
@@ -600,19 +642,23 @@ type Mutation {
     userId: String!
   ): RelationshipPostResponse
 }
+
 type StatusResponse {
   \\"\\"\\"No data - 'null'\\"\\"\\"
   data: String
   meta: MetaData
 }
+
 type RelationshipPostResponse {
   data: RelationshipStatus
   meta: MetaData
 }
+
 type RelationshipStatus {
   \\"\\"\\"Status of outgoing relationship\\"\\"\\"
   outgoingStatus: OutgoingStatus
 }
+
 enum Action {
   FOLLOW
   UNFOLLOW
@@ -620,5 +666,6 @@ enum Action {
   UNBLOCK
   APPROVE
   IGNORE
-}"
+}
+"
 `;

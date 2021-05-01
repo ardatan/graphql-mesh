@@ -26,7 +26,7 @@ function checkPatient(patient) {
     expect(typeof addressElement.country).toBe('string');
 }
 
-describe('JSON Schema FHIR', () => {
+describe.skip('JSON Schema FHIR', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
