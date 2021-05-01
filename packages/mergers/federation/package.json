@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-federation",
-  "version": "0.8.33",
+  "version": "0.8.34",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -16,7 +16,7 @@
     "@types/object-hash": "2.1.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.39.0",
+    "@graphql-mesh/types": "0.40.0",
     "@apollo/gateway": "0.27.1",
     "@graphql-tools/wrap": "7.0.7",
     "@graphql-tools/schema": "7.1.4",

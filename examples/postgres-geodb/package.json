@@ -1,6 +1,6 @@
 {
   "name": "postgres-geodb-example",
-  "version": "0.5.92",
+  "version": "0.5.93",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -17,13 +17,13 @@
     "typescript": "4.0.5"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.29.4",
-    "@graphql-mesh/transform-prefix": "0.6.40",
-    "@graphql-mesh/graphql": "0.16.2",
-    "@graphql-mesh/postgraphile": "0.12.0",
-    "@graphql-mesh/cache-file": "0.5.2",
-    "@graphql-mesh/config": "0.15.5",
-    "@graphql-mesh/runtime": "0.14.0",
+    "@graphql-mesh/cli": "0.29.5",
+    "@graphql-mesh/transform-prefix": "0.6.41",
+    "@graphql-mesh/graphql": "0.17.0",
+    "@graphql-mesh/postgraphile": "0.12.1",
+    "@graphql-mesh/cache-file": "0.5.3",
+    "@graphql-mesh/config": "0.15.6",
+    "@graphql-mesh/runtime": "0.14.1",
     "graphql": "15.4.0"
   },
   "resolutions": {
