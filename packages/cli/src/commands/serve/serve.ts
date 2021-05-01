@@ -103,6 +103,7 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
 
     useServer(
       {
+        schema: () => mesh$.then(({ schema }) => schema),
         execute: args =>
           mesh$.then(({ execute }) => execute(args.document, args.variableValues, args.contextValue, args.rootValue)),
         subscribe: args =>
