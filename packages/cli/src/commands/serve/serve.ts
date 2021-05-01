@@ -160,7 +160,7 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
     app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
 
     if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playgroundMiddlewareFactory({ baseDir, exampleQuery, graphqlPath });
+      const playgroundMiddleware = playgroundMiddlewareFactory({ baseDir, exampleQuery, hostname, port, graphqlPath });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
       }
