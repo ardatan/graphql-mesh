@@ -1,6 +1,6 @@
 {
   "name": "javascript-wiki",
-  "version": "0.5.96",
+  "version": "0.5.97",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "generate-sdk": "mesh generate-sdk --operations \"example-queries/*.graphql\" --output src/sdk.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.29.4",
-    "@graphql-mesh/openapi": "0.16.2",
+    "@graphql-mesh/cli": "0.29.5",
+    "@graphql-mesh/openapi": "0.16.3",
     "graphql": "15.4.0",
     "moment": "2.29.1"
   }

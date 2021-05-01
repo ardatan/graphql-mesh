@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/tuql",
-  "version": "0.4.55",
+  "version": "0.4.56",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -16,7 +16,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.39.0",
+    "@graphql-mesh/types": "0.40.0",
     "tuql": "1.7.0"
   },
   "publishConfig": {

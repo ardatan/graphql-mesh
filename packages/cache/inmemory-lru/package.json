@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-inmemory-lru",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -13,7 +13,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.39.0",
+    "@graphql-mesh/types": "0.40.0",
     "@types/lru-cache": "5.1.0",
     "lru-cache": "6.0.0"
   },
