@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.29.4
+
+### Patch Changes
+
+- 28f80c0a7: fix(serve): fix subscriptions
+
 ## 0.29.3
 
 ### Patch Changes
