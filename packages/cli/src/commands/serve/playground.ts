@@ -73,7 +73,6 @@ export const playgroundMiddlewareFactory = ({
           renderGraphiQL({
             defaultQuery,
             endpoint: graphqlPath,
-            subscriptionsEndpoint: `ws://${hostname}:${port}${graphqlPath}`,
           })
       );
     });
