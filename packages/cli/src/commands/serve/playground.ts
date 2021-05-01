@@ -8,14 +8,10 @@ import { handleFatalError } from '../../handleFatalError';
 export const playgroundMiddlewareFactory = ({
   baseDir,
   exampleQuery,
-  hostname,
-  port,
   graphqlPath,
 }: {
   baseDir: string;
   exampleQuery: string;
-  hostname: string;
-  port: string | number;
   graphqlPath: string;
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
