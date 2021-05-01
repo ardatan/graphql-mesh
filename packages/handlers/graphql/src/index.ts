@@ -42,7 +42,7 @@ export default class GraphQLHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const { endpoint, schemaHeaders: configHeaders, introspection } = this.config;
+    const { endpoint, schemaHeaders: configHeaders, introspection, useWebSocketLegacyProtocol = false } = this.config;
     const customFetch = getCachedFetch(this.cache);
 
     if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
@@ -57,7 +57,7 @@ export default class GraphQLHandler implements MeshHandler {
         schema,
       };
     }
-    const urlLoader = new UrlLoader();
+    const urlLoader = new UrlLoader(useWebSocketLegacyProtocol);
     const getExecutorAndSubscriberForParams = (
       params: ExecutionParams,
       headersFactory: ResolverDataBasedFactory<Headers>,

@@ -231,6 +231,10 @@ export interface GraphQLHandler {
    */
   webSocketImpl?: string;
   /**
+   * Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`
+   */
+  useWebSocketLegacyProtocol?: boolean;
+  /**
    * Path to the introspection
    * You can seperately give schema introspection
    */

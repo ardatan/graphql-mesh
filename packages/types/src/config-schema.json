@@ -674,6 +674,10 @@
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
+        "useWebSocketLegacyProtocol": {
+          "type": "boolean",
+          "description": "Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`"
+        },
         "introspection": {
           "type": "string",
           "description": "Path to the introspection\nYou can seperately give schema introspection"
