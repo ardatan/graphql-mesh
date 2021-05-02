@@ -21,7 +21,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.40.0",
     "@graphql-mesh/utils": "0.11.0",
-    "@graphql-tools/resolvers-composition": "6.2.6",
+    "@graphql-tools/resolvers-composition": "6.2.7",
     "@graphql-tools/schema": "7.1.5",
     "@graphql-tools/utils": "7.8.1",
     "object-hash": "2.1.1"
