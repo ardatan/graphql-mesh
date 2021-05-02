@@ -2652,7 +2652,16 @@
     relay-compiler "10.1.0"
     tslib "~2.0.1"
 
-"@graphql-tools/resolvers-composition@6.2.6", "@graphql-tools/resolvers-composition@^6.2.5":
+"@graphql-tools/resolvers-composition@6.2.7":
+  version "6.2.7"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.2.7.tgz#0c1349652fa1ad19537774a174926e11fb39eb95"
+  integrity sha512-PmvPYAYSHdLSlnXRnozhmSSagI/x7LT3FdU68nX0zXjo1utolJdNwe+9x/+xSbauJNQH5PXgzRoWj5uYm2oaFA==
+  dependencies:
+    "@graphql-tools/utils" "^7.0.0"
+    lodash "4.17.21"
+    tslib "~2.2.0"
+
+"@graphql-tools/resolvers-composition@^6.2.5":
   version "6.2.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/resolvers-composition/-/resolvers-composition-6.2.6.tgz#b369cdf2772a41a7544bf3f16a794501da34c394"
   integrity sha512-QO0PC5RG0SolOksupOuB4B0tuzEsQFwQrwD9xLHCrJmjaLi66lOKMFzN40IBY5rqg0k/zqPyjII8rtzcNobvIg==

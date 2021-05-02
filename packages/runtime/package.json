@@ -18,7 +18,7 @@
     "@graphql-mesh/types": "0.40.0",
     "@graphql-mesh/utils": "0.11.0",
     "@graphql-tools/delegate": "7.1.5",
-    "@graphql-tools/resolvers-composition": "6.2.6",
+    "@graphql-tools/resolvers-composition": "6.2.7",
     "@graphql-tools/schema": "7.1.5",
     "@graphql-tools/wrap": "7.0.8",
     "@graphql-tools/utils": "7.8.1"
