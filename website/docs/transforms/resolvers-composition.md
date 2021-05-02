@@ -48,4 +48,4 @@ module.exports = {
 
 ## Config API Reference
 
-{@import ../generated-markdown/ResolversCompositionTransformObject.generated.md}
+{@import ../generated-markdown/ResolversCompositionTransform.generated.md}
