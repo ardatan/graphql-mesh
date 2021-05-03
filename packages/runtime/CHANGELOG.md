@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.15.0
+
+### Minor Changes
+
+- 1f4655ee6: enhance(runtime): export getMesh result interface
+
 ## 0.14.1
 
 ### Patch Changes
