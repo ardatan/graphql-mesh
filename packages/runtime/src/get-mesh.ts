@@ -16,9 +16,7 @@ import {
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 
-export async function getMesh(
-  options: GetMeshOptions
-): Promise<{
+export interface MeshInstance {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
@@ -29,7 +27,9 @@ export async function getMesh(
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   liveQueryStore: InMemoryLiveQueryStore;
-}> {
+}
+
+export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache } = options;
 
