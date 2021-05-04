@@ -3,7 +3,7 @@ import { IResolvers } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
-import { Executor, Subscriber, Transform } from '@graphql-tools/delegate';
+import { Executor, Subscriber, Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 export { YamlConfig };
@@ -109,6 +109,7 @@ export type RawSourceOutput = {
   contextVariables: (keyof any)[];
   handler: MeshHandler;
   batch: boolean;
+  merge?: Record<string, MergedTypeConfig>;
 };
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;

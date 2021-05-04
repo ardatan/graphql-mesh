@@ -11,6 +11,7 @@ import {
 import { DocumentNode } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
+import { MergedTypeConfig } from '@graphql-tools/delegate';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -28,6 +29,7 @@ export type MeshResolvedSource<TContext = any> = {
   name: string;
   handler: MeshHandler<TContext>;
   transforms?: MeshTransform[];
+  merge?: Record<string, MergedTypeConfig>;
 };
 
 export type ExecuteMeshFn<TData = any, TVariables = any, TContext = any, TRootValue = any> = (

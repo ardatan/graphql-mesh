@@ -1,4 +1,4 @@
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join, resolve } from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   getJsonSchema,
@@ -24,6 +24,9 @@ import {
   resolveMerger,
   resolvePubSub,
 } from './utils';
+import { stringInterpolator } from '@graphql-mesh/utils';
+import { MergedTypeConfig, MergedFieldConfig } from '@graphql-tools/delegate';
+import { get, set } from 'lodash';
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -120,6 +123,92 @@ export async function processConfig(
 
         introspectionCache[source.name] = introspectionCache[source.name] || {};
         const handlerIntrospectionCache = introspectionCache[source.name];
+
+        const mergedTypeConfigMap: Record<string, MergedTypeConfig> = {};
+        for (const mergedTypeConfigRaw of source.typeMerging || []) {
+          mergedTypeConfigMap[mergedTypeConfigRaw.typeName] = {
+            fieldName: mergedTypeConfigRaw.fieldName,
+            args:
+              mergedTypeConfigRaw.args &&
+              ((root: any) => {
+                if (typeof mergedTypeConfigRaw.args === 'string') {
+                  return stringInterpolator.parse(mergedTypeConfigRaw.args, { root });
+                }
+                const returnObj: any = {};
+                for (const argName in mergedTypeConfigRaw.args) {
+                  set(returnObj, argName, stringInterpolator.parse(mergedTypeConfigRaw.args[argName], { root }));
+                }
+                return returnObj;
+              }),
+            argsFromKeys:
+              mergedTypeConfigRaw.argsFromKeys &&
+              ((keys: any) => {
+                if (typeof mergedTypeConfigRaw.argsFromKeys === 'string') {
+                  return stringInterpolator.parse(mergedTypeConfigRaw.argsFromKeys, { keys });
+                }
+                const returnObj: any = {};
+                for (const argName in mergedTypeConfigRaw.argsFromKeys) {
+                  set(
+                    returnObj,
+                    argName,
+                    stringInterpolator.parse(mergedTypeConfigRaw.argsFromKeys[argName], { keys })
+                  );
+                }
+                return returnObj;
+              }),
+            selectionSet: mergedTypeConfigRaw.selectionSet,
+            fields: mergedTypeConfigRaw.fields?.reduce(
+              (prev, curr) => ({
+                ...prev,
+                [curr.fieldName]: curr,
+              }),
+              {} as Record<string, MergedFieldConfig>
+            ),
+            key:
+              mergedTypeConfigRaw.key &&
+              ((root: any) => {
+                if (typeof mergedTypeConfigRaw.key === 'string') {
+                  return stringInterpolator.parse(mergedTypeConfigRaw.key, { root });
+                }
+                const returnObj: any = {};
+                for (const argName in mergedTypeConfigRaw.args) {
+                  set(returnObj, argName, stringInterpolator.parse(mergedTypeConfigRaw.key[argName], { root }));
+                }
+                return returnObj;
+              }),
+            canonical: mergedTypeConfigRaw.canonical,
+            resolve:
+              mergedTypeConfigRaw.resolve &&
+              (async (root: any, args: any, context: any, info: any) => {
+                if (typeof mergedTypeConfigRaw.resolve === 'string') {
+                  const filePath = mergedTypeConfigRaw.resolve;
+
+                  const exported = await importFn(resolve(options.dir, filePath));
+                  return exported.default || exported;
+                } else if (typeof mergedTypeConfigRaw.resolve === 'object' && 'args' in mergedTypeConfigRaw.resolve) {
+                  const resolverData = { root, args, context, info };
+                  const methodArgs: any = {};
+                  for (const argPath in mergedTypeConfigRaw.resolve.args) {
+                    set(
+                      methodArgs,
+                      argPath,
+                      stringInterpolator.parse(mergedTypeConfigRaw.resolve.args[argPath], resolverData)
+                    );
+                  }
+                  const result = await context[mergedTypeConfigRaw.resolve.targetSource].api[
+                    mergedTypeConfigRaw.resolve.targetMethod
+                  ](methodArgs, {
+                    selectedFields: mergedTypeConfigRaw.resolve.resultSelectedFields,
+                    selectionSet: mergedTypeConfigRaw.resolve.resultSelectionSet,
+                    depth: mergedTypeConfigRaw.resolve.resultDepth,
+                  });
+                  return mergedTypeConfigRaw.resolve.returnData
+                    ? get(result, mergedTypeConfigRaw.resolve.returnData)
+                    : result;
+                }
+              }),
+          };
+        }
         return {
           name: source.name,
           handler: new HandlerCtor({
