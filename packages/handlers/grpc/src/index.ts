@@ -1,4 +1,4 @@
-import './patchLongBits';
+import './patchLongJs';
 import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { withCancel } from '@graphql-mesh/utils';
 import {
