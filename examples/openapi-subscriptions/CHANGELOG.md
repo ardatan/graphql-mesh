@@ -1,5 +1,12 @@
 # openapi-subscriptions
 
+## 0.0.88
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.7
+- @graphql-mesh/openapi@0.16.4
+
 ## 0.0.87
 
 ### Patch Changes

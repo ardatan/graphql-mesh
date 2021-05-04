@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.14.2
+
+### Patch Changes
+
+- a01e439e6: fix(grpc): patch LongJS to support BigInt
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/types@0.41.0
+
 ## 0.14.1
 
 ### Patch Changes

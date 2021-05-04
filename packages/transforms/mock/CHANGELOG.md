@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-mock
 
+## 0.9.0
+
+### Minor Changes
+
+- acb45130b: feat(mock): initial impl of stateful mocking
+
+### Patch Changes
+
+- acb45130b: fix(mock): fix field mockings
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/types@0.41.0
+
 ## 0.8.8
 
 ### Patch Changes
