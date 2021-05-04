@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 0.16.0
+
+### Minor Changes
+
+- 214b7a23c: feat(runtime): Type Merging support
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/runtime@0.16.0
+  - @graphql-mesh/types@0.41.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.3
+  - @graphql-mesh/merger-stitching@0.9.2
+
 ## 0.15.7
 
 ### Patch Changes
