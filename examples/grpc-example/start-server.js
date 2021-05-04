@@ -18,7 +18,7 @@ const Movies = [
     cast: ['Tom Cruise', 'Simon Pegg', 'Jeremy Renner'],
     name: 'Mission: Impossible Rogue Nation',
     rating: 0.97,
-    year: 2015,
+    year: 2015n,
     time: {
       seconds,
     },
@@ -28,7 +28,7 @@ const Movies = [
     cast: ['Tom Cruise', 'Simon Pegg', 'Henry Cavill'],
     name: 'Mission: Impossible - Fallout',
     rating: 0.93,
-    year: 2018,
+    year: 2018n,
     time: {
       seconds,
     },
@@ -38,7 +38,7 @@ const Movies = [
     cast: ['Leonardo DiCaprio', 'Jonah Hill', 'Margot Robbie'],
     name: 'The Wolf of Wall Street',
     rating: 0.78,
-    year: 2013,
+    year: 2013n,
     time: {
       seconds,
     },
