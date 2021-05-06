@@ -13,7 +13,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/faker": "5.5.3"
+    "@types/faker": "5.5.4"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.41.0",
