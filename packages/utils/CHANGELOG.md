@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.11.1
+
+### Patch Changes
+
+- 69c89666d: chore(utils): bump string interpolator version
+
 ## 0.11.0
 
 ### Minor Changes

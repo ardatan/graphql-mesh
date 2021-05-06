@@ -1,6 +1,6 @@
 {
   "name": "grpc-example",
-  "version": "0.5.100",
+  "version": "0.5.101",
   "author": "Simon Liang",
   "license": "MIT",
   "private": true,
@@ -10,9 +10,9 @@
     "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\""
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.29.7",
-    "@graphql-mesh/grpc": "0.14.2",
-    "@graphql-mesh/transform-naming-convention": "0.6.43",
+    "@graphql-mesh/cli": "0.29.8",
+    "@graphql-mesh/grpc": "0.14.3",
+    "@graphql-mesh/transform-naming-convention": "0.6.44",
     "@grpc/proto-loader": "0.5.5",
     "google-protobuf": "3.14.0",
     "graphql": "15.4.0",
