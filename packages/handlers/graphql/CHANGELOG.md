@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.17.4
+
+### Patch Changes
+
+- a48368992: enhance(graphql): bump url-loader to run legacy subscriptions client lazily
+
 ## 0.17.3
 
 ### Patch Changes

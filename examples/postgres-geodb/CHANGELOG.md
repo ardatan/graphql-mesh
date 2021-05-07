@@ -1,5 +1,12 @@
 # postgres-geodb-example
 
+## 0.5.98
+
+### Patch Changes
+
+- Updated dependencies [a48368992]
+  - @graphql-mesh/graphql@0.17.4
+
 ## 0.5.97
 
 ### Patch Changes
