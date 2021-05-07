@@ -56,7 +56,7 @@ Let's say you have the following query that returns specific `Todo` entity based
 
 ```graphql
 query getTodo($id: ID!) {
-    todo(id: $id) {]
+    todo(id: $id) {
         id
         content
     }
