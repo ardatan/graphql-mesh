@@ -288,12 +288,12 @@
     mkdirp "1.0.3"
     yargs "15.3.1"
 
-"@ardatan/string-interpolation@1.2.11":
-  version "1.2.11"
-  resolved "https://registry.yarnpkg.com/@ardatan/string-interpolation/-/string-interpolation-1.2.11.tgz#5a0ea807e55f1faf79a0ec7b809953d6e1e31c81"
-  integrity sha512-MHp6DPMIlSgCwZwcNuev1wbWFKbizCGNwKvWd6CR7jXGpSnlE6FPUhWtH5xGalWY/OyOnUOfV2Tj9+2STnTMZg==
+"@ardatan/string-interpolation@1.2.12":
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/@ardatan/string-interpolation/-/string-interpolation-1.2.12.tgz#8b86820238a93f716d9b8bc9b8f3178bcada4356"
+  integrity sha512-v5hlEaLrJNmC6aDXTVKsmMmr2wI5Z0VFGqXbXbhhvj8hJ8rCYJ5l1G8oUBf/ypW4PWtS65JwJocBQg1qAfTY+Q==
   dependencies:
-    lodash "4.17.20"
+    lodash "^4.17.21"
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"
@@ -10268,7 +10268,7 @@ fs-capacitor@^2.0.4:
   resolved "https://registry.yarnpkg.com/fs-capacitor/-/fs-capacitor-2.0.4.tgz#5a22e72d40ae5078b4fe64fe4d08c0d3fc88ad3c"
   integrity sha512-8S4f4WsCryNw2mJJchi46YgB6CR5Ze+4L1h8ewl9tEpL4SJ3ZO+c/bS4BWhB8bK+O3TMqhuZarTitd0S0eh2pA==
 
-fs-capacitor@^6.1.0:
+fs-capacitor@^6.1.0, fs-capacitor@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/fs-capacitor/-/fs-capacitor-6.2.0.tgz#fa79ac6576629163cb84561995602d8999afb7f5"
   integrity sha512-nKcE1UduoSKX27NSZlg879LdQc94OtbOsEmKMN2MBNudXREvijRKx2GEBsTMTfws+BrbkJoEuynbGSVRSpauvw==
@@ -10967,6 +10967,17 @@ graphql-upload@11.0.0, graphql-upload@^11.0.0:
     isobject "^4.0.0"
     object-path "^0.11.4"
 
+graphql-upload@12.0.0:
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/graphql-upload/-/graphql-upload-12.0.0.tgz#2351d20d294e920fb25d2eba9f7c352e37a1a02b"
+  integrity sha512-ovZ3Q7sZ17Bmn8tYl22MfrpNR7nYM/DUszXWgkue7SFIlI9jtqszHAli8id8ZcnGBc9GF0gUTNSskYWW+5aNNQ==
+  dependencies:
+    busboy "^0.3.1"
+    fs-capacitor "^6.2.0"
+    http-errors "^1.8.0"
+    isobject "^4.0.0"
+    object-path "^0.11.5"
+
 graphql-ws@4.5.0, graphql-ws@^4.1.1, graphql-ws@^4.4.1:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-4.5.0.tgz#c71c6eed34850c375156c29b1ed45cea2f9aee6b"
@@ -11456,7 +11467,7 @@ http-errors@1.7.3, http-errors@~1.7.2:
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
 
-http-errors@1.8.0, http-errors@^1.5.1, http-errors@^1.7.3:
+http-errors@1.8.0, http-errors@^1.5.1, http-errors@^1.7.3, http-errors@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.8.0.tgz#75d1bbe497e1044f51e4ee9e704a62f28d336507"
   integrity sha512-4I8r0C5JDhT5VkvI47QktDW75rNlGVsUf/8hzjCC/wkWI/jdTRmBb9aI7erSG82r1bjKY3F6k28WnsVxB1C73A==
@@ -13820,11 +13831,6 @@ lodash.xorby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash.xorby/-/lodash.xorby-4.7.0.tgz#9c19a6f9f063a6eb53dd03c1b6871799801463d7"
   integrity sha1-nBmm+fBjputT3QPBtocXmYAUY9c=
 
-lodash@4.17.20:
-  version "4.17.20"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
-  integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
-
 lodash@4.17.21, lodash@4.x, "lodash@>=3.5 <5", "lodash@>=4 <5", lodash@^4.0.0, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.5, lodash@^4.7.0, lodash@~4.17.20:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
@@ -15263,7 +15269,7 @@ object-keys@^1.0.12, object-keys@^1.1.1:
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.1.1.tgz#1c47f272df277f3b1daf061677d9c82e2322c60e"
   integrity sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==
 
-object-path@0.11.5, object-path@^0.11.4:
+object-path@0.11.5, object-path@^0.11.4, object-path@^0.11.5:
   version "0.11.5"
   resolved "https://registry.yarnpkg.com/object-path/-/object-path-0.11.5.tgz#d4e3cf19601a5140a55a16ad712019a9c50b577a"
   integrity sha512-jgSbThcoR/s+XumvGMTMf81QVBmah+/Q7K7YduKeKVWL7N111unR2d6pZZarSk6kY/caeNxUDyxOvMWyzoU2eg==

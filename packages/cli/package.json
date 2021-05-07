@@ -42,7 +42,7 @@
     "cors": "2.8.5",
     "express": "4.17.1",
     "graphql-helix": "1.4.1",
-    "graphql-upload": "11.0.0",
+    "graphql-upload": "12.0.0",
     "graphql-ws": "4.5.0",
     "ora": "5.4.0",
     "chalk": "4.1.1",
