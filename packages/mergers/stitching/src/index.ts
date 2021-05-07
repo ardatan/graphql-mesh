@@ -2,7 +2,7 @@ import { MergerFn } from '@graphql-mesh/types';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { mergeSingleSchema } from './mergeSingleSchema';
-import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms, meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/stitch/types';
 
 const mergeUsingStitching: MergerFn = async function (options) {
@@ -20,7 +20,10 @@ const mergeUsingStitching: MergerFn = async function (options) {
     });
   */
   let unifiedSchema = stitchSchemas({
-    subschemas: rawSources,
+    subschemas: rawSources.map(rawSource => ({
+      createProxyingResolver: meshDefaultCreateProxyingResolver,
+      ...rawSource,
+    })),
     typeDefs,
     resolvers,
   });
@@ -41,6 +44,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
         schema: unifiedSchema,
         batch: true,
         transforms: wrapTransforms,
+        createProxyingResolver: meshDefaultCreateProxyingResolver,
       });
     }
     if (noWrapTransforms.length) {

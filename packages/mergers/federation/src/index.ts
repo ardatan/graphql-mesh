@@ -3,6 +3,7 @@ import { GraphQLSchema, print, graphql, extendSchema } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway, ServiceEndpointDefinition } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
+import { meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
 import objectHash from 'object-hash';
 
 const mergeUsingFederation: MergerFn = async function ({
@@ -18,7 +19,10 @@ const mergeUsingFederation: MergerFn = async function ({
   const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
   await Promise.all(
     rawSources.map(async rawSource => {
-      const transformedSchema = wrapSchema(rawSource);
+      const transformedSchema = wrapSchema({
+        createProxyingResolver: meshDefaultCreateProxyingResolver,
+        ...rawSource,
+      });
       serviceMap.set(rawSource.name, transformedSchema);
       sourceMap.set(rawSource, transformedSchema);
       serviceList.push({
@@ -73,6 +77,7 @@ const mergeUsingFederation: MergerFn = async function ({
         schemaHash,
       });
     },
+    createProxyingResolver: meshDefaultCreateProxyingResolver,
   });
   pubsub.subscribe('destroy', () => gateway.stop());
   typeDefs?.forEach(typeDef => {
@@ -89,6 +94,7 @@ const mergeUsingFederation: MergerFn = async function ({
     remoteSchema = wrapSchema({
       schema: remoteSchema,
       transforms,
+      createProxyingResolver: meshDefaultCreateProxyingResolver,
     });
   }
   remoteSchema.extensions = remoteSchema.extensions || {};
