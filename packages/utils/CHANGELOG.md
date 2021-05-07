@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.11.2
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+
 ## 0.11.1
 
 ### Patch Changes

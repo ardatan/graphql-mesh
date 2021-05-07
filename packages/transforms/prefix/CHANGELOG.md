@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-prefix
 
+## 0.6.44
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/types@0.41.1
+  - @graphql-mesh/utils@0.11.2
+
 ## 0.6.43
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-cache",
-  "version": "0.8.44",
+  "version": "0.8.45",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -17,8 +17,8 @@
     "@types/object-hash": "2.1.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.41.0",
-    "@graphql-mesh/utils": "0.11.1",
+    "@graphql-mesh/types": "0.41.1",
+    "@graphql-mesh/utils": "0.11.2",
     "date-fns": "2.21.2",
     "@graphql-tools/resolvers-composition": "6.2.8",
     "@graphql-tools/schema": "7.1.5",

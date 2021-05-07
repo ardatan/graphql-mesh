@@ -1,11 +1,11 @@
 {
   "name": "json-schema-fhir",
   "private": true,
-  "version": "0.0.77",
+  "version": "0.0.78",
   "dependencies": {
-    "@graphql-mesh/cli": "0.29.8",
-    "@graphql-mesh/graphql": "0.17.2",
-    "@graphql-mesh/fhir": "0.10.6",
+    "@graphql-mesh/cli": "0.29.9",
+    "@graphql-mesh/graphql": "0.17.3",
+    "@graphql-mesh/fhir": "0.10.7",
     "graphql": "15.4.0"
   },
   "scripts": {
