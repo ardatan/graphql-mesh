@@ -1,5 +1,14 @@
 # @graphql-mesh/odata
 
+## 0.11.4
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/types@0.41.1
+  - @graphql-mesh/utils@0.11.2
+
 ## 0.11.3
 
 ### Patch Changes
