@@ -1,5 +1,13 @@
 # @graphql-mesh/merger-stitching
 
+## 0.9.5
+
+### Patch Changes
+
+- 3c4c51100: enhance(runtime): skip validation on schema delegation
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/utils@0.11.3
+
 ## 0.9.4
 
 ### Patch Changes

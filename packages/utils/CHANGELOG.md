@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.11.3
+
+### Patch Changes
+
+- 3c4c51100: enhance(runtime): skip validation on schema delegation
+
 ## 0.11.2
 
 ### Patch Changes
