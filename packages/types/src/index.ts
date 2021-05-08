@@ -71,7 +71,7 @@ export interface MeshPubSub {
 export interface MeshTransformOptions<Config = any> {
   apiName?: string;
   config: Config;
-  baseDir: string;
+  baseDir?: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
 }
