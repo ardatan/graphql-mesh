@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-federation
 
+## 0.5.13
+
+### Patch Changes
+
+- Updated dependencies [cfb517b3d]
+  - @graphql-mesh/types@0.42.0
+
 ## 0.5.12
 
 ### Patch Changes
