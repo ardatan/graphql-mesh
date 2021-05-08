@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.42.0
+
+### Minor Changes
+
+- cfb517b3d: feat(types): make baseDir optional
+
 ## 0.41.1
 
 ### Patch Changes
