@@ -21,7 +21,7 @@
     "@graphql-tools/utils": "7.9.1",
     "@graphql-typed-document-node/core": "3.1.0",
     "cross-fetch": "3.1.4",
-    "date-fns": "2.21.2",
+    "date-fns": "2.21.3",
     "fetchache": "0.1.1",
     "flatstr": "1.0.12",
     "graphql-jit": "0.5.0",
