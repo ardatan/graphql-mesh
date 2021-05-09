@@ -52,7 +52,7 @@
     "jest": "26.6.3",
     "lint-staged": "11.0.0",
     "patch-package": "6.4.7",
-    "prettier": "2.2.1",
+    "prettier": "2.3.0",
     "ts-jest": "26.5.6",
     "ts-node-dev": "1.1.6",
     "typedoc": "0.20.36",
