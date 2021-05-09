@@ -4024,10 +4024,10 @@
   resolved "https://registry.yarnpkg.com/@types/is-glob/-/is-glob-4.0.1.tgz#a93eec1714172c8eb3225a1cc5eb88c2477b7d00"
   integrity sha512-k3RS5HyBPu4h+5hTmIEfPB2rl5P3LnGdQEZrV2b9OWTJVtsUQ2VBcedqYKGqxvZqle5UALUXdSfVA8nf3HfyWQ==
 
-"@types/is-url@1.2.28":
-  version "1.2.28"
-  resolved "https://registry.yarnpkg.com/@types/is-url/-/is-url-1.2.28.tgz#914dabd50546d9b0142806e42c72bc7c2b7e0787"
-  integrity sha1-kU2r1QVG2bAUKAbkLHK8fCt+B4c=
+"@types/is-url@1.2.29":
+  version "1.2.29"
+  resolved "https://registry.yarnpkg.com/@types/is-url/-/is-url-1.2.29.tgz#d71a49fb4f5cfd1c0d60674ba3922c9590cef687"
+  integrity sha512-dhvdv2mpZ9j8qWJE/KpLUABbTBajtXqmvSpn+bkN2n2wpJZ/gnZcQ4ymGa9oiXjVB03AjZO07jcWyooz6tsrKQ==
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.3"
