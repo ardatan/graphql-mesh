@@ -254,9 +254,9 @@ export default class JsonSchemaHandler implements MeshHandler {
               case 'PUT':
               case 'PATCH': {
                 if (headers['content-type']?.startsWith('application/x-www-form-urlencoded')) {
-                  requestInit.body = jsonFlatStringify(input);
-                } else {
                   requestInit.body = new URLSearchParams(input);
+                } else {
+                  requestInit.body = jsonFlatStringify(input);
                 }
                 break;
               }
