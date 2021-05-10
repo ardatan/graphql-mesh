@@ -82,6 +82,9 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`,
     },
   },
+  scripts: [
+    'https://the-guild.dev/static/crisp.js'
+  ],
   presets: [
     [
       '@docusaurus/preset-classic',
