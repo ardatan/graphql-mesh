@@ -13,6 +13,8 @@ import {
   GraphQLDate,
   GraphQLTimestamp,
   GraphQLTime,
+  GraphQLUnsignedInt,
+  GraphQLUnsignedFloat,
 } from 'graphql-scalars';
 import { specifiedDirectives } from 'graphql';
 import { loadFromModuleExportExpression, jitExecutorFactory } from '@graphql-mesh/utils';
@@ -20,6 +22,7 @@ import { ExecutionParams } from '@graphql-tools/delegate';
 
 const SCALARS = {
   bigint: 'BigInt',
+  'bigint unsigned': 'BigInt',
   binary: 'String',
   bit: 'Int',
   blob: 'String',
@@ -32,13 +35,19 @@ const SCALARS = {
   datetime: 'DateTime',
 
   dec: 'Float',
+  'dec unsigned': 'UnsignedFloat',
   decimal: 'Float',
+  'decimal unsigned': 'UnsignedFloat',
   double: 'Float',
+  'double unsigned': 'UnsignedFloat',
 
   float: 'Float',
+  'float unsigned': 'UnsignedFloat',
 
   int: 'Int',
+  'int unsigned': 'UnsignedInt',
   integer: 'Int',
+  'integer unsigned': 'UnsignedInt',
 
   json: 'JSON',
 
@@ -47,17 +56,21 @@ const SCALARS = {
 
   mediumblob: 'String',
   mediumint: 'Int',
+  'mediumint unsigned': 'UnsignedInt',
   mediumtext: 'String',
 
   numeric: 'Float',
+  'numeric unsigned': 'UnsignedFloat',
 
   smallint: 'Int',
+  'smallint unsigned': 'UnsignedInt',
 
   text: 'String',
   time: 'Time',
   timestamp: 'Timestamp',
   tinyblob: 'String',
   tinyint: 'Int',
+  'tinyint unsigned': 'UnsignedInt',
   tinytext: 'String',
 
   varbinary: 'String',
@@ -179,6 +192,8 @@ export default class MySQLHandler implements MeshHandler {
     schemaComposer.add(GraphQLTime);
     schemaComposer.add(GraphQLDateTime);
     schemaComposer.add(GraphQLTimestamp);
+    schemaComposer.add(GraphQLUnsignedInt);
+    schemaComposer.add(GraphQLUnsignedFloat);
     schemaComposer.createEnumTC({
       name: 'OrderBy',
       values: {
@@ -258,6 +273,10 @@ export default class MySQLHandler implements MeshHandler {
                 }, {} as EnumTypeComposerValueConfigDefinition),
               });
               type = enumTypeName;
+            }
+            if (!type) {
+              console.warn(`${realTypeName} couldn't be mapped to a type. It will be mapped to JSON as a fallback.`);
+              type = 'JSON';
             }
             if (tableField.Null.toLowerCase() === 'no') {
               type += '!';
