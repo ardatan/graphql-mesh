@@ -15,7 +15,7 @@ function normalizeGraphQLError(error: GraphQLError) {
       ...error?.originalError,
       name: error?.originalError?.name,
       message: error?.originalError?.message,
-      stack: error?.originalError?.stack.split('\n'),
+      stack: error?.originalError?.stack?.split('\n'),
     },
     path: error.path,
     positions: error.positions,
