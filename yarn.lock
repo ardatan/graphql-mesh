@@ -4012,10 +4012,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.29.tgz#0256e22f357a2e822ac8b848b545e06153c32ede"
   integrity sha1-AlbiLzV6LoIqyLhItUXgYVPDLt4=
 
-"@types/ioredis@4.26.1":
-  version "4.26.1"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.26.1.tgz#761f1812c48a3ecfbd9d9ecd35c49849f8693e2e"
-  integrity sha512-k9f+bda6y0ZNrwUMNYI9mqIPqjPZ4Jqc+jTRTUyhFz8aD8cHQBk+uenTKCZj9RhdfrU4sSqrot5sn5LqkAHODw==
+"@types/ioredis@4.26.2":
+  version "4.26.2"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.26.2.tgz#6185392fc771f758e26aa9ed99dac25f5e9a76d0"
+  integrity sha512-Dliwq2BDTs+Wljw3ByL9nG7XxakpvepvCUI/0tHH8RLsJ2LwUoxVr+/ZnbFD4uF8Uw/k6eFSvxvbUGbV6iVldg==
   dependencies:
     "@types/node" "*"
 
