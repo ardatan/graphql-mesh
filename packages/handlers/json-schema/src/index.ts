@@ -232,7 +232,7 @@ export default class JsonSchemaHandler implements MeshHandler {
             ...operationConfig?.headers,
           };
           for (const headerName in headers) {
-            headers[headerName] = stringInterpolator.parse(headers[headerName], interpolationData);
+            headers[headerName.toLowerCase()] = stringInterpolator.parse(headers[headerName], interpolationData);
           }
           const requestInit: RequestInit = {
             method,
@@ -253,7 +253,11 @@ export default class JsonSchemaHandler implements MeshHandler {
               case 'POST':
               case 'PUT':
               case 'PATCH': {
-                requestInit.body = jsonFlatStringify(input);
+                if (headers['content-type']?.startsWith('application/x-www-form-urlencoded')) {
+                  requestInit.body = jsonFlatStringify(input);
+                } else {
+                  requestInit.body = new URLSearchParams(input);
+                }
                 break;
               }
               default:
