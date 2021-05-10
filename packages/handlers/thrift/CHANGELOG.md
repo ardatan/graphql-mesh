@@ -1,5 +1,13 @@
 # @graphql-mesh/thrift
 
+## 0.7.9
+
+### Patch Changes
+
+- 7d0e33660: fix(utils): support annotations in argTypeMap
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+
 ## 0.7.8
 
 ### Patch Changes

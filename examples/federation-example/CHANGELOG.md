@@ -1,5 +1,14 @@
 # federation-handler-example
 
+## 0.5.103
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.12
+- @graphql-mesh/graphql@0.17.7
+- @graphql-mesh/merger-federation@0.8.39
+- @graphql-mesh/transform-federation@0.5.14
+
 ## 0.5.102
 
 ### Patch Changes

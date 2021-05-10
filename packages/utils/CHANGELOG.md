@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.11.4
+
+### Patch Changes
+
+- 7d0e33660: fix(utils): support annotations in argTypeMap
+
 ## 0.11.3
 
 ### Patch Changes
