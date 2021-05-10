@@ -13,6 +13,7 @@ import {
   GraphQLDate,
   GraphQLTimestamp,
   GraphQLTime,
+  GraphQLUnsignedInt,
 } from 'graphql-scalars';
 import { specifiedDirectives } from 'graphql';
 import { loadFromModuleExportExpression, jitExecutorFactory } from '@graphql-mesh/utils';
@@ -38,6 +39,7 @@ const SCALARS = {
   float: 'Float',
 
   int: 'Int',
+  'int unsigned': 'UnsignedInt',
   integer: 'Int',
 
   json: 'JSON',
@@ -58,6 +60,7 @@ const SCALARS = {
   timestamp: 'Timestamp',
   tinyblob: 'String',
   tinyint: 'Int',
+  'tinyint unsigned': 'UnsignedInt',
   tinytext: 'String',
 
   varbinary: 'String',
@@ -179,6 +182,7 @@ export default class MySQLHandler implements MeshHandler {
     schemaComposer.add(GraphQLTime);
     schemaComposer.add(GraphQLDateTime);
     schemaComposer.add(GraphQLTimestamp);
+    schemaComposer.add(GraphQLUnsignedInt);
     schemaComposer.createEnumTC({
       name: 'OrderBy',
       values: {
