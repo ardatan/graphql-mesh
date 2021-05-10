@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.17.8
+
+### Patch Changes
+
+- 674bbadc9: fix(graphql): respect introspection cache for federation
+
 ## 0.17.7
 
 ### Patch Changes
