@@ -1,5 +1,12 @@
 # @graphql-mesh/odata
 
+## 0.11.7
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+
 ## 0.11.6
 
 ### Patch Changes
