@@ -22,7 +22,7 @@ import { ExecutionParams } from '@graphql-tools/delegate';
 
 const SCALARS = {
   bigint: 'BigInt',
-  'unsigned bigint': 'BigInt',
+  'bigint unsigned': 'BigInt',
   binary: 'String',
   bit: 'Int',
   blob: 'String',
