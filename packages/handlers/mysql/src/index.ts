@@ -259,6 +259,10 @@ export default class MySQLHandler implements MeshHandler {
               });
               type = enumTypeName;
             }
+            if (!type) {
+              console.warn(`${realTypeName} couldn't be mapped to a type. It will be mapped to JSON as a fallback.`);
+              type = 'JSON';
+            }
             if (tableField.Null.toLowerCase() === 'no') {
               type += '!';
             }
