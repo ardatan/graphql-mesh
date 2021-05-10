@@ -1,5 +1,11 @@
 # @graphql-mesh/mysql
 
+## 0.10.7
+
+### Patch Changes
+
+- c8cf17ab6: fix(mysql): fallback to JSON scalar if column type cannot be mapped
+
 ## 0.10.6
 
 ### Patch Changes
