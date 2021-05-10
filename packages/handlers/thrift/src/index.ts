@@ -19,6 +19,7 @@ import {
   GraphQLNonNull,
   GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
+  GraphQLID,
 } from 'graphql';
 import { GraphQLBigInt, GraphQLJSON, GraphQLByte, GraphQLVoid } from 'graphql-scalars';
 import { createHttpClient } from '@creditkarma/thrift-client';
@@ -486,9 +487,12 @@ export default class ThriftHandler implements MeshHandler {
                 const fnName = fn.name.value;
                 const description = processComments(fn.comments);
                 const { outputType: returnType } = getGraphQLFunctionType(fn.returnType, Number(fnIndex) + 1);
-                const args: GraphQLFieldConfigArgumentMap = {
-                  ...commonArgs,
-                };
+                const args: GraphQLFieldConfigArgumentMap = {};
+                for (const argName in commonArgs) {
+                  args[argName] = {
+                    type: inputTypeMap.get(commonArgs[argName].type) || GraphQLID,
+                  };
+                }
                 const fieldTypeMap: TypeMap = {};
                 for (const field of fn.fields) {
                   const fieldName = field.name.value;

@@ -198,9 +198,9 @@ export default class JsonSchemaHandler implements MeshHandler {
 
       if (requestTypeName) {
         args.input = {
-          type: requestTypeName as any,
+          type: requestTypeName,
           description: requestSchema?.description,
-        };
+        } as any;
       }
 
       const destination = operationConfig.type;

@@ -20,6 +20,8 @@ import {
   MeshPubSub,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
+import { GraphQLInputType } from 'graphql-compose/lib/graphql';
+import { GraphQLID } from 'graphql';
 
 interface OpenAPIIntrospectionCache {
   spec?: Oas3;
@@ -181,7 +183,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
     for (const rootField of rootFields) {
       for (const argName in args) {
-        const argConfig = args[argName];
+        const { type } = args[argName];
         rootField.args.push({
           name: argName,
           description: undefined,
@@ -189,7 +191,7 @@ export default class OpenAPIHandler implements MeshHandler {
           extensions: undefined,
           astNode: undefined,
           deprecationReason: undefined,
-          ...argConfig,
+          type: (schema.getType(type) as GraphQLInputType) || GraphQLID,
         });
       }
     }
