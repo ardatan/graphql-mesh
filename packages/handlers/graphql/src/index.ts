@@ -124,24 +124,22 @@ export default class GraphQLHandler implements MeshHandler {
     const nonExecutableSchema = buildClientSchema(this.introspectionCache.introspection);
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     const endpointFactory = getInterpolatedStringFactory(endpoint);
-    const queryType = nonExecutableSchema.getType('Query');
-    if (queryType && 'getFields' in queryType) {
-      const queryTypeFieldMap = queryType.getFields();
-      if ('_service' in queryTypeFieldMap) {
-        const _serviceField = queryTypeFieldMap._service;
-        if ('resolve' in _serviceField) {
-          _serviceField.resolve = async () => {
-            if (!this.introspectionCache.sdl) {
-              const sdlQueryResult = await introspectionExecutor({
-                document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
-              });
-              this.introspectionCache.sdl = sdlQueryResult?.data?._service?.sdl;
-            }
-            return {
-              sdl: this.introspectionCache.sdl,
-            };
+    const queryType = nonExecutableSchema.getQueryType();
+    const queryTypeFieldMap = queryType.getFields();
+    if ('_service' in queryTypeFieldMap) {
+      const _serviceField = queryTypeFieldMap._service;
+      if ('resolve' in _serviceField) {
+        _serviceField.resolve = async () => {
+          if (!this.introspectionCache.sdl) {
+            const sdlQueryResult = await introspectionExecutor({
+              document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
+            });
+            this.introspectionCache.sdl = sdlQueryResult?.data?._service?.sdl;
+          }
+          return {
+            sdl: this.introspectionCache.sdl,
           };
-        }
+        };
       }
     }
     const isSdlQuery = (info: GraphQLResolveInfo) =>
