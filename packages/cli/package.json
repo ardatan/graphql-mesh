@@ -65,7 +65,7 @@
     "@types/js-yaml": "4.0.1",
     "@types/mkdirp": "1.0.1",
     "@types/yargs": "16.0.1",
-    "@types/ws": "7.4.2"
+    "@types/ws": "7.4.4"
   },
   "publishConfig": {
     "access": "public",
