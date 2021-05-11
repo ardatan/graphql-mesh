@@ -285,11 +285,16 @@ export default class JsonSchemaHandler implements MeshHandler {
             }
           }
           const errors = responseJson.errors || responseJson._errors;
-          if (errors) {
-            throw new AggregateError(errors.map(normalizeError));
+          const returnType = schema.getType(responseTypeName);
+          if (errors?.length) {
+            if ('getFields' in returnType && !('errors' in returnType.getFields())) {
+              throw new AggregateError(errors.map(normalizeError));
+            }
           }
           if (responseJson.error) {
-            throw normalizeError(responseJson.error);
+            if ('getFields' in returnType && !('error' in returnType.getFields())) {
+              throw normalizeError(responseJson.error);
+            }
           }
           return responseJson;
         };
