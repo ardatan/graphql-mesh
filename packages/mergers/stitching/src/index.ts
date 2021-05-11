@@ -3,7 +3,7 @@ import { stitchSchemas } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { mergeSingleSchema } from './mergeSingleSchema';
 import { groupTransforms, applySchemaTransforms, meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
-import { StitchingInfo } from '@graphql-tools/stitch/types';
+import { StitchingInfo } from '@graphql-tools/delegate';
 
 const mergeUsingStitching: MergerFn = async function (options) {
   if (options.rawSources.length === 1) {
