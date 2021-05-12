@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.29.13
+
+### Patch Changes
+
+- ee86d8fa7: fix(serve): do not throw if stack is undefined
+
 ## 0.29.12
 
 ### Patch Changes

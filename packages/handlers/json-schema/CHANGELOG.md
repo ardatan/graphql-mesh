@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.15.0
+
+### Minor Changes
+
+- ee86d8fa7: feat(jsonSchema): support application/x-www-form-urlencoded
+
 ## 0.14.8
 
 ### Patch Changes
