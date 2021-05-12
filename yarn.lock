@@ -13685,12 +13685,12 @@ json-parse-even-better-errors@^2.3.0:
   resolved "https://registry.yarnpkg.com/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz#7c47805a94319928e05777405dc12e1f7a4ee02d"
   integrity sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==
 
-json-ptr@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/json-ptr/-/json-ptr-2.0.0.tgz#aadc43994cb5bf4e1443e3a298920ab86eaeaa5d"
-  integrity sha512-VGP7ucQzBLJFUC8sWR57ALW/+iui9NCE2i61SULum4TBfu9664bCdWjuRkjghbg1rj1k+8+PciKbfFJdGQlS1w==
+json-ptr@2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/json-ptr/-/json-ptr-2.1.1.tgz#66b8ecfa237289e18ab630a572a5891e66be4466"
+  integrity sha512-64/64Ten1yBVw8vVjnK6DrcBlM6uHOPqw0dLzAjcGw1qq7szKVf1azj66bkNaH20j+7X/K/pN/wuQq+VPnKB/Q==
   dependencies:
-    tslib "^2.0.3"
+    tslib "^2.2.0"
 
 json-schema-ref-parser@^6.1.0:
   version "6.1.0"
@@ -21521,7 +21521,7 @@ tslib@^1.10.0, tslib@^1.11.1, tslib@^1.14.1, tslib@^1.8.1, tslib@^1.9.0, tslib@^
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.1, tslib@^2.0.3, tslib@^2.1.0, tslib@~2.2.0:
+tslib@^2.0.1, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.2.0, tslib@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
   integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
