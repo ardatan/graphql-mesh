@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@types/object-hash": "2.1.0",
-    "@types/lodash": "4.14.168",
+    "@types/lodash": "4.14.169",
     "lodash": "4.17.21",
     "graphql-fields": "2.0.3"
   },
