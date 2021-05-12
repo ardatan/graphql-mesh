@@ -14,7 +14,8 @@
   },
   "devDependencies": {
     "@types/to-json-schema": "0.2.0",
-    "@types/url-join": "4.0.0"
+    "@types/url-join": "4.0.0",
+    "@types/qs": "6.9.6"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
@@ -26,6 +27,7 @@
     "graphql-scalars": "1.9.3",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
+    "qs": "6.10.1",
     "to-json-schema": "0.2.5",
     "object-hash": "2.1.1"
   },
