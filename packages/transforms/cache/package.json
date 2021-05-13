@@ -22,7 +22,7 @@
     "date-fns": "2.21.3",
     "@graphql-tools/resolvers-composition": "6.2.8",
     "@graphql-tools/schema": "7.1.5",
-    "@graphql-tools/utils": "7.9.1",
+    "@graphql-tools/utils": "7.10.0",
     "graphql-fields": "2.0.3",
     "object-hash": "2.1.1"
   },
