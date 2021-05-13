@@ -21,7 +21,7 @@
     "@graphql-tools/resolvers-composition": "6.2.8",
     "@graphql-tools/schema": "7.1.5",
     "@graphql-tools/wrap": "7.0.8",
-    "@graphql-tools/utils": "7.9.1"
+    "@graphql-tools/utils": "7.10.0"
   },
   "publishConfig": {
     "access": "public",
