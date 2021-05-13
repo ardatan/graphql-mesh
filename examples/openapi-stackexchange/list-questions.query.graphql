@@ -1,5 +1,5 @@
-query GetQuestions {
-  getQuestions(site: "stackoverflow") {
+query ListQuestions {
+  listQuestions(site: "stackoverflow") {
     items {
       title
       tags
