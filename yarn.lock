@@ -13694,10 +13694,10 @@ json-parse-even-better-errors@^2.3.0:
   resolved "https://registry.yarnpkg.com/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz#7c47805a94319928e05777405dc12e1f7a4ee02d"
   integrity sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==
 
-json-ptr@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/json-ptr/-/json-ptr-2.1.1.tgz#66b8ecfa237289e18ab630a572a5891e66be4466"
-  integrity sha512-64/64Ten1yBVw8vVjnK6DrcBlM6uHOPqw0dLzAjcGw1qq7szKVf1azj66bkNaH20j+7X/K/pN/wuQq+VPnKB/Q==
+json-ptr@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/json-ptr/-/json-ptr-2.1.2.tgz#174f69b2bc7777efd545cbc95447af790bd47bb5"
+  integrity sha512-MR8zOcNNUtSXjbAkZVAxSsvnY6kVtDIT/DlWBu5u6prj/vcDtbUSpLwSQmVCBSx/YzVePJWpFnTkTKe57CpoxQ==
   dependencies:
     tslib "^2.2.0"
 
