@@ -20029,10 +20029,25 @@ soap-graphql@0.1.1:
   dependencies:
     graphql-iso-date "~3.3.0"
 
-soap@*, soap@0.37.0:
+soap@*:
   version "0.37.0"
   resolved "https://registry.yarnpkg.com/soap/-/soap-0.37.0.tgz#19f58cb5978d8b6b5e5bb84fde0d939f211e6f70"
   integrity sha512-AFVq9EzLcZBoqhi06reLfAyYj6oj0GfBX+yyt7beMW/BdfH8MeL/OhgUabKvpNEqW5vo94VNIHEgN1r8GBH3dQ==
+  dependencies:
+    debug "^4.1.1"
+    get-stream "^6.0.0"
+    httpntlm "^1.5.2"
+    lodash "^4.17.19"
+    request ">=2.9.0"
+    sax ">=0.6"
+    strip-bom "^3.0.0"
+    uuid "^8.3.0"
+    xml-crypto "^2.1.0"
+
+soap@0.38.0:
+  version "0.38.0"
+  resolved "https://registry.yarnpkg.com/soap/-/soap-0.38.0.tgz#75883e7193f1be45c8e5d8bd9f4e7575e4a2da75"
+  integrity sha512-gNnR+mWlgTUo/vBwgEWEaAM+PxqI0a8aUpdkz1ETKGn6OCLg+sNfgkaPCGoheqmvN56d7HiPhvu5Mm1uTRscTw==
   dependencies:
     debug "^4.1.1"
     get-stream "^6.0.0"
