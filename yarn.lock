@@ -10819,10 +10819,10 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-form-urlencoded@6.0.3:
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-6.0.3.tgz#98f79ba29366b129751c5fe8b5b00f4d2970f18f"
-  integrity sha512-WoIMOwRlxTmzzRI3tnocMi4FEDYshbSnbAkbExh2qELEaJaPHlcQC17Ce5TCTmR5xnGkvbe9m0Bq8nI2d6K5vA==
+form-urlencoded@6.0.4:
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-6.0.4.tgz#62305ea704bb86e1c8b946d1aae5a34e02b6634f"
+  integrity sha512-39GnqmnZkThJBXiKhBCrBGPKiwFHDgi3lcGO3SfURjXoz9x8quxNRTiIWViYN+QzQXxxl/uyKm+i+0PCj7Aqbw==
 
 format-util@^1.0.3:
   version "1.0.5"
