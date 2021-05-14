@@ -20,7 +20,7 @@
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/utils": "0.11.4",
     "deep-equal": "2.0.5",
-    "form-urlencoded": "6.0.3",
+    "form-urlencoded": "6.0.4",
     "jsonpath-plus": "5.0.7",
     "json-ptr": "2.1.2",
     "graphql-scalars": "1.9.3",
