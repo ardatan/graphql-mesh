@@ -100,7 +100,7 @@ async function test() {
 }
 ```
 
-### Introspecting your Mesh
+### Introspecting your Mesh / Exporting your Schema
 
 Since GraphQL-Mesh schema is created during runtime (based on your external API sources), it's not possible to access it without serving it.
 
@@ -115,5 +115,7 @@ Or, for introspection JSON:
 ```
 yarn graphql-mesh dump-schema --output ./schema.json
 ```
+
+The `dump-schema` command uses an implicit switch based on the target file extension `.graphql` or `.json` to produce different output files. Make sure you select the correct one for your purposes. The `.graphql` extension causes the output to be in GraphQL SDL (Schema Definition Language) format.
 
 This is useful if you need to feed other tools (like [graphql-codegen](https://graphql-code-generator.com/), [graphql-eslint](https://github.com/dotansimha/graphql-eslint), [graphql-inspector](https://graphql-inspector.com/) and more) with the static GraphQL schema.
