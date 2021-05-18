@@ -1,0 +1,8 @@
+sources:
+  - name: Microsoft Graph
+    handler:
+      odata:
+        baseUrl: https://graph.microsoft.com/v1.0/
+        batch: json
+        operationHeaders:
+          Authorization: Bearer {context.accessToken}

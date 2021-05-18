@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "cross-env GRAPH_VERSION=\"v1.0\" mesh serve",
-    "start:beta": "cross-env GRAPH_VERSION=\"beta\" mesh serve"
+    "start:beta": "cross-env GRAPH_VERSION=\"beta\" mesh serve",
+    "start:programmatic": "programmatic.js"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.29.13",
