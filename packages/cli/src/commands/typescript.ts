@@ -4,6 +4,7 @@ import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 import { serverSideScalarsMap } from './scalars-map';
+import { pascalCase } from 'pascal-case';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -17,14 +18,17 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
   }
 }
 
-function buildSignatureBasedOnRootFields(codegenHelpers: CodegenHelpers, type: Maybe<GraphQLObjectType>): string[] {
+function buildSignatureBasedOnRootFields(
+  codegenHelpers: CodegenHelpers,
+  type: Maybe<GraphQLObjectType>
+): Record<string, string> {
   if (!type) {
-    return [];
+    return {};
   }
 
   const fields = type.getFields();
-
-  return Object.keys(fields).map(fieldName => {
+  const operationMap: Record<string, string> = {};
+  for (const fieldName in fields) {
     const field = fields[fieldName];
     const argsExists = field.args && field.args.length > 0;
     const argsName = argsExists ? `${type.name}${codegenHelpers.convertName(field.name)}Args` : '{}';
@@ -35,35 +39,50 @@ function buildSignatureBasedOnRootFields(codegenHelpers: CodegenHelpers, type: M
         value: type.name,
       },
     };
-    return `  ${field.name}: (args${
+    operationMap[fieldName] = `  ${field.name}: (args${
       argsExists ? '' : '?'
     }: ${argsName}, projectionOptions?: ProjectionOptions) => Promise<${codegenHelpers.getTypeToUse(
       parentTypeNode
     )}['${fieldName}']>`;
-  });
+  }
+  return operationMap;
 }
 
 function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
-  const sdkIdentifier = `${options.name}Sdk`;
-  const contextIdentifier = `${options.name}Context`;
-  const operations = [
-    ...buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType()),
-    ...buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType()),
-    ...buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getSubscriptionType()),
-  ];
+  const sdkIdentifier = pascalCase(`${options.name}Sdk`);
+  const contextIdentifier = pascalCase(`${options.name}Context`);
+  const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType());
+  const mutationOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType());
+  const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
+    codegenHelpers,
+    options.schema.getSubscriptionType()
+  );
+  const operationMap = Object.assign({}, subscriptionsOperationMap, mutationOperationMap, queryOperationMap);
 
   const sdk = {
     identifier: sdkIdentifier,
     codeAst: `export type ${sdkIdentifier} = {
-${operations.join(',\n')}
+${Object.values(operationMap).join(',\n')}
+};
+
+export type Query${sdkIdentifier} = {
+${Object.values(queryOperationMap).join(',\n')}
+};
+
+export type Mutation${sdkIdentifier} = {
+${Object.values(mutationOperationMap).join(',\n')}
+};
+
+export type Subscription${sdkIdentifier} = {
+${Object.values(subscriptionsOperationMap).join(',\n')}
 };`,
   };
 
   const context = {
     identifier: contextIdentifier,
     codeAst: `export type ${contextIdentifier} = { 
-      ${options.name}: { api: ${sdkIdentifier} }, 
+      ["${options.name}"]: { api: ${sdkIdentifier}, apiQuery: Query${sdkIdentifier}, apiMutation: Mutation${sdkIdentifier}, apiSubscription: Subscription${sdkIdentifier} }, 
     };`,
   };
 
