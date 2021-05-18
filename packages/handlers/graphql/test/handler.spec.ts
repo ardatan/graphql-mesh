@@ -1,9 +1,11 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '../src';
 import { PubSub } from 'graphql-subscriptions';
-import { readFile } from 'fs/promises';
+import { promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { buildSchema, introspectionFromSchema } from 'graphql';
+
+const { readFile } = fsPromises;
 
 describe('graphql', () => {
   it('handle SDL files correctly as endpoint', async () => {
