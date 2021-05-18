@@ -16,6 +16,9 @@ import {
   parse,
   execute,
   GraphQLResolveInfo,
+  DocumentNode,
+  Kind,
+  buildASTSchema,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
@@ -25,6 +28,7 @@ import {
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
   getCachedFetch,
+  readFileOrUrlWithCache,
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
@@ -64,12 +68,34 @@ export default class GraphQLHandler implements MeshHandler {
     const customFetch = getCachedFetch(this.cache);
 
     if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
-      const schema = await loadFromModuleExportExpression<GraphQLSchema>(endpoint, { cwd: this.baseDir });
+      // Loaders logic should be here somehow
+      const schemaOrStringOrDocumentNode = await loadFromModuleExportExpression<GraphQLSchema | string | DocumentNode>(
+        endpoint,
+        { cwd: this.baseDir }
+      );
+      let schema: GraphQLSchema;
+      if (schemaOrStringOrDocumentNode instanceof GraphQLSchema) {
+        schema = schemaOrStringOrDocumentNode;
+      } else if (typeof schemaOrStringOrDocumentNode === 'string') {
+        schema = buildSchema(schemaOrStringOrDocumentNode);
+      } else if (
+        typeof schemaOrStringOrDocumentNode === 'object' &&
+        schemaOrStringOrDocumentNode?.kind === Kind.DOCUMENT
+      ) {
+        schema = buildASTSchema(schemaOrStringOrDocumentNode);
+      } else {
+        throw new Error(
+          `Provided file '${endpoint} exports an unknown type: ${typeof schemaOrStringOrDocumentNode}': expected GraphQLSchema, SDL or DocumentNode.`
+        );
+      }
       return {
         schema,
       };
     } else if (endpoint.endsWith('.graphql')) {
-      const rawSDL = await loadFromModuleExportExpression<string>(endpoint, { cwd: this.baseDir });
+      const rawSDL = await readFileOrUrlWithCache<string>(endpoint, this.cache, {
+        cwd: this.baseDir,
+        allowUnknownExtensions: true,
+      });
       const schema = buildSchema(rawSDL);
       return {
         schema,
