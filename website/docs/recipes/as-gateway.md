@@ -14,6 +14,11 @@ You can use GraphQL Mesh as a gateway for your data sources. CLI's `serve` comma
 ```bash
 mesh serve
 ```
+You can also point to a specific directory which contains the documentation
+
+```bash
+mesh serve --dir some/path/to-the-file/
+```
 
 You can configure `serve` command like below in `.meshrc.yml`;
 
