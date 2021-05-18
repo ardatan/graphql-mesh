@@ -25,6 +25,7 @@ import {
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
   getCachedFetch,
+  readFileOrUrlWithCache,
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 
@@ -69,7 +70,7 @@ export default class GraphQLHandler implements MeshHandler {
         schema,
       };
     } else if (endpoint.endsWith('.graphql')) {
-      const rawSDL = await loadFromModuleExportExpression<string>(endpoint, { cwd: this.baseDir });
+      const rawSDL = await readFileOrUrlWithCache<string>(endpoint, this.cache, { cwd: this.baseDir });
       const schema = buildSchema(rawSDL);
       return {
         schema,
