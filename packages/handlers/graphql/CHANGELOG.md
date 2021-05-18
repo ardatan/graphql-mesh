@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.17.9
+
+### Patch Changes
+
+- a04e3f090: fix(graphql): handle SDL files correctly
+
 ## 0.17.8
 
 ### Patch Changes
