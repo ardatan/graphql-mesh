@@ -1,5 +1,12 @@
 # @graphql-mesh/cli
 
+## 0.29.14
+
+### Patch Changes
+
+- b9036c51b: fix(serve): better error handling
+- 4d96aa9b5: fix(cli): fix duplicate methods in incontext sdk typings
+
 ## 0.29.13
 
 ### Patch Changes
