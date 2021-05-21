@@ -58,6 +58,37 @@ module.exports = {
   fullName: () => 'My Static Name'
 };
 ```
+When defined manually, properties can return values either directly, or through a method. This is useful when defining static mocks, because a mock property will be called as many times as there are items, for example in an array.
+Here's an example on how this could be achieved:
+
+in `user-mocks.js` file;
+```js
+function* generateNames() {
+  while (true) {
+    yield "John Doe";
+    yield "John Snow";
+  }
+}
+
+const fullNames = generateNames();
+
+export const fullName = () => fullNames.next().value;
+```
+and in case you are using [typescript](https://www.graphql-mesh.com/docs/recipes/typescript) in `user-mocks.ts` file:
+```ts
+import { User } from './types/mesh';
+
+function* generateNames(): Generator<string> {
+  while (true) {
+    yield "John Doe";
+    yield "John Snow";
+  }
+}
+
+const fullNames = generateNames();
+
+export const fullName: () => User['fullName'] = () => fullNames.next().value;
+```
 
 ## Mocking the lists
 
