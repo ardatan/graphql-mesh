@@ -245,7 +245,7 @@ type ServerStatus {
 "
 `;
 
-exports[`Interpreting Protos should load the Outide proto 1`] = `
+exports[`Interpreting Protos should load the Outside proto 1`] = `
 "type Query {
   GetMovies(input: MovieRequestInput = {}): MoviesResult
   ioXtechGetMovies(input: IoXtechMovieRequestInput = {}): IoXtechMoviesResult
