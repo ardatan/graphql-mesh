@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.14.8
+
+### Patch Changes
+
+- 465a7aceb: fixed trivial warnings in grpc handler
+
 ## 0.14.7
 
 ### Patch Changes

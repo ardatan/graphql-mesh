@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.30.0
+
+### Minor Changes
+
+- d27f36029: Add support to require local modules as an addition to installed packages
+
 ## 0.29.14
 
 ### Patch Changes
