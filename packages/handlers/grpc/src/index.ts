@@ -79,7 +79,7 @@ export default class GrpcHandler implements MeshHandler {
         const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
         await reflectionClient.listServices().then(services =>
           Promise.all(
-            services.map((service: string | void) => {
+            services.map(async (service: string | void) => {
               if (service && !service.startsWith('grpc.')) {
                 return reflectionClient.fileContainingSymbol(service).then(serviceRoot => {
                   if (serviceRoot.nested) {
@@ -175,14 +175,14 @@ export default class GrpcHandler implements MeshHandler {
       fields: {
         status: {
           type: 'String',
-          descripton: 'status string',
+          description: 'status string',
         },
       },
     });
 
     const { rootJson, descriptorSetJson } = await this.getCachedRootJson(creds);
     const decodedDescriptorSet = await descriptor.FileDescriptorSet.fromObject(descriptorSetJson);
-    const packageDefinition = await loadFileDescriptorSetFromObject(decodedDescriptorSet);
+    const packageDefinition = loadFileDescriptorSetFromObject(decodedDescriptorSet);
 
     const grpcObject = loadPackageDefinition(packageDefinition);
 

@@ -12,7 +12,7 @@ describe.each<[string, string, string, string]>([
   ['With All Values', 'Example', 'io.xtech', 'allvalues.proto'],
   ['No Package Nested', 'Example', '', 'nopackage-nested.proto'],
   ['With Underscores', 'Example', 'io.xtech', 'underscores.proto'],
-  ['Outide', 'Example', 'io.outside', 'outside.proto'],
+  ['Outside', 'Example', 'io.outside', 'outside.proto'],
   ['Custom Message', 'BamService', 'foos', 'custom-message.proto'],
 ])('Interpreting Protos', (name, serviceName, packageName, file) => {
   test(`should load the ${name} proto`, async () => {
