@@ -5,6 +5,7 @@ import { generateTsTypes } from './commands/typescript';
 import { generateSdk } from './commands/generate-sdk';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve } from 'path';
+import { existsSync } from 'fs';
 import { logger } from './logger';
 import { introspectionFromSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -22,7 +23,14 @@ export async function graphqlMesh() {
       describe: 'Loads specific require.extensions before running the codegen and reading the configuration',
       type: 'array' as const,
       default: [],
-      coerce: (externalModules: string[]) => Promise.all(externalModules.map(mod => import(mod))),
+      coerce: (externalModules: string[]) =>
+        Promise.all(
+          externalModules.map(module => {
+            const localModulePath = resolve(process.cwd(), module);
+            const islocalModule = existsSync(localModulePath);
+            return import(islocalModule ? localModulePath : module);
+          })
+        ),
     })
     .option('dir', {
       describe: 'Modified the base directory to use for looking for meshrc config file',
