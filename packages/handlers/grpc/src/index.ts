@@ -182,7 +182,7 @@ export default class GrpcHandler implements MeshHandler {
 
     const { rootJson, descriptorSetJson } = await this.getCachedRootJson(creds);
     const decodedDescriptorSet = await descriptor.FileDescriptorSet.fromObject(descriptorSetJson);
-    const packageDefinition = await loadFileDescriptorSetFromObject(decodedDescriptorSet);
+    const packageDefinition = loadFileDescriptorSetFromObject(decodedDescriptorSet);
 
     const grpcObject = loadPackageDefinition(packageDefinition);
 
