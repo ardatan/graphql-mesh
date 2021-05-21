@@ -64,7 +64,7 @@
     "@types/graphql-upload": "8.0.4",
     "@types/js-yaml": "4.0.1",
     "@types/mkdirp": "1.0.1",
-    "@types/yargs": "16.0.3",
+    "@types/yargs": "17.0.0",
     "@types/ws": "7.4.4"
   },
   "publishConfig": {
