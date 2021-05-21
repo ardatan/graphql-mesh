@@ -9,6 +9,7 @@ describe.each<[string, string, string, string]>([
   ['Movie', 'Example', 'io.xtech', 'movie.proto'],
   ['Empty', 'Example', 'io.xtech', 'empty.proto'],
   ['Nested', 'Example', 'io.xtech', 'nested.proto'],
+  ['Import Nested', 'Example', 'io.xtech', 'import-nested.proto'],
   ['With All Values', 'Example', 'io.xtech', 'allvalues.proto'],
   ['No Package Nested', 'Example', '', 'nopackage-nested.proto'],
   ['With Underscores', 'Example', 'io.xtech', 'underscores.proto'],
