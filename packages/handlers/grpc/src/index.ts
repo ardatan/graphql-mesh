@@ -175,7 +175,7 @@ export default class GrpcHandler implements MeshHandler {
       fields: {
         status: {
           type: 'String',
-          descripton: 'status string',
+          description: 'status string',
         },
       },
     });
