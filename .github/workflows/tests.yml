@@ -59,12 +59,11 @@ jobs:
         run: yarn transpile-ts --noEmit
 
   test:
-    name: Testing on ${{matrix.os}} and Node ${{matrix.node_version}}
+    name: Testing on Node ${{matrix.node_version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
         node_version: [12, 16]
     steps:
       - name: Checkout Master
