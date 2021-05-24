@@ -1,4 +1,4 @@
-import { getSdk } from './src/generated/sdk';
+import { getSdk } from './src/generated/sdk.js';
 import { findAndParseConfig } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
 

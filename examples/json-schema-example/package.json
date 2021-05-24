@@ -10,10 +10,14 @@
     "postbuild": "yarn copy-files",
     "copy-files": "cp \".meshrc.yml\" dist",
     "generate": "graphql-mesh typescript --output ./src/generated/mesh.ts && graphql-mesh generate-sdk --output ./src/generated/sdk.ts --depth 99",
-    "dev": "ts-node ./index.ts",
+    "dev": "node --loader ts-node/esm ./index.ts",
     "start": "node ./dist"
   },
-  "main": "./dist/index.js",
+  "type": "module",
+  "expoerts": "./dist/index.js",
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
   "dependencies": {
     "@graphql-mesh/cli": "0.20.1",
     "@graphql-mesh/config": "^0.16.5",
