@@ -171,23 +171,23 @@
     apollo-graphql "^0.6.0"
     lodash.xorby "^4.7.0"
 
-"@apollo/federation@0.25.0", "@apollo/federation@^0.25.0":
-  version "0.25.0"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.25.0.tgz#9318ef58d04468ce7cbc7202fd173a580f9647ed"
-  integrity sha512-HspsFSatOhBwDSbYq7WyrtalhX98ShOrzT1Knwj/VHLGfFbLsbREpx191S8D2Wr6ew8LhqCcUkfNrrTBB1l3XA==
+"@apollo/federation@0.25.1", "@apollo/federation@^0.25.1":
+  version "0.25.1"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.25.1.tgz#3605fa8cf8f7b699c482885820ae5baa04f610c4"
+  integrity sha512-f/wQjQ2M7Mbsw/g/VTFu+bgICZD03DZaQ4rNjKbWL0HmjYb+CdSlvCP8N6TFLCdlKHwD6qIQpRsROP6qTpeicg==
   dependencies:
-    apollo-graphql "^0.9.2"
+    apollo-graphql "^0.9.3"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.28.1":
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.28.1.tgz#ec50228f7268ad4f090d0b95d3b3ce58843928ef"
-  integrity sha512-RbzrY7UuJIO3Fy690YhWqO5GTysJBoXU9THXZgVpE4z7Jvb5/O0H9e2JljzdecTOUUQJRI0Nt7ARUm6FbDhU0Q==
+"@apollo/gateway@0.28.2":
+  version "0.28.2"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.28.2.tgz#af05fd745d08dae19be208224f73d0b76bc498bb"
+  integrity sha512-aKeFXB1i9CNUKzhsL7ZYcD2HcWZC/UPgST2RsKxgNII+8KEwZMh2oSePDdKRfohwPYXMQUYzN9JiOH6kvyUSzA==
   dependencies:
-    "@apollo/federation" "^0.25.0"
+    "@apollo/federation" "^0.25.1"
     "@apollo/query-planner" "^0.2.0"
     "@types/node-fetch" "2.5.10"
-    apollo-graphql "^0.9.2"
+    apollo-graphql "^0.9.3"
     apollo-reporting-protobuf "^0.7.0"
     apollo-server-caching "^0.7.0"
     apollo-server-core "^2.23.0"
@@ -5808,10 +5808,19 @@ apollo-graphql@^0.6.0:
     apollo-env "^0.6.6"
     lodash.sortby "^4.7.0"
 
-apollo-graphql@^0.9.0, apollo-graphql@^0.9.2:
+apollo-graphql@^0.9.0:
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/apollo-graphql/-/apollo-graphql-0.9.2.tgz#750ca9a97b59c868426defc95d9d9e1733ae4bdf"
   integrity sha512-+c/vqC2LPq3e5kO7MfBxDDiljzLog/THZr9Pd46HVaKAhHUxFL0rJEbT17VhjdOoZGWFWLYG7x9hiN6EQD1xZQ==
+  dependencies:
+    core-js-pure "^3.10.2"
+    lodash.sortby "^4.7.0"
+    sha.js "^2.4.11"
+
+apollo-graphql@^0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/apollo-graphql/-/apollo-graphql-0.9.3.tgz#1ca6f625322ae10a66f57a39642849a07a7a5dc9"
+  integrity sha512-rcAl2E841Iko4kSzj4Pt3PRBitmyq1MvoEmpl04TQSpGnoVgl1E/ZXuLBYxMTSnEAm7umn2IsoY+c6Ll9U/10A==
   dependencies:
     core-js-pure "^3.10.2"
     lodash.sortby "^4.7.0"
