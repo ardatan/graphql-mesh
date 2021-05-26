@@ -24,7 +24,7 @@ export default class MockingTransform implements MeshTransform {
       const mocks: IMocks = {};
       const resolvers: any = {};
       if (this.config.initializeStore) {
-        const initializeStore = loadFromModuleExportExpressionSync(this.config.initializeStore);
+        const initializeStore = loadFromModuleExportExpressionSync(this.config.initializeStore, { cwd: this.baseDir });
         initializeStore(store);
       }
       if (this.config.mocks) {
