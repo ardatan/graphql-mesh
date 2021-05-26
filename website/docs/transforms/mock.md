@@ -26,18 +26,6 @@ transforms:
 
 The example above will replace the resolver of `User.firstName` with a mock that uses `faker.js` to generate a random name.
 
-## Custom mock functions for types
-
-You can mock types with custom mock functions like below;
-
-```yml
-transforms:
-  - mock:
-      mocks:
-        - apply: DateTime
-          custom: graphql-scalars#DateTimeMock 
-          # This will import `DateTimeMock` from `graphql-scalars` for example. Local paths are also supported
-```
 
 ## Custom mock functions for fields
 
@@ -49,6 +37,19 @@ transforms:
       mocks: 
         - apply: User.fullName
           custom: ./user-mocks#fullName
+```
+
+## Custom mock functions for types
+
+You can mock types with custom mock functions like below;
+
+```yml
+transforms:
+  - mock:
+      mocks:
+        - apply: DateTime
+          custom: graphql-scalars#DateTimeMock 
+          # This will import `DateTimeMock` from `graphql-scalars` for example. Local paths are also supported
 ```
 
 in `user-mocks.js` file;
@@ -143,6 +144,69 @@ Now `{ users { id fullName } }` query will return 3 of `User` item;
 
 GraphQL Mesh supports GraphQL Tools's Stateful Mocking feature. So you can have stateful mocking by using the store provided in the context `context.mockStore`;
 
+### Initialize store
+When having a schema that returns a list, in this case a list of users:
+```graphql
+type User {
+  id: ID
+  name: String
+}
+type Query {
+  users: User
+}
+```
+Initially populating the list of users can be done by utilizing the `initializeStore` property. The store initialization will happen before the store is attached to the schema.
+
+In this case there is no need to provide special array mocking definition, like `length`. It will automatically be taken based on the mock data.
+
+**Note:**
+If you are using the `mesh serve --dir=some-path` to set your root, at the moment the `initializeStore` will not be affected by it, so the absolute path will be needed.
+
+```yml
+transforms:
+  - mock:
+      initializeStore: absolute-path-to-file/myMock#initializeStore
+```
+
+In the `./myMock.js`:
+```ts
+const users = [{id: 'uuid', name: 'John Snow'}]
+
+export default {
+  initializeStore: (store) => {
+    // Set individual users data in the store so that they can be queried as individuals later on
+    users.forEach((user) => {
+      store.set('User', user.id, user);
+    });
+
+    // Populate the `users` query on the root with data
+    store.set('Query', 'ROOT', 'users', users);
+  },
+};
+```
+
+### Get from the store
+You can implement the mock query field `*ById` declaratively like below:
+
+```graphql
+type Query {
+  user(id:ID): User
+}
+```
+
+```yml
+transforms:
+  - mock:
+      initializeStore: absolute-path-to-file/myMock#initializeStore
+      mocks: 
+        - apply: Query.user
+          store:
+            type: User
+            key: "{args.id}" 
+```
+
+### Mutate data in the store
+
 ```graphql
 type User {
   id: ID
@@ -153,6 +217,7 @@ type Query {
 }
 type Mutation {
   changeMyName(newName: String): User
+  updateUser(id: ID, name: String): User
 }
 ```
 
@@ -162,69 +227,49 @@ transforms:
       mocks: 
         - apply: Mutation.changeMyName
           custom: ./myMocks#changeMyName
-```
-
-In the code part;
-
-```js
-module.exports = {
-  changeMyName: (_, { newName }, { mockStore }) => {
-    mockStore.set('Query', 'ROOT', 'me', { name: newName });
-    return mockStore.get('Query', 'ROOT', 'me');
-  } 
-}
-```
-
-You can also implement `*ById` field declaratively like below;
-
-```graphql
-type Query {
-  user(id:ID) : User
-}
-type Mutation {
-  updateUser(id: ID, name: String): User
-}
-```
-
-```yml
-transforms:
-  - mock:
-      mocks: 
-        - apply: Query.user
-          store:
-            type: User
-            key: "{args.id}" 
+          
         - apply: Mutation.addUser
           updateStore:
             type: User
             key: "{random}"
             fieldName: name
             value: "{args.name}"
-          store: # return created user
+            
+          # return created user
+          store:
             type: User
             key: "{random}"
+            
         - apply: Mutation.updateUser
           custom: ./mocks#updateUser
-        # or you can do the following
+          
+          # or you can do the following
           updateStore:
             type: User
             key: "{args.id}"
             fieldName: name
             value: "{args.name}"
-          store: # return updated user
+          # return updated user
+          store: 
             type: User
             key: "{args.id}"
-
 ```
 
-And in `mocks.js`;
-
+In the code:
 ```js
-module.exports.updateUser = (_, { id, name }, { mockStore }) => {
-  mockStore.set('User', id, { name });
-  return mockStore.get('User', id);
+module.exports = {
+  changeMyName: (_, { newName }, { mockStore }) => {
+    mockStore.set('Query', 'ROOT', 'me', { name: newName });
+    return mockStore.get('Query', 'ROOT', 'me');
+  },
+  updateUser: (_, { id, name }, { mockStore }) => {
+    mockStore.set('User', id, { name });
+    return mockStore.get('User', id);
+  }
 }
 ```
+
+
 
 
 > Learn more about GraphQL Tools Mocking; https://www.graphql-tools.com/docs/mocking
