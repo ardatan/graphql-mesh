@@ -28,8 +28,7 @@
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
     "qs": "6.10.1",
-    "to-json-schema": "0.2.5",
-    "object-hash": "2.2.0"
+    "to-json-schema": "0.2.5"
   },
   "publishConfig": {
     "access": "public",

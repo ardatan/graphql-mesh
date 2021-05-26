@@ -13,7 +13,7 @@ import {
 } from 'graphql';
 import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
-import objectHash from 'object-hash';
+import { hashObject } from '@graphql-mesh/utils';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 import { PubSub } from 'graphql-subscriptions';
@@ -365,7 +365,7 @@ describe('cache', () => {
     });
 
     it('Should work correctly with argsHash', async () => {
-      const expectedHash = `query-user-${objectHash({ id: '1' })}`;
+      const expectedHash = `query-user-${hashObject({ id: '1' })}`;
 
       await checkCache(
         [
@@ -379,7 +379,7 @@ describe('cache', () => {
     });
 
     it('Should work correctly with hash helper', async () => {
-      const expectedHash = objectHash('1');
+      const expectedHash = hashObject('1');
 
       await checkCache(
         [

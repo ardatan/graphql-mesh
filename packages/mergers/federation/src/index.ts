@@ -3,8 +3,7 @@ import { GraphQLSchema, print, graphql, extendSchema } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway, ServiceEndpointDefinition } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
-import objectHash from 'object-hash';
+import { meshDefaultCreateProxyingResolver, hashObject } from '@graphql-mesh/utils';
 
 const mergeUsingFederation: MergerFn = async function ({
   rawSources,
@@ -50,7 +49,7 @@ const mergeUsingFederation: MergerFn = async function ({
     },
   });
   const { schema, executor: gatewayExecutor } = await gateway.load();
-  const schemaHash: any = objectHash({ schema }, { ignoreUnknown: true });
+  const schemaHash: any = hashObject({ schema });
   let remoteSchema: GraphQLSchema = schema;
   remoteSchema = wrapSchema({
     schema: remoteSchema,

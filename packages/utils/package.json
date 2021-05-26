@@ -6,7 +6,8 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/is-url": "1.2.29"
+    "@types/is-url": "1.2.29",
+    "@types/object-hash": "2.1.0"
   },
   "sideEffects": false,
   "main": "dist/index.cjs.js",

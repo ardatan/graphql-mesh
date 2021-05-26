@@ -1,6 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import objectHash from 'object-hash';
-import { stringInterpolator } from '@graphql-mesh/utils';
+import { stringInterpolator, hashObject } from '@graphql-mesh/utils';
 import graphqlFields from 'graphql-fields';
 
 export function computeCacheKey(options: {
@@ -8,9 +7,9 @@ export function computeCacheKey(options: {
   args: Record<string, any>;
   info: GraphQLResolveInfo;
 }): string {
-  const argsHash = options.args ? objectHash(options.args, { ignoreUnknown: true }) : '';
+  const argsHash = options.args ? hashObject(options.args) : '';
   const fieldsObj = graphqlFields(options.info, {}, { processArguments: true });
-  const fieldNamesHash = objectHash(fieldsObj, { ignoreUnknown: true });
+  const fieldNamesHash = hashObject(fieldsObj);
 
   if (!options.keyStr) {
     return `${options.info.parentType.name}-${options.info.fieldName}-${argsHash}-${fieldNamesHash}`;
