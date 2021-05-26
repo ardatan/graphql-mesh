@@ -91,7 +91,7 @@
   },
   "resolutions": {
     "babel-jest": "27.0.1",
-    "jest-runner": "27.0.0-next.9",
+    "jest-runner": "27.0.1",
     "graphql": "15.5.0",
     "@changesets/apply-release-plan": "5.0.0"
   }
