@@ -1518,10 +1518,24 @@ Object {
 exports[`gRPC Example should get movies correctly: get-movies-grpc-example-result 1`] = `
 Object {
   "data": Object {
-    "getMovies": null,
+    "getMovies": Object {
+      "result": Array [
+        Object {
+          "cast": Array [
+            "Leonardo DiCaprio",
+            "Jonah Hill",
+            "Margot Robbie",
+          ],
+          "genre": 2,
+          "name": "The Wolf of Wall Street",
+          "rating": 0.7799999713897705,
+          "time": Object {
+            "seconds": 1608422400000n,
+          },
+          "year": 2013n,
+        },
+      ],
+    },
   },
-  "errors": Array [
-    [GraphQLError: Incorrect arguments passed],
-  ],
 }
 `;

@@ -5416,6 +5416,17 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
+            "name": "population",
+            "type": Object {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
             "name": "region",
             "type": Object {
               "kind": "SCALAR",
