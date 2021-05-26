@@ -159,13 +159,11 @@ Initially populating the list of users can be done by utilizing the `initializeS
 
 In this case there is no need to provide special array mocking definition, like `length`. It will automatically be taken based on the mock data.
 
-**Note:**
-If you are using the `mesh serve --dir=some-path` to set your root, at the moment the `initializeStore` will not be affected by it, so the absolute path will be needed.
 
 ```yml
 transforms:
   - mock:
-      initializeStore: absolute-path-to-file/myMock#initializeStore
+      initializeStore: ./myMock#initializeStore
 ```
 
 In the `./myMock.js`:
