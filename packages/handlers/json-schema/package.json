@@ -29,7 +29,7 @@
     "url-join": "4.0.1",
     "qs": "6.10.1",
     "to-json-schema": "0.2.5",
-    "object-hash": "2.1.1"
+    "object-hash": "2.2.0"
   },
   "publishConfig": {
     "access": "public",
