@@ -1,5 +1,16 @@
 # @graphql-mesh/json-schema
 
+## 0.16.0
+
+### Minor Changes
+
+- bdb58dfec: chore(deps): bump object-hash
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
 ## 0.15.0
 
 ### Minor Changes

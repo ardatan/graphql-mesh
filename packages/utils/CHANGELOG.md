@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.12.0
+
+### Minor Changes
+
+- bdb58dfec: chore(deps): bump object-hash
+
 ## 0.11.4
 
 ### Patch Changes

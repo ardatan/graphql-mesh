@@ -1,5 +1,16 @@
 # @graphql-mesh/merger-federation
 
+## 0.9.0
+
+### Minor Changes
+
+- bdb58dfec: chore(deps): bump object-hash
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
 ## 0.8.39
 
 ### Patch Changes

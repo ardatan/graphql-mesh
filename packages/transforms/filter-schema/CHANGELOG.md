@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.10.17
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
 ## 0.10.16
 
 ### Patch Changes
