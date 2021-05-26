@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-mock
 
+## 0.9.6
+
+### Patch Changes
+
+- bcfe7a676: fix(mock): respect cwd while importing initializeStore script
+
 ## 0.9.5
 
 ### Patch Changes
