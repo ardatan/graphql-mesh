@@ -8,7 +8,7 @@ import {
   KeyValueCache,
 } from '@graphql-mesh/types';
 import { subscribe } from 'graphql';
-import { withPostGraphileContext, Plugin } from 'postgraphile';
+import { withPostGraphileContext, Plugin, WithPostGraphileContextOptions } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
 import { join } from 'path';
@@ -104,8 +104,13 @@ export default class PostGraphileHandler implements MeshHandler {
     }
 
     const jitExecutor = jitExecutorFactory(schema, this.name);
+
+    const withPostGraphileContextParams: Partial<WithPostGraphileContextOptions> = {
+      pgPool,
+    };
+
     const executor: any = ({ document, variables, context: meshContext, info }: ExecutionParams) =>
-      withPostGraphileContext({ pgPool }, async postgraphileContext =>
+      withPostGraphileContext(withPostGraphileContextParams as any, async postgraphileContext =>
         jitExecutor({
           document,
           variables,
@@ -117,23 +122,25 @@ export default class PostGraphileHandler implements MeshHandler {
         })
       );
 
+    const subscriber: any = ({ document, variables, context: meshContext }: ExecutionParams) =>
+      withPostGraphileContext(
+        withPostGraphileContextParams as any,
+        // Execute your GraphQL query in this function with the provided
+        // `context` object, which should NOT be used outside of this
+        // function.
+        postgraphileContext =>
+          subscribe({
+            schema, // The schema from `createPostGraphileSchema`
+            document,
+            contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
+            variableValues: variables,
+          }) as any
+      ) as any;
+
     return {
       schema,
       executor,
-      subscriber: ({ document, variables, context: meshContext }) =>
-        withPostGraphileContext(
-          { pgPool },
-          // Execute your GraphQL query in this function with the provided
-          // `context` object, which should NOT be used outside of this
-          // function.
-          postgraphileContext =>
-            subscribe({
-              schema, // The schema from `createPostGraphileSchema`
-              document,
-              contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
-              variableValues: variables,
-            }) as any
-        ) as any,
+      subscriber,
     };
   }
 }
