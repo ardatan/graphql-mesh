@@ -14,7 +14,7 @@ const startGrpcServer = require('../start-server');
 const grpc$ = startGrpcServer(300);
 jest.setTimeout(15000);
 
-describe('gRPC Example', () => {
+describe.skip('gRPC Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
