@@ -38,12 +38,19 @@ export interface Config {
    */
   liveQueryInvalidations?: LiveQueryInvalidation[];
   /**
-   * Path to the file containing the introspection cache
+   * Provide a query or queries for GraphQL Playground, validation and SDK Generation
+   * The value can be the file path, glob expression for the file paths or the SDL.
+   * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
+   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
    */
-  introspectionCache?: string;
+  documents?: string[];
+  /**
+   * Logger instance that matches `Console` interface of NodeJS
+   */
+  logger?: any;
 }
 /**
- * Configuration for `mesh serve` command.
+ * Configuration for `mesh start` or `mesh dev` command.
  * Those commands won't be available in programmatic usage.
  */
 export interface ServeConfig {
@@ -59,13 +66,6 @@ export interface ServeConfig {
    * The binding hostname (default: `localhost`)
    */
   hostname?: string;
-  /**
-   * Provide an example query or queries for GraphQL Playground
-   * The value can be the file path, glob expression for the file paths or the SDL.
-   * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
-   */
-  exampleQuery?: string;
   cors?: CorsConfig;
   /**
    * Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)
@@ -166,20 +166,14 @@ export interface Source {
    * List of transforms to apply to the current API source, before unifying it with the rest of the sources
    */
   transforms?: Transform[];
-  /**
-   * Type Merging Configuration
-   * https://www.graphql-tools.com/docs/stitch-type-merging
-   */
-  typeMerging?: MergedTypeConfig[];
 }
 /**
  * Point to the handler you wish to use, it can either be a predefined handler, or a custom
  */
 export interface Handler {
-  fhir?: FhirHandler;
   graphql?: GraphQLHandler;
   grpc?: GrpcHandler;
-  jsonSchema?: JsonSchemaHandler;
+  JsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
@@ -190,9 +184,6 @@ export interface Handler {
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
   [k: string]: any;
-}
-export interface FhirHandler {
-  endpoint?: string;
 }
 /**
  * Handler for remote/local/third-party GraphQL schema
@@ -329,11 +320,10 @@ export interface JsonSchemaHandler {
   };
   operations: JsonSchemaOperation[];
   disableTimestampScalar?: boolean;
-  baseSchema?: any;
   /**
    * Field name of your custom error object (default: 'message')
    */
-  errorMessageField?: string;
+  errorMessage?: string;
 }
 export interface JsonSchemaOperation {
   field: string;
@@ -351,8 +341,8 @@ export interface JsonSchemaOperation {
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;
-  responseSample?: any;
   responseSchema?: any;
+  responseSample?: any;
   responseTypeName?: string;
   argTypeMap?: {
     [k: string]: any;
@@ -904,6 +894,11 @@ export interface Transform {
    */
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
+  /**
+   * Type Merging Configuration
+   * https://www.graphql-tools.com/docs/stitch-type-merging
+   */
+  typeMerging?: MergedTypeConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -997,20 +992,17 @@ export interface FederationField {
 export interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
-  required?: string;
+  requires?: string;
 }
 export interface ResolveReferenceObject {
-  targetSource: string;
-  targetMethod: string;
-  args: {
+  sourceName: string;
+  sourceTypeName: string;
+  sourceFieldName: string;
+  sourceSelectionSet?: string;
+  sourceArgs?: {
     [k: string]: any;
   };
   returnData?: string;
-  resultSelectedFields?: {
-    [k: string]: any;
-  };
-  resultSelectionSet?: string;
-  resultDepth?: number;
 }
 export interface FilterSchemaTransform {
   /**
@@ -1269,24 +1261,21 @@ export interface MergedFieldConfig {
   canonical?: boolean;
 }
 export interface AdditionalStitchingResolverObject {
-  type: string;
-  field: string;
+  sourceName: string;
+  sourceTypeName: string;
+  sourceFieldName: string;
+  sourceSelectionSet?: string;
   requiredSelectionSet?: string;
-  targetSource: string;
-  targetMethod: string;
-  args?: {
+  sourceArgs?: {
     [k: string]: any;
   };
+  targetTypeName: string;
+  targetFieldName: string;
   returnData?: string;
-  resultSelectedFields?: {
-    [k: string]: any;
-  };
-  resultSelectionSet?: string;
-  resultDepth?: number;
 }
 export interface AdditionalSubscriptionObject {
-  type: string;
-  field: string;
+  targetTypeName: string;
+  targetFieldName: string;
   pubsubTopic: string;
   returnData?: string;
   filterBy?: string;

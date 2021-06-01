@@ -1,27 +1,22 @@
 {
-    "$ref": "#/definitions/Company",
-    "definitions": {
-        "Company": {
-            "type": "object",
-            "title": "Company",
-            "description": "Fake Company",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/CompanyType"
-                }
-            }
+  "definitions": {
+    "Company": {
+      "type": "object",
+      "title": "Company",
+      "description": "Fake Company",
+      "properties": {
+        "name": {
+          "type": "string"
         },
-        "CompanyType": {
-            "type": "string",
-            "title": "CompanyType",
-            "enum": [
-                "Public Limited",
-                "Private Limited",
-                "One Person"
-            ]
+        "type": {
+          "$ref": "#/definitions/CompanyType"
         }
+      }
+    },
+    "CompanyType": {
+      "type": "string",
+      "title": "CompanyType",
+      "enum": ["Public Limited", "Private Limited", "One Person"]
     }
+  }
 }

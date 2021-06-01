@@ -6,5 +6,5 @@ sources:
         batch: multipart
         expandNavProps: true
 
-serve:
-  exampleQuery: example-query.graphql
+documents:
+  - example-query.graphql

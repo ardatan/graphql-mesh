@@ -15,9 +15,10 @@ sources:
                 keyFields:
                   - id
                 resolveReference:
-                  targetSource: accounts
-                  targetMethod: user
-                  args:
+                  sourceName: accounts
+                  sourceTypeName: Query
+                  sourceFieldName: user
+                  sourceArgs:
                     id: root.id
   - name: reviews
     handler:
@@ -32,5 +33,5 @@ sources:
       graphql:
         endpoint: http://localhost:9874/graphql
 
-serve:
-  exampleQuery: example-query.graphql
+documents:
+  - example-query.graphql

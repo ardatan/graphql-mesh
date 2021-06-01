@@ -1,9 +1,9 @@
 import { MergerFn, MeshTransform } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { groupTransforms, applySchemaTransforms, meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
-import { mergeSchemas } from '@graphql-tools/merge';
+import { mergeSchemasAsync } from '@graphql-tools/merge';
 
-const mergeBare: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) => {
+const mergeBare: MergerFn = async ({ rawSources, typeDefs, resolvers, transforms }) => {
   const sourceMap = new Map();
   const schemas = rawSources.map(source => {
     let schema = source.schema;
@@ -20,7 +20,7 @@ const mergeBare: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) =>
     return schema;
   });
 
-  let schema = mergeSchemas({
+  let schema = await mergeSchemasAsync({
     schemas,
     typeDefs,
     resolvers,

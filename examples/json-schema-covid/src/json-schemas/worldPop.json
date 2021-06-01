@@ -1,31 +1,31 @@
 {
-    "type": "object",
-    "title": "Api Population",
-    "description": "Desc Api Population",
-    "properties": {
-        "records": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "title": "Result",
-                "description": "Result of API",
-                "properties": {
-                    "fields": {
-                        "type": "object",
-                        "properties": {
-                            "country_name": {
-                                "type": "string"
-                            },
-                            "value": {
-                                "type": "number"
-                            },
-                            "year": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
+  "type": "object",
+  "title": "ApiPopulation",
+  "description": "Desc Api Population",
+  "properties": {
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "title": "Result",
+        "description": "Result of API",
+        "properties": {
+          "fields": {
+            "type": "object",
+            "properties": {
+              "country_name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "year": {
+                "type": "string"
+              }
             }
+          }
         }
+      }
     }
+  }
 }

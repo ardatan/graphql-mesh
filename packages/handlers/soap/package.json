@@ -3,8 +3,7 @@
   "version": "0.7.10",
   "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
+  "module": "dist/index.mjs","typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
   },
@@ -27,6 +26,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/store": "0.0.0",
     "@graphql-mesh/utils": "0.12.0",
     "soap-graphql": "0.1.1",
     "soap": "0.39.0"

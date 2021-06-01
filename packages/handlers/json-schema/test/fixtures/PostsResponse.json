@@ -1,0 +1,13 @@
+{
+  "$id": "PostsResponse.json",
+  "title": "PostsResponse",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "Post.json#/definitions/Post"
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '
 import { existsSync } from 'fs';
 import { GraphQLEnumTypeConfig } from 'graphql';
 import { InputTypeComposer, ObjectTypeComposer, SchemaComposer } from 'graphql-compose';
-import { get } from 'lodash';
+import _ from 'lodash';
 import { pascalCase } from 'pascal-case';
 import { isAbsolute, join } from 'path';
 import { IField, Root } from 'protobufjs';
@@ -57,7 +57,7 @@ export function addMetaDataToCall(
       let metaValue: unknown = value;
       if (Array.isArray(value)) {
         // Extract data from context
-        metaValue = get(context, value);
+        metaValue = _.get(context, value);
       }
       // Ensure that the metadata is compatible with what node-grpc expects
       if (typeof metaValue !== 'string' && !(metaValue instanceof Buffer)) {

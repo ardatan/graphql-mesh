@@ -2,10 +2,9 @@ const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { basename, join } = require('path');
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
-const { loadDocuments } = require('@graphql-tools/load');
-const { GraphQLFileLoader } = require('@graphql-tools/graphql-file-loader');
+const { lexicographicSortSchema, printSchema } = require('graphql');
 const { mkdirSync, writeFileSync } = require('fs');
+const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 
 const problematicModulePath = join(__dirname, '../../../node_modules/core-js/features/array');
 const emptyModuleContent = 'module.exports = {};';
@@ -31,22 +30,17 @@ describe('Federation Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      introspectionFromSchema(lexicographicSortSchema(schema), {
+      printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
     ).toMatchSnapshot('federation-example-schema');
   });
   it('should give correct response for example queries', async () => {
     const [{
-      config: {
-        serve: { exampleQuery },
-      },
+      documents,
     }] = await configAndServices$;
-    const sources = await loadDocuments(join(__dirname, '..', exampleQuery), {
-      loaders: [new GraphQLFileLoader()],
-    });
     const { execute } = await mesh$;
-    for (const source of sources) {
+    for (const source of documents) {
       const result = await execute(source.document);
       expect(result).toMatchSnapshot(basename(source.location) + '-federation-example-result');
     }

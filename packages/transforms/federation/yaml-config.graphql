@@ -21,13 +21,12 @@ type FederationObjectConfig {
 union ResolveReference = String | ResolveReferenceObject
 
 type ResolveReferenceObject {
-  targetSource: String!
-  targetMethod: String!
-  args: JSON!
+  sourceName: String!
+  sourceTypeName: String!
+  sourceFieldName: String!
+  sourceSelectionSet: String
+  sourceArgs: JSON
   returnData: String
-  resultSelectedFields: JSON
-  resultSelectionSet: String
-  resultDepth: Int
 }
 
 type FederationField {
@@ -38,5 +37,5 @@ type FederationField {
 type FederationFieldConfig {
   external: Boolean
   provides: String
-  required: String
+  requires: String
 }

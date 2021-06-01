@@ -1,0 +1,10 @@
+query GetSomeEmployees {
+  employees(limit: 5, orderBy: { emp_no: asc }) {
+    emp_no
+    birth_date
+    first_name
+    last_name
+    gender
+    hire_date
+  }
+}

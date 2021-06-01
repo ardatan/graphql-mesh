@@ -1,8 +1,8 @@
 import { MakeDirectoryOptions, promises as fsPromises, readFileSync } from 'fs';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import { jsonFlatStringify } from './flat-string';
 
-const { stat, writeFile: fsWriteFile, readFile, mkdir: fsMkdir } = fsPromises || {};
+const { stat, writeFile: fsWriteFile, readFile, mkdir: fsMkdir, readdir, unlink, rmdir } = fsPromises || {};
 
 export async function pathExists(path: string) {
   if (!path) {
@@ -54,5 +54,23 @@ export async function mkdir(path: string, options: MakeDirectoryOptions = { recu
   const ifExists = await pathExists(path);
   if (!ifExists) {
     await fsMkdir(path, options);
+  }
+}
+
+export async function rmdirs(dir: string) {
+  if (await pathExists(dir)) {
+    const entries = await readdir(dir, { withFileTypes: true });
+    const results = await Promise.all(
+      entries.map(entry => {
+        const fullPath = join(dir, entry.name);
+        const task = entry.isDirectory() ? rmdirs(fullPath) : unlink(fullPath);
+        return task.catch(error => ({ error }));
+      })
+    );
+    results.forEach(result => {
+      // Ignore missing files/directories; bail on other errors
+      if (result && result.error.code !== 'ENOENT') throw result.error;
+    });
+    await rmdir(dir);
   }
 }

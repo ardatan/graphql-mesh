@@ -1,0 +1,26 @@
+extend type Transform {
+  """
+  Type Merging Configuration
+  https://www.graphql-tools.com/docs/stitch-type-merging
+  """
+  typeMerging: [MergedTypeConfig!]
+}
+
+type MergedTypeConfig {
+  typeName: String
+  fieldName: String
+  args: Any
+  argsFromKeys: Any
+  selectionSet: String
+  fields: [MergedFieldConfig]
+  key: Any
+  canonical: Boolean
+  resolve: AdditionalResolver
+}
+
+type MergedFieldConfig {
+  fieldName: String
+  selectionSet: String
+  computed: Boolean
+  canonical: Boolean
+}

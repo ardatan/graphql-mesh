@@ -1,33 +1,29 @@
-import LRUCache from 'lru-cache';
+import { globalLruCache } from '@graphql-mesh/utils';
 import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
 
-// Based on https://github.com/apollographql/apollo-server/blob/master/packages/apollo-datasource-rest/src/HTTPCache.ts
+type CacheEntry<V> = { expiresAt: number; value: V };
 
 export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
-  private store: LRUCache<string, V>;
-
-  constructor({
-    max = Infinity,
-    length = (item: V) => (Array.isArray(item) || typeof item === 'string' ? item.length : 1),
-    ...options
-  }: LRUCache.Options<string, V> = {}) {
-    this.store = new LRUCache({
-      max,
-      length,
-      ...options,
-    });
-  }
+  private cacheIdentifier = Date.now();
+  constructor({ max = Infinity } = {}) {}
 
   async get(key: string) {
-    return this.store.get(key);
+    const entry: CacheEntry<V> = globalLruCache.get(`${this.cacheIdentifier}-${key}`);
+    if (entry?.expiresAt && Date.now() > entry.expiresAt) {
+      globalLruCache.delete(key);
+      return undefined;
+    }
+    return entry?.value;
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
-    const maxAge = options?.ttl && options?.ttl * 1000;
-    this.store.set(key, value, maxAge!);
+    globalLruCache.set(`${this.cacheIdentifier}-${key}`, {
+      expiresAt: options?.ttl ? Date.now() + options.ttl * 1000 : Infinity,
+      value,
+    });
   }
 
   async delete(key: string) {
-    this.store.del(key);
+    globalLruCache.delete(`${this.cacheIdentifier}-${key}`);
   }
 }

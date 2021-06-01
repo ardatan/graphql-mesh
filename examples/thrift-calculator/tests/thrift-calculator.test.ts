@@ -30,16 +30,9 @@ describe('Thrift Calculator', () => {
     ).toMatchSnapshot('thrift-calculator-schema');
   });
   it('should give correct response for example queries', async () => {
-    const {
-      config: {
-        serve: { exampleQuery },
-      },
-    } = await config$;
-    const sources = await loadDocuments(join(__dirname, '..', exampleQuery), {
-      loaders: [new GraphQLFileLoader()],
-    });
+    const { documents } = await config$;
     const { execute } = await mesh$;
-    for (const source of sources) {
+    for (const source of documents) {
       const result = await execute(source.document, {});
       expect(result.errors).toBeFalsy();
       expect(result).toMatchSnapshot(basename(source.location) + '-thrift-calculator-result');

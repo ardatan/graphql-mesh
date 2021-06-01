@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start:thrift": "ts-node src/main.ts",
-    "start:mesh": "mesh serve",
+    "start:mesh": "mesh dev",
     "start": "concurrently \"npm run start:thrift\" \"npm run start:mesh\"",
     "codegen": "thrift-typescript --target thrift-server --sourceDir ./src --outDir ./src/codegen"
   },

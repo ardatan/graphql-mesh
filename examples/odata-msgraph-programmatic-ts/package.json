@@ -4,8 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dump-schema": "mesh dump-schema --output ./schema.graphql",
-    "codegen": "graphql-codegen",
+    "prestart": "mesh build && graphql-codegen",
     "start": "ts-node src/index.ts"
   },
   "dependencies": {

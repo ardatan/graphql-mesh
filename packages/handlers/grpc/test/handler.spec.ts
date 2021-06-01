@@ -4,6 +4,7 @@ import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { PubSub } from 'graphql-subscriptions';
 import GrpcHandler from '../src';
+import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 
 describe.each<[string, string, string, string]>([
   ['Movie', 'Example', 'io.xtech', 'movie.proto'],
@@ -27,11 +28,16 @@ describe.each<[string, string, string, string]>([
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },
     };
+    const store = new MeshStore(name, new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
     const handler = new GrpcHandler({
       name: Date.now().toString(),
       config,
       cache,
       pubsub,
+      store,
     });
 
     const { schema } = await handler.getMeshSource();

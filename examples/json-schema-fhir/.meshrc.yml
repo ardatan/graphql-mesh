@@ -1,28 +1,37 @@
 sources:
   - name: FHIR
     handler:
-      fhir:
-        endpoint: http://hapi.fhir.org/baseR4
+      jsonSchema:
+        baseUrl: http://hapi.fhir.org/baseR4
+        operations:
+          - type: Query
+            field: resourceById
+            method: GET
+            path: /{args.resourceType}/{args.id}?_format=application/json
+            responseSchema: ./fhir.schema.json#/definitions/ResourceList
+          - type: Query
+            field: resourceByName
+            method: GET
+            path: /{args.resourceType}/?name={args.name}?_format=application/json
+            responseSchema: ./fhir.schema.json#/definitions/Bundle
+          - type: Query
+            field: resourceByOtherResourceId
+            method: GET
+            path: /{args.resourceType}?subject={args.otherResourceType}/{args.otherResourceId}
+            responseSchema: ./fhir.schema.json#/definitions/Bundle
 
-  - name: Covid
-    handler:
-      graphql:
-        endpoint: https://covid-19-two-rust.vercel.app/api/graphql
 additionalTypeDefs: |
-  extend type Address {
-    case: Case
+  extend type Reference {
+    resource: ResourceList
   }
 additionalResolvers:
-  - type: Address # Declarative API
-    field: case
-    requiredSelectionSet: |
-      {
-        country
-      }
-    targetSource: Covid
-    targetMethod: case
-    args:
-      countryRegion: '{root.country}'
+  - targetTypeName: Reference
+    targetFieldName: resource
+    sourceName: FHIR
+    sourceTypeName: Query
+    sourceFieldName: resourceById
+    sourceArgs:
+      resourceType: '{root.reference}'
 
-serve:
-  exampleQuery: ./example-queries/*.graphql
+documents:
+  - ./example-queries/*.graphql

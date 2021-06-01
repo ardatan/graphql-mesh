@@ -4,8 +4,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "mesh serve",
-    "generate-sdk": "mesh generate-sdk --operations \"example-queries/*.graphql\" --output src/sdk.ts"
+    "start": "mesh dev",
+    "build": "mesh build"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",

@@ -4,9 +4,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "cross-env GRAPH_VERSION=\"v1.0\" mesh serve",
-    "start:beta": "cross-env GRAPH_VERSION=\"beta\" mesh serve",
-    "start:programmatic": "programmatic.js"
+    "start": "cross-env GRAPH_VERSION=\"v1.0\" mesh dev",
+    "start:beta": "cross-env GRAPH_VERSION=\"beta\" mesh dev"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",

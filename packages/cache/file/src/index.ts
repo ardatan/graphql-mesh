@@ -3,14 +3,15 @@ import { isAbsolute, join } from 'path';
 import { get, set } from 'lodash';
 import DataLoader from 'dataloader';
 import { writeJSON } from '@graphql-mesh/utils';
+import { cwd } from 'process';
 
 export default class FileCache<V = any> implements KeyValueCache<V> {
   json$: Promise<Record<string, V>>;
   absolutePath: string;
   writeDataLoader: DataLoader<any, any>;
   constructor({ path }: { path: string }) {
+    this.absolutePath = isAbsolute(path) ? path : join(cwd(), path);
     this.json$ = import(this.absolutePath).then(m => m.default || m);
-    this.absolutePath = isAbsolute(path) ? path : join(process.cwd(), path);
     this.writeDataLoader = new DataLoader(async keys => {
       const json = await this.json$;
       await writeJSON(this.absolutePath, json);
@@ -30,6 +31,6 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
   }
 
   async delete(name: string) {
-    this.set(name, undefined);
+    this.json$.then(json => (json[name] = undefined));
   }
 }

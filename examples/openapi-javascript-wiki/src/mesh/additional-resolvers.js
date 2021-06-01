@@ -2,22 +2,33 @@ const moment = require('moment');
 
 const resolvers = {
   Query: {
-    async viewsInPastMonth(_, { project }, { Wiki }) {
-      const { items } = await Wiki.api.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
-        {
+    async viewsInPastMonth(root, { project }, context, info) {
+      const result = await context.Wiki.Query.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd({
+        root,
+        args: {
           access: 'all-access',
           agent: 'user',
           end: moment().format('YYYYMMDD'),
           start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
           project,
-          granularity: 'monthly'
-        });
+          granularity: 'monthly',
+        },
+        context,
+        info,
+        selectionSet: /* GraphQL */`
+          {
+            items {
+              views 
+            }
+          }
+        `
+      });
 
-      if (!items || items.length === 0) {
+      if (!result?.items || result?.items.length === 0) {
         return 0;
       }
 
-      return items[0].views;
+      return result?.items[0].views;
     }
   }
 };

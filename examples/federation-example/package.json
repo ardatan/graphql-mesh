@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
-    "start-gateway": "mesh serve",
+    "start-gateway": "mesh dev",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
     "start-service-accounts": "nodemon services/accounts/index.js",
     "start-service-reviews": "nodemon services/reviews/index.js",

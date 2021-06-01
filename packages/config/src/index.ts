@@ -1,7 +1,9 @@
 import { isAbsolute, join, resolve } from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
-  getJsonSchema,
+  ImportFn,
+  jsonSchema,
+  Logger,
   MergerFn,
   MeshHandlerLibrary,
   MeshPubSub,
@@ -9,7 +11,7 @@ import {
   MeshTransformLibrary,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { IResolvers } from '@graphql-tools/utils';
+import { IResolvers, Source } from '@graphql-tools/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { KeyValueCache } from 'fetchache';
@@ -20,19 +22,22 @@ import {
   resolveAdditionalResolvers,
   resolveAdditionalTypeDefs,
   resolveCache,
-  resolveIntrospectionCache,
   resolveMerger,
   resolvePubSub,
+  resolveDocuments,
+  resolveLogger,
 } from './utils';
-import { stringInterpolator } from '@graphql-mesh/utils';
-import { MergedTypeConfig, MergedFieldConfig } from '@graphql-tools/delegate';
-import { get, set } from 'lodash';
+import _ from 'lodash';
+import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
+import { cwd, env } from 'process';
+
+export { DefaultLogger } from './utils';
 
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
-  ignoreIntrospectionCache?: boolean;
   importFn?: (moduleId: string) => Promise<any>;
+  store?: MeshStore;
 };
 
 // TODO: deprecate this in next major release as dscussed in #1687
@@ -42,7 +47,7 @@ export async function parseConfig(
 ) {
   let config: YamlConfig.Config;
   const { configFormat = 'object', dir: configDir = '' } = options || {};
-  const dir = isAbsolute(configDir) ? configDir : join(process.cwd(), configDir);
+  const dir = isAbsolute(configDir) ? configDir : join(cwd(), configDir);
 
   switch (configFormat) {
     case 'yaml':
@@ -70,8 +75,30 @@ export type ProcessedConfig = {
   pubsub: MeshPubSub;
   liveQueryInvalidations: YamlConfig.LiveQueryInvalidation[];
   config: YamlConfig.Config;
-  introspectionCache: Record<string, any>;
+  documents: Source[];
+  logger: Logger;
 };
+
+function getDefaultMeshStore(dir = cwd(), importFn: ImportFn) {
+  const isProd = env.NODE_ENV?.toLowerCase() === 'production';
+  const storeStorageAdapter = isProd
+    ? new FsStoreStorageAdapter({
+        cwd: dir,
+        importFn,
+      })
+    : new InMemoryStoreStorageAdapter();
+  return new MeshStore(resolve(dir, '.mesh'), storeStorageAdapter, {
+    /**
+     * TODO:
+     * `mesh start` => { readonly: true, validate: false }
+     * `mesh dev` => { readonly: false, validate: true } => validation error should show a prompt for confirmation
+     * `mesh validate` => { readonly: true, validate: true } => should fetch from remote and try to update
+     * readonly
+     */
+    readonly: isProd,
+    validate: false,
+  });
+}
 
 export async function processConfig(
   config: YamlConfig.Config,
@@ -80,18 +107,22 @@ export async function processConfig(
   const {
     dir,
     ignoreAdditionalResolvers = false,
-    importFn = (moduleId: string) => import(moduleId),
-    ignoreIntrospectionCache = false,
+    importFn = (moduleId: string) => import(moduleId).then(m => m.default || m),
+    store: providedStore,
   } = options || {};
+
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
-  const cache = await resolveCache(config.cache, importFn);
-  const pubsub = await resolvePubSub(config.pubsub, importFn);
-  const introspectionCache = ignoreIntrospectionCache
-    ? {}
-    : await resolveIntrospectionCache(config.introspectionCache, dir);
+  const rootStore = providedStore || getDefaultMeshStore(dir, importFn);
 
-  const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
+  const cache = await resolveCache(config.cache, importFn, rootStore);
+  const pubsub = await resolvePubSub(config.pubsub, importFn);
+
+  const sourcesStore = rootStore.child('sources');
+
+  const logger = await resolveLogger(config.logger, importFn);
+
+  const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
     Promise.all(
       config.sources.map<Promise<MeshResolvedSource>>(async source => {
         const handlerName = Object.keys(source.handler)[0];
@@ -121,94 +152,6 @@ export async function processConfig(
 
         const HandlerCtor: MeshHandlerLibrary = handlerLibrary;
 
-        introspectionCache[source.name] = introspectionCache[source.name] || {};
-        const handlerIntrospectionCache = introspectionCache[source.name];
-
-        const mergedTypeConfigMap: Record<string, MergedTypeConfig> = {};
-        for (const mergedTypeConfigRaw of source.typeMerging || []) {
-          mergedTypeConfigMap[mergedTypeConfigRaw.typeName] = {
-            fieldName: mergedTypeConfigRaw.fieldName,
-            args:
-              mergedTypeConfigRaw.args &&
-              ((root: any) => {
-                if (typeof mergedTypeConfigRaw.args === 'string') {
-                  return stringInterpolator.parse(mergedTypeConfigRaw.args, { root });
-                }
-                const returnObj: any = {};
-                for (const argName in mergedTypeConfigRaw.args) {
-                  set(returnObj, argName, stringInterpolator.parse(mergedTypeConfigRaw.args[argName], { root }));
-                }
-                return returnObj;
-              }),
-            argsFromKeys:
-              mergedTypeConfigRaw.argsFromKeys &&
-              ((keys: any) => {
-                if (typeof mergedTypeConfigRaw.argsFromKeys === 'string') {
-                  return stringInterpolator.parse(mergedTypeConfigRaw.argsFromKeys, { keys });
-                }
-                const returnObj: any = {};
-                for (const argName in mergedTypeConfigRaw.argsFromKeys) {
-                  set(
-                    returnObj,
-                    argName,
-                    stringInterpolator.parse(mergedTypeConfigRaw.argsFromKeys[argName], { keys })
-                  );
-                }
-                return returnObj;
-              }),
-            selectionSet: mergedTypeConfigRaw.selectionSet,
-            fields: mergedTypeConfigRaw.fields?.reduce(
-              (prev, curr) => ({
-                ...prev,
-                [curr.fieldName]: curr,
-              }),
-              {} as Record<string, MergedFieldConfig>
-            ),
-            key:
-              mergedTypeConfigRaw.key &&
-              ((root: any) => {
-                if (typeof mergedTypeConfigRaw.key === 'string') {
-                  return stringInterpolator.parse(mergedTypeConfigRaw.key, { root });
-                }
-                const returnObj: any = {};
-                for (const argName in mergedTypeConfigRaw.args) {
-                  set(returnObj, argName, stringInterpolator.parse(mergedTypeConfigRaw.key[argName], { root }));
-                }
-                return returnObj;
-              }),
-            canonical: mergedTypeConfigRaw.canonical,
-            resolve:
-              mergedTypeConfigRaw.resolve &&
-              (async (root: any, args: any, context: any, info: any) => {
-                if (typeof mergedTypeConfigRaw.resolve === 'string') {
-                  const filePath = mergedTypeConfigRaw.resolve;
-
-                  const exported = await importFn(resolve(options.dir, filePath));
-                  return exported.default || exported;
-                } else if (typeof mergedTypeConfigRaw.resolve === 'object' && 'args' in mergedTypeConfigRaw.resolve) {
-                  const resolverData = { root, args, context, info };
-                  const methodArgs: any = {};
-                  for (const argPath in mergedTypeConfigRaw.resolve.args) {
-                    set(
-                      methodArgs,
-                      argPath,
-                      stringInterpolator.parse(mergedTypeConfigRaw.resolve.args[argPath], resolverData)
-                    );
-                  }
-                  const result = await context[mergedTypeConfigRaw.resolve.targetSource].api[
-                    mergedTypeConfigRaw.resolve.targetMethod
-                  ](methodArgs, {
-                    selectedFields: mergedTypeConfigRaw.resolve.resultSelectedFields,
-                    selectionSet: mergedTypeConfigRaw.resolve.resultSelectionSet,
-                    depth: mergedTypeConfigRaw.resolve.resultDepth,
-                  });
-                  return mergedTypeConfigRaw.resolve.returnData
-                    ? get(result, mergedTypeConfigRaw.resolve.returnData)
-                    : result;
-                }
-              }),
-          };
-        }
         return {
           name: source.name,
           handler: new HandlerCtor({
@@ -217,10 +160,10 @@ export async function processConfig(
             baseDir: dir,
             cache,
             pubsub,
-            introspectionCache: handlerIntrospectionCache,
+            store: sourcesStore.child(source.name),
+            logger: logger.child(source.name),
           }),
           transforms,
-          merge: mergedTypeConfigMap,
         };
       })
     ),
@@ -250,6 +193,7 @@ export async function processConfig(
       pubsub
     ),
     resolveMerger(config.merger, importFn),
+    resolveDocuments(config.documents, dir),
   ]);
 
   return {
@@ -263,13 +207,14 @@ export async function processConfig(
     pubsub,
     liveQueryInvalidations: config.liveQueryInvalidations,
     config,
-    introspectionCache,
+    documents,
+    logger,
   };
 }
 
 function customLoader(ext: 'json' | 'yaml' | 'js') {
   function loader(filepath: string, content: string) {
-    if (typeof process !== 'undefined' && 'env' in process) {
+    if (env) {
       content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
         let varName = variable;
         let defaultValue = '';
@@ -280,7 +225,7 @@ function customLoader(ext: 'json' | 'yaml' | 'js') {
           defaultValue = spl.join(':');
         }
 
-        return process.env[varName] || defaultValue;
+        return env[varName] || defaultValue;
       });
     }
 
@@ -304,7 +249,6 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
   const ajv = new Ajv({
     strict: false,
   });
-  const jsonSchema = getJsonSchema();
   jsonSchema.$schema = undefined;
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
@@ -313,8 +257,8 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
 }
 
 export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions) {
-  const { configName = 'mesh', dir: configDir = '', ignoreAdditionalResolvers = false } = options || {};
-  const dir = isAbsolute(configDir) ? configDir : join(process.cwd(), configDir);
+  const { configName = 'mesh', dir: configDir = '', ignoreAdditionalResolvers = false, ...restOptions } = options || {};
+  const dir = isAbsolute(configDir) ? configDir : join(cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     loaders: {
       '.json': customLoader('json'),
@@ -332,5 +276,5 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
 
   const config = results.config;
   validateConfig(config);
-  return processConfig(config, { dir, ignoreAdditionalResolvers });
+  return processConfig(config, { dir, ignoreAdditionalResolvers, ...restOptions });
 }

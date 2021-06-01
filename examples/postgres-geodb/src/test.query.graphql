@@ -1,12 +1,16 @@
-query citiesAndDevelopers($city: String!) {
+query citiesAndDevelopers($city: String! = "London") {
   allCities(orderBy: ID_ASC, first: 1, condition: { name: $city }) {
     nodes {
       name
       countrycode
       district
       developers {
-        login
-        avatarUrl
+        nodes {
+          id
+          login
+          name
+          avatarUrl
+        }
       }
     }
   }

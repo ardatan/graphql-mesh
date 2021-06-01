@@ -1,14 +1,15 @@
-import { logger } from './logger';
+import { Logger } from '@graphql-mesh/types';
 import { spinner } from './spinner';
+import { env, exit } from 'process';
 
-export function handleFatalError(e: Error): any {
-  const errorText = `Unable to start GraphQL Mesh: ${e.message}`;
+export function handleFatalError(e: Error, logger: Logger): any {
+  const errorText = e.message;
   if (spinner.isSpinning) {
     spinner.fail(errorText);
   } else {
     logger.error(errorText);
   }
-  if (process.env.DEBUG) {
+  if (env.DEBUG) {
     logger.error(
       JSON.stringify({
         ...e,
@@ -18,5 +19,5 @@ export function handleFatalError(e: Error): any {
       })
     );
   }
-  process.exit(1);
+  exit(1);
 }
