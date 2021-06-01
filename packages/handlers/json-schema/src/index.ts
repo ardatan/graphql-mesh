@@ -7,7 +7,7 @@ import {
   readFileOrUrlWithCache,
   getCachedFetch,
 } from '@graphql-mesh/utils';
-import { JSONSchema } from '@json-schema-tools/meta-schema';
+import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { SchemaComposer } from 'graphql-compose';
 import { diffSchemas } from 'json-schema-diff';
 import toJsonSchema from 'to-json-schema';
@@ -118,10 +118,12 @@ export default class JsonSchemaHandler implements MeshHandler {
           generatedSchema.title = operationConfig.requestTypeName;
           rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
         } else {
-          rootTypeInputTypeDefinition.properties[operationConfig.field] = {
+          const generatedSchema: JSONSchemaObject = {
             type: 'object',
             additionalProperties: true,
           };
+          generatedSchema.title = operationConfig.requestTypeName;
+          rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
         }
       }
       return flattenJSONSchema(finalJsonSchema, this.cache, {
