@@ -20101,10 +20101,10 @@ soap-graphql@0.1.1:
   dependencies:
     graphql-iso-date "~3.3.0"
 
-soap@*, soap@0.38.0:
-  version "0.38.0"
-  resolved "https://registry.yarnpkg.com/soap/-/soap-0.38.0.tgz#75883e7193f1be45c8e5d8bd9f4e7575e4a2da75"
-  integrity sha512-gNnR+mWlgTUo/vBwgEWEaAM+PxqI0a8aUpdkz1ETKGn6OCLg+sNfgkaPCGoheqmvN56d7HiPhvu5Mm1uTRscTw==
+soap@*, soap@0.39.0:
+  version "0.39.0"
+  resolved "https://registry.yarnpkg.com/soap/-/soap-0.39.0.tgz#66f1eebbd93cef39b40623c01eeb434c8898a720"
+  integrity sha512-H1pbwOzc2Q+T2u2OZ/VOGoXKPjjlEELJru6glc1Vi9nZtfxGYRW6teU0W/vavSZ1j404VGCA8TNzWqAm8QI7Xg==
   dependencies:
     debug "^4.1.1"
     get-stream "^6.0.0"
