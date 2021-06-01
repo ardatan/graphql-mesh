@@ -1,17 +1,15 @@
-import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadDocuments } from '@graphql-tools/load';
 import { Request, Response, RequestHandler } from 'express';
 import { renderGraphiQL } from 'graphql-helix';
+import { Source } from '@graphql-tools/utils';
 import { handleFatalError } from '../../handleFatalError';
 
 export const playgroundMiddlewareFactory = ({
   baseDir,
-  exampleQuery,
+  documents,
   graphqlPath,
 }: {
   baseDir: string;
-  exampleQuery: string;
+  documents: Source[];
   graphqlPath: string;
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
@@ -21,12 +19,7 @@ export const playgroundMiddlewareFactory = ({
       Promise.resolve()
         .then(async () => {
           let defaultQuery: string;
-          if (exampleQuery) {
-            const documents = await loadDocuments(exampleQuery, {
-              loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-              cwd: baseDir,
-            });
-
+          if (documents?.length) {
             defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
           }
           return defaultQuery;

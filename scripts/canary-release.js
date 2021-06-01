@@ -51,6 +51,7 @@ async function updateVersions() {
         {
           ...config,
           commit: false,
+          access: 'public'
         },
         false,
         true

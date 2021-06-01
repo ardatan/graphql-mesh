@@ -7,7 +7,5 @@ sources:
         user: rfamro
         database: Rfam
 
-serve:
-  exampleQuery: example-query.graphql
-
-introspectionCache: ./introspection-cache.json
+documents:
+  - example-query.graphql

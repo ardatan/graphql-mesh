@@ -4,12 +4,17 @@ import { PubSub } from 'graphql-subscriptions';
 import { promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema } from 'graphql';
+import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 
 const { readFile } = fsPromises;
 
 describe('graphql', () => {
   it('handle SDL files correctly as endpoint', async () => {
     const sdlFilePath = './fixtures/schema.graphql';
+    const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
@@ -17,8 +22,8 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),
-      introspectionCache: {},
       pubsub: new PubSub(),
+      store,
     });
     const absoluteFilePath = join(__dirname, sdlFilePath);
     const schemaStringFromFile = await readFile(absoluteFilePath, 'utf-8');
@@ -28,6 +33,10 @@ describe('graphql', () => {
   });
   it('handle code files exports GraphQLSchema correctly', async () => {
     const schemaFilePath = './fixtures/schema.js';
+    const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
@@ -35,8 +44,8 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),
-      introspectionCache: {},
       pubsub: new PubSub(),
+      store,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaFromFile = require(absoluteFilePath);
@@ -45,6 +54,10 @@ describe('graphql', () => {
   });
   it('handle code files exports DocumentNode correctly', async () => {
     const schemaFilePath = './fixtures/schema-document.js';
+    const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
@@ -52,8 +65,8 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),
-      introspectionCache: {},
       pubsub: new PubSub(),
+      store,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaDocumentFromFile = require(absoluteFilePath);
@@ -63,6 +76,10 @@ describe('graphql', () => {
   });
   it('handle code files exports string correctly', async () => {
     const schemaFilePath = './fixtures/schema-str.js';
+    const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
@@ -70,8 +87,8 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),
-      introspectionCache: {},
       pubsub: new PubSub(),
+      store,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaStringFromFile = require(absoluteFilePath);

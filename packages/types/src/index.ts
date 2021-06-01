@@ -5,6 +5,7 @@ import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Executor, Subscriber, Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { MeshStore } from '@graphql-mesh/store';
 
 export { YamlConfig };
 
@@ -21,13 +22,13 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
   batch?: boolean;
 };
 
-export type GetMeshSourceOptions<THandlerConfig, TIntrospectionCache = never> = {
+export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   config: THandlerConfig;
   baseDir?: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  introspectionCache?: TIntrospectionCache;
+  store: MeshStore;
 };
 
 // Handlers
@@ -35,8 +36,8 @@ export interface MeshHandler<TContext = any> {
   getMeshSource: () => Promise<MeshSource<TContext>>;
 }
 
-export interface MeshHandlerLibrary<TConfig = any, TContext = any, TIntrospectionCache = any> {
-  new (options: GetMeshSourceOptions<TConfig, TIntrospectionCache>): MeshHandler<TContext>;
+export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
+  new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
 }
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {

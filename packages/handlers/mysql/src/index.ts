@@ -19,6 +19,7 @@ import {
 import { specifiedDirectives } from 'graphql';
 import { loadFromModuleExportExpression, jitExecutorFactory } from '@graphql-mesh/utils';
 import { ExecutionParams } from '@graphql-tools/delegate';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -79,12 +80,6 @@ const SCALARS = {
   year: 'Int',
 };
 
-type MySQLIntrospectionCache = {
-  [Key in keyof MysqlPromisifiedConnection]?: MysqlPromisifiedConnection[Key] extends (...args: any[]) => any
-    ? ThenArg<ReturnType<MysqlPromisifiedConnection[Key]>>
-    : never;
-};
-
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof MySQLHandler.prototype.getPromisifiedConnection>>;
 
@@ -95,20 +90,14 @@ export default class MySQLHandler implements MeshHandler {
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
-  private introspectionCache: MySQLIntrospectionCache;
+  private store: MeshStore;
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    pubsub,
-    introspectionCache = {},
-  }: GetMeshSourceOptions<YamlConfig.MySQLHandler, MySQLIntrospectionCache>) {
+  constructor({ name, config, baseDir, pubsub, store }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache;
+    this.store = store;
   }
 
   async getPromisifiedConnection(pool: Pool) {
@@ -144,27 +133,23 @@ export default class MySQLHandler implements MeshHandler {
   }
 
   private getCachedIntrospectionConnection(pool: Pool) {
-    let promisiedConnection$: Promise<MysqlPromisifiedConnection>;
+    let promisifiedConnection$: Promise<MysqlPromisifiedConnection>;
     return new Proxy<MysqlPromisifiedConnection>({} as any, {
       get: (_, methodName) => {
         if (methodName === 'connection') {
           return {
-            release: () => promisiedConnection$?.then(promisiedConnection => promisiedConnection?.connection.release()),
+            release: () =>
+              promisifiedConnection$?.then(promisifiedConnection => promisifiedConnection?.connection.release()),
           };
         }
-        return (...args: any[]) => {
+        return async (...args: any[]) => {
           const cacheKey = [methodName, ...args].join('_');
-          if (cacheKey in this.introspectionCache) {
-            return this.introspectionCache[cacheKey];
-          } else {
-            promisiedConnection$ = promisiedConnection$ || this.getPromisifiedConnection(pool);
-            return promisiedConnection$
-              .then(promisiedConnection => promisiedConnection[methodName](...args))
-              .then(result => {
-                this.introspectionCache[cacheKey] = result;
-                return result;
-              });
-          }
+          const cacheProxy = this.store.proxy(cacheKey, PredefinedProxyOptions.JsonWithoutValidation);
+          return cacheProxy.getWithSet(async () => {
+            promisifiedConnection$ = promisifiedConnection$ || this.getPromisifiedConnection(pool);
+            const promisifiedConnection = await promisifiedConnection$;
+            return promisifiedConnection[methodName](...args);
+          });
         };
       },
     });

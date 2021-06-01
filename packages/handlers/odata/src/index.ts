@@ -50,6 +50,7 @@ import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
 import { pruneSchema } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-fetch';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -115,36 +116,24 @@ const queryOptionsFields = {
   },
 };
 
-export interface ODataIntrospectionCache {
-  metadataJson: any;
-}
-
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
   private baseDir: string;
   private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
-  private introspectionCache: ODataIntrospectionCache;
+  private metadataJson: any;
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    cache,
-    introspectionCache,
-  }: GetMeshSourceOptions<YamlConfig.ODataHandler, ODataIntrospectionCache>) {
+  constructor({ name, config, baseDir, cache, store }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
-    this.introspectionCache = introspectionCache || {
-      metadataJson: null,
-    };
+    this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
   }
 
   async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
-    if (!this.introspectionCache.metadataJson) {
+    return this.metadataJson.getWithSet(async () => {
       const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
       const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
         allowUnknownExtensions: true,
@@ -153,7 +142,7 @@ export default class ODataHandler implements MeshHandler {
         fetch,
       });
 
-      this.introspectionCache.metadataJson = parseXML(metadataText, {
+      return parseXML(metadataText, {
         attributeNamePrefix: '',
         attrNodeName: 'attributes',
         textNodeName: 'innerText',
@@ -162,8 +151,7 @@ export default class ODataHandler implements MeshHandler {
         arrayMode: true,
         allowBooleanAttributes: true,
       });
-    }
-    return this.introspectionCache.metadataJson;
+    });
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -463,92 +451,88 @@ export default class ODataHandler implements MeshHandler {
 
     const DATALOADER_FACTORIES = {
       multipart: (context: any) =>
-        new DataLoader(
-          async (requests: Request[]): Promise<Response[]> => {
-            let requestBody = '';
-            const requestBoundary = 'batch_' + Date.now();
-            for (const requestIndex in requests) {
-              requestBody += `--${requestBoundary}\n`;
-              const request = requests[requestIndex];
-              requestBody += `Content-Type: application/http\n`;
-              requestBody += `Content-Transfer-Encoding:binary\n`;
-              requestBody += `Content-ID: ${requestIndex}\n\n`;
-              requestBody += `${request.method} ${request.url} HTTP/1.1\n`;
-              request.headers?.forEach((value, key) => {
-                requestBody += `${key}: ${value}\n`;
-              });
-              if (request.body) {
-                const bodyAsStr = await request.text();
-                requestBody += `Content-Length: ${bodyAsStr.length}`;
-                requestBody += `\n`;
-                requestBody += bodyAsStr;
-              }
+        new DataLoader(async (requests: Request[]): Promise<Response[]> => {
+          let requestBody = '';
+          const requestBoundary = 'batch_' + Date.now();
+          for (const requestIndex in requests) {
+            requestBody += `--${requestBoundary}\n`;
+            const request = requests[requestIndex];
+            requestBody += `Content-Type: application/http\n`;
+            requestBody += `Content-Transfer-Encoding:binary\n`;
+            requestBody += `Content-ID: ${requestIndex}\n\n`;
+            requestBody += `${request.method} ${request.url} HTTP/1.1\n`;
+            request.headers?.forEach((value, key) => {
+              requestBody += `${key}: ${value}\n`;
+            });
+            if (request.body) {
+              const bodyAsStr = await request.text();
+              requestBody += `Content-Length: ${bodyAsStr.length}`;
               requestBody += `\n`;
+              requestBody += bodyAsStr;
             }
-            requestBody += `--${requestBoundary}--\n`;
-            const batchHeaders = headersFactory({ context }, 'POST');
-            batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
-            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
-              method: 'POST',
-              body: requestBody,
-              headers: batchHeaders,
-            });
-            const batchResponse = await nativeFetch(batchRequest);
-            const batchResponseText = await batchResponse.text();
-            if (!batchResponseText.startsWith('--')) {
-              const batchResponseJson = JSON.parse(batchResponseText);
-              return handleBatchJsonResults(batchResponseJson, requests);
-            }
-            const responseLines = batchResponseText.split('\n');
-            const responseBoundary = responseLines[0];
-            const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
-            const responseTextArr = actualResponse.split(responseBoundary);
-            return responseTextArr.map(responseTextWithContentHeader => {
-              const responseText = responseTextWithContentHeader.split('\n').slice(4).join('\n');
-              const { body, headers, statusCode, statusMessage } = parseResponse(responseText);
-              return new Response(body, {
-                headers,
-                status: parseInt(statusCode),
-                statusText: statusMessage,
-              });
-            });
+            requestBody += `\n`;
           }
-        ),
-      json: (context: any) =>
-        new DataLoader(
-          async (requests: Request[]): Promise<Response[]> => {
-            const batchHeaders = headersFactory({ context }, 'POST');
-            batchHeaders.set('Content-Type', 'application/json');
-            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
-              method: 'POST',
-              body: jsonFlatStringify({
-                requests: await Promise.all(
-                  requests.map(async (request, index) => {
-                    const id = index.toString();
-                    const url = request.url.replace(baseUrl, '');
-                    const method = request.method;
-                    const headers: HeadersInit = {};
-                    request.headers?.forEach((value, key) => {
-                      headers[key] = value;
-                    });
-                    return {
-                      id,
-                      url,
-                      method,
-                      body: request.body && (await request.json()),
-                      headers,
-                    };
-                  })
-                ),
-              }),
-              headers: batchHeaders,
-            });
-            const batchResponse = await fetch(batchRequest);
-            const batchResponseText = await batchResponse.text();
+          requestBody += `--${requestBoundary}--\n`;
+          const batchHeaders = headersFactory({ context }, 'POST');
+          batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
+          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+            method: 'POST',
+            body: requestBody,
+            headers: batchHeaders,
+          });
+          const batchResponse = await nativeFetch(batchRequest);
+          const batchResponseText = await batchResponse.text();
+          if (!batchResponseText.startsWith('--')) {
             const batchResponseJson = JSON.parse(batchResponseText);
             return handleBatchJsonResults(batchResponseJson, requests);
           }
-        ),
+          const responseLines = batchResponseText.split('\n');
+          const responseBoundary = responseLines[0];
+          const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
+          const responseTextArr = actualResponse.split(responseBoundary);
+          return responseTextArr.map(responseTextWithContentHeader => {
+            const responseText = responseTextWithContentHeader.split('\n').slice(4).join('\n');
+            const { body, headers, statusCode, statusMessage } = parseResponse(responseText);
+            return new Response(body, {
+              headers,
+              status: parseInt(statusCode),
+              statusText: statusMessage,
+            });
+          });
+        }),
+      json: (context: any) =>
+        new DataLoader(async (requests: Request[]): Promise<Response[]> => {
+          const batchHeaders = headersFactory({ context }, 'POST');
+          batchHeaders.set('Content-Type', 'application/json');
+          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+            method: 'POST',
+            body: jsonFlatStringify({
+              requests: await Promise.all(
+                requests.map(async (request, index) => {
+                  const id = index.toString();
+                  const url = request.url.replace(baseUrl, '');
+                  const method = request.method;
+                  const headers: HeadersInit = {};
+                  request.headers?.forEach((value, key) => {
+                    headers[key] = value;
+                  });
+                  return {
+                    id,
+                    url,
+                    method,
+                    body: request.body && (await request.json()),
+                    headers,
+                  };
+                })
+              ),
+            }),
+            headers: batchHeaders,
+          });
+          const batchResponse = await fetch(batchRequest);
+          const batchResponseText = await batchResponse.text();
+          const batchResponseJson = JSON.parse(batchResponseText);
+          return handleBatchJsonResults(batchResponseJson, requests);
+        }),
       none: () =>
         new DataLoader(
           (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => fetch(request)))
@@ -1111,10 +1095,8 @@ export default class ODataHandler implements MeshHandler {
         const baseInputType = schemaComposer.getAnyTC(baseTypeName + 'Input') as InputTypeComposer;
         const baseAbstractType = getTCByTypeNames('I' + baseTypeName, baseTypeName) as InterfaceTypeComposer;
         const baseOutputType = getTCByTypeNames('T' + baseTypeName, baseTypeName) as ObjectTypeComposer;
-        const {
-          entityInfo: baseEntityInfo,
-          eventEmitter: baseEventEmitter,
-        } = baseOutputType.getExtensions() as EntityTypeExtensions;
+        const { entityInfo: baseEntityInfo, eventEmitter: baseEventEmitter } =
+          baseOutputType.getExtensions() as EntityTypeExtensions;
         const baseEventEmitterListener = () => {
           inputType.addFields(baseInputType.getFields());
           entityInfo.identifierFieldName = baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;

@@ -7,6 +7,8 @@ import {
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
   getCachedFetch,
+  jsonFlatStringify,
+  asArray,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -22,46 +24,64 @@ import {
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 import { GraphQLInputType } from 'graphql-compose/lib/graphql';
 import { GraphQLID } from 'graphql';
-
-interface OpenAPIIntrospectionCache {
-  spec?: Oas3;
-}
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import openapiDiff from 'openapi-diff';
+import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
+import { Oas2 } from './openapi-to-graphql/types/oas2';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
   private baseDir: string;
   private cache: KeyValueCache;
   private pubsub: MeshPubSub;
-  private introspectionCache: OpenAPIIntrospectionCache;
+  private oasSchema: StoreProxy<Oas3[]>;
 
-  constructor({
-    config,
-    baseDir,
-    cache,
-    pubsub,
-    introspectionCache = {},
-  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler, OpenAPIIntrospectionCache>) {
+  constructor({ name, config, baseDir, cache, pubsub, store }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache;
+    // TODO: This validation here should be more flexible, probably specific to OAS
+    // Because we can handle json/swagger files, and also we might want to use this:
+    // https://github.com/Azure/openapi-diff
+    this.oasSchema = store.proxy<Oas3[]>('schema.json', {
+      ...PredefinedProxyOptions.JsonWithoutValidation,
+      validate: async (oldOas, newOas) => {
+        const result = await openapiDiff.diffSpecs({
+          sourceSpec: {
+            content: jsonFlatStringify(oldOas),
+            location: 'old-schema.json',
+            format: 'openapi3',
+          },
+          destinationSpec: {
+            content: jsonFlatStringify(newOas),
+            location: 'new-schema.json',
+            format: 'openapi3',
+          },
+        });
+        if (result.breakingDifferencesFound) {
+          throw new Error('Breaking changes found!');
+        }
+      },
+    });
   }
 
-  private async getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3> {
+  private getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3[]> {
     const { source } = this.config;
-    if (!this.introspectionCache.spec) {
-      this.introspectionCache.spec =
-        typeof source !== 'string'
-          ? source
-          : await readFileOrUrlWithCache<Oas3>(source, this.cache, {
-              cwd: this.baseDir,
-              fallbackFormat: this.config.sourceFormat,
-              headers: this.config.schemaHeaders,
-              fetch,
-            });
-    }
-    return this.introspectionCache.spec;
+    return this.oasSchema.getWithSet(async () => {
+      let rawSpec: Oas3 | Oas2 | (Oas3 | Oas2)[];
+      if (typeof source !== 'string') {
+        rawSpec = source;
+      } else {
+        rawSpec = await readFileOrUrlWithCache(source, this.cache, {
+          cwd: this.baseDir,
+          fallbackFormat: this.config.sourceFormat,
+          headers: this.config.schemaHeaders,
+          fetch,
+        });
+      }
+      return Promise.all(asArray(rawSpec).map(singleSpec => getValidOAS3(singleSpec)));
+    });
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -181,20 +201,23 @@ export default class OpenAPIHandler implements MeshHandler {
       ...Object.values(schema.getSubscriptionType()?.getFields() || {}),
     ];
 
-    for (const rootField of rootFields) {
-      for (const argName in args) {
-        const { type } = args[argName];
-        rootField.args.push({
-          name: argName,
-          description: undefined,
-          defaultValue: undefined,
-          extensions: undefined,
-          astNode: undefined,
-          deprecationReason: undefined,
-          type: (schema.getType(type) as GraphQLInputType) || GraphQLID,
-        });
-      }
-    }
+    await Promise.all(
+      rootFields.map(rootField =>
+        Promise.all(
+          Object.entries(args).map(async ([argName, { type }]) =>
+            rootField?.args.push({
+              name: argName,
+              description: undefined,
+              defaultValue: undefined,
+              extensions: undefined,
+              astNode: undefined,
+              deprecationReason: undefined,
+              type: (schema.getType(type) as GraphQLInputType) || GraphQLID,
+            })
+          )
+        )
+      )
+    );
 
     contextVariables.push('fetch' /*, 'baseUrl' */);
 

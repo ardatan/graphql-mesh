@@ -38,15 +38,10 @@ describe('Federation Example', () => {
   });
   it('should give correct response for example queries', async () => {
     const [{
-      config: {
-        serve: { exampleQuery },
-      },
+      documents,
     }] = await configAndServices$;
-    const sources = await loadDocuments(join(__dirname, '..', exampleQuery), {
-      loaders: [new GraphQLFileLoader()],
-    });
     const { execute } = await mesh$;
-    for (const source of sources) {
+    for (const source of documents) {
       const result = await execute(source.document);
       expect(result).toMatchSnapshot(basename(source.location) + '-federation-example-result');
     }

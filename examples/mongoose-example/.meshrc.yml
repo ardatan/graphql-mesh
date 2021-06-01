@@ -6,5 +6,5 @@ sources:
           - name: User
             path: ./src/models.js#User
 
-serve:
-  exampleQuery: ./example-queries/*.graphql
+documents:
+  - ./example-queries/*.graphql

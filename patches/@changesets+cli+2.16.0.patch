@@ -1,8 +1,8 @@
 diff --git a/node_modules/@changesets/cli/dist/cli.cjs.dev.js b/node_modules/@changesets/cli/dist/cli.cjs.dev.js
-index f771824..bcb14cc 100644
+index f771824..ac0b15a 100644
 --- a/node_modules/@changesets/cli/dist/cli.cjs.dev.js
 +++ b/node_modules/@changesets/cli/dist/cli.cjs.dev.js
-@@ -576,8 +576,8 @@ async function version(cwd, options, config) {
+@@ -576,15 +576,15 @@ async function version(cwd, options, config) {
  // @ts-ignore
  var isCI = !!(isCI__default['default'] || process.env.GITHUB_ACTIONS);
  
@@ -11,13 +11,61 @@ index f771824..bcb14cc 100644
 +const npmRequestLimit = pLimit__default['default'](3);
 +const npmPublishLimit = pLimit__default['default'](3);
  
- function jsonParse(input) {
+-function jsonParse(input) {
++function jsonParse(input, extraNote) {
    try {
+     return JSON.parse(input);
+   } catch (err) {
+     if (err instanceof SyntaxError) {
+-      console.error("error parsing json:", input);
++      console.error("error parsing json for " + extraNote, input);
+     }
+ 
+     throw err;
+@@ -735,7 +735,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
+   // some struggles
+   // Note that both pre and post publish hooks are printed before the json out, so this works.
+ 
+-  let json = jsonParse(stdout.toString().replace(/[^{]*/, ""));
++  let json = jsonParse(stdout.toString().replace(/[^{]*/, ""), pkgName);
+ 
+   if (json.error) {
+     // The first case is no 2fa provided, the second is when the 2fa is wrong (timeout or wrong words)
+diff --git a/node_modules/@changesets/cli/dist/cli.cjs.prod.js b/node_modules/@changesets/cli/dist/cli.cjs.prod.js
+index d40fd42..a16961d 100644
+--- a/node_modules/@changesets/cli/dist/cli.cjs.prod.js
++++ b/node_modules/@changesets/cli/dist/cli.cjs.prod.js
+@@ -332,13 +332,13 @@ async function version(cwd, options, config) {
+ 
+ var isCI = !(!isCI__default.default && !process.env.GITHUB_ACTIONS);
+ 
+-const npmRequestLimit = pLimit__default.default(40), npmPublishLimit = pLimit__default.default(10);
++const npmRequestLimit = pLimit__default.default(3), npmPublishLimit = pLimit__default.default(3);
+ 
+-function jsonParse(input) {
++function jsonParse(input, extraNote) {
+   try {
+     return JSON.parse(input);
+   } catch (err) {
+-    throw err instanceof SyntaxError && console.error("error parsing json:", input), 
++    throw err instanceof SyntaxError && console.error("error parsing json for " + extraNote, input), 
+     err;
+   }
+ }
+@@ -430,7 +430,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
+   };
+   let {stdout: stdout} = await spawn__default.default(publishTool.name, [ "publish", opts.cwd, "--json", ...publishFlags ], {
+     env: Object.assign({}, process.env, envOverride)
+-  }), json = jsonParse(stdout.toString().replace(/[^{]*/, ""));
++  }), json = jsonParse(stdout.toString().replace(/[^{]*/, ""), pkgName);
+   return json.error ? ("EOTP" === json.error.code || "E401" === json.error.code && json.error.detail.includes("--otp=<code>")) && !isCI ? (null !== twoFactorState.token && (twoFactorState.token = null), 
+   twoFactorState.isRequired = Promise.resolve(!0), internalPublish(pkgName, opts, twoFactorState)) : (logger.error(`an error occurred while publishing ${pkgName}: ${json.error.code}`, json.error.summary, json.error.detail ? "\n" + json.error.detail : ""), 
+   {
 diff --git a/node_modules/@changesets/cli/dist/cli.esm.js b/node_modules/@changesets/cli/dist/cli.esm.js
-index 40bcc31..258c15a 100644
+index 40bcc31..3aa799c 100644
 --- a/node_modules/@changesets/cli/dist/cli.esm.js
 +++ b/node_modules/@changesets/cli/dist/cli.esm.js
-@@ -553,8 +553,8 @@ async function version(cwd, options, config) {
+@@ -553,15 +553,15 @@ async function version(cwd, options, config) {
  // @ts-ignore
  var isCI = !!(isCI$1 || process.env.GITHUB_ACTIONS);
  
@@ -26,5 +74,23 @@ index 40bcc31..258c15a 100644
 +const npmRequestLimit = pLimit(3);
 +const npmPublishLimit = pLimit(3);
  
- function jsonParse(input) {
+-function jsonParse(input) {
++function jsonParse(input, extraNote) {
    try {
+     return JSON.parse(input);
+   } catch (err) {
+     if (err instanceof SyntaxError) {
+-      console.error("error parsing json:", input);
++      console.error("error parsing json for " + extraNote, input);
+     }
+ 
+     throw err;
+@@ -712,7 +712,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
+   // some struggles
+   // Note that both pre and post publish hooks are printed before the json out, so this works.
+ 
+-  let json = jsonParse(stdout.toString().replace(/[^{]*/, ""));
++  let json = jsonParse(stdout.toString().replace(/[^{]*/, ""), pkgName);
+ 
+   if (json.error) {
+     // The first case is no 2fa provided, the second is when the 2fa is wrong (timeout or wrong words)

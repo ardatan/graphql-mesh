@@ -1,14 +1,9 @@
-import { getSdk } from './sdk.generated';
-import { findAndParseConfig } from '@graphql-mesh/config';
-import { getMesh } from '@graphql-mesh/runtime';
+import { getMeshSDK } from '../.mesh';
 
 async function testSdk(city: string) {
-  console.log(`Loading Mesh config...`);
-  const meshConfig = await findAndParseConfig();
-  console.log(`Loading Mesh schema...`);
-  const { sdkRequester } = await getMesh(meshConfig);
+  console.log(`Loading Mesh SDK...`);
+  const sdk = await getMeshSDK();
   try {
-    const sdk = getSdk(sdkRequester);
     console.log(`Running query, looking for GitHub developers from ${city}...`);
     const result = await sdk.citiesAndDevelopers({ city });
 

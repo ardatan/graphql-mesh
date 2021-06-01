@@ -2,6 +2,7 @@ import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache } from '@g
 import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
 import { WSSecurityCert } from 'soap';
 import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 
 type AnyFn = (...args: any[]) => any;
 
@@ -9,11 +10,13 @@ export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
   private baseDir: string;
   private cache: KeyValueCache;
+  private wsdlResponse: StoreProxy<{ res: { statusCode: number; body: string }; body: string }>;
 
-  constructor({ config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, baseDir, cache, store }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
+    this.wsdlResponse = store.proxy('wsdlResponse.json', PredefinedProxyOptions.JsonWithoutValidation);
   }
 
   async getMeshSource() {
@@ -32,36 +35,38 @@ export default class SoapHandler implements MeshHandler {
       basicAuth: this.config.basicAuth,
       options: {
         request: ((requestObj: any, callback: AnyFn) => {
-          let _request: any = null;
+          const isWsdlRequest = requestObj.uri.href === this.config.wsdl;
           const sendRequest = async () => {
             const headers = {
               ...requestObj.headers,
-              ...(requestObj.uri.href === this.config.wsdl ? schemaHeaders : this.config.operationHeaders),
+              ...(isWsdlRequest ? schemaHeaders : this.config.operationHeaders),
             };
             const res = await fetch(requestObj.uri.href, {
               headers,
               method: requestObj.method,
               body: requestObj.body,
             });
-            // eslint-disable-next-line dot-notation
-            _request = res.body;
             const body = await res.text();
-            return { res, body };
+            return {
+              res: {
+                ...res,
+                statusCode: res.status,
+                body,
+              },
+              body,
+            };
           };
-          sendRequest()
-            .then(({ res, body }) =>
-              callback(
-                null,
-                {
-                  ...res,
-                  statusCode: res.status,
-                },
-                body
-              )
-            )
-            .catch(err => callback(err));
-          // eslint-disable-next-line dot-notation
-          return _request;
+          if (isWsdlRequest) {
+            this.wsdlResponse
+              .getWithSet(() => sendRequest().catch(err => callback(err)))
+              .then(({ res, body }) => {
+                callback(null, res, body);
+              });
+          } else {
+            sendRequest()
+              .then(({ res, body }) => callback(null, res, body))
+              .catch(err => callback(err));
+          }
         }) as any,
       },
     });

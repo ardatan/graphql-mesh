@@ -21,22 +21,12 @@ describe('JavaScript Wiki', () => {
     ).toMatchSnapshot('javascript-wiki-schema');
   });
   it('should give correct response for viewsInPastMonth', async () => {
-    const {
-      config: {
-        serve: { exampleQuery },
-      },
-    } = await config$;
     const viewsInPastMonthQuery = await readFile(join(__dirname, '../example-queries/views-in-past-month.graphql'), 'utf8');
     const { execute } = await mesh$;
     const result = await execute(viewsInPastMonthQuery);
     expect(typeof result?.data?.viewsInPastMonth).toBe('number');
   });
   it('should give correct response for wikipediaMetrics within specific range', async () => {
-    const {
-      config: {
-        serve: { exampleQuery },
-      },
-    } = await config$;
     const wikipediaMetricsQuery = await readFile(
       join(__dirname, '../example-queries/wikipedia-metrics.graphql'),
       'utf8'

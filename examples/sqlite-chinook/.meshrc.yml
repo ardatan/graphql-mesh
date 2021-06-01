@@ -4,5 +4,5 @@ sources:
       tuql:
         db: ./chinook.db
 
-serve:
-  exampleQuery: example-query.graphql
+documents:
+  - example-query.graphql

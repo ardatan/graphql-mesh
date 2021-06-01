@@ -1,0 +1,23 @@
+{
+  "$id": "Post.json",
+  "definitions": {
+    "Post": {
+      "type": "object",
+      "title": "Post",
+      "properties": {
+        "id": {
+          "$ref": "UUID.json"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "Author.json#/definitions/Author"
+        }
+      }
+    }
+  }
+}

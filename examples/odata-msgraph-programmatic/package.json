@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dump-schema": "mesh dump-schema --output ./schema.graphql",
+    "prestart": "mesh build",
     "start": "node index.ts"
   },
   "dependencies": {

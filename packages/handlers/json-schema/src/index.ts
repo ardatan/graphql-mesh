@@ -1,176 +1,141 @@
-import { GetMeshSourceOptions, MeshHandler, MeshPubSub, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
-import { JSONSchemaVisitor, getFileName } from './json-schema-visitor';
-import urlJoin from 'url-join';
+import { ProxyOptions, PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { GetMeshSourceOptions, KeyValueCache, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import {
-  readFileOrUrlWithCache,
-  stringInterpolator,
-  parseInterpolationStrings,
-  isUrl,
-  pathExists,
-  writeJSON,
   jsonFlatStringify,
+  parseInterpolationStrings,
+  stringInterpolator,
+  readFileOrUrlWithCache,
   getCachedFetch,
 } from '@graphql-mesh/utils';
-import AggregateError from '@ardatan/aggregate-error';
-import { JSONSchemaDefinition } from './json-schema-types';
-import { ObjectTypeComposerFieldConfigDefinition, SchemaComposer } from 'graphql-compose';
+import { JSONSchema } from '@json-schema-tools/meta-schema';
+import { SchemaComposer } from 'graphql-compose';
+import { diffSchemas } from 'json-schema-diff';
 import toJsonSchema from 'to-json-schema';
-import {
-  GraphQLJSON,
-  GraphQLVoid,
-  GraphQLDate,
-  GraphQLDateTime,
-  GraphQLTime,
-  GraphQLTimestamp,
-  GraphQLPhoneNumber,
-  GraphQLURL,
-  GraphQLEmailAddress,
-  GraphQLIPv4,
-  GraphQLIPv6,
-} from 'graphql-scalars';
-import { promises as fsPromises } from 'fs';
-import { specifiedDirectives } from 'graphql';
+import { flattenJSONSchema, getComposerFromJSONSchema } from './utils';
 import { stringify as qsStringify } from 'qs';
+import urlJoin from 'url-join';
+import { specifiedDirectives } from 'graphql';
 
-const { stat } = fsPromises || {};
-
-export interface JsonSchemaIntrospectionCache {
-  externalFileCache: Record<string, any>;
-  schemaCache: Record<string, any>;
-}
+const JsonSchemaWithDiff: ProxyOptions<JSONSchema> = {
+  ...PredefinedProxyOptions.JsonWithoutValidation,
+  validate: async (oldJsonSchema, newJsonSchema) => {
+    const result = await diffSchemas({
+      sourceSchema: oldJsonSchema as any,
+      destinationSchema: newJsonSchema as any,
+    });
+    if (result.removalsFound) {
+      throw new Error(`Breaking changes found in the new schema. ${JSON.stringify(result.removedJsonSchema)}`);
+    }
+  },
+};
 
 export default class JsonSchemaHandler implements MeshHandler {
-  public config: YamlConfig.JsonSchemaHandler;
+  private config: YamlConfig.JsonSchemaHandler;
   private baseDir: string;
   public cache: KeyValueCache<any>;
   public pubsub: MeshPubSub;
-  public introspectionCache: JsonSchemaIntrospectionCache;
+  public jsonSchema: StoreProxy<JSONSchema>;
 
-  constructor({
-    config,
-    baseDir,
-    cache,
-    pubsub,
-    introspectionCache,
-  }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler, JsonSchemaIntrospectionCache>) {
+  constructor({ config, baseDir, cache, pubsub, store }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache || {
-      externalFileCache: null,
-      schemaCache: null,
-    };
+    this.jsonSchema = store.proxy('jsonSchema.json', JsonSchemaWithDiff);
   }
 
-  public schemaComposer = new SchemaComposer();
-
   async getMeshSource() {
-    const fetch = getCachedFetch(this.cache);
-    const schemaComposer = this.schemaComposer;
-    schemaComposer.add(GraphQLJSON);
-    schemaComposer.add(GraphQLVoid);
-    schemaComposer.add(GraphQLDateTime);
-    schemaComposer.add(GraphQLDate);
-    schemaComposer.add(GraphQLTime);
-    if (!this.config.disableTimestampScalar) {
-      schemaComposer.add(GraphQLTimestamp);
-    }
-    schemaComposer.add(GraphQLPhoneNumber);
-    schemaComposer.add(GraphQLURL);
-    schemaComposer.add(GraphQLEmailAddress);
-    schemaComposer.add(GraphQLIPv4);
-    schemaComposer.add(GraphQLIPv6);
+    const inputJsonSchema = await this.jsonSchema.getWithSet(async () => {
+      const finalJsonSchema: JSONSchema = {
+        type: 'object',
+        title: '_schema',
+        properties: {},
+      };
+      for (const operationConfig of this.config.operations) {
+        operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
+        operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
+        const rootTypePropertyName = operationConfig.type.toLowerCase();
+        const rootTypeDefinition = (finalJsonSchema.properties[rootTypePropertyName] = finalJsonSchema.properties[
+          rootTypePropertyName
+        ] || {
+          type: 'object',
+          title: operationConfig.type,
+          properties: {},
+        });
+        rootTypeDefinition.properties = rootTypeDefinition.properties || {};
+        if (operationConfig.responseSchema) {
+          rootTypeDefinition.properties[operationConfig.field] = {
+            $ref: operationConfig.responseSchema,
+          };
+        } else if (operationConfig.responseSample) {
+          const sample = await readFileOrUrlWithCache(operationConfig.responseSample, this.cache, {
+            cwd: this.baseDir,
+          });
+          const generatedSchema = toJsonSchema(sample, {
+            required: false,
+            objects: {
+              additionalProperties: false,
+            },
+            strings: {
+              detectFormat: true,
+            },
+            arrays: {
+              mode: 'first',
+            },
+          });
+          generatedSchema.title = operationConfig.responseTypeName;
+          rootTypeDefinition.properties[operationConfig.field] = generatedSchema;
+        }
 
-    this.introspectionCache.schemaCache = this.introspectionCache.schemaCache || {};
-    this.introspectionCache.externalFileCache = this.introspectionCache.externalFileCache || {};
-    const externalFileCache = this.introspectionCache.externalFileCache;
-    const inputSchemaVisitor = new JSONSchemaVisitor(
-      schemaComposer,
-      true,
-      externalFileCache,
-      this.config.disableTimestampScalar
-    );
-    const outputSchemaVisitor = new JSONSchemaVisitor(
-      schemaComposer,
-      false,
-      externalFileCache,
-      this.config.disableTimestampScalar
-    );
+        const rootTypeInputPropertyName = operationConfig.type.toLowerCase() + 'Input';
+        const rootTypeInputTypeDefinition = (finalJsonSchema.properties[rootTypeInputPropertyName] = finalJsonSchema
+          .properties[rootTypeInputPropertyName] || {
+          type: 'object',
+          title: operationConfig.type + 'Input',
+          properties: {},
+        });
+        if (operationConfig.requestSchema) {
+          rootTypeInputTypeDefinition.properties[operationConfig.field] = {
+            $ref: operationConfig.requestSchema,
+          };
+        } else if (operationConfig.requestSample) {
+          const sample = await readFileOrUrlWithCache(operationConfig.requestSample, this.cache, {
+            cwd: this.baseDir,
+          });
+          const generatedSchema = toJsonSchema(sample, {
+            required: false,
+            objects: {
+              additionalProperties: false,
+            },
+            strings: {
+              detectFormat: true,
+            },
+            arrays: {
+              mode: 'first',
+            },
+          });
+          generatedSchema.title = operationConfig.requestTypeName;
+          rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
+        }
+      }
+      return flattenJSONSchema(finalJsonSchema, this.cache, {
+        cwd: this.baseDir,
+      });
+    });
+    const visitorResult = getComposerFromJSONSchema(inputJsonSchema);
+
+    const schemaComposer = visitorResult.output as SchemaComposer;
+
+    // graphql-compose doesn't add @defer and @stream to the schema
+    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const contextVariables: string[] = [];
 
-    const typeNamedOperations: YamlConfig.JsonSchemaOperation[] = [];
-    const unnamedOperations: YamlConfig.JsonSchemaOperation[] = [];
+    const fetch = getCachedFetch(this.cache);
 
-    if (this.config.baseSchema) {
-      const basedFilePath = this.config.baseSchema;
-      const baseSchema = await readFileOrUrlWithCache(basedFilePath, this.cache, {
-        cwd: this.baseDir,
-        headers: this.config.schemaHeaders,
-      });
-      externalFileCache[basedFilePath] = baseSchema;
-      const baseFileName = getFileName(basedFilePath);
-      outputSchemaVisitor.visit({
-        def: baseSchema as JSONSchemaDefinition,
-        propertyName: 'Base',
-        prefix: baseFileName,
-        cwd: basedFilePath,
-      });
-    }
-
-    this.config?.operations?.forEach(async operationConfig => {
-      if (operationConfig.responseTypeName) {
-        typeNamedOperations.push(operationConfig);
-      } else {
-        unnamedOperations.push(operationConfig);
-      }
-    });
-
-    const handleOperations = async (operationConfig: YamlConfig.JsonSchemaOperation) => {
-      let responseTypeName = operationConfig.responseTypeName;
-
-      let [requestSchema, responseSchema] = await Promise.all([
-        operationConfig.requestSample &&
-          this.generateJsonSchemaFromSample({
-            samplePath: operationConfig.requestSample,
-            schemaPath: operationConfig.requestSchema,
-          }),
-        operationConfig.responseSample &&
-          this.generateJsonSchemaFromSample({
-            samplePath: operationConfig.responseSample,
-            schemaPath: operationConfig.responseSchema,
-          }),
-      ]);
-      [requestSchema, responseSchema] = await Promise.all([
-        requestSchema ||
-          (operationConfig.requestSchema &&
-            readFileOrUrlWithCache(operationConfig.requestSchema, this.cache, {
-              cwd: this.baseDir,
-              headers: this.config.schemaHeaders,
-            })),
-        responseSchema ||
-          (operationConfig.responseSchema &&
-            readFileOrUrlWithCache(operationConfig.responseSchema, this.cache, {
-              cwd: this.baseDir,
-              headers: this.config.schemaHeaders,
-            })),
-      ]);
+    for (const operationConfig of this.config.operations) {
       operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
       operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
-      const basedFilePath = operationConfig.responseSchema || operationConfig.responseSample;
-      if (basedFilePath) {
-        externalFileCache[basedFilePath] = responseSchema;
-        const responseFileName = getFileName(basedFilePath);
-        responseTypeName = outputSchemaVisitor.visit({
-          def: responseSchema as JSONSchemaDefinition,
-          propertyName: 'Response',
-          prefix: responseFileName,
-          cwd: basedFilePath,
-          typeName: operationConfig.responseTypeName,
-        });
-      }
-
       const { args, contextVariables: specificContextVariables } = parseInterpolationStrings(
         [
           ...Object.values(this.config.operationHeaders || {}),
@@ -182,48 +147,28 @@ export default class JsonSchemaHandler implements MeshHandler {
 
       contextVariables.push(...specificContextVariables);
 
-      let requestTypeName = operationConfig.requestTypeName;
+      const rootTypeComposer = schemaComposer[operationConfig.type];
 
-      if (requestSchema) {
-        const basedFilePath = operationConfig.requestSchema || operationConfig.requestSample;
-        externalFileCache[basedFilePath] = requestSchema;
-        const requestFileName = getFileName(basedFilePath);
-        requestTypeName = inputSchemaVisitor.visit({
-          def: requestSchema as JSONSchemaDefinition,
-          propertyName: 'Request',
-          prefix: requestFileName,
-          cwd: basedFilePath,
-          typeName: operationConfig.requestTypeName,
-        });
+      rootTypeComposer.addFieldArgs(operationConfig.field, args);
+
+      const field = rootTypeComposer.getField(operationConfig.field);
+      if (!field.description) {
+        field.description = operationConfig.path
+          ? `${operationConfig.method} ${operationConfig.path}`
+          : operationConfig.pubsubTopic
+          ? `PubSub Topic: ${operationConfig.pubsubTopic}`
+          : '';
       }
 
-      if (requestTypeName) {
-        args.input = {
-          type: requestTypeName,
-          description: requestSchema?.description,
-        } as any;
-      }
-
-      const destination = operationConfig.type;
-      const fieldConfig: ObjectTypeComposerFieldConfigDefinition<any, any> = {
-        description:
-          operationConfig.description || responseSchema?.description || operationConfig.path
-            ? `${operationConfig.method} ${operationConfig.path}`
-            : operationConfig.pubsubTopic
-            ? `PubSub Topic: ${operationConfig.pubsubTopic}`
-            : '',
-        type: responseTypeName,
-        args,
-      };
       if (operationConfig.pubsubTopic) {
-        fieldConfig.subscribe = (root, args, context, info) => {
+        field.subscribe = (root, args, context, info) => {
           const interpolationData = { root, args, context, info };
           const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
           return this.pubsub.asyncIterator(pubsubTopic);
         };
-        fieldConfig.resolve = root => root;
+        field.resolve = root => root;
       } else if (operationConfig.path) {
-        fieldConfig.resolve = async (root, args, context, info) => {
+        field.resolve = async (root, args, context, info) => {
           const interpolationData = { root, args, context, info };
           const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
           const fullPath = urlJoin(this.config.baseUrl, interpolatedPath);
@@ -285,7 +230,7 @@ export default class JsonSchemaHandler implements MeshHandler {
             }
           }
           const errors = responseJson.errors || responseJson._errors;
-          const returnType = schema.getType(responseTypeName);
+          const returnType = field.type;
           if (errors?.length) {
             if ('getFields' in returnType && !('errors' in returnType.getFields())) {
               throw new AggregateError(errors.map(normalizeError));
@@ -299,59 +244,11 @@ export default class JsonSchemaHandler implements MeshHandler {
           return responseJson;
         };
       }
-      schemaComposer[destination].addFields({
-        [operationConfig.field]: fieldConfig,
-      });
-    };
-
-    await Promise.all(typeNamedOperations.map(handleOperations));
-    await Promise.all(unnamedOperations.map(handleOperations));
-
-    // graphql-compose doesn't add @defer and @stream to the schema
-    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
+    }
 
     const schema = schemaComposer.buildSchema();
     return {
       schema,
-      contextVariables,
     };
-  }
-
-  private async isGeneratedJSONSchemaValid({ samplePath, schemaPath }: { samplePath: string; schemaPath?: string }) {
-    if (schemaPath || (!isUrl(schemaPath) && (await pathExists(schemaPath)))) {
-      const [schemaFileStat, sampleFileStat] = await Promise.all([stat(schemaPath), stat(samplePath)]);
-      if (schemaFileStat.mtime > sampleFileStat.mtime) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private async generateJsonSchemaFromSample({ samplePath, schemaPath }: { samplePath: string; schemaPath?: string }) {
-    if (!(await this.isGeneratedJSONSchemaValid({ samplePath, schemaPath }))) {
-      if (samplePath in this.introspectionCache.schemaCache) {
-        return this.introspectionCache.schemaCache[samplePath];
-      }
-      const sample = await readFileOrUrlWithCache(samplePath, this.cache, { cwd: this.baseDir });
-      const schema = toJsonSchema(sample, {
-        required: false,
-        objects: {
-          additionalProperties: false,
-        },
-        strings: {
-          detectFormat: true,
-        },
-        arrays: {
-          mode: 'first',
-        },
-      });
-      if (schemaPath) {
-        writeJSON(schemaPath, schema).catch(e => `JSON Schema for ${samplePath} couldn't get cached: ${e.message}`);
-      } else {
-        this.introspectionCache.schemaCache[samplePath] = schema;
-      }
-      return schema;
-    }
-    return null;
   }
 }

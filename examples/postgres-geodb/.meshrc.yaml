@@ -10,7 +10,8 @@ sources:
     handler:
       graphql:
         endpoint: https://api.github.com/graphql
-        introspection: https://raw.githubusercontent.com/octokit/graphql-schema/master/schema.graphql
+        schemaHeaders:
+          Authorization: bearer ${GH_ACCESS_TOKEN}
         operationHeaders:
           Authorization: bearer ${GH_ACCESS_TOKEN}
     transforms:
@@ -37,9 +38,5 @@ additionalResolvers:
       query: "location:{root.name}"
       first: "{args.limit}"
 
-cache:
-  file:
-    path: ./mesh-cache.json
-
-serve:
-  exampleQuery: ./src/test.query.graphql
+documents: 
+  - ./src/test.query.graphql

@@ -11,5 +11,5 @@ sources:
             - Mutation.*
           outputDir: snapshots
 
-serve:
-  exampleQuery: list-of-languages-by-name.graphql
+documents:
+  - list-of-languages-by-name.graphql

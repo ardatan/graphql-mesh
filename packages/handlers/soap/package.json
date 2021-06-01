@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/store": "0.0.0",
     "@graphql-mesh/utils": "0.12.0",
     "soap-graphql": "0.1.1",
     "soap": "0.39.0"

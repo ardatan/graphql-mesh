@@ -197,7 +197,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       operationName
     );
 
-    if ('data' in executionResult) {
+    if ('data' in executionResult || 'errors' in executionResult) {
       if (executionResult.data && !executionResult.errors) {
         return executionResult.data as Result;
       } else {

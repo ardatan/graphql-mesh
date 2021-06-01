@@ -9,7 +9,7 @@ import {
   MeshTransformLibrary,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { IResolvers } from '@graphql-tools/utils';
+import { IResolvers, Source } from '@graphql-tools/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { KeyValueCache } from 'fetchache';
@@ -20,19 +20,21 @@ import {
   resolveAdditionalResolvers,
   resolveAdditionalTypeDefs,
   resolveCache,
-  resolveIntrospectionCache,
   resolveMerger,
   resolvePubSub,
+  resolveDocuments,
 } from './utils';
 import { stringInterpolator } from '@graphql-mesh/utils';
 import { MergedTypeConfig, MergedFieldConfig } from '@graphql-tools/delegate';
 import { get, set } from 'lodash';
+import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
+import { cwd, env } from 'process';
 
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
-  ignoreIntrospectionCache?: boolean;
   importFn?: (moduleId: string) => Promise<any>;
+  store?: MeshStore;
 };
 
 // TODO: deprecate this in next major release as dscussed in #1687
@@ -70,8 +72,24 @@ export type ProcessedConfig = {
   pubsub: MeshPubSub;
   liveQueryInvalidations: YamlConfig.LiveQueryInvalidation[];
   config: YamlConfig.Config;
-  introspectionCache: Record<string, any>;
+  documents: Source[];
 };
+
+function getDefaultMeshStore(dir = cwd()) {
+  const isProd = env.NODE_ENV?.toLowerCase() === 'production';
+  const storeStorageAdapter = isProd ? new FsStoreStorageAdapter() : new InMemoryStoreStorageAdapter();
+  return new MeshStore(resolve(dir, '.mesh'), storeStorageAdapter, {
+    /**
+     * TODO:
+     * `mesh start` => { readonly: true, validate: false }
+     * `mesh dev` => { readonly: false, validate: true } => validation error should show a prompt for confirmation
+     * `mesh validate` => { readonly: true, validate: true } => should fetch from remote and try to update
+     * readonly
+     */
+    readonly: isProd,
+    validate: false,
+  });
+}
 
 export async function processConfig(
   config: YamlConfig.Config,
@@ -81,17 +99,19 @@ export async function processConfig(
     dir,
     ignoreAdditionalResolvers = false,
     importFn = (moduleId: string) => import(moduleId),
-    ignoreIntrospectionCache = false,
+    store: providedStore,
   } = options || {};
+
   await Promise.all(config.require?.map(mod => importFn(mod)) || []);
 
-  const cache = await resolveCache(config.cache, importFn);
-  const pubsub = await resolvePubSub(config.pubsub, importFn);
-  const introspectionCache = ignoreIntrospectionCache
-    ? {}
-    : await resolveIntrospectionCache(config.introspectionCache, dir);
+  const rootStore = providedStore || getDefaultMeshStore(dir);
 
-  const [sources, transforms, additionalTypeDefs, additionalResolvers, merger] = await Promise.all([
+  const cache = await resolveCache(config.cache, importFn, rootStore);
+  const pubsub = await resolvePubSub(config.pubsub, importFn);
+
+  const sourcesStore = rootStore.child('sources');
+
+  const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
     Promise.all(
       config.sources.map<Promise<MeshResolvedSource>>(async source => {
         const handlerName = Object.keys(source.handler)[0];
@@ -120,9 +140,6 @@ export async function processConfig(
         ]);
 
         const HandlerCtor: MeshHandlerLibrary = handlerLibrary;
-
-        introspectionCache[source.name] = introspectionCache[source.name] || {};
-        const handlerIntrospectionCache = introspectionCache[source.name];
 
         const mergedTypeConfigMap: Record<string, MergedTypeConfig> = {};
         for (const mergedTypeConfigRaw of source.typeMerging || []) {
@@ -209,6 +226,7 @@ export async function processConfig(
               }),
           };
         }
+
         return {
           name: source.name,
           handler: new HandlerCtor({
@@ -217,7 +235,7 @@ export async function processConfig(
             baseDir: dir,
             cache,
             pubsub,
-            introspectionCache: handlerIntrospectionCache,
+            store: sourcesStore.child(source.name),
           }),
           transforms,
         };
@@ -249,6 +267,7 @@ export async function processConfig(
       pubsub
     ),
     resolveMerger(config.merger, importFn),
+    resolveDocuments(config.documents, dir),
   ]);
 
   return {
@@ -262,7 +281,7 @@ export async function processConfig(
     pubsub,
     liveQueryInvalidations: config.liveQueryInvalidations,
     config,
-    introspectionCache,
+    documents,
   };
 }
 
@@ -312,7 +331,7 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
 }
 
 export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions) {
-  const { configName = 'mesh', dir: configDir = '', ignoreAdditionalResolvers = false } = options || {};
+  const { configName = 'mesh', dir: configDir = '', ignoreAdditionalResolvers = false, ...restOptions } = options || {};
   const dir = isAbsolute(configDir) ? configDir : join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     loaders: {
@@ -331,5 +350,5 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
 
   const config = results.config;
   validateConfig(config);
-  return processConfig(config, { dir, ignoreAdditionalResolvers });
+  return processConfig(config, { dir, ignoreAdditionalResolvers, ...restOptions });
 }

@@ -3,8 +3,6 @@ const { getMesh } = require('@graphql-mesh/runtime');
 const { basename, join } = require('path');
 
 const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
-const { loadDocuments } = require('@graphql-tools/load');
-const { GraphQLFileLoader } = require('@graphql-tools/graphql-file-loader');
 
 const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
@@ -22,16 +20,9 @@ describe('MySQL Rfam', () => {
     ).toMatchSnapshot('mysql-rfam-schema');
   });
   it('should give correct response for example queries', async () => {
-    const {
-      config: {
-        serve: { exampleQuery },
-      },
-    } = await config$;
-    const sources = await loadDocuments(join(__dirname, '..', exampleQuery), {
-      loaders: [new GraphQLFileLoader()],
-    });
+    const { documents } = await config$;
     const { execute } = await mesh$;
-    for (const source of sources) {
+    for (const source of documents) {
       const result = await execute(source.document);
       expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
     }

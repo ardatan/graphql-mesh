@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/store": "0.0.0",
     "@graphql-mesh/utils": "0.12.0",
     "postgraphile-core": "4.12.1",
     "postgraphile": "4.12.2",

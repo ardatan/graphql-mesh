@@ -1,47 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  GetMeshSourceOptions,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  MeshPubSub,
-  KeyValueCache,
-} from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig, MeshPubSub } from '@graphql-mesh/types';
 import { subscribe } from 'graphql';
 import { withPostGraphileContext, Plugin, WithPostGraphileContextOptions } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { Pool } from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { loadFromModuleExportExpression, readFileOrUrlWithCache, jitExecutorFactory } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, jitExecutorFactory, readJSON } from '@graphql-mesh/utils';
 import { ExecutionParams } from '@graphql-tools/delegate';
-
-interface PostGraphileIntrospection {
-  pgCache?: any;
-}
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
-  private cache: KeyValueCache;
   private pubsub: MeshPubSub;
-  private introspectionCache: PostGraphileIntrospection;
+  private pgCache: any;
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    cache,
-    pubsub,
-    introspectionCache = {},
-  }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler, PostGraphileIntrospection>) {
+  constructor({ name, config, baseDir, pubsub, store }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache;
+    this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -60,10 +41,10 @@ export default class PostGraphileHandler implements MeshHandler {
 
     this.pubsub.subscribe('destroy', () => pgPool.end());
 
-    const cacheKey = this.name + '_introspection';
+    const cacheKey = this.name + '_introspection.json';
 
     const dummyCacheFilePath = join(tmpdir(), cacheKey);
-    const cachedIntrospection = this.introspectionCache;
+    let cachedIntrospection = await this.pgCache.get();
 
     let writeCache: () => Promise<void>;
 
@@ -97,10 +78,8 @@ export default class PostGraphileHandler implements MeshHandler {
 
     if (!cachedIntrospection) {
       await writeCache();
-      const writtenCache = await readFileOrUrlWithCache(cacheKey, this.cache, {
-        cwd: this.baseDir,
-      });
-      this.introspectionCache.pgCache = writtenCache;
+      cachedIntrospection = await readJSON(dummyCacheFilePath);
+      await this.pgCache.set(cachedIntrospection);
     }
 
     const jitExecutor = jitExecutorFactory(schema, this.name);

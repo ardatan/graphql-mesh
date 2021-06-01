@@ -26,7 +26,12 @@ import open from 'open';
 
 const { readFile } = fsPromises;
 
-export async function serveMesh(baseDir: string, argsPort?: number) {
+interface ServeMeshOptions {
+  baseDir: string;
+  argsPort?: number;
+}
+
+export async function serveMesh({ baseDir, argsPort }: ServeMeshOptions) {
   spinner.start('Generating Mesh schema...');
   let readyFlag = false;
 
@@ -46,7 +51,6 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
     .catch(handleFatalError);
   const {
     fork,
-    exampleQuery,
     port: configPort,
     hostname = 'localhost',
     cors: corsConfig,
@@ -161,7 +165,11 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
     app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
 
     if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playgroundMiddlewareFactory({ baseDir, exampleQuery, graphqlPath });
+      const playgroundMiddleware = playgroundMiddlewareFactory({
+        baseDir,
+        documents: meshConfig.documents,
+        graphqlPath,
+      });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
       }

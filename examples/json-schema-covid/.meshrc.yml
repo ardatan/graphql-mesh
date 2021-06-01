@@ -43,5 +43,5 @@ additionalResolvers:
       country: '{root.countryRegion}'
   - ./src/query-additional-resolvers.js
 
-serve:
-  exampleQuery: example-queries/*.graphql
+documents:
+  - example-queries/*.graphql
