@@ -15,6 +15,8 @@ import { flattenJSONSchema, getComposerFromJSONSchema } from './utils';
 import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import { specifiedDirectives } from 'graphql';
+import { get } from 'lodash';
+import AggregateError from '@ardatan/aggregate-error';
 
 const JsonSchemaWithDiff: ProxyOptions<JSONSchema> = {
   ...PredefinedProxyOptions.JsonWithoutValidation,
@@ -221,8 +223,10 @@ export default class JsonSchemaHandler implements MeshHandler {
           }
           const errorMessageField = this.config.errorMessageField || 'message';
           function normalizeError(error: any): Error {
-            if (typeof error === 'object' && errorMessageField in error) {
-              const errorObj = new Error(error[errorMessageField]);
+            const errorMessage = get(error, errorMessageField);
+            if (typeof error === 'object' && errorMessage) {
+              const errorObj = new Error(errorMessage);
+              errorObj.stack = null;
               Object.assign(errorObj, error);
               return errorObj;
             } else {
@@ -233,12 +237,15 @@ export default class JsonSchemaHandler implements MeshHandler {
           const returnType = field.type;
           if (errors?.length) {
             if ('getFields' in returnType && !('errors' in returnType.getFields())) {
-              throw new AggregateError(errors.map(normalizeError));
+              const aggregatedError = new AggregateError(errors.map(normalizeError));
+              aggregatedError.stack = null;
+              return aggregatedError;
             }
           }
           if (responseJson.error) {
             if ('getFields' in returnType && !('error' in returnType.getFields())) {
-              throw normalizeError(responseJson.error);
+              const normalizedError = normalizeError(responseJson.error);
+              return normalizedError;
             }
           }
           return responseJson;
