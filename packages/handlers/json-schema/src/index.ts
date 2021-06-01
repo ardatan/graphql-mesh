@@ -91,7 +91,7 @@ export default class JsonSchemaHandler implements MeshHandler {
             type: 'object',
             additionalProperties: true,
           };
-          generatedSchema.title = operationConfig.requestTypeName;
+          generatedSchema.title = operationConfig.responseTypeName;
           rootTypeDefinition.properties[operationConfig.field] = generatedSchema;
         }
 
