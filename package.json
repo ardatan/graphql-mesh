@@ -71,6 +71,9 @@
     ],
     "**/*.{ts,tsx,graphql,yml,json}": [
       "prettier --write"
+    ],
+    "yarn.lock": [
+      "npx yarn-deduplicate"
     ]
   },
   "workspaces": {
