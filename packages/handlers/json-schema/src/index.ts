@@ -117,6 +117,11 @@ export default class JsonSchemaHandler implements MeshHandler {
           });
           generatedSchema.title = operationConfig.requestTypeName;
           rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
+        } else {
+          rootTypeInputTypeDefinition.properties[operationConfig.field] = {
+            type: 'object',
+            additionalProperties: true,
+          };
         }
       }
       return flattenJSONSchema(finalJsonSchema, this.cache, {
