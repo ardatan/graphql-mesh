@@ -1,18 +1,16 @@
-const { findAndParseConfig } = require('@graphql-mesh/config');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { basename, join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { getMesh } from '@graphql-mesh/runtime';
+import { basename, join } from 'path';
 
-const { introspectionFromSchema, lexicographicSortSchema, printSchema } = require('graphql');
-const { loadDocuments } = require('@graphql-tools/load');
-const { GraphQLFileLoader } = require('@graphql-tools/graphql-file-loader');
-
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(30000);
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
+import { loadDocuments } from '@graphql-tools/load';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 
 describe('SQLite Chinook', () => {
+  const config$ = findAndParseConfig({
+    dir: join(__dirname, '..'),
+  });
+  const mesh$ = config$.then(config => getMesh(config));
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(

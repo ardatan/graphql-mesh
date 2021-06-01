@@ -1,17 +1,17 @@
-const { findAndParseConfig } = require('@graphql-mesh/config');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { basename, join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { getMesh } from '@graphql-mesh/runtime';
+import { basename, join } from 'path';
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
-const { readFile } = require('fs-extra');
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
+import { readFile } from 'fs-extra';
 
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(15000);
+jest.useFakeTimers('legacy');
 
 describe('JavaScript Wiki', () => {
+  const config$ = findAndParseConfig({
+    dir: join(__dirname, '..'),
+  });
+  const mesh$ = config$.then(config => getMesh(config));
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
@@ -26,7 +26,10 @@ describe('JavaScript Wiki', () => {
         serve: { exampleQuery },
       },
     } = await config$;
-    const viewsInPastMonthQuery = await readFile(join(__dirname, '../example-queries/views-in-past-month.graphql'), 'utf8');
+    const viewsInPastMonthQuery = await readFile(
+      join(__dirname, '../example-queries/views-in-past-month.graphql'),
+      'utf8'
+    );
     const { execute } = await mesh$;
     const result = await execute(viewsInPastMonthQuery);
     expect(typeof result?.data?.viewsInPastMonth).toBe('number');

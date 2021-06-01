@@ -6,21 +6,20 @@ const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
 const { loadDocuments } = require('@graphql-tools/load');
 const { GraphQLFileLoader } = require('@graphql-tools/graphql-file-loader');
 
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(30000);
-
-describe('SOAP Country Info', () => {
+describe('MySQL Rfam', () => {
+  const config$ = findAndParseConfig({
+    dir: join(__dirname, '..'),
+  });
+  const mesh$ = config$.then(config => getMesh(config));
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
-    ).toMatchSnapshot('soap-country-info-schema');
+    ).toMatchSnapshot('mysql-rfam-schema');
   });
+  jest.setTimeout(30000);
   it('should give correct response for example queries', async () => {
     const {
       config: {
@@ -33,7 +32,7 @@ describe('SOAP Country Info', () => {
     const { execute } = await mesh$;
     for (const source of sources) {
       const result = await execute(source.document);
-      expect(result).toMatchSnapshot(basename(source.location) + '-soap-country-info-result');
+      expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
     }
   });
   afterAll(() => mesh$.then(mesh => mesh.destroy()));

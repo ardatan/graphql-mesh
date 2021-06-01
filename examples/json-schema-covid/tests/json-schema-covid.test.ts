@@ -1,17 +1,15 @@
-const { findAndParseConfig } = require('@graphql-mesh/config');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { basename, join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { getMesh } from '@graphql-mesh/runtime';
+import { basename, join } from 'path';
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
-const { readFile } = require('fs-extra');
-
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(30000);
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
+import { readFile } from 'fs-extra';
 
 describe('JSON Schema Covid', () => {
+  const config$ = findAndParseConfig({
+    dir: join(__dirname, '..'),
+  });
+  const mesh$ = config$.then(config => getMesh(config));
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
@@ -21,17 +19,17 @@ describe('JSON Schema Covid', () => {
     ).toMatchSnapshot('json-schema-covid-schema');
   });
   it('should give correct response for STEP 1: 2 sources side by side', async () => {
-      const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');
-      const { execute } = await mesh$
-      const result = await execute(getDataStep1Query);
-      expect(typeof result?.data?.case?.confirmed).toBe('number');
-      expect(result?.data?.case?.countryRegion).toBe('France');
-      expect(typeof result?.data?.case?.deaths).toBe('number');
-      expect(typeof result?.data?.case?.recovered).toBe('number');
+    const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');
+    const { execute } = await mesh$;
+    const result = await execute(getDataStep1Query);
+    expect(typeof result?.data?.case?.confirmed).toBe('number');
+    expect(result?.data?.case?.countryRegion).toBe('France');
+    expect(typeof result?.data?.case?.deaths).toBe('number');
+    expect(typeof result?.data?.case?.recovered).toBe('number');
 
-      expect(result?.data?.population?.records).toHaveLength(1);
-      expect(result?.data?.population?.records[0]?.fields?.country_name).toBe('France');
-      expect(typeof result?.data?.population?.records[0]?.fields?.value).toBe('number');
+    expect(result?.data?.population?.records).toHaveLength(1);
+    expect(result?.data?.population?.records[0]?.fields?.country_name).toBe('France');
+    expect(typeof result?.data?.population?.records[0]?.fields?.value).toBe('number');
   });
   it('should give correct response for STEP1: 2 sources side by side', async () => {
     const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');

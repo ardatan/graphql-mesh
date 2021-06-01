@@ -1,20 +1,19 @@
 require('json-bigint-patch');
-const { findAndParseConfig } = require('@graphql-mesh/config');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { basename, join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { getMesh } from '@graphql-mesh/runtime';
+import { basename, join } from 'path';
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
-const { readFile } = require('fs-extra');
-
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-const startGrpcServer = require('../start-server');
-const grpc$ = startGrpcServer(300);
-jest.setTimeout(15000);
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
+import { readFile } from 'fs-extra';
 
 describe.skip('gRPC Example', () => {
+  const config$ = findAndParseConfig({
+    dir: join(__dirname, '..'),
+  });
+  const mesh$ = config$.then(config => getMesh(config));
+  const startGrpcServer = require('../start-server');
+  const grpc$ = startGrpcServer(300);
+  jest.setTimeout(15000);
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
@@ -31,7 +30,10 @@ describe.skip('gRPC Example', () => {
     expect(result).toMatchSnapshot('get-movies-grpc-example-result');
   });
   it('should fetch movies by cast as a subscription correctly', async () => {
-    const MoviesByCastSubscription = await readFile(join(__dirname, '../example-queries/MoviesByCast.subscription.graphql'), 'utf8');
+    const MoviesByCastSubscription = await readFile(
+      join(__dirname, '../example-queries/MoviesByCast.subscription.graphql'),
+      'utf8'
+    );
     const { subscribe } = await mesh$;
     await grpc$;
     const resultIterator = await subscribe(MoviesByCastSubscription);
@@ -39,9 +41,9 @@ describe.skip('gRPC Example', () => {
     expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-1');
     expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-2');
     await resultIterator.return();
-  })
+  });
   afterAll(() => {
-      mesh$.then(mesh => mesh.destroy());
-      grpc$.then(grpc => grpc.forceShutdown());
+    mesh$.then(mesh => mesh.destroy());
+    grpc$.then(grpc => grpc.forceShutdown());
   });
 });
