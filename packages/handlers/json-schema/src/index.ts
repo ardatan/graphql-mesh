@@ -86,6 +86,13 @@ export default class JsonSchemaHandler implements MeshHandler {
           });
           generatedSchema.title = operationConfig.responseTypeName;
           rootTypeDefinition.properties[operationConfig.field] = generatedSchema;
+        } else {
+          const generatedSchema: JSONSchemaObject = {
+            type: 'object',
+            additionalProperties: true,
+          };
+          generatedSchema.title = operationConfig.requestTypeName;
+          rootTypeDefinition.properties[operationConfig.field] = generatedSchema;
         }
 
         const rootTypeInputPropertyName = operationConfig.type.toLowerCase() + 'Input';
@@ -115,13 +122,6 @@ export default class JsonSchemaHandler implements MeshHandler {
               mode: 'first',
             },
           });
-          generatedSchema.title = operationConfig.requestTypeName;
-          rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
-        } else {
-          const generatedSchema: JSONSchemaObject = {
-            type: 'object',
-            additionalProperties: true,
-          };
           generatedSchema.title = operationConfig.requestTypeName;
           rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
         }
