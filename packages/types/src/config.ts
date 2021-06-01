@@ -324,7 +324,7 @@ export interface JsonSchemaHandler {
   /**
    * Field name of your custom error object (default: 'message')
    */
-  errorMessageField?: string;
+  errorMessage?: string;
 }
 export interface JsonSchemaOperation {
   field: string;

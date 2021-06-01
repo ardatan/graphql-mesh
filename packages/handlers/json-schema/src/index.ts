@@ -15,7 +15,6 @@ import { flattenJSONSchema, getComposerFromJSONSchema } from './utils';
 import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import { specifiedDirectives } from 'graphql';
-import { get } from 'lodash';
 import AggregateError from '@ardatan/aggregate-error';
 
 const JsonSchemaWithDiff: ProxyOptions<JSONSchema> = {
@@ -221,9 +220,9 @@ export default class JsonSchemaHandler implements MeshHandler {
           } catch (e) {
             throw responseText;
           }
-          const errorMessageField = this.config.errorMessageField || 'message';
+          const errorMessageTemplate = this.config.errorMessage || 'message';
           function normalizeError(error: any): Error {
-            const errorMessage = get(error, errorMessageField);
+            const errorMessage = stringInterpolator.parse(errorMessageTemplate, error);
             if (typeof error === 'object' && errorMessage) {
               const errorObj = new Error(errorMessage);
               errorObj.stack = null;

@@ -14,7 +14,7 @@ type JsonSchemaHandler @md {
   """
   Field name of your custom error object (default: 'message')
   """
-  errorMessageField: String
+  errorMessage: String
 }
 
 enum JsonSchemaOperationType {
