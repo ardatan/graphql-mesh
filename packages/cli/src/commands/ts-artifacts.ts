@@ -208,14 +208,19 @@ export async function generateTsArtifacts({
   return [
     codegenOutput,
     /* TypeScript */ `
-import { findAndParseConfig } from '@graphql-mesh/config';
+import { findAndParseConfig, ConfigProcessOptions } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
 import { join } from 'path';
+import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 
 export async function getBuiltMesh(configProcessOptions: ConfigProcessOptions = {}) {
   const meshConfig = await findAndParseConfig(
     {
       dir: join(__dirname, '..'),
+      store: new MeshStore(join(__dirname, '../.mesh'), new FsStoreStorageAdapter(), {
+        readonly: true,
+        validate: false
+      }),
       ...configProcessOptions
     }
   );
