@@ -33,6 +33,15 @@ export async function flattenJSONSchema(
   cache: KeyValueCache<any>,
   config: ReadFileOrUrlOptions
 ) {
+  const bundled = await bundleJSONSchema(schema, cache, config);
+  return dereferenceJSONSchema(bundled);
+}
+
+export async function bundleJSONSchema(
+  schema: string | JSONSchema,
+  cache: KeyValueCache<any>,
+  config: ReadFileOrUrlOptions
+) {
   if (typeof schema === 'string') {
     schema = {
       $ref: schema,
@@ -50,7 +59,11 @@ export async function flattenJSONSchema(
   };
   const baseDir = config.cwd + '/';
   const bundled = await $RefParser.bundle(baseDir, schema as $RefParser.JSONSchema, options);
-  const dereferenced = await $RefParser.dereference(baseDir, bundled as $RefParser.JSONSchema, options);
+  return bundled;
+}
+
+export async function dereferenceJSONSchema(bundledSchema: $RefParser.JSONSchema) {
+  const dereferenced = await $RefParser.dereference(bundledSchema);
   const titleized = traverse(
     dereferenced as any,
     (subSchema, _, path) => {

@@ -11,15 +11,20 @@ import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { SchemaComposer } from 'graphql-compose';
 import { diffSchemas } from 'json-schema-diff';
 import toJsonSchema from 'to-json-schema';
-import { flattenJSONSchema, getComposerFromJSONSchema } from './utils';
+import { bundleJSONSchema, dereferenceJSONSchema, getComposerFromJSONSchema } from './utils';
 import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import { specifiedDirectives } from 'graphql';
 import AggregateError from '@ardatan/aggregate-error';
+import $RefParser from '@apidevtools/json-schema-ref-parser';
 
 const JsonSchemaWithDiff: ProxyOptions<JSONSchema> = {
   ...PredefinedProxyOptions.JsonWithoutValidation,
-  validate: async (oldJsonSchema, newJsonSchema) => {
+  validate: async (oldBundledJsonSchema, newBundledJsonSchema) => {
+    const [oldJsonSchema, newJsonSchema] = await Promise.all([
+      dereferenceJSONSchema(oldBundledJsonSchema as $RefParser.JSONSchema),
+      dereferenceJSONSchema(newBundledJsonSchema as $RefParser.JSONSchema),
+    ]);
     const result = await diffSchemas({
       sourceSchema: oldJsonSchema as any,
       destinationSchema: newJsonSchema as any,
@@ -46,7 +51,7 @@ export default class JsonSchemaHandler implements MeshHandler {
   }
 
   async getMeshSource() {
-    const inputJsonSchema = await this.jsonSchema.getWithSet(async () => {
+    const bundledJsonSchema = await this.jsonSchema.getWithSet(async () => {
       const finalJsonSchema: JSONSchema = {
         type: 'object',
         title: '_schema',
@@ -126,10 +131,11 @@ export default class JsonSchemaHandler implements MeshHandler {
           rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
         }
       }
-      return flattenJSONSchema(finalJsonSchema, this.cache, {
+      return bundleJSONSchema(finalJsonSchema, this.cache, {
         cwd: this.baseDir,
       });
     });
+    const inputJsonSchema = await dereferenceJSONSchema(bundledJsonSchema as $RefParser.JSONSchema);
     const visitorResult = getComposerFromJSONSchema(inputJsonSchema);
 
     const schemaComposer = visitorResult.output as SchemaComposer;
