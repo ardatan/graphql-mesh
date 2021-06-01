@@ -6,6 +6,7 @@ module.exports = {
       'getting-started/basic-example',
       'getting-started/mesh-transforms',
       'getting-started/multiple-apis',
+      'getting-started/build-mesh-artifacts',
     ],
     'Input Handlers': [
       'handlers/available-handlers',
@@ -35,22 +36,16 @@ module.exports = {
       'transforms/naming-convention',
       'transforms/extend',
     ],
-    Cache: [
-      'cache/inmemory-lru',
-      'cache/cache-file',
-      'cache/localforage',
-      'cache/cache-redis'
-    ],
+    Cache: ['cache/inmemory-lru', 'cache/cache-file', 'cache/localforage', 'cache/cache-redis'],
     Recipes: [
       'recipes/typescript',
       'recipes/as-sdk',
       'recipes/as-gateway',
       'recipes/federation',
-      'recipes/introspection-cache',
       'recipes/subscriptions-webhooks',
-      'recipes/live-queries'
+      'recipes/live-queries',
     ],
-    "API Reference": require('./api-sidebar.json')
+    'API Reference': require('./api-sidebar.json'),
     // 'Extend Your Mesh': ['extend/custom-handler', 'extend/custom-transform']
   },
 };

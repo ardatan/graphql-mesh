@@ -2,34 +2,15 @@ import SnapshotTransform from '../src';
 import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql, GraphQLResolveInfo } from 'graphql';
-import { promises as fsPromises } from 'fs';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from 'graphql-subscriptions';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { pick } from 'lodash';
+import _ from 'lodash';
 import graphqlFields from 'graphql-fields';
-import { readJSON, mkdir } from '@graphql-mesh/utils';
-
-const { readdir, unlink, rmdir } = fsPromises || {};
-
-async function rmdirs(dir: string) {
-  let entries = await readdir(dir, { withFileTypes: true });
-  let results = await Promise.all(
-    entries.map(entry => {
-      let fullPath = join(dir, entry.name);
-      let task = entry.isDirectory() ? rmdirs(fullPath) : unlink(fullPath);
-      return task.catch(error => ({ error }));
-    })
-  );
-  results.forEach(result => {
-    // Ignore missing files/directories; bail on other errors
-    if (result && result.error.code !== 'ENOENT') throw result.error;
-  });
-  await rmdir(dir);
-}
+import { readJSON, mkdir, rmdirs } from '@graphql-mesh/utils';
 
 describe('snapshot', () => {
   const baseDir: string = undefined;
@@ -204,7 +185,7 @@ describe('snapshot', () => {
               const fieldMap: Record<string, any> = graphqlFields(info);
               const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
               const foundUser = users.find(user => args.id === user.id);
-              return foundUser ?? pick(foundUser, ...fields);
+              return foundUser ?? _.pick(foundUser, ...fields);
             },
           },
         },

@@ -1,5 +1,5 @@
 query LocationSearchExample {
-  searchLocation(name: "PCP145219") {
+  resourceByName(name: "PCP145219", resourceType: "Location") {
     entry {
       resource {
         ... on Location {

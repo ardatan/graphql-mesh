@@ -1,18 +1,19 @@
-import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadDocuments } from '@graphql-tools/load';
 import { Request, Response, RequestHandler } from 'express';
 import { renderGraphiQL } from 'graphql-helix';
+import { Source } from '@graphql-tools/utils';
 import { handleFatalError } from '../../handleFatalError';
+import { Logger } from '@graphql-mesh/types';
 
 export const playgroundMiddlewareFactory = ({
   baseDir,
-  exampleQuery,
+  documents,
   graphqlPath,
+  logger,
 }: {
   baseDir: string;
-  exampleQuery: string;
+  documents: Source[];
   graphqlPath: string;
+  logger: Logger;
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
   return function (req: Request, res: Response, next) {
@@ -21,17 +22,12 @@ export const playgroundMiddlewareFactory = ({
       Promise.resolve()
         .then(async () => {
           let defaultQuery: string;
-          if (exampleQuery) {
-            const documents = await loadDocuments(exampleQuery, {
-              loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-              cwd: baseDir,
-            });
-
+          if (documents?.length) {
             defaultQuery = documents.reduce((acc, doc) => (acc += doc.rawSDL! + '\n'), '');
           }
           return defaultQuery;
         })
-        .catch(handleFatalError);
+        .catch(e => handleFatalError(e, logger));
     if (req.query.query) {
       next();
       return;

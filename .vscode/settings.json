@@ -1,5 +1,6 @@
 {
   "yaml.schemas": {
     "./packages/types/src/config-schema.json": ".meshrc.*"
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

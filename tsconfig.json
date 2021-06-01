@@ -26,10 +26,12 @@
 
     "paths": {
       "@graphql-mesh/cli": ["packages/cli/src/index.ts"],
+      "@graphql-mesh/cli-canary": ["packages/cli-canary/src/index.ts"],
       "@graphql-mesh/runtime": ["packages/runtime/src/index.ts"],
       "@graphql-mesh/config": ["packages/config/src/index.ts"],
       "@graphql-mesh/types": ["packages/types/src/index.ts"],
       "@graphql-mesh/utils": ["packages/utils/src/index.ts"],
+      "@graphql-mesh/store": ["packages/store/src/index.ts"],
       "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
       "@graphql-mesh/transform-*": ["packages/transforms/*/src/index.ts"],
       "@graphql-mesh/merger-*": ["packages/mergers/*/src/index.ts"],

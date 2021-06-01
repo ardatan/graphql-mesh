@@ -1,0 +1,19 @@
+merger: bare
+sources:
+  - name: Weatherbit
+    handler:
+      openapi:
+        source: https://www.weatherbit.io/static/swagger.json
+    transforms:
+      - cache:
+          # Forcast data might change, so we can cache it for 1 hour only
+          - field: Query.getForecastDailyLatequalToLatLonLon
+            invalidate:
+              ttl: 864000 # Cache daily data for 24 hours
+
+cache:
+  localforage:
+    driver: [WEBSQL, INDEXEDDB, LOCALSTORAGE]
+
+documents:
+  - ./*.graphql

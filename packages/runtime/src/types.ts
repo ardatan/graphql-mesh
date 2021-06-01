@@ -7,8 +7,9 @@ import {
   MeshHandler,
   MeshTransform,
   YamlConfig,
+  Logger,
 } from '@graphql-mesh/types';
-import { DocumentNode } from 'graphql';
+import { DocumentNode, GraphQLResolveInfo } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
@@ -22,6 +23,7 @@ export type GetMeshOptions = {
   pubsub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
+  logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
 };
 
@@ -50,32 +52,18 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
 
 export type Requester<C = any> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
 
-export type SelectedFields =
-  | {
-      [fieldName: string]: SelectedFields;
-    }
-  | true;
-
-export type ProjectionOptions = {
-  /**
-   * If you don't provide custom selection, this is the depth of generated selection set by GraphQL Mesh
-   * default: 2
-   */
-  depth?: number;
-  /**
-   * Provide selection set in form of object similar to MongoDB's projection
-   * example: { foo: { bar: true }, baz: true }
-   */
-  fields?: SelectedFields;
-  /**
-   * Provide selection set in form of GraphQL SDL
-   * example: { foo bar baz }
-   */
+export type APIContextMethodParams = {
+  root?: any;
+  args?: any;
+  context: any;
+  info?: GraphQLResolveInfo;
   selectionSet?: string;
 };
 
 export type APIContext = {
-  api: Record<string, (args: any, projectionOptions: ProjectionOptions) => Promise<any>>;
+  Query: Record<string, (params: APIContextMethodParams) => Promise<any>>;
+  Mutation: Record<string, (params: APIContextMethodParams) => Promise<any>>;
+  Subscription: Record<string, (params: APIContextMethodParams) => AsyncIterable<any>>;
   rawSource: RawSourceOutput;
 };
 

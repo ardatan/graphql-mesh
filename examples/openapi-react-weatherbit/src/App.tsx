@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { useMeshSdk } from './mesh/useMeshSdk';
-import { GetDailyForecastByCoordinatesQuery } from './mesh/sdk.generated';
+import { getDailyForecastByCoordinatesQuery } from './mesh/.mesh';
 
 function App() {
-  const [forecastData, setForecastData] = useState<GetDailyForecastByCoordinatesQuery['forecastData']>();
+  const [forecastData, setForecastData] = useState<getDailyForecastByCoordinatesQuery['forecastData']>();
 
   const sdk = useMeshSdk();
 

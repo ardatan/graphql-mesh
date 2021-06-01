@@ -1,15 +1,23 @@
 {
   me {
+    id
+    username
     name
     reviews {
+      id
       body
       product {
+        inStock
         name
+        price
+        shippingEstimate
+        upc
+        weight
       }
       author {
         id
-        name
         username
+        name
         reviews {
           body
         }

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package io.xtech.outer;
+
+import "nested.proto";
+
+service Example {
+    rpc Get (io.xtech.TopLevel.Nested) returns (io.xtech.Result) {}
+}

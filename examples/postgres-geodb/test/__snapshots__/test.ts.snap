@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PostgresGeoDB should give correct response for example queries: test.query.graphql-query-result 1`] = `
+Object {
+  "data": Object {
+    "allCities": Object {
+      "nodes": Array [
+        Object {
+          "countrycode": "GBR",
+          "developers": Array [
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/25254?u=d332bdd6d335df9f08e7cdac0e17143d898ec70d&v=4",
+              "id": "MDQ6VXNlcjI1MjU0",
+              "login": "tj",
+              "name": "TJ Holowaychuk",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/227486?v=4",
+              "id": "MDQ6VXNlcjIyNzQ4Ng==",
+              "login": "chrisbanes",
+              "name": "Chris Banes",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/97088?u=f8156684506d77fd89ba332dc677b07352a0b790&v=4",
+              "id": "MDQ6VXNlcjk3MDg4",
+              "login": "mrdoob",
+              "name": "Mr.doob",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/1305617?u=25309b5502674f2627fdc109c52522daed0e3d6d&v=4",
+              "id": "MDQ6VXNlcjEzMDU2MTc=",
+              "login": "jlord",
+              "name": "Jessica Lord",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/8798027?u=9dfe78c98a6fdf4d5814f1ebf1ee5c19bd7277a9&v=4",
+              "id": "MDQ6VXNlcjg3OTgwMjc=",
+              "login": "angelabauer",
+              "name": "Angela Yu",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/439365?u=0e5f5555da75f83ca50a083072336bcd58ff038f&v=4",
+              "id": "MDQ6VXNlcjQzOTM2NQ==",
+              "login": "daneden",
+              "name": "Daniel Eden",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/546885?u=b766e4373e4d97b103ef19391d409b6ed9bb5c37&v=4",
+              "id": "MDQ6VXNlcjU0Njg4NQ==",
+              "login": "nicklockwood",
+              "name": "Nick Lockwood",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/17011?v=4",
+              "id": "MDQ6VXNlcjE3MDEx",
+              "login": "jskeet",
+              "name": "Jon Skeet",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/6673982?u=e3eed7a19ca3ce58e579a4e720dd0601c3bd29d1&v=4",
+              "id": "MDQ6VXNlcjY2NzM5ODI=",
+              "login": "MichalPaszkiewicz",
+              "name": "Michal Paszkiewicz",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/1254808?u=1d9df343bac6f57e7bff85f0074aac2de34f5dcc&v=4",
+              "id": "MDQ6VXNlcjEyNTQ4MDg=",
+              "login": "jgthms",
+              "name": "Jeremy Thomas",
+            },
+          ],
+          "district": "England",
+          "name": "London",
+        },
+      ],
+    },
+  },
+}
+`;

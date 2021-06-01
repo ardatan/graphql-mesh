@@ -1,19 +1,17 @@
 query Patient {
-  Patient(id: "1566443") {
-    name {
-      given
-      family
-    }
-    gender
-    address {
-      line
-      city
-      postalCode
-      state
-      country
-      case {
-        deaths
-        confirmed
+  resourceById(id: "1566443", resourceType: "Patient") {
+    ... on Patient {
+      name {
+        given
+        family
+      }
+      gender
+      address {
+        line
+        city
+        postalCode
+        state
+        country
       }
     }
   }

@@ -7,19 +7,7 @@ import {
   KeyValueCache,
 } from '@graphql-mesh/types';
 import { UrlLoader } from '@graphql-tools/url-loader';
-import {
-  GraphQLSchema,
-  buildClientSchema,
-  introspectionFromSchema,
-  buildSchema,
-  IntrospectionQuery,
-  parse,
-  execute,
-  GraphQLResolveInfo,
-  DocumentNode,
-  Kind,
-  buildASTSchema,
-} from 'graphql';
+import { GraphQLSchema, buildSchema, parse, DocumentNode, Kind, buildASTSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
   getInterpolatedHeadersFactory,
@@ -31,11 +19,9 @@ import {
   readFileOrUrlWithCache,
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
-
-export interface GraphQLHandlerIntrospection {
-  introspection?: IntrospectionQuery;
-  sdl?: string;
-}
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import federationToStitchingSDL from 'federation-to-stitching-sdl';
+import { mergeSchemas } from '@graphql-tools/merge';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
   query __ApolloGetServiceDefinition__ {
@@ -49,18 +35,15 @@ export default class GraphQLHandler implements MeshHandler {
   private config: YamlConfig.GraphQLHandler;
   private baseDir: string;
   private cache: KeyValueCache<any>;
-  private introspectionCache: GraphQLHandlerIntrospection;
+  private nonExecutableSchema: StoreProxy<GraphQLSchema>;
+  private apolloServiceSdl: StoreProxy<string>;
 
-  constructor({
-    config,
-    baseDir,
-    cache,
-    introspectionCache = {},
-  }: GetMeshSourceOptions<YamlConfig.GraphQLHandler, GraphQLHandlerIntrospection>) {
+  constructor({ config, baseDir, cache, store }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
-    this.introspectionCache = introspectionCache;
+    this.nonExecutableSchema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
+    this.apolloServiceSdl = store.proxy('apolloService.graphql', PredefinedProxyOptions.StringWithoutValidation);
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -135,49 +118,59 @@ export default class GraphQLHandler implements MeshHandler {
       const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory, () => endpoint);
       return executor(params);
     };
-    if (!this.introspectionCache.introspection) {
-      if (introspection) {
-        const result = await urlLoader.handleSDLAsync(introspection, {
-          customFetch,
-          ...this.config,
-          headers: schemaHeaders,
-        });
-        this.introspectionCache.introspection = introspectionFromSchema(result.schema);
-      } else {
-        this.introspectionCache.introspection = introspectionFromSchema(await introspectSchema(introspectionExecutor));
-      }
-    }
-    const nonExecutableSchema = buildClientSchema(this.introspectionCache.introspection);
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     const endpointFactory = getInterpolatedStringFactory(endpoint);
-    const queryType = nonExecutableSchema.getQueryType();
-    const queryTypeFieldMap = queryType.getFields();
+
+    const fetchApolloServiceSdl = async () => {
+      return this.apolloServiceSdl.getWithSet(async () => {
+        const sdlQueryResult = await introspectionExecutor({
+          document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
+        });
+        return sdlQueryResult?.data?._service?.sdl;
+      });
+    };
+
+    const nonExecutableSchema = await this.nonExecutableSchema.getWithSet(async () => {
+      const schemaFromIntrospection = await (introspection
+        ? urlLoader
+            .handleSDLAsync(introspection, {
+              customFetch,
+              ...this.config,
+              headers: schemaHeaders,
+            })
+            .then(({ schema }) => schema)
+        : introspectSchema(introspectionExecutor));
+      const queryTypeFromIntrospection = schemaFromIntrospection.getQueryType();
+      const queryTypeFieldMap = queryTypeFromIntrospection.getFields();
+      if ('_service' in queryTypeFieldMap) {
+        const apolloServiceSdl = await fetchApolloServiceSdl();
+        // eslint-disable-next-line no-unused-expressions
+        (schemaFromIntrospection.getDirectives() as any[]).splice(0, schemaFromIntrospection.getDirectives().length);
+        return mergeSchemas({
+          schemas: [schemaFromIntrospection],
+          typeDefs: [federationToStitchingSDL(apolloServiceSdl)],
+        });
+      }
+      return schemaFromIntrospection;
+    });
+    const queryTypeFromIntrospection = nonExecutableSchema.getQueryType();
+    const queryTypeFieldMap = queryTypeFromIntrospection.getFields();
     if ('_service' in queryTypeFieldMap) {
       const _serviceField = queryTypeFieldMap._service;
-      if ('resolve' in _serviceField) {
-        _serviceField.resolve = async () => {
-          if (!this.introspectionCache.sdl) {
-            const sdlQueryResult = await introspectionExecutor({
-              document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
-            });
-            this.introspectionCache.sdl = sdlQueryResult?.data?._service?.sdl;
-          }
-          return {
-            sdl: this.introspectionCache.sdl,
-          };
+      const apolloServiceSdl = await fetchApolloServiceSdl();
+      _serviceField.resolve = async () => {
+        return {
+          sdl: apolloServiceSdl,
         };
-      }
+      };
+      nonExecutableSchema.extensions = nonExecutableSchema.extensions || {};
+      Object.assign(nonExecutableSchema.extensions, {
+        apolloServiceSdl,
+      });
     }
-    const isSdlQuery = (info: GraphQLResolveInfo) =>
-      info.fieldName === '_service' &&
-      info.fieldNodes[0].selectionSet.selections[0].kind === 'Field' &&
-      info.fieldNodes[0].selectionSet.selections[0].name.value === 'sdl';
     return {
       schema: nonExecutableSchema,
       executor: async params => {
-        if (isSdlQuery(params.info)) {
-          return execute(nonExecutableSchema, params.document);
-        }
         const { executor } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory, endpointFactory);
         return executor(params) as any;
       },

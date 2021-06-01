@@ -8,12 +8,12 @@ sources:
             field: me
             path: /me
             method: GET
-            responseSchema: ./json-schemas/user.json
+            responseSchema: ./json-schemas/user.json#/definitions/User
           - type: Query
             field: company
             path: /company/{args.id}
             method: GET
-            responseSchema: ./json-schemas/company.json
+            responseSchema: ./json-schemas/company.json#/definitions/Company
             argTypeMap:
               id: ID!
           - type: Mutation
@@ -21,7 +21,7 @@ sources:
             path: /user
             method: PUT
             requestSample: ./json-samples/user-input.json
-            responseSchema: ./json-schemas/user.json
+            responseSchema: ./json-schemas/user.json#/definitions/User
           - type: Mutation
             field: updateUser
             path: /user/{args.id}
@@ -29,7 +29,7 @@ sources:
               id: ID!
             method: POST
             requestSample: ./json-samples/user-input.json
-            responseSchema: ./json-schemas/user.json # This can be `responseSample` with a sample JSON file
+            responseSchema: ./json-schemas/user.json#/definitions/User # This can be `responseSample` with a sample JSON file
 additionalTypeDefs: |
   extend type User {
     company: Company
@@ -50,5 +50,5 @@ transforms:
         - apply: Company.name
           faker: '{{company.companyName}}'
 
-serve:
-  exampleQuery: example-query.graphql
+documents:
+  - example-query.graphql

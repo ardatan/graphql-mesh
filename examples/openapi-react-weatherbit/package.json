@@ -12,7 +12,7 @@
     "@types/react-dom": "^16.9.9",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-scripts": "4.0.0",
+    "react-scripts": "4.0.3",
     "typescript": "~4.0.5",
     "@graphql-mesh/runtime": "0.17.0",
     "@graphql-mesh/openapi": "0.16.11",
@@ -23,16 +23,16 @@
     "graphql": "15.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.30.2",
-    "ts-node": "9.0.0"
+    "@graphql-mesh/cli": "0.30.2"
   },
   "scripts": {
-    "prestart": "yarn generate-sdk",
-    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "prestart": "yarn build:mesh",
+    "prebuild": "yarn build:mesh",
+    "build:mesh": "yarn mesh build --dir=./src/mesh",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "generate-sdk": "ts-node  -O \"{ \\\"module\\\": \\\"commonjs\\\", \\\"esModuleInterop\\\": true }\" scripts/generateSdk.ts"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

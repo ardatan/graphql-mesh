@@ -1,24 +1,36 @@
-import { MergerFn } from '@graphql-mesh/types';
+import { MergerFn, RawSourceOutput } from '@graphql-mesh/types';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { mergeSingleSchema } from './mergeSingleSchema';
-import { groupTransforms, applySchemaTransforms, meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
+import {
+  groupTransforms,
+  applySchemaTransforms,
+  meshDefaultCreateProxyingResolver,
+  jitExecutorFactory,
+} from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 const mergeUsingStitching: MergerFn = async function (options) {
   if (options.rawSources.length === 1) {
+    options.logger.debug(`Stitching is not necessary for a single schema`);
     return mergeSingleSchema(options);
   }
-  const { rawSources, typeDefs, resolvers, transforms } = options;
-  /*
-    rawSources.forEach(rawSource => {
-      if (!rawSource.executor) {
-        const originalSchema = rawSource.schema;
-        rawSource.executor = jitExecutorFactory(originalSchema, rawSource.name) as any;
-        rawSource.schema = buildSchema(printSchema(originalSchema));
-      }
-    });
-  */
+  const { rawSources, typeDefs, resolvers, transforms, logger } = options;
+  rawSources.forEach(rawSource => {
+    if (!rawSource.executor) {
+      rawSource.executor = jitExecutorFactory(
+        rawSource.schema,
+        rawSource.name,
+        logger.child(`${rawSource.name} - JIT Executor`)
+      ) as any;
+    }
+  });
+  logger.debug(`Stitching directives are being generated`);
+  const defaultStitchingDirectives = stitchingDirectives({
+    pathToDirectivesInExtensions: ['directives'],
+  });
+  logger.debug(`Stitching the source schemas`);
   let unifiedSchema = stitchSchemas({
     subschemas: rawSources.map(rawSource => ({
       createProxyingResolver: meshDefaultCreateProxyingResolver,
@@ -26,18 +38,32 @@ const mergeUsingStitching: MergerFn = async function (options) {
     })),
     typeDefs,
     resolvers,
+    subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],
   });
+  logger.debug(`sourceMap is being generated and attached to the unified schema`);
   unifiedSchema.extensions = unifiedSchema.extensions || {};
-  Object.defineProperty(unifiedSchema.extensions, 'sourceMap', {
-    get: () => {
-      const stitchingInfo: StitchingInfo = unifiedSchema.extensions.stitchingInfo;
-      const entries = stitchingInfo.subschemaMap.entries();
-      return new Map(
-        [...entries].map(([subschemaConfig, subschema]) => [subschemaConfig, subschema.transformedSchema])
-      );
-    },
+  Object.assign(unifiedSchema.extensions, {
+    sourceMap: new Proxy({} as any, {
+      get: (_, pKey) => {
+        if (pKey === 'get') {
+          return (rawSource: RawSourceOutput) => {
+            const stitchingInfo: StitchingInfo = unifiedSchema.extensions.stitchingInfo;
+            for (const [subschemaConfig, subschema] of stitchingInfo.subschemaMap) {
+              if ((subschemaConfig as RawSourceOutput).name === rawSource.name) {
+                return subschema.transformedSchema;
+              }
+            }
+            return undefined;
+          };
+        }
+        return () => {
+          throw new Error('Not Implemented');
+        };
+      },
+    }),
   });
   if (transforms?.length) {
+    logger.debug(`Root level transformations are being applied`);
     const { noWrapTransforms, wrapTransforms } = groupTransforms(transforms);
     if (wrapTransforms.length) {
       unifiedSchema = wrapSchema({
@@ -45,6 +71,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
         batch: true,
         transforms: wrapTransforms,
         createProxyingResolver: meshDefaultCreateProxyingResolver,
+        executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')) as any,
       });
     }
     if (noWrapTransforms.length) {

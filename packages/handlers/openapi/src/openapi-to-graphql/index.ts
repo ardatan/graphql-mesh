@@ -33,7 +33,6 @@
 // Type imports:
 import { Options, InternalOptions, Report, ConnectOptions, RequestOptions } from './types/options';
 import { Oas3 } from './types/oas3';
-import { Oas2 } from './types/oas2';
 import { Args, GraphQLOperationType, SubscriptionContext } from './types/graphql';
 import { Operation } from './types/operation';
 import { PreprocessingData } from './types/preprocessing_data';
@@ -49,6 +48,7 @@ import { createAndLoadViewer } from './auth_builder';
 import { GraphQLSchemaConfig } from 'graphql/type/schema';
 import { sortObject, handleWarning, mockDebug as debug, MitigationTypes } from './utils';
 import { MeshPubSub } from '@graphql-mesh/types';
+import { asArray } from '@graphql-mesh/utils';
 
 type Result = {
   schema: GraphQLSchema;
@@ -61,7 +61,7 @@ const translationLog = debug('translation');
  * Creates a GraphQL interface from the given OpenAPI Specification (2 or 3).
  */
 export async function createGraphQLSchema<TSource, TContext, TArgs>(
-  spec: Oas3 | Oas2 | (Oas3 | Oas2)[],
+  oasOrOass: Oas3 | Oas3[],
   options: Options<TSource, TContext, TArgs> = {}
 ): Promise<Result> {
   // Setting default options
@@ -106,28 +106,8 @@ export async function createGraphQLSchema<TSource, TContext, TArgs>(
 
   options.includeHttpDetails = typeof options.includeHttpDetails === 'boolean' ? options.includeHttpDetails : false;
 
-  let oass: Oas3[];
-
-  if (Array.isArray(spec)) {
-    /**
-     * Convert all non-OAS 3.0.x into OAS 3.0.x
-     */
-    oass = await Promise.all(
-      spec.map(ele => {
-        return Oas3Tools.getValidOAS3(ele);
-      })
-    );
-  } else {
-    /**
-     * Check if the spec is a valid OAS 3.0.x
-     * If the spec is OAS 2.0, attempt to translate it into 3.0.x, then try to
-     * translate the spec into a GraphQL schema
-     */
-    oass = [await Oas3Tools.getValidOAS3(spec)];
-  }
-
   const { schema, report } = await translateOpenAPIToGraphQL(
-    oass,
+    asArray(oasOrOass),
     options as InternalOptions<TSource, TContext, TArgs>
   );
   return {

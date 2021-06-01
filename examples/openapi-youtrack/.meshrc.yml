@@ -18,5 +18,5 @@ sources:
             - resolver: Query.*
               composer: ./src/add-fields
 
-serve:
-  exampleQuery: get-projects-with-issues.graphql
+documents:
+  - get-projects-with-issues.graphql

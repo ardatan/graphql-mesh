@@ -8,7 +8,7 @@
     "dev": "ts-node-dev src/index.ts",
     "start": "ts-node src/index.ts --transpileOnly",
     "premesh:serve": "yarn mesh:ts",
-    "mesh:serve": "mesh serve",
+    "mesh:serve": "mesh dev",
     "mesh:ts": "mesh typescript --output ./src/mesh/__generated__/types.ts",
     "write-introspection-cache": "mesh write-introspection-cache"
   },

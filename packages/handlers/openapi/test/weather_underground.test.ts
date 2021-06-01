@@ -10,6 +10,7 @@
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { GraphQLSchema } from 'graphql';
 import fetch from 'cross-fetch';
+import { getValidOAS3 } from '../src/openapi-to-graphql/oas_3_tools';
 
 /**
  * Set up the schema first
@@ -17,10 +18,10 @@ import fetch from 'cross-fetch';
 const oas = require('./fixtures/weather_underground.json');
 
 let createdSchema: GraphQLSchema;
-beforeAll(() => {
-  return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema, report }) => {
-    createdSchema = schema;
-  });
+beforeAll(async () => {
+  const validOas = await getValidOAS3(oas);
+  const { schema } = await openAPIToGraphQL.createGraphQLSchema(validOas, { fetch });
+  createdSchema = schema;
 });
 
 test('All Weather Underground query endpoints present', () => {

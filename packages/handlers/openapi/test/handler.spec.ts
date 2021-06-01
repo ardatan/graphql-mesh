@@ -3,6 +3,7 @@ import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { resolve } from 'path';
 import { PubSub } from 'graphql-subscriptions';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 
 describe('openapi', () => {
   it('should create a GraphQL schema from a simple local swagger file', async () => {
@@ -13,6 +14,10 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
+      store: new MeshStore('openapi', new InMemoryStoreStorageAdapter(), {
+        readonly: false,
+        validate: false,
+      }),
     });
     const source = await handler.getMeshSource();
 
@@ -27,6 +32,10 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
+      store: new MeshStore('openapi', new InMemoryStoreStorageAdapter(), {
+        readonly: false,
+        validate: false,
+      }),
     });
     const source = await handler.getMeshSource();
     expect(
@@ -46,6 +55,10 @@ describe('openapi', () => {
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
+      store: new MeshStore('openapi', new InMemoryStoreStorageAdapter(), {
+        readonly: false,
+        validate: false,
+      }),
     });
     const source = await handler.getMeshSource();
     expect(

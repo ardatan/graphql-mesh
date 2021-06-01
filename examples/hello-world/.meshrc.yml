@@ -6,13 +6,13 @@ sources:
           - type: Query
             field: greeting
             method: GET
-            responseTypeName: String
+            responseSample: greeting.json
 transforms:
   - mock:
       mocks:
         - apply: Query.greeting
-serve:
-  exampleQuery: |
+documents:
+  - |
     query HelloWorld {
       greeting
     }

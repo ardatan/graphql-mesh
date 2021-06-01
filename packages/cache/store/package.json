@@ -1,0 +1,33 @@
+{
+  "name": "@graphql-mesh/cache-store",
+  "version": "0.0.0",
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/store": "0.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

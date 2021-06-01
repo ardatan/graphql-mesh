@@ -6,6 +6,7 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { PubSub } from 'graphql-subscriptions';
 import ODataHandler from '../src';
+import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 
 const TripPinMetadata = readFileSync(resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
 const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
@@ -14,9 +15,14 @@ const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip
 describe('odata', () => {
   let pubsub: MeshPubSub;
   let cache: KeyValueCache;
+  let store: MeshStore;
   beforeEach(() => {
     pubsub = new PubSub();
     cache = new InMemoryLRUCache();
+    store = new MeshStore('odata', new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
     resetMocks();
   });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
@@ -29,6 +35,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -51,6 +58,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -88,6 +96,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -134,6 +143,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -173,6 +183,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -210,6 +221,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -265,6 +277,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -305,6 +318,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -345,6 +359,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -392,6 +407,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -442,6 +458,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -484,6 +501,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 
@@ -525,6 +543,7 @@ describe('odata', () => {
       },
       pubsub,
       cache,
+      store,
     });
     const source = await handler.getMeshSource();
 

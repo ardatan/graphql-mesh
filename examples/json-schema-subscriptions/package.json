@@ -5,7 +5,7 @@
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
     "start:api": "node api.js",
-    "start:mesh": "mesh serve"
+    "start:mesh": "mesh dev"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",

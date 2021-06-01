@@ -3,6 +3,7 @@ import { tmpdir } from 'os';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { join, relative } from 'path';
 import { readFileWithCache } from '../src/read-file-or-url';
+import { cwd } from 'process';
 
 describe('readFileWithCache', () => {
   it('should convert relative paths to absolute paths correctly', async () => {
@@ -12,7 +13,7 @@ describe('readFileWithCache', () => {
       test: 'TEST',
     };
     writeFileSync(tmpFileAbsolutePath, JSON.stringify(tmpFileContent));
-    const tmpFileRelativePath = relative(process.cwd(), tmpFileAbsolutePath);
+    const tmpFileRelativePath = relative(cwd(), tmpFileAbsolutePath);
     const receivedFileContent = await readFileWithCache(tmpFileRelativePath, cache);
     expect(receivedFileContent).toStrictEqual(tmpFileContent);
   });

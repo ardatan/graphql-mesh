@@ -21,13 +21,15 @@ type FederationObjectConfig {
 union ResolveReference = String | ResolveReferenceObject
 
 type ResolveReferenceObject {
-  targetSource: String!
-  targetMethod: String!
-  args: JSON!
-  returnData: String
-  resultSelectedFields: JSON
-  resultSelectionSet: String
-  resultDepth: Int
+  """
+  Name of root field name that resolves the reference
+  """
+  queryFieldName: String!
+  """
+  If the root field name has multiple args,
+  you need to define which argument should receive the key
+  """
+  keyArg: String
 }
 
 type FederationField {
@@ -38,5 +40,5 @@ type FederationField {
 type FederationFieldConfig {
   external: Boolean
   provides: String
-  required: String
+  requires: String
 }

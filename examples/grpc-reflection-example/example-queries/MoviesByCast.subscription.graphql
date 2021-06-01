@@ -1,5 +1,5 @@
 subscription SearchMoviesByCast {
-  exampleSearchMoviesByCast(input: { castName: "Tom Cruise" }) {
+  ioXtechExampleSearchMoviesByCast(input: { castName: "Tom Cruise" }) {
     name
     year
     rating

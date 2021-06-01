@@ -1,3 +1,4 @@
+/* eslint-disable import/no-duplicates */
 import './patchLongJs';
 import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { withCancel } from '@graphql-mesh/utils';
@@ -10,31 +11,22 @@ import {
   loadPackageDefinition,
 } from '@grpc/grpc-js';
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
-import { camelCase } from 'camel-case';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt } from 'graphql-scalars';
-import { get } from 'lodash';
-import { pascalCase } from 'pascal-case';
-import { AnyNestedObject, INamespace, IParseOptions, Message, Root, RootConstructor } from 'protobufjs';
+import _ from 'lodash';
+import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
+import protobufjs from 'protobufjs';
 import { promisify } from 'util';
 import grpcReflection from 'grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
+import descriptor from 'protobufjs/ext/descriptor/index.js';
 
-import {
-  ClientMethod,
-  addIncludePathResolver,
-  addMetaDataToCall,
-  createEnum,
-  createInputOutput,
-  getBuffer,
-  getTypeName,
-} from './utils';
-import { specifiedDirectives } from 'graphql';
+import { ClientMethod, addIncludePathResolver, addMetaDataToCall, getBuffer, getTypeName } from './utils';
+import { GraphQLEnumTypeConfig, specifiedDirectives } from 'graphql';
 import { join, isAbsolute } from 'path';
+import { StoreProxy } from '@graphql-mesh/store';
 
-// We have to use an ol' fashioned require here :(
-// Needed for descriptor.FileDescriptorSet
-const descriptor = require('protobufjs/ext/descriptor');
+const { Root } = protobufjs;
 
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
@@ -42,37 +34,44 @@ interface LoadOptions extends IParseOptions {
 
 type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
-interface GrpcHandlerIntrospectionCache {
-  rootJson: INamespace;
-  descriptorSetJson: any;
-}
+type RootJsonAndDecodedDescriptorSet = {
+  rootJson: protobufjs.INamespace;
+  decodedDescriptorSet: DecodedDescriptorSet;
+};
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
   private cache: KeyValueCache;
-  private introspectionCache: GrpcHandlerIntrospectionCache;
+  private rootJsonAndDecodedDescriptorSet: StoreProxy<RootJsonAndDecodedDescriptorSet>;
 
-  constructor({
-    config,
-    baseDir,
-    cache,
-    introspectionCache,
-  }: GetMeshSourceOptions<YamlConfig.GrpcHandler, GrpcHandlerIntrospectionCache>) {
+  constructor({ config, baseDir, cache, store }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
     if (!config) {
       throw new Error('Config not specified!');
     }
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
-    this.introspectionCache = introspectionCache || {
-      rootJson: null,
-      descriptorSetJson: null,
-    };
+    this.rootJsonAndDecodedDescriptorSet = store.proxy('descriptorSet.proto', {
+      codify: ({ rootJson, decodedDescriptorSet }) =>
+        `
+const { FileDescriptorSet } = require('protobufjs/ext/descriptor/index.js');
+
+module.exports = {
+  decodedDescriptorSet: descriptor.FileDescriptorSet.fromObject(${JSON.stringify(
+    decodedDescriptorSet.toJSON(),
+    null,
+    2
+  )}),
+  rootJson: ${JSON.stringify(rootJson, null, 2)},
+};
+`.trim(),
+      validate: () => {},
+    });
   }
 
-  async getCachedRootJson(creds: ChannelCredentials) {
-    if (!this.introspectionCache.rootJson || !this.introspectionCache.descriptorSetJson) {
+  getCachedDescriptorSet(creds: ChannelCredentials) {
+    return this.rootJsonAndDecodedDescriptorSet.getWithSet(async () => {
       const root = new Root();
       if (this.config.useReflection) {
         const grpcReflectionServer = this.config.endpoint;
@@ -119,7 +118,7 @@ export default class GrpcHandler implements MeshHandler {
           options = {
             ...this.config.protoFilePath.load,
             includeDirs: this.config.protoFilePath.load.includeDirs?.map(includeDir =>
-              isAbsolute(includeDir) ? includeDir : join(this.baseDir || process.cwd(), includeDir)
+              isAbsolute(includeDir) ? includeDir : join(this.baseDir, includeDir)
             ),
           };
           if (options.includeDirs) {
@@ -135,17 +134,15 @@ export default class GrpcHandler implements MeshHandler {
         const protoDefinition = await root.load(fileName, options);
         protoDefinition.resolveAll();
       }
-      this.introspectionCache.rootJson = root.toJSON({
-        keepComments: true,
-      });
-      this.introspectionCache.descriptorSetJson = root.toDescriptor('proto3').toJSON();
-    }
 
-    return this.introspectionCache;
+      return {
+        rootJson: root.toJSON(),
+        decodedDescriptorSet: root.toDescriptor('proto3'),
+      };
+    });
   }
 
   async getMeshSource() {
-    this.config.packageName = this.config.packageName || '';
     let creds: ChannelCredentials;
     if (this.config.credentialsSsl) {
       const sslFiles = [
@@ -180,91 +177,122 @@ export default class GrpcHandler implements MeshHandler {
       },
     });
 
-    const { rootJson, descriptorSetJson } = await this.getCachedRootJson(creds);
-    const decodedDescriptorSet = await descriptor.FileDescriptorSet.fromObject(descriptorSetJson);
+    const { rootJson, decodedDescriptorSet } = await this.getCachedDescriptorSet(creds);
+
     const packageDefinition = loadFileDescriptorSetFromObject(decodedDescriptorSet);
 
     const grpcObject = loadPackageDefinition(packageDefinition);
 
-    const visit = async (nested: AnyNestedObject, name: string, currentPath: string) => {
+    const walkToFindTypePath = (pathWithName: string[], baseTypePath: string[]) => {
+      const currentWalkingPath = [...pathWithName];
+      while (!_.has(rootJson.nested, currentWalkingPath.concat(baseTypePath).join('.nested.'))) {
+        if (!currentWalkingPath.length) {
+          break;
+        }
+        currentWalkingPath.pop();
+      }
+      return currentWalkingPath.concat(baseTypePath);
+    };
+
+    const visit = async (nested: AnyNestedObject, name: string, currentPath: string[]) => {
+      const pathWithName = [...currentPath, ...name.split('.')].filter(Boolean);
       if ('nested' in nested) {
         await Promise.all(
           Object.keys(nested.nested).map(async (key: string) => {
             const currentNested = nested.nested[key];
-            await visit(currentNested, key, currentPath ? currentPath + '.' + name : name);
+            await visit(currentNested, key, pathWithName);
           })
         );
       }
+      const typeName = pathWithName.join('_');
       if ('values' in nested) {
-        if (this.config.packageName && currentPath && !currentPath.includes(this.config.packageName)) {
-          // outside value that needs to be scoped by package name to ensure there are no clashes
-          const typeName = pascalCase(currentPath.split('.').join('_') + '_' + name);
-          schemaComposer.createEnumTC(createEnum(typeName, nested.values));
-        } else {
-          const typeName = pascalCase(name);
-          if (currentPath && currentPath !== this.config.packageName) {
-            // this is a nested value, add both nested name and unnested name
-            const nestedName = this.config.packageName ? currentPath.split(this.config.packageName)[1] : currentPath;
-            const typeName = pascalCase(nestedName.split('.').join('_') + '_' + name);
-            schemaComposer.createEnumTC(createEnum(typeName, nested.values));
-          }
-          schemaComposer.createEnumTC(createEnum(typeName, nested.values));
+        const enumTypeConfig: GraphQLEnumTypeConfig = {
+          name: typeName,
+          values: {},
+        };
+        for (const [key, value] of Object.entries(nested.values)) {
+          enumTypeConfig.values[key] = {
+            value,
+          };
         }
+        schemaComposer.createEnumTC(enumTypeConfig);
       } else if ('fields' in nested) {
-        if (this.config.packageName && currentPath && !currentPath.includes(this.config.packageName)) {
-          // outside message that needs to be scoped by package name to ensure there are no clashes
-          const typeName = pascalCase(currentPath.split('.').join('_') + '_' + name);
-          createInputOutput(schemaComposer, typeName, currentPath, this.config.packageName, nested.fields);
-        } else {
-          const typeName = pascalCase(name);
-          if (currentPath && currentPath !== this.config.packageName) {
-            // this is a nested message, add both nested name and unnested name
-            const nestedName = this.config.packageName ? currentPath.split(this.config.packageName)[1] : currentPath;
-            const typeName = pascalCase(nestedName.split('.').join('_') + '_' + name);
-            createInputOutput(schemaComposer, typeName, currentPath, this.config.packageName, nested.fields);
-          }
-          createInputOutput(schemaComposer, typeName, currentPath, this.config.packageName, nested.fields);
+        const inputTC = schemaComposer.createInputTC({
+          name: typeName + '_Input',
+          fields: {},
+        });
+        const outputTC = schemaComposer.createObjectTC({
+          name: typeName,
+          fields: {},
+        });
+        const fieldEntries = Object.entries(nested.fields);
+        if (!fieldEntries.length) {
+          // This is a empty proto type
+          inputTC.addFields({
+            _: {
+              type: 'Boolean',
+            },
+          });
+          outputTC.addFields({
+            _: {
+              type: 'Boolean',
+            },
+          });
         }
+        await Promise.all(
+          fieldEntries.map(async ([fieldName, { type, rule }]) => {
+            const baseFieldTypePath = type.split('.');
+            inputTC.addFields({
+              [fieldName]: {
+                type: () => {
+                  const fieldTypePath = walkToFindTypePath(pathWithName, baseFieldTypePath);
+                  const fieldInputTypeName = getTypeName(schemaComposer, fieldTypePath, true);
+                  return rule === 'repeated' ? `[${fieldInputTypeName}]` : fieldInputTypeName;
+                },
+              },
+            });
+            outputTC.addFields({
+              [fieldName]: {
+                type: () => {
+                  const fieldTypePath = walkToFindTypePath(pathWithName, baseFieldTypePath);
+                  const fieldInputTypeName = getTypeName(schemaComposer, fieldTypePath, false);
+                  return rule === 'repeated' ? `[${fieldInputTypeName}]` : fieldInputTypeName;
+                },
+              },
+            });
+          })
+        );
       } else if ('methods' in nested) {
-        const objPath = currentPath ? currentPath + '.' + name : name;
-        const ServiceClient = get(grpcObject, objPath);
+        const objPath = pathWithName.join('.');
+        const ServiceClient = _.get(grpcObject, objPath);
         if (typeof ServiceClient !== 'function') {
           throw new Error(`Object at path ${objPath} is not a Service constructor`);
         }
         const client = new ServiceClient(this.config.endpoint, creds);
         const methods = nested.methods;
         await Promise.all(
-          Object.keys(methods).map(async (methodName: string) => {
-            const method = methods[methodName];
-            let rootFieldName = methodName;
-            let responseType = method.responseType;
-            let requestType = method.requestType;
-            if (name !== this.config.serviceName) {
-              rootFieldName = camelCase(name + '_' + rootFieldName);
-            }
-            if (!this.config.serviceName && this.config.useReflection) {
-              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
-              responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType.replace(currentPath, ''));
-              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType.replace(currentPath, ''));
-            } else if (this.config.descriptorSetFilePath && currentPath !== this.config.packageName) {
-              const reflectionPath = currentPath.replace(this.config.serviceName || '', '');
-              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
-              responseType = camelCase(
-                currentPath.split('.').join('_') + '_' + responseType.replace(reflectionPath, '')
-              );
-              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType.replace(reflectionPath, ''));
-            } else if (currentPath !== this.config.packageName) {
-              rootFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootFieldName);
-              responseType = camelCase(currentPath.split('.').join('_') + '_' + responseType);
-              requestType = camelCase(currentPath.split('.').join('_') + '_' + requestType);
-            }
+          Object.entries(methods).map(async ([methodName, method]) => {
+            const rootFieldName = [...pathWithName, methodName].join('_');
+            const baseRequestTypePath = method.requestType?.split('.');
             const fieldConfig = {
-              type: () => getTypeName(schemaComposer, responseType, false, this.config.packageName),
+              type: () => {
+                const baseResponseTypePath = method.responseType?.split('.');
+                if (baseResponseTypePath) {
+                  const responseTypePath = walkToFindTypePath(pathWithName, baseResponseTypePath);
+                  return getTypeName(schemaComposer, responseTypePath, false);
+                }
+                return 'Void';
+              },
               args: {
-                input: {
-                  type: () => getTypeName(schemaComposer, requestType, true, this.config.packageName),
-                  defaultValue: {},
-                },
+                input: baseRequestTypePath
+                  ? {
+                      type: () => {
+                        const requestTypePath = walkToFindTypePath(pathWithName, baseRequestTypePath);
+                        return getTypeName(schemaComposer, requestTypePath, true);
+                      },
+                      defaultValue: {},
+                    }
+                  : undefined,
               },
             };
             if (method.responseStream) {
@@ -304,22 +332,16 @@ export default class GrpcHandler implements MeshHandler {
             }
           })
         );
-        let rootPingFieldName = 'ping';
-        if (name !== this.config.serviceName) {
-          rootPingFieldName = camelCase(name + '_' + rootPingFieldName);
-        }
-        if (currentPath !== this.config.packageName) {
-          rootPingFieldName = camelCase(currentPath.split('.').join('_') + '_' + rootPingFieldName);
-        }
+        const pingFieldName = pathWithName.join('_') + '_ping';
         schemaComposer.Query.addFields({
-          [rootPingFieldName]: {
+          [pingFieldName]: {
             type: 'ServerStatus',
             resolve: () => ({ status: 'online' }),
           },
         });
       }
     };
-    await visit(rootJson, '', '');
+    await visit(rootJson, '', []);
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));

@@ -1,8 +1,25 @@
-import { GraphQLSchema, GraphQLObjectType, GraphQLID, isNonNullType, GraphQLNonNull } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
-import { transformSchemaFederation, FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
-import { get, set } from 'lodash';
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLID,
+  isNonNullType,
+  GraphQLNonNull,
+  isObjectType,
+  GraphQLUnionType,
+  buildSchema,
+  GraphQLResolveInfo,
+} from 'graphql';
+import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
+import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
+import _ from 'lodash';
+import { entitiesField, EntityType, serviceField } from '@apollo/federation/dist/types.js';
+import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
+
+import federationToStitchingSDL from 'federation-to-stitching-sdl';
+
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 export default class FederationTransform implements MeshTransform {
   private config: YamlConfig.Transform['federation'];
@@ -13,7 +30,7 @@ export default class FederationTransform implements MeshTransform {
     this.baseDir = baseDir;
   }
 
-  transformSchema(schema: GraphQLSchema) {
+  transformSchema(schema: GraphQLSchema, subschemaConfig: RawSourceOutput) {
     const federationConfig: FederationConfig<any> = {};
 
     if (this.config?.types) {
@@ -42,32 +59,29 @@ export default class FederationTransform implements MeshTransform {
         if (type.config?.resolveReference) {
           const resolveReferenceConfig = type.config.resolveReference;
           if (typeof resolveReferenceConfig === 'string') {
-            resolveReference = loadFromModuleExportExpressionSync(resolveReferenceConfig, { cwd: this.baseDir });
+            resolveReference = (...args: any[]) =>
+              loadFromModuleExportExpression<any>(resolveReferenceConfig, { cwd: this.baseDir }).then(fn =>
+                fn(...args)
+              );
           } else if (typeof resolveReferenceConfig === 'function') {
             resolveReference = type.config.resolveReference;
           } else {
-            const {
-              args,
-              targetSource,
-              targetMethod,
-              resultSelectedFields,
-              resultSelectionSet,
-              resultDepth,
-              returnData,
-            } = resolveReferenceConfig;
-            resolveReference = async (root: any, context: any, info: any) => {
-              const resolverData = { root, context, info };
-              const methodArgs: any = {};
-              for (const argPath in args) {
-                set(methodArgs, argPath, get(resolverData, resolveReferenceConfig.args[argPath]));
-              }
-              const result = await context[targetSource].api[targetMethod](methodArgs, {
-                selectedFields: resultSelectedFields,
-                selectionSet: resultSelectionSet,
-                depth: resultDepth,
+            const { queryFieldName, keyArg = schema.getQueryType().getFields()[queryFieldName].args[0].name } =
+              resolveReferenceConfig;
+            const keyField = type.config.keyFields[0];
+            resolveReference = (root: any, context: any, info: GraphQLResolveInfo) =>
+              context[subschemaConfig.name].Query[queryFieldName]({
+                root,
+                key: keyField,
+                argsFromKeys: (keys: string[]) => ({
+                  [keyArg]: keys,
+                }),
+                args: {
+                  [keyArg]: root[keyField],
+                },
+                context,
+                info,
               });
-              return returnData ? get(result, returnData) : result;
-            };
           }
         }
         federationConfig[type.name] = {
@@ -78,6 +92,80 @@ export default class FederationTransform implements MeshTransform {
       }
     }
 
-    return transformSchemaFederation(schema, federationConfig);
+    const entityTypes = Object.fromEntries(
+      Object.entries(federationConfig)
+        .filter(([, { keyFields }]) => keyFields && keyFields.length)
+        .map(([objectName]) => {
+          const type = schema.getType(objectName);
+          if (!isObjectType(type)) {
+            throw new Error(`Type "${objectName}" is not an object type and can't have a key directive`);
+          }
+          return [objectName, type];
+        })
+    );
+
+    const hasEntities = !!Object.keys(entityTypes).length;
+
+    const schemaWithFederationDirectives = addFederationAnnotations(
+      printSchemaWithDirectives(schema),
+      federationConfig
+    );
+
+    const { stitchingDirectivesTransformer } = stitchingDirectives();
+    const sdlWithStitchingDirectives = federationToStitchingSDL(schemaWithFederationDirectives);
+
+    subschemaConfig.merge = stitchingDirectivesTransformer({
+      schema: buildSchema(sdlWithStitchingDirectives, {
+        assumeValid: true,
+        assumeValidSDL: true,
+      }),
+    }).merge;
+
+    const schemaWithFederationQueryType = mapSchema(schema, {
+      [MapperKind.QUERY]: type => {
+        const config = type.toConfig();
+        return new GraphQLObjectType({
+          ...config,
+          fields: {
+            ...config.fields,
+            ...(hasEntities && { _entities: entitiesField }),
+            _service: {
+              ...serviceField,
+              resolve: () => ({ sdl: schemaWithFederationDirectives }),
+            },
+          },
+        });
+      },
+    });
+
+    const schemaWithUnionType = mapSchema(schemaWithFederationQueryType, {
+      [MapperKind.UNION_TYPE]: type => {
+        if (type.name === EntityType.name) {
+          return new GraphQLUnionType({
+            ...EntityType.toConfig(),
+            types: Object.values(entityTypes),
+          });
+        }
+        return type;
+      },
+    });
+
+    // Not using transformSchema since it will remove resolveReference
+    Object.entries(federationConfig).forEach(([objectName, currentFederationConfig]) => {
+      if (currentFederationConfig.resolveReference) {
+        const type = schemaWithUnionType.getType(objectName);
+        if (!isObjectType(type)) {
+          throw new Error(`Type "${objectName}" is not an object type and can't have a resolveReference function`);
+        }
+        type.resolveReference = currentFederationConfig.resolveReference;
+      }
+    });
+
+    schemaWithUnionType.extensions = schemaWithUnionType.extensions || {};
+    Object.assign(schemaWithUnionType.extensions, {
+      apolloServiceSdl: schemaWithFederationDirectives,
+    });
+
+    return schemaWithUnionType;
   }
 }

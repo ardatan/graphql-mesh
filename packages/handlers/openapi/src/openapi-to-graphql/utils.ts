@@ -7,6 +7,7 @@
 
 import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessing_data';
 import { Warning } from './types/options';
+import { env } from 'process';
 
 export enum MitigationTypes {
   /**
@@ -169,7 +170,7 @@ export function getCommonPropertyNames(
 export function mockDebug(...args1: any[]) {
   // do nothing
   return (...args2: any[]) => {
-    if (process.env.DEBUG) {
+    if (env.DEBUG) {
       console.error(...args1, ...args2);
     }
   };
