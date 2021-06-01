@@ -24,7 +24,7 @@
     "graphql-compose": "8.1.0",
     "graphql-compose-mongoose": "9.4.1",
     "graphql-compose-connection": "8.2.0",
-    "graphql-compose-pagination": "8.1.0"
+    "graphql-compose-pagination": "8.2.0"
   },
   "publishConfig": {
     "access": "public",
