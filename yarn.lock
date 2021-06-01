@@ -17772,10 +17772,10 @@ postgraphile-core@4.12.1:
     graphile-build-pg "4.12.1"
     tslib "^2.0.1"
 
-postgraphile@4.12.1:
-  version "4.12.1"
-  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.12.1.tgz#d906957bbcb678b6ab25331a33037a0736672776"
-  integrity sha512-m7kxe3LIQ7SVXyOFVrizNm37DroeP+YtvpdMekkvYmXNUdca+DjqhQJhPngEFYxeSI0NtWdisdkLT/3eai8ntA==
+postgraphile@4.12.2:
+  version "4.12.2"
+  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.12.2.tgz#6ff06236b5b438e27e499541e01e98a8c04cb1bc"
+  integrity sha512-rhqbzBSlkhGLGaxpAwN2kwtxIDOun/Rkrm6qOr5N65vSjziCD4Od2dEhZqgC08UF7xAk8/pk3/qkUnk5FLRBPw==
   dependencies:
     "@graphile/lru" "4.11.0"
     "@types/json5" "^0.0.30"
