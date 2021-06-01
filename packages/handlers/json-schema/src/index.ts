@@ -94,7 +94,6 @@ export default class JsonSchemaHandler implements MeshHandler {
         } else {
           const generatedSchema: JSONSchemaObject = {
             type: 'object',
-            additionalProperties: true,
           };
           generatedSchema.title = operationConfig.responseTypeName;
           rootTypeDefinition.properties[operationConfig.field] = generatedSchema;
