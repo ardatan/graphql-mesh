@@ -27,6 +27,8 @@ import {
 import $RefParser from '@apidevtools/json-schema-ref-parser';
 import { readFileOrUrlWithCache, sanitizeNameForGraphQL, ReadFileOrUrlOptions } from '@graphql-mesh/utils';
 import { KeyValueCache } from '@graphql-mesh/types';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 export async function flattenJSONSchema(
   schema: string | JSONSchema,
@@ -88,6 +90,10 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
   const schemaComposer = new SchemaComposer();
   const subSchemaTypeComposerMap = new Map<any, TypeComposers>();
   const pathTypeComposerMap = new Map<string, TypeComposers>();
+  const ajv = new Ajv({
+    strict: false,
+  });
+  addFormats(ajv);
   function ensureTypeComposers(maybeTypeComposers: any) {
     return subSchemaTypeComposerMap.get(maybeTypeComposers) || maybeTypeComposers;
   }
@@ -117,15 +123,31 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
         }
         return sanitizedName;
       };
-
+      const validate = (data: any) =>
+        ajv.validate(
+          {
+            $ref: '#/definitions/schema' + path,
+            definitions: {
+              schema,
+            },
+          },
+          data
+        );
       const getGenericJSONScalar = (isInput: boolean) => {
+        const coerceValue = (value: any) => {
+          if (!validate(value)) {
+            throw new Error(`${JSON.stringify(value)} is not valid!`);
+          }
+          return value;
+        };
         return schemaComposer.createScalarTC({
-          ...GraphQLJSON,
           name: getValidTypeName(isInput),
           description: subSchema.description,
-          extensions: {
-            subSchema,
-            path,
+          serialize: coerceValue,
+          parseValue: coerceValue,
+          parseLiteral: (...args) => {
+            const value = GraphQLJSON.parseLiteral(...args);
+            return coerceValue(value);
           },
         });
       };
@@ -135,10 +157,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
           ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.pattern), {
             description: subSchema.description,
           }),
-          extensions: {
-            subSchema,
-            path,
-          },
         });
         return {
           input: typeComposer,
@@ -150,10 +168,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
           ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.const), {
             description: subSchema.description,
           }),
-          extensions: {
-            subSchema,
-            path,
-          },
         });
         return {
           input: typeComposer,
@@ -170,10 +184,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
         const typeComposer = schemaComposer.createEnumTC({
           name: getValidTypeName(false),
           values,
-          extensions: {
-            subSchema,
-            path,
-          },
         });
         return {
           input: typeComposer,
@@ -191,10 +201,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
               name: getValidTypeName(false),
               description: subSchema.description,
               types: typeComposers,
-              extensions: {
-                subSchema,
-                path,
-              },
             }),
           };
         } else {
@@ -401,10 +407,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
               serialize: coerceString,
               parseLiteral: coerceString,
               parseValue: ast => ast?.value && coerceString(ast.value),
-              extensions: {
-                subSchema,
-                path,
-              },
             });
             return {
               input: typeComposer,
@@ -433,16 +435,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                 output: typeComposer,
               };
             }
-            case 'email':
-            case 'idn-email': {
+            case 'email': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLEmailAddress);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-              };
-            }
-            case 'hostname': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLString);
               return {
                 input: typeComposer,
                 output: typeComposer,
@@ -462,32 +456,23 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                 output: typeComposer,
               };
             }
-            case 'uri':
-            case 'uri-reference':
-            case 'iri':
-            case 'iri-reference':
-            case 'uri-template': {
+            case 'uri': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
               return {
                 input: typeComposer,
                 output: typeComposer,
               };
             }
-            case 'json-pointer': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLString);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-              };
-            }
-            case 'relative-json-pointer': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLString);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-              };
-            }
-            case 'regex': {
+            case 'idn-email':
+            case 'hostname':
+            case 'regex':
+            case 'json-pointer':
+            case 'relative-json-pointer':
+            case 'uri-reference':
+            case 'iri':
+            case 'iri-reference':
+            case 'uri-template': {
+              // Trust ajv
               const typeComposer = schemaComposer.getAnyTC(GraphQLString);
               return {
                 input: typeComposer,
@@ -533,10 +518,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                 name: getValidTypeName(false),
                 description: subSchema.description,
                 types: typeComposers,
-                extensions: {
-                  subSchema,
-                  path,
-                },
               });
               const inputComposer = getGenericJSONScalar(true);
               return {
@@ -574,7 +555,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                 type: subSchema.required?.includes(propertyName) ? output.getTypeNonNull() : output,
               };
               inputFieldMap[propertyName] = {
-                type: subSchema.required?.includes(propertyName) ? input.getTypeNonNull() : input,
+                type: subSchema.required?.includes(propertyName) ? input?.getTypeNonNull() : input,
               };
             }
           }
@@ -647,7 +628,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
             }
           }
 
-          // eslint-disable-next-line no-case-declarations
           const output =
             Object.keys(fieldMap).length === 0
               ? getGenericJSONScalar(false)
@@ -655,10 +635,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                   name: getValidTypeName(false),
                   description: subSchema.description,
                   fields: fieldMap,
-                  extensions: {
-                    subSchema,
-                    path,
-                  },
+                  isTypeOf: data => !!validate(data),
                 });
 
           const input =
@@ -668,10 +645,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                   name: getValidTypeName(true),
                   description: subSchema.description,
                   fields: inputFieldMap,
-                  extensions: {
-                    subSchema,
-                    path,
-                  },
                 });
 
           return {

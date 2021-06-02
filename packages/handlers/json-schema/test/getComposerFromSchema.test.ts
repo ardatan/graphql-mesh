@@ -1,5 +1,15 @@
 import { getComposerFromJSONSchema } from '../src/utils';
-import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isListType, isScalarType, printType } from 'graphql';
+import {
+  execute,
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLInt,
+  GraphQLString,
+  isListType,
+  isScalarType,
+  parse,
+  printType,
+} from 'graphql';
 import {
   EnumTypeComposer,
   GraphQLJSON,
@@ -819,5 +829,88 @@ input Foo_Input {
 }
      `.trim()
     );
+  });
+  it('should choose correct type in union type generated from oneOf', async () => {
+    const FooOrBar = {
+      title: 'FooOrBar',
+      oneOf: [
+        {
+          title: 'Foo',
+          type: 'object',
+          properties: {
+            fooId: {
+              type: 'string',
+            },
+          },
+          required: ['fooId'],
+        },
+        {
+          title: 'Bar',
+          type: 'object',
+          properties: {
+            barId: {
+              type: 'string',
+            },
+          },
+        },
+      ],
+    };
+    const inputSchema = {
+      title: '_schema',
+      type: 'object',
+      properties: {
+        query: {
+          title: 'Query',
+          type: 'object',
+          properties: {
+            fooOrBarButFoo: FooOrBar,
+            fooOrBarButBar: FooOrBar,
+          },
+        },
+      },
+    };
+
+    const result = getComposerFromJSONSchema(inputSchema);
+
+    const schemaComposer = result.output as SchemaComposer;
+    const fooId = 'FOO_ID';
+    const barId = 'BAR_ID';
+    schemaComposer.addResolveMethods({
+      Query: {
+        fooOrBarButFoo: () => ({
+          fooId: 'FOO_ID',
+        }),
+        fooOrBarButBar: () => ({
+          barId: 'BAR_ID',
+        }),
+      },
+    });
+    const schema = schemaComposer.buildSchema();
+    const executionResponse = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        fragment FooOrBarFragment on FooOrBar {
+          __typename
+          ... on Foo {
+            fooId
+          }
+          ... on Bar {
+            barId
+          }
+        }
+        query TestQuery {
+          fooOrBarButFoo {
+            ...FooOrBarFragment
+          }
+          fooOrBarButBar {
+            ...FooOrBarFragment
+          }
+        }
+      `),
+    });
+    expect(executionResponse?.data?.fooOrBarButFoo?.__typename).toBe('Foo');
+    expect(executionResponse?.data?.fooOrBarButFoo?.fooId).toBe(fooId);
+    expect(executionResponse?.data?.fooOrBarButBar?.__typename).toBe('Bar');
+    expect(executionResponse?.data?.fooOrBarButBar?.barId).toBe(barId);
   });
 });

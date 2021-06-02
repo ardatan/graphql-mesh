@@ -56,6 +56,7 @@ export default class JsonSchemaHandler implements MeshHandler {
         type: 'object',
         title: '_schema',
         properties: {},
+        required: ['query'],
       };
       for (const operationConfig of this.config.operations) {
         operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
