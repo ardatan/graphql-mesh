@@ -186,6 +186,20 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                 name: getValidTypeName(false),
                 description: subSchema.description,
                 types: outputTypeComposers,
+                resolveType: data =>
+                  outputTypeComposers
+                    .find(typeComposer =>
+                      ajv.validate(
+                        {
+                          $ref: '#/definitions/schema' + typeComposer.getExtension('path'),
+                          definitions: {
+                            schema,
+                          },
+                        },
+                        data
+                      )
+                    )
+                    .getTypeName(),
               })
             : getGenericJSONScalar(false),
         };
@@ -639,7 +653,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                   name: getValidTypeName(false),
                   description: subSchema.description,
                   fields: fieldMap,
-                  isTypeOf: data => !!validate(data),
+                  extensions: {
+                    path,
+                  },
                 });
 
           const input =

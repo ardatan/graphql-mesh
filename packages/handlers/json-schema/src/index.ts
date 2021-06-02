@@ -6,15 +6,16 @@ import {
   stringInterpolator,
   readFileOrUrlWithCache,
   getCachedFetch,
+  asArray,
 } from '@graphql-mesh/utils';
 import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { InputTypeComposer, SchemaComposer } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import { diffSchemas } from 'json-schema-diff';
 import toJsonSchema from 'to-json-schema';
 import { bundleJSONSchema, dereferenceJSONSchema, getComposerFromJSONSchema } from './utils';
 import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
-import { specifiedDirectives } from 'graphql';
+import { GraphQLInputType, isInputObjectType, isListType, isNonNullType, specifiedDirectives } from 'graphql';
 import AggregateError from '@ardatan/aggregate-error';
 import $RefParser from '@apidevtools/json-schema-ref-parser';
 
@@ -182,6 +183,28 @@ export default class JsonSchemaHandler implements MeshHandler {
         };
         field.resolve = root => root;
       } else if (operationConfig.path) {
+        const resolveDataByUnionInputType = (data: any, type: GraphQLInputType): any => {
+          if (data) {
+            if (isListType(type)) {
+              return asArray(data).map(elem => resolveDataByUnionInputType(elem, type.ofType));
+            }
+            if (isNonNullType(type)) {
+              return resolveDataByUnionInputType(data, type.ofType);
+            }
+            if (isInputObjectType(type)) {
+              const fieldMap = type.getFields();
+              const isOneOf = schemaComposer.getAnyTC(type).getDirectiveByName('oneOf');
+              data = asArray(data)[0];
+              for (const fieldName in data) {
+                if (isOneOf) {
+                  return data[fieldName];
+                }
+                data[fieldName] = resolveDataByUnionInputType(data[fieldName], fieldMap[fieldName].type);
+              }
+            }
+          }
+          return data;
+        };
         field.resolve = async (root, args, context, info) => {
           const interpolationData = { root, args, context, info };
           const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
@@ -200,9 +223,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           };
           const urlObj = new URL(fullPath);
           // Resolve union input
-          const input = (field.args?.input?.type as InputTypeComposer)?.getDirectiveByName('oneOf')
-            ? args.input && args.input[Object.keys(args.input)[0]]
-            : args.input;
+          const input = resolveDataByUnionInputType(args.input, field.args?.input?.type?.getType());
           if (input) {
             switch (method) {
               case 'GET':
