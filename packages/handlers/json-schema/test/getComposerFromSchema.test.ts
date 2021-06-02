@@ -211,7 +211,7 @@ enum AdminPermission {
       })
     ).toBe(outputSchema);
   });
-  it('should generate JSON scalar for oneOf definitions that contain scalar types', () => {
+  it('should generate an input union type for oneOf definitions that contain scalar types', () => {
     const title = 'ExampleOneOf';
     const inputSchema = {
       title,
@@ -231,10 +231,33 @@ enum AdminPermission {
       ],
     };
     const result = getComposerFromJSONSchema(inputSchema);
-    expect(result.input).toBe(result.output);
-    const outputComposer = result.output as ScalarTypeComposer;
-    expect(isScalarType(outputComposer.getType())).toBeTruthy();
-    expect(outputComposer.getTypeName()).toBe(title);
+    expect(
+      (result.input as InputTypeComposer).toSDL({
+        deep: true,
+      })
+    ).toBe(
+      /* GraphQL */ `
+input ExampleOneOf_Input @oneOf {
+  String: String
+  ExampleObject_Input: ExampleObject_Input
+}
+
+${printType(GraphQLString)}
+
+input ExampleObject_Input {
+  id: String
+}
+    `.trim()
+    );
+    expect(
+      (result.output as ObjectTypeComposer).toSDL({
+        deep: true,
+      })
+    ).toBe(
+      /* GraphQL */ `
+scalar ExampleOneOf
+    `.trim()
+    );
   });
   it('should generate merged object types from allOf definitions', () => {
     const inputSchema: JSONSchema = {

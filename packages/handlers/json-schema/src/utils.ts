@@ -5,6 +5,7 @@ import {
   GraphQLJSON,
   InputTypeComposerFieldConfigMap,
   isSomeInputTypeComposer,
+  ObjectTypeComposer,
   ObjectTypeComposerFieldConfigMap,
   ScalarTypeComposer,
   SchemaComposer,
@@ -152,6 +153,44 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
         });
       };
 
+      const getUnionTypeComposers = (maybeTypeComposersList: any[]) => {
+        const unionInputFields: Record<string, any> = {};
+        const outputTypeComposers: ObjectTypeComposer<any>[] = [];
+        let ableToUseGraphQLUnionType = true;
+        for (const maybeTypeComposers of maybeTypeComposersList) {
+          const { input, output } = ensureTypeComposers(maybeTypeComposers);
+          if (isSomeInputTypeComposer(output)) {
+            ableToUseGraphQLUnionType = false;
+          } else {
+            outputTypeComposers.push(output);
+          }
+          unionInputFields[input.getTypeName()] = {
+            type: input,
+          };
+        }
+        const input = schemaComposer.createInputTC({
+          name: getValidTypeName(true),
+          description: subSchema.description,
+          fields: unionInputFields,
+        });
+        input.setDirectives([
+          {
+            name: 'oneOf',
+            args: {},
+          },
+        ]);
+        return {
+          input,
+          output: ableToUseGraphQLUnionType
+            ? schemaComposer.createUnionTC({
+                name: getValidTypeName(false),
+                description: subSchema.description,
+                types: outputTypeComposers,
+              })
+            : getGenericJSONScalar(false),
+        };
+      };
+
       if (subSchema.pattern) {
         const typeComposer = schemaComposer.createScalarTC({
           ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.pattern), {
@@ -192,24 +231,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
       }
 
       if (subSchema.oneOf) {
-        const typeComposers = subSchema.oneOf.map(maybeTypeComposers => ensureTypeComposers(maybeTypeComposers).output);
-        const ableToUseGraphQLUnionType = !typeComposers.some(typeComposer => isSomeInputTypeComposer(typeComposer));
-        if (ableToUseGraphQLUnionType) {
-          return {
-            input: getGenericJSONScalar(true),
-            output: schemaComposer.createUnionTC({
-              name: getValidTypeName(false),
-              description: subSchema.description,
-              types: typeComposers,
-            }),
-          };
-        } else {
-          const typeComposer = getGenericJSONScalar(false);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-          };
-        }
+        return getUnionTypeComposers(subSchema.oneOf);
       }
 
       if (subSchema.allOf) {
@@ -270,7 +292,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
       }
 
       if (subSchema.anyOf) {
-        // It should not have `required` because it is `anyOf` not `allOf`
         // It should not have `required` because it is `anyOf` not `allOf`
         const inputFieldMap: InputTypeComposerFieldConfigMap = {};
         const fieldMap: ObjectTypeComposerFieldConfigMap<any, any> = {};
@@ -509,28 +530,11 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
             if (subSchema.additionalItems) {
               existingItems.push(subSchema.additionalItems);
             }
-            const typeComposers = existingItems.map(item => ensureTypeComposers(item).output);
-            const ableToUseGraphQLUnionType = !typeComposers.some(typeComposer =>
-              isSomeInputTypeComposer(typeComposer)
-            );
-            if (ableToUseGraphQLUnionType) {
-              const outputComposer = schemaComposer.createUnionTC({
-                name: getValidTypeName(false),
-                description: subSchema.description,
-                types: typeComposers,
-              });
-              const inputComposer = getGenericJSONScalar(true);
-              return {
-                input: inputComposer.getTypePlural(),
-                output: outputComposer.getTypePlural(),
-              };
-            } else {
-              const typeComposer = getGenericJSONScalar(false).getTypePlural();
-              return {
-                input: typeComposer,
-                output: typeComposer,
-              };
-            }
+            const { input: inputTypeComposer, output: outputTypeComposer } = getUnionTypeComposers(existingItems);
+            return {
+              input: inputTypeComposer.getTypePlural(),
+              output: outputTypeComposer.getTypePlural(),
+            };
           }
           // If it doesn't have any clue
           {

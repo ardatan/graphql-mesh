@@ -8,7 +8,7 @@ import {
   getCachedFetch,
 } from '@graphql-mesh/utils';
 import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { SchemaComposer } from 'graphql-compose';
+import { InputTypeComposer, SchemaComposer } from 'graphql-compose';
 import { diffSchemas } from 'json-schema-diff';
 import toJsonSchema from 'to-json-schema';
 import { bundleJSONSchema, dereferenceJSONSchema, getComposerFromJSONSchema } from './utils';
@@ -199,7 +199,10 @@ export default class JsonSchemaHandler implements MeshHandler {
             headers,
           };
           const urlObj = new URL(fullPath);
-          const input = args.input;
+          // Resolve union input
+          const input = (field.args?.input?.type as InputTypeComposer)?.getDirectiveByName('oneOf')
+            ? args.input && args.input[Object.keys(args.input)[0]]
+            : args.input;
           if (input) {
             switch (method) {
               case 'GET':
