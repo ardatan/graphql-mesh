@@ -28,7 +28,7 @@ import {
 import $RefParser from '@apidevtools/json-schema-ref-parser';
 import { readFileOrUrlWithCache, sanitizeNameForGraphQL, ReadFileOrUrlOptions } from '@graphql-mesh/utils';
 import { KeyValueCache } from '@graphql-mesh/types';
-import Ajv from 'ajv';
+import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 
 export async function flattenJSONSchema(
@@ -188,17 +188,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                 types: outputTypeComposers,
                 resolveType: data =>
                   outputTypeComposers
-                    .find(typeComposer =>
-                      ajv.validate(
-                        {
-                          $ref: '#/definitions/schema' + typeComposer.getExtension('path'),
-                          definitions: {
-                            schema,
-                          },
-                        },
-                        data
-                      )
-                    )
+                    .find(typeComposer => (typeComposer.getExtension('validate') as ValidateFunction)(data))
                     .getTypeName(),
               })
             : getGenericJSONScalar(false),
@@ -654,7 +644,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema): TypeComposers {
                   description: subSchema.description,
                   fields: fieldMap,
                   extensions: {
-                    path,
+                    validate,
                   },
                 });
 
