@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/fhir",
-  "version": "0.10.12",
+  "version": "0.10.13",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/utils": "0.12.0",
-    "@graphql-mesh/json-schema": "0.16.0",
+    "@graphql-mesh/json-schema": "0.16.1",
     "url-join": "4.0.1"
   },
   "publishConfig": {

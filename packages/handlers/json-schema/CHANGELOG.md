@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.16.1
+
+### Patch Changes
+
+- 29b841b6b: enhance(json-schema): disable timestamp scalar by default
+
 ## 0.16.0
 
 ### Minor Changes
