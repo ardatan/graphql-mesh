@@ -66,6 +66,8 @@ export default class JsonSchemaHandler implements MeshHandler {
   public schemaComposer = new SchemaComposer();
 
   async getMeshSource() {
+    this.config.disableTimestampScalar =
+      typeof this.config.disableTimestampScalar !== 'undefined' ? this.config.disableTimestampScalar : true;
     const fetch = getCachedFetch(this.cache);
     const schemaComposer = this.schemaComposer;
     schemaComposer.add(GraphQLJSON);
