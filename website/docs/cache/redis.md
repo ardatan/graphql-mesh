@@ -1,7 +1,7 @@
 ---
-id: cache-file
-title: File Cache
-sidebar_label: File
+id: cache-redis
+title: Redis Cache
+sidebar_label: Redis
 ---
 
 This caching strategy will use your Redis instance as the storage.

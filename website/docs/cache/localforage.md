@@ -24,4 +24,4 @@ cache:
 
 ## Config API Reference
 
-{@import ../generated-markdown/Localforage.generated.md}
+{@import ../generated-markdown/LocalforageConfig.generated.md}

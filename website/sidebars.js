@@ -37,9 +37,9 @@ module.exports = {
     ],
     Cache: [
       'cache/inmemory-lru',
-      'cache/file',
+      'cache/cache-file',
       'cache/localforage',
-      'cache/redis'
+      'cache/cache-redis'
     ],
     Recipes: [
       'recipes/typescript',
