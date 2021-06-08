@@ -63,7 +63,7 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
-  const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
+  const { useServer } = await import('graphql-ws/lib/use/ws');
   if (isMaster && fork) {
     const forkNum = fork > 1 ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {

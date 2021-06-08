@@ -4,7 +4,7 @@ import { join } from 'path';
 import { getCachedFetch } from '@graphql-mesh/utils';
 import urljoin from 'url-join';
 
-const fhirSchema = require('./fhir.schema.json');
+import fhirSchema from './fhir.schema.json';
 
 export default class FhirHandler extends JsonSchemaHandler {
   constructor(options: GetMeshSourceOptions<YamlConfig.FhirHandler>) {
