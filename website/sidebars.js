@@ -35,6 +35,12 @@ module.exports = {
       'transforms/naming-convention',
       'transforms/extend',
     ],
+    Cache: [
+      'cache/inmemory-lru',
+      'cache/file',
+      'cache/localforage',
+      'cache/redis'
+    ],
     Recipes: [
       'recipes/typescript',
       'recipes/as-sdk',

@@ -2,7 +2,7 @@ type Cache {
   redis: RedisConfig
 }
 
-type RedisConfig {
+type RedisConfig @md {
   host: String
   port: Int
   password: String

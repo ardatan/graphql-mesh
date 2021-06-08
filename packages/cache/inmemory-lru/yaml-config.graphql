@@ -2,6 +2,6 @@ type Cache {
   inmemoryLRU: InMemoryLRUConfig
 }
 
-type InMemoryLRUConfig {
+type InMemoryLRUConfig @md {
   max: Int
 }
