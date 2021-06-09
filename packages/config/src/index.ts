@@ -220,6 +220,7 @@ export async function processConfig(
             introspectionCache: handlerIntrospectionCache,
           }),
           transforms,
+          merge: mergedTypeConfigMap,
         };
       })
     ),
