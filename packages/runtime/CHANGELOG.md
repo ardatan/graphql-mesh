@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.17.0
+
+### Minor Changes
+
+- 01cf89298: feat(runtime/config): enable Type Merging
+
 ## 0.16.6
 
 ### Patch Changes
