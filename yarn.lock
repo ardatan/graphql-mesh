@@ -3887,10 +3887,10 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@theguild/components@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-1.2.0.tgz#cd223a6649fc134171b6fcb604b9cf7ffb2d9023"
-  integrity sha512-JrWt6WYHpma7p0i1gbugoRhOlg+j65/deQjVbPTQaSfbS9J8odFltHFFBA1Nt+6WP4uCFSc3kYs4bysv/OxYZw==
+"@theguild/components@1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-1.2.4.tgz#08a604fc38a94d62a2e4c8ff8605f6346e46f28c"
+  integrity sha512-0nxytVpdXB2aey7Mn8hHSlyP/9jSgpAwlxjkzajVwjawkV13+h0VaQl19d6DT8mmbi4uB50uF4o0g4HgKl0FWQ==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/styled" "^11.3.0"
@@ -6598,10 +6598,10 @@ bn.js@^5.0.0, bn.js@^5.1.1:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.0.tgz#358860674396c6997771a9d051fcc1b57d4ae002"
   integrity sha512-D7iWRBvnZE8ecXiLj/9wbxH7Tk79fAh8IHaTNq1RWRixsS02W+5qS+iE9yq6RYl0asXx5tw0bLhmT5pIfbSquw==
 
-bob-the-bundler@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.4.0.tgz#5c712cb03552229aa230bde19db99250924023b8"
-  integrity sha512-E2HXGLb5Gt2N05CejilWLjxotiXFTrjiZUFgCZON9JgoJOiAMavZmYLUbp85sBZ/ftWq81Llyz/ByjU0Ftd9mQ==
+bob-the-bundler@1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.4.1.tgz#794382f60f0d2a68c57d85a41d06caf4a45cb1b4"
+  integrity sha512-Ho7JLV8ePKjWgV1USjoZK7w0rJ64RXv8WTBjP/J+l3wILem+TekcBPjKvpYvAqmWBZIliaKVyZhGHgTOaqjabw==
   dependencies:
     "@rollup/plugin-node-resolve" "7.1.1"
     "@vercel/ncc" "0.28.3"
@@ -11335,10 +11335,10 @@ graphql-upload@12.0.0:
     isobject "^4.0.0"
     object-path "^0.11.5"
 
-graphql-ws@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.1.0.tgz#a36c1cc811dd737b1b6b1bb759ac8c5dd05ab025"
-  integrity sha512-meVQa7aFzDVpfLbPhYfvxZuB6fSkqB0cS79s9/TA1rb9puxc1hNOgT0SAWHfTHNh68BZeZRKK7WaDtpdEEggXA==
+graphql-ws@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.0.0.tgz#30f55a649f8dc825c51b6f7cfc05e513688c4f8d"
+  integrity sha512-SSSn5xQB5bDtmIwn2Rkw9WakrNbkDvPP5B7J5pKhFoDfQkF5xs9BaqelsGljoRs4rrdmWq9xw/QVtEXmjImZQA==
 
 graphql-ws@^4.1.1, graphql-ws@^4.4.1:
   version "4.9.0"
@@ -21372,12 +21372,12 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-the-guild-components@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/the-guild-components/-/the-guild-components-1.2.0.tgz#08d97dc6a16d814431bcae87ddedd02179036867"
-  integrity sha512-QJTeCpV8cGO4s19sp774Kb9Ky/FhvDPI4G0QRaIOf7kZSf2rrQN97HOC6YBdKAnry3HQ9VbpCm9jRCTjJmJiXQ==
+the-guild-components@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/the-guild-components/-/the-guild-components-1.2.4.tgz#38205d5b351ded715e02c83591e869cb4a841f46"
+  integrity sha512-mNSBso+GQ/RWLRT5XySNdFnQ0TVGB6YE4L/7MyBsFRw3vgO8K74LuJGVsKzUWX51PetSaus+nVl0DHWfJGpz7g==
   dependencies:
-    "@theguild/components" "1.2.0"
+    "@theguild/components" "1.2.4"
 
 thenify-all@^1.0.0:
   version "1.6.0"
