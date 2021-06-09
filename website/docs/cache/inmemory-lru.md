@@ -20,7 +20,7 @@ yarn add @graphql-mesh/cache-inmemory-lru
 
 ```yml
 cache:
-    inmemoryLru:
+    inmemoryLRU:
         max: 1000 # This will set the size
 ```
 
