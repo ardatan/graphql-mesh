@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "0.16.6",
+  "version": "0.17.0",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -15,7 +15,7 @@
   "dependencies": {
     "@graphql-mesh/cache-inmemory-lru": "0.5.5",
     "@graphql-mesh/merger-stitching": "0.9.8",
-    "@graphql-mesh/runtime": "0.16.6",
+    "@graphql-mesh/runtime": "0.17.0",
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/utils": "0.12.0",
     "ajv": "8.6.0",
