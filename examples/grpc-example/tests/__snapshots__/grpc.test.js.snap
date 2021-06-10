@@ -1526,7 +1526,7 @@ Object {
             "Jonah Hill",
             "Margot Robbie",
           ],
-          "genre": 2,
+          "genre": "DRAMA",
           "name": "The Wolf of Wall Street",
           "rating": 0.7799999713897705,
           "time": Object {

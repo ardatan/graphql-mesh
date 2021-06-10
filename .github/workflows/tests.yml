@@ -96,3 +96,4 @@ jobs:
         run: yarn test
         env:
           CI: true
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
