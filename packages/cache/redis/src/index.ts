@@ -1,17 +1,33 @@
 import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
 import { jsonFlatStringify } from '@graphql-mesh/utils';
+import DataLoader from 'dataloader';
 
 export default class RedisCache<V = string> implements KeyValueCache<V> {
-  readonly client: Redis.Redis;
+  private client: Redis.Redis;
 
   constructor(options: YamlConfig.Transform['redis'] = {}) {
-    this.client = new Redis({
+    const redisClient = new Redis({
       host: options.host,
       port: options.port,
       password: options.password,
       lazyConnect: true,
       enableAutoPipelining: true,
+    });
+    const dataLoader = new DataLoader<string[], [any, string]>(async (commands: string[][]) => {
+      const responses = await redisClient.pipeline(commands).exec();
+      return responses.map(([err, data]) => {
+        if (err) {
+          return err;
+        }
+        return data;
+      });
+    });
+    this.client = new Proxy(redisClient, {
+      get:
+        (_, methodName: keyof Redis.Redis) =>
+        (...args: string[]) =>
+          dataLoader.load([methodName, ...args]),
     });
   }
 
