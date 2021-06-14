@@ -4,7 +4,6 @@
   "version": "0.2.15",
   "private": true,
   "scripts": {
-    "preinstall": "npx yarn-deduplicate",
     "postinstall": "patch-package && husky install",
     "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
     "deploy:website": "cd website && yarn deploy",
@@ -72,9 +71,6 @@
     ],
     "**/*.{ts,tsx,graphql,yml,json}": [
       "prettier --write"
-    ],
-    "yarn.lock": [
-      "npx yarn-deduplicate"
     ]
   },
   "workspaces": {
