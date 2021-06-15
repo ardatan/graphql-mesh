@@ -1,6 +1,6 @@
 import { KeyValueCache } from '@graphql-mesh/types';
 import { isAbsolute, join } from 'path';
-import { get, set } from 'lodash';
+import _ from 'lodash';
 import DataLoader from 'dataloader';
 import { writeJSON } from '@graphql-mesh/utils';
 import { cwd } from 'process';
@@ -21,12 +21,12 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
 
   async get(name: string) {
     const json = await this.json$;
-    return get(json, name);
+    return _.get(json, name);
   }
 
   async set(name: string, value: V) {
     const json = await this.json$;
-    set(json, name, value);
+    _.set(json, name, value);
     this.writeDataLoader.load({});
   }
 
