@@ -38,7 +38,11 @@ export default class TypeMerging implements MeshTransform {
             }
             const returnObj: any = {};
             for (const argName in mergedTypeConfigRaw.argsFromKeys) {
-              _.set(returnObj, argName, stringInterpolator.parse(mergedTypeConfigRaw.argsFromKeys[argName], { keys }));
+              _.set(
+                returnObj,
+                argName,
+                stringInterpolator.parse(mergedTypeConfigRaw.argsFromKeys[argName], { keys }).split(',')
+              );
             }
             return returnObj;
           }),
