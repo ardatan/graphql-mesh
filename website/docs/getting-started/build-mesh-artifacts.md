@@ -27,7 +27,7 @@ yarn mesh start
 
 You can use the Mesh `GraphQLSchema` instance to query your data from your application code by using `getBuiltMesh` with your configuration object.
 
-Start by load and parsing your configuration file, and pass it to `getMesh`, this will return for your a modified version of GraphQL's `execute`, so you can use it directly to fetch your data:
+This will return for your a modified version of GraphQL's `execute`, so you can use it directly to fetch your data:
 
 ```js
 const { getBuiltMesh } = require('./.mesh');

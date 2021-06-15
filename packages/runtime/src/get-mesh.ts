@@ -129,6 +129,10 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
     additionalContext: TAdditionalContext = {} as any
   ): Promise<TContext> {
+    if (MESH_CONTEXT_SYMBOL in additionalContext) {
+      return additionalContext as TContext;
+    }
+
     const context: TContext = Object.assign(additionalContext as any, {
       pubsub,
       cache,
@@ -234,7 +238,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     rootValue?: TRootValue,
     operationName?: string
   ) {
-    const contextValue = context && context[MESH_CONTEXT_SYMBOL] ? context : await buildMeshContext(context);
+    const contextValue = await buildMeshContext(context);
 
     const executionParams = {
       document: ensureDocumentNode(document),
@@ -247,7 +251,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
     const executionResult = await liveQueryStore.execute(executionParams);
 
-    pubsub.publish('onExecutionDone', {
+    pubsub.publish('executionDone', {
       ...executionParams,
       executionResult: executionResult as any,
     });
@@ -262,7 +266,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     rootValue?: TRootValue,
     operationName?: string
   ) {
-    const contextValue = context && context[MESH_CONTEXT_SYMBOL] ? context : await buildMeshContext(context);
+    const contextValue = await buildMeshContext(context);
 
     const executionParams = {
       document: ensureDocumentNode(document),
@@ -275,7 +279,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
     const executionResult = await subscribe(executionParams);
 
-    pubsub.publish('onExecutionDone', {
+    pubsub.publish('executionDone', {
       ...executionParams,
       executionResult: executionResult as any,
     });
