@@ -7,6 +7,7 @@ import {
   MeshHandler,
   MeshTransform,
   YamlConfig,
+  Logger,
 } from '@graphql-mesh/types';
 import { DocumentNode, GraphQLResolveInfo } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
@@ -22,6 +23,7 @@ export type GetMeshOptions = {
   pubsub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;
   merger: MergerFn;
+  logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
 };
 

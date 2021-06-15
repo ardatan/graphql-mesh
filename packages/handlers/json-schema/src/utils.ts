@@ -245,6 +245,8 @@ export async function referenceJSONSchemaObject(schema: JSONSchemaObject) {
   const definitions: Record<string, JSONSchemaObject> = {};
   const finalSchema = await visitJSONSchema<any>(schema, subSchema => {
     if (typeof subSchema === 'object') {
+      // Remove $id refs
+      subSchema.$id = undefined;
       if (subSchema.$ref) {
         throw new Error('Input schema should be fully resolved! It cannot have $refs in it!');
       } else if (subSchema.title) {

@@ -63,15 +63,10 @@ function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
     codegenHelpers,
     options.schema.getSubscriptionType()
   );
-  const operationMap = Object.assign({}, subscriptionsOperationMap, mutationOperationMap, queryOperationMap);
 
   const sdk = {
     identifier: sdkIdentifier,
-    codeAst: `export type ${sdkIdentifier} = {
-${Object.values(operationMap).join(',\n')}
-};
-
-export type Query${sdkIdentifier} = {
+    codeAst: `export type Query${sdkIdentifier} = {
 ${Object.values(queryOperationMap).join(',\n')}
 };
 

@@ -21,7 +21,8 @@ import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore } from '@graphql-mesh/store';
-import { cwd, env } from 'process';
+import { cwd } from 'process';
+import { DefaultLogger } from '@graphql-mesh/runtime';
 
 export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
   const casedName = paramCase(name);
@@ -240,35 +241,6 @@ export async function resolveDocuments(documentsConfig: YamlConfig.Config['docum
     skipGraphQLImport: true,
     cwd,
   });
-}
-
-export class DefaultLogger implements Logger {
-  constructor(public name: string) {}
-  log(message: string) {
-    return console.log(this.name + ':' + message);
-  }
-
-  warn(message: string) {
-    return this.log(message);
-  }
-
-  info(message: string) {
-    return this.log(message);
-  }
-
-  error(message: string) {
-    return this.log(message);
-  }
-
-  debug(message: string) {
-    if (env.DEBUG) {
-      return this.log(message);
-    }
-  }
-
-  child(name: string): Logger {
-    return new DefaultLogger(this.name + ' ' + name);
-  }
 }
 
 export async function resolveLogger(loggerConfig: YamlConfig.Config['logger'], importFn: ImportFn): Promise<Logger> {

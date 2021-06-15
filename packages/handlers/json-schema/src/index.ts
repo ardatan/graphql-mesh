@@ -248,7 +248,8 @@ export default class JsonSchemaHandler implements MeshHandler {
               case 'POST':
               case 'PUT':
               case 'PATCH': {
-                const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type');
+                const [, contentType] =
+                  Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
                   requestInit.body = qsStringify(input);
                 } else {
@@ -298,7 +299,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           // Make sure the return type doesn't have a field `errors`
           // so ignore auto error detection if the return type has that field
           if (errors?.length) {
-            if ('getFields' in returnType && !('errors' in returnType.getFields())) {
+            if (!('getFields' in returnType && 'errors' in returnType.getFields())) {
               const aggregatedError = new AggregateError(errors.map(normalizeError));
               aggregatedError.stack = null;
               this.logger.debug(`=> Throwing the error ${JSON.stringify(aggregatedError, null, 2)}`);
@@ -306,7 +307,7 @@ export default class JsonSchemaHandler implements MeshHandler {
             }
           }
           if (responseJson.error) {
-            if ('getFields' in returnType && !('error' in returnType.getFields())) {
+            if (!('getFields' in returnType && 'error' in returnType.getFields())) {
               const normalizedError = normalizeError(responseJson.error);
               operationLogger.debug(`=> Throwing the error ${JSON.stringify(normalizedError, null, 2)}`);
               return normalizedError;

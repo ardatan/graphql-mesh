@@ -10,6 +10,7 @@ import {
   GraphQLObjectType,
   parse,
   Kind,
+  getOperationAST,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
@@ -27,6 +28,8 @@ import {
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { createRequest, delegateRequest, delegateToSchema } from '@graphql-tools/delegate';
+import AggregateError from '@ardatan/aggregate-error';
+import { DefaultLogger } from './logger';
 
 export interface MeshInstance {
   execute: ExecuteMeshFn;
@@ -43,7 +46,7 @@ export interface MeshInstance {
 
 export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubsub, cache } = options;
+  const { pubsub, cache, logger = new DefaultLogger('Mesh') } = options;
 
   await Promise.all(
     options.sources.map(async apiSource => {
@@ -287,6 +290,18 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     return executionResult;
   }
 
+  class GraphQLMeshSdkError<Data = any, Variables = any> extends AggregateError {
+    constructor(
+      errors: ReadonlyArray<GraphQLError>,
+      public document: DocumentNode,
+      public variables: Variables,
+      public data: Data
+    ) {
+      super(errors);
+    }
+  }
+
+  const sdkLogger = logger.child('Mesh SDK');
   const localRequester: Requester = async <Result, TVariables, TContext, TRootValue>(
     document: DocumentNode,
     variables: TVariables,
@@ -294,6 +309,12 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     rootValue?: TRootValue,
     operationName?: string
   ) => {
+    if (!operationName) {
+      const operationAst = getOperationAST(document);
+      operationName = operationAst.name?.value;
+    }
+    const executionLogger = sdkLogger.child(operationName || 'UnnamedOperation');
+    executionLogger.debug(`Execution started with;\n ${JSON.stringify(variables, null, 2)}`);
     const executionResult = await meshExecute<TVariables, TContext, TRootValue>(
       document,
       variables,
@@ -304,8 +325,10 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
     if ('data' in executionResult || 'errors' in executionResult) {
       if (executionResult.data && !executionResult.errors) {
+        executionLogger.debug(`Execution succeeded with;\n ${JSON.stringify(executionResult, null, 2)}`);
         return executionResult.data as Result;
       } else {
+        executionLogger.debug(`Execution failed with;\n ${JSON.stringify(executionResult, null, 2)}`);
         throw new GraphQLMeshSdkError(
           executionResult.errors as ReadonlyArray<GraphQLError>,
           document,
@@ -330,16 +353,4 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     destroy: () => pubsub.publish('destroy', undefined),
     liveQueryStore,
   };
-}
-
-export class GraphQLMeshSdkError<Data = any, Variables = any> extends Error {
-  constructor(
-    public errors: ReadonlyArray<GraphQLError>,
-    public document: DocumentNode,
-    public variables: Variables,
-    public data: Data
-  ) {
-    super(`GraphQL Mesh SDK Failed (${errors.length} errors): ${errors.map(e => e.message).join('\n\t')}`);
-    errors.forEach(e => console.error(e));
-  }
 }

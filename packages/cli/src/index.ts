@@ -1,5 +1,5 @@
-import { findAndParseConfig, DefaultLogger } from '@graphql-mesh/config';
-import { getMesh } from '@graphql-mesh/runtime';
+import { findAndParseConfig } from '@graphql-mesh/config';
+import { DefaultLogger, getMesh } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';

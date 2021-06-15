@@ -31,8 +31,6 @@ import _ from 'lodash';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { cwd, env } from 'process';
 
-export { DefaultLogger } from './utils';
-
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;

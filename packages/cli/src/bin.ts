@@ -1,4 +1,4 @@
-import { DefaultLogger } from '@graphql-mesh/config';
+import { DefaultLogger } from '@graphql-mesh/runtime';
 import { graphqlMesh } from '.';
 import { handleFatalError } from './handleFatalError';
 
