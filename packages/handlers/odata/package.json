@@ -39,7 +39,7 @@
     "graphql-scalars": "1.10.0",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
-    "undici": "3.3.6"
+    "undici": "4.0.0"
   },
   "publishConfig": {
     "access": "public",
