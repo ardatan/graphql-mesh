@@ -1332,10 +1332,11 @@
           },
           "inventor-id": {
             "type": "string",
-            "description": "The id of the inventor"
+            "description": "The id of the inventor",
+            "nullable": true
           }
         },
-        "required": ["patent-name", "patent-id"]
+        "required": ["patent-name", "patent-id", "inventor-id"]
       },
       "product-with-id": {
         "type": "object",

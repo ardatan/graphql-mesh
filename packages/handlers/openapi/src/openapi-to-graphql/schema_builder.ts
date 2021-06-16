@@ -564,7 +564,8 @@ function createFields<TSource, TContext, TArgs>({
       includeHttpDetails,
     });
 
-    const requiredProperty = typeof def.required === 'object' && def.required.includes(fieldTypeKey);
+    const requiredProperty =
+      typeof def.required === 'object' && def.required.includes(fieldTypeKey) && !fieldTypeDefinition.schema.nullable;
 
     // Finally, add the object type to the fields (using sanitized field name)
     if (objectType) {
