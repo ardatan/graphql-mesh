@@ -11390,12 +11390,11 @@ grpc-node-server-reflection@1.0.2:
     "@grpc/proto-loader" "^0.6.0-pre17"
     google-protobuf "^3.15.1"
 
-grpc-reflection-js@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/grpc-reflection-js/-/grpc-reflection-js-0.1.1.tgz#957c86b43611edb51c0923d2bd703f0f7c8c1f24"
-  integrity sha512-md/xkCE4iSrmqz6rtV+rHep6kdMtfRu0Zjrcb9eAnrzMhpP18P/Xwde91iLeXuNEwymrEkMiymNy9JFrKS7hBw==
+grpc-reflection-js@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/grpc-reflection-js/-/grpc-reflection-js-0.1.2.tgz#c1dda07a488771bd9238697428c48da9bdcb6667"
+  integrity sha512-ecLGJDCoRRyTNQ2jQYLsMQ0H9a/ZZ/6brU+6haGPS8GpQ93uYoFOc60ptO3bebS3xRPJQSIiSZClkBS5L9PYuw==
   dependencies:
-    "@grpc/grpc-js" "^1.1.7"
     "@types/google-protobuf" "^3.7.2"
     "@types/lodash.set" "^4.3.6"
     google-protobuf "^3.12.2"
