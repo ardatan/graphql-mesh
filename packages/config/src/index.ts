@@ -77,7 +77,7 @@ export type ProcessedConfig = {
   logger: Logger;
 };
 
-function getDefaultMeshStore(dir = cwd(), importFn: ImportFn) {
+function getDefaultMeshStore(dir: string, importFn: ImportFn) {
   const isProd = env.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
@@ -113,12 +113,12 @@ export async function processConfig(
 
   const rootStore = providedStore || getDefaultMeshStore(dir, importFn);
 
-  const cache = await resolveCache(config.cache, importFn, rootStore);
-  const pubsub = await resolvePubSub(config.pubsub, importFn);
+  const cache = await resolveCache(config.cache, importFn, rootStore, dir);
+  const pubsub = await resolvePubSub(config.pubsub, importFn, dir);
 
   const sourcesStore = rootStore.child('sources');
 
-  const logger = await resolveLogger(config.logger, importFn);
+  const logger = await resolveLogger(config.logger, importFn, dir);
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
     Promise.all(
@@ -126,7 +126,7 @@ export async function processConfig(
         const handlerName = Object.keys(source.handler)[0];
         const handlerConfig = source.handler[handlerName];
         const [handlerLibrary, transforms] = await Promise.all([
-          getHandler(handlerName, importFn),
+          getHandler(handlerName, importFn, dir),
           Promise.all(
             (source.transforms || []).map(async t => {
               const transformName = Object.keys(t)[0];
@@ -134,7 +134,8 @@ export async function processConfig(
               const TransformCtor = await getPackage<MeshTransformLibrary>(
                 transformName.toString(),
                 'transform',
-                importFn
+                importFn,
+                dir
               );
 
               return new TransformCtor({
@@ -172,7 +173,8 @@ export async function processConfig(
         const TransformLibrary = await getPackage<MeshTransformLibrary>(
           transformName.toString(),
           'transform',
-          importFn
+          importFn,
+          dir
         );
         return new TransformLibrary({
           apiName: '',
@@ -190,7 +192,7 @@ export async function processConfig(
       importFn,
       pubsub
     ),
-    resolveMerger(config.merger, importFn),
+    resolveMerger(config.merger, importFn, dir),
     resolveDocuments(config.documents, dir),
   ]);
 

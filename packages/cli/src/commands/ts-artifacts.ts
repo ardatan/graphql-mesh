@@ -1,4 +1,4 @@
-import { Maybe, RawSourceOutput } from '@graphql-mesh/types';
+import { Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
@@ -8,6 +8,8 @@ import { pascalCase } from 'pascal-case';
 import { Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
+import { isAbsolute, relative, join } from 'path';
+import ts from 'typescript';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -98,14 +100,18 @@ export async function generateTsArtifacts({
   mergerType = 'stitching',
   documents,
   flattenTypes,
-  cwd,
+  importedModulesSet,
+  baseDir,
+  rawConfig,
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: RawSourceOutput[];
   mergerType: string;
   documents: Source[];
   flattenTypes: boolean;
-  cwd: string;
+  importedModulesSet: Set<string>;
+  baseDir: string;
+  rawConfig: YamlConfig.Config;
 }) {
   const codegenOutput = await codegen({
     filename: 'types.ts',
@@ -194,30 +200,63 @@ export async function generateTsArtifacts({
       },
     ],
   });
-  return [
+
+  const artifactsDir = join(baseDir, '.mesh');
+
+  const tsResult = [
     codegenOutput,
     /* TypeScript */ `
-import { findAndParseConfig, ConfigProcessOptions } from '@graphql-mesh/config';
+import { processConfig, ConfigProcessOptions } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
 import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { cwd } from 'process';
+import { relative, isAbsolute } from 'path';
 
-export async function getBuiltMesh(configProcessOptions: ConfigProcessOptions = {}) {
+const importedModules = {
+${[...importedModulesSet]
+  .map(importedModuleName => {
+    let moduleMapProp = importedModuleName;
+    let importPath = importedModuleName;
+    if (isAbsolute(importedModuleName)) {
+      moduleMapProp = relative(baseDir, importedModuleName);
+      importPath = `./${relative(artifactsDir, importedModuleName)}`;
+    }
+    return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: () => import(\`${importPath}\`)`;
+  })
+  .join(',\n')}
+};
+
+export async function getMeshConfig(configProcessOptions: ConfigProcessOptions = {}) {
   const baseDir = configProcessOptions.dir || cwd();
+
+  const importFn = async (moduleId: string) => {
+    const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
+    if (!(relativeModuleId in importedModules)) {
+      throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
+    }
+    return importedModules[relativeModuleId]();
+  };
+
   const store = new MeshStore('.mesh', new FsStoreStorageAdapter({
     cwd: baseDir,
-    importFn: m => import(m).then(m => m.default || m)
+    importFn,
   }), {
     readonly: true,
     validate: false
   });
-  const meshConfig = await findAndParseConfig(
+  return processConfig(
+    ${JSON.stringify(rawConfig, null, 2)},
     {
       dir: baseDir,
       store,
+      importFn,
       ...configProcessOptions
     }
   );
+}
+
+export async function getBuiltMesh(configProcessOptions?: ConfigProcessOptions) {
+  const meshConfig = await getMeshConfig(configProcessOptions);
   return getMesh(meshConfig);
 }
 
@@ -227,4 +266,19 @@ export async function getMeshSDK(configProcessOptions?: ConfigProcessOptions) {
 }
       `,
   ].join('\n');
+
+  const tsFilePath = join(artifactsDir, 'index.ts');
+  const compilerOptions: ts.CompilerOptions = {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ESNext,
+    baseUrl: baseDir,
+    declaration: true,
+  };
+  const host = ts.createCompilerHost(compilerOptions);
+  const oldFileExists = host.fileExists.bind(host);
+  const oldReadFile = host.readFile.bind(host);
+  host.fileExists = fileName => (fileName === tsFilePath ? true : oldFileExists(fileName));
+  host.readFile = fileName => (fileName === tsFilePath ? tsResult : oldReadFile(fileName));
+  const program = ts.createProgram([tsFilePath], compilerOptions, host);
+  program.emit();
 }

@@ -1,6 +1,6 @@
 import { promises as fsPromises } from 'fs';
 import { isAbsolute, join } from 'path';
-import { flatString, pathExists, writeFile } from '@graphql-mesh/utils';
+import { flatString, writeFile } from '@graphql-mesh/utils';
 import { Change, CriticalityLevel, diff } from '@graphql-inspector/core';
 import AggregateError from '@ardatan/aggregate-error';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -13,7 +13,6 @@ export class ReadonlyStoreError extends Error {}
 export class ValidationError extends Error {}
 
 export type StoreStorageAdapter<TData = any, TKey = string> = {
-  exists: (key: TKey) => Promise<boolean>;
   read: (key: TKey, options: ProxyOptions<TData>) => Promise<TData>;
   write: (key: TKey, data: TData, options: ProxyOptions<TData>) => Promise<TData>;
   delete: (key: TKey) => Promise<void>;
@@ -21,10 +20,6 @@ export type StoreStorageAdapter<TData = any, TKey = string> = {
 
 export class InMemoryStoreStorageAdapter implements StoreStorageAdapter {
   private data = new Map<string, any>();
-
-  async exists(key: string): Promise<boolean> {
-    return this.data.has(key);
-  }
 
   async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
     return this.data.get(key);
@@ -55,20 +50,23 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
     return isAbsolute(jsFileName) ? jsFileName : join(this.options.cwd, jsFileName);
   }
 
-  async exists(key: string): Promise<boolean> {
-    const filePath = this.getWrittenFileName(key);
-    return pathExists(filePath);
-  }
-
   async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
     const filePath = this.getWrittenFileName(key);
-    return this.options.importFn(filePath);
+    try {
+      return await this.options.importFn(filePath).then(m => m.default || m);
+    } catch (e) {
+      if (e.message.startsWith('Cannot find module')) {
+        return undefined;
+      }
+      throw e;
+    }
   }
 
   async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
     const asString = options.codify(data, key);
     const filePath = this.getWrittenFileName(key);
-    return writeFile(filePath, flatString(asString));
+    await writeFile(filePath, flatString(asString));
+    await this.options.importFn(filePath);
   }
 
   async delete(key: string): Promise<void> {
@@ -160,9 +158,7 @@ export class MeshStore {
 
     const ensureValueCached = async () => {
       if (!isValueCached) {
-        if (await this.storage.exists(path)) {
-          value = await this.storage.read(path, options);
-        }
+        value = await this.storage.read(path, options);
         isValueCached = true;
       }
     };

@@ -57,9 +57,13 @@ export async function graphqlMesh() {
       async args => {
         try {
           env.NODE_ENV = 'development';
+          const meshConfig = await findAndParseConfig({
+            dir: baseDir,
+          });
           const result = await serveMesh({
             baseDir,
             argsPort: args.port,
+            meshConfig,
           });
           logger = result.logger;
         } catch (e) {
@@ -77,17 +81,24 @@ export async function graphqlMesh() {
       },
       async args => {
         try {
-          if (!(await pathExists(join(baseDir, '.mesh')))) {
+          const builtMeshArtifactsPath = join(baseDir, '.mesh');
+          if (!(await pathExists(builtMeshArtifactsPath))) {
             throw new Error(
               `Seems like you haven't build Mesh artifacts yet to start production server! You need to build artifacts first with "mesh build" command!`
             );
           }
           env.NODE_ENV = 'production';
-          const result = await serveMesh({
+          const mainModule = join(builtMeshArtifactsPath, 'index.js');
+          const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
+          const meshConfig = await builtMeshArtifacts.getMeshConfig({
+            dir: baseDir,
+          });
+          logger = meshConfig.logger;
+          await serveMesh({
             baseDir,
             argsPort: args.port,
+            meshConfig,
           });
-          logger = result.logger;
         } catch (e) {
           handleFatalError(e, logger);
         }
@@ -152,7 +163,12 @@ export async function graphqlMesh() {
           spinner.start('Cleaning existing artifacts');
           await rmdirs(outputDir);
 
-          const importFn = (moduleId: string) => import(moduleId).then(m => m.default || m);
+          const importedModulesSet = new Set<string>();
+          const importFn = (moduleId: string) =>
+            import(moduleId).then(m => {
+              importedModulesSet.add(moduleId);
+              return m.default || m;
+            });
 
           const store = new MeshStore(
             rootArtifactsName,
@@ -171,6 +187,7 @@ export async function graphqlMesh() {
             dir: baseDir,
             ignoreAdditionalResolvers: true,
             store,
+            importFn,
           });
           logger = meshConfig.logger;
 
@@ -179,15 +196,16 @@ export async function graphqlMesh() {
           await writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
 
           spinner.text = 'Generating artifacts';
-          const tsArtifacts = await generateTsArtifacts({
+          await generateTsArtifacts({
             unifiedSchema: schema,
             rawSources,
             mergerType: meshConfig.mergerType,
             documents: meshConfig.documents,
             flattenTypes: false,
-            cwd: baseDir,
+            importedModulesSet,
+            baseDir,
+            rawConfig: meshConfig.config,
           });
-          await writeFile(join(outputDir, 'index.ts'), tsArtifacts);
 
           spinner.text = 'Cleanup';
           destroy();

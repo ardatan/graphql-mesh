@@ -1,8 +1,11 @@
 import { isAbsolute, join } from 'path';
+import { createRequire } from 'module';
+import { ImportFn } from '@graphql-mesh/types';
 
 type loadFromModuleExportExpressionOptions = {
   defaultExportName?: string;
   cwd?: string;
+  importFn?: ImportFn;
 };
 
 export async function loadFromModuleExportExpression<T>(
@@ -13,9 +16,9 @@ export async function loadFromModuleExportExpression<T>(
     return expression;
   }
 
-  const { defaultExportName, cwd } = options || {};
+  const { defaultExportName, cwd, importFn = (m: string) => import(m) } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = await tryImport(modulePath, cwd);
+  const mod = await tryImport(modulePath, cwd, importFn);
 
   if (exportName === 'default' || !exportName) {
     return mod.default || mod;
@@ -24,19 +27,26 @@ export async function loadFromModuleExportExpression<T>(
   }
 }
 
-async function tryImport(modulePath: string, cwd: string) {
+async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
   try {
-    return await import(modulePath);
+    return await importFn(modulePath);
   } catch (e1) {
     if (!isAbsolute(modulePath)) {
+      const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
       try {
-        const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
-        return await import(absoluteModulePath);
+        return await importFn(absoluteModulePath);
       } catch (e2) {
-        if (e2.message.startsWith('Cannot find')) {
-          throw e1;
-        } else {
-          throw e2;
+        try {
+          const cwdRequire = createRequire(cwd);
+          return cwdRequire(absoluteModulePath);
+        } catch (e3) {
+          if (e3.message.startsWith('Cannot find')) {
+            if (e2.message.startsWith('Cannot find')) {
+              throw e1;
+            }
+            throw e2;
+          }
+          throw e3;
         }
       }
     }
@@ -64,13 +74,14 @@ export function loadFromModuleExportExpressionSync<T>(
 }
 
 function tryImportSync(modulePath: string, cwd: string) {
+  const cwdRequire = createRequire(cwd);
   try {
-    return require(modulePath);
+    return cwdRequire(modulePath);
   } catch (e1) {
     if (!isAbsolute(modulePath)) {
       try {
         const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
-        return require(absoluteModulePath);
+        return cwdRequire(absoluteModulePath);
       } catch (e2) {
         if (e2.message.startsWith('Cannot find')) {
           throw e1;

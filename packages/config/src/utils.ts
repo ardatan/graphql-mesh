@@ -14,17 +14,15 @@ import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import _ from 'lodash';
-import { stringInterpolator } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore } from '@graphql-mesh/store';
-import { cwd } from 'process';
 import { DefaultLogger } from '@graphql-mesh/runtime';
 
-export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
+export async function getPackage<T>(name: string, type: string, importFn: ImportFn, cwd: string): Promise<T> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
@@ -39,7 +37,7 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   if (name.includes('-')) {
     possibleNames.push(name);
   }
-  const possibleModules = possibleNames.concat(resolve(cwd(), name));
+  const possibleModules = possibleNames.concat(resolve(cwd, name));
 
   for (const moduleName of possibleModules) {
     try {
@@ -60,8 +58,12 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   throw new Error(`Unable to find ${type} matching ${name}`);
 }
 
-export async function getHandler(name: keyof YamlConfig.Handler, importFn: ImportFn): Promise<MeshHandlerLibrary> {
-  const handlerFn = await getPackage<MeshHandlerLibrary>(name.toString(), 'handler', importFn);
+export async function getHandler(
+  name: keyof YamlConfig.Handler,
+  importFn: ImportFn,
+  cwd: string
+): Promise<MeshHandlerLibrary> {
+  const handlerFn = await getPackage<MeshHandlerLibrary>(name.toString(), 'handler', importFn, cwd);
 
   return handlerFn;
 }
@@ -92,7 +94,11 @@ export async function resolveAdditionalResolvers(
       if (typeof additionalResolver === 'string') {
         const filePath = additionalResolver;
 
-        const exported = await importFn(resolve(baseDir, filePath));
+        const exported = await loadFromModuleExportExpression<any>(additionalResolver, {
+          cwd: baseDir,
+          importFn,
+        });
+
         let resolvers = null;
 
         if (exported.default) {
@@ -174,31 +180,28 @@ export async function resolveAdditionalResolvers(
 }
 
 export async function resolveCache(
-  cacheConfig: YamlConfig.Config['cache'],
+  cacheConfig: YamlConfig.Config['cache'] = { inmemoryLru: {} },
   importFn: ImportFn,
-  store: MeshStore
+  store: MeshStore,
+  cwd: string
 ): Promise<KeyValueCache | undefined> {
-  if (cacheConfig) {
-    const cacheName = Object.keys(cacheConfig)[0];
-    const config = cacheConfig[cacheName];
+  const cacheName = Object.keys(cacheConfig)[0];
+  const config = cacheConfig[cacheName];
 
-    const moduleName = _.kebabCase(cacheName.toString());
-    const pkg = await getPackage<any>(moduleName, 'cache', importFn);
-    const Cache = pkg.default || pkg;
+  const moduleName = _.kebabCase(cacheName.toString());
+  const pkg = await getPackage<any>(moduleName, 'cache', importFn, cwd);
+  const Cache = pkg.default || pkg;
 
-    return new Cache({
-      ...config,
-      store,
-    });
-  }
-  const InMemoryLRUCache = await import('@graphql-mesh/cache-inmemory-lru').then(m => m.default);
-  const cache = new InMemoryLRUCache();
-  return cache;
+  return new Cache({
+    ...config,
+    store,
+  });
 }
 
 export async function resolvePubSub(
   pubsubYamlConfig: YamlConfig.Config['pubsub'],
-  importFn: ImportFn
+  importFn: ImportFn,
+  cwd: string
 ): Promise<MeshPubSub> {
   if (pubsubYamlConfig) {
     let pubsubName: string;
@@ -211,7 +214,7 @@ export async function resolvePubSub(
     }
 
     const moduleName = _.kebabCase(pubsubName.toString());
-    const pkg = await getPackage<any>(moduleName, 'pubsub', importFn);
+    const pkg = await getPackage<any>(moduleName, 'pubsub', importFn, cwd);
     const PubSub = pkg.default || pkg;
 
     return new PubSub(pubsubConfig);
@@ -224,12 +227,13 @@ export async function resolvePubSub(
   }
 }
 
-export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], importFn: ImportFn): Promise<MergerFn> {
-  if (mergerConfig) {
-    const pkg = await getPackage<any>(mergerConfig, 'merger', importFn);
-    return pkg.default || pkg;
-  }
-  return StitchingMerger;
+export async function resolveMerger(
+  mergerConfig: YamlConfig.Config['merger'] = 'stitching',
+  importFn: ImportFn,
+  cwd: string
+): Promise<MergerFn> {
+  const pkg = await getPackage<any>(mergerConfig, 'merger', importFn, cwd);
+  return pkg.default || pkg;
 }
 
 export async function resolveDocuments(documentsConfig: YamlConfig.Config['documents'], cwd: string) {
@@ -243,10 +247,14 @@ export async function resolveDocuments(documentsConfig: YamlConfig.Config['docum
   });
 }
 
-export async function resolveLogger(loggerConfig: YamlConfig.Config['logger'], importFn: ImportFn): Promise<Logger> {
+export async function resolveLogger(
+  loggerConfig: YamlConfig.Config['logger'],
+  importFn: ImportFn,
+  cwd: string
+): Promise<Logger> {
   if (typeof loggerConfig === 'string') {
     const moduleName = _.kebabCase(loggerConfig.toString());
-    const pkg = await getPackage<any>(moduleName, 'logger', importFn);
+    const pkg = await getPackage<any>(moduleName, 'logger', importFn, cwd);
     return pkg.default || pkg;
   }
   return new DefaultLogger('Mesh');

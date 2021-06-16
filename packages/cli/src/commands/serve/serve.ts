@@ -17,7 +17,7 @@ import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
 import { promises as fsPromises } from 'fs';
-import { findAndParseConfig } from '@graphql-mesh/config';
+import { ProcessedConfig } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import { spinner } from '../../spinner';
@@ -29,16 +29,14 @@ const { readFile } = fsPromises;
 
 interface ServeMeshOptions {
   baseDir: string;
+  meshConfig: ProcessedConfig;
   argsPort?: number;
 }
 
-export async function serveMesh({ baseDir, argsPort }: ServeMeshOptions) {
+export async function serveMesh({ baseDir, argsPort, meshConfig }: ServeMeshOptions) {
   spinner.start('Generating Mesh schema...');
   let readyFlag = false;
 
-  const meshConfig = await findAndParseConfig({
-    dir: baseDir,
-  });
   const mesh$ = getMesh(meshConfig)
     .then(mesh => {
       readyFlag = true;
