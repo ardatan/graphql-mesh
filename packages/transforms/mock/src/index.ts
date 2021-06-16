@@ -8,6 +8,8 @@ import {
   loadFromModuleExportExpressionSync,
 } from '@graphql-mesh/utils';
 
+import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
+
 export default class MockingTransform implements MeshTransform {
   private config: YamlConfig.MockingConfig;
   private baseDir: string;
@@ -21,7 +23,9 @@ export default class MockingTransform implements MeshTransform {
     const configIf = 'if' in this.config ? this.config.if : true;
     if (configIf) {
       const store = createMockStore({ schema });
-      const mocks: IMocks = {};
+      const mocks: IMocks = {
+        ...graphqlScalarsMocks,
+      };
       const resolvers: any = {};
       if (this.config.initializeStore) {
         const initializeStore = loadFromModuleExportExpressionSync(this.config.initializeStore, { cwd: this.baseDir });
