@@ -160,10 +160,10 @@
     apollo-graphql "^0.9.3"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.29.0":
-  version "0.29.0"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.29.0.tgz#a74815ee61be0484dc80670c8962495fa1540270"
-  integrity sha512-v/oHYHppudJXsXX6IoTFEb23CBC08noqMVxMUWRRZ77Ha7jTSuUHfPORB5EmAs7kAH92y9SUo5hhFi01GFNFdA==
+"@apollo/gateway@0.29.1":
+  version "0.29.1"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.29.1.tgz#602102e5d9d3afb43e0b6f94ad51c2b88e03beda"
+  integrity sha512-FNHqvuvA63MRebqOmkpMjYUbslcozZFnmqAqDW2dRpb3fJ5Rg5H/cHnTmRrs+XDmIOQKuNKhoFA/Kvkz3Ngbjg==
   dependencies:
     "@apollo/federation" "^0.25.1"
     "@apollo/query-planner" "^0.2.1"
