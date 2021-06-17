@@ -9,7 +9,7 @@ type OpenapiHandler @md {
   """
   A pointer to your API source - could be a local file, remote file or url endpoint
   """
-  source: String!
+  source: Any!
   """
   Format of the source file
   """

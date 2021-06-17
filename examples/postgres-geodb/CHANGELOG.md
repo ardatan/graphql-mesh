@@ -1,5 +1,285 @@
 # postgres-geodb-example
 
+## 0.5.108
+
+### Patch Changes
+
+- Updated dependencies [02cf272a2]
+  - @graphql-mesh/cache-file@0.6.0
+
+## 0.5.107
+
+### Patch Changes
+
+- Updated dependencies [01cf89298]
+  - @graphql-mesh/config@0.17.0
+  - @graphql-mesh/runtime@0.17.0
+  - @graphql-mesh/cli@0.30.2
+
+## 0.5.106
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.5.10
+- @graphql-mesh/cli@0.30.1
+- @graphql-mesh/config@0.16.6
+- @graphql-mesh/graphql@0.17.10
+- @graphql-mesh/postgraphile@0.12.8
+- @graphql-mesh/runtime@0.16.6
+- @graphql-mesh/transform-prefix@0.6.48
+
+## 0.5.105
+
+### Patch Changes
+
+- Updated dependencies [d27f36029]
+  - @graphql-mesh/cli@0.30.0
+
+## 0.5.104
+
+### Patch Changes
+
+- Updated dependencies [a04e3f090]
+- Updated dependencies [b9036c51b]
+- Updated dependencies [4d96aa9b5]
+  - @graphql-mesh/graphql@0.17.9
+  - @graphql-mesh/cli@0.29.14
+
+## 0.5.103
+
+### Patch Changes
+
+- Updated dependencies [ee86d8fa7]
+  - @graphql-mesh/cli@0.29.13
+
+## 0.5.102
+
+### Patch Changes
+
+- Updated dependencies [674bbadc9]
+  - @graphql-mesh/graphql@0.17.8
+
+## 0.5.101
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.5.9
+- @graphql-mesh/cli@0.29.12
+- @graphql-mesh/config@0.16.5
+- @graphql-mesh/graphql@0.17.7
+- @graphql-mesh/postgraphile@0.12.7
+- @graphql-mesh/runtime@0.16.5
+- @graphql-mesh/transform-prefix@0.6.47
+
+## 0.5.100
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.5.8
+- @graphql-mesh/config@0.16.4
+- @graphql-mesh/graphql@0.17.6
+- @graphql-mesh/postgraphile@0.12.6
+- @graphql-mesh/runtime@0.16.4
+- @graphql-mesh/transform-prefix@0.6.46
+- @graphql-mesh/cli@0.29.11
+
+## 0.5.99
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/runtime@0.16.3
+  - @graphql-mesh/config@0.16.3
+  - @graphql-mesh/cli@0.29.10
+  - @graphql-mesh/cache-file@0.5.7
+  - @graphql-mesh/graphql@0.17.5
+  - @graphql-mesh/postgraphile@0.12.5
+  - @graphql-mesh/transform-prefix@0.6.45
+
+## 0.5.98
+
+### Patch Changes
+
+- Updated dependencies [a48368992]
+  - @graphql-mesh/graphql@0.17.4
+
+## 0.5.97
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/cli@0.29.9
+  - @graphql-mesh/config@0.16.2
+  - @graphql-mesh/runtime@0.16.2
+  - @graphql-mesh/transform-prefix@0.6.44
+  - @graphql-mesh/cache-file@0.5.6
+  - @graphql-mesh/graphql@0.17.3
+  - @graphql-mesh/postgraphile@0.12.4
+
+## 0.5.96
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.5.5
+- @graphql-mesh/cli@0.29.8
+- @graphql-mesh/config@0.16.1
+- @graphql-mesh/graphql@0.17.2
+- @graphql-mesh/postgraphile@0.12.3
+- @graphql-mesh/runtime@0.16.1
+- @graphql-mesh/transform-prefix@0.6.43
+
+## 0.5.95
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/config@0.16.0
+  - @graphql-mesh/runtime@0.16.0
+  - @graphql-mesh/cli@0.29.7
+  - @graphql-mesh/cache-file@0.5.4
+  - @graphql-mesh/graphql@0.17.1
+  - @graphql-mesh/postgraphile@0.12.2
+  - @graphql-mesh/transform-prefix@0.6.42
+
+## 0.5.94
+
+### Patch Changes
+
+- Updated dependencies [1f4655ee6]
+  - @graphql-mesh/runtime@0.15.0
+  - @graphql-mesh/cli@0.29.6
+  - @graphql-mesh/config@0.15.7
+
+## 0.5.93
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/graphql@0.17.0
+  - @graphql-mesh/cache-file@0.5.3
+  - @graphql-mesh/config@0.15.6
+  - @graphql-mesh/postgraphile@0.12.1
+  - @graphql-mesh/runtime@0.14.1
+  - @graphql-mesh/transform-prefix@0.6.41
+  - @graphql-mesh/cli@0.29.5
+
+## 0.5.92
+
+### Patch Changes
+
+- Updated dependencies [28f80c0a7]
+  - @graphql-mesh/cli@0.29.4
+
+## 0.5.91
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/postgraphile@0.12.0
+  - @graphql-mesh/runtime@0.14.0
+  - @graphql-mesh/config@0.15.5
+  - @graphql-mesh/cli@0.29.3
+  - @graphql-mesh/cache-file@0.5.2
+  - @graphql-mesh/graphql@0.16.2
+  - @graphql-mesh/transform-prefix@0.6.40
+
+## 0.5.90
+
+### Patch Changes
+
+- @graphql-mesh/cache-file@0.5.1
+- @graphql-mesh/config@0.15.4
+- @graphql-mesh/graphql@0.16.1
+- @graphql-mesh/postgraphile@0.11.4
+- @graphql-mesh/runtime@0.13.4
+- @graphql-mesh/transform-prefix@0.6.39
+- @graphql-mesh/cli@0.29.2
+
+## 0.5.89
+
+### Patch Changes
+
+- Updated dependencies [1c8b460d1]
+  - @graphql-mesh/cli@0.29.1
+
+## 0.5.88
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+- Updated dependencies [f89497389]
+  - @graphql-mesh/cache-file@0.5.0
+  - @graphql-mesh/cli@0.29.0
+  - @graphql-mesh/graphql@0.16.0
+  - @graphql-mesh/postgraphile@0.11.3
+  - @graphql-mesh/runtime@0.13.3
+  - @graphql-mesh/config@0.15.3
+  - @graphql-mesh/transform-prefix@0.6.38
+
+## 0.5.87
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/cli@0.28.0
+  - @graphql-mesh/cache-file@0.4.58
+  - @graphql-mesh/config@0.15.2
+  - @graphql-mesh/graphql@0.15.2
+  - @graphql-mesh/postgraphile@0.11.2
+  - @graphql-mesh/runtime@0.13.2
+  - @graphql-mesh/transform-prefix@0.6.37
+
+## 0.5.86
+
+### Patch Changes
+
+- Updated dependencies [e7c3de4ae]
+  - @graphql-mesh/cli@0.27.2
+
+## 0.5.85
+
+### Patch Changes
+
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/cache-file@0.4.57
+  - @graphql-mesh/cli@0.27.1
+  - @graphql-mesh/config@0.15.1
+  - @graphql-mesh/graphql@0.15.1
+  - @graphql-mesh/postgraphile@0.11.1
+  - @graphql-mesh/runtime@0.13.1
+  - @graphql-mesh/transform-prefix@0.6.36
+
+## 0.5.84
+
+### Patch Changes
+
+- Updated dependencies [634a8a134]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/cli@0.27.0
+  - @graphql-mesh/config@0.15.0
+  - @graphql-mesh/graphql@0.15.0
+  - @graphql-mesh/postgraphile@0.11.0
+  - @graphql-mesh/runtime@0.13.0
+  - @graphql-mesh/cache-file@0.4.56
+  - @graphql-mesh/transform-prefix@0.6.35
+
+## 0.5.83
+
+### Patch Changes
+
+- Updated dependencies [0b175305a]
+  - @graphql-mesh/runtime@0.12.0
+  - @graphql-mesh/cli@0.26.2
+  - @graphql-mesh/config@0.14.3
+
+## 0.5.82
+
+### Patch Changes
+
+- Updated dependencies [939f9beb5]
+  - @graphql-mesh/config@0.14.2
+  - @graphql-mesh/cli@0.26.1
+
 ## 0.5.81
 
 ### Patch Changes

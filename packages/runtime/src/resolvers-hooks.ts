@@ -231,6 +231,8 @@ function getSdk(
           args: methodArgs,
           context,
           info: proxyInfo,
+          skipTypeMerging: true,
+          skipValidation: true,
         });
       };
     },

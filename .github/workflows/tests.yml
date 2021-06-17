@@ -17,18 +17,18 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Use Node 15
+      - name: Use Node
         uses: actions/setup-node@master
         with:
-          node-version: 15
+          node-version: 16
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-15-node-modules-
+            ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-16-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Lint
@@ -41,31 +41,30 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Use Node 15
+      - name: Use Node
         uses: actions/setup-node@master
         with:
-          node-version: 15
+          node-version: 16
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-15-node-modules-
+            ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-16-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Build
         run: yarn transpile-ts --noEmit
 
   test:
-    name: Testing on ${{matrix.os}} and Node ${{matrix.node_version}}
+    name: Testing on Node ${{matrix.node_version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        node_version: [10, 15]
+        node_version: [12, 16]
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
@@ -97,3 +96,4 @@ jobs:
         run: yarn test
         env:
           CI: true
+          NODE_TLS_REJECT_UNAUTHORIZED: 0

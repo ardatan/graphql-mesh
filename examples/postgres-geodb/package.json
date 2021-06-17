@@ -1,6 +1,6 @@
 {
   "name": "postgres-geodb-example",
-  "version": "0.5.81",
+  "version": "0.5.108",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,7 +8,8 @@
     "test-sdk": "ts-node src/test-sdk.ts London",
     "mesh:serve": "mesh serve",
     "mesh:sdk": "mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
-    "start": "yarn mesh:serve"
+    "start": "yarn mesh:serve",
+    "write-introspection-cache": "mesh write-introspection-cache"
   },
   "devDependencies": {
     "@types/node": "14.14.3",
@@ -16,13 +17,13 @@
     "typescript": "4.0.5"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.26.0",
-    "@graphql-mesh/transform-prefix": "0.6.34",
-    "@graphql-mesh/graphql": "0.14.1",
-    "@graphql-mesh/postgraphile": "0.10.1",
-    "@graphql-mesh/cache-file": "0.4.55",
-    "@graphql-mesh/config": "0.14.1",
-    "@graphql-mesh/runtime": "0.11.9",
+    "@graphql-mesh/cli": "0.30.2",
+    "@graphql-mesh/transform-prefix": "0.6.48",
+    "@graphql-mesh/graphql": "0.17.10",
+    "@graphql-mesh/postgraphile": "0.12.8",
+    "@graphql-mesh/cache-file": "0.6.0",
+    "@graphql-mesh/config": "0.17.0",
+    "@graphql-mesh/runtime": "0.17.0",
     "graphql": "15.4.0"
   },
   "resolutions": {

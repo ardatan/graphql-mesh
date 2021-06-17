@@ -3,7 +3,7 @@ import { IResolvers } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
-import { Executor, Subscriber, Transform } from '@graphql-tools/delegate';
+import { Executor, Subscriber, Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 export { YamlConfig };
@@ -21,12 +21,13 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
   batch?: boolean;
 };
 
-export type GetMeshSourceOptions<THandlerConfig> = {
+export type GetMeshSourceOptions<THandlerConfig, TIntrospectionCache = never> = {
   name: string;
   config: THandlerConfig;
   baseDir?: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  introspectionCache?: TIntrospectionCache;
 };
 
 // Handlers
@@ -34,8 +35,8 @@ export interface MeshHandler<TContext = any> {
   getMeshSource: () => Promise<MeshSource<TContext>>;
 }
 
-export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
-  new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
+export interface MeshHandlerLibrary<TConfig = any, TContext = any, TIntrospectionCache = any> {
+  new (options: GetMeshSourceOptions<TConfig, TIntrospectionCache>): MeshHandler<TContext>;
 }
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {
@@ -70,7 +71,7 @@ export interface MeshPubSub {
 export interface MeshTransformOptions<Config = any> {
   apiName?: string;
   config: Config;
-  baseDir: string;
+  baseDir?: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
 }
@@ -108,6 +109,7 @@ export type RawSourceOutput = {
   contextVariables: (keyof any)[];
   handler: MeshHandler;
   batch: boolean;
+  merge?: Record<string, MergedTypeConfig>;
 };
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;

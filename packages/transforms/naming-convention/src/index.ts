@@ -56,17 +56,17 @@ export default class NamingConventionTransform implements MeshTransform {
     if (options.config.typeNames) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.typeNames];
       this.transforms.push(
-        new RenameTypes(typeName => namingConventionFn(typeName)),
-        new RenameRootTypes(typeName => namingConventionFn(typeName))
+        new RenameTypes(typeName => namingConventionFn(typeName) || typeName),
+        new RenameRootTypes(typeName => namingConventionFn(typeName) || typeName)
       );
     }
     if (options.config.fieldNames) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.fieldNames];
       this.transforms.push(
-        new RenameObjectFields((_, fieldName) => namingConventionFn(fieldName)),
-        new RenameRootFields((_, fieldName) => namingConventionFn(fieldName)),
-        new RenameInputObjectFields((_, fieldName) => namingConventionFn(fieldName)),
-        new RenameInterfaceFields((_, fieldName) => namingConventionFn(fieldName))
+        new RenameObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
+        new RenameRootFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
+        new RenameInputObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
+        new RenameInterfaceFields((_, fieldName) => namingConventionFn(fieldName) || fieldName)
       );
     }
     if (options.config.enumValues) {
@@ -74,7 +74,7 @@ export default class NamingConventionTransform implements MeshTransform {
 
       this.transforms.push(
         new TransformEnumValues((typeName, externalValue, enumValueConfig) => [
-          namingConventionFn(externalValue),
+          namingConventionFn(externalValue) || externalValue,
           enumValueConfig,
         ])
       );

@@ -2,7 +2,7 @@ type Cache {
   localforage: LocalforageConfig
 }
 
-type LocalforageConfig {
+type LocalforageConfig @md {
   driver: [LocalforageDriver!]
   name: String
   version: Float

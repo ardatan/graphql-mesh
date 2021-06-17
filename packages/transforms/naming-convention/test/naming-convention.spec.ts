@@ -23,6 +23,8 @@ describe('namingConvention', () => {
   `);
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
+  const baseDir: string = undefined;
+
   beforeEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
@@ -40,6 +42,7 @@ describe('namingConvention', () => {
           },
           cache,
           pubsub,
+          baseDir,
         }),
       ],
     });
@@ -98,6 +101,7 @@ describe('namingConvention', () => {
           config: {
             fieldNames: 'camelCase',
           },
+          baseDir,
         }),
       ],
     });
@@ -125,5 +129,44 @@ describe('namingConvention', () => {
       firstName: 'John',
       lastName: 'Doe',
     });
+  });
+  it('should be skipped if the result gonna be empty string', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type Query {
+        _: String!
+      }
+    `);
+    schema = addResolversToSchema({
+      schema,
+      resolvers: {
+        Query: {
+          _: (root, args, context, info) => {
+            return 'test';
+          },
+        },
+      },
+    });
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        new NamingConventionTransform({
+          cache,
+          pubsub,
+          config: {
+            fieldNames: 'camelCase',
+          },
+          baseDir,
+        }),
+      ],
+    });
+    const { data } = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          _
+        }
+      `),
+    });
+    expect(data?._).toEqual('test');
   });
 });

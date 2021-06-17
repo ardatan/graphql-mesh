@@ -11,3 +11,5 @@ serve:
   port: 4000
   exampleQuery: example-queries/**/*.graphql
   staticFiles: public
+
+introspectionCache: ./introspection-cache-${GRAPH_VERSION:v1.0}.json

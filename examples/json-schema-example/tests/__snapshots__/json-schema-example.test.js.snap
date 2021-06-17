@@ -54,14 +54,6 @@ Object {
         "name": "include",
       },
       Object {
-        "args": Array [],
-        "isRepeatable": false,
-        "locations": Array [
-          "QUERY",
-        ],
-        "name": "live",
-      },
-      Object {
         "args": Array [
           Object {
             "defaultValue": null,
@@ -248,9 +240,13 @@ Object {
                 "isDeprecated": false,
                 "name": "id",
                 "type": Object {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                  },
                 },
               },
               Object {
@@ -293,9 +289,13 @@ Object {
                 "isDeprecated": false,
                 "name": "id",
                 "type": Object {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                  },
                 },
               },
             ],

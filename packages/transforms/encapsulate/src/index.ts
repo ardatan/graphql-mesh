@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { WrapType } from '@graphql-tools/wrap';
-import { ExecutionResult, Request } from '@graphql-tools/utils';
+import { ExecutionResult, Request, selectObjectFields } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
@@ -11,7 +11,10 @@ const DEFUALT_APPLY_TO = {
   subscription: true,
 };
 
+type RootType = 'Query' | 'Mutation' | 'Subscription';
+
 export default class EncapsulateTransform implements MeshTransform {
+  private transformMap: Partial<Record<RootType, Transform>> = {};
   private transforms: Transform[] = [];
 
   constructor(options: MeshTransformOptions<YamlConfig.Transform['encapsulate']>) {
@@ -27,13 +30,22 @@ export default class EncapsulateTransform implements MeshTransform {
     const applyTo = { ...DEFUALT_APPLY_TO, ...(config?.applyTo || {}) };
 
     if (applyTo.query) {
-      this.transforms.push(new WrapType('Query', `${name}Query`, name));
+      this.transformMap.Query = new WrapType('Query', `${name}Query`, name);
     }
     if (applyTo.mutation) {
-      this.transforms.push(new WrapType('Mutation', `${name}Mutation`, name));
+      this.transformMap.Mutation = new WrapType('Mutation', `${name}Mutation`, name);
     }
     if (applyTo.subscription) {
-      this.transforms.push(new WrapType('Subscription', `${name}Subscription`, name));
+      this.transformMap.Subscription = new WrapType('Subscription', `${name}Subscription`, name);
+    }
+  }
+
+  *generateSchemaTransforms(originalWrappingSchema: GraphQLSchema) {
+    for (const typeName of Object.keys(this.transformMap)) {
+      const fieldConfigMap = selectObjectFields(originalWrappingSchema, typeName, () => true);
+      if (Object.keys(fieldConfigMap).length) {
+        yield this.transformMap[typeName];
+      }
     }
   }
 
@@ -42,6 +54,7 @@ export default class EncapsulateTransform implements MeshTransform {
     subschemaConfig: SubschemaConfig,
     transformedSchema?: GraphQLSchema
   ) {
+    this.transforms = [...this.generateSchemaTransforms(originalWrappingSchema)];
     return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
   }
 

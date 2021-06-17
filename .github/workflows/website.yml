@@ -30,27 +30,20 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v2
         with:
-          node-version: '15.x'
+          node-version: '16.x'
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-15-node-modules-
+            ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-16-node-modules-
+      - name: Align TypeScript version with typedoc
+        run: node scripts/install-typedocs-typescript-version.js
       - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock
+        run: yarn install && git checkout yarn.lock && git checkout package.json
       - name: Deploy 🚀
         run: yarn deploy:website
         env:
           GIT_USER: ${{github.actor}}
-      - name: Index Docs
-        uses: darrenjennings/algolia-docsearch-action@master
-        env:
-          ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
-        if: env.ALGOLIA_API_KEY != null
-        with:
-          algolia_api_key: ${{ secrets.ALGOLIA_API_KEY }}
-          algolia_application_id: ${{ secrets.ALGOLIA_APPLICATION_ID }}
-          file: algolia/config.json

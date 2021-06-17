@@ -54,14 +54,6 @@ Object {
         "name": "include",
       },
       Object {
-        "args": Array [],
-        "isRepeatable": false,
-        "locations": Array [
-          "QUERY",
-        ],
-        "name": "live",
-      },
-      Object {
         "args": Array [
           Object {
             "defaultValue": null,
@@ -2461,7 +2453,7 @@ Object {
         "kind": "SCALAR",
         "name": "JSON",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByUrl": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
       },
       Object {
         "enumValues": null,

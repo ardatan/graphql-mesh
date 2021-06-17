@@ -1,12 +1,22 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.7.1",
+  "version": "0.7.15",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "license": "MIT",
   "peerDependencies": {
@@ -14,17 +24,16 @@
     "mongoose": "*"
   },
   "devDependencies": {
-    "@types/mongoose": "5.10.3",
-    "mongoose": "5.11.19"
+    "mongoose": "5.12.14"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.35.1",
-    "@graphql-mesh/utils": "0.9.0",
+    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/utils": "0.12.0",
     "camel-case": "4.1.2",
-    "graphql-compose": "7.25.0",
-    "graphql-compose-mongoose": "9.1.0",
-    "graphql-compose-connection": "8.0.1",
-    "graphql-compose-pagination": "8.0.2"
+    "graphql-compose": "8.1.0",
+    "graphql-compose-mongoose": "9.4.1",
+    "graphql-compose-connection": "8.2.0",
+    "graphql-compose-pagination": "8.2.0"
   },
   "publishConfig": {
     "access": "public",

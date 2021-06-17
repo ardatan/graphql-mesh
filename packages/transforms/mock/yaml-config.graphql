@@ -20,6 +20,10 @@ type MockingConfig @md {
   Mock configurations
   """
   mocks: [MockingFieldConfig]
+  """
+  The path to the code runs before the store is attached to the schema
+  """
+  initializeStore: Any
 }
 
 type MockingFieldConfig {
@@ -47,4 +51,31 @@ type MockingFieldConfig {
   Both "moduleName#exportName" or only "moduleName" would work
   """
   custom: String
+  """
+  Length of the mock list
+  For the list types `[ObjectType]`, how many `ObjectType` you want to return?
+  default: 2
+  """
+  length: Int
+  """
+  Get the data from the mock store
+  """
+  store: GetFromMockStoreConfig
+  """
+  Update the data on the mock store
+  """
+  updateStore: [UpdateMockStoreConfig]
+}
+
+type GetFromMockStoreConfig {
+  type: String
+  key: ID
+  fieldName: String
+}
+
+type UpdateMockStoreConfig {
+  type: String
+  key: ID
+  fieldName: String
+  value: String
 }

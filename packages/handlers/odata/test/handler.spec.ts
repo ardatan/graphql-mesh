@@ -1,16 +1,11 @@
 import { MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
 import { printSchema, graphql } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { addMock, resetMocks, Response } from 'fetchache';
+import { addMock, resetMocks, MockResponse as Response, mockFetch } from './custom-fetch';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { PubSub } from 'graphql-subscriptions';
 import ODataHandler from '../src';
-declare module 'fetchache' {
-  type FetchMockFn = (request: Request) => Promise<Response>;
-  function addMock(url: string, mockFn: FetchMockFn): void;
-  function resetMocks(): void;
-}
 
 const TripPinMetadata = readFileSync(resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
 const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
@@ -30,6 +25,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -51,6 +47,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -87,6 +84,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -132,6 +130,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -170,6 +169,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -191,7 +191,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(decodeURIComponent(correctUrl));
   });
   it('should generate correct HTTP request for $count', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -206,6 +206,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -260,6 +261,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -299,6 +301,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -338,6 +341,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -363,7 +367,7 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-    expect(sentRequest!.body).toBe(JSON.stringify(correctBody));
+    expect(await sentRequest!.text()).toBe(JSON.stringify(correctBody));
   });
   it('should generate correct HTTP request for invoking unbound functions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -384,6 +388,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -405,7 +410,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for invoking bound functions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -433,6 +438,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -474,6 +480,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -514,6 +521,7 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -535,6 +543,6 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-    expect(sentRequest!.body).toBe(JSON.stringify(correctBody));
+    expect(await sentRequest!.text()).toBe(JSON.stringify(correctBody));
   });
 });

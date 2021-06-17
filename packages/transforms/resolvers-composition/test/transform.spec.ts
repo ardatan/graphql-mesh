@@ -6,6 +6,8 @@ import ResolversCompositionTransform, { ResolversComposition } from '../src';
 import { execute, parse } from 'graphql';
 
 describe('transform', () => {
+  const baseDir: string = undefined;
+
   it('should handle composition functions from external modules', async () => {
     const transform = new ResolversCompositionTransform({
       cache: new InMemoryLRUCache(),
@@ -16,6 +18,7 @@ describe('transform', () => {
           composer: join(__dirname, './fixtures/composer.js'),
         },
       ],
+      baseDir,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -51,6 +54,7 @@ describe('transform', () => {
           composer,
         },
       ],
+      baseDir,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

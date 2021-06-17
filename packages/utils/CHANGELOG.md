@@ -1,5 +1,60 @@
 # @graphql-mesh/utils
 
+## 0.12.0
+
+### Minor Changes
+
+- bdb58dfec: chore(deps): bump object-hash
+
+## 0.11.4
+
+### Patch Changes
+
+- 7d0e33660: fix(utils): support annotations in argTypeMap
+
+## 0.11.3
+
+### Patch Changes
+
+- 3c4c51100: enhance(runtime): skip validation on schema delegation
+
+## 0.11.2
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+
+## 0.11.1
+
+### Patch Changes
+
+- 69c89666d: chore(utils): bump string interpolator version
+
+## 0.11.0
+
+### Minor Changes
+
+- 1caa8ffd3: enhance(runtime): use graphql-jit to improve the performance
+
+## 0.10.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+## 0.9.2
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+
+## 0.9.1
+
+### Patch Changes
+
+- 2c3312f1a: use fallbackFormat in readUrlWithCache
+- d12c7d978: fix(utils): use mkdir before emit output
+
 ## 0.9.0
 
 ### Minor Changes

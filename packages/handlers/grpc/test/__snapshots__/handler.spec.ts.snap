@@ -30,6 +30,7 @@ input BamInput {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 "
@@ -97,6 +98,7 @@ type EmptyRequest {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 
@@ -168,6 +170,7 @@ input GoogleProtobufTimestampInput {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 
@@ -206,6 +209,7 @@ input ItemInput {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 "
@@ -235,12 +239,13 @@ input ItemInput {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 "
 `;
 
-exports[`Interpreting Protos should load the Outide proto 1`] = `
+exports[`Interpreting Protos should load the Outside proto 1`] = `
 "type Query {
   GetMovies(input: MovieRequestInput = {}): MoviesResult
   ioXtechGetMovies(input: IoXtechMovieRequestInput = {}): IoXtechMoviesResult
@@ -307,6 +312,7 @@ input IoXtechMovieRequestInput {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 
@@ -380,6 +386,7 @@ input ItemInput {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 "
@@ -442,6 +449,7 @@ input GoogleProtobufTimestampInput {
 
 \\"\\"\\"status of the server\\"\\"\\"
 type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
   status: String
 }
 

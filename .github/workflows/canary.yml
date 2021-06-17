@@ -18,7 +18,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v2
         with:
-          node-version: '15.x'
+          node-version: '16.x'
       - name: Configure Git Credentials
         run: |
           git config --global user.email "theguild-bot@users.noreply.github.com"
@@ -32,10 +32,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-15-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-15-node-modules-
+            ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-16-node-modules-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock && yarn patch-package
       - name: Release Canary

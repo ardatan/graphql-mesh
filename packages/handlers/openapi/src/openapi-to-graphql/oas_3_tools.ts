@@ -37,6 +37,7 @@ import * as Swagger2OpenAPI from 'swagger2openapi';
 import { handleWarning, MitigationTypes, mockDebug as debug } from './utils';
 import * as jsonptr from 'json-ptr';
 import * as pluralize from 'pluralize';
+import { jsonFlatStringify } from '@graphql-mesh/utils';
 
 // Type definitions & exports:
 export type SchemaNames = {
@@ -1019,7 +1020,7 @@ export function storeSaneName(saneStr: string, str: string, mapping: { [key: str
  */
 export function trim(str: string, length: number): string {
   if (typeof str !== 'string') {
-    str = JSON.stringify(str);
+    str = jsonFlatStringify(str);
   }
 
   if (str && str.length > length) {

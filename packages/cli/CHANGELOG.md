@@ -1,5 +1,208 @@
 # @graphql-mesh/cli
 
+## 0.30.2
+
+### Patch Changes
+
+- Updated dependencies [01cf89298]
+  - @graphql-mesh/config@0.17.0
+  - @graphql-mesh/runtime@0.17.0
+
+## 0.30.1
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+  - @graphql-mesh/config@0.16.6
+  - @graphql-mesh/runtime@0.16.6
+
+## 0.30.0
+
+### Minor Changes
+
+- d27f36029: Add support to require local modules as an addition to installed packages
+
+## 0.29.14
+
+### Patch Changes
+
+- b9036c51b: fix(serve): better error handling
+- 4d96aa9b5: fix(cli): fix duplicate methods in incontext sdk typings
+
+## 0.29.13
+
+### Patch Changes
+
+- ee86d8fa7: fix(serve): do not throw if stack is undefined
+
+## 0.29.12
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+  - @graphql-mesh/config@0.16.5
+  - @graphql-mesh/runtime@0.16.5
+
+## 0.29.11
+
+### Patch Changes
+
+- @graphql-mesh/config@0.16.4
+- @graphql-mesh/runtime@0.16.4
+
+## 0.29.10
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/runtime@0.16.3
+  - @graphql-mesh/utils@0.11.3
+  - @graphql-mesh/config@0.16.3
+
+## 0.29.9
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/config@0.16.2
+  - @graphql-mesh/runtime@0.16.2
+  - @graphql-mesh/utils@0.11.2
+
+## 0.29.8
+
+### Patch Changes
+
+- Updated dependencies [69c89666d]
+  - @graphql-mesh/utils@0.11.1
+  - @graphql-mesh/config@0.16.1
+  - @graphql-mesh/runtime@0.16.1
+
+## 0.29.7
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/config@0.16.0
+  - @graphql-mesh/runtime@0.16.0
+
+## 0.29.6
+
+### Patch Changes
+
+- Updated dependencies [1f4655ee6]
+  - @graphql-mesh/runtime@0.15.0
+  - @graphql-mesh/config@0.15.7
+
+## 0.29.5
+
+### Patch Changes
+
+- @graphql-mesh/config@0.15.6
+- @graphql-mesh/runtime@0.14.1
+
+## 0.29.4
+
+### Patch Changes
+
+- 28f80c0a7: fix(serve): fix subscriptions
+
+## 0.29.3
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/runtime@0.14.0
+  - @graphql-mesh/utils@0.11.0
+  - @graphql-mesh/config@0.15.5
+
+## 0.29.2
+
+### Patch Changes
+
+- @graphql-mesh/config@0.15.4
+- @graphql-mesh/runtime@0.13.4
+
+## 0.29.1
+
+### Patch Changes
+
+- 1c8b460d1: fix(serve) fix browser flag
+
+## 0.29.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+- Updated dependencies [f89497389]
+  - @graphql-mesh/utils@0.10.0
+  - @graphql-mesh/runtime@0.13.3
+  - @graphql-mesh/config@0.15.3
+
+## 0.28.0
+
+### Minor Changes
+
+- 4b57f7496: feat(serve): ability to configure opening browser window feature
+
+### Patch Changes
+
+- @graphql-mesh/config@0.15.2
+- @graphql-mesh/runtime@0.13.2
+
+## 0.27.2
+
+### Patch Changes
+
+- e7c3de4ae: fix(cli): use baseDir for path defined in config file
+
+## 0.27.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/config@0.15.1
+  - @graphql-mesh/runtime@0.13.1
+  - @graphql-mesh/utils@0.9.2
+
+## 0.27.0
+
+### Minor Changes
+
+- 634a8a134: feat(config): introduce introspection cache
+
+### Patch Changes
+
+- d12c7d978: fix(utils): use mkdir before emit output
+- Updated dependencies [634a8a134]
+- Updated dependencies [2c3312f1a]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/config@0.15.0
+  - @graphql-mesh/runtime@0.13.0
+  - @graphql-mesh/utils@0.9.1
+
+## 0.26.2
+
+### Patch Changes
+
+- Updated dependencies [0b175305a]
+  - @graphql-mesh/runtime@0.12.0
+  - @graphql-mesh/config@0.14.3
+
+## 0.26.1
+
+### Patch Changes
+
+- Updated dependencies [939f9beb5]
+  - @graphql-mesh/config@0.14.2
+
 ## 0.26.0
 
 ### Minor Changes

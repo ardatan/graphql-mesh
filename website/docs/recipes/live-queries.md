@@ -29,6 +29,8 @@ And you want to update this operation result automatically without manual refres
 The only thing you need is to add the following configuration to your existing configuration;
 
 ```yml
+additionalTypeDefs: |
+    directive @live on QUERY
 liveQueryInvalidations:
     - field: Mutation.addTodo
       invalidate: 
@@ -54,7 +56,7 @@ Let's say you have the following query that returns specific `Todo` entity based
 
 ```graphql
 query getTodo($id: ID!) {
-    todo(id: $id) {]
+    todo(id: $id) {
         id
         content
     }

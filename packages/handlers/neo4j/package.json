@@ -1,12 +1,22 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.10.1",
+  "version": "0.11.6",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "buildOptions": {
     "input": "./src/index.ts"
@@ -16,13 +26,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/load": "6.2.7",
+    "@graphql-tools/load": "6.2.8",
     "@graphql-tools/graphql-file-loader": "6.2.7",
     "@graphql-tools/code-file-loader": "6.3.1",
-    "@graphql-tools/merge": "6.2.10",
-    "@graphql-mesh/types": "0.35.1",
-    "neo4j-driver": "4.2.3",
-    "neo4j-graphql-js": "2.19.2"
+    "@graphql-tools/merge": "6.2.14",
+    "@graphql-mesh/types": "0.42.0",
+    "neo4j-driver": "4.3.1",
+    "neo4j-graphql-js": "2.19.4"
   },
   "publishConfig": {
     "access": "public",

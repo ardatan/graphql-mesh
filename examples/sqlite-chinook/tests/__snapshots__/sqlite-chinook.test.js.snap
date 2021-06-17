@@ -54,14 +54,6 @@ Object {
         "name": "include",
       },
       Object {
-        "args": Array [],
-        "isRepeatable": false,
-        "locations": Array [
-          "QUERY",
-        ],
-        "name": "live",
-      },
-      Object {
         "args": Array [
           Object {
             "defaultValue": null,

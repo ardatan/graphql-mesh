@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, parse } from 'graphql';
+import { GraphQLSchema, DocumentNode, GraphQLError, subscribe, ExecutionArgs } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
 
@@ -11,13 +11,12 @@ import {
   getInterpolatedStringFactory,
   groupTransforms,
   ResolverDataBasedFactory,
+  jitExecutorFactory,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 
-export async function getMesh(
-  options: GetMeshOptions
-): Promise<{
+export interface MeshInstance {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
@@ -28,11 +27,12 @@ export async function getMesh(
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   liveQueryStore: InMemoryLiveQueryStore;
-}> {
+}
+
+export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache } = options;
 
-  let hasLiveDirective = false;
   await Promise.all(
     options.sources.map(async apiSource => {
       const source = await apiSource.handler.getMeshSource();
@@ -47,8 +47,6 @@ export async function getMesh(
         apiSchema = applySchemaTransforms(apiSchema, { schema: apiSchema }, null, noWrapTransforms);
       }
 
-      hasLiveDirective = hasLiveDirective || !!apiSchema.getDirective('live');
-
       rawSources.push({
         name: apiName,
         contextBuilder: source.contextBuilder || null,
@@ -59,18 +57,10 @@ export async function getMesh(
         contextVariables: source.contextVariables || [],
         handler: apiSource.handler,
         batch: 'batch' in source ? source.batch : true,
+        merge: apiSource.merge,
       });
     })
   );
-
-  options.additionalTypeDefs = options.additionalTypeDefs || [];
-  if (!hasLiveDirective) {
-    options.additionalTypeDefs.push(
-      parse(/* GraphQL */ `
-        directive @live on QUERY
-      `)
-    );
-  }
 
   let unifiedSchema = await options.merger({
     rawSources,
@@ -83,7 +73,23 @@ export async function getMesh(
 
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
-  const liveQueryStore = new InMemoryLiveQueryStore();
+  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified');
+
+  const liveQueryStore = new InMemoryLiveQueryStore({
+    includeIdentifierExtension: true,
+    execute: (args: any) => {
+      const { document, contextValue, variableValues, rootValue, operationName }: ExecutionArgs = args;
+      return jitExecutor(
+        {
+          document,
+          context: contextValue,
+          variables: variableValues,
+        },
+        operationName,
+        rootValue
+      );
+    },
+  });
 
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
 

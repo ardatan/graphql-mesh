@@ -30,17 +30,4 @@ type Neo4jHandler @md {
   Provide GraphQL Type Definitions instead of inferring
   """
   typeDefs: String
-  """
-  Cache Introspection
-  """
-  cacheIntrospection: Neo4jCacheIntrospectionConfig
-}
-
-union Neo4jCacheIntrospectionConfig = Neo4jIntrospectionCachingOptions | Boolean
-
-type Neo4jIntrospectionCachingOptions {
-  """
-  Time to live of introspection cache
-  """
-  ttl: Int
 }

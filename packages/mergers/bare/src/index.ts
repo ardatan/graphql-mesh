@@ -1,6 +1,6 @@
 import { MergerFn, MeshTransform } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms, meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
 import { mergeSchemas } from '@graphql-tools/merge';
 
 const mergeBare: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) => {
@@ -10,6 +10,7 @@ const mergeBare: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) =>
 
     if (source.executor || source.subscriber || source.transforms.length) {
       schema = wrapSchema({
+        createProxyingResolver: meshDefaultCreateProxyingResolver,
         ...source,
         schema,
         transforms: source.transforms,
@@ -38,6 +39,7 @@ const mergeBare: MergerFn = ({ rawSources, typeDefs, resolvers, transforms }) =>
     schema = wrapSchema({
       schema,
       transforms: [...wrapTransforms, ...noWrapTransforms],
+      createProxyingResolver: meshDefaultCreateProxyingResolver,
     });
   } else if (noWrapTransforms.length) {
     schema = applySchemaTransforms(schema, undefined, schema, noWrapTransforms);

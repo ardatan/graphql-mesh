@@ -10,12 +10,7 @@ module.exports = {
   themeConfig: {
     colorMode: {
       defaultMode: 'dark',
-    },
-    algolia: {
-      appId: 'ANRJKXZTRW',
-      apiKey: '811d453fc7f80306044dd5cc4b87e064',
-      indexName: 'theguild',
-      algoliaOptions: {},
+      disableSwitch: true,
     },
     navbar: {
       title: 'GraphQL Mesh',
@@ -88,11 +83,7 @@ module.exports = {
     },
   },
   scripts: [
-    {
-      src: 'https://the-guild.dev/static/banner.js',
-      // we may want to load it ASAP
-      async: true,
-    },
+    'https://the-guild.dev/static/crisp.js'
   ],
   presets: [
     [

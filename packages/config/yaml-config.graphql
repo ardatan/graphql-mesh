@@ -32,6 +32,10 @@ type Query {
   Live Query Invalidations
   """
   liveQueryInvalidations: [LiveQueryInvalidation]
+  """
+  Path to the file containing the introspection cache
+  """
+  introspectionCache: String
 }
 
 scalar JSON
@@ -51,6 +55,11 @@ type Source {
   List of transforms to apply to the current API source, before unifying it with the rest of the sources
   """
   transforms: [Transform]
+  """
+  Type Merging Configuration
+  https://www.graphql-tools.com/docs/stitch-type-merging
+  """
+  typeMerging: [MergedTypeConfig]
 }
 
 type Transform @withAdditionalProperties
@@ -90,4 +99,23 @@ type PubSubConfig {
 type LiveQueryInvalidation {
   field: String!
   invalidate: [String!]!
+}
+
+type MergedTypeConfig {
+  typeName: String
+  fieldName: String
+  args: Any
+  argsFromKeys: Any
+  selectionSet: String
+  fields: [MergedFieldConfig]
+  key: Any
+  canonical: Boolean
+  resolve: AdditionalResolver
+}
+
+type MergedFieldConfig {
+  fieldName: String
+  selectionSet: String
+  computed: Boolean
+  canonical: Boolean
 }

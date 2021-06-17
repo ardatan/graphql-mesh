@@ -170,7 +170,7 @@ export function mockDebug(...args1: any[]) {
   // do nothing
   return (...args2: any[]) => {
     if (process.env.DEBUG) {
-      console.debug(...args1, ...args2);
+      console.error(...args1, ...args2);
     }
   };
 }

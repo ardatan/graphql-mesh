@@ -2,6 +2,6 @@ type Cache {
   file: FileCacheConfig
 }
 
-type FileCacheConfig {
+type FileCacheConfig @md {
   path: String
 }

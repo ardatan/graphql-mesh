@@ -1,12 +1,12 @@
 import { parse } from 'graphql';
 import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn, ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { resolve } from 'path';
+import { resolve, isAbsolute, join } from 'path';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { get, set, kebabCase } from 'lodash';
-import { stringInterpolator } from '@graphql-mesh/utils';
+import { stringInterpolator, pathExists, readJSON } from '@graphql-mesh/utils';
 import { mergeResolvers } from '@graphql-tools/merge';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
@@ -209,4 +209,19 @@ export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], i
     return pkg.default || pkg;
   }
   return StitchingMerger;
+}
+
+export async function resolveIntrospectionCache(
+  introspectionCacheConfig: YamlConfig.Config['introspectionCache'],
+  dir: string
+): Promise<any> {
+  if (introspectionCacheConfig) {
+    const absolutePath = isAbsolute(introspectionCacheConfig)
+      ? introspectionCacheConfig
+      : join(dir, introspectionCacheConfig);
+    if (await pathExists(absolutePath)) {
+      return readJSON(absolutePath);
+    }
+  }
+  return {};
 }

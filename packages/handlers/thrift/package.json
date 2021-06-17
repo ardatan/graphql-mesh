@@ -1,12 +1,22 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.6.1",
+  "version": "0.7.10",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "license": "MIT",
   "peerDependencies": {
@@ -18,13 +28,13 @@
   },
   "dependencies": {
     "@ardatan/aggregate-error": "0.0.6",
-    "@creditkarma/thrift-client": "0.16.1",
+    "@creditkarma/thrift-client": "0.17.2",
     "@creditkarma/thrift-parser": "1.2.0",
-    "@creditkarma/thrift-server-core": "0.16.1",
-    "@graphql-mesh/types": "0.35.1",
-    "@graphql-mesh/utils": "0.9.0",
-    "fetchache": "0.0.4",
-    "graphql-scalars": "1.9.0",
+    "@creditkarma/thrift-server-core": "0.17.2",
+    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/utils": "0.12.0",
+    "fetchache": "0.1.1",
+    "graphql-scalars": "1.10.0",
     "url-join": "4.0.1",
     "thrift": "0.14.1"
   },

@@ -14,6 +14,8 @@ sources:
             path: /company/{args.id}
             method: GET
             responseSchema: ./json-schemas/company.json
+            argTypeMap:
+              id: ID!
           - type: Mutation
             field: createUser
             path: /user
@@ -23,6 +25,8 @@ sources:
           - type: Mutation
             field: updateUser
             path: /user/{args.id}
+            argTypeMap:
+              id: ID!
             method: POST
             requestSample: ./json-samples/user-input.json
             responseSchema: ./json-schemas/user.json # This can be `responseSample` with a sample JSON file

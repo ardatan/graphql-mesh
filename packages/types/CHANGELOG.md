@@ -1,5 +1,64 @@
 # @graphql-mesh/types
 
+## 0.42.0
+
+### Minor Changes
+
+- cfb517b3d: feat(types): make baseDir optional
+
+## 0.41.1
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+
+## 0.41.0
+
+### Minor Changes
+
+- 214b7a23c: feat(runtime): Type Merging support
+
+## 0.40.0
+
+### Minor Changes
+
+- 0d2f7bfcd: Added the config option `useWebSocketLegacyProtocol` for the graphql handler that enables the use of the `graphql-ws` protocol for subscriptions to the handlers source.
+
+## 0.39.0
+
+### Minor Changes
+
+- 6c90e0e39: Add wrap mode to resolvers-composition transform (#1928)
+
+## 0.38.0
+
+### Minor Changes
+
+- 346fe9c61: Performance improvements and OData fixes
+
+## 0.37.0
+
+### Minor Changes
+
+- 4b57f7496: feat(serve): ability to configure opening browser window feature
+- 4b57f7496: support introspection cache
+
+## 0.36.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+
+## 0.36.0
+
+### Minor Changes
+
+- 634a8a134: feat(config): introduce introspection cache
+
+### Patch Changes
+
+- 6b8b23a4e: feat(openapi): allow source spec inline injection
+
 ## 0.35.1
 
 ### Patch Changes

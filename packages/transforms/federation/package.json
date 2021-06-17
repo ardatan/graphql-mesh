@@ -1,21 +1,31 @@
 {
   "name": "@graphql-mesh/transform-federation",
-  "version": "0.5.1",
+  "version": "0.5.15",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/federation": "0.22.0",
-    "@graphql-mesh/types": "0.35.1",
-    "@graphql-mesh/utils": "0.9.0",
+    "@apollo/federation": "0.25.1",
+    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/utils": "0.12.0",
     "graphql-transform-federation": "2.2.0",
     "lodash": "4.17.21"
   },

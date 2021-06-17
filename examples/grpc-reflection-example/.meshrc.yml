@@ -1,0 +1,10 @@
+sources:
+  - name: gRPC Example
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        useReflection: true
+
+serve:
+  exampleQuery: example-queries/*.graphql
+introspectionCache: ./introspection-cache.json

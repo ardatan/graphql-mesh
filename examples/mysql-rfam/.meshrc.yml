@@ -9,3 +9,5 @@ sources:
 
 serve:
   exampleQuery: example-query.graphql
+
+introspectionCache: ./introspection-cache.json

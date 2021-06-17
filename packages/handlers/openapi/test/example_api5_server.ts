@@ -49,7 +49,7 @@ export function startServer(PORT: number) {
   });
 
   return new Promise(resolve => {
-    server = app.listen(PORT, resolve);
+    server = app.listen(PORT, resolve as () => void);
   });
 }
 

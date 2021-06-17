@@ -30,6 +30,10 @@ type ODataHandler @md {
   Use $expand for navigation props instead of seperate HTTP requests (Default: false)
   """
   expandNavProps: Boolean
+  """
+  Custom Fetch
+  """
+  customFetch: Any
 }
 
 enum ODataBatchMethod {

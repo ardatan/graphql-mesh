@@ -6,6 +6,7 @@ import {
   getHeadersObject,
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
+  getCachedFetch,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -18,21 +19,49 @@ import {
   KeyValueCache,
   MeshPubSub,
 } from '@graphql-mesh/types';
-import { fetchache, Request } from 'fetchache';
-import { set } from 'lodash';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
+import { GraphQLInputType } from 'graphql-compose/lib/graphql';
+import { GraphQLID } from 'graphql';
+
+interface OpenAPIIntrospectionCache {
+  spec?: Oas3;
+}
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
   private baseDir: string;
   private cache: KeyValueCache;
   private pubsub: MeshPubSub;
+  private introspectionCache: OpenAPIIntrospectionCache;
 
-  constructor({ config, baseDir, cache, pubsub }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  constructor({
+    config,
+    baseDir,
+    cache,
+    pubsub,
+    introspectionCache = {},
+  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler, OpenAPIIntrospectionCache>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
+    this.introspectionCache = introspectionCache;
+  }
+
+  private async getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3> {
+    const { source } = this.config;
+    if (!this.introspectionCache.spec) {
+      this.introspectionCache.spec =
+        typeof source !== 'string'
+          ? source
+          : await readFileOrUrlWithCache<Oas3>(source, this.cache, {
+              cwd: this.baseDir,
+              fallbackFormat: this.config.sourceFormat,
+              headers: this.config.schemaHeaders,
+              fetch,
+            });
+    }
+    return this.introspectionCache.spec;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -44,20 +73,16 @@ export default class OpenAPIHandler implements MeshHandler {
       operationHeaders,
       qs,
       selectQueryOrMutationField,
-      source,
     } = this.config;
-    const spec = await readFileOrUrlWithCache<Oas3>(source || source, this.cache, {
-      cwd: this.baseDir,
-      fallbackFormat: this.config.sourceFormat,
-      headers: this.config.schemaHeaders,
-    });
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];
     if (customFetch) {
       fetch = await loadFromModuleExportExpression(customFetch, { defaultExportName: 'default', cwd: this.baseDir });
     } else {
-      fetch = (...args) => fetchache(args[0] instanceof Request ? args[0] : new Request(...args), this.cache);
+      fetch = getCachedFetch(this.cache);
     }
+
+    const spec = await this.getCachedSpec(fetch);
 
     const baseUrlFactory = getInterpolatedStringFactory(baseUrl);
 
@@ -93,8 +118,16 @@ export default class OpenAPIHandler implements MeshHandler {
                   operationType = GraphQLOperationType.Mutation;
                   break;
               }
-              set(acc, `${curr.title}.${curr.path}.${curr.method}`, operationType);
-              return acc;
+              return {
+                ...acc,
+                [curr.title]: {
+                  ...acc[curr.title],
+                  [curr.path]: {
+                    ...((acc[curr.title] && acc[curr.title][curr.path]) || {}),
+                    [curr.method]: operationType,
+                  },
+                },
+              };
             }, {} as OasTitlePathMethodObject<GraphQLOperationType>),
       addLimitArgument: addLimitArgument === undefined ? true : addLimitArgument,
       sendOAuthTokenInQuery: true,
@@ -107,6 +140,7 @@ export default class OpenAPIHandler implements MeshHandler {
         resolverParams.requestOptions = {
           headers: getHeadersObject(headersFactory(resolverData)),
         };
+        resolverParams.qs = qs;
 
         /* FIXME: baseUrl is coming from Fastify Request
         if (context?.baseUrl) {
@@ -149,7 +183,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
     for (const rootField of rootFields) {
       for (const argName in args) {
-        const argConfig = args[argName];
+        const { type } = args[argName];
         rootField.args.push({
           name: argName,
           description: undefined,
@@ -157,7 +191,7 @@ export default class OpenAPIHandler implements MeshHandler {
           extensions: undefined,
           astNode: undefined,
           deprecationReason: undefined,
-          ...argConfig,
+          type: (schema.getType(type) as GraphQLInputType) || GraphQLID,
         });
       }
     }

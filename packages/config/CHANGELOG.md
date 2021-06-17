@@ -1,5 +1,190 @@
 # @graphql-mesh/config
 
+## 0.17.0
+
+### Minor Changes
+
+- 01cf89298: feat(runtime/config): enable Type Merging
+
+### Patch Changes
+
+- Updated dependencies [01cf89298]
+  - @graphql-mesh/runtime@0.17.0
+
+## 0.16.6
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+  - @graphql-mesh/merger-stitching@0.9.8
+  - @graphql-mesh/runtime@0.16.6
+
+## 0.16.5
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+  - @graphql-mesh/merger-stitching@0.9.7
+  - @graphql-mesh/runtime@0.16.5
+
+## 0.16.4
+
+### Patch Changes
+
+- Updated dependencies [cfb517b3d]
+  - @graphql-mesh/types@0.42.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.5
+  - @graphql-mesh/merger-stitching@0.9.6
+  - @graphql-mesh/runtime@0.16.4
+
+## 0.16.3
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/merger-stitching@0.9.5
+  - @graphql-mesh/runtime@0.16.3
+  - @graphql-mesh/utils@0.11.3
+
+## 0.16.2
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/merger-stitching@0.9.4
+  - @graphql-mesh/runtime@0.16.2
+  - @graphql-mesh/types@0.41.1
+  - @graphql-mesh/utils@0.11.2
+  - @graphql-mesh/cache-inmemory-lru@0.5.4
+
+## 0.16.1
+
+### Patch Changes
+
+- Updated dependencies [69c89666d]
+  - @graphql-mesh/utils@0.11.1
+  - @graphql-mesh/merger-stitching@0.9.3
+  - @graphql-mesh/runtime@0.16.1
+
+## 0.16.0
+
+### Minor Changes
+
+- 214b7a23c: feat(runtime): Type Merging support
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/runtime@0.16.0
+  - @graphql-mesh/types@0.41.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.3
+  - @graphql-mesh/merger-stitching@0.9.2
+
+## 0.15.7
+
+### Patch Changes
+
+- Updated dependencies [1f4655ee6]
+  - @graphql-mesh/runtime@0.15.0
+
+## 0.15.6
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/types@0.40.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.2
+  - @graphql-mesh/merger-stitching@0.9.1
+  - @graphql-mesh/runtime@0.14.1
+
+## 0.15.5
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/merger-stitching@0.9.0
+  - @graphql-mesh/runtime@0.14.0
+  - @graphql-mesh/utils@0.11.0
+
+## 0.15.4
+
+### Patch Changes
+
+- Updated dependencies [6c90e0e39]
+  - @graphql-mesh/types@0.39.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.1
+  - @graphql-mesh/merger-stitching@0.8.1
+  - @graphql-mesh/runtime@0.13.4
+
+## 0.15.3
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+- Updated dependencies [f89497389]
+  - @graphql-mesh/cache-inmemory-lru@0.5.0
+  - @graphql-mesh/merger-stitching@0.8.0
+  - @graphql-mesh/types@0.38.0
+  - @graphql-mesh/utils@0.10.0
+  - @graphql-mesh/runtime@0.13.3
+
+## 0.15.2
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/types@0.37.0
+  - @graphql-mesh/cache-inmemory-lru@0.4.53
+  - @graphql-mesh/merger-stitching@0.7.37
+  - @graphql-mesh/runtime@0.13.2
+
+## 0.15.1
+
+### Patch Changes
+
+- b77148a04: fix(npm-publish): bump all versions to publish again
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/cache-inmemory-lru@0.4.52
+  - @graphql-mesh/merger-stitching@0.7.36
+  - @graphql-mesh/runtime@0.13.1
+  - @graphql-mesh/types@0.36.1
+  - @graphql-mesh/utils@0.9.2
+
+## 0.15.0
+
+### Minor Changes
+
+- 634a8a134: feat(config): introduce introspection cache
+
+### Patch Changes
+
+- Updated dependencies [634a8a134]
+- Updated dependencies [6b8b23a4e]
+- Updated dependencies [2c3312f1a]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/runtime@0.13.0
+  - @graphql-mesh/types@0.36.0
+  - @graphql-mesh/utils@0.9.1
+  - @graphql-mesh/cache-inmemory-lru@0.4.51
+  - @graphql-mesh/merger-stitching@0.7.35
+
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies [0b175305a]
+  - @graphql-mesh/runtime@0.12.0
+
+## 0.14.2
+
+### Patch Changes
+
+- 939f9beb5: fix(config): move Object.keys fix outside of source code
+
 ## 0.14.1
 
 ### Patch Changes

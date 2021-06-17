@@ -12,3 +12,4 @@ package-lock.json
 .bob
 .history
 .DS_Store
+.mesh

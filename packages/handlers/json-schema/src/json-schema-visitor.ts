@@ -8,6 +8,7 @@ import {
   JSONSchemaTypedObjectDefinition,
   JSONSchemaStringDefinition,
   JSONSchemaOneOfDefinition,
+  JSONSchemaNumberDefinition,
 } from './json-schema-types';
 import { SchemaComposer } from 'graphql-compose';
 import { pascalCase } from 'pascal-case';
@@ -15,7 +16,7 @@ import { join, isAbsolute, dirname } from 'path';
 import { camelCase, flatten, get } from 'lodash';
 import { RegularExpression } from 'graphql-scalars';
 import Ajv from 'ajv';
-import { readJSONSync } from '@graphql-mesh/utils';
+import { jsonFlatStringify, readJSONSync } from '@graphql-mesh/utils';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
   if (Array.isArray(maybeArray)) {
@@ -36,19 +37,18 @@ export const getFileName = (filePath: string) => {
 };
 
 export class JSONSchemaVisitor<TContext> {
-  private cache: Map<string, string>;
+  private summaryCache: Map<string, string> = new Map();
   private ajv: Ajv;
   constructor(
     private schemaComposer: SchemaComposer<TContext>,
     private isInput: boolean,
-    private externalFileCache = new Map<string, any>(),
+    private externalFileCache: Record<string, any> = {},
     private disableTimestamp = false
   ) {
     this.ajv = new Ajv({
       strict: false,
       logger: false,
     });
-    this.cache = new Map();
   }
 
   // TODO: Should be improved!
@@ -63,9 +63,9 @@ export class JSONSchemaVisitor<TContext> {
       const cwdDir = dirname(cwd);
       const absolutePath = externalPath ? (isAbsolute(externalPath) ? externalPath : join(cwdDir, externalPath)) : cwd;
       const fileName = getFileName(absolutePath);
-      if (!this.externalFileCache.has(absolutePath)) {
+      if (!(absolutePath in this.externalFileCache)) {
         const externalSchema = readJSONSync(absolutePath);
-        this.externalFileCache.set(absolutePath, externalSchema);
+        this.externalFileCache[absolutePath] = externalSchema;
         this.visit({
           def: externalSchema,
           propertyName: this.isInput ? 'Request' : 'Response',
@@ -77,7 +77,7 @@ export class JSONSchemaVisitor<TContext> {
       const internalRefArr = internalRef.split('/').filter(Boolean);
       const internalPath = internalRefArr.join('.');
       const internalPropertyName = internalRefArr[internalRefArr.length - 1];
-      const internalDef = get(this.externalFileCache.get(absolutePath), internalPath);
+      const internalDef = get(this.externalFileCache[absolutePath], internalPath);
       const result = this.visit({
         def: internalDef,
         propertyName: internalPropertyName,
@@ -132,9 +132,9 @@ export class JSONSchemaVisitor<TContext> {
       this.namedVisitedDefs.add(typeName);
     }
     def.type = Array.isArray(def.type) ? def.type[0] : def.type;
-    const summary = JSON.stringify(def);
-    if (this.cache.has(summary)) {
-      return this.cache.get(summary);
+    const summary = jsonFlatStringify(def);
+    if (this.summaryCache.has(summary)) {
+      return this.summaryCache.get(summary);
     }
     if ('definitions' in def) {
       for (const propertyName in def.definitions) {
@@ -162,7 +162,7 @@ export class JSONSchemaVisitor<TContext> {
         result = this.visitInteger();
         break;
       case 'number':
-        result = this.visitNumber();
+        result = this.visitNumber({ numberDef: def, propertyName, prefix, cwd, typeName });
         break;
       case 'string':
         if ('enum' in def) {
@@ -206,7 +206,7 @@ export class JSONSchemaVisitor<TContext> {
       console.warn(`Unknown JSON Schema definition for (${typeName || prefix}, ${propertyName})`);
       result = this.visitAny();
     }
-    this.cache.set(summary, result);
+    this.summaryCache.set(summary, result);
     this.namedVisitedDefs.add(result);
     return result;
   }
@@ -240,7 +240,31 @@ export class JSONSchemaVisitor<TContext> {
     return 'Int';
   }
 
-  visitNumber() {
+  visitNumber({
+    numberDef,
+    propertyName,
+    prefix,
+    cwd,
+    typeName,
+  }: {
+    numberDef: JSONSchemaNumberDefinition;
+    propertyName: string;
+    prefix: string;
+    cwd: string;
+    typeName?: string;
+  }) {
+    if (numberDef.pattern) {
+      let refName = `${prefix}_${propertyName}`;
+      if ('format' in numberDef) {
+        refName = numberDef.format;
+      }
+      const scalarName = typeName || this.createName({ ref: refName, cwd });
+      const scalar = new RegularExpression(scalarName, new RegExp(numberDef.pattern), {
+        description: numberDef.description,
+      });
+      this.schemaComposer.add(scalar);
+      return scalarName;
+    }
     return 'Float';
   }
 
@@ -263,7 +287,10 @@ export class JSONSchemaVisitor<TContext> {
         refName = stringDef.format;
       }
       const scalarName = typeName || this.createName({ ref: refName, cwd });
-      this.schemaComposer.add(new RegularExpression(scalarName, new RegExp(stringDef.pattern)));
+      const scalar = new RegularExpression(scalarName, new RegExp(stringDef.pattern), {
+        description: stringDef.description,
+      });
+      this.schemaComposer.add(scalar);
       return scalarName;
     }
     if (stringDef.format) {
@@ -499,7 +526,7 @@ export class JSONSchemaVisitor<TContext> {
         }
         for (const typeName of types) {
           const typeDef = this.schemaComposer.getAnyTC(typeName);
-          const jsonSchema = typeDef.getExtension('objectDef');
+          const jsonSchema: any = typeDef.getExtension('objectDef');
           jsonSchema.$schema = undefined;
           const isValid = this.ajv.validate(typeDef.getExtension('objectDef'), root);
           if (isValid) {

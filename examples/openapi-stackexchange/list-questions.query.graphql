@@ -1,0 +1,11 @@
+query ListQuestions {
+  listQuestions(site: "stackoverflow") {
+    items {
+      title
+      tags
+      isAnswered
+      answerCount
+      link
+    }
+  }
+}

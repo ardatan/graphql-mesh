@@ -14,7 +14,7 @@ import fetch from 'cross-fetch';
 const oas = require('./fixtures/docusign.json');
 
 test('Generate schema without problems', () => {
-  const options: Options = {
+  const options: Options<any, any, any> = {
     strict: false,
     fetch,
   };

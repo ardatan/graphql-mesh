@@ -26,7 +26,7 @@ sources:
 
 transforms:
   - cache:
-      # Geo data doesn't change frequntly, so we can cache it forever
+      # Geo data doesn't change frequently, so we can cache it forever
       - field: Query.*
       # Forcast data might change, so we can cache it for 1 hour only
       - field: PopulatedPlaceSummary.dailyForecast
@@ -48,3 +48,5 @@ additionalResolvers:
 
 serve:
   exampleQuery: ./example-query.graphql
+
+introspectionCache: ./introspection-cache.json

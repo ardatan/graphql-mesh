@@ -2,10 +2,23 @@ extend type Transform {
   """
   Transformer to apply composition to resolvers
   """
-  resolversComposition: [ResolversCompositionTransformObject!]
+  resolversComposition: ResolversCompositionTransformConfig
 }
 
-type ResolversCompositionTransformObject @md {
+union ResolversCompositionTransformConfig = ResolversCompositionTransform | Any
+
+type ResolversCompositionTransform @md {
+  """
+  Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema
+  """
+  mode: ResolversCompositionTransformMode
+  """
+  Array of resolver/composer to apply
+  """
+  compositions: [ResolversCompositionTransformObject!]!
+}
+
+type ResolversCompositionTransformObject {
   """
   The GraphQL Resolver path
   Example: Query.users
@@ -16,4 +29,9 @@ type ResolversCompositionTransformObject @md {
   Example: ./src/auth.js#authComposer
   """
   composer: Any!
+}
+
+enum ResolversCompositionTransformMode {
+  bare
+  wrap
 }

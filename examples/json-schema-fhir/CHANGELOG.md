@@ -1,5 +1,220 @@
 # json-schema-fhir
 
+## 0.0.89
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.30.2
+
+## 0.0.88
+
+### Patch Changes
+
+- @graphql-mesh/fhir@0.10.13
+
+## 0.0.87
+
+### Patch Changes
+
+- @graphql-mesh/fhir@0.10.12
+- @graphql-mesh/cli@0.30.1
+- @graphql-mesh/graphql@0.17.10
+
+## 0.0.86
+
+### Patch Changes
+
+- Updated dependencies [d27f36029]
+  - @graphql-mesh/cli@0.30.0
+
+## 0.0.85
+
+### Patch Changes
+
+- Updated dependencies [a04e3f090]
+- Updated dependencies [b9036c51b]
+- Updated dependencies [4d96aa9b5]
+  - @graphql-mesh/graphql@0.17.9
+  - @graphql-mesh/cli@0.29.14
+
+## 0.0.84
+
+### Patch Changes
+
+- Updated dependencies [ee86d8fa7]
+  - @graphql-mesh/cli@0.29.13
+  - @graphql-mesh/fhir@0.10.11
+
+## 0.0.83
+
+### Patch Changes
+
+- Updated dependencies [674bbadc9]
+  - @graphql-mesh/graphql@0.17.8
+
+## 0.0.82
+
+### Patch Changes
+
+- @graphql-mesh/fhir@0.10.10
+- @graphql-mesh/cli@0.29.12
+- @graphql-mesh/graphql@0.17.7
+
+## 0.0.81
+
+### Patch Changes
+
+- @graphql-mesh/fhir@0.10.9
+- @graphql-mesh/graphql@0.17.6
+- @graphql-mesh/cli@0.29.11
+
+## 0.0.80
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.10
+- @graphql-mesh/fhir@0.10.8
+- @graphql-mesh/graphql@0.17.5
+
+## 0.0.79
+
+### Patch Changes
+
+- Updated dependencies [a48368992]
+  - @graphql-mesh/graphql@0.17.4
+
+## 0.0.78
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/cli@0.29.9
+  - @graphql-mesh/fhir@0.10.7
+  - @graphql-mesh/graphql@0.17.3
+
+## 0.0.77
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.8
+- @graphql-mesh/fhir@0.10.6
+- @graphql-mesh/graphql@0.17.2
+
+## 0.0.76
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.7
+- @graphql-mesh/fhir@0.10.5
+- @graphql-mesh/graphql@0.17.1
+
+## 0.0.75
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.6
+
+## 0.0.74
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/graphql@0.17.0
+  - @graphql-mesh/fhir@0.10.4
+  - @graphql-mesh/cli@0.29.5
+
+## 0.0.73
+
+### Patch Changes
+
+- Updated dependencies [28f80c0a7]
+  - @graphql-mesh/cli@0.29.4
+
+## 0.0.72
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.3
+- @graphql-mesh/fhir@0.10.3
+- @graphql-mesh/graphql@0.16.2
+
+## 0.0.71
+
+### Patch Changes
+
+- @graphql-mesh/fhir@0.10.2
+
+## 0.0.70
+
+### Patch Changes
+
+- @graphql-mesh/fhir@0.10.1
+- @graphql-mesh/graphql@0.16.1
+- @graphql-mesh/cli@0.29.2
+
+## 0.0.69
+
+### Patch Changes
+
+- Updated dependencies [1c8b460d1]
+  - @graphql-mesh/cli@0.29.1
+
+## 0.0.68
+
+### Patch Changes
+
+- Updated dependencies [346fe9c61]
+  - @graphql-mesh/cli@0.29.0
+  - @graphql-mesh/fhir@0.10.0
+  - @graphql-mesh/graphql@0.16.0
+
+## 0.0.67
+
+### Patch Changes
+
+- Updated dependencies [4b57f7496]
+  - @graphql-mesh/cli@0.28.0
+  - @graphql-mesh/fhir@0.9.12
+  - @graphql-mesh/graphql@0.15.2
+
+## 0.0.66
+
+### Patch Changes
+
+- Updated dependencies [e7c3de4ae]
+  - @graphql-mesh/cli@0.27.2
+
+## 0.0.65
+
+### Patch Changes
+
+- Updated dependencies [b77148a04]
+  - @graphql-mesh/cli@0.27.1
+  - @graphql-mesh/fhir@0.9.11
+  - @graphql-mesh/graphql@0.15.1
+
+## 0.0.64
+
+### Patch Changes
+
+- Updated dependencies [634a8a134]
+- Updated dependencies [d12c7d978]
+  - @graphql-mesh/cli@0.27.0
+  - @graphql-mesh/graphql@0.15.0
+  - @graphql-mesh/fhir@0.9.10
+
+## 0.0.63
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.26.2
+
+## 0.0.62
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.26.1
+
 ## 0.0.61
 
 ### Patch Changes

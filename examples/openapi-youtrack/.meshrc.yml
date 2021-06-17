@@ -13,8 +13,10 @@ sources:
       # So thanks to GraphQL, we know which fields client needs
       # And we can prevent overfetching in this way
       - resolversComposition:
-          - resolver: Query.*
-            composer: ./src/add-fields
+          mode: bare
+          compositions:
+            - resolver: Query.*
+              composer: ./src/add-fields
 
 serve:
   exampleQuery: get-projects-with-issues.graphql

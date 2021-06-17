@@ -617,7 +617,7 @@ export function getResolver<TSource, TContext, TArgs>(
         if (response.headers.get('content-type').includes('json')) {
           let responseBody;
           try {
-            responseBody = JSON.parse(body);
+            responseBody = body ? JSON.parse(body) : {};
           } catch (e) {
             const errorString =
               `Cannot JSON parse response body of ` +

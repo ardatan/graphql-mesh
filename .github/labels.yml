@@ -1,0 +1,60 @@
+- color: 1d76db
+  description: ''
+  name: automerge
+- color: d73a4a
+  description: Something isn't working
+  name: bug
+- color: 89c5e5
+  description: ''
+  name: cli
+- color: fbca04
+  description: ''
+  name: core
+- color: d4c5f9
+  description: ''
+  name: dependencies
+- color: 5319e7
+  description: ''
+  name: discussion
+- color: 0075ca
+  description: Improvements or additions to documentation
+  name: documentation
+- color: cfd3d7
+  description: This issue or pull request already exists
+  name: duplicate
+- color: a2eeef
+  description: New feature or request
+  name: enhancement
+- color: fef2c0
+  description: ''
+  name: feature
+- color: 7057ff
+  description: Good for newcomers
+  name: good first issue
+- color: '008672'
+  description: Extra attention is needed
+  name: help wanted
+- color: e4e669
+  description: This doesn't seem right
+  name: invalid
+- color: d93f0b
+  description: ''
+  name: needs reproduction
+- color: d876e3
+  description: Further information is requested
+  name: question
+- color: 8df48b
+  description: ''
+  name: source handler
+- color: f418ed
+  description: ''
+  name: transforms
+- color: fef2c0
+  description: ''
+  name: waiting for answer
+- color: 0052cc
+  description: ''
+  name: waiting for release
+- color: ffffff
+  description: This will not be worked on
+  name: wontfix

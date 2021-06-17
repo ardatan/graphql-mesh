@@ -1,8 +1,14 @@
-import { GraphQLSchema, GraphQLFieldResolver } from 'graphql';
+import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { addMocksToSchema, IMocks } from '@graphql-tools/mock';
+import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
 import * as faker from 'faker';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import {
+  getInterpolatedStringFactory,
+  loadFromModuleExportExpression,
+  loadFromModuleExportExpressionSync,
+} from '@graphql-mesh/utils';
+
+import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 
 export default class MockingTransform implements MeshTransform {
   private config: YamlConfig.MockingConfig;
@@ -16,16 +22,22 @@ export default class MockingTransform implements MeshTransform {
   transformSchema(schema: GraphQLSchema) {
     const configIf = 'if' in this.config ? this.config.if : true;
     if (configIf) {
-      const mocks: IMocks = {};
+      const store = createMockStore({ schema });
+      const mocks: IMocks = {
+        ...graphqlScalarsMocks,
+      };
+      const resolvers: any = {};
+      if (this.config.initializeStore) {
+        const initializeStore = loadFromModuleExportExpressionSync(this.config.initializeStore, { cwd: this.baseDir });
+        initializeStore(store);
+      }
       if (this.config.mocks) {
         for (const fieldConfig of this.config.mocks) {
           const fieldConfigIf = 'if' in fieldConfig ? fieldConfig.if : true;
           if (fieldConfigIf) {
             const [typeName, fieldName] = fieldConfig.apply.split('.');
-            mocks[typeName] = mocks[typeName] || (() => ({}));
             if (fieldName) {
               if (fieldConfig.faker) {
-                const prevFn: any = mocks[typeName];
                 let fakerFn: Function; // eslint-disable-line
                 const [service, method] = fieldConfig.faker.split('.');
                 if (service in faker) {
@@ -33,18 +45,50 @@ export default class MockingTransform implements MeshTransform {
                 } else {
                   fakerFn = () => faker.fake(fieldConfig.faker || '');
                 }
-                mocks[typeName] = (...args: any[]) => {
-                  const prevObj = prevFn(...args);
-                  prevObj[fieldName] = fakerFn;
-                  return prevObj;
-                };
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = fakerFn;
               } else if (fieldConfig.custom) {
-                const exportedVal = loadFromModuleExportExpressionSync(fieldConfig.custom, { cwd: this.baseDir });
-                const prevFn: any = mocks[typeName];
-                mocks[typeName] = (...args: any[]) => {
-                  const prevObj = prevFn(...args);
-                  prevObj[fieldName] = typeof exportedVal === 'function' ? exportedVal : () => exportedVal;
-                  return prevObj;
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = async (
+                  root: any,
+                  args: any,
+                  context: any,
+                  info: GraphQLResolveInfo
+                ) => {
+                  context = context || {};
+                  context.mockStore = store;
+                  const exportedVal = await loadFromModuleExportExpression<any>(fieldConfig.custom, {
+                    cwd: this.baseDir,
+                  });
+                  return typeof exportedVal === 'function' ? exportedVal(root, args, context, info) : exportedVal;
+                };
+              } else if ('length' in fieldConfig) {
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = () => new Array(fieldConfig.length).fill({});
+              } else if ('updateStore' in fieldConfig) {
+                const getFromStoreKeyFactory = getInterpolatedStringFactory(fieldConfig.store.key);
+                const updateStoreFactories = fieldConfig.updateStore.map(updateStoreConfig => ({
+                  updateStoreConfig,
+                  keyFactory: getInterpolatedStringFactory(updateStoreConfig.key),
+                  valueFactory: getInterpolatedStringFactory(updateStoreConfig.value),
+                }));
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+                  const resolverData = { root, args, context, info, random: Date.now().toString() };
+                  updateStoreFactories.forEach(({ updateStoreConfig, keyFactory, valueFactory }) => {
+                    const key = keyFactory(resolverData);
+                    const value = valueFactory(resolverData);
+                    store.set(updateStoreConfig.type, key, updateStoreConfig.fieldName, value);
+                  });
+                  const key = getFromStoreKeyFactory(resolverData);
+                  return store.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
+                };
+              } else if ('store' in fieldConfig) {
+                const keyFactory = getInterpolatedStringFactory(fieldConfig.store.key);
+                resolvers[typeName] = resolvers[typeName] || {};
+                resolvers[typeName][fieldName] = (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+                  const key = keyFactory({ root, args, context, info });
+                  return store.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
                 };
               }
             } else {
@@ -58,10 +102,10 @@ export default class MockingTransform implements MeshTransform {
                 }
                 mocks[typeName] = fakerFn;
               } else if (fieldConfig.custom) {
-                const [moduleName, exportName] = fieldConfig.custom.split('#');
-                const m = require(moduleName);
-                const exportedVal = m[exportName] || (m.default && m.default[exportName]);
-                mocks[typeName] = typeof exportedVal === 'function' ? exportedVal : () => exportedVal;
+                mocks[typeName] = () => {
+                  const exportedVal = loadFromModuleExportExpressionSync<any>(fieldConfig.custom);
+                  mocks[typeName] = typeof exportedVal === 'function' ? exportedVal(store) : exportedVal;
+                };
               }
             }
           }
@@ -69,7 +113,9 @@ export default class MockingTransform implements MeshTransform {
       }
       return addMocksToSchema({
         schema,
+        store,
         mocks,
+        resolvers,
         preserveResolvers: this.config?.preserveResolvers,
       });
     }

@@ -33,7 +33,7 @@ describe('openapi', () => {
       source.schema
         .getQueryType()
         .getFields()
-        ['getAllCars'].args.some(it => it.name === 'limit')
+        .getAllCars.args.some(it => it.name === 'limit')
     ).toBe(true);
   });
 
@@ -52,7 +52,7 @@ describe('openapi', () => {
       source.schema
         .getQueryType()
         .getFields()
-        ['getAllCars'].args.some(it => it.name === 'limit')
+        .getAllCars.args.some(it => it.name === 'limit')
     ).toBe(false);
   });
 });

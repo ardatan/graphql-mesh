@@ -5,8 +5,6 @@ sources:
         url: bolt://localhost
         username: neo4j
         password: test
-        cacheIntrospection:
-          ttl: 3600
 
 cache:
   file:

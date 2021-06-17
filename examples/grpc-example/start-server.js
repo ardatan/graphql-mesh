@@ -5,7 +5,7 @@ const { Server, loadPackageDefinition, ServerCredentials } = require('@grpc/grpc
 const { load } = require('@grpc/proto-loader');
 const { join } = require('path');
 
-const seconds = Date.now();
+const seconds = new Date('2020-12-20').getTime();
 
 const Genre = {
   UNSPECIFIED: 0,
@@ -18,7 +18,7 @@ const Movies = [
     cast: ['Tom Cruise', 'Simon Pegg', 'Jeremy Renner'],
     name: 'Mission: Impossible Rogue Nation',
     rating: 0.97,
-    year: 2015,
+    year: 2015n,
     time: {
       seconds,
     },
@@ -28,7 +28,7 @@ const Movies = [
     cast: ['Tom Cruise', 'Simon Pegg', 'Henry Cavill'],
     name: 'Mission: Impossible - Fallout',
     rating: 0.93,
-    year: 2018,
+    year: 2018n,
     time: {
       seconds,
     },
@@ -38,7 +38,7 @@ const Movies = [
     cast: ['Leonardo DiCaprio', 'Jonah Hill', 'Margot Robbie'],
     name: 'The Wolf of Wall Street',
     rating: 0.78,
-    year: 2013,
+    year: 2013n,
     time: {
       seconds,
     },
@@ -46,7 +46,8 @@ const Movies = [
   },
 ];
 
-module.exports = async function startServer(subscriptionInterval = 1000) {
+module.exports = async function startServer(subscriptionInterval = 1000, debug = false) {
+  const logger = debug ? (...args) => console.log(...args) : () => {};
   const server = new Server();
 
   const packageDefinition = await load('./io/xtech/service.proto', {
@@ -63,12 +64,12 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
         }
       });
       const moviesResult = { result };
-      console.log('called with MetaData:', JSON.stringify(call.metadata.getMap()));
+      logger('called with MetaData:', JSON.stringify(call.metadata.getMap()));
       callback(null, moviesResult);
     },
     searchMoviesByCast(call) {
-      console.log('call started');
-      console.log('called with MetaData:', JSON.stringify(call.metadata.getMap()));
+      logger('call started');
+      logger('called with MetaData:', JSON.stringify(call.metadata.getMap()));
       const input = call.request;
       call.on('error', error => {
         console.error(error);
@@ -79,11 +80,11 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
           if (movie.cast.indexOf(input.castName) > -1) {
             setTimeout(() => {
               if (call.cancelled || call.destroyed) {
-                console.log('call ended');
+                logger('call ended');
                 clearInterval(interval);
                 return;
               }
-              console.log('call received', movie);
+              logger('call received', movie);
               call.write(movie);
             }, i * subscriptionInterval);
           }
@@ -105,7 +106,7 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
       }
       server.start();
 
-      console.log('Server started, listening: 0.0.0.0:' + port);
+      logger('Server started, listening: 0.0.0.0:' + port);
     }
   );
   return server;

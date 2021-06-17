@@ -21,7 +21,7 @@ sources:
         endpoint: localhost:50051
         protoFilePath: grpc/proto/Example.proto
         serviceName: Example
-        packageName: io.xtech.example
+        packageName: io.xtech.example # This field is required
 ```
 
 > You can check out our example that uses gRPC Handler.

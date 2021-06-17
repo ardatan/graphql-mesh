@@ -172,6 +172,17 @@
         "endpoint": {
           "type": "string",
           "description": "Path to GraphQL Endpoint (default: /graphql)"
+        },
+        "browser": {
+          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disable by passing `false` (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         }
       }
     },
@@ -313,6 +324,14 @@
           },
           "additionalItems": false,
           "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
+        },
+        "typeMerging": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MergedTypeConfig"
+          },
+          "additionalItems": false,
+          "description": "Type Merging Configuration\nhttps://www.graphql-tools.com/docs/stitch-type-merging"
         }
       },
       "required": ["name", "handler"]
@@ -399,12 +418,27 @@
           ]
         },
         "resolversComposition": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ResolversCompositionTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Transformer to apply composition to resolvers"
+          "description": "Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ResolversCompositionTransform"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "additionalItems": true
+                }
+              ]
+            }
+          ]
         },
         "snapshot": {
           "$ref": "#/definitions/SnapshotTransformConfig",
@@ -575,6 +609,110 @@
       },
       "required": ["field", "invalidate"]
     },
+    "MergedTypeConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MergedTypeConfig",
+      "properties": {
+        "typeName": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        },
+        "args": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "argsFromKeys": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "selectionSet": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MergedFieldConfig"
+          },
+          "additionalItems": false
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "canonical": {
+          "type": "boolean"
+        },
+        "resolve": {
+          "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/AdditionalStitchingResolverObject"
+            },
+            {
+              "$ref": "#/definitions/AdditionalSubscriptionObject"
+            }
+          ]
+        }
+      }
+    },
+    "MergedFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MergedFieldConfig",
+      "properties": {
+        "fieldName": {
+          "type": "string"
+        },
+        "selectionSet": {
+          "type": "string"
+        },
+        "computed": {
+          "type": "boolean"
+        },
+        "canonical": {
+          "type": "boolean"
+        }
+      }
+    },
     "FhirHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -649,20 +787,13 @@
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
+        "useWebSocketLegacyProtocol": {
+          "type": "boolean",
+          "description": "Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`"
+        },
         "introspection": {
           "type": "string",
           "description": "Path to the introspection\nYou can seperately give schema introspection"
-        },
-        "cacheIntrospection": {
-          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
         },
         "multipart": {
           "type": "boolean",
@@ -674,21 +805,6 @@
         }
       },
       "required": ["endpoint"]
-    },
-    "GraphQLIntrospectionCachingOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GraphQLIntrospectionCachingOptions",
-      "properties": {
-        "ttl": {
-          "type": "integer",
-          "description": "Time to live of introspection cache"
-        },
-        "path": {
-          "type": "string",
-          "description": "Path to Introspection JSON File"
-        }
-      }
     },
     "GrpcHandler": {
       "additionalProperties": false,
@@ -1422,31 +1538,9 @@
         "typeDefs": {
           "type": "string",
           "description": "Provide GraphQL Type Definitions instead of inferring"
-        },
-        "cacheIntrospection": {
-          "description": "Cache Introspection (Any of: Neo4jIntrospectionCachingOptions, Boolean)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Neo4jIntrospectionCachingOptions"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
         }
       },
       "required": ["url", "username", "password"]
-    },
-    "Neo4jIntrospectionCachingOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Neo4jIntrospectionCachingOptions",
-      "properties": {
-        "ttl": {
-          "type": "integer",
-          "description": "Time to live of introspection cache"
-        }
-      }
     },
     "ODataHandler": {
       "additionalProperties": false,
@@ -1479,6 +1573,22 @@
         "expandNavProps": {
           "type": "boolean",
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
+        },
+        "customFetch": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Custom Fetch"
         }
       },
       "required": ["baseUrl"]
@@ -1489,7 +1599,19 @@
       "title": "OpenapiHandler",
       "properties": {
         "source": {
-          "type": "string",
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
           "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
         },
         "sourceFormat": {
@@ -1637,17 +1759,6 @@
             },
             {
               "type": "string"
-            }
-          ]
-        },
-        "cacheIntrospection": {
-          "description": "Cache Introspection (Any of: GraphQLIntrospectionCachingOptions, Boolean)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/GraphQLIntrospectionCachingOptions"
-            },
-            {
-              "type": "boolean"
             }
           ]
         },
@@ -2084,6 +2195,22 @@
           },
           "additionalItems": false,
           "description": "Mock configurations"
+        },
+        "initializeStore": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "The path to the code runs before the store is attached to the schema"
         }
       }
     },
@@ -2107,9 +2234,60 @@
         "custom": {
           "type": "string",
           "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
+        },
+        "length": {
+          "type": "integer",
+          "description": "Length of the mock list\nFor the list types `[ObjectType]`, how many `ObjectType` you want to return?\ndefault: 2"
+        },
+        "store": {
+          "$ref": "#/definitions/GetFromMockStoreConfig",
+          "description": "Get the data from the mock store"
+        },
+        "updateStore": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UpdateMockStoreConfig"
+          },
+          "additionalItems": false,
+          "description": "Update the data on the mock store"
         }
       },
       "required": ["apply"]
+    },
+    "GetFromMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GetFromMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "UpdateMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
     },
     "NamingConventionTransformConfig": {
       "additionalProperties": false,
@@ -2253,6 +2431,27 @@
           "type": "string"
         }
       }
+    },
+    "ResolversCompositionTransform": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResolversCompositionTransform",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
+        "compositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResolversCompositionTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of resolver/composer to apply"
+        }
+      },
+      "required": ["compositions"]
     },
     "ResolversCompositionTransformObject": {
       "additionalProperties": false,
@@ -2426,6 +2625,10 @@
       },
       "additionalItems": false,
       "description": "Live Query Invalidations"
+    },
+    "introspectionCache": {
+      "type": "string",
+      "description": "Path to the file containing the introspection cache"
     }
   },
   "additionalProperties": false

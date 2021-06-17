@@ -1,4 +1,5 @@
-import { fetchache, KeyValueCache, Request } from 'fetchache';
+import { fetchFactory, KeyValueCache } from 'fetchache';
+import { fetch, Request, Response } from 'cross-fetch';
 import isUrl from 'is-url';
 import { load as loadYaml } from 'js-yaml';
 import { isAbsolute, resolve } from 'path';
@@ -12,6 +13,16 @@ interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml';
   cwd?: string;
+  fetch?: typeof fetch;
+}
+
+export function getCachedFetch(cache: KeyValueCache): typeof fetch {
+  return fetchFactory({
+    fetch,
+    Request,
+    Response,
+    cache,
+  });
 }
 
 export async function readFileOrUrlWithCache<T>(
@@ -33,10 +44,9 @@ export async function readFileWithCache<T>(
 ): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat } = config || {};
   const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
-  const cachedObjStr = await cache.get(actualPath);
+  const cachedObj = await cache.get(actualPath);
   const stats = await stat(actualPath);
-  if (cachedObjStr) {
-    const cachedObj = JSON.parse(cachedObjStr);
+  if (cachedObj) {
     if (stats.mtimeMs <= cachedObj.mtimeMs) {
       return cachedObj.result;
     }
@@ -61,7 +71,7 @@ export async function readFileWithCache<T>(
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
-  cache.set(filePath, JSON.stringify({ result, mtimeMs: stats.mtimeMs }));
+  cache.set(filePath, { result, mtimeMs: stats.mtimeMs });
   return result;
 }
 
@@ -71,7 +81,8 @@ export async function readUrlWithCache<T>(
   config?: ReadFileOrUrlOptions
 ): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
-  const response = await fetchache(new Request(path, config), cache);
+  const fetch = config?.fetch || getCachedFetch(cache);
+  const response = await fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
   if (/json$/.test(path) || contentType.startsWith('application/json') || fallbackFormat === 'json') {

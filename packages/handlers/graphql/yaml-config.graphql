@@ -42,14 +42,14 @@ type GraphQLHandler @md {
   """
   webSocketImpl: String
   """
+  Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`
+  """
+  useWebSocketLegacyProtocol: Boolean
+  """
   Path to the introspection
   You can seperately give schema introspection
   """
   introspection: String
-  """
-  Cache Introspection
-  """
-  cacheIntrospection: GraphQLCacheIntrospectionConfig
   """
   Enable multipart/formdata in order to support file uploads
   """
@@ -58,15 +58,6 @@ type GraphQLHandler @md {
   Batch requests
   """
   batch: Boolean
-}
-
-union GraphQLCacheIntrospectionConfig = GraphQLIntrospectionCachingOptions | Boolean
-
-type GraphQLIntrospectionCachingOptions {
-  """
-  Time to live of introspection cache
-  """
-  ttl: Int
 }
 
 enum GraphQLHandlerHTTPMethod {

@@ -17,6 +17,8 @@ Add the following configuration to your Mesh config file:
 ```yml
 transforms:
   - resolversComposition:
+      mode: bare | wrap
+      compositions:
         - resolver: 'Query.me'
           composer: is-auth#isAuth
         - resolver: 'Mutation.*'
@@ -26,7 +28,8 @@ transforms:
 ```ts
 module.exports = {
   isAuth: next => (root, args, context, info) => {
-      if(!context.currentUser) {
+      // Check if Authorization header is present
+      if(!context.headers.authorization) {
           throw new Error('Unauthorized');
       }
       return next(root, args, context, info);
@@ -34,6 +37,7 @@ module.exports = {
 };
 ```
 
+> For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/getting-started/mesh-transforms#two-different-modes).
 
 <iframe
      src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-youtrack?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
@@ -44,4 +48,4 @@ module.exports = {
 
 ## Config API Reference
 
-{@import ../generated-markdown/ResolversCompositionTransformObject.generated.md}
+{@import ../generated-markdown/ResolversCompositionTransform.generated.md}

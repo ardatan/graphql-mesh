@@ -1,6 +1,6 @@
 const startServer = require('./start-server');
 
-startServer().catch(console.error);
+startServer(1000, true).catch(console.error);
 
 process.on('uncaughtException', err => {
   console.error(`process on uncaughtException error: ${err}`);

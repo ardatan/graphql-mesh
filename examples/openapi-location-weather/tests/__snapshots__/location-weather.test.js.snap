@@ -54,14 +54,6 @@ Object {
         "name": "include",
       },
       Object {
-        "args": Array [],
-        "isRepeatable": false,
-        "locations": Array [
-          "QUERY",
-        ],
-        "name": "live",
-      },
-      Object {
         "args": Array [
           Object {
             "defaultValue": null,
@@ -5417,6 +5409,17 @@ Object {
             "type": Object {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "population",
+            "type": Object {
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null,
             },
           },

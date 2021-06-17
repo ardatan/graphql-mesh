@@ -57,11 +57,12 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
     maxRequestBodySize = '100kb',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
+    browser,
   } = meshConfig.config.serve || {};
   const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
-  const serverUrl = `${protocol}://${hostname}:${port}${graphqlPath}`;
+  const serverUrl = `${protocol}://${hostname}:${port}`;
   const { useServer }: typeof import('graphql-ws/lib/use/ws') = require('graphql-ws/lib/use/ws');
   if (isMaster && fork) {
     const forkNum = fork > 1 ? fork : cpus().length;
@@ -102,6 +103,7 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
 
     useServer(
       {
+        schema: () => mesh$.then(({ schema }) => schema),
         execute: args =>
           mesh$.then(({ execute }) => execute(args.document, args.variableValues, args.contextValue, args.rootValue)),
         subscribe: args =>
@@ -168,8 +170,9 @@ export async function serveMesh(baseDir: string, argsPort?: number) {
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
-        if (process.env.NODE_ENV?.toLowerCase() !== 'production') {
-          open(serverUrl).catch(() => {});
+        const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
+        if (!shouldntOpenBrowser) {
+          open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
         }
       })
       .on('error', handleFatalError);
