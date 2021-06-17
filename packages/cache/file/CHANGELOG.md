@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-file
 
+## 0.6.0
+
+### Minor Changes
+
+- 02cf272a2: enhance(cache-file): improve file caching performance
+
 ## 0.5.10
 
 ### Patch Changes

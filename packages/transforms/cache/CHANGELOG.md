@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-cache
 
+## 0.9.1
+
+### Patch Changes
+
+- 97d44f990: fix(transform-cache): handle aliases correctly
+
 ## 0.9.0
 
 ### Minor Changes

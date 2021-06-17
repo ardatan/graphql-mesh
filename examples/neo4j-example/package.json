@@ -1,6 +1,6 @@
 {
   "name": "neo4j-example",
-  "version": "0.6.86",
+  "version": "0.6.87",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",
     "@graphql-mesh/neo4j": "0.11.6",
-    "@graphql-mesh/cache-file": "0.5.10",
+    "@graphql-mesh/cache-file": "0.6.0",
     "graphql": "15.4.0"
   },
   "resolutions": {
