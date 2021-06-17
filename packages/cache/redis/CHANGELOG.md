@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-redis
 
+## 0.5.11
+
+### Patch Changes
+
+- 02cf272a2: enhance(redis): enable auto-pipelining and remove dataloader
+
 ## 0.5.10
 
 ### Patch Changes

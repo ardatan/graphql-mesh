@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.16.11
+
+### Patch Changes
+
+- 624deb612: fix(openapi): respect nullable property
+
 ## 0.16.10
 
 ### Patch Changes

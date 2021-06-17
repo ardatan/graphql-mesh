@@ -1,7 +1,7 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.0.65",
+  "version": "0.0.66",
   "scripts": {
     "start": "graphql-mesh serve"
   },
@@ -10,7 +10,7 @@
     "@graphql-mesh/cli": "0.30.2",
     "@graphql-mesh/config": "0.17.0",
     "@graphql-mesh/runtime": "0.17.0",
-    "@graphql-mesh/openapi": "0.16.10",
+    "@graphql-mesh/openapi": "0.16.11",
     "@graphql-mesh/graphql": "0.17.10",
     "@graphql-mesh/grpc": "0.14.9",
     "@graphql-mesh/json-schema": "0.16.1",
@@ -20,7 +20,7 @@
     "@graphql-mesh/transform-mock": "0.9.7",
     "@graphql-mesh/transform-prefix": "0.6.48",
     "@graphql-mesh/transform-encapsulate": "0.1.47",
-    "@graphql-mesh/transform-cache": "0.9.0",
+    "@graphql-mesh/transform-cache": "0.9.1",
     "@graphql-mesh/transform-filter-schema": "0.10.17",
     "@graphql-mesh/transform-extend": "0.6.15",
     "@graphql-mesh/transform-rename": "0.8.19",
