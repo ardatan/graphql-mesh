@@ -527,6 +527,48 @@
       },
       "required": ["sourceName", "sourceTypeName", "sourceFieldName", "targetTypeName", "targetFieldName"]
     },
+    "AdditionalStitchingBatchResolverObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "AdditionalStitchingBatchResolverObject",
+      "properties": {
+        "sourceName": {
+          "type": "string"
+        },
+        "sourceTypeName": {
+          "type": "string"
+        },
+        "sourceFieldName": {
+          "type": "string"
+        },
+        "key": {
+          "type": "object",
+          "properties": {}
+        },
+        "argsFromKeys": {
+          "type": "object",
+          "properties": {}
+        },
+        "requiredSelectionSet": {
+          "type": "string"
+        },
+        "targetTypeName": {
+          "type": "string"
+        },
+        "targetFieldName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sourceName",
+        "sourceTypeName",
+        "sourceFieldName",
+        "key",
+        "argsFromKeys",
+        "targetTypeName",
+        "targetFieldName"
+      ]
+    },
     "AdditionalSubscriptionObject": {
       "additionalProperties": false,
       "type": "object",
@@ -2378,7 +2420,7 @@
             "$ref": "#/definitions/MergedRootFieldConfig"
           },
           "additionalItems": false,
-          "description": "Denotes a root field used to query a merged type across services. \nThe marked field's name is analogous \nto the fieldName setting in \n[merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example), \nwhile the field's arguments and return type are used to infer merge configuration. \nDirective arguments tune the merge behavior  "
+          "description": "Denotes a root field used to query a merged type across services.\nThe marked field's name is analogous\nto the fieldName setting in\n[merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example),\nwhile the field's arguments and return type are used to infer merge configuration.\nDirective arguments tune the merge behavior"
         }
       }
     },
@@ -2400,7 +2442,7 @@
         },
         "additionalArgs": {
           "type": "string",
-          "description": "Specifies a string of additional keys and values to apply to other arguments, \nformatted as `\\\"\\\"\\\" arg1: \"value\", arg2: \"value\" \\\"\\\"\\\"`."
+          "description": "Specifies a string of additional keys and values to apply to other arguments,\nformatted as `\\\"\\\"\\\" arg1: \"value\", arg2: \"value\" \\\"\\\"\\\"`."
         },
         "key": {
           "type": "array",
@@ -2428,7 +2470,7 @@
         },
         "key": {
           "$ref": "#/definitions/KeyAnnotation",
-          "description": "Specifies a base selection set needed to merge the annotated type across subschemas. \nAnalogous to the `selectionSet` setting specified in [merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example)."
+          "description": "Specifies a base selection set needed to merge the annotated type across subschemas.\nAnalogous to the `selectionSet` setting specified in [merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example)."
         },
         "canonical": {
           "type": "boolean",
@@ -2547,7 +2589,7 @@
     "additionalResolvers": {
       "type": "array",
       "items": {
-        "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject",
+        "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject",
         "anyOf": [
           {
             "type": "string"
@@ -2556,12 +2598,15 @@
             "$ref": "#/definitions/AdditionalStitchingResolverObject"
           },
           {
+            "$ref": "#/definitions/AdditionalStitchingBatchResolverObject"
+          },
+          {
             "$ref": "#/definitions/AdditionalSubscriptionObject"
           }
         ]
       },
       "additionalItems": false,
-      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)"
+      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject)"
     },
     "cache": {
       "$ref": "#/definitions/Cache",

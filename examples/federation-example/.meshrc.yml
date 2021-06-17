@@ -1,3 +1,4 @@
+merger: federation
 sources:
   - name: accounts
     handler:

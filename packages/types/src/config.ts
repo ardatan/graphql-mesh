@@ -21,9 +21,14 @@ export interface Config {
    */
   additionalTypeDefs?: any;
   /**
-   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)
+   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject)
    */
-  additionalResolvers?: (string | AdditionalStitchingResolverObject | AdditionalSubscriptionObject)[];
+  additionalResolvers?: (
+    | string
+    | AdditionalStitchingResolverObject
+    | AdditionalStitchingBatchResolverObject
+    | AdditionalSubscriptionObject
+  )[];
   cache?: Cache;
   /**
    * Merge method
@@ -1314,6 +1319,20 @@ export interface AdditionalStitchingResolverObject {
   targetTypeName: string;
   targetFieldName: string;
   returnData?: string;
+}
+export interface AdditionalStitchingBatchResolverObject {
+  sourceName: string;
+  sourceTypeName: string;
+  sourceFieldName: string;
+  key: {
+    [k: string]: any;
+  };
+  argsFromKeys: {
+    [k: string]: any;
+  };
+  requiredSelectionSet?: string;
+  targetTypeName: string;
+  targetFieldName: string;
 }
 export interface AdditionalSubscriptionObject {
   targetTypeName: string;

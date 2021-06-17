@@ -85,6 +85,7 @@ export async function resolveAdditionalResolvers(
     | string
     | YamlConfig.AdditionalStitchingResolverObject
     | YamlConfig.AdditionalSubscriptionObject
+    | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
   importFn: ImportFn,
   pubsub: MeshPubSub
@@ -138,6 +139,35 @@ export async function resolveAdditionalResolvers(
                     return _.get(payload, additionalResolver.returnData);
                   }
                   return payload;
+                },
+              },
+            },
+          };
+        } else if ('key' in additionalResolver) {
+          return {
+            [additionalResolver.targetTypeName]: {
+              [additionalResolver.targetFieldName]: {
+                selectionSet: additionalResolver.requiredSelectionSet,
+                resolve: async (root: any, args: any, context: any, info: any) => {
+                  const resolverData = { root, args, context, info };
+                  const targetArgsFromKeys: any = {};
+                  for (const argPath in additionalResolver.argsFromKeys) {
+                    _.set(
+                      targetArgsFromKeys,
+                      argPath,
+                      stringInterpolator.parse(additionalResolver.argsFromKeys[argPath], resolverData)
+                    );
+                  }
+                  const key = stringInterpolator.parse(additionalResolver.key, resolverData);
+                  return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                    additionalResolver.sourceFieldName
+                  ]({
+                    root,
+                    context,
+                    info,
+                    argsFromKeys: targetArgsFromKeys,
+                    key,
+                  });
                 },
               },
             },

@@ -11,6 +11,7 @@ import {
   parse,
   Kind,
   getOperationAST,
+  GraphQLList,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
@@ -30,6 +31,7 @@ import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { createRequest, delegateRequest, delegateToSchema } from '@graphql-tools/delegate';
 import AggregateError from '@ardatan/aggregate-error';
 import { DefaultLogger } from './logger';
+import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 
 export interface MeshInstance {
   execute: ExecuteMeshFn;
@@ -179,12 +181,16 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                 context: givenContext = context,
                 info,
                 selectionSet: selectionSetString,
+                key,
+                argsFromKeys,
               }: {
                 root: any;
                 args: any;
                 context: any;
                 info: GraphQLResolveInfo;
                 selectionSet: string;
+                key?: string;
+                argsFromKeys?: (keys: string[]) => any;
               }) => {
                 const delegationOptions = {
                   schema: rawSource,
@@ -212,6 +218,14 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                   return delegateRequest({
                     ...delegationOptions,
                     request,
+                  });
+                } else if (info && key && argsFromKeys) {
+                  return batchDelegateToSchema({
+                    ...delegationOptions,
+                    returnType: (rootTypeField.type as GraphQLList<any>).ofType,
+                    key,
+                    argsFromKeys,
+                    info,
                   });
                 } else if (info) {
                   return delegateToSchema({

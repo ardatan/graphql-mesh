@@ -68,7 +68,11 @@ type Transform @withAdditionalProperties
 type Handler @withAdditionalProperties
 type Cache @withAdditionalProperties
 
-union AdditionalResolver = String | AdditionalStitchingResolverObject | AdditionalSubscriptionObject
+union AdditionalResolver =
+    String
+  | AdditionalStitchingResolverObject
+  | AdditionalStitchingBatchResolverObject
+  | AdditionalSubscriptionObject
 
 type AdditionalStitchingResolverObject {
   sourceName: String!
@@ -80,6 +84,17 @@ type AdditionalStitchingResolverObject {
   targetTypeName: String!
   targetFieldName: String!
   returnData: String
+}
+
+type AdditionalStitchingBatchResolverObject {
+  sourceName: String!
+  sourceTypeName: String!
+  sourceFieldName: String!
+  key: JSON!
+  argsFromKeys: JSON!
+  requiredSelectionSet: String
+  targetTypeName: String!
+  targetFieldName: String!
 }
 
 type AdditionalSubscriptionObject {
