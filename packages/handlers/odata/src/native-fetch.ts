@@ -11,7 +11,6 @@ export async function nativeFetch(request: Request): Promise<Response> {
   });
 
   const res = await undiciRequest(urlObj, {
-    path: null,
     method: request.method,
     headers: headersObj,
     body: request.body as any,

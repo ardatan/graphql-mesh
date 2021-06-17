@@ -22150,10 +22150,10 @@ underscore@~1.8.3:
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
   integrity sha1-Tz+1OxBuYJf8+ctBCfKl6b36UCI=
 
-undici@3.3.6:
-  version "3.3.6"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-3.3.6.tgz#06d3b97b7eeff46bce6f8a71079c09f64dd59dc1"
-  integrity sha512-/j3YTZ5AobMB4ZrTY72mzM54uFUX32v0R/JRW9G2vOyF1uSKYAx+WT8dMsAcRS13TOFISv094TxIyWYk+WEPsA==
+undici@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.0.0.tgz#0794fe33ac06af978a93e62749a17012d5386643"
+  integrity sha512-bVXZKTcQPECj2yYWgVWk1tDw3T24Bzfbp5H5bivcVCpklpqoGvJ842mCA54bExFzuCZcIPrwsVJXWt215/qRIg==
 
 unherit@^1.0.4:
   version "1.1.3"
