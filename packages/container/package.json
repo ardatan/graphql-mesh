@@ -1,7 +1,7 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.0.66",
+  "version": "0.0.67",
   "scripts": {
     "start": "graphql-mesh serve"
   },
@@ -17,7 +17,7 @@
     "@graphql-mesh/odata": "0.11.8",
     "@graphql-mesh/soap": "0.7.10",
     "@graphql-mesh/postgraphile": "0.12.8",
-    "@graphql-mesh/transform-mock": "0.9.7",
+    "@graphql-mesh/transform-mock": "0.10.0",
     "@graphql-mesh/transform-prefix": "0.6.48",
     "@graphql-mesh/transform-encapsulate": "0.1.47",
     "@graphql-mesh/transform-cache": "0.9.1",

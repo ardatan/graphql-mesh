@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-mock
 
+## 0.10.0
+
+### Minor Changes
+
+- 05025d42a: feat(mock): apply mocks for graphql-scalars automatically
+
 ## 0.9.7
 
 ### Patch Changes
