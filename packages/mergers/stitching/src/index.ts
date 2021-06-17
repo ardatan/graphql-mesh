@@ -21,7 +21,9 @@ const mergeUsingStitching: MergerFn = async function (options) {
       rawSource.executor = jitExecutorFactory(rawSource.schema, rawSource.name) as any;
     }
   });
-  const defaultStitchingDirectives = stitchingDirectives();
+  const defaultStitchingDirectives = stitchingDirectives({
+    pathToDirectivesInExtensions: ['directives'],
+  });
   let unifiedSchema = stitchSchemas({
     subschemas: rawSources.map(rawSource => ({
       createProxyingResolver: meshDefaultCreateProxyingResolver,
