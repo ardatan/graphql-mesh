@@ -9632,6 +9632,9 @@ type GithubIssue implements GithubAssignable & GithubClosable & GithubComment & 
   \\"\\"\\"Identifies the issue title.\\"\\"\\"
   title: String!
 
+  \\"\\"\\"Identifies the issue title rendered to HTML.\\"\\"\\"
+  titleHTML: String!
+
   \\"\\"\\"Identifies the date and time when the object was last updated.\\"\\"\\"
   updatedAt: GithubDateTime!
 
@@ -16372,6 +16375,9 @@ type GithubPullRequest implements GithubAssignable & GithubClosable & GithubComm
 
   \\"\\"\\"Identifies the pull request title.\\"\\"\\"
   title: String!
+
+  \\"\\"\\"Identifies the pull request title rendered to HTML.\\"\\"\\"
+  titleHTML: GithubHTML!
 
   \\"\\"\\"Identifies the date and time when the object was last updated.\\"\\"\\"
   updatedAt: GithubDateTime!
