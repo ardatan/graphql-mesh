@@ -220,13 +220,15 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                     request,
                   });
                 } else if (info && key && argsFromKeys) {
-                  return batchDelegateToSchema({
+                  const batchDelegationOptions = {
                     ...delegationOptions,
-                    returnType: (rootTypeField.type as GraphQLList<any>).ofType,
+                    returnType: rootTypeField.type,
                     key,
                     argsFromKeys,
                     info,
-                  });
+                  };
+                  delete batchDelegationOptions.args;
+                  return batchDelegateToSchema(batchDelegationOptions);
                 } else if (info) {
                   return delegateToSchema({
                     ...delegationOptions,
