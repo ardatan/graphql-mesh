@@ -2,15 +2,15 @@
 
 exports[`Interpreting Protos should load the Custom Message proto 1`] = `
 "type Query {
-  GetW(input: GetBamRequestInput = {}): GetFoosResponse
-  ping: ServerStatus
+  foos_BamService_GetW(input: foos_GetBamRequest_Input = {}): foos_GetFoosResponse
+  foos_BamService_ping: ServerStatus
 }
 
-type GetFoosResponse {
-  abcd: Bam
+type foos_GetFoosResponse {
+  abcd: foos_Bam
 }
 
-type Bam {
+type foos_Bam {
   id: BigInt
 }
 
@@ -19,12 +19,12 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 \\"\\"\\"
 scalar BigInt
 
-input GetBamRequestInput {
+input foos_GetBamRequest_Input {
   id: Int
-  abcd: BamInput
+  abcd: foos_Bam_Input
 }
 
-input BamInput {
+input foos_Bam_Input {
   id: BigInt
 }
 
@@ -38,27 +38,27 @@ type ServerStatus {
 
 exports[`Interpreting Protos should load the Empty proto 1`] = `
 "type Query {
-  GetMovies(input: MovieRequestInput = {}): MoviesResult
-  GetEmpty(input: MovieRequestInput = {}): EmptyRequest
-  anotherExampleGetMovies(input: MovieRequestInput = {}): MoviesResult
-  ping: ServerStatus
-  anotherExamplePing: ServerStatus
+  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
+  io_xtech_Example_GetEmpty(input: io_xtech_MovieRequest_Input = {}): io_xtech_EmptyRequest
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
+  io_xtech_Example_ping: ServerStatus
+  io_xtech_AnotherExample_ping: ServerStatus
 }
 
-type MoviesResult {
-  result: [Movie]
+type io_xtech_MoviesResult {
+  result: [io_xtech_Movie]
 }
 
-type Movie {
+type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestamp
-  genre: Genre
+  time: google_protobuf_Timestamp
+  genre: io_xtech_Genre
 }
 
-type GoogleProtobufTimestamp {
+type google_protobuf_Timestamp {
   seconds: BigInt
   nanos: Int
 }
@@ -68,31 +68,31 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 \\"\\"\\"
 scalar BigInt
 
-enum Genre {
+enum io_xtech_Genre {
   UNSPECIFIED
   ACTION
   DRAMA
 }
 
-input MovieRequestInput {
-  movie: MovieInput
+input io_xtech_MovieRequest_Input {
+  movie: io_xtech_Movie_Input
 }
 
-input MovieInput {
+input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestampInput
-  genre: Genre
+  time: google_protobuf_Timestamp_Input
+  genre: io_xtech_Genre
 }
 
-input GoogleProtobufTimestampInput {
+input google_protobuf_Timestamp_Input {
   seconds: BigInt
   nanos: Int
 }
 
-type EmptyRequest {
+type io_xtech_EmptyRequest {
   _: Boolean
 }
 
@@ -103,38 +103,70 @@ type ServerStatus {
 }
 
 type Subscription {
-  SearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
-  anotherExampleSearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
 }
 
-input SearchByCastRequestInput {
+input io_xtech_SearchByCastRequest_Input {
   castName: String
+}
+"
+`;
+
+exports[`Interpreting Protos should load the Import Nested proto 1`] = `
+"type Query {
+  io_xtech_outer_Example_Get(input: io_xtech_TopLevel_Nested_Input = {}): io_xtech_Result
+  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input = {}): io_xtech_Result
+  io_xtech_outer_Example_ping: ServerStatus
+  io_xtech_Example_ping: ServerStatus
+}
+
+type io_xtech_Result {
+  result: [io_xtech_Item]
+}
+
+type io_xtech_Item {
+  name: String
+}
+
+input io_xtech_TopLevel_Nested_Input {
+  movie: io_xtech_Item_Input
+}
+
+input io_xtech_Item_Input {
+  name: String
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
+  status: String
 }
 "
 `;
 
 exports[`Interpreting Protos should load the Movie proto 1`] = `
 "type Query {
-  GetMovies(input: MovieRequestInput = {}): MoviesResult
-  anotherExampleGetMovies(input: MovieRequestInput = {}): MoviesResult
-  ping: ServerStatus
-  anotherExamplePing: ServerStatus
+  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
+  io_xtech_Example_ping: ServerStatus
+  io_xtech_AnotherExample_ping: ServerStatus
 }
 
-type MoviesResult {
-  result: [Movie]
+type io_xtech_MoviesResult {
+  result: [io_xtech_Movie]
 }
 
-type Movie {
+type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestamp
-  genre: Genre
+  time: google_protobuf_Timestamp
+  genre: io_xtech_Genre
 }
 
-type GoogleProtobufTimestamp {
+type google_protobuf_Timestamp {
   seconds: BigInt
   nanos: Int
 }
@@ -144,26 +176,26 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 \\"\\"\\"
 scalar BigInt
 
-enum Genre {
+enum io_xtech_Genre {
   UNSPECIFIED
   ACTION
   DRAMA
 }
 
-input MovieRequestInput {
-  movie: MovieInput
+input io_xtech_MovieRequest_Input {
+  movie: io_xtech_Movie_Input
 }
 
-input MovieInput {
+input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestampInput
-  genre: Genre
+  time: google_protobuf_Timestamp_Input
+  genre: io_xtech_Genre
 }
 
-input GoogleProtobufTimestampInput {
+input google_protobuf_Timestamp_Input {
   seconds: BigInt
   nanos: Int
 }
@@ -175,11 +207,11 @@ type ServerStatus {
 }
 
 type Subscription {
-  SearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
-  anotherExampleSearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
 }
 
-input SearchByCastRequestInput {
+input io_xtech_SearchByCastRequest_Input {
   castName: String
 }
 "
@@ -187,23 +219,23 @@ input SearchByCastRequestInput {
 
 exports[`Interpreting Protos should load the Nested proto 1`] = `
 "type Query {
-  Get(input: TopLevelNestedInput = {}): Result
-  ping: ServerStatus
+  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input = {}): io_xtech_Result
+  io_xtech_Example_ping: ServerStatus
 }
 
-type Result {
-  result: [Item]
+type io_xtech_Result {
+  result: [io_xtech_Item]
 }
 
-type Item {
+type io_xtech_Item {
   name: String
 }
 
-input TopLevelNestedInput {
-  movie: ItemInput
+input io_xtech_TopLevel_Nested_Input {
+  movie: io_xtech_Item_Input
 }
 
-input ItemInput {
+input io_xtech_Item_Input {
   name: String
 }
 
@@ -217,8 +249,8 @@ type ServerStatus {
 
 exports[`Interpreting Protos should load the No Package Nested proto 1`] = `
 "type Query {
-  Get(input: TopLevelNestedInput = {}): Result
-  ping: ServerStatus
+  Example_Get(input: TopLevel_Nested_Input = {}): Result
+  Example_ping: ServerStatus
 }
 
 type Result {
@@ -229,11 +261,11 @@ type Item {
   name: String
 }
 
-input TopLevelNestedInput {
-  movie: ItemInput
+input TopLevel_Nested_Input {
+  movie: Item_Input
 }
 
-input ItemInput {
+input Item_Input {
   name: String
 }
 
@@ -247,28 +279,28 @@ type ServerStatus {
 
 exports[`Interpreting Protos should load the Outside proto 1`] = `
 "type Query {
-  GetMovies(input: MovieRequestInput = {}): MoviesResult
-  ioXtechGetMovies(input: IoXtechMovieRequestInput = {}): IoXtechMoviesResult
-  ioXtechAnotherExampleGetMovies(input: IoXtechMovieRequestInput = {}): IoXtechMoviesResult
-  ping: ServerStatus
-  ioXtechPing: ServerStatus
-  ioXtechAnotherExamplePing: ServerStatus
+  io_outside_Example_GetMovies(input: io_outside_MovieRequest_Input = {}): io_outside_MoviesResult
+  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
+  io_outside_Example_ping: ServerStatus
+  io_xtech_Example_ping: ServerStatus
+  io_xtech_AnotherExample_ping: ServerStatus
 }
 
-type MoviesResult {
-  result: [IoXtechMovie]
+type io_outside_MoviesResult {
+  result: [io_xtech_Movie]
 }
 
-type IoXtechMovie {
+type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestamp
-  genre: IoXtechGenre
+  time: google_protobuf_Timestamp
+  genre: io_xtech_Genre
 }
 
-type GoogleProtobufTimestamp {
+type google_protobuf_Timestamp {
   seconds: BigInt
   nanos: Int
 }
@@ -278,36 +310,36 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 \\"\\"\\"
 scalar BigInt
 
-enum IoXtechGenre {
+enum io_xtech_Genre {
   UNSPECIFIED
   ACTION
   DRAMA
 }
 
-input MovieRequestInput {
-  movie: IoXtechMovieInput
+input io_outside_MovieRequest_Input {
+  movie: io_xtech_Movie_Input
 }
 
-input IoXtechMovieInput {
+input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestampInput
-  genre: IoXtechGenre
+  time: google_protobuf_Timestamp_Input
+  genre: io_xtech_Genre
 }
 
-input GoogleProtobufTimestampInput {
+input google_protobuf_Timestamp_Input {
   seconds: BigInt
   nanos: Int
 }
 
-type IoXtechMoviesResult {
-  result: [IoXtechMovie]
+type io_xtech_MoviesResult {
+  result: [io_xtech_Movie]
 }
 
-input IoXtechMovieRequestInput {
-  movie: IoXtechMovieInput
+input io_xtech_MovieRequest_Input {
+  movie: io_xtech_Movie_Input
 }
 
 \\"\\"\\"status of the server\\"\\"\\"
@@ -317,11 +349,11 @@ type ServerStatus {
 }
 
 type Subscription {
-  ioXtechSearchMoviesByCast(input: IoXtechSearchByCastRequestInput = {}): IoXtechMovie
-  ioXtechAnotherExampleSearchMoviesByCast(input: IoXtechSearchByCastRequestInput = {}): IoXtechMovie
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
 }
 
-input IoXtechSearchByCastRequestInput {
+input io_xtech_SearchByCastRequest_Input {
   castName: String
 }
 "
@@ -329,8 +361,8 @@ input IoXtechSearchByCastRequestInput {
 
 exports[`Interpreting Protos should load the With All Values proto 1`] = `
 "type Query {
-  get(input: ItemInput = {}): Result
-  ping: ServerStatus
+  Example_Get(input: Item_Input = {}): Result
+  Example_ping: ServerStatus
 }
 
 type Result {
@@ -366,7 +398,7 @@ scalar BigInt
 \\"\\"\\"Integers that will have a value of 0 or more.\\"\\"\\"
 scalar UnsignedInt
 
-input ItemInput {
+input Item_Input {
   boolean: Boolean
   bytesType: Byte
   doubleNum: Float
@@ -394,26 +426,26 @@ type ServerStatus {
 
 exports[`Interpreting Protos should load the With Underscores proto 1`] = `
 "type Query {
-  GetMovies(input: MovieRequestInput = {}): MoviesResult
-  anotherExampleGetMovies(input: MovieRequestInput = {}): MoviesResult
-  ping: ServerStatus
-  anotherExamplePing: ServerStatus
+  io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input = {}): io_xtech_MoviesResult
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_movie_request_Input = {}): io_xtech_MoviesResult
+  io_xtech_Example_ping: ServerStatus
+  io_xtech_AnotherExample_ping: ServerStatus
 }
 
-type MoviesResult {
-  result: [Movie]
+type io_xtech_MoviesResult {
+  result: [io_xtech_Movie]
 }
 
-type Movie {
+type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestamp
-  genre: Genre
+  time: google_protobuf_Timestamp
+  genre: io_xtech_Genre
 }
 
-type GoogleProtobufTimestamp {
+type google_protobuf_Timestamp {
   seconds: BigInt
   nanos: Int
 }
@@ -423,26 +455,26 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 \\"\\"\\"
 scalar BigInt
 
-enum Genre {
+enum io_xtech_Genre {
   UNSPECIFIED
   ACTION
   DRAMA
 }
 
-input MovieRequestInput {
-  movie: MovieInput
+input io_xtech_movie_request_Input {
+  movie: io_xtech_Movie_Input
 }
 
-input MovieInput {
+input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
   cast: [String]
-  time: GoogleProtobufTimestampInput
-  genre: Genre
+  time: google_protobuf_Timestamp_Input
+  genre: io_xtech_Genre
 }
 
-input GoogleProtobufTimestampInput {
+input google_protobuf_Timestamp_Input {
   seconds: BigInt
   nanos: Int
 }
@@ -454,11 +486,11 @@ type ServerStatus {
 }
 
 type Subscription {
-  SearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
-  anotherExampleSearchMoviesByCast(input: SearchByCastRequestInput = {}): Movie
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
 }
 
-input SearchByCastRequestInput {
+input io_xtech_SearchByCastRequest_Input {
   castName: String
 }
 "

@@ -261,16 +261,6 @@ export interface GrpcHandler {
    */
   descriptorSetFilePath?: ProtoFilePath | string;
   /**
-   * Your base service name
-   * Used for naming only
-   */
-  serviceName?: string;
-  /**
-   * Your base package name
-   * Used for naming only
-   */
-  packageName?: string;
-  /**
    * Request timeout in milliseconds
    * Default: 200000
    */

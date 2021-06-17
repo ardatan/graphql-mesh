@@ -3,7 +3,7 @@ const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { basename, join } = require('path');
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
+const { printSchema, lexicographicSortSchema } = require('graphql');
 const { readFile } = require('fs-extra');
 
 const config$ = findAndParseConfig({
@@ -18,7 +18,7 @@ describe('gRPC Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      introspectionFromSchema(lexicographicSortSchema(schema), {
+      printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
     ).toMatchSnapshot('grpc-schema');
