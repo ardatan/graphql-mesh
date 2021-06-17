@@ -36,6 +36,37 @@ type ServerStatus {
 "
 `;
 
+exports[`Interpreting Protos should load the Custom Message2 proto 1`] = `
+"type Query {
+  foo_BamService_GetFOOs(input: foo_GetFOOsRequest_Input = {}): foo_GetFOOsResponse
+  foo_BamService_ping: ServerStatus
+}
+
+type foo_GetFOOsResponse {
+  foos: [foo_FOO]
+}
+
+type foo_FOO {
+  id: BigInt
+}
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+input foo_GetFOOsRequest_Input {
+  id: Int
+}
+
+\\"\\"\\"status of the server\\"\\"\\"
+type ServerStatus {
+  \\"\\"\\"status string\\"\\"\\"
+  status: String
+}
+"
+`;
+
 exports[`Interpreting Protos should load the Empty proto 1`] = `
 "type Query {
   io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult

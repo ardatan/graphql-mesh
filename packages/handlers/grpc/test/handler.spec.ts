@@ -18,6 +18,7 @@ describe.each<[string, string]>([
   ['With Underscores', 'underscores.proto'],
   ['Outside', 'outside.proto'],
   ['Custom Message', 'custom-message.proto'],
+  ['Custom Message2', 'custom-message-2.proto'],
 ])('Interpreting Protos', (name, file) => {
   test(`should load the ${name} proto`, async () => {
     const cache = new InMemoryLRUCache();
