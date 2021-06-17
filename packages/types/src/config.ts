@@ -1324,10 +1324,9 @@ export interface AdditionalStitchingBatchResolverObject {
   sourceName: string;
   sourceTypeName: string;
   sourceFieldName: string;
-  key: {
-    [k: string]: any;
-  };
-  argsFromKeys: {
+  keyField: string;
+  keysArg: string;
+  additionalArgs?: {
     [k: string]: any;
   };
   requiredSelectionSet?: string;

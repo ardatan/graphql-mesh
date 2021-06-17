@@ -143,30 +143,32 @@ export async function resolveAdditionalResolvers(
               },
             },
           };
-        } else if ('key' in additionalResolver) {
+        } else if ('keysArg' in additionalResolver) {
           return {
             [additionalResolver.targetTypeName]: {
               [additionalResolver.targetFieldName]: {
                 selectionSet: additionalResolver.requiredSelectionSet,
                 resolve: async (root: any, args: any, context: any, info: any) => {
                   const resolverData = { root, args, context, info };
-                  const targetArgsFromKeys: any = {};
-                  for (const argPath in additionalResolver.argsFromKeys) {
+                  const targetArgs: any = {};
+                  for (const argPath in additionalResolver.additionalArgs || {}) {
                     _.set(
-                      targetArgsFromKeys,
+                      targetArgs,
                       argPath,
-                      stringInterpolator.parse(additionalResolver.argsFromKeys[argPath], resolverData)
+                      stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
                     );
                   }
-                  const key = stringInterpolator.parse(additionalResolver.key, resolverData);
                   return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
                     additionalResolver.sourceFieldName
                   ]({
                     root,
                     context,
                     info,
-                    argsFromKeys: targetArgsFromKeys,
-                    key,
+                    argsFromKeys: (keys: string[]) => ({
+                      [additionalResolver.keysArg]: keys,
+                      ...targetArgs,
+                    }),
+                    key: _.get(root, additionalResolver.keyField),
                   });
                 },
               },

@@ -90,8 +90,9 @@ type AdditionalStitchingBatchResolverObject {
   sourceName: String!
   sourceTypeName: String!
   sourceFieldName: String!
-  key: JSON!
-  argsFromKeys: JSON!
+  keyField: String!
+  keysArg: String!
+  additionalArgs: JSON
   requiredSelectionSet: String
   targetTypeName: String!
   targetFieldName: String!

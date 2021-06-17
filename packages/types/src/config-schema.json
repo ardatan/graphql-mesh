@@ -541,11 +541,13 @@
         "sourceFieldName": {
           "type": "string"
         },
-        "key": {
-          "type": "object",
-          "properties": {}
+        "keyField": {
+          "type": "string"
         },
-        "argsFromKeys": {
+        "keysArg": {
+          "type": "string"
+        },
+        "additionalArgs": {
           "type": "object",
           "properties": {}
         },
@@ -563,8 +565,8 @@
         "sourceName",
         "sourceTypeName",
         "sourceFieldName",
-        "key",
-        "argsFromKeys",
+        "keyField",
+        "keysArg",
         "targetTypeName",
         "targetFieldName"
       ]
