@@ -36,7 +36,7 @@
     "graphql-scalars": "1.10.0",
     "graphql-subscriptions": "1.2.1",
     "pluralize": "8.0.0",
-    "swagger2openapi": "7.0.6",
+    "swagger2openapi": "7.0.7",
     "url-join": "4.0.1"
   },
   "publishConfig": {

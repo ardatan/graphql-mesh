@@ -16075,10 +16075,10 @@ oas-schema-walker@^1.1.5:
   resolved "https://registry.yarnpkg.com/oas-schema-walker/-/oas-schema-walker-1.1.5.tgz#74c3cd47b70ff8e0b19adada14455b5d3ac38a22"
   integrity sha512-2yucenq1a9YPmeNExoUa9Qwrt9RFkjqaMAA1X+U7sbb0AqBeTIdMHky9SQQ6iN94bO5NW0W4TRYXerG+BdAvAQ==
 
-oas-validator@^5.0.6:
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-5.0.6.tgz#419ff4c14b9b16ca2052a31e81ee93efb7492978"
-  integrity sha512-bI+gyr3MiG/4Q5Ibvg0R77skVWS882gFMkxwB1p6qY7Rc4p7EoDezFVfondjYhJDPDnB1ZD7Aqj7AWROAsMBZg==
+oas-validator@^5.0.7:
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-5.0.7.tgz#ea5bd035cbebb09a7d677c2b4297291d57693c0f"
+  integrity sha512-gtOjKWQMVeOBIuioguaXA7sMXfJ9q4efHDFo3kmcy9HZEtmGla3aptQK0LZG1AhOX9zambKUwH72kqgoIJa0Fg==
   dependencies:
     call-me-maybe "^1.0.1"
     oas-kit-common "^1.0.8"
@@ -21123,10 +21123,10 @@ svgo@^2.3.0:
     csso "^4.2.0"
     stable "^0.1.8"
 
-swagger2openapi@7.0.6:
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-7.0.6.tgz#20a2835b8edfc0f4c08036b20cb51e8f78a420bf"
-  integrity sha512-VIT414koe0eJqre0KrhNMUB7QEUfPjGAKesPZZosIKr2rxZ6vpUoersHUFNOsN/OZ5u2zsniCslBOwVcmQZwlg==
+swagger2openapi@7.0.7:
+  version "7.0.7"
+  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-7.0.7.tgz#60abd369aa2803330e808db9d2cf3cfd49bee0eb"
+  integrity sha512-uQMHn9Q1gOte13xarNTRtK00K3VgoLydwB3QMHcEptp8e8Q/idynMq+n1gTTf6U9BVcjfrbKXUpfyv/z/RLvQA==
   dependencies:
     call-me-maybe "^1.0.1"
     node-fetch "^2.6.1"
@@ -21135,7 +21135,7 @@ swagger2openapi@7.0.6:
     oas-kit-common "^1.0.8"
     oas-resolver "^2.5.5"
     oas-schema-walker "^1.1.5"
-    oas-validator "^5.0.6"
+    oas-validator "^5.0.7"
     reftools "^1.1.8"
     yaml "^1.10.0"
     yargs "^17.0.1"
