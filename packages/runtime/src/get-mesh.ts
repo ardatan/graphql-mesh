@@ -11,7 +11,6 @@ import {
   parse,
   Kind,
   getOperationAST,
-  GraphQLList,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
