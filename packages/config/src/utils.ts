@@ -241,7 +241,6 @@ export async function resolveAdditionalResolvers(
                           isLastResult = false;
                         }
                       }
-                      console.log(print(finalSelectionSet));
                       return finalSelectionSet;
                     };
                   }

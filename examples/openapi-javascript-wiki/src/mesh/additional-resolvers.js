@@ -1,4 +1,5 @@
 const moment = require('moment');
+const { parseSelectionSet } = require('@graphql-tools/utils');
 
 const resolvers = {
   Query: {
@@ -15,13 +16,13 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: /* GraphQL */`
+        selectionSet: () => parseSelectionSet(/* GraphQL */`
           {
             items {
               views 
             }
           }
-        `
+        `)
       });
 
       if (!result?.items || result?.items.length === 0) {

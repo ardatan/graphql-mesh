@@ -241,6 +241,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                     ...delegationOptions,
                     transforms: [new WrapQuery([fieldName], selectionSet, res => res)],
                   });
+                } else {
+                  return delegateToSchema(delegationOptions);
                 }
               };
             }
