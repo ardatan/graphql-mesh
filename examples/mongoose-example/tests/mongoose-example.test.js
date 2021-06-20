@@ -21,13 +21,5 @@ describe('Mongoose', () => {
       })
     ).toMatchSnapshot();
   });
-  it('should give correct response for example queries', async () => {
-    const { documents } = await config$;
-    const { execute } = await mesh$;
-    for (const source of documents) {
-      const result = await execute(source.document);
-      expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
-    }
-  });
   afterAll(() => mesh$.then(mesh => mesh.destroy()));
 });
