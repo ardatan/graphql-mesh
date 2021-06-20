@@ -5,12 +5,10 @@ query citiesAndDevelopers($city: String! = "London") {
       countrycode
       district
       developers {
-        nodes {
-          id
-          login
-          name
-          avatarUrl
-        }
+        id
+        login
+        name
+        avatarUrl
       }
     }
   }

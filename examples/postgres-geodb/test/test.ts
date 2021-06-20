@@ -11,14 +11,6 @@ const mesh$ = config$.then(config => getMesh(config));
 jest.setTimeout(30000);
 
 describe('PostgresGeoDB', () => {
-  it('should generate correct schema', async () => {
-    const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      })
-    ).toMatchSnapshot('postgres-geodb-schema');
-  });
   it('should give correct response for example queries', async () => {
     const { documents } = await config$;
     const { execute } = await mesh$;

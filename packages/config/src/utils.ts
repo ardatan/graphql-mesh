@@ -1,4 +1,4 @@
-import { Kind, parse, SelectionSetNode } from 'graphql';
+import { GraphQLResolveInfo, Kind, parse, print, SelectionSetNode } from 'graphql';
 import {
   MeshHandlerLibrary,
   KeyValueCache,
@@ -179,7 +179,7 @@ export async function resolveAdditionalResolvers(
             [additionalResolver.targetTypeName]: {
               [additionalResolver.targetFieldName]: {
                 selectionSet: additionalResolver.requiredSelectionSet,
-                resolve: async (root: any, args: any, context: any, info: any) => {
+                resolve: async (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
                   const resolverData = { root, args, context, info };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.sourceArgs) {
@@ -201,21 +201,47 @@ export async function resolveAdditionalResolvers(
                   } else if (additionalResolver.result) {
                     const resultPathReversed = _.toPath(additionalResolver.result);
                     options.selectionSet = (subtree: SelectionSetNode) => {
-                      let finalSelectionSet: any = subtree;
+                      let finalSelectionSet = subtree;
+                      let isLastResult = true;
                       for (const pathElem of resultPathReversed) {
                         if (Number.isNaN(parseInt(pathElem))) {
+                          if (isLastResult && additionalResolver.resultType) {
+                            finalSelectionSet = {
+                              kind: Kind.SELECTION_SET,
+                              selections: [
+                                {
+                                  kind: Kind.INLINE_FRAGMENT,
+                                  typeCondition: {
+                                    kind: Kind.NAMED_TYPE,
+                                    name: {
+                                      kind: Kind.NAME,
+                                      value: additionalResolver.resultType,
+                                    },
+                                  },
+                                  selectionSet: finalSelectionSet,
+                                },
+                              ],
+                            };
+                          }
                           finalSelectionSet = {
-                            // we create a wrapping AST Field
-                            kind: Kind.FIELD,
-                            name: {
-                              kind: Kind.NAME,
-                              value: pathElem,
-                            },
-                            // Inside the field selection
-                            selectionSet: finalSelectionSet,
+                            kind: Kind.SELECTION_SET,
+                            selections: [
+                              {
+                                // we create a wrapping AST Field
+                                kind: Kind.FIELD,
+                                name: {
+                                  kind: Kind.NAME,
+                                  value: pathElem,
+                                },
+                                // Inside the field selection
+                                selectionSet: finalSelectionSet,
+                              },
+                            ],
                           };
+                          isLastResult = false;
                         }
                       }
+                      console.log(print(finalSelectionSet));
                       return finalSelectionSet;
                     };
                   }

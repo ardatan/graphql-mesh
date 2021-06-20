@@ -1319,7 +1319,15 @@ export interface AdditionalStitchingResolverObject {
   };
   targetTypeName: string;
   targetFieldName: string;
+  /**
+   * Extract specific property from the result
+   */
   result?: string;
+  /**
+   * If return types don't match,
+   * you can specify a result type to apply inline fragment
+   */
+  resultType?: string;
 }
 export interface AdditionalStitchingBatchResolverObject {
   sourceName: string;

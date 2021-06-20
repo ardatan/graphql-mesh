@@ -83,7 +83,15 @@ type AdditionalStitchingResolverObject {
   sourceArgs: JSON
   targetTypeName: String!
   targetFieldName: String!
+  """
+  Extract specific property from the result
+  """
   result: String
+  """
+  If return types don't match,
+  you can specify a result type to apply inline fragment
+  """
+  resultType: String
 }
 
 type AdditionalStitchingBatchResolverObject {

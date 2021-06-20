@@ -90,6 +90,14 @@ jobs:
         ports:
           - 33306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      mongo:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
+        ports:
+          - 8081:8081
+        options: --health-cmd="mongo --eval 'db.runCommand("ping").ok' --quiet" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2

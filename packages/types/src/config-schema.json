@@ -522,7 +522,12 @@
           "type": "string"
         },
         "result": {
-          "type": "string"
+          "type": "string",
+          "description": "Extract specific property from the result"
+        },
+        "resultType": {
+          "type": "string",
+          "description": "If return types don't match,\nyou can specify a result type to apply inline fragment"
         }
       },
       "required": ["sourceName", "sourceTypeName", "sourceFieldName", "targetTypeName", "targetFieldName"]

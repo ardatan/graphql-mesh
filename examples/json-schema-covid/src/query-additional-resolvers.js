@@ -1,4 +1,5 @@
 const { parse } = require("graphql");
+const { parseSelectionSet } = require('@graphql-tools/utils');
 
 const resolvers = {
   Query: {
@@ -10,15 +11,16 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: () => parse(/* GraphQL */ `
-          {
-            records {
-              fields {
-                value
+        selectionSet: () =>
+          parseSelectionSet(/* GraphQL */ `
+            {
+              records {
+                fields {
+                  value
+                }
               }
             }
-          }
-        `),
+          `),
       });
 
       const numberPop = worldPop.records[0].fields.value;
@@ -31,7 +33,7 @@ const resolvers = {
         context,
         info,
         selectionSet: () =>
-          parse(/* GraphQL */ `
+          parseSelectionSet(/* GraphQL */ `
             {
               confirmed
               deaths

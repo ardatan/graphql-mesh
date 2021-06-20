@@ -21,13 +21,27 @@ sources:
 
 additionalTypeDefs: |
       extend type GeoCity {
-        developers(limit: Int = 10): GithubUserConnection
+        developers(limit: Int = 10): [GithubUser]
       }
 
 require:
   - "ts-node/register/transpile-only"
 additionalResolvers:
-  - ./src/additionalResolvers.ts
+  - targetTypeName: GeoCity
+    targetFieldName: developers
+    requiredSelectionSet: |
+      {
+        name
+      }
+    sourceName: Github
+    sourceTypeName: Query
+    sourceFieldName: Githubsearch
+    sourceArgs:
+      type: USER
+      query: location:{root.name}
+      first: "{args.limit}"
+    result: nodes
+    resultType: GithubUser
 
 documents: 
   - ./src/test.query.graphql

@@ -35,7 +35,7 @@ export default class PostGraphileHandler implements MeshHandler {
     if (!pgPool || !('connect' in pgPool)) {
       pgPool = new pg.Pool({
         connectionString: this.config.connectionString,
-        log: messages => this.logger.log(messages),
+        log: messages => this.logger.debug(messages),
         ...this.config?.pool,
       });
     }
@@ -87,9 +87,24 @@ export default class PostGraphileHandler implements MeshHandler {
 
     return {
       schema,
-      contextBuilder: async () => ({
-        pgClient: await pgPool.connect(),
-      }),
+      contextBuilder: async () => {
+        // In order to prevent unnecessary connections
+        // We need to implement some kind of lazy connections
+        let pgClient$: Promise<pg.PoolClient>;
+        return {
+          pgClient: new Proxy(
+            {},
+            {
+              get: (_, pKey) => {
+                if (pKey !== 'release' && !pgClient$) {
+                  pgClient$ = pgPool.connect();
+                }
+                return (...args: any[]) => pgClient$?.then(pgClient => pgClient[pKey](...args));
+              },
+            }
+          ),
+        };
+      },
     };
   }
 }

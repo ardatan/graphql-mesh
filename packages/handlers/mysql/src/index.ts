@@ -112,9 +112,11 @@ export default class MySQLHandler implements MeshHandler {
     const update = promisify(connection.update.bind(connection));
     const deleteRow = promisify(connection.delete.bind(connection));
     const count = promisify(connection.count.bind(connection));
+    const release = promisify(connection.release.bind(connection));
 
     return {
       connection,
+      release,
       getDatabaseTables,
       getTableFields,
       getTableForeigns,
@@ -132,11 +134,9 @@ export default class MySQLHandler implements MeshHandler {
     let promisifiedConnection$: Promise<MysqlPromisifiedConnection>;
     return new Proxy<MysqlPromisifiedConnection>({} as any, {
       get: (_, methodName) => {
-        if (methodName === 'connection') {
-          return {
-            release: () =>
-              promisifiedConnection$?.then(promisifiedConnection => promisifiedConnection?.connection.release()),
-          };
+        if (methodName === 'release') {
+          return () =>
+            promisifiedConnection$?.then(promisifiedConnection => promisifiedConnection?.connection.release());
         }
         return async (...args: any[]) => {
           const cacheKey = [methodName, ...args].join('_');
@@ -459,15 +459,30 @@ export default class MySQLHandler implements MeshHandler {
 
     const schema = schemaComposer.buildSchema();
 
-    introspectionConnection.connection.release();
+    introspectionConnection.release();
 
-    this.pubsub.subscribe('executionDone', ({ contextValue }) => contextValue.mysqlConnection.connection.destroy());
+    this.pubsub.subscribe('executionDone', ({ contextValue }) => contextValue.mysqlConnection?.release());
 
     return {
       schema,
-      contextBuilder: async () => ({
-        mysqlConnection: await this.getPromisifiedConnection(pool),
-      }),
+      contextBuilder: async () => {
+        // In order to prevent unnecessary connections
+        // We need to implement some kind of lazy connections
+        let mysqlConnection$: Promise<MysqlPromisifiedConnection>;
+        return {
+          mysqlConnection: new Proxy(
+            {},
+            {
+              get: (_, pKey) => {
+                if (pKey !== 'release' && !mysqlConnection$) {
+                  mysqlConnection$ = this.getPromisifiedConnection(pool);
+                }
+                return (...args: any[]) => mysqlConnection$?.then(mysqlConnection => mysqlConnection[pKey](...args));
+              },
+            }
+          ),
+        };
+      },
     };
   }
 }
