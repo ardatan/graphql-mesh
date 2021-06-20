@@ -97,7 +97,6 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: example
         ports:
           - 8081:8081
-        options: --health-cmd="mongo --eval 'db.runCommand("ping").ok' --quiet" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
