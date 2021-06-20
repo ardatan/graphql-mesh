@@ -45,44 +45,4 @@ additionalResolvers:
     targetFieldName: author
 
 documents:
-  - |
-    query Books {
-      books {
-        id
-        title
-        author {
-          id
-          name
-        }
-      }
-    }
-    query Book {
-      book(id: 1) {
-        id
-        title
-        author {
-          id
-          name
-        }
-      }
-    }
-    query Authors {
-      authors{
-        id
-        name
-        books{
-        id
-        title
-        }
-      }
-    }
-    query Author{
-      author(id:1){
-        id
-        name
-        books{
-          id
-          title
-        }
-      }
-    }
+  - ./example-queries/*.graphql

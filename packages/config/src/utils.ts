@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo, Kind, parse, print, SelectionSetNode } from 'graphql';
+import { GraphQLResolveInfo, Kind, parse, SelectionSetNode } from 'graphql';
 import {
   MeshHandlerLibrary,
   KeyValueCache,

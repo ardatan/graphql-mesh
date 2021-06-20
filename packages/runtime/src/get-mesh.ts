@@ -228,7 +228,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                   skipValidation: true,
                   info,
                 };
-                if (isListType(rootTypeField) && key && argsFromKeys) {
+                if (key && argsFromKeys) {
                   const batchDelegationOptions = {
                     ...delegationOptions,
                     key,
