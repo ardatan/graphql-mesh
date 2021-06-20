@@ -10,7 +10,6 @@ import {
   GraphQLObjectType,
   getOperationAST,
   print,
-  isListType,
   SelectionSetNode,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
