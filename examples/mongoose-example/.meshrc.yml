@@ -2,7 +2,7 @@ sources:
   - name: Mongoose
     handler:
       mongoose:
-        connectionString: mongodb://root:example@localhost:8081/test
+        connectionString: mongodb://root:example@localhost:27017/test
         models:
           - name: User
             path: ./src/models.js#User

@@ -96,7 +96,7 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
         ports:
-          - 8081:8081
+          - 27017:27017
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
