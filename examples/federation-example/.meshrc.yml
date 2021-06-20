@@ -15,11 +15,7 @@ sources:
                 keyFields:
                   - id
                 resolveReference:
-                  sourceName: accounts
-                  sourceTypeName: Query
-                  sourceFieldName: user
-                  sourceArgs:
-                    id: '{root.id}'
+                  queryFieldName: user
   - name: reviews
     handler:
       graphql:

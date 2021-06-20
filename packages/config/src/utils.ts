@@ -1,4 +1,4 @@
-import { parse } from 'graphql';
+import { Kind, parse, SelectionSetNode } from 'graphql';
 import {
   MeshHandlerLibrary,
   KeyValueCache,
@@ -135,8 +135,8 @@ export async function resolveAdditionalResolvers(
                   }
                 ),
                 resolve: (payload: any) => {
-                  if (additionalResolver.returnData) {
-                    return _.get(payload, additionalResolver.returnData);
+                  if (additionalResolver.result) {
+                    return _.get(payload, additionalResolver.result);
                   }
                   return payload;
                 },
@@ -147,7 +147,7 @@ export async function resolveAdditionalResolvers(
           return {
             [additionalResolver.targetTypeName]: {
               [additionalResolver.targetFieldName]: {
-                selectionSet: additionalResolver.requiredSelectionSet,
+                selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
                 resolve: async (root: any, args: any, context: any, info: any) => {
                   const resolverData = { root, args, context, info };
                   const targetArgs: any = {};
@@ -186,19 +186,43 @@ export async function resolveAdditionalResolvers(
                     _.set(
                       targetArgs,
                       argPath,
-                      stringInterpolator.parse(additionalResolver.sourceArgs[argPath], resolverData)
+                      stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
                     );
                   }
-                  const result = await context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                    additionalResolver.sourceFieldName
-                  ]({
+                  const options: any = {
                     root,
                     args: targetArgs,
                     context,
                     info,
-                    selectionSet: additionalResolver.sourceSelectionSet,
-                  });
-                  return additionalResolver.returnData ? _.get(result, additionalResolver.returnData) : result;
+                  };
+                  if (additionalResolver.sourceSelectionSet) {
+                    options.selectionSet = () => parse(additionalResolver.sourceSelectionSet);
+                    // If result path provided without a selectionSet
+                  } else if (additionalResolver.result) {
+                    const resultPathReversed = _.toPath(additionalResolver.result);
+                    options.selectionSet = (subtree: SelectionSetNode) => {
+                      let finalSelectionSet: any = subtree;
+                      for (const pathElem of resultPathReversed) {
+                        if (Number.isNaN(parseInt(pathElem))) {
+                          finalSelectionSet = {
+                            // we create a wrapping AST Field
+                            kind: Kind.FIELD,
+                            name: {
+                              kind: Kind.NAME,
+                              value: pathElem,
+                            },
+                            // Inside the field selection
+                            selectionSet: finalSelectionSet,
+                          };
+                        }
+                      }
+                      return finalSelectionSet;
+                    };
+                  }
+                  const result = await context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                    additionalResolver.sourceFieldName
+                  ](options);
+                  return additionalResolver.result ? _.get(result, additionalResolver.result) : result;
                 },
               },
             },

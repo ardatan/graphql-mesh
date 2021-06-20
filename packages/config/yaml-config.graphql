@@ -83,7 +83,7 @@ type AdditionalStitchingResolverObject {
   sourceArgs: JSON
   targetTypeName: String!
   targetFieldName: String!
-  returnData: String
+  result: String
 }
 
 type AdditionalStitchingBatchResolverObject {
@@ -102,7 +102,7 @@ type AdditionalSubscriptionObject {
   targetTypeName: String!
   targetFieldName: String!
   pubsubTopic: String!
-  returnData: String
+  result: String
   filterBy: String
 }
 

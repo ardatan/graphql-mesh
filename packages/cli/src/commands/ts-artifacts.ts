@@ -49,7 +49,7 @@ function buildSignatureBasedOnRootFields(
       args${argsExists ? '' : '?'}: ${argsName};
       context: ${unifiedContextIdentifier};
       info: GraphQLResolveInfo;
-      selectionSet?: string;
+      selectionSet?: (subtree: import('graphql').SelectionSetNode) => SelectionSetNode;
     }) => Promise<${codegenHelpers.getTypeToUse(parentTypeNode)}['${fieldName}']>`;
   }
   return operationMap;

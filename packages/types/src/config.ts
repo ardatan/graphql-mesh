@@ -986,14 +986,15 @@ export interface FederationFieldConfig {
   requires?: string;
 }
 export interface ResolveReferenceObject {
-  sourceName: string;
-  sourceTypeName: string;
-  sourceFieldName: string;
-  sourceSelectionSet?: string;
-  sourceArgs?: {
-    [k: string]: any;
-  };
-  returnData?: string;
+  /**
+   * Name of root field name that resolves the reference
+   */
+  queryFieldName: string;
+  /**
+   * If the root field name has multiple args,
+   * you need to define which argument should receive the key
+   */
+  keyArg?: string;
 }
 export interface FilterSchemaTransform {
   /**
@@ -1318,7 +1319,7 @@ export interface AdditionalStitchingResolverObject {
   };
   targetTypeName: string;
   targetFieldName: string;
-  returnData?: string;
+  result?: string;
 }
 export interface AdditionalStitchingBatchResolverObject {
   sourceName: string;
@@ -1337,7 +1338,7 @@ export interface AdditionalSubscriptionObject {
   targetTypeName: string;
   targetFieldName: string;
   pubsubTopic: string;
-  returnData?: string;
+  result?: string;
   filterBy?: string;
 }
 /**

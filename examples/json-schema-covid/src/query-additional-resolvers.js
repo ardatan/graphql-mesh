@@ -1,3 +1,5 @@
+const { parse } = require("graphql");
+
 const resolvers = {
   Query: {
     stat: async (root, args, context, info) => {
@@ -8,7 +10,7 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: /* GraphQL */ `
+        selectionSet: () => parse(/* GraphQL */ `
           {
             records {
               fields {
@@ -16,7 +18,7 @@ const resolvers = {
               }
             }
           }
-        `,
+        `),
       });
 
       const numberPop = worldPop.records[0].fields.value;
@@ -28,14 +30,15 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: /* GraphQL */ `
-          {
-            confirmed
-            deaths
-            recovered
-            countryRegion
-          }
-        `,
+        selectionSet: () =>
+          parse(/* GraphQL */ `
+            {
+              confirmed
+              deaths
+              recovered
+              countryRegion
+            }
+          `),
       });
       const numberConfirmed = covidCase.confirmed;
       const numberDeath = covidCase.deaths;

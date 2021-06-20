@@ -3,7 +3,8 @@
   "version": "0.5.15",
   "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs","typings": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
   },
@@ -29,7 +30,8 @@
     "lodash": "4.17.21",
     "@graphql-tools/utils": "7.10.0",
     "federation-to-stitching-sdl": "1.0.1",
-    "@graphql-tools/merge": "6.2.14"
+    "@graphql-tools/stitching-directives": "1.3.3",
+    "@graphql-tools/delegate": "7.1.5"
   },
   "publishConfig": {
     "access": "public",

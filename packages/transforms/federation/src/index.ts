@@ -6,19 +6,20 @@ import {
   GraphQLNonNull,
   isObjectType,
   GraphQLUnionType,
+  buildSchema,
+  GraphQLResolveInfo,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
+import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
 import _ from 'lodash';
 import { entitiesField, EntityType, serviceField } from '@apollo/federation/dist/types.js';
 import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { SubschemaConfig } from '@graphql-tools/delegate';
 
 import federationToStitchingSDL from 'federation-to-stitching-sdl';
 
-import { mergeSchemas } from '@graphql-tools/merge';
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 export default class FederationTransform implements MeshTransform {
   private config: YamlConfig.Transform['federation'];
@@ -29,7 +30,7 @@ export default class FederationTransform implements MeshTransform {
     this.baseDir = baseDir;
   }
 
-  transformSchema(schema: GraphQLSchema, subschemaConfig: SubschemaConfig) {
+  transformSchema(schema: GraphQLSchema, subschemaConfig: RawSourceOutput) {
     const federationConfig: FederationConfig<any> = {};
 
     if (this.config?.types) {
@@ -65,27 +66,22 @@ export default class FederationTransform implements MeshTransform {
           } else if (typeof resolveReferenceConfig === 'function') {
             resolveReference = type.config.resolveReference;
           } else {
-            const { sourceName, sourceTypeName, sourceFieldName, sourceSelectionSet, sourceArgs, returnData } =
+            const { queryFieldName, keyArg = schema.getQueryType().getFields()[queryFieldName].args[0].name } =
               resolveReferenceConfig;
-            resolveReference = async (root: any, context: any, info: any) => {
-              const resolverData = { root, context, info };
-              const methodArgs: any = {};
-              for (const argPath in sourceArgs) {
-                _.set(
-                  methodArgs,
-                  argPath,
-                  stringInterpolator.parse(resolveReferenceConfig.sourceArgs[argPath], resolverData)
-                );
-              }
-              const result = await context[sourceName][sourceTypeName][sourceFieldName]({
+            const keyField = type.config.keyFields[0];
+            resolveReference = (root: any, context: any, info: GraphQLResolveInfo) =>
+              context[subschemaConfig.name].Query[queryFieldName]({
                 root,
-                args: methodArgs,
+                key: keyField,
+                argsFromKeys: (keys: string[]) => ({
+                  [keyArg]: keys,
+                }),
+                args: {
+                  [keyArg]: root[keyField],
+                },
                 context,
                 info,
-                selectionSet: sourceSelectionSet,
               });
-              return returnData ? _.get(result, returnData) : result;
-            };
           }
         }
         federationConfig[type.name] = {
@@ -115,11 +111,17 @@ export default class FederationTransform implements MeshTransform {
       federationConfig
     );
 
+    const { stitchingDirectivesTransformer } = stitchingDirectives();
     const sdlWithStitchingDirectives = federationToStitchingSDL(schemaWithFederationDirectives);
 
-    const schemaWithStitchingDirectives = mergeSchemas({ schemas: [schema], typeDefs: [sdlWithStitchingDirectives] });
+    subschemaConfig.merge = stitchingDirectivesTransformer({
+      schema: buildSchema(sdlWithStitchingDirectives, {
+        assumeValid: true,
+        assumeValidSDL: true,
+      }),
+    }).merge;
 
-    const schemaWithFederationQueryType = mapSchema(schemaWithStitchingDirectives, {
+    const schemaWithFederationQueryType = mapSchema(schema, {
       [MapperKind.QUERY]: type => {
         const config = type.toConfig();
         return new GraphQLObjectType({

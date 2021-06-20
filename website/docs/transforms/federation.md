@@ -34,10 +34,7 @@ transforms:
                     - name: id
                       external: true
                 resolveReference:
-                  targetSource: accounts
-                  targetMethod: user
-                  args:
-                    id: root.id
+                  queryFieldName: user
 
 ```
 
@@ -52,7 +49,8 @@ resolveReference: ./userResolveReference.js
 `./userResolveReference.js`
 ```js
 // So we can point to an existing query field to resolve that entity
-module.exports = (root, context) => context.accounts.api.user({ id: root.id })
+module.exports = (root, context, info) => 
+                    context.accounts.Query.user({ root, args: { id: root.id }, context, info })
 ```
 
 > You can check out our example that uses Federation as a merging strategy.

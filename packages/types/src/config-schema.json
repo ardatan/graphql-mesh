@@ -521,7 +521,7 @@
         "targetFieldName": {
           "type": "string"
         },
-        "returnData": {
+        "result": {
           "type": "string"
         }
       },
@@ -585,7 +585,7 @@
         "pubsubTopic": {
           "type": "string"
         },
-        "returnData": {
+        "result": {
           "type": "string"
         },
         "filterBy": {
@@ -1990,27 +1990,16 @@
       "type": "object",
       "title": "ResolveReferenceObject",
       "properties": {
-        "sourceName": {
-          "type": "string"
+        "queryFieldName": {
+          "type": "string",
+          "description": "Name of root field name that resolves the reference"
         },
-        "sourceTypeName": {
-          "type": "string"
-        },
-        "sourceFieldName": {
-          "type": "string"
-        },
-        "sourceSelectionSet": {
-          "type": "string"
-        },
-        "sourceArgs": {
-          "type": "object",
-          "properties": {}
-        },
-        "returnData": {
-          "type": "string"
+        "keyArg": {
+          "type": "string",
+          "description": "If the root field name has multiple args,\nyou need to define which argument should receive the key"
         }
       },
-      "required": ["sourceName", "sourceTypeName", "sourceFieldName"]
+      "required": ["queryFieldName"]
     },
     "FederationField": {
       "additionalProperties": false,

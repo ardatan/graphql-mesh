@@ -39,7 +39,6 @@ additionalResolvers:
   - sourceName: AuthorService
     sourceTypeName: Query
     sourceFieldName: authors
-    requiredSelectionSet: '{ authorId }'
     keyField: authorId
     keysArg: ids
     targetTypeName: Book
