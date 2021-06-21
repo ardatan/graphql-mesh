@@ -13,17 +13,20 @@ import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 const mergeUsingStitching: MergerFn = async function (options) {
   if (options.rawSources.length === 1) {
+    options.logger.debug(`Stitching is not necessary for a single schema`);
     return mergeSingleSchema(options);
   }
-  const { rawSources, typeDefs, resolvers, transforms } = options;
+  const { rawSources, typeDefs, resolvers, transforms, logger } = options;
   rawSources.forEach(rawSource => {
     if (!rawSource.executor) {
-      rawSource.executor = jitExecutorFactory(rawSource.schema, rawSource.name) as any;
+      rawSource.executor = jitExecutorFactory(rawSource.schema, rawSource.name, logger.child('JIT Executor')) as any;
     }
   });
+  logger.debug(`Stitching directives are being generated`);
   const defaultStitchingDirectives = stitchingDirectives({
     pathToDirectivesInExtensions: ['directives'],
   });
+  logger.debug(`Stitching the source schemas`);
   let unifiedSchema = stitchSchemas({
     subschemas: rawSources.map(rawSource => ({
       createProxyingResolver: meshDefaultCreateProxyingResolver,
@@ -33,6 +36,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
     resolvers,
     subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],
   });
+  logger.debug(`sourceMap is being generated and attached to the unified schema`);
   unifiedSchema.extensions = unifiedSchema.extensions || {};
   Object.assign(unifiedSchema.extensions, {
     sourceMap: new Proxy({} as any, {
@@ -55,6 +59,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
     }),
   });
   if (transforms?.length) {
+    logger.debug(`Root level transformations are being applied`);
     const { noWrapTransforms, wrapTransforms } = groupTransforms(transforms);
     if (wrapTransforms.length) {
       unifiedSchema = wrapSchema({
@@ -62,7 +67,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
         batch: true,
         transforms: wrapTransforms,
         createProxyingResolver: meshDefaultCreateProxyingResolver,
-        executor: jitExecutorFactory(unifiedSchema, 'wrapped') as any,
+        executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')) as any,
       });
     }
     if (noWrapTransforms.length) {

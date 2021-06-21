@@ -5,6 +5,7 @@ import { ApolloGateway } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { meshDefaultCreateProxyingResolver, hashObject, jitExecutorFactory } from '@graphql-mesh/utils';
 import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { env } from 'process';
 
 const mergeUsingFederation: MergerFn = async function ({
   rawSources,
@@ -13,7 +14,9 @@ const mergeUsingFederation: MergerFn = async function ({
   typeDefs,
   resolvers,
   transforms,
+  logger,
 }): Promise<GraphQLSchema> {
+  logger.debug(`Creating localServiceList for gateway`);
   const rawSourceMap = new Map<string, RawSourceOutput>();
   const localServiceList: { name: string; typeDefs: DocumentNode }[] = [];
   const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
@@ -33,14 +36,16 @@ const mergeUsingFederation: MergerFn = async function ({
       });
     })
   );
+  logger.debug(`Creating ApolloGateway`);
   const gateway = new ApolloGateway({
     localServiceList,
     buildService({ name }) {
+      logger.debug(`Building federation service: ${name}`);
       const rawSource = rawSourceMap.get(name);
       const transformedSchema = sourceMap.get(rawSource);
-      const jitExecute = jitExecutorFactory(transformedSchema, name);
+      const jitExecute = jitExecutorFactory(transformedSchema, name, logger.child('JIT Executor'));
       return {
-        process: ({ request, context }) =>
+        process: async ({ request, context }) =>
           jitExecute(
             {
               document: parse(request.query),
@@ -48,14 +53,19 @@ const mergeUsingFederation: MergerFn = async function ({
               context: context.graphqlContext || context,
             },
             request.operationName,
-            null
-          ) as any,
+            {}
+          ),
       };
     },
+    logger,
+    debug: !!env.DEBUG,
+    serviceHealthCheck: true,
   });
+  logger.debug(`Loading gateway`);
   const { schema, executor: gatewayExecutor } = await gateway.load();
   const schemaHash: any = hashObject({ schema });
   let remoteSchema: GraphQLSchema = schema;
+  logger.debug(`Wrapping gateway executor in a unified schema`);
   remoteSchema = wrapSchema({
     createProxyingResolver: meshDefaultCreateProxyingResolver,
     schema: remoteSchema,
@@ -74,7 +84,7 @@ const mergeUsingFederation: MergerFn = async function ({
         cache,
         context,
         queryHash: documentStr,
-        logger: console,
+        logger,
         metrics: {},
         source: documentStr,
         operation,
@@ -84,10 +94,12 @@ const mergeUsingFederation: MergerFn = async function ({
     },
   });
   pubsub.subscribe('destroy', () => gateway.stop());
+  logger.debug(`Applying additionalTypeDefs`);
   typeDefs?.forEach(typeDef => {
     remoteSchema = extendSchema(remoteSchema, typeDef);
   });
   if (resolvers) {
+    logger.debug(`Applying additionalResolvers`);
     remoteSchema = addResolversToSchema({
       schema: remoteSchema,
       resolvers,
@@ -95,13 +107,15 @@ const mergeUsingFederation: MergerFn = async function ({
     });
   }
   if (transforms?.length) {
+    logger.debug(`Applying root level transforms`);
     remoteSchema = wrapSchema({
       schema: remoteSchema,
       transforms,
-      executor: jitExecutorFactory(remoteSchema, 'wrapped') as any,
+      executor: jitExecutorFactory(remoteSchema, 'wrapped', logger.child('JIT Executor')) as any,
       createProxyingResolver: meshDefaultCreateProxyingResolver,
     });
   }
+  logger.debug(`Attaching sourceMap to the unified schema`);
   remoteSchema.extensions = remoteSchema.extensions || {};
   Object.defineProperty(remoteSchema.extensions, 'sourceMap', {
     get: () => sourceMap,

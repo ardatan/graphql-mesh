@@ -93,10 +93,10 @@ export type MergerFn = (options: {
   rawSources: RawSourceOutput[];
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  logger: Logger;
   typeDefs?: DocumentNode[];
   resolvers?: IResolvers;
   transforms?: Transform[];
-  executor?: Executor;
 }) => Promise<GraphQLSchema> | GraphQLSchema;
 
 export type RawSourceOutput = {

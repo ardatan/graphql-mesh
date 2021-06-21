@@ -95,13 +95,14 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
     transforms: options.transforms,
+    logger: logger.child(`Merger`),
   });
 
   getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
   getMeshLogger.debug(`Creating JIT Executor`);
-  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified');
+  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
 
   getMeshLogger.debug(`Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
@@ -144,6 +145,91 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     }
   });
 
+  const baseMeshContext: Record<string, any> = {
+    pubsub,
+    cache,
+    liveQueryStore,
+    [MESH_CONTEXT_SYMBOL]: true,
+  };
+  const sourceMap: Map<RawSourceOutput, GraphQLSchema> = unifiedSchema.extensions.sourceMap;
+  await Promise.all(
+    rawSources.map(async rawSource => {
+      const rawSourceLogger = logger.child(`${rawSource.name}`);
+
+      const rawSourceContext: any = {
+        rawSource,
+        [MESH_API_CONTEXT_SYMBOL]: true,
+      };
+      const transformedSchema = sourceMap.get(rawSource);
+      const rootTypes: Record<OperationTypeNode, GraphQLObjectType> = {
+        query: transformedSchema.getQueryType(),
+        mutation: transformedSchema.getMutationType(),
+        subscription: transformedSchema.getSubscriptionType(),
+      };
+
+      rawSourceLogger.debug(`In Context SDK is being generated`);
+      for (const operationType in rootTypes) {
+        const rootType: GraphQLObjectType = rootTypes[operationType];
+        if (rootType) {
+          rawSourceContext[rootType.name] = {};
+          const rootTypeFieldMap = rootType.getFields();
+          for (const fieldName in rootTypeFieldMap) {
+            const rootTypeField = rootTypeFieldMap[fieldName];
+            const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
+            rawSourceContext[rootType.name][fieldName] = ({
+              root,
+              args,
+              context,
+              info,
+              selectionSet,
+              key,
+              argsFromKeys,
+            }: {
+              root: any;
+              args: any;
+              context: any;
+              info: GraphQLResolveInfo;
+              selectionSet: (subtree: SelectionSetNode) => SelectionSetNode;
+              key?: string;
+              argsFromKeys?: (keys: string[]) => any;
+            }) => {
+              inContextSdkLogger.debug(`Called with ${JSON.stringify({ root, args, key })}`);
+              const delegationOptions = {
+                schema: rawSource,
+                rootValue: root,
+                operation: operationType as OperationTypeNode,
+                fieldName,
+                args,
+                returnType: rootTypeField.type,
+                context,
+                transformedSchema,
+                skipValidation: true,
+                info,
+              };
+              if (isListType(rootTypeField.type) && key && argsFromKeys) {
+                const batchDelegationOptions = {
+                  ...delegationOptions,
+                  key,
+                  argsFromKeys,
+                };
+                delete batchDelegationOptions.args;
+                return batchDelegateToSchema(batchDelegationOptions);
+              } else if (selectionSet) {
+                return delegateToSchema({
+                  ...delegationOptions,
+                  transforms: [new WrapQuery([fieldName], selectionSet, res => res)],
+                });
+              } else {
+                return delegateToSchema(delegationOptions);
+              }
+            };
+          }
+        }
+      }
+      baseMeshContext[rawSource.name] = rawSourceContext;
+    })
+  );
+
   const buildMeshContextLogger = logger.child(`buildMeshContext`);
   async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
     additionalContext: TAdditionalContext = {} as any
@@ -154,104 +240,23 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       return additionalContext as TContext;
     }
 
-    buildMeshContextLogger.debug(`Attaching pubsub, cache and liveQueryStore to the context`);
-    const context: TContext = Object.assign(additionalContext as any, {
-      pubsub,
-      cache,
-      liveQueryStore,
-      [MESH_CONTEXT_SYMBOL]: true,
-    });
+    buildMeshContextLogger.debug(`Attaching in-context SDK, pubsub, cache and liveQueryStore to the context`);
+    const context: TContext = Object.assign(additionalContext as any, baseMeshContext);
 
-    const sourceMap: Map<RawSourceOutput, GraphQLSchema> = unifiedSchema.extensions.sourceMap;
     buildMeshContextLogger.debug(`Building context for each source`);
     await Promise.all(
       rawSources.map(async rawSource => {
         const rawSourceLogger = buildMeshContextLogger.child(`${rawSource.name}`);
-        rawSourceLogger.debug(`Building context`);
         const contextBuilder = rawSource.contextBuilder;
 
         if (contextBuilder) {
+          rawSourceLogger.debug(`Building context`);
           const sourceContext = await contextBuilder(context);
           if (sourceContext) {
             Object.assign(context, sourceContext);
           }
+          rawSourceLogger.debug(`Context has been built successfully`);
         }
-        rawSourceLogger.debug(`Context has been built successfully`);
-
-        const rawSourceContext: any = {
-          rawSource,
-          [MESH_API_CONTEXT_SYMBOL]: true,
-        };
-        const transformedSchema = sourceMap.get(rawSource);
-        const rootTypes: Record<OperationTypeNode, GraphQLObjectType> = {
-          query: transformedSchema.getQueryType(),
-          mutation: transformedSchema.getMutationType(),
-          subscription: transformedSchema.getSubscriptionType(),
-        };
-
-        rawSourceLogger.debug(`In Context SDK is being generated`);
-        for (const operationType in rootTypes) {
-          const rootType: GraphQLObjectType = rootTypes[operationType];
-          if (rootType) {
-            rawSourceContext[rootType.name] = {};
-            const rootTypeFieldMap = rootType.getFields();
-            for (const fieldName in rootTypeFieldMap) {
-              const rootTypeField = rootTypeFieldMap[fieldName];
-              const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
-              rawSourceContext[rootType.name][fieldName] = ({
-                root,
-                args,
-                context: givenContext = context,
-                info,
-                selectionSet,
-                key,
-                argsFromKeys,
-              }: {
-                root: any;
-                args: any;
-                context: any;
-                info: GraphQLResolveInfo;
-                selectionSet: (subtree: SelectionSetNode) => SelectionSetNode;
-                key?: string;
-                argsFromKeys?: (keys: string[]) => any;
-              }) => {
-                inContextSdkLogger.debug(`Called with ${JSON.stringify({ root, args, key })}`);
-                const delegationOptions = {
-                  schema: rawSource,
-                  rootValue: root,
-                  operation: operationType as OperationTypeNode,
-                  fieldName,
-                  args,
-                  returnType: rootTypeField.type,
-                  context: givenContext,
-                  transformedSchema,
-                  skipValidation: true,
-                  info,
-                };
-                if (isListType(rootTypeField.type) && key && argsFromKeys) {
-                  const batchDelegationOptions = {
-                    ...delegationOptions,
-                    key,
-                    argsFromKeys,
-                  };
-                  delete batchDelegationOptions.args;
-                  return batchDelegateToSchema(batchDelegationOptions);
-                } else if (selectionSet) {
-                  return delegateToSchema({
-                    ...delegationOptions,
-                    transforms: [new WrapQuery([fieldName], selectionSet, res => res)],
-                  });
-                } else {
-                  return delegateToSchema(delegationOptions);
-                }
-              };
-            }
-          }
-        }
-
-        Object.assign(context, {
-          [rawSource.name]: rawSourceContext,
-        });
       })
     );
 

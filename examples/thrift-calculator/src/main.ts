@@ -22,5 +22,7 @@ const app: express.Application = createThriftServer({
 });
 
 export default app.listen(PORT, () => {
-  console.log(`Express server listening on port: ${PORT}`);
+  if (!process.env.CI) {
+    console.log(`Express server listening on port: ${PORT}`);
+  }
 });
