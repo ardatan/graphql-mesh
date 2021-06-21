@@ -2354,6 +2354,35 @@
     url "^0.11.0"
     webpack-sources "^1.4.3"
 
+"@envelop/core@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-0.3.0.tgz#43bd27fd338c5d3242c936ecb934823d34a0cda6"
+  integrity sha512-O2ydpp7JiX558wf3kS3UPSn/fQ7QORy4WQ/8ALEE1zCFxt/Ilynm+Gu2rU1mMEKXUd0th23i3ZbjBhsrNDH3QA==
+  dependencies:
+    "@envelop/types" "0.2.0"
+
+"@envelop/graphql-jit@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@envelop/graphql-jit/-/graphql-jit-0.2.0.tgz#f63bb4149a196ac85f35e7ea9cb31b679c6acf3d"
+  integrity sha512-5HsbJ7jZ7XCmeEXSmFfzimHQSf9c3lCCaVYLrisqth9aru5reBBvgJj7kbUyOOGu/O++aWsHz4ZcVP13686JoQ==
+  dependencies:
+    graphql-jit "^0.5.0"
+    tiny-lru "7.0.6"
+
+"@envelop/live-query@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-0.0.1.tgz#ab71e9054530fdbf8944413f8e9553bbabd3c1e9"
+  integrity sha512-/FUM+uYbb/+cylxD8FjP6POfeWrFoXetneEbbTzll4JG1nQqLyaaX65jCn4CH1niP203pDxTZNyODmO1gKhqvA==
+  dependencies:
+    "@graphql-tools/utils" "^7.10.0"
+    "@n1ru4l/graphql-live-query" "^0.7.1"
+    "@n1ru4l/in-memory-live-query-store" "^0.6.5"
+
+"@envelop/types@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@envelop/types/-/types-0.2.0.tgz#d66f850a04032270ef55bcc128e6de113dcb0b33"
+  integrity sha512-rwK2zSui7d7hTZc0XZFOwV2AiU/n2NYT3z6TrkYbACNI3SV5bhPb6H1/WZOFK65VBCGIobFtnoWf/NmlFf7m9Q==
+
 "@eslint/eslintrc@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.2.tgz#f63d0ef06f5c0c57d76c4ab5f63d3835c51b0179"
@@ -2953,7 +2982,7 @@
     "@ardatan/aggregate-error" "0.0.1"
     camel-case "4.1.1"
 
-"@graphql-tools/utils@7.10.0", "@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.1", "@graphql-tools/utils@^7.1.0", "@graphql-tools/utils@^7.1.2", "@graphql-tools/utils@^7.2.4", "@graphql-tools/utils@^7.5.0", "@graphql-tools/utils@^7.7.0", "@graphql-tools/utils@^7.7.1", "@graphql-tools/utils@^7.8.1", "@graphql-tools/utils@^7.9.0", "@graphql-tools/utils@^7.9.1":
+"@graphql-tools/utils@7.10.0", "@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.1", "@graphql-tools/utils@^7.1.0", "@graphql-tools/utils@^7.1.2", "@graphql-tools/utils@^7.10.0", "@graphql-tools/utils@^7.2.4", "@graphql-tools/utils@^7.5.0", "@graphql-tools/utils@^7.7.0", "@graphql-tools/utils@^7.7.1", "@graphql-tools/utils@^7.8.1", "@graphql-tools/utils@^7.9.0", "@graphql-tools/utils@^7.9.1":
   version "7.10.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.10.0.tgz#07a4cb5d1bec1ff1dc1d47a935919ee6abd38699"
   integrity sha512-d334r6bo9mxdSqZW6zWboEnnOOFRrAPVQJ7LkU8/6grglrbcu6WhwCLzHb90E94JI3TD3ricC3YGbUqIi9Xg0w==
@@ -3522,12 +3551,12 @@
   resolved "https://registry.yarnpkg.com/@microsoft/fetch-event-source/-/fetch-event-source-2.0.1.tgz#9ceecc94b49fbaa15666e38ae8587f64acce007d"
   integrity sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==
 
-"@n1ru4l/graphql-live-query@0.7.1":
+"@n1ru4l/graphql-live-query@0.7.1", "@n1ru4l/graphql-live-query@^0.7.1":
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.7.1.tgz#c020d017c3ed6bcfdde49a7106ba035e4d0774f5"
   integrity sha512-5kJPe2FkPNsCGu9tocKIzUSNO986qAqdnbk8hIFqWlpVPBAmEAOYb1mr6PA18FYAlu7ojWm9Hm13k29aj2GGlQ==
 
-"@n1ru4l/in-memory-live-query-store@0.6.5":
+"@n1ru4l/in-memory-live-query-store@0.6.5", "@n1ru4l/in-memory-live-query-store@^0.6.5":
   version "0.6.5"
   resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.6.5.tgz#17dbd198b70da34ea7d8b05098945bbd3b2dbecc"
   integrity sha512-Yj9ova+t3TKuD5HFkqEBnjI1apNSEXq0JDqH41xz6ArWDLVY9e9kZMQBmIXe2iTeaKtkYOhcmrw2kdjITZaiqw==
@@ -11764,7 +11793,7 @@ graphql-iso-date@~3.3.0:
   resolved "https://registry.yarnpkg.com/graphql-iso-date/-/graphql-iso-date-3.3.0.tgz#cbe434b41e035e806338121b1b2b509a0f72bb80"
   integrity sha1-y+Q0tB4DXoBjOBIbGytQmg9yu4A=
 
-graphql-jit@0.5.1:
+graphql-jit@0.5.1, graphql-jit@^0.5.0:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.5.1.tgz#738cb2c772a65e9682f04f20dc8edac4365023da"
   integrity sha512-gzgnlu9/R/SnMnPe7MGQWh6sIpK7Tva2mT2ulhUenD0GZD1izbakevGGRT6ApTMenCOiClSVcugDNziXC5KKYg==
