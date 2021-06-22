@@ -1,8 +1,8 @@
+import { getBuiltMesh } from '../.mesh';
 import { FetchRecentEmailsDocument } from './graphql-operations';
-import { getMsGraphGraphQLClient } from './msGraphGraphQLClient';
 
 async function main() {
-  const client = await getMsGraphGraphQLClient();
+  const client = await getBuiltMesh();
   const result = await client.execute(
     FetchRecentEmailsDocument,
     {},

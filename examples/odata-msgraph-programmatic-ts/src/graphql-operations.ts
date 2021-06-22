@@ -1867,6 +1867,7 @@ export type GraphApplePushNotificationCertificate = GraphEntity & {
   __typename?: 'GraphApplePushNotificationCertificate';
   appleIdentifier?: Maybe<Scalars['String']>;
   certificate?: Maybe<Scalars['String']>;
+  certificateSerialNumber?: Maybe<Scalars['String']>;
   expirationDateTime: Scalars['DateTime'];
   lastModifiedDateTime: Scalars['DateTime'];
   topicIdentifier?: Maybe<Scalars['String']>;
@@ -1883,6 +1884,7 @@ export type GraphApplication = {
   appRoles: Array<Maybe<GraphAppRole>>;
   createdDateTime?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
+  disabledByMicrosoftStatus?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   groupMembershipClaims?: Maybe<Scalars['String']>;
   identifierUris: Array<Maybe<Scalars['String']>>;
@@ -2069,6 +2071,7 @@ export type GraphApplicationInput = {
   appRoles: Array<Maybe<GraphAppRoleInput>>;
   createdDateTime?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
+  disabledByMicrosoftStatus?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   groupMembershipClaims?: Maybe<Scalars['String']>;
   identifierUris: Array<Maybe<Scalars['String']>>;
@@ -2150,6 +2153,7 @@ export type GraphApplicationUpdateInput = {
   appRoles?: Maybe<Array<Maybe<GraphAppRoleInput>>>;
   createdDateTime?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
+  disabledByMicrosoftStatus?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   groupMembershipClaims?: Maybe<Scalars['String']>;
   identifierUris?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -3347,7 +3351,6 @@ export type GraphChat = GraphEntity & {
   messagesById?: Maybe<GraphChatMessage>;
   tabs?: Maybe<Array<Maybe<GraphTeamsTab>>>;
   tabsById?: Maybe<GraphTeamsTab>;
-  getAllMessages?: Maybe<Array<Maybe<GraphChatMessage>>>;
   sendActivityNotification?: Maybe<Scalars['JSON']>;
   id: Scalars['String'];
 };
@@ -3424,7 +3427,7 @@ export type GraphChatMessage = GraphEntity & {
   createdDateTime?: Maybe<Scalars['DateTime']>;
   deletedDateTime?: Maybe<Scalars['DateTime']>;
   etag?: Maybe<Scalars['String']>;
-  from?: Maybe<GraphIdentitySet>;
+  from?: Maybe<GraphChatMessageFromIdentitySet>;
   importance: GraphChatMessageImportance;
   lastEditedDateTime?: Maybe<Scalars['DateTime']>;
   lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
@@ -3471,6 +3474,14 @@ export type GraphChatMessageAttachment = {
   thumbnailUrl?: Maybe<Scalars['String']>;
 };
 
+export type GraphChatMessageFromIdentitySet = {
+  __typename?: 'GraphChatMessageFromIdentitySet';
+  rest?: Maybe<Scalars['JSON']>;
+  application?: Maybe<GraphIdentity>;
+  device?: Maybe<GraphIdentity>;
+  user?: Maybe<GraphIdentity>;
+};
+
 export type GraphChatMessageHostedContent = {
   __typename?: 'GraphChatMessageHostedContent';
   rest?: Maybe<Scalars['JSON']>;
@@ -3489,8 +3500,17 @@ export enum GraphChatMessageImportance {
 export type GraphChatMessageMention = {
   __typename?: 'GraphChatMessageMention';
   id?: Maybe<Scalars['Int']>;
-  mentioned?: Maybe<GraphIdentitySet>;
+  mentioned?: Maybe<GraphChatMessageMentionedIdentitySet>;
   mentionText?: Maybe<Scalars['String']>;
+};
+
+export type GraphChatMessageMentionedIdentitySet = {
+  __typename?: 'GraphChatMessageMentionedIdentitySet';
+  conversation?: Maybe<GraphTeamworkConversationIdentity>;
+  rest?: Maybe<Scalars['JSON']>;
+  application?: Maybe<GraphIdentity>;
+  device?: Maybe<GraphIdentity>;
+  user?: Maybe<GraphIdentity>;
 };
 
 export type GraphChatMessagePolicyViolation = {
@@ -3533,7 +3553,15 @@ export type GraphChatMessageReaction = {
   __typename?: 'GraphChatMessageReaction';
   createdDateTime: Scalars['DateTime'];
   reactionType: Scalars['String'];
-  user: GraphIdentitySet;
+  user: GraphChatMessageReactionIdentitySet;
+};
+
+export type GraphChatMessageReactionIdentitySet = {
+  __typename?: 'GraphChatMessageReactionIdentitySet';
+  rest?: Maybe<Scalars['JSON']>;
+  application?: Maybe<GraphIdentity>;
+  device?: Maybe<GraphIdentity>;
+  user?: Maybe<GraphIdentity>;
 };
 
 export enum GraphChatMessageType {
@@ -5444,6 +5472,9 @@ export enum GraphDeviceEnrollmentType {
   WindowsAutoEnrollment = 'windowsAutoEnrollment',
   WindowsBulkAzureDomainJoin = 'windowsBulkAzureDomainJoin',
   WindowsCoManagement = 'windowsCoManagement',
+  WindowsAzureAdJoinUsingDeviceAuth = 'windowsAzureADJoinUsingDeviceAuth',
+  AppleUserEnrollment = 'appleUserEnrollment',
+  AppleUserEnrollmentWithServiceAccount = 'appleUserEnrollmentWithServiceAccount',
 }
 
 export type GraphDeviceEnrollmentWindowsHelloForBusinessConfiguration = GraphDeviceEnrollmentConfiguration & {
@@ -6942,6 +6973,182 @@ export enum GraphEditionUpgradeLicenseType {
   LicenseFile = 'licenseFile',
 }
 
+export enum GraphEducationAddedStudentAction {
+  None = 'none',
+  AssignIfOpen = 'assignIfOpen',
+  UnknownFutureValue = 'unknownFutureValue',
+}
+
+export type GraphEducationAssignment = GraphEntity & {
+  __typename?: 'GraphEducationAssignment';
+  addedStudentAction?: Maybe<GraphEducationAddedStudentAction>;
+  allowLateSubmissions?: Maybe<Scalars['Boolean']>;
+  allowStudentsToAddResourcesToSubmission?: Maybe<Scalars['Boolean']>;
+  assignDateTime?: Maybe<Scalars['DateTime']>;
+  assignedDateTime?: Maybe<Scalars['DateTime']>;
+  assignTo?: Maybe<GraphEducationAssignmentRecipient>;
+  classId?: Maybe<Scalars['String']>;
+  closeDateTime?: Maybe<Scalars['DateTime']>;
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  dueDateTime?: Maybe<Scalars['DateTime']>;
+  grading?: Maybe<GraphEducationAssignmentGradeType>;
+  instructions?: Maybe<GraphEducationItemBody>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+  notificationChannelUrl?: Maybe<Scalars['String']>;
+  resourcesFolderUrl?: Maybe<Scalars['String']>;
+  status?: Maybe<GraphEducationAssignmentStatus>;
+  webUrl?: Maybe<Scalars['String']>;
+  categories?: Maybe<Array<Maybe<GraphEducationCategory>>>;
+  categoriesById?: Maybe<GraphEducationCategory>;
+  resources?: Maybe<Array<Maybe<GraphEducationAssignmentResource>>>;
+  resourcesById?: Maybe<GraphEducationAssignmentResource>;
+  rubric?: Maybe<GraphEducationRubric>;
+  submissions?: Maybe<Array<Maybe<GraphEducationSubmission>>>;
+  submissionsById?: Maybe<GraphEducationSubmission>;
+  setUpResourcesFolder?: Maybe<GraphEducationAssignment>;
+  publish?: Maybe<Scalars['JSON']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationAssignmentCategoriesArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationAssignmentCategoriesByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationAssignmentResourcesArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationAssignmentResourcesByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationAssignmentSubmissionsArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationAssignmentSubmissionsByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationAssignmentPublishArgs = {
+  bindingParameter?: Maybe<GraphEducationAssignmentInput>;
+};
+
+export type GraphEducationAssignmentClassRecipient = GraphEducationAssignmentRecipient & {
+  __typename?: 'GraphEducationAssignmentClassRecipient';
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentDefaults = GraphEntity & {
+  __typename?: 'GraphEducationAssignmentDefaults';
+  addedStudentAction?: Maybe<GraphEducationAddedStudentAction>;
+  dueTime?: Maybe<Scalars['String']>;
+  notificationChannelUrl?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationAssignmentGrade = {
+  gradedBy?: Maybe<GraphIdentitySet>;
+  gradedDateTime?: Maybe<Scalars['DateTime']>;
+};
+
+export type GraphEducationAssignmentGradeType = {
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentGradeTypeInput = {
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentGroupRecipient = GraphEducationAssignmentRecipient & {
+  __typename?: 'GraphEducationAssignmentGroupRecipient';
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentIndividualRecipient = GraphEducationAssignmentRecipient & {
+  __typename?: 'GraphEducationAssignmentIndividualRecipient';
+  recipients?: Maybe<Array<Maybe<Scalars['String']>>>;
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentInput = {
+  addedStudentAction?: Maybe<GraphEducationAddedStudentAction>;
+  allowLateSubmissions?: Maybe<Scalars['Boolean']>;
+  allowStudentsToAddResourcesToSubmission?: Maybe<Scalars['Boolean']>;
+  assignDateTime?: Maybe<Scalars['DateTime']>;
+  assignedDateTime?: Maybe<Scalars['DateTime']>;
+  assignTo?: Maybe<GraphEducationAssignmentRecipientInput>;
+  classId?: Maybe<Scalars['String']>;
+  closeDateTime?: Maybe<Scalars['DateTime']>;
+  createdBy?: Maybe<GraphIdentitySetInput>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  dueDateTime?: Maybe<Scalars['DateTime']>;
+  grading?: Maybe<GraphEducationAssignmentGradeTypeInput>;
+  instructions?: Maybe<GraphEducationItemBodyInput>;
+  lastModifiedBy?: Maybe<GraphIdentitySetInput>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+  notificationChannelUrl?: Maybe<Scalars['String']>;
+  resourcesFolderUrl?: Maybe<Scalars['String']>;
+  status?: Maybe<GraphEducationAssignmentStatus>;
+  webUrl?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationAssignmentPointsGrade = GraphEducationAssignmentGrade & {
+  __typename?: 'GraphEducationAssignmentPointsGrade';
+  points?: Maybe<Scalars['Float']>;
+  gradedBy?: Maybe<GraphIdentitySet>;
+  gradedDateTime?: Maybe<Scalars['DateTime']>;
+};
+
+export type GraphEducationAssignmentPointsGradeType = GraphEducationAssignmentGradeType & {
+  __typename?: 'GraphEducationAssignmentPointsGradeType';
+  maxPoints?: Maybe<Scalars['Float']>;
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentRecipient = {
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentRecipientInput = {
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationAssignmentResource = GraphEntity & {
+  __typename?: 'GraphEducationAssignmentResource';
+  distributeForStudentWork?: Maybe<Scalars['Boolean']>;
+  resource?: Maybe<GraphEducationResource>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationAssignmentSettings = GraphEntity & {
+  __typename?: 'GraphEducationAssignmentSettings';
+  submissionAnimationDisabled?: Maybe<Scalars['Boolean']>;
+  id: Scalars['String'];
+};
+
+export enum GraphEducationAssignmentStatus {
+  Draft = 'draft',
+  Published = 'published',
+  Assigned = 'assigned',
+  UnknownFutureValue = 'unknownFutureValue',
+}
+
+export type GraphEducationCategory = GraphEntity & {
+  __typename?: 'GraphEducationCategory';
+  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+};
+
 export type GraphEducationClass = GraphEntity & {
   __typename?: 'GraphEducationClass';
   classCode?: Maybe<Scalars['String']>;
@@ -6956,6 +7163,12 @@ export type GraphEducationClass = GraphEntity & {
   grade?: Maybe<Scalars['String']>;
   mailNickname: Scalars['String'];
   term?: Maybe<GraphEducationTerm>;
+  assignmentCategories?: Maybe<Array<Maybe<GraphEducationCategory>>>;
+  assignmentCategoriesById?: Maybe<GraphEducationCategory>;
+  assignmentDefaults?: Maybe<GraphEducationAssignmentDefaults>;
+  assignments?: Maybe<Array<Maybe<GraphEducationAssignment>>>;
+  assignmentsById?: Maybe<GraphEducationAssignment>;
+  assignmentSettings?: Maybe<GraphEducationAssignmentSettings>;
   group?: Maybe<GraphGroup>;
   members?: Maybe<Array<Maybe<GraphEducationUser>>>;
   membersById?: Maybe<GraphEducationUser>;
@@ -6965,6 +7178,22 @@ export type GraphEducationClass = GraphEntity & {
   teachersById?: Maybe<GraphEducationUser>;
   delta?: Maybe<Array<Maybe<GraphEducationClass>>>;
   id: Scalars['String'];
+};
+
+export type GraphEducationClassAssignmentCategoriesArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationClassAssignmentCategoriesByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationClassAssignmentsArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationClassAssignmentsByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
 };
 
 export type GraphEducationClassMembersArgs = {
@@ -7000,11 +7229,47 @@ export type GraphEducationCourse = {
   subject?: Maybe<Scalars['String']>;
 };
 
+export type GraphEducationExcelResource = GraphEducationResource & {
+  __typename?: 'GraphEducationExcelResource';
+  fileUrl?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+};
+
 export enum GraphEducationExternalSource {
   Sis = 'sis',
   Manual = 'manual',
   UnknownFutureValue = 'unknownFutureValue',
 }
+
+export type GraphEducationFeedback = {
+  __typename?: 'GraphEducationFeedback';
+  feedbackBy?: Maybe<GraphIdentitySet>;
+  feedbackDateTime?: Maybe<Scalars['DateTime']>;
+  text?: Maybe<GraphEducationItemBody>;
+};
+
+export type GraphEducationFeedbackOutcome = GraphEducationOutcome & {
+  __typename?: 'GraphEducationFeedbackOutcome';
+  feedback?: Maybe<GraphEducationFeedback>;
+  publishedFeedback?: Maybe<GraphEducationFeedback>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationFileResource = GraphEducationResource & {
+  __typename?: 'GraphEducationFileResource';
+  fileUrl?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+};
 
 export enum GraphEducationGender {
   Female = 'female',
@@ -7012,6 +7277,27 @@ export enum GraphEducationGender {
   Other = 'other',
   UnknownFutureValue = 'unknownFutureValue',
 }
+
+export type GraphEducationItemBody = {
+  __typename?: 'GraphEducationItemBody';
+  content?: Maybe<Scalars['String']>;
+  contentType?: Maybe<GraphBodyType>;
+};
+
+export type GraphEducationItemBodyInput = {
+  content?: Maybe<Scalars['String']>;
+  contentType?: Maybe<GraphBodyType>;
+};
+
+export type GraphEducationLinkResource = GraphEducationResource & {
+  __typename?: 'GraphEducationLinkResource';
+  link?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+};
 
 export type GraphEducationOnPremisesInfo = {
   __typename?: 'GraphEducationOnPremisesInfo';
@@ -7024,6 +7310,39 @@ export type GraphEducationOrganization = {
   externalSource?: Maybe<GraphEducationExternalSource>;
   externalSourceDetail?: Maybe<Scalars['String']>;
   id: Scalars['String'];
+};
+
+export type GraphEducationOutcome = {
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationPointsOutcome = GraphEducationOutcome & {
+  __typename?: 'GraphEducationPointsOutcome';
+  points?: Maybe<GraphEducationAssignmentPointsGrade>;
+  publishedPoints?: Maybe<GraphEducationAssignmentPointsGrade>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationPowerPointResource = GraphEducationResource & {
+  __typename?: 'GraphEducationPowerPointResource';
+  fileUrl?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+};
+
+export type GraphEducationResource = {
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
 };
 
 export type GraphEducationRoot = {
@@ -7059,6 +7378,31 @@ export type GraphEducationRootUsersArgs = {
 
 export type GraphEducationRootUsersByIdArgs = {
   id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationRubric = GraphEntity & {
+  __typename?: 'GraphEducationRubric';
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<GraphEducationItemBody>;
+  displayName?: Maybe<Scalars['String']>;
+  grading?: Maybe<GraphEducationAssignmentGradeType>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+  levels?: Maybe<Array<Maybe<GraphRubricLevel>>>;
+  qualities?: Maybe<Array<Maybe<GraphRubricQuality>>>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationRubricOutcome = GraphEducationOutcome & {
+  __typename?: 'GraphEducationRubricOutcome';
+  publishedRubricQualityFeedback?: Maybe<Array<Maybe<GraphRubricQualityFeedbackModel>>>;
+  publishedRubricQualitySelectedLevels?: Maybe<Array<Maybe<GraphRubricQualitySelectedColumnModel>>>;
+  rubricQualityFeedback?: Maybe<Array<Maybe<GraphRubricQualityFeedbackModel>>>;
+  rubricQualitySelectedLevels?: Maybe<Array<Maybe<GraphRubricQualitySelectedColumnModel>>>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
 };
 
 export type GraphEducationSchool = GraphEducationOrganization & {
@@ -7113,6 +7457,108 @@ export type GraphEducationStudent = {
   studentNumber?: Maybe<Scalars['String']>;
 };
 
+export type GraphEducationSubmission = GraphEntity & {
+  __typename?: 'GraphEducationSubmission';
+  recipient?: Maybe<GraphEducationSubmissionRecipient>;
+  resourcesFolderUrl?: Maybe<Scalars['String']>;
+  returnedBy?: Maybe<GraphIdentitySet>;
+  returnedDateTime?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<GraphEducationSubmissionStatus>;
+  submittedBy?: Maybe<GraphIdentitySet>;
+  submittedDateTime?: Maybe<Scalars['DateTime']>;
+  unsubmittedBy?: Maybe<GraphIdentitySet>;
+  unsubmittedDateTime?: Maybe<Scalars['DateTime']>;
+  outcomes?: Maybe<Array<Maybe<GraphEducationOutcome>>>;
+  outcomesById?: Maybe<GraphEducationOutcome>;
+  resources?: Maybe<Array<Maybe<GraphEducationSubmissionResource>>>;
+  resourcesById?: Maybe<GraphEducationSubmissionResource>;
+  submittedResources?: Maybe<Array<Maybe<GraphEducationSubmissionResource>>>;
+  submittedResourcesById?: Maybe<GraphEducationSubmissionResource>;
+  setUpResourcesFolder?: Maybe<GraphEducationSubmission>;
+  return?: Maybe<Scalars['JSON']>;
+  submit?: Maybe<Scalars['JSON']>;
+  unsubmit?: Maybe<Scalars['JSON']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationSubmissionOutcomesArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationSubmissionOutcomesByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationSubmissionResourcesArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationSubmissionResourcesByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationSubmissionSubmittedResourcesArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationSubmissionSubmittedResourcesByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type GraphEducationSubmissionReturnArgs = {
+  bindingParameter?: Maybe<GraphEducationSubmissionInput>;
+};
+
+export type GraphEducationSubmissionSubmitArgs = {
+  bindingParameter?: Maybe<GraphEducationSubmissionInput>;
+};
+
+export type GraphEducationSubmissionUnsubmitArgs = {
+  bindingParameter?: Maybe<GraphEducationSubmissionInput>;
+};
+
+export type GraphEducationSubmissionIndividualRecipient = GraphEducationSubmissionRecipient & {
+  __typename?: 'GraphEducationSubmissionIndividualRecipient';
+  userId?: Maybe<Scalars['String']>;
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationSubmissionInput = {
+  recipient?: Maybe<GraphEducationSubmissionRecipientInput>;
+  resourcesFolderUrl?: Maybe<Scalars['String']>;
+  returnedBy?: Maybe<GraphIdentitySetInput>;
+  returnedDateTime?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<GraphEducationSubmissionStatus>;
+  submittedBy?: Maybe<GraphIdentitySetInput>;
+  submittedDateTime?: Maybe<Scalars['DateTime']>;
+  unsubmittedBy?: Maybe<GraphIdentitySetInput>;
+  unsubmittedDateTime?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+};
+
+export type GraphEducationSubmissionRecipient = {
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationSubmissionRecipientInput = {
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type GraphEducationSubmissionResource = GraphEntity & {
+  __typename?: 'GraphEducationSubmissionResource';
+  assignmentResourceUrl?: Maybe<Scalars['String']>;
+  resource?: Maybe<GraphEducationResource>;
+  id: Scalars['String'];
+};
+
+export enum GraphEducationSubmissionStatus {
+  Working = 'working',
+  Submitted = 'submitted',
+  Released = 'released',
+  Returned = 'returned',
+  UnknownFutureValue = 'unknownFutureValue',
+}
+
 export type GraphEducationTeacher = {
   __typename?: 'GraphEducationTeacher';
   externalId?: Maybe<Scalars['String']>;
@@ -7160,6 +7606,8 @@ export type GraphEducationUser = GraphEntity & {
   usageLocation?: Maybe<Scalars['String']>;
   userPrincipalName?: Maybe<Scalars['String']>;
   userType?: Maybe<Scalars['String']>;
+  rubrics?: Maybe<Array<Maybe<GraphEducationRubric>>>;
+  rubricsById?: Maybe<GraphEducationRubric>;
   classes?: Maybe<Array<Maybe<GraphEducationClass>>>;
   classesById?: Maybe<GraphEducationClass>;
   schools?: Maybe<Array<Maybe<GraphEducationSchool>>>;
@@ -7169,6 +7617,14 @@ export type GraphEducationUser = GraphEntity & {
   user?: Maybe<GraphUser>;
   delta?: Maybe<Array<Maybe<GraphEducationUser>>>;
   id: Scalars['String'];
+};
+
+export type GraphEducationUserRubricsArgs = {
+  queryOptions?: Maybe<QueryOptions>;
+};
+
+export type GraphEducationUserRubricsByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
 };
 
 export type GraphEducationUserClassesArgs = {
@@ -7201,6 +7657,16 @@ export enum GraphEducationUserRole {
   None = 'none',
   UnknownFutureValue = 'unknownFutureValue',
 }
+
+export type GraphEducationWordResource = GraphEducationResource & {
+  __typename?: 'GraphEducationWordResource';
+  fileUrl?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+};
 
 export type GraphEmailAddress = {
   __typename?: 'GraphEmailAddress';
@@ -7975,6 +8441,7 @@ export type GraphGroup = {
   expirationDateTime?: Maybe<Scalars['DateTime']>;
   groupTypes: Array<Maybe<Scalars['String']>>;
   hasMembersWithLicenseErrors?: Maybe<Scalars['Boolean']>;
+  isAssignableToRole?: Maybe<Scalars['Boolean']>;
   licenseProcessingState?: Maybe<GraphLicenseProcessingState>;
   mail?: Maybe<Scalars['String']>;
   mailEnabled?: Maybe<Scalars['Boolean']>;
@@ -8325,6 +8792,7 @@ export type GraphGroupInput = {
   expirationDateTime?: Maybe<Scalars['DateTime']>;
   groupTypes: Array<Maybe<Scalars['String']>>;
   hasMembersWithLicenseErrors?: Maybe<Scalars['Boolean']>;
+  isAssignableToRole?: Maybe<Scalars['Boolean']>;
   licenseProcessingState?: Maybe<GraphLicenseProcessingStateInput>;
   mail?: Maybe<Scalars['String']>;
   mailEnabled?: Maybe<Scalars['Boolean']>;
@@ -8508,6 +8976,7 @@ export type GraphGroupUpdateInput = {
   expirationDateTime?: Maybe<Scalars['DateTime']>;
   groupTypes?: Maybe<Array<Maybe<Scalars['String']>>>;
   hasMembersWithLicenseErrors?: Maybe<Scalars['Boolean']>;
+  isAssignableToRole?: Maybe<Scalars['Boolean']>;
   licenseProcessingState?: Maybe<GraphLicenseProcessingStateInput>;
   mail?: Maybe<Scalars['String']>;
   mailEnabled?: Maybe<Scalars['Boolean']>;
@@ -11698,10 +12167,12 @@ export type GraphManagedDevice = GraphEntity & {
   easDeviceId?: Maybe<Scalars['String']>;
   emailAddress?: Maybe<Scalars['String']>;
   enrolledDateTime: Scalars['DateTime'];
+  ethernetMacAddress?: Maybe<Scalars['String']>;
   exchangeAccessState: GraphDeviceManagementExchangeAccessState;
   exchangeAccessStateReason: GraphDeviceManagementExchangeAccessStateReason;
   exchangeLastSuccessfulSyncDateTime: Scalars['DateTime'];
   freeStorageSpaceInBytes: Scalars['BigInt'];
+  iccid?: Maybe<Scalars['String']>;
   imei?: Maybe<Scalars['String']>;
   isEncrypted: Scalars['Boolean'];
   isSupervised: Scalars['Boolean'];
@@ -11713,15 +12184,18 @@ export type GraphManagedDevice = GraphEntity & {
   manufacturer?: Maybe<Scalars['String']>;
   meid?: Maybe<Scalars['String']>;
   model?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
   operatingSystem?: Maybe<Scalars['String']>;
   osVersion?: Maybe<Scalars['String']>;
   partnerReportedThreatState: GraphManagedDevicePartnerReportedHealthState;
   phoneNumber?: Maybe<Scalars['String']>;
+  physicalMemoryInBytes: Scalars['BigInt'];
   remoteAssistanceSessionErrorDetails?: Maybe<Scalars['String']>;
   remoteAssistanceSessionUrl?: Maybe<Scalars['String']>;
   serialNumber?: Maybe<Scalars['String']>;
   subscriberCarrier?: Maybe<Scalars['String']>;
   totalStorageSpaceInBytes: Scalars['BigInt'];
+  udid?: Maybe<Scalars['String']>;
   userDisplayName?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
   userPrincipalName?: Maybe<Scalars['String']>;
@@ -11845,6 +12319,7 @@ export type GraphManagedDeviceWipeArgs = {
   keepEnrollmentData?: Maybe<Scalars['Boolean']>;
   keepUserData?: Maybe<Scalars['Boolean']>;
   macOsUnlockCode?: Maybe<Scalars['String']>;
+  persistEsimDataPlan?: Maybe<Scalars['Boolean']>;
 };
 
 export type GraphManagedDeviceInput = {
@@ -11866,10 +12341,12 @@ export type GraphManagedDeviceInput = {
   easDeviceId?: Maybe<Scalars['String']>;
   emailAddress?: Maybe<Scalars['String']>;
   enrolledDateTime: Scalars['DateTime'];
+  ethernetMacAddress?: Maybe<Scalars['String']>;
   exchangeAccessState: GraphDeviceManagementExchangeAccessState;
   exchangeAccessStateReason: GraphDeviceManagementExchangeAccessStateReason;
   exchangeLastSuccessfulSyncDateTime: Scalars['DateTime'];
   freeStorageSpaceInBytes: Scalars['BigInt'];
+  iccid?: Maybe<Scalars['String']>;
   imei?: Maybe<Scalars['String']>;
   isEncrypted: Scalars['Boolean'];
   isSupervised: Scalars['Boolean'];
@@ -11881,15 +12358,18 @@ export type GraphManagedDeviceInput = {
   manufacturer?: Maybe<Scalars['String']>;
   meid?: Maybe<Scalars['String']>;
   model?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
   operatingSystem?: Maybe<Scalars['String']>;
   osVersion?: Maybe<Scalars['String']>;
   partnerReportedThreatState: GraphManagedDevicePartnerReportedHealthState;
   phoneNumber?: Maybe<Scalars['String']>;
+  physicalMemoryInBytes: Scalars['BigInt'];
   remoteAssistanceSessionErrorDetails?: Maybe<Scalars['String']>;
   remoteAssistanceSessionUrl?: Maybe<Scalars['String']>;
   serialNumber?: Maybe<Scalars['String']>;
   subscriberCarrier?: Maybe<Scalars['String']>;
   totalStorageSpaceInBytes: Scalars['BigInt'];
+  udid?: Maybe<Scalars['String']>;
   userDisplayName?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
   userPrincipalName?: Maybe<Scalars['String']>;
@@ -17567,6 +18047,40 @@ export enum GraphRoutingType {
   UnknownFutureValue = 'unknownFutureValue',
 }
 
+export type GraphRubricCriterion = {
+  __typename?: 'GraphRubricCriterion';
+  description?: Maybe<GraphEducationItemBody>;
+};
+
+export type GraphRubricLevel = {
+  __typename?: 'GraphRubricLevel';
+  description?: Maybe<GraphEducationItemBody>;
+  displayName?: Maybe<Scalars['String']>;
+  grading?: Maybe<GraphEducationAssignmentGradeType>;
+  levelId?: Maybe<Scalars['String']>;
+};
+
+export type GraphRubricQuality = {
+  __typename?: 'GraphRubricQuality';
+  criteria?: Maybe<Array<Maybe<GraphRubricCriterion>>>;
+  description?: Maybe<GraphEducationItemBody>;
+  displayName?: Maybe<Scalars['String']>;
+  qualityId?: Maybe<Scalars['String']>;
+  weight?: Maybe<Scalars['Float']>;
+};
+
+export type GraphRubricQualityFeedbackModel = {
+  __typename?: 'GraphRubricQualityFeedbackModel';
+  feedback?: Maybe<GraphEducationItemBody>;
+  qualityId?: Maybe<Scalars['String']>;
+};
+
+export type GraphRubricQualitySelectedColumnModel = {
+  __typename?: 'GraphRubricQualitySelectedColumnModel';
+  columnId?: Maybe<Scalars['String']>;
+  qualityId?: Maybe<Scalars['String']>;
+};
+
 export enum GraphRunAsAccountType {
   System = 'system',
   User = 'user',
@@ -18129,6 +18643,7 @@ export type GraphServicePrincipal = {
   appRoleAssignmentRequired: Scalars['Boolean'];
   appRoles: Array<Maybe<GraphAppRole>>;
   description?: Maybe<Scalars['String']>;
+  disabledByMicrosoftStatus?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   info?: Maybe<GraphInformationalUrl>;
@@ -18384,6 +18899,7 @@ export type GraphServicePrincipalInput = {
   appRoleAssignmentRequired: Scalars['Boolean'];
   appRoles: Array<Maybe<GraphAppRoleInput>>;
   description?: Maybe<Scalars['String']>;
+  disabledByMicrosoftStatus?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   info?: Maybe<GraphInformationalUrlInput>;
@@ -18420,6 +18936,7 @@ export type GraphServicePrincipalUpdateInput = {
   appRoleAssignmentRequired?: Maybe<Scalars['Boolean']>;
   appRoles?: Maybe<Array<Maybe<GraphAppRoleInput>>>;
   description?: Maybe<Scalars['String']>;
+  disabledByMicrosoftStatus?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   homepage?: Maybe<Scalars['String']>;
   info?: Maybe<GraphInformationalUrlInput>;
@@ -19476,7 +19993,6 @@ export type GraphTeam = GraphEntity & {
   primaryChannel?: Maybe<GraphChannel>;
   template?: Maybe<GraphTeamsTemplate>;
   rest?: Maybe<Scalars['JSON']>;
-  getAllMessages?: Maybe<Array<Maybe<GraphChatMessage>>>;
   archive?: Maybe<Scalars['JSON']>;
   clone?: Maybe<Scalars['JSON']>;
   completeMigration?: Maybe<Scalars['JSON']>;
@@ -19823,6 +20339,21 @@ export type GraphTeamworkBot = GraphEntity & {
   rest?: Maybe<Scalars['JSON']>;
   id: Scalars['String'];
 };
+
+export type GraphTeamworkConversationIdentity = {
+  __typename?: 'GraphTeamworkConversationIdentity';
+  conversationIdentityType?: Maybe<GraphTeamworkConversationIdentityType>;
+  rest?: Maybe<Scalars['JSON']>;
+  displayName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+};
+
+export enum GraphTeamworkConversationIdentityType {
+  Team = 'team',
+  Channel = 'channel',
+  Chat = 'chat',
+  UnknownFutureValue = 'unknownFutureValue',
+}
 
 export type GraphTeamworkHostedContent = GraphEntity & {
   __typename?: 'GraphTeamworkHostedContent';
@@ -22958,7 +23489,6 @@ export type GraphWindowsAutopilotDeviceIdentity = GraphEntity & {
   assignUserToDevice?: Maybe<Scalars['JSON']>;
   unassignUserFromDevice?: Maybe<Scalars['JSON']>;
   updateDeviceProperties?: Maybe<Scalars['JSON']>;
-  deleteDevices?: Maybe<Scalars['JSON']>;
   id: Scalars['String'];
 };
 
@@ -22978,11 +23508,6 @@ export type GraphWindowsAutopilotDeviceIdentityUpdateDevicePropertiesArgs = {
   addressableUserName?: Maybe<Scalars['String']>;
   groupTag?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
-};
-
-export type GraphWindowsAutopilotDeviceIdentityDeleteDevicesArgs = {
-  bindingParameter?: Maybe<Array<Maybe<GraphWindowsAutopilotDeviceIdentityInput>>>;
-  serialNumbers?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export type GraphWindowsAutopilotDeviceIdentityInput = {
@@ -30047,6 +30572,22 @@ export type TGraphEdgeSearchEngineBase = GraphEdgeSearchEngineBase & {
   rest?: Maybe<Scalars['JSON']>;
 };
 
+export type TGraphEducationAssignmentGrade = GraphEducationAssignmentGrade & {
+  __typename?: 'TGraphEducationAssignmentGrade';
+  gradedBy?: Maybe<GraphIdentitySet>;
+  gradedDateTime?: Maybe<Scalars['DateTime']>;
+};
+
+export type TGraphEducationAssignmentGradeType = GraphEducationAssignmentGradeType & {
+  __typename?: 'TGraphEducationAssignmentGradeType';
+  rest?: Maybe<Scalars['JSON']>;
+};
+
+export type TGraphEducationAssignmentRecipient = GraphEducationAssignmentRecipient & {
+  __typename?: 'TGraphEducationAssignmentRecipient';
+  rest?: Maybe<Scalars['JSON']>;
+};
+
 export type TGraphEducationOrganization = GraphEducationOrganization &
   GraphEntity & {
     __typename?: 'TGraphEducationOrganization';
@@ -30056,6 +30597,28 @@ export type TGraphEducationOrganization = GraphEducationOrganization &
     externalSourceDetail?: Maybe<Scalars['String']>;
     id: Scalars['String'];
   };
+
+export type TGraphEducationOutcome = GraphEducationOutcome &
+  GraphEntity & {
+    __typename?: 'TGraphEducationOutcome';
+    lastModifiedBy?: Maybe<GraphIdentitySet>;
+    lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+    id: Scalars['String'];
+  };
+
+export type TGraphEducationResource = GraphEducationResource & {
+  __typename?: 'TGraphEducationResource';
+  createdBy?: Maybe<GraphIdentitySet>;
+  createdDateTime?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  lastModifiedBy?: Maybe<GraphIdentitySet>;
+  lastModifiedDateTime?: Maybe<Scalars['DateTime']>;
+};
+
+export type TGraphEducationSubmissionRecipient = GraphEducationSubmissionRecipient & {
+  __typename?: 'TGraphEducationSubmissionRecipient';
+  rest?: Maybe<Scalars['JSON']>;
+};
 
 export type TGraphEntity = GraphEntity & {
   __typename?: 'TGraphEntity';
@@ -31121,7 +31684,7 @@ export type FetchRecentEmailsQuery = { __typename?: 'Query' } & {
   >;
 };
 
-export const FetchRecentEmailsDocument: DocumentNode<FetchRecentEmailsQuery, FetchRecentEmailsQueryVariables> = {
+export const FetchRecentEmailsDocument = {
   kind: 'Document',
   definitions: [
     {
@@ -31190,4 +31753,4 @@ export const FetchRecentEmailsDocument: DocumentNode<FetchRecentEmailsQuery, Fet
       },
     },
   ],
-};
+} as DocumentNode<FetchRecentEmailsQuery, FetchRecentEmailsQueryVariables>;

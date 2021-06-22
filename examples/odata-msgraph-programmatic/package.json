@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "prestart": "mesh build",
-    "start": "node index.ts"
+    "start": "node index.js"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",

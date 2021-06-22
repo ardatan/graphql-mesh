@@ -176,7 +176,7 @@ import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { cwd } from 'process';
 import { relative, isAbsolute } from 'path';
 
-const importedModules = {
+const importedModules: Record<string, () => Promise<any>> = {
 ${[...importedModulesSet]
   .map(importedModuleName => {
     let moduleMapProp = importedModuleName;
@@ -209,7 +209,14 @@ export async function getMeshConfig(configProcessOptions: ConfigProcessOptions =
     validate: false
   });
   return processConfig(
-    ${JSON.stringify(rawConfig, null, 2)},
+    ${JSON.stringify(
+      {
+        ...rawConfig,
+        documents: documents.map(source => source.rawSDL),
+      },
+      null,
+      2
+    )},
     {
       dir: baseDir,
       store,

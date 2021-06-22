@@ -1,4 +1,4 @@
-import { getMeshSDK, Sdk } from './.mesh';
+import { getMeshSDK, Sdk } from '../.mesh';
 import { useEffect, useState } from 'react';
 
 export function useMeshSdk() {

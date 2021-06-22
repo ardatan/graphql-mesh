@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { useMeshSdk } from './mesh/useMeshSdk';
-import { getDailyForecastByCoordinatesQuery } from './mesh/.mesh';
+import { useMeshSdk } from './useMeshSdk';
+import { getDailyForecastByCoordinatesQuery } from '../.mesh';
 
 function App() {
   const [forecastData, setForecastData] = useState<getDailyForecastByCoordinatesQuery['forecastData']>();
