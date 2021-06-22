@@ -34,6 +34,7 @@ Now, we need to implement `src/mesh/additional-resolvers.js` with code that fetc
 
 ```js
 const moment = require('moment');
+const { parseSelectionSet } = require('@graphql-tools/utils');
 
 const resolvers = {
   Query: {
@@ -50,11 +51,11 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: /* GraphQL */`
+        selectionSet: () => (/* GraphQL */`
           {
             views
           }
-        `
+        `)
       });
 
       if (!items || items.length === 0) {
@@ -109,8 +110,8 @@ additionalTypeDefs: |
     todayForecast: Forecast
   }
 additionalResolvers:
-  - type: PopulatedPlaceSummary
-    field: dailyForecast
+  - targetTypeName: PopulatedPlaceSummary
+    targetFieldName: dailyForecast
     requiredSelectionSet:
       | # latitude and longitude will be request if dailyForecast is requested on PopulatedPlaceSummary level
       {
@@ -120,11 +121,11 @@ additionalResolvers:
     sourceName: Weather # Target Source Name
     sourceTypeName: Query # Target Root Type
     sourceFieldName: getForecastDailyLatLatLonLon # Target root field of that source
-    result: data # Return `data` property of returned data
-    args:
+    sourceArgs:
       lat: '{root.latitude}' # Access required fields and pass those to args of getForecastDailyLatLatLonLon
       lon: '{root.longitude}'
       key: "{context.headers['x-weather-api-key']}" # x-weather-api-key coming from HTTP Headers
+    result: data # Return `data` property of returned data
   - type: PopulatedPlaceSummary
     field: todayForecast
     requiredSelectionSet: |
@@ -135,16 +136,19 @@ additionalResolvers:
     sourceName: Weather
     sourceTypeName: Query
     sourceFieldName: getForecastDailyLatLatLonLon
-    result: data[0]
-    args:
+    sourceArgs:
       lat: '{root.latitude}'
       lon: '{root.longitude}'
       key: "{context.headers['x-weather-api-key']}"
+    result: data[0]
 ```
 
 The declaration above equals to the following;
 
 ```js
+const { parseSelectionSet } = require('@graphql-tools/utils');
+const { print } = require('graphql');
+
 module.exports = {
   PopulatedPlaceSummary: {
     dailyForecast: {
@@ -164,6 +168,13 @@ module.exports = {
           },
           context,
           info,
+          selectionSet: subtree => parseSelectionSet(/* GraphQL */`
+            {
+              data {
+                ${print(subtree)}
+              }
+            }
+          `)
         });
         return result?.data;
       },
@@ -185,6 +196,13 @@ module.exports = {
           },
           context,
           info,
+          selectionSet: subtree => parseSelectionSet(/* GraphQL */`
+            {
+              data {
+                ${print(subtree)}
+              }
+            }
+          `)
         });
         return result?.data?.length && result.data[0];
       },

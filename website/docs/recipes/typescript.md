@@ -22,13 +22,15 @@ additionalResolvers:
 
 Then, use the CLI command to generate the typings file based on your unified GraphQL schema:
 ```
-graphql-mesh typescript --output ./src/generated/mesh.ts
+mesh build
 ```
+
+[See more about artifacts](/getting-started/build-mesh-artifacts)
 
 Now, you can import `Resolvers` interface from the generated file, and use it as the type for your custom resolvers. It will make sure that your parent value, arguments, context type and return value are fully compatible with the implementation. It will also provide fully typed SDK from the context:
 
 ```ts
-import { Resolvers } from './generated/mesh';
+import { Resolvers } from './.mesh';
 
 export const resolvers: Resolvers = {
   // Your custom resolvers here

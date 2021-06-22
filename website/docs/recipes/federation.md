@@ -38,7 +38,9 @@ sources:
               config:
                 keyFields:
                   - id
-                resolveReference: ./services/accounts/user-reference-resolver
+                resolveReference:
+                  queryFieldName: user # Target root field
+                  
   - name: reviews # You can also use a federated schema
     handler:
       graphql:
