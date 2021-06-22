@@ -2,9 +2,10 @@ sources:
   - name: Mongoose
     handler:
       mongoose:
+        connectionString: mongodb://root:example@localhost:27017/test
         models:
           - name: User
             path: ./src/models.js#User
 
-serve:
-  exampleQuery: ./example-queries/*.graphql
+documents:
+  - ./example-queries/*.graphql

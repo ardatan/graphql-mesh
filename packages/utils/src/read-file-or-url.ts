@@ -9,9 +9,9 @@ const { readFile, stat } = fsPromises || {};
 
 export { isUrl };
 
-interface ReadFileOrUrlOptions extends RequestInit {
+export interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
-  fallbackFormat?: 'json' | 'yaml';
+  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
   fetch?: typeof fetch;
 }
@@ -51,6 +51,9 @@ export async function readFileWithCache<T>(
       return cachedObj.result;
     }
   }
+  if (/js$/.test(filePath) || /ts$/.test(filePath)) {
+    return import(filePath).then(m => m.default || m);
+  }
   let result: any = await readFile(actualPath, 'utf-8');
   if (/json$/.test(filePath)) {
     result = JSON.parse(result);
@@ -63,6 +66,10 @@ export async function readFileWithCache<T>(
         break;
       case 'yaml':
         result = loadYaml(result);
+        break;
+      case 'ts':
+      case 'js':
+        result = await import(filePath).then(m => m.default || m);
         break;
     }
   } else if (!allowUnknownExtensions) {
@@ -94,7 +101,7 @@ export async function readUrlWithCache<T>(
     contentType.includes('yml') ||
     fallbackFormat === 'yaml'
   ) {
-    return (loadYaml(responseText) as any) as T;
+    return loadYaml(responseText) as any as T;
   } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure URL '${path}' has ` +

@@ -1,5 +1,5 @@
 query PatientSearch {
-  searchPatient(name: "Jane") {
+  resourceByName(name: "Jane", resourceType: "Patient") {
     entry {
       resource {
         ... on Patient {

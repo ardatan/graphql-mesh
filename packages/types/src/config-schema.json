@@ -118,10 +118,6 @@
           "type": "string",
           "description": "The binding hostname (default: `localhost`)"
         },
-        "exampleQuery": {
-          "type": "string",
-          "description": "Provide an example query or queries for GraphQL Playground\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.\nBut TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)"
-        },
         "cors": {
           "$ref": "#/definitions/CorsConfig",
           "description": "Configuration for CORS"
@@ -324,14 +320,6 @@
           },
           "additionalItems": false,
           "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
-        },
-        "typeMerging": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MergedTypeConfig"
-          },
-          "additionalItems": false,
-          "description": "Type Merging Configuration\nhttps://www.graphql-tools.com/docs/stitch-type-merging"
         }
       },
       "required": ["name", "handler"]
@@ -443,6 +431,10 @@
         "snapshot": {
           "$ref": "#/definitions/SnapshotTransformConfig",
           "description": "Configuration for Snapshot extension"
+        },
+        "typeMerging": {
+          "$ref": "#/definitions/TypeMergingConfig",
+          "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
         }
       }
     },
@@ -451,9 +443,6 @@
       "type": "object",
       "title": "Handler",
       "properties": {
-        "fhir": {
-          "$ref": "#/definitions/FhirHandler"
-        },
         "graphql": {
           "$ref": "#/definitions/GraphQLHandler",
           "description": "Handler for remote/local/third-party GraphQL schema"
@@ -462,7 +451,7 @@
           "$ref": "#/definitions/GrpcHandler",
           "description": "Handler for gRPC and Protobuf schemas"
         },
-        "jsonSchema": {
+        "JsonSchema": {
           "$ref": "#/definitions/JsonSchemaHandler",
           "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
         },
@@ -507,63 +496,108 @@
       "type": "object",
       "title": "AdditionalStitchingResolverObject",
       "properties": {
-        "type": {
+        "sourceName": {
           "type": "string"
         },
-        "field": {
+        "sourceTypeName": {
+          "type": "string"
+        },
+        "sourceFieldName": {
+          "type": "string"
+        },
+        "sourceSelectionSet": {
           "type": "string"
         },
         "requiredSelectionSet": {
           "type": "string"
         },
-        "targetSource": {
-          "type": "string"
-        },
-        "targetMethod": {
-          "type": "string"
-        },
-        "args": {
+        "sourceArgs": {
           "type": "object",
           "properties": {}
         },
-        "returnData": {
+        "targetTypeName": {
           "type": "string"
         },
-        "resultSelectedFields": {
-          "type": "object",
-          "properties": {}
-        },
-        "resultSelectionSet": {
+        "targetFieldName": {
           "type": "string"
         },
-        "resultDepth": {
-          "type": "integer"
+        "result": {
+          "type": "string",
+          "description": "Extract specific property from the result"
+        },
+        "resultType": {
+          "type": "string",
+          "description": "If return types don't match,\nyou can specify a result type to apply inline fragment"
         }
       },
-      "required": ["type", "field", "targetSource", "targetMethod"]
+      "required": ["sourceName", "sourceTypeName", "sourceFieldName", "targetTypeName", "targetFieldName"]
+    },
+    "AdditionalStitchingBatchResolverObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "AdditionalStitchingBatchResolverObject",
+      "properties": {
+        "sourceName": {
+          "type": "string"
+        },
+        "sourceTypeName": {
+          "type": "string"
+        },
+        "sourceFieldName": {
+          "type": "string"
+        },
+        "keyField": {
+          "type": "string"
+        },
+        "keysArg": {
+          "type": "string"
+        },
+        "additionalArgs": {
+          "type": "object",
+          "properties": {}
+        },
+        "requiredSelectionSet": {
+          "type": "string"
+        },
+        "targetTypeName": {
+          "type": "string"
+        },
+        "targetFieldName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sourceName",
+        "sourceTypeName",
+        "sourceFieldName",
+        "keyField",
+        "keysArg",
+        "targetTypeName",
+        "targetFieldName"
+      ]
     },
     "AdditionalSubscriptionObject": {
       "additionalProperties": false,
       "type": "object",
       "title": "AdditionalSubscriptionObject",
       "properties": {
-        "type": {
+        "targetTypeName": {
           "type": "string"
         },
-        "field": {
+        "targetFieldName": {
           "type": "string"
         },
         "pubsubTopic": {
           "type": "string"
         },
-        "returnData": {
+        "result": {
           "type": "string"
         },
         "filterBy": {
           "type": "string"
         }
       },
-      "required": ["type", "field", "pubsubTopic"]
+      "required": ["targetTypeName", "targetFieldName", "pubsubTopic"]
     },
     "PubSubConfig": {
       "additionalProperties": false,
@@ -609,120 +643,6 @@
       },
       "required": ["field", "invalidate"]
     },
-    "MergedTypeConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MergedTypeConfig",
-      "properties": {
-        "typeName": {
-          "type": "string"
-        },
-        "fieldName": {
-          "type": "string"
-        },
-        "args": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
-        },
-        "argsFromKeys": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
-        },
-        "selectionSet": {
-          "type": "string"
-        },
-        "fields": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MergedFieldConfig"
-          },
-          "additionalItems": false
-        },
-        "key": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
-        },
-        "canonical": {
-          "type": "boolean"
-        },
-        "resolve": {
-          "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject",
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/definitions/AdditionalStitchingResolverObject"
-            },
-            {
-              "$ref": "#/definitions/AdditionalSubscriptionObject"
-            }
-          ]
-        }
-      }
-    },
-    "MergedFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MergedFieldConfig",
-      "properties": {
-        "fieldName": {
-          "type": "string"
-        },
-        "selectionSet": {
-          "type": "string"
-        },
-        "computed": {
-          "type": "boolean"
-        },
-        "canonical": {
-          "type": "boolean"
-        }
-      }
-    },
-    "FhirHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FhirHandler",
-      "properties": {
-        "endpoint": {
-          "type": "string"
-        }
-      }
-    },
     "GraphQLHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -730,7 +650,6 @@
       "properties": {
         "endpoint": {
           "type": "string",
-          "pattern": "^https?://.*$",
           "description": "A url or file path to your remote GraphQL endpoint.\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
         },
         "schemaHeaders": {
@@ -837,14 +756,6 @@
             }
           ]
         },
-        "serviceName": {
-          "type": "string",
-          "description": "Your base service name\nUsed for naming only"
-        },
-        "packageName": {
-          "type": "string",
-          "description": "Your base package name\nUsed for naming only"
-        },
         "requestTimeout": {
           "type": "integer",
           "description": "Request timeout in milliseconds\nDefault: 200000"
@@ -942,22 +853,7 @@
         "disableTimestampScalar": {
           "type": "boolean"
         },
-        "baseSchema": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
-        },
-        "errorMessageField": {
+        "errorMessage": {
           "type": "string",
           "description": "Field name of your custom error object (default: 'message')"
         }
@@ -1024,7 +920,7 @@
         "requestTypeName": {
           "type": "string"
         },
-        "responseSample": {
+        "responseSchema": {
           "anyOf": [
             {
               "type": "object",
@@ -1039,7 +935,7 @@
             }
           ]
         },
-        "responseSchema": {
+        "responseSample": {
           "anyOf": [
             {
               "type": "object",
@@ -2098,31 +1994,16 @@
       "type": "object",
       "title": "ResolveReferenceObject",
       "properties": {
-        "targetSource": {
-          "type": "string"
+        "queryFieldName": {
+          "type": "string",
+          "description": "Name of root field name that resolves the reference"
         },
-        "targetMethod": {
-          "type": "string"
-        },
-        "args": {
-          "type": "object",
-          "properties": {}
-        },
-        "returnData": {
-          "type": "string"
-        },
-        "resultSelectedFields": {
-          "type": "object",
-          "properties": {}
-        },
-        "resultSelectionSet": {
-          "type": "string"
-        },
-        "resultDepth": {
-          "type": "integer"
+        "keyArg": {
+          "type": "string",
+          "description": "If the root field name has multiple args,\nyou need to define which argument should receive the key"
         }
       },
-      "required": ["targetSource", "targetMethod", "args"]
+      "required": ["queryFieldName"]
     },
     "FederationField": {
       "additionalProperties": false,
@@ -2149,7 +2030,7 @@
         "provides": {
           "type": "string"
         },
-        "required": {
+        "requires": {
           "type": "string"
         }
       }
@@ -2516,6 +2397,126 @@
       },
       "required": ["apply", "outputDir"]
     },
+    "TypeMergingConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TypeMergingConfig",
+      "properties": {
+        "types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MergedTypeConfig"
+          },
+          "additionalItems": false
+        },
+        "queryFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MergedRootFieldConfig"
+          },
+          "additionalItems": false,
+          "description": "Denotes a root field used to query a merged type across services.\nThe marked field's name is analogous\nto the fieldName setting in\n[merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example),\nwhile the field's arguments and return type are used to infer merge configuration.\nDirective arguments tune the merge behavior"
+        }
+      }
+    },
+    "MergedRootFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MergedRootFieldConfig",
+      "properties": {
+        "queryFieldName": {
+          "type": "string"
+        },
+        "keyField": {
+          "type": "string",
+          "description": "Specifies the name of a field to pick off origin objects as the key value. When omitted, a `@key` directive must be included on the return type's definition to be built into an object key.\nhttps://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys"
+        },
+        "keyArg": {
+          "type": "string",
+          "description": "Specifies which field argument receives the merge key. This may be omitted for fields with only one argument where the recipient can be inferred."
+        },
+        "additionalArgs": {
+          "type": "string",
+          "description": "Specifies a string of additional keys and values to apply to other arguments,\nformatted as `\\\"\\\"\\\" arg1: \"value\", arg2: \"value\" \\\"\\\"\\\"`."
+        },
+        "key": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Advanced use only; Allows building a custom key just for the argument from the selectionSet included by the `@key` directive."
+        },
+        "argsExpr": {
+          "type": "string",
+          "description": "Advanced use only; This argument specifies a string expression that allows more customization of the input arguments. Rules for evaluation of this argument are as follows:\n  - basic object parsing of the input key: `\"arg1: $key.arg1, arg2: $key.arg2\"`\n  - any expression enclosed by double brackets will be evaluated once for each of the requested keys, and then sent as a list: `\"input: { keys: [[$key]] }\"`\n  - selections from the key can be referenced by using the $ sign and dot notation: `\"upcs: [[$key.upc]]\"`, so that `$key.upc` refers to the `upc` field of the key."
+        }
+      },
+      "required": ["queryFieldName"]
+    },
+    "MergedTypeConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MergedTypeConfig",
+      "properties": {
+        "typeName": {
+          "type": "string",
+          "description": "Name of the type (Query by default)"
+        },
+        "key": {
+          "$ref": "#/definitions/KeyAnnotation",
+          "description": "Specifies a base selection set needed to merge the annotated type across subschemas.\nAnalogous to the `selectionSet` setting specified in [merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example)."
+        },
+        "canonical": {
+          "type": "boolean",
+          "description": "Specifies types and fields\nthat provide a [canonical definition](https://www.graphql-tools.com/docs/stitch-type-merging#canonical-definitions) to be built into the gateway schema. Useful for selecting preferred characteristics among types and fields that overlap across subschemas. Root fields marked as canonical specify which subschema the field proxies for new queries entering the graph."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MergedTypeField"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "KeyAnnotation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "KeyAnnotation",
+      "properties": {
+        "selectionSet": {
+          "type": "string"
+        }
+      },
+      "required": ["selectionSet"]
+    },
+    "MergedTypeField": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MergedTypeField",
+      "properties": {
+        "fieldName": {
+          "type": "string"
+        },
+        "computed": {
+          "$ref": "#/definitions/ComputedAnnotation",
+          "description": "specifies a selection of fields required from other services to compute the value of this field.\nThese additional fields are only selected when the computed field is requested.\nAnalogous to [computed field](https://www.graphql-tools.com/docs/stitch-type-merging#computed-fields) in merged type configuration.\nComputed field dependencies must be sent into the subservice using an [object key](https://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys)."
+        }
+      },
+      "required": ["fieldName"]
+    },
+    "ComputedAnnotation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComputedAnnotation",
+      "properties": {
+        "selectionSet": {
+          "type": "string"
+        }
+      },
+      "required": ["selectionSet"]
+    },
     "TuqlHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -2539,7 +2540,7 @@
   "properties": {
     "serve": {
       "$ref": "#/definitions/ServeConfig",
-      "description": "Configuration for `mesh serve` command.\nThose commands won't be available in programmatic usage."
+      "description": "Configuration for `mesh start` or `mesh dev` command.\nThose commands won't be available in programmatic usage."
     },
     "require": {
       "type": "array",
@@ -2583,7 +2584,7 @@
     "additionalResolvers": {
       "type": "array",
       "items": {
-        "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject",
+        "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject",
         "anyOf": [
           {
             "type": "string"
@@ -2592,12 +2593,15 @@
             "$ref": "#/definitions/AdditionalStitchingResolverObject"
           },
           {
+            "$ref": "#/definitions/AdditionalStitchingBatchResolverObject"
+          },
+          {
             "$ref": "#/definitions/AdditionalSubscriptionObject"
           }
         ]
       },
       "additionalItems": false,
-      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)"
+      "description": "Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject)"
     },
     "cache": {
       "$ref": "#/definitions/Cache",
@@ -2626,9 +2630,29 @@
       "additionalItems": false,
       "description": "Live Query Invalidations"
     },
-    "introspectionCache": {
-      "type": "string",
-      "description": "Path to the file containing the introspection cache"
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false,
+      "description": "Provide a query or queries for GraphQL Playground, validation and SDK Generation\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.\nBut TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)"
+    },
+    "logger": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
+      "description": "Logger instance that matches `Console` interface of NodeJS"
     }
   },
   "additionalProperties": false

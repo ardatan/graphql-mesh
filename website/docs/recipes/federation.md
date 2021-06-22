@@ -11,6 +11,8 @@ sidebar_label: Apollo Federation
 
 You can use Apollo Federation as a merging strategy in favor of Schema Stitching approach.
 
+> Stitching merger which is the default one also support federated schemas out of box. So you don't need this unless you want it specifically. While federation merger needs all sources federated, stitching doesn't and stitching merger can combine federated and non-federated sources automatically.
+
 To get started, install the merger library from NPM:
 
 ```

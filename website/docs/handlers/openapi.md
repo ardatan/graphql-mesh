@@ -151,9 +151,16 @@ const oneYear = 365 * 24 * 3600
 
 const resolvers = {
   Mutation: {
-    login: async (_root, args, { Rest, res }) => {
+    login: async (root, args, context, info) => {
       // Call the Rest API's login operation
-      const result = await Rest.api.Mutaion.login(args.credentials)
+      const result = await context.Rest.Mutation.accountLogin({
+        root,
+        args: {
+          credentials: args.credentials
+        },
+        context,
+        info
+      })
       // if `result` contains a JWT token, you could instead decode it and set `Expires`
       // to the JWT token's expiration date
       res.set('Set-Cookie', `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`)
@@ -171,3 +178,15 @@ const resolvers = {
 
 module.exports = { resolvers }
 ```
+
+> We have a lot of examples for OpenAPI Handler;
+- [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
+- [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather)
+- [StackExchange](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-stackexchange)
+- [Stripe](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-stripe)
+- [Subscriptions Example with Webhooks](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-subscriptions)
+- [Youtrack](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-youtrack)
+
+## Config API Reference
+
+{@import ../generated-markdown/OpenapiHandler.generated.md}

@@ -1,70 +1,68 @@
-import { isAbsolute } from 'path';
 import { makeAugmentedSchema, inferSchema } from 'neo4j-graphql-js';
 import neo4j, { Driver } from 'neo4j-driver';
-import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub } from '@graphql-mesh/types';
-import { loadTypedefs } from '@graphql-tools/load';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import { mergeTypeDefs } from '@graphql-tools/merge';
-import { DocumentNode } from 'graphql';
-
-export interface Neo4JIntrospectionCache {
-  typeDefs: string | DocumentNode;
-}
+import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger, KeyValueCache } from '@graphql-mesh/types';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { env } from 'process';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
-  private introspectionCache: Neo4JIntrospectionCache;
+  private typeDefs: StoreProxy<string>;
+  private logger: Logger;
+  private cache: KeyValueCache<string>;
 
-  constructor({
-    config,
-    baseDir,
-    pubsub,
-    introspectionCache,
-  }: GetMeshSourceOptions<YamlConfig.Neo4JHandler, Neo4JIntrospectionCache>) {
+  constructor({ config, baseDir, pubsub, store, logger, cache }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache || {
-      typeDefs: null,
-    };
+    this.typeDefs = store.proxy('typeDefs.graphql', PredefinedProxyOptions.StringWithoutValidation);
+    this.logger = logger;
+    this.cache = cache;
   }
 
   private driver: Driver;
 
   getDriver() {
     if (!this.driver) {
-      this.driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password));
+      this.driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password), {
+        useBigInt: true,
+        logging: {
+          logger: (level, message) => this.logger[level](message),
+        },
+      });
       this.pubsub.subscribe('destroy', () => this.driver.close());
     }
     return this.driver;
   }
 
-  async getCachedTypeDefs() {
-    if (!this.introspectionCache.typeDefs) {
+  getCachedTypeDefs() {
+    return this.typeDefs.getWithSet(async () => {
       if (this.config.typeDefs) {
-        const typeDefsArr = await loadTypedefs(this.config.typeDefs, {
-          cwd: isAbsolute(this.config.typeDefs) ? null : this.baseDir,
-          loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
-          assumeValid: true,
-          assumeValidSDL: true,
+        return readFileOrUrlWithCache(this.config.typeDefs, this.cache, {
+          cwd: this.baseDir,
         });
-        this.introspectionCache.typeDefs = mergeTypeDefs(typeDefsArr.map(source => source.document));
       } else {
-        this.introspectionCache.typeDefs = await inferSchema(this.getDriver(), {
+        const { typeDefs } = await inferSchema(this.getDriver(), {
           alwaysIncludeRelationships: this.config.alwaysIncludeRelationships,
         });
+        return typeDefs;
       }
-    }
-    return this.introspectionCache.typeDefs;
+    });
   }
 
   async getMeshSource() {
-    const typeDefs: DocumentNode | string = await this.getCachedTypeDefs();
+    const typeDefs = await this.getCachedTypeDefs();
 
-    const schema = makeAugmentedSchema({ typeDefs, config: { experimental: true } });
+    const schema = makeAugmentedSchema({
+      typeDefs,
+      config: {
+        experimental: true,
+        debug: !!env.DEBUG,
+      },
+      logger: this.logger,
+    });
 
     return {
       schema,

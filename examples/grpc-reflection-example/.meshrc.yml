@@ -5,6 +5,5 @@ sources:
         endpoint: localhost:50051
         useReflection: true
 
-serve:
-  exampleQuery: example-queries/*.graphql
-introspectionCache: ./introspection-cache.json
+documents:
+  - example-queries/*.graphql

@@ -6,8 +6,9 @@
   "private": true,
   "scripts": {
     "grpc:start": "node index.js",
-    "mesh:start": "mesh serve",
-    "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\""
+    "mesh:start": "mesh dev",
+    "start": "concurrently \"yarn grpc:start\" \"yarn mesh:start\"",
+    "test": "jest"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",
@@ -19,6 +20,7 @@
     "@grpc/grpc-js": "1.1.7"
   },
   "devDependencies": {
-    "concurrently": "5.3.0"
+    "concurrently": "5.3.0",
+    "jest": "27.0.1"
   }
 }

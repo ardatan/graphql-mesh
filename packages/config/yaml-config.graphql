@@ -33,9 +33,16 @@ type Query {
   """
   liveQueryInvalidations: [LiveQueryInvalidation]
   """
-  Path to the file containing the introspection cache
+  Provide a query or queries for GraphQL Playground, validation and SDK Generation
+  The value can be the file path, glob expression for the file paths or the SDL.
+  (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
+  But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
   """
-  introspectionCache: String
+  documents: [String!]
+  """
+  Logger instance that matches `Console` interface of NodeJS
+  """
+  logger: Any
 }
 
 scalar JSON
@@ -55,37 +62,55 @@ type Source {
   List of transforms to apply to the current API source, before unifying it with the rest of the sources
   """
   transforms: [Transform]
-  """
-  Type Merging Configuration
-  https://www.graphql-tools.com/docs/stitch-type-merging
-  """
-  typeMerging: [MergedTypeConfig]
 }
 
 type Transform @withAdditionalProperties
 type Handler @withAdditionalProperties
 type Cache @withAdditionalProperties
 
-union AdditionalResolver = String | AdditionalStitchingResolverObject | AdditionalSubscriptionObject
+union AdditionalResolver =
+    String
+  | AdditionalStitchingResolverObject
+  | AdditionalStitchingBatchResolverObject
+  | AdditionalSubscriptionObject
 
 type AdditionalStitchingResolverObject {
-  type: String!
-  field: String!
+  sourceName: String!
+  sourceTypeName: String!
+  sourceFieldName: String!
+  sourceSelectionSet: String
   requiredSelectionSet: String
-  targetSource: String!
-  targetMethod: String!
-  args: JSON
-  returnData: String
-  resultSelectedFields: JSON
-  resultSelectionSet: String
-  resultDepth: Int
+  sourceArgs: JSON
+  targetTypeName: String!
+  targetFieldName: String!
+  """
+  Extract specific property from the result
+  """
+  result: String
+  """
+  If return types don't match,
+  you can specify a result type to apply inline fragment
+  """
+  resultType: String
+}
+
+type AdditionalStitchingBatchResolverObject {
+  sourceName: String!
+  sourceTypeName: String!
+  sourceFieldName: String!
+  keyField: String!
+  keysArg: String!
+  additionalArgs: JSON
+  requiredSelectionSet: String
+  targetTypeName: String!
+  targetFieldName: String!
 }
 
 type AdditionalSubscriptionObject {
-  type: String!
-  field: String!
+  targetTypeName: String!
+  targetFieldName: String!
   pubsubTopic: String!
-  returnData: String
+  result: String
   filterBy: String
 }
 
@@ -99,23 +124,4 @@ type PubSubConfig {
 type LiveQueryInvalidation {
   field: String!
   invalidate: [String!]!
-}
-
-type MergedTypeConfig {
-  typeName: String
-  fieldName: String
-  args: Any
-  argsFromKeys: Any
-  selectionSet: String
-  fields: [MergedFieldConfig]
-  key: Any
-  canonical: Boolean
-  resolve: AdditionalResolver
-}
-
-type MergedFieldConfig {
-  fieldName: String
-  selectionSet: String
-  computed: Boolean
-  canonical: Boolean
 }

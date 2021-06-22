@@ -9,7 +9,7 @@ import MockingTransform from '../src';
 describe('mocking', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
-  const baseDir: string = undefined;
+  const baseDir: string = __dirname;
 
   beforeEach(() => {
     cache = new InMemoryLRUCache();
@@ -112,11 +112,11 @@ describe('mocking', () => {
       mocks: [
         {
           apply: 'User.id',
-          custom: './packages/transforms/mock/test/mocks.ts#id',
+          custom: './mocks.ts#id',
         },
         {
           apply: 'User.fullName',
-          custom: './packages/transforms/mock/test/mocks.ts#fullName',
+          custom: './mocks.ts#fullName',
         },
       ],
     };
@@ -174,15 +174,15 @@ describe('mocking', () => {
             mocks: [
               {
                 apply: 'Query.user',
-                custom: './packages/transforms/mock/test/mocks.ts#GetUserMock',
+                custom: './mocks.ts#GetUserMock',
               },
               {
                 apply: 'Mutation.addUser',
-                custom: './packages/transforms/mock/test/mocks.ts#AddUserMock',
+                custom: './mocks.ts#AddUserMock',
               },
               {
                 apply: 'Mutation.updateUser',
-                custom: './packages/transforms/mock/test/mocks.ts#UpdateUserMock',
+                custom: './mocks.ts#UpdateUserMock',
               },
             ],
           },
@@ -192,7 +192,7 @@ describe('mocking', () => {
         }),
       ],
     });
-    const ADD_USER = /* GraphQL */ parse(`
+    const ADD_USER = parse(/* GraphQL */ `
       mutation AddUser {
         addUser(name: "John Doe") {
           id
@@ -203,7 +203,7 @@ describe('mocking', () => {
     const addUserResult = await execute(mockedSchema, ADD_USER);
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
-    const GET_USER = /* GraphQL */ parse(`
+    const GET_USER = parse(/* GraphQL */ `
       query GetUser {
         user(id: "${addedUserId}") {
           id
@@ -214,7 +214,7 @@ describe('mocking', () => {
     const getUserResult = await execute(mockedSchema, GET_USER);
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
-    const UPDATE_USER = /* GraphQL */ parse(`
+    const UPDATE_USER = parse(/* GraphQL */ `
       mutation UpdateUser {
         updateUser(id: "${addedUserId}", name: "Jane Doe") {
           id
@@ -291,7 +291,7 @@ describe('mocking', () => {
         }),
       ],
     });
-    const ADD_USER = /* GraphQL */ parse(`
+    const ADD_USER = parse(/* GraphQL */ `
       mutation AddUser {
         addUser(name: "John Doe") {
           id
@@ -302,7 +302,7 @@ describe('mocking', () => {
     const addUserResult = await execute(mockedSchema, ADD_USER);
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
-    const GET_USER = /* GraphQL */ parse(`
+    const GET_USER = parse(/* GraphQL */ `
       query GetUser {
         user(id: "${addedUserId}") {
           id
@@ -313,7 +313,7 @@ describe('mocking', () => {
     const getUserResult = await execute(mockedSchema, GET_USER);
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
-    const UPDATE_USER = /* GraphQL */ parse(`
+    const UPDATE_USER = parse(/* GraphQL */ `
       mutation UpdateUser {
         updateUser(id: "${addedUserId}", name: "Jane Doe") {
           id

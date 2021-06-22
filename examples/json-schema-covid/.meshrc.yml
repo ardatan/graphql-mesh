@@ -31,17 +31,18 @@ additionalTypeDefs: |
     population: ApiPopulation
   }
 additionalResolvers:
-  - type: Case
-    field: population
+  - targetTypeName: Case
+    targetFieldName: population
     requiredSelectionSet: |
       { 
         countryRegion 
       }
-    targetSource: WorldPop
-    targetMethod: population
-    args:
+    sourceName: WorldPop
+    sourceTypeName: Query
+    sourceFieldName: population
+    sourceArgs:
       country: '{root.countryRegion}'
   - ./src/query-additional-resolvers.js
 
-serve:
-  exampleQuery: example-queries/*.graphql
+documents:
+  - example-queries/*.graphql

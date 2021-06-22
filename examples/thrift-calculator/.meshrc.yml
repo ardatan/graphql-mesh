@@ -8,5 +8,5 @@ sources:
         path: /thrift
         serviceName: calculator-service
 
-serve:
-  exampleQuery: ./example-query.graphql
+documents:
+  - ./example-query.graphql

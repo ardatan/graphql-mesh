@@ -65,6 +65,32 @@ jobs:
     strategy:
       matrix:
         node_version: [12, 16]
+    # Service containers to run with `runner-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: docker
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+      mysql:
+        image: genschsa/mysql-employees
+        env:
+          MYSQL_ROOT_PASSWORD: passwd
+        ports:
+          - 33306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
@@ -92,8 +118,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
             ${{ runner.os }}-${{matrix.node_version}}-jest-
+      - name: Download Postgres Dump
+        run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
+      - name: Load Postgres Data
+        uses: tj-actions/pg-restore@v4.5
+        with:
+          database_url: 'postgres://postgres:docker@localhost:5432/postgres'
+          backup_file: '/tmp/backup.sql'
       - name: Test
         run: yarn test
         env:
           CI: true
           NODE_TLS_REJECT_UNAUTHORIZED: 0
+          GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LC_ALL: en-US

@@ -1,19 +1,19 @@
 const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { readFile } = require('fs-extra');
-const { basename, join } = require('path');
+const { join } = require('path');
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
+const { printSchema, lexicographicSortSchema } = require('graphql');
 
 const mesh$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
+  dir: join(__dirname, '..')
 }).then(config => getMesh(config));
 
 describe('JSON Schema Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      introspectionFromSchema(lexicographicSortSchema(schema), {
+      printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
     ).toMatchSnapshot();

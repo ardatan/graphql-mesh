@@ -19,16 +19,6 @@ type GrpcHandler @md {
   """
   descriptorSetFilePath: ProtoFilePathOrString
   """
-  Your base service name
-  Used for naming only
-  """
-  serviceName: String
-  """
-  Your base package name
-  Used for naming only
-  """
-  packageName: String
-  """
   Request timeout in milliseconds
   Default: 200000
   """

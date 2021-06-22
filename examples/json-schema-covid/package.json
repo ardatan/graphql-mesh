@@ -8,7 +8,7 @@
     "url": "https://github.com/jycouet"
   },
   "scripts": {
-    "start": "mesh serve",
+    "start": "mesh dev",
     "test": "jest"
   },
   "dependencies": {

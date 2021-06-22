@@ -36,7 +36,7 @@ import { InternalOptions } from './types/options';
 import * as Swagger2OpenAPI from 'swagger2openapi';
 import { handleWarning, MitigationTypes, mockDebug as debug } from './utils';
 import * as jsonptr from 'json-ptr';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import { jsonFlatStringify } from '@graphql-mesh/utils';
 
 // Type definitions & exports:

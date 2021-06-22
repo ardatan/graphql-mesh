@@ -3,7 +3,7 @@
   "license": "MIT",
   "version": "0.0.67",
   "scripts": {
-    "start": "graphql-mesh serve"
+    "start": "graphql-mesh dev"
   },
   "dependencies": {
     "graphql": "15.5.1",

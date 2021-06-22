@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start-apis": "concurrently \"node upload-files/index.js\" \"node resize-image/index.js\"",
-    "start-gateway": "mesh serve"
+    "start-gateway": "mesh dev"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",

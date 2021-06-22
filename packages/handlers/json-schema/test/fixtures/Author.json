@@ -1,0 +1,29 @@
+{
+  "$id": "Author.json",
+  "definitions": {
+    "Author": {
+      "type": "object",
+      "title": "Author",
+      "properties": {
+        "id": {
+          "$ref": "UUID.json"
+        },
+        "name": {
+          "type": "string"
+        },
+        "friends": {
+          "type": "array",
+          "items": {
+            "$ref": "Author.json#/definitions/Author"
+          }
+        },
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "Post.json#/definitions/Post"
+          }
+        }
+      }
+    }
+  }
+}

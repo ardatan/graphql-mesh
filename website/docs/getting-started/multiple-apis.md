@@ -23,9 +23,9 @@ sources:
       openapi:
         source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
 additionalTypeDefs: |
-          extend type Query {
-            viewsInPastMonth(project: String!): Float!
-          }
+  extend type Query {
+    viewsInPastMonth(project: String!): Float!
+  }
 additionalResolvers:
   - ./src/mesh/additional-resolvers.js
 ```
@@ -37,30 +37,33 @@ const moment = require('moment');
 
 const resolvers = {
   Query: {
-    viewsInPastMonth: async (root, args, { Wiki }) => {
-      const {
-        items
-      } = await Wiki.api.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
-        {
+    viewsInPastMonth: async (root, args, context, info) => {
+      const { items } = await context.Wiki.Query.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd({
+        root,
+        args: {
           access: 'all-access',
           agent: 'user',
           end: moment().format('YYYYMMDD'),
-          start: moment()
-            .startOf('month')
-            .subtract(1, 'month')
-            .format('YYYYMMDD'),
+          start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
           project: args.project,
-          granularity: 'monthly'
-        }
-      );
+          granularity: 'monthly',
+        },
+        context,
+        info,
+        selectionSet: /* GraphQL */`
+          {
+            views
+          }
+        `
+      });
 
       if (!items || items.length === 0) {
         return 0;
       }
 
       return items[0].views;
-    }
-  }
+    },
+  },
 };
 
 module.exports = { resolvers };
@@ -80,9 +83,9 @@ query viewsInPastMonth {
 
 > You can use TypeScript to have full type-safety in additional resolvers. See [TypeScript Support](/docs/recipes/typescript) section to learn more.
 
-## Stitching Schemas using declarative API without JavaScript Code File 
+## Stitching Schemas using declarative API without JavaScript Code File
 
-You can combine multiple APIs in Mesh using `additionalTypeDefs` and `additionalResolvers`. 
+You can combine multiple APIs in Mesh using `additionalTypeDefs` and `additionalResolvers`.
 
 The following example has two different OpenAPI sources; we add two new fields to a type of `Cities`, and those fields have return types from `Weather` API.
 
@@ -101,24 +104,26 @@ sources:
       openapi:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
 additionalTypeDefs: |
-      extend type PopulatedPlaceSummary {
-        dailyForecast: [Forecast]
-        todayForecast: Forecast
-      }
+  extend type PopulatedPlaceSummary {
+    dailyForecast: [Forecast]
+    todayForecast: Forecast
+  }
 additionalResolvers:
   - type: PopulatedPlaceSummary
     field: dailyForecast
-    requiredSelectionSet: | # latitude and longitude will be request if dailyForecast is requested on PopulatedPlaceSummary level
+    requiredSelectionSet:
+      | # latitude and longitude will be request if dailyForecast is requested on PopulatedPlaceSummary level
       {
         latitude
         longitude
       }
-    targetSource: Weather ## Target Source Name
-    targetMethod: getForecastDailyLatLatLonLon # Target root field of that source
-    returnData: data # Return `data` property of returned data
+    sourceName: Weather # Target Source Name
+    sourceTypeName: Query # Target Root Type
+    sourceFieldName: getForecastDailyLatLatLonLon # Target root field of that source
+    result: data # Return `data` property of returned data
     args:
-      lat: "{root.latitude}" # Access required fields and pass those to args of getForecastDailyLatLatLonLon
-      lon: "{root.longitude}"
+      lat: '{root.latitude}' # Access required fields and pass those to args of getForecastDailyLatLatLonLon
+      lon: '{root.longitude}'
       key: "{context.headers['x-weather-api-key']}" # x-weather-api-key coming from HTTP Headers
   - type: PopulatedPlaceSummary
     field: todayForecast
@@ -127,12 +132,13 @@ additionalResolvers:
         latitude
         longitude
       }
-    targetSource: Weather
-    targetMethod: getForecastDailyLatLatLonLon
-    returnData: data[0]
+    sourceName: Weather
+    sourceTypeName: Query
+    sourceFieldName: getForecastDailyLatLatLonLon
+    result: data[0]
     args:
-      lat: "{root.latitude}"
-      lon: "{root.longitude}"      
+      lat: '{root.latitude}'
+      lon: '{root.longitude}'
       key: "{context.headers['x-weather-api-key']}"
 ```
 
@@ -149,14 +155,19 @@ module.exports = {
         }
       `,
       resolve: async (root, args, context, info) => {
-        const result = await context.Weather.api.getForecastDailyLatLatLonLon({
-          lat: root.latitude,
-          lon: root.longitude,
-          key: context.headers['x-weather-api-key']
+        const result = await context.Weather.Query.getForecastDailyLatLatLonLon({
+          root,
+          args: {
+            lat: root.latitude,
+            lon: root.longitude,
+            key: context.headers['x-weather-api-key'],
+          },
+          context,
+          info,
         });
         return result?.data;
       },
-    },    
+    },
     todayForecast: {
       selectionSet: `
         {
@@ -164,16 +175,20 @@ module.exports = {
           longitude
         }
       `,
-      resolve: (root, args, context, info) => {        
-        const result = await context.Weather.api.getForecastDailyLatLatLonLon({
-          lat: root.latitude,
-          lon: root.longitude,
-          key: context.headers['x-weather-api-key']
+      resolve: (root, args, context, info) => {
+        const result = await context.Weather.Query.getForecastDailyLatLatLonLon({
+          root,
+          args: {
+            lat: root.latitude,
+            lon: root.longitude,
+            key: context.headers['x-weather-api-key'],
+          },
+          context,
+          info,
         });
         return result?.data?.length && result.data[0];
       },
-    }
-
-  }
-}
+    },
+  },
+};
 ```

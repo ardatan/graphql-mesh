@@ -1,0 +1,16 @@
+/* This is an auto generated file. Please do not change it. */
+syntax = "proto3";
+package foo;
+service BamService {
+    rpc GetFOOs (GetFOOsRequest) returns (GetFOOsResponse) {}
+}
+
+message GetFOOsRequest {
+    int32 id = 1;
+}
+message FOO {
+    int64 id = 1;
+}
+message GetFOOsResponse {
+    repeated FOO foos = 1;
+}

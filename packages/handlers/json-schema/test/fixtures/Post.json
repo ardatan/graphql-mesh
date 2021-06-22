@@ -1,0 +1,44 @@
+{
+  "$id": "Post.json",
+  "definitions": {
+    "Post": {
+      "type": "object",
+      "title": "Post",
+      "properties": {
+        "id": {
+          "$ref": "UUID.json"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "Author.json#/definitions/Author"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "Post.json#/definitions/Comment"
+          }
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "title": "Comment",
+      "properties": {
+        "id": {
+          "$ref": "UUID.json"
+        },
+        "content": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "Author.json#/definitions/Author"
+        }
+      }
+    }
+  }
+}

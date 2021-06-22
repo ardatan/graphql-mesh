@@ -14,12 +14,12 @@ additionalTypeDefs: |
     thumbnailImage(width: Int, height: Int): String
   }
 additionalResolvers:
-  - type: File
-    field: thumbnailImage
+  - targetTypeName: File
+    targetFieldName: thumbnailImage
     requiredSelectionSet: '{ base64 }'
-    targetSource: ResizeImages
-    targetMethod: resizeImage
-    args:
+    sourceName: ResizeImages
+    sourceFieldName: resizeImage
+    sourceArgs:
       image: '{root.base64}'
       width: '{args.width}'
       height: '{args.height}'

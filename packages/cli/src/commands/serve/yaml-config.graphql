@@ -1,6 +1,6 @@
 type Query {
   """
-  Configuration for `mesh serve` command.
+  Configuration for `mesh start` or `mesh dev` command.
   Those commands won't be available in programmatic usage.
   """
   serve: ServeConfig
@@ -19,13 +19,6 @@ type ServeConfig @md {
   The binding hostname (default: `localhost`)
   """
   hostname: String
-  """
-  Provide an example query or queries for GraphQL Playground
-  The value can be the file path, glob expression for the file paths or the SDL.
-  (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-  But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
-  """
-  exampleQuery: String
   """
   Configuration for CORS
   """

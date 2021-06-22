@@ -3,9 +3,7 @@ import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-c
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
 import { promisify } from 'util';
-import { pascalCase } from 'pascal-case';
 import graphqlFields from 'graphql-fields';
-import { camelCase } from 'camel-case';
 import {
   GraphQLBigInt,
   GraphQLDateTime,
@@ -17,8 +15,9 @@ import {
   GraphQLUnsignedFloat,
 } from 'graphql-scalars';
 import { specifiedDirectives } from 'graphql';
-import { loadFromModuleExportExpression, jitExecutorFactory } from '@graphql-mesh/utils';
-import { ExecutionParams } from '@graphql-tools/delegate';
+import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import { env } from 'process';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -79,36 +78,22 @@ const SCALARS = {
   year: 'Int',
 };
 
-type MySQLIntrospectionCache = {
-  [Key in keyof MysqlPromisifiedConnection]?: MysqlPromisifiedConnection[Key] extends (...args: any[]) => any
-    ? ThenArg<ReturnType<MysqlPromisifiedConnection[Key]>>
-    : never;
-};
-
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof MySQLHandler.prototype.getPromisifiedConnection>>;
 
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 export default class MySQLHandler implements MeshHandler {
-  private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
-  private introspectionCache: MySQLIntrospectionCache;
+  private store: MeshStore;
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    pubsub,
-    introspectionCache = {},
-  }: GetMeshSourceOptions<YamlConfig.MySQLHandler, MySQLIntrospectionCache>) {
-    this.name = name;
+  constructor({ config, baseDir, pubsub, store }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache;
+    this.store = store;
   }
 
   async getPromisifiedConnection(pool: Pool) {
@@ -127,9 +112,11 @@ export default class MySQLHandler implements MeshHandler {
     const update = promisify(connection.update.bind(connection));
     const deleteRow = promisify(connection.delete.bind(connection));
     const count = promisify(connection.count.bind(connection));
+    const release = promisify(connection.release.bind(connection));
 
     return {
       connection,
+      release,
       getDatabaseTables,
       getTableFields,
       getTableForeigns,
@@ -144,27 +131,21 @@ export default class MySQLHandler implements MeshHandler {
   }
 
   private getCachedIntrospectionConnection(pool: Pool) {
-    let promisiedConnection$: Promise<MysqlPromisifiedConnection>;
+    let promisifiedConnection$: Promise<MysqlPromisifiedConnection>;
     return new Proxy<MysqlPromisifiedConnection>({} as any, {
       get: (_, methodName) => {
-        if (methodName === 'connection') {
-          return {
-            release: () => promisiedConnection$?.then(promisiedConnection => promisiedConnection?.connection.release()),
-          };
+        if (methodName === 'release') {
+          return () =>
+            promisifiedConnection$?.then(promisifiedConnection => promisifiedConnection?.connection.release());
         }
-        return (...args: any[]) => {
+        return async (...args: any[]) => {
           const cacheKey = [methodName, ...args].join('_');
-          if (cacheKey in this.introspectionCache) {
-            return this.introspectionCache[cacheKey];
-          } else {
-            promisiedConnection$ = promisiedConnection$ || this.getPromisifiedConnection(pool);
-            return promisiedConnection$
-              .then(promisiedConnection => promisiedConnection[methodName](...args))
-              .then(result => {
-                this.introspectionCache[cacheKey] = result;
-                return result;
-              });
-          }
+          const cacheProxy = this.store.proxy(cacheKey, PredefinedProxyOptions.JsonWithoutValidation);
+          return cacheProxy.getWithSet(async () => {
+            promisifiedConnection$ = promisifiedConnection$ || this.getPromisifiedConnection(pool);
+            const promisifiedConnection = await promisifiedConnection$;
+            return promisifiedConnection[methodName](...args);
+          });
         };
       },
     });
@@ -177,7 +158,14 @@ export default class MySQLHandler implements MeshHandler {
       ? typeof configPool === 'string'
         ? await loadFromModuleExportExpression(configPool, { cwd: this.baseDir })
         : configPool
-      : createPool(this.config);
+      : createPool({
+          supportBigNumbers: true,
+          bigNumberStrings: true,
+          dateStrings: true,
+          trace: !!env.DEBUG,
+          debug: !!env.DEBUG,
+          ...this.config,
+        });
 
     pool.on('connection', connection => {
       upgrade(connection);
@@ -209,11 +197,11 @@ export default class MySQLHandler implements MeshHandler {
     await Promise.all(
       Object.keys(tables).map(async tableName => {
         const table = tables[tableName];
-        const objectTypeName = pascalCase(table.TABLE_NAME);
-        const insertInputName = pascalCase(table.TABLE_NAME + '_InsertInput');
-        const updateInputName = pascalCase(table.TABLE_NAME + '_UpdateInput');
-        const whereInputName = pascalCase(table.TABLE_NAME + '_WhereInput');
-        const orderByInputName = pascalCase(table.TABLE_NAME + '_OrderByInput');
+        const objectTypeName = table.TABLE_NAME;
+        const insertInputName = table.TABLE_NAME + '_InsertInput';
+        const updateInputName = table.TABLE_NAME + '_UpdateInput';
+        const whereInputName = table.TABLE_NAME + '_WhereInput';
+        const orderByInputName = table.TABLE_NAME + '_OrderByInput';
         const tableTC = schemaComposer.createObjectTC({
           name: objectTypeName,
           description: table.TABLE_COMMENT,
@@ -256,14 +244,11 @@ export default class MySQLHandler implements MeshHandler {
             let type: string = SCALARS[realTypeName];
             if (realTypeName === 'enum' || realTypeName === 'set') {
               const enumValues = typeDetails.split(`'`).join('').split(',');
-              const enumTypeName = pascalCase(tableName + '_' + fieldName);
+              const enumTypeName = tableName + '_' + fieldName;
               schemaComposer.createEnumTC({
                 name: enumTypeName,
                 values: enumValues.reduce((prev, curr) => {
-                  let enumKey = pascalCase(curr).toUpperCase();
-                  if (!isNaN(parseInt(enumKey[0]))) {
-                    enumKey = '_' + enumKey;
-                  }
+                  const enumKey = sanitizeNameForGraphQL(curr);
                   return {
                     ...prev,
                     [enumKey]: {
@@ -320,16 +305,15 @@ export default class MySQLHandler implements MeshHandler {
             const columnName = tableForeign.COLUMN_NAME;
             const foreignTableName = tableForeign.REFERENCED_TABLE_NAME;
             const foreignColumnName = tableForeign.REFERENCED_COLUMN_NAME;
-            const foreignTypeName = pascalCase(foreignTableName);
             tableTC.addFields({
               [foreignTableName]: {
-                type: '[' + foreignTypeName + ']',
+                type: '[' + foreignTableName + ']',
                 args: {
                   where: {
-                    type: foreignTypeName + 'WhereInput',
+                    type: foreignTableName + '_WhereInput',
                   },
                   orderBy: {
-                    type: foreignTypeName + 'OrderByInput',
+                    type: foreignTableName + '_OrderByInput',
                   },
                   limit: {
                     type: 'Int',
@@ -361,7 +345,7 @@ export default class MySQLHandler implements MeshHandler {
           })
         );
         schemaComposer.Query.addFields({
-          [camelCase(`get_${tableName}`)]: {
+          [tableName]: {
             type: '[' + objectTypeName + ']',
             args: {
               limit: {
@@ -403,7 +387,7 @@ export default class MySQLHandler implements MeshHandler {
           },
         });
         schemaComposer.Query.addFields({
-          [camelCase(`count_${tableName}`)]: {
+          [`count_${tableName}`]: {
             type: 'Int',
             args: {
               where: {
@@ -416,7 +400,7 @@ export default class MySQLHandler implements MeshHandler {
           },
         });
         schemaComposer.Mutation.addFields({
-          [camelCase(`insert_${tableName}`)]: {
+          [`insert_${tableName}`]: {
             type: objectTypeName,
             args: {
               [tableName]: {
@@ -435,7 +419,7 @@ export default class MySQLHandler implements MeshHandler {
               return result[0];
             },
           },
-          [camelCase(`update_${tableName}`)]: {
+          [`update_${tableName}`]: {
             type: objectTypeName,
             args: {
               [tableName]: {
@@ -453,7 +437,7 @@ export default class MySQLHandler implements MeshHandler {
               return result[0];
             },
           },
-          [camelCase(`delete_${tableName}`)]: {
+          [`delete_${tableName}`]: {
             type: 'Boolean',
             args: {
               where: {
@@ -475,18 +459,30 @@ export default class MySQLHandler implements MeshHandler {
 
     const schema = schemaComposer.buildSchema();
 
-    introspectionConnection.connection.release();
+    introspectionConnection.release();
 
-    const jitExecutor = jitExecutorFactory(schema, this.name);
-    const executor: any = async ({ document, variables, context: meshContext, info }: ExecutionParams) => {
-      const mysqlConnection = await this.getPromisifiedConnection(pool);
-      const contextValue = { ...meshContext, mysqlConnection };
-      return jitExecutor({ document, variables, context: contextValue, info });
-    };
+    this.pubsub.subscribe('executionDone', ({ contextValue }) => contextValue.mysqlConnection?.release());
 
     return {
       schema,
-      executor,
+      contextBuilder: async () => {
+        // In order to prevent unnecessary connections
+        // We need to implement some kind of lazy connections
+        let mysqlConnection$: Promise<MysqlPromisifiedConnection>;
+        return {
+          mysqlConnection: new Proxy(
+            {},
+            {
+              get: (_, pKey) => {
+                if (pKey !== 'release' && !mysqlConnection$) {
+                  mysqlConnection$ = this.getPromisifiedConnection(pool);
+                }
+                return (...args: any[]) => mysqlConnection$?.then(mysqlConnection => mysqlConnection[pKey](...args));
+              },
+            }
+          ),
+        };
+      },
     };
   }
 }

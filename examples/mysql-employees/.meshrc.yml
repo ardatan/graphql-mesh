@@ -3,7 +3,10 @@ sources:
     handler:
       mysql:
         host: localhost
-        port: 3306
+        port: 33306
         user: root
         password: passwd
         database: employees
+
+documents:
+  - example-query.graphql

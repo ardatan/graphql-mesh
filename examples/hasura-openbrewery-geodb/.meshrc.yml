@@ -11,5 +11,5 @@ sources:
             requestSample: ./json-samples/breweriesInput.json
             responseSample: ./json-samples/breweries.json
 
-serve:
-  exampleQuery: example-queries/*.graphql
+documents:
+  - example-queries/*.graphql

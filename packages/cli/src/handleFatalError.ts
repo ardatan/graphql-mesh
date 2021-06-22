@@ -1,22 +1,24 @@
-import { logger } from './logger';
-import { spinner } from './spinner';
+import { Logger } from '@graphql-mesh/types';
+import { env, exit } from 'process';
+import { inspect } from 'util';
 
-export function handleFatalError(e: Error): any {
-  const errorText = `Unable to start GraphQL Mesh: ${e.message}`;
-  if (spinner.isSpinning) {
-    spinner.fail(errorText);
-  } else {
-    logger.error(errorText);
-  }
-  if (process.env.DEBUG) {
+export function handleFatalError(e: Error, logger: Logger): any {
+  const errorText = e.message;
+  logger.error(errorText);
+  if (env.DEBUG) {
     logger.error(
-      JSON.stringify({
-        ...e,
-        name: e.name,
-        stack: e.stack,
-        message: e.message,
-      })
+      inspect(
+        {
+          ...e,
+          name: e.name,
+          stack: e.stack,
+          message: e.message,
+        },
+        true,
+        Infinity,
+        true
+      )
     );
   }
-  process.exit(1);
+  exit(1);
 }

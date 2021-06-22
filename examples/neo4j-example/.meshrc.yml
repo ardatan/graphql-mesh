@@ -2,10 +2,10 @@ sources:
   - name: Neo4j
     handler:
       neo4j:
-        url: bolt://localhost
-        username: neo4j
-        password: test
+        url: bolt+s://demo.neo4jlabs.com:7687
+        username: movies
+        password: movies
+        database: movies
 
-cache:
-  file:
-    path: ./mesh-cache.json
+documents:
+  - ./example-query.graphql

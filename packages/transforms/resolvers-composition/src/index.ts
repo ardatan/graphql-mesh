@@ -2,7 +2,7 @@ import { GraphQLSchema } from 'graphql';
 import { YamlConfig, MeshTransformOptions, MeshTransform } from '@graphql-mesh/types';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
-import { extractResolvers, loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { extractResolvers, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 export default class ResolversCompositionTransform implements MeshTransform {
   public noWrap: boolean;
@@ -19,10 +19,13 @@ export default class ResolversCompositionTransform implements MeshTransform {
     const resolversComposition: ResolversComposerMapping = {};
 
     for (const { resolver, composer } of this.compositions) {
-      resolversComposition[resolver] = loadFromModuleExportExpressionSync(composer, {
-        defaultExportName: 'default',
-        cwd: this.baseDir,
-      }); // Async is not available
+      resolversComposition[resolver] = next => async (root, args, context, info) => {
+        const composerFn = await loadFromModuleExportExpression(composer, {
+          defaultExportName: 'default',
+          cwd: this.baseDir,
+        });
+        return composerFn(next)(root, args, context, info);
+      };
     }
 
     const resolvers = extractResolvers(schema);

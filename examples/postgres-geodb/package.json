@@ -4,17 +4,15 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "pretest-sdk": "yarn mesh:sdk",
-    "test-sdk": "ts-node src/test-sdk.ts London",
-    "mesh:serve": "mesh serve",
-    "mesh:sdk": "mesh generate-sdk --operations './src/*.graphql' --output ./src/sdk.generated.ts",
-    "start": "yarn mesh:serve",
-    "write-introspection-cache": "mesh write-introspection-cache"
+    "start": "ts-node --transpile-only src/test-sdk.ts London",
+    "mesh:serve": "cross-env NODE_OPTIONS=\"--loader ts-node/esm.mjs\" mesh dev",
+    "mesh:build": "mesh build"
   },
   "devDependencies": {
     "@types/node": "14.14.3",
     "ts-node": "8.10.2",
-    "typescript": "4.0.5"
+    "typescript": "4.0.5",
+    "cross-env": "7.0.3"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",
