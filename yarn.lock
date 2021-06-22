@@ -183,20 +183,20 @@
     apollo-graphql "^0.6.0"
     lodash.xorby "^4.7.0"
 
-"@apollo/federation@0.25.1", "@apollo/federation@^0.25.1":
-  version "0.25.1"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.25.1.tgz#3605fa8cf8f7b699c482885820ae5baa04f610c4"
-  integrity sha512-f/wQjQ2M7Mbsw/g/VTFu+bgICZD03DZaQ4rNjKbWL0HmjYb+CdSlvCP8N6TFLCdlKHwD6qIQpRsROP6qTpeicg==
+"@apollo/federation@0.25.2", "@apollo/federation@^0.25.2":
+  version "0.25.2"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.25.2.tgz#10b2e22ac20e64701fd6d31d9abbf7f411b03763"
+  integrity sha512-TrRCrGniHpnRwALm2J7q2c1X4Lcc95e7SeHkVjascaQx6nBZGFbBXadw8rOPxlw5syfxYf8h9winF+wwld+gsg==
   dependencies:
     apollo-graphql "^0.9.3"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.29.1":
-  version "0.29.1"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.29.1.tgz#602102e5d9d3afb43e0b6f94ad51c2b88e03beda"
-  integrity sha512-FNHqvuvA63MRebqOmkpMjYUbslcozZFnmqAqDW2dRpb3fJ5Rg5H/cHnTmRrs+XDmIOQKuNKhoFA/Kvkz3Ngbjg==
+"@apollo/gateway@0.30.0":
+  version "0.30.0"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.30.0.tgz#73714e0fece3c1c62ffeabd9e6c6638b2f6ed965"
+  integrity sha512-wPx4X3L50TmEt8ACRYF0qtETIuh2E72u/EVmLH11SGB0xZvosgJ4VPC9wQKOjg3BFPzEfrw+TuVuDnwO8FBMsA==
   dependencies:
-    "@apollo/federation" "^0.25.1"
+    "@apollo/federation" "^0.25.2"
     "@apollo/query-planner" "^0.2.1"
     "@types/node-fetch" "2.5.10"
     apollo-graphql "^0.9.3"
