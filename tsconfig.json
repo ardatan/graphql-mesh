@@ -26,7 +26,6 @@
 
     "paths": {
       "@graphql-mesh/cli": ["packages/cli/src/index.ts"],
-      "@graphql-mesh/cli-canary": ["packages/cli-canary/src/index.ts"],
       "@graphql-mesh/runtime": ["packages/runtime/src/index.ts"],
       "@graphql-mesh/config": ["packages/config/src/index.ts"],
       "@graphql-mesh/types": ["packages/types/src/index.ts"],
