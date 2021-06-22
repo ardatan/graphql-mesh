@@ -8,20 +8,20 @@
   },
   "bugs": "https://github.com/urigo/graphql-mesh/issues",
   "dependencies": {
-    "@oclif/command": "^1",
-    "@oclif/config": "^1",
-    "@oclif/plugin-help": "^3",
-    "tslib": "^1"
+    "@oclif/command": "1.8.0",
+    "@oclif/config": "1.17.0",
+    "@oclif/plugin-help": "3.2.2",
+    "tslib": "1.14.1"
   },
   "devDependencies": {
-    "@oclif/dev-cli": "^1",
-    "@types/node": "^10",
-    "eslint": "^5.13",
-    "eslint-config-oclif": "^3.1",
-    "eslint-config-oclif-typescript": "^0.1",
-    "globby": "^10",
-    "ts-node": "^8",
-    "typescript": "^3.3"
+    "@oclif/dev-cli": "1.26.0",
+    "@types/node": "10.17.59",
+    "eslint": "5.16.0",
+    "eslint-config-oclif": "3.1.0",
+    "eslint-config-oclif-typescript": "0.1.0",
+    "globby": "10.0.2",
+    "ts-node": "8.10.2",
+    "typescript": "3.5.3"
   },
   "engines": {
     "node": ">=8.0.0"
