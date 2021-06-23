@@ -37,6 +37,7 @@ const mergeUsingFederation: MergerFn = async function ({
     })
   );
   logger.debug(`Creating ApolloGateway`);
+  const rootValue = {};
   const gateway = new ApolloGateway({
     localServiceList,
     buildService({ name }) {
@@ -46,15 +47,13 @@ const mergeUsingFederation: MergerFn = async function ({
       const jitExecute = jitExecutorFactory(transformedSchema, name, logger.child('JIT Executor'));
       return {
         process: async ({ request, context }) =>
-          jitExecute(
-            {
-              document: parse(request.query),
-              variables: request.variables,
-              context: context.graphqlContext || context,
-            },
-            request.operationName,
-            {}
-          ),
+          jitExecute({
+            document: parse(request.query),
+            variables: request.variables,
+            context: context.graphqlContext || context,
+            operationName: request.operationName,
+            rootValue,
+          }),
       };
     },
     logger,
@@ -111,7 +110,7 @@ const mergeUsingFederation: MergerFn = async function ({
     remoteSchema = wrapSchema({
       schema: remoteSchema,
       transforms,
-      executor: jitExecutorFactory(remoteSchema, 'wrapped', logger.child('JIT Executor')) as any,
+      executor: jitExecutorFactory(remoteSchema, 'wrapped', logger.child('JIT Executor')),
       createProxyingResolver: meshDefaultCreateProxyingResolver,
     });
   }

@@ -1,5 +1,6 @@
 query GetSomeEmployees {
   employees(limit: 5, orderBy: { emp_no: asc }) {
+    __typename
     emp_no
     birth_date
     first_name

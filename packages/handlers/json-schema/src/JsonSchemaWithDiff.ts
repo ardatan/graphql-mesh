@@ -1,4 +1,4 @@
-import AggregateError from '@ardatan/aggregate-error';
+import { AggregateError } from '@graphql-mesh/utils';
 import { ProxyOptions, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { JSONSchema } from '@json-schema-tools/meta-schema';
 import { JsonPointer } from 'json-ptr';
@@ -107,7 +107,7 @@ export const JsonSchemaWithDiff: ProxyOptions<JSONSchema> = {
       }
     );
     if (breakingChanges.length > 0) {
-      throw new AggregateError(breakingChanges);
+      throw new AggregateError(breakingChanges, 'Breaking changes are found');
     }
   },
 };

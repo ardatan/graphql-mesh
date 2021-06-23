@@ -25,11 +25,11 @@ import {
   groupTransforms,
   ResolverDataBasedFactory,
   jitExecutorFactory,
+  AggregateError,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { delegateToSchema } from '@graphql-tools/delegate';
-import AggregateError from '@ardatan/aggregate-error';
 import { DefaultLogger } from './logger';
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
@@ -110,15 +110,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     includeIdentifierExtension: true,
     execute: (args: any) => {
       const { document, contextValue, variableValues, rootValue, operationName }: ExecutionArgs = args;
-      return jitExecutor(
-        {
-          document,
-          context: contextValue,
-          variables: variableValues,
-        },
+      return jitExecutor({
+        document,
+        context: contextValue,
+        variables: variableValues,
         operationName,
-        rootValue
-      );
+        rootValue,
+      });
     },
   });
 

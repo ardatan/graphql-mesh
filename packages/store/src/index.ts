@@ -1,8 +1,7 @@
 import { promises as fsPromises } from 'fs';
 import { isAbsolute, join } from 'path';
-import { flatString, writeFile } from '@graphql-mesh/utils';
+import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
 import { Change, CriticalityLevel, diff } from '@graphql-inspector/core';
-import AggregateError from '@ardatan/aggregate-error';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
 

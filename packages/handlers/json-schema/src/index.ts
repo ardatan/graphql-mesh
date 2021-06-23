@@ -7,6 +7,7 @@ import {
   readFileOrUrlWithCache,
   getCachedFetch,
   asArray,
+  AggregateError,
 } from '@graphql-mesh/utils';
 import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { SchemaComposer } from 'graphql-compose';
@@ -22,7 +23,6 @@ import {
   isScalarType,
   specifiedDirectives,
 } from 'graphql';
-import AggregateError from '@ardatan/aggregate-error';
 import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
 import { inspect } from 'util';
 
@@ -299,7 +299,10 @@ export default class JsonSchemaHandler implements MeshHandler {
           // so ignore auto error detection if the return type has that field
           if (errors?.length) {
             if (!('getFields' in returnType && 'errors' in returnType.getFields())) {
-              const aggregatedError = new AggregateError(errors.map(normalizeError));
+              const aggregatedError = new AggregateError(
+                errors.map(normalizeError),
+                `${operationConfig.type}.${operationConfig.field} failed`
+              );
               aggregatedError.stack = null;
               this.logger.debug(`=> Throwing the error ${inspect(aggregatedError, true, Infinity, true)}`);
               return aggregatedError;

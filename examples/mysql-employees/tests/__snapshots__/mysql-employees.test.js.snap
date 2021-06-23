@@ -857,6 +857,7 @@ Object {
   "data": Object {
     "employees": Array [
       Object {
+        "__typename": "employees",
         "birth_date": "1953-09-02",
         "emp_no": 10001,
         "first_name": "Georgi",
@@ -865,6 +866,7 @@ Object {
         "last_name": "Facello",
       },
       Object {
+        "__typename": "employees",
         "birth_date": "1964-06-02",
         "emp_no": 10002,
         "first_name": "Bezalel",
@@ -873,6 +875,7 @@ Object {
         "last_name": "Simmel",
       },
       Object {
+        "__typename": "employees",
         "birth_date": "1959-12-03",
         "emp_no": 10003,
         "first_name": "Parto",
@@ -881,6 +884,7 @@ Object {
         "last_name": "Bamford",
       },
       Object {
+        "__typename": "employees",
         "birth_date": "1954-05-01",
         "emp_no": 10004,
         "first_name": "Chirstian",
@@ -889,6 +893,7 @@ Object {
         "last_name": "Koblick",
       },
       Object {
+        "__typename": "employees",
         "birth_date": "1955-01-21",
         "emp_no": 10005,
         "first_name": "Kyoichi",

@@ -28,7 +28,6 @@
     "@types/qs": "6.9.6"
   },
   "dependencies": {
-    "@ardatan/aggregate-error": "0.0.6",
     "@json-schema-tools/meta-schema": "1.6.18",
     "json-ptr": "2.2.0",
     "@graphql-mesh/types": "0.42.0",

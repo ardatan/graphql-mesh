@@ -23,7 +23,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
         rawSource.schema,
         rawSource.name,
         logger.child(`${rawSource.name} - JIT Executor`)
-      ) as any;
+      );
     }
   });
   logger.debug(`Stitching directives are being generated`);
@@ -71,7 +71,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
         batch: true,
         transforms: wrapTransforms,
         createProxyingResolver: meshDefaultCreateProxyingResolver,
-        executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')) as any,
+        executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')),
       });
     }
     if (noWrapTransforms.length) {

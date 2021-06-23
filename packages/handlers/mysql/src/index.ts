@@ -326,7 +326,7 @@ export default class MySQLHandler implements MeshHandler {
                 resolve: async (root, args, { mysqlConnection }, info) => {
                   const fieldMap: Record<string, any> = graphqlFields(info);
                   const fields = Object.keys(fieldMap).filter(
-                    fieldName => Object.keys(fieldMap[fieldName]).length === 0
+                    fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
                   );
                   const where = {
                     [foreignColumnName]: root[columnName],
@@ -366,6 +366,9 @@ export default class MySQLHandler implements MeshHandler {
               const fields: string[] = [];
               await Promise.all(
                 Object.keys(fieldMap).map(async fieldName => {
+                  if (fieldName === '__typename') {
+                    return;
+                  }
                   const subFieldMap = fieldMap[fieldName];
                   if (Object.keys(subFieldMap).length === 0) {
                     fields.push(fieldName);
@@ -411,7 +414,9 @@ export default class MySQLHandler implements MeshHandler {
               const input = args[tableName];
               const { recordId } = await mysqlConnection.insert(tableName, input);
               const fieldMap: Record<string, any> = graphqlFields(info);
-              const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
+              const fields = Object.keys(fieldMap).filter(
+                fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
+              );
               const where: any = {};
               const primaryColumnName = primaryKeyMetadata.Column_name;
               where[primaryColumnName] = input[primaryColumnName] || recordId;
@@ -432,7 +437,9 @@ export default class MySQLHandler implements MeshHandler {
             resolve: async (root, args, { mysqlConnection }, info) => {
               await mysqlConnection.update(tableName, args[tableName], args.where);
               const fieldMap: Record<string, any> = graphqlFields(info);
-              const fields = Object.keys(fieldMap).filter(fieldName => Object.keys(fieldMap[fieldName]).length === 0);
+              const fields = Object.keys(fieldMap).filter(
+                fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
+              );
               const result = await mysqlConnection.select(tableName, fields, args.where, {});
               return result[0];
             },
