@@ -4,12 +4,17 @@ on:
   pull_request:
     branches:
       - master
-
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Are you sure?'
+        required: true
+        default: 'yes'
 jobs:
   publish-canary:
     name: Publish Canary
     runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.head.repo.full_name == github.repository || github.event.inputs.confirm == 'yes'
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
@@ -18,7 +23,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: 16
       - name: Configure Git Credentials
         run: |
           git config --global user.email "theguild-bot@users.noreply.github.com"
@@ -34,18 +39,18 @@ jobs:
           path: '**/node_modules'
           key: ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
             ${{ runner.os }}-16-node-modules-
       - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock && yarn patch-package
+        run: yarn install --ignore-engines && git checkout yarn.lock
       - name: Release Canary
         id: canary
         uses: 'kamilkisiela/release-canary@master'
-        if: github.repository == 'urigo/graphql-mesh'
         with:
           npm-token: ${{ secrets.NODE_AUTH_TOKEN }}
           npm-script: 'yarn release:canary'
           changesets: true
+        env:
+          ON_DEMAND: ${{github.event.inputs.confirm}}
       - name: Publish a message
         if: steps.canary.outputs.released
         uses: 'kamilkisiela/pr-comment@master'
