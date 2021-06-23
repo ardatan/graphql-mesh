@@ -107,7 +107,10 @@ export const JsonSchemaWithDiff: ProxyOptions<JSONSchema> = {
       }
     );
     if (breakingChanges.length > 0) {
-      throw new AggregateError(breakingChanges, 'Breaking changes are found');
+      throw new AggregateError(
+        breakingChanges.map(breakingChange => new Error(breakingChange)),
+        'Breaking changes are found'
+      );
     }
   },
 };

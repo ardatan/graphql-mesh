@@ -27,7 +27,10 @@ async function updateVersions() {
   const packages = await getPackages(cwd);
   const config = await readConfig(cwd, packages);
   const modifiedChangesets = getRelevantChangesets(config.baseBranch);
-  const changesets = (await readChangesets(cwd)).filter(change => modifiedChangesets.includes(change.id));
+  const allChangesets = await readChangesets(cwd);
+  const changesets = process.env.ON_DEMAND
+    ? allChangesets
+    : allChangesets.filter(change => modifiedChangesets.includes(change.id));
   
   if (changesets.length === 0) {
     console.warn(`Unable to find any relevant package for canary publishing. Please make sure changesets exists!`);
