@@ -27,6 +27,23 @@ type Query {
 "
 `;
 
+exports[`Type Merging and Batching Example should give correct response for example queries: Author.graphql-query-result 1`] = `
+Object {
+  "data": Object {
+    "author": Object {
+      "books": Array [
+        Object {
+          "id": "0",
+          "title": "Lorem Ipsum",
+        },
+      ],
+      "id": "1",
+      "name": "Jane Doe",
+    },
+  },
+}
+`;
+
 exports[`Type Merging and Batching Example should give correct response for example queries: Authors.graphql-query-result 1`] = `
 Object {
   "data": Object {

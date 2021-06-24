@@ -59,7 +59,7 @@ Then, this handler will be available for you to use in your config file.
 
 [Supported APIs](https://graphql-mesh.com/docs/handlers/available-handlers)
 
-[Schema Transformations](https://graphql-mesh.com/docs/getting-started/mesh-transforms)
+[Schema Transformations](https://graphql-mesh.com/docs/transforms/transforms-introduction)
 
 [TypeScript Support](https://graphql-mesh.com/docs/recipes/typescript)
 

@@ -1,24 +1,26 @@
 ---
 id: basic-example
 title: Basic Usage
-sidebar_label: 3. Basic Usage
+sidebar_label: Basic Usage
 ---
 
 To get started with a simple Mesh, create a GraphQL Mesh configuration file - `.meshrc.yaml`, under your project root, and fill in your sources, for example:
 
 ```yml
 sources:
-  - name: Wiki
+  - name: StackExchange
     handler:
       openapi:
-        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+        source: https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml
 ```
 
-This demo will use the public API of Wikipedia, which uses `openapi` spec, so we'll need to make sure we have `@graphql-mesh/openapi` handler installed as well:
+This demo will use the public API of StackExchange, which uses `openapi` spec, so we'll need to make sure we have `@graphql-mesh/openapi` handler installed as well:
 
 ```
 yarn add graphql @graphql-mesh/openapi
 ```
+
+[Learn more about OpenAPI Handler](https://www.graphql-mesh.com/docs/handlers/openapi)
 
 ## Try your new API
 
@@ -37,17 +39,14 @@ Open your browser in `http://localhost:4000` to start using it.
 For example, this following will fetch all page views for Wikipedia.org on the past month:
 
 ```graphql
-query wikipediaMetrics {
-  getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd(
-    access: ALL_ACCESS
-    agent: USER
-    start: "20200101"
-    end: "20200226"
-    project: "en.wikipedia.org"
-    granularity: DAILY
-  ) {
+query ListQuestions {
+  listQuestions(site: "stackoverflow") {
     items {
-      views
+      title
+      tags
+      isAnswered
+      answerCount
+      link
     }
   }
 }
@@ -55,4 +54,7 @@ query wikipediaMetrics {
 
 You can give it a try and run it directly in your browser.
 
-> You can find the complete example [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
+> You can find the complete example [here](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-stackexchange)
+
+## What's next?
+Checkout `Recipes` section to learn more about GraphQL Mesh!

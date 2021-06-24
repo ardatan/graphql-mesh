@@ -1,3 +1,9 @@
+---
+id: build-mesh-artifacts
+title: Build Artifacts
+sidebar_label: Build Artifacts
+---
+
 ## Build & Validate Mesh Artifacts
 
 After you tested your Mesh with `dev` command, it is time to build Mesh artifacts for advanced usage with the following command.
@@ -71,4 +77,4 @@ yarn mesh validate
 
 ### Generate an SDK from defined operations in order to use it in your existing app
 
-[Learn how to use Mesh as SDK](/docs/recipes/as-sdk.md)
+[Learn how to use Mesh as SDK](/docs/recipes/as-sdk)

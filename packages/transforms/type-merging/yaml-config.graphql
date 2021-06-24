@@ -5,7 +5,7 @@ extend type Transform {
   typeMerging: TypeMergingConfig
 }
 
-type TypeMergingConfig {
+type TypeMergingConfig @md {
   types: [MergedTypeConfig!]
   """
   Denotes a root field used to query a merged type across services.

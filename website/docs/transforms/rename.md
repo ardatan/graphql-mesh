@@ -52,7 +52,7 @@ or you can use regular expressions to rename multiple types, fields or both
         useRegExpForFields: true
 ```
 
-> For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/getting-started/mesh-transforms#two-different-modes).
+> For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
 
 ## Config API Reference
 

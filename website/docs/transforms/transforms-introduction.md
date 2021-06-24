@@ -1,7 +1,7 @@
 ---
-id: mesh-transforms
-title: Mesh Transforms
-sidebar_label: 4. Mesh Transforms
+id: transforms-introduction
+title: Schema Transformation
+sidebar_label: Introduction
 ---
 
 ## Introduction to Transforms

@@ -1,7 +1,7 @@
 ---
 id: grpc
-title: gRPC & Protobuf
-sidebar_label: gRPC
+title: gRPC / Protobuf
+sidebar_label: gRPC / Protobuf
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
 

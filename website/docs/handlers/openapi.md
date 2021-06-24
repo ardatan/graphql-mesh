@@ -179,7 +179,9 @@ const resolvers = {
 module.exports = { resolvers }
 ```
 
-> We have a lot of examples for OpenAPI Handler;
+## Examples
+
+We have a lot of examples for OpenAPI Handler;
 - [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
 - [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather)
 - [StackExchange](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-stackexchange)

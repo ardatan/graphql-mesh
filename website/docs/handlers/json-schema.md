@@ -1,7 +1,7 @@
 ---
 id: json-schema
-title: JSON Schema
-sidebar_label: JSON Schema
+title: JSON Schema or Samples
+sidebar_label: JSON Schema or Samples
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218994-11434880-7e5a-11ea-8594-08185526080f.png)
 

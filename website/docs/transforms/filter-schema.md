@@ -97,7 +97,7 @@ type User {
 }
 ```
 
-> For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/getting-started/mesh-transforms#two-different-modes).
+> For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
 
 ## Config API Reference
 
