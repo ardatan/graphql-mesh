@@ -6,6 +6,8 @@ sidebar_label: Combine and extend sources
 
 GraphQL Mesh is able to merge different data sources into a single unified GraphQL Schema, and GraphQL Mesh is not an alternative to Schema Stitching, Apollo Federation, Bare or another merging strategy. GraphQL Mesh can use any of those merging strategies to combine the input sources. By default, GraphQL Mesh applies Schema Stitching.
 
+[Learn more the key differences between Schema Stitching and Apollo Federation](https://product.voxmedia.com/2020/11/2/21494865/to-federate-or-stitch-a-graphql-gateway-revisited)
+
 ## Extending GraphQL Schema with `additionalTypeDefs`
 
 You can add new types and/or fields to the current unified GraphQL Schema by using `additionalTypeDefs` configuration field;
