@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
-    "@graphql-tools/stitching-directives": "1.3.3",
-    "@graphql-tools/delegate": "7.1.5",
+    "@graphql-tools/stitching-directives": "beta",
+    "@graphql-tools/delegate": "beta",
     "@graphql-mesh/utils": "0.12.0",
     "lodash": "4.17.21"
   },
