@@ -28,7 +28,7 @@
     "@types/qs": "6.9.6"
   },
   "dependencies": {
-    "@json-schema-tools/meta-schema": "1.6.18",
+    "@json-schema-tools/meta-schema": "1.6.19",
     "json-ptr": "2.2.0",
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/utils": "0.12.0",
