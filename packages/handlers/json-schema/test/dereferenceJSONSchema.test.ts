@@ -1,5 +1,5 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { dereferenceJSONSchema } from '../src/utils';
+import { dereferenceJSONSchema } from '../src/utils/dereferenceJSONSchema';
 
 describe('dereferenceJSONSchema', () => {
   it('should resolve all $ref', async () => {

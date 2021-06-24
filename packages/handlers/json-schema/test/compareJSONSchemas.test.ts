@@ -1,6 +1,7 @@
-import { JsonSchemaWithDiff } from '../src/JsonSchemaWithDiff';
+import { AggregateError } from '@graphql-tools/utils';
+import { compareJSONSchemas } from '../src/utils/compareJSONSchemas';
 
-describe('validateSchemaCompatibility', () => {
+describe('compareJSONSchemas', () => {
   it('should throw on removed field', async () => {
     const oldSchema = {
       type: 'object',
@@ -26,7 +27,7 @@ describe('validateSchemaCompatibility', () => {
     } as const;
 
     try {
-      await JsonSchemaWithDiff.validate(oldSchema, newSchema, '');
+      await compareJSONSchemas(oldSchema, newSchema);
       expect(true).toBe(false);
     } catch (e) {
       const errors = [...e.errors];

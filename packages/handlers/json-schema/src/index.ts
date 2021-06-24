@@ -12,7 +12,6 @@ import {
 import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { SchemaComposer } from 'graphql-compose';
 import toJsonSchema from 'to-json-schema';
-import { getComposerFromJSONSchema, healJSONSchema, dereferenceJSONSchema, referenceJSONSchemaObject } from './utils';
 import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import {
@@ -25,6 +24,10 @@ import {
 } from 'graphql';
 import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
 import { inspect } from 'util';
+import { dereferenceJSONSchema } from './utils/dereferenceJSONSchema';
+import { getComposerFromJSONSchema } from './utils/getComposerFromJSONSchema';
+import { healJSONSchema } from './utils/healJSONSchema';
+import { referenceJSONSchema } from './utils/referenceJSONSchema';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
@@ -135,7 +138,7 @@ export default class JsonSchemaHandler implements MeshHandler {
       this.logger.debug(`Healing JSON Schema`);
       const healedSchema = await healJSONSchema(fullyDeferencedSchema);
       this.logger.debug(`Building and mapping $refs back to JSON Schema`);
-      const fullyReferencedSchema = await referenceJSONSchemaObject(healedSchema as any);
+      const fullyReferencedSchema = await referenceJSONSchema(healedSchema as any);
       return fullyReferencedSchema;
     });
     this.logger.debug(`Derefering the bundled JSON Schema`);

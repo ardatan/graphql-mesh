@@ -1,7 +1,7 @@
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { referenceJSONSchemaObject } from '../src/utils';
+import { referenceJSONSchema } from '../src/utils/referenceJSONSchema';
 
-describe('referenceJSONSchemaObject', () => {
+describe('referenceJSONSchema', () => {
   it('should create definitions under definitions prop and put references in other places', async () => {
     const Post: JSONSchemaObject = {
       type: 'object',
@@ -35,7 +35,7 @@ describe('referenceJSONSchemaObject', () => {
       },
     };
     Post.properties.author = Author;
-    const result = await referenceJSONSchemaObject({
+    const result = await referenceJSONSchema({
       type: 'object',
       title: 'Container',
       properties: {

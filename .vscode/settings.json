@@ -1,6 +1,25 @@
+// Place your settings in this file to overwrite default and user settings.
 {
   "yaml.schemas": {
     "./packages/types/src/config-schema.json": ".meshrc.*"
+  },
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.rulers": [80],
+  "editor.wordWrapColumn": 110,
+  "prettier.semi": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "prettier.singleQuote": true,
+  "prettier.printWidth": 110,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "test-lib": true,
+    "lib": true,
+    "coverage": true,
+    "npm": true
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
