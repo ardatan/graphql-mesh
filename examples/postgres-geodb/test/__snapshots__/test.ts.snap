@@ -15,16 +15,16 @@ Object {
               "name": "TJ Holowaychuk",
             },
             Object {
-              "avatarUrl": "https://avatars.githubusercontent.com/u/227486?v=4",
-              "id": "MDQ6VXNlcjIyNzQ4Ng==",
-              "login": "chrisbanes",
-              "name": "Chris Banes",
-            },
-            Object {
               "avatarUrl": "https://avatars.githubusercontent.com/u/97088?u=f8156684506d77fd89ba332dc677b07352a0b790&v=4",
               "id": "MDQ6VXNlcjk3MDg4",
               "login": "mrdoob",
               "name": "Mr.doob",
+            },
+            Object {
+              "avatarUrl": "https://avatars.githubusercontent.com/u/227486?v=4",
+              "id": "MDQ6VXNlcjIyNzQ4Ng==",
+              "login": "chrisbanes",
+              "name": "Chris Banes",
             },
             Object {
               "avatarUrl": "https://avatars.githubusercontent.com/u/1305617?u=25309b5502674f2627fdc109c52522daed0e3d6d&v=4",

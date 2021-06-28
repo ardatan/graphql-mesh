@@ -1,9 +1,9 @@
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { healJSONSchema } from '../src/utils/healJSONSchema';
 
 describe('healJSONSchema', () => {
   it('should add titles for non-primitive definitions if missing', async () => {
-    const schema = {
+    const schema: JSONSchema = {
       type: 'object',
       title: 'SomeSchema',
       properties: {

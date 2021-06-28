@@ -24,7 +24,7 @@ import {
 } from 'graphql';
 import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
 import { inspect } from 'util';
-import { dereferenceJSONSchema } from './utils/dereferenceJSONSchema';
+import { dereferenceObject } from './utils/dereferenceObject';
 import { getComposerFromJSONSchema } from './utils/getComposerFromJSONSchema';
 import { healJSONSchema } from './utils/healJSONSchema';
 import { referenceJSONSchema } from './utils/referenceJSONSchema';
@@ -34,7 +34,7 @@ export default class JsonSchemaHandler implements MeshHandler {
   private baseDir: string;
   public cache: KeyValueCache<any>;
   public pubsub: MeshPubSub;
-  public jsonSchema: StoreProxy<JSONSchema>;
+  public jsonSchema: StoreProxy<JSONSchemaObject>;
   private logger: Logger;
 
   constructor({ config, baseDir, cache, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
@@ -132,8 +132,11 @@ export default class JsonSchemaHandler implements MeshHandler {
         }
       }
       this.logger.debug(`Dereferencing JSON Schema to resolve all $refs`);
-      const fullyDeferencedSchema = await dereferenceJSONSchema(finalJsonSchema, this.cache, {
-        cwd: this.baseDir,
+      const fullyDeferencedSchema = await dereferenceObject(finalJsonSchema, {
+        cache: this.cache,
+        config: {
+          cwd: this.baseDir,
+        },
       });
       this.logger.debug(`Healing JSON Schema`);
       const healedSchema = await healJSONSchema(fullyDeferencedSchema);
@@ -142,8 +145,11 @@ export default class JsonSchemaHandler implements MeshHandler {
       return fullyReferencedSchema;
     });
     this.logger.debug(`Derefering the bundled JSON Schema`);
-    const fullyDeferencedSchema = await dereferenceJSONSchema(cachedJsonSchema, this.cache, {
-      cwd: this.baseDir,
+    const fullyDeferencedSchema = await dereferenceObject(cachedJsonSchema, {
+      cache: this.cache,
+      config: {
+        cwd: this.baseDir,
+      },
     });
     this.logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
     const visitorResult = await getComposerFromJSONSchema(fullyDeferencedSchema as JSONSchema, this.logger);

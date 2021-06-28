@@ -1,4 +1,3 @@
-import { AggregateError } from '@graphql-tools/utils';
 import { compareJSONSchemas } from '../src/utils/compareJSONSchemas';
 
 describe('compareJSONSchemas', () => {

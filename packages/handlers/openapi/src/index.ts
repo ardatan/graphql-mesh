@@ -22,8 +22,7 @@ import {
   MeshPubSub,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
-import { GraphQLInputType } from 'graphql-compose/lib/graphql';
-import { GraphQLID } from 'graphql';
+import { GraphQLID, GraphQLInputType } from 'graphql';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';

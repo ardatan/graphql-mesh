@@ -99,6 +99,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
   });
   addFormats(ajv);
   const formatScalarMap = JSONSchemaStringFormatScalarMapFactory(ajv);
+  const futureTasks = new Set<VoidFunction>();
   return visitJSONSchema(schema, function mutateFn(subSchema, { path }): any {
     const getTypeComposer = (): any => {
       if (typeof subSchema === 'boolean') {
@@ -627,6 +628,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           }
 
           if (subSchema.title === '_schema') {
+            futureTasks.forEach(futureTask => futureTask());
             return {
               output: schemaComposer,
             };
@@ -659,11 +661,13 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           if (subSchema.title === 'QueryInput') {
             const typeComposer = schemaComposer.Query;
             for (const fieldName in inputFieldMap) {
-              typeComposer.addFieldArgs(fieldName, {
-                input: {
-                  type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
-                },
-              });
+              futureTasks.add(() =>
+                typeComposer.addFieldArgs(fieldName, {
+                  input: {
+                    type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
+                  },
+                })
+              );
             }
             return {
               output: typeComposer,
@@ -673,11 +677,13 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           if (subSchema.title === 'MutationInput') {
             const typeComposer = schemaComposer.Mutation;
             for (const fieldName in inputFieldMap) {
-              typeComposer.addFieldArgs(fieldName, {
-                input: {
-                  type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
-                },
-              });
+              futureTasks.add(() =>
+                typeComposer.addFieldArgs(fieldName, {
+                  input: {
+                    type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
+                  },
+                })
+              );
             }
             return {
               output: typeComposer,
@@ -687,11 +693,13 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           if (subSchema.title === 'SubscriptionInput') {
             const typeComposer = schemaComposer.Subscription;
             for (const fieldName in inputFieldMap) {
-              typeComposer.addFieldArgs(fieldName, {
-                input: {
-                  type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
-                },
-              });
+              futureTasks.add(() =>
+                typeComposer.addFieldArgs(fieldName, {
+                  input: {
+                    type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
+                  },
+                })
+              );
             }
             return {
               output: typeComposer,
@@ -733,5 +741,5 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
     };
     const result = getTypeComposer();
     return result;
-  }) as any;
+  });
 }

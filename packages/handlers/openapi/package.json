@@ -3,7 +3,8 @@
   "version": "0.16.11",
   "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs","typings": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
   },
@@ -38,7 +39,8 @@
     "graphql-subscriptions": "1.2.1",
     "pluralize": "8.0.0",
     "swagger2openapi": "7.0.7",
-    "url-join": "4.0.1"
+    "url-join": "4.0.1",
+    "openapi-types": "9.0.3"
   },
   "publishConfig": {
     "access": "public",

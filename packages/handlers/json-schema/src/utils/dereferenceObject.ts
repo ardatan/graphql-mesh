@@ -1,10 +1,16 @@
 import { KeyValueCache } from '@graphql-mesh/types';
-import { JSONSchemaObject, JSONSchema } from '@json-schema-tools/meta-schema';
+import { JsonPointer } from 'json-ptr';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { ReadFileOrUrlOptions, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { dirname, isAbsolute, join } from 'path';
-import { resolvePath } from './getComposerFromJSONSchema';
 import { healJSONSchema } from './healJSONSchema';
-import { visitJSONSchema } from './visitJSONSchema';
+
+export const resolvePath = (path: string, root: any): any => {
+  return JsonPointer.get(root, path);
+};
+function isRefObject(obj: any): obj is { $ref: string } {
+  return typeof obj === 'object' && obj.$ref;
+}
 
 const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   const [givenExternalFileRelativePath, givenRefPath] = given$ref.split('#');
@@ -20,28 +26,32 @@ const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   }
   return `${baseFilePath}#${givenRefPath}`;
 };
-
-const dereferencedJSONSchemaWeakMap = new WeakMap<JSONSchemaObject, any>();
-export async function dereferenceJSONSchema(
-  schema: string | JSONSchema,
-  cache: KeyValueCache<any>,
-  config: ReadFileOrUrlOptions,
-  externalFileCache = new Map<string, JSONSchemaObject>(),
-  refMap = new Map<string, JSONSchemaObject>()
-) {
-  if (typeof schema === 'string') {
-    schema = {
-      $ref: schema,
-    };
-  }
-  return visitJSONSchema(
-    typeof schema === 'object' ? { ...schema } : schema,
-    async function visitorFn(subSchema): Promise<any> {
-      if (typeof subSchema === 'object' && subSchema.$ref) {
-        if (refMap.has(subSchema.$ref)) {
-          return refMap.get(subSchema.$ref);
-        }
-        const [externalRelativeFilePath, refPath] = subSchema.$ref.split('#');
+// eslint-disable-next-line @typescript-eslint/ban-types
+export async function dereferenceObject<T extends object, TRoot = T>(
+  obj: T,
+  {
+    cache = new InMemoryLRUCache(),
+    config = {
+      cwd: process.cwd(),
+    },
+    externalFileCache = new Map<string, any>(),
+    refMap = new Map<string, any>(),
+    root = obj as any,
+  }: {
+    cache?: KeyValueCache<any>;
+    config?: ReadFileOrUrlOptions;
+    externalFileCache?: Map<string, any>;
+    refMap?: Map<string, any>;
+    root?: TRoot;
+  } = {}
+): Promise<T> {
+  if (typeof obj === 'object') {
+    if (isRefObject(obj)) {
+      const $ref = obj.$ref;
+      if (refMap.has($ref)) {
+        return refMap.get($ref);
+      } else {
+        const [externalRelativeFilePath, refPath] = $ref.split('#');
         if (externalRelativeFilePath) {
           const externalFilePath = isAbsolute(externalRelativeFilePath)
             ? externalRelativeFilePath
@@ -54,19 +64,18 @@ export async function dereferenceJSONSchema(
           };
           if (!externalFile) {
             externalFile = await readFileOrUrlWithCache(externalFilePath, cache, newConfig);
-            externalFile = (await healJSONSchema(externalFile)) as JSONSchemaObject;
+            externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }
           const fakeRefObject = {
             $ref: `#${refPath}`,
             ...externalFile,
           };
-          const result = await dereferenceJSONSchema(
-            refPath ? fakeRefObject : externalFile,
+          return dereferenceObject(refPath ? fakeRefObject : externalFile, {
             cache,
-            newConfig,
+            config: newConfig,
             externalFileCache,
-            new Proxy(refMap, {
+            refMap: new Proxy(refMap, {
               get: (originalRefMap, key) => {
                 switch (key) {
                   case 'has':
@@ -85,24 +94,29 @@ export async function dereferenceJSONSchema(
                       return originalRefMap.set(original$Ref, val);
                     };
                 }
-                throw new Error('Not implemented');
+                throw new Error('Not implemented ' + key.toString());
               },
-            })
-          );
-          return result;
+            }),
+          });
         } else {
-          const result = resolvePath(refPath, schema);
-          refMap.set(subSchema.$ref, result);
-          return result;
+          const result = resolvePath(refPath, root);
+          refMap.set($ref, result);
+          return dereferenceObject(result, {
+            cache,
+            config,
+            externalFileCache,
+            refMap,
+            root,
+          });
         }
       }
-      return subSchema;
-    },
-    {
-      path: '/',
-      visitedSubschemaResultMap: dereferencedJSONSchemaWeakMap,
-      keepObjectRef: true,
-      reverse: false,
+    } else {
+      await Promise.all(
+        Object.entries(obj).map(async ([key, val]) => {
+          obj[key] = await dereferenceObject<any>(val, { cache, config, externalFileCache, refMap, root });
+        })
+      );
     }
-  );
+  }
+  return obj;
 }

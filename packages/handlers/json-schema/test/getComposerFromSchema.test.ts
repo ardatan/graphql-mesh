@@ -32,10 +32,12 @@ import {
   GraphQLURL,
   GraphQLVoid,
 } from 'graphql-scalars';
+import { DefaultLogger } from '@graphql-mesh/runtime';
 
 describe('getComposerFromJSONSchema', () => {
+  const logger = new DefaultLogger('getComposerFromJSONSchema - test');
   it('should return JSON scalar if given schema is boolean true', async () => {
-    const result = await getComposerFromJSONSchema(true);
+    const result = await getComposerFromJSONSchema(true, logger);
     expect(result.input.getType()).toBe(GraphQLJSON);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLJSON);
   });
@@ -47,7 +49,7 @@ describe('getComposerFromJSONSchema', () => {
       type: 'string',
       pattern,
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     // Scalar types are both input and output types
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ScalarTypeComposer;
@@ -65,7 +67,7 @@ describe('getComposerFromJSONSchema', () => {
       type: 'string',
       const: constStr,
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     // Scalar types are both input and output types
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ScalarTypeComposer;
@@ -83,7 +85,7 @@ describe('getComposerFromJSONSchema', () => {
       type: 'string',
       enum: enumValues,
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     // Enum types are both input and output types
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as EnumTypeComposer;
@@ -104,7 +106,7 @@ enum ExampleEnum {
       type: 'string',
       enum: enumValues,
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     // Enum types are both input and output types
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as EnumTypeComposer;
@@ -203,7 +205,7 @@ enum AdminPermission {
 }
     `.trim();
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     const unionComposer = result.output as UnionTypeComposer;
     expect(
       unionComposer.toSDL({
@@ -213,7 +215,7 @@ enum AdminPermission {
   });
   it('should generate an input union type for oneOf definitions that contain scalar types', async () => {
     const title = 'ExampleOneOf';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       oneOf: [
         {
@@ -230,7 +232,7 @@ enum AdminPermission {
         },
       ],
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(
       (result.input as InputTypeComposer).toSDL({
         deep: true,
@@ -285,7 +287,7 @@ scalar ExampleOneOf
         },
       ],
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect((result.input as InputTypeComposer).toSDL()).toBe(
       /* GraphQL */ `
 input ExampleAllOf_Input {
@@ -305,7 +307,7 @@ type ExampleAllOf {
   });
   it('should generate JSON scalar for allOf definitions that contain scalar types', async () => {
     const title = 'ExampleAllOf';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       allOf: [
         {
@@ -322,7 +324,7 @@ type ExampleAllOf {
         },
       ],
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ScalarTypeComposer;
     expect(isScalarType(outputComposer.getType())).toBeTruthy();
@@ -354,7 +356,7 @@ type ExampleAllOf {
         },
       ],
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect((result.input as InputTypeComposer).toSDL()).toBe(
       /* GraphQL */ `
 input ExampleAnyOf_Input {
@@ -374,7 +376,7 @@ type ExampleAnyOf {
   });
   it('should generate JSON scalar for allOf definitions that contain scalar types', async () => {
     const title = 'ExampleAnyOf';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       allOf: [
         {
@@ -391,82 +393,82 @@ type ExampleAnyOf {
         },
       ],
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ScalarTypeComposer;
     expect(isScalarType(outputComposer.getType())).toBeTruthy();
     expect(outputComposer.getTypeName()).toBe(title);
   });
   it('should return Boolean for boolean definition', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'boolean',
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
 
     expect(result.input.getType()).toBe(GraphQLBoolean);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLBoolean);
   });
   it('should return Void for null definition', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'null',
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
 
     expect(result.input.getType()).toBe(GraphQLVoid);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLVoid);
   });
   it('should return BigInt for int64 definition', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'integer',
       format: 'int64',
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
 
     expect(result.input.getType()).toBe(GraphQLBigInt);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLBigInt);
   });
   it('should return Int for int32 definition', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'integer',
       format: 'int32',
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
 
     expect(result.input.getType()).toBe(GraphQLInt);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLInt);
   });
   it('should return Int for integer definitions without format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'integer',
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
 
     expect(result.input.getType()).toBe(GraphQLInt);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLInt);
   });
   it('should return Float for number definition', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'number',
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
 
     expect(result.input.getType()).toBe(GraphQLFloat);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLFloat);
   });
   it('should generate scalar types for minLength definition', async () => {
     const title = 'NonEmptyString';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       type: 'string',
       minLength: 1,
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
     expect(inputComposer.getTypeName()).toBe(title);
@@ -476,12 +478,12 @@ type ExampleAnyOf {
   });
   it('should generate scalar types for maxLength definition', async () => {
     const title = 'NonEmptyString';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       type: 'string',
       maxLength: 2,
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
     expect(inputComposer.getTypeName()).toBe(title);
@@ -491,13 +493,13 @@ type ExampleAnyOf {
   });
   it('should generate scalar types for both minLength and maxLength definition', async () => {
     const title = 'NonEmptyString';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       type: 'string',
       minLength: 1,
       maxLength: 2,
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
     expect(inputComposer.getTypeName()).toBe(title);
@@ -507,84 +509,84 @@ type ExampleAnyOf {
     expect(serializeFn('a')).toBe('a');
   });
   it('should return DateTime scalar for date-time format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
       format: 'date-time',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLDateTime);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLDateTime);
   });
   it('should return Time scalar for time format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
       format: 'time',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLTime);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLTime);
   });
   it('should return Date scalar for date format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
       format: 'date',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLDate);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLDate);
   });
   it('should return EmailAddress scalar for email format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
       format: 'email',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLEmailAddress);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLEmailAddress);
   });
   it('should return IPv4 scalar for email format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
       format: 'ipv4',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLIPv4);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLIPv4);
   });
   it('should return IPv6 scalar for email format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
       format: 'ipv6',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLIPv6);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLIPv6);
   });
   it('should return URL scalar for uri format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
       format: 'uri',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLURL);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLURL);
   });
   it('should return String for string definitions without format', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'string',
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input.getType()).toBe(GraphQLString);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLString);
   });
   it('should return list type for array definitions with items as object', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       type: 'array',
       items: {
         type: 'string',
       },
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(isListType(result.input.getType())).toBeTruthy();
     expect((result.input as ListComposer).ofType.getType()).toBe(GraphQLString);
     expect(isListType((result.output as ListComposer).getType())).toBeTruthy();
@@ -592,14 +594,14 @@ type ExampleAnyOf {
   });
   it('should return generic JSON type for array definitions with contains', async () => {
     const title = 'ExampleArray';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       type: 'array',
       contains: {
         type: 'string',
       },
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ListComposer;
     expect(isListType(outputComposer.getType())).toBeTruthy();
@@ -608,7 +610,7 @@ type ExampleAnyOf {
   });
   it('should return union type inside a list type if array definition has items as an array', async () => {
     const title = 'FooOrBar';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title: 'ExampleObject',
       type: 'object',
       properties: {
@@ -639,7 +641,7 @@ type ExampleAnyOf {
       },
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect(
       (result.output as ObjectTypeComposer).toSDL({
         deep: true,
@@ -666,7 +668,7 @@ type Bar {
   });
   it('should create correct object types from object definition', async () => {
     const title = 'ExampleObject';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       type: 'object',
       properties: {
@@ -675,7 +677,7 @@ type Bar {
         },
       },
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect((result.input as InputTypeComposer).toSDL()).toBe(
       /* GraphQL */ `
 input ExampleObject_Input {
@@ -693,7 +695,7 @@ type ExampleObject {
   });
   it('should create correct object types from object definition with additionalPropertiez', async () => {
     const title = 'ExampleObject';
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title,
       type: 'object',
       properties: {
@@ -705,7 +707,7 @@ type ExampleObject {
         type: 'string',
       },
     };
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
     expect((result.input as InputTypeComposer).toSDL()).toContain(
       /* GraphQL */ `
 scalar ExampleObject_Input
@@ -721,7 +723,7 @@ type ExampleObject {
     );
   });
   it('should return GraphQLSchema if object definition given with _schema title', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title: '_schema',
       type: 'object',
       properties: {
@@ -736,7 +738,7 @@ type ExampleObject {
         },
       },
     };
-    const { output } = await getComposerFromJSONSchema(inputSchema);
+    const { output } = await getComposerFromJSONSchema(inputSchema, logger);
     expect(output instanceof SchemaComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
       /* GraphQL */ `
@@ -747,7 +749,7 @@ type Query {
     );
   });
   it('should return Query type if object definition given with Query title', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title: 'Query',
       type: 'object',
       properties: {
@@ -756,7 +758,7 @@ type Query {
         },
       },
     };
-    const { output } = await getComposerFromJSONSchema(inputSchema);
+    const { output } = await getComposerFromJSONSchema(inputSchema, logger);
     expect(output instanceof ObjectTypeComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
       /* GraphQL */ `
@@ -767,7 +769,7 @@ type Query {
     );
   });
   it('should return Mutation type if object definition given with Query title', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title: 'Mutation',
       type: 'object',
       properties: {
@@ -776,7 +778,7 @@ type Query {
         },
       },
     };
-    const { output } = await getComposerFromJSONSchema(inputSchema);
+    const { output } = await getComposerFromJSONSchema(inputSchema, logger);
     expect(output instanceof ObjectTypeComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
       /* GraphQL */ `
@@ -787,7 +789,7 @@ type Mutation {
     );
   });
   it('should return Subscription type if object definition given with Subscription title', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title: 'Subscription',
       type: 'object',
       properties: {
@@ -796,7 +798,7 @@ type Mutation {
         },
       },
     };
-    const { output } = await getComposerFromJSONSchema(inputSchema);
+    const { output } = await getComposerFromJSONSchema(inputSchema, logger);
     expect(output instanceof ObjectTypeComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
       /* GraphQL */ `
@@ -807,7 +809,7 @@ type Subscription {
     );
   });
   it('should add arguments to Query fields with the object definition QueryTitle', async () => {
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title: '_schema',
       type: 'object',
       properties: {
@@ -837,7 +839,7 @@ type Subscription {
         },
       },
     };
-    const { output } = await getComposerFromJSONSchema(inputSchema);
+    const { output } = await getComposerFromJSONSchema(inputSchema, logger);
     expect(output instanceof SchemaComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toBe(
       /* GraphQL */ `
@@ -878,7 +880,7 @@ input Foo_Input {
         },
       ],
     };
-    const inputSchema = {
+    const inputSchema: JSONSchema = {
       title: '_schema',
       type: 'object',
       properties: {
@@ -893,7 +895,7 @@ input Foo_Input {
       },
     };
 
-    const result = await getComposerFromJSONSchema(inputSchema);
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
 
     const schemaComposer = result.output as SchemaComposer;
     const fooId = 'FOO_ID';

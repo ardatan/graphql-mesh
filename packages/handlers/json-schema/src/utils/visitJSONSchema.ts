@@ -58,25 +58,29 @@ export async function visitJSONSchema<T>(
       }
       if (schema.allOf) {
         visitedSchema.allOf = keepObjectRef ? visitedSchema.allOf : [];
-        for (const subSchemaIndex in schema.allOf) {
-          visitedSchema.allOf[subSchemaIndex] = await visitJSONSchema(schema.allOf[subSchemaIndex], visitorFn, {
-            visitedSubschemaResultMap,
-            path: path + '/allOf/' + subSchemaIndex,
-            keepObjectRef,
-            reverse,
-          });
-        }
+        await Promise.all(
+          schema.allOf.map(async (subSchema, subSchemaIndex) => {
+            visitedSchema.allOf[subSchemaIndex] = await visitJSONSchema(subSchema, visitorFn, {
+              visitedSubschemaResultMap,
+              path: path + '/allOf/' + subSchemaIndex,
+              keepObjectRef,
+              reverse,
+            });
+          })
+        );
       }
       if (schema.anyOf) {
         visitedSchema.anyOf = keepObjectRef ? visitedSchema.anyOf : [];
-        for (const subSchemaIndex in schema.anyOf) {
-          visitedSchema.anyOf[subSchemaIndex] = await visitJSONSchema(schema.anyOf[subSchemaIndex], visitorFn, {
-            visitedSubschemaResultMap,
-            path: path + '/anyOf/' + subSchemaIndex,
-            keepObjectRef,
-            reverse,
-          });
-        }
+        await Promise.all(
+          schema.anyOf.map(async (subSchema, subSchemaIndex) => {
+            visitedSchema.anyOf[subSchemaIndex] = await visitJSONSchema(subSchema, visitorFn, {
+              visitedSubschemaResultMap,
+              path: path + '/anyOf/' + subSchemaIndex,
+              keepObjectRef,
+              reverse,
+            });
+          })
+        );
       }
       if (schema.contains) {
         visitedSchema.contains = await visitJSONSchema(schema.contains, visitorFn, {
@@ -88,18 +92,16 @@ export async function visitJSONSchema<T>(
       }
       if (schema.definitions) {
         visitedSchema.definitions = keepObjectRef ? visitedSchema.definitions : {};
-        for (const definitionName in schema.definitions) {
-          visitedSchema.definitions[definitionName] = await visitJSONSchema(
-            schema.definitions[definitionName],
-            visitorFn,
-            {
+        await Promise.all(
+          Object.entries(schema.definitions).map(async ([definitionName, subSchema]) => {
+            visitedSchema.definitions[definitionName] = await visitJSONSchema(subSchema, visitorFn, {
               visitedSubschemaResultMap,
               path: path + '/definitions/' + definitionName,
               keepObjectRef,
               reverse,
-            }
-          );
-        }
+            });
+          })
+        );
       }
       if (schema.else) {
         visitedSchema.else = await visitJSONSchema(schema.else, visitorFn, {
@@ -120,14 +122,16 @@ export async function visitJSONSchema<T>(
       if (schema.items) {
         if (Array.isArray(schema.items)) {
           visitedSchema.items = keepObjectRef ? visitedSchema.items : [];
-          for (const subSchemaIndex in schema.items) {
-            visitedSchema.items[subSchemaIndex] = await visitJSONSchema(schema.items[subSchemaIndex], visitorFn, {
-              visitedSubschemaResultMap,
-              path: path + '/items/' + subSchemaIndex,
-              keepObjectRef,
-              reverse,
-            });
-          }
+          await Promise.all(
+            schema.items.map(async (subSchema, subSchemaIndex) => {
+              visitedSchema.items[subSchemaIndex] = await visitJSONSchema(subSchema, visitorFn, {
+                visitedSubschemaResultMap,
+                path: path + '/items/' + subSchemaIndex,
+                keepObjectRef,
+                reverse,
+              });
+            })
+          );
         } else {
           visitedSchema.items = await visitJSONSchema(schema.items, visitorFn, {
             visitedSubschemaResultMap,
@@ -147,40 +151,42 @@ export async function visitJSONSchema<T>(
       }
       if (schema.oneOf) {
         visitedSchema.oneOf = keepObjectRef ? visitedSchema.oneOf : [];
-        for (const subSchemaIndex in schema.oneOf) {
-          visitedSchema.oneOf[subSchemaIndex] = await visitJSONSchema(schema.oneOf[subSchemaIndex], visitorFn, {
-            visitedSubschemaResultMap,
-            path: path + '/oneOf/' + subSchemaIndex,
-            keepObjectRef,
-            reverse,
-          });
-        }
+        await Promise.all(
+          schema.oneOf.map(async (subSchema, subSchemaIndex) => {
+            visitedSchema.oneOf[subSchemaIndex] = await visitJSONSchema(subSchema, visitorFn, {
+              visitedSubschemaResultMap,
+              path: path + '/oneOf/' + subSchemaIndex,
+              keepObjectRef,
+              reverse,
+            });
+          })
+        );
       }
       if (schema.patternProperties) {
         visitedSchema.patternProperties = keepObjectRef ? visitedSchema.patternProperties : {};
-        for (const pattern in schema.patternProperties) {
-          visitedSchema.patternProperties[pattern] = await visitJSONSchema(
-            schema.patternProperties[pattern],
-            visitorFn,
-            {
+        await Promise.all(
+          Object.entries(schema.patternProperties).map(async ([pattern, subSchema]) => {
+            visitedSchema.patternProperties[pattern] = await visitJSONSchema(subSchema, visitorFn, {
               visitedSubschemaResultMap,
               path: path + '/patternProperties/' + pattern,
               keepObjectRef,
               reverse,
-            }
-          );
-        }
+            });
+          })
+        );
       }
       if (schema.properties) {
         visitedSchema.properties = keepObjectRef ? visitedSchema.properties : {};
-        for (const property in schema.properties) {
-          visitedSchema.properties[property] = await visitJSONSchema(schema.properties[property], visitorFn, {
-            visitedSubschemaResultMap,
-            path: path + '/properties/' + property,
-            keepObjectRef,
-            reverse,
-          });
-        }
+        await Promise.all(
+          Object.entries(schema.properties).map(async ([propertyName, subSchema]) => {
+            visitedSchema.properties[propertyName] = await visitJSONSchema(subSchema, visitorFn, {
+              visitedSubschemaResultMap,
+              path: path + '/properties/' + propertyName,
+              keepObjectRef,
+              reverse,
+            });
+          })
+        );
       }
       if (schema.then) {
         visitedSchema.then = await visitJSONSchema(schema.then, visitorFn, {
