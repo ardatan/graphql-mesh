@@ -1,5 +1,5 @@
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { referenceJSONSchema } from '../src/utils/referenceJSONSchema';
+import { referenceJSONSchema } from '../src/referenceJSONSchema';
 
 describe('referenceJSONSchema', () => {
   it('should create definitions under definitions prop and put references in other places', async () => {

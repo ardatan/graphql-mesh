@@ -1,6 +1,6 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { dereferenceObject } from '../src/utils/dereferenceObject';
+import { dereferenceObject } from '../src/dereferenceObject';
 
 describe('dereferenceObject', () => {
   it('should resolve all $ref', async () => {

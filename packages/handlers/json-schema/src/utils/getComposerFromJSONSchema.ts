@@ -38,13 +38,8 @@ import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
-import { JsonPointer } from 'json-ptr';
 import { inspect } from 'util';
-import { visitJSONSchema } from './visitJSONSchema';
-
-export const resolvePath = (path: string, root: any): any => {
-  return JsonPointer.get(root, path);
-};
+import { visitJSONSchema } from 'json-machete';
 
 interface TypeComposers {
   input?: AnyTypeComposer<any>;

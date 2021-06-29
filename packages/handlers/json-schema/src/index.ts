@@ -24,10 +24,8 @@ import {
 } from 'graphql';
 import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
 import { inspect } from 'util';
-import { dereferenceObject } from './utils/dereferenceObject';
+import { dereferenceObject, healJSONSchema, referenceJSONSchema } from 'json-machete';
 import { getComposerFromJSONSchema } from './utils/getComposerFromJSONSchema';
-import { healJSONSchema } from './utils/healJSONSchema';
-import { referenceJSONSchema } from './utils/referenceJSONSchema';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
