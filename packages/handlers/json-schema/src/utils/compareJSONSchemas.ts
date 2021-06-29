@@ -1,7 +1,7 @@
 import { JSONSchema } from '@json-schema-tools/meta-schema';
 import { JsonPointer } from 'json-ptr';
 import { visitJSONSchema } from './visitJSONSchema';
-import { AggregateError } from '@graphql-tools/utils';
+import { AggregateError } from '@graphql-mesh/utils';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {
   const breakingChanges: string[] = [];

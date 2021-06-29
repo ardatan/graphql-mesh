@@ -20,7 +20,7 @@ export const mergeSingleSchema: MergerFn = ({ rawSources, typeDefs, resolvers, t
     noWrapTransforms = transformGroups.noWrapTransforms;
   }
 
-  if (source.executor || source.subscriber || source.transforms.length) {
+  if (source.executor || source.transforms.length) {
     const firstRoundTransforms = [...source.transforms];
     if (!typeDefs && !resolvers) {
       firstRoundTransforms.push(...wrapTransforms, ...noWrapTransforms);

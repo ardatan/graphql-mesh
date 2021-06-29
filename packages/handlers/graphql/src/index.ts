@@ -7,7 +7,7 @@ import {
   KeyValueCache,
 } from '@graphql-mesh/types';
 import { UrlLoader } from '@graphql-tools/url-loader';
-import { GraphQLSchema, buildSchema, parse, DocumentNode, Kind, buildASTSchema } from 'graphql';
+import { GraphQLSchema, buildSchema, parse, DocumentNode, Kind, buildASTSchema, ExecutionResult } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
   getInterpolatedHeadersFactory,
@@ -85,7 +85,7 @@ export default class GraphQLHandler implements MeshHandler {
       };
     }
     const urlLoader = new UrlLoader();
-    const getExecutorAndSubscriberForParams = (
+    const getExecutorForParams = (
       params: ExecutionParams,
       headersFactory: ResolverDataBasedFactory<Headers>,
       endpointFactory: ResolverDataBasedFactory<string>
@@ -97,7 +97,7 @@ export default class GraphQLHandler implements MeshHandler {
       };
       const headers = getHeadersObject(headersFactory(resolverData));
       const endpoint = endpointFactory(resolverData);
-      return urlLoader.getExecutorAndSubscriberAsync(endpoint, {
+      return urlLoader.getExecutorAsync(endpoint, {
         customFetch,
         ...this.config,
         headers,
@@ -115,7 +115,7 @@ export default class GraphQLHandler implements MeshHandler {
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
     const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
-      const { executor } = await getExecutorAndSubscriberForParams(params, schemaHeadersFactory, () => endpoint);
+      const executor = await getExecutorForParams(params, schemaHeadersFactory, () => endpoint);
       return executor(params);
     };
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
@@ -123,9 +123,9 @@ export default class GraphQLHandler implements MeshHandler {
 
     const fetchApolloServiceSdl = async () => {
       return this.apolloServiceSdl.getWithSet(async () => {
-        const sdlQueryResult = await introspectionExecutor({
+        const sdlQueryResult = (await introspectionExecutor({
           document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
-        });
+        })) as ExecutionResult;
         return sdlQueryResult?.data?._service?.sdl;
       });
     };
@@ -133,8 +133,7 @@ export default class GraphQLHandler implements MeshHandler {
     const nonExecutableSchema = await this.nonExecutableSchema.getWithSet(async () => {
       const schemaFromIntrospection = await (introspection
         ? urlLoader
-            .handleSDLAsync(introspection, {
-              customFetch,
+            .handleSDL(introspection, customFetch, {
               ...this.config,
               headers: schemaHeaders,
             })
@@ -171,16 +170,8 @@ export default class GraphQLHandler implements MeshHandler {
     return {
       schema: nonExecutableSchema,
       executor: async params => {
-        const { executor } = await getExecutorAndSubscriberForParams(params, operationHeadersFactory, endpointFactory);
-        return executor(params) as any;
-      },
-      subscriber: async params => {
-        const { subscriber } = await getExecutorAndSubscriberForParams(
-          params,
-          operationHeadersFactory,
-          endpointFactory
-        );
-        return subscriber(params);
+        const executor = await getExecutorForParams(params, operationHeadersFactory, endpointFactory);
+        return executor(params);
       },
       batch: 'batch' in this.config ? this.config.batch : true,
     };

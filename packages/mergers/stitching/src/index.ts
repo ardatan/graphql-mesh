@@ -1,13 +1,8 @@
 import { MergerFn, RawSourceOutput } from '@graphql-mesh/types';
-import { stitchSchemas } from '@graphql-tools/stitch';
+import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { mergeSingleSchema } from './mergeSingleSchema';
-import {
-  groupTransforms,
-  applySchemaTransforms,
-  meshDefaultCreateProxyingResolver,
-  jitExecutorFactory,
-} from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms, meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
@@ -17,6 +12,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
     return mergeSingleSchema(options);
   }
   const { rawSources, typeDefs, resolvers, transforms, logger } = options;
+  /*
   rawSources.forEach(rawSource => {
     if (!rawSource.executor) {
       rawSource.executor = jitExecutorFactory(
@@ -26,6 +22,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
       );
     }
   });
+  */
   logger.debug(`Stitching directives are being generated`);
   const defaultStitchingDirectives = stitchingDirectives({
     pathToDirectivesInExtensions: ['directives'],
@@ -39,6 +36,11 @@ const mergeUsingStitching: MergerFn = async function (options) {
     typeDefs,
     resolvers,
     subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],
+    typeMergingOptions: {
+      validationSettings: {
+        validationLevel: ValidationLevel.Off,
+      },
+    },
   });
   logger.debug(`sourceMap is being generated and attached to the unified schema`);
   unifiedSchema.extensions = unifiedSchema.extensions || {};
@@ -71,7 +73,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
         batch: true,
         transforms: wrapTransforms,
         createProxyingResolver: meshDefaultCreateProxyingResolver,
-        executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')),
+        // executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')),
       });
     }
     if (noWrapTransforms.length) {

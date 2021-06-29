@@ -8,7 +8,7 @@ const mergeBare: MergerFn = async ({ rawSources, typeDefs, resolvers, transforms
   const schemas = rawSources.map(source => {
     let schema = source.schema;
 
-    if (source.executor || source.subscriber || source.transforms.length) {
+    if (source.executor || source.transforms.length) {
       schema = wrapSchema({
         createProxyingResolver: meshDefaultCreateProxyingResolver,
         ...source,

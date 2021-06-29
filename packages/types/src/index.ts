@@ -3,7 +3,7 @@ import { IResolvers } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, ExecutionArgs, ExecutionResult } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
-import { Executor, Subscriber, Transform, MergedTypeConfig } from '@graphql-tools/delegate';
+import { Executor, Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 
@@ -14,7 +14,6 @@ export { YamlConfig };
 export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
   executor?: Executor;
-  subscriber?: Subscriber;
   contextVariables?: (keyof InitialContext)[];
   contextBuilder?: (initialContextValue: InitialContext) => Promise<ContextType>;
   batch?: boolean;
@@ -105,7 +104,6 @@ export type RawSourceOutput = {
   contextBuilder: null | ((initialContextValue?: any) => Promise<any>);
   schema: GraphQLSchema;
   executor?: Executor;
-  subscriber?: Subscriber;
   transforms: MeshTransform[];
   contextVariables: (keyof any)[];
   handler: MeshHandler;

@@ -110,7 +110,7 @@ const mergeUsingFederation: MergerFn = async function ({
     remoteSchema = wrapSchema({
       schema: remoteSchema,
       transforms,
-      executor: jitExecutorFactory(remoteSchema, 'wrapped', logger.child('JIT Executor')),
+      // executor: jitExecutorFactory(remoteSchema, 'wrapped', logger.child('JIT Executor')) as Executor,
       createProxyingResolver: meshDefaultCreateProxyingResolver,
     });
   }

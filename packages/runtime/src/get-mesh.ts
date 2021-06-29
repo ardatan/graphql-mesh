@@ -12,6 +12,7 @@ import {
   print,
   isListType,
   SelectionSetNode,
+  ExecutionResult,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
@@ -77,7 +78,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         contextBuilder: source.contextBuilder || null,
         schema: apiSchema,
         executor: source.executor,
-        subscriber: source.subscriber,
         transforms: wrapTransforms,
         contextVariables: source.contextVariables || [],
         handler: apiSource.handler,
@@ -116,7 +116,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         variables: variableValues,
         operationName,
         rootValue,
-      });
+      }) as ExecutionResult;
     },
   });
 
@@ -194,7 +194,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               key?: string;
               argsFromKeys?: (keys: string[]) => any;
             }) => {
-              inContextSdkLogger.debug(`Called with 
+              inContextSdkLogger.debug(`Called with
 - root: ${inspect(root)}
 - args: ${inspect(args)}
 - key: ${inspect(key)}`);
@@ -287,7 +287,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     } as const;
 
     operationLogger.debug(
-      `Execution started with 
+      `Execution started with
 ${inspect(
   {
     ...(operationName ? {} : { query: printedDocument }),
@@ -308,7 +308,7 @@ ${inspect(
     });
 
     operationLogger.debug(
-      `Execution done with 
+      `Execution done with
 ${inspect(
   {
     ...(operationName ? {} : { query: printedDocument }),
@@ -350,7 +350,7 @@ ${inspect(
     } as const;
 
     operationLogger.debug(
-      `Subscription started with 
+      `Subscription started with
 ${inspect(
   {
     ...(rootValue ? {} : { rootValue }),
