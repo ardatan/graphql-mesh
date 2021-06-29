@@ -46,7 +46,6 @@ export async function healJSONSchema(schema: JSONSchema) {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
-      reverse: false,
     }
   );
 }

@@ -30,8 +30,8 @@ describe('compareJSONSchemas', () => {
       expect(true).toBe(false);
     } catch (e) {
       const errors = [...e.errors];
-      expect(errors[0].message).toBe(`/properties doesn't have bar`);
-      expect(errors[1].message).toBe(`/properties/bar/type is changed from string to undefined`);
+      expect(errors[0].message).toBe(`/properties/bar/type is changed from string to undefined`);
+      expect(errors[1].message).toBe(`/properties doesn't have bar`);
     }
   });
 });

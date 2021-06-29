@@ -98,13 +98,12 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
-      reverse: true,
     }
   );
   if (breakingChanges.length > 0) {
     throw new AggregateError(
       breakingChanges.map(breakingChange => new Error(breakingChange)),
-      'Breaking changes are found'
+      `Breaking changes are found:\n${breakingChanges.join('\n')}`
     );
   }
 }
