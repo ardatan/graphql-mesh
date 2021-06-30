@@ -26,9 +26,9 @@
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/utils": "0.12.0",
     "@apollo/gateway": "0.30.0",
-    "@graphql-tools/wrap": "beta",
-    "@graphql-tools/schema": "beta",
-    "@graphql-tools/utils": "beta"
+    "@graphql-tools/wrap": "8.0.0-alpha-e323e9e8.0",
+    "@graphql-tools/schema": "8.0.0-alpha-e323e9e8.0",
+    "@graphql-tools/utils": "8.0.0-alpha-e323e9e8.0"
   },
   "publishConfig": {
     "access": "public",

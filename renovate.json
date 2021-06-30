@@ -10,7 +10,7 @@
   "ignoreDeps": ["typedoc-plugin-markdown"],
   "packageRules": [
     {
-      "matchPackageNames": ["@graphql-tools/"],
+      "matchPackagePrefixes": ["@graphql-tools/"],
       "followTag": "beta"
     }
   ]

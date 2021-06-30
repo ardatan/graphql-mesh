@@ -25,9 +25,9 @@
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/utils": "0.12.0",
-    "@graphql-tools/delegate": "beta",
-    "@graphql-tools/wrap": "beta",
-    "@graphql-tools/utils": "beta"
+    "@graphql-tools/delegate": "8.0.0-alpha-e323e9e8.0",
+    "@graphql-tools/wrap": "8.0.0-alpha-e323e9e8.0",
+    "@graphql-tools/utils": "8.0.0-alpha-e323e9e8.0"
   },
   "publishConfig": {
     "access": "public",

@@ -2,7 +2,7 @@ import { MergerFn, RawSourceOutput } from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { mergeSingleSchema } from './mergeSingleSchema';
-import { groupTransforms, applySchemaTransforms, meshDefaultCreateProxyingResolver } from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
@@ -29,10 +29,7 @@ const mergeUsingStitching: MergerFn = async function (options) {
   });
   logger.debug(`Stitching the source schemas`);
   let unifiedSchema = stitchSchemas({
-    subschemas: rawSources.map(rawSource => ({
-      createProxyingResolver: meshDefaultCreateProxyingResolver,
-      ...rawSource,
-    })),
+    subschemas: rawSources,
     typeDefs,
     resolvers,
     subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],
@@ -72,7 +69,6 @@ const mergeUsingStitching: MergerFn = async function (options) {
         schema: unifiedSchema,
         batch: true,
         transforms: wrapTransforms,
-        createProxyingResolver: meshDefaultCreateProxyingResolver,
         // executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')),
       });
     }

@@ -3,8 +3,8 @@ import { GraphQLSchema, print, extendSchema, DocumentNode, parse } from 'graphql
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { meshDefaultCreateProxyingResolver, hashObject, jitExecutorFactory } from '@graphql-mesh/utils';
-import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { hashObject, jitExecutorFactory } from '@graphql-mesh/utils';
+import { Executor, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { env } from 'process';
 
 const mergeUsingFederation: MergerFn = async function ({
@@ -23,7 +23,6 @@ const mergeUsingFederation: MergerFn = async function ({
   await Promise.all(
     rawSources.map(async rawSource => {
       const transformedSchema = wrapSchema({
-        createProxyingResolver: meshDefaultCreateProxyingResolver,
         ...rawSource,
       });
       rawSourceMap.set(rawSource.name, rawSource);
@@ -66,7 +65,6 @@ const mergeUsingFederation: MergerFn = async function ({
   let remoteSchema: GraphQLSchema = schema;
   logger.debug(`Wrapping gateway executor in a unified schema`);
   remoteSchema = wrapSchema({
-    createProxyingResolver: meshDefaultCreateProxyingResolver,
     schema: remoteSchema,
     executor: ({ document, info, variables, context }): any => {
       const documentStr = print(document);
@@ -110,8 +108,7 @@ const mergeUsingFederation: MergerFn = async function ({
     remoteSchema = wrapSchema({
       schema: remoteSchema,
       transforms,
-      // executor: jitExecutorFactory(remoteSchema, 'wrapped', logger.child('JIT Executor')) as Executor,
-      createProxyingResolver: meshDefaultCreateProxyingResolver,
+      executor: jitExecutorFactory(remoteSchema, 'wrapped', logger.child('JIT Executor')) as Executor,
     });
   }
   logger.debug(`Attaching sourceMap to the unified schema`);

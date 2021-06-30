@@ -10,7 +10,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.30.2",
     "@graphql-mesh/graphql": "0.17.10",
-    "@graphql-tools/schema": "beta",
+    "@graphql-tools/schema": "8.0.0-alpha-e323e9e8.0",
     "concurrently": "5.3.0",
     "express": "4.17.1",
     "express-graphql": "0.12.0",

@@ -11,7 +11,6 @@ export * from './fs-operations';
 export * from './global-lru-cache';
 export * from './flat-string';
 export * from './jitExecute';
-export * from './meshDefaultCreateProxyingResolver';
 export * from './hashObject';
 export * from './as-array';
 export * from './sanitize-name-for-graphql';
