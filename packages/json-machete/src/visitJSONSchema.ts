@@ -1,35 +1,42 @@
-import { JSONSchemaObject, JSONSchema } from '@json-schema-tools/meta-schema';
+import { JSONSchemaObject, JSONSchema } from './types';
+
+export enum OnCircularReference {
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+  IGNORE = 'IGNORE',
+}
 
 export interface JSONSchemaVisitorContext<T> {
   visitedSubschemaResultMap: WeakMap<JSONSchemaObject, T>;
   path: string;
   keepObjectRef: boolean;
+  onCircularReference: OnCircularReference;
 }
+
+export const FIRST_VISITED_PATH = Symbol('FIRST_VISITED_PATH');
 
 export async function visitJSONSchema<T>(
   schema: JSONSchema,
   visitorFn: (subSchema: JSONSchema, context: JSONSchemaVisitorContext<T>) => Promise<T> | T,
-  { visitedSubschemaResultMap, path, keepObjectRef }: JSONSchemaVisitorContext<T> = {
+  { visitedSubschemaResultMap, path, keepObjectRef, onCircularReference }: JSONSchemaVisitorContext<T> = {
     visitedSubschemaResultMap: new WeakMap(),
     path: '',
     keepObjectRef: false,
+    onCircularReference: OnCircularReference.IGNORE,
   }
 ) {
-  const context = {
-    visitedSubschemaResultMap,
-    path,
-    keepObjectRef,
-  };
   if (typeof schema === 'object') {
     if (!visitedSubschemaResultMap.has(schema)) {
       const result: any = keepObjectRef ? schema : {};
       const visitedSchema: any = keepObjectRef ? schema : { ...schema };
+      result[FIRST_VISITED_PATH] = path;
       visitedSubschemaResultMap.set(schema, result);
       if (schema.additionalItems) {
         visitedSchema.additionalItems = await visitJSONSchema(schema.additionalItems, visitorFn, {
           visitedSubschemaResultMap,
           path: path + '/additionalItems',
           keepObjectRef,
+          onCircularReference,
         });
       }
       if (schema.additionalProperties) {
@@ -37,6 +44,7 @@ export async function visitJSONSchema<T>(
           visitedSubschemaResultMap,
           path: path + '/additionalProperties',
           keepObjectRef,
+          onCircularReference,
         });
       }
       if (schema.allOf) {
@@ -46,6 +54,7 @@ export async function visitJSONSchema<T>(
             visitedSubschemaResultMap,
             path: path + '/allOf/' + subSchemaIndex,
             keepObjectRef,
+            onCircularReference,
           });
         }
       }
@@ -56,6 +65,7 @@ export async function visitJSONSchema<T>(
             visitedSubschemaResultMap,
             path: path + '/anyOf/' + subSchemaIndex,
             keepObjectRef,
+            onCircularReference,
           });
         }
       }
@@ -64,6 +74,7 @@ export async function visitJSONSchema<T>(
           visitedSubschemaResultMap,
           path: path + '/contains',
           keepObjectRef,
+          onCircularReference,
         });
       }
       if (schema.definitions) {
@@ -74,6 +85,7 @@ export async function visitJSONSchema<T>(
             visitedSubschemaResultMap,
             path: path + '/definitions/' + definitionName,
             keepObjectRef,
+            onCircularReference,
           });
         }
       }
@@ -82,6 +94,7 @@ export async function visitJSONSchema<T>(
           visitedSubschemaResultMap,
           path: path + '/else',
           keepObjectRef,
+          onCircularReference,
         });
       }
       if (schema.if) {
@@ -89,6 +102,7 @@ export async function visitJSONSchema<T>(
           visitedSubschemaResultMap,
           path: path + '/if',
           keepObjectRef,
+          onCircularReference,
         });
       }
       if (schema.items) {
@@ -99,6 +113,7 @@ export async function visitJSONSchema<T>(
               visitedSubschemaResultMap,
               path: path + '/items/' + subSchemaIndex,
               keepObjectRef,
+              onCircularReference,
             });
           }
         } else {
@@ -106,6 +121,7 @@ export async function visitJSONSchema<T>(
             visitedSubschemaResultMap,
             path: path + '/items',
             keepObjectRef,
+            onCircularReference,
           });
         }
       }
@@ -114,6 +130,7 @@ export async function visitJSONSchema<T>(
           visitedSubschemaResultMap,
           path: path + '/not',
           keepObjectRef,
+          onCircularReference,
         });
       }
       if (schema.oneOf) {
@@ -123,6 +140,7 @@ export async function visitJSONSchema<T>(
             visitedSubschemaResultMap,
             path: path + '/oneOf/' + subSchemaIndex,
             keepObjectRef,
+            onCircularReference,
           });
         }
       }
@@ -134,6 +152,7 @@ export async function visitJSONSchema<T>(
             visitedSubschemaResultMap,
             path: path + '/patternProperties/' + pattern,
             keepObjectRef,
+            onCircularReference,
           });
         }
       }
@@ -145,6 +164,7 @@ export async function visitJSONSchema<T>(
             visitedSubschemaResultMap,
             path: path + '/properties/' + propertyName,
             keepObjectRef,
+            onCircularReference,
           });
         }
       }
@@ -153,14 +173,35 @@ export async function visitJSONSchema<T>(
           visitedSubschemaResultMap,
           path: path + '/then',
           keepObjectRef,
+          onCircularReference,
         });
       }
 
-      const visitorResult = await visitorFn(visitedSchema, context);
+      const visitorResult = await visitorFn(visitedSchema, {
+        visitedSubschemaResultMap,
+        path,
+        keepObjectRef,
+        onCircularReference,
+      });
+      delete result[FIRST_VISITED_PATH];
       Object.assign(result, visitorResult);
       return result;
     }
-    return visitedSubschemaResultMap.get(schema);
+    const result = visitedSubschemaResultMap.get(schema);
+    if (onCircularReference !== OnCircularReference.IGNORE && result[FIRST_VISITED_PATH]) {
+      const message = `Circular reference detected on ${path} to ${result[FIRST_VISITED_PATH]}`;
+      if (onCircularReference === OnCircularReference.ERROR) {
+        throw new Error(message);
+      } else if (onCircularReference === OnCircularReference.WARN) {
+        console.warn(message);
+      }
+    }
+    return result;
   }
-  return visitorFn(schema, context);
+  return visitorFn(schema, {
+    visitedSubschemaResultMap,
+    path,
+    keepObjectRef,
+    onCircularReference,
+  });
 }

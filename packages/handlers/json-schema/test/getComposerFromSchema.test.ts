@@ -1,4 +1,4 @@
-import { getComposerFromJSONSchema } from '../src/utils/getComposerFromJSONSchema';
+import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema';
 import {
   execute,
   GraphQLBoolean,

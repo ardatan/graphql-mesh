@@ -1,6 +1,6 @@
-import { JSONSchema } from '@json-schema-tools/meta-schema';
+import { JSONSchema } from './types';
 import { JsonPointer } from 'json-ptr';
-import { visitJSONSchema } from './visitJSONSchema';
+import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import { AggregateError } from '@graphql-mesh/utils';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {
@@ -98,6 +98,7 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
+      onCircularReference: OnCircularReference.IGNORE,
     }
   );
   if (breakingChanges.length > 0) {

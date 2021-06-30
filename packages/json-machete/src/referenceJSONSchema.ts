@@ -1,4 +1,4 @@
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import { JSONSchemaObject } from './types';
 import { visitJSONSchema } from './visitJSONSchema';
 
 export async function referenceJSONSchema(schema: JSONSchemaObject) {

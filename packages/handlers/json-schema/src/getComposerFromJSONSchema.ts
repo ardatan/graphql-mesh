@@ -12,7 +12,6 @@ import {
   ScalarTypeComposer,
   SchemaComposer,
 } from 'graphql-compose';
-import { JSONSchema } from '@json-schema-tools/meta-schema';
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -39,7 +38,7 @@ import { Logger } from '@graphql-mesh/types';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { inspect } from 'util';
-import { visitJSONSchema } from 'json-machete';
+import { visitJSONSchema, JSONSchema } from 'json-machete';
 
 interface TypeComposers {
   input?: AnyTypeComposer<any>;

@@ -1,5 +1,5 @@
-import { JSONSchema } from '@json-schema-tools/meta-schema';
-import { visitJSONSchema } from './visitJSONSchema';
+import { JSONSchema } from './types';
+import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 
 const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
@@ -46,6 +46,7 @@ export async function healJSONSchema(schema: JSONSchema) {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
+      onCircularReference: OnCircularReference.IGNORE,
     }
   );
 }

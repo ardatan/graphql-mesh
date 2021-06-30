@@ -1,4 +1,3 @@
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { dereferenceObject } from '../src/dereferenceObject';
 
@@ -69,10 +68,7 @@ describe('dereferenceObject', () => {
         $ref: './fixtures/PostsResponse.json',
       },
       {
-        cache: new InMemoryLRUCache(),
-        config: {
-          cwd: __dirname,
-        },
+        cwd: __dirname,
       }
     );
     expect(result.title).toBe('PostsResponse');

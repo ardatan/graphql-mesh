@@ -1,7 +1,5 @@
-import { KeyValueCache } from '@graphql-mesh/types';
 import { JsonPointer } from 'json-ptr';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { ReadFileOrUrlOptions, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { readJSON } from '@graphql-mesh/utils';
 import { dirname, isAbsolute, join } from 'path';
 import { healJSONSchema } from './healJSONSchema';
 
@@ -30,16 +28,12 @@ const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
-    cache = new InMemoryLRUCache(),
-    config = {
-      cwd: process.cwd(),
-    },
+    cwd = process.cwd(),
     externalFileCache = new Map<string, any>(),
     refMap = new Map<string, any>(),
     root = obj as any,
   }: {
-    cache?: KeyValueCache<any>;
-    config?: ReadFileOrUrlOptions;
+    cwd?: string;
     externalFileCache?: Map<string, any>;
     refMap?: Map<string, any>;
     root?: TRoot;
@@ -55,15 +49,11 @@ export async function dereferenceObject<T extends object, TRoot = T>(
         if (externalRelativeFilePath) {
           const externalFilePath = isAbsolute(externalRelativeFilePath)
             ? externalRelativeFilePath
-            : join(config.cwd, externalRelativeFilePath);
+            : join(cwd, externalRelativeFilePath);
           const newCwd = dirname(externalFilePath);
           let externalFile = externalFileCache.get(externalFilePath);
-          const newConfig = {
-            ...config,
-            cwd: newCwd,
-          };
           if (!externalFile) {
-            externalFile = await readFileOrUrlWithCache(externalFilePath, cache, newConfig);
+            externalFile = await readJSON(externalFilePath);
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }
@@ -72,8 +62,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             ...externalFile,
           };
           return dereferenceObject(refPath ? fakeRefObject : externalFile, {
-            cache,
-            config: newConfig,
+            cwd: newCwd,
             externalFileCache,
             refMap: new Proxy(refMap, {
               get: (originalRefMap, key) => {
@@ -102,8 +91,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           const result = resolvePath(refPath, root);
           refMap.set($ref, result);
           return dereferenceObject(result, {
-            cache,
-            config,
+            cwd,
             externalFileCache,
             refMap,
             root,
@@ -113,7 +101,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     } else {
       await Promise.all(
         Object.entries(obj).map(async ([key, val]) => {
-          obj[key] = await dereferenceObject<any>(val, { cache, config, externalFileCache, refMap, root });
+          obj[key] = await dereferenceObject<any>(val, { cwd, externalFileCache, refMap, root });
         })
       );
     }

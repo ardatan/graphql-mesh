@@ -9,7 +9,6 @@ import {
   asArray,
   AggregateError,
 } from '@graphql-mesh/utils';
-import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { SchemaComposer } from 'graphql-compose';
 import toJsonSchema from 'to-json-schema';
 import { stringify as qsStringify } from 'qs';
@@ -24,8 +23,8 @@ import {
 } from 'graphql';
 import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
 import { inspect } from 'util';
-import { dereferenceObject, healJSONSchema, referenceJSONSchema } from 'json-machete';
-import { getComposerFromJSONSchema } from './utils/getComposerFromJSONSchema';
+import { dereferenceObject, healJSONSchema, referenceJSONSchema, JSONSchema, JSONSchemaObject } from 'json-machete';
+import { getComposerFromJSONSchema } from './getComposerFromJSONSchema';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
@@ -131,10 +130,7 @@ export default class JsonSchemaHandler implements MeshHandler {
       }
       this.logger.debug(`Dereferencing JSON Schema to resolve all $refs`);
       const fullyDeferencedSchema = await dereferenceObject(finalJsonSchema, {
-        cache: this.cache,
-        config: {
-          cwd: this.baseDir,
-        },
+        cwd: this.baseDir,
       });
       this.logger.debug(`Healing JSON Schema`);
       const healedSchema = await healJSONSchema(fullyDeferencedSchema);
@@ -144,10 +140,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     });
     this.logger.debug(`Derefering the bundled JSON Schema`);
     const fullyDeferencedSchema = await dereferenceObject(cachedJsonSchema, {
-      cache: this.cache,
-      config: {
-        cwd: this.baseDir,
-      },
+      cwd: this.baseDir,
     });
     this.logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
     const visitorResult = await getComposerFromJSONSchema(fullyDeferencedSchema as JSONSchema, this.logger);
