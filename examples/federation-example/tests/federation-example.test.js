@@ -2,7 +2,7 @@ const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { basename, join } = require('path');
 
-const { lexicographicSortSchema, printSchema } = require('graphql');
+const { lexicographicSortSchema } = require('graphql');
 const { mkdirSync, writeFileSync } = require('fs');
 const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 
@@ -30,7 +30,7 @@ describe('Federation Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      printSchema(lexicographicSortSchema(schema), {
+      printSchemaWithDirectives(lexicographicSortSchema(schema), {
         descriptions: false,
       })
     ).toMatchSnapshot('federation-example-schema');
