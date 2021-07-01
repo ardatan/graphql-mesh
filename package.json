@@ -18,7 +18,7 @@
     "lint": "eslint --ext .ts \"./packages/**/src/*.ts\"",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
-    "test": "rm -rf **/.mesh && jest --forceExit --no-watchman",
+    "test": "jest --forceExit --no-watchman",
     "test-and-build": "yarn build && yarn test",
     "prerelease": "yarn build",
     "release": "changeset publish",

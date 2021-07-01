@@ -30,9 +30,7 @@ describe('Federation Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      printSchemaWithDirectives(lexicographicSortSchema(schema), {
-        descriptions: false,
-      })
+      printSchemaWithDirectives(schema)
     ).toMatchSnapshot('federation-example-schema');
   });
   it('should give correct response for example queries', async () => {

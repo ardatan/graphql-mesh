@@ -33,7 +33,7 @@ query TestQuery {
     reviews {
       ...Review
       author {
-        ...Author
+        ...User
       }
     }
   }

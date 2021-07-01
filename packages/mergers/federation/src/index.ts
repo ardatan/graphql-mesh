@@ -1,7 +1,7 @@
 import { MergerFn, RawSourceOutput } from '@graphql-mesh/types';
 import { GraphQLSchema, print, extendSchema, DocumentNode, parse } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { ApolloGateway } from '@apollo/gateway';
+import { ApolloGateway, LocalGraphQLDataSource } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { hashObject, jitExecutorFactory } from '@graphql-mesh/utils';
 import { Executor, getDocumentNodeFromSchema } from '@graphql-tools/utils';
@@ -22,9 +22,7 @@ const mergeUsingFederation: MergerFn = async function ({
   const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
   await Promise.all(
     rawSources.map(async rawSource => {
-      const transformedSchema = wrapSchema({
-        ...rawSource,
-      });
+      const transformedSchema = wrapSchema(rawSource);
       rawSourceMap.set(rawSource.name, rawSource);
       sourceMap.set(rawSource, transformedSchema);
       localServiceList.push({
@@ -36,24 +34,15 @@ const mergeUsingFederation: MergerFn = async function ({
     })
   );
   logger.debug(`Creating ApolloGateway`);
-  const rootValue = {};
+  // const rootValue = {};
   const gateway = new ApolloGateway({
     localServiceList,
     buildService({ name }) {
       logger.debug(`Building federation service: ${name}`);
       const rawSource = rawSourceMap.get(name);
       const transformedSchema = sourceMap.get(rawSource);
-      const jitExecute = jitExecutorFactory(transformedSchema, name, logger.child('JIT Executor'));
-      return {
-        process: async ({ request, context }) =>
-          jitExecute({
-            document: parse(request.query),
-            variables: request.variables,
-            context: context.graphqlContext || context,
-            operationName: request.operationName,
-            rootValue,
-          }),
-      };
+      // const jitExecute = jitExecutorFactory(transformedSchema, name, logger.child('JIT Executor'));
+      return new LocalGraphQLDataSource(transformedSchema);
     },
     logger,
     debug: !!env.DEBUG,
