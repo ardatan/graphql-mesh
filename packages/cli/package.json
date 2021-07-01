@@ -64,7 +64,7 @@
     "pascal-case": "3.1.2",
     "rimraf": "3.0.2",
     "yargs": "17.0.1",
-    "typescript": "4.3.4",
+    "typescript": "4.3.5",
     "ws": "7.5.1"
   },
   "devDependencies": {
