@@ -17,7 +17,10 @@ const typeDefs = gql`
 const resolvers = {
   Product: {
     __resolveReference(object) {
-      return products.find(product => product.upc === object.upc);
+      return {
+        ...object,
+        ...products.find(product => product.upc === object.upc),
+      };
     }
   },
   Query: {

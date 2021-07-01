@@ -24,7 +24,6 @@ import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 export default class FederationTransform implements MeshTransform {
   private config: YamlConfig.Transform['federation'];
   private baseDir: string;
-
   constructor({ baseDir, config }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.config = config;
     this.baseDir = baseDir;
@@ -69,8 +68,8 @@ export default class FederationTransform implements MeshTransform {
             const { queryFieldName, keyArg = schema.getQueryType().getFields()[queryFieldName].args[0].name } =
               resolveReferenceConfig;
             const keyField = type.config.keyFields[0];
-            resolveReference = (root: any, context: any, info: GraphQLResolveInfo) =>
-              context[subschemaConfig.name].Query[queryFieldName]({
+            resolveReference = async (root: any, context: any, info: GraphQLResolveInfo) => {
+              const result = await context[subschemaConfig.name].Query[queryFieldName]({
                 root,
                 key: keyField,
                 argsFromKeys: (keys: string[]) => ({
@@ -82,6 +81,11 @@ export default class FederationTransform implements MeshTransform {
                 context,
                 info,
               });
+              return {
+                ...root,
+                ...result,
+              };
+            };
           }
         }
         federationConfig[type.name] = {
@@ -94,8 +98,8 @@ export default class FederationTransform implements MeshTransform {
 
     const entityTypes = Object.fromEntries(
       Object.entries(federationConfig)
-        .filter(([, { keyFields }]) => keyFields && keyFields.length)
-        .map(([objectName]) => {
+        .filter(([, { keyFields }]) => keyFields?.length)
+        .map(([objectName, { keyFields }]) => {
           const type = schema.getType(objectName);
           if (!isObjectType(type)) {
             throw new Error(`Type "${objectName}" is not an object type and can't have a key directive`);
@@ -128,11 +132,36 @@ export default class FederationTransform implements MeshTransform {
           ...config,
           fields: {
             ...config.fields,
-            ...(hasEntities && { _entities: entitiesField }),
-            _service: {
-              ...serviceField,
-              resolve: () => ({ sdl: schemaWithFederationDirectives }),
-            },
+            ...(hasEntities && {
+              _entities: {
+                ...entitiesField,
+                resolve: async (_source, { representations }, context, info) => {
+                  return representations.map(async (reference: any) => {
+                    const { __typename } = reference;
+                    const type = entityTypes[__typename];
+                    if (!type || !isObjectType(type)) {
+                      throw new Error(
+                        `The _entities resolver tried to load an entity for type "${__typename}", but no object type of that name was found in the schema`
+                      );
+                    }
+                    const resolveReference = type.resolveReference
+                      ? type.resolveReference
+                      : function defaultResolveReference() {
+                          return reference;
+                        };
+                    const result = await resolveReference(reference, context, info);
+                    return {
+                      __typename,
+                      ...result,
+                    };
+                  });
+                },
+              },
+              _service: {
+                ...serviceField,
+                resolve: () => ({ sdl: schemaWithFederationDirectives }),
+              },
+            }),
           },
         });
       },
@@ -153,7 +182,7 @@ export default class FederationTransform implements MeshTransform {
     // Not using transformSchema since it will remove resolveReference
     Object.entries(federationConfig).forEach(([objectName, currentFederationConfig]) => {
       if (currentFederationConfig.resolveReference) {
-        const type = schemaWithUnionType.getType(objectName);
+        const type = schema.getType(objectName);
         if (!isObjectType(type)) {
           throw new Error(`Type "${objectName}" is not an object type and can't have a resolveReference function`);
         }
