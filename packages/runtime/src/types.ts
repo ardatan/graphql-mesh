@@ -1,13 +1,13 @@
 import {
   KeyValueCache,
   MeshPubSub,
-  MergerFn,
   RawSourceOutput,
   GraphQLOperation,
   MeshHandler,
   MeshTransform,
   YamlConfig,
   Logger,
+  MeshMerger,
 } from '@graphql-mesh/types';
 import { DocumentNode, GraphQLResolveInfo } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
@@ -22,7 +22,7 @@ export type GetMeshOptions = {
   cache: KeyValueCache;
   pubsub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;
-  merger: MergerFn;
+  merger: MeshMerger;
   logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
 };

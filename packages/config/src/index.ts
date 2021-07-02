@@ -4,8 +4,8 @@ import {
   ImportFn,
   jsonSchema,
   Logger,
-  MergerFn,
   MeshHandlerLibrary,
+  MeshMerger,
   MeshPubSub,
   MeshTransform,
   MeshTransformLibrary,
@@ -68,13 +68,13 @@ export type ProcessedConfig = {
   additionalTypeDefs: DocumentNode[];
   additionalResolvers: IResolvers;
   cache: KeyValueCache<string>;
-  merger: MergerFn;
-  mergerType: string;
+  merger: MeshMerger;
   pubsub: MeshPubSub;
   liveQueryInvalidations: YamlConfig.LiveQueryInvalidation[];
   config: YamlConfig.Config;
   documents: Source[];
   logger: Logger;
+  store: MeshStore;
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn) {
@@ -192,7 +192,15 @@ export async function processConfig(
       importFn,
       pubsub
     ),
-    resolveMerger(config.merger, importFn, dir),
+    resolveMerger(config.merger, importFn, dir).then(
+      Merger =>
+        new Merger({
+          pubsub,
+          cache,
+          store: rootStore.child('merger'),
+          logger: logger.child('Merger'),
+        })
+    ),
     resolveDocuments(config.documents, dir),
   ]);
 
@@ -203,12 +211,12 @@ export async function processConfig(
     additionalResolvers,
     cache,
     merger,
-    mergerType: config.merger,
     pubsub,
     liveQueryInvalidations: config.liveQueryInvalidations,
     config,
     documents,
     logger,
+    store: rootStore,
   };
 }
 

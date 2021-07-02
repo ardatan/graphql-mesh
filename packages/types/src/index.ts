@@ -88,15 +88,28 @@ export type Maybe<T> = null | undefined | T;
 
 export { KeyValueCache, KeyValueCacheSetOptions };
 
-export type MergerFn = (options: {
-  rawSources: RawSourceOutput[];
+export interface MeshMergerOptions {
   cache: KeyValueCache;
   pubsub: MeshPubSub;
   logger: Logger;
+  store: MeshStore;
+}
+
+export interface MeshMergerLibrary {
+  new (options: MeshMergerOptions): MeshMerger;
+}
+
+export interface MeshMergerContext {
+  rawSources: RawSourceOutput[];
   typeDefs?: DocumentNode[];
   resolvers?: IResolvers;
   transforms?: Transform[];
-}) => Promise<GraphQLSchema> | GraphQLSchema;
+}
+
+export interface MeshMerger {
+  name: string;
+  getUnifiedSchema(mergerContext: MeshMergerContext): GraphQLSchema | Promise<GraphQLSchema>;
+}
 
 export type RawSourceOutput = {
   name: string;

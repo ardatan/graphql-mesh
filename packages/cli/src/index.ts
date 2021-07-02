@@ -198,7 +198,7 @@ export async function graphqlMesh() {
           await generateTsArtifacts({
             unifiedSchema: schema,
             rawSources,
-            mergerType: meshConfig.mergerType,
+            mergerType: meshConfig.merger.name,
             documents: meshConfig.documents,
             flattenTypes: false,
             importedModulesSet,

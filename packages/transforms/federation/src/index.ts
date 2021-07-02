@@ -6,7 +6,6 @@ import {
   GraphQLNonNull,
   isObjectType,
   GraphQLUnionType,
-  buildSchema,
   GraphQLResolveInfo,
 } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput } from '@graphql-mesh/types';
@@ -17,32 +16,38 @@ import _ from 'lodash';
 import { entitiesField, EntityType, serviceField } from '@apollo/federation/dist/types.js';
 import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
 
-import federationToStitchingSDL from 'federation-to-stitching-sdl';
-
-import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-
 export default class FederationTransform implements MeshTransform {
+  private apiName: string;
   private config: YamlConfig.Transform['federation'];
   private baseDir: string;
-  constructor({ baseDir, config }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+  constructor({ apiName, baseDir, config }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+    this.apiName = apiName;
     this.config = config;
     this.baseDir = baseDir;
   }
 
-  transformSchema(schema: GraphQLSchema, subschemaConfig: RawSourceOutput) {
+  transformSchema(schema: GraphQLSchema, rawSource: RawSourceOutput) {
     const federationConfig: FederationConfig<any> = {};
 
+    rawSource.merge = {};
     if (this.config?.types) {
       for (const type of this.config.types) {
+        rawSource.merge[type.name] = {};
         const fields: FederationFieldsConfig = {};
         if (type.config?.fields) {
           for (const field of type.config.fields) {
             fields[field.name] = field.config;
+            rawSource.merge[type.name].fields[field.name] = {};
+            if (field.config.requires) {
+              rawSource.merge[type.name].fields[field.name].computed = true;
+              rawSource.merge[type.name].fields[field.name].selectionSet = `{ ${field.config.requires} }`;
+            }
           }
         }
         // If a field is a key field, it should be GraphQLID
 
         if (type.config?.keyFields) {
+          rawSource.merge[type.name].selectionSet = `{ ${type.config.keyFields.join(' ')} }`;
           for (const fieldName of type.config.keyFields) {
             const objectType = schema.getType(type.name) as GraphQLObjectType;
             if (objectType) {
@@ -69,7 +74,7 @@ export default class FederationTransform implements MeshTransform {
               resolveReferenceConfig;
             const keyField = type.config.keyFields[0];
             resolveReference = async (root: any, context: any, info: GraphQLResolveInfo) => {
-              const result = await context[subschemaConfig.name].Query[queryFieldName]({
+              const result = await context[this.apiName].Query[queryFieldName]({
                 root,
                 key: keyField,
                 argsFromKeys: (keys: string[]) => ({
@@ -87,6 +92,7 @@ export default class FederationTransform implements MeshTransform {
               };
             };
           }
+          rawSource.merge[type.name].resolve = resolveReference;
         }
         federationConfig[type.name] = {
           ...type.config,
@@ -99,7 +105,7 @@ export default class FederationTransform implements MeshTransform {
     const entityTypes = Object.fromEntries(
       Object.entries(federationConfig)
         .filter(([, { keyFields }]) => keyFields?.length)
-        .map(([objectName, { keyFields }]) => {
+        .map(([objectName]) => {
           const type = schema.getType(objectName);
           if (!isObjectType(type)) {
             throw new Error(`Type "${objectName}" is not an object type and can't have a key directive`);
@@ -110,20 +116,7 @@ export default class FederationTransform implements MeshTransform {
 
     const hasEntities = !!Object.keys(entityTypes).length;
 
-    const schemaWithFederationDirectives = addFederationAnnotations(
-      printSchemaWithDirectives(schema),
-      federationConfig
-    );
-
-    const { stitchingDirectivesTransformer } = stitchingDirectives();
-    const sdlWithStitchingDirectives = federationToStitchingSDL(schemaWithFederationDirectives);
-
-    subschemaConfig.merge = stitchingDirectivesTransformer({
-      schema: buildSchema(sdlWithStitchingDirectives, {
-        assumeValid: true,
-        assumeValidSDL: true,
-      }),
-    }).merge;
+    const sdlWithFederationDirectives = addFederationAnnotations(printSchemaWithDirectives(schema), federationConfig);
 
     const schemaWithFederationQueryType = mapSchema(schema, {
       [MapperKind.QUERY]: type => {
@@ -133,33 +126,10 @@ export default class FederationTransform implements MeshTransform {
           fields: {
             ...config.fields,
             ...(hasEntities && {
-              _entities: {
-                ...entitiesField,
-                resolve: async (_source, { representations }, context, info) => {
-                  return representations.map(async (reference: any) => {
-                    const { __typename } = reference;
-                    const type = entityTypes[__typename];
-                    if (!type || !isObjectType(type)) {
-                      throw new Error(
-                        `The _entities resolver tried to load an entity for type "${__typename}", but no object type of that name was found in the schema`
-                      );
-                    }
-                    const resolveReference = type.resolveReference
-                      ? type.resolveReference
-                      : function defaultResolveReference() {
-                          return reference;
-                        };
-                    const result = await resolveReference(reference, context, info);
-                    return {
-                      __typename,
-                      ...result,
-                    };
-                  });
-                },
-              },
+              _entities: entitiesField,
               _service: {
                 ...serviceField,
-                resolve: () => ({ sdl: schemaWithFederationDirectives }),
+                resolve: () => ({ sdl: sdlWithFederationDirectives }),
               },
             }),
           },
@@ -182,17 +152,12 @@ export default class FederationTransform implements MeshTransform {
     // Not using transformSchema since it will remove resolveReference
     Object.entries(federationConfig).forEach(([objectName, currentFederationConfig]) => {
       if (currentFederationConfig.resolveReference) {
-        const type = schema.getType(objectName);
+        const type = schemaWithUnionType.getType(objectName);
         if (!isObjectType(type)) {
           throw new Error(`Type "${objectName}" is not an object type and can't have a resolveReference function`);
         }
         type.resolveReference = currentFederationConfig.resolveReference;
       }
-    });
-
-    schemaWithUnionType.extensions = schemaWithUnionType.extensions || {};
-    Object.assign(schemaWithUnionType.extensions, {
-      apolloServiceSdl: schemaWithFederationDirectives,
     });
 
     return schemaWithUnionType;

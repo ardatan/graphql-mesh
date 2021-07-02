@@ -3,7 +3,7 @@ import {
   MeshHandlerLibrary,
   KeyValueCache,
   YamlConfig,
-  MergerFn,
+  MeshMergerLibrary,
   ImportFn,
   MeshPubSub,
   Logger,
@@ -312,7 +312,7 @@ export async function resolveMerger(
   mergerConfig: YamlConfig.Config['merger'] = 'stitching',
   importFn: ImportFn,
   cwd: string
-): Promise<MergerFn> {
+): Promise<MeshMergerLibrary> {
   const pkg = await getPackage<any>(mergerConfig, 'merger', importFn, cwd);
   return pkg.default || pkg;
 }

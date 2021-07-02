@@ -84,8 +84,8 @@ ${Object.values(subscriptionsOperationMap).join(',\n')}
 
   const context = {
     identifier: contextIdentifier,
-    codeAst: `export type ${contextIdentifier} = { 
-      ["${options.name}"]: { Query: Query${sdkIdentifier}, Mutation: Mutation${sdkIdentifier}, Subscription: Subscription${sdkIdentifier} }, 
+    codeAst: `export type ${contextIdentifier} = {
+      ["${options.name}"]: { Query: Query${sdkIdentifier}, Mutation: Mutation${sdkIdentifier}, Subscription: Subscription${sdkIdentifier} },
     };`,
   };
 
