@@ -23,7 +23,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/thrift": "0.10.10",
+    "@types/thrift": "0.10.11",
     "@types/url-join": "4.0.0"
   },
   "dependencies": {
