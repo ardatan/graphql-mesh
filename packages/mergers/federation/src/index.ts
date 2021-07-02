@@ -11,7 +11,7 @@ import { GraphQLSchema, print, extendSchema, DocumentNode, parse, execute } from
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { hashObject, jitExecutorFactory } from '@graphql-mesh/utils';
+import { hashObject, jitExecutorFactory, AggregateError } from '@graphql-mesh/utils';
 import { Executor } from '@graphql-tools/utils';
 import { env } from 'process';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
@@ -50,10 +50,14 @@ export default class FederationMerger implements MeshMerger {
         const sdl = await this.store
           .proxy(`${rawSource.name}_sdl`, PredefinedProxyOptions.StringWithoutValidation)
           .getWithSet(async () => {
+            this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
             const sdlQueryResult = await execute({
               schema: transformedSchema,
               document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
             });
+            if (sdlQueryResult.errors?.length) {
+              throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${rawSource.name}`);
+            }
             return sdlQueryResult.data._service.sdl;
           });
         localServiceList.push({
