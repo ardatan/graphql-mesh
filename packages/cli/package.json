@@ -74,7 +74,7 @@
     "@types/graphql-upload": "8.0.5",
     "@types/js-yaml": "4.0.1",
     "@types/mkdirp": "1.0.1",
-    "@types/yargs": "17.0.0",
+    "@types/yargs": "17.0.1",
     "@types/ws": "7.4.5",
     "@types/rimraf": "3.0.0"
   },
