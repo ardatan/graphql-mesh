@@ -4915,10 +4915,10 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/thrift@0.10.10":
-  version "0.10.10"
-  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.10.tgz#f90f6c84c8b003c79f54463f909b0a12a993029d"
-  integrity sha512-sEhRbmmQgiTn+JdophEPiuTFkc9QRl7R/Kxs/le5GXZAc2K1/VCHauW734nCwpu1cFI8jL1niyrqk7E4tGL92w==
+"@types/thrift@0.10.11":
+  version "0.10.11"
+  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.11.tgz#4d53e176b8c0d299f7cd4f67f78d7beb02ee7b6a"
+  integrity sha512-skAJTzEcz0RSKX/oooCz4nrLW+lgAq3Wy0imNRqwVpw2ODYKaQHg6iRA5Ig5tzvbFAWPUb9BcQWCf0Ul+IYyCw==
   dependencies:
     "@types/node" "*"
     "@types/node-int64" "*"
