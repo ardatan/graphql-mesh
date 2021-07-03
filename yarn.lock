@@ -192,22 +192,22 @@
     apollo-graphql "^0.9.3"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.31.1":
-  version "0.31.1"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.31.1.tgz#eba4cc62be1ea61340d159d399d190358bdba9b1"
-  integrity sha512-jRDkYCVezxPeOL7r5QQO73so3firxxa1pQYAlr8nHZc3TxUpRt4X6a5i30J60wN5qimor5GBSnOvi8lPh9xy1w==
+"@apollo/gateway@0.32.0":
+  version "0.32.0"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.32.0.tgz#639b7b826c76a2bffdf777902010485dfd981918"
+  integrity sha512-Pxq3VVxG1ALrFNN8SM3RVy6Kwm+5p1KG3ObVmQX720Wx5WpRKvCRC23J/c3oFRpsGqjPOglh3vmpAQVdJJTCZA==
   dependencies:
     "@apollo/federation" "^0.25.2"
     "@apollo/query-planner" "^0.2.2"
     "@opentelemetry/api" "^1.0.1"
     "@types/node-fetch" "2.5.10"
     apollo-graphql "^0.9.3"
-    apollo-reporting-protobuf "^0.8.0 || ^3.0.0-preview.2"
-    apollo-server-caching "^0.7.0 || ^3.0.0-preview.2"
-    apollo-server-core "^2.23.0 || ^3.0.0-preview.2"
-    apollo-server-env "^3.0.0 || ^3.2.0-preview.2"
-    apollo-server-errors "^2.5.0 || ^3.0.0-preview.2"
-    apollo-server-types "^0.9.0 || ^3.0.0-preview.2"
+    apollo-reporting-protobuf "^0.8.0 || ^3.0.0 || ^3.0.0-preview.2"
+    apollo-server-caching "^0.7.0 || ^3.0.0 ||  ^3.0.0-preview.2"
+    apollo-server-core "^2.23.0 || ^3.0.0 || ^3.0.0-preview.2"
+    apollo-server-env "^3.0.0 || ^4.0.0 || ^3.2.0-preview.2 || ^4.0.0-rc.0"
+    apollo-server-errors "^2.5.0 || ^3.0.0 || ^3.0.0-preview.2"
+    apollo-server-types "^0.9.0 || ^3.0.0 || ^3.0.0-preview.2"
     loglevel "^1.6.1"
     make-fetch-happen "^8.0.0"
     pretty-format "^26.0.0"
@@ -5856,21 +5856,21 @@ apollo-link@^1.2.14:
     tslib "^1.9.3"
     zen-observable-ts "^0.8.21"
 
-apollo-reporting-protobuf@^0.8.0, "apollo-reporting-protobuf@^0.8.0 || ^3.0.0-preview.2":
+apollo-reporting-protobuf@^0.8.0, "apollo-reporting-protobuf@^0.8.0 || ^3.0.0 || ^3.0.0-preview.2":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/apollo-reporting-protobuf/-/apollo-reporting-protobuf-0.8.0.tgz#ae9d967934d3d8ed816fc85a0d8068ef45c371b9"
   integrity sha512-B3XmnkH6Y458iV6OsA7AhfwvTgeZnFq9nPVjbxmLKnvfkEl8hYADtz724uPa0WeBiD7DSFcnLtqg9yGmCkBohg==
   dependencies:
     "@apollo/protobufjs" "1.2.2"
 
-apollo-server-caching@^0.7.0, "apollo-server-caching@^0.7.0 || ^3.0.0-preview.2":
+apollo-server-caching@^0.7.0, "apollo-server-caching@^0.7.0 || ^3.0.0 ||  ^3.0.0-preview.2":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/apollo-server-caching/-/apollo-server-caching-0.7.0.tgz#e6d1e68e3bb571cba63a61f60b434fb771c6ff39"
   integrity sha512-MsVCuf/2FxuTFVhGLK13B+TZH9tBd2qkyoXKKILIiGcZ5CDUEBO14vIV63aNkMkS1xxvK2U4wBcuuNj/VH2Mkw==
   dependencies:
     lru-cache "^6.0.0"
 
-apollo-server-core@^2.21.0, "apollo-server-core@^2.23.0 || ^3.0.0-preview.2", apollo-server-core@^2.25.2:
+apollo-server-core@^2.21.0, "apollo-server-core@^2.23.0 || ^3.0.0 || ^3.0.0-preview.2", apollo-server-core@^2.25.2:
   version "2.25.2"
   resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-2.25.2.tgz#ff65da5e512d9b5ca54c8e5e8c78ee28b5987247"
   integrity sha512-lrohEjde2TmmDTO7FlOs8x5QQbAS0Sd3/t0TaK2TWaodfzi92QAvIsq321Mol6p6oEqmjm8POIDHW1EuJd7XMA==
@@ -5901,7 +5901,7 @@ apollo-server-core@^2.21.0, "apollo-server-core@^2.23.0 || ^3.0.0-preview.2", ap
     subscriptions-transport-ws "^0.9.19"
     uuid "^8.0.0"
 
-"apollo-server-env@^3.0.0 || ^3.2.0-preview.2", apollo-server-env@^3.1.0:
+"apollo-server-env@^3.0.0 || ^4.0.0 || ^3.2.0-preview.2 || ^4.0.0-rc.0", apollo-server-env@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/apollo-server-env/-/apollo-server-env-3.1.0.tgz#0733c2ef50aea596cc90cf40a53f6ea2ad402cd0"
   integrity sha512-iGdZgEOAuVop3vb0F2J3+kaBVi4caMoxefHosxmgzAbbSpvWehB8Y1QiSyyMeouYC38XNVk5wnZl+jdGSsWsIQ==
@@ -5909,7 +5909,7 @@ apollo-server-core@^2.21.0, "apollo-server-core@^2.23.0 || ^3.0.0-preview.2", ap
     node-fetch "^2.6.1"
     util.promisify "^1.0.0"
 
-apollo-server-errors@^2.4.1, apollo-server-errors@^2.5.0, "apollo-server-errors@^2.5.0 || ^3.0.0-preview.2":
+apollo-server-errors@^2.4.1, apollo-server-errors@^2.5.0, "apollo-server-errors@^2.5.0 || ^3.0.0 || ^3.0.0-preview.2":
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.5.0.tgz#5d1024117c7496a2979e3e34908b5685fe112b68"
   integrity sha512-lO5oTjgiC3vlVg2RKr3RiXIIQ5pGXBFxYGGUkKDhTud3jMIhs+gel8L8zsEjKaKxkjHhCQAA/bcEfYiKkGQIvA==
@@ -5955,7 +5955,7 @@ apollo-server-plugin-base@^0.13.0:
   dependencies:
     apollo-server-types "^0.9.0"
 
-apollo-server-types@^0.9.0, "apollo-server-types@^0.9.0 || ^3.0.0-preview.2":
+apollo-server-types@^0.9.0, "apollo-server-types@^0.9.0 || ^3.0.0 || ^3.0.0-preview.2":
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/apollo-server-types/-/apollo-server-types-0.9.0.tgz#ccf550b33b07c48c72f104fbe2876232b404848b"
   integrity sha512-qk9tg4Imwpk732JJHBkhW0jzfG0nFsLqK2DY6UhvJf7jLnRePYsPxWfPiNkxni27pLE2tiNlCwoDFSeWqpZyBg==
