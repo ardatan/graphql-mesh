@@ -4924,10 +4924,10 @@
     "@types/node-int64" "*"
     "@types/q" "*"
 
-"@types/to-json-schema@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@types/to-json-schema/-/to-json-schema-0.2.0.tgz#6c76736449942aa8a16a522fa2d3fcfd3bcb8d15"
-  integrity sha512-9fqRjNFSSxJ8dQrE4v8gThS5ftxdFj8Q0y8hAjaF+uN+saJRxLiJdtFaDd9sv3bhzwcB2oDJpT/1ZelHnexbLw==
+"@types/to-json-schema@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@types/to-json-schema/-/to-json-schema-0.2.1.tgz#223346df86bc0c183d53c939ad5eb1ddfb0e9bf5"
+  integrity sha512-DlvjodmdSrih054SrUqgS3bIZ93allrfbzjFUFmUhAtC60O+B/doLfgB8stafkEFyrU/zXWtPlX/V1H94iKv/A==
   dependencies:
     "@types/json-schema" "*"
 
