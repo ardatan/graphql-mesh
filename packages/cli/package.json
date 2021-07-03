@@ -75,7 +75,7 @@
     "@types/js-yaml": "4.0.1",
     "@types/mkdirp": "1.0.1",
     "@types/yargs": "17.0.1",
-    "@types/ws": "7.4.5",
+    "@types/ws": "7.4.6",
     "@types/rimraf": "3.0.0"
   },
   "publishConfig": {
