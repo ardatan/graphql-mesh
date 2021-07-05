@@ -884,8 +884,8 @@
         },
         "method": {
           "type": "string",
-          "enum": ["GET", "DELETE", "POST", "PUT", "PATCH"],
-          "description": "Allowed values: GET, DELETE, POST, PUT, PATCH"
+          "enum": ["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"],
+          "description": "Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH"
         },
         "requestSchema": {
           "anyOf": [
