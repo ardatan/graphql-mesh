@@ -239,7 +239,10 @@ export default class JsonSchemaHandler implements MeshHandler {
           if (input) {
             switch (method) {
               case 'GET':
-              case 'DELETE': {
+              case 'HEAD':
+              case 'CONNECT':
+              case 'OPTIONS':
+              case 'TRACE': {
                 const newSearchParams = new URLSearchParams(input);
                 newSearchParams.forEach((value, key) => {
                   urlObj.searchParams.set(key, value);
@@ -248,7 +251,8 @@ export default class JsonSchemaHandler implements MeshHandler {
               }
               case 'POST':
               case 'PUT':
-              case 'PATCH': {
+              case 'PATCH':
+              case 'DELETE': {
                 const [, contentType] =
                   Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {

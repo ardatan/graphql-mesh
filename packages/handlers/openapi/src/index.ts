@@ -45,21 +45,25 @@ export default class OpenAPIHandler implements MeshHandler {
     // https://github.com/Azure/openapi-diff
     this.oasSchema = store.proxy<Oas3[]>('schema.json', {
       ...PredefinedProxyOptions.JsonWithoutValidation,
-      validate: async (oldOas, newOas) => {
-        const result = await openapiDiff.diffSpecs({
-          sourceSpec: {
-            content: jsonFlatStringify(oldOas),
-            location: 'old-schema.json',
-            format: 'openapi3',
-          },
-          destinationSpec: {
-            content: jsonFlatStringify(newOas),
-            location: 'new-schema.json',
-            format: 'openapi3',
-          },
-        });
-        if (result.breakingDifferencesFound) {
-          throw new Error('Breaking changes found!');
+      validate: async (oldOass, newOass) => {
+        for (const index in oldOass) {
+          const oldOas = oldOass[index];
+          const newOas = newOass[index];
+          const result = await openapiDiff.diffSpecs({
+            sourceSpec: {
+              content: jsonFlatStringify(oldOas),
+              location: 'old-schema.json',
+              format: 'openapi3',
+            },
+            destinationSpec: {
+              content: jsonFlatStringify(newOas),
+              location: 'new-schema.json',
+              format: 'openapi3',
+            },
+          });
+          if (result.breakingDifferencesFound) {
+            throw new Error('Breaking changes found!');
+          }
         }
       },
     });
