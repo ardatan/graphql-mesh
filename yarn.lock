@@ -5019,10 +5019,10 @@
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.0.tgz#dd3e6699ba3237f0348cd085e4698780204842f9"
   integrity sha512-37RSHht+gzzgYeobbG+KWryeAW8J33Nhr69cjTqSYymXVZEN9NbRYWoYlRtDhHKPVT1FyNKwaTPC1NynKZpzRA==
 
-"@types/yargs@17.0.1":
-  version "17.0.1"
-  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-17.0.1.tgz#7129ed41a450b21d11be5dae30d1a834deaa63ab"
-  integrity sha512-bGmavvJsnGi4uPUH++e3kb7G3TzRF/rB8m/OY1eH0Q2QahKgPInk3Y+b7tT7D418N08MjsXhB11nDjuqw9w3EQ==
+"@types/yargs@17.0.2":
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-17.0.2.tgz#8fb2e0f4cdc7ab2a1a570106e56533f31225b584"
+  integrity sha512-JhZ+pNdKMfB0rXauaDlrIvm+U7V4m03PPOSVoPS66z8gf+G4Z/UW8UlrVIj2MRQOBzuoEvYtjS0bqYwnpZaS9Q==
   dependencies:
     "@types/yargs-parser" "*"
 
