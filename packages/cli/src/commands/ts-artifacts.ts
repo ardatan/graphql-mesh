@@ -1,4 +1,4 @@
-import { Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import { Maybe, RawSourceOutput } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
@@ -103,7 +103,7 @@ export async function generateTsArtifacts({
   flattenTypes,
   importedModulesSet,
   baseDir,
-  rawConfig,
+  meshConfigCode,
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: RawSourceOutput[];
@@ -112,7 +112,7 @@ export async function generateTsArtifacts({
   flattenTypes: boolean;
   importedModulesSet: Set<string>;
   baseDir: string;
-  rawConfig: YamlConfig.Config;
+  meshConfigCode: string;
 }) {
   const artifactsDir = join(baseDir, '.mesh');
   const codegenOutput = await codegen({
@@ -170,7 +170,6 @@ export async function generateTsArtifacts({
             .join(' & ')} & BaseMeshContext;`;
 
           const meshMethods = `
-import { processConfig, ConfigProcessOptions } from '@graphql-mesh/config';
 import { getMesh } from '@graphql-mesh/runtime';
 import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { cwd } from 'process';
@@ -190,49 +189,33 @@ ${[...importedModulesSet]
   .join(',\n')}
 };
 
-export async function getMeshConfig(configProcessOptions: ConfigProcessOptions = {}) {
-  const baseDir = configProcessOptions.dir || cwd();
+const baseDir = cwd();
+const importFn = async (moduleId: string) => {
+  const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
+  if (!(relativeModuleId in importedModules)) {
+    throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
+  }
+  return importedModules[relativeModuleId]();
+};
+const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
+  cwd: baseDir,
+  importFn,
+}), {
+  readonly: true,
+  validate: false
+});
 
-  const importFn = async (moduleId: string) => {
-    const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
-    if (!(relativeModuleId in importedModules)) {
-      throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
-    }
-    return importedModules[relativeModuleId]();
-  };
+${meshConfigCode}
 
-  const store = new MeshStore('.mesh', new FsStoreStorageAdapter({
-    cwd: baseDir,
-    importFn,
-  }), {
-    readonly: true,
-    validate: false
-  });
-  return processConfig(
-    ${JSON.stringify(
-      {
-        ...rawConfig,
-        documents: documents.map(source => source.rawSDL),
-      },
-      null,
-      2
-    )},
-    {
-      dir: baseDir,
-      store,
-      importFn,
-      ...configProcessOptions
-    }
-  );
-}
+export const documents = ${JSON.stringify(documents)} as any;
 
-export async function getBuiltMesh(configProcessOptions?: ConfigProcessOptions) {
-  const meshConfig = await getMeshConfig(configProcessOptions);
+export async function getBuiltMesh() {
+  const meshConfig = await getMeshOptions();
   return getMesh(meshConfig);
 }
 
-export async function getMeshSDK(configProcessOptions?: ConfigProcessOptions) {
-  const { sdkRequester } = await getBuiltMesh(configProcessOptions);
+export async function getMeshSDK() {
+  const { sdkRequester } = await getBuiltMesh();
   return getSdk(sdkRequester);
 }`;
 
@@ -275,6 +258,8 @@ export async function getMeshSDK(configProcessOptions?: ConfigProcessOptions) {
       sourceMap: false,
       inlineSourceMap: false,
       importHelpers: true,
+      allowSyntheticDefaultImports: true,
+      esModuleInterop: true,
     },
   });
   const jsFilePath = join(artifactsDir, 'index.js');

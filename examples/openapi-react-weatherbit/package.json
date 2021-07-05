@@ -33,7 +33,6 @@
     "build": "parcel build ./public/index.html"
   },
   "alias": {
-    "globby": "./globby.js",
     "fs": "./fs.js"
   },
   "eslintConfig": {

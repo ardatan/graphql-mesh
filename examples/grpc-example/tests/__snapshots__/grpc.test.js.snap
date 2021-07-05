@@ -6,22 +6,33 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 \\"\\"\\"
 scalar BigInt
 
-type Query {
-  ioXtechAnotherExampleGetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  ioXtechAnotherExamplePing: ServerStatus
-  ioXtechExampleGetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  ioXtechExamplePing: ServerStatus
+enum ConnectivityState {
+  CONNECTING
+  IDLE
+  READY
+  SHUTDOWN
+  TRANSIENT_FAILURE
 }
 
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
+type Mutation {
+  \\"\\"\\"get all movies\\"\\"\\"
+  ioXtechAnotherExampleGetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get all movies\\"\\"\\"
+  ioXtechExampleGetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+}
+
+type Query {
+  ioXtechAnotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
+  ioXtechExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
 type Subscription {
-  ioXtechAnotherExampleSearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
-  ioXtechExampleSearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  ioXtechAnotherExampleSearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  ioXtechExampleSearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
 }
 
 type google_protobuf_Timestamp {
@@ -40,7 +51,9 @@ enum io_xtech_Genre {
   UNSPECIFIED
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 type io_xtech_Movie {
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   genre: io_xtech_Genre
   name: String
@@ -53,7 +66,9 @@ input io_xtech_MovieRequest_Input {
   movie: io_xtech_Movie_Input
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 input io_xtech_Movie_Input {
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   genre: io_xtech_Genre
   name: String
@@ -62,7 +77,9 @@ input io_xtech_Movie_Input {
   year: BigInt
 }
 
+\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
 type io_xtech_MoviesResult {
+  \\"\\"\\"list of movies\\"\\"\\"
   result: [io_xtech_Movie]
 }
 

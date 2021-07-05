@@ -1,5 +1,4 @@
-import { KeyValueCache } from '@graphql-mesh/types';
-import { jsonFlatStringify, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { existsSync } from 'fs';
 import { SchemaComposer } from 'graphql-compose';
@@ -14,15 +13,18 @@ export type ClientMethod = (
   metaData?: Metadata
 ) => Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>>;
 
-export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string[], isInput: boolean) {
-  const baseTypeName = pathWithName.join('_');
-  if (isScalarType(baseTypeName)) {
-    return getGraphQLScalar(baseTypeName);
+export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string[] | undefined, isInput: boolean) {
+  if (pathWithName?.length) {
+    const baseTypeName = pathWithName.filter(Boolean).join('_');
+    if (isScalarType(baseTypeName)) {
+      return getGraphQLScalar(baseTypeName);
+    }
+    if (schemaComposer.isEnumType(baseTypeName)) {
+      return baseTypeName;
+    }
+    return isInput ? baseTypeName + '_Input' : baseTypeName;
   }
-  if (schemaComposer.isEnumType(baseTypeName)) {
-    return baseTypeName;
-  }
-  return isInput ? baseTypeName + '_Input' : baseTypeName;
+  return 'Void';
 }
 
 export function addIncludePathResolver(root: Root, includePaths: string[]): void {
@@ -70,15 +72,4 @@ export function addMetaDataToCall(
     return call(input, meta);
   }
   return call(input);
-}
-
-export async function getBuffer(path: string, cache: KeyValueCache, cwd: string): Promise<Buffer> {
-  if (path) {
-    const result = await readFileOrUrlWithCache<string>(path, cache, {
-      allowUnknownExtensions: true,
-      cwd,
-    });
-    return Buffer.from(result);
-  }
-  return undefined;
 }

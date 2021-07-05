@@ -1,13 +1,5 @@
 import { GraphQLResolveInfo, Kind, parse, SelectionSetNode } from 'graphql';
-import {
-  MeshHandlerLibrary,
-  KeyValueCache,
-  YamlConfig,
-  MeshMergerLibrary,
-  ImportFn,
-  MeshPubSub,
-  Logger,
-} from '@graphql-mesh/types';
+import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
@@ -22,7 +14,17 @@ import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/runtime';
 
-export async function getPackage<T>(name: string, type: string, importFn: ImportFn, cwd: string): Promise<T> {
+type ResolvedPackage<T> = {
+  moduleName: string;
+  resolved: T;
+};
+
+export async function getPackage<T>(
+  name: string,
+  type: string,
+  importFn: ImportFn,
+  cwd: string
+): Promise<ResolvedPackage<T>> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
@@ -42,8 +44,11 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   for (const moduleName of possibleModules) {
     try {
       const exported = await importFn(moduleName);
-
-      return (exported.default || exported.parser || exported) as T;
+      const resolved = exported.default || (exported as T);
+      return {
+        moduleName,
+        resolved,
+      };
     } catch (err) {
       if (
         !err.message.includes(`Cannot find module '${moduleName}'`) &&
@@ -56,16 +61,6 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   }
 
   throw new Error(`Unable to find ${type} matching ${name}`);
-}
-
-export async function getHandler(
-  name: keyof YamlConfig.Handler,
-  importFn: ImportFn,
-  cwd: string
-): Promise<MeshHandlerLibrary> {
-  const handlerFn = await getPackage<MeshHandlerLibrary>(name.toString(), 'handler', importFn, cwd);
-
-  return handlerFn;
 }
 
 export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeDefs: string) {
@@ -263,27 +258,45 @@ export async function resolveAdditionalResolvers(
 export async function resolveCache(
   cacheConfig: YamlConfig.Config['cache'] = { inmemoryLru: {} },
   importFn: ImportFn,
-  store: MeshStore,
+  rootStore: MeshStore,
   cwd: string
-): Promise<KeyValueCache | undefined> {
-  const cacheName = Object.keys(cacheConfig)[0];
+): Promise<{
+  cache: KeyValueCache;
+  importCode: string;
+  code: string;
+}> {
+  const cacheName = Object.keys(cacheConfig)[0].toString();
   const config = cacheConfig[cacheName];
 
-  const moduleName = _.kebabCase(cacheName.toString());
-  const pkg = await getPackage<any>(moduleName, 'cache', importFn, cwd);
-  const Cache = pkg.default || pkg;
+  const { moduleName, resolved: Cache } = await getPackage<any>(cacheName, 'cache', importFn, cwd);
 
-  return new Cache({
+  const cache = new Cache({
     ...config,
-    store,
+    store: rootStore.child('cache'),
   });
+
+  const code = `const cache = new MeshCache({
+      ...(${JSON.stringify(config, null, 2)}),
+      store: rootStore.child('cache'),
+    } as any)`;
+  const importCode = `import MeshCache from '${moduleName}';`;
+
+  return {
+    cache,
+    importCode,
+    code,
+  };
 }
 
 export async function resolvePubSub(
   pubsubYamlConfig: YamlConfig.Config['pubsub'],
   importFn: ImportFn,
   cwd: string
-): Promise<MeshPubSub> {
+): Promise<{
+  importCode: string;
+  code: string;
+  pubsub: MeshPubSub;
+}> {
   if (pubsubYamlConfig) {
     let pubsubName: string;
     let pubsubConfig: any;
@@ -294,27 +307,35 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const moduleName = _.kebabCase(pubsubName.toString());
-    const pkg = await getPackage<any>(moduleName, 'pubsub', importFn, cwd);
-    const PubSub = pkg.default || pkg;
+    const { moduleName, resolved: PubSub } = await getPackage<any>(pubsubName, 'pubsub', importFn, cwd);
 
-    return new PubSub(pubsubConfig);
+    const pubsub = new PubSub(pubsubConfig);
+
+    const importCode = `import PubSub from '${moduleName}'`;
+    const code = `const pubsub = new PubSub(${JSON.stringify(pubsubConfig, null, 2)});`;
+
+    return {
+      importCode,
+      code,
+      pubsub,
+    };
   } else {
     const eventEmitter = new EventEmitter({ captureRejections: true });
     eventEmitter.setMaxListeners(Infinity);
     const pubsub = new PubSub({ eventEmitter }) as MeshPubSub;
 
-    return pubsub;
-  }
-}
+    const importCode = `import { PubSub } from 'graphql-subscriptions';
+import { EventEmitter } from 'events';`;
+    const code = `const eventEmitter = new EventEmitter({ captureRejections: true });
+eventEmitter.setMaxListeners(Infinity);
+const pubsub = new PubSub({ eventEmitter });`;
 
-export async function resolveMerger(
-  mergerConfig: YamlConfig.Config['merger'] = 'stitching',
-  importFn: ImportFn,
-  cwd: string
-): Promise<MeshMergerLibrary> {
-  const pkg = await getPackage<any>(mergerConfig, 'merger', importFn, cwd);
-  return pkg.default || pkg;
+    return {
+      importCode,
+      code,
+      pubsub,
+    };
+  }
 }
 
 export async function resolveDocuments(documentsConfig: YamlConfig.Config['documents'], cwd: string) {
@@ -332,11 +353,23 @@ export async function resolveLogger(
   loggerConfig: YamlConfig.Config['logger'],
   importFn: ImportFn,
   cwd: string
-): Promise<Logger> {
+): Promise<{
+  importCode: string;
+  code: string;
+  logger: Logger;
+}> {
   if (typeof loggerConfig === 'string') {
-    const moduleName = _.kebabCase(loggerConfig.toString());
-    const pkg = await getPackage<any>(moduleName, 'logger', importFn, cwd);
-    return pkg.default || pkg;
+    const { moduleName, resolved: logger } = await getPackage<Logger>(loggerConfig, 'logger', importFn, cwd);
+    return {
+      logger,
+      importCode: `import logger from '${moduleName}';`,
+      code: '',
+    };
   }
-  return new DefaultLogger('Mesh');
+  const logger = new DefaultLogger('Mesh');
+  return {
+    logger,
+    importCode: `import { DefaultLogger } from '@graphql-mesh/runtime';`,
+    code: `const logger = new DefaultLogger('Mesh');`,
+  };
 }

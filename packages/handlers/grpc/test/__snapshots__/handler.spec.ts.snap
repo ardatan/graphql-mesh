@@ -2,8 +2,19 @@
 
 exports[`Interpreting Protos should load the Custom Message proto 1`] = `
 "type Query {
-  foos_BamService_GetW(input: foos_GetBamRequest_Input = {}): foos_GetFoosResponse
-  foos_BamService_ping: ServerStatus
+  foos_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  foos_BamService_GetW(input: foos_GetBamRequest_Input): foos_GetFoosResponse
 }
 
 type foos_GetFoosResponse {
@@ -27,19 +38,24 @@ input foos_GetBamRequest_Input {
 input foos_Bam_Input {
   id: BigInt
 }
-
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
 "
 `;
 
 exports[`Interpreting Protos should load the Custom Message2 proto 1`] = `
 "type Query {
-  foo_BamService_GetFOOs(input: foo_GetFOOsRequest_Input = {}): foo_GetFOOsResponse
-  foo_BamService_ping: ServerStatus
+  foo_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  foo_BamService_GetFOOs(input: foo_GetFOOsRequest_Input): foo_GetFOOsResponse
 }
 
 type foo_GetFOOsResponse {
@@ -58,32 +74,45 @@ scalar BigInt
 input foo_GetFOOsRequest_Input {
   id: Int
 }
-
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
 "
 `;
 
 exports[`Interpreting Protos should load the Empty proto 1`] = `
 "type Query {
-  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  io_xtech_Example_GetEmpty(input: io_xtech_MovieRequest_Input = {}): io_xtech_EmptyRequest
-  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  io_xtech_Example_ping: ServerStatus
-  io_xtech_AnotherExample_ping: ServerStatus
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+  io_xtech_Example_GetEmpty(input: io_xtech_MovieRequest_Input): io_xtech_EmptyRequest
+
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+}
+
+\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
 type io_xtech_MoviesResult {
+  \\"\\"\\"list of movies\\"\\"\\"
   result: [io_xtech_Movie]
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp
   genre: io_xtech_Genre
@@ -109,10 +138,13 @@ input io_xtech_MovieRequest_Input {
   movie: io_xtech_Movie_Input
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp_Input
   genre: io_xtech_Genre
@@ -123,19 +155,14 @@ input google_protobuf_Timestamp_Input {
   nanos: Int
 }
 
-type io_xtech_EmptyRequest {
-  _: Boolean
-}
-
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
+scalar io_xtech_EmptyRequest @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
 
 type Subscription {
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
 }
 
 input io_xtech_SearchByCastRequest_Input {
@@ -146,10 +173,21 @@ input io_xtech_SearchByCastRequest_Input {
 
 exports[`Interpreting Protos should load the Import Nested proto 1`] = `
 "type Query {
-  io_xtech_outer_Example_Get(input: io_xtech_TopLevel_Nested_Input = {}): io_xtech_Result
-  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input = {}): io_xtech_Result
-  io_xtech_outer_Example_ping: ServerStatus
-  io_xtech_Example_ping: ServerStatus
+  io_xtech_outer_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  io_xtech_outer_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
+  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
 }
 
 type io_xtech_Result {
@@ -167,31 +205,44 @@ input io_xtech_TopLevel_Nested_Input {
 input io_xtech_Item_Input {
   name: String
 }
-
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
 "
 `;
 
 exports[`Interpreting Protos should load the Movie proto 1`] = `
 "type Query {
-  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  io_xtech_Example_ping: ServerStatus
-  io_xtech_AnotherExample_ping: ServerStatus
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+}
+
+\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
 type io_xtech_MoviesResult {
+  \\"\\"\\"list of movies\\"\\"\\"
   result: [io_xtech_Movie]
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp
   genre: io_xtech_Genre
@@ -217,10 +268,13 @@ input io_xtech_MovieRequest_Input {
   movie: io_xtech_Movie_Input
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp_Input
   genre: io_xtech_Genre
@@ -231,15 +285,12 @@ input google_protobuf_Timestamp_Input {
   nanos: Int
 }
 
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
-
 type Subscription {
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
 }
 
 input io_xtech_SearchByCastRequest_Input {
@@ -250,8 +301,19 @@ input io_xtech_SearchByCastRequest_Input {
 
 exports[`Interpreting Protos should load the Nested proto 1`] = `
 "type Query {
-  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input = {}): io_xtech_Result
-  io_xtech_Example_ping: ServerStatus
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
 }
 
 type io_xtech_Result {
@@ -269,19 +331,24 @@ input io_xtech_TopLevel_Nested_Input {
 input io_xtech_Item_Input {
   name: String
 }
-
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
 "
 `;
 
 exports[`Interpreting Protos should load the No Package Nested proto 1`] = `
 "type Query {
-  Example_Get(input: TopLevel_Nested_Input = {}): Result
-  Example_ping: ServerStatus
+  Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  Example_Get(input: TopLevel_Nested_Input): Result
 }
 
 type Result {
@@ -299,33 +366,45 @@ input TopLevel_Nested_Input {
 input Item_Input {
   name: String
 }
-
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
 "
 `;
 
 exports[`Interpreting Protos should load the Outside proto 1`] = `
 "type Query {
-  io_outside_Example_GetMovies(input: io_outside_MovieRequest_Input = {}): io_outside_MoviesResult
-  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input = {}): io_xtech_MoviesResult
-  io_outside_Example_ping: ServerStatus
-  io_xtech_Example_ping: ServerStatus
-  io_xtech_AnotherExample_ping: ServerStatus
+  io_outside_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  io_outside_Example_GetMovies(input: io_outside_MovieRequest_Input): io_outside_MoviesResult
+
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
 }
 
 type io_outside_MoviesResult {
   result: [io_xtech_Movie]
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp
   genre: io_xtech_Genre
@@ -351,10 +430,13 @@ input io_outside_MovieRequest_Input {
   movie: io_xtech_Movie_Input
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp_Input
   genre: io_xtech_Genre
@@ -365,7 +447,9 @@ input google_protobuf_Timestamp_Input {
   nanos: Int
 }
 
+\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
 type io_xtech_MoviesResult {
+  \\"\\"\\"list of movies\\"\\"\\"
   result: [io_xtech_Movie]
 }
 
@@ -373,15 +457,12 @@ input io_xtech_MovieRequest_Input {
   movie: io_xtech_Movie_Input
 }
 
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
-
 type Subscription {
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
 }
 
 input io_xtech_SearchByCastRequest_Input {
@@ -392,8 +473,19 @@ input io_xtech_SearchByCastRequest_Input {
 
 exports[`Interpreting Protos should load the With All Values proto 1`] = `
 "type Query {
-  Example_Get(input: Item_Input = {}): Result
-  Example_ping: ServerStatus
+  Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  Example_Get(input: Item_Input): Result
 }
 
 type Result {
@@ -446,31 +538,44 @@ input Item_Input {
   uinteger32: UnsignedInt
   uinteger64: BigInt
 }
-
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
 "
 `;
 
 exports[`Interpreting Protos should load the With Underscores proto 1`] = `
 "type Query {
-  io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input = {}): io_xtech_MoviesResult
-  io_xtech_AnotherExample_GetMovies(input: io_xtech_movie_request_Input = {}): io_xtech_MoviesResult
-  io_xtech_Example_ping: ServerStatus
-  io_xtech_AnotherExample_ping: ServerStatus
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
+}
+
+\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
 type io_xtech_MoviesResult {
+  \\"\\"\\"list of movies\\"\\"\\"
   result: [io_xtech_Movie]
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 type io_xtech_Movie {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp
   genre: io_xtech_Genre
@@ -496,10 +601,13 @@ input io_xtech_movie_request_Input {
   movie: io_xtech_Movie_Input
 }
 
+\\"\\"\\"movie message payload\\"\\"\\"
 input io_xtech_Movie_Input {
   name: String
   year: Int
   rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
   cast: [String]
   time: google_protobuf_Timestamp_Input
   genre: io_xtech_Genre
@@ -510,15 +618,12 @@ input google_protobuf_Timestamp_Input {
   nanos: Int
 }
 
-\\"\\"\\"status of the server\\"\\"\\"
-type ServerStatus {
-  \\"\\"\\"status string\\"\\"\\"
-  status: String
-}
-
 type Subscription {
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input = {}): io_xtech_Movie
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
 }
 
 input io_xtech_SearchByCastRequest_Input {
