@@ -1,7 +1,7 @@
-import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { YamlConfig, MeshPubSub } from '@graphql-mesh/types';
-import { buildASTSchema, buildSchema, execute, graphql, parse } from 'graphql';
+import { buildSchema, execute, graphql, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { PubSub } from 'graphql-subscriptions';
 import MockingTransform from '../src';
@@ -61,6 +61,8 @@ describe('mocking', () => {
           cache,
           pubsub,
           baseDir,
+          apiName: '',
+          syncImportFn: require,
         }),
       ],
     });
@@ -129,6 +131,8 @@ describe('mocking', () => {
           cache,
           pubsub,
           baseDir,
+          apiName: '',
+          syncImportFn: require,
         }),
       ],
     });
@@ -189,6 +193,8 @@ describe('mocking', () => {
           cache,
           pubsub,
           baseDir,
+          apiName: '',
+          syncImportFn: require,
         }),
       ],
     });
@@ -288,6 +294,8 @@ describe('mocking', () => {
           cache,
           pubsub,
           baseDir,
+          apiName: '',
+          syncImportFn: require,
         }),
       ],
     });
