@@ -1,4 +1,4 @@
-const { join, resolve } = require('path');
+const { resolve } = require('path');
 const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const CI = !!process.env.CI;
 

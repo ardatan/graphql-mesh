@@ -1,8 +1,9 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache, ImportFn } from '@graphql-mesh/types';
-import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
-import { WSSecurityCert } from 'soap';
+import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache, ImportFn, Logger } from '@graphql-mesh/types';
+import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
+import soap from 'soap';
 import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { env } from 'process';
 
 type AnyFn = (...args: any[]) => any;
 
@@ -12,13 +13,15 @@ export default class SoapHandler implements MeshHandler {
   private cache: KeyValueCache;
   private wsdlResponse: StoreProxy<{ res: { statusCode: number; body: string }; body: string }>;
   private importFn: ImportFn;
+  private logger: Logger;
 
-  constructor({ config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, baseDir, cache, store, importFn, logger }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.wsdlResponse = store.proxy('wsdlResponse.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getMeshSource() {
@@ -99,11 +102,14 @@ export default class SoapHandler implements MeshHandler {
               cwd: this.baseDir,
             })),
       ]);
-      soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password));
+      soapClient.setSecurity(new soap.WSSecurityCert(privateKey, publicKey, password));
     }
 
     const schema = await soapGraphqlSchema({
       soapClient,
+      logger: this.logger,
+      debug: !!env.DEBUG,
+      warnings: !!env.DEBUG,
     });
 
     return {

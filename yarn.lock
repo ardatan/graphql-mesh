@@ -12149,11 +12149,6 @@ graphql-helix@1.6.1:
   resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.6.1.tgz#f504b8ceb8661c5884a6ae5edfcbd66891342710"
   integrity sha512-fdh9+uHnH0hz4ooGJkfPBh02ieblnH9G0OkbYS4vMMTJnq0Ea4R/QsIwzb2vLMDQlKhODkMbKlc1uXwghnvJrw==
 
-graphql-iso-date@~3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/graphql-iso-date/-/graphql-iso-date-3.3.0.tgz#cbe434b41e035e806338121b1b2b509a0f72bb80"
-  integrity sha1-y+Q0tB4DXoBjOBIbGytQmg9yu4A=
-
 graphql-jit@0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.5.1.tgz#738cb2c772a65e9682f04f20dc8edac4365023da"
@@ -21488,13 +21483,6 @@ snapdragon@^0.8.1:
     source-map "^0.5.6"
     source-map-resolve "^0.5.0"
     use "^3.1.0"
-
-soap-graphql@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/soap-graphql/-/soap-graphql-0.1.1.tgz#8217435e5bcf4618c0d18a57825ea872012b7e79"
-  integrity sha512-nh8ZCGS3rGsoyiuLAHxKC7y0vNxajWLEwk3WPJIt30LF/xPIcRP1mFQ/X+oc5m1LJFOatzxARAt53nF66rjLew==
-  dependencies:
-    graphql-iso-date "~3.3.0"
 
 soap@*, soap@0.39.0:
   version "0.39.0"
