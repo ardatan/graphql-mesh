@@ -40,7 +40,7 @@
     "pluralize": "8.0.0",
     "swagger2openapi": "7.0.7",
     "url-join": "4.0.1",
-    "openapi-types": "9.0.3"
+    "openapi-types": "9.1.0"
   },
   "publishConfig": {
     "access": "public",
