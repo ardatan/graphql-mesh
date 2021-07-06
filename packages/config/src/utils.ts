@@ -92,7 +92,7 @@ export async function resolveCache(
   });
 
   const code = `const cache = new MeshCache({
-      ...(${JSON.stringify(config, null, 2)}),
+      ...(rawConfig.cache || {}),
       store: rootStore.child('cache'),
     } as any)`;
   const importCode = `import MeshCache from '${moduleName}';`;
@@ -128,7 +128,7 @@ export async function resolvePubSub(
     const pubsub = new PubSub(pubsubConfig);
 
     const importCode = `import PubSub from '${moduleName}'`;
-    const code = `const pubsub = new PubSub(${JSON.stringify(pubsubConfig, null, 2)});`;
+    const code = `const pubsub = new PubSub(rawConfig.pubsub);`;
 
     return {
       importCode,

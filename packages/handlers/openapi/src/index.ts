@@ -9,6 +9,7 @@ import {
   getCachedFetch,
   jsonFlatStringify,
   asArray,
+  stringInterpolator,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -20,6 +21,7 @@ import {
   MeshSource,
   KeyValueCache,
   MeshPubSub,
+  ImportFn,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 import { GraphQLID, GraphQLInputType } from 'graphql';
@@ -28,6 +30,7 @@ import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
 import { Oas2 } from './openapi-to-graphql/types/oas2';
 import { join } from 'path';
+import { env } from 'process';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
@@ -35,8 +38,17 @@ export default class OpenAPIHandler implements MeshHandler {
   private cache: KeyValueCache;
   private pubsub: MeshPubSub;
   private oasSchema: StoreProxy<Oas3[]>;
+  private importFn: ImportFn;
 
-  constructor({ name, config, baseDir, cache, pubsub, store }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    cache,
+    pubsub,
+    store,
+    importFn,
+  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
@@ -68,10 +80,14 @@ export default class OpenAPIHandler implements MeshHandler {
         }
       },
     });
+    this.importFn = importFn;
   }
 
   private getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3[]> {
-    const { source } = this.config;
+    const { source: nonInterpolatedSource } = this.config;
+    const source = stringInterpolator.parse(nonInterpolatedSource, {
+      env,
+    });
     return this.oasSchema.getWithSet(async () => {
       let rawSpec: Oas3 | Oas2 | (Oas3 | Oas2)[];
       if (typeof source !== 'string') {
@@ -101,7 +117,11 @@ export default class OpenAPIHandler implements MeshHandler {
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];
     if (customFetch) {
-      fetch = await loadFromModuleExportExpression(customFetch, { defaultExportName: 'default', cwd: this.baseDir });
+      fetch = await loadFromModuleExportExpression(customFetch, {
+        defaultExportName: 'default',
+        cwd: this.baseDir,
+        importFn: this.importFn,
+      });
     } else {
       fetch = getCachedFetch(this.cache);
     }
@@ -159,7 +179,7 @@ export default class OpenAPIHandler implements MeshHandler {
       equivalentToMessages: true,
       pubsub: this.pubsub,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
-        const resolverData: ResolverData = { root, args, context, info };
+        const resolverData: ResolverData = { root, args, context, info, env };
         const resolverParams = getResolverParams();
         resolverParams.requestOptions = {
           headers: getHeadersObject(headersFactory(resolverData)),

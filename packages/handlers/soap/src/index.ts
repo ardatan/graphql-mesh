@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache, ImportFn } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
 import { WSSecurityCert } from 'soap';
 import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
@@ -11,18 +11,24 @@ export default class SoapHandler implements MeshHandler {
   private baseDir: string;
   private cache: KeyValueCache;
   private wsdlResponse: StoreProxy<{ res: { statusCode: number; body: string }; body: string }>;
+  private importFn: ImportFn;
 
-  constructor({ config, baseDir, cache, store }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.wsdlResponse = store.proxy('wsdlResponse.json', PredefinedProxyOptions.JsonWithoutValidation);
+    this.importFn = importFn;
   }
 
   async getMeshSource() {
     let schemaHeaders =
       typeof this.config.schemaHeaders === 'string'
-        ? await loadFromModuleExportExpression(this.config.schemaHeaders, { cwd: this.baseDir })
+        ? await loadFromModuleExportExpression(this.config.schemaHeaders, {
+            cwd: this.baseDir,
+            defaultExportName: 'default',
+            importFn: this.importFn,
+          })
         : this.config.schemaHeaders;
     if (typeof schemaHeaders === 'function') {
       schemaHeaders = schemaHeaders();

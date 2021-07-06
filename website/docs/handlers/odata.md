@@ -38,7 +38,7 @@ sources:
         baseUrl: https://graph.microsoft.com/v1.0
         operationHeaders:
           # Please do not use capital letters while getting the headers
-          Authorization: Bearer {context.headers['x-my-api-token']} 
+          Authorization: Bearer {context.headers['x-my-api-token']}
           # You can also access to the cookies like below;
           # Authorization: Bearer {context.cookies.myApiToken}
 ```
@@ -56,7 +56,7 @@ sources:
       odata:
         baseUrl: https://graph.microsoft.com/v1.0
         operationHeaders:
-          Authorization: Bearer ${MY_API_TOKEN}
+          Authorization: Bearer {env.MY_API_TOKEN}
 ```
 
 ## Codesandbox Example

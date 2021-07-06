@@ -2,7 +2,7 @@ sources:
   - name: Microsoft Graph
     handler:
       odata:
-        baseUrl: https://graph.microsoft.com/${GRAPH_VERSION:v1.0}
+        baseUrl: https://graph.microsoft.com/{env.GRAPH_VERSION}
         batch: json
         operationHeaders:
           Authorization: Bearer {context.cookies.accessToken}

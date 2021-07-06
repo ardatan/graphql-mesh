@@ -22,11 +22,12 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
 export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   config: THandlerConfig;
-  baseDir?: string;
+  baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
   store: MeshStore;
   logger: Logger;
+  importFn: ImportFn;
 };
 
 // Handlers
@@ -44,6 +45,7 @@ export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = a
   context?: TContext;
   info?: GraphQLResolveInfo;
   result?: TResult;
+  env: Record<string, string>;
 };
 
 // Hooks
@@ -69,11 +71,12 @@ export interface MeshPubSub {
 }
 
 export interface MeshTransformOptions<Config = any> {
-  apiName?: string;
+  apiName: string;
   config: Config;
-  baseDir?: string;
+  baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  syncImportFn: SyncImportFn;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -126,7 +129,8 @@ export type RawSourceOutput = {
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
-export type ImportFn = (moduleId: string) => Promise<any>;
+export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
+export type SyncImportFn = <T = any>(moduleId: string) => T;
 
 export type Logger = {
   name: string;

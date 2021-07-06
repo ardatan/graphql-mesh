@@ -134,7 +134,11 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
       handlers?.map(async handlerConfig => {
         registeredPaths.add(handlerConfig.path);
         if ('handler' in handlerConfig) {
-          const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler);
+          const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler, {
+            cwd: baseDir,
+            defaultExportName: 'default',
+            importFn: m => import(m),
+          });
           app[handlerConfig.method.toLowerCase() || 'use'](handlerConfig.path, handlerFn);
         } else if ('pubsubTopic' in handlerConfig) {
           app.use(handlerConfig.path, (req, res) => {

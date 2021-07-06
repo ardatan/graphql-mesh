@@ -5,6 +5,7 @@ import {
   GetMeshSourceOptions,
   MeshSource,
   KeyValueCache,
+  ImportFn,
 } from '@graphql-mesh/types';
 import {
   parseInterpolationStrings,
@@ -13,6 +14,7 @@ import {
   jsonFlatStringify,
   getCachedFetch,
   loadFromModuleExportExpression,
+  stringInterpolator,
 } from '@graphql-mesh/utils';
 import urljoin from 'url-join';
 import {
@@ -51,6 +53,7 @@ import { parse as parseXML } from 'fast-xml-parser';
 import { pruneSchema } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { env } from 'process';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -123,18 +126,23 @@ export default class ODataHandler implements MeshHandler {
   private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
   private metadataJson: any;
+  private importFn: ImportFn;
 
-  constructor({ name, config, baseDir, cache, store }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({ name, config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
+    this.importFn = importFn;
   }
 
   async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
     return this.metadataJson.getWithSet(async () => {
-      const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
+      const baseUrl = stringInterpolator.parse(this.config.baseUrl, {
+        env,
+      });
+      const metadataUrl = urljoin(baseUrl, '$metadata');
       const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
@@ -159,13 +167,20 @@ export default class ODataHandler implements MeshHandler {
     if (this.config.customFetch) {
       fetch =
         typeof this.config.customFetch === 'string'
-          ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch)
+          ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch, {
+              cwd: this.baseDir,
+              importFn: this.importFn,
+              defaultExportName: 'default',
+            })
           : this.config.customFetch;
     } else {
       fetch = getCachedFetch(this.cache);
     }
 
-    const { baseUrl, operationHeaders } = this.config;
+    const { baseUrl: nonInterpolatedBaseUrl, operationHeaders } = this.config;
+    const baseUrl = stringInterpolator.parse(nonInterpolatedBaseUrl, {
+      env,
+    });
 
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
@@ -473,7 +488,7 @@ export default class ODataHandler implements MeshHandler {
             requestBody += `\n`;
           }
           requestBody += `--${requestBoundary}--\n`;
-          const batchHeaders = headersFactory({ context }, 'POST');
+          const batchHeaders = headersFactory({ context, env }, 'POST');
           batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
           const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
             method: 'POST',
@@ -502,7 +517,7 @@ export default class ODataHandler implements MeshHandler {
         }),
       json: (context: any) =>
         new DataLoader(async (requests: Request[]): Promise<Response[]> => {
-          const batchHeaders = headersFactory({ context }, 'POST');
+          const batchHeaders = headersFactory({ context, env }, 'POST');
           batchHeaders.set('Content-Type', 'application/json');
           const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
             method: 'POST',
@@ -711,7 +726,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -744,7 +759,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -785,7 +800,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -856,7 +871,7 @@ export default class ODataHandler implements MeshHandler {
               const method = 'GET';
               const request = new Request(urlString, {
                 method,
-                headers: headersFactory({ root, args, context, info }, method),
+                headers: headersFactory({ root, args, context, info, env }, method),
               });
               const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
@@ -934,7 +949,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -977,7 +992,7 @@ export default class ODataHandler implements MeshHandler {
               const method = 'POST';
               const request = new Request(urlString, {
                 method,
-                headers: headersFactory({ root, args, context, info }, method),
+                headers: headersFactory({ root, args, context, info, env }, method),
                 body: jsonFlatStringify(args),
               });
               const response = await context[contextDataloaderName].load(request);
@@ -1042,7 +1057,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'POST';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                   body: jsonFlatStringify(args),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1142,7 +1157,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1187,7 +1202,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1215,7 +1230,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1238,7 +1253,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1264,7 +1279,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'POST';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                   body: jsonFlatStringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1288,7 +1303,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'DELETE';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1315,7 +1330,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'PATCH';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                   body: jsonFlatStringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);

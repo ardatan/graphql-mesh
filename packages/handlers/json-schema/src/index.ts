@@ -25,6 +25,7 @@ import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
 import { inspect } from 'util';
 import { dereferenceObject, healJSONSchema, referenceJSONSchema, JSONSchema, JSONSchemaObject } from 'json-machete';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema';
+import { env } from 'process';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
@@ -187,7 +188,7 @@ export default class JsonSchemaHandler implements MeshHandler {
       if (operationConfig.pubsubTopic) {
         field.subscribe = (root, args, context, info) => {
           operationLogger.debug(`=> Subscribing to pubSubTopic: ${operationConfig.pubsubTopic}`);
-          const interpolationData = { root, args, context, info };
+          const interpolationData = { root, args, context, info, env };
           const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
           return this.pubsub.asyncIterator(pubsubTopic);
         };
@@ -217,7 +218,7 @@ export default class JsonSchemaHandler implements MeshHandler {
         };
         field.resolve = async (root, args, context, info) => {
           operationLogger.debug(`=> Resolving`);
-          const interpolationData = { root, args, context, info };
+          const interpolationData = { root, args, context, info, env };
           const interpolatedBaseUrl = stringInterpolator.parse(this.config.baseUrl, interpolationData);
           const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
           const fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);

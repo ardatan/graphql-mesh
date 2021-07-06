@@ -5,6 +5,7 @@ import {
   ResolverData,
   YamlConfig,
   KeyValueCache,
+  ImportFn,
 } from '@graphql-mesh/types';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildSchema, DocumentNode, Kind, buildASTSchema } from 'graphql';
@@ -20,18 +21,21 @@ import {
 } from '@graphql-mesh/utils';
 import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { env } from 'process';
 
 export default class GraphQLHandler implements MeshHandler {
   private config: YamlConfig.GraphQLHandler;
   private baseDir: string;
   private cache: KeyValueCache<any>;
   private nonExecutableSchema: StoreProxy<GraphQLSchema>;
+  private importFn: ImportFn;
 
-  constructor({ config, baseDir, cache, store }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
+  constructor({ config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.GraphQLHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.nonExecutableSchema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
+    this.importFn = importFn;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -42,7 +46,7 @@ export default class GraphQLHandler implements MeshHandler {
       // Loaders logic should be here somehow
       const schemaOrStringOrDocumentNode = await loadFromModuleExportExpression<GraphQLSchema | string | DocumentNode>(
         endpoint,
-        { cwd: this.baseDir }
+        { cwd: this.baseDir, defaultExportName: 'default', importFn: this.importFn }
       );
       let schema: GraphQLSchema;
       if (schemaOrStringOrDocumentNode instanceof GraphQLSchema) {
@@ -82,6 +86,7 @@ export default class GraphQLHandler implements MeshHandler {
         root: {},
         args: params.variables,
         context: params.context,
+        env,
       };
       const headers = getHeadersObject(headersFactory(resolverData));
       const endpoint = endpointFactory(resolverData);
@@ -93,7 +98,11 @@ export default class GraphQLHandler implements MeshHandler {
     };
     let schemaHeaders =
       typeof configHeaders === 'string'
-        ? await loadFromModuleExportExpression(configHeaders, { cwd: this.baseDir })
+        ? await loadFromModuleExportExpression(configHeaders, {
+            cwd: this.baseDir,
+            defaultExportName: 'default',
+            importFn: this.importFn,
+          })
         : configHeaders;
     if (typeof schemaHeaders === 'function') {
       schemaHeaders = schemaHeaders();

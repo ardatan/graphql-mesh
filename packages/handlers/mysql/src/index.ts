@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -88,12 +88,14 @@ export default class MySQLHandler implements MeshHandler {
   private baseDir: string;
   private pubsub: MeshPubSub;
   private store: MeshStore;
+  private importFn: ImportFn;
 
-  constructor({ config, baseDir, pubsub, store }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({ config, baseDir, pubsub, store, importFn }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.store = store;
+    this.importFn = importFn;
   }
 
   async getPromisifiedConnection(pool: Pool) {
@@ -156,7 +158,11 @@ export default class MySQLHandler implements MeshHandler {
     const schemaComposer = new SchemaComposer<MysqlContext>();
     const pool: Pool = configPool
       ? typeof configPool === 'string'
-        ? await loadFromModuleExportExpression(configPool, { cwd: this.baseDir })
+        ? await loadFromModuleExportExpression(configPool, {
+            cwd: this.baseDir,
+            defaultExportName: 'default',
+            importFn: this.importFn,
+          })
         : configPool
       : createPool({
           supportBigNumbers: true,
