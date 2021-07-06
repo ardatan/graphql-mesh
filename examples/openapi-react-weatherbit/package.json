@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.30.2",
-    "parcel-bundler": "1.12.5"
+    "parcel": "next"
   },
   "scripts": {
     "build:mesh": "yarn mesh build",
@@ -31,10 +31,6 @@
     "start": "parcel ./public/index.html",
     "prebuild": "yarn build:mesh",
     "build": "parcel build ./public/index.html"
-  },
-  "alias": {
-    "globby": "./globby.js",
-    "fs": "./fs.js"
   },
   "eslintConfig": {
     "extends": "react-app"

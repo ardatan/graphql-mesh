@@ -9,20 +9,12 @@ import {
 } from '@graphql-mesh/types';
 import { GraphQLSchema, print, extendSchema, DocumentNode, parse, execute } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { ApolloGateway } from '@apollo/gateway';
+import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { hashObject, jitExecutorFactory, AggregateError } from '@graphql-mesh/utils';
-import { Executor } from '@graphql-tools/utils';
+import { asArray, Executor } from '@graphql-tools/utils';
 import { env } from 'process';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-
-const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
-  query __ApolloGetServiceDefinition__ {
-    _service {
-      sdl
-    }
-  }
-`;
 
 export default class FederationMerger implements MeshMerger {
   name = 'federation';
@@ -53,7 +45,7 @@ export default class FederationMerger implements MeshMerger {
             this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
             const sdlQueryResult = await execute({
               schema: transformedSchema,
-              document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
+              document: parse(SERVICE_DEFINITION_QUERY),
             });
             if (sdlQueryResult.errors?.length) {
               throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${rawSource.name}`);
@@ -130,11 +122,13 @@ export default class FederationMerger implements MeshMerger {
     });
     if (resolvers) {
       this.logger.debug(`Applying additionalResolvers`);
-      remoteSchema = addResolversToSchema({
-        schema: remoteSchema,
-        resolvers,
-        updateResolversInPlace: true,
-      });
+      for (const resolversObj of asArray(resolvers)) {
+        remoteSchema = addResolversToSchema({
+          schema: remoteSchema,
+          resolvers: resolversObj,
+          updateResolversInPlace: true,
+        });
+      }
     }
     if (transforms?.length) {
       this.logger.debug(`Applying root level transforms`);

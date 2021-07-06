@@ -26,7 +26,7 @@ describe.each<[string, string]>([
     const config: YamlConfig.GrpcHandler = {
       endpoint: 'localhost',
       protoFilePath: {
-        file,
+        file: join(__dirname, './fixtures/proto-tests', file),
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },
     };

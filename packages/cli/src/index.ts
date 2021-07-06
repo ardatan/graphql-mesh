@@ -1,5 +1,5 @@
 import { findAndParseConfig } from '@graphql-mesh/config';
-import { DefaultLogger, getMesh } from '@graphql-mesh/runtime';
+import { DefaultLogger, getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
@@ -62,7 +62,9 @@ export async function graphqlMesh() {
           const result = await serveMesh({
             baseDir,
             argsPort: args.port,
-            meshConfig,
+            getMeshOptions: meshConfig,
+            rawConfig: meshConfig.config,
+            documents: meshConfig.documents,
           });
           logger = result.logger;
         } catch (e) {
@@ -89,14 +91,14 @@ export async function graphqlMesh() {
           env.NODE_ENV = 'production';
           const mainModule = join(builtMeshArtifactsPath, 'index.js');
           const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
-          const meshConfig = await builtMeshArtifacts.getMeshConfig({
-            dir: baseDir,
-          });
-          logger = meshConfig.logger;
+          const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
+          logger = getMeshOptions.logger;
           await serveMesh({
             baseDir,
             argsPort: args.port,
-            meshConfig,
+            getMeshOptions,
+            rawConfig: builtMeshArtifacts.rawConfig,
+            documents: builtMeshArtifacts.documents,
           });
         } catch (e) {
           handleFatalError(e, logger);
@@ -203,7 +205,7 @@ export async function graphqlMesh() {
             flattenTypes: false,
             importedModulesSet,
             baseDir,
-            rawConfig: meshConfig.config,
+            meshConfigCode: meshConfig.code,
           });
 
           logger.info(`Cleanup`);

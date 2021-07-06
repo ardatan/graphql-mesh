@@ -25,9 +25,13 @@ enum JsonSchemaOperationType {
 
 enum JsonSchemaOperationMethod {
   GET
-  DELETE
+  HEAD
   POST
   PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
   PATCH
 }
 

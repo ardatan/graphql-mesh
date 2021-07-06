@@ -11,7 +11,7 @@ sources:
           someKey: 'someValue'
           connection_type: ['headers', 'connection']
         protoFilePath:
-          file: io/xtech/service.proto
+          file: ./proto/io/xtech/service.proto
           load:
             includeDirs:
               - ./proto

@@ -2,4 +2,10 @@ sources:
   - name: Stripe
     handler:
       openapi:
-        source: ./test.yml
+        source: https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json
+        baseUrl: https://api.stripe.com
+        operationHeaders:
+          Authorization: 'Bearer ${STRIPE_TOKEN}'
+
+documents:
+  - get-customers.query.graphql

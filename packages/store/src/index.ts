@@ -5,8 +5,6 @@ import { Change, CriticalityLevel, diff } from '@graphql-inspector/core';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
 
-const { unlink } = fsPromises;
-
 export class ReadonlyStoreError extends Error {}
 
 export class ValidationError extends Error {}
@@ -70,6 +68,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
 
   async delete(key: string): Promise<void> {
     const filePath = this.getWrittenFileName(key);
+    const { unlink } = fsPromises;
     return unlink(filePath);
   }
 }

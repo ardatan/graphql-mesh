@@ -31,6 +31,7 @@
     "graphql-scalars": "1.10.0",
     "graphql-compose": "9.0.1",
     "grpc-reflection-js": "0.1.2",
+    "globby": "11.0.4",
     "long": "4.0.0",
     "protobufjs": "6.11.2",
     "lodash": "4.17.21"

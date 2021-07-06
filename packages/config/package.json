@@ -37,8 +37,7 @@
     "@graphql-tools/code-file-loader": "6.3.2-alpha-aa43054d.0",
     "@graphql-tools/graphql-file-loader": "6.2.8-alpha-aa43054d.0",
     "graphql-subscriptions": "1.2.1",
-    "param-case": "3.0.4",
-    "lodash": "4.17.21"
+    "param-case": "3.0.4"
   },
   "devDependencies": {
     "@types/ajv": "1.0.0"

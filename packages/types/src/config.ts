@@ -330,9 +330,9 @@ export interface JsonSchemaOperation {
    */
   type: 'Query' | 'Mutation' | 'Subscription';
   /**
-   * Allowed values: GET, DELETE, POST, PUT, PATCH
+   * Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
    */
-  method?: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
+  method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;

@@ -377,7 +377,10 @@ ${inspect(
       public variables: Variables,
       public data: Data
     ) {
-      super(errors);
+      super(
+        errors,
+        `GraphQL Mesh SDK ${getOperationAST(document).operation} ${getOperationAST(document).name?.value || ''} failed!`
+      );
     }
   }
 
@@ -400,6 +403,11 @@ ${inspect(
       if (executionResult.data && !executionResult.errors) {
         return executionResult.data as Result;
       } else {
+        logger.error(`GraphQL Mesh SDK failed to execute:
+        ${inspect({
+          query: print(document),
+          variables,
+        })}`);
         throw new GraphQLMeshSdkError(
           executionResult.errors as ReadonlyArray<GraphQLError>,
           document,

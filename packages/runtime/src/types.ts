@@ -18,7 +18,7 @@ export type GetMeshOptions = {
   sources: MeshResolvedSource[];
   transforms?: MeshTransform[];
   additionalTypeDefs?: DocumentNode[];
-  additionalResolvers?: IResolvers;
+  additionalResolvers?: IResolvers | IResolvers[];
   cache: KeyValueCache;
   pubsub: MeshPubSub;
   ignoreAdditionalResolvers?: boolean;

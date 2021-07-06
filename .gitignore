@@ -7,9 +7,10 @@ generated
 yarn-error.log
 temp
 *.generated.graphql
-ignored-demo
+ignored-*
 package-lock.json
 .bob
 .history
 .DS_Store
 .mesh
+.parcel-cache

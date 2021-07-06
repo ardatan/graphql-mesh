@@ -1,4 +1,4 @@
-import { Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import { Maybe, RawSourceOutput } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
@@ -103,7 +103,7 @@ export async function generateTsArtifacts({
   flattenTypes,
   importedModulesSet,
   baseDir,
-  rawConfig,
+  meshConfigCode,
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: RawSourceOutput[];
@@ -112,7 +112,7 @@ export async function generateTsArtifacts({
   flattenTypes: boolean;
   importedModulesSet: Set<string>;
   baseDir: string;
-  rawConfig: YamlConfig.Config;
+  meshConfigCode: string;
 }) {
   const artifactsDir = join(baseDir, '.mesh');
   const codegenOutput = await codegen({
@@ -169,70 +169,58 @@ export async function generateTsArtifacts({
             .filter(Boolean)
             .join(' & ')} & BaseMeshContext;`;
 
+          const importCodes = [
+            `import { getMesh } from '@graphql-mesh/runtime';`,
+            `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
+            `import { cwd } from 'process';`,
+            `import { relative, isAbsolute } from 'path';`,
+          ];
+          const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
+            let moduleMapProp = importedModuleName;
+            let importPath = importedModuleName;
+            if (isAbsolute(importedModuleName)) {
+              moduleMapProp = relative(baseDir, importedModuleName);
+              importPath = `./${relative(artifactsDir, importedModuleName)}`;
+            }
+            const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
+            importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
+            return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: async () => ${importedModuleVariable}`;
+          });
+
           const meshMethods = `
-import { processConfig, ConfigProcessOptions } from '@graphql-mesh/config';
-import { getMesh } from '@graphql-mesh/runtime';
-import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
-import { cwd } from 'process';
-import { relative, isAbsolute } from 'path';
+${importCodes.join('\n')}
 
 const importedModules: Record<string, () => Promise<any>> = {
-${[...importedModulesSet]
-  .map(importedModuleName => {
-    let moduleMapProp = importedModuleName;
-    let importPath = importedModuleName;
-    if (isAbsolute(importedModuleName)) {
-      moduleMapProp = relative(baseDir, importedModuleName);
-      importPath = `./${relative(artifactsDir, importedModuleName)}`;
-    }
-    return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: () => import(\`${importPath}\`)`;
-  })
-  .join(',\n')}
+${importedModulesCodes.join(',\n')}
 };
 
-export async function getMeshConfig(configProcessOptions: ConfigProcessOptions = {}) {
-  const baseDir = configProcessOptions.dir || cwd();
+const baseDir = cwd();
+const importFn = async (moduleId: string) => {
+  const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
+  if (!(relativeModuleId in importedModules)) {
+    throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
+  }
+  return importedModules[relativeModuleId]();
+};
+const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
+  cwd: baseDir,
+  importFn,
+}), {
+  readonly: true,
+  validate: false
+});
 
-  const importFn = async (moduleId: string) => {
-    const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
-    if (!(relativeModuleId in importedModules)) {
-      throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
-    }
-    return importedModules[relativeModuleId]();
-  };
+${meshConfigCode}
 
-  const store = new MeshStore('.mesh', new FsStoreStorageAdapter({
-    cwd: baseDir,
-    importFn,
-  }), {
-    readonly: true,
-    validate: false
-  });
-  return processConfig(
-    ${JSON.stringify(
-      {
-        ...rawConfig,
-        documents: documents.map(source => source.rawSDL),
-      },
-      null,
-      2
-    )},
-    {
-      dir: baseDir,
-      store,
-      importFn,
-      ...configProcessOptions
-    }
-  );
-}
+export const documents = ${JSON.stringify(documents)} as any;
 
-export async function getBuiltMesh(configProcessOptions?: ConfigProcessOptions) {
-  const meshConfig = await getMeshConfig(configProcessOptions);
+export async function getBuiltMesh() {
+  const meshConfig = await getMeshOptions();
   return getMesh(meshConfig);
 }
 
-export async function getMeshSDK(configProcessOptions?: ConfigProcessOptions) {
-  const { sdkRequester } = await getBuiltMesh(configProcessOptions);
+export async function getMeshSDK() {
+  const { sdkRequester } = await getBuiltMesh();
   return getSdk(sdkRequester);
 }`;
 
@@ -268,15 +256,31 @@ export async function getMeshSDK(configProcessOptions?: ConfigProcessOptions) {
 
   const tsFilePath = join(artifactsDir, 'index.ts');
   await writeFile(tsFilePath, codegenOutput);
+
+  const compilerOptions = {
+    target: ts.ScriptTarget.ESNext,
+    sourceMap: false,
+    inlineSourceMap: false,
+    importHelpers: true,
+    allowSyntheticDefaultImports: true,
+    esModuleInterop: true,
+  };
+
   const jsResult = ts.transpileModule(codegenOutput, {
     compilerOptions: {
+      ...compilerOptions,
       module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ESNext,
-      sourceMap: false,
-      inlineSourceMap: false,
-      importHelpers: true,
     },
   });
   const jsFilePath = join(artifactsDir, 'index.js');
   await writeFile(jsFilePath, jsResult.outputText);
+
+  const mjsResult = ts.transpileModule(codegenOutput, {
+    compilerOptions: {
+      ...compilerOptions,
+      module: ts.ModuleKind.ESNext,
+    },
+  });
+  const mjsFilePath = join(artifactsDir, 'index.mjs');
+  await writeFile(mjsFilePath, mjsResult.outputText);
 }
