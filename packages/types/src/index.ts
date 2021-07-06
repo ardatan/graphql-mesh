@@ -102,7 +102,7 @@ export interface MeshMergerLibrary {
 export interface MeshMergerContext {
   rawSources: RawSourceOutput[];
   typeDefs?: DocumentNode[];
-  resolvers?: IResolvers;
+  resolvers?: IResolvers | IResolvers[];
   transforms?: Transform[];
 }
 

@@ -8,7 +8,7 @@ import {
 } from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { groupTransforms, applySchemaTransforms, extractResolvers, AggregateError } from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms, extractResolvers, AggregateError, asArray } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import federationToStitchingSDL from 'federation-to-stitching-sdl';
@@ -61,15 +61,19 @@ export default class StitchingMerger implements MeshMerger {
       });
     }
     if (typeDefs || resolvers) {
+      this.logger.debug(`Applying additionalTypeDefs`);
       typeDefs?.forEach(typeDef => {
         schema = extendSchema(schema, typeDef);
       });
       if (resolvers) {
-        schema = addResolversToSchema({
-          schema,
-          resolvers,
-          updateResolversInPlace: true,
-        });
+        this.logger.debug(`Applying additionalResolvers`);
+        for (const resolversObj of asArray(resolvers)) {
+          schema = addResolversToSchema({
+            schema,
+            resolvers: resolversObj,
+            updateResolversInPlace: true,
+          });
+        }
       }
       if (wrapTransforms.length) {
         schema = wrapSchema({

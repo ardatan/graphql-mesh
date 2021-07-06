@@ -19,20 +19,17 @@ import { KeyValueCache } from 'fetchache';
 import { DocumentNode } from 'graphql';
 import {
   getPackage,
-  resolveAdditionalResolvers,
   resolveAdditionalTypeDefs,
   resolveCache,
   resolvePubSub,
   resolveDocuments,
   resolveLogger,
 } from './utils';
-import _ from 'lodash';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { cwd, env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
-
-export { resolveAdditionalResolvers };
+import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -69,7 +66,7 @@ export type ProcessedConfig = {
   sources: MeshResolvedSource<any>[];
   transforms: MeshTransform[];
   additionalTypeDefs: DocumentNode[];
-  additionalResolvers: IResolvers;
+  additionalResolvers: IResolvers[];
   cache: KeyValueCache<string>;
   merger: MeshMerger;
   pubsub: MeshPubSub;
@@ -275,7 +272,7 @@ export async function processConfig(
       ({ resolved: Merger, moduleName }) => {
         const mergerImportName = pascalCase(`${config.merger || 'stitching'}Merger`);
         importCodes.push(`import ${mergerImportName} from '${moduleName}';`);
-        codes.push(`const merger = new ${mergerImportName}({
+        codes.push(`const merger = new(${mergerImportName} as any)({
         cache,
         pubsub,
         logger: logger.child('${mergerImportName}'),
@@ -292,7 +289,7 @@ export async function processConfig(
     resolveDocuments(config.documents, dir),
   ]);
 
-  importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/config';`);
+  importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
   codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
       baseDir,
       ${JSON.stringify(config.additionalResolvers)},

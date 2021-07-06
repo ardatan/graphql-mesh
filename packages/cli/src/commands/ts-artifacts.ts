@@ -169,24 +169,29 @@ export async function generateTsArtifacts({
             .filter(Boolean)
             .join(' & ')} & BaseMeshContext;`;
 
+          const importCodes = [
+            `import { getMesh } from '@graphql-mesh/runtime';`,
+            `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
+            `import { cwd } from 'process';`,
+            `import { relative, isAbsolute } from 'path';`,
+          ];
+          const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
+            let moduleMapProp = importedModuleName;
+            let importPath = importedModuleName;
+            if (isAbsolute(importedModuleName)) {
+              moduleMapProp = relative(baseDir, importedModuleName);
+              importPath = `./${relative(artifactsDir, importedModuleName)}`;
+            }
+            const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
+            importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
+            return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: async () => ${importedModuleVariable}`;
+          });
+
           const meshMethods = `
-import { getMesh } from '@graphql-mesh/runtime';
-import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
-import { cwd } from 'process';
-import { relative, isAbsolute } from 'path';
+${importCodes.join('\n')}
 
 const importedModules: Record<string, () => Promise<any>> = {
-${[...importedModulesSet]
-  .map(importedModuleName => {
-    let moduleMapProp = importedModuleName;
-    let importPath = importedModuleName;
-    if (isAbsolute(importedModuleName)) {
-      moduleMapProp = relative(baseDir, importedModuleName);
-      importPath = `./${relative(artifactsDir, importedModuleName)}`;
-    }
-    return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: () => import(\`${importPath}\`)`;
-  })
-  .join(',\n')}
+${importedModulesCodes.join(',\n')}
 };
 
 const baseDir = cwd();
@@ -251,17 +256,31 @@ export async function getMeshSDK() {
 
   const tsFilePath = join(artifactsDir, 'index.ts');
   await writeFile(tsFilePath, codegenOutput);
+
+  const compilerOptions = {
+    target: ts.ScriptTarget.ESNext,
+    sourceMap: false,
+    inlineSourceMap: false,
+    importHelpers: true,
+    allowSyntheticDefaultImports: true,
+    esModuleInterop: true,
+  };
+
   const jsResult = ts.transpileModule(codegenOutput, {
     compilerOptions: {
+      ...compilerOptions,
       module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ESNext,
-      sourceMap: false,
-      inlineSourceMap: false,
-      importHelpers: true,
-      allowSyntheticDefaultImports: true,
-      esModuleInterop: true,
     },
   });
   const jsFilePath = join(artifactsDir, 'index.js');
   await writeFile(jsFilePath, jsResult.outputText);
+
+  const mjsResult = ts.transpileModule(codegenOutput, {
+    compilerOptions: {
+      ...compilerOptions,
+      module: ts.ModuleKind.ESNext,
+    },
+  });
+  const mjsFilePath = join(artifactsDir, 'index.mjs');
+  await writeFile(mjsFilePath, mjsResult.outputText);
 }

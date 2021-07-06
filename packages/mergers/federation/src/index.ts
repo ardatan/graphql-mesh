@@ -12,7 +12,7 @@ import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { hashObject, jitExecutorFactory, AggregateError } from '@graphql-mesh/utils';
-import { Executor } from '@graphql-tools/utils';
+import { asArray, Executor } from '@graphql-tools/utils';
 import { env } from 'process';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 
@@ -122,11 +122,13 @@ export default class FederationMerger implements MeshMerger {
     });
     if (resolvers) {
       this.logger.debug(`Applying additionalResolvers`);
-      remoteSchema = addResolversToSchema({
-        schema: remoteSchema,
-        resolvers,
-        updateResolversInPlace: true,
-      });
+      for (const resolversObj of asArray(resolvers)) {
+        remoteSchema = addResolversToSchema({
+          schema: remoteSchema,
+          resolvers: resolversObj,
+          updateResolversInPlace: true,
+        });
+      }
     }
     if (transforms?.length) {
       this.logger.debug(`Applying root level transforms`);

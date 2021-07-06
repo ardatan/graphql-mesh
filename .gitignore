@@ -13,3 +13,4 @@ package-lock.json
 .history
 .DS_Store
 .mesh
+.parcel-cache

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import './App.css';
 import { useMeshSdk } from './useMeshSdk';
 import { getDailyForecastByCoordinatesQuery } from '../.mesh';
 
 function App() {
-  const [forecastData, setForecastData] = useState<getDailyForecastByCoordinatesQuery['forecastData']>();
+  const [forecastData, setForecastData] = React.useState<getDailyForecastByCoordinatesQuery['forecastData']>();
 
   const sdk = useMeshSdk();
 
-  useEffect(() => {
+  React.useEffect(() => {
     sdk
       ?.getDailyForecastByCoordinates({
         lat: 41.01384,

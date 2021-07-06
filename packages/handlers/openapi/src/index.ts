@@ -27,6 +27,7 @@ import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
 import { Oas2 } from './openapi-to-graphql/types/oas2';
+import { join } from 'path';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
@@ -43,7 +44,7 @@ export default class OpenAPIHandler implements MeshHandler {
     // TODO: This validation here should be more flexible, probably specific to OAS
     // Because we can handle json/swagger files, and also we might want to use this:
     // https://github.com/Azure/openapi-diff
-    this.oasSchema = store.proxy<Oas3[]>('schema.json', {
+    this.oasSchema = store.proxy<Oas3[]>('oas-schema', {
       ...PredefinedProxyOptions.JsonWithoutValidation,
       validate: async (oldOass, newOass) => {
         for (const index in oldOass) {
@@ -52,12 +53,12 @@ export default class OpenAPIHandler implements MeshHandler {
           const result = await openapiDiff.diffSpecs({
             sourceSpec: {
               content: jsonFlatStringify(oldOas),
-              location: 'old-schema.json',
+              location: join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
               format: 'openapi3',
             },
             destinationSpec: {
               content: jsonFlatStringify(newOas),
-              location: 'new-schema.json',
+              location: config.source,
               format: 'openapi3',
             },
           });
