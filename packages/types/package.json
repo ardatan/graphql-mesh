@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "fetchache": "0.1.1",
-    "@graphql-tools/delegate": "8.0.0-alpha-aa43054d.0",
-    "@graphql-tools/utils": "8.0.0-alpha-aa43054d.0",
+    "@graphql-tools/delegate": "8.0.0-alpha-f1d7b3c2.0",
+    "@graphql-tools/utils": "8.0.0-alpha-f1d7b3c2.0",
     "@graphql-typed-document-node/core": "3.1.0"
   },
   "publishConfig": {
