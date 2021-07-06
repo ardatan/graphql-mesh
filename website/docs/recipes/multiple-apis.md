@@ -4,7 +4,9 @@ title: Combine and extend different sources
 sidebar_label: Combine and extend sources
 ---
 
-GraphQL Mesh is able to merge different data sources into a single unified GraphQL Schema, and GraphQL Mesh is not an alternative to Schema Stitching, Apollo Federation, Bare or another merging strategy. GraphQL Mesh can use any of those merging strategies to combine the input sources. By default, GraphQL Mesh applies Schema Stitching.
+GraphQL Mesh is able to merge different data sources into a single unified GraphQL Schema, and GraphQL Mesh is not an alternative to Schema Stitching, Apollo Federation, Bare Schema Merging or another merging strategy. GraphQL Mesh can consume and merge your data sources in different approaches.
+
+In addition to `@apollo/gateway`, GraphQL Mesh supports subscriptions out-of-box.
 
 [Learn more the key differences between Schema Stitching and Apollo Federation](https://product.voxmedia.com/2020/11/2/21494865/to-federate-or-stitch-a-graphql-gateway-revisited)
 
@@ -495,10 +497,50 @@ And that's it. Now GraphQL Mesh will `Author` by `authorId` field.
 
 ## Consuming Apollo Federation Services inside GraphQL Mesh
 
-The default merging strategy Schema Stitching uses [the approach of Schema Stitching](https://github.com/gmac/schema-stitching-handbook/tree/master/federation-services) in order to consume the existing Apollo Federation services inside GraphQL Mesh. So you can either keep using Schema Stitching or switch to `Federation` merger.
+GraphQL Mesh uses [the approach of Schema Stitching](https://github.com/gmac/schema-stitching-handbook/tree/master/federation-services) in order to consume the existing Apollo Federation services inside GraphQL Mesh. So you can combine Federation and Type Merging in GraphQL Mesh
 
-[Learn more about Apollo Federation merger](https://www.graphql-mesh.com/docs/recipes/federation)
+<p align="center">
+  <img src="https://storage.googleapis.com/xebia-blog/1/2019/10/apollo-federation.jpg" width="300" alt="Apollo Federation" />
+<br/>
+</p>
 
-Also GraphQL Mesh has [Federation Transform](https://www.graphql-mesh.com/docs/transforms/federation) so you can extend your existing non-federated services with custom federation metadata to merge your entity types in federation approach.
+You can follow Apollo Federation spec and integrate your existing Federated services into GraphQL Mesh.
 
-> Please note that with Schema Stitching merger, GraphQL Mesh is smart enough to mix and match Federation and Stitching approaches including all other transforms (Type Merging, Rename, Filter etc)
+GraphQL Mesh is smart enough to mix and match Federation and Stitching approaches including all other transforms (Type Merging, Rename, Filter etc)
+
+You can also transform your existing non-federated schemas into federated service.
+
+```yml
+sources:
+  - name: accounts # Add a non-federated GraphQL Source
+    handler:
+      graphql:
+        endpoint: http://localhost:4001/graphql
+    transforms: # Transform it to a federated schema
+      - federation:
+          types:
+            - name: Query
+              config:
+                extend: true
+            - name: User
+              config:
+                keyFields:
+                  - id
+                resolveReference:
+                  queryFieldName: user # Target root field
+
+  - name: reviews # You can also use a federated schema
+    handler:
+      graphql:
+        endpoint: http://localhost:4002/graphql
+  - name: products
+    handler:
+      graphql:
+        endpoint: http://localhost:4003/graphql
+  - name: inventory
+    handler:
+      graphql:
+        endpoint: http://localhost:4004/graphql
+```
+
+> You can [check out documentation of federation transformer](/docs/transforms/federation) to learn more about adding federation metadata to a non-federated GraphQL Schema.
