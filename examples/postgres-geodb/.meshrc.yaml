@@ -11,9 +11,9 @@ sources:
       graphql:
         endpoint: https://api.github.com/graphql
         schemaHeaders:
-          Authorization: bearer ${GH_ACCESS_TOKEN}
+          Authorization: bearer {env.GH_ACCESS_TOKEN}
         operationHeaders:
-          Authorization: bearer ${GH_ACCESS_TOKEN}
+          Authorization: bearer {env.GH_ACCESS_TOKEN}
     transforms:
       - prefix:
           value: Github
@@ -43,5 +43,5 @@ additionalResolvers:
     result: nodes
     resultType: GithubUser
 
-documents: 
+documents:
   - ./src/test.query.graphql
