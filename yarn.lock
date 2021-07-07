@@ -12167,10 +12167,10 @@ graphql-helix@1.6.1:
   resolved "https://registry.yarnpkg.com/graphql-helix/-/graphql-helix-1.6.1.tgz#f504b8ceb8661c5884a6ae5edfcbd66891342710"
   integrity sha512-fdh9+uHnH0hz4ooGJkfPBh02ieblnH9G0OkbYS4vMMTJnq0Ea4R/QsIwzb2vLMDQlKhODkMbKlc1uXwghnvJrw==
 
-graphql-jit@0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.5.1.tgz#738cb2c772a65e9682f04f20dc8edac4365023da"
-  integrity sha512-gzgnlu9/R/SnMnPe7MGQWh6sIpK7Tva2mT2ulhUenD0GZD1izbakevGGRT6ApTMenCOiClSVcugDNziXC5KKYg==
+graphql-jit@0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.5.2.tgz#f1fe88e106f6e5b6daa43f9f9a021f733697aee6"
+  integrity sha512-8XNFsdFTUujjqu2q26Vkh4U6ZJ5dKZ2KxtiuCe95VlHK9Xn4+yz1P/nOj7ipZvXhMG4/s2gwoEhkSig9IEoahQ==
   dependencies:
     fast-json-stringify "^1.13.0"
     generate-function "^2.3.1"
