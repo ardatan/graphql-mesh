@@ -28,7 +28,7 @@
     "@graphql-tools/load": "7.0.0-alpha-bbb5746f.0",
     "@graphql-tools/code-file-loader": "7.0.0-alpha-bbb5746f.0",
     "@graphql-tools/graphql-file-loader": "7.0.0-alpha-bbb5746f.0",
-    "@graphql-tools/merge": "6.2.15-alpha-af9a78de.0"
+    "@graphql-tools/merge": "6.2.15-alpha-bbb5746f.0"
   },
   "publishConfig": {
     "access": "public",
