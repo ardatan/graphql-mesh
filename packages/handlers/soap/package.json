@@ -22,9 +22,6 @@
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "@types/soap": "0.21.0"
-  },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/store": "0.0.0",

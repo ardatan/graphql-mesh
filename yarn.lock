@@ -5394,13 +5394,6 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
-"@types/soap@0.21.0":
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/@types/soap/-/soap-0.21.0.tgz#d240c80e410f07b07d2acdea99e60d3e4aa412f3"
-  integrity sha512-NFT751PfjmIMJz5m/AHfygq8x2svHU4Bi2CXATSjrk9S2Elv19yu6rDf6foER4+o/mwMESTZrvqq5BS91a0uAg==
-  dependencies:
-    soap "*"
-
 "@types/source-list-map@*":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
@@ -21496,7 +21489,7 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-soap@*, soap@0.40.0:
+soap@0.40.0:
   version "0.40.0"
   resolved "https://registry.yarnpkg.com/soap/-/soap-0.40.0.tgz#c0d95520dd3528593ff0c12bd1c959620d2089b6"
   integrity sha512-66GjEXIWyRsc24RXtzzoVaXtHzd3+DRy0PsXxMGrqGU26mqKfORbtDLFJIyp2OXcCHch5pM0LkXUXI/d/KouNw==
