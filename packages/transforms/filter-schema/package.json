@@ -23,7 +23,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/micromatch": "4.0.1"
+    "@types/micromatch": "4.0.2"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
