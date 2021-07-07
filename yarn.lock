@@ -5312,10 +5312,10 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
-"@types/object-hash@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-2.1.0.tgz#284353e535481690a72bf748619d77577bd23317"
-  integrity sha512-RW3VRiuQIMo5PJ4Q1IwBtdLHL/t8ACpzUY40norN9ejE6CUBwKetmSxJnITJ0NlzN/ymF1nvPvlpvegtns7yOg==
+"@types/object-hash@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-2.1.1.tgz#a4937565af39c3adc26771c0f487584840b20adc"
+  integrity sha512-X2LV33+tSr9LQXcQBatyPGtWOOranhjGYjEnphsdtNRdviCY/3ciCkahwohx1/ary2dMHIKIRoncBF/69Wr38A==
 
 "@types/object-path@^0.11.0":
   version "0.11.0"
