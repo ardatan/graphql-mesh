@@ -1,17 +1,21 @@
 import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache, ImportFn, Logger } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
 import soap from 'soap';
-import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import {
+  getCachedFetch,
+  getHeadersObject,
+  loadFromModuleExportExpression,
+  readFileOrUrlWithCache,
+} from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { env } from 'process';
-
-type AnyFn = (...args: any[]) => any;
+import { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 
 export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
   private baseDir: string;
   private cache: KeyValueCache;
-  private wsdlResponse: StoreProxy<{ res: { statusCode: number; body: string }; body: string }>;
+  private wsdlResponse: StoreProxy<AxiosResponse>;
   private importFn: ImportFn;
   private logger: Logger;
 
@@ -43,40 +47,32 @@ export default class SoapHandler implements MeshHandler {
     const soapClient = await createSoapClient(this.config.wsdl, {
       basicAuth: this.config.basicAuth,
       options: {
-        request: ((requestObj: any, callback: AnyFn) => {
-          const isWsdlRequest = requestObj.uri.href === this.config.wsdl;
+        request: (async (requestObj: AxiosRequestConfig): Promise<AxiosResponse<any>> => {
+          const isWsdlRequest = requestObj.url === this.config.wsdl;
           const sendRequest = async () => {
             const headers = {
               ...requestObj.headers,
               ...(isWsdlRequest ? schemaHeaders : this.config.operationHeaders),
             };
-            const res = await fetch(requestObj.uri.href, {
+            const res = await fetch(requestObj.url, {
               headers,
               method: requestObj.method,
-              body: requestObj.body,
+              body: requestObj.data && JSON.stringify(requestObj.data),
             });
-            const body = await res.text();
+            const data = await res.text();
             return {
-              res: {
-                ...res,
-                statusCode: res.status,
-                body,
-              },
-              body,
+              data,
+              status: res.status,
+              statusText: res.statusText,
+              headers: getHeadersObject(res.headers),
+              config: requestObj,
             };
           };
           if (isWsdlRequest) {
-            this.wsdlResponse
-              .getWithSet(() => sendRequest().catch(err => callback(err)))
-              .then(({ res, body }) => {
-                callback(null, res, body);
-              });
-          } else {
-            sendRequest()
-              .then(({ res, body }) => callback(null, res, body))
-              .catch(err => callback(err));
+            return this.wsdlResponse.getWithSet(() => sendRequest());
           }
-        }) as any,
+          return sendRequest();
+        }) as AxiosInstance,
       },
     });
 
