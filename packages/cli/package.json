@@ -76,7 +76,7 @@
     "@types/mkdirp": "1.0.2",
     "@types/yargs": "17.0.2",
     "@types/ws": "7.4.6",
-    "@types/rimraf": "3.0.0"
+    "@types/rimraf": "3.0.1"
   },
   "publishConfig": {
     "access": "public",
