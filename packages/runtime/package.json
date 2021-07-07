@@ -27,12 +27,12 @@
     "@n1ru4l/in-memory-live-query-store": "0.6.5",
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/utils": "0.12.0",
-    "@graphql-tools/delegate": "8.0.0-alpha-af9a78de.0",
-    "@graphql-tools/batch-delegate": "7.0.3-alpha-af9a78de.0",
-    "@graphql-tools/resolvers-composition": "6.3.0-alpha-af9a78de.0",
-    "@graphql-tools/schema": "8.0.0-alpha-af9a78de.0",
-    "@graphql-tools/wrap": "8.0.0-alpha-af9a78de.0",
-    "@graphql-tools/utils": "8.0.0-alpha-af9a78de.0",
+    "@graphql-tools/delegate": "8.0.0-alpha-bbb5746f.0",
+    "@graphql-tools/batch-delegate": "7.0.3-alpha-bbb5746f.0",
+    "@graphql-tools/resolvers-composition": "6.3.0-alpha-bbb5746f.0",
+    "@graphql-tools/schema": "8.0.0-alpha-bbb5746f.0",
+    "@graphql-tools/wrap": "8.0.0-alpha-bbb5746f.0",
+    "@graphql-tools/utils": "8.0.0-alpha-bbb5746f.0",
     "chalk": "4.1.1"
   },
   "publishConfig": {
