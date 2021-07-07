@@ -17179,14 +17179,14 @@ oas-linter@^3.2.2:
     should "^13.2.1"
     yaml "^1.10.0"
 
-oas-resolver@^2.5.5:
-  version "2.5.5"
-  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.5.5.tgz#12304c85b7eea840bf7fb51ea85b132592a104f3"
-  integrity sha512-1po1gzIlTXQqyVNtLFWJuzDm4xxhMCJ8QcP3OarKDO8aJ8AmCtQ67XZ1X+nBbHH4CjTcEsIab1qX5+GIU4f2Gg==
+oas-resolver@^2.5.6:
+  version "2.5.6"
+  resolved "https://registry.yarnpkg.com/oas-resolver/-/oas-resolver-2.5.6.tgz#10430569cb7daca56115c915e611ebc5515c561b"
+  integrity sha512-Yx5PWQNZomfEhPPOphFbZKi9W93CocQj18NlD2Pa4GWZzdZpSJvYwoiuurRI7m3SpcChrnO08hkuQDL3FGsVFQ==
   dependencies:
     node-fetch-h2 "^2.3.0"
     oas-kit-common "^1.0.8"
-    reftools "^1.1.8"
+    reftools "^1.1.9"
     yaml "^1.10.0"
     yargs "^17.0.1"
 
@@ -17195,17 +17195,17 @@ oas-schema-walker@^1.1.5:
   resolved "https://registry.yarnpkg.com/oas-schema-walker/-/oas-schema-walker-1.1.5.tgz#74c3cd47b70ff8e0b19adada14455b5d3ac38a22"
   integrity sha512-2yucenq1a9YPmeNExoUa9Qwrt9RFkjqaMAA1X+U7sbb0AqBeTIdMHky9SQQ6iN94bO5NW0W4TRYXerG+BdAvAQ==
 
-oas-validator@^5.0.7:
-  version "5.0.7"
-  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-5.0.7.tgz#ea5bd035cbebb09a7d677c2b4297291d57693c0f"
-  integrity sha512-gtOjKWQMVeOBIuioguaXA7sMXfJ9q4efHDFo3kmcy9HZEtmGla3aptQK0LZG1AhOX9zambKUwH72kqgoIJa0Fg==
+oas-validator@^5.0.8:
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/oas-validator/-/oas-validator-5.0.8.tgz#387e90df7cafa2d3ffc83b5fb976052b87e73c28"
+  integrity sha512-cu20/HE5N5HKqVygs3dt94eYJfBi0TsZvPVXDhbXQHiEityDN+RROTleefoKRKKJ9dFAF2JBkDHgvWj0sjKGmw==
   dependencies:
     call-me-maybe "^1.0.1"
     oas-kit-common "^1.0.8"
     oas-linter "^3.2.2"
-    oas-resolver "^2.5.5"
+    oas-resolver "^2.5.6"
     oas-schema-walker "^1.1.5"
-    reftools "^1.1.8"
+    reftools "^1.1.9"
     should "^13.2.1"
     yaml "^1.10.0"
 
@@ -20210,10 +20210,10 @@ reduce-flatten@^2.0.0:
   resolved "https://registry.yarnpkg.com/reduce-flatten/-/reduce-flatten-2.0.0.tgz#734fd84e65f375d7ca4465c69798c25c9d10ae27"
   integrity sha512-EJ4UNY/U1t2P/2k6oqotuX2Cc3T6nxJwsM0N0asT7dhrtH1ltUxDn4NalSYmPE2rCkVpcf/X6R0wDwcFpzhd4w==
 
-reftools@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.8.tgz#cc08fd67eb913d779fd330657d010cc080c7d643"
-  integrity sha512-Yvz9NH8uFHzD/AXX82Li1GdAP6FzDBxEZw+njerNBBQv/XHihqsWAjNfXtaq4QD2l4TEZVnp4UbktdYSegAM3g==
+reftools@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.9.tgz#e16e19f662ccd4648605312c06d34e5da3a2b77e"
+  integrity sha512-OVede/NQE13xBQ+ob5CKd5KyeJYU2YInb1bmV4nRoOfquZPkAkxuOXicSe1PvqIuZZ4kD13sPKBbR7UFDmli6w==
 
 regenerate-unicode-properties@^8.2.0:
   version "8.2.0"
@@ -22374,20 +22374,20 @@ swagger-parser@^10.0.2:
   dependencies:
     "@apidevtools/swagger-parser" "10.0.2"
 
-swagger2openapi@7.0.7:
-  version "7.0.7"
-  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-7.0.7.tgz#60abd369aa2803330e808db9d2cf3cfd49bee0eb"
-  integrity sha512-uQMHn9Q1gOte13xarNTRtK00K3VgoLydwB3QMHcEptp8e8Q/idynMq+n1gTTf6U9BVcjfrbKXUpfyv/z/RLvQA==
+swagger2openapi@7.0.8:
+  version "7.0.8"
+  resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-7.0.8.tgz#12c88d5de776cb1cbba758994930f40ad0afac59"
+  integrity sha512-upi/0ZGkYgEcLeGieoz8gT74oWHA0E7JivX7aN9mAf+Tc7BQoRBvnIGHoPDw+f9TXTW4s6kGYCZJtauP6OYp7g==
   dependencies:
     call-me-maybe "^1.0.1"
     node-fetch "^2.6.1"
     node-fetch-h2 "^2.3.0"
     node-readfiles "^0.2.0"
     oas-kit-common "^1.0.8"
-    oas-resolver "^2.5.5"
+    oas-resolver "^2.5.6"
     oas-schema-walker "^1.1.5"
-    oas-validator "^5.0.7"
-    reftools "^1.1.8"
+    oas-validator "^5.0.8"
+    reftools "^1.1.9"
     yaml "^1.10.0"
     yargs "^17.0.1"
 
