@@ -57,7 +57,7 @@ export default class SoapHandler implements MeshHandler {
             const res = await fetch(requestObj.url, {
               headers,
               method: requestObj.method,
-              body: requestObj.data && JSON.stringify(requestObj.data),
+              body: requestObj.data,
             });
             const data = await res.text();
             return {
