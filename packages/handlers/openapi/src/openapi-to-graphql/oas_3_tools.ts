@@ -34,10 +34,11 @@ import { InternalOptions } from './types/options';
 
 // Imports:
 import * as Swagger2OpenAPI from 'swagger2openapi';
-import { handleWarning, MitigationTypes, mockDebug as debug } from './utils';
+import { handleWarning, MitigationTypes } from './utils';
 import * as jsonptr from 'json-ptr';
 import pluralize from 'pluralize';
 import { jsonFlatStringify } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-mesh/types';
 
 // Type definitions & exports:
 export type SchemaNames = {
@@ -66,10 +67,6 @@ export type ResponseSchemaAndNames = {
   responseSchemaNames?: SchemaNames;
   statusCode?: string;
 };
-
-const httpLog = debug('http');
-
-const translationLog = debug('translation');
 
 // OAS constants
 export enum HTTP_METHODS {
@@ -228,7 +225,9 @@ export function resolveRef(ref: string, oas: Oas3): any {
 /**
  * Returns the base URL to use for the given operation.
  */
-export function getBaseUrl(operation: Operation): string {
+export function getBaseUrl(operation: Operation, logger: Logger): string {
+  const httpLogger = logger.child('http');
+
   // Check for servers:
   if (!Array.isArray(operation.servers) || operation.servers.length === 0) {
     throw new Error(`No servers defined for operation '${operation.operationString}'`);
@@ -239,7 +238,7 @@ export function getBaseUrl(operation: Operation): string {
     const url = buildUrl(operation.servers[0]);
 
     if (Array.isArray(operation.servers) && operation.servers.length > 1) {
-      httpLog(`Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -251,7 +250,7 @@ export function getBaseUrl(operation: Operation): string {
     const url = buildUrl(oas.servers[0]);
 
     if (Array.isArray(oas.servers) && oas.servers.length > 1) {
-      httpLog(`Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -615,7 +614,7 @@ export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
   data: PreprocessingData<TSource, TContext, TArgs>,
   options: InternalOptions<TSource, TContext, TArgs>
 ): ResponseSchemaAndNames {
-  const statusCode = getResponseStatusCode(path, method, operation, oas, data);
+  const statusCode = getResponseStatusCode(path, method, operation, oas, data, options.logger);
   if (!statusCode) {
     return {};
   }
@@ -695,8 +694,10 @@ export function getResponseStatusCode<TSource, TContext, TArgs>(
   method: string,
   operation: OperationObject,
   oas: Oas3,
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  logger: Logger
 ): string | void {
+  const translationLogger = logger.child('translation');
   if (typeof operation.responses === 'object') {
     const codes = Object.keys(operation.responses);
     const successCodes = codes.filter(code => {
@@ -713,7 +714,7 @@ export function getResponseStatusCode<TSource, TContext, TArgs>(
           `(HTTP code 200-299 or 2XX). Only one can be chosen.`,
         mitigationAddendum: `The response object with the HTTP code ` + `${successCodes[0]} will be selected`,
         data,
-        log: translationLog,
+        logger: translationLogger,
       });
       return successCodes[0].toString();
     }
@@ -729,10 +730,11 @@ export function getLinks<TSource, TContext, TArgs>(
   method: HTTP_METHODS,
   operation: OperationObject,
   oas: Oas3,
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  logger: Logger
 ): { [key: string]: LinkObject } {
   const links = {};
-  const statusCode = getResponseStatusCode(path, method, operation, oas, data);
+  const statusCode = getResponseStatusCode(path, method, operation, oas, data, logger);
   if (!statusCode) {
     return links;
   }
@@ -775,12 +777,17 @@ export function getParameters(
   method: HTTP_METHODS,
   operation: OperationObject,
   pathItem: PathItemObject,
-  oas: Oas3
+  oas: Oas3,
+  logger: Logger
 ): ParameterObject[] {
+  const translationLogger = logger.child('translation');
+
   let parameters: ParameterObject[] = [];
 
   if (!isHttpMethod(method)) {
-    translationLog(`Warning: attempted to get parameters for ${method} ${path}, ` + `which is not an operation.`);
+    translationLogger.debug(
+      `Warning: attempted to get parameters for ${method} ${path}, ` + `which is not an operation.`
+    );
     return parameters;
   }
 
@@ -997,10 +1004,16 @@ export function sanitize(str: string, caseStyle: CaseStyle): string {
  * Sanitizes the given string and stores the sanitized-to-original mapping in
  * the given mapping.
  */
-export function storeSaneName(saneStr: string, str: string, mapping: { [key: string]: string }): string {
+export function storeSaneName(
+  saneStr: string,
+  str: string,
+  mapping: { [key: string]: string },
+  logger: Logger
+): string {
   if (saneStr in mapping && str !== mapping[saneStr]) {
+    const translationLogger = logger.child('translation');
     // TODO: Follow warning model
-    translationLog(
+    translationLogger.debug(
       `Warning: '${str}' and '${mapping[saneStr]}' both sanitize ` +
         `to '${saneStr}' - collision possible. Desanitize to '${str}'.`
     );
@@ -1008,7 +1021,7 @@ export function storeSaneName(saneStr: string, str: string, mapping: { [key: str
     while (`${saneStr}${appendix}` in mapping) {
       appendix++;
     }
-    return storeSaneName(`${saneStr}${appendix}`, str, mapping);
+    return storeSaneName(`${saneStr}${appendix}`, str, mapping, logger);
   }
   mapping[saneStr] = str;
 

@@ -16,3 +16,4 @@ export * from './as-array';
 export * from './sanitize-name-for-graphql';
 export { AggregateError } from '@graphql-tools/utils';
 export * from './resolve-additional-resolvers';
+export * from './logger';

@@ -22,6 +22,7 @@ import {
   KeyValueCache,
   MeshPubSub,
   ImportFn,
+  Logger,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 import { GraphQLID, GraphQLInputType } from 'graphql';
@@ -39,6 +40,7 @@ export default class OpenAPIHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private oasSchema: StoreProxy<Oas3[]>;
   private importFn: ImportFn;
+  private logger: Logger;
 
   constructor({
     name,
@@ -48,11 +50,13 @@ export default class OpenAPIHandler implements MeshHandler {
     pubsub,
     store,
     importFn,
+    logger,
   }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
+    this.logger = logger;
     // TODO: This validation here should be more flexible, probably specific to OAS
     // Because we can handle json/swagger files, and also we might want to use this:
     // https://github.com/Azure/openapi-diff
@@ -178,6 +182,7 @@ export default class OpenAPIHandler implements MeshHandler {
       viewer: false,
       equivalentToMessages: true,
       pubsub: this.pubsub,
+      logger: this.logger,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
         const resolverData: ResolverData = { root, args, context, info, env };
         const resolverParams = getResolverParams();
@@ -199,11 +204,11 @@ export default class OpenAPIHandler implements MeshHandler {
         if (resolverParams.baseUrl) {
           const urlObj = new URL(resolverParams.baseUrl);
           searchParamsFactory(resolverData, urlObj.searchParams);
-        } /* else {
-          console.warn(
-            `There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
+        } else {
+          this.logger.debug(
+            `Warning: There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
           );
-        } */
+        }
 
         if (context?.fetch) {
           resolverParams.fetch = context.fetch;
@@ -213,7 +218,7 @@ export default class OpenAPIHandler implements MeshHandler {
           resolverParams.qs = context.qs;
         }
 
-        return originalFactory(() => resolverParams)(root, args, context, info);
+        return originalFactory(() => resolverParams, this.logger)(root, args, context, info);
       },
     });
 

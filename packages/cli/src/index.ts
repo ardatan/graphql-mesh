@@ -1,12 +1,12 @@
 import { findAndParseConfig } from '@graphql-mesh/config';
-import { DefaultLogger, getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
+import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
 import { existsSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { writeFile, pathExists, rmdirs } from '@graphql-mesh/utils';
+import { writeFile, pathExists, rmdirs, DefaultLogger } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
 import yargs from 'yargs';

@@ -32,8 +32,7 @@
     "@graphql-tools/resolvers-composition": "6.3.0-alpha-bbb5746f.0",
     "@graphql-tools/schema": "8.0.0-alpha-bbb5746f.0",
     "@graphql-tools/wrap": "8.0.0-alpha-bbb5746f.0",
-    "@graphql-tools/utils": "8.0.0-alpha-bbb5746f.0",
-    "chalk": "4.1.1"
+    "@graphql-tools/utils": "8.0.0-alpha-bbb5746f.0"
   },
   "publishConfig": {
     "access": "public",

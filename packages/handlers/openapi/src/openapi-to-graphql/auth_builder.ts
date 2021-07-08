@@ -16,8 +16,9 @@ import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessin
 // Imports:
 import { getGraphQLType } from './schema_builder';
 import * as Oas3Tools from './oas_3_tools';
-import { handleWarning, sortObject, MitigationTypes, mockDebug as debug } from './utils';
+import { handleWarning, sortObject, MitigationTypes } from './utils';
 import { createDataDef } from './preprocessor';
+import { Logger } from '@graphql-mesh/types';
 
 // Type definitions & exports:
 type Viewer<TSource, TContext, TArgs> = {
@@ -26,8 +27,6 @@ type Viewer<TSource, TContext, TArgs> = {
   args: Args;
   description: string;
 };
-
-const translationLog = debug('translation');
 
 /**
  * Load the field object in the appropriate root object
@@ -39,8 +38,11 @@ export function createAndLoadViewer<TSource, TContext, TArgs>(
   queryFields: any,
   operationType: GraphQLOperationType,
   data: PreprocessingData<TSource, TContext, TArgs>,
-  includeHttpDetails: boolean
+  includeHttpDetails: boolean,
+  logger: Logger
 ): { [key: string]: Viewer<TSource, TContext, TArgs> } {
+  const translationLog = logger.child('translation');
+
   const results = {};
   /**
    * To ensure that viewers have unique names, we add a numerical postfix.
@@ -86,7 +88,7 @@ export function createAndLoadViewer<TSource, TContext, TArgs>(
             mitigationType: MitigationTypes.UNSUPPORTED_HTTP_SECURITY_SCHEME,
             message: `Currently unsupported HTTP authentication protocol ` + `type 'http' and scheme '${scheme}'`,
             data,
-            log: translationLog,
+            logger: translationLog,
           });
 
           continue;
@@ -112,7 +114,7 @@ export function createAndLoadViewer<TSource, TContext, TArgs>(
     }
 
     // Add the viewer object type to the specified root query object type
-    results[viewerName] = getViewerOT(viewerName, protocolName, securityType, queryFields[protocolName], data);
+    results[viewerName] = getViewerOT(viewerName, protocolName, securityType, queryFields[protocolName], data, logger);
   }
 
   // Create name for the AnyAuth viewer
@@ -124,7 +126,7 @@ export function createAndLoadViewer<TSource, TContext, TArgs>(
       : 'subscriptionViewerAnyAuth';
 
   // Add the AnyAuth object type to the specified root query object type
-  results[anyAuthObjectName] = getViewerAnyAuthOT(anyAuthObjectName, anyAuthFields, data, includeHttpDetails);
+  results[anyAuthObjectName] = getViewerAnyAuthOT(anyAuthObjectName, anyAuthFields, data, includeHttpDetails, logger);
 
   return results;
 }
@@ -137,7 +139,8 @@ function getViewerOT<TSource, TContext, TArgs>(
   protocolName: string,
   securityType: string,
   queryFields: GraphQLFieldConfigMap<any, any>,
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  logger: Logger
 ): Viewer<TSource, TContext, TArgs> {
   const scheme: ProcessedSecurityScheme = data.security[protocolName];
 
@@ -145,7 +148,7 @@ function getViewerOT<TSource, TContext, TArgs>(
   const resolve = (root: any, args: any, context: any) => {
     const security = {};
     const saneProtocolName = Oas3Tools.sanitize(protocolName, Oas3Tools.CaseStyle.camelCase);
-    security[Oas3Tools.storeSaneName(saneProtocolName, protocolName, data.saneMap)] = args;
+    security[Oas3Tools.storeSaneName(saneProtocolName, protocolName, data.saneMap, logger)] = args;
 
     /**
      * Viewers are always root, so we can instantiate _openAPIToGraphQL here without
@@ -207,7 +210,8 @@ function getViewerAnyAuthOT<TSource, TContext, TArgs>(
   name: string,
   queryFields: GraphQLFieldConfigMap<any, any>,
   data: PreprocessingData<TSource, TContext, TArgs>,
-  includeHttpDetails: boolean
+  includeHttpDetails: boolean,
+  logger: Logger
 ): Viewer<TSource, TContext, TArgs> {
   let args = {};
   for (const protocolName in data.security) {
@@ -217,7 +221,8 @@ function getViewerAnyAuthOT<TSource, TContext, TArgs>(
       data.security[protocolName].schema,
       true,
       data,
-      data.security[protocolName].oas
+      data.security[protocolName].oas,
+      logger
     );
 
     const type = getGraphQLType({
@@ -225,10 +230,11 @@ function getViewerAnyAuthOT<TSource, TContext, TArgs>(
       data,
       isInputObjectType: true,
       includeHttpDetails,
+      logger,
     });
 
     const saneProtocolName = Oas3Tools.sanitize(protocolName, Oas3Tools.CaseStyle.camelCase);
-    args[Oas3Tools.storeSaneName(saneProtocolName, protocolName, data.saneMap)] = { type };
+    args[Oas3Tools.storeSaneName(saneProtocolName, protocolName, data.saneMap, logger)] = { type };
   }
   args = sortObject(args);
 

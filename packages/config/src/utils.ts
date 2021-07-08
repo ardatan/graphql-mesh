@@ -9,7 +9,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
-import { DefaultLogger } from '@graphql-mesh/runtime';
+import { DefaultLogger } from '@graphql-mesh/utils';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -185,7 +185,7 @@ export async function resolveLogger(
   const logger = new DefaultLogger('Mesh');
   return {
     logger,
-    importCode: `import { DefaultLogger } from '@graphql-mesh/runtime';`,
+    importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
     code: `const logger = new DefaultLogger('Mesh');`,
   };
 }
