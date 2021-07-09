@@ -32,7 +32,7 @@
     "camel-case": "4.1.2",
     "graphql-compose": "9.0.1",
     "graphql-compose-mongoose": "9.4.1",
-    "graphql-compose-connection": "8.2.0",
+    "graphql-compose-connection": "8.2.1",
     "graphql-compose-pagination": "8.2.0"
   },
   "publishConfig": {
