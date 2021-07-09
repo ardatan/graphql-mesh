@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/to-json-schema": "0.2.1",
-    "@types/url-join": "4.0.0",
+    "@types/url-join": "4.0.1",
     "@types/qs": "6.9.7"
   },
   "dependencies": {

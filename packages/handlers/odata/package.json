@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/http-string-parser": "0.0.29",
-    "@types/url-join": "4.0.0"
+    "@types/url-join": "4.0.1"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",

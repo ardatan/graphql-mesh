@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/thrift": "0.10.11",
-    "@types/url-join": "4.0.0"
+    "@types/url-join": "4.0.1"
   },
   "dependencies": {
     "@creditkarma/thrift-client": "0.17.2",
