@@ -20,11 +20,11 @@ import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessin
 // Imports:
 import * as Oas3Tools from './oas_3_tools';
 import deepEqual from 'deep-equal';
-import { handleWarning, getCommonPropertyNames, MitigationTypes, mockDebug as debug } from './utils';
+import { handleWarning, getCommonPropertyNames, MitigationTypes } from './utils';
 import { GraphQLOperationType } from './types/graphql';
 import { methodToHttpMethod } from './oas_3_tools';
-
-const preprocessingLog = debug('preprocessing');
+import { Logger } from '@graphql-mesh/types';
+import { inspect } from 'util';
 
 /**
  * Given an operation object from the OAS, create an Operation, which contains
@@ -51,6 +51,7 @@ function processOperation<TSource, TContext, TArgs>(
   data: PreprocessingData<TSource, TContext, TArgs>,
   options: InternalOptions<TSource, TContext, TArgs>
 ): Operation {
+  const preprocessingLogger = options.logger.child('preprocessing');
   // Determine description
   let description = operation.description;
   if ((typeof description !== 'string' || description === '') && typeof operation.summary === 'string') {
@@ -79,7 +80,7 @@ function processOperation<TSource, TContext, TArgs>(
 
   const payloadDefinition =
     payloadSchema && typeof payloadSchema !== 'undefined'
-      ? createDataDef(payloadSchemaNames, payloadSchema as SchemaObject, true, data, oas)
+      ? createDataDef(payloadSchemaNames, payloadSchema as SchemaObject, true, data, oas, options.logger)
       : undefined;
 
   // Response schema
@@ -100,14 +101,14 @@ function processOperation<TSource, TContext, TArgs>(
         `You can use the fillEmptyResponses option to create a ` +
         `placeholder schema`,
       data,
-      log: preprocessingLog,
+      logger: preprocessingLogger,
     });
 
     return undefined;
   }
 
   // Links
-  const links = Oas3Tools.getLinks(path, method, operation, oas, data);
+  const links = Oas3Tools.getLinks(path, method, operation, oas, data, options.logger);
 
   const responseDefinition = createDataDef(
     responseSchemaNames,
@@ -115,11 +116,12 @@ function processOperation<TSource, TContext, TArgs>(
     false,
     data,
     oas,
+    options.logger,
     links
   );
 
   // Parameters
-  const parameters = Oas3Tools.getParameters(path, method, operation, pathItem, oas);
+  const parameters = Oas3Tools.getParameters(path, method, operation, pathItem, oas, options.logger);
 
   // Security protocols
   const securityRequirements = options.viewer ? Oas3Tools.getSecurityRequirements(operation, data.security, oas) : [];
@@ -159,6 +161,8 @@ export function preprocessOas<TSource, TContext, TArgs>(
   oass: Oas3[],
   options: InternalOptions<TSource, TContext, TArgs>
 ): PreprocessingData<TSource, TContext, TArgs> {
+  const preprocessingLogger = options.logger.child('preprocessing');
+
   const data: PreprocessingData<TSource, TContext, TArgs> = {
     operations: {},
     callbackOperations: {},
@@ -182,7 +186,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
     data.options.report.numOpsSubscription += Oas3Tools.countOperationsSubscription(oas);
 
     // Get security schemes
-    const currentSecurity = getProcessedSecuritySchemes(oas, data);
+    const currentSecurity = getProcessedSecuritySchemes(oas, data, options.logger);
     const commonSecurityPropertyName = getCommonPropertyNames(data.security, currentSecurity);
     commonSecurityPropertyName.forEach(propertyName => {
       handleWarning({
@@ -191,7 +195,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
         mitigationAddendum:
           `The security scheme from OAS ` + `'${currentSecurity[propertyName].oas.info?.title}' will be ignored`,
         data,
-        log: preprocessingLog,
+        logger: preprocessingLogger,
       });
     });
 
@@ -227,7 +231,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
               mitigationType: MitigationTypes.INVALID_HTTP_METHOD,
               message: `Invalid HTTP method '${rawMethod}' in operation '${operationString}'`,
               data,
-              log: preprocessingLog,
+              logger: preprocessingLogger,
             });
 
             return;
@@ -276,7 +280,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
                 message: `Multiple OASs share operations with the same operationId '${operationData.operationId}'`,
                 mitigationAddendum: `The operation from the OAS '${operationData.oas.info?.title}' will be ignored`,
                 data,
-                log: preprocessingLog,
+                logger: preprocessingLogger,
               });
             }
           }
@@ -309,7 +313,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
                       message: `Callback '${callbackExpression}' on operation '${operationString}' has multiple operation objects with the methods '${callbackOperationObjectMethods}'. OpenAPI-to-GraphQL can only utilize one of these operation objects.`,
                       mitigationAddendum: `The operation with the method '${callbackOperationObjectMethods[0].toString()}' will be selected and all others will be ignored.`,
                       data,
-                      log: preprocessingLog,
+                      logger: preprocessingLogger,
                     });
                   }
 
@@ -330,7 +334,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
                       mitigationType: MitigationTypes.INVALID_HTTP_METHOD,
                       message: `Invalid HTTP method '${rawMethod}' in callback '${callbackOperationString}' in operation '${operationString}'`,
                       data,
-                      log: preprocessingLog,
+                      logger: preprocessingLogger,
                     });
 
                     return;
@@ -369,7 +373,7 @@ export function preprocessOas<TSource, TContext, TArgs>(
                         message: `Multiple OASs share callback operations with the same operationId '${callbackOperation.operationId}'`,
                         mitigationAddendum: `The callback operation from the OAS '${operationData.oas.info?.title}' will be ignored`,
                         data,
-                        log: preprocessingLog,
+                        logger: preprocessingLogger,
                       });
                     }
                   }
@@ -424,8 +428,10 @@ export function preprocessOas<TSource, TContext, TArgs>(
  */
 function getProcessedSecuritySchemes<TSource, TContext, TArgs>(
   oas: Oas3,
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  logger: Logger
 ): { [key: string]: ProcessedSecurityScheme } {
+  const preprocessingLogger = logger.child('preprocessing');
   const result = {};
   const security = Oas3Tools.getSecuritySchemes(oas);
 
@@ -496,7 +502,7 @@ function getProcessedSecuritySchemes<TSource, TContext, TArgs>(
                 `type 'http' and scheme '${protocol.scheme}' in OAS ` +
                 `'${oas.info?.title}'`,
               data,
-              log: preprocessingLog,
+              logger: preprocessingLogger,
             });
         }
         break;
@@ -508,7 +514,7 @@ function getProcessedSecuritySchemes<TSource, TContext, TArgs>(
           message:
             `Currently unsupported HTTP authentication protocol ` + `type 'openIdConnect' in OAS '${oas.info?.title}'`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
 
         break;
@@ -520,7 +526,7 @@ function getProcessedSecuritySchemes<TSource, TContext, TArgs>(
             `OAuth security scheme found in OAS '${oas.info?.title}'. ` +
             `OAuth support is provided using the 'tokenJSONpath' option`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
 
         // Continue because we do not want to create an OAuth viewer
@@ -531,7 +537,7 @@ function getProcessedSecuritySchemes<TSource, TContext, TArgs>(
           mitigationType: MitigationTypes.UNSUPPORTED_HTTP_SECURITY_SCHEME,
           message: `Unsupported HTTP authentication protocol` + `type '${protocol.type}' in OAS '${oas.info?.title}'`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
     }
 
@@ -557,8 +563,10 @@ export function createDataDef<TSource, TContext, TArgs>(
   isInputObjectType: boolean,
   data: PreprocessingData<TSource, TContext, TArgs>,
   oas: Oas3,
+  logger: Logger,
   links?: { [key: string]: LinkObject }
 ): DataDefinition {
+  const preprocessingLogger = logger.child('preprocessing');
   const preferredName = getPreferredName(names);
 
   // Basic validation test
@@ -569,7 +577,7 @@ export function createDataDef<TSource, TContext, TArgs>(
         `Could not create data definition for schema with ` +
         `preferred name '${preferredName}' and schema '${JSON.stringify(schema)}'`,
       data,
-      log: preprocessingLog,
+      logger: preprocessingLogger,
     });
 
     // TODO: Does this change make the option fillEmptyResponses obsolete?
@@ -627,7 +635,7 @@ export function createDataDef<TSource, TContext, TArgs>(
                   `'${JSON.stringify(existingDataDef.links[saneLinkKey])}' and ` +
                   `'${JSON.stringify(saneLinks[saneLinkKey])}'.`,
                 data,
-                log: preprocessingLog,
+                logger: preprocessingLogger,
               });
             }
           });
@@ -653,7 +661,7 @@ export function createDataDef<TSource, TContext, TArgs>(
 
       // Store and sanitize the name
       let saneName = Oas3Tools.sanitize(name, caseStyle);
-      saneName = Oas3Tools.storeSaneName(saneName, name, data.saneMap);
+      saneName = Oas3Tools.storeSaneName(saneName, name, data.saneMap, logger);
       const saneInputName = Oas3Tools.capitalize(saneName + 'Input');
 
       /**
@@ -661,7 +669,7 @@ export function createDataDef<TSource, TContext, TArgs>(
        *
        * Perhaps, just copy it at the root level (operation schema)
        */
-      const collapsedSchema = resolveAllOf(schema, {}, data, oas);
+      const collapsedSchema = resolveAllOf(schema, {}, data, oas, logger);
 
       const targetGraphQLType = Oas3Tools.getSchemaTargetGraphQLType(collapsedSchema as SchemaObject, data);
 
@@ -709,7 +717,7 @@ export function createDataDef<TSource, TContext, TArgs>(
             `is currently not supported.`,
           mitigationAddendum: `Use arbitrary JSON type instead.`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
 
         def.targetGraphQLType = 'json';
@@ -725,7 +733,8 @@ export function createDataDef<TSource, TContext, TArgs>(
           isInputObjectType,
           def,
           data,
-          oas
+          oas,
+          logger
         );
         if (typeof oneOfDataDef === 'object') {
           return oneOfDataDef;
@@ -745,7 +754,8 @@ export function createDataDef<TSource, TContext, TArgs>(
           isInputObjectType,
           def,
           data,
-          oas
+          oas,
+          logger
         );
         if (typeof anyOfDataDef === 'object') {
           return anyOfDataDef;
@@ -772,7 +782,8 @@ export function createDataDef<TSource, TContext, TArgs>(
                 itemsSchema as SchemaObject,
                 isInputObjectType,
                 data,
-                oas
+                oas,
+                logger
               );
 
               // Add list item reference
@@ -784,13 +795,13 @@ export function createDataDef<TSource, TContext, TArgs>(
             def.subDefinitions = {};
 
             if (typeof collapsedSchema.properties === 'object' && Object.keys(collapsedSchema.properties).length > 0) {
-              addObjectPropertiesToDataDef(def, collapsedSchema, def.required, isInputObjectType, data, oas);
+              addObjectPropertiesToDataDef(def, collapsedSchema, def.required, isInputObjectType, data, oas, logger);
             } else {
               handleWarning({
                 mitigationType: MitigationTypes.OBJECT_MISSING_PROPERTIES,
                 message: `Schema ${JSON.stringify(schema)} does not have ` + `any properties`,
                 data,
-                log: preprocessingLog,
+                logger: preprocessingLogger,
               });
 
               def.targetGraphQLType = 'json';
@@ -805,7 +816,7 @@ export function createDataDef<TSource, TContext, TArgs>(
           mitigationType: MitigationTypes.UNKNOWN_TARGET_TYPE,
           message: `No GraphQL target type could be identified for schema '${JSON.stringify(schema)}'.`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
 
         def.targetGraphQLType = 'json';
@@ -939,7 +950,8 @@ function addObjectPropertiesToDataDef<TSource, TContext, TArgs>(
   required: string[],
   isInputObjectType: boolean,
   data: PreprocessingData<TSource, TContext, TArgs>,
-  oas: Oas3
+  oas: Oas3,
+  logger: Logger
 ) {
   /**
    * Resolve all required properties
@@ -970,12 +982,14 @@ function addObjectPropertiesToDataDef<TSource, TContext, TArgs>(
         propSchema,
         isInputObjectType,
         data,
-        oas
+        oas,
+        logger
       );
 
       // Add field type references
       def.subDefinitions[propertyKey] = subDefinition;
     } else {
+      const preprocessingLogger = logger.child('preprocessing');
       handleWarning({
         mitigationType: MitigationTypes.DUPLICATE_FIELD_NAME,
         message:
@@ -984,7 +998,7 @@ function addObjectPropertiesToDataDef<TSource, TContext, TArgs>(
           `add property '${propertyKey}' from schema '${JSON.stringify(schema)}' ` +
           `to dataDefinition '${JSON.stringify(def)}'`,
         data,
-        log: preprocessingLog,
+        logger: preprocessingLogger,
       });
     }
   }
@@ -998,8 +1012,10 @@ function resolveAllOf<TSource, TContext, TArgs>(
   schema: SchemaObject | ReferenceObject,
   references: { [reference: string]: SchemaObject },
   data: PreprocessingData<TSource, TContext, TArgs>,
-  oas: Oas3
+  oas: Oas3,
+  logger: Logger
 ): SchemaObject {
+  const preprocessingLogger = logger.child('preprocessing');
   // Dereference schema
   if ('$ref' in schema) {
     const referenceLocation = schema.$ref;
@@ -1019,7 +1035,7 @@ function resolveAllOf<TSource, TContext, TArgs>(
   if (Array.isArray(collapsedSchema.allOf)) {
     collapsedSchema.allOf.forEach(memberSchema => {
       // Collapse type if applicable
-      const resolvedSchema = resolveAllOf(memberSchema, references, data, oas);
+      const resolvedSchema = resolveAllOf(memberSchema, references, data, oas, logger);
 
       if (resolvedSchema.type) {
         if (!collapsedSchema.type) {
@@ -1035,7 +1051,7 @@ function resolveAllOf<TSource, TContext, TArgs>(
               `Resolving 'allOf' field in schema '${collapsedSchema}' ` +
               `results in incompatible schema type from partial schema '${resolvedSchema}'.`,
             data,
-            log: preprocessingLog,
+            logger: preprocessingLogger,
           });
         }
       }
@@ -1056,7 +1072,7 @@ function resolveAllOf<TSource, TContext, TArgs>(
                 `Resolving 'allOf' field in schema '${collapsedSchema}' ` +
                 `results in incompatible property field from partial schema '${resolvedSchema}'.`,
               data,
-              log: preprocessingLog,
+              logger: preprocessingLogger,
             });
           } else {
             collapsedSchema.properties[propertyName] = property;
@@ -1206,8 +1222,10 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
   isInputObjectType: boolean,
   def: DataDefinition,
   data: PreprocessingData<TSource, TContext, TArgs>,
-  oas: Oas3
+  oas: Oas3,
+  logger: Logger
 ): DataDefinition | void {
+  const preprocessingLogger = logger.child('preprocessing');
   const anyOfData = getMemberSchemaData(collapsedSchema.anyOf, data, oas);
 
   if (
@@ -1266,7 +1284,7 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
         def.subDefinitions = {};
 
         if (typeof collapsedSchema.properties === 'object' && Object.keys(collapsedSchema.properties).length > 0) {
-          addObjectPropertiesToDataDef(def, collapsedSchema, def.required, isInputObjectType, data, oas);
+          addObjectPropertiesToDataDef(def, collapsedSchema, def.required, isInputObjectType, data, oas, logger);
         }
 
         anyOfData.allProperties.forEach(properties => {
@@ -1283,7 +1301,8 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
                 propertySchema,
                 isInputObjectType,
                 data,
-                oas
+                oas,
+                logger
               );
 
               /**
@@ -1316,13 +1335,13 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
         handleWarning({
           mitigationType: MitigationTypes.COMBINE_SCHEMAS,
           message:
-            `Schema '${JSON.stringify(def.schema)}' contains 'anyOf' and ` +
+            `Schema '${inspect(def.schema)}' contains 'anyOf' and ` +
             `some member schemas are object types so create a GraphQL ` +
             `object type but the parent schema is a non-object type ` +
             `so they are not compatible.`,
           mitigationAddendum: `Use arbitrary JSON type instead.`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
 
         def.targetGraphQLType = 'json';
@@ -1334,12 +1353,12 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
       handleWarning({
         mitigationType: MitigationTypes.COMBINE_SCHEMAS,
         message:
-          `Schema '${def.schema}' contains 'anyOf' and ` +
+          `Schema '${inspect(def.schema)}' contains 'anyOf' and ` +
           `some member schemas are object types so create a GraphQL ` +
           `object type but some member schemas are non-object types ` +
           `so they are not compatible.`,
         data,
-        log: preprocessingLog,
+        logger: preprocessingLogger,
       });
 
       def.targetGraphQLType = 'json';
@@ -1355,8 +1374,10 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
   isInputObjectType: boolean,
   def: DataDefinition,
   data: PreprocessingData<TSource, TContext, TArgs>,
-  oas: Oas3
+  oas: Oas3,
+  logger: Logger
 ): DataDefinition | void {
+  const preprocessingLogger = logger.child('preprocessing');
   const oneOfData = getMemberSchemaData(collapsedSchema.oneOf, data, oas);
 
   if (
@@ -1377,7 +1398,7 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
           mitigationType: MitigationTypes.INPUT_UNION,
           message: `Input object types cannot be composed of union types.`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
 
         def.targetGraphQLType = 'json';
@@ -1407,7 +1428,8 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
               memberSchema,
               isInputObjectType,
               data,
-              oas
+              oas,
+              logger
             );
             (def.subDefinitions as DataDefinition[]).push(subDefinition);
           } else {
@@ -1419,7 +1441,7 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
                 `is not an object type and union member types must be ` +
                 `object base types.`,
               data,
-              log: preprocessingLog,
+              logger: preprocessingLogger,
             });
           }
         });
@@ -1448,7 +1470,7 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
               `object types and union member types must be object types.`,
             mitigationAddendum: `Use arbitrary JSON type instead.`,
             data,
-            log: preprocessingLog,
+            logger: preprocessingLogger,
           });
 
           // Default arbitrary JSON type
@@ -1466,7 +1488,7 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
             `type and member types must be object types.`,
           mitigationAddendum: `Use arbitrary JSON type instead.`,
           data,
-          log: preprocessingLog,
+          logger: preprocessingLogger,
         });
 
         def.targetGraphQLType = 'json';
@@ -1483,7 +1505,7 @@ function createDataDefFromOneOf<TSource, TContext, TArgs>(
           `types and union member types must be object types.`,
         mitigationAddendum: `Use arbitrary JSON type instead.`,
         data,
-        log: preprocessingLog,
+        logger: preprocessingLogger,
       });
 
       def.targetGraphQLType = 'json';

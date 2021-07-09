@@ -8,8 +8,15 @@ import {
 } from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { groupTransforms, applySchemaTransforms, extractResolvers, AggregateError, asArray } from '@graphql-mesh/utils';
-import { StitchingInfo } from '@graphql-tools/delegate';
+import {
+  groupTransforms,
+  applySchemaTransforms,
+  extractResolvers,
+  AggregateError,
+  asArray,
+  jitExecutorFactory,
+} from '@graphql-mesh/utils';
+import { Executor, StitchingInfo } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import federationToStitchingSDL from 'federation-to-stitching-sdl';
 import { addResolversToSchema } from '@graphql-tools/schema';
@@ -106,7 +113,15 @@ export default class StitchingMerger implements MeshMerger {
         const rawSourceQueryType = rawSource.schema.getQueryType();
         const queryTypeFields = rawSourceQueryType.getFields();
         if ('_service' in queryTypeFields) {
-          const resolvers = extractResolvers(rawSource.schema);
+          const oldSchema = rawSource.schema;
+          const resolvers = extractResolvers(oldSchema);
+          rawSource.executor =
+            rawSource.executor ||
+            (jitExecutorFactory(
+              oldSchema,
+              rawSource.name,
+              this.logger.child(`${rawSource.name} - JIT Executor`)
+            ) as Executor);
           rawSource.schema = await this.store
             .proxy(`${rawSource.name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
             .getWithSet(async () => {
@@ -129,6 +144,9 @@ export default class StitchingMerger implements MeshMerger {
             schema: rawSource.schema,
             resolvers,
             updateResolversInPlace: true,
+            resolverValidationOptions: {
+              requireResolversToMatchSchema: 'ignore',
+            },
           });
         }
       })

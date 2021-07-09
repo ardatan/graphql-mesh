@@ -27,11 +27,11 @@ import {
   ResolverDataBasedFactory,
   jitExecutorFactory,
   AggregateError,
+  DefaultLogger,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { delegateToSchema, IDelegateToSchemaOptions } from '@graphql-tools/delegate';
-import { DefaultLogger } from './logger';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { inspect } from 'util';

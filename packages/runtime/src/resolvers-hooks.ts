@@ -4,6 +4,7 @@ import { composeResolvers } from '@graphql-tools/resolvers-composition';
 import { IResolvers } from '@graphql-tools/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { extractResolvers } from '@graphql-mesh/utils';
+import { env } from 'process';
 
 export function applyResolversHooksToResolvers(resolvers: IResolvers, pubsub: MeshPubSub): IResolvers {
   return composeResolvers(resolvers, {
@@ -19,6 +20,7 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, pubsub: Me
             root: resolverArgs[0],
             context: resolverArgs[1] || {},
             info: resolverArgs[2],
+            env,
           };
           isArgsInResolversArgs = false;
         } else if (resolverArgs.length === 4) {
@@ -27,6 +29,7 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, pubsub: Me
             args: resolverArgs[1],
             context: resolverArgs[2] || {},
             info: resolverArgs[3],
+            env,
           };
           isArgsInResolversArgs = true;
         } else {

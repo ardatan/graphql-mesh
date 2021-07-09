@@ -32,7 +32,7 @@ import {
   GraphQLURL,
   GraphQLVoid,
 } from 'graphql-scalars';
-import { DefaultLogger } from '@graphql-mesh/runtime';
+import { DefaultLogger } from '@graphql-mesh/utils';
 
 describe('getComposerFromJSONSchema', () => {
   const logger = new DefaultLogger('getComposerFromJSONSchema - test');

@@ -178,30 +178,36 @@ export async function generateTsArtifacts({
           const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
             let moduleMapProp = importedModuleName;
             let importPath = importedModuleName;
-            if (isAbsolute(importedModuleName)) {
+            if (importPath.startsWith('.')) {
+              importPath = join(baseDir, importPath);
+            }
+            if (isAbsolute(importPath)) {
               moduleMapProp = relative(baseDir, importedModuleName);
               importPath = `./${relative(artifactsDir, importedModuleName)}`;
             }
             const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
             importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
-            return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: async () => ${importedModuleVariable}`;
+            return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: ${importedModuleVariable}`;
           });
 
           const meshMethods = `
 ${importCodes.join('\n')}
 
-const importedModules: Record<string, () => Promise<any>> = {
+const importedModules: Record<string, any> = {
 ${importedModulesCodes.join(',\n')}
 };
 
 const baseDir = cwd();
-const importFn = async (moduleId: string) => {
+
+const syncImportFn = (moduleId: string) => {
   const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
   if (!(relativeModuleId in importedModules)) {
     throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
   }
-  return importedModules[relativeModuleId]();
+  return importedModules[relativeModuleId];
 };
+const importFn = async (moduleId: string) => syncImportFn(moduleId);
+
 const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
   cwd: baseDir,
   importFn,
@@ -212,10 +218,10 @@ const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
 
 ${meshConfigCode}
 
-export const documents = ${JSON.stringify(documents)} as any;
+export const documents = /*#__PURE__*/ ${JSON.stringify(documents)} as any;
 
-export async function getBuiltMesh() {
-  const meshConfig = await getMeshOptions();
+export function getBuiltMesh() {
+  const meshConfig = getMeshOptions();
   return getMesh(meshConfig);
 }
 

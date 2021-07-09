@@ -7,7 +7,7 @@
 
 import { PreprocessingData, ProcessedSecurityScheme } from './types/preprocessing_data';
 import { Warning } from './types/options';
-import { env } from 'process';
+import { Logger } from '@graphql-mesh/types';
 
 export enum MitigationTypes {
   /**
@@ -112,14 +112,14 @@ export function handleWarning<TSource, TContext, TArgs>({
   mitigationAddendum,
   path,
   data,
-  log,
+  logger,
 }: {
   mitigationType: MitigationTypes;
   message: string;
   mitigationAddendum?: string;
   path?: string[];
   data: PreprocessingData<TSource, TContext, TArgs>;
-  log?: Function;
+  logger: Logger;
 }) {
   const mitigation = mitigations[mitigationType];
 
@@ -137,11 +137,7 @@ export function handleWarning<TSource, TContext, TArgs>({
     throw new Error(`${warning.type} - ${warning.message}`);
   } else {
     const output = `Warning: ${warning.message} - ${warning.mitigation}`;
-    if (typeof log === 'function') {
-      log(output);
-    } else {
-      console.log(output);
-    }
+    logger.debug(output);
     data.options.report.warnings.push(warning);
   }
 }
@@ -164,14 +160,4 @@ export function getCommonPropertyNames(
   return Object.keys(object1).filter(propertyName => {
     return propertyName in object2;
   });
-}
-
-// TODO: replace this with Mesh's logger
-export function mockDebug(...args1: any[]) {
-  // do nothing
-  return (...args2: any[]) => {
-    if (env.DEBUG) {
-      console.error(...args1, ...args2);
-    }
-  };
 }

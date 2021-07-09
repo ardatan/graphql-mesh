@@ -8,8 +8,8 @@ import {
   GraphQLUnionType,
   GraphQLResolveInfo,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput, SyncImportFn } from '@graphql-mesh/types';
+import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
 import _ from 'lodash';
@@ -20,10 +20,13 @@ export default class FederationTransform implements MeshTransform {
   private apiName: string;
   private config: YamlConfig.Transform['federation'];
   private baseDir: string;
-  constructor({ apiName, baseDir, config }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+  private syncImportFn: SyncImportFn;
+
+  constructor({ apiName, baseDir, config, syncImportFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.apiName = apiName;
     this.config = config;
     this.baseDir = baseDir;
+    this.syncImportFn = syncImportFn;
   }
 
   transformSchema(schema: GraphQLSchema, rawSource: RawSourceOutput) {
@@ -63,10 +66,12 @@ export default class FederationTransform implements MeshTransform {
         if (type.config?.resolveReference) {
           const resolveReferenceConfig = type.config.resolveReference;
           if (typeof resolveReferenceConfig === 'string') {
-            resolveReference = (...args: any[]) =>
-              loadFromModuleExportExpression<any>(resolveReferenceConfig, { cwd: this.baseDir }).then(fn =>
-                fn(...args)
-              );
+            const resolveReferenceFn = loadFromModuleExportExpressionSync<any>(resolveReferenceConfig, {
+              cwd: this.baseDir,
+              syncImportFn: this.syncImportFn,
+              defaultExportName: 'default',
+            });
+            resolveReference = resolveReferenceFn;
           } else if (typeof resolveReferenceConfig === 'function') {
             resolveReference = type.config.resolveReference;
           } else {

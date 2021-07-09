@@ -4,8 +4,6 @@ const { basename, join } = require('path');
 
 const { lexicographicSortSchema } = require('graphql');
 const { mkdirSync, readFileSync, writeFileSync } = require('fs');
-const { printSchemaWithDirectives } = require('@graphql-tools/utils');
-const StitchingMerger = require('@graphql-mesh/merger-stitching').default;
 
 const problematicModulePath = join(__dirname, '../../../node_modules/core-js/features/array');
 const emptyModuleContent = 'module.exports = {};';
@@ -27,32 +25,17 @@ const configAndServices$ = Promise.all([
     require('../services/products'),
     require('../services/reviews'),
 ]);
-const meshWithFederation$ = configAndServices$.then(([config]) => getMesh(config));
-const meshWithStitching$ = configAndServices$.then(([config]) => getMesh({
-  ...config,
-  merger: new StitchingMerger(config)
-}));
-jest.setTimeout(30000);
+const mesh$ = configAndServices$.then(([config]) => getMesh(config));
 
 
 describe('Federation Example', () => {
   it('should give correct response for example queries', async () => {
-    const { execute } = await meshWithFederation$;
-    const result = await execute(exampleQuery);
-    expect(result?.data).toEqual(exampleResult);
-  });
-
-  it('should give correct responses with stitching as well', async () => {
-    const [{
-      documents,
-    }] = await configAndServices$;
-    const { execute } = await meshWithStitching$;
+    const { execute } = await mesh$;
     const result = await execute(exampleQuery);
     expect(result?.data).toEqual(exampleResult);
   });
   afterAll(() => {
       configAndServices$.then(([config,...services]) => services.map(service => service.stop()))
-      meshWithFederation$.then(meshWithFederation => meshWithFederation.destroy());
-      meshWithStitching$.then(meshWithStitching => meshWithStitching.destroy());
+      mesh$.then(mesh => mesh.destroy());
   });
 });

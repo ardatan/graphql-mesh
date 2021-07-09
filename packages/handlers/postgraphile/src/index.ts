@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig, MeshPubSub, Logger } from '@graphql-mesh/types';
+import {
+  GetMeshSourceOptions,
+  MeshHandler,
+  MeshSource,
+  YamlConfig,
+  MeshPubSub,
+  Logger,
+  ImportFn,
+} from '@graphql-mesh/types';
 import { Plugin } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
@@ -7,6 +15,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import FederationPlugin from '@graphile/federation';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -15,21 +24,35 @@ export default class PostGraphileHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private pgCache: any;
   private logger: Logger;
+  private importFn: ImportFn;
 
-  constructor({ name, config, baseDir, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    pubsub,
+    store,
+    logger,
+    importFn,
+  }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.logger = logger;
+    this.importFn = importFn;
   }
 
   async getMeshSource(): Promise<MeshSource> {
     let pgPool: pg.Pool;
 
     if (typeof this.config?.pool === 'string') {
-      pgPool = await loadFromModuleExportExpression<any>(this.config.pool, { cwd: this.baseDir });
+      pgPool = await loadFromModuleExportExpression<any>(this.config.pool, {
+        cwd: this.baseDir,
+        importFn: this.importFn,
+        defaultExportName: 'default',
+      });
     }
 
     if (!pgPool || !('connect' in pgPool)) {
@@ -52,15 +75,30 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const appendPlugins = await Promise.all<Plugin>(
       (this.config.appendPlugins || []).map(pluginName =>
-        loadFromModuleExportExpression<any>(pluginName, { cwd: this.baseDir })
+        loadFromModuleExportExpression<any>(pluginName, {
+          cwd: this.baseDir,
+          importFn: this.importFn,
+          defaultExportName: 'default',
+        })
       )
     );
     const skipPlugins = await Promise.all<Plugin>(
       (this.config.skipPlugins || []).map(pluginName =>
-        loadFromModuleExportExpression<any>(pluginName, { cwd: this.baseDir })
+        loadFromModuleExportExpression<any>(pluginName, {
+          cwd: this.baseDir,
+          importFn: this.importFn,
+          defaultExportName: 'default',
+        })
       )
     );
-    const options = await loadFromModuleExportExpression<any>(this.config.options, { cwd: this.baseDir });
+    const options = await loadFromModuleExportExpression<any>(this.config.options, {
+      cwd: this.baseDir,
+      importFn: this.importFn,
+      defaultExportName: 'default',
+    });
+
+    // This will bring Federation and Type Merging support
+    appendPlugins.push(FederationPlugin);
 
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,

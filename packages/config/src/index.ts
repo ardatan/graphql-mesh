@@ -10,6 +10,7 @@ import {
   MeshPubSub,
   MeshTransform,
   MeshTransformLibrary,
+  SyncImportFn,
   YamlConfig,
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
@@ -30,11 +31,13 @@ import { cwd, env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { createRequire } from 'module';
 
 export type ConfigProcessOptions = {
   dir?: string;
   ignoreAdditionalResolvers?: boolean;
-  importFn?: (moduleId: string) => Promise<any>;
+  importFn?: ImportFn;
+  syncImportFn?: SyncImportFn;
   store?: MeshStore;
 };
 
@@ -102,16 +105,20 @@ export async function processConfig(
   config: YamlConfig.Config,
   options?: ConfigProcessOptions
 ): Promise<ProcessedConfig> {
-  const importCodes: string[] = [`import { GetMeshOptions } from '@graphql-mesh/runtime';`];
+  const importCodes: string[] = [
+    `import { GetMeshOptions } from '@graphql-mesh/runtime';`,
+    `import { YamlConfig } from '@graphql-mesh/types';`,
+  ];
   const codes: string[] = [
-    `export const rawConfig = ${JSON.stringify(config)}`,
-    `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
+    `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)}`,
+    `export function getMeshOptions(): GetMeshOptions {`,
   ];
 
   const {
     dir,
     ignoreAdditionalResolvers = false,
     importFn = (moduleId: string) => import(moduleId).then(m => m.default || m),
+    syncImportFn = createRequire(join(dir, 'mesh.config.js')),
     store: providedStore,
   } = options || {};
 
@@ -148,7 +155,7 @@ export async function processConfig(
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
     Promise.all(
-      config.sources.map<Promise<MeshResolvedSource>>(async source => {
+      config.sources.map<Promise<MeshResolvedSource>>(async (source, sourceIndex) => {
         const handlerName = Object.keys(source.handler)[0].toString();
         const handlerConfig = source.handler[handlerName];
         const handlerVariableName = camelCase(`${source.name}_Handler`);
@@ -160,13 +167,14 @@ export async function processConfig(
               const handlerImportName = pascalCase(handlerName + '_Handler');
               importCodes.push(`import ${handlerImportName} from '${moduleName}'`);
               codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
-              name: '${source.name}',
-              config: ${JSON.stringify(handlerConfig, null, 2)},
+              name: rawConfig.sources[${sourceIndex}].name,
+              config: rawConfig.sources[${sourceIndex}].handler.${handlerName},
               baseDir,
               cache,
               pubsub,
-              store: sourcesStore.child('${source.name}'),
-              logger: logger.child('${source.name}'),
+              store: sourcesStore.child(rawConfig.sources[${sourceIndex}].name),
+              logger: logger.child(rawConfig.sources[${sourceIndex}].name),
+              importFn
             });`);
               return new HandlerCtor({
                 name: source.name,
@@ -176,11 +184,12 @@ export async function processConfig(
                 pubsub,
                 store: sourcesStore.child(source.name),
                 logger: logger.child(source.name),
+                importFn,
               });
             }
           ),
           Promise.all(
-            (source.transforms || []).map(async t => {
+            (source.transforms || []).map(async (t, transformIndex) => {
               const transformName = Object.keys(t)[0].toString();
               const transformConfig = t[transformName];
               const { resolved: TransformCtor, moduleName } = await getPackage<MeshTransformLibrary>(
@@ -194,11 +203,12 @@ export async function processConfig(
               importCodes.push(`import ${transformImportName} from '${moduleName}';`);
               codes.push(`${transformsVariableName}.push(
                 new ${transformImportName}({
-                  apiName: '${source.name}',
-                  config: ${JSON.stringify(transformConfig, null, 2)},
+                  apiName: rawConfig.sources[${sourceIndex}].name,
+                  config: rawConfig.sources[${sourceIndex}].transforms[${transformIndex}].${transformName},
                   baseDir,
                   cache,
                   pubsub,
+                  syncImportFn
                 })
               );`);
 
@@ -208,6 +218,7 @@ export async function processConfig(
                 baseDir: dir,
                 cache,
                 pubsub,
+                syncImportFn,
               });
             })
           ),
@@ -227,7 +238,7 @@ export async function processConfig(
       })
     ),
     Promise.all(
-      config.transforms?.map(async t => {
+      config.transforms?.map(async (t, transformIndex) => {
         const transformName = Object.keys(t)[0].toString();
         const transformConfig = t[transformName];
         const { resolved: TransformLibrary, moduleName } = await getPackage<MeshTransformLibrary>(
@@ -243,10 +254,11 @@ export async function processConfig(
         codes.push(`transforms.push(
           new ${transformImportName}({
             apiName: '',
-            config: ${JSON.stringify(transformConfig, null, 2)},
+            config: rawConfig.transforms[${transformIndex}].${transformName},
             baseDir,
             cache,
-            pubsub
+            pubsub,
+            syncImportFn
           })
         )`);
         return new TransformLibrary({
@@ -255,6 +267,7 @@ export async function processConfig(
           baseDir: dir,
           cache,
           pubsub,
+          syncImportFn,
         });
       }) || []
     ),
@@ -265,7 +278,7 @@ export async function processConfig(
     resolveAdditionalResolvers(
       dir,
       ignoreAdditionalResolvers ? [] : config.additionalResolvers || [],
-      importFn,
+      syncImportFn,
       pubsub
     ),
     getPackage<MeshMergerLibrary>(config.merger || 'stitching', 'merger', importFn, dir).then(
@@ -290,14 +303,14 @@ export async function processConfig(
   ]);
 
   importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
-  codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
+  codes.push(`const additionalResolvers = resolveAdditionalResolvers(
       baseDir,
-      ${JSON.stringify(config.additionalResolvers)},
-      importFn,
+      rawConfig.additionalResolvers,
+      syncImportFn,
       pubsub
   )`);
 
-  codes.push(`const liveQueryInvalidations = ${JSON.stringify(config.liveQueryInvalidations)};`);
+  codes.push(`const liveQueryInvalidations = rawConfig.liveQueryInvalidations;`);
 
   codes.push(`
   return {

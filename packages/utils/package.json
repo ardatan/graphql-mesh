@@ -6,8 +6,8 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/is-url": "1.2.29",
-    "@types/object-hash": "2.1.0"
+    "@types/is-url": "1.2.30",
+    "@types/object-hash": "2.1.1"
   },
   "sideEffects": false,
   "main": "dist/index.js",
@@ -28,15 +28,16 @@
   },
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.12",
-    "@graphql-tools/delegate": "8.0.0-alpha-aa43054d.0",
-    "@graphql-tools/utils": "8.0.0-alpha-aa43054d.0",
+    "@graphql-tools/delegate": "8.0.0-alpha-bbb5746f.0",
+    "@graphql-tools/utils": "8.0.0-alpha-bbb5746f.0",
     "@graphql-typed-document-node/core": "3.1.0",
     "@graphql-mesh/types": "0.42.0",
     "cross-fetch": "3.1.4",
+    "chalk": "4.1.1",
     "date-fns": "2.22.1",
     "fetchache": "0.1.1",
     "flatstr": "1.0.12",
-    "graphql-jit": "0.5.1",
+    "graphql-jit": "0.5.2",
     "graphql-subscriptions": "1.2.1",
     "lodash": "4.17.21",
     "is-url": "1.2.4",

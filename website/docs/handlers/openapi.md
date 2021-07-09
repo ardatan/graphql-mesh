@@ -63,7 +63,7 @@ sources:
         source: ./my-schema.json
         operationHeaders:
           # Please do not use capital letters while getting the headers
-          Authorization: Bearer {context.headers['x-my-api-token']} 
+          Authorization: Bearer {context.headers['x-my-api-token']}
           # You can also access to the cookies like below;
           # Authorization: Bearer {context.cookies.myApiToken}
 ```
@@ -81,7 +81,7 @@ sources:
       openapi:
         source: ./my-schema.json
         operationHeaders:
-          Authorization: Bearer ${MY_API_TOKEN}
+          Authorization: Bearer {env.MY_API_TOKEN}
 ```
 
 ## Advanced cookies handling
@@ -100,7 +100,7 @@ sources:
     handler:
       openapi:
         source: ./openapi.yaml
-        baseUrl: ${REST_API_URL}/api/
+        baseUrl: "{env.REST_URL}/api/"
         operationHeaders:
           Authorization-Header: "{context.headers['authorization']}"
           Authorization-Cookie: Bearer {context.cookies.accessToken}

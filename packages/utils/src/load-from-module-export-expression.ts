@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/return-await */
 import { isAbsolute, join } from 'path';
 import { createRequire } from 'module';
-import { ImportFn } from '@graphql-mesh/types';
+import { ImportFn, SyncImportFn } from '@graphql-mesh/types';
 
-type loadFromModuleExportExpressionOptions = {
-  defaultExportName?: string;
-  cwd?: string;
-  importFn?: ImportFn;
+type LoadFromModuleExportExpressionOptions = {
+  defaultExportName: string;
+  cwd: string;
+  importFn: ImportFn;
 };
 
 export async function loadFromModuleExportExpression<T>(
   expression: T | string,
-  options?: loadFromModuleExportExpressionOptions
+  options: LoadFromModuleExportExpressionOptions
 ): Promise<T> {
   if (typeof expression !== 'string') {
     return expression;
@@ -53,18 +54,23 @@ async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
     throw e1;
   }
 }
+type LoadFromModuleExportExpressionSyncOptions = {
+  defaultExportName: string;
+  cwd: string;
+  syncImportFn: SyncImportFn;
+};
 
 export function loadFromModuleExportExpressionSync<T>(
   expression: T | string,
-  options?: loadFromModuleExportExpressionOptions
+  options: LoadFromModuleExportExpressionSyncOptions
 ): T {
   if (typeof expression !== 'string') {
     return expression;
   }
 
-  const { defaultExportName, cwd } = options || {};
+  const { defaultExportName = 'default', cwd, syncImportFn } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = tryImportSync(modulePath, cwd);
+  const mod = tryImportSync(modulePath, cwd, syncImportFn);
 
   if (exportName === 'default' || !exportName) {
     return mod.default || mod;
@@ -73,15 +79,14 @@ export function loadFromModuleExportExpressionSync<T>(
   }
 }
 
-function tryImportSync(modulePath: string, cwd: string) {
-  const cwdRequire = createRequire(cwd);
+function tryImportSync(modulePath: string, cwd: string, syncImportFn: SyncImportFn) {
   try {
-    return cwdRequire(modulePath);
+    return syncImportFn(modulePath);
   } catch (e1) {
     if (!isAbsolute(modulePath)) {
       try {
         const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
-        return cwdRequire(absoluteModulePath);
+        return syncImportFn(absoluteModulePath);
       } catch (e2) {
         if (e2.message.startsWith('Cannot find')) {
           throw e1;

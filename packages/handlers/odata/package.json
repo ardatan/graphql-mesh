@@ -24,13 +24,13 @@
   },
   "devDependencies": {
     "@types/http-string-parser": "0.0.29",
-    "@types/url-join": "4.0.0"
+    "@types/url-join": "4.0.1"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.42.0",
     "@graphql-mesh/store": "0.0.0",
     "@graphql-mesh/utils": "0.12.0",
-    "@graphql-tools/utils": "8.0.0-alpha-aa43054d.0",
+    "@graphql-tools/utils": "8.0.0-alpha-bbb5746f.0",
     "http-string-parser": "0.0.6",
     "cross-fetch": "3.1.4",
     "dataloader": "2.0.0",

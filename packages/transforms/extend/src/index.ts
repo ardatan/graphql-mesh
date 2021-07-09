@@ -1,5 +1,5 @@
 import { isAbsolute } from 'path';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, SyncImportFn, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -21,10 +21,12 @@ export default class ExtendTransform implements MeshTransform {
   noWrap = true;
   private config: YamlConfig.ExtendTransform;
   private baseDir: string;
+  private syncImportFn: SyncImportFn;
 
-  constructor({ baseDir, config }: MeshTransformOptions<YamlConfig.ExtendTransform>) {
+  constructor({ baseDir, config, syncImportFn }: MeshTransformOptions<YamlConfig.ExtendTransform>) {
     this.config = config;
     this.baseDir = baseDir;
+    this.syncImportFn = syncImportFn;
   }
 
   transformSchema(schema: GraphQLSchema) {
@@ -35,7 +37,11 @@ export default class ExtendTransform implements MeshTransform {
     const typeDefs = sources.map(source => source.document);
     const resolvers = asArray(this.config.resolvers).map(resolverDef => {
       if (typeof resolverDef === 'string') {
-        return loadFromModuleExportExpressionSync(resolverDef, { cwd: this.baseDir });
+        return loadFromModuleExportExpressionSync(resolverDef, {
+          cwd: this.baseDir,
+          defaultExportName: 'default',
+          syncImportFn: this.syncImportFn,
+        });
       } else {
         return resolverDef;
       }

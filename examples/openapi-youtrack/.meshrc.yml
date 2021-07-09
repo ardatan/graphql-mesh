@@ -2,12 +2,10 @@ sources:
   - name: YouTrack
     handler:
       openapi:
-        source: ${YOUTRACK_SERVICE_URL}/api/openapi.json
-        baseUrl: ${YOUTRACK_SERVICE_URL}/api/
-        schemaHeaders:
-          Authorization: Bearer ${YOUTRACK_TOKEN}
+        source: '{env.YOUTRACK_SERVICE_URL}/api/openapi.json'
+        baseUrl: '{env.YOUTRACK_SERVICE_URL}/api/'
         operationHeaders:
-          Authorization: Bearer ${YOUTRACK_TOKEN}
+          Authorization: Bearer {env.YOUTRACK_TOKEN}
     transforms:
       # Each YouTrack needs `fields` query parameter
       # So thanks to GraphQL, we know which fields client needs

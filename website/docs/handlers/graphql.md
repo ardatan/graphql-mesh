@@ -44,7 +44,7 @@ sources:
           # Please do not use capital letters while getting the headers
           Authorization: Bearer {context.headers['x-my-api-token']}
           # You can also access to the cookies like below;
-          # Authorization: Bearer {context.cookies.myApiToken} 
+          # Authorization: Bearer {context.cookies.myApiToken}
 ```
 
 And for `mesh serve`, you can pass the value using `x-my-graphql-api-token` HTTP header.
@@ -60,7 +60,7 @@ sources:
       graphql:
         endpoint: http://my-service-url:3000/graphql
         operationHeaders:
-          Authorization: Bearer ${MY_API_TOKEN}
+          Authorization: Bearer {env.MY_API_TOKEN}
 ```
 
 ## Config API Reference

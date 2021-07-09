@@ -39,7 +39,8 @@ import { GraphQLJSON, GraphQLBigInt } from 'graphql-scalars';
 import * as Oas3Tools from './oas_3_tools';
 import { getResolver } from './resolver_builder';
 import { createDataDef } from './preprocessor';
-import { handleWarning, sortObject, MitigationTypes, mockDebug as debug } from './utils';
+import { handleWarning, sortObject, MitigationTypes } from './utils';
+import { Logger } from '@graphql-mesh/types';
 
 type GetArgsParams<TSource, TContext, TArgs> = {
   requestPayloadDef?: DataDefinition;
@@ -47,6 +48,7 @@ type GetArgsParams<TSource, TContext, TArgs> = {
   operation?: Operation;
   data: PreprocessingData<TSource, TContext, TArgs>;
   includeHttpDetails: boolean;
+  logger: Logger;
 };
 
 type CreateOrReuseComplexTypeParams<TSource, TContext, TArgs> = {
@@ -56,11 +58,13 @@ type CreateOrReuseComplexTypeParams<TSource, TContext, TArgs> = {
   isInputObjectType?: boolean; // Does not require isInputObjectType because unions must be composed of objects
   data: PreprocessingData<TSource, TContext, TArgs>; // Data produced by preprocessing
   includeHttpDetails: boolean;
+  logger: Logger;
 };
 
 type CreateOrReuseSimpleTypeParams<TSource, TContext, TArgs> = {
   def: DataDefinition;
   data: PreprocessingData<TSource, TContext, TArgs>;
+  logger: Logger;
 };
 
 type CreateFieldsParams<TSource, TContext, TArgs> = {
@@ -71,6 +75,7 @@ type CreateFieldsParams<TSource, TContext, TArgs> = {
   isInputObjectType: boolean;
   data: PreprocessingData<TSource, TContext, TArgs>;
   includeHttpDetails: boolean;
+  logger: Logger;
 };
 
 type LinkOpRefToOpIdParams<TSource, TContext, TArgs> = {
@@ -78,9 +83,8 @@ type LinkOpRefToOpIdParams<TSource, TContext, TArgs> = {
   linkKey: string;
   operation: Operation;
   data: PreprocessingData<TSource, TContext, TArgs>;
+  logger: Logger;
 };
-
-const translationLog = debug('translation');
 
 /**
  * Creates and returns a GraphQL type for the given JSON schema.
@@ -92,6 +96,7 @@ export function getGraphQLType<TSource, TContext, TArgs>({
   iteration = 0,
   isInputObjectType = false,
   includeHttpDetails = false,
+  logger,
 }: CreateOrReuseComplexTypeParams<TSource, TContext, TArgs>): GraphQLType {
   const name = isInputObjectType ? def.graphQLInputObjectTypeName : def.graphQLTypeName;
 
@@ -110,6 +115,7 @@ export function getGraphQLType<TSource, TContext, TArgs>({
         iteration,
         isInputObjectType,
         includeHttpDetails,
+        logger,
       });
 
     // CASE: union - create union type
@@ -120,6 +126,7 @@ export function getGraphQLType<TSource, TContext, TArgs>({
         data,
         iteration,
         includeHttpDetails,
+        logger,
       });
 
     // CASE: list - create list type
@@ -131,6 +138,7 @@ export function getGraphQLType<TSource, TContext, TArgs>({
         iteration,
         isInputObjectType,
         includeHttpDetails,
+        logger,
       });
 
     // CASE: enum - create enum type
@@ -138,6 +146,7 @@ export function getGraphQLType<TSource, TContext, TArgs>({
       return createOrReuseEnum({
         def,
         data,
+        logger,
       });
 
     // CASE: scalar - return scalar type
@@ -145,6 +154,7 @@ export function getGraphQLType<TSource, TContext, TArgs>({
       return getScalarType({
         def,
         data,
+        logger,
       });
   }
 }
@@ -171,16 +181,18 @@ function createOrReuseOt<TSource, TContext, TArgs>({
   iteration,
   isInputObjectType,
   includeHttpDetails,
+  logger,
 }: CreateOrReuseComplexTypeParams<TSource, TContext, TArgs>):
   | GraphQLObjectType
   | GraphQLInputObjectType
   | GraphQLScalarType {
+  const translationLogger = logger.child('translation');
   // Try to reuse a preexisting (input) object type
 
   // CASE: query - reuse object type
   if (!isInputObjectType) {
     if (def.graphQLType && typeof def.graphQLType !== 'undefined') {
-      translationLog(
+      translationLogger.debug(
         `Reuse object type '${def.graphQLTypeName}'` +
           (typeof operation === 'object' ? ` (for operation '${operation.operationString}')` : '')
       );
@@ -191,7 +203,7 @@ function createOrReuseOt<TSource, TContext, TArgs>({
     // CASE: mutation - reuse input object type
   } else {
     if (def.graphQLInputObjectType && typeof def.graphQLInputObjectType !== 'undefined') {
-      translationLog(
+      translationLogger.debug(
         `Reuse input object type '${def.graphQLInputObjectTypeName}'` +
           (typeof operation === 'object' ? ` (for operation '${operation.operationString}')` : '')
       );
@@ -206,7 +218,7 @@ function createOrReuseOt<TSource, TContext, TArgs>({
 
   // CASE: query - create object type
   if (!isInputObjectType) {
-    translationLog(
+    translationLogger.debug(
       `Create object type '${def.graphQLTypeName}'` +
         (typeof operation === 'object' ? ` (for operation '${operation.operationString}')` : '')
     );
@@ -223,6 +235,7 @@ function createOrReuseOt<TSource, TContext, TArgs>({
           iteration,
           isInputObjectType: false,
           includeHttpDetails,
+          logger,
         }) as GraphQLFieldConfigMap<TSource, TContext>;
       },
     });
@@ -231,7 +244,7 @@ function createOrReuseOt<TSource, TContext, TArgs>({
 
     // CASE: mutation - create input object type
   } else {
-    translationLog(
+    translationLogger.debug(
       `Create input object type '${def.graphQLInputObjectTypeName}'` +
         (typeof operation === 'object' ? ` (for operation '${operation.operationString}')` : '')
     );
@@ -248,6 +261,7 @@ function createOrReuseOt<TSource, TContext, TArgs>({
           iteration,
           isInputObjectType: true,
           includeHttpDetails,
+          logger,
         }) as GraphQLInputFieldConfigMap;
       },
     });
@@ -265,16 +279,18 @@ function createOrReuseUnion<TSource, TContext, TArgs>({
   data,
   iteration,
   includeHttpDetails,
+  logger,
 }: CreateOrReuseComplexTypeParams<TSource, TContext, TArgs>): GraphQLUnionType {
+  const translationLogger = logger.child('translation');
   // Try to reuse existing union type
   if (typeof def.graphQLType !== 'undefined') {
-    translationLog(
+    translationLogger.debug(
       `Reuse union type '${def.graphQLTypeName}'` +
         (typeof operation === 'object' ? ` (for operation '${operation.operationString}')` : '')
     );
     return def.graphQLType as GraphQLUnionType;
   } else {
-    translationLog(
+    translationLogger.debug(
       `Create union type '${def.graphQLTypeName}'` +
         (typeof operation === 'object' ? ` (for operation '${operation.operationString}')` : '')
     );
@@ -293,6 +309,7 @@ function createOrReuseUnion<TSource, TContext, TArgs>({
         iteration: iteration + 1,
         isInputObjectType: false,
         includeHttpDetails,
+        logger,
       }) as GraphQLObjectType;
     });
 
@@ -301,7 +318,7 @@ function createOrReuseUnion<TSource, TContext, TArgs>({
      *
      * i.e. member types that can be confused with each other.
      */
-    checkAmbiguousMemberTypes(def, types, data);
+    checkAmbiguousMemberTypes(def, types, data, logger);
 
     def.graphQLType = new GraphQLUnionType({
       name: def.graphQLTypeName,
@@ -348,8 +365,10 @@ function createOrReuseUnion<TSource, TContext, TArgs>({
 function checkAmbiguousMemberTypes<TSource, TContext, TArgs>(
   def: DataDefinition,
   types: GraphQLObjectType[],
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  logger: Logger
 ): void {
+  const translationLogger = logger.child('translation');
   types.sort((a, b) => {
     const aFieldLength = Object.keys(a.getFields()).length;
     const bFieldLength = Object.keys(b.getFields()).length;
@@ -383,7 +402,7 @@ function checkAmbiguousMemberTypes<TSource, TContext, TArgs>(
             `which are ambiguous. Ambiguous member types can cause ` +
             `problems when trying to resolve types.`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
 
         return;
@@ -402,20 +421,22 @@ function createOrReuseList<TSource, TContext, TArgs>({
   isInputObjectType,
   data,
   includeHttpDetails,
+  logger,
 }: CreateOrReuseComplexTypeParams<TSource, TContext, TArgs>): GraphQLList<any> {
+  const translationLogger = logger.child('translation');
   const name = isInputObjectType ? def.graphQLInputObjectTypeName : def.graphQLTypeName;
 
   // Try to reuse existing Object Type
   if (!isInputObjectType && def.graphQLType && typeof def.graphQLType !== 'undefined') {
-    translationLog(`Reuse GraphQLList '${def.graphQLTypeName}'`);
+    translationLogger.debug(`Reuse GraphQLList '${def.graphQLTypeName}'`);
     return def.graphQLType as GraphQLList<any>;
   } else if (isInputObjectType && def.graphQLInputObjectType && typeof def.graphQLInputObjectType !== 'undefined') {
-    translationLog(`Reuse GraphQLList '${def.graphQLInputObjectTypeName}'`);
+    translationLogger.debug(`Reuse GraphQLList '${def.graphQLInputObjectTypeName}'`);
     return def.graphQLInputObjectType as GraphQLList<any>;
   }
 
   // Create new List Object Type
-  translationLog(`Create GraphQLList '${def.graphQLTypeName}'`);
+  translationLogger.debug(`Create GraphQLList '${def.graphQLTypeName}'`);
 
   // Get definition of the list item, which should be in the sub definitions
   const itemDef = def.subDefinitions as DataDefinition;
@@ -432,6 +453,7 @@ function createOrReuseList<TSource, TContext, TArgs>({
     iteration: iteration + 1,
     isInputObjectType,
     includeHttpDetails,
+    logger,
   });
 
   if (itemsType !== null) {
@@ -445,7 +467,7 @@ function createOrReuseList<TSource, TContext, TArgs>({
     }
     return listObjectType;
   } else {
-    throw new Error(`Cannot create list item object type '${itemsName}' in list 
+    throw new Error(`Cannot create list item object type '${itemsName}' in list
     '${name}' with schema '${JSON.stringify(itemsSchema)}'`);
   }
 }
@@ -455,17 +477,19 @@ function createOrReuseList<TSource, TContext, TArgs>({
  */
 function createOrReuseEnum<TSource, TContext, TArgs>({
   def,
+  logger,
 }: CreateOrReuseSimpleTypeParams<TSource, TContext, TArgs>): GraphQLEnumType {
+  const translationLogger = logger.child('translation');
   /**
    * Try to reuse existing enum type
    *
    * Enum types do not have an input variant so only check def.ot
    */
   if (def.graphQLType && typeof def.graphQLType !== 'undefined') {
-    translationLog(`Reuse GraphQLEnumType '${def.graphQLTypeName}'`);
+    translationLogger.debug(`Reuse GraphQLEnumType '${def.graphQLTypeName}'`);
     return def.graphQLType as GraphQLEnumType;
   } else {
-    translationLog(`Create GraphQLEnumType '${def.graphQLTypeName}'`);
+    translationLogger.debug(`Create GraphQLEnumType '${def.graphQLTypeName}'`);
 
     const values = {};
     def.schema.enum.forEach(e => {
@@ -535,7 +559,10 @@ function createFields<TSource, TContext, TArgs>({
   iteration,
   isInputObjectType,
   includeHttpDetails,
+  logger,
 }: CreateFieldsParams<TSource, TContext, TArgs>): GraphQLFieldConfigMap<any, any> | GraphQLInputFieldConfigMap {
+  const translationLogger = logger.child('translation');
+
   let fields: GraphQLFieldConfigMap<any, any> = {};
 
   if (includeHttpDetails && !isInputObjectType) {
@@ -562,6 +589,7 @@ function createFields<TSource, TContext, TArgs>({
       iteration: iteration + 1,
       isInputObjectType,
       includeHttpDetails,
+      logger,
     });
 
     const requiredProperty =
@@ -574,7 +602,7 @@ function createFields<TSource, TContext, TArgs>({
         !data.options.simpleNames ? Oas3Tools.CaseStyle.camelCase : Oas3Tools.CaseStyle.simple
       );
 
-      const sanePropName = Oas3Tools.storeSaneName(saneFieldTypeKey, fieldTypeKey, data.saneMap);
+      const sanePropName = Oas3Tools.storeSaneName(saneFieldTypeKey, fieldTypeKey, data.saneMap, logger);
 
       fields[sanePropName] = {
         type: requiredProperty ? new GraphQLNonNull(objectType) : (objectType as GraphQLOutputType),
@@ -588,7 +616,7 @@ function createFields<TSource, TContext, TArgs>({
           `Cannot obtain GraphQL type for field '${fieldTypeKey}' in ` +
           `GraphQL type '${JSON.stringify(def.schema)}'.`,
         data,
-        log: translationLog,
+        logger: translationLogger,
       });
     }
   }
@@ -598,7 +626,7 @@ function createFields<TSource, TContext, TArgs>({
     !isInputObjectType // Only object type (input object types cannot make use of links)
   ) {
     for (const saneLinkKey in links) {
-      translationLog(`Create link '${saneLinkKey}'...`);
+      translationLogger.debug(`Create link '${saneLinkKey}'...`);
 
       // Check if key is already in fields
       if (saneLinkKey in fields) {
@@ -608,7 +636,7 @@ function createFields<TSource, TContext, TArgs>({
             `Cannot create link '${saneLinkKey}' because parent ` +
             `object type already contains a field with the same (sanitized) name.`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
       } else {
         const link = links[saneLinkKey];
@@ -624,6 +652,7 @@ function createFields<TSource, TContext, TArgs>({
             linkKey: saneLinkKey,
             operation,
             data,
+            logger,
           });
         }
 
@@ -653,6 +682,7 @@ function createFields<TSource, TContext, TArgs>({
               data,
               baseUrl: data.options.baseUrl,
               requestOptions: data.options.requestOptions,
+              logger,
             }),
             getResolver
           );
@@ -663,6 +693,7 @@ function createFields<TSource, TContext, TArgs>({
             operation: linkedOp,
             data,
             includeHttpDetails,
+            logger,
           });
 
           // Get response object type
@@ -676,6 +707,7 @@ function createFields<TSource, TContext, TArgs>({
                   iteration: iteration + 1,
                   isInputObjectType: false,
                   includeHttpDetails,
+                  logger,
                 });
 
           let description = link.description;
@@ -697,7 +729,7 @@ function createFields<TSource, TContext, TArgs>({
             mitigationType: MitigationTypes.UNRESOLVABLE_LINK,
             message: `Cannot resolve target of link '${saneLinkKey}'`,
             data,
-            log: translationLog,
+            logger: translationLogger,
           });
         }
       }
@@ -722,7 +754,10 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
   linkKey,
   operation,
   data,
+  logger,
 }: LinkOpRefToOpIdParams<TSource, TContext, TArgs>): string | void {
+  const translationLogger = logger.child('translation');
+
   const link = links[linkKey];
 
   if (typeof link.operationRef === 'string') {
@@ -760,7 +795,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
               `contains an ambiguous operationRef '${operationRef}', ` +
               `meaning it has multiple instances of the string '#/paths/'`,
             data,
-            log: translationLog,
+            logger: translationLogger,
           });
 
           return null;
@@ -778,7 +813,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
             `does not contain a valid path in operationRef '${operationRef}', ` +
             `meaning it does not contain a string '#/paths/'`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
 
         return null;
@@ -820,7 +855,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
               mitigationType: MitigationTypes.UNRESOLVABLE_LINK,
               message: `The operationRef '${operationRef}' contains an ` + `invalid HTTP method '${linkMethod}'`,
               data,
-              log: translationLog,
+              logger: translationLogger,
             });
 
             return null;
@@ -832,7 +867,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
             mitigationType: MitigationTypes.UNRESOLVABLE_LINK,
             message: `The operationRef '${operationRef}' does not contain an` + `HTTP method`,
             data,
-            log: translationLog,
+            logger: translationLogger,
           });
 
           return null;
@@ -857,7 +892,9 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
 
         // Find the right oas
         const oas =
-          typeof linkLocation === 'undefined' ? operation.oas : getOasFromLinkLocation(linkLocation, link, data);
+          typeof linkLocation === 'undefined'
+            ? operation.oas
+            : getOasFromLinkLocation(linkLocation, link, data, logger);
 
         // If the link was external, make sure that an OAS could be identified
         if (typeof oas !== 'undefined') {
@@ -887,7 +924,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
                   `Note that the operationId may be autogenerated but ` +
                   `regardless, the link could not be matched to an operation.`,
                 data,
-                log: translationLog,
+                logger: translationLogger,
               });
 
               return null;
@@ -902,7 +939,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
                 `'${linkMethod}' respectively, from operationRef ` +
                 `'${operationRef}' in link '${linkKey}'`,
               data,
-              log: translationLog,
+              logger: translationLogger,
             });
 
             return null;
@@ -914,7 +951,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
             mitigationType: MitigationTypes.UNRESOLVABLE_LINK,
             message: `The link '${link.operationRef}' references an external OAS ` + `but it was not provided`,
             data,
-            log: translationLog,
+            logger: translationLogger,
           });
 
           return null;
@@ -926,7 +963,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
           mitigationType: MitigationTypes.UNRESOLVABLE_LINK,
           message: `Cannot extract path and/or method from operationRef ` + `'${operationRef}' in link '${linkKey}'`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
 
         return null;
@@ -938,7 +975,7 @@ function linkOpRefToOpId<TSource, TContext, TArgs>({
         mitigationType: MitigationTypes.UNRESOLVABLE_LINK,
         message: `Cannot extract path and/or method from operationRef ` + `'${operationRef}' in link '${linkKey}'`,
         data,
-        log: translationLog,
+        logger: translationLogger,
       });
 
       return null;
@@ -1025,7 +1062,9 @@ export function getArgs<TSource, TContext, TArgs>({
   operation,
   data,
   includeHttpDetails,
+  logger,
 }: GetArgsParams<TSource, TContext, TArgs>): Args {
+  const translationLogger = logger.child('translation');
   let args: any = {};
 
   // Handle params:
@@ -1038,7 +1077,7 @@ export function getArgs<TSource, TContext, TArgs>({
           `The operation '${operation.operationString}' contains a ` +
           `parameter '${JSON.stringify(parameter)}' with no 'name' property`,
         data,
-        log: translationLog,
+        logger: translationLogger,
       });
       return;
     }
@@ -1077,7 +1116,7 @@ export function getArgs<TSource, TContext, TArgs>({
             `property but no schemas in application/json format. The ` +
             `parameter will not be created`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
         return;
       }
@@ -1090,7 +1129,7 @@ export function getArgs<TSource, TContext, TArgs>({
           `parameter '${JSON.stringify(parameter)}' with no 'schema' or ` +
           `'content' property`,
         data,
-        log: translationLog,
+        logger: translationLogger,
       });
       return;
     }
@@ -1103,15 +1142,23 @@ export function getArgs<TSource, TContext, TArgs>({
       schema = Oas3Tools.resolveRef(schema.$ref, operation.oas);
     }
 
-    const paramDef = createDataDef({ fromSchema: parameter.name }, schema as SchemaObject, true, data, operation.oas);
+    const paramDef = createDataDef(
+      { fromSchema: parameter.name },
+      schema as SchemaObject,
+      true,
+      data,
+      operation.oas,
+      logger
+    );
 
-    // @ts-ignore
     const type = getGraphQLType({
       def: paramDef,
       operation,
       data,
       iteration: 0,
       isInputObjectType: true,
+      includeHttpDetails,
+      logger,
     });
 
     /**
@@ -1166,7 +1213,7 @@ export function getArgs<TSource, TContext, TArgs>({
           `because of a preexisting argument in ` +
           `operation ${operation.operationString}`,
         data,
-        log: translationLog,
+        logger: translationLogger,
       });
     } else {
       args.limit = {
@@ -1187,6 +1234,7 @@ export function getArgs<TSource, TContext, TArgs>({
       operation,
       isInputObjectType: true, // Request payloads will always be an input object type
       includeHttpDetails,
+      logger,
     });
 
     // Sanitize the argument name
@@ -1228,8 +1276,10 @@ function getLinkLocationType(linkLocation: string): string {
 function getOasFromLinkLocation<TSource, TContext, TArgs>(
   linkLocation: string,
   link: LinkObject,
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  logger: Logger
 ): Oas3 | void {
+  const translationLogger = logger.child('translation');
   // May be an external reference
   switch (getLinkLocationType(linkLocation)) {
     case 'title':
@@ -1250,7 +1300,7 @@ function getOasFromLinkLocation<TSource, TContext, TArgs>(
             `The operationRef '${link.operationRef}' references an ` +
             `OAS '${linkLocation}' but multiple OASs share the same title`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
       } else {
         // No OAS had the expected title
@@ -1260,7 +1310,7 @@ function getOasFromLinkLocation<TSource, TContext, TArgs>(
             `The operationRef '${link.operationRef}' references an ` +
             `OAS '${linkLocation}' but no such OAS was provided`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
       }
       break;
@@ -1283,7 +1333,7 @@ function getOasFromLinkLocation<TSource, TContext, TArgs>(
           `'${link.operationRef}' is currently not supported\n` +
           `Currently only the title of the OAS is supported`,
         data,
-        log: translationLog,
+        logger: translationLogger,
       });
   }
 }
