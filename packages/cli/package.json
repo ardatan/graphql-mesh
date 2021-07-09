@@ -68,7 +68,7 @@
     "ws": "7.5.2"
   },
   "devDependencies": {
-    "@types/cors": "2.8.11",
+    "@types/cors": "2.8.12",
     "@types/cookie-parser": "1.4.2",
     "@types/express": "4.17.13",
     "@types/graphql-upload": "8.0.6",
