@@ -37,54 +37,8 @@ module.exports = {
         },
       ],
     },
-    footer: {
-      links: [
-        /* {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Style Guide',
-              to: 'docs/doc1'
-            },
-            {
-              label: 'Second Doc',
-              to: 'docs/doc2'
-            }
-          ]
-        }, */
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Discord',
-              href: 'http://bit.ly/guild-chat',
-            },
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/graphql-mesh',
-            },
-          ],
-        },
-        {
-          title: 'Social',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/Urigo/graphql-mesh/',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/TheGuildDev',
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`,
-    },
   },
-  scripts: [
-    'https://the-guild.dev/static/crisp.js'
-  ],
+  scripts: ['https://the-guild.dev/static/crisp.js'],
   presets: [
     [
       '@docusaurus/preset-classic',

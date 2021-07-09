@@ -12,6 +12,7 @@
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
+    "@theguild/components": "1.4.3",
     "@docusaurus/core": "2.0.0-beta.ff31de0ff",
     "@docusaurus/preset-classic": "2.0.0-beta.ff31de0ff",
     "babel-preset-minify": "0.5.1",
@@ -19,9 +20,7 @@
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "remark-code-import": "0.3.0",
-    "remark-import-partial": "0.0.2",
-    "styled-components": "5.3.0",
-    "the-guild-components": "1.4.3"
+    "remark-import-partial": "0.0.2"
   },
   "browserslist": {
     "production": [
