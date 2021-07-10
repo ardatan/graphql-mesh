@@ -26,7 +26,7 @@
     "webpack-cli": "4.7.2",
     "css-loader": "5.2.6",
     "style-loader": "3.0.0",
-    "use-query-params": "1.2.2",
+    "use-query-params": "1.2.3",
     "query-string": "7.0.1"
   }
 }
