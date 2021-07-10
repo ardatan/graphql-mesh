@@ -24,8 +24,6 @@ additionalTypeDefs: |
         developers(limit: Int = 10): [GithubUser]
       }
 
-require:
-  - "ts-node/register/transpile-only"
 additionalResolvers:
   - targetTypeName: GeoCity
     targetFieldName: developers

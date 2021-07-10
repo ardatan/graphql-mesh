@@ -1,7 +1,4 @@
-const { parse } = require("graphql");
-const { parseSelectionSet } = require('@graphql-tools/utils');
-
-const resolvers = {
+module.exports = {
   Query: {
     stat: async (root, args, context, info) => {
       const worldPop = await context.WorldPop.Query.population({
@@ -11,16 +8,15 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: () =>
-          parseSelectionSet(/* GraphQL */ `
-            {
-              records {
-                fields {
-                  value
-                }
+        selectionSet: /* GraphQL */ `
+          {
+            records {
+              fields {
+                value
               }
             }
-          `),
+          }
+        `,
       });
 
       const numberPop = worldPop.records[0].fields.value;
@@ -32,15 +28,14 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: () =>
-          parseSelectionSet(/* GraphQL */ `
-            {
-              confirmed
-              deaths
-              recovered
-              countryRegion
-            }
-          `),
+        selectionSet: /* GraphQL */ `
+          {
+            confirmed
+            deaths
+            recovered
+            countryRegion
+          }
+        `,
       });
       const numberConfirmed = covidCase.confirmed;
       const numberDeath = covidCase.deaths;
@@ -55,5 +50,3 @@ const resolvers = {
     },
   },
 };
-
-module.exports = { resolvers };

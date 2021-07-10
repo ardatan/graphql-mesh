@@ -15,7 +15,14 @@ import {
   ExecutionResult,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
-import { MeshPubSub, KeyValueCache, RawSourceOutput, GraphQLOperation } from '@graphql-mesh/types';
+import {
+  MeshPubSub,
+  KeyValueCache,
+  RawSourceOutput,
+  GraphQLOperation,
+  SelectionSetParamOrFactory,
+  SelectionSetParam,
+} from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
@@ -35,6 +42,7 @@ import { delegateToSchema, IDelegateToSchemaOptions } from '@graphql-tools/deleg
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { inspect } from 'util';
+import { isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
 
 export interface MeshInstance {
   execute: ExecuteMeshFn;
@@ -187,7 +195,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               args: any;
               context: any;
               info: GraphQLResolveInfo;
-              selectionSet: (subtree: SelectionSetNode) => SelectionSetNode;
+              selectionSet: SelectionSetParamOrFactory;
               key?: string;
               argsFromKeys?: (keys: string[]) => any;
             }) => {
@@ -213,10 +221,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                 };
                 return batchDelegateToSchema(batchDelegationOptions);
               } else if (selectionSet) {
+                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                const path = [fieldName];
+                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
                 return delegateToSchema({
                   ...commonDelegateOptions,
                   args,
-                  transforms: [new WrapQuery([fieldName], selectionSet, res => res)],
+                  transforms: [wrapQueryTransform],
                 });
               } else {
                 return delegateToSchema({
@@ -432,4 +443,31 @@ ${inspect(
     destroy: () => pubsub.publish('destroy', undefined),
     liveQueryStore,
   };
+}
+
+function normalizeSelectionSetParam(selectionSetParam: SelectionSetParam) {
+  if (typeof selectionSetParam === 'string') {
+    return parseSelectionSet(selectionSetParam);
+  }
+  if (isDocumentNode(selectionSetParam)) {
+    return parseSelectionSet(print(selectionSetParam));
+  }
+  return selectionSetParam;
+}
+
+function normalizeSelectionSetParamOrFactory(
+  selectionSetParamOrFactory: SelectionSetParamOrFactory
+): (subtree: SelectionSetNode) => SelectionSetNode {
+  return function getSelectionSet(subtree: SelectionSetNode) {
+    if (typeof selectionSetParamOrFactory === 'function') {
+      const selectionSetParam = selectionSetParamOrFactory(subtree);
+      return normalizeSelectionSetParam(selectionSetParam);
+    } else {
+      return normalizeSelectionSetParam(selectionSetParamOrFactory);
+    }
+  };
+}
+
+function identical<T>(val: T): T {
+  return val;
 }

@@ -87,7 +87,7 @@ Now, we need to implement `src/mesh/additional-resolvers.js` with code that fetc
 
 ```js
 const moment = require('moment');
-const { parseSelectionSet } = require('@graphql-tools/utils');
+
 
 const resolvers = {
   Query: {
@@ -104,11 +104,11 @@ const resolvers = {
         },
         context,
         info,
-        selectionSet: () => parseSelectionSet(/* GraphQL */`
+        selectionSet: /* GraphQL */`
           {
             views
           }
-        `)
+        `
       });
 
       if (!items || items.length === 0) {
@@ -200,13 +200,12 @@ additionalResolvers:
 The declaration above equals to the following;
 
 ```js
-const { parseSelectionSet } = require('@graphql-tools/utils');
 const { print } = require('graphql');
 
 module.exports = {
   PopulatedPlaceSummary: {
     dailyForecast: {
-      selectionSet: `
+      selectionSet: /* GraphQL */`
         {
           latitude
           longitude
@@ -222,13 +221,13 @@ module.exports = {
           },
           context,
           info,
-          selectionSet: subtree => parseSelectionSet(/* GraphQL */`
+          selectionSet: subtree => /* GraphQL */`
             {
               data {
                 ${print(subtree)}
               }
             }
-          `)
+          `
         });
         return result?.data;
       },
@@ -250,15 +249,15 @@ module.exports = {
           },
           context,
           info,
-          selectionSet: subtree => parseSelectionSet(/* GraphQL */`
+          selectionSet: subtree => /* GraphQL */`
             {
               data {
                 ${print(subtree)}
               }
             }
-          `)
+          `
         });
-        return result?.data?.length && result.data[0];
+        return result?.data?.[0];
       },
     },
   },

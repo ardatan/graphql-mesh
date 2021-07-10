@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { IResolvers } from '@graphql-tools/utils';
-import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, ExecutionArgs, ExecutionResult } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLResolveInfo,
+  DocumentNode,
+  ExecutionArgs,
+  ExecutionResult,
+  SelectionSetNode,
+} from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Executor, Transform, MergedTypeConfig } from '@graphql-tools/delegate';
@@ -141,3 +148,6 @@ export type Logger = {
   debug: (message: string) => void;
   child: (name: string) => Logger;
 };
+
+export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
+export type SelectionSetParamOrFactory = ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;
