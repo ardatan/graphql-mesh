@@ -56,7 +56,7 @@ jobs:
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Build
-        run: yarn transpile-ts --noEmit
+        run: yarn build # We need build for playground
 
   test:
     name: Testing on Node ${{matrix.node_version}}

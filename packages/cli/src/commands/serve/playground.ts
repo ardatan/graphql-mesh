@@ -2,11 +2,7 @@ import { Request, Response, RequestHandler } from 'express';
 import { Source } from '@graphql-tools/utils';
 import { handleFatalError } from '../../handleFatalError';
 import { Logger } from '@graphql-mesh/types';
-import { readFileSync } from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { playgroundContent } from './playground-content';
 
 export const playgroundMiddlewareFactory = ({
   baseDir,
@@ -21,7 +17,6 @@ export const playgroundMiddlewareFactory = ({
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
 
-  const mainJs = readFileSync(join(__dirname, 'playground/main.js'), 'utf8');
   return function (req: Request, res: Response, next) {
     defaultQuery$ =
       defaultQuery$ ||
@@ -51,7 +46,7 @@ export const playgroundMiddlewareFactory = ({
             window.endpoint = ${JSON.stringify(graphqlPath)};
           </script>
           <script>
-            ${mainJs}
+            ${playgroundContent}
           </script>
         </body>
       </html>
