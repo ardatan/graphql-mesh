@@ -1,8 +1,9 @@
 import { Logger } from '@graphql-mesh/types';
 import { env, exit } from 'process';
 import { inspect } from 'util';
+import { DefaultLogger } from '@graphql-mesh/utils';
 
-export function handleFatalError(e: Error, logger: Logger): any {
+export function handleFatalError(e: Error, logger: Logger = new DefaultLogger('Mesh')): any {
   const errorText = e.message;
   logger.error(errorText);
   if (env.DEBUG) {

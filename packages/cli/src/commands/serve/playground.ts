@@ -1,8 +1,12 @@
 import { Request, Response, RequestHandler } from 'express';
-import { renderGraphiQL } from 'graphql-helix';
 import { Source } from '@graphql-tools/utils';
 import { handleFatalError } from '../../handleFatalError';
 import { Logger } from '@graphql-mesh/types';
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const playgroundMiddlewareFactory = ({
   baseDir,
@@ -16,6 +20,8 @@ export const playgroundMiddlewareFactory = ({
   logger: Logger;
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
+
+  const mainJs = readFileSync(join(__dirname, 'playground/main.js'), 'utf8');
   return function (req: Request, res: Response, next) {
     defaultQuery$ =
       defaultQuery$ ||
@@ -34,39 +40,22 @@ export const playgroundMiddlewareFactory = ({
     }
 
     defaultQuery$.then(defaultQuery => {
-      res.send(
-        `
-  <script>
-    let fakeStorageObj = {};
-    const fakeStorageInstance = {
-      getItem(key) {
-        return fakeStorageObj[key];
-      },
-      setItem(key, val) {
-        fakeStorageObj[key] = val;
-      },
-      clear() {
-        fakeStorageObj = {};
-      },
-      key(i) {
-        return Object.keys(fakeStorageObj)[i];
-      },
-      removeItem(key) {
-        delete fakeStorageObj[key];
-      },
-      get length() {
-        return Object.keys(fakeStorageObj).length;
-      }
-    };
-    Object.defineProperty(window, 'localStorage', {
-      value: fakeStorageInstance,
-    });
-  </script>` +
-          renderGraphiQL({
-            defaultQuery,
-            endpoint: graphqlPath,
-          })
-      );
+      res.send(`
+        <html>
+        <head>
+          <title>GraphQL Mesh</title>
+        </head>
+        <body>
+          <script>
+            window.defaultQuery = ${JSON.stringify(defaultQuery)};
+            window.endpoint = ${JSON.stringify(graphqlPath)};
+          </script>
+          <script>
+            ${mainJs}
+          </script>
+        </body>
+      </html>
+      `);
     });
   };
 };

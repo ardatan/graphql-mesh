@@ -2,7 +2,7 @@ sources:
   - name: Example
     handler:
       jsonSchema:
-        baseUrl: http://localhost:4001
+        baseUrl: http://localhost:4002
         operationHeaders:
           Content-Type: application/json
         operations:
@@ -27,7 +27,9 @@ serve:
   handlers:
     - path: /webhooks/todo_added
       pubsubTopic: todoAdded
-  exampleQuery: ./example-queries/**/*.graphql
+
+documents:
+  - ./example-queries/**/*.graphql
 
 additionalTypeDefs: |
   directive @live on QUERY

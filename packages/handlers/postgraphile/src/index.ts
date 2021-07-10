@@ -8,7 +8,7 @@ import {
   Logger,
   ImportFn,
 } from '@graphql-mesh/types';
-import { Plugin } from 'postgraphile';
+import { Plugin, withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
 import { join } from 'path';
@@ -16,6 +16,7 @@ import { tmpdir } from 'os';
 import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import FederationPlugin from '@graphile/federation';
+import { execute, ExecutionArgs, getOperationAST, subscribe } from 'graphql-compose/lib/graphql';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -122,28 +123,32 @@ export default class PostGraphileHandler implements MeshHandler {
       await this.pgCache.set(cachedIntrospection);
     }
 
-    this.pubsub.subscribe('executionDone', ({ contextValue }) => contextValue.pgClient.release());
-
     return {
       schema,
-      contextBuilder: async () => {
-        // In order to prevent unnecessary connections
-        // We need to implement some kind of lazy connections
-        let pgClient$: Promise<pg.PoolClient>;
-        return {
-          pgClient: new Proxy(
-            {},
-            {
-              get: (_, pKey) => {
-                if (pKey !== 'release' && !pgClient$) {
-                  pgClient$ = pgPool.connect();
-                }
-                return (...args: any[]) => pgClient$?.then(pgClient => pgClient[pKey](...args));
+      executor: ({ document, variables, context: meshContext, rootValue, operationName }) =>
+        withPostGraphileContext(
+          {
+            pgPool,
+          },
+          async pgContext => {
+            const operationAst = getOperationAST(document, operationName);
+            const executionArgs: ExecutionArgs = {
+              schema,
+              document,
+              variableValues: variables,
+              contextValue: {
+                ...meshContext,
+                ...pgContext,
               },
+              rootValue,
+              operationName,
+            };
+            if (operationAst.operation === 'subscription') {
+              return subscribe(executionArgs) as any;
             }
-          ),
-        };
-      },
+            return execute(executionArgs) as any;
+          }
+        ) as any,
     };
   }
 }

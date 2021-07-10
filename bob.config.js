@@ -1,3 +1,3 @@
 module.exports = {
-  ignore: ['@graphql-mesh/container'],
+  ignore: ['@graphql-mesh/container', '@graphql-mesh/playground'],
 };

@@ -162,7 +162,13 @@ export function resolveAdditionalResolvers(
                 const result = await context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
                   additionalResolver.sourceFieldName
                 ](options);
-                return additionalResolver.result ? _.get(result, additionalResolver.result) : result;
+                if (additionalResolver.result) {
+                  if (Array.isArray(additionalResolver.result)) {
+                    return result.map((elem: any) => _.get(elem, additionalResolver.result));
+                  }
+                  return _.get(result, additionalResolver.result);
+                }
+                return result;
               },
             },
           },
