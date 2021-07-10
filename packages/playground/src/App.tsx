@@ -99,7 +99,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
               label="Explorer"
               title="Toggle Explorer"
             />
-            <GraphiQL.Button onClick={() => copyToClipboard(query)} label="Copy Operation" title="Copy Operation" />
+            <GraphiQL.Button onClick={() => copyToClipboard(query!)} label="Copy Operation" title="Copy Operation" />
           </GraphiQL.Toolbar>
         </GraphiQL>
       </div>

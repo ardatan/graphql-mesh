@@ -17,7 +17,7 @@ import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import FederationPlugin from '@graphile/federation';
 import { execute, ExecutionArgs, getOperationAST, subscribe } from 'graphql';
-import PgManyToManyPlugin from '@graphql-contrib/pg-many-to-many';
+import PgManyToManyPlugin from '@graphile-contrib/pg-many-to-many';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
