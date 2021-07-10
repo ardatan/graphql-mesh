@@ -17,7 +17,7 @@ import { IResolvers, Source } from '@graphql-tools/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { KeyValueCache } from 'fetchache';
-import { DocumentNode } from 'graphql';
+import { DocumentNode, print } from 'graphql';
 import {
   getPackage,
   resolveAdditionalTypeDefs,
@@ -272,7 +272,11 @@ export async function processConfig(
       }) || []
     ),
     resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
-      codes.push(`const additionalTypeDefs = ${JSON.stringify(additionalTypeDefs)} as any;`);
+      codes.push(
+        `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
+          parsedTypeDefs => `parse(/* GraphQL */\`${print(parsedTypeDefs)}\`),`
+        )}] as any[];`
+      );
       return additionalTypeDefs;
     }),
     resolveAdditionalResolvers(

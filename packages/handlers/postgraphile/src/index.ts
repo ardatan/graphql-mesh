@@ -98,7 +98,7 @@ export default class PostGraphileHandler implements MeshHandler {
     });
 
     // This will bring Federation and Type Merging support
-    appendPlugins.push(FederationPlugin);
+    appendPlugins.push((FederationPlugin as any).default || FederationPlugin);
 
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,

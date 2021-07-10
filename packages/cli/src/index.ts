@@ -12,6 +12,7 @@ import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { createRequire } from 'module';
+import { parse } from 'graphql';
 
 export { generateTsArtifacts, serveMesh };
 
@@ -99,7 +100,11 @@ export async function graphqlMesh() {
             argsPort: args.port,
             getMeshOptions,
             rawConfig: builtMeshArtifacts.rawConfig,
-            documents: builtMeshArtifacts.documents,
+            documents: builtMeshArtifacts.documentsInSDL.map((documentSdl: string, i: number) => ({
+              rawSDL: documentSdl,
+              document: parse(documentSdl),
+              location: `document_${i}.graphql`,
+            })),
           });
         } catch (e) {
           handleFatalError(e, logger);

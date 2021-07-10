@@ -170,6 +170,7 @@ export async function generateTsArtifacts({
             .join(' & ')} & BaseMeshContext;`;
 
           const importCodes = [
+            `import { parse } from 'graphql';`,
             `import { getMesh } from '@graphql-mesh/runtime';`,
             `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
             `import { cwd } from 'process';`,
@@ -218,7 +219,9 @@ const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
 
 ${meshConfigCode}
 
-export const documents = /*#__PURE__*/ ${JSON.stringify(documents)} as any;
+export const documentsInSDL = /*#__PURE__*/ [${documents.map(
+            documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
+          )}];
 
 export function getBuiltMesh() {
   const meshConfig = getMeshOptions();
