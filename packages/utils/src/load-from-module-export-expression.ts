@@ -21,11 +21,7 @@ export async function loadFromModuleExportExpression<T>(
   const [modulePath, exportName = defaultExportName] = expression.split('#');
   const mod = await tryImport(modulePath, cwd, importFn);
 
-  if (exportName === 'default' || !exportName) {
-    return mod.default || mod;
-  } else {
-    return mod[exportName] || (mod.default && mod.default[exportName]);
-  }
+  return mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod;
 }
 
 async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
@@ -72,11 +68,7 @@ export function loadFromModuleExportExpressionSync<T>(
   const [modulePath, exportName = defaultExportName] = expression.split('#');
   const mod = tryImportSync(modulePath, cwd, syncImportFn);
 
-  if (exportName === 'default' || !exportName) {
-    return mod.default || mod;
-  } else {
-    return mod[exportName] || (mod.default && mod.default[exportName]);
-  }
+  return mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod;
 }
 
 function tryImportSync(modulePath: string, cwd: string, syncImportFn: SyncImportFn) {
