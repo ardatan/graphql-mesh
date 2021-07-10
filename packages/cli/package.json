@@ -65,7 +65,7 @@
     "rimraf": "3.0.2",
     "yargs": "17.0.1",
     "typescript": "4.3.5",
-    "ws": "7.5.2"
+    "ws": "7.5.3"
   },
   "devDependencies": {
     "@types/cors": "2.8.12",
