@@ -17,8 +17,7 @@ import {
   jitExecutorFactory,
 } from '@graphql-mesh/utils';
 import { Executor, StitchingInfo } from '@graphql-tools/delegate';
-import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import federationToStitchingSDL from 'federation-to-stitching-sdl';
+import { stitchingDirectives, federationToStitchingSDL } from '@graphql-tools/stitching-directives';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { buildSchema, ExecutionResult, extendSchema, parse } from 'graphql';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';

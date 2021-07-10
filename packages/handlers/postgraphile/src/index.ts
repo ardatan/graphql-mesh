@@ -16,7 +16,8 @@ import { tmpdir } from 'os';
 import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import FederationPlugin from '@graphile/federation';
-import { execute, ExecutionArgs, getOperationAST, subscribe } from 'graphql-compose/lib/graphql';
+import { execute, ExecutionArgs, getOperationAST, subscribe } from 'graphql';
+import PgManyToManyPlugin from '@graphql-contrib/pg-many-to-many';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -98,8 +99,11 @@ export default class PostGraphileHandler implements MeshHandler {
       defaultExportName: 'default',
     });
 
-    // This will bring Federation and Type Merging support
+    // This brings Federation and Type Merging support
     appendPlugins.push((FederationPlugin as any).default || FederationPlugin);
+
+    // This brings Many-To-Many support
+    appendPlugins.push(PgManyToManyPlugin);
 
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,

@@ -29,7 +29,8 @@
     "@graphile/federation": "0.0.3",
     "postgraphile-core": "4.12.1",
     "postgraphile": "4.12.3",
-    "pg": "^8.6.0"
+    "pg": "^8.6.0",
+    "@graphile-contrib/pg-many-to-many": "1.0.1"
   },
   "publishConfig": {
     "access": "public",

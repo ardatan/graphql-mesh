@@ -2383,6 +2383,11 @@
   dependencies:
     purgecss "^4.0.3"
 
+"@graphile-contrib/pg-many-to-many@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@graphile-contrib/pg-many-to-many/-/pg-many-to-many-1.0.1.tgz#c6eb333c877938f7a4fda3da0ee95393b223bd08"
+  integrity sha512-gFk0OaiXtO2BGHy0QIeceBsCoq8IvjkPuCN58JR1EBOuEPduZ+siwB6/SUF70ErBUiT41+qNKgTOayQfo2tU0A==
+
 "@graphile/federation@0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@graphile/federation/-/federation-0.0.3.tgz#c2b2b62fd1b7432dd5696068572f9a69ab9b6403"
@@ -3060,15 +3065,6 @@
     "@graphql-tools/utils" "8.0.0-alpha-bbb5746f.0"
     tslib "~2.3.0"
 
-"@graphql-tools/stitching-directives@^1.1.0":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitching-directives/-/stitching-directives-1.3.3.tgz#f847f1e8bf80e67dd0b5e763f19a4c8e34ac97dd"
-  integrity sha512-G3Ia7zcoJPGQn05CKvsnBGI9xkA6+WIpJ9VfxP7LlAGnjS7be0F9tJRHF7HUSzKMXVVs4m4b1oO1IPf2cJ+mag==
-  dependencies:
-    "@graphql-tools/delegate" "^7.0.10"
-    "@graphql-tools/utils" "^7.2.4"
-    tslib "~2.2.0"
-
 "@graphql-tools/url-loader@6.1.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-6.1.0.tgz#36a7cb6270548d3e800acebc25ecf65cb8ba6214"
@@ -3158,7 +3154,7 @@
   dependencies:
     tslib "~2.3.0"
 
-"@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.1", "@graphql-tools/utils@^7.1.0", "@graphql-tools/utils@^7.1.2", "@graphql-tools/utils@^7.2.4", "@graphql-tools/utils@^7.5.0", "@graphql-tools/utils@^7.7.0", "@graphql-tools/utils@^7.7.1", "@graphql-tools/utils@^7.8.1", "@graphql-tools/utils@^7.9.0", "@graphql-tools/utils@^7.9.1":
+"@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.0.1", "@graphql-tools/utils@^7.1.0", "@graphql-tools/utils@^7.1.2", "@graphql-tools/utils@^7.5.0", "@graphql-tools/utils@^7.7.0", "@graphql-tools/utils@^7.7.1", "@graphql-tools/utils@^7.8.1", "@graphql-tools/utils@^7.9.0", "@graphql-tools/utils@^7.9.1":
   version "7.10.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.10.0.tgz#07a4cb5d1bec1ff1dc1d47a935919ee6abd38699"
   integrity sha512-d334r6bo9mxdSqZW6zWboEnnOOFRrAPVQJ7LkU8/6grglrbcu6WhwCLzHb90E94JI3TD3ricC3YGbUqIi9Xg0w==
@@ -11301,14 +11297,6 @@ fbjs@^3.0.0:
     promise "^7.1.1"
     setimmediate "^1.0.5"
     ua-parser-js "^0.7.18"
-
-federation-to-stitching-sdl@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/federation-to-stitching-sdl/-/federation-to-stitching-sdl-1.0.1.tgz#8323cc0170e8e90a610c76610ed6e99345a4f958"
-  integrity sha512-9U+CAPYhExONtnJh3KBoeXZZiAhsa4dCH2gdgUaIk3EVgeJOGa+o92TFKEULors+DKEJEXP3q/FMLvEPRTlusA==
-  dependencies:
-    "@graphql-tools/stitching-directives" "^1.1.0"
-    graphql "^15.4.0"
 
 feed@^4.2.2:
   version "4.2.2"
