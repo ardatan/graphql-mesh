@@ -2405,6 +2405,16 @@
   dependencies:
     tslib "^2.0.1"
 
+"@graphile/postgis@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@graphile/postgis/-/postgis-0.1.0.tgz#de87bf9a3742decc86841e7e00ddda89f868a929"
+  integrity sha512-67lTNvyTnng2oPU9OoA1NRvbAvS/zyTGQIK+d77OFhNi41NHNZynNVRZ+R/UpotcWVQL6rAmo2w8EkI1o4xfAg==
+  dependencies:
+    "@types/debug" "^4.1.2"
+    "@types/graphql" "^14.0.7"
+    debug "^4.1.1"
+    tslib "^1.9.3"
+
 "@graphiql/toolkit@^0.2.0":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@graphiql/toolkit/-/toolkit-0.2.2.tgz#193d570afcf686c9ee61c92054c1782b9f3c1255"
@@ -4861,6 +4871,11 @@
   resolved "https://registry.yarnpkg.com/@types/cors/-/cors-2.8.12.tgz#6b2c510a7ad7039e98e7b8d3d6598f4359e5c080"
   integrity sha512-vt+kDhq/M2ayberEtJcIN/hxXy1Pk+59g2FV/ZQceeaTyCtCucjL2Q7FXlFjtWn4n15KCr1NE2lNNFhp0lEThw==
 
+"@types/debug@^4.1.2":
+  version "4.1.6"
+  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.6.tgz#0b7018723084918a865eff99249c490505df2163"
+  integrity sha512-7fDOJFA/x8B+sO1901BmHlf5dE1cxBU8mRXj8QOEDnn16hhGJv/IHxJtZhvsabZsIMn0eLIyeOKAeqSNJJYTpA==
+
 "@types/deep-equal@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/deep-equal/-/deep-equal-1.0.1.tgz#71cfabb247c22bcc16d536111f50c0ed12476b03"
@@ -5001,7 +5016,7 @@
     "@types/koa" "*"
     graphql "^15.3.0"
 
-"@types/graphql@^14.0.0":
+"@types/graphql@^14.0.0", "@types/graphql@^14.0.7":
   version "14.5.0"
   resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.5.0.tgz#a545fb3bc8013a3547cf2f07f5e13a33642b75d6"
   integrity sha512-MOkzsEp1Jk5bXuAsHsUi6BVv0zCO+7/2PTiZMXWDSsMXvNU6w/PLMQT2vHn8hy2i0JqojPz1Sz6rsFjHtsU0lA==

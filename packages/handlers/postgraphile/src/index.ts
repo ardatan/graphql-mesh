@@ -18,6 +18,7 @@ import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import FederationPlugin from '@graphile/federation';
 import { execute, ExecutionArgs, getOperationAST, subscribe } from 'graphql';
 import PgManyToManyPlugin from '@graphile-contrib/pg-many-to-many';
+import PostgisPlugin from '@graphile/postgis';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -105,6 +106,19 @@ export default class PostGraphileHandler implements MeshHandler {
     // This brings Many-To-Many support
     appendPlugins.push(PgManyToManyPlugin);
 
+    appendPlugins.push((PostgisPlugin as any).default || PostgisPlugin);
+
+    appendPlugins.push(builder => {
+      builder.hook('GraphQLUnionType:types', (types, build, context) => {
+        const { Self } = context;
+        if (Self.name === '_Entity' && types.length === 0) {
+          return [build.getTypeByName('Query')];
+        }
+
+        return types;
+      });
+    });
+
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,
       subscriptions: 'subscriptions' in this.config ? this.config.subscriptions : true,
@@ -116,6 +130,7 @@ export default class PostGraphileHandler implements MeshHandler {
       },
       appendPlugins,
       skipPlugins,
+      simpleCollections: 'both',
       ...options,
     });
 
