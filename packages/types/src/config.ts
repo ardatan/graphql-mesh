@@ -350,6 +350,7 @@ export interface MongooseHandler {
   connectionString?: string;
   models?: MongooseModel[];
   discriminators?: MongooseModel[];
+  autoTypeMerging?: boolean;
 }
 export interface MongooseModel {
   name: string;

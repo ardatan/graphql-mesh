@@ -985,6 +985,9 @@
             "$ref": "#/definitions/MongooseModel"
           },
           "additionalItems": false
+        },
+        "autoTypeMerging": {
+          "type": "boolean"
         }
       }
     },

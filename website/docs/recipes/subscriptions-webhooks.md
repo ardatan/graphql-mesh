@@ -26,9 +26,11 @@ additionalTypeDefs: |
     todoAdded: Todo
   }
 additionalResolvers:
-  - type: Subscription
-    field: todoAdded
+  - targetTypeName: Subscription
+    targetFieldName: todoAdded
     pubsubTopic: todoAdded
+    # result: data.someProp.someOtherProp # You can get nested fields
+    # filterBy: root.userId === args.userId # You can filter the payload by `userId` for example
 ```
 
 We're able to use existing types from our unified schema, and this root field is subscribed to our specific `topic` in our PubSub service.
@@ -59,6 +61,7 @@ serve:
   handlers:
     - path: /webhooks/todo_added
       pubsubTopic: todoAdded
+      # payload: data # you can get `data` prop of the received data
 ```
 
 `path` defines the path in our server that will receive HTTP requests as "Webhook" from our API then send it to `pubsubTopic`.

@@ -1,10 +1,10 @@
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import { SchemaComposer } from 'graphql-compose';
 import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
-import { camelCase } from 'camel-case';
 import mongoose from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { specifiedDirectives } from 'graphql';
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 const modelQueryOperations = ['findById', 'findByIds', 'findOne', 'findMany', 'count', 'connection', 'pagination'];
 
@@ -45,7 +45,6 @@ export default class MongooseHandler implements MeshHandler {
     }
 
     const schemaComposer = new SchemaComposer();
-
     await Promise.all([
       Promise.all(
         this.config.models?.map(async modelConfig => {
@@ -65,18 +64,28 @@ export default class MongooseHandler implements MeshHandler {
             Promise.all(
               modelQueryOperations.map(async queryOperation =>
                 schemaComposer.Query.addFields({
-                  [camelCase(`${modelConfig.name}_${queryOperation}`)]: modelTC.getResolver(queryOperation),
+                  [`${modelConfig.name}_${queryOperation}`]: modelTC.getResolver(queryOperation),
                 })
               )
             ),
             Promise.all(
               modelMutationOperations.map(async mutationOperation =>
                 schemaComposer.Mutation.addFields({
-                  [camelCase(`${modelConfig.name}_${mutationOperation}`)]: modelTC.getResolver(mutationOperation),
+                  [`${modelConfig.name}_${mutationOperation}`]: modelTC.getResolver(mutationOperation),
                 })
               )
             ),
           ]);
+          if (this.config.autoTypeMerging) {
+            modelTC.setDirectiveByName('key', {
+              selectionSet: /* GraphQL */ `
+                {
+                  id
+                }
+              `,
+            });
+            modelTC.setFieldDirectiveByName(`${modelConfig.name}_findByIds`, 'merge');
+          }
         }) || []
       ),
       Promise.all(
@@ -91,16 +100,14 @@ export default class MongooseHandler implements MeshHandler {
             Promise.all(
               modelQueryOperations.map(async queryOperation =>
                 schemaComposer.Query.addFields({
-                  [camelCase(`${discriminatorConfig.name}_${queryOperation}`)]:
-                    discriminatorTC.getResolver(queryOperation),
+                  [`${discriminatorConfig.name}_${queryOperation}`]: discriminatorTC.getResolver(queryOperation),
                 })
               )
             ),
             Promise.all(
               modelMutationOperations.map(async mutationOperation =>
                 schemaComposer.Mutation.addFields({
-                  [camelCase(`${discriminatorConfig.name}_${mutationOperation}`)]:
-                    discriminatorTC.getResolver(mutationOperation),
+                  [`${discriminatorConfig.name}_${mutationOperation}`]: discriminatorTC.getResolver(mutationOperation),
                 })
               )
             ),
@@ -111,6 +118,11 @@ export default class MongooseHandler implements MeshHandler {
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
+
+    if (this.config.autoTypeMerging) {
+      const defaultStitchingDirectives = stitchingDirectives();
+      defaultStitchingDirectives.allStitchingDirectives.forEach(directive => schemaComposer.addDirective(directive));
+    }
 
     const schema = schemaComposer.buildSchema();
 

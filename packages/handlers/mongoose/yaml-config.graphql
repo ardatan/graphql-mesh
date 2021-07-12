@@ -6,6 +6,7 @@ type MongooseHandler @md {
   connectionString: String
   models: [MongooseModel]
   discriminators: [MongooseModel]
+  autoTypeMerging: Boolean
 }
 
 type MongooseModel {

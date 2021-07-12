@@ -26,11 +26,11 @@ sources:
 > You can check out our example that uses schema stitching with a PostgreSQL datasource.
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
 
-### External Plugins (e.g. ConnectionFilterPlugin)
-You can add [PostGraphile plugins](https://www.graphile.org/postgraphile/community-plugins/) for example ConnectionFilterPlugin. You can install it using npm or yarn like below;
+## External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)
+You can add [PostGraphile plugins](https://www.graphile.org/postgraphile/community-plugins/) for example FederationPlugin. You can install it using npm or yarn like below;
 
 ```sh
-yarn add postgraphile-plugin-connection-filter
+yarn add @graphile/federation
 ```
 
 and add those in your configuration file;
@@ -41,13 +41,22 @@ sources:
     handler:
       postgraphile:
         connectionString: postgres://postgres:password@localhost/postgres
-        plugins:
-          - "postgraphile-plugin-connection-filter"
+        appendPlugins:
+          - "@graphile/federation"
 ```
 
-> You don't need to have Federation plugin because it is already added by GraphQL Mesh.
-
 [Learn more about PostGraphile plugins](https://www.graphile.org/postgraphile/extending/)
+
+### Federation and Automatic Type Merging support
+Federation plugin converts your Postgraphile schema into a federated schema that can also be recognized by Stitching and this brings Automatic Type Merging. So you can install `@graphile/federation` package like above and add it under `appendPlugins`
+
+### Many-to-Many support
+If you want to have automatic many-to-many mapping across your entities. You can install `@graphile-contrib/pg-many-to-many` with `yarn add @graphile-contrib/pg-many-to-many` and add it under `appendPlugins`
+
+### PostGIS Support
+If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile/postgis` package and add it under `appendPlugins`.
+
+> See more [plugins](https://www.graphile.org/postgraphile/community-plugins/) to improve the experience!
 
 ## Config API Reference
 

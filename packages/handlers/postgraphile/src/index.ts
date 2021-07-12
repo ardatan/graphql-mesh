@@ -15,10 +15,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import FederationPlugin from '@graphile/federation';
 import { execute, ExecutionArgs, getOperationAST, subscribe } from 'graphql';
-import PgManyToManyPlugin from '@graphile-contrib/pg-many-to-many';
-import PostgisPlugin from '@graphile/postgis';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -98,25 +95,6 @@ export default class PostGraphileHandler implements MeshHandler {
       cwd: this.baseDir,
       importFn: this.importFn,
       defaultExportName: 'default',
-    });
-
-    // This brings Federation and Type Merging support
-    appendPlugins.push((FederationPlugin as any).default || FederationPlugin);
-
-    // This brings Many-To-Many support
-    appendPlugins.push(PgManyToManyPlugin);
-
-    appendPlugins.push((PostgisPlugin as any).default || PostgisPlugin);
-
-    appendPlugins.push(builder => {
-      builder.hook('GraphQLUnionType:types', (types, build, context) => {
-        const { Self } = context;
-        if (Self.name === '_Entity' && types.length === 0) {
-          return [build.getTypeByName('Query')];
-        }
-
-        return types;
-      });
     });
 
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
