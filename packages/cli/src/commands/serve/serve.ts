@@ -139,7 +139,7 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
             defaultExportName: 'default',
             importFn: m => import(m),
           });
-          app[handlerConfig.method.toLowerCase() || 'use'](handlerConfig.path, handlerFn);
+          app[handlerConfig.method?.toLowerCase() || 'use'](handlerConfig.path, handlerFn);
         } else if ('pubsubTopic' in handlerConfig) {
           app.use(handlerConfig.path, (req, res) => {
             let payload = req.body;

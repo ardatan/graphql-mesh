@@ -9,6 +9,28 @@ import GraphiQLExplorer from 'graphiql-explorer';
 import 'graphiql/graphiql.css';
 import './App.css';
 
+let fakeStorageObj = {};
+const fakeStorageInstance: Storage = {
+  getItem(key) {
+    return fakeStorageObj[key];
+  },
+  setItem(key, val) {
+    fakeStorageObj[key] = val;
+  },
+  clear() {
+    fakeStorageObj = {};
+  },
+  key(i) {
+    return Object.keys(fakeStorageObj)[i];
+  },
+  removeItem(key) {
+    delete fakeStorageObj[key];
+  },
+  get length() {
+    return Object.keys(fakeStorageObj).length;
+  },
+};
+
 const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuery = '', endpoint }) => {
   const urlLoader = new UrlLoader();
   const [fetcher, setFetcher] = useState<Fetcher | null>(null);
@@ -81,6 +103,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
           onEditOperationName={operationName => setOperationName(operationName)}
           headers={headers}
           onEditHeaders={headers => setHeaders(headers)}
+          storage={fakeStorageInstance}
         >
           <GraphiQL.Logo>GraphQL Mesh</GraphiQL.Logo>
           <GraphiQL.Toolbar>
