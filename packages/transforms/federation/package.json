@@ -29,7 +29,7 @@
     "graphql-transform-federation": "2.2.0",
     "lodash": "4.17.21",
     "@graphql-tools/utils": "8.0.0-alpha-fed00e3c.0",
-    "@graphql-tools/stitching-directives": "1.4.0-alpha-fed00e3c.0",
+    "@graphql-tools/stitching-directives": "2.0.0-alpha-c42e811d.0",
     "@graphql-tools/delegate": "8.0.0-alpha-fed00e3c.0"
   },
   "publishConfig": {
