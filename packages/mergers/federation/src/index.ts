@@ -91,7 +91,7 @@ export default class FederationMerger implements MeshMerger {
     this.logger.debug(`Wrapping gateway executor in a unified schema`);
     remoteSchema = wrapSchema({
       schema: remoteSchema,
-      executor: ({ document, info, variables, context }): any => {
+      executor: ({ document, info, variables, context, operationName }): any => {
         const documentStr = print(document);
         const { operation } = info;
         // const operationName = operation.name?.value;
@@ -99,10 +99,10 @@ export default class FederationMerger implements MeshMerger {
           document,
           request: {
             query: documentStr,
-            operationName: undefined,
+            operationName,
             variables,
           },
-          operationName: undefined,
+          operationName,
           cache: this.cache,
           context,
           queryHash: documentStr,
@@ -114,6 +114,7 @@ export default class FederationMerger implements MeshMerger {
           schemaHash,
         });
       },
+      batch: true,
     });
     this.pubsub.subscribe('destroy', () => gateway.stop());
     this.logger.debug(`Applying additionalTypeDefs`);
@@ -135,7 +136,7 @@ export default class FederationMerger implements MeshMerger {
       remoteSchema = wrapSchema({
         schema: remoteSchema,
         transforms,
-        executor: jitExecutorFactory(remoteSchema, 'wrapped', this.logger.child('JIT Executor')) as Executor,
+        batch: true,
       });
     }
     this.logger.debug(`Attaching sourceMap to the unified schema`);

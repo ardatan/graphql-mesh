@@ -15,6 +15,7 @@ export default class BareMerger implements MeshMerger {
           ...source,
           schema,
           transforms: source.transforms,
+          batch: true,
         });
       }
       sourceMap.set(source, schema);
@@ -40,6 +41,7 @@ export default class BareMerger implements MeshMerger {
       schema = wrapSchema({
         schema,
         transforms: [...wrapTransforms, ...noWrapTransforms],
+        batch: true,
       });
     } else if (noWrapTransforms.length) {
       schema = applySchemaTransforms(schema, undefined, schema, noWrapTransforms);

@@ -64,6 +64,7 @@ export default class StitchingMerger implements MeshMerger {
         ...source,
         schema,
         transforms: firstRoundTransforms,
+        batch: true,
       });
     }
     if (typeDefs || resolvers) {
@@ -85,6 +86,7 @@ export default class StitchingMerger implements MeshMerger {
         schema = wrapSchema({
           schema,
           transforms: [...wrapTransforms, ...noWrapTransforms],
+          batch: true,
         });
       } else if (noWrapTransforms.length) {
         schema = applySchemaTransforms(schema, undefined, schema, noWrapTransforms);
@@ -201,8 +203,8 @@ export default class StitchingMerger implements MeshMerger {
       if (wrapTransforms.length) {
         unifiedSchema = wrapSchema({
           schema: unifiedSchema,
-          batch: true,
           transforms: wrapTransforms,
+          batch: true,
           // executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')),
         });
       }
