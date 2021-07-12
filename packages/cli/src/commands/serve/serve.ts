@@ -24,6 +24,7 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import { env } from 'process';
 import { YamlConfig } from '@graphql-mesh/types';
 import { Source } from '@graphql-tools/utils';
+import { inspect } from 'util';
 
 const { readFile } = fsPromises;
 
@@ -133,23 +134,28 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
     await Promise.all(
       handlers?.map(async handlerConfig => {
         registeredPaths.add(handlerConfig.path);
+        let handlerFn: any;
+        const handlerLogger = getMeshOptions.logger.child(handlerConfig.path);
         if ('handler' in handlerConfig) {
-          const handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler, {
+          handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler, {
             cwd: baseDir,
             defaultExportName: 'default',
             importFn: m => import(m),
           });
-          app[handlerConfig.method?.toLowerCase() || 'use'](handlerConfig.path, handlerFn);
         } else if ('pubsubTopic' in handlerConfig) {
-          app.use(handlerConfig.path, (req, res) => {
+          handlerFn = (req: any, res: any) => {
             let payload = req.body;
+            handlerLogger.debug(`Payload received; ${inspect(payload)}`);
             if (handlerConfig.payload) {
               payload = _.get(payload, handlerConfig.payload);
+              handlerLogger.debug(`Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
             }
             req['pubsub'].publish(handlerConfig.pubsubTopic, payload);
+            handlerLogger.debug(`Payload sent to ${handlerConfig.pubsubTopic}`);
             res.end();
-          });
+          };
         }
+        app[handlerConfig.method?.toLowerCase() || 'use'](handlerConfig.path, handlerFn);
       }) || []
     );
 

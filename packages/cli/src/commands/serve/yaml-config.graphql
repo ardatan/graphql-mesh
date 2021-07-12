@@ -107,6 +107,10 @@ type WebhookHandler {
   """
   path: String!
   """
+  HTTP Method that the handler will control
+  """
+  method: ExpressHandlerMethod
+  """
   Name of the topic you want to pass incoming payload
   """
   pubsubTopic: String!

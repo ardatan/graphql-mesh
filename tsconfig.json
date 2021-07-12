@@ -24,6 +24,8 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
 
+    "allowJs": true,
+
     "paths": {
       "@graphql-mesh/cli": ["packages/cli/src/index.ts"],
       "@graphql-mesh/runtime": ["packages/runtime/src/index.ts"],

@@ -26,6 +26,7 @@ serve:
   port: 4000
   handlers:
     - path: /webhooks/todo_added
+      method: POST
       pubsubTopic: todoAdded
 
 documents:

@@ -260,6 +260,11 @@
           "type": "string",
           "description": "Path that remote API will ping"
         },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "DELETE", "PATCH"],
+          "description": "HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)"
+        },
         "pubsubTopic": {
           "type": "string",
           "description": "Name of the topic you want to pass incoming payload"

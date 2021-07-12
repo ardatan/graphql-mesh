@@ -118,6 +118,10 @@ export interface WebhookHandler {
    */
   path: string;
   /**
+   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
+   */
+  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
+  /**
    * Name of the topic you want to pass incoming payload
    */
   pubsubTopic: string;

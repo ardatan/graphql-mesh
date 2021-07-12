@@ -187,12 +187,15 @@ export default class JsonSchemaHandler implements MeshHandler {
 
       if (operationConfig.pubsubTopic) {
         field.subscribe = (root, args, context, info) => {
-          operationLogger.debug(`=> Subscribing to pubSubTopic: ${operationConfig.pubsubTopic}`);
           const interpolationData = { root, args, context, info, env };
           const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
+          operationLogger.debug(`=> Subscribing to pubSubTopic: ${pubsubTopic}`);
           return this.pubsub.asyncIterator(pubsubTopic);
         };
-        field.resolve = root => root;
+        field.resolve = root => {
+          operationLogger.debug(`Received ${inspect(root)} from ${operationConfig.pubsubTopic}`);
+          return root;
+        };
       } else if (operationConfig.path) {
         const resolveDataByUnionInputType = (data: any, type: GraphQLInputType): any => {
           if (data) {
