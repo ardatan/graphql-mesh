@@ -1,5 +1,5 @@
 mutation CreateUser {
-  userCreateOne(
+  user_createOne(
     record: {
       name: "John Doe"
       age: 25

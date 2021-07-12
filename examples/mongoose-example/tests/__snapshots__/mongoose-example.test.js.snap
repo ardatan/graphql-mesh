@@ -6857,7 +6857,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userCreateMany",
+            "name": "User_createMany",
             "type": Object {
               "kind": "OBJECT",
               "name": "CreateManyUserPayload",
@@ -6884,7 +6884,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userCreateOne",
+            "name": "User_createOne",
             "type": Object {
               "kind": "OBJECT",
               "name": "CreateOneUserPayload",
@@ -6911,7 +6911,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userRemoveById",
+            "name": "User_removeById",
             "type": Object {
               "kind": "OBJECT",
               "name": "RemoveByIdUserPayload",
@@ -6949,7 +6949,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userRemoveMany",
+            "name": "User_removeMany",
             "type": Object {
               "kind": "OBJECT",
               "name": "RemoveManyUserPayload",
@@ -6983,7 +6983,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userRemoveOne",
+            "name": "User_removeOne",
             "type": Object {
               "kind": "OBJECT",
               "name": "RemoveOneUserPayload",
@@ -7025,7 +7025,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userUpdateById",
+            "name": "User_updateById",
             "type": Object {
               "kind": "OBJECT",
               "name": "UpdateByIdUserPayload",
@@ -7096,7 +7096,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userUpdateMany",
+            "name": "User_updateMany",
             "type": Object {
               "kind": "OBJECT",
               "name": "UpdateManyUserPayload",
@@ -7156,7 +7156,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userUpdateOne",
+            "name": "User_updateOne",
             "type": Object {
               "kind": "OBJECT",
               "name": "UpdateOneUserPayload",
@@ -7393,7 +7393,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userConnection",
+            "name": "User_connection",
             "type": Object {
               "kind": "OBJECT",
               "name": "UserConnection",
@@ -7416,7 +7416,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userCount",
+            "name": "User_count",
             "type": Object {
               "kind": "SCALAR",
               "name": "Int",
@@ -7443,7 +7443,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userFindById",
+            "name": "User_findById",
             "type": Object {
               "kind": "OBJECT",
               "name": "User",
@@ -7500,7 +7500,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userFindByIds",
+            "name": "User_findByIds",
             "type": Object {
               "kind": "NON_NULL",
               "name": null,
@@ -7568,7 +7568,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userFindMany",
+            "name": "User_findMany",
             "type": Object {
               "kind": "NON_NULL",
               "name": null,
@@ -7625,7 +7625,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userFindOne",
+            "name": "User_findOne",
             "type": Object {
               "kind": "OBJECT",
               "name": "User",
@@ -7681,7 +7681,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "userPagination",
+            "name": "User_pagination",
             "type": Object {
               "kind": "OBJECT",
               "name": "UserPagination",
