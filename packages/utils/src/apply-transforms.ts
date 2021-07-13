@@ -1,6 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionResult, Request } from '@graphql-tools/utils';
+import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 
 export function applySchemaTransforms(
   originalWrappingSchema: GraphQLSchema,
@@ -15,7 +15,7 @@ export function applySchemaTransforms(
   );
 }
 export function applyRequestTransforms(
-  originalRequest: Request,
+  originalRequest: ExecutionRequest,
   delegationContext: DelegationContext,
   transformationContext: Record<string, any>,
   transforms: Transform[]

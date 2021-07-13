@@ -9,7 +9,7 @@ import {
   TransformEnumValues,
   RenameInterfaceFields,
 } from '@graphql-tools/wrap';
-import { ExecutionResult, Request } from '@graphql-tools/utils';
+import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
@@ -90,7 +90,7 @@ export default class NamingConventionTransform implements MeshTransform {
   }
 
   transformRequest(
-    originalRequest: Request,
+    originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
     transformationContext: Record<string, any>
   ) {

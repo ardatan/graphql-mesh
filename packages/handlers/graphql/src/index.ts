@@ -19,7 +19,7 @@ import {
   getCachedFetch,
   readFileOrUrlWithCache,
 } from '@graphql-mesh/utils';
-import { ExecutionParams, AsyncExecutor } from '@graphql-tools/delegate';
+import { ExecutionRequest } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { env } from 'process';
 
@@ -78,7 +78,7 @@ export default class GraphQLHandler implements MeshHandler {
     }
     const urlLoader = new UrlLoader();
     const getExecutorForParams = (
-      params: ExecutionParams,
+      params: ExecutionRequest,
       headersFactory: ResolverDataBasedFactory<Headers>,
       endpointFactory: ResolverDataBasedFactory<string>
     ) => {
@@ -111,10 +111,10 @@ export default class GraphQLHandler implements MeshHandler {
       schemaHeaders = await schemaHeaders;
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
-    const introspectionExecutor: AsyncExecutor = async (params): Promise<any> => {
+    async function introspectionExecutor(params: ExecutionRequest) {
       const executor = await getExecutorForParams(params, schemaHeadersFactory, () => endpoint);
       return executor(params);
-    };
+    }
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     const endpointFactory = getInterpolatedStringFactory(endpoint);
 

@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { RenameTypes, RenameRootFields } from '@graphql-tools/wrap';
-import { ExecutionResult, Request } from '@graphql-tools/utils';
+import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
@@ -47,7 +47,7 @@ export default class PrefixTransform implements MeshTransform {
   }
 
   transformRequest(
-    originalRequest: Request,
+    originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
     transformationContext: Record<string, any>
   ) {

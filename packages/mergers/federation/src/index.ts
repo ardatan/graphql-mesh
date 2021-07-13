@@ -7,12 +7,21 @@ import {
   MeshPubSub,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import { GraphQLSchema, print, extendSchema, DocumentNode, parse, execute } from 'graphql';
+import {
+  GraphQLSchema,
+  print,
+  extendSchema,
+  DocumentNode,
+  parse,
+  execute,
+  ExecutionResult,
+  getOperationAST,
+} from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { hashObject, jitExecutorFactory, AggregateError } from '@graphql-mesh/utils';
-import { asArray, Executor } from '@graphql-tools/utils';
+import { asArray } from '@graphql-tools/utils';
 import { env } from 'process';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 
@@ -68,15 +77,22 @@ export default class FederationMerger implements MeshMerger {
         const transformedSchema = sourceMap.get(rawSource);
         const jitExecute = jitExecutorFactory(transformedSchema, name, this.logger.child('JIT Executor'));
         return {
-          async process({ request, context }) {
+          async process({ request: { query, variables, operationName, extensions }, context }) {
+            const document = parse(query);
+            const operationAst = getOperationAST(document, operationName);
+            if (!operationAst) {
+              throw new Error(`Operation ${operationName} cannot be found!`);
+            }
+            const operationType = operationAst.operation;
             return jitExecute({
-              document: parse(request.query),
-              variables: request.variables,
-              operationName: request.operationName,
-              extensions: request.extensions,
+              document: parse(query),
+              variables,
+              operationName,
+              extensions,
               context,
               rootValue,
-            });
+              operationType,
+            }) as ExecutionResult;
           },
         };
       },

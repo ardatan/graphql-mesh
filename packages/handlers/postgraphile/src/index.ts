@@ -15,7 +15,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import { execute, ExecutionArgs, getOperationAST, subscribe } from 'graphql';
+import { execute, ExecutionArgs, subscribe } from 'graphql';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -122,13 +122,12 @@ export default class PostGraphileHandler implements MeshHandler {
 
     return {
       schema,
-      executor: ({ document, variables, context: meshContext, rootValue, operationName }) =>
+      executor: ({ document, variables, context: meshContext, rootValue, operationName, operationType }) =>
         withPostGraphileContext(
           {
             pgPool,
           },
           async pgContext => {
-            const operationAst = getOperationAST(document, operationName);
             const executionArgs: ExecutionArgs = {
               schema,
               document,
@@ -140,7 +139,7 @@ export default class PostGraphileHandler implements MeshHandler {
               rootValue,
               operationName,
             };
-            if (operationAst.operation === 'subscription') {
+            if (operationType === 'subscription') {
               return subscribe(executionArgs) as any;
             }
             return execute(executionArgs) as any;

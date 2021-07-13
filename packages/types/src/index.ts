@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
-import { IResolvers } from '@graphql-tools/utils';
+import { IResolvers, Executor } from '@graphql-tools/utils';
 import {
   GraphQLSchema,
   GraphQLResolveInfo,
@@ -10,7 +10,7 @@ import {
 } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
-import { Executor, Transform, MergedTypeConfig } from '@graphql-tools/delegate';
+import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 

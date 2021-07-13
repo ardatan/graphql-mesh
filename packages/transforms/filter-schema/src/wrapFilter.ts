@@ -1,7 +1,7 @@
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionResult, pruneSchema, Request } from '@graphql-tools/utils';
+import { ExecutionResult, pruneSchema, ExecutionRequest } from '@graphql-tools/utils';
 import {
   FilterRootFields,
   FilterObjectFields,
@@ -120,7 +120,7 @@ export default class WrapFilter implements MeshTransform {
   }
 
   transformRequest(
-    originalRequest: Request,
+    originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
     transformationContext: Record<string, any>
   ) {

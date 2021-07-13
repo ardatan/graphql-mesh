@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { WrapType } from '@graphql-tools/wrap';
-import { ExecutionResult, Request, selectObjectFields } from '@graphql-tools/utils';
+import { ExecutionResult, ExecutionRequest, selectObjectFields } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
@@ -59,7 +59,7 @@ export default class EncapsulateTransform implements MeshTransform {
   }
 
   transformRequest(
-    originalRequest: Request,
+    originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
     transformationContext: Record<string, any>
   ) {

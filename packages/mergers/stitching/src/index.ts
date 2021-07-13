@@ -16,11 +16,12 @@ import {
   asArray,
   jitExecutorFactory,
 } from '@graphql-mesh/utils';
-import { Executor, StitchingInfo } from '@graphql-tools/delegate';
+import { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchingDirectives, federationToStitchingSDL } from '@graphql-tools/stitching-directives';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { buildSchema, ExecutionResult, extendSchema, parse } from 'graphql';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import { Executor } from '@graphql-tools/utils';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
   query __ApolloGetServiceDefinition__ {
@@ -129,6 +130,7 @@ export default class StitchingMerger implements MeshMerger {
               this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
               const sdlQueryResult = (await rawSource.executor({
                 document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
+                operationType: 'query',
               })) as ExecutionResult;
               if (sdlQueryResult.errors?.length) {
                 throw new AggregateError(

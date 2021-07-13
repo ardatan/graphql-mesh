@@ -1,5 +1,5 @@
 import copyToClipboard from 'copy-to-clipboard';
-import { GraphQLSchema, parse } from 'graphql';
+import { getOperationAST, GraphQLSchema, parse } from 'graphql';
 import GraphiQL, { Fetcher, FetcherResult } from 'graphiql';
 import React, { useEffect, useState } from 'react';
 import { SubscriptionProtocol, UrlLoader } from '@graphql-tools/url-loader';
@@ -54,15 +54,20 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
             schemaDescription: true,
           }
         ).then(schema => setSchema(schema));
-        setFetcher(
-          () => (graphQLParams, opts) =>
-            executor({
-              document: parse(graphQLParams.query),
-              variables: graphQLParams.variables,
-              extensions: opts,
-              operationName: graphQLParams.operationName,
-            }) as FetcherResult
-        );
+        setFetcher(() => (graphQLParams, opts) => {
+          const document = parse(graphQLParams.query);
+          const operationAst = getOperationAST(document, graphQLParams.operationName);
+          if (!operationAst) {
+            throw new Error(`Operation ${graphQLParams.operationName} cannot be found!`);
+          }
+          return executor({
+            document: parse(graphQLParams.query),
+            variables: graphQLParams.variables,
+            extensions: opts,
+            operationName: graphQLParams.operationName,
+            operationType: operationAst.operation,
+          }) as FetcherResult;
+        });
       });
   }, []);
 

@@ -115,12 +115,18 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     includeIdentifierExtension: true,
     execute: (args: any) => {
       const { document, contextValue, variableValues, rootValue, operationName }: ExecutionArgs = args;
+      const operationAst = getOperationAST(document, operationName);
+      if (!operationAst) {
+        throw new Error(`Operation ${operationName} cannot be found!`);
+      }
+      const operationType = operationAst.operation;
       return jitExecutor({
         document,
         context: contextValue,
         variables: variableValues,
         operationName,
         rootValue,
+        operationType,
       }) as ExecutionResult;
     },
   });
