@@ -36,8 +36,6 @@ import {
   GraphQLISO8601Duration,
 } from 'graphql-scalars';
 import {
-  isListType,
-  GraphQLResolveInfo,
   isAbstractType,
   GraphQLObjectType,
   GraphQLSchema,
@@ -54,70 +52,12 @@ import { pruneSchema } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
+import { SCALARS } from './scalars';
+import { queryOptionsFields } from './query-options';
+import { getUrlString, addIdentifierToUrl } from './util';
+import { EntityTypeExtensions } from './schema-util';
+import { handleResponseText } from './request-processing';
 
-const SCALARS = new Map<string, string>([
-  ['Edm.Binary', 'String'],
-  ['Edm.Stream', 'String'],
-  ['Edm.String', 'String'],
-  ['Edm.Int16', 'Int'],
-  ['Edm.Byte', 'Byte'],
-  ['Edm.Int32', 'Int'],
-  ['Edm.Int64', 'BigInt'],
-  ['Edm.Double', 'Float'],
-  ['Edm.Boolean', 'Boolean'],
-  ['Edm.Guid', 'GUID'],
-  ['Edm.DateTimeOffset', 'DateTime'],
-  ['Edm.Date', 'Date'],
-  ['Edm.TimeOfDay', 'String'],
-  ['Edm.Single', 'Float'],
-  ['Edm.Duration', 'ISO8601Duration'],
-  ['Edm.Decimal', 'Float'],
-  ['Edm.SByte', 'Byte'],
-  ['Edm.GeographyPoint', 'String'],
-]);
-
-interface EntityTypeExtensions {
-  entityInfo: {
-    actualFields: string[];
-    navigationFields: string[];
-    identifierFieldName?: string;
-    identifierFieldTypeRef?: string;
-    isOpenType: boolean;
-  };
-  typeObj: any;
-  eventEmitter: EventEmitter;
-}
-
-const queryOptionsFields = {
-  orderby: {
-    type: 'String',
-    description:
-      'A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.',
-  },
-  top: {
-    type: 'Int',
-    description:
-      'A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.',
-  },
-  skip: {
-    type: 'Int',
-    description:
-      'A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.',
-  },
-  filter: {
-    type: 'String',
-    description:
-      'A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.',
-  },
-  inlinecount: {
-    type: 'InlineCount',
-    description:
-      'A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.',
-  },
-  count: {
-    type: 'Boolean',
-  },
-};
 
 export default class ODataHandler implements MeshHandler {
   private name: string;
@@ -251,133 +191,6 @@ export default class ODataHandler implements MeshHandler {
       return realTypeName;
     }
 
-    function getUrlString(url: URL) {
-      return decodeURIComponent(url.toString()).split('+').join(' ');
-    }
-
-    function handleResponseText(responseText: string, urlString: string, info: GraphQLResolveInfo) {
-      let responseJson: any;
-      try {
-        responseJson = JSON.parse(responseText);
-      } catch (error) {
-        const actualError = new Error(responseText);
-        Object.assign(actualError, {
-          extensions: {
-            url: urlString,
-          },
-        });
-        throw actualError;
-      }
-      if (responseJson.error) {
-        const actualError = new Error(responseJson.error.message || responseJson.error) as any;
-        actualError.extensions = responseJson.error;
-        throw actualError;
-      }
-      const urlStringWithoutSearchParams = urlString.split('?')[0];
-      if (isListType(info.returnType)) {
-        const actualReturnType: GraphQLObjectType = info.returnType.ofType;
-        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
-        if ('Message' in responseJson && !('value' in responseJson)) {
-          const error = new Error(responseJson.Message);
-          Object.assign(error, { extensions: responseJson });
-          throw error;
-        }
-        const returnList: any[] = responseJson.value;
-        return returnList.map(element => {
-          if (!entityTypeExtensions?.entityInfo) {
-            return element;
-          }
-          const urlOfElement = new URL(urlStringWithoutSearchParams);
-          addIdentifierToUrl(
-            urlOfElement,
-            entityTypeExtensions.entityInfo.identifierFieldName,
-            entityTypeExtensions.entityInfo.identifierFieldTypeRef,
-            element
-          );
-          const identifierUrl = element['@odata.id'] || getUrlString(urlOfElement);
-          const fieldMap = actualReturnType.getFields();
-          for (const fieldName in element) {
-            if (entityTypeExtensions.entityInfo.navigationFields.includes(fieldName)) {
-              const field = element[fieldName];
-              let fieldType = fieldMap[fieldName].type;
-              if ('ofType' in fieldType) {
-                fieldType = fieldType.ofType;
-              }
-              const { entityInfo: fieldEntityInfo } = (fieldType as any).extensions as EntityTypeExtensions;
-              if (field instanceof Array) {
-                for (const fieldElement of field) {
-                  const urlOfField = new URL(urljoin(identifierUrl, fieldName));
-                  addIdentifierToUrl(
-                    urlOfField,
-                    fieldEntityInfo.identifierFieldName,
-                    fieldEntityInfo.identifierFieldTypeRef,
-                    fieldElement
-                  );
-                  fieldElement['@odata.id'] = fieldElement['@odata.id'] || getUrlString(urlOfField);
-                }
-              } else {
-                const urlOfField = new URL(urljoin(identifierUrl, fieldName));
-                addIdentifierToUrl(
-                  urlOfField,
-                  fieldEntityInfo.identifierFieldName,
-                  fieldEntityInfo.identifierFieldTypeRef,
-                  field
-                );
-                field['@odata.id'] = field['@odata.id'] || getUrlString(urlOfField);
-              }
-            }
-          }
-          return {
-            '@odata.id': identifierUrl,
-            ...element,
-          };
-        });
-      } else {
-        const actualReturnType = info.returnType as GraphQLObjectType;
-        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
-        if (!entityTypeExtensions?.entityInfo) {
-          return responseJson;
-        }
-        const identifierUrl = responseJson['@odata.id'] || urlStringWithoutSearchParams;
-        const fieldMap = actualReturnType.getFields();
-        for (const fieldName in responseJson) {
-          if (entityTypeExtensions?.entityInfo.navigationFields.includes(fieldName)) {
-            const field = responseJson[fieldName];
-            let fieldType = fieldMap[fieldName].type;
-            if ('ofType' in fieldType) {
-              fieldType = fieldType.ofType;
-            }
-            const { entityInfo: fieldEntityInfo } = (fieldType as any).extensions as EntityTypeExtensions;
-            if (field instanceof Array) {
-              for (const fieldElement of field) {
-                const urlOfField = new URL(urljoin(identifierUrl, fieldName));
-                addIdentifierToUrl(
-                  urlOfField,
-                  fieldEntityInfo.identifierFieldName,
-                  fieldEntityInfo.identifierFieldTypeRef,
-                  fieldElement
-                );
-                fieldElement['@odata.id'] = fieldElement['@odata.id'] || getUrlString(urlOfField);
-              }
-            } else {
-              const urlOfField = new URL(urljoin(identifierUrl, fieldName));
-              addIdentifierToUrl(
-                urlOfField,
-                fieldEntityInfo.identifierFieldName,
-                fieldEntityInfo.identifierFieldTypeRef,
-                field
-              );
-              field['@odata.id'] = field['@odata.id'] || getUrlString(urlOfField);
-            }
-          }
-        }
-        return {
-          '@odata.id': responseJson['@odata.id'] || urlStringWithoutSearchParams,
-          ...responseJson,
-        };
-      }
-    }
-
     schemaComposer.createEnumTC({
       name: 'InlineCount',
       values: {
@@ -422,10 +235,6 @@ export default class ODataHandler implements MeshHandler {
         } catch {}
       }
       return null;
-    }
-
-    function addIdentifierToUrl(url: URL, identifierFieldName: string, identifierFieldTypeRef: string, args: any) {
-      url.href += `/${args[identifierFieldName]}/`;
     }
 
     function rebuildOpenInputObjects(input: any) {
