@@ -9,7 +9,7 @@ import { getUrlString, addIdentifierToUrl } from "./util";
 import urljoin from 'url-join';
 import { ResolverData } from "@graphql-mesh/types";
 
-type HeadersFactory = (resolverData: ResolverData, method: string) => Headers;
+export type HeadersFactory = (resolverData: ResolverData, method: string) => Headers;
 type DataLoaderFactory = (context: any) => DataLoader<Request, Response, Request>;
 type DataLoaderType = 'multipart' | 'json' | 'none';
 
