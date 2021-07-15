@@ -4,8 +4,8 @@ import { parseResponse } from 'http-string-parser';
 import { getCachedFetch, jsonFlatStringify } from "@graphql-mesh/utils";
 import { Request, Response } from 'cross-fetch';
 import { nativeFetch } from './native-fetch';
-import { EntityTypeExtensions } from "./schema-util";
-import { getUrlString, addIdentifierToUrl } from "./util";
+import { EntityTypeExtensions } from "./schema-utils";
+import { getUrlString, addIdentifierToUrl } from "./utils";
 import urljoin from 'url-join';
 import { ResolverData } from "@graphql-mesh/types";
 

@@ -31,8 +31,8 @@ import { pascalCase } from 'pascal-case';
 import { Request } from 'cross-fetch';
 import { SCALARS } from './scalars';
 import { queryOptionsFields } from './query-options';
-import { EntityTypeExtensions } from './schema-util';
-import { addIdentifierToUrl, getUrlString } from './util';
+import { EntityTypeExtensions } from './schema-utils';
+import { addIdentifierToUrl, getUrlString } from './utils';
 import { handleResponseText, HeadersFactory } from './request-processing'
 import DataLoader from 'dataloader';
 
