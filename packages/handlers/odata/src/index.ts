@@ -22,7 +22,7 @@ import { pruneSchema } from '@graphql-tools/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
 import { getDataLoaderFactory } from './request-processing';
-import { generateGraphQLSchema } from "./schema-generation";
+import { buildGraphQLSchema } from "./schema-builder";
 
 
 export default class ODataHandler implements MeshHandler {
@@ -109,7 +109,7 @@ export default class ODataHandler implements MeshHandler {
 
     const dataLoaderFactory = getDataLoaderFactory(this.config.batch || 'none', baseUrl, env, headersFactory, fetch);
 
-    const schema = generateGraphQLSchema({
+    const schema = buildGraphQLSchema({
       metadataJson,
       commonArgs,
       contextVariables,
