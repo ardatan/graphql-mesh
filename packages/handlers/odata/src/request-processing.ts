@@ -108,7 +108,7 @@ function initDataloaderFactories(baseUrl: string, env: Record<string, string>, h
         (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => fetch(request)))
       ),
   };
-};
+}
 
 export function handleBatchJsonResults(batchResponseJson: any, requests: Request[]) {
   if ('error' in batchResponseJson) {
