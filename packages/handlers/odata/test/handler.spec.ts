@@ -1,5 +1,5 @@
 import { MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
-import { printSchema, graphql } from 'graphql';
+import { printSchema, graphql, GraphQLInterfaceType } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addMock, resetMocks, MockResponse as Response, mockFetch } from './custom-fetch';
 import { readFileSync } from 'fs';
@@ -38,8 +38,30 @@ describe('odata', () => {
       store,
     });
     const source = await handler.getMeshSource();
-
     expect(printSchema(source.schema)).toMatchSnapshot();
+  });
+  it('should declare arguments for fields created from bound functions', async () => {
+    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    const handler = new ODataHandler({
+      name: 'TripPin',
+      config: {
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
+      },
+      pubsub,
+      cache,
+      store,
+    });
+    const source = await handler.getMeshSource();
+    const personType = source.schema.getType('IPerson') as GraphQLInterfaceType;
+    const getFriendsTripsFunction = personType.getFields()['GetFriendsTrips'];
+    expect(getFriendsTripsFunction.args).toHaveLength(2);
+    const personArg = getFriendsTripsFunction.args.find(arg => arg.name === 'person');
+    expect(personArg).not.toBeFalsy();
+    expect(personArg.type.toString()).toBe('PersonInput');
+    const userNameArg = getFriendsTripsFunction.args.find(arg => arg.name === 'userName');
+    expect(userNameArg).not.toBeFalsy();
+    expect(userNameArg.type.toString()).toBe('String!');
   });
   it('should generate correct HTTP request for requesting an EntitySet', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -473,6 +495,54 @@ describe('odata', () => {
               GetInvolvedPeople {
                 UserName
               }
+            }
+          }
+        }
+      `,
+      contextValue: await source.contextBuilder({}),
+    });
+
+    expect(graphqlResult.errors).toBeFalsy();
+    expect(sentRequest!.method).toBe(correctMethod);
+    expect(sentRequest!.url).toBe(correctUrl);
+  });
+  it('should generate correct HTTP request for invoking bound functions with arguments', async () => {
+    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='ronaldmundy')?$select=TripId,Name`;
+    const correctMethod = 'GET';
+    let sentRequest: Request;
+    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
+      return new Response(JSON.stringify(PersonMockData));
+    });
+    addMock(correctUrl, async request => {
+      sentRequest = request;
+      return new Response(
+        JSON.stringify({
+          value: [],
+        })
+      );
+    });
+    const handler = new ODataHandler({
+      name: 'TripPin',
+      config: {
+        baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
+      },
+      pubsub,
+      cache,
+      store,
+    });
+    const source = await handler.getMeshSource();
+
+    const graphqlResult = await graphql({
+      schema: source.schema,
+      source: /* GraphQL */ `
+        {
+          PeopleByUserName(UserName: "russellwhyte") {
+            UserName
+            GetFriendsTrips(userName: "ronaldmundy") {
+              TripId
+              Name
             }
           }
         }
