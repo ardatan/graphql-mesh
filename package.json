@@ -55,7 +55,7 @@
     "lint-staged": "11.0.1",
     "patch-package": "6.4.7",
     "prettier": "2.3.2",
-    "ts-jest": "27.0.3",
+    "ts-jest": "27.0.4",
     "ts-node-dev": "1.1.8",
     "typedoc": "0.21.4",
     "typedoc-plugin-markdown": "3.9.0",
