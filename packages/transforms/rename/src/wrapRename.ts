@@ -24,10 +24,12 @@ export default class WrapRename implements MeshTransform {
         useRegExpForFields,
       } = change;
 
+      const regExpFlags = change.regExpFlags || undefined;
+
       if (fromTypeName !== toTypeName) {
         let replaceTypeNameFn: (t: string) => string;
         if (useRegExpForTypes) {
-          const typeNameRegExp = new RegExp(fromTypeName);
+          const typeNameRegExp = new RegExp(fromTypeName, regExpFlags);
           replaceTypeNameFn = (t: string) => t.replace(typeNameRegExp, toTypeName);
         } else {
           replaceTypeNameFn = t => (t === fromTypeName ? toTypeName : t);
@@ -40,7 +42,7 @@ export default class WrapRename implements MeshTransform {
         let replaceFieldNameFn: (typeName: string, fieldName: string) => string;
 
         if (useRegExpForFields) {
-          const fieldNameRegExp = new RegExp(fromFieldName);
+          const fieldNameRegExp = new RegExp(fromFieldName, regExpFlags);
           replaceFieldNameFn = (typeName, fieldName) =>
             typeName === toTypeName && fieldName.replace(fieldNameRegExp, toFieldName);
         } else {
