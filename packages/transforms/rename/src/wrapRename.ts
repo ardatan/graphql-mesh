@@ -49,7 +49,6 @@ export default class WrapRename implements MeshTransform {
           replaceFieldNameFn = (typeName, fieldName) =>
             typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName;
         }
-        this.transforms.push(new RenameRootFields(replaceFieldNameFn));
         this.transforms.push(new RenameObjectFields(replaceFieldNameFn));
         this.transforms.push(new RenameInputObjectFields(replaceFieldNameFn));
       }

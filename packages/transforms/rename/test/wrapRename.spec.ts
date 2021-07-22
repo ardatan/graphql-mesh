@@ -161,6 +161,42 @@ describe('rename', () => {
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
+  it('should replace the first occurrence of a substring in a field', () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        RenameTransform({
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  type: 'Query',
+                  field: 'o(.*)',
+                },
+                to: {
+                  type: 'Query',
+                  field: '$1',
+                },
+                useRegExpForFields: true,
+              },
+            ],
+          },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    const fieldMap = queryType.getFields();
+
+    expect(fieldMap.my_book).toBeUndefined();
+    expect(fieldMap.my_bok).toBeDefined();
+    expect(printSchema(newSchema)).toMatchSnapshot();
+  });
+
   it('should replace all occurrences of a substring in a type', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {

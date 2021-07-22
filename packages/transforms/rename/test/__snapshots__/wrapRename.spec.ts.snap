@@ -107,3 +107,19 @@ type User {
 }
 "
 `;
+
+exports[`rename should replace the first occurrence of a substring in a field 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_bok: MyBook!
+}
+
+type MyUser {
+  false: ID!
+}
+
+type MyBook {
+  false: ID!
+}
+"
+`;
