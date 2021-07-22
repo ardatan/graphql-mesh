@@ -1179,6 +1179,10 @@ export interface RenameTransformObject {
    * Use Regular Expression for field names
    */
   useRegExpForFields?: boolean;
+  /**
+   * Flags to use in the Regular Expression
+   */
+  regExpFlags?: string;
 }
 export interface RenameConfig {
   type?: string;

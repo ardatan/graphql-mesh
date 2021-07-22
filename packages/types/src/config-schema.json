@@ -2304,6 +2304,10 @@
         "useRegExpForFields": {
           "type": "boolean",
           "description": "Use Regular Expression for field names"
+        },
+        "regExpFlags": {
+          "type": "string",
+          "description": "Flags to use in the Regular Expression"
         }
       },
       "required": ["from", "to"]

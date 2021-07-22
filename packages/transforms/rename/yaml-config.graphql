@@ -29,6 +29,10 @@ type RenameTransformObject @md {
   Use Regular Expression for field names
   """
   useRegExpForFields: Boolean
+  """
+  Flags to use in the Regular Expression
+  """
+  regExpFlags: String
 }
 
 type RenameConfig {
