@@ -7,14 +7,14 @@
     "start": "cross-env NODE_ENV=development webpack serve"
   },
   "dependencies": {
-    "@graphql-tools/url-loader": "7.0.0-alpha-c42e811d.0",
-    "@graphql-tools/wrap": "8.0.0-alpha-c42e811d.0",
+    "@graphql-tools/url-loader": "7.0.0-alpha-e6320b00.0",
+    "@graphql-tools/wrap": "8.0.0-alpha-e6320b00.0",
     "copy-to-clipboard": "3.3.1",
     "graphiql": "1.4.2",
     "graphiql-explorer": "0.6.3",
     "graphql": "15.4.0",
-    "react": "16.8.0",
-    "react-dom": "16.8.0"
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
   },
   "devDependencies": {
     "cross-env": "7.0.3",
@@ -23,9 +23,9 @@
     "html-webpack-plugin": "5.3.2",
     "html-webpack-inline-source-plugin": "1.0.0-beta.2",
     "ts-loader": "9.2.3",
-    "webpack": "5.44.0",
+    "webpack": "5.46.0",
     "webpack-cli": "4.7.2",
     "css-loader": "5.2.7",
-    "style-loader": "3.1.0"
+    "style-loader": "3.2.1"
   }
 }
