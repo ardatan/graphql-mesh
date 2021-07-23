@@ -542,6 +542,38 @@ test('Link parameters as constants and variables with request payload', () => {
   });
 });
 
+test('Get response for users with providing correct parameter', () => {
+  const query = `{
+    users (limit: 2) {
+      name
+    }
+  }`;
+
+  return graphql(createdSchema, query).then(result => {
+    expect(result).toEqual({
+      data: {
+        users: [{ name: 'Arlene L McMahon' }, { name: 'William B Ropp' }],
+      },
+    });
+  });
+});
+
+test('Get response with providing parameter with falsy value', () => {
+  const query = `{
+    users (limit: 0) {
+      name
+    }
+  }`;
+
+  return graphql(createdSchema, query).then(result => {
+    expect(result).toEqual({
+      data: {
+        users: [],
+      },
+    });
+  });
+});
+
 test('Get response without providing parameter with default value', () => {
   const query = `{
     productReviews (id: "100") {
