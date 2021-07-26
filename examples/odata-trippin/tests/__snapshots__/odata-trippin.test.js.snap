@@ -789,7 +789,19 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFavoriteAirline",
@@ -800,7 +812,34 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFriendsTrips",
@@ -1650,7 +1689,19 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFavoriteAirline",
@@ -1661,7 +1712,34 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFriendsTrips",
@@ -2459,7 +2537,19 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFavoriteAirline",
@@ -2470,7 +2560,34 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFriendsTrips",
@@ -3305,7 +3422,19 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFavoriteAirline",
@@ -3316,7 +3445,34 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFriendsTrips",
@@ -4497,7 +4653,19 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "trip",
+                "type": Object {
+                  "kind": "INPUT_OBJECT",
+                  "name": "TripInput",
+                  "ofType": null,
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetInvolvedPeople",
@@ -4637,6 +4805,129 @@ Object {
         "interfaces": Array [],
         "kind": "OBJECT",
         "name": "Trip",
+        "possibleTypes": null,
+        "specifiedByUrl": null,
+      },
+      Object {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": Array [
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Budget",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null,
+              },
+            },
+          },
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Description",
+            "type": Object {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": Object {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ShareId",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "SCALAR",
+                "name": "GUID",
+                "ofType": null,
+              },
+            },
+          },
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Tags",
+            "type": Object {
+              "kind": "LIST",
+              "name": null,
+              "ofType": Object {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          Object {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "TripId",
+            "type": Object {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": Object {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "TripInput",
         "possibleTypes": null,
         "specifiedByUrl": null,
       },
