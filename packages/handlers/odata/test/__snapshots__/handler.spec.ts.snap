@@ -18,9 +18,9 @@ exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] =
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
   TripsById(id: ID): Trip
-  GetFavoriteAirline: Airline
-  GetFriendsTrips: [Trip]
-  UpdatePersonLastName: Boolean
+  GetFavoriteAirline(person: PersonInput): Airline
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
 }
 
@@ -41,9 +41,9 @@ interface IPerson {
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
   TripsById(id: ID): Trip
-  GetFavoriteAirline: Airline
-  GetFriendsTrips: [Trip]
-  UpdatePersonLastName: Boolean
+  GetFavoriteAirline(person: PersonInput): Airline
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
 }
 
@@ -105,11 +105,6 @@ enum InlineCount {
   none
 }
 
-\\"\\"\\"
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-\\"\\"\\"
-scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
-
 input PersonInput {
   UserName: String!
   FirstName: String!
@@ -135,6 +130,11 @@ input CityInput {
   Region: String
 }
 
+\\"\\"\\"
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+\\"\\"\\"
+scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+
 type Airline {
   AirlineCode: String!
   Name: String
@@ -158,7 +158,7 @@ type Trip implements ITrip {
   EndsAt: DateTime!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
   PlanItemsById(id: ID): PlanItem
-  GetInvolvedPeople: [Person]
+  GetInvolvedPeople(trip: TripInput): [Person]
 }
 
 interface ITrip {
@@ -172,7 +172,7 @@ interface ITrip {
   EndsAt: DateTime!
   PlanItems(queryOptions: QueryOptions): [PlanItem]
   PlanItemsById(id: ID): PlanItem
-  GetInvolvedPeople: [Person]
+  GetInvolvedPeople(trip: TripInput): [Person]
 }
 
 \\"\\"\\"
@@ -184,6 +184,17 @@ scalar GUID
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 \\"\\"\\"
 scalar DateTime
+
+input TripInput {
+  TripId: Int!
+  ShareId: GUID!
+  Name: String
+  Budget: Float!
+  Description: String
+  Tags: [String]
+  StartsAt: DateTime!
+  EndsAt: DateTime!
+}
 
 type PlanItem implements IPlanItem {
   PlanItemId: Int!
@@ -284,9 +295,9 @@ type Employee implements IPerson {
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
   TripsById(id: ID): Trip
-  GetFavoriteAirline: Airline
-  GetFriendsTrips: [Trip]
-  UpdatePersonLastName: Boolean
+  GetFavoriteAirline(person: PersonInput): Airline
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
 }
 
@@ -311,9 +322,9 @@ type Manager implements IPerson {
   BestFriend: Person
   Trips(queryOptions: QueryOptions): [Trip]
   TripsById(id: ID): Trip
-  GetFavoriteAirline: Airline
-  GetFriendsTrips: [Trip]
-  UpdatePersonLastName: Boolean
+  GetFavoriteAirline(person: PersonInput): Airline
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
 }
 

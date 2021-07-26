@@ -552,7 +552,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(sentRequest!.url).toBe(correctUrl.replace(/'/g, '%27',  ));// apostrophe gets percent-encoded
   });
   it('should generate correct HTTP request for invoking unbound actions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
