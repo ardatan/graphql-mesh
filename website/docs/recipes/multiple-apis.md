@@ -123,7 +123,7 @@ const resolvers = {
 module.exports = { resolvers };
 ```
 
-Now run `graphql-mesh serve` and you'll be able to see your new field as part of your GraphQL schema, and you'll be able to query for it.
+Now run `mesh dev` and you'll be able to see your new field as part of your GraphQL schema, and you'll be able to query for it.
 
 And now we run the the following GraphQL query to fetch the simplified data:
 
