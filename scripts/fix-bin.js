@@ -2,7 +2,7 @@ const { readdirSync, lstatSync, ensureSymlinkSync, chmodSync } = require('fs-ext
 const { resolve, join } = require('path');
 
 const absoluteExamplesDirPath = resolve(__dirname, '../examples');
-const absoluteGraphqlMeshBinPath = resolve(__dirname, '../packages/cli/dist/bin.mjs');
+const absoluteGraphqlMeshBinPath = resolve(__dirname, '../packages/cli/dist/bin.js');
 const dir = readdirSync(absoluteExamplesDirPath);
 for (const path of dir) {
     const absolutePath = join(absoluteExamplesDirPath, path);
