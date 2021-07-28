@@ -7,11 +7,5 @@
     "automerge": false
   },
   "labels": ["dependencies"],
-  "ignoreDeps": ["typedoc-plugin-markdown"],
-  "packageRules": [
-    {
-      "matchPackagePrefixes": ["@graphql-tools/"],
-      "followTag": "beta"
-    }
-  ]
+  "ignoreDeps": ["typedoc-plugin-markdown"]
 }
