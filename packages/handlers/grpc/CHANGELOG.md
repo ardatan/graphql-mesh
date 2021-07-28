@@ -1,5 +1,23 @@
 # @graphql-mesh/grpc
 
+## 0.15.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+- 63fe4c464: feat(grpc): replace ping with valid connectivity state
+- 885ea439a: feat(grpc): support nested types and avoid naming convention
+- 63fe4c464: feat(grpc): support globs in protoFilePath
+
+### Patch Changes
+
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/store@0.1.0
+  - @graphql-mesh/types@0.43.0
+  - @graphql-mesh/utils@0.13.0
+
 ## 0.14.9
 
 ### Patch Changes

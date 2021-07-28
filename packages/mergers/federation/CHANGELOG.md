@@ -1,5 +1,17 @@
 # @graphql-mesh/merger-federation
 
+## 0.9.1
+
+### Patch Changes
+
+- 93fd61849: fix(federation): fix resolveReference call
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/store@0.1.0
+  - @graphql-mesh/types@0.43.0
+  - @graphql-mesh/utils@0.13.0
+
 ## 0.9.0
 
 ### Minor Changes

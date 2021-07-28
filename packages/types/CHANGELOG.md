@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.43.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+
+### Patch Changes
+
+- d8051f87d: GraphQLHandler endpoint validation
+
 ## 0.42.0
 
 ### Minor Changes
