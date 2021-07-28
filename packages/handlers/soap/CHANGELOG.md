@@ -1,5 +1,17 @@
 # @graphql-mesh/soap
 
+## 0.7.11
+
+### Patch Changes
+
+- a1d1f0a2f: fix(soap): handle missing type definitions
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/store@0.1.0
+  - @graphql-mesh/types@0.43.0
+  - @graphql-mesh/utils@0.13.0
+
 ## 0.7.10
 
 ### Patch Changes

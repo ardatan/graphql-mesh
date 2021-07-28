@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-stitching",
-  "version": "0.9.8",
+  "version": "0.10.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,14 +23,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/types": "0.43.0",
     "@graphql-tools/stitch": "8.0.2",
     "@graphql-tools/wrap": "8.0.2",
-    "@graphql-mesh/utils": "0.12.0",
+    "@graphql-mesh/utils": "0.13.0",
     "@graphql-tools/delegate": "8.0.2",
     "@graphql-tools/stitching-directives": "2.0.2",
     "@graphql-tools/schema": "8.0.0",
-    "@graphql-mesh/store": "0.0.0"
+    "@graphql-mesh/store": "0.1.0"
   },
   "publishConfig": {
     "access": "public",

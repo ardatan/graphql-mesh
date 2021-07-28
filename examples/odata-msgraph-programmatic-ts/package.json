@@ -1,6 +1,6 @@
 {
   "name": "odata-msgraph-programmatic-ts",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -12,10 +12,10 @@
     "@graphql-codegen/typescript": "1.22.0",
     "@graphql-codegen/typescript-operations": "1.17.16",
     "@graphql-codegen/typed-document-node": "1.18.5",
-    "@graphql-mesh/cli": "0.30.2",
-    "@graphql-mesh/config": "0.17.0",
-    "@graphql-mesh/runtime": "0.17.0",
-    "@graphql-mesh/odata": "0.11.8",
+    "@graphql-mesh/cli": "0.31.0",
+    "@graphql-mesh/config": "0.18.0",
+    "@graphql-mesh/runtime": "0.17.1",
+    "@graphql-mesh/odata": "0.12.0",
     "graphql": "15.4.0",
     "ts-node": "9.1.1"
   }

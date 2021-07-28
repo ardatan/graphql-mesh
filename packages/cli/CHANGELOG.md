@@ -1,5 +1,20 @@
 # @graphql-mesh/cli
 
+## 0.31.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+
+### Patch Changes
+
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/config@0.18.0
+  - @graphql-mesh/store@0.1.0
+  - @graphql-mesh/utils@0.13.0
+  - @graphql-mesh/runtime@0.17.1
+
 ## 0.30.2
 
 ### Patch Changes

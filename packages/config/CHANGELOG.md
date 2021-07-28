@@ -1,5 +1,24 @@
 # @graphql-mesh/config
 
+## 0.18.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+
+### Patch Changes
+
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/store@0.1.0
+  - @graphql-mesh/types@0.43.0
+  - @graphql-mesh/utils@0.13.0
+  - @graphql-mesh/merger-stitching@0.10.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.6
+  - @graphql-mesh/runtime@0.17.1
+
 ## 0.17.0
 
 ### Minor Changes

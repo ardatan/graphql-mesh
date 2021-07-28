@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/cache-inmemory-lru",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
   },
   "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs","typings": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
   },
@@ -22,8 +23,8 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.42.0",
-    "@graphql-mesh/utils": "0.12.0"
+    "@graphql-mesh/types": "0.43.0",
+    "@graphql-mesh/utils": "0.13.0"
   },
   "publishConfig": {
     "access": "public",

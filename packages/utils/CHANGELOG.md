@@ -1,5 +1,18 @@
 # @graphql-mesh/utils
 
+## 0.13.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+
+### Patch Changes
+
+- d8051f87d: use fallbackFormat in readUrlWithCache
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/types@0.43.0
+
 ## 0.12.0
 
 ### Minor Changes

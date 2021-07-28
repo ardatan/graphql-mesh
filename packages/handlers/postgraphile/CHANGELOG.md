@@ -1,5 +1,21 @@
 # @graphql-mesh/postgraphile
 
+## 0.13.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+- 8ab4ec8ba: feat(postgraphile): add builtin federation support
+
+### Patch Changes
+
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/store@0.1.0
+  - @graphql-mesh/types@0.43.0
+  - @graphql-mesh/utils@0.13.0
+
 ## 0.12.8
 
 ### Patch Changes
