@@ -7,9 +7,9 @@ sources:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
     transforms:
       - rename:
-          - from: 
+          - from:
               type: Error
-            to: 
+            to:
               type: CitiesError
 
   - name: Weather
@@ -18,9 +18,9 @@ sources:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
     transforms:
       - rename:
-          - from: 
+          - from:
               type: Error
-            to: 
+            to:
               type: WeatherError
 
 
@@ -41,15 +41,13 @@ additionalTypeDefs: |
         dailyForecast: [Forecast]
         todayForecast: Forecast
       }
-require:
-  - ts-node/register/transpile-only
 additionalResolvers:
   - targetTypeName: PopulatedPlaceSummary
     targetFieldName: dailyForecast
     requiredSelectionSet: |
       {
         latitude
-        longitude 
+        longitude
       }
     sourceName: Weather
     sourceTypeName: Query
@@ -64,7 +62,7 @@ additionalResolvers:
     requiredSelectionSet: |
       {
         latitude
-        longitude 
+        longitude
       }
     sourceName: Weather
     sourceTypeName: Query
