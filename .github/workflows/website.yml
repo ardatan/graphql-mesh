@@ -43,6 +43,8 @@ jobs:
         run: node scripts/install-typedocs-typescript-version.js
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock && git checkout package.json
+      - name: Build
+        run: yarn build
       - name: Deploy 🚀
         run: yarn deploy:website
         env:
