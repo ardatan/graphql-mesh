@@ -28,7 +28,7 @@
   "dependencies": {
     "@graphql-inspector/core": "2.6.1",
     "@graphql-mesh/utils": "0.13.0",
-    "@graphql-tools/utils": "8.0.0"
+    "@graphql-tools/utils": "8.0.1"
   },
   "publishConfig": {
     "access": "public",
