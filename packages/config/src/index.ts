@@ -35,7 +35,6 @@ import { createRequire } from 'module';
 
 export type ConfigProcessOptions = {
   dir?: string;
-  ignoreAdditionalResolvers?: boolean;
   importFn?: ImportFn;
   syncImportFn?: SyncImportFn;
   store?: MeshStore;
@@ -116,7 +115,6 @@ export async function processConfig(
 
   const {
     dir,
-    ignoreAdditionalResolvers = false,
     importFn = (moduleId: string) => import(moduleId).then(m => m.default || m),
     syncImportFn = createRequire(join(dir, 'mesh.config.js')),
     store: providedStore,
@@ -279,12 +277,7 @@ export async function processConfig(
       );
       return additionalTypeDefs;
     }),
-    resolveAdditionalResolvers(
-      dir,
-      ignoreAdditionalResolvers ? [] : config.additionalResolvers || [],
-      syncImportFn,
-      pubsub
-    ),
+    resolveAdditionalResolvers(dir, config.additionalResolvers, syncImportFn, pubsub),
     getPackage<MeshMergerLibrary>(config.merger || 'stitching', 'merger', importFn, dir).then(
       ({ resolved: Merger, moduleName }) => {
         const mergerImportName = pascalCase(`${config.merger || 'stitching'}Merger`);
@@ -390,7 +383,7 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
 }
 
 export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions) {
-  const { configName = 'mesh', dir: configDir = '', ignoreAdditionalResolvers = false, ...restOptions } = options || {};
+  const { configName = 'mesh', dir: configDir = '', ...restOptions } = options || {};
   const dir = isAbsolute(configDir) ? configDir : join(cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     loaders: {
@@ -409,5 +402,5 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
 
   const config = results.config;
   validateConfig(config);
-  return processConfig(config, { dir, ignoreAdditionalResolvers, ...restOptions });
+  return processConfig(config, { dir, ...restOptions });
 }

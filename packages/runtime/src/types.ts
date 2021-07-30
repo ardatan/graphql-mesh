@@ -21,7 +21,6 @@ export type GetMeshOptions = {
   additionalResolvers?: IResolvers | IResolvers[];
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  ignoreAdditionalResolvers?: boolean;
   merger: MeshMerger;
   logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];

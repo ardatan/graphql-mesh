@@ -141,7 +141,6 @@ export async function graphqlMesh() {
           logger.info(`Reading Mesh configuration`);
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
-            ignoreAdditionalResolvers: true,
             store,
             importFn,
           });
@@ -199,7 +198,6 @@ export async function graphqlMesh() {
           logger.info(`Reading Mesh configuration`);
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
-            ignoreAdditionalResolvers: true,
             store,
             importFn,
             syncImportFn,
