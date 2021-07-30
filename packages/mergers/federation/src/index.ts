@@ -128,6 +128,7 @@ export default class FederationMerger implements MeshMerger {
           operation,
           schema,
           schemaHash,
+          overallCachePolicy: {} as any,
         });
       },
       batch: true,
