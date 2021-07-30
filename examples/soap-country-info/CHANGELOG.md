@@ -1,5 +1,12 @@
 # country-info-example
 
+## 0.5.103
+
+### Patch Changes
+
+- Updated dependencies [e5fdcfdcc]
+  - @graphql-mesh/cli@0.32.0
+
 ## 0.5.102
 
 ### Patch Changes

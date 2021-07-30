@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.32.0
+
+### Minor Changes
+
+- e5fdcfdcc: fix(config): do not ignore additional resolvers while building artifacts
+
+### Patch Changes
+
+- Updated dependencies [e5fdcfdcc]
+  - @graphql-mesh/config@0.19.0
+  - @graphql-mesh/runtime@0.18.0
+
 ## 0.31.0
 
 ### Minor Changes
