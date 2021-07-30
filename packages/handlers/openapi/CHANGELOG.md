@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.18.0
+
+### Minor Changes
+
+- 81ef581d1: Pass context as third argument to custom fetch function
+
 ## 0.17.0
 
 ### Minor Changes
