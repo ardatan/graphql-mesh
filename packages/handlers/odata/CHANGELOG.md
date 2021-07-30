@@ -1,5 +1,12 @@
 # @graphql-mesh/odata
 
+## 0.12.1
+
+### Patch Changes
+
+- 0fb9ed2a5: fix(odata): create fields for EntitySet after all types are visited
+- 1c88dc0a7: fix(odata): fix handling of bound functions with arguments
+
 ## 0.12.0
 
 ### Minor Changes
