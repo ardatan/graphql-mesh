@@ -910,6 +910,8 @@ export default class ODataHandler implements MeshHandler {
         };
         // eslint-disable-next-line prefer-const
         let entitySetPath = boundFunctionObj.attributes.EntitySetPath;
+        let field: ObjectTypeComposerFieldConfigDefinition<any, any, any>
+        let boundEntityTypeName: string;
         boundFunctionObj.Parameter?.forEach((parameterObj: any) => {
           const parameterName = parameterObj.attributes.Name;
           const parameterTypeRef = parameterObj.attributes.Type;
@@ -922,24 +924,27 @@ export default class ODataHandler implements MeshHandler {
           // If entitySetPath is not available, take first parameter as entity
           entitySetPath = entitySetPath || parameterName;
           if (entitySetPath === parameterName) {
-            const boundEntityTypeName = getTypeNameFromRef({
+            boundEntityTypeName = getTypeNameFromRef({
               typeRef: parameterTypeRef,
               isInput: false,
               isRequired: false,
             })
               .replace('[', '')
               .replace(']', '');
-            const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
-            const boundEntityOtherType = getTCByTypeNames(
-              'I' + boundEntityTypeName,
-              'T' + boundEntityTypeName
-            ) as InterfaceTypeComposer;
-            const field: ObjectTypeComposerFieldConfigDefinition<any, any, any> = {
+            field = {
               type: returnType,
               args,
               resolve: async (root, args, context, info) => {
                 const url = new URL(root['@odata.id']);
                 url.href = urljoin(url.href, '/' + functionRef);
+                const argsEntries = Object.entries(args);
+                if (argsEntries.length) {
+                  url.href += `(${argsEntries
+                    .filter(argEntry => argEntry[0] !== 'queryOptions')
+                    .map(([argName, value]) => [argName, typeof value === 'string' ? `'${value}'` : value])
+                    .map(argEntry => argEntry.join('='))
+                    .join(',')})`;
+                }
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
                 searchParams?.forEach((value, key) => {
@@ -956,16 +961,22 @@ export default class ODataHandler implements MeshHandler {
                 return handleResponseText(responseText, urlString, info);
               },
             };
-            boundEntityType.addFields({
-              [functionName]: field,
-            });
-            boundEntityOtherType?.addFields({
-              [functionName]: field,
-            });
+
           }
           args[parameterName] = {
             type: parameterTypeName,
           };
+        });
+        const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
+        const boundEntityOtherType = getTCByTypeNames(
+          'I' + boundEntityTypeName,
+          'T' + boundEntityTypeName
+        ) as InterfaceTypeComposer;
+        boundEntityType.addFields({
+          [functionName]: field,
+        });
+        boundEntityOtherType?.addFields({
+          [functionName]: field,
         });
       };
 
