@@ -304,7 +304,7 @@ type AuthorWithBooks {
 }
 ```
 
-And you renamed `AuthorWithBooks` to `Author` using [`Rename`](http://localhost:3000/docs/transforms/rename) transform.
+And you renamed `AuthorWithBooks` to `Author` using [`Rename`](/docs/transforms/rename) transform.
 ```yml
 - sources:
   - name: BookService
@@ -395,7 +395,7 @@ sources:
 
 Then now our query will work as expected!
 
-[Check this out learn more about Type Merging transform](http://localhost:3000/docs/transforms/type-merging).
+[Check this out learn more about Type Merging transform](/docs/transforms/type-merging).
 
 ## Batching requests between sources to prevent N+1 problem
 
