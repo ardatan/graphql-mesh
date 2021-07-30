@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.19.1
+
+### Patch Changes
+
+- a5f086a58: fix(config): fix type issues on earlier Node versions
+
 ## 0.19.0
 
 ### Minor Changes
