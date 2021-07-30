@@ -45,7 +45,7 @@ export default class PostGraphileHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    let pgPool: pg.Pool;
+    let pgPool: any;
 
     if (typeof this.config?.pool === 'string') {
       pgPool = await loadFromModuleExportExpression<any>(this.config.pool, {

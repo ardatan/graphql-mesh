@@ -1129,7 +1129,9 @@ export default class ODataHandler implements MeshHandler {
         baseEventEmitter.on('onFieldChange', baseEventEmitterListener);
         baseEventEmitterListener();
       });
+    });
 
+    schemas?.forEach((schemaObj: any) => {
       schemaObj.EntityContainer?.forEach((entityContainerObj: any) => {
         entityContainerObj.Singleton?.forEach((singletonObj: any) => {
           const singletonName = singletonObj.attributes.Name;
