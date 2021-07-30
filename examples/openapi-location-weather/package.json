@@ -4,10 +4,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "predev": "yarn mesh:ts",
-    "dev": "ts-node-dev src/index.ts",
     "prestart": "yarn mesh:build",
-    "start": "ts-node src/index.ts --transpileOnly",
+    "start": "ts-node-dev src/index.ts",
     "premesh:serve": "yarn mesh:ts",
     "mesh:serve": "mesh dev",
     "mesh:build": "mesh build"
