@@ -9,7 +9,7 @@ additionalTypeDefs: |
         viewsInPastMonth(project: String!): Float!
       }
 additionalResolvers:
-  - ./src/mesh/additional-resolvers.js
+  - ./additional-resolvers.js
 
-documents: 
+documents:
   - example-queries/*.graphql
