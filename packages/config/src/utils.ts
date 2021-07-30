@@ -142,7 +142,7 @@ export async function resolvePubSub(
 
     const importCode = `import { PubSub } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';`;
-    const code = `const eventEmitter = new EventEmitter({ captureRejections: true });
+    const code = `const eventEmitter = new (EventEmitter as any)({ captureRejections: true });
 eventEmitter.setMaxListeners(Infinity);
 const pubsub = new PubSub({ eventEmitter });`;
 
