@@ -45,7 +45,7 @@ type GetResolverParams<TSource, TContext, TArgs> = {
   data: PreprocessingData<TSource, TContext, TArgs>;
   baseUrl?: string;
   requestOptions?: RequestOptions<TSource, TContext, TArgs>;
-  fetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+  fetch?: (input: RequestInfo, init?: RequestInit, ctx?: TContext) => Promise<Response>;
   qs?: Record<string, string>;
   logger: Logger;
 };
@@ -598,7 +598,7 @@ export function getResolver<TSource, TContext, TArgs>(
 
     let response: Response;
     try {
-      response = await fetchFn(urlObject.href, options);
+      response = await fetchFn(urlObject.href, options, ctx);
     } catch (err) {
       httpLogger.debug(err);
       throw err;

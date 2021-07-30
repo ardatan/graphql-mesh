@@ -90,9 +90,9 @@ When building a web application, for security reasons, cookies are often used fo
 
 This section shows how to configure GraphQL Mesh to accept either, and also how to use GraphQL Mesh to set / unset cookies on the login & logout mutations.
 
-### Accepting either a cookie or a header
+### Accepting one of cookie, header or context value
 
-We want to accept either a `accessToken` cookie or a `Authorization` header, and transmit it to the Rest API as a `Authorization` header. GraphQL Mesh does not allow dynamic selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
+We want to accept one of: an `accessToken` cookie, an `Authorization` header, or an authorization value available in context (e.g. set by a GraphQL auth plugin), and transmit it to the Rest API as a `Authorization` header. GraphQL Mesh does not allow dynamic selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
 
 ```yml
 sources:
@@ -112,9 +112,9 @@ Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Co
 ```js
 const fetch = require('node-fetch')
 
-module.exports = function (url, args) {
-  // Set Authorization header dynamically to either the input cookie or input header
-  args.headers['authorization'] = args.headers['authorization-cookie'] ?? args.headers['authorization-header'];
+module.exports = function (url, args, context) {
+  // Set Authorization header dynamically to context value, or input cookie, or input header
+  args.headers['authorization'] = context.authorization || args.headers['authorization-cookie'] || args.headers['authorization-header'];
   // Clean up headers forwarded to the Rest API
   delete args.headers['authorization-cookie'];
   delete args.headers['authorization-header'];

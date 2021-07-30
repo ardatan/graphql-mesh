@@ -499,8 +499,7 @@ test('Nested links with constants and variables', () => {
               everythingLink: {
                 body: 'http://localhost:3002/api/copier_get_200_123_application/json_close',
                 everythingLink: {
-                  body:
-                    'http://localhost:3002/api/copier_get_200_http://localhost:3002/api/copier_get_200_123_application/json_close_application/json_close',
+                  body: 'http://localhost:3002/api/copier_get_200_http://localhost:3002/api/copier_get_200_123_application/json_close_application/json_close',
                 },
               },
             },
@@ -533,8 +532,7 @@ test('Link parameters as constants and variables with request payload', () => {
         postScanner: {
           body: 'req.body: body, req.query.query: query, req.path.path: path',
           everythingLink2: {
-            body:
-              'http://localhost:3002/api/scanner/path_post_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_close',
+            body: 'http://localhost:3002/api/scanner/path_post_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_close',
           },
         },
       },
