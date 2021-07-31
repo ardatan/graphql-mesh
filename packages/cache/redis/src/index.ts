@@ -2,7 +2,7 @@ import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mes
 import Redis from 'ioredis';
 import { jsonFlatStringify } from '@graphql-mesh/utils';
 import DataLoader from 'dataloader';
-import { URL } from 'url'
+import { URL } from 'url';
 
 export default class RedisCache<V = string> implements KeyValueCache<V> {
   private client: Redis.Redis;
@@ -12,14 +12,14 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
 
     if (options.url) {
       const redisUrl = new URL(options.url);
-    
-      redisUrl.searchParams.set("lazyConnect", "true");
-      redisUrl.searchParams.set("enableAutoPipelining", "true");
-    
-      if (!["redis:", "rediss:"].includes(redisUrl.protocol)) {
-        throw new Error("Redis URL must use either redis:// or rediss://");
+
+      redisUrl.searchParams.set('lazyConnect', 'true');
+      redisUrl.searchParams.set('enableAutoPipelining', 'true');
+
+      if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
+        throw new Error('Redis URL must use either redis:// or rediss://');
       }
-    
+
       redisClient = new Redis(redisUrl.toString());
     } else {
       redisClient = new Redis({
@@ -29,7 +29,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         lazyConnect: true,
         enableAutoPipelining: true,
       });
-    }    
+    }
 
     const dataLoader = new DataLoader<string[], [any, string]>(async (commands: string[][]) => {
       const responses = await redisClient.pipeline(commands).exec();
