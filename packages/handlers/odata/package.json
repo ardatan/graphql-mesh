@@ -40,7 +40,7 @@
     "graphql-scalars": "1.10.0",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
-    "undici": "4.2.2"
+    "undici": "4.3.0"
   },
   "publishConfig": {
     "access": "public",
