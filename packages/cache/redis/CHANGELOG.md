@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-redis
 
+## 0.6.0
+
+### Minor Changes
+
+- 816411ea7: Add url option to redis
+
 ## 0.5.12
 
 ### Patch Changes

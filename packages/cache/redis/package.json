@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.5.12",
+  "version": "0.6.0",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
