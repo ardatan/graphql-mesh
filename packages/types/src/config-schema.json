@@ -84,6 +84,9 @@
         },
         "password": {
           "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },

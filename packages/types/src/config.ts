@@ -1385,6 +1385,7 @@ export interface RedisConfig {
   host?: string;
   port?: number;
   password?: string;
+  url?: string;
 }
 export interface PubSubConfig {
   name: string;

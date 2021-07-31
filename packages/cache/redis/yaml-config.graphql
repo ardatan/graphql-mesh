@@ -6,4 +6,5 @@ type RedisConfig @md {
   host: String
   port: Int
   password: String
+  url: String
 }
