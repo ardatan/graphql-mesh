@@ -19,10 +19,22 @@ describe('redis', () => {
       });
     });
 
-    it('passes configuration to redis client with default options, with url', async () => {
+    it('passes configuration to redis client with default options, url case', async () => {
       new RedisCache({ url: 'redis://password@localhost:6379' });
 
       expect(Redis).toHaveBeenCalledWith('redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true');
+    });
+
+    it('passes configuration to redis client with default options, host, port & password case', async () => {
+      new RedisCache({ port: '6379', password: 'testpassword', host: 'localhost' });
+
+      expect(Redis).toHaveBeenCalledWith({
+        enableAutoPipelining: true,
+        host: 'localhost',
+        lazyConnect: true,
+        password: 'testpassword',
+        port: '6379',
+      });
     });
 
     it('prefers url over specific properties if both given', () => {
