@@ -223,13 +223,13 @@ export const documentsInSDL = /*#__PURE__*/ [${documents.map(
             documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
           )}];
 
-export function getBuiltMesh() {
-  const meshConfig = getMeshOptions();
+export function getBuiltMesh(config: YamlConfig.Config | null = null) {
+  const meshConfig = getMeshOptions(config);
   return getMesh(meshConfig);
 }
 
-export async function getMeshSDK() {
-  const { sdkRequester } = await getBuiltMesh();
+export async function getMeshSDK(config: YamlConfig.Config | null = null) {
+  const { sdkRequester } = await getBuiltMesh(config);
   return getSdk(sdkRequester);
 }`;
 
