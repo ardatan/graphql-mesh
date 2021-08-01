@@ -110,8 +110,13 @@ export async function processConfig(
   ];
   const codes: string[] = [
     `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)}`,
-    `export function getMeshOptions(): GetMeshOptions {`,
+    `export function getMeshOptions(config: YamlConfig.Config | null = null): GetMeshOptions {`,
   ];
+
+  // If the caller does not want parameters, then use the generated parameters
+  codes.push(`if (config === null) {
+    config = rawConfig;
+  }`);
 
   const {
     dir,
@@ -165,13 +170,13 @@ export async function processConfig(
               const handlerImportName = pascalCase(handlerName + '_Handler');
               importCodes.push(`import ${handlerImportName} from '${moduleName}'`);
               codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
-              name: rawConfig.sources[${sourceIndex}].name,
-              config: rawConfig.sources[${sourceIndex}].handler.${handlerName},
+              name: config.sources[${sourceIndex}].name,
+              config: config.sources[${sourceIndex}].handler.${handlerName},
               baseDir,
               cache,
               pubsub,
-              store: sourcesStore.child(rawConfig.sources[${sourceIndex}].name),
-              logger: logger.child(rawConfig.sources[${sourceIndex}].name),
+              store: sourcesStore.child(config.sources[${sourceIndex}].name),
+              logger: logger.child(config.sources[${sourceIndex}].name),
               importFn
             });`);
               return new HandlerCtor({
@@ -201,8 +206,8 @@ export async function processConfig(
               importCodes.push(`import ${transformImportName} from '${moduleName}';`);
               codes.push(`${transformsVariableName}.push(
                 new ${transformImportName}({
-                  apiName: rawConfig.sources[${sourceIndex}].name,
-                  config: rawConfig.sources[${sourceIndex}].transforms[${transformIndex}].${transformName},
+                  apiName: config.sources[${sourceIndex}].name,
+                  config: config.sources[${sourceIndex}].transforms[${transformIndex}].${transformName},
                   baseDir,
                   cache,
                   pubsub,
@@ -252,7 +257,7 @@ export async function processConfig(
         codes.push(`transforms.push(
           new ${transformImportName}({
             apiName: '',
-            config: rawConfig.transforms[${transformIndex}].${transformName},
+            config: config.transforms[${transformIndex}].${transformName},
             baseDir,
             cache,
             pubsub,
@@ -302,12 +307,12 @@ export async function processConfig(
   importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
   codes.push(`const additionalResolvers = resolveAdditionalResolvers(
       baseDir,
-      rawConfig.additionalResolvers,
+      config.additionalResolvers,
       syncImportFn,
       pubsub
   )`);
 
-  codes.push(`const liveQueryInvalidations = rawConfig.liveQueryInvalidations;`);
+  codes.push(`const liveQueryInvalidations = config.liveQueryInvalidations;`);
 
   codes.push(`
   return {
