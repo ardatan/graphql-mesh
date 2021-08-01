@@ -64,6 +64,31 @@ async function test() {
 }
 ```
 
+```ts
+import { getMeshSdk } from './.mesh';
+
+async function test() {
+  // Runtime override configuration
+  const exampleServiceEndpoint = 'http://vpc.example-service/graphql';
+  const sdk = await getMeshSdk({
+    sources: [
+        {
+            name: "ExampleService",
+            handler: {
+                graphql: {
+                    endpoint: exampleServiceEndpoint,
+                },
+            },
+        },
+    ]
+  });
+
+  // Execute `myQuery` and get a type-safe result
+  // Variables and result are typed: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] }
+  const { getSomething } = await sdk.myQuery({ someVar: 'foo' });
+}
+```
+
 > You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb#using-the-generated-sdk)
 
 
