@@ -1,6 +1,6 @@
 ## GraphQL Mesh Commands
 
-Graphql-mesh exposes a number of commands that can be used to determine interactions as well as startup behavior.
+Graphql Mesh exposes a number of commands that can be used to determine interactions as well as startup behavior.
 
 When running mesh commands please be aware that some will work differently based on the context you are executing them in. Global installed CLI vs local CLI do not return the exact same results in all circumstances.
 
