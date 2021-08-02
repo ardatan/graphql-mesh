@@ -12,7 +12,7 @@ yarn global add graphql @graphql-mesh/cli
 If you have a global install of the cli and you can use `graphql-mesh` in terminal directly.
 
 As indicated the result of the command may differ based on whether you run the global CLI command or the locally installed CLI inside your target project's root directory.
-The safest method is the local execution.
+The safest method is to use the local CLI.
 
 To run project specific commands CLI:
 
@@ -157,4 +157,3 @@ introspectionCache: ./introspectionCache.json
 ```
 yarn graphql-mesh write-introspection-cache
 ```
-
