@@ -16,11 +16,15 @@ import { parse } from 'graphql';
 
 export { generateTsArtifacts, serveMesh };
 
+const SERVE_COMMAND_WARNING =
+  '`serve` command has been replaced by `dev` and `start` commands. Check our documentation for new usage';
+
 export async function graphqlMesh() {
   let baseDir = cwd();
   let logger = new DefaultLogger('Mesh');
   return yargs(hideBin(process.argv))
     .help()
+    .strict()
     .option('r', {
       alias: 'require',
       describe: 'Loads specific require.extensions before running the codegen and reading the configuration',
@@ -47,9 +51,17 @@ export async function graphqlMesh() {
         }
       },
     })
+    .command(
+      'serve',
+      SERVE_COMMAND_WARNING,
+      () => {},
+      () => {
+        logger.error(SERVE_COMMAND_WARNING);
+      }
+    )
     .command<{ port: number; prod: boolean; validate: boolean }>(
       'dev',
-      'Serves a GraphQL server with GraphQL interface to test your Mesh API',
+      'Serves a GraphQL server with GraphQL interface by building Mesh artifacts on the fly',
       builder => {
         builder.option('port', {
           type: 'number',
@@ -76,7 +88,7 @@ export async function graphqlMesh() {
     )
     .command<{ port: number; prod: boolean; validate: boolean }>(
       'start',
-      'Serves a GraphQL server with GraphQL interface to test your Mesh API',
+      'Serves a GraphQL server with GraphQL interface based on your generated Mesh artifacts',
       builder => {
         builder.option('port', {
           type: 'number',
