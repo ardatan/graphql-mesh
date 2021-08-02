@@ -1,4 +1,4 @@
-## GraphQL-Mesh Commands
+## GraphQL Mesh Commands
 
 Graphql-mesh exposes a number of commands that can be used to determine interactions as well as startup behavior.
 
