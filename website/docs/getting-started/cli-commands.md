@@ -11,7 +11,7 @@ yarn global add graphql @graphql-mesh/cli
 
 If you have a installed the CLI globally, you can use `graphql-mesh` directly from anywhere in the terminal.
 
-As indicated the result of the command may differ based on whether you run the global CLI command or the locally installed CLI inside your target project's root directory.
+As already indicated, the result of the command may differ based on whether you run the global CLI command or the locally-installed CLI inside your target project's root directory.
 The safest method is to use the local CLI.
 
 Here's an example of how to run project-specific commands using the local CLI:
