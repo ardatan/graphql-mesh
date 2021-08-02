@@ -14,7 +14,7 @@ If you have a global install of the cli and you can use `graphql-mesh` in termin
 As indicated the result of the command may differ based on whether you run the global CLI command or the locally installed CLI inside your target project's root directory.
 The safest method is to use the local CLI.
 
-To run project specific commands CLI:
+Here's an example of how to run project-specific commands using the local CLI:
 
 > windows     `node node_modules\\.bin\\graphql-mesh dump-schema --output ./schema.json`
 
