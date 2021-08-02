@@ -22,7 +22,7 @@ Here's an example of how to run project-specific commands using the local CLI:
 
 
 
-To run a project specific commands repeatedly it is more practical to add a script reference inside your `package.json` like so:
+If you are running a project-specific command repeatedly, you may find it more practical to add a script reference inside your `package.json` like so:
 
 ```json
 script: {
