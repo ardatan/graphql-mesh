@@ -199,7 +199,7 @@ const importedModules: Record<string, any> = {
 ${importedModulesCodes.join(',\n')}
 };
 
-const baseDir = join(cwd(), ${relative(cwd(), baseDir)});
+const baseDir = join(cwd(), '${relative(cwd(), baseDir)}');
 
 const syncImportFn = (moduleId: string) => {
   const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
