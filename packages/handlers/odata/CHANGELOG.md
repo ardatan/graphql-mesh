@@ -1,5 +1,11 @@
 # @graphql-mesh/odata
 
+## 0.12.2
+
+### Patch Changes
+
+- 782864e03: fix(odata): handle entitySetPath correctly
+
 ## 0.12.1
 
 ### Patch Changes
