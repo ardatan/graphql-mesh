@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<DataServices>
+		<Schema Namespace="Sample.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="Person">
+				<Key>
+					<PropertyRef Name="UserName" />
+				</Key>
+				<Property Name="UserName" Type="Edm.String" Nullable="false" />
+				<Property Name="FirstName" Type="Edm.String" Nullable="false" />
+				<Property Name="LastName" Type="Edm.String" />
+				<Property Name="MiddleName" Type="Edm.String" />
+				<Property Name="Age" Type="Edm.Int64" />
+				<Property Name="Emails" Type="Collection(Edm.String)" />
+        <NavigationProperty Name="Messages" Type="Collection(Sample.Service.Message)" ContainsTarget="true" />
+			</EntityType>
+      <EntityType Name="Message">
+				<Key>
+					<PropertyRef Name="Id" />
+				</Key>
+				<Property Name="Id" Type="Edm.String" Nullable="false" />
+				<Property Name="Contents" Type="Edm.String" Nullable="false" />
+			</EntityType>
+			<Function Name="GetAllMessages" IsBound="true" EntitySetPath="bindingParameter/Messages">
+        <Parameter Name="bindingParameter" Type="Collection(Sample.Service.Person)" />
+				<ReturnType Type="Collection(Sample.Service.Message)" />
+			</Function>
+			<EntityContainer Name="Container">
+				<EntitySet Name="People" EntityType="Sample.Service.Person">
+				</EntitySet>
+			</EntityContainer>
+		</Schema>
+	</DataServices>
+</Edmx>

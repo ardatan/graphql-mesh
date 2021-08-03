@@ -922,7 +922,9 @@ export default class ODataHandler implements MeshHandler {
             isRequired,
           });
           // If entitySetPath is not available, take first parameter as entity
-          entitySetPath = entitySetPath || parameterName;
+          // The first segment of the entity set path must match the binding parameter name
+          // (see: http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#_Toc38530388)
+          entitySetPath = entitySetPath && entitySetPath.split("/")[0] || parameterName;
           if (entitySetPath === parameterName) {
             boundEntityTypeName = getTypeNameFromRef({
               typeRef: parameterTypeRef,
