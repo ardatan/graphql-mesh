@@ -33,7 +33,7 @@
     "cosmiconfig": "7.0.0",
     "@graphql-tools/merge": "6.2.16",
     "@graphql-tools/utils": "8.0.1",
-    "@graphql-tools/load": "7.0.1",
+    "@graphql-tools/load": "7.1.0",
     "@graphql-tools/code-file-loader": "7.0.1",
     "@graphql-tools/graphql-file-loader": "7.0.1",
     "graphql-subscriptions": "1.2.1",
