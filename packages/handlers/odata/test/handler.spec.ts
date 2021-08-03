@@ -11,6 +11,7 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 const TripPinMetadata = readFileSync(resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
 const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
 const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip.json'), 'utf-8'));
+const BasicMetadata = readFileSync(resolve(__dirname, './fixtures/simple-metadata.xml'), 'utf-8');
 
 describe('odata', () => {
   let pubsub: MeshPubSub;
@@ -31,6 +32,21 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
+        customFetch: mockFetch,
+      },
+      pubsub,
+      cache,
+      store,
+    });
+    const source = await handler.getMeshSource();
+    expect(printSchema(source.schema)).toMatchSnapshot();
+  });
+  it('should create correct GraphQL schema for functions with entity set paths', async () => {
+    addMock('http://sample.service.com/$metadata', async () => new Response(BasicMetadata));
+    const handler = new ODataHandler({
+      name: 'SampleService',
+      config: {
+        baseUrl: 'http://sample.service.com',
         customFetch: mockFetch,
       },
       pubsub,
