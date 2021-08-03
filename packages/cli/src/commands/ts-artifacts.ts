@@ -11,6 +11,7 @@ import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { isAbsolute, relative, join } from 'path';
 import ts from 'typescript';
 import { writeFile } from '@graphql-mesh/utils';
+import { cwd } from 'process';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -174,7 +175,7 @@ export async function generateTsArtifacts({
             `import { getMesh } from '@graphql-mesh/runtime';`,
             `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
             `import { cwd } from 'process';`,
-            `import { relative, isAbsolute } from 'path';`,
+            `import { join, relative, isAbsolute } from 'path';`,
           ];
           const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
             let moduleMapProp = importedModuleName;
@@ -198,7 +199,7 @@ const importedModules: Record<string, any> = {
 ${importedModulesCodes.join(',\n')}
 };
 
-const baseDir = cwd();
+const baseDir = join(cwd(), ${relative(cwd(), baseDir)});
 
 const syncImportFn = (moduleId: string) => {
   const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
