@@ -266,7 +266,7 @@ export async function getMeshSDK() {
   const tsFilePath = join(artifactsDir, 'index.ts');
   await writeFile(tsFilePath, codegenOutput);
 
-  const compilerOptions = {
+  const compilerOptions: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
     sourceMap: false,
     inlineSourceMap: false,

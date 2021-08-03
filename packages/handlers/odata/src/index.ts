@@ -909,8 +909,8 @@ export default class ODataHandler implements MeshHandler {
           ...commonArgs,
         };
         // eslint-disable-next-line prefer-const
-        let entitySetPath = boundFunctionObj.attributes.EntitySetPath;
-        let field: ObjectTypeComposerFieldConfigDefinition<any, any, any>
+        let entitySetPath = boundFunctionObj.attributes.EntitySetPath?.split('/')[0];
+        let field: ObjectTypeComposerFieldConfigDefinition<any, any, any>;
         let boundEntityTypeName: string;
         boundFunctionObj.Parameter?.forEach((parameterObj: any) => {
           const parameterName = parameterObj.attributes.Name;
@@ -961,7 +961,6 @@ export default class ODataHandler implements MeshHandler {
                 return handleResponseText(responseText, urlString, info);
               },
             };
-
           }
           args[parameterName] = {
             type: parameterTypeName,
