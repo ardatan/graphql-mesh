@@ -1,5 +1,12 @@
 # @graphql-mesh/cli
 
+## 0.32.2
+
+### Patch Changes
+
+- 2a449e797: fix(cli): respect build cwd
+- 3c5c45c8e: enhance(cli): add a warning to old serve command
+
 ## 0.32.1
 
 ### Patch Changes
