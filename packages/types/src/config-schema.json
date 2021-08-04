@@ -1447,7 +1447,8 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "required": ["table", "fields"]
     },
     "Neo4jHandler": {
       "additionalProperties": false,

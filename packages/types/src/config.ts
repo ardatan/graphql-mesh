@@ -571,8 +571,8 @@ export interface MySQLHandler {
   tableFields?: TableField[];
 }
 export interface TableField {
-  table?: string;
-  fields?: string[];
+  table: string;
+  fields: string[];
 }
 /**
  * Handler for Neo4j

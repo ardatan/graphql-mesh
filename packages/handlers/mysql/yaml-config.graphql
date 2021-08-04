@@ -17,10 +17,13 @@ type MySQLHandler @md {
   Use specific tables for your schema
   """
   tables: [String!]
-  tableFields: [TableField]
+  """
+  Use specific fields of specific tables
+  """
+  tableFields: [TableField!]
 }
 
 type TableField {
-  table: String
-  fields: [String!]
+  table: String!
+  fields: [String!]!
 }
