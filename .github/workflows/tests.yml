@@ -107,7 +107,6 @@ jobs:
           key: ${{ runner.os }}-${{matrix.node_version}}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{matrix.node_version}}-yarn-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-${{matrix.node_version}}-yarn-
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Cache Jest
@@ -117,7 +116,6 @@ jobs:
           key: ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-${{matrix.node_version}}-jest-
       - name: Download Postgres Dump
         run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
       - name: Load Postgres Data
