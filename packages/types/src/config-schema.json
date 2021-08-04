@@ -1414,6 +1414,14 @@
             }
           ],
           "description": "Use existing `Pool` instance\nFormat: modulePath#exportName"
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Use specific tables for your schema"
         }
       }
     },

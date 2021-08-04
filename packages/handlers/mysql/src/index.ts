@@ -202,6 +202,9 @@ export default class MySQLHandler implements MeshHandler {
     const tables = await introspectionConnection.getDatabaseTables(pool.config.connectionConfig.database);
     await Promise.all(
       Object.keys(tables).map(async tableName => {
+        if (this.config.tables && !this.config.tables.includes(tableName)) {
+          return;
+        }
         const table = tables[tableName];
         const objectTypeName = table.TABLE_NAME;
         const insertInputName = table.TABLE_NAME + '_InsertInput';

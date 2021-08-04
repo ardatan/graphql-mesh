@@ -564,6 +564,10 @@ export interface MySQLHandler {
    * Format: modulePath#exportName
    */
   pool?: any;
+  /**
+   * Use specific tables for your schema
+   */
+  tables?: string[];
 }
 /**
  * Handler for Neo4j
