@@ -28,7 +28,7 @@ jobs:
           key: ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-16-yarn-
+
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Lint
@@ -52,7 +52,7 @@ jobs:
           key: ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-16-yarn-
+
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
       - name: Build
