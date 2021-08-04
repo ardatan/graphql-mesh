@@ -1,4 +1,4 @@
-import { Maybe, RawSourceOutput } from '@graphql-mesh/types';
+import { Logger, Maybe, RawSourceOutput } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
@@ -12,6 +12,9 @@ import { isAbsolute, relative, join } from 'path';
 import ts from 'typescript';
 import { writeFile } from '@graphql-mesh/utils';
 import { cwd } from 'process';
+import { promises as fsPromises } from 'fs';
+
+const { unlink, rename } = fsPromises;
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -105,6 +108,7 @@ export async function generateTsArtifacts({
   importedModulesSet,
   baseDir,
   meshConfigCode,
+  logger,
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: RawSourceOutput[];
@@ -114,8 +118,10 @@ export async function generateTsArtifacts({
   importedModulesSet: Set<string>;
   baseDir: string;
   meshConfigCode: string;
+  logger: Logger;
 }) {
   const artifactsDir = join(baseDir, '.mesh');
+  logger.info('Generating index file in TypeScript');
   const codegenOutput = await codegen({
     filename: 'types.ts',
     documents,
@@ -139,7 +145,7 @@ export async function generateTsArtifacts({
       contextSdk: {
         plugin: async () => {
           const commonTypes = [
-            `import { MeshContext as BaseMeshContext } from '@graphql-mesh/runtime';`,
+            `import { MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
             `import { SelectionSetParamOrFactory } from '@graphql-mesh/types';`,
           ];
           const sdkItems: string[] = [];
@@ -224,7 +230,7 @@ export const documentsInSDL = /*#__PURE__*/ [${documents.map(
             documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
           )}];
 
-export function getBuiltMesh() {
+export function getBuiltMesh(): Promise<MeshInstance> {
   const meshConfig = getMeshOptions();
   return getMesh(meshConfig);
 }
@@ -264,33 +270,36 @@ export async function getMeshSDK() {
     ],
   });
 
+  logger.info('Writing index.ts to the disk.');
   const tsFilePath = join(artifactsDir, 'index.ts');
   await writeFile(tsFilePath, codegenOutput);
 
-  const compilerOptions: ts.CompilerOptions = {
+  logger.info('Compiling TS file as ES Module to `index.mjs`');
+  compileTS(tsFilePath, ts.ModuleKind.ESNext);
+  const jsFilePath = join(artifactsDir, 'index.js');
+  const mjsFilePath = join(artifactsDir, 'index.mjs');
+  await rename(jsFilePath, mjsFilePath);
+  logger.info('Compiling TS file as CommonJS Module to `index.js`');
+  compileTS(tsFilePath, ts.ModuleKind.CommonJS);
+
+  logger.info('Deleting index.ts');
+  await unlink(tsFilePath);
+}
+
+function compileTS(tsFilePath: string, module: ts.ModuleKind) {
+  const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
+    module,
     sourceMap: false,
     inlineSourceMap: false,
     importHelpers: true,
     allowSyntheticDefaultImports: true,
     esModuleInterop: true,
+    declaration: true,
   };
+  const host = ts.createCompilerHost(options);
 
-  const jsResult = ts.transpileModule(codegenOutput, {
-    compilerOptions: {
-      ...compilerOptions,
-      module: ts.ModuleKind.CommonJS,
-    },
-  });
-  const jsFilePath = join(artifactsDir, 'index.js');
-  await writeFile(jsFilePath, jsResult.outputText);
-
-  const mjsResult = ts.transpileModule(codegenOutput, {
-    compilerOptions: {
-      ...compilerOptions,
-      module: ts.ModuleKind.ESNext,
-    },
-  });
-  const mjsFilePath = join(artifactsDir, 'index.mjs');
-  await writeFile(mjsFilePath, mjsResult.outputText);
+  // Prepare and emit the d.ts files
+  const program = ts.createProgram([tsFilePath], options, host);
+  program.emit();
 }
