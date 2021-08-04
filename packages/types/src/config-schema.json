@@ -1422,6 +1422,30 @@
           },
           "additionalItems": false,
           "description": "Use specific tables for your schema"
+        },
+        "tableFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TableField"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "TableField": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TableField",
+      "properties": {
+        "table": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         }
       }
     },

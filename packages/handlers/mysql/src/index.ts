@@ -200,8 +200,9 @@ export default class MySQLHandler implements MeshHandler {
       },
     });
     const tables = await introspectionConnection.getDatabaseTables(pool.config.connectionConfig.database);
+    const tableNames = this.config.tables && Object.keys(tables);
     await Promise.all(
-      Object.keys(tables).map(async tableName => {
+      tableNames.map(async tableName => {
         if (this.config.tables && !this.config.tables.includes(tableName)) {
           return;
         }
@@ -243,8 +244,10 @@ export default class MySQLHandler implements MeshHandler {
         });
         const primaryKeyMetadata = await introspectionConnection.getTablePrimaryKeyMetadata(tableName);
         const fields = await introspectionConnection.getTableFields(tableName);
+        const fieldNames =
+          this.config.tableFields?.find(({ table }) => table === tableName)?.fields && Object.keys(fields);
         await Promise.all(
-          Object.keys(fields).map(async fieldName => {
+          fieldNames.map(async fieldName => {
             const tableField = fields[fieldName];
             const typePattern = tableField.Type;
             const [realTypeNameCased, restTypePattern] = typePattern.split('(');
@@ -312,6 +315,9 @@ export default class MySQLHandler implements MeshHandler {
           Object.keys(tableForeigns).map(async foreignName => {
             const tableForeign = tableForeigns[foreignName];
             const columnName = tableForeign.COLUMN_NAME;
+            if (!fieldNames.includes(columnName)) {
+              return;
+            }
             const foreignTableName = tableForeign.REFERENCED_TABLE_NAME;
             const foreignColumnName = tableForeign.REFERENCED_COLUMN_NAME;
             tableTC.addFields({
