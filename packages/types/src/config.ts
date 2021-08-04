@@ -564,6 +564,15 @@ export interface MySQLHandler {
    * Format: modulePath#exportName
    */
   pool?: any;
+  /**
+   * Use specific tables for your schema
+   */
+  tables?: string[];
+  tableFields?: TableField[];
+}
+export interface TableField {
+  table: string;
+  fields: string[];
 }
 /**
  * Handler for Neo4j
