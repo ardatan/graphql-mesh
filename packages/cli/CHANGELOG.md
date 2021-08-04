@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.33.0
+
+### Minor Changes
+
+- 4a04492d6: enhance(cli): generate d.ts and js files instead of ts code file
+
+### Patch Changes
+
+- @graphql-mesh/config@0.19.3
+- @graphql-mesh/runtime@0.18.1
+- @graphql-mesh/utils@0.13.1
+- @graphql-mesh/store@0.1.1
+
 ## 0.32.3
 
 ### Patch Changes

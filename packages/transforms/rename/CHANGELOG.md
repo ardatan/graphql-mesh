@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-rename
 
+## 0.9.0
+
+### Minor Changes
+
+- 4a04492d6: enhance(cli): generate d.ts and js files instead of ts code file
+
+### Patch Changes
+
+- Updated dependencies [1ee417e3d]
+  - @graphql-mesh/types@0.44.0
+  - @graphql-mesh/utils@0.13.1
+
 ## 0.8.20
 
 ### Patch Changes

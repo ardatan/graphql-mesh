@@ -4,6 +4,19 @@
 
 ### Patch Changes
 
+- Updated dependencies [4a04492d6]
+  - @graphql-mesh/cli@0.33.0
+  - @graphql-mesh/cache-file@0.6.2
+  - @graphql-mesh/config@0.19.3
+  - @graphql-mesh/graphql@0.18.1
+  - @graphql-mesh/postgraphile@0.13.1
+  - @graphql-mesh/runtime@0.18.1
+  - @graphql-mesh/transform-prefix@0.6.50
+
+## 0.5.109
+
+### Patch Changes
+
 - Updated dependencies [885ea439a]
 - Updated dependencies [8ab4ec8ba]
   - @graphql-mesh/cli@0.31.0
