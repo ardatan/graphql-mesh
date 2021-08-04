@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.19.2
+
+### Patch Changes
+
+- e42206753: fix(config): update redis configuration
+
 ## 0.19.1
 
 ### Patch Changes
