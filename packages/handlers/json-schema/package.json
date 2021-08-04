@@ -32,7 +32,7 @@
     "@graphql-mesh/types": "0.43.0",
     "@graphql-mesh/utils": "0.13.0",
     "@graphql-mesh/store": "0.1.0",
-    "@graphql-tools/utils": "8.0.1",
+    "@graphql-tools/utils": "8.0.2",
     "graphql-compose": "9.0.1",
     "graphql-scalars": "1.10.0",
     "pascal-case": "3.1.2",
