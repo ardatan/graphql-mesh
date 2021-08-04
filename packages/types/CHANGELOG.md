@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.44.0
+
+### Minor Changes
+
+- 1ee417e3d: feat(mysql): ability to select some specific tables
+
 ## 0.43.0
 
 ### Minor Changes

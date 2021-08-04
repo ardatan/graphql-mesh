@@ -1,6 +1,13 @@
 # @graphql-mesh/store
 
+## 0.1.1
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.13.1
+
 ## 0.1.0
+
 ### Minor Changes
 
 - 885ea439a: New MeshStore approach

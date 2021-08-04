@@ -1,6 +1,17 @@
 # @graphql-mesh/json-schema
 
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies [1ee417e3d]
+  - @graphql-mesh/types@0.44.0
+  - @graphql-mesh/utils@0.13.1
+  - json-machete@0.0.2
+  - @graphql-mesh/store@0.1.1
+
 ## 0.17.0
+
 ### Minor Changes
 
 - 885ea439a: New MeshStore approach

@@ -1,6 +1,13 @@
 # json-machete
 
+## 0.0.2
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.13.1
+
 ## 0.0.1
+
 ### Patch Changes
 
 - d55f30c89: NEW LIBRARY
