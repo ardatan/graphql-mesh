@@ -230,6 +230,7 @@ export async function graphqlMesh() {
             importedModulesSet,
             baseDir,
             meshConfigCode: meshConfig.code,
+            logger,
           });
 
           logger.info(`Cleanup`);
