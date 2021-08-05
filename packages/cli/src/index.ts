@@ -24,7 +24,6 @@ export async function graphqlMesh() {
   let logger = new DefaultLogger('Mesh');
   return yargs(hideBin(process.argv))
     .help()
-    .strict()
     .option('r', {
       alias: 'require',
       describe: 'Loads specific require.extensions before running the codegen and reading the configuration',
