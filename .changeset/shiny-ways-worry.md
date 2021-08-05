@@ -4,7 +4,6 @@
 '@graphql-mesh/merger-bare': patch
 '@graphql-mesh/merger-federation': patch
 '@graphql-mesh/merger-stitching': patch
-'@graphql-mesh/playground': patch
 '@graphql-mesh/runtime': patch
 '@graphql-mesh/transform-encapsulate': patch
 '@graphql-mesh/transform-federation': patch
