@@ -455,20 +455,20 @@ export function getRequestBodyObject(
       const content: MediaTypesObject = requestBodyObject.content;
 
       const contentTypes = Object.keys(content);
-      const isJsonContent = contentTypes.some(contentType => contentType.toString().includes('application/json'));
-      const isFormData = contentTypes.some(contentType =>
+      const jsonContentType = contentTypes.find(contentType => contentType.toString().includes('application/json'));
+      const formDataContentType = contentTypes.find(contentType =>
         contentType.toString().includes('application/x-www-form-urlencoded')
       );
 
       // Prioritize content-type JSON
-      if (isJsonContent) {
+      if (jsonContentType) {
         return {
-          payloadContentType: 'application/json',
+          payloadContentType: jsonContentType,
           requestBodyObject,
         };
-      } else if (isFormData) {
+      } else if (formDataContentType) {
         return {
-          payloadContentType: 'application/x-www-form-urlencoded',
+          payloadContentType: formDataContentType,
           requestBodyObject,
         };
       } else {

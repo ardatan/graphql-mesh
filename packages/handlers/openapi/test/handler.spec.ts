@@ -24,6 +24,24 @@ describe('openapi', () => {
     expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
   });
 
+  it('should create a GraphQL schema from some complex local swagger file', async () => {
+    const handler = new OpenAPIHandler({
+      name: 'Kubernetes',
+      config: {
+        source: resolve(__dirname, './fixtures/kubernetes.json'),
+      },
+      pubsub: new PubSub(),
+      cache: new InMemoryLRUCache(),
+      store: new MeshStore('openapi', new InMemoryStoreStorageAdapter(), {
+        readonly: false,
+        validate: false,
+      }),
+    });
+    const source = await handler.getMeshSource();
+
+    expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
+  });
+
   it('should create a GraphQL schema from a simple local openapi file, adding limit arg', async () => {
     const handler = new OpenAPIHandler({
       name: 'Example OAS3',
