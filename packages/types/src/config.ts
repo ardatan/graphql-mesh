@@ -568,6 +568,9 @@ export interface MySQLHandler {
    * Use specific tables for your schema
    */
   tables?: string[];
+  /**
+   * Use specific fields of specific tables
+   */
   tableFields?: TableField[];
 }
 export interface TableField {
