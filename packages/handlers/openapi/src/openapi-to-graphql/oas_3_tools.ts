@@ -455,10 +455,12 @@ export function getRequestBodyObject(
       const content: MediaTypesObject = requestBodyObject.content;
 
       const contentTypes = Object.keys(content);
-      const jsonContentType = contentTypes.find(contentType => contentType.toString().includes('application/json'));
-      const formDataContentType = contentTypes.find(contentType =>
-        contentType.toString().includes('application/x-www-form-urlencoded')
-      );
+      const jsonContentType = contentTypes
+        .find(contentType => contentType.toString().includes('application/json'))
+        .toString();
+      const formDataContentType = contentTypes
+        .find(contentType => contentType.toString().includes('application/x-www-form-urlencoded'))
+        .toString();
 
       // Prioritize content-type JSON
       if (jsonContentType) {
