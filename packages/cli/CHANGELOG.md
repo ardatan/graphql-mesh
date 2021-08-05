@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.33.2
+
+### Patch Changes
+
+- 0d7d56d83: fix(cli): revert strict() which stopped working randomly
+
 ## 0.33.1
 
 ### Patch Changes
