@@ -27,7 +27,7 @@
     "@graphql-mesh/utils": "0.13.1",
     "date-fns": "2.22.1",
     "@graphql-tools/resolvers-composition": "6.3.2",
-    "@graphql-tools/schema": "8.0.2",
+    "@graphql-tools/schema": "8.0.3",
     "@graphql-tools/utils": "8.0.2"
   },
   "publishConfig": {
