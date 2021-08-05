@@ -1,5 +1,15 @@
 # @graphql-mesh/openapi
 
+## 0.18.2
+
+### Patch Changes
+
+- bd1397e26: fix(openapi): respect payload content type
+- Updated dependencies [49c8ceb38]
+  - @graphql-mesh/types@0.44.1
+  - @graphql-mesh/utils@0.13.2
+  - @graphql-mesh/store@0.1.2
+
 ## 0.18.1
 
 ### Patch Changes
