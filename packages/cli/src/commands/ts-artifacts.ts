@@ -275,18 +275,20 @@ export async function getMeshSDK() {
   await writeFile(tsFilePath, codegenOutput);
 
   logger.info('Compiling TS file as ES Module to `index.mjs`');
-  compileTS(tsFilePath, ts.ModuleKind.ESNext);
   const jsFilePath = join(artifactsDir, 'index.js');
+  const dtsFilePath = join(artifactsDir, 'index.d.ts');
+  compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
+
   const mjsFilePath = join(artifactsDir, 'index.mjs');
   await rename(jsFilePath, mjsFilePath);
   logger.info('Compiling TS file as CommonJS Module to `index.js`');
-  compileTS(tsFilePath, ts.ModuleKind.CommonJS);
+  compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
   logger.info('Deleting index.ts');
   await unlink(tsFilePath);
 }
 
-function compileTS(tsFilePath: string, module: ts.ModuleKind) {
+function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: string[]) {
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
     module,
@@ -298,6 +300,13 @@ function compileTS(tsFilePath: string, module: ts.ModuleKind) {
     declaration: true,
   };
   const host = ts.createCompilerHost(options);
+
+  const hostWriteFile = host.writeFile.bind(host);
+  host.writeFile = (fileName, ...rest) => {
+    if (outputFilePaths.includes(fileName)) {
+      return hostWriteFile(fileName, ...rest);
+    }
+  };
 
   // Prepare and emit the d.ts files
   const program = ts.createProgram([tsFilePath], options, host);

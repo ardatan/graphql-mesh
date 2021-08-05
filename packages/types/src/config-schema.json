@@ -1428,7 +1428,8 @@
           "items": {
             "$ref": "#/definitions/TableField"
           },
-          "additionalItems": false
+          "additionalItems": false,
+          "description": "Use specific fields of specific tables"
         }
       }
     },
