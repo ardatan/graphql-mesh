@@ -1,5 +1,15 @@
 # @graphql-mesh/merger-federation
 
+## 0.9.3
+
+### Patch Changes
+
+- 49c8ceb38: fix(core): bump packages to fix variables issue
+- Updated dependencies [49c8ceb38]
+  - @graphql-mesh/types@0.44.1
+  - @graphql-mesh/utils@0.13.2
+  - @graphql-mesh/store@0.1.2
+
 ## 0.9.2
 
 ### Patch Changes

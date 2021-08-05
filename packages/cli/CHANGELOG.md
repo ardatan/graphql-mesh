@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.33.1
+
+### Patch Changes
+
+- 83da97053: fix(cli): do not compile external ts files
+- Updated dependencies [49c8ceb38]
+  - @graphql-mesh/runtime@0.18.2
+  - @graphql-mesh/utils@0.13.2
+  - @graphql-mesh/config@0.19.4
+  - @graphql-mesh/store@0.1.2
+
 ## 0.33.0
 
 ### Minor Changes

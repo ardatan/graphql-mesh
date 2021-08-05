@@ -1,5 +1,14 @@
 # @graphql-mesh/mongoose
 
+## 0.8.2
+
+### Patch Changes
+
+- 49c8ceb38: fix(core): bump packages to fix variables issue
+- Updated dependencies [49c8ceb38]
+  - @graphql-mesh/types@0.44.1
+  - @graphql-mesh/utils@0.13.2
+
 ## 0.8.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.13.2
+
+### Patch Changes
+
+- 49c8ceb38: fix(core): bump packages to fix variables issue
+- Updated dependencies [49c8ceb38]
+  - @graphql-mesh/types@0.44.1
+
 ## 0.13.1
 
 ### Patch Changes
