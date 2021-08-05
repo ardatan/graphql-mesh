@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.18.3
+
+### Patch Changes
+
+- a9f88cac7: fix(openapi): fix toString bug
+
 ## 0.18.2
 
 ### Patch Changes
