@@ -457,10 +457,10 @@ export function getRequestBodyObject(
       const contentTypes = Object.keys(content);
       const jsonContentType = contentTypes
         .find(contentType => contentType.toString().includes('application/json'))
-        .toString();
+        ?.toString();
       const formDataContentType = contentTypes
         .find(contentType => contentType.toString().includes('application/x-www-form-urlencoded'))
-        .toString();
+        ?.toString();
 
       // Prioritize content-type JSON
       if (jsonContentType) {
