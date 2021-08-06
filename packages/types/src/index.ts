@@ -13,8 +13,9 @@ import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
+import configSchema from './config-schema.json';
 
-export { default as jsonSchema } from './config-schema.json';
+export const jsonSchema: any = configSchema;
 
 export { YamlConfig };
 
