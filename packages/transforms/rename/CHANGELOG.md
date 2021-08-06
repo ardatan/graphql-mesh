@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-rename
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [25d10cc23]
+  - @graphql-mesh/types@0.44.2
+  - @graphql-mesh/utils@0.13.3
+
 ## 0.9.1
 
 ### Patch Changes
