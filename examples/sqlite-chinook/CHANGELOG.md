@@ -1,5 +1,12 @@
 # chinook
 
+## 0.5.110
+
+### Patch Changes
+
+- @graphql-mesh/tuql@0.4.63
+- @graphql-mesh/cli@0.33.3
+
 ## 0.5.109
 
 ### Patch Changes

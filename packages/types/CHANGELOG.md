@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.44.2
+
+### Patch Changes
+
+- 25d10cc23: fix(types): do not resolve json module
+
 ## 0.44.1
 
 ### Patch Changes
