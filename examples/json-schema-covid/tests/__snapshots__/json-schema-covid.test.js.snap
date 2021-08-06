@@ -137,7 +137,6 @@ type Stat {
   confirmedRatio: Float
   deathRatio: Float
   population: ApiPopulation
-  recoveredRatio: Float
 }
 
 \\"\\"\\"The \`Upload\` scalar type represents a file upload.\\"\\"\\"

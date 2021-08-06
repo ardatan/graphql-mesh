@@ -30,7 +30,6 @@ describe('JSON Schema Covid', () => {
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(result?.data?.case?.countryRegion).toBe('France');
     expect(typeof result?.data?.case?.deaths).toBe('number');
-    expect(typeof result?.data?.case?.recovered).toBe('number');
 
     expect(result?.data?.population?.records).toHaveLength(1);
     expect(result?.data?.population?.records[0]?.fields?.country_name).toBe('France');
@@ -44,7 +43,6 @@ describe('JSON Schema Covid', () => {
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(result?.data?.case?.countryRegion).toBe('France');
     expect(typeof result?.data?.case?.deaths).toBe('number');
-    expect(typeof result?.data?.case?.recovered).toBe('number');
 
     expect(result?.data?.population?.records?.length).toBe(1);
     expect(result?.data?.population?.records[0]?.fields?.country_name).toBe('France');
@@ -57,7 +55,6 @@ describe('JSON Schema Covid', () => {
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(typeof result?.data?.case?.deaths).toBe('number');
-    expect(typeof result?.data?.case?.recovered).toBe('number');
 
     expect(result?.data?.case?.population?.records?.length).toBe(1);
     expect(typeof result?.data?.case?.population?.records[0]?.fields?.value).toBe('number');
