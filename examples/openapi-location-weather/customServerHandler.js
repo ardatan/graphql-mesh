@@ -8,7 +8,7 @@ module.exports = async ({
   const { schema, contextBuilder } = await getMesh(getMeshOptions);
   const apolloServer = new ApolloServer({
     schema,
-    context: contextBuilder,
+    context: ({ req }) => contextBuilder(req),
     playground: {
       tabs: documents.map(({ location, rawSDL }) => ({
           name: location,
