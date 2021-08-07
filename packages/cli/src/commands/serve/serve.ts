@@ -28,7 +28,7 @@ import { inspect } from 'util';
 
 const { readFile } = fsPromises;
 
-interface ServeMeshOptions {
+export interface ServeMeshOptions {
   baseDir: string;
   getMeshOptions: GetMeshOptions;
   rawConfig: YamlConfig.Config;

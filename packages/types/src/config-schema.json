@@ -182,6 +182,10 @@
               "type": "boolean"
             }
           ]
+        },
+        "customServerHandler": {
+          "type": "string",
+          "description": "If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler"
         }
       }
     },

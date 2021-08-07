@@ -1,17 +1,18 @@
 import { findAndParseConfig } from '@graphql-mesh/config';
 import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
-import { serveMesh } from './commands/serve/serve';
+import { serveMesh, ServeMeshOptions } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
 import { existsSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { writeFile, pathExists, rmdirs, DefaultLogger, getDefaultSyncImport } from '@graphql-mesh/utils';
+import { writeFile, pathExists, rmdirs, DefaultLogger, getDefaultSyncImport, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { parse } from 'graphql';
+import { YamlConfig } from '@graphql-mesh/types';
 
 export { generateTsArtifacts, serveMesh };
 
@@ -71,14 +72,27 @@ export async function graphqlMesh() {
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
           });
-          const result = await serveMesh({
+          const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
             getMeshOptions: meshConfig,
             rawConfig: meshConfig.config,
             documents: meshConfig.documents,
-          });
-          logger = result.logger;
+          };
+          if (meshConfig.config.serve?.customServerHandler) {
+            const customServerHandler = await loadFromModuleExportExpression<any>(
+              meshConfig.config.serve.customServerHandler,
+              {
+                defaultExportName: 'default',
+                cwd: baseDir,
+                importFn: m => import(m).then(m => m.default || m),
+              }
+            );
+            await customServerHandler(serveMeshOptions);
+          } else {
+            const result = await serveMesh(serveMeshOptions);
+            logger = result.logger;
+          }
         } catch (e) {
           handleFatalError(e, logger);
         }
@@ -105,7 +119,8 @@ export async function graphqlMesh() {
           const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
           const getMeshOptions: GetMeshOptions = builtMeshArtifacts.getMeshOptions();
           logger = getMeshOptions.logger;
-          await serveMesh({
+          const rawConfig: YamlConfig.Config = builtMeshArtifacts.rawConfig;
+          const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
             getMeshOptions,
@@ -115,7 +130,17 @@ export async function graphqlMesh() {
               document: parse(documentSdl),
               location: `document_${i}.graphql`,
             })),
-          });
+          };
+          if (rawConfig.serve?.customServerHandler) {
+            const customServerHandler = await loadFromModuleExportExpression<any>(rawConfig.serve.customServerHandler, {
+              defaultExportName: 'default',
+              cwd: baseDir,
+              importFn: m => import(m).then(m => m.default || m),
+            });
+            await customServerHandler(serveMeshOptions);
+          } else {
+            await serveMesh(serveMeshOptions);
+          }
         } catch (e) {
           handleFatalError(e, logger);
         }
