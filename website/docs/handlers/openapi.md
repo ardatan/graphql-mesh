@@ -63,9 +63,9 @@ sources:
         source: ./my-schema.json
         operationHeaders:
           # Please do not use capital letters while getting the headers
-          Authorization: Bearer {context.headers['x-my-api-token']}
+          Authorization: Bearer {context.req.headers['x-my-api-token']}
           # You can also access to the cookies like below;
-          # Authorization: Bearer {context.cookies.myApiToken}
+          # Authorization: Bearer {context.req.cookies.myApiToken}
 ```
 
 And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-api-token` HTTP header.
@@ -102,8 +102,8 @@ sources:
         source: ./openapi.yaml
         baseUrl: "{env.REST_URL}/api/"
         operationHeaders:
-          Authorization-Header: "{context.headers['authorization']}"
-          Authorization-Cookie: Bearer {context.cookies.accessToken}
+          Authorization-Header: "{context.req.headers['authorization']}"
+          Authorization-Cookie: Bearer {context.req.cookies.accessToken}
         customFetch: ./src/custom-fetch.js
 ```
 
