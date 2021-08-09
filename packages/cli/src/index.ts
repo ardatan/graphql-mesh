@@ -230,6 +230,7 @@ export async function graphqlMesh() {
             baseDir,
             meshConfigCode: meshConfig.code,
             logger,
+            sdkConfig: meshConfig.config.sdk,
           });
 
           logger.info(`Cleanup`);
