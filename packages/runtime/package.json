@@ -31,7 +31,7 @@
     "@graphql-tools/batch-delegate": "8.0.7",
     "@graphql-tools/resolvers-composition": "6.3.2",
     "@graphql-tools/schema": "8.0.3",
-    "@graphql-tools/wrap": "8.0.8",
+    "@graphql-tools/wrap": "8.0.9",
     "@graphql-tools/utils": "8.0.2"
   },
   "publishConfig": {
