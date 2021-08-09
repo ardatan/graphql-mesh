@@ -1,4 +1,4 @@
-import { findAndParseConfig } from '@graphql-mesh/config';
+import { findAndParseConfig, getDefaultSyncImport } from '@graphql-mesh/config';
 import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
@@ -11,7 +11,6 @@ import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { createRequire } from 'module';
 import { parse } from 'graphql';
 
 export { generateTsArtifacts, serveMesh };
@@ -187,7 +186,7 @@ export async function graphqlMesh() {
               return m.default || m;
             });
 
-          const baseDirRequire = createRequire(join(baseDir, 'mesh.config.js'));
+          const baseDirRequire = getDefaultSyncImport(baseDir);
           const syncImportFn = (moduleId: string) => {
             const m = baseDirRequire(moduleId);
             importedModulesSet.add(moduleId);

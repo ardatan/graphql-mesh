@@ -1,6 +1,6 @@
 import { parse } from 'graphql';
-import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
-import { resolve } from 'path';
+import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger, SyncImportFn } from '@graphql-mesh/types';
+import { join, resolve } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
@@ -10,18 +10,22 @@ import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';
+import { createRequire } from 'module';
+import { statSync } from 'fs';
 
 type ResolvedPackage<T> = {
   moduleName: string;
   resolved: T;
 };
 
-export async function getPackage<T>(
-  name: string,
-  type: string,
-  importFn: ImportFn,
-  cwd: string
-): Promise<ResolvedPackage<T>> {
+interface GetPackageOptions {
+  name: string;
+  type: string;
+  importFn: ImportFn;
+  cwd: string;
+}
+
+export async function getPackage<T>({ name, type, importFn, cwd }: GetPackageOptions): Promise<ResolvedPackage<T>> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
@@ -47,12 +51,13 @@ export async function getPackage<T>(
         resolved,
       };
     } catch (err) {
+      const error: Error = err;
       if (
-        !err.message.includes(`Cannot find module '${moduleName}'`) &&
-        !err.message.includes(`Cannot find package '${moduleName}'`) &&
-        !err.message.includes(`Could not locate module`)
+        !error.message.includes(`Cannot find module '${moduleName}'`) &&
+        !error.message.includes(`Cannot find package '${moduleName}'`) &&
+        !error.message.includes(`Could not locate module`)
       ) {
-        throw new Error(`Unable to load ${type} matching ${name}: ${err.message}`);
+        throw new Error(`Unable to load ${type} matching ${name}: ${error.message}`);
       }
     }
   }
@@ -84,7 +89,7 @@ export async function resolveCache(
   const cacheName = Object.keys(cacheConfig)[0].toString();
   const config = cacheConfig[cacheName];
 
-  const { moduleName, resolved: Cache } = await getPackage<any>(cacheName, 'cache', importFn, cwd);
+  const { moduleName, resolved: Cache } = await getPackage<any>({ name: cacheName, type: 'cache', importFn, cwd });
 
   const cache = new Cache({
     ...config,
@@ -123,7 +128,7 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const { moduleName, resolved: PubSub } = await getPackage<any>(pubsubName, 'pubsub', importFn, cwd);
+    const { moduleName, resolved: PubSub } = await getPackage<any>({ name: pubsubName, type: 'pubsub', importFn, cwd });
 
     const pubsub = new PubSub(pubsubConfig);
 
@@ -175,7 +180,12 @@ export async function resolveLogger(
   logger: Logger;
 }> {
   if (typeof loggerConfig === 'string') {
-    const { moduleName, resolved: logger } = await getPackage<Logger>(loggerConfig, 'logger', importFn, cwd);
+    const { moduleName, resolved: logger } = await getPackage<Logger>({
+      name: loggerConfig,
+      type: 'logger',
+      importFn,
+      cwd,
+    });
     return {
       logger,
       importCode: `import logger from '${moduleName}';`,
@@ -188,4 +198,20 @@ export async function resolveLogger(
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
     code: `const logger = new DefaultLogger('Mesh');`,
   };
+}
+
+export function getDefaultImport(from: string): ImportFn {
+  const syncImport = getDefaultSyncImport(from);
+  return m => import(m).catch(() => syncImport(m));
+}
+
+export function getDefaultSyncImport(from: string): SyncImportFn {
+  const pathStats = statSync(from);
+  if (pathStats.isDirectory()) {
+    from = join(from, 'mesh.config.js');
+  }
+
+  const relativeRequire = createRequire(from);
+
+  return (from: string) => relativeRequire(from);
 }

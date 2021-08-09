@@ -2,6 +2,7 @@
 import { isAbsolute, join } from 'path';
 import { createRequire } from 'module';
 import { ImportFn, SyncImportFn } from '@graphql-mesh/types';
+import { getDefaultImport } from '@graphql-mesh/config';
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;
@@ -17,7 +18,7 @@ export async function loadFromModuleExportExpression<T>(
     return expression;
   }
 
-  const { defaultExportName, cwd, importFn = (m: string) => import(m) } = options || {};
+  const { defaultExportName, cwd, importFn = getDefaultImport(cwd) } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
   const mod = await tryImport(modulePath, cwd, importFn);
 
@@ -34,7 +35,7 @@ async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
         return await importFn(absoluteModulePath);
       } catch (e2) {
         try {
-          const cwdRequire = createRequire(cwd);
+          const cwdRequire = createRequire(join(cwd, 'mesh.config.js'));
           return cwdRequire(absoluteModulePath);
         } catch (e3) {
           if (e3.message.startsWith('Cannot find')) {
