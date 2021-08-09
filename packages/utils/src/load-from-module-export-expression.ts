@@ -2,7 +2,7 @@
 import { isAbsolute, join } from 'path';
 import { createRequire } from 'module';
 import { ImportFn, SyncImportFn } from '@graphql-mesh/types';
-import { getDefaultImport } from '@graphql-mesh/config';
+import { statSync } from 'fs';
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;
@@ -90,4 +90,20 @@ function tryImportSync(modulePath: string, cwd: string, syncImportFn: SyncImport
     }
     throw e1;
   }
+}
+
+export function getDefaultImport(from: string): ImportFn {
+  const syncImport = getDefaultSyncImport(from);
+  return m => import(m).catch(() => syncImport(m));
+}
+
+export function getDefaultSyncImport(from: string): SyncImportFn {
+  const pathStats = statSync(from);
+  if (pathStats.isDirectory()) {
+    from = join(from, 'mesh.config.js');
+  }
+
+  const relativeRequire = createRequire(from);
+
+  return (from: string) => relativeRequire(from);
 }

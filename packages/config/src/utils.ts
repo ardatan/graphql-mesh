@@ -1,6 +1,6 @@
 import { parse } from 'graphql';
-import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger, SyncImportFn } from '@graphql-mesh/types';
-import { join, resolve } from 'path';
+import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
+import { resolve } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
@@ -10,8 +10,6 @@ import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { createRequire } from 'module';
-import { statSync } from 'fs';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -198,20 +196,4 @@ export async function resolveLogger(
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
     code: `const logger = new DefaultLogger('Mesh');`,
   };
-}
-
-export function getDefaultImport(from: string): ImportFn {
-  const syncImport = getDefaultSyncImport(from);
-  return m => import(m).catch(() => syncImport(m));
-}
-
-export function getDefaultSyncImport(from: string): SyncImportFn {
-  const pathStats = statSync(from);
-  if (pathStats.isDirectory()) {
-    from = join(from, 'mesh.config.js');
-  }
-
-  const relativeRequire = createRequire(from);
-
-  return (from: string) => relativeRequire(from);
 }

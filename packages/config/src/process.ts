@@ -25,14 +25,12 @@ import {
   resolvePubSub,
   resolveDocuments,
   resolveLogger,
-  getDefaultImport,
-  getDefaultSyncImport,
 } from './utils';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { cwd, env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
-import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { getDefaultImport, getDefaultSyncImport, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 
 export type ConfigProcessOptions = {
   dir?: string;
