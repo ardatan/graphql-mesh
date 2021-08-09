@@ -2873,10 +2873,10 @@
     unixify "1.0.0"
     valid-url "1.0.9"
 
-"@graphql-tools/load@7.1.2":
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/load/-/load-7.1.2.tgz#456c6aed645bd0bb11011cbf0c1fd1d3cbfaa834"
-  integrity sha512-H2tLlAmFLjC8CQRTzqHkPJKjXdnYS2JdWsM6iVlKkbxs42ZAVk/OxYEe3Fg61pLV+EqfWtydiDT3xdPy+vqGEg==
+"@graphql-tools/load@7.1.4":
+  version "7.1.4"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/load/-/load-7.1.4.tgz#f738399725a8147f52b9ef79b2eb1b4cd341e086"
+  integrity sha512-7iH741MyWGkut2CBND+hNe4aZCilTCIf1VaX5o8Gw8X/i+1w/yomIz9mTOHqIWHtlv+aPjX1Z4Dmf0oscIcFaQ==
   dependencies:
     "@graphql-tools/merge" "^7.0.0"
     "@graphql-tools/utils" "8.0.2"
