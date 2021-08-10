@@ -1,12 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import {
-  RenameTypes,
-  RenameObjectFields,
-  RenameRootFields,
-  RenameRootTypes,
-  RenameInputObjectFields,
-} from '@graphql-tools/wrap';
+import { RenameTypes, RenameObjectFields, RenameRootTypes, RenameInputObjectFields } from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
