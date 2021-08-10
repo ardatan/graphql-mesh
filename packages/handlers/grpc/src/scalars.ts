@@ -2,7 +2,7 @@ type ScalarMap = Map<string, string>;
 
 const SCALARS: ScalarMap = new Map([
   ['bool', 'Boolean'],
-  ['bytes', 'Byte'],
+  ['bytes', '[Byte]'],
   ['double', 'Float'],
   ['fixed32', 'Int'],
   ['fixed64', 'BigInt'],
