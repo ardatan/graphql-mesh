@@ -63,3 +63,63 @@ type Book {
 }
 "
 `;
+
+exports[`rename should replace all occurrences of a substring in a field 1`] = `
+"type Query {
+  user_v1: ApiUserV1Api!
+}
+
+type ApiUserV1Api {
+  false: ID!
+}
+"
+`;
+
+exports[`rename should replace all occurrences of a substring in a type 1`] = `
+"type Query {
+  api_user_v1_api: UserV1!
+}
+
+type UserV1 {
+  id: ID!
+}
+"
+`;
+
+exports[`rename should replace all occurrences of multiple substrings in a field 1`] = `
+"type Query {
+  user: ApiUserV1Api!
+}
+
+type ApiUserV1Api {
+  false: ID!
+}
+"
+`;
+
+exports[`rename should replace all occurrences of multiple substrings in a type 1`] = `
+"type Query {
+  api_user_v1_api: User!
+}
+
+type User {
+  id: ID!
+}
+"
+`;
+
+exports[`rename should replace the first occurrence of a substring in a field 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_bok: MyBook!
+}
+
+type MyUser {
+  false: ID!
+}
+
+type MyBook {
+  false: ID!
+}
+"
+`;
