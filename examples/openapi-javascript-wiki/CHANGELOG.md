@@ -1,5 +1,12 @@
 # javascript-wiki
 
+## 0.5.124
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.34.1
+- @graphql-mesh/openapi@0.18.7
+
 ## 0.5.123
 
 ### Patch Changes
