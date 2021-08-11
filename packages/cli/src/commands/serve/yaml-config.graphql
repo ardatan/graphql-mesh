@@ -4,6 +4,10 @@ type Query {
   Those commands won't be available in programmatic usage.
   """
   serve: ServeConfig
+  """
+  SDK Configuration
+  """
+  sdk: SDKConfig
 }
 
 type ServeConfig @md {
@@ -134,4 +138,16 @@ type UploadOptions {
 type HTTPSConfig {
   key: String!
   cert: String!
+}
+
+type SDKConfig @md {
+  """
+  Use this only if you don't want to use `documents` for SDK,
+  and let Mesh generate them for you
+  """
+  generateOperations: GenerateOperationsConfig
+}
+
+type GenerateOperationsConfig {
+  selectionSetDepth: Int
 }

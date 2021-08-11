@@ -7,6 +7,7 @@
 
 export interface Config {
   serve?: ServeConfig;
+  sdk?: SDKConfig;
   require?: string[];
   /**
    * Defines the list of your external data sources for your API mesh
@@ -164,6 +165,19 @@ export interface UploadOptions {
 export interface HTTPSConfig {
   key: string;
   cert: string;
+}
+/**
+ * SDK Configuration
+ */
+export interface SDKConfig {
+  generateOperations?: GenerateOperationsConfig;
+}
+/**
+ * Use this only if you don't want to use `documents` for SDK,
+ * and let Mesh generate them for you
+ */
+export interface GenerateOperationsConfig {
+  selectionSetDepth?: number;
 }
 export interface Source {
   /**

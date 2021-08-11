@@ -1,4 +1,4 @@
-import { Logger, Maybe, RawSourceOutput } from '@graphql-mesh/types';
+import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
@@ -13,6 +13,7 @@ import ts from 'typescript';
 import { writeFile } from '@graphql-mesh/utils';
 import { cwd } from 'process';
 import { promises as fsPromises } from 'fs';
+import { generateOperations } from './generate-operations';
 
 const { unlink, rename } = fsPromises;
 
@@ -109,6 +110,7 @@ export async function generateTsArtifacts({
   baseDir,
   meshConfigCode,
   logger,
+  sdkConfig,
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: RawSourceOutput[];
@@ -119,12 +121,15 @@ export async function generateTsArtifacts({
   baseDir: string;
   meshConfigCode: string;
   logger: Logger;
+  sdkConfig: YamlConfig.SDKConfig;
 }) {
   const artifactsDir = join(baseDir, '.mesh');
   logger.info('Generating index file in TypeScript');
   const codegenOutput = await codegen({
     filename: 'types.ts',
-    documents,
+    documents: sdkConfig?.generateOperations
+      ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
+      : documents,
     config: {
       scalars: serverSideScalarsMap,
       skipTypename: true,

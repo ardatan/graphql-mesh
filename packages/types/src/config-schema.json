@@ -308,6 +308,27 @@
       },
       "required": ["key", "cert"]
     },
+    "SDKConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SDKConfig",
+      "properties": {
+        "generateOperations": {
+          "$ref": "#/definitions/GenerateOperationsConfig",
+          "description": "Use this only if you don't want to use `documents` for SDK,\nand let Mesh generate them for you"
+        }
+      }
+    },
+    "GenerateOperationsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GenerateOperationsConfig",
+      "properties": {
+        "selectionSetDepth": {
+          "type": "integer"
+        }
+      }
+    },
     "Source": {
       "additionalProperties": false,
       "type": "object",
@@ -2590,6 +2611,10 @@
     "serve": {
       "$ref": "#/definitions/ServeConfig",
       "description": "Configuration for `mesh start` or `mesh dev` command.\nThose commands won't be available in programmatic usage."
+    },
+    "sdk": {
+      "$ref": "#/definitions/SDKConfig",
+      "description": "SDK Configuration"
     },
     "require": {
       "type": "array",
