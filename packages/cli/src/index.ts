@@ -6,12 +6,11 @@ import { isAbsolute, resolve, join } from 'path';
 import { existsSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { writeFile, pathExists, rmdirs, DefaultLogger } from '@graphql-mesh/utils';
+import { writeFile, pathExists, rmdirs, DefaultLogger, getDefaultSyncImport } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { createRequire } from 'module';
 import { parse } from 'graphql';
 
 export { generateTsArtifacts, serveMesh };
@@ -187,7 +186,7 @@ export async function graphqlMesh() {
               return m.default || m;
             });
 
-          const baseDirRequire = createRequire(join(baseDir, 'mesh.config.js'));
+          const baseDirRequire = getDefaultSyncImport(baseDir);
           const syncImportFn = (moduleId: string) => {
             const m = baseDirRequire(moduleId);
             importedModulesSet.add(moduleId);
