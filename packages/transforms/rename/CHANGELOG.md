@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-rename
 
+## 0.9.3
+
+### Patch Changes
+
+- 94606e7b9: Enable flags for regular expressions in rename transform
+- cb70939cc: fix(transforms): handle non nullable input variables correctly
+- Updated dependencies [6266d1774]
+- Updated dependencies [94606e7b9]
+- Updated dependencies [2b8dae1cb]
+- Updated dependencies [0c97b4b75]
+  - @graphql-mesh/types@0.45.0
+  - @graphql-mesh/utils@0.13.4
+
 ## 0.9.2
 
 ### Patch Changes

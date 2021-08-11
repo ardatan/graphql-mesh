@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.45.0
+
+### Minor Changes
+
+- 6266d1774: feat(cli): ability to use a custom server handler
+- 2b8dae1cb: feat(cli): generate operations for sdk
+
+### Patch Changes
+
+- 94606e7b9: Enable flags for regular expressions in rename transform
+
 ## 0.44.2
 
 ### Patch Changes

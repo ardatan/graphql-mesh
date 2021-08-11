@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.34.0
+
+### Minor Changes
+
+- 6266d1774: feat(cli): ability to use a custom server handler
+- 2b8dae1cb: feat(cli): generate operations for sdk
+
+### Patch Changes
+
+- 0c97b4b75: fix(config): Yarn PnP Support
+- Updated dependencies [cb70939cc]
+- Updated dependencies [0c97b4b75]
+  - @graphql-mesh/runtime@0.18.4
+  - @graphql-mesh/config@0.19.6
+  - @graphql-mesh/utils@0.13.4
+  - @graphql-mesh/store@0.1.4
+
 ## 0.33.3
 
 ### Patch Changes
