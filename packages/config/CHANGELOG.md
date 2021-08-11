@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 0.19.6
+
+### Patch Changes
+
+- 0c97b4b75: fix(config): Yarn PnP Support
+- Updated dependencies [6266d1774]
+- Updated dependencies [94606e7b9]
+- Updated dependencies [cb70939cc]
+- Updated dependencies [2b8dae1cb]
+- Updated dependencies [0c97b4b75]
+  - @graphql-mesh/types@0.45.0
+  - @graphql-mesh/merger-stitching@0.10.4
+  - @graphql-mesh/runtime@0.18.4
+  - @graphql-mesh/utils@0.13.4
+  - @graphql-mesh/cache-inmemory-lru@0.5.10
+  - @graphql-mesh/store@0.1.4
+
 ## 0.19.5
 
 ### Patch Changes
