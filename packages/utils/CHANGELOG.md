@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.13.5
+
+### Patch Changes
+
+- 7080a2f1d: Fix baseDir imports for cli generated artifacts
+
 ## 0.13.4
 
 ### Patch Changes

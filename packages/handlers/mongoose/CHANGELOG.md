@@ -1,5 +1,12 @@
 # @graphql-mesh/mongoose
 
+## 0.8.5
+
+### Patch Changes
+
+- Updated dependencies [7080a2f1d]
+  - @graphql-mesh/utils@0.13.5
+
 ## 0.8.4
 
 ### Patch Changes

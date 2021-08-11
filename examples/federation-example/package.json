@@ -1,6 +1,6 @@
 {
   "name": "federation-handler-example",
-  "version": "0.5.119",
+  "version": "0.5.120",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -18,10 +18,10 @@
     "nodemon": "2.0.6"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.34.0",
-    "@graphql-mesh/graphql": "0.18.4",
-    "@graphql-mesh/merger-federation": "0.9.5",
-    "@graphql-mesh/transform-federation": "0.5.20",
+    "@graphql-mesh/cli": "0.34.1",
+    "@graphql-mesh/graphql": "0.18.5",
+    "@graphql-mesh/merger-federation": "0.9.6",
+    "@graphql-mesh/transform-federation": "0.5.21",
     "apollo-server": "2.21.0",
     "delay-cli": "^1.1.0",
     "graphql": "15.4.0"
