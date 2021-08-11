@@ -39,6 +39,16 @@ You can run `mesh dev` to try your operations in the playground;
 yarn mesh dev
 ```
 
+## Generate operations automatically
+
+Mesh can generate the operations for you if you don't want to use manually written operations. Just add the following to your configuration;
+
+```yaml
+sdk:
+  generateOperations:
+     selectionSetDepth: 2 # This is the maximum level of selection set
+```
+
 ## Build your SDK with Mesh artifacts
 
 This will generate an SDK inside your Mesh artifacts under `.mesh` directory;
