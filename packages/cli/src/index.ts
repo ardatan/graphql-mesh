@@ -75,7 +75,8 @@ export async function graphqlMesh() {
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
-            getMeshOptions: meshConfig,
+            getBuiltMesh: () => getMesh(meshConfig),
+            logger: meshConfig.logger,
             rawConfig: meshConfig.config,
             documents: meshConfig.documents,
           };
@@ -118,12 +119,12 @@ export async function graphqlMesh() {
           const mainModule = join(builtMeshArtifactsPath, 'index.js');
           const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
           const getMeshOptions: GetMeshOptions = builtMeshArtifacts.getMeshOptions();
-          logger = getMeshOptions.logger;
           const rawConfig: YamlConfig.Config = builtMeshArtifacts.rawConfig;
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
-            getMeshOptions,
+            getBuiltMesh: () => getMesh(getMeshOptions),
+            logger: getMeshOptions.logger,
             rawConfig: builtMeshArtifacts.rawConfig,
             documents: builtMeshArtifacts.documentsInSDL.map((documentSdl: string, i: number) => ({
               rawSDL: documentSdl,

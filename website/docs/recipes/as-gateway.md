@@ -9,18 +9,20 @@ sidebar_label: Mesh as Gateway
   <br/>
 </p>
 
-You can use GraphQL Mesh as a gateway for your data sources. CLI's `dev` command creates a GraphQL Endpoint with GraphQL Playground.
+You can use GraphQL Mesh as an HTTP gateway proxy for your data sources. GraphQL Mesh provides you an HTTP server with [Express](https://expressjs.com/), [GraphQL Helix](https://github.com/contrawork/graphql-helix), [GraphQL-WS](https://github.com/enisdenjo/graphql-ws#readme) and [GraphiQL Explorer](https://github.com/OneGraph/graphiql-explorer) with the bunch of configurable features out-of-box which can be seen [here](/docs/recipes/mesh-as-gateway).
 
-```bash
-mesh dev
-```
+There are two commands for GraphQL Mesh's HTTP Server;
+
+- `dev` commands generates the unified schema without using any existing artifacts on the disk and it introspects all the schemas but it doesn't save it.
+- `start` commands generates the unified schema by using the existing artifacts previously created by `mesh build` command. [Learn more about Mesh artifacts.](/docs/recipes/build-mesh-artifacts).
+
 You can also point to a specific directory which contains the source files (`.meshrc.yaml`, etc.)
 
 ```bash
 mesh dev --dir some/path/to-configuration/
 ```
 
-You can configure `dev` command like below in `.meshrc.yml`;
+GraphQL Mesh's HTTP Server can be configured using `serve` command like below;
 
 ```yaml
 serve:

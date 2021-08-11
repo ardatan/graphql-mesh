@@ -17,12 +17,12 @@ import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
 import { promises as fsPromises } from 'fs';
-import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
+import { MeshInstance } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { env } from 'process';
-import { YamlConfig } from '@graphql-mesh/types';
+import { YamlConfig, Logger } from '@graphql-mesh/types';
 import { Source } from '@graphql-tools/utils';
 import { inspect } from 'util';
 
@@ -30,25 +30,26 @@ const { readFile } = fsPromises;
 
 export interface ServeMeshOptions {
   baseDir: string;
-  getMeshOptions: GetMeshOptions;
+  getBuiltMesh: () => Promise<MeshInstance>;
+  logger: Logger;
   rawConfig: YamlConfig.Config;
   documents: Source[];
   argsPort?: number;
 }
 
-export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, documents }: ServeMeshOptions) {
-  getMeshOptions.logger.info(`Generating Mesh schema...`);
+export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents }: ServeMeshOptions) {
+  logger.info(`Generating Mesh schema...`);
   let readyFlag = false;
 
-  const mesh$ = getMesh(getMeshOptions)
+  const mesh$ = getBuiltMesh()
     .then(mesh => {
       readyFlag = true;
       if (!fork) {
-        getMeshOptions.logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
+        logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
       }
       return mesh;
     })
-    .catch(e => handleFatalError(e, getMeshOptions.logger));
+    .catch(e => handleFatalError(e, logger));
   const {
     fork,
     port: configPort,
@@ -72,7 +73,7 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
     for (let i = 0; i < forkNum; i++) {
       clusterFork();
     }
-    getMeshOptions.logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
+    logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
   } else {
     const app = express();
     app.set('trust proxy', 'loopback');
@@ -135,7 +136,7 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
       handlers?.map(async handlerConfig => {
         registeredPaths.add(handlerConfig.path);
         let handlerFn: any;
-        const handlerLogger = getMeshOptions.logger.child(handlerConfig.path);
+        const handlerLogger = logger.child(handlerConfig.path);
         if ('handler' in handlerConfig) {
           handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler, {
             cwd: baseDir,
@@ -177,7 +178,7 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
         baseDir,
         documents,
         graphqlPath,
-        logger: getMeshOptions.logger,
+        logger: logger,
       });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
@@ -199,7 +200,7 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
       httpServer,
       app,
       readyFlag,
-      logger: getMeshOptions.logger,
+      logger: logger,
     }));
   }
   return null;
