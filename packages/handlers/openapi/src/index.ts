@@ -132,8 +132,6 @@ export default class OpenAPIHandler implements MeshHandler {
 
     const spec = await this.getCachedSpec(fetch);
 
-    const baseUrlFactory = getInterpolatedStringFactory(baseUrl);
-
     const headersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
     for (const queryName in qs || {}) {
@@ -148,7 +146,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
-      baseUrl: baseUrl,
+      baseUrl,
       operationIdFieldNames: true,
       fillEmptyResponses: true,
       includeHttpDetails: this.config.includeHttpDetails,
@@ -197,8 +195,8 @@ export default class OpenAPIHandler implements MeshHandler {
         }
         */
 
-        if (!resolverParams.baseUrl && baseUrl) {
-          resolverParams.baseUrl = baseUrlFactory(resolverData);
+        if (baseUrl) {
+          resolverParams.baseUrl = stringInterpolator.parse(baseUrl, resolverData);
         }
 
         if (resolverParams.baseUrl) {
