@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/return-await */
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join, resolve } from 'path';
 import { createRequire } from 'module';
 import { ImportFn, SyncImportFn } from '@graphql-mesh/types';
-import { statSync } from 'fs';
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;
@@ -98,12 +97,8 @@ export function getDefaultImport(from: string): ImportFn {
 }
 
 export function getDefaultSyncImport(from: string): SyncImportFn {
-  const pathStats = statSync(from);
-  if (pathStats.isDirectory()) {
-    from = join(from, 'mesh.config.js');
-  }
-
-  const relativeRequire = createRequire(from);
+  const createRequireConstructor = isAbsolute(from) ? from : resolve(from);
+  const relativeRequire = createRequire(createRequireConstructor);
 
   return (from: string) => relativeRequire(from);
 }
