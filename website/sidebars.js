@@ -11,6 +11,7 @@ module.exports = {
       'recipes/typescript',
       'recipes/as-sdk',
       'recipes/as-gateway',
+      'recipes/custom-server',
       'recipes/subscriptions-webhooks',
       'recipes/live-queries',
     ],

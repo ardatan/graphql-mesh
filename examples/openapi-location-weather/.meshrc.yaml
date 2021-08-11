@@ -23,7 +23,6 @@ sources:
             to:
               type: WeatherError
 
-
 transforms:
   - cache:
       # Geo data doesn't change frequently, so we can cache it forever
@@ -76,3 +75,6 @@ additionalResolvers:
 
 documents:
   - ./example-query.graphql
+
+serve:
+  customServerHandler: ./customServerHandler.js

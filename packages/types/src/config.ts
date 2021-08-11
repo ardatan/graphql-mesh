@@ -100,6 +100,11 @@ export interface ServeConfig {
    * This feature can be disable by passing `false` (Any of: String, Boolean)
    */
   browser?: string | boolean;
+  /**
+   * If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler
+   * With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
+   */
+  customServerHandler?: string;
 }
 /**
  * Configuration for CORS

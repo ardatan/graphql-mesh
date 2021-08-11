@@ -4,7 +4,7 @@ title: Cache Transform
 sidebar_label: Cache
 ---
 
-The `cache` transform allow you to apply caching over your data-sources easily. 
+The `cache` transform allow you to apply caching over your data-sources easily.
 
 It allow you to configure custom invalidation rules (by ttl / mutation), and selective caching, according to your needs.
 
@@ -44,7 +44,7 @@ transforms:
 
 Each cache record is being stored with a key. The default way of creating this key is to use the GraphQL type name, the GraphQL field name, and a hash of the `args` object. This is in order to make that we can distinct the cache key according to the data it's storing.
 
-You can customize the `cacheKey` according to your needs, and you can use custom helpers to help you create those cache keys dynamically. 
+You can customize the `cacheKey` according to your needs, and you can use custom helpers to help you create those cache keys dynamically.
 
 The following example creates a `cacheKey` by an GraphQL query argument called `userId`, per day:
 
@@ -59,7 +59,7 @@ transforms:
 
 ### TTL
 
-Invalidation by TTL is the simplest way to deal with your cache. You can specify any time (in seconds) to keep your cache. 
+Invalidation by TTL is the simplest way to deal with your cache. You can specify any time (in seconds) to keep your cache.
 
 ```yml
 transforms:
@@ -98,7 +98,7 @@ input UpdateUserInput {
 }
 ```
 
-You can set a simple caching, based on a user id: 
+You can set a simple caching, based on a user id:
 
 ```yml
 transforms:
@@ -122,12 +122,13 @@ transforms:
 
 This way, when someone uses `updateUser` with a specific user id, it will update the data record, and then invalidate the cache automatically.
 
-### Programmatic 
+### Programmatic
 
-The `getMesh` method of GraphQL Mesh returns the general key=>value cache it uses at the moment, so you can easily access it and invalidate records according to your needs:
+The `getBuiltMesh` method of GraphQL Mesh artifacts returns the general key=>value cache it uses at the moment, so you can easily access it and invalidate records according to your needs:
 
 ```ts
-const { schema, execute, cache } = getMesh(config);
+const { getBuiltMesh } = require('./.mesh');
+const { schema, execute, cache } = getBuiltMesh();
 
 cache.delete(SOME_KEY);
 ```
