@@ -1,5 +1,5 @@
 ---
-id: custom-servr
+id: custom-server
 title: Custom Server
 sidebar_label: Custom Server (Apollo etc.)
 ---
