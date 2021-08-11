@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.18.6
+
+### Patch Changes
+
+- b45cb155d: fix(openapi): interpolate baseUrl string
+
 ## 0.18.5
 
 ### Patch Changes
