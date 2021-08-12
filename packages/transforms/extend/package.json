@@ -25,9 +25,9 @@
   "dependencies": {
     "@graphql-mesh/types": "0.45.0",
     "@graphql-mesh/utils": "0.13.5",
-    "@graphql-tools/load": "7.1.4",
-    "@graphql-tools/code-file-loader": "7.0.2",
-    "@graphql-tools/graphql-file-loader": "7.0.2",
+    "@graphql-tools/load": "7.1.5",
+    "@graphql-tools/code-file-loader": "7.0.3",
+    "@graphql-tools/graphql-file-loader": "7.0.3",
     "@graphql-tools/merge": "7.0.0"
   },
   "publishConfig": {
