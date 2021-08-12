@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.45.0",
-    "@graphql-tools/url-loader": "7.0.7",
-    "@graphql-tools/wrap": "8.0.9",
+    "@graphql-tools/url-loader": "7.0.8",
+    "@graphql-tools/wrap": "8.0.10",
     "@graphql-mesh/utils": "0.13.5",
-    "@graphql-tools/delegate": "8.0.7",
+    "@graphql-tools/delegate": "8.0.8",
     "@graphql-mesh/store": "0.1.5"
   },
   "publishConfig": {
