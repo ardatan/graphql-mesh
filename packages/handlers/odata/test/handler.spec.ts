@@ -70,7 +70,7 @@ describe('odata', () => {
     });
     const source = await handler.getMeshSource();
     const personType = source.schema.getType('IPerson') as GraphQLInterfaceType;
-    const getFriendsTripsFunction = personType.getFields()['GetFriendsTrips'];
+    const getFriendsTripsFunction = personType.getFields().GetFriendsTrips;
     expect(getFriendsTripsFunction.args).toHaveLength(2);
     const personArg = getFriendsTripsFunction.args.find(arg => arg.name === 'person');
     expect(personArg).not.toBeFalsy();
@@ -301,11 +301,16 @@ describe('odata', () => {
       ],
     };
     let sentRequest: Request;
+    let sentBody: any;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      const bodyObj = JSON.parse(request.body as any);
-      bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
-      return new Response(JSON.stringify(bodyObj));
+      sentBody = await request.json();
+      return new Response(
+        JSON.stringify({
+          ...sentBody,
+          '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person',
+        })
+      );
     });
     const handler = new ODataHandler({
       name: 'TripPin',
@@ -337,7 +342,7 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-    expect(JSON.parse(sentRequest!.body as any)).toStrictEqual(correctBody);
+    expect(sentBody).toStrictEqual(correctBody);
   });
   it('should generate correct HTTP request for deleting an entity', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -383,11 +388,16 @@ describe('odata', () => {
       LastName: 'King',
     };
     let sentRequest: Request;
+    let sentBody: any;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      const returnBody = JSON.parse(request.body as any);
-      returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
-      return new Response(JSON.stringify(returnBody));
+      sentBody = await request.json();
+      return new Response(
+        JSON.stringify({
+          ...sentBody,
+          '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person',
+        })
+      );
     });
     const handler = new ODataHandler({
       name: 'TripPin',
@@ -420,7 +430,7 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-    expect(await sentRequest!.text()).toBe(JSON.stringify(correctBody));
+    expect(sentBody).toStrictEqual(correctBody);
   });
   it('should generate correct HTTP request for invoking unbound functions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -568,7 +578,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl.replace(/'/g, '%27',  ));// apostrophe gets percent-encoded
+    expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for invoking unbound actions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));

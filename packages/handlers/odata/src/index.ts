@@ -46,14 +46,13 @@ import {
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
-import { nativeFetch } from './native-fetch';
 import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
 import { pruneSchema } from '@graphql-tools/utils';
-import { Request, Response } from 'cross-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
+import { fetch as nativeFetch, Request, Response } from 'undici';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -174,7 +173,7 @@ export default class ODataHandler implements MeshHandler {
             })
           : this.config.customFetch;
     } else {
-      fetch = getCachedFetch(this.cache);
+      fetch = nativeFetch;
     }
 
     const { baseUrl: nonInterpolatedBaseUrl, operationHeaders } = this.config;
@@ -924,7 +923,7 @@ export default class ODataHandler implements MeshHandler {
           // If entitySetPath is not available, take first parameter as entity
           // The first segment of the entity set path must match the binding parameter name
           // (see: http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#_Toc38530388)
-          entitySetPath = entitySetPath && entitySetPath.split("/")[0] || parameterName;
+          entitySetPath = (entitySetPath && entitySetPath.split('/')[0]) || parameterName;
           if (entitySetPath === parameterName) {
             boundEntityTypeName = getTypeNameFromRef({
               typeRef: parameterTypeRef,
