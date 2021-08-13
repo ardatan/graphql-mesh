@@ -715,10 +715,6 @@
           "enum": ["GET", "POST"],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
-        "useSSEForSubscription": {
-          "type": "boolean",
-          "description": "Use Server Sent Events instead of WebSocket for Subscriptions"
-        },
         "customFetch": {
           "anyOf": [
             {
@@ -739,10 +735,6 @@
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
-        "useWebSocketLegacyProtocol": {
-          "type": "boolean",
-          "description": "Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`"
-        },
         "introspection": {
           "type": "string",
           "description": "Path to the introspection\nYou can seperately give schema introspection"
@@ -754,6 +746,11 @@
         "batch": {
           "type": "boolean",
           "description": "Batch requests"
+        },
+        "subscriptionsProtocol": {
+          "type": "string",
+          "enum": ["SSE", "WS", "LEGACY_WS"],
+          "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
         }
       },
       "required": ["endpoint"]

@@ -7,7 +7,7 @@ import {
   KeyValueCache,
   ImportFn,
 } from '@graphql-mesh/types';
-import { UrlLoader } from '@graphql-tools/url-loader';
+import { UrlLoader, SubscriptionProtocol } from '@graphql-tools/url-loader';
 import { GraphQLSchema, buildSchema, DocumentNode, Kind, buildASTSchema } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
@@ -93,6 +93,7 @@ export default class GraphQLHandler implements MeshHandler {
       return urlLoader.getExecutorAsync(endpoint, {
         customFetch,
         ...this.config,
+        subscriptionsProtocol: this.config.subscriptionsProtocol as SubscriptionProtocol,
         headers,
       });
     };
@@ -123,6 +124,7 @@ export default class GraphQLHandler implements MeshHandler {
         ? urlLoader
             .handleSDL(introspection, customFetch, {
               ...this.config,
+              subscriptionsProtocol: this.config.subscriptionsProtocol as SubscriptionProtocol,
               headers: schemaHeaders,
             })
             .then(({ schema }) => schema)

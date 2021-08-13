@@ -102,7 +102,7 @@ sources:
         source: ./openapi.yaml
         baseUrl: "{env.REST_URL}/api/"
         operationHeaders:
-          Authorization-Header: "{context.headers['authorization']}"
+          Authorization-Header: "{context.headers.authorization}"
           Authorization-Cookie: Bearer {context.cookies.accessToken}
         customFetch: ./src/custom-fetch.js
 ```

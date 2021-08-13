@@ -243,10 +243,6 @@ export interface GraphQLHandler {
    */
   method?: 'GET' | 'POST';
   /**
-   * Use Server Sent Events instead of WebSocket for Subscriptions
-   */
-  useSSEForSubscription?: boolean;
-  /**
    * Path to a custom W3 Compatible Fetch Implementation
    */
   customFetch?: any;
@@ -254,10 +250,6 @@ export interface GraphQLHandler {
    * Path to a custom W3 Compatible WebSocket Implementation
    */
   webSocketImpl?: string;
-  /**
-   * Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`
-   */
-  useWebSocketLegacyProtocol?: boolean;
   /**
    * Path to the introspection
    * You can seperately give schema introspection
@@ -271,6 +263,12 @@ export interface GraphQLHandler {
    * Batch requests
    */
   batch?: boolean;
+  /**
+   * SSE - Server Sent Events
+   * WS - New graphql-ws
+   * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)
+   */
+  subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
 }
 /**
  * Handler for gRPC and Protobuf schemas
