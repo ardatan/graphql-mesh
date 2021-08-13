@@ -452,7 +452,7 @@ sources:
 
 And now it batches the requests to the inner sources.
 
-## In regular `additionalResolvers`
+### In regular `additionalResolvers`
 
 In the current example, we want to have a field called `author` under `Book` property then point it to `author`.
 
