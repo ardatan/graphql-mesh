@@ -5,7 +5,7 @@ const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin
 
 module.exports = {
   entry: './src/index.tsx',
-  mode: process.env.NODE_ENV ?? 'development',
+  mode: process.env.NODE_ENV || 'development',
   module: {
     rules: [
       {
