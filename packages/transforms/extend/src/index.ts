@@ -4,7 +4,7 @@ import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';
-import { mergeSchemas } from '@graphql-tools/merge';
+import { mergeSchemas } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 
 const asArray = <T>(maybeArray: T | T[]): T[] => {
