@@ -1,7 +1,7 @@
 import { MeshMerger, MeshMergerContext, MeshTransform } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { mergeSchemasAsync } from '@graphql-tools/merge';
+import { mergeSchemas } from '@graphql-tools/schema';
 
 export default class BareMerger implements MeshMerger {
   name = 'bare';
@@ -22,7 +22,7 @@ export default class BareMerger implements MeshMerger {
       return schema;
     });
 
-    let schema = await mergeSchemasAsync({
+    let schema = mergeSchemas({
       schemas,
       typeDefs,
       resolvers,
