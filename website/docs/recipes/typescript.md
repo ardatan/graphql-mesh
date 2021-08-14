@@ -25,7 +25,7 @@ Then, use the CLI command to generate the typings file based on your unified Gra
 mesh build
 ```
 
-[See more about artifacts](/getting-started/build-mesh-artifacts)
+[See more about artifacts](/docs/recipes/build-mesh-artifacts)
 
 Now, you can import `Resolvers` interface from the generated file, and use it as the type for your custom resolvers. It will make sure that your parent value, arguments, context type and return value are fully compatible with the implementation. It will also provide fully typed SDK from the context:
 
