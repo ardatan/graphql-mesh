@@ -120,7 +120,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
           // [@graphql-tools/url-loader adds the headers inside the "headers" field](https://github.com/ardatan/graphql-tools/blob/9a13357c4be98038c645f6efb26f0584828177cf/packages/loaders/url/src/index.ts#L597)
           for (const [key, value] of Object.entries(connectionParams.headers ?? {})) {
             // dont overwrite existing upgrade headers due to security reasons
-            if (!(key in request.headers)) {
+            if (!(key.toLowerCase() in request.headers)) {
               request.headers[key.toLowerCase()] = value;
             }
           }
