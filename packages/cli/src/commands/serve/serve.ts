@@ -116,7 +116,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
           ),
         context: async ({ connectionParams, extra: { request } }) => {
           // spread connectionParams.headers to upgrade request headers.
-          // we dont completely ignore the root connectionParams because
+          // we completely ignore the root connectionParams because
           // [@graphql-tools/url-loader adds the headers there](https://github.com/ardatan/graphql-tools/blob/9a13357c4be98038c645f6efb26f0584828177cf/packages/loaders/url/src/index.ts#L597)
           for (const [key, value] of Object.entries(connectionParams.headers ?? {})) {
             // dont overwrite existing upgrade headers due to security reasons
