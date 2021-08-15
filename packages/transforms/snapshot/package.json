@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-snapshot",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -26,8 +26,8 @@
     "graphql-fields": "2.0.3"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.45.0",
-    "@graphql-mesh/utils": "0.13.5",
+    "@graphql-mesh/types": "0.45.1",
+    "@graphql-mesh/utils": "0.13.6",
     "@graphql-tools/resolvers-composition": "6.3.3",
     "@graphql-tools/schema": "8.1.0",
     "@graphql-tools/utils": "8.1.0"

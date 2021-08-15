@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.34.2
+
+### Patch Changes
+
+- 6f0c05145: Spread WebSocket `connectionParams` to upgrade request headers
+  - @graphql-mesh/config@0.19.8
+  - @graphql-mesh/runtime@0.18.6
+  - @graphql-mesh/utils@0.13.6
+  - @graphql-mesh/store@0.1.6
+
 ## 0.34.1
 
 ### Patch Changes
