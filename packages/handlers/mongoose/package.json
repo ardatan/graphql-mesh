@@ -33,7 +33,7 @@
     "graphql-compose-mongoose": "9.5.2",
     "graphql-compose-connection": "8.2.1",
     "graphql-compose-pagination": "8.3.0",
-    "@graphql-tools/stitching-directives": "2.0.8"
+    "@graphql-tools/stitching-directives": "2.0.9"
   },
   "publishConfig": {
     "access": "public",
