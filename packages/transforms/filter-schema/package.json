@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-filter-schema",
-  "version": "0.10.23",
+  "version": "0.10.24",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -26,8 +26,8 @@
     "@types/micromatch": "4.0.2"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.45.0",
-    "@graphql-mesh/utils": "0.13.5",
+    "@graphql-mesh/types": "0.45.1",
+    "@graphql-mesh/utils": "0.13.6",
     "micromatch": "4.0.4",
     "@graphql-tools/wrap": "8.0.10",
     "@graphql-tools/delegate": "8.0.8",

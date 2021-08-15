@@ -1,5 +1,15 @@
 # @graphql-mesh/graphql
 
+## 0.18.6
+
+### Patch Changes
+
+- 1c2667489: fix(graphql): Replace old flags with subscriptionsProtocol
+- Updated dependencies [1c2667489]
+  - @graphql-mesh/types@0.45.1
+  - @graphql-mesh/utils@0.13.6
+  - @graphql-mesh/store@0.1.6
+
 ## 0.18.5
 
 ### Patch Changes
