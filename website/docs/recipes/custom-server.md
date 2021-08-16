@@ -4,7 +4,7 @@ title: Custom Server
 sidebar_label: Custom Server (Apollo etc.)
 ---
 
-By default, GraphQL Mesh provides you an HTTP server. You can see the details in [Mesh as Gateway page](/docs/recipes/mesh-as-gateway). However, you can replace GraphQL Mesh's default server implementation by a custom one.
+By default, GraphQL Mesh provides you an HTTP server. You can see the details in [Mesh as Gateway page](/docs/recipes/as-gateway). However, you can replace GraphQL Mesh's default server implementation by a custom one.
 
 ## How to do?
 

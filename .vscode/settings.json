@@ -16,10 +16,13 @@
     "**/.git": true,
     "**/.DS_Store": true,
     "**/node_modules": true,
+    "**/dist": true,
     "test-lib": true,
     "lib": true,
     "coverage": true,
-    "npm": true
+    "npm": true,
+    ".parcel-cache": true,
+    ".bob": true
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }

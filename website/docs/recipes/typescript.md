@@ -17,7 +17,7 @@ require:
   - ts-node/register/transpile-only
 
 additionalResolvers:
-  - ./src/mesh-resolvers.ts  
+  - ./src/mesh-resolvers.ts
 ```
 
 Then, use the CLI command to generate the typings file based on your unified GraphQL schema:
