@@ -308,7 +308,7 @@ function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: s
 
   const hostWriteFile = host.writeFile.bind(host);
   host.writeFile = (fileName, ...rest) => {
-    if (outputFilePaths.some(outputFilePath => outputFilePath.replace(sep, '/') === fileName)) {
+    if (outputFilePaths.includes(fileName.replace('/', sep))) {
       return hostWriteFile(fileName, ...rest);
     }
   };
