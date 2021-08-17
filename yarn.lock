@@ -16831,27 +16831,27 @@ neo-async@^2.5.0, neo-async@^2.6.0, neo-async@^2.6.1, neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@^4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-4.3.2.tgz#5cce9f6b9275d97bc51106440c2f3c6ce4f1bc48"
-  integrity sha512-Jhgs5VDj0+xJsmnjl3ph9tddBR8SLfqOV9h3hAFdehGIXU1GvMBoamnsymgfWPrf1XF05I9QZK5TG+rPVlbvPg==
+neo4j-driver-bolt-connection@^4.3.3:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-4.3.3.tgz#603734caba66b09f6a5962516d27427fd6633502"
+  integrity sha512-yCiNf4c96wUFrBflabkJ3P+2jLLxrKrjHofvnPqoaTtFBEdnFQYk6oNI+xtF4STe9ADRRrpzOQo1SI8jfmksRQ==
   dependencies:
-    neo4j-driver-core "^4.3.2"
+    neo4j-driver-core "^4.3.3"
     text-encoding-utf-8 "^1.0.2"
 
-neo4j-driver-core@^4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-4.3.2.tgz#18cdbf43a63b324914a56d1fec54acd41b1a01f3"
-  integrity sha512-RFQAnIz/osp63msghEU1yNKZJOpyu99Ch/DU15o+RvdYTgvReewWXoThadnCzqfcuCrNqAq2lMC3SxDO284aSw==
+neo4j-driver-core@^4.3.3:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-4.3.3.tgz#600081d2d1e7dfa79ba624aafceb74c8419d947d"
+  integrity sha512-n0ltGzACnKTta/d1CGhqgcjYaWwlTIgUU0nwRRd3OZZifXcW030ICqNtwqn2t7WFmDE5iVmD2yQwo4JIvitV5g==
 
-neo4j-driver@4.3.2, neo4j-driver@^4.2.1:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-4.3.2.tgz#5f5fc91f5b2496f7eb7917a69d8a101c13af01bc"
-  integrity sha512-upU+EP3rEH029+2XBDG9GF406IILdckUx8D6oTyuIaH+La0aFI5Q8F52bXLDUVt9tmPx7GKO4kyb7EQSty4B9g==
+neo4j-driver@4.3.3, neo4j-driver@^4.2.1:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-4.3.3.tgz#497383d89b0141b11926ef7cec7a91678604fd6f"
+  integrity sha512-rsBd8BB3YA8mNhQcltj3UuoTJKd07DRN5ZrtW4bKJHp9AgC28v6Q65nLYTdZZo0r+NRpxau1SlsAeqSEnLPCZA==
   dependencies:
     "@babel/runtime" "^7.5.5"
-    neo4j-driver-bolt-connection "^4.3.2"
-    neo4j-driver-core "^4.3.2"
+    neo4j-driver-bolt-connection "^4.3.3"
+    neo4j-driver-core "^4.3.3"
     rxjs "^6.6.3"
 
 neo4j-graphql-js@2.19.4:
