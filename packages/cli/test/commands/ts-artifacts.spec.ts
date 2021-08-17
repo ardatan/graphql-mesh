@@ -1,5 +1,5 @@
 import { join } from "path";
-import { existsSync, readFileSync, mkdirSync, rmdirSync, copyFileSync, rmSync } from "fs";
+import { existsSync, readFileSync, mkdirSync, copyFileSync, rmSync } from "fs";
 import ts from "typescript";
 import { compileTS } from "../../src/commands/ts-artifacts";
 
