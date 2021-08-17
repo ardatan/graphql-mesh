@@ -1,5 +1,5 @@
 import { join } from "path";
-import { existsSync, readFileSync, mkdirSync, copyFileSync, rmSync } from "fs";
+import { existsSync, readFileSync, mkdirSync, copyFileSync, rmdirSync } from "fs";
 import ts from "typescript";
 import { compileTS } from "../../src/commands/ts-artifacts";
 
@@ -11,8 +11,8 @@ describe('cli ts-artifacts', () => {
     const esmDir = join(baseDir, "esm");
 
     function cleanUp() {
-      rmSync(cjsDir, { recursive: true, force: true });
-      rmSync(esmDir, { recursive: true, force: true });
+      rmdirSync(cjsDir, { recursive: true });
+      rmdirSync(esmDir, { recursive: true });
     }
 
     beforeAll(() => {
