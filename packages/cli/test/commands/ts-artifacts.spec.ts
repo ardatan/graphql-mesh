@@ -1,5 +1,6 @@
 import { join } from "path";
-import { existsSync, readFileSync, mkdirSync, copyFileSync, rmdirSync } from "fs";
+import { existsSync, readFileSync, mkdirSync, copyFileSync } from "fs";
+import rimraf from "rimraf";
 import ts from "typescript";
 import { compileTS } from "../../src/commands/ts-artifacts";
 
@@ -10,13 +11,20 @@ describe('cli ts-artifacts', () => {
     const cjsDir = join(baseDir, "commonjs");
     const esmDir = join(baseDir, "esm");
 
-    function cleanUp() {
-      rmdirSync(cjsDir, { recursive: true });
-      rmdirSync(esmDir, { recursive: true });
+    async function cleanUp() {
+      return new Promise<void>((resolve, reject) => {
+        rimraf(cjsDir, (cjsErr) => {
+          if (cjsErr) return reject(cjsErr);
+          rimraf(esmDir, (esmErr) => {
+            if (esmErr) return reject(esmErr);
+            resolve();
+          })
+        });
+      });
     }
 
-    beforeAll(() => {
-      cleanUp();
+    beforeAll(async () => {
+      await cleanUp();
       const tsFilePath = join(baseDir, "index.ts");
       mkdirSync(cjsDir, { recursive: true });
       copyFileSync(tsFilePath, join(cjsDir, "index.ts"));
@@ -24,8 +32,8 @@ describe('cli ts-artifacts', () => {
       copyFileSync(tsFilePath, join(esmDir, "index.ts"));
     });
 
-    afterAll(() => {
-      cleanUp();
+    afterAll(async () => {
+      await cleanUp();
     });
 
 
