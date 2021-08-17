@@ -8,7 +8,7 @@ import { pascalCase } from 'pascal-case';
 import { Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
-import { isAbsolute, relative, join } from 'path';
+import { isAbsolute, relative, join, sep } from 'path';
 import ts from 'typescript';
 import { writeFile } from '@graphql-mesh/utils';
 import { cwd } from 'process';
@@ -308,7 +308,7 @@ function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: s
 
   const hostWriteFile = host.writeFile.bind(host);
   host.writeFile = (fileName, ...rest) => {
-    if (outputFilePaths.includes(fileName)) {
+    if (outputFilePaths.some(outputFilePath => outputFilePath.replace(sep, '/') === fileName)) {
       return hostWriteFile(fileName, ...rest);
     }
   };
