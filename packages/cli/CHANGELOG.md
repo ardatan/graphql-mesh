@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.34.3
+
+### Patch Changes
+
+- 1928246f8: Fixed a regression causing code generation using mesh build to fail on Windows
+
 ## 0.34.2
 
 ### Patch Changes
