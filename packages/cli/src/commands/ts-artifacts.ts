@@ -8,7 +8,7 @@ import { pascalCase } from 'pascal-case';
 import { Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
-import { isAbsolute, relative, join } from 'path';
+import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
 import { writeFile } from '@graphql-mesh/utils';
 import { cwd } from 'process';
@@ -293,7 +293,7 @@ export async function getMeshSDK() {
   await unlink(tsFilePath);
 }
 
-function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: string[]) {
+export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: string[]) {
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
     module,
@@ -308,7 +308,7 @@ function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: s
 
   const hostWriteFile = host.writeFile.bind(host);
   host.writeFile = (fileName, ...rest) => {
-    if (outputFilePaths.includes(fileName)) {
+    if (outputFilePaths.some(f => normalize(f) === normalize(fileName))) {
       return hostWriteFile(fileName, ...rest);
     }
   };
