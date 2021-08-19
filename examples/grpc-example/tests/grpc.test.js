@@ -1,5 +1,5 @@
 require('json-bigint-patch');
-const { findAndParseConfig } = require('@graphql-mesh/config');
+const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { basename, join } = require('path');
 
