@@ -8,7 +8,7 @@ import { pascalCase } from 'pascal-case';
 import { Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
-import { isAbsolute, relative, join, normalize } from 'path';
+import { isAbsolute, relative, join, normalize, sep, win32, posix } from 'path';
 import ts from 'typescript';
 import { writeFile } from '@graphql-mesh/utils';
 import { cwd } from 'process';
@@ -197,6 +197,9 @@ export async function generateTsArtifacts({
             if (isAbsolute(importPath)) {
               moduleMapProp = relative(baseDir, importedModuleName).split('\\').join('/');
               importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
+            }
+            if (sep === win32.sep) {
+              importPath = importPath.replace(new RegExp(`\\${sep}`, 'g'), posix.sep);
             }
             const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
             importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
