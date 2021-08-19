@@ -949,7 +949,7 @@ input Foo_Input {
     const enumValuesMap = enumTypeComposer.getFields();
     expect(enumValuesMap).toMatchInlineSnapshot(`
 Object {
-  "_045_1": Object {
+  "NEGATIVE_1": Object {
     "deprecationReason": undefined,
     "description": undefined,
     "directives": Array [],
