@@ -31,8 +31,8 @@
     "@graphql-mesh/utils": "0.13.6",
     "@graphql-tools/merge": "8.0.2",
     "@graphql-tools/utils": "8.1.1",
-    "@graphql-tools/load": "7.1.7",
-    "@graphql-tools/code-file-loader": "7.0.5",
+    "@graphql-tools/load": "7.1.8",
+    "@graphql-tools/code-file-loader": "7.0.6",
     "@graphql-tools/graphql-file-loader": "7.0.5",
     "graphql-subscriptions": "1.2.1",
     "param-case": "3.0.4"
