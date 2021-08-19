@@ -2,11 +2,17 @@ const reservedNames = ['Query', 'Mutation', 'Subscription'];
 export function sanitizeNameForGraphQL(unsafeName: string): string {
   let sanitizedName = '';
 
-  for (const ch of unsafeName.trim()) {
-    sanitizedName += /^[_a-zA-Z0-9]*$/.test(ch) ? ch : '_';
+  const trimmedUnsafeName = unsafeName.trim();
+
+  if (/^[_a-zA-Z0-9]*$/.test(trimmedUnsafeName)) {
+    sanitizedName = trimmedUnsafeName;
+  } else {
+    for (const ch of trimmedUnsafeName) {
+      sanitizedName += /^[_a-zA-Z0-9]*$/.test(ch) ? ch : `_${ch.charCodeAt(0)}_`;
+    }
   }
 
-  if (!isNaN(parseInt(sanitizedName))) {
+  if (!isNaN(parseInt(trimmedUnsafeName))) {
     sanitizedName = '_' + sanitizedName;
   }
 

@@ -9,9 +9,9 @@ type Company {
 }
 
 enum CompanyType {
-  One_Person
-  Private_Limited
-  Public_Limited
+  One_32_Person
+  Private_32_Limited
+  Public_32_Limited
 }
 
 type Foo {
