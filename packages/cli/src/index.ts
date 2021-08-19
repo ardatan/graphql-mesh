@@ -1,4 +1,4 @@
-import { findAndParseConfig } from '@graphql-mesh/config';
+import { findAndParseConfig } from './config';
 import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh, ServeMeshOptions } from './commands/serve/serve';
@@ -6,7 +6,14 @@ import { isAbsolute, resolve, join } from 'path';
 import { existsSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { writeFile, pathExists, rmdirs, DefaultLogger, getDefaultSyncImport, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import {
+  writeFile,
+  pathExists,
+  rmdirs,
+  DefaultLogger,
+  getDefaultSyncImport,
+  loadFromModuleExportExpression,
+} from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
 import yargs from 'yargs';
@@ -14,7 +21,7 @@ import { hideBin } from 'yargs/helpers';
 import { parse } from 'graphql';
 import { YamlConfig } from '@graphql-mesh/types';
 
-export { generateTsArtifacts, serveMesh };
+export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
 const SERVE_COMMAND_WARNING =
   '`serve` command has been replaced by `dev` and `start` commands. Check our documentation for new usage';

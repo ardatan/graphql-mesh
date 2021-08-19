@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "mesh:generate:schema": "graphql-mesh dump-schema --dir ./server/ --output ./generated/mesh.graphql",
-    "mesh:generate:json": "graphql-mesh dump-schema --dir ./server/ --output ./generated/mesh.json",
-    "mesh:generate:typings": "graphql-mesh typescript --dir ./server/ --output ./generated/mesh.ts"
+    "mesh:build": "mesh build --dir ./server/"
   },
   "dependencies": {
     "@graphql-mesh/cli": "^0.34.0",

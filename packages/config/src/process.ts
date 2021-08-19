@@ -1,8 +1,7 @@
-import { isAbsolute, join, resolve } from 'path';
+import { resolve } from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
-  jsonSchema,
   Logger,
   MeshHandlerLibrary,
   MeshMerger,
@@ -14,8 +13,6 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
-import Ajv from 'ajv';
-import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { KeyValueCache } from 'fetchache';
 import { DocumentNode, print } from 'graphql';
 import {
@@ -27,7 +24,7 @@ import {
   resolveLogger,
 } from './utils';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
-import { cwd, env } from 'process';
+import { env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { getDefaultImport, getDefaultSyncImport, resolveAdditionalResolvers } from '@graphql-mesh/utils';
@@ -38,30 +35,6 @@ export type ConfigProcessOptions = {
   syncImportFn?: SyncImportFn;
   store?: MeshStore;
 };
-
-// TODO: deprecate this in next major release as dscussed in #1687
-export async function parseConfig(
-  rawConfig: YamlConfig.Config | string,
-  options?: { configFormat?: 'yaml' | 'json' | 'object' } & ConfigProcessOptions
-) {
-  let config: YamlConfig.Config;
-  const { configFormat = 'object', dir: configDir = '' } = options || {};
-  const dir = isAbsolute(configDir) ? configDir : join(cwd(), configDir);
-
-  switch (configFormat) {
-    case 'yaml':
-      config = defaultLoaders['.yaml']('.meshrc.yml', rawConfig as string);
-      break;
-    case 'json':
-      config = defaultLoaders['.json']('.meshrc.json', rawConfig as string);
-      break;
-    case 'object':
-      config = rawConfig as YamlConfig.Config;
-      break;
-  }
-
-  return processConfig(config, { ...options, dir });
-}
 
 export type ProcessedConfig = {
   sources: MeshResolvedSource<any>[];
@@ -335,71 +308,4 @@ export async function processConfig(
     store: rootStore,
     code: [...new Set([...importCodes, ...codes])].join('\n'),
   };
-}
-
-function customLoader(ext: 'json' | 'yaml' | 'js') {
-  function loader(filepath: string, content: string) {
-    if (env) {
-      content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
-        let varName = variable;
-        let defaultValue = '';
-
-        if (variable.includes(':')) {
-          const spl = variable.split(':');
-          varName = spl.shift();
-          defaultValue = spl.join(':');
-        }
-
-        return env[varName] || defaultValue;
-      });
-    }
-
-    if (ext === 'json') {
-      return defaultLoaders['.json'](filepath, content);
-    }
-
-    if (ext === 'yaml') {
-      return defaultLoaders['.yaml'](filepath, content);
-    }
-
-    if (ext === 'js') {
-      return defaultLoaders['.js'](filepath, content);
-    }
-  }
-
-  return loader;
-}
-
-export function validateConfig(config: any): asserts config is YamlConfig.Config {
-  const ajv = new Ajv({
-    strict: false,
-  });
-  jsonSchema.$schema = undefined;
-  const isValid = ajv.validate(jsonSchema, config);
-  if (!isValid) {
-    console.warn(`GraphQL Mesh Configuration is not valid:\n${ajv.errorsText()}`);
-  }
-}
-
-export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions) {
-  const { configName = 'mesh', dir: configDir = '', ...restOptions } = options || {};
-  const dir = isAbsolute(configDir) ? configDir : join(cwd(), configDir);
-  const explorer = cosmiconfig(configName, {
-    loaders: {
-      '.json': customLoader('json'),
-      '.yaml': customLoader('yaml'),
-      '.yml': customLoader('yaml'),
-      '.js': customLoader('js'),
-      noExt: customLoader('yaml'),
-    },
-  });
-  const results = await explorer.search(dir);
-
-  if (!results) {
-    throw new Error(`No mesh config file was found in "${dir}"!`);
-  }
-
-  const config = results.config;
-  validateConfig(config);
-  return processConfig(config, { dir, ...restOptions });
 }

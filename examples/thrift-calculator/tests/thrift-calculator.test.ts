@@ -1,4 +1,4 @@
-import { findAndParseConfig } from '@graphql-mesh/config';
+import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh } from '@graphql-mesh/runtime';
 import { basename, join } from 'path';
 import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
