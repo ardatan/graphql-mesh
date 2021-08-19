@@ -8,7 +8,7 @@ import { cwd, env } from 'process';
 export function validateConfig(config: any): asserts config is YamlConfig.Config {
   const ajv = new Ajv({
     strict: false,
-  });
+  } as any);
   jsonSchema.$schema = undefined;
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
