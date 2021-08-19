@@ -196,7 +196,7 @@ export async function generateTsArtifacts({
             }
             if (isAbsolute(importPath)) {
               moduleMapProp = relative(baseDir, importedModuleName);
-              importPath = `./${relative(artifactsDir, importedModuleName)}`;
+              importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
             }
             const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
             importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
