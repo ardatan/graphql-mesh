@@ -2,38 +2,39 @@ import React, { useState } from "react";
 import styles from './styles.module.css';
 
 const EXAMPLES = {
-    'OpenAPI': {
-        'JavaScript Wiki': 'openapi-javascript-wiki',
-        'Location Weather': 'openapi-location-weather',
-        'YouTrack': 'openapi-youtrack',
-        'Stripe': 'openapi-stripe',
-        'StackExchange': 'openapi-stackexchange',
-        'WeatherBit on React App': 'openapi-react-weatherbit'
-    },
-    'JSON Schema': {
-        'Fake API': 'json-schema-example',
-        'Covid-19 Statistics': 'json-schema-covid',
-        'Subscriptions, Webhooks & Live Queries': 'json-schema-subscriptions'
-    },
-    'OData':{
-        'TripPin': 'odata-trippin',
-        'Microsoft Graph': 'odata-microsoft',
-    },
-    'SOAP': {
-        'Country Info': 'soap-country-info'
-    },
-    'MySQL': {
-        'Rfam': 'mysql-rfam',
-    },
-    'SQLite': {
-        'Chinook': 'sqlite-chinook'
-    },
-    'Apollo Federation': {
-        'Apollo Federation Example': 'federation-example'
-    },
-    'Apache Thrift': {
-        'Calculator': 'thrift-calculator'
-    }
+  OpenAPI: {
+    'JavaScript Wiki': 'openapi-javascript-wiki',
+    'Location Weather': 'openapi-location-weather',
+    YouTrack: 'openapi-youtrack',
+    Stripe: 'openapi-stripe',
+    StackExchange: 'openapi-stackexchange',
+    'WeatherBit on React App': 'openapi-react-weatherbit',
+    'NextJS with Apollo': 'nextjs-apollo-example',
+  },
+  'JSON Schema': {
+    'Fake API': 'json-schema-example',
+    'Covid-19 Statistics': 'json-schema-covid',
+    'Subscriptions, Webhooks & Live Queries': 'json-schema-subscriptions',
+  },
+  OData: {
+    TripPin: 'odata-trippin',
+    'Microsoft Graph': 'odata-microsoft',
+  },
+  SOAP: {
+    'Country Info': 'soap-country-info',
+  },
+  MySQL: {
+    Rfam: 'mysql-rfam',
+  },
+  SQLite: {
+    Chinook: 'sqlite-chinook',
+  },
+  'Apollo Federation': {
+    'Apollo Federation Example': 'federation-example',
+  },
+  'Apache Thrift': {
+    Calculator: 'thrift-calculator',
+  },
 };
 
 export default () => {

@@ -27,7 +27,9 @@
   },
   "scripts": {
     "build:mesh": "yarn mesh build",
+    "prestart": "yarn build:mesh",
     "start": "parcel ./public/index.html",
+    "prebuild": "yarn build:mesh",
     "build": "parcel build ./public/index.html"
   },
   "eslintConfig": {

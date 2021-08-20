@@ -3,9 +3,11 @@
   "version": "0.1.10",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "prestart": "yarn build:mesh",
+    "start": "next dev",
+    "prebuild": "yarn build:mesh",
     "build": "next build",
-    "start": "next start",
+    "start:prod": "next start",
     "mesh:build": "mesh build --dir ./server/"
   },
   "dependencies": {
