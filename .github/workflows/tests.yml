@@ -55,8 +55,10 @@ jobs:
 
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock
-      - name: Build
-        run: yarn build # We need build for playground
+      - name: Build Playground
+        run: yarn build:playground && yarn copy-playground
+      - name: Type Checking
+        run: yarn transpile-ts --noEmit # We need build for playground
 
   test:
     name: Testing on Node ${{matrix.node_version}}
@@ -123,6 +125,8 @@ jobs:
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
+      - name: Build Playground
+        run: yarn build:playground && yarn copy-playground
       - name: Test
         run: yarn test
         env:
