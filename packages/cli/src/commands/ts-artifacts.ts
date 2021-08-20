@@ -195,12 +195,12 @@ export async function generateTsArtifacts({
               importPath = join(baseDir, importPath);
             }
             if (isAbsolute(importPath)) {
-              moduleMapProp = relative(baseDir, importedModuleName);
+              moduleMapProp = relative(baseDir, importedModuleName).split('\\').join('/');
               importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
             }
             const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
             importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
-            return `  // @ts-ignore\n  [\`${moduleMapProp}\`]: ${importedModuleVariable}`;
+            return `  // @ts-ignore\n  [${JSON.stringify(moduleMapProp)}]: ${importedModuleVariable}`;
           });
 
           const meshMethods = `
@@ -213,7 +213,7 @@ ${importedModulesCodes.join(',\n')}
 const baseDir = join(cwd(), '${relative(cwd(), baseDir)}');
 
 const syncImportFn = (moduleId: string) => {
-  const relativeModuleId = isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId;
+  const relativeModuleId = (isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId).split('\\\\').join('/');
   if (!(relativeModuleId in importedModules)) {
     throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
   }
