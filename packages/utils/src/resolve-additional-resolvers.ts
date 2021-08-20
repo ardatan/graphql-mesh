@@ -79,7 +79,7 @@ export function resolveAdditionalResolvers(
                   context,
                   info,
                   argsFromKeys: (keys: string[]) => ({
-                    [additionalResolver.keysArg]: keys,
+                    ..._.set({}, additionalResolver.keysArg, keys),
                     ...targetArgs,
                   }),
                   key: _.get(root, additionalResolver.keyField),

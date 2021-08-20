@@ -10,7 +10,6 @@ import {
   GraphQLObjectType,
   getOperationAST,
   print,
-  isListType,
   SelectionSetNode,
   ExecutionResult,
 } from 'graphql';
@@ -219,7 +218,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                 transformedSchema,
                 info,
               };
-              if (isListType(rootTypeField.type) && key && argsFromKeys) {
+              if (key && argsFromKeys) {
                 const batchDelegationOptions: BatchDelegateOptions = {
                   ...commonDelegateOptions,
                   key,
