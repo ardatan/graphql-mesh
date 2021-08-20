@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.45.2
+
+### Patch Changes
+
+- fc51c574d: Dependency updates
+
 ## 0.45.1
 
 ### Patch Changes
