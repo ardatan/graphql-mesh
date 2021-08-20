@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.20.0
+
+### Minor Changes
+
+- 3ddf29c8e: enhance(config/cli): breaking change by moving findAndParseConfig to cli package and remove parseConfig
+
 ## 0.19.8
 
 ### Patch Changes
