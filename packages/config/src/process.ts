@@ -76,6 +76,10 @@ export async function processConfig(
   config: YamlConfig.Config,
   options?: ConfigProcessOptions
 ): Promise<ProcessedConfig> {
+  if (config.skipSSLValidation) {
+    env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  }
+
   const importCodes: string[] = [
     `import { GetMeshOptions } from '@graphql-mesh/runtime';`,
     `import { YamlConfig } from '@graphql-mesh/types';`,

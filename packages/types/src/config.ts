@@ -54,6 +54,10 @@ export interface Config {
    * Logger instance that matches `Console` interface of NodeJS
    */
   logger?: any;
+  /**
+   * Allow connections to an SSL endpoint without certificates
+   */
+  skipSSLValidation?: boolean;
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.

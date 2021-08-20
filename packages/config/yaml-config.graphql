@@ -43,6 +43,10 @@ type Query {
   Logger instance that matches `Console` interface of NodeJS
   """
   logger: Any
+  """
+  Allow connections to an SSL endpoint without certificates
+  """
+  skipSSLValidation: Boolean
 }
 
 scalar JSON

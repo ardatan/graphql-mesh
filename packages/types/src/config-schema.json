@@ -2728,6 +2728,10 @@
         }
       ],
       "description": "Logger instance that matches `Console` interface of NodeJS"
+    },
+    "skipSSLValidation": {
+      "type": "boolean",
+      "description": "Allow connections to an SSL endpoint without certificates"
     }
   },
   "additionalProperties": false

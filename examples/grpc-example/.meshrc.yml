@@ -21,3 +21,5 @@ sources:
 
 documents:
   - example-queries/*.graphql
+
+skipSSLValidation: true
