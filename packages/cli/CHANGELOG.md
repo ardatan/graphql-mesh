@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.35.0
+
+### Minor Changes
+
+- 3ddf29c8e: enhance(config/cli): breaking change by moving findAndParseConfig to cli package and remove parseConfig
+
+### Patch Changes
+
+- 01bfd65de: fix(cli): fix windows path issue
+- e433731cd: fix(cli): fix handling imports inside artifacts
+- Updated dependencies [3ddf29c8e]
+  - @graphql-mesh/config@0.20.0
+
 ## 0.34.3
 
 ### Patch Changes
