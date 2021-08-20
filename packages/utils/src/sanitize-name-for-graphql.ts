@@ -1,4 +1,42 @@
 const reservedNames = ['Query', 'Mutation', 'Subscription'];
+const KNOWN_CHARACTERS = {
+  '+': 'PLUS',
+  '-': 'MINUS',
+  '>': 'GREATER_THAN',
+  '<': 'LESS_THAN',
+  '=': 'EQUALS',
+  '&': 'AMPERSAND',
+  '|': 'PIPE',
+  '@': 'AT',
+  '*': 'STAR',
+  ':': 'COLON',
+  '{': 'LEFT_CURLY_BRACE',
+  '}': 'RIGHT_CURLY_BRACE',
+  '[': 'LEFT_SQUARE_BRACE',
+  ']': 'RIGHT_SQUARE_BRACE',
+  ',': 'COMMA',
+  '%': 'PERCENT',
+  $: 'DOLLAR',
+  '#': 'POUND',
+  '^': 'CARET',
+  '~': 'TILDE',
+  '?': 'QUESTION_MARK',
+  '!': 'EXCLAMATION_MARK',
+  '"': 'QUOTATION_MARK',
+  "'": 'SINGLE_QUOTE',
+  '\\': 'BACKSLASH',
+  '/': 'SLASH',
+  '.': 'DOT',
+  '`': 'BACKTICK',
+  ';': 'SEMICOLON',
+  '(': 'LEFT_PARENTHESIS',
+  ')': 'RIGHT_PARENTHESIS',
+};
+
+function getKnownCharacterOrCharCode(ch: string): string {
+  return KNOWN_CHARACTERS[ch] || ch.charCodeAt(0).toString();
+}
+
 export function sanitizeNameForGraphQL(unsafeName: string): string {
   let sanitizedName = unsafeName.trim();
 
@@ -14,7 +52,7 @@ export function sanitizeNameForGraphQL(unsafeName: string): string {
     const unsanitizedName = sanitizedName;
     sanitizedName = '';
     for (const ch of unsanitizedName) {
-      sanitizedName += /^[_a-zA-Z0-9]*$/.test(ch) ? ch : `_${ch.charCodeAt(0)}_`;
+      sanitizedName += /^[_a-zA-Z0-9]*$/.test(ch) ? ch : ch === ' ' ? '_' : `_${getKnownCharacterOrCharCode(ch)}_`;
     }
   }
 

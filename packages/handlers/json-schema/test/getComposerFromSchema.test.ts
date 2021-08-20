@@ -112,9 +112,9 @@ enum ExampleEnum {
     const outputComposer = result.output as EnumTypeComposer;
     expect(outputComposer.toSDL()).toMatchInlineSnapshot(`
 "enum ExampleEnum {
-  _0_45_foo
-  _1_43_bar
-  _2_41_qux
+  _0_MINUS_foo
+  _1_PLUS_bar
+  _2_RIGHT_PARENTHESIS_qux
 }"
 `);
   });
