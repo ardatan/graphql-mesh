@@ -492,7 +492,7 @@ additionalResolvers:
     targetFieldName: author
 ```
 
-And that's it. Now GraphQL Mesh will `Author` by `authorId` field.
+And that's it. Now GraphQL Mesh will batch the queries of `Book.author` by using `authorId` field into `Query.authors`.
 
 ## Consuming Apollo Federation Services inside GraphQL Mesh
 
