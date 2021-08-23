@@ -28,6 +28,10 @@ function getTypeByPath(type: GraphQLType, path: string[]): GraphQLType {
   }
   const fieldMap = type.getFields();
   const currentFieldName = path[0];
+  // Might be an index of an array
+  if (!Number.isNaN(parseInt(currentFieldName))) {
+    return getTypeByPath(type, path.slice(1));
+  }
   const field = fieldMap[currentFieldName];
   if (!field?.type) {
     throw new Error(`${type}.${currentFieldName} is not a valid field.`);
