@@ -50,13 +50,10 @@ function buildSignatureBasedOnRootFields(
         value: type.name,
       },
     };
-    operationMap[fieldName] = `  ${field.name}: (params: {
-      root?: any;
-      args${argsExists ? '' : '?'}: ${argsName};
-      context: ${unifiedContextIdentifier};
-      info: GraphQLResolveInfo;
-      selectionSet?: SelectionSetParamOrFactory;
-    }) => Promise<${codegenHelpers.getTypeToUse(parentTypeNode)}['${fieldName}']>`;
+
+    operationMap[fieldName] = `  ${field.name}: InContextSdkMethod<${codegenHelpers.getTypeToUse(
+      parentTypeNode
+    )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }
   return operationMap;
 }
@@ -151,7 +148,7 @@ export async function generateTsArtifacts({
         plugin: async () => {
           const commonTypes = [
             `import { MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
-            `import { SelectionSetParamOrFactory } from '@graphql-mesh/types';`,
+            `import { InContextSdkMethod } from '@graphql-mesh/types';`,
           ];
           const sdkItems: string[] = [];
           const contextItems: string[] = [];
