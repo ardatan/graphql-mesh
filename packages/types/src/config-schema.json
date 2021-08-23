@@ -579,6 +579,12 @@
         "sourceFieldName": {
           "type": "string"
         },
+        "sourceSelectionSet": {
+          "type": "string"
+        },
+        "requiredSelectionSet": {
+          "type": "string"
+        },
         "keyField": {
           "type": "string"
         },
@@ -589,14 +595,19 @@
           "type": "object",
           "properties": {}
         },
-        "requiredSelectionSet": {
-          "type": "string"
-        },
         "targetTypeName": {
           "type": "string"
         },
         "targetFieldName": {
           "type": "string"
+        },
+        "result": {
+          "type": "string",
+          "description": "Extract specific property from the result"
+        },
+        "resultType": {
+          "type": "string",
+          "description": "If return types don't match,\nyou can specify a result type to apply inline fragment"
         }
       },
       "required": [

@@ -7,6 +7,7 @@ import {
   isObjectType,
   GraphQLUnionType,
   GraphQLResolveInfo,
+  isListType,
 } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput, SyncImportFn } from '@graphql-mesh/types';
 import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
@@ -34,6 +35,8 @@ export default class FederationTransform implements MeshTransform {
 
     rawSource.merge = {};
     if (this.config?.types) {
+      const queryType = schema.getQueryType();
+      const queryTypeFields = queryType.getFields();
       for (const type of this.config.types) {
         rawSource.merge[type.name] = {};
         const fields: FederationFieldsConfig = {};
@@ -75,19 +78,25 @@ export default class FederationTransform implements MeshTransform {
           } else if (typeof resolveReferenceConfig === 'function') {
             resolveReference = type.config.resolveReference;
           } else {
-            const { queryFieldName, keyArg = schema.getQueryType().getFields()[queryFieldName].args[0].name } =
-              resolveReferenceConfig;
+            const queryField = queryTypeFields[resolveReferenceConfig.queryFieldName];
+            const keyArg = resolveReferenceConfig.keyArg || queryField.args[0].name;
             const keyField = type.config.keyFields[0];
+            const isBatch = isListType(queryField.args.find(arg => arg.name === keyArg));
             resolveReference = async (root: any, context: any, info: GraphQLResolveInfo) => {
-              const result = await context[this.apiName].Query[queryFieldName]({
+              const result = await context[this.apiName].Query[queryField.name]({
                 root,
-                key: keyField,
-                argsFromKeys: (keys: string[]) => ({
-                  [keyArg]: keys,
-                }),
-                args: {
-                  [keyArg]: root[keyField],
-                },
+                ...(isBatch
+                  ? {
+                      key: root[keyField],
+                      argsFromKeys: (keys: string[]) => ({
+                        [keyArg]: keys,
+                      }),
+                    }
+                  : {
+                      args: {
+                        [keyArg]: root[keyField],
+                      },
+                    }),
                 context,
                 info,
               });

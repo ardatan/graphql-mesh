@@ -10,7 +10,6 @@ import {
   GraphQLObjectType,
   getOperationAST,
   print,
-  isListType,
   SelectionSetNode,
   ExecutionResult,
 } from 'graphql';
@@ -188,7 +187,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           for (const fieldName in rootTypeFieldMap) {
             const rootTypeField = rootTypeFieldMap[fieldName];
             const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
-            rawSourceContext[rootType.name][fieldName] = ({
+            rawSourceContext[rootType.name][fieldName] = async ({
               root,
               args,
               context,
@@ -196,6 +195,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               selectionSet,
               key,
               argsFromKeys,
+              valuesFromResults,
             }: {
               root: any;
               args: any;
@@ -204,6 +204,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               selectionSet: SelectionSetParamOrFactory;
               key?: string;
               argsFromKeys?: (keys: string[]) => any;
+              valuesFromResults?: (result: any, keys?: string[]) => any;
             }) => {
               inContextSdkLogger.debug(`Called with
 - root: ${inspect(root)}
@@ -219,27 +220,36 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                 transformedSchema,
                 info,
               };
-              if (isListType(rootTypeField.type) && key && argsFromKeys) {
+              if (key && argsFromKeys) {
                 const batchDelegationOptions: BatchDelegateOptions = {
                   ...commonDelegateOptions,
                   key,
                   argsFromKeys,
+                  valuesFromResults,
                 };
+                if (selectionSet) {
+                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                  const path = [fieldName];
+                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
+                  batchDelegationOptions.transforms = [wrapQueryTransform];
+                }
                 return batchDelegateToSchema(batchDelegationOptions);
-              } else if (selectionSet) {
-                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
-                const path = [fieldName];
-                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
-                return delegateToSchema({
-                  ...commonDelegateOptions,
-                  args,
-                  transforms: [wrapQueryTransform],
-                });
               } else {
-                return delegateToSchema({
+                const options: IDelegateToSchemaOptions = {
                   ...commonDelegateOptions,
                   args,
-                });
+                };
+                if (selectionSet) {
+                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                  const path = [fieldName];
+                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
+                  options.transforms = [wrapQueryTransform];
+                }
+                const result = await delegateToSchema(options);
+                if (valuesFromResults) {
+                  return valuesFromResults(result);
+                }
+                return result;
               }
             };
           }
