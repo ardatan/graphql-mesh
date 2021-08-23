@@ -1,5 +1,23 @@
 # @graphql-mesh/transform-federation
 
+## 0.6.0
+
+### Minor Changes
+
+- 4545fe72d: Some improvements on additional resolvers;
+
+  - Now you can point to the nested fields in `keyArgs`; e.g. `keysArg: "where.ids"`
+  - You don't need `returnType` for abstract types anymore, because it's inferred from the type of `targetFieldName`.
+
+### Patch Changes
+
+- Updated dependencies [4545fe72d]
+- Updated dependencies [d189b4034]
+- Updated dependencies [f23820ed0]
+- Updated dependencies [06d688e70]
+  - @graphql-mesh/types@0.46.0
+  - @graphql-mesh/utils@0.14.0
+
 ## 0.5.23
 
 ### Patch Changes

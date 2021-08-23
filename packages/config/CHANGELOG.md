@@ -1,5 +1,29 @@
 # @graphql-mesh/config
 
+## 0.21.0
+
+### Minor Changes
+
+- 4545fe72d: Some improvements on additional resolvers;
+
+  - Now you can point to the nested fields in `keyArgs`; e.g. `keysArg: "where.ids"`
+  - You don't need `returnType` for abstract types anymore, because it's inferred from the type of `targetFieldName`.
+
+- 06d688e70: feat(config): new skipSSLValidation configuration field that disabled SSL check on HTTP requests
+
+### Patch Changes
+
+- Updated dependencies [4545fe72d]
+- Updated dependencies [d189b4034]
+- Updated dependencies [f23820ed0]
+- Updated dependencies [06d688e70]
+  - @graphql-mesh/runtime@0.19.0
+  - @graphql-mesh/types@0.46.0
+  - @graphql-mesh/utils@0.14.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.14
+  - @graphql-mesh/merger-stitching@0.10.8
+  - @graphql-mesh/store@0.1.8
+
 ## 0.20.1
 
 ### Patch Changes
