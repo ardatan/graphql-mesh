@@ -152,3 +152,17 @@ export type Logger = {
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
 export type SelectionSetParamOrFactory = ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;
+
+export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <
+  TKey,
+  TReturn = TDefaultReturn
+>(params: {
+  root?: any;
+  args?: TArgs;
+  context?: TContext;
+  info?: GraphQLResolveInfo;
+  selectionSet?: SelectionSetParamOrFactory;
+  key?: TKey;
+  argsFromKeys?: (keys: TKey[]) => TArgs;
+  valuesFromResults?: (results: TDefaultReturn, keys: TKey[]) => TReturn;
+}) => Promise<TReturn>;
