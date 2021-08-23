@@ -1375,14 +1375,24 @@ export interface AdditionalStitchingBatchResolverObject {
   sourceName: string;
   sourceTypeName: string;
   sourceFieldName: string;
+  sourceSelectionSet?: string;
+  requiredSelectionSet?: string;
   keyField: string;
   keysArg: string;
   additionalArgs?: {
     [k: string]: any;
   };
-  requiredSelectionSet?: string;
   targetTypeName: string;
   targetFieldName: string;
+  /**
+   * Extract specific property from the result
+   */
+  result?: string;
+  /**
+   * If return types don't match,
+   * you can specify a result type to apply inline fragment
+   */
+  resultType?: string;
 }
 export interface AdditionalSubscriptionObject {
   targetTypeName: string;

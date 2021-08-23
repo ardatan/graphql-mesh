@@ -39,7 +39,6 @@ additionalResolvers:
       query: location:{root.name}
       first: "{args.limit}"
     result: nodes
-    resultType: GithubUser
 
 documents:
   - ./src/test.query.graphql
