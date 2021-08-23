@@ -164,5 +164,5 @@ export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any
   selectionSet?: SelectionSetParamOrFactory;
   key?: TKey;
   argsFromKeys?: (keys: TKey[]) => TArgs;
-  valuesFromResults?: (results: TDefaultReturn, keys: TKey[]) => TReturn;
+  valuesFromResults?: (results: TDefaultReturn, keys: TKey[]) => TReturn | TReturn[];
 }) => Promise<TReturn>;
