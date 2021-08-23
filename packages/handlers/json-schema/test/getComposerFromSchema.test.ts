@@ -110,14 +110,13 @@ enum ExampleEnum {
     // Enum types are both input and output types
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as EnumTypeComposer;
-    expect(outputComposer.toSDL()).toBe(
-      /* GraphQL */ `
-enum ExampleEnum {
-  _0_foo
-  _1_bar
-  _2_qux
-}`.trim()
-    );
+    expect(outputComposer.toSDL()).toMatchInlineSnapshot(`
+"enum ExampleEnum {
+  _0_MINUS_foo
+  _1_PLUS_bar
+  _2_RIGHT_PARENTHESIS_qux
+}"
+`);
   });
   it('should generate union types from oneOf object types', async () => {
     const inputSchema: JSONSchema = {
@@ -937,5 +936,64 @@ input Foo_Input {
     expect(executionResponse?.data?.fooOrBarButFoo?.fooId).toBe(fooId);
     expect(executionResponse?.data?.fooOrBarButBar?.__typename).toBe('Bar');
     expect(executionResponse?.data?.fooOrBarButBar?.barId).toBe(barId);
+  });
+  it('should handle non-string enum values', async () => {
+    const FooEnum = {
+      title: 'FooEnum',
+      type: 'string' as const,
+      enum: [-1, 1],
+    };
+    const { output } = await getComposerFromJSONSchema(FooEnum, logger);
+    expect(output instanceof EnumTypeComposer).toBeTruthy();
+    const enumTypeComposer = output as EnumTypeComposer;
+    const enumValuesMap = enumTypeComposer.getFields();
+    expect(enumValuesMap).toMatchInlineSnapshot(`
+Object {
+  "NEGATIVE_1": Object {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": Array [],
+    "extensions": Object {},
+    "value": -1,
+  },
+  "_1": Object {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": Array [],
+    "extensions": Object {},
+    "value": 1,
+  },
+}
+`);
+  });
+  it('should handle strings with non-latin characters', async () => {
+    const FooEnum = {
+      title: 'FooEnum',
+      type: 'string' as const,
+      enum: ['לא', 'כן'],
+    };
+
+    const { output } = await getComposerFromJSONSchema(FooEnum, logger);
+    expect(output instanceof EnumTypeComposer).toBeTruthy();
+    const enumTypeComposer = output as EnumTypeComposer;
+    const enumValuesMap = enumTypeComposer.getFields();
+    expect(enumValuesMap).toMatchInlineSnapshot(`
+      Object {
+        "_1499__1503_": Object {
+          "deprecationReason": undefined,
+          "description": undefined,
+          "directives": Array [],
+          "extensions": Object {},
+          "value": "כן",
+        },
+        "_1500__1488_": Object {
+          "deprecationReason": undefined,
+          "description": undefined,
+          "directives": Array [],
+          "extensions": Object {},
+          "value": "לא",
+        },
+      }
+    `);
   });
 });

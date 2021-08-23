@@ -257,7 +257,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       if (subSchema.enum) {
         const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
         for (const value of subSchema.enum) {
-          values[sanitizeNameForGraphQL(value)] = {
+          const enumKey = sanitizeNameForGraphQL(value.toString());
+          values[enumKey] = {
             value,
           };
         }
