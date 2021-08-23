@@ -78,10 +78,12 @@ export function resolveAdditionalResolvers(
                   root,
                   context,
                   info,
-                  argsFromKeys: (keys: string[]) => ({
-                    ..._.set({}, additionalResolver.keysArg, keys),
-                    ...targetArgs,
-                  }),
+                  argsFromKeys: (keys: string[]) => {
+                    const args: any = {};
+                    _.set(args, additionalResolver.keysArg, keys);
+                    Object.assign(args, targetArgs);
+                    return args;
+                  },
                   key: _.get(root, additionalResolver.keyField),
                 });
               },
