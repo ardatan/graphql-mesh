@@ -1,5 +1,17 @@
 # @graphql-mesh/types
 
+## 0.46.0
+
+### Minor Changes
+
+- 4545fe72d: Some improvements on additional resolvers;
+
+  - Now you can point to the nested fields in `keyArgs`; e.g. `keysArg: "where.ids"`
+  - You don't need `returnType` for abstract types anymore, because it's inferred from the type of `targetFieldName`.
+
+- f23820ed0: feat(types): update in-context SDK types
+- 06d688e70: feat(config): new skipSSLValidation configuration field that disabled SSL check on HTTP requests
+
 ## 0.45.2
 
 ### Patch Changes

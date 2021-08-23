@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.36.0
+
+### Minor Changes
+
+- f23820ed0: feat(types): update in-context SDK types
+
+### Patch Changes
+
+- Updated dependencies [4545fe72d]
+- Updated dependencies [d189b4034]
+- Updated dependencies [06d688e70]
+  - @graphql-mesh/config@0.21.0
+  - @graphql-mesh/runtime@0.19.0
+  - @graphql-mesh/utils@0.14.0
+  - @graphql-mesh/store@0.1.8
+
 ## 0.35.1
 
 ### Patch Changes
