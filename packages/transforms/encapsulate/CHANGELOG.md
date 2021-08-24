@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-encapsulate
 
+## 0.1.57
+
+### Patch Changes
+
+- Updated dependencies [f4f30741d]
+  - @graphql-mesh/utils@0.15.0
+
 ## 0.1.56
 
 ### Patch Changes

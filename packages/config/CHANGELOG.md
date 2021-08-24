@@ -1,5 +1,23 @@
 # @graphql-mesh/config
 
+## 0.22.0
+
+### Minor Changes
+
+- f4f30741d: enhance(config): use bare merger if there is only one source
+- f4f30741d: enhance(artifacts): no more execute additional resolvers during build
+
+### Patch Changes
+
+- Updated dependencies [f4f30741d]
+- Updated dependencies [f4f30741d]
+  - @graphql-mesh/merger-stitching@0.11.0
+  - @graphql-mesh/utils@0.15.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.15
+  - @graphql-mesh/merger-bare@0.9.20
+  - @graphql-mesh/runtime@0.19.1
+  - @graphql-mesh/store@0.1.9
+
 ## 0.21.0
 
 ### Minor Changes

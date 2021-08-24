@@ -1,5 +1,17 @@
 # @graphql-mesh/merger-stitching
 
+## 0.11.0
+
+### Minor Changes
+
+- f4f30741d: enhance(config): use bare merger if there is only one source
+
+### Patch Changes
+
+- Updated dependencies [f4f30741d]
+  - @graphql-mesh/utils@0.15.0
+  - @graphql-mesh/store@0.1.9
+
 ## 0.10.8
 
 ### Patch Changes
