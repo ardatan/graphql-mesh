@@ -6,26 +6,19 @@ import {
   stringInterpolator,
   readFileOrUrlWithCache,
   getCachedFetch,
-  asArray,
   AggregateError,
 } from '@graphql-mesh/utils';
 import { SchemaComposer } from 'graphql-compose';
 import toJsonSchema from 'to-json-schema';
 import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
-import {
-  GraphQLInputType,
-  isInputObjectType,
-  isListType,
-  isNonNullType,
-  isScalarType,
-  specifiedDirectives,
-} from 'graphql';
+import { isScalarType, specifiedDirectives } from 'graphql';
 import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
 import { inspect } from 'util';
 import { dereferenceObject, healJSONSchema, referenceJSONSchema, JSONSchema, JSONSchemaObject } from 'json-machete';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema';
 import { env } from 'process';
+import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.JsonSchemaHandler;
@@ -197,28 +190,6 @@ export default class JsonSchemaHandler implements MeshHandler {
           return root;
         };
       } else if (operationConfig.path) {
-        const resolveDataByUnionInputType = (data: any, type: GraphQLInputType): any => {
-          if (data) {
-            if (isListType(type)) {
-              return asArray(data).map(elem => resolveDataByUnionInputType(elem, type.ofType));
-            }
-            if (isNonNullType(type)) {
-              return resolveDataByUnionInputType(data, type.ofType);
-            }
-            if (isInputObjectType(type)) {
-              const fieldMap = type.getFields();
-              const isOneOf = schemaComposer.getAnyTC(type).getDirectiveByName('oneOf');
-              data = asArray(data)[0];
-              for (const fieldName in data) {
-                if (isOneOf) {
-                  return data[fieldName];
-                }
-                data[fieldName] = resolveDataByUnionInputType(data[fieldName], fieldMap[fieldName].type);
-              }
-            }
-          }
-          return data;
-        };
         field.resolve = async (root, args, context, info) => {
           operationLogger.debug(`=> Resolving`);
           const interpolationData = { root, args, context, info, env };
@@ -239,7 +210,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           };
           const urlObj = new URL(fullPath);
           // Resolve union input
-          const input = resolveDataByUnionInputType(args.input, field.args?.input?.type?.getType());
+          const input = resolveDataByUnionInputType(args.input, field.args?.input?.type?.getType(), schemaComposer);
           if (input) {
             switch (method) {
               case 'GET':
