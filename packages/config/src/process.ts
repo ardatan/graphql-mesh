@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
@@ -34,6 +34,7 @@ export type ConfigProcessOptions = {
   importFn?: ImportFn;
   syncImportFn?: SyncImportFn;
   store?: MeshStore;
+  ignoreAdditionalResolvers?: boolean;
 };
 
 export type ProcessedConfig = {
@@ -86,7 +87,7 @@ export async function processConfig(
   ];
   const codes: string[] = [
     `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)}`,
-    `export function getMeshOptions(): GetMeshOptions {`,
+    `export async function getMeshOptions(): GetMeshOptions {`,
   ];
 
   const {
@@ -126,6 +127,8 @@ export async function processConfig(
 
   codes.push(`const sources = [];`);
   codes.push(`const transforms = [];`);
+
+  const mergerName = config.merger || config.sources.length > 1 ? 'stitching' : 'bare';
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
     Promise.all(
@@ -253,22 +256,24 @@ export async function processConfig(
       );
       return additionalTypeDefs;
     }),
-    resolveAdditionalResolvers(dir, config.additionalResolvers, syncImportFn, pubsub),
-    getPackage<MeshMergerLibrary>({ name: config.merger || 'stitching', type: 'merger', importFn, cwd: dir }).then(
+    options?.ignoreAdditionalResolvers
+      ? []
+      : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
+    getPackage<MeshMergerLibrary>({ name: mergerName, type: 'merger', importFn, cwd: dir }).then(
       ({ resolved: Merger, moduleName }) => {
-        const mergerImportName = pascalCase(`${config.merger || 'stitching'}Merger`);
+        const mergerImportName = pascalCase(`${mergerName}Merger`);
         importCodes.push(`import ${mergerImportName} from '${moduleName}';`);
         codes.push(`const merger = new(${mergerImportName} as any)({
         cache,
         pubsub,
         logger: logger.child('${mergerImportName}'),
-        store: rootStore.child('${config.merger || 'stitching'}Merger')
+        store: rootStore.child('${mergerName}Merger')
       })`);
         return new Merger({
           cache,
           pubsub,
           logger: logger.child(mergerImportName),
-          store: rootStore.child(`${config.merger || 'stitching'}Merger`),
+          store: rootStore.child(`${mergerName}Merger`),
         });
       }
     ),
@@ -276,10 +281,32 @@ export async function processConfig(
   ]);
 
   importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
-  codes.push(`const additionalResolvers = resolveAdditionalResolvers(
+
+  codes.push(`const additionalResolversRawConfig = [];`);
+
+  for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
+    const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
+    if (typeof additionalResolverDefinition === 'string') {
+      importCodes.push(
+        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${join(
+          '..',
+          additionalResolverDefinition
+        )}';`
+      );
+      codes.push(
+        `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
+      );
+    } else {
+      codes.push(
+        `additionalResolversRawConfig.push(rawConfig.additionalResolvers[${additionalResolverDefinitionIndex}]);`
+      );
+    }
+  }
+
+  codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
       baseDir,
-      rawConfig.additionalResolvers,
-      syncImportFn,
+      additionalResolversRawConfig,
+      importFn,
       pubsub
   )`);
 

@@ -14,25 +14,67 @@ enum ConnectivityState {
   TRANSIENT_FAILURE
 }
 
+enum Genre {
+  ACTION
+  DRAMA
+  UNSPECIFIED
+}
+
+\\"\\"\\"movie message payload\\"\\"\\"
+type Movie {
+  \\"\\"\\"list of cast\\"\\"\\"
+  cast: [String]
+  genre: Genre
+  name: String
+  rating: Float
+  time: google_protobuf_Timestamp
+  year: BigInt
+}
+
+input MovieRequest_Input {
+  movie: Movie_Input
+}
+
+\\"\\"\\"movie message payload\\"\\"\\"
+input Movie_Input {
+  \\"\\"\\"list of cast\\"\\"\\"
+  cast: [String]
+  genre: Genre
+  name: String
+  rating: Float
+  time: google_protobuf_Timestamp_Input
+  year: BigInt
+}
+
+\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
+type MoviesResult {
+  \\"\\"\\"list of movies\\"\\"\\"
+  result: [Movie]
+}
+
 type Mutation {
   \\"\\"\\"get all movies\\"\\"\\"
-  ioXtechAnotherExampleGetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+  anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult
 
   \\"\\"\\"get all movies\\"\\"\\"
-  ioXtechExampleGetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+  exampleGetMovies(input: MovieRequest_Input): MoviesResult
 }
 
 type Query {
-  ioXtechAnotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
-  ioXtechExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
+  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
+  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+input SearchByCastRequest_Input {
+  castName: String
 }
 
 type Subscription {
   \\"\\"\\"search movies by the name of the cast\\"\\"\\"
-  ioXtechAnotherExampleSearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie
 
   \\"\\"\\"search movies by the name of the cast\\"\\"\\"
-  ioXtechExampleSearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie
 }
 
 type google_protobuf_Timestamp {
@@ -44,55 +86,13 @@ input google_protobuf_Timestamp_Input {
   nanos: Int
   seconds: BigInt
 }
-
-enum io_xtech_Genre {
-  ACTION
-  DRAMA
-  UNSPECIFIED
-}
-
-\\"\\"\\"movie message payload\\"\\"\\"
-type io_xtech_Movie {
-  \\"\\"\\"list of cast\\"\\"\\"
-  cast: [String]
-  genre: io_xtech_Genre
-  name: String
-  rating: Float
-  time: google_protobuf_Timestamp
-  year: BigInt
-}
-
-input io_xtech_MovieRequest_Input {
-  movie: io_xtech_Movie_Input
-}
-
-\\"\\"\\"movie message payload\\"\\"\\"
-input io_xtech_Movie_Input {
-  \\"\\"\\"list of cast\\"\\"\\"
-  cast: [String]
-  genre: io_xtech_Genre
-  name: String
-  rating: Float
-  time: google_protobuf_Timestamp_Input
-  year: BigInt
-}
-
-\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
-type io_xtech_MoviesResult {
-  \\"\\"\\"list of movies\\"\\"\\"
-  result: [io_xtech_Movie]
-}
-
-input io_xtech_SearchByCastRequest_Input {
-  castName: String
-}
 "
 `;
 
 exports[`gRPC Example should get movies correctly: get-movies-grpc-example-result 1`] = `
 Object {
   "data": Object {
-    "ioXtechExampleGetMovies": Object {
+    "exampleGetMovies": Object {
       "result": Array [
         Object {
           "cast": Array [

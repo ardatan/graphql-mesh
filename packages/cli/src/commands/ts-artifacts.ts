@@ -11,7 +11,6 @@ import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
 import { writeFile } from '@graphql-mesh/utils';
-import { cwd } from 'process';
 import { promises as fsPromises } from 'fs';
 import { generateOperations } from './generate-operations';
 
@@ -96,6 +95,8 @@ ${Object.values(subscriptionsOperationMap).join(',\n')}
     context,
   };
 }
+
+const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
 export async function generateTsArtifacts({
   unifiedSchema,
@@ -183,7 +184,8 @@ export async function generateTsArtifacts({
             `import { getMesh } from '@graphql-mesh/runtime';`,
             `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
             `import { cwd } from 'process';`,
-            `import { join, relative, isAbsolute } from 'path';`,
+            `import { join, relative, isAbsolute, dirname } from 'path';`,
+            `import { fileURLToPath } from 'url';`,
           ];
           const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
             let moduleMapProp = importedModuleName;
@@ -207,7 +209,7 @@ const importedModules: Record<string, any> = {
 ${importedModulesCodes.join(',\n')}
 };
 
-const baseDir = join(cwd(), '${relative(cwd(), baseDir)}');
+${BASEDIR_ASSIGNMENT_COMMENT}
 
 const syncImportFn = (moduleId: string) => {
   const relativeModuleId = (isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId).split('\\\\').join('/');
@@ -232,8 +234,8 @@ export const documentsInSDL = /*#__PURE__*/ [${documents.map(
             documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
           )}];
 
-export function getBuiltMesh(): Promise<MeshInstance> {
-  const meshConfig = getMeshOptions();
+export async function getBuiltMesh(): Promise<MeshInstance> {
+  const meshConfig = await getMeshOptions();
   return getMesh(meshConfig);
 }
 
@@ -272,9 +274,15 @@ export async function getMeshSDK() {
     ],
   });
 
-  logger.info('Writing index.ts to the disk.');
+  const baseUrlAssignmentESM = `const baseDir = join(dirname(fileURLToPath(import.meta.url)), '${relative(
+    artifactsDir,
+    baseDir
+  )}');`;
+  const baseUrlAssignmentCJS = `const baseDir = join(__dirname, '${relative(artifactsDir, baseDir)}');`;
+
+  logger.info('Writing index.ts for ESM to the disk.');
   const tsFilePath = join(artifactsDir, 'index.ts');
-  await writeFile(tsFilePath, codegenOutput);
+  await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
 
   logger.info('Compiling TS file as ES Module to `index.mjs`');
   const jsFilePath = join(artifactsDir, 'index.js');
@@ -283,6 +291,10 @@ export async function getMeshSDK() {
 
   const mjsFilePath = join(artifactsDir, 'index.mjs');
   await rename(jsFilePath, mjsFilePath);
+
+  logger.info('Writing index.ts for CJS to the disk.');
+  await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
+
   logger.info('Compiling TS file as CommonJS Module to `index.js`');
   compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 

@@ -9,7 +9,10 @@ additionalTypeDefs: |
         viewsInPastMonth(project: String!): Float!
       }
 additionalResolvers:
-  - ./additional-resolvers.js
+  - ./additional-resolvers.ts
+
+require:
+  - "ts-node/register/transpile-only"
 
 documents:
   - example-queries/*.graphql

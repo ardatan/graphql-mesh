@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package io.xtech;
-
 import "google/protobuf/timestamp.proto";
 
 enum Genre {
