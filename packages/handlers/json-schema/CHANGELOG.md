@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.18.2
+
+### Patch Changes
+
+- 0c49591e5: fix(json-schema): ignore if there is a hidden field while resolving oneOf input type
+
 ## 0.18.1
 
 ### Patch Changes

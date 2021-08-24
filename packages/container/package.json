@@ -1,7 +1,7 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.0.88",
+  "version": "0.0.89",
   "scripts": {
     "start": "graphql-mesh dev"
   },
@@ -13,7 +13,7 @@
     "@graphql-mesh/openapi": "0.18.11",
     "@graphql-mesh/graphql": "0.18.9",
     "@graphql-mesh/grpc": "0.15.9",
-    "@graphql-mesh/json-schema": "0.18.1",
+    "@graphql-mesh/json-schema": "0.18.2",
     "@graphql-mesh/odata": "0.12.11",
     "@graphql-mesh/soap": "0.7.20",
     "@graphql-mesh/postgraphile": "0.13.9",
