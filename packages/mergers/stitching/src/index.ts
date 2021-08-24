@@ -1,11 +1,4 @@
-import {
-  Logger,
-  MeshMerger,
-  MeshMergerContext,
-  MeshMergerOptions,
-  MeshTransform,
-  RawSourceOutput,
-} from '@graphql-mesh/types';
+import { Logger, MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
 import {
@@ -13,13 +6,12 @@ import {
   applySchemaTransforms,
   extractResolvers,
   AggregateError,
-  asArray,
   jitExecutorFactory,
 } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchingDirectives, federationToStitchingSDL } from '@graphql-tools/stitching-directives';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { buildSchema, ExecutionResult, extendSchema, parse } from 'graphql';
+import { buildSchema, ExecutionResult, parse } from 'graphql';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { Executor } from '@graphql-tools/utils';
 
@@ -40,71 +32,7 @@ export default class StitchingMerger implements MeshMerger {
     this.store = options.store;
   }
 
-  handleSingleSchema({ rawSources, transforms, typeDefs, resolvers }: MeshMergerContext) {
-    if (rawSources.length !== 1) {
-      throw new Error('This merger supports only one schema');
-    }
-    const [source] = rawSources;
-    let schema = source.schema;
-
-    let wrapTransforms: MeshTransform[] = [];
-    let noWrapTransforms: MeshTransform[] = [];
-
-    if (transforms?.length) {
-      const transformGroups = groupTransforms(transforms);
-      wrapTransforms = transformGroups.wrapTransforms;
-      noWrapTransforms = transformGroups.noWrapTransforms;
-    }
-
-    if (source.executor || source.transforms.length) {
-      const firstRoundTransforms = [...source.transforms];
-      if (!typeDefs && !resolvers) {
-        firstRoundTransforms.push(...wrapTransforms, ...noWrapTransforms);
-      }
-      schema = wrapSchema({
-        ...source,
-        schema,
-        transforms: firstRoundTransforms,
-        batch: true,
-      });
-    }
-    if (typeDefs || resolvers) {
-      this.logger.debug(`Applying additionalTypeDefs`);
-      typeDefs?.forEach(typeDef => {
-        schema = extendSchema(schema, typeDef);
-      });
-      if (resolvers) {
-        this.logger.debug(`Applying additionalResolvers`);
-        for (const resolversObj of asArray(resolvers)) {
-          schema = addResolversToSchema({
-            schema,
-            resolvers: resolversObj,
-            updateResolversInPlace: true,
-          });
-        }
-      }
-      if (wrapTransforms.length) {
-        schema = wrapSchema({
-          schema,
-          transforms: [...wrapTransforms, ...noWrapTransforms],
-          batch: true,
-        });
-      } else if (noWrapTransforms.length) {
-        schema = applySchemaTransforms(schema, undefined, schema, noWrapTransforms);
-      }
-    }
-    schema.extensions = schema.extensions || {};
-    Object.defineProperty(schema.extensions, 'sourceMap', {
-      get: () => new Map([[source, schema]]),
-    });
-    return schema;
-  }
-
   async getUnifiedSchema(context: MeshMergerContext) {
-    if (context.rawSources.length === 1) {
-      this.logger.debug(`Stitching is not necessary for a single schema`);
-      return this.handleSingleSchema(context);
-    }
     const { rawSources, typeDefs, resolvers, transforms } = context;
     this.logger.debug(`Stitching directives are being generated`);
     const defaultStitchingDirectives = stitchingDirectives({

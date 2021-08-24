@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cache-inmemory-lru": "0.5.14",
+    "@graphql-mesh/merger-bare": "0.9.19",
     "@graphql-mesh/merger-stitching": "0.10.8",
     "@graphql-mesh/runtime": "0.19.0",
     "@graphql-mesh/types": "0.46.0",

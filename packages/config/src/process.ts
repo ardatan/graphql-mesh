@@ -128,6 +128,8 @@ export async function processConfig(
   codes.push(`const sources = [];`);
   codes.push(`const transforms = [];`);
 
+  const mergerName = config.merger || config.sources.length > 1 ? 'stitching' : 'bare';
+
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
     Promise.all(
       config.sources.map<Promise<MeshResolvedSource>>(async (source, sourceIndex) => {
@@ -257,21 +259,21 @@ export async function processConfig(
     options?.ignoreAdditionalResolvers
       ? []
       : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
-    getPackage<MeshMergerLibrary>({ name: config.merger || 'stitching', type: 'merger', importFn, cwd: dir }).then(
+    getPackage<MeshMergerLibrary>({ name: mergerName, type: 'merger', importFn, cwd: dir }).then(
       ({ resolved: Merger, moduleName }) => {
-        const mergerImportName = pascalCase(`${config.merger || 'stitching'}Merger`);
+        const mergerImportName = pascalCase(`${mergerName}Merger`);
         importCodes.push(`import ${mergerImportName} from '${moduleName}';`);
         codes.push(`const merger = new(${mergerImportName} as any)({
         cache,
         pubsub,
         logger: logger.child('${mergerImportName}'),
-        store: rootStore.child('${config.merger || 'stitching'}Merger')
+        store: rootStore.child('${mergerName}Merger')
       })`);
         return new Merger({
           cache,
           pubsub,
           logger: logger.child(mergerImportName),
-          store: rootStore.child(`${config.merger || 'stitching'}Merger`),
+          store: rootStore.child(`${mergerName}Merger`),
         });
       }
     ),
