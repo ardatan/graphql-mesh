@@ -125,7 +125,7 @@ export async function graphqlMesh() {
           env.NODE_ENV = 'production';
           const mainModule = join(builtMeshArtifactsPath, 'index.js');
           const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
-          const getMeshOptions: GetMeshOptions = builtMeshArtifacts.getMeshOptions();
+          const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
           const rawConfig: YamlConfig.Config = builtMeshArtifacts.rawConfig;
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
@@ -186,6 +186,7 @@ export async function graphqlMesh() {
             dir: baseDir,
             store,
             importFn,
+            ignoreAdditionalResolvers: true,
           });
           logger = meshConfig.logger;
 
@@ -244,6 +245,7 @@ export async function graphqlMesh() {
             store,
             importFn,
             syncImportFn,
+            ignoreAdditionalResolvers: true,
           });
           logger = meshConfig.logger;
 

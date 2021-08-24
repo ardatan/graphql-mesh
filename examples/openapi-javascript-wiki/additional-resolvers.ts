@@ -1,27 +1,28 @@
-const moment = require('moment');
+import moment from 'moment';
+import { Access5, Agent3, Granularity22, Resolvers } from './.mesh';
 
-const resolvers = {
+export const resolvers: Resolvers = {
   Query: {
     async viewsInPastMonth(root, { project }, context, info) {
       const result = await context.Wiki.Query.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd({
         root,
         args: {
-          access: 'all-access',
-          agent: 'user',
+          access: Access5.ALL_ACCESS,
+          agent: Agent3.USER,
           end: moment().format('YYYYMMDD'),
           start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
           project,
-          granularity: 'monthly',
+          granularity: Granularity22.DAILY,
         },
         context,
         info,
-        selectionSet: /* GraphQL */`
+        selectionSet: /* GraphQL */ `
           {
             items {
               views
             }
           }
-        `
+        `,
       });
 
       if (!result?.items || result?.items.length === 0) {
@@ -29,8 +30,6 @@ const resolvers = {
       }
 
       return result?.items[0].views;
-    }
-  }
+    },
+  },
 };
-
-module.exports = { resolvers };

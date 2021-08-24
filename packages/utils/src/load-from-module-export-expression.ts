@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/return-await */
-import { isAbsolute, join, resolve } from 'path';
+import { isAbsolute, join } from 'path';
 import { createRequire } from 'module';
 import { ImportFn, SyncImportFn } from '@graphql-mesh/types';
+import { cwd } from 'process';
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;
@@ -91,14 +92,17 @@ function tryImportSync(modulePath: string, cwd: string, syncImportFn: SyncImport
   }
 }
 
-export function getDefaultImport(from: string): ImportFn {
-  const syncImport = getDefaultSyncImport(from);
+export function getDefaultImport(baseDir: string): ImportFn {
+  const syncImport = getDefaultSyncImport(baseDir);
   return m => import(m).catch(() => syncImport(m));
 }
 
-export function getDefaultSyncImport(from: string): SyncImportFn {
-  const createRequireConstructor = isAbsolute(from) ? from : resolve(from);
-  const relativeRequire = createRequire(createRequireConstructor);
+export function getDefaultSyncImport(baseDir: string): SyncImportFn {
+  const absoluteBaseDir = isAbsolute(baseDir) ? baseDir : join(cwd(), baseDir);
+  const fakeBaseModulePath = join(absoluteBaseDir, 'fake.js');
+  const relativeRequire = createRequire(fakeBaseModulePath);
 
-  return (from: string) => relativeRequire(from);
+  return function syncImportFn(moduleId: string) {
+    return relativeRequire(moduleId);
+  };
 }

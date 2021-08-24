@@ -1,4 +1,4 @@
-import { YamlConfig, MeshPubSub, SyncImportFn } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, ImportFn } from '@graphql-mesh/types';
 import { IResolvers, parseSelectionSet } from '@graphql-tools/utils';
 import {
   GraphQLResolveInfo,
@@ -13,7 +13,7 @@ import {
 import { withFilter } from 'graphql-subscriptions';
 import _ from 'lodash';
 import { stringInterpolator } from './string-interpolator';
-import { loadFromModuleExportExpressionSync } from './load-from-module-export-expression';
+import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 import { env } from 'process';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLType {
@@ -142,123 +142,127 @@ export function resolveAdditionalResolvers(
     | YamlConfig.AdditionalSubscriptionObject
     | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
-  syncImportFn: SyncImportFn,
+  importFn: ImportFn,
   pubsub: MeshPubSub
-): IResolvers[] {
-  return (additionalResolvers || []).map(additionalResolver => {
-    if (typeof additionalResolver === 'string') {
-      const resolvers = loadFromModuleExportExpressionSync<any>(additionalResolver, {
-        cwd: baseDir,
-        defaultExportName: 'resolvers',
-        syncImportFn,
-      });
+): Promise<IResolvers[]> {
+  return Promise.all(
+    (additionalResolvers || []).map(async additionalResolver => {
+      if (typeof additionalResolver === 'string') {
+        const resolvers = await loadFromModuleExportExpression<any>(additionalResolver, {
+          cwd: baseDir,
+          defaultExportName: 'resolvers',
+          importFn,
+        });
 
-      if (!resolvers) {
-        console.warn(`Unable to load resolvers from file: ${additionalResolver}`);
+        if (!resolvers) {
+          console.warn(`Unable to load resolvers from file: ${additionalResolver}`);
 
-        return {};
-      }
+          return {};
+        }
 
-      return resolvers;
-    } else {
-      const baseOptions: any = {};
-      if (additionalResolver.result) {
-        baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
-      }
-      if ('pubsubTopic' in additionalResolver) {
-        return {
-          [additionalResolver.targetTypeName]: {
-            [additionalResolver.targetFieldName]: {
-              subscribe: withFilter(
-                (root, args, context, info) => {
-                  const resolverData = { root, args, context, info, env };
-                  const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-                  return pubsub.asyncIterator(topic);
-                },
-                (root, args, context, info) => {
-                  return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
-                }
-              ),
-              resolve: (payload: any) => {
-                if (baseOptions.valuesFromResults) {
-                  return baseOptions.valuesFromResults(payload);
-                }
-                return payload;
-              },
-            },
-          },
-        };
-      } else if ('keysArg' in additionalResolver) {
-        return {
-          [additionalResolver.targetTypeName]: {
-            [additionalResolver.targetFieldName]: {
-              selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
-              resolve: async (root: any, args: any, context: any, info: any) => {
-                if (!baseOptions.selectionSet) {
-                  baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
-                }
-                const resolverData = { root, args, context, info, env };
-                const targetArgs: any = {};
-                for (const argPath in additionalResolver.additionalArgs || {}) {
-                  _.set(
-                    targetArgs,
-                    argPath,
-                    stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
-                  );
-                }
-                const options: any = {
-                  ...baseOptions,
-                  root,
-                  context,
-                  info,
-                  argsFromKeys: (keys: string[]) => {
-                    const args: any = {};
-                    _.set(args, additionalResolver.keysArg, keys);
-                    Object.assign(args, targetArgs);
-                    return args;
-                  },
-                  key: _.get(root, additionalResolver.keyField),
-                };
-                return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                  additionalResolver.sourceFieldName
-                ](options);
-              },
-            },
-          },
-        };
+        return resolvers;
       } else {
-        return {
-          [additionalResolver.targetTypeName]: {
-            [additionalResolver.targetFieldName]: {
-              selectionSet: additionalResolver.requiredSelectionSet,
-              resolve: (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
-                if (!baseOptions.selectionSet) {
-                  baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
-                }
-                const resolverData = { root, args, context, info, env };
-                const targetArgs: any = {};
-                for (const argPath in additionalResolver.sourceArgs) {
-                  _.set(
-                    targetArgs,
-                    argPath,
-                    stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
-                  );
-                }
-                const options: any = {
-                  ...baseOptions,
-                  root,
-                  args: targetArgs,
-                  context,
-                  info,
-                };
-                return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                  additionalResolver.sourceFieldName
-                ](options);
+        const baseOptions: any = {};
+        if (additionalResolver.result) {
+          baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
+        }
+        if ('pubsubTopic' in additionalResolver) {
+          return {
+            [additionalResolver.targetTypeName]: {
+              [additionalResolver.targetFieldName]: {
+                subscribe: withFilter(
+                  (root, args, context, info) => {
+                    const resolverData = { root, args, context, info, env };
+                    const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+                    return pubsub.asyncIterator(topic);
+                  },
+                  (root, args, context, info) => {
+                    return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
+                  }
+                ),
+                resolve: (payload: any) => {
+                  if (baseOptions.valuesFromResults) {
+                    return baseOptions.valuesFromResults(payload);
+                  }
+                  return payload;
+                },
               },
             },
-          },
-        };
+          };
+        } else if ('keysArg' in additionalResolver) {
+          return {
+            [additionalResolver.targetTypeName]: {
+              [additionalResolver.targetFieldName]: {
+                selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
+                resolve: async (root: any, args: any, context: any, info: any) => {
+                  if (!baseOptions.selectionSet) {
+                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                  }
+                  const resolverData = { root, args, context, info, env };
+                  const targetArgs: any = {};
+                  for (const argPath in additionalResolver.additionalArgs || {}) {
+                    _.set(
+                      targetArgs,
+                      argPath,
+                      stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
+                    );
+                  }
+                  const options: any = {
+                    ...baseOptions,
+                    root,
+                    context,
+                    info,
+                    argsFromKeys: (keys: string[]) => {
+                      const args: any = {};
+                      _.set(args, additionalResolver.keysArg, keys);
+                      Object.assign(args, targetArgs);
+                      return args;
+                    },
+                    key: _.get(root, additionalResolver.keyField),
+                  };
+                  return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                    additionalResolver.sourceFieldName
+                  ](options);
+                },
+              },
+            },
+          };
+        } else if ('targetTypeName' in additionalResolver) {
+          return {
+            [additionalResolver.targetTypeName]: {
+              [additionalResolver.targetFieldName]: {
+                selectionSet: additionalResolver.requiredSelectionSet,
+                resolve: (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+                  if (!baseOptions.selectionSet) {
+                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                  }
+                  const resolverData = { root, args, context, info, env };
+                  const targetArgs: any = {};
+                  for (const argPath in additionalResolver.sourceArgs) {
+                    _.set(
+                      targetArgs,
+                      argPath,
+                      stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
+                    );
+                  }
+                  const options: any = {
+                    ...baseOptions,
+                    root,
+                    args: targetArgs,
+                    context,
+                    info,
+                  };
+                  return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                    additionalResolver.sourceFieldName
+                  ](options);
+                },
+              },
+            },
+          };
+        } else {
+          return additionalResolver;
+        }
       }
-    }
-  });
+    })
+  );
 }
