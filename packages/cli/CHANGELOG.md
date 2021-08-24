@@ -1,5 +1,20 @@
 # @graphql-mesh/cli
 
+## 0.37.0
+
+### Minor Changes
+
+- f4f30741d: enhance(artifacts): no more execute additional resolvers during build
+
+### Patch Changes
+
+- Updated dependencies [f4f30741d]
+- Updated dependencies [f4f30741d]
+  - @graphql-mesh/config@0.22.0
+  - @graphql-mesh/utils@0.15.0
+  - @graphql-mesh/runtime@0.19.1
+  - @graphql-mesh/store@0.1.9
+
 ## 0.36.0
 
 ### Minor Changes
