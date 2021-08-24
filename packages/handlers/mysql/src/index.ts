@@ -207,11 +207,11 @@ export default class MySQLHandler implements MeshHandler {
           return;
         }
         const table = tables[tableName];
-        const objectTypeName = table.TABLE_NAME;
-        const insertInputName = table.TABLE_NAME + '_InsertInput';
-        const updateInputName = table.TABLE_NAME + '_UpdateInput';
-        const whereInputName = table.TABLE_NAME + '_WhereInput';
-        const orderByInputName = table.TABLE_NAME + '_OrderByInput';
+        const objectTypeName = sanitizeNameForGraphQL(table.TABLE_NAME);
+        const insertInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_InsertInput');
+        const updateInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_UpdateInput');
+        const whereInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_WhereInput');
+        const orderByInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_OrderByInput');
         const tableTC = schemaComposer.createObjectTC({
           name: objectTypeName,
           description: table.TABLE_COMMENT,
@@ -256,7 +256,7 @@ export default class MySQLHandler implements MeshHandler {
             let type: string = SCALARS[realTypeName];
             if (realTypeName === 'enum' || realTypeName === 'set') {
               const enumValues = typeDetails.split(`'`).join('').split(',');
-              const enumTypeName = tableName + '_' + fieldName;
+              const enumTypeName = sanitizeNameForGraphQL(tableName + '_' + fieldName);
               schemaComposer.createEnumTC({
                 name: enumTypeName,
                 values: enumValues.reduce((prev, curr) => {
@@ -320,15 +320,19 @@ export default class MySQLHandler implements MeshHandler {
             }
             const foreignTableName = tableForeign.REFERENCED_TABLE_NAME;
             const foreignColumnName = tableForeign.REFERENCED_COLUMN_NAME;
+
+            const foreignObjectTypeName = sanitizeNameForGraphQL(foreignTableName);
+            const foreignWhereInputName = sanitizeNameForGraphQL(foreignTableName + '_WhereInput');
+            const foreignOrderByInputName = sanitizeNameForGraphQL(foreignTableName + '_OrderByInput');
             tableTC.addFields({
               [foreignTableName]: {
-                type: '[' + foreignTableName + ']',
+                type: '[' + foreignObjectTypeName + ']',
                 args: {
                   where: {
-                    type: foreignTableName + '_WhereInput',
+                    type: foreignWhereInputName,
                   },
                   orderBy: {
-                    type: foreignTableName + '_OrderByInput',
+                    type: foreignOrderByInputName,
                   },
                   limit: {
                     type: 'Int',
