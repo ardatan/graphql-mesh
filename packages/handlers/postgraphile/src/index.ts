@@ -64,7 +64,10 @@ export default class PostGraphileHandler implements MeshHandler {
       });
     }
 
-    this.pubsub.subscribe('destroy', () => pgPool.end());
+    this.pubsub.subscribe('destroy', () => {
+      this.logger.debug('Destroying PostgreSQL pool');
+      pgPool.end();
+    });
 
     const cacheKey = this.name + '_introspection.json';
 

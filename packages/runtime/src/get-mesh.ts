@@ -58,9 +58,9 @@ export interface MeshInstance {
 
 export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubsub, cache, logger = new DefaultLogger('Mesh') } = options;
+  const { pubsub, cache, logger = new DefaultLogger('🕸️') } = options;
 
-  const getMeshLogger = logger.child('getMesh/runtime');
+  const getMeshLogger = logger.child('GetMesh');
   getMeshLogger.debug(`Getting subschemas from source handlers`);
   await Promise.all(
     options.sources.map(async apiSource => {
@@ -285,7 +285,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     return context;
   }
 
-  const executionLogger = logger.child(`meshExecute`);
+  const executionLogger = logger.child(`Execute`);
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     document: GraphQLOperation<TData, TVariables>,
     variableValues?: TVariables,

@@ -190,10 +190,10 @@ export async function resolveLogger(
       code: '',
     };
   }
-  const logger = new DefaultLogger('Mesh');
+  const logger = new DefaultLogger('🕸️');
   return {
     logger,
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger('Mesh');`,
+    code: `const logger = new DefaultLogger('🕸️');`,
   };
 }

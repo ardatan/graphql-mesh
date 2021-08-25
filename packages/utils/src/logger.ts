@@ -9,9 +9,10 @@ const debugColor = chalk.magenta;
 const titleBold = chalk.bold;
 
 export class DefaultLogger implements Logger {
-  constructor(public name: string) {}
+  constructor(public name?: string) {}
   log(message: string) {
-    return console.log(`${titleBold(this.name)}: ${message}`);
+    const finalMessage = this.name ? `${titleBold(this.name)}: ${message}` : message;
+    return console.log(finalMessage);
   }
 
   warn(message: string) {
@@ -27,12 +28,12 @@ export class DefaultLogger implements Logger {
   }
 
   debug(message: string) {
-    if (env.DEBUG) {
+    if ((env.DEBUG && env.DEBUG === '1') || this.name.includes(env.DEBUG)) {
       return this.log(debugColor(message));
     }
   }
 
   child(name: string): Logger {
-    return new DefaultLogger(`${this.name} - ${name}`);
+    return new DefaultLogger(this.name ? `${this.name} - ${name}` : name);
   }
 }

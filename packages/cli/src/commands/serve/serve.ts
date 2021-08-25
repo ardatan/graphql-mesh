@@ -21,7 +21,7 @@ import { MeshInstance } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { env } from 'process';
+import { env, on as processOn } from 'process';
 import { YamlConfig, Logger } from '@graphql-mesh/types';
 import { Source } from '@graphql-tools/utils';
 import { inspect } from 'util';
@@ -37,19 +37,15 @@ export interface ServeMeshOptions {
   argsPort?: number;
 }
 
-export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents }: ServeMeshOptions) {
-  logger.info(`Generating Mesh schema...`);
-  let readyFlag = false;
+const terminateEvents = ['SIGINT', 'SIGTERM'];
 
-  const mesh$ = getBuiltMesh()
-    .then(mesh => {
-      readyFlag = true;
-      if (!fork) {
-        logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
-      }
-      return mesh;
-    })
-    .catch(e => handleFatalError(e, logger));
+function registerTerminateHandler(callback: (eventName: string) => void) {
+  for (const eventName of terminateEvents) {
+    processOn(eventName, () => callback(eventName));
+  }
+}
+
+export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents }: ServeMeshOptions) {
   const {
     fork,
     port: configPort,
@@ -71,10 +67,25 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
   if (isMaster && fork) {
     const forkNum = fork > 1 ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {
-      clusterFork();
+      const worker = clusterFork();
+      registerTerminateHandler(eventName => worker.kill(eventName));
     }
     logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
   } else {
+    logger.info(`Generating Mesh schema...`);
+    let readyFlag = false;
+    const mesh$ = getBuiltMesh()
+      .then(mesh => {
+        readyFlag = true;
+        logger.info(`Serving GraphQL Mesh: ${serverUrl}`);
+        registerTerminateHandler(eventName => {
+          const eventLogger = logger.child(`${eventName}💀`);
+          eventLogger.info(`Destroying GraphQL Mesh`);
+          mesh.destroy();
+        });
+        return mesh;
+      })
+      .catch(e => handleFatalError(e, logger));
     const app = express();
     app.set('trust proxy', 'loopback');
     let httpServer: Server;
@@ -88,6 +99,18 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
     } else {
       httpServer = createHTTPServer(app);
     }
+
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}💀`);
+      eventLogger.debug(`Stopping HTTP Server`);
+      httpServer.close(error => {
+        if (error) {
+          eventLogger.debug(`HTTP Server couldn't be stopped: ${error.message}`);
+        } else {
+          eventLogger.debug(`HTTP Server has been stopped`);
+        }
+      });
+    });
 
     if (corsConfig) {
       app.use(cors(corsConfig));
@@ -105,7 +128,19 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
       server: httpServer,
     });
 
-    useServer(
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}💀`);
+      eventLogger.debug(`Stopping WebSocket Server`);
+      wsServer.close(error => {
+        if (error) {
+          eventLogger.debug(`WebSocket Server couldn't be stopped: ${error.message}`);
+        } else {
+          eventLogger.debug(`WebSocket Server has been stopped`);
+        }
+      });
+    });
+
+    const { dispose: stopGraphQLWSServer } = useServer(
       {
         schema: () => mesh$.then(({ schema }) => schema),
         execute: args =>
@@ -131,6 +166,19 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
       },
       wsServer
     );
+
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}💀`);
+      eventLogger.debug(`Stopping GraphQL WS`);
+      Promise.resolve()
+        .then(() => stopGraphQLWSServer())
+        .then(() => {
+          eventLogger.debug(`GraphQL WS has been stopped`);
+        })
+        .catch(error => {
+          eventLogger.debug(`GraphQL WS couldn't be stopped: ${error.message}`);
+        });
+    });
 
     const pubSubHandler: RequestHandler = (req, _res, next) => {
       Promise.resolve().then(async () => {

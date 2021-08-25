@@ -5,9 +5,11 @@ sources:
         source: ./openapi.yml
         baseUrl: http://localhost:4001
 
+documents:
+  - ./example-queries/**/*.graphql
+
 serve:
   port: 4000
   handlers:
     - path: /callback
       pubsubTopic: http://localhost:4000/callback
-  exampleQuery: ./example-queries/**/*.graphql

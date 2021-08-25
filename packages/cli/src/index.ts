@@ -28,7 +28,7 @@ const SERVE_COMMAND_WARNING =
 
 export async function graphqlMesh() {
   let baseDir = cwd();
-  let logger = new DefaultLogger('Mesh');
+  let logger = new DefaultLogger('🕸️');
   return yargs(hideBin(process.argv))
     .help()
     .option('r', {
@@ -79,11 +79,12 @@ export async function graphqlMesh() {
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
           });
+          logger = meshConfig.logger;
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
             getBuiltMesh: () => getMesh(meshConfig),
-            logger: meshConfig.logger,
+            logger: meshConfig.logger.child('Server'),
             rawConfig: meshConfig.config,
             documents: meshConfig.documents,
           };
@@ -98,8 +99,7 @@ export async function graphqlMesh() {
             );
             await customServerHandler(serveMeshOptions);
           } else {
-            const result = await serveMesh(serveMeshOptions);
-            logger = result.logger;
+            await serveMesh(serveMeshOptions);
           }
         } catch (e) {
           handleFatalError(e, logger);
@@ -126,12 +126,13 @@ export async function graphqlMesh() {
           const mainModule = join(builtMeshArtifactsPath, 'index.js');
           const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
           const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
+          logger = getMeshOptions.logger;
           const rawConfig: YamlConfig.Config = builtMeshArtifacts.rawConfig;
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
             getBuiltMesh: () => getMesh(getMeshOptions),
-            logger: getMeshOptions.logger,
+            logger: getMeshOptions.logger.child('Server'),
             rawConfig: builtMeshArtifacts.rawConfig,
             documents: builtMeshArtifacts.documentsInSDL.map((documentSdl: string, i: number) => ({
               rawSDL: documentSdl,

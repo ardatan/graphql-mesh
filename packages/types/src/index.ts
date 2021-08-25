@@ -141,7 +141,7 @@ export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
 export type SyncImportFn = <T = any>(moduleId: string) => T;
 
 export type Logger = {
-  name: string;
+  name?: string;
   log: (message: string) => void;
   warn: (message: string) => void;
   info: (message: string) => void;
