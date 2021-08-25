@@ -1,5 +1,17 @@
 # @graphql-mesh/runtime
 
+## 0.20.0
+
+### Minor Changes
+
+- 9eff8a396: enhance(logging): ability to filter debug messages
+
+### Patch Changes
+
+- Updated dependencies [9eff8a396]
+  - @graphql-mesh/types@0.47.0
+  - @graphql-mesh/utils@0.16.0
+
 ## 0.19.1
 
 ### Patch Changes
