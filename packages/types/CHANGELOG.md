@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.47.0
+
+### Minor Changes
+
+- 9eff8a396: enhance(logging): ability to filter debug messages
+
 ## 0.46.0
 
 ### Minor Changes
