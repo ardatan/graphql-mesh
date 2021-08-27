@@ -5060,10 +5060,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.29.tgz#0256e22f357a2e822ac8b848b545e06153c32ede"
   integrity sha1-AlbiLzV6LoIqyLhItUXgYVPDLt4=
 
-"@types/ioredis@4.27.0":
-  version "4.27.0"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.0.tgz#906d23460134f5450ba833944d94beff5bb00983"
-  integrity sha512-H3Uaffcxav+KmZob0bF1glq04DzENDv2fcMovDc+/yt2fIKZN3LKEOtR8OIAvQvIq0UW2s5m6C0AZwQKLHg13Q==
+"@types/ioredis@4.27.1":
+  version "4.27.1"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.1.tgz#f1c2d8a4341ed5ff9f4dd7aebfb38e275e3b3197"
+  integrity sha512-+JichYPCtVapxi5Z+7V/8Uhn+4Piz+rkb03JQTQ0kW0pkV71+bmzSTkpwmIqa7FfWIszp0VbRyN8gfgWDNQMdA==
   dependencies:
     "@types/node" "*"
 
