@@ -5,7 +5,7 @@ sidebar_label: MySQL
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79219205-84e55580-7e5a-11ea-96e2-c39581b90e61.png)
 
-This handler allows you to generate GraphQL schema using `graphql-compose-mysql` based on a MySQL database schema or an SQL dump file.
+This handler allows you to generate GraphQL schema from an existing MySQL database.
 
 To get started, install the handler library from NPM:
 
