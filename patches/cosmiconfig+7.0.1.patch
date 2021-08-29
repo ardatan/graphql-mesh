@@ -1,5 +1,5 @@
 diff --git a/node_modules/cosmiconfig/dist/loaders.js b/node_modules/cosmiconfig/dist/loaders.js
-index 43126af..0995a74 100644
+index 43126af..08b915c 100644
 --- a/node_modules/cosmiconfig/dist/loaders.js
 +++ b/node_modules/cosmiconfig/dist/loaders.js
 @@ -1,29 +1,21 @@
@@ -65,3 +65,4 @@ index 43126af..0995a74 100644
  };
  exports.loaders = loaders;
  //# sourceMappingURL=loaders.js.map
+\ No newline at end of file
