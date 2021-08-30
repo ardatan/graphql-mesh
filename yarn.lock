@@ -12231,15 +12231,6 @@ graphql-compose-pagination@8.3.0:
   resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-8.3.0.tgz#a58c786256b4dba1843d495ae81cb0fc67ac1369"
   integrity sha512-zZoBhlWD9KnAJ9AUOeFNeoE4Q/zMxZaxg0tR+HFMVNFnw7ENUnIChMWnD2uvmvik+k8Yv304hMF4n81okGVsJw==
 
-graphql-compose@9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-9.0.1.tgz#e28e7c34bd954dda4b0eddf0eb288b7a58bfb7de"
-  integrity sha512-EMo8+lcA8GJpEJB+hWYak21EwZmzzf/woIYvVQHFi/gU+2jbLEVdBB7cHd0M9fIrMswHqDpxYM8JwjIrFphpcA==
-  dependencies:
-    "@types/object-path" "^0.11.0"
-    graphql-type-json "0.3.2"
-    object-path "0.11.5"
-
 graphql-compose@9.0.2:
   version "9.0.2"
   resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-9.0.2.tgz#f029ff1ceaec65655a847521996109ac0e0a076e"
