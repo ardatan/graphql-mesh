@@ -30,7 +30,7 @@
     "@graphql-mesh/types": "0.47.0",
     "@graphql-mesh/utils": "0.16.0",
     "graphql-compose": "9.0.2",
-    "graphql-compose-mongoose": "9.5.4",
+    "graphql-compose-mongoose": "9.6.0",
     "graphql-compose-connection": "8.2.1",
     "graphql-compose-pagination": "8.3.0",
     "@graphql-tools/stitching-directives": "2.0.11"

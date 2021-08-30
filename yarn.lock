@@ -12207,19 +12207,14 @@ graphql-compose-connection@8.2.1:
   resolved "https://registry.yarnpkg.com/graphql-compose-connection/-/graphql-compose-connection-8.2.1.tgz#ca78363f4f94a209e31d9dc8905de2e26bcb8b81"
   integrity sha512-75QOx1HusfkLzDlF+RMGoC0UowbZ2R7/xFRIMfbQf1gc6eeRqiGmTWFxHaUYk2WjTAB4dGO7p/gllfwqO0W/TA==
 
-graphql-compose-mongoose@9.5.4:
-  version "9.5.4"
-  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-9.5.4.tgz#985a9fa203bdd0521acf6234c138680ab6565ece"
-  integrity sha512-Wz50T/zU+IGYqxBLvD9BvvqSQg9x2g65xfSCI8koHvaIH1+7L8oxcXDRef0SMnQsfBES14rrmiMceX5n5Jwcuw==
+graphql-compose-mongoose@9.6.0:
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/graphql-compose-mongoose/-/graphql-compose-mongoose-9.6.0.tgz#b1303ad002a9865941d9ebc05d42ba442667d579"
+  integrity sha512-jfiAR1ZNCytN4h9qMqhr9H0MlwFCaMter+/5jF+EDFKDHwP36oebu57U+36+KRqLPvL6eNRzTsbSDXCdnn6UKw==
   dependencies:
     dataloader "^2.0.0"
     graphql-compose-connection "8.2.1"
-    graphql-compose-pagination "8.2.1"
-
-graphql-compose-pagination@8.2.1:
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-8.2.1.tgz#cd1e8637a1b3d9246378e222200204412c5a863e"
-  integrity sha512-jV+nD76MWLugNO2M2xRt1yXw7VWF7XpRZri4WhMFUgRuqRMVx4k9yna0QEKo70SDKsGkC+2YUbSWdf8V8TQVWQ==
+    graphql-compose-pagination "8.3.0"
 
 graphql-compose-pagination@8.3.0:
   version "8.3.0"
