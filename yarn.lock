@@ -17531,10 +17531,10 @@ openapi-diff@0.23.4:
     swagger-parser "^10.0.2"
     verror "^1.10.0"
 
-openapi-types@9.2.0:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-9.2.0.tgz#db50b38398b2ed7116cfa08fc7296d68528dbee2"
-  integrity sha512-3x0gg8DxhpZ5MVki7AK6jmMdVIZASmVGo9CoUtD+nksLdkqz7EzWKdfS9Oxxq1J7idnZV0b3LjqcvizfKFySpQ==
+openapi-types@9.3.0:
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-9.3.0.tgz#2d90549edb928cf06cf83018485a1a5961fbd2b9"
+  integrity sha512-sR23YjmuwDSMsQVZDHbV9mPgi0RyniQlqR0AQxTC2/F3cpSjRFMH3CFPjoWvNqhC4OxPkDYNb2l8Mc1Me6D/KQ==
 
 openapi3-ts@^2.0.0:
   version "2.0.1"
