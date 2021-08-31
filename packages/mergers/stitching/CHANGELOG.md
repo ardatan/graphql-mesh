@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-stitching
 
+## 0.12.0
+
+### Minor Changes
+
+- f63907c73: enhance(stitching): update graphql-tools
+
 ## 0.11.1
 
 ### Patch Changes
