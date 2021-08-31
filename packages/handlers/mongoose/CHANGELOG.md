@@ -1,5 +1,11 @@
 # @graphql-mesh/mongoose
 
+## 0.9.0
+
+### Minor Changes
+
+- 1439d9040: feat(mongoose): v6 support
+
 ## 0.8.10
 
 ### Patch Changes
