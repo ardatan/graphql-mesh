@@ -50,7 +50,7 @@ yarn add @graphql-mesh/transform-encapsulate
 
 ```yml
 transforms:
-  - encapsulate
+  - encapsulate:
       applyTo:
         query: true
         mutation: false
