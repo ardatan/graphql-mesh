@@ -1,12 +1,22 @@
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import { SchemaComposer } from 'graphql-compose';
 import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
-import mongoose from 'mongoose';
+import { connect, disconnect, ConnectOptions, Document, Model } from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { specifiedDirectives } from 'graphql';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
-const modelQueryOperations = ['findById', 'findByIds', 'findOne', 'findMany', 'count', 'connection', 'pagination'];
+const modelQueryOperations = [
+  'findById',
+  'findByIds',
+  'findOne',
+  'findMany',
+  'count',
+  'connection',
+  'pagination',
+  'dataLoader',
+  'dataLoaderMany',
+];
 
 const modelMutationOperations = [
   'createOne',
@@ -34,28 +44,23 @@ export default class MongooseHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     if (this.config.connectionString) {
-      mongoose
-        .connect(this.config.connectionString, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        })
-        .catch(e => console.error(e));
+      connect(this.config.connectionString, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      } as ConnectOptions).catch(e => console.error(e));
 
-      this.pubsub.subscribe('destroy', () => mongoose.disconnect());
+      this.pubsub.subscribe('destroy', () => disconnect());
     }
 
     const schemaComposer = new SchemaComposer();
     await Promise.all([
       Promise.all(
         this.config.models?.map(async modelConfig => {
-          const model = await loadFromModuleExportExpression<mongoose.Model<mongoose.Document<any, any, any>>>(
-            modelConfig.path,
-            {
-              defaultExportName: modelConfig.name,
-              cwd: this.baseDir,
-              importFn: this.importFn,
-            }
-          );
+          const model = await loadFromModuleExportExpression<Model<Document<any, any, any>>>(modelConfig.path, {
+            defaultExportName: modelConfig.name,
+            cwd: this.baseDir,
+            importFn: this.importFn,
+          });
           if (!model) {
             throw new Error(`Model ${modelConfig.name} cannot be imported ${modelConfig.path}!`);
           }
@@ -84,7 +89,7 @@ export default class MongooseHandler implements MeshHandler {
                 }
               `,
             });
-            modelTC.setFieldDirectiveByName(`${modelConfig.name}_findByIds`, 'merge');
+            modelTC.setFieldDirectiveByName(`${modelConfig.name}_dataLoaderMany`, 'merge');
           }
         }) || []
       ),
@@ -112,6 +117,16 @@ export default class MongooseHandler implements MeshHandler {
               )
             ),
           ]);
+          if (this.config.autoTypeMerging) {
+            discriminatorTC.setDirectiveByName('key', {
+              selectionSet: /* GraphQL */ `
+                {
+                  id
+                }
+              `,
+            });
+            discriminatorTC.setFieldDirectiveByName(`${discriminatorConfig.name}_dataLoaderMany`, 'merge');
+          }
         }) || []
       ),
     ]);
