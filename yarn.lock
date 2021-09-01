@@ -2608,10 +2608,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.2.0"
 
-"@graphql-inspector/core@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-2.7.0.tgz#28cd28160322a323c68bab81b3c663623b5b52d1"
-  integrity sha512-vD4ILW7VK+12/3cd6oBEaRB4iviGGSu9dwe/gi+7+YEeEt7WapHDos6JpNi4jSOfnfbKrDoakFSI7q85GZkCOg==
+"@graphql-inspector/core@2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-2.8.0.tgz#9d14b49962677f034698f2bfdd6d5ea0a6fed72d"
+  integrity sha512-tQ1qShMEL2cWY8CImXOYJPgn9y2iIuzpRjs4aEaAvVw8U8VDLqi3GhPChxL69PXBp1XjCH0ef734hIHi8qlwow==
   dependencies:
     dependency-graph "0.11.0"
     object-inspect "1.10.3"
