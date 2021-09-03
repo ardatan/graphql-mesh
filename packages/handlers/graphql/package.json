@@ -27,7 +27,7 @@
     "@graphql-tools/url-loader": "7.1.0",
     "@graphql-tools/wrap": "8.1.0",
     "@graphql-mesh/utils": "0.16.0",
-    "@graphql-tools/delegate": "8.2.0",
+    "@graphql-tools/delegate": "8.2.1",
     "@graphql-mesh/store": "0.1.10"
   },
   "publishConfig": {
