@@ -30,7 +30,7 @@
     "@graphql-mesh/types": "0.47.0",
     "@graphql-mesh/store": "0.1.10",
     "@graphql-mesh/utils": "0.16.0",
-    "@graphql-tools/utils": "8.2.1",
+    "@graphql-tools/utils": "8.2.2",
     "http-string-parser": "0.0.6",
     "cross-fetch": "3.1.4",
     "dataloader": "2.0.0",
