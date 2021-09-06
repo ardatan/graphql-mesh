@@ -48,7 +48,7 @@
     "eslint-plugin-promise": "5.1.0",
     "eslint-plugin-standard": "4.1.0",
     "globby": "11.0.4",
-    "graphql": "15.5.2",
+    "graphql": "15.5.3",
     "husky": "7.0.2",
     "jest": "27.1.0",
     "lint-staged": "11.1.2",
@@ -91,7 +91,7 @@
   "resolutions": {
     "babel-jest": "27.1.0",
     "jest-runner": "27.1.0",
-    "graphql": "15.5.2",
+    "graphql": "15.5.3",
     "@changesets/apply-release-plan": "5.0.1"
   }
 }

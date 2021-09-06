@@ -6,7 +6,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "graphql": "15.5.2"
+    "graphql": "15.5.3"
   },
   "sideEffects": false,
   "main": "dist/index.js",
