@@ -60,7 +60,9 @@ export default class BareFilter implements MeshTransform {
       ...((this.fieldsMap.size || this.argsMap.size) && {
         [MapperKind.COMPOSITE_FIELD]: (fieldConfig, fieldName, typeName) => {
           const fieldRules = this.fieldsMap.get(typeName);
-          const argRules = this.argsMap.get(`${typeName}_${fieldName}`);
+          const wildcardArgRules = this.argsMap.get(`${typeName}_*`) || [];
+          const fieldArgRules = this.argsMap.get(`${typeName}_${fieldName}`) || [];
+          const argRules = wildcardArgRules.concat(fieldArgRules);
           const hasFieldRules = Boolean(fieldRules && fieldRules.length);
           const hasArgRules = Boolean(argRules && argRules.length);
 
