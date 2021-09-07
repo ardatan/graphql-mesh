@@ -35,7 +35,7 @@
     "cross-fetch": "3.1.4",
     "dataloader": "2.0.0",
     "fast-xml-parser": "3.19.0",
-    "graphql-compose": "9.0.2",
+    "graphql-compose": "9.0.3",
     "graphql-parse-resolve-info": "4.12.0",
     "graphql-scalars": "1.10.1",
     "pascal-case": "3.1.2",
