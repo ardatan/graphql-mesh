@@ -40,9 +40,11 @@ describe('filter', () => {
       transforms: [
         FilterSchemaTransform({
           config: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -99,9 +101,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: { filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'] },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -185,9 +189,11 @@ type Query {
               'Query.user.!pk',
             ],
           },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -209,6 +215,190 @@ type Post {
 
 type Query {
   user(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it("filters correctly arguments on all fields in Type, with 'bare' mode", async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+      }
+
+      type Query {
+        userOne(pk: ID!, name: String, age: Int): User
+        userTwo(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: {
+            mode: 'bare',
+            filters: ['Query.*.!pk'],
+          },
+          apiName: '',
+          cache,
+          pubsub,
+          baseDir,
+          syncImportFn: require,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+}
+
+type Query {
+  userOne(name: String, age: Int): User
+  userTwo(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it("filters correctly arguments on all fields in Type, plus specific field arguments; with 'bare' mode", async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+      }
+
+      type Query {
+        userOne(pk: ID!, name: String, age: Int): User
+        userTwo(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: {
+            mode: 'bare',
+            filters: ['Query.*.!pk', 'Query.userOne.!age'],
+          },
+          apiName: '',
+          cache,
+          pubsub,
+          baseDir,
+          syncImportFn: require,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+}
+
+type Query {
+  userOne(name: String): User
+  userTwo(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it("filters correctly arguments on all fields in Type, with 'wrap' mode", async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+      }
+
+      type Query {
+        userOne(pk: ID!, name: String, age: Int): User
+        userTwo(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: {
+            mode: 'wrap',
+            filters: ['Query.*.!pk'],
+          },
+          apiName: '',
+          cache,
+          pubsub,
+          baseDir,
+          syncImportFn: require,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+}
+
+type Query {
+  userOne(name: String, age: Int): User
+  userTwo(name: String, age: Int): User
+}
+`.trim()
+    );
+  });
+
+  it("filters correctly arguments on all fields in Type, plus specific field arguments; with 'wrap' mode", async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+        username: String
+      }
+
+      type Query {
+        userOne(pk: ID!, name: String, age: Int): User
+        userTwo(pk: ID!, name: String, age: Int): User
+      }
+    `);
+    schema = wrapSchema({
+      schema,
+      transforms: [
+        FilterSchemaTransform({
+          config: {
+            mode: 'wrap',
+            filters: ['Query.*.!pk', 'Query.userOne.!age'],
+          },
+          apiName: '',
+          cache,
+          pubsub,
+          baseDir,
+          syncImportFn: require,
+        }),
+      ],
+    });
+
+    expect(printSchema(schema).trim()).toBe(
+      /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+  username: String
+}
+
+type Query {
+  userOne(name: String): User
+  userTwo(name: String, age: Int): User
 }
 `.trim()
     );
@@ -244,9 +434,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -289,9 +481,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: ['Mutation.!*'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -334,9 +528,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: ['User.{id, username}', 'Query.!{admin}', 'Book.{id}'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -389,9 +585,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: ['!Book'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -456,9 +654,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: { mode: 'bare', filters: ['Type.!Comment', 'Type.!{Notification, Mention}'] },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -525,9 +725,11 @@ type Query {
         FilterSchemaTransform({
           // bizarre case, but logic should still work
           config: { mode: 'bare', filters: ['Type.{Query, User, Post, String, ID}'] },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -585,9 +787,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: ['!User'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -647,9 +851,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: ['!AuthRule'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
@@ -708,9 +914,11 @@ type Query {
       transforms: [
         FilterSchemaTransform({
           config: ['Query.user.!{pk, age}', 'Query.book.title'],
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          syncImportFn: require,
         }),
       ],
     });
