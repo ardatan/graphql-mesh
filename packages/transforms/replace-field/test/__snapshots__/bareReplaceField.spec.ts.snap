@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rename should replace correctly field Type with additional type definitions 1`] = `
+"type Query {
+  books: [Books]
+}
+
+type Books {
+  title: String!
+  author: Author!
+}
+
+type Author {
+  name: String!
+  age: Int
+}
+"
+`;
+
+exports[`rename should replace correctly field with resolver function 1`] = `
+"type Query {
+  books: [Books]
+}
+
+type Books {
+  title: String!
+  author: Author!
+}
+
+type Author {
+  name: String!
+  age: Int!
+}
+"
+`;
+
+exports[`rename should replace correctly field without resolver function 1`] = `
+"type Query {
+  books: BooksApiResponse
+}
+
+type BooksApiResponse {
+  books: [Books]
+}
+
+type Books {
+  title: String!
+  author: String!
+}
+"
+`;
+
+exports[`rename should replace correctly mtultiple fields with and without resolver function 1`] = `
+"type Query {
+  books: [Books]
+}
+
+type Books {
+  title: String!
+  author: String!
+}
+"
+`;
