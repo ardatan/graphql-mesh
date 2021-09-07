@@ -3074,10 +3074,10 @@
     "@graphql-tools/wrap" "^7.0.6"
     tslib "~2.2.0"
 
-"@graphql-tools/stitching-directives@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitching-directives/-/stitching-directives-2.1.0.tgz#09c9ca02c16ec07977e2ee7b912b28e1c41241f2"
-  integrity sha512-Xm2xUfSGSqFVoc2aLGBNHC2bH6ESny19ptoEE50wEjQvAsQVoVidoUfkKwlMyIf8AEWkaBkkJZ0016X3+D9+Yg==
+"@graphql-tools/stitching-directives@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitching-directives/-/stitching-directives-2.1.1.tgz#7c5d40bbdf0ebd114408e36b6074446361898302"
+  integrity sha512-RgnijzFRKORYIcqzvoO+TA4sXRTgGb7AuOWjVl5pyqu/JRfQZ3zThIzq/+20XyjtPxfZloObOx+6L4HnPKk9WA==
   dependencies:
     "@graphql-tools/delegate" "^8.2.0"
     "@graphql-tools/utils" "^8.2.0"
