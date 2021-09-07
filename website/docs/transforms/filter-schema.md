@@ -27,9 +27,14 @@ transforms:
         - User.{id, username, name, age} # <-- This will remove all fields, from User type, except `id`, `username`, `name` and `age`
 
         - Query.user.id # <-- This will remove all args from field `user`, in Query type, except `id` only
-        - Query.user.!name # <-- This will remove argument `id` from field `user`, in Query type
+        - Query.user.!name # <-- This will remove argument `name` from field `user`, in Query type
         - Query.user.{id, name} # <-- This will remove all args for field `user`, in Query type, except `id` and `name`
         - Query.user.!{id, name} # <-- This will remove args `id` and `name` from field `user`, in Query type
+
+        - Query.*.id # <-- This will remove all args from all fields in Query type, except `id` only
+        - Query.*.!name # <-- This will remove argument `name` from all fields in Query type
+        - Query.*.{id, name} # <-- This will remove all args from all fields in Query type, except `id` and `name`
+        - Query.*.!{id, name} # <-- This will remove args `id` and `name` from all fields in Query type
 ```
 
 Let's assume you have the following schema,
