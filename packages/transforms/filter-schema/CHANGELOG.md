@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.11.0
+
+### Minor Changes
+
+- 1a0a6ffbd: Add support for wildcard matching of fields when filtering arguments
+
 ## 0.10.28
 
 ### Patch Changes
