@@ -19,8 +19,11 @@ Add the following configuration to your Mesh config file:
 ```yml
 transforms:
   - prefix:
+      mode: bare | wrap
       value: MyApi_
 ```
+
+> For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
 
 > You can check out our example that uses schema stitching with a PostgreSQL datasource and prefix transform.
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)

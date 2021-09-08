@@ -200,7 +200,7 @@ If you have use cases for which you would require to introduce either "bare" or 
 | Filter Schema         |  ✅  |  ✅  | [docs](/docs/transforms/filter-schema)         |
 | Mock                  |  ❌  |  ✅  | [docs](/docs/transforms/mock)                  |
 | Naming Convention     |  ❌  |  ✅  | [docs](/docs/transforms/naming-convention)     |
-| Prefix                |  ❌  |  ✅  | [docs](/docs/transforms/prefix)                |
+| Prefix                |  ✅  |  ✅  | [docs](/docs/transforms/prefix)                |
 | Rename                |  ✅  |  ✅  | [docs](/docs/transforms/rename)                |
 | Resolvers Composition |  ✅  |  ✅  | [docs](/docs/transforms/resolvers-composition) |
 | Snapshot              |  ✅  |  ❌  | [docs](/docs/transforms/snapshot)              |
