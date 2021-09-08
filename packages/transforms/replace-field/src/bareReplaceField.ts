@@ -1,4 +1,4 @@
-import { extendSchema, GraphQLFieldConfig, GraphQLFieldResolver, GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { extendSchema, defaultFieldResolver, GraphQLFieldConfig, GraphQLFieldResolver, GraphQLSchema } from 'graphql';
 import { MeshTransform, MeshTransformOptions, SyncImportFn, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, selectObjectFields, pruneSchema } from '@graphql-tools/utils';
 import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
@@ -10,19 +10,17 @@ type ReplaceFieldConfig = YamlConfig.ReplaceFieldConfig &
   Pick<YamlConfig.ReplaceFieldTransformObject, 'scope' | 'composer'>;
 
 // Execute original field resolver and return single property to be hoisted from rsesolver reponse
-const defaultHoistComposer =
+const defaultHoistFieldComposer =
   (next: GraphQLFieldResolver<any, any, any>, targetFieldName: string) =>
   async (root: any, args: any, context: any, info: any) => {
     const rawResult = await next(root, args, context, info);
-    return rawResult[targetFieldName];
+    return rawResult && rawResult[targetFieldName];
   };
-const defaultHoistResolver = (fieldName: string, targetFieldName: string) => (root: any) =>
-  root[fieldName] && root[fieldName][targetFieldName];
 
 export default class BareReplaceField implements MeshTransform {
   noWrap = true;
   private baseDir: string;
-  private typeDefs: any;
+  private typeDefs: Pick<YamlConfig.ReplaceFieldTransform, 'typeDefs'>;
   private replacementsMap: Map<string, ReplaceFieldConfig>;
   private syncImportFn: SyncImportFn;
 
@@ -78,7 +76,7 @@ export default class BareReplaceField implements MeshTransform {
           baseSchema,
           newFieldConfig.type,
           fieldName => fieldName === targetFieldName
-        )[targetFieldName] as unknown as GraphQLFieldConfig<any, any>;
+        )[targetFieldName];
 
         if (newFieldConfig.scope === 'config') {
           const targetResolver = targetFieldConfig.resolve;
@@ -89,24 +87,17 @@ export default class BareReplaceField implements MeshTransform {
           return [fieldName, targetFieldConfig];
         }
 
-        const originalResolver = fieldConfig.resolve;
-        fieldConfig.type = targetFieldConfig.type as unknown as GraphQLObjectType;
+        // override field type with the target type requested
+        fieldConfig.type = targetFieldConfig.type;
 
         if (newFieldConfig.scope === 'hoistValue') {
-          // implement resolver value hoisting by computing a resolver function.
+          // implement value hoisting by wrapping a default composer that hoists the value from resolver result
+          fieldConfig.resolve = defaultHoistFieldComposer(fieldConfig.resolve || defaultFieldResolver, targetFieldName);
+        }
 
-          // if we have a resolver function we wrap it with a default composer that hoists the value from resolver result
-          // if we don't have a resolver function we create one that hoists the value from the root object
-          const targetResolver = originalResolver
-            ? defaultHoistComposer(originalResolver, targetFieldName)
-            : defaultHoistResolver(fieldName, targetFieldName);
-
-          // finally if we have a user-defined composer we wrap it around our computed resolver above
-          fieldConfig.resolve = newFieldConfig.composer ? newFieldConfig.composer(targetResolver) : targetResolver;
-        } else if (newFieldConfig.composer) {
-          // if we're noi hosting avalue and we have a user-defined composer
-          // we just wrap the original resolver function (if available) with the given composer function
-          fieldConfig.resolve = originalResolver && newFieldConfig.composer(originalResolver);
+        if (newFieldConfig.composer) {
+          // wrap user-defined composer to current field resolver or, if not preset, defaultFieldResolver
+          fieldConfig.resolve = newFieldConfig.composer(fieldConfig.resolve || defaultFieldResolver);
         }
 
         // avoid re-iterating over replacements that have already been applied

@@ -7,7 +7,7 @@ import { PubSub } from 'graphql-subscriptions';
 
 import ReplaceFieldTransform from '../src';
 
-describe('rename', () => {
+describe('replace-field', () => {
   const schemaDefs = /* GraphQL */ `
     type Query {
       books: BooksApiResponse
@@ -234,7 +234,7 @@ describe('rename', () => {
         mode: 'bare',
         typeDefs: /* GraphQL */ `
           type NewAuthor {
-            age: Int
+            age: String
           }
         `,
         replacements: [
@@ -282,7 +282,7 @@ describe('rename', () => {
     });
     const transformedSchema = transform.transformSchema(schema);
 
-    expect((transformedSchema.getType('Author') as GraphQLObjectType).getFields().age.type.toString()).toBe('Int');
+    expect((transformedSchema.getType('Author') as GraphQLObjectType).getFields().age.type.toString()).toBe('String');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
     const result = await execute({
@@ -299,7 +299,7 @@ describe('rename', () => {
       `),
     });
     expect(result.data.books).toEqual([
-      { title: 'abc', author: { age: 50 } },
+      { title: 'abc', author: { age: '50' } },
       { title: 'def', author: { age: null } },
     ]);
   });
