@@ -5,6 +5,7 @@ import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 const rootOperations = new Set(['Query', 'Mutation', 'Subscription']);
 
 export default class WrapPrefix implements MeshTransform {
+  noWrap = true;
   private ignoreList: string[];
   private includeRootOperations: boolean;
   private prefix: string;
