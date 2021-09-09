@@ -1028,7 +1028,8 @@
           "additionalItems": false
         },
         "autoTypeMerging": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable Automatic Type Merging/Federation support"
         }
       }
     },

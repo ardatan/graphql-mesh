@@ -37,7 +37,7 @@ import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
-import { inspect } from 'util';
+import { inspect } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
 
 interface TypeComposers {
@@ -129,7 +129,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       const getGenericJSONScalar = (isInput: boolean, description?: string) => {
         const coerceValue = (value: any) => {
           if (!validate(value)) {
-            throw new Error(`${inspect(value, false, 1, false)} is not valid!`);
+            throw new Error(`${inspect(value)} is not valid!`);
           }
           return value;
         };

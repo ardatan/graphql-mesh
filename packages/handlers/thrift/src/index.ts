@@ -43,7 +43,7 @@ import {
 } from '@creditkarma/thrift-server-core';
 import { pascalCase } from 'pascal-case';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { inspect } from 'util';
+import { inspect } from '@graphql-tools/utils';
 import { env } from 'process';
 
 export default class ThriftHandler implements MeshHandler {
@@ -402,7 +402,7 @@ export default class ThriftHandler implements MeshHandler {
           break;
         }
         default:
-          throw new Error(`Unknown function type: ${inspect(functionType, true, 2)}!`);
+          throw new Error(`Unknown function type: ${inspect(functionType)}!`);
       }
       return {
         inputType: inputType!,

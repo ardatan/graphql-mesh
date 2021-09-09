@@ -3,7 +3,7 @@ import { flatString, jsonFlatStringify } from '@graphql-mesh/utils';
 import { RequestHandler } from 'express';
 import { GraphQLError } from 'graphql';
 import { getGraphQLParameters, processRequest, shouldRenderGraphiQL } from 'graphql-helix';
-import { inspect } from 'util';
+import { inspect } from '@graphql-tools/utils';
 
 function normalizeGraphQLError(error: GraphQLError) {
   return {
@@ -142,7 +142,7 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
               });
               break;
             default:
-              throw new Error(`Unknown GraphQL Result: ${inspect(result, true, 2, true)}`);
+              throw new Error(`Unknown GraphQL Result: ${inspect(result)}`);
           }
         })
         .catch(e => {

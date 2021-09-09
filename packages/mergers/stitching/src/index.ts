@@ -41,44 +41,46 @@ export default class StitchingMerger implements MeshMerger {
     await Promise.all(
       rawSources.map(async rawSource => {
         const rawSourceQueryType = rawSource.schema.getQueryType();
-        const queryTypeFields = rawSourceQueryType.getFields();
-        if ('_service' in queryTypeFields) {
-          const oldSchema = rawSource.schema;
-          const resolvers = extractResolvers(oldSchema);
-          rawSource.executor =
-            rawSource.executor ||
-            (jitExecutorFactory(
-              oldSchema,
-              rawSource.name,
-              this.logger.child(`${rawSource.name} - JIT Executor`)
-            ) as Executor);
-          rawSource.schema = await this.store
-            .proxy(`${rawSource.name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
-            .getWithSet(async () => {
-              this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
-              const sdlQueryResult = (await rawSource.executor({
-                document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
-                operationType: 'query',
-              })) as ExecutionResult;
-              if (sdlQueryResult.errors?.length) {
-                throw new AggregateError(
-                  sdlQueryResult.errors,
-                  `Failed on fetching Federated SDL for ${rawSource.name}`
-                );
-              }
-              const federationSdl = sdlQueryResult.data._service.sdl;
-              this.logger.debug(`Generating Stitching SDL for ${rawSource.name}`);
-              const stitchingSdl = federationToStitchingSDL(federationSdl, defaultStitchingDirectives);
-              return buildSchema(stitchingSdl);
+        if (rawSourceQueryType) {
+          const queryTypeFields = rawSourceQueryType.getFields();
+          if ('_service' in queryTypeFields) {
+            const oldSchema = rawSource.schema;
+            const resolvers = extractResolvers(oldSchema);
+            rawSource.executor =
+              rawSource.executor ||
+              (jitExecutorFactory(
+                oldSchema,
+                rawSource.name,
+                this.logger.child(`${rawSource.name} - JIT Executor`)
+              ) as Executor);
+            rawSource.schema = await this.store
+              .proxy(`${rawSource.name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
+              .getWithSet(async () => {
+                this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
+                const sdlQueryResult = (await rawSource.executor({
+                  document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
+                  operationType: 'query',
+                })) as ExecutionResult;
+                if (sdlQueryResult.errors?.length) {
+                  throw new AggregateError(
+                    sdlQueryResult.errors,
+                    `Failed on fetching Federated SDL for ${rawSource.name}`
+                  );
+                }
+                const federationSdl = sdlQueryResult.data._service.sdl;
+                this.logger.debug(`Generating Stitching SDL for ${rawSource.name}`);
+                const stitchingSdl = federationToStitchingSDL(federationSdl, defaultStitchingDirectives);
+                return buildSchema(stitchingSdl);
+              });
+            addResolversToSchema({
+              schema: rawSource.schema,
+              resolvers,
+              updateResolversInPlace: true,
+              resolverValidationOptions: {
+                requireResolversToMatchSchema: 'ignore',
+              },
             });
-          addResolversToSchema({
-            schema: rawSource.schema,
-            resolvers,
-            updateResolversInPlace: true,
-            resolverValidationOptions: {
-              requireResolversToMatchSchema: 'ignore',
-            },
-          });
+          }
         }
       })
     );

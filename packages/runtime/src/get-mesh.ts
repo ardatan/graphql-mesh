@@ -40,8 +40,7 @@ import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { delegateToSchema, IDelegateToSchemaOptions } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
-import { inspect } from 'util';
-import { isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
+import { inspect, isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
 
 export interface MeshInstance {
   execute: ExecuteMeshFn;
@@ -313,16 +312,11 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
     operationLogger.debug(
       `Execution started with
-${inspect(
-  {
-    ...(operationName ? {} : { query: printedDocument }),
-    ...(rootValue ? { rootValue } : {}),
-    ...(variableValues ? { variableValues } : {}),
-  },
-  true,
-  2,
-  true
-)}`
+${inspect({
+  ...(operationName ? {} : { query: printedDocument }),
+  ...(rootValue ? { rootValue } : {}),
+  ...(variableValues ? { variableValues } : {}),
+})}`
     );
 
     const executionResult = await liveQueryStore.execute(executionParams);
@@ -334,15 +328,10 @@ ${inspect(
 
     operationLogger.debug(
       `Execution done with
-${inspect(
-  {
-    ...(operationName ? {} : { query: printedDocument }),
-    ...executionResult,
-  },
-  true,
-  2,
-  true
-)}`
+${inspect({
+  ...(operationName ? {} : { query: printedDocument }),
+  ...executionResult,
+})}`
     );
 
     return executionResult;
@@ -376,16 +365,11 @@ ${inspect(
 
     operationLogger.debug(
       `Subscription started with
-${inspect(
-  {
-    ...(rootValue ? {} : { rootValue }),
-    ...(variableValues ? {} : { variableValues }),
-    ...(operationName ? {} : { query: printedDocument }),
-  },
-  true,
-  2,
-  true
-)}`
+${inspect({
+  ...(rootValue ? {} : { rootValue }),
+  ...(variableValues ? {} : { variableValues }),
+  ...(operationName ? {} : { query: printedDocument }),
+})}`
     );
     const executionResult = await subscribe(executionParams);
 

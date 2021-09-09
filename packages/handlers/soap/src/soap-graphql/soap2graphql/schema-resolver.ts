@@ -11,7 +11,7 @@ import {
   SoapObjectType,
 } from './soap-endpoint';
 import { SoapCaller } from './soap-caller';
-import { inspect } from 'util';
+import { inspect } from '@graphql-tools/utils';
 import {
   GraphQLObjectType,
   Thunk,
@@ -239,7 +239,7 @@ class GraphqlOutputFieldResolver {
       const type: GraphQLOutputType = this.resolveOutputType(input.type);
       return input.isList ? new GraphQLList(type) : type;
     } catch (err) {
-      const errStacked = new Error(`could not resolve output type for ${inspect(input, false, 4)}`);
+      const errStacked = new Error(`could not resolve output type for ${inspect(input)}`);
       errStacked.stack += '\nCaused by: ' + err.stack;
       throw errStacked;
     }
@@ -364,7 +364,7 @@ class GraphqlInputFieldResolver {
       const type: GraphQLInputType = this.resolveInputType(input.type);
       return input.isList ? new GraphQLList(type) : type;
     } catch (err) {
-      const errStacked = new Error(`could not resolve output type for ${inspect(input, false, 4)}`);
+      const errStacked = new Error(`could not resolve output type for ${inspect(input)}`);
       errStacked.stack += '\nCaused by: ' + err.stack;
       throw errStacked;
     }

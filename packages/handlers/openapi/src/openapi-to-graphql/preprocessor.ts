@@ -24,7 +24,7 @@ import { handleWarning, getCommonPropertyNames, MitigationTypes } from './utils'
 import { GraphQLOperationType } from './types/graphql';
 import { methodToHttpMethod } from './oas_3_tools';
 import { Logger } from '@graphql-mesh/types';
-import { inspect } from 'util';
+import { inspect } from '@graphql-tools/utils';
 
 /**
  * Given an operation object from the OAS, create an Operation, which contains

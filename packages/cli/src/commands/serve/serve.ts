@@ -23,8 +23,7 @@ import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
 import { YamlConfig, Logger } from '@graphql-mesh/types';
-import { Source } from '@graphql-tools/utils';
-import { inspect } from 'util';
+import { Source , inspect } from '@graphql-tools/utils';
 
 const { readFile } = fsPromises;
 

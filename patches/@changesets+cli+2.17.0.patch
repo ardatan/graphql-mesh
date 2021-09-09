@@ -1,5 +1,5 @@
 diff --git a/node_modules/@changesets/cli/dist/cli.cjs.dev.js b/node_modules/@changesets/cli/dist/cli.cjs.dev.js
-index f771824..ac0b15a 100644
+index 8e6118a..d872f49 100644
 --- a/node_modules/@changesets/cli/dist/cli.cjs.dev.js
 +++ b/node_modules/@changesets/cli/dist/cli.cjs.dev.js
 @@ -576,15 +576,15 @@ async function version(cwd, options, config) {
@@ -22,7 +22,7 @@ index f771824..ac0b15a 100644
      }
  
      throw err;
-@@ -735,7 +735,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
+@@ -734,7 +734,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
    // some struggles
    // Note that both pre and post publish hooks are printed before the json out, so this works.
  
@@ -32,7 +32,7 @@ index f771824..ac0b15a 100644
    if (json.error) {
      // The first case is no 2fa provided, the second is when the 2fa is wrong (timeout or wrong words)
 diff --git a/node_modules/@changesets/cli/dist/cli.cjs.prod.js b/node_modules/@changesets/cli/dist/cli.cjs.prod.js
-index d40fd42..a16961d 100644
+index c4bf195..90dbecb 100644
 --- a/node_modules/@changesets/cli/dist/cli.cjs.prod.js
 +++ b/node_modules/@changesets/cli/dist/cli.cjs.prod.js
 @@ -332,13 +332,13 @@ async function version(cwd, options, config) {
@@ -52,7 +52,7 @@ index d40fd42..a16961d 100644
      err;
    }
  }
-@@ -430,7 +430,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
+@@ -428,7 +428,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
    };
    let {stdout: stdout} = await spawn__default.default(publishTool.name, [ "publish", opts.cwd, "--json", ...publishFlags ], {
      env: Object.assign({}, process.env, envOverride)
@@ -62,7 +62,7 @@ index d40fd42..a16961d 100644
    twoFactorState.isRequired = Promise.resolve(!0), internalPublish(pkgName, opts, twoFactorState)) : (logger.error(`an error occurred while publishing ${pkgName}: ${json.error.code}`, json.error.summary, json.error.detail ? "\n" + json.error.detail : ""), 
    {
 diff --git a/node_modules/@changesets/cli/dist/cli.esm.js b/node_modules/@changesets/cli/dist/cli.esm.js
-index 40bcc31..3aa799c 100644
+index b4b2a6f..d0fb01f 100644
 --- a/node_modules/@changesets/cli/dist/cli.esm.js
 +++ b/node_modules/@changesets/cli/dist/cli.esm.js
 @@ -553,15 +553,15 @@ async function version(cwd, options, config) {
@@ -85,7 +85,7 @@ index 40bcc31..3aa799c 100644
      }
  
      throw err;
-@@ -712,7 +712,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
+@@ -711,7 +711,7 @@ async function internalPublish(pkgName, opts, twoFactorState) {
    // some struggles
    // Note that both pre and post publish hooks are printed before the json out, so this works.
  
