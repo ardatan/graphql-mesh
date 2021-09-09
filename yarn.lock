@@ -3784,13 +3784,13 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.8.0.tgz#1f95bffc02d9b59616bfbeafa67cf405a2c20482"
   integrity sha512-Ib/oC2R+fHoAe1op47T2yGRmtDqZpnUy63oNz+jW1BQwMSkgF8YrLpkeb5DkaK3pDPOHO8cFNrWR3fPN3DFc+w==
 
-"@n1ru4l/in-memory-live-query-store@0.6.6":
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.6.6.tgz#57f4b7e4219c062a82da6b4e6434f0bda5284497"
-  integrity sha512-91GdnWsnSq2ZI4C0vJlzedXPjWNxz71RP+870RJjRoHmsco5vyDs6W3y9aCUy02HkGwhdJNuf6qSylBA8oDKqQ==
+"@n1ru4l/in-memory-live-query-store@0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.7.0.tgz#f0bf7e049bbfa35e3e249e93588ab21723fe263e"
+  integrity sha512-qsxbEPIvQo/JjUAsL7lsXoj3KklQ8cwP2rUS1xyrEBcxr85Tjb6Gqo+oAI5xVYeN+q4auEj2kKyx/h9vFXxtpw==
   dependencies:
     "@graphql-tools/utils" "^8.0.0"
-    "@n1ru4l/graphql-live-query" "0.7.1"
+    "@n1ru4l/graphql-live-query" "0.8.0"
     "@n1ru4l/push-pull-async-iterable-iterator" "^3.0.0"
 
 "@n1ru4l/push-pull-async-iterable-iterator@^2.1.4":
