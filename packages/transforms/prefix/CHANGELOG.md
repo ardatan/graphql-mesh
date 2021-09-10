@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-prefix
 
+## 0.7.0
+
+### Minor Changes
+
+- 922dd23bd: Implement 'bare' mode on Prefix transform
+
 ## 0.6.59
 
 ### Patch Changes

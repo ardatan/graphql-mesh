@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-stitching
 
+## 0.12.1
+
+### Patch Changes
+
+- 1ac321346: fix(stitching): skip federation check if query type is nullish
+
 ## 0.12.0
 
 ### Minor Changes
