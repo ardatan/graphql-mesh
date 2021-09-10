@@ -44,6 +44,8 @@ type RootJsonAndDecodedDescriptorSet = {
   decodedDescriptorSet: DecodedDescriptorSet;
 };
 
+const QUERY_METHOD_PREFIXES = ['get', 'list'];
+
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
@@ -365,7 +367,11 @@ module.exports = {
               });
             } else {
               const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
-              schemaComposer.Mutation.addFields({
+              const methodNameLowerCased = methodName.toLowerCase();
+              const rootTypeComposer = QUERY_METHOD_PREFIXES.some(prefix => methodNameLowerCased.startsWith(prefix))
+                ? schemaComposer.Query
+                : schemaComposer.Mutation;
+              rootTypeComposer.addFields({
                 [rootFieldName]: {
                   ...fieldConfig,
                   resolve: (_, args: Record<string, unknown>, context: Record<string, unknown>) =>

@@ -1,4 +1,4 @@
-mutation GetMovies {
+query GetMovies {
   Example_GetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
     result {
       name

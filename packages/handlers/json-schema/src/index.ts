@@ -14,7 +14,7 @@ import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import { isScalarType, specifiedDirectives } from 'graphql';
 import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
-import { inspect } from 'util';
+import { inspect } from '@graphql-tools/utils';
 import { dereferenceObject, healJSONSchema, referenceJSONSchema, JSONSchema, JSONSchemaObject } from 'json-machete';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema';
 import { env } from 'process';
@@ -241,7 +241,7 @@ export default class JsonSchemaHandler implements MeshHandler {
                 throw new Error(`Unknown method ${operationConfig.method}`);
             }
           }
-          operationLogger.debug(`=> Fetching ${urlObj.toString()}=>${inspect(requestInit, true, 2, true)}`);
+          operationLogger.debug(`=> Fetching ${urlObj.toString()}=>${inspect(requestInit)}`);
           const response = await fetch(urlObj.toString(), requestInit);
           const responseText = await response.text();
           operationLogger.debug(
@@ -283,18 +283,18 @@ export default class JsonSchemaHandler implements MeshHandler {
                 `${operationConfig.type}.${operationConfig.field} failed`
               );
               aggregatedError.stack = null;
-              this.logger.debug(`=> Throwing the error ${inspect(aggregatedError, true, Infinity, true)}`);
+              this.logger.debug(`=> Throwing the error ${inspect(aggregatedError)}`);
               return aggregatedError;
             }
           }
           if (responseJson.error) {
             if (!('getFields' in returnType && 'error' in returnType.getFields())) {
               const normalizedError = normalizeError(responseJson.error);
-              operationLogger.debug(`=> Throwing the error ${inspect(normalizedError, true, Infinity, true)}`);
+              operationLogger.debug(`=> Throwing the error ${inspect(normalizedError)}`);
               return normalizedError;
             }
           }
-          operationLogger.debug(`=> Returning ${inspect(responseJson, true, Infinity, true)}`);
+          operationLogger.debug(`=> Returning ${inspect(responseJson)}`);
           return responseJson;
         };
       }

@@ -33,7 +33,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             renames: [
               {
@@ -61,7 +63,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             mode: 'wrap',
             renames: [
@@ -96,7 +100,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             mode: 'wrap',
             renames: [
@@ -128,7 +134,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             renames: [
               {
@@ -165,7 +173,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             mode: 'wrap',
             renames: [
@@ -211,7 +221,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             renames: [
               {
@@ -252,7 +264,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             renames: [
               {
@@ -293,7 +307,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             renames: [
               {
@@ -339,7 +355,9 @@ describe('rename', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        RenameTransform({
+        new RenameTransform({
+          apiName: '',
+          syncImportFn: require,
           config: {
             renames: [
               {
@@ -368,6 +386,50 @@ describe('rename', () => {
 
     expect(fieldMap.api_user_v1_api).toBeUndefined();
     expect(fieldMap.user).toBeDefined();
+    expect(printSchema(newSchema)).toMatchSnapshot();
+  });
+
+  // TODO
+  it.skip('should move a root field from a root type to another', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        foo: String
+      }
+
+      type Mutation {
+        bar: String
+      }
+    `);
+
+    const transform = new RenameTransform({
+      apiName: '',
+      syncImportFn: require,
+      config: {
+        mode: 'bare',
+        renames: [
+          {
+            from: {
+              type: 'Mutation',
+              field: 'bar',
+            },
+            to: {
+              type: 'Query',
+              field: 'bar',
+            },
+          },
+        ],
+      },
+      cache,
+      pubsub,
+      baseDir,
+    });
+
+    const newSchema = transform.transformSchema(schema, {} as any);
+
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    const queryFieldMap = queryType.getFields();
+
+    expect(queryFieldMap.bar).toBeDefined();
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 });

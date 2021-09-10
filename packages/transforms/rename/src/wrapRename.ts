@@ -1,6 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { RenameTypes, RenameObjectFields, RenameRootTypes, RenameInputObjectFields } from '@graphql-tools/wrap';
+import { RenameTypes, RenameObjectFields, RenameInputObjectFields } from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
@@ -28,7 +28,6 @@ export default class WrapRename implements MeshTransform {
         } else {
           replaceTypeNameFn = t => (t === fromTypeName ? toTypeName : t);
         }
-        this.transforms.push(new RenameRootTypes(replaceTypeNameFn));
         this.transforms.push(new RenameTypes(replaceTypeNameFn));
       }
 

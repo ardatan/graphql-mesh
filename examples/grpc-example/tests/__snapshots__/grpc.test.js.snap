@@ -52,17 +52,15 @@ type MoviesResult {
   result: [Movie]
 }
 
-type Mutation {
+type Query {
+  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
+
   \\"\\"\\"get all movies\\"\\"\\"
   anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult
+  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState
 
   \\"\\"\\"get all movies\\"\\"\\"
   exampleGetMovies(input: MovieRequest_Input): MoviesResult
-}
-
-type Query {
-  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
-  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
 input SearchByCastRequest_Input {
