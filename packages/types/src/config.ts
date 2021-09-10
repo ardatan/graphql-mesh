@@ -375,6 +375,9 @@ export interface MongooseHandler {
   connectionString?: string;
   models?: MongooseModel[];
   discriminators?: MongooseModel[];
+  /**
+   * Enable Automatic Type Merging/Federation support
+   */
   autoTypeMerging?: boolean;
 }
 export interface MongooseModel {
@@ -1178,6 +1181,10 @@ export interface NamingConventionTransformConfig {
  * Prefix transform
  */
 export interface PrefixTransformConfig {
+  /**
+   * Specify to apply prefix transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
   /**
    * The prefix to apply to the schema types. By default it's the API name.
    */

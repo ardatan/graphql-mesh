@@ -1028,7 +1028,8 @@
           "additionalItems": false
         },
         "autoTypeMerging": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable Automatic Type Merging/Federation support"
         }
       }
     },
@@ -2317,6 +2318,11 @@
       "type": "object",
       "title": "PrefixTransformConfig",
       "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply prefix transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
         "value": {
           "type": "string",
           "description": "The prefix to apply to the schema types. By default it's the API name."

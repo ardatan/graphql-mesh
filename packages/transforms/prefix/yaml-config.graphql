@@ -7,6 +7,10 @@ extend type Transform {
 
 type PrefixTransformConfig @md {
   """
+  Specify to apply prefix transform to bare schema or by wrapping original schema
+  """
+  mode: PrefixTransformMode
+  """
   The prefix to apply to the schema types. By default it's the API name.
   """
   value: String
@@ -18,4 +22,9 @@ type PrefixTransformConfig @md {
   Changes root types and changes the field names
   """
   includeRootOperations: Boolean
+}
+
+enum PrefixTransformMode {
+  bare
+  wrap
 }
