@@ -22747,10 +22747,10 @@ thrift@0.13.0:
     json-int64 "~1.0"
     nopt "~4.0"
 
-thrift@0.14.2:
-  version "0.14.2"
-  resolved "https://registry.yarnpkg.com/thrift/-/thrift-0.14.2.tgz#723c38a27da2d235ee744b5850ea61d29f3f988e"
-  integrity sha512-bW8EaE6iw3hSt4HB2HpBdHW86Xpb9IUJfqufx4NwEu7OGuIpS0ISj+Yy1Z1Wvhfno6SPNhKRJ1qFXea84HcrOQ==
+thrift@0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/thrift/-/thrift-0.15.0.tgz#9c502ab3763e12b93e33c8b4e5c1e0e12ed864cf"
+  integrity sha512-RvuFCwHD8bAHIh0Evlr+8QJui/zzistIj9k668jX6jGvDF1OyOmI5TvY+YnqI/VQxpiE2OCGucYJs/nz/CfldA==
   dependencies:
     browser-or-node "^1.2.1"
     isomorphic-ws "^4.0.1"
