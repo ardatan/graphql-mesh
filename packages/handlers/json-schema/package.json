@@ -39,7 +39,7 @@
     "to-json-schema": "0.2.5",
     "url-join": "4.0.1",
     "qs": "6.10.1",
-    "ajv": "8.6.2",
+    "ajv": "8.6.3",
     "ajv-formats": "2.1.1"
   },
   "publishConfig": {
