@@ -5293,10 +5293,10 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
-"@types/object-hash@2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-2.1.1.tgz#a4937565af39c3adc26771c0f487584840b20adc"
-  integrity sha512-X2LV33+tSr9LQXcQBatyPGtWOOranhjGYjEnphsdtNRdviCY/3ciCkahwohx1/ary2dMHIKIRoncBF/69Wr38A==
+"@types/object-hash@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-2.2.0.tgz#f58876f84308de346f8c2187805e7871b8b18ec5"
+  integrity sha512-k88aPAwnW+F47Kc468N6KraBo6i3lIVIuemcRyM1JBAyUsIbqztSzOLTFDKNdn5//QaLz2FxSRlc9uHkgQ6waQ==
 
 "@types/object-path@0.11.1":
   version "0.11.1"
