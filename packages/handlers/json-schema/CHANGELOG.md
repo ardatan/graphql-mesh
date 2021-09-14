@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.18.6
+
+### Patch Changes
+
+- 459e8fb4d: fix(json-schema): add missing oneOf directive definition if needed
+
 ## 0.18.5
 
 ### Patch Changes
