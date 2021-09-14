@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-type-merging
 
+## 0.1.0
+
+### Minor Changes
+
+- 6ce43ddac: feat(type-merging): additional type merging configuration for edge cases
+
+### Patch Changes
+
+- Updated dependencies [6ce43ddac]
+  - @graphql-mesh/types@0.49.0
+  - @graphql-mesh/utils@0.16.2
+
 ## 0.0.12
 
 ### Patch Changes

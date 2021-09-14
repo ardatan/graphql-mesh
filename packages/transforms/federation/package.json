@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-federation",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@apollo/federation": "0.32.0",
-    "@graphql-mesh/types": "0.48.0",
-    "@graphql-mesh/utils": "0.16.1",
+    "@graphql-mesh/types": "0.49.0",
+    "@graphql-mesh/utils": "0.16.2",
     "graphql-transform-federation": "2.2.0",
     "lodash": "4.17.21",
     "@graphql-tools/utils": "8.2.2",
