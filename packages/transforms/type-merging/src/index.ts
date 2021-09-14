@@ -3,7 +3,7 @@ import { GraphQLSchema } from 'graphql';
 import _ from 'lodash';
 import { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import { loadFromModuleExportExpressionSync } from 'packages/utils/src/load-from-module-export-expression';
+import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 import { inspect } from 'util';
 
 export default class TypeMerging implements MeshTransform {
