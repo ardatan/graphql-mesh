@@ -1028,7 +1028,8 @@
           "additionalItems": false
         },
         "autoTypeMerging": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable Automatic Type Merging/Federation support"
         }
       }
     },
@@ -2498,6 +2499,22 @@
           },
           "additionalItems": false,
           "description": "Denotes a root field used to query a merged type across services.\nThe marked field's name is analogous\nto the fieldName setting in\n[merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example),\nwhile the field's arguments and return type are used to infer merge configuration.\nDirective arguments tune the merge behavior"
+        },
+        "additionalConfiguration": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "The path to a code file that has additional type merging configuration"
         }
       }
     },

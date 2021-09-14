@@ -375,6 +375,9 @@ export interface MongooseHandler {
   connectionString?: string;
   models?: MongooseModel[];
   discriminators?: MongooseModel[];
+  /**
+   * Enable Automatic Type Merging/Federation support
+   */
   autoTypeMerging?: boolean;
 }
 export interface MongooseModel {
@@ -1288,6 +1291,10 @@ export interface TypeMergingConfig {
    * Directive arguments tune the merge behavior
    */
   queryFields?: MergedRootFieldConfig[];
+  /**
+   * The path to a code file that has additional type merging configuration
+   */
+  additionalConfiguration?: any;
 }
 export interface MergedTypeConfig {
   /**
