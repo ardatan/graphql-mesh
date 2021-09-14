@@ -1295,6 +1295,10 @@ export interface TypeMergingConfig {
    * Directive arguments tune the merge behavior
    */
   queryFields?: MergedRootFieldConfig[];
+  /**
+   * The path to a code file that has additional type merging configuration
+   */
+  additionalConfiguration?: any;
 }
 export interface MergedTypeConfig {
   /**
