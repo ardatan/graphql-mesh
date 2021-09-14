@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.48.0
+
+### Minor Changes
+
+- 67552c8f8: feat(types): update prefix transform
+
 ## 0.47.0
 
 ### Minor Changes

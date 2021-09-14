@@ -1,5 +1,12 @@
 # soap-netsuite
 
+## 0.0.21
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.38.3
+- @graphql-mesh/soap@0.7.22
+
 ## 0.0.20
 
 ### Patch Changes

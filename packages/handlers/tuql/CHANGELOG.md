@@ -1,5 +1,12 @@
 # @graphql-mesh/tuql
 
+## 0.4.69
+
+### Patch Changes
+
+- Updated dependencies [67552c8f8]
+  - @graphql-mesh/types@0.48.0
+
 ## 0.4.68
 
 ### Patch Changes
