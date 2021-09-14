@@ -1,5 +1,14 @@
 # @graphql-mesh/utils
 
+## 0.16.1
+
+### Patch Changes
+
+- 46a4f7b73: fix(utils): hashObject should always return a string
+- aa804d043: enhance(utils): improve rmdirs
+- Updated dependencies [67552c8f8]
+  - @graphql-mesh/types@0.48.0
+
 ## 0.16.0
 
 ### Minor Changes
