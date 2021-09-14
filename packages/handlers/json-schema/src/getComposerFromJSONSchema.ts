@@ -86,6 +86,10 @@ const JSONSchemaStringFormatScalarMapFactory = (ajv: Ajv) =>
     })
   );
 
+const ONE_OF_DEFINITION = /* GraphQL */ `
+  directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+`;
+
 export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const ajv = new Ajv({
@@ -165,6 +169,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           description: subSchema.description,
           fields: unionInputFields,
         });
+        if (!schemaComposer.hasDirective('oneOf')) {
+          schemaComposer.addTypeDefs(ONE_OF_DEFINITION);
+        }
         input.setDirectives([
           {
             name: 'oneOf',
