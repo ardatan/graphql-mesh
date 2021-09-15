@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "@types/is-url": "1.2.30",
-    "@types/object-hash": "2.2.0"
+    "@types/object-hash": "2.2.1"
   },
   "sideEffects": false,
   "main": "dist/index.js",
