@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.19.0
+
+### Minor Changes
+
+- f1d580ddb: feat(json-schema): correct scalar types for json schema sources
+
 ## 0.18.6
 
 ### Patch Changes
