@@ -139,7 +139,7 @@ export async function generateTsArtifacts({
       ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
       : documents,
     config: {
-      scalars: serverSideScalarsMap,
+      scalars: scalarsMap,
       skipTypename: true,
       flattenGeneratedTypes: flattenTypes,
       onlyOperationTypes: flattenTypes,

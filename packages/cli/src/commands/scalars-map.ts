@@ -10,6 +10,7 @@ export const serverSideScalarsMap = {
   Timestamp: 'Date',
   Time: 'Date',
   Void: 'void',
+  EmailAddress: 'string',
 };
 
 export const clientSideScalarsMap = {
