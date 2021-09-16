@@ -244,6 +244,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.pattern), {
             description: subSchema.description,
           }),
+          extensions: {
+            codegenScalarType: 'string',
+          },
         });
         return {
           input: typeComposer,
