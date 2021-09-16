@@ -262,7 +262,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             description: subSchema.description,
           }),
           extensions: {
-            codegenScalarType: 'string',
+            codegenScalarType: `'${subSchema.const}'`,
           },
         });
         return {
