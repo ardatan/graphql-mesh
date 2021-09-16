@@ -81,6 +81,9 @@ const JSONSchemaStringFormatScalarMapFactory = (ajv: Ajv) =>
           }
           throw new Error(`Expected string in ${format} format but got: ${(ast as any).value}`);
         },
+        extensions: {
+          codegenScalarType: 'string',
+        },
       });
       return [format, scalar];
     })
