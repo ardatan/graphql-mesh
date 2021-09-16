@@ -81,6 +81,9 @@ const JSONSchemaStringFormatScalarMapFactory = (ajv: Ajv) =>
           }
           throw new Error(`Expected string in ${format} format but got: ${(ast as any).value}`);
         },
+        extensions: {
+          codegenScalarType: 'string',
+        },
       });
       return [format, scalar];
     })
@@ -244,6 +247,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.pattern), {
             description: subSchema.description,
           }),
+          extensions: {
+            codegenScalarType: 'string',
+          },
         });
         return {
           input: typeComposer,
@@ -255,6 +261,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.const), {
             description: subSchema.description,
           }),
+          extensions: {
+            codegenScalarType: `'${subSchema.const}'`,
+          },
         });
         return {
           input: typeComposer,

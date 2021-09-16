@@ -1,7 +1,7 @@
 import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
-import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
+import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind, isScalarType } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 import { serverSideScalarsMap } from './scalars-map';
 import { pascalCase } from 'pascal-case';
@@ -123,13 +123,23 @@ export async function generateTsArtifacts({
 }) {
   const artifactsDir = join(baseDir, '.mesh');
   logger.info('Generating index file in TypeScript');
+  const scalarsMap = {
+    ...serverSideScalarsMap,
+  };
+  const unifiedTypeMap = unifiedSchema.getTypeMap();
+  for (const typeName in unifiedTypeMap) {
+    const type = unifiedTypeMap[typeName];
+    if (isScalarType(type) && type.extensions && 'codegenScalarType' in type.extensions) {
+      scalarsMap[typeName] = type.extensions.codegenScalarType;
+    }
+  }
   const codegenOutput = await codegen({
     filename: 'types.ts',
     documents: sdkConfig?.generateOperations
       ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
       : documents,
     config: {
-      scalars: serverSideScalarsMap,
+      scalars: scalarsMap,
       skipTypename: true,
       flattenGeneratedTypes: flattenTypes,
       onlyOperationTypes: flattenTypes,
