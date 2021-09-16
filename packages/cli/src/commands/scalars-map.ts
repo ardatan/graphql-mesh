@@ -15,7 +15,9 @@ export const serverSideScalarsMap = {
 
 export const clientSideScalarsMap = {
   ...serverSideScalarsMap,
+  Byte: 'string',
   Date: 'string',
+  DateTime: 'string',
   Timestamp: 'number',
   Time: 'string',
 };
