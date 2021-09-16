@@ -129,10 +129,8 @@ export async function generateTsArtifacts({
   const unifiedTypeMap = unifiedSchema.getTypeMap();
   for (const typeName in unifiedTypeMap) {
     const type = unifiedTypeMap[typeName];
-    if (isScalarType(type)) {
-      if ('codegenScalarType' in type.extensions) {
-        scalarsMap[typeName] = type.extensions.codegenScalarType;
-      }
+    if (isScalarType(type) && type.extensions && 'codegenScalarType' in type.extensions) {
+      scalarsMap[typeName] = type.extensions.codegenScalarType;
     }
   }
   const codegenOutput = await codegen({
