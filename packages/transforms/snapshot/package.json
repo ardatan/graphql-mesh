@@ -30,7 +30,7 @@
     "@graphql-mesh/utils": "0.16.2",
     "@graphql-tools/resolvers-composition": "6.4.0",
     "@graphql-tools/schema": "8.2.0",
-    "@graphql-tools/utils": "8.2.2"
+    "@graphql-tools/utils": "8.2.3"
   },
   "publishConfig": {
     "access": "public",
