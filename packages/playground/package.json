@@ -26,6 +26,6 @@
     "webpack": "5.53.0",
     "webpack-cli": "4.8.0",
     "css-loader": "6.3.0",
-    "style-loader": "3.2.1"
+    "style-loader": "3.3.0"
   }
 }
