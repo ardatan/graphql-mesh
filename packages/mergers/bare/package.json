@@ -27,8 +27,8 @@
     "@graphql-mesh/utils": "0.16.2",
     "fetchache": "0.1.1",
     "@graphql-tools/schema": "8.2.0",
-    "@graphql-tools/wrap": "8.1.0",
-    "@graphql-tools/utils": "8.2.2"
+    "@graphql-tools/wrap": "8.1.1",
+    "@graphql-tools/utils": "8.2.3"
   },
   "publishConfig": {
     "access": "public",
