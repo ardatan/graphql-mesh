@@ -1,12 +1,7 @@
 import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache, ImportFn, Logger } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
 import soap from 'soap';
-import {
-  getCachedFetch,
-  getHeadersObject,
-  loadFromModuleExportExpression,
-  readFileOrUrlWithCache,
-} from '@graphql-mesh/utils';
+import { getCachedFetch, getHeadersObject, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { env } from 'process';
 import { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
@@ -81,19 +76,19 @@ export default class SoapHandler implements MeshHandler {
       const [privateKey, publicKey, password] = await Promise.all([
         securityCertConfig.privateKey ||
           (securityCertConfig.privateKeyPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.privateKeyPath, this.cache, {
+            readFileOrUrl<string>(securityCertConfig.privateKeyPath, {
               allowUnknownExtensions: true,
               cwd: this.baseDir,
             })),
         securityCertConfig.publicKey ||
           (securityCertConfig.publicKeyPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.publicKeyPath, this.cache, {
+            readFileOrUrl<string>(securityCertConfig.publicKeyPath, {
               allowUnknownExtensions: true,
               cwd: this.baseDir,
             })),
         securityCertConfig.password ||
           (securityCertConfig.passwordPath &&
-            readFileOrUrlWithCache<string>(securityCertConfig.passwordPath, this.cache, {
+            readFileOrUrl<string>(securityCertConfig.passwordPath, {
               allowUnknownExtensions: true,
               cwd: this.baseDir,
             })),

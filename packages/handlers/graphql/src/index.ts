@@ -17,7 +17,7 @@ import {
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
   getCachedFetch,
-  readFileOrUrlWithCache,
+  readFileOrUrl,
 } from '@graphql-mesh/utils';
 import { ExecutionRequest } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
@@ -67,7 +67,7 @@ export default class GraphQLHandler implements MeshHandler {
         schema,
       };
     } else if (endpoint.endsWith('.graphql')) {
-      const rawSDL = await readFileOrUrlWithCache<string>(endpoint, this.cache, {
+      const rawSDL = await readFileOrUrl<string>(endpoint, {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
       });

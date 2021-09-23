@@ -1,8 +1,8 @@
 import { makeAugmentedSchema, inferSchema } from 'neo4j-graphql-js';
 import neo4j, { Driver } from 'neo4j-driver';
-import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger, KeyValueCache } from '@graphql-mesh/types';
+import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { env } from 'process';
 
 export default class Neo4JHandler implements MeshHandler {
@@ -11,15 +11,13 @@ export default class Neo4JHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private typeDefs: StoreProxy<string>;
   private logger: Logger;
-  private cache: KeyValueCache<string>;
 
-  constructor({ config, baseDir, pubsub, store, logger, cache }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+  constructor({ config, baseDir, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.typeDefs = store.proxy('typeDefs.graphql', PredefinedProxyOptions.StringWithoutValidation);
     this.logger = logger;
-    this.cache = cache;
   }
 
   private driver: Driver;
@@ -50,7 +48,7 @@ export default class Neo4JHandler implements MeshHandler {
   getCachedTypeDefs() {
     return this.typeDefs.getWithSet(async () => {
       if (this.config.typeDefs) {
-        return readFileOrUrlWithCache(this.config.typeDefs, this.cache, {
+        return readFileOrUrl(this.config.typeDefs, {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
         });

@@ -1,5 +1,5 @@
 import {
-  readFileOrUrlWithCache,
+  readFileOrUrl,
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
@@ -97,7 +97,7 @@ export default class OpenAPIHandler implements MeshHandler {
       if (typeof source !== 'string') {
         rawSpec = source;
       } else {
-        rawSpec = await readFileOrUrlWithCache(source, this.cache, {
+        rawSpec = await readFileOrUrl(source, {
           cwd: this.baseDir,
           fallbackFormat: this.config.sourceFormat,
           headers: this.config.schemaHeaders,
