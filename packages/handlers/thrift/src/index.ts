@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, KeyValueCache, MeshHandler, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
 import {
   readFileOrUrl,
