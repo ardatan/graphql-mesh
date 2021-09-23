@@ -1,0 +1,5 @@
+sources:
+  - name: SOAPDemo
+    handler:
+      soap:
+        wsdl: https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL

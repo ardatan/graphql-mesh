@@ -1,0 +1,21 @@
+{
+  "name": "soap-demo",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "mesh dev",
+    "debug": "cross-env DEBUG=1 yarn dev",
+    "build": "mesh build",
+    "start:prod": "mesh start",
+    "start": "yarn debug"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.39.0",
+    "@graphql-mesh/soap": "0.7.23",
+    "graphql": "15.4.0"
+  },
+  "devDependencies": {
+    "cross-env": "7.0.3"
+  }
+}

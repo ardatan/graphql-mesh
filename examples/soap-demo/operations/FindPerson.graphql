@@ -1,0 +1,23 @@
+mutation FindPerson {
+  FindPerson(id: "1") {
+    Age
+    DOB
+    FavoriteColors {
+      FavoriteColorsItem
+    }
+    Home {
+      City
+      State
+      Street
+      Zip
+    }
+    Name
+    SSN
+    Office {
+      City
+      State
+      Street
+      Zip
+    }
+  }
+}

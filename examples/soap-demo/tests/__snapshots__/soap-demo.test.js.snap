@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SOAP Country Info should generate correct schema: soap-demo-schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Address {
+  City: String
+  State: String
+  Street: String
+  Zip: String
+}
+
+type ArrayOfFavoriteColorsItemString {
+  FavoriteColorsItem: [String]
+}
+
+type ArrayOfPersonIdentificationPersonIdentification {
+  PersonIdentification: [PersonIdentification]
+}
+
+\\"\\"\\"The \`BigInt\` scalar type represents non-fractional signed whole numeric values.\\"\\"\\"
+scalar BigInt
+
+type ByNameDataSet {
+  undefined: String
+}
+
+type DataSet {
+  undefined: String
+}
+
+\\"\\"\\"A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.\\"\\"\\"
+scalar Date
+
+type Mutation {
+  \\"\\"\\"Operation AddInteger, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  AddInteger(Arg1: BigInt, Arg2: BigInt): BigInt
+  \\"\\"\\"Operation DivideInteger, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  DivideInteger(Arg1: BigInt, Arg2: BigInt): BigInt
+  \\"\\"\\"Operation FindPerson, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  FindPerson(id: String): Person
+  \\"\\"\\"Operation GetByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  GetByName(name: String): DataSet
+  \\"\\"\\"Operation GetDataSetByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  GetDataSetByName(name: String): ByNameDataSet
+  \\"\\"\\"Operation GetListByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  GetListByName(name: String): ArrayOfPersonIdentificationPersonIdentification
+  \\"\\"\\"Operation LookupCity, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  LookupCity(zip: String): Address
+  \\"\\"\\"Operation Mission, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  Mission: String
+  \\"\\"\\"Operation QueryByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  QueryByName(name: String): QueryByName_DataSet
+}
+
+type Person {
+  Age: BigInt
+  DOB: Date
+  FavoriteColors: ArrayOfFavoriteColorsItemString
+  Home: Address
+  Name: String
+  Office: Address
+  SSN: String
+  Spouse: Person
+}
+
+type PersonIdentification {
+  DOB: Date
+  ID: String
+  Name: String
+  SSN: String
+}
+
+type Query {
+  description: String
+}
+
+type QueryByName_DataSet {
+  undefined: String
+}
+"
+`;
