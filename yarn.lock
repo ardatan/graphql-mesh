@@ -12482,12 +12482,12 @@ graphql-upload@12.0.0:
     isobject "^4.0.0"
     object-path "^0.11.5"
 
-graphql-ws@5.5.0, graphql-ws@^5.4.1:
+graphql-ws@5.5.0, graphql-ws@^5.1.2, graphql-ws@^5.4.1:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.5.0.tgz#79f10248d23d104369eaef93acb9f887276a2c42"
   integrity sha512-WQepPMGQQoqS2VsrI2I3RMLCVz3CW4/6ZqGV6ABDOwH4R62DzjxwMlwZbj6vhSI/7IM3/C911yITwgs77iO/hw==
 
-graphql-ws@^4.1.1, graphql-ws@^4.3.2, graphql-ws@^4.4.1:
+graphql-ws@^4.3.2, graphql-ws@^4.4.1:
   version "4.9.0"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-4.9.0.tgz#5cfd8bb490b35e86583d8322f5d5d099c26e365c"
   integrity sha512-sHkK9+lUm20/BGawNEWNtVAeJzhZeBg21VmvmLoT5NdGVeZWv5PdIhkcayQIAgjSyyQ17WMKmbDijIPG2On+Ag==
@@ -19308,10 +19308,10 @@ postgraphile-core@4.12.1:
     graphile-build-pg "4.12.1"
     tslib "^2.0.1"
 
-postgraphile@4.12.3:
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.12.3.tgz#19493421b170b21428db696f04d857a5644a6b54"
-  integrity sha512-hGeLxU9HROd+csQULgsGa6l5j459vrKJtQzztbLgkZZLJDvEo/bA4bYNTyP4+OWI8RkIuwu1cM8ds40InrnZ+g==
+postgraphile@4.12.4:
+  version "4.12.4"
+  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.12.4.tgz#c07395618e12f3e35f401ec7c75d7e34e48de69b"
+  integrity sha512-ylx3w9MQ9tSOXCIPIzqseyTX57R6PJOQrQYdNn3SMrj6Glrt7mpzNNLW5BDwQvuViLnIIOaUEkDdHG1IaHHMmA==
   dependencies:
     "@graphile/lru" "4.11.0"
     "@types/json5" "^0.0.30"
@@ -19327,7 +19327,7 @@ postgraphile@4.12.3:
     graphile-build-pg "4.12.1"
     graphile-utils "^4.12.1"
     graphql "^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0"
-    graphql-ws "^4.1.1"
+    graphql-ws "^5.1.2"
     http-errors "^1.5.1"
     iterall "^1.0.2"
     json5 "^2.1.1"
