@@ -4,7 +4,7 @@ import {
   jsonFlatStringify,
   parseInterpolationStrings,
   stringInterpolator,
-  readFileOrUrlWithCache,
+  readFileOrUrl,
   getCachedFetch,
   AggregateError,
 } from '@graphql-mesh/utils';
@@ -62,7 +62,7 @@ export default class JsonSchemaHandler implements MeshHandler {
             $ref: operationConfig.responseSchema,
           };
         } else if (operationConfig.responseSample) {
-          const sample = await readFileOrUrlWithCache(operationConfig.responseSample, this.cache, {
+          const sample = await readFileOrUrl(operationConfig.responseSample, {
             cwd: this.baseDir,
           }).catch(e => {
             throw new Error(`responseSample - ${e.message}`);
@@ -101,7 +101,7 @@ export default class JsonSchemaHandler implements MeshHandler {
             $ref: operationConfig.requestSchema,
           };
         } else if (operationConfig.requestSample) {
-          const sample = await readFileOrUrlWithCache(operationConfig.requestSample, this.cache, {
+          const sample = await readFileOrUrl(operationConfig.requestSample, {
             cwd: this.baseDir,
           }).catch(e => {
             throw new Error(`requestSample:${operationConfig.requestSample} cannot be read - ${e.message}`);

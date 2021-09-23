@@ -10,7 +10,7 @@ import {
 import {
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
-  readFileOrUrlWithCache,
+  readFileOrUrl,
   jsonFlatStringify,
   getCachedFetch,
   loadFromModuleExportExpression,
@@ -142,7 +142,7 @@ export default class ODataHandler implements MeshHandler {
         env,
       });
       const metadataUrl = urljoin(baseUrl, '$metadata');
-      const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
+      const metadataText = await readFileOrUrl<string>(this.config.metadata || metadataUrl, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         headers: this.config.schemaHeaders,

@@ -1,11 +1,11 @@
 import { fetchFactory, KeyValueCache } from 'fetchache';
-import { fetch, Request, Response } from 'cross-fetch';
+import { fetch as crossFetch, Request, Response } from 'cross-fetch';
 import isUrl from 'is-url';
 import { load as loadYaml } from 'js-yaml';
 import { isAbsolute, resolve } from 'path';
 import { promises as fsPromises } from 'fs';
 
-const { readFile, stat } = fsPromises || {};
+const { readFile: readFileFromFS } = fsPromises || {};
 
 export { isUrl };
 
@@ -13,64 +13,46 @@ export interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
-  fetch?: typeof fetch;
+  fetch?: typeof crossFetch;
 }
 
-export function getCachedFetch(cache: KeyValueCache): typeof fetch {
+export function getCachedFetch(cache: KeyValueCache): typeof crossFetch {
   return fetchFactory({
-    fetch,
+    fetch: crossFetch,
     Request,
     Response,
     cache,
   });
 }
 
-export async function readFileOrUrlWithCache<T>(
-  filePathOrUrl: string,
-  cache: KeyValueCache,
-  config?: ReadFileOrUrlOptions
-): Promise<T> {
+export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileOrUrlOptions): Promise<T> {
   if (isUrl(filePathOrUrl)) {
-    return readUrlWithCache(filePathOrUrl, cache, config);
+    return readUrl(filePathOrUrl, config);
   } else {
-    return readFileWithCache(filePathOrUrl, cache, config);
+    return readFile(filePathOrUrl, config);
   }
 }
 
-export async function readFileWithCache<T>(
-  filePath: string,
-  cache: KeyValueCache,
-  config?: ReadFileOrUrlOptions
-): Promise<T> {
+export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat } = config || {};
   const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
-  const cachedObj = await cache.get(actualPath);
-  const stats = await stat(actualPath);
-  if (cachedObj) {
-    if (stats.mtimeMs <= cachedObj.mtimeMs) {
-      return cachedObj.result;
-    }
-  }
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {
     return import(filePath).then(m => m.default || m);
   }
-  let result: any = await readFile(actualPath, 'utf-8');
+  const rawResult = await readFileFromFS(actualPath, 'utf-8');
   if (/json$/.test(filePath)) {
-    result = JSON.parse(result);
+    return JSON.parse(rawResult);
   } else if (/yaml$/.test(filePath) || /yml$/.test(filePath)) {
-    result = loadYaml(result);
+    return loadYaml(rawResult) as T;
   } else if (fallbackFormat) {
     switch (fallbackFormat) {
       case 'json':
-        result = JSON.parse(result);
-        break;
+        return JSON.parse(rawResult);
       case 'yaml':
-        result = loadYaml(result);
-        break;
+        return loadYaml(rawResult) as T;
       case 'ts':
       case 'js':
-        result = await import(filePath).then(m => m.default || m);
-        break;
+        return import(filePath).then(m => m.default || m);
     }
   } else if (!allowUnknownExtensions) {
     throw new Error(
@@ -78,17 +60,12 @@ export async function readFileWithCache<T>(
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`
     );
   }
-  cache.set(filePath, { result, mtimeMs: stats.mtimeMs });
-  return result;
+  return rawResult as unknown as T;
 }
 
-export async function readUrlWithCache<T>(
-  path: string,
-  cache: KeyValueCache,
-  config?: ReadFileOrUrlOptions
-): Promise<T> {
+export async function readUrl<T>(path: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
-  const fetch = config?.fetch || getCachedFetch(cache);
+  const fetch = config?.fetch || crossFetch;
   const response = await fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
