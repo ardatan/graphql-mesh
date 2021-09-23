@@ -82,7 +82,8 @@
       "./examples/*",
       "./examples/federation-example/services/*",
       "./examples/graphql-file-upload-example/frontend",
-      "./website"
+      "./website",
+      "./packages/loaders/*"
     ],
     "nohoist": [
       "@graphql-mesh/website/@docusaurus/*"
