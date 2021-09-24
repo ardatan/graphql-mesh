@@ -61,43 +61,42 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   const getMeshLogger = logger.child('GetMesh');
   getMeshLogger.debug(`Getting subschemas from source handlers`);
-  const sourceResults = await Promise.allSettled(
+  const sourceErrorMessages: string[] = [];
+  await Promise.allSettled(
     options.sources.map(async apiSource => {
-      const apiName = apiSource.name;
-      const sourceLogger = logger.child(apiName);
-      sourceLogger.debug(`Generating the schema`);
-      const source = await apiSource.handler.getMeshSource();
-      sourceLogger.debug(`The schema has been generated successfully`);
+      try {
+        const apiName = apiSource.name;
+        const sourceLogger = logger.child(apiName);
+        sourceLogger.debug(`Generating the schema`);
+        const source = await apiSource.handler.getMeshSource();
+        sourceLogger.debug(`The schema has been generated successfully`);
 
-      let apiSchema = source.schema;
+        let apiSchema = source.schema;
 
-      sourceLogger.debug(`Analyzing transforms`);
-      const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
+        sourceLogger.debug(`Analyzing transforms`);
+        const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
-      if (noWrapTransforms?.length) {
-        sourceLogger.debug(`${noWrapTransforms.length} bare transforms found and applying`);
-        apiSchema = applySchemaTransforms(apiSchema, source, null, noWrapTransforms);
+        if (noWrapTransforms?.length) {
+          sourceLogger.debug(`${noWrapTransforms.length} bare transforms found and applying`);
+          apiSchema = applySchemaTransforms(apiSchema, source, null, noWrapTransforms);
+        }
+
+        rawSources.push({
+          name: apiName,
+          contextBuilder: source.contextBuilder || null,
+          schema: apiSchema,
+          executor: source.executor,
+          transforms: wrapTransforms,
+          contextVariables: source.contextVariables || [],
+          handler: apiSource.handler,
+          batch: 'batch' in source ? source.batch : true,
+          merge: apiSource.merge,
+        });
+      } catch (e: any) {
+        sourceErrorMessages.push(e.message || e);
       }
-
-      rawSources.push({
-        name: apiName,
-        contextBuilder: source.contextBuilder || null,
-        schema: apiSchema,
-        executor: source.executor,
-        transforms: wrapTransforms,
-        contextVariables: source.contextVariables || [],
-        handler: apiSource.handler,
-        batch: 'batch' in source ? source.batch : true,
-        merge: apiSource.merge,
-      });
     })
   );
-  const sourceErrorMessages: string[] = [];
-  for (const sourceResult of sourceResults) {
-    if (sourceResult.status === 'rejected') {
-      sourceErrorMessages.push(sourceResult.reason.message || sourceResult.reason);
-    }
-  }
 
   if (sourceErrorMessages.length) {
     throw new AggregateError(sourceErrorMessages, `Failed to generate schemas; ${sourceErrorMessages.join('\n')}`);
