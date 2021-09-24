@@ -193,6 +193,7 @@ export async function graphqlMesh() {
 
           logger.info(`Generating Mesh schema`);
           const mesh = await getMesh(meshConfig);
+          logger.info(`Artifacts has been validated successfully`);
           destroy = mesh?.destroy;
         } catch (e) {
           handleFatalError(e, logger);
