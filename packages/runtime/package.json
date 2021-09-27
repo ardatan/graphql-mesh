@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@n1ru4l/graphql-live-query": "0.8.1",
-    "@n1ru4l/in-memory-live-query-store": "0.7.1",
+    "@n1ru4l/in-memory-live-query-store": "0.7.2",
     "@graphql-mesh/types": "0.49.0",
     "@graphql-mesh/utils": "0.16.2",
     "@graphql-tools/delegate": "8.2.1",
