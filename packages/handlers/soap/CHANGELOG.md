@@ -1,5 +1,14 @@
 # @graphql-mesh/soap
 
+## 0.7.24
+
+### Patch Changes
+
+- 472c5887b: enhance(readFileOrUrl): remove unnecessary caching
+- Updated dependencies [472c5887b]
+  - @graphql-mesh/utils@0.16.3
+  - @graphql-mesh/store@0.1.13
+
 ## 0.7.23
 
 ### Patch Changes
