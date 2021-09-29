@@ -1,5 +1,20 @@
 # @graphql-mesh/cli
 
+## 0.40.0
+
+### Minor Changes
+
+- 4263ed47e: feat(cli-validate): success message if validation doesn't fail
+
+### Patch Changes
+
+- Updated dependencies [472c5887b]
+- Updated dependencies [4263ed47e]
+  - @graphql-mesh/utils@0.16.3
+  - @graphql-mesh/runtime@0.21.0
+  - @graphql-mesh/config@0.23.5
+  - @graphql-mesh/store@0.1.13
+
 ## 0.39.0
 
 ### Minor Changes

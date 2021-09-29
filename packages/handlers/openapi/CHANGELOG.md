@@ -1,5 +1,14 @@
 # @graphql-mesh/openapi
 
+## 0.18.15
+
+### Patch Changes
+
+- 472c5887b: enhance(readFileOrUrl): remove unnecessary caching
+- Updated dependencies [472c5887b]
+  - @graphql-mesh/utils@0.16.3
+  - @graphql-mesh/store@0.1.13
+
 ## 0.18.14
 
 ### Patch Changes

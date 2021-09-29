@@ -1,5 +1,14 @@
 # @graphql-mesh/neo4j
 
+## 0.13.3
+
+### Patch Changes
+
+- 472c5887b: enhance(readFileOrUrl): remove unnecessary caching
+- Updated dependencies [472c5887b]
+  - @graphql-mesh/utils@0.16.3
+  - @graphql-mesh/store@0.1.13
+
 ## 0.13.2
 
 ### Patch Changes

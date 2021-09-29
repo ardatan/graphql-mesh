@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.16.3
+
+### Patch Changes
+
+- 472c5887b: enhance(readFileOrUrl): remove unnecessary caching
+
 ## 0.16.2
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/runtime
 
+## 0.21.0
+
+### Minor Changes
+
+- 4263ed47e: feat(runtime): list errors from all sources
+
+### Patch Changes
+
+- Updated dependencies [472c5887b]
+  - @graphql-mesh/utils@0.16.3
+
 ## 0.20.2
 
 ### Patch Changes
