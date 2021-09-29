@@ -37,7 +37,7 @@
     "date-fns": "2.24.0",
     "fetchache": "0.1.1",
     "flatstr": "1.0.12",
-    "graphql-jit": "0.5.2",
+    "graphql-jit": "0.6.0",
     "graphql-subscriptions": "1.2.1",
     "lodash": "4.17.21",
     "is-url": "1.2.4",
