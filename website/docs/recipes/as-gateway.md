@@ -9,7 +9,7 @@ sidebar_label: Mesh as Gateway
   <br/>
 </p>
 
-You can use GraphQL Mesh as an HTTP gateway proxy for your data sources. GraphQL Mesh provides you an HTTP server with [Express](https://expressjs.com/), [GraphQL Helix](https://github.com/contrawork/graphql-helix), [GraphQL-WS](https://github.com/enisdenjo/graphql-ws#readme) and [GraphiQL Explorer](https://github.com/OneGraph/graphiql-explorer) with the bunch of configurable features out-of-box.
+You can use GraphQL Mesh as an HTTP gateway proxy for your data sources. GraphQL Mesh provides you an HTTP server with [Express](https://expressjs.com/), [GraphQL Helix](https://github.com/contrawork/graphql-helix), [GraphQL-WS](https://github.com/enisdenjo/graphql-ws#readme) and [GraphiQL Explorer](https://github.com/OneGraph/graphiql-explorer) with a bunch of configurable features out-of-box.
 
 There are two commands for GraphQL Mesh's HTTP Server;
 
