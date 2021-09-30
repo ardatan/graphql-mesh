@@ -1,5 +1,11 @@
 # @graphql-mesh/json-schema
 
+## 0.19.2
+
+### Patch Changes
+
+- 297e3bb66: fix(json-schema): no need to have nonnull for input types
+
 ## 0.19.1
 
 ### Patch Changes

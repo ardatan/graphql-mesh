@@ -1,5 +1,12 @@
 # @graphql-mesh/container
 
+## 0.0.99
+
+### Patch Changes
+
+- Updated dependencies [297e3bb66]
+  - @graphql-mesh/json-schema@0.19.2
+
 ## 0.0.98
 
 ### Patch Changes
