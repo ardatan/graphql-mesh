@@ -843,7 +843,7 @@ type Subscription {
     expect((output as SchemaComposer).toSDL()).toBe(
       /* GraphQL */ `
 type Query {
-  foo(input: Foo_Input!): String
+  foo(input: Foo_Input): String
 }
 
 ${printType(GraphQLString)}

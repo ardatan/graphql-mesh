@@ -675,7 +675,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
+                    type: () => inputFieldMap[fieldName].type(),
                   },
                 })
               );
@@ -691,7 +691,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type().getTypeNonNull(),
+                    type: () => inputFieldMap[fieldName].type(),
                   },
                 })
               );

@@ -20,10 +20,10 @@ type Foo {
 
 type Mutation {
   \\"\\"\\"PUT /user\\"\\"\\"
-  createUser(input: _mutationInput_createUser_Input!): User
+  createUser(input: _mutationInput_createUser_Input): User
 
   \\"\\"\\"POST /user/{args.id}\\"\\"\\"
-  updateUser(id: ID!, input: _mutationInput_updateUser_Input!): User
+  updateUser(id: ID!, input: _mutationInput_updateUser_Input): User
 }
 
 type Query {
