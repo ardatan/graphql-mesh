@@ -2561,10 +2561,10 @@
     auto-bind "~4.0.0"
     tslib "~2.2.0"
 
-"@graphql-codegen/typescript-operations@2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-2.1.5.tgz#e40e71cfd871276e741a2e732cb6d264f7656122"
-  integrity sha512-P3rYvlSTdeBesK12RbsU/oGu8XBnCjRwZtE+X+n8ebDl7vgPfhogBEkgouWiglh/psXmI3lUJTvq+DIHVdBE1g==
+"@graphql-codegen/typescript-operations@2.1.6":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-2.1.6.tgz#d5c26300101e73f8c67c4689781c3556565f0d84"
+  integrity sha512-TtvrlLcZNNotxz3UAKBDrPeT1eL2bi1CWwDSzKiViX5lEDiMp40p/Gxa7P/n9n0n5ZfYzrl06Id6l/WMlUy6Kw==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.1.1"
     "@graphql-codegen/typescript" "^2.2.2"
@@ -2572,10 +2572,10 @@
     auto-bind "~4.0.0"
     tslib "~2.3.0"
 
-"@graphql-codegen/typescript-resolvers@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-2.2.1.tgz#2cf23b595ee94037a1152b669094db9bce616196"
-  integrity sha512-SlJEhlOeYFA+Qj5QJrVruNjmlFy1b8lc5u1NTd3mT+1Y2ZGXLftEfJeofag+9x5KB2I6RRjoAOc/gf0yUwxgxA==
+"@graphql-codegen/typescript-resolvers@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-2.3.0.tgz#76b4a1dd3fb353497320fd3b5e259f673bd211c4"
+  integrity sha512-EpekbMg/v9tB5VSAguztOIUIXnGRF+gijxI4mTb1F9IzbjiZm98FImypVMn61D0fDGSaaLK4hDbJ+BodMi7xVQ==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.1.1"
     "@graphql-codegen/typescript" "^2.2.2"
