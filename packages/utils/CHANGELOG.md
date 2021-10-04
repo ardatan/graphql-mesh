@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.17.0
+
+### Minor Changes
+
+- 7bd145769: feat(utils): use JIT for subscriptions as well
+
 ## 0.16.3
 
 ### Patch Changes

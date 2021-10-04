@@ -1,5 +1,17 @@
 # @graphql-mesh/config
 
+## 0.23.6
+
+### Patch Changes
+
+- Updated dependencies [7bd145769]
+  - @graphql-mesh/utils@0.17.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.20
+  - @graphql-mesh/merger-bare@0.9.25
+  - @graphql-mesh/merger-stitching@0.12.5
+  - @graphql-mesh/runtime@0.21.1
+  - @graphql-mesh/store@0.1.14
+
 ## 0.23.5
 
 ### Patch Changes
