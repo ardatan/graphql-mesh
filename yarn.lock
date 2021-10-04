@@ -5069,10 +5069,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.29.tgz#0256e22f357a2e822ac8b848b545e06153c32ede"
   integrity sha1-AlbiLzV6LoIqyLhItUXgYVPDLt4=
 
-"@types/ioredis@4.27.5":
-  version "4.27.5"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.5.tgz#f3bd216d8fdd02e831fbac0fbdcf418a4a46b0f9"
-  integrity sha512-RA8Ba0MPNjCSwukqJlapzu4KRT/MokzauUHbHAfOJtgw93pZ0vX/BBmYvodp2kzIU5bwYycH9n6pGBJaysPqxQ==
+"@types/ioredis@4.27.6":
+  version "4.27.6"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.6.tgz#06f2826ca9bcf4e9c179cd11417a4d0413903cba"
+  integrity sha512-3FeeDlVQ2sdbvU436XnZzOiDMMgFbKfIsiUF2BnJnH7xxqCbJ1teJwfcu9fLwnfmV0qH2W1Vg3jFrtOehNIkMA==
   dependencies:
     "@types/node" "*"
 
@@ -13476,10 +13476,10 @@ invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis@4.27.9:
-  version "4.27.9"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.9.tgz#c27bbade9724f0b8f84c279fb1d567be785ba33d"
-  integrity sha512-hAwrx9F+OQ0uIvaJefuS3UTqW+ByOLyLIV+j0EH8ClNVxvFyH9Vmb08hCL4yje6mDYT5zMquShhypkd50RRzkg==
+ioredis@4.27.10:
+  version "4.27.10"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.10.tgz#3da6c1d2eab440f94c52d6fcd9b91127d7e07470"
+  integrity sha512-BtV2mEoZlhnW0EyxuK49V5iutLeZeJAYi/+Fuc4Q6DpDjq0cGMLODdS/+Kb5CHpT7v3YT6SK0vgJF6y0Ls4+Bg==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.3.1"
