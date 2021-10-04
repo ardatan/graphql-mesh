@@ -1,22 +1,13 @@
 import { ExecutionRequest } from '@graphql-tools/utils';
 import { compileQuery, isCompiledQuery } from 'graphql-jit';
 import { globalLruCache } from './global-lru-cache';
-import { GraphQLSchema, print, subscribe } from 'graphql';
+import { GraphQLSchema, print } from 'graphql';
 import { Logger } from '@graphql-mesh/types';
 
 type CompileQueryResult = ReturnType<typeof compileQuery>;
 
 export const jitExecutorFactory = (schema: GraphQLSchema, prefix: string, logger: Logger) => {
   return ({ document, variables, context, operationName, rootValue, operationType }: ExecutionRequest) => {
-    if (operationType === 'subscription') {
-      return subscribe({
-        schema,
-        document,
-        variableValues: variables,
-        contextValue: context,
-        rootValue,
-      });
-    }
     const documentStr = print(document);
     logger.debug(`Executing ${documentStr}`);
     const cacheKey = [prefix, documentStr, operationName].join('_');
@@ -33,6 +24,9 @@ export const jitExecutorFactory = (schema: GraphQLSchema, prefix: string, logger
       compiledQuery = globalLruCache.get(cacheKey);
     }
     if (isCompiledQuery(compiledQuery)) {
+      if (operationType === 'subscription') {
+        return compiledQuery.subscribe(rootValue, context, variables);
+      }
       return compiledQuery.query(rootValue, context, variables);
     }
     return compiledQuery;
