@@ -202,6 +202,6 @@ If you have use cases for which you would require to introduce either "bare" or 
 | Naming Convention     |  ❌  |  ✅  | [docs](/docs/transforms/naming-convention)     |
 | Prefix                |  ✅  |  ✅  | [docs](/docs/transforms/prefix)                |
 | Rename                |  ✅  |  ✅  | [docs](/docs/transforms/rename)                |
-| Replace Field         |  ✅  |  ❓  | [docs](/docs/transforms/replace-field)         |
+| Replace Field         |  ✅  |  ❌  | [docs](/docs/transforms/replace-field)         |
 | Resolvers Composition |  ✅  |  ✅  | [docs](/docs/transforms/resolvers-composition) |
 | Snapshot              |  ✅  |  ❌  | [docs](/docs/transforms/snapshot)              |

@@ -2,10 +2,10 @@
 
 exports[`replace-field should replace correctly field Type with additional type definitions 1`] = `
 "type Query {
-  books: [Books]
+  books: [Book]
 }
 
-type Books {
+type Book {
   title: String!
   author: Author!
 }
@@ -19,10 +19,10 @@ type Author {
 
 exports[`replace-field should replace correctly field with resolver function 1`] = `
 "type Query {
-  books: [Books]
+  books: [Book]
 }
 
-type Books {
+type Book {
   title: String!
   author: Author!
 }
@@ -40,10 +40,10 @@ exports[`replace-field should replace correctly field without resolver function 
 }
 
 type BooksApiResponse {
-  books: [Books]
+  books: [Book]
 }
 
-type Books {
+type Book {
   title: String!
   author: String!
 }
@@ -52,10 +52,10 @@ type Books {
 
 exports[`replace-field should replace correctly mtultiple fields with and without resolver function 1`] = `
 "type Query {
-  books: [Books]
+  books: [Book]
 }
 
-type Books {
+type Book {
   title: String!
   author: String!
 }

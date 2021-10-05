@@ -2,14 +2,10 @@ extend type Transform {
   """
   Transformer to replace GraphQL field with partial of full config from a different field
   """
-  replaceField: ReplaceFieldTransform
+  replaceField: ReplaceFieldTransformConfig
 }
 
-type ReplaceFieldTransform @md {
-  """
-  Specify to apply ReplaceField transform to bare schema or by wrapping original schema
-  """
-  mode: ReplaceFieldTransformMode
+type ReplaceFieldTransformConfig @md {
   """
   Additional type definition to used to replace field types
   """
@@ -35,9 +31,4 @@ type ReplaceFieldTransformObject @md {
 type ReplaceFieldConfig {
   type: String!
   field: String!
-}
-
-enum ReplaceFieldTransformMode {
-  bare
-  wrap
 }

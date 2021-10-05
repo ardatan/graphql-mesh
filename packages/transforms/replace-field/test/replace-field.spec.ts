@@ -14,10 +14,10 @@ describe('replace-field', () => {
     }
 
     type BooksApiResponse {
-      books: [Books]
+      books: [Book]
     }
 
-    type Books {
+    type Book {
       title: String!
       author: Author!
     }
@@ -39,7 +39,6 @@ describe('replace-field', () => {
   it('should replace correctly field with resolver function', async () => {
     const transform = new ReplaceFieldTransform({
       config: {
-        mode: 'bare',
         replacements: [
           {
             from: {
@@ -73,7 +72,7 @@ describe('replace-field', () => {
     const transformedSchema = transform.transformSchema(schema);
 
     expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Books]');
+    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Book]');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
     const result = await execute({
@@ -92,11 +91,10 @@ describe('replace-field', () => {
   it('should replace correctly field without resolver function', async () => {
     const transform = new ReplaceFieldTransform({
       config: {
-        mode: 'bare',
         replacements: [
           {
             from: {
-              type: 'Books',
+              type: 'Book',
               field: 'author',
             },
             to: {
@@ -129,9 +127,7 @@ describe('replace-field', () => {
     const transformedSchema = transform.transformSchema(schema);
 
     expect(transformedSchema.getType('Author')).toBeUndefined();
-    expect((transformedSchema.getType('Books') as GraphQLObjectType).getFields().author.type.toString()).toBe(
-      'String!'
-    );
+    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString()).toBe('String!');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
     const result = await execute({
@@ -156,7 +152,6 @@ describe('replace-field', () => {
   it('should replace correctly mtultiple fields with and without resolver function', async () => {
     const transform = new ReplaceFieldTransform({
       config: {
-        mode: 'bare',
         replacements: [
           {
             from: {
@@ -171,7 +166,7 @@ describe('replace-field', () => {
           },
           {
             from: {
-              type: 'Books',
+              type: 'Book',
               field: 'author',
             },
             to: {
@@ -205,10 +200,8 @@ describe('replace-field', () => {
 
     expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
     expect(transformedSchema.getType('Author')).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Books]');
-    expect((transformedSchema.getType('Books') as GraphQLObjectType).getFields().author.type.toString()).toBe(
-      'String!'
-    );
+    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Book]');
+    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString()).toBe('String!');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
     const result = await execute({
@@ -231,7 +224,6 @@ describe('replace-field', () => {
   it('should replace correctly field Type with additional type definitions', async () => {
     const transform = new ReplaceFieldTransform({
       config: {
-        mode: 'bare',
         typeDefs: /* GraphQL */ `
           type NewAuthor {
             age: String
@@ -307,7 +299,6 @@ describe('replace-field', () => {
   it('should replace correctly field with composer wrapping resolver function', async () => {
     const transform = new ReplaceFieldTransform({
       config: {
-        mode: 'bare',
         replacements: [
           {
             from: {

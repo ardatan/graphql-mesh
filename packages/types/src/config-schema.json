@@ -363,7 +363,7 @@
       "title": "Transform",
       "properties": {
         "replaceField": {
-          "$ref": "#/definitions/ReplaceFieldTransform",
+          "$ref": "#/definitions/ReplaceFieldTransformConfig",
           "description": "Transformer to replace GraphQL field with partial of full config from a different field"
         },
         "cache": {
@@ -1751,16 +1751,11 @@
         }
       }
     },
-    "ReplaceFieldTransform": {
+    "ReplaceFieldTransformConfig": {
       "additionalProperties": false,
       "type": "object",
-      "title": "ReplaceFieldTransform",
+      "title": "ReplaceFieldTransformConfig",
       "properties": {
-        "mode": {
-          "type": "string",
-          "enum": ["bare", "wrap"],
-          "description": "Specify to apply ReplaceField transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
-        },
         "typeDefs": {
           "anyOf": [
             {

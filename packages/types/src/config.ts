@@ -907,7 +907,7 @@ export interface TuqlHandler {
   infile?: string;
 }
 export interface Transform {
-  replaceField?: ReplaceFieldTransform;
+  replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply caching for your data sources
    */
@@ -937,11 +937,7 @@ export interface Transform {
 /**
  * Transformer to replace GraphQL field with partial of full config from a different field
  */
-export interface ReplaceFieldTransform {
-  /**
-   * Specify to apply ReplaceField transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)
-   */
-  mode?: 'bare' | 'wrap';
+export interface ReplaceFieldTransformConfig {
   /**
    * Additional type definition to used to replace field types
    */
