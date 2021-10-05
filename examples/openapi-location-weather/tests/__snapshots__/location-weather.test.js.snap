@@ -13456,7 +13456,19 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": "false",
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeprecated",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "args",
