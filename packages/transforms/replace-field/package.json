@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@graphql-mesh/cache-inmemory-lru": "^0.5.16",
-    "@graphql-tools/schema": "^8.2.0",
-    "graphql-subscriptions": "^1.2.1"
+    "@graphql-tools/schema": "8.2.0",
+    "graphql-subscriptions": "1.2.1"
   }
 }
