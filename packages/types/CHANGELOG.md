@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.50.0
+
+### Minor Changes
+
+- 8c9b709ae: Introduce new replace-field transform
+
 ## 0.49.0
 
 ### Minor Changes
