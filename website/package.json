@@ -3,35 +3,59 @@
   "version": "0.8.0",
   "private": true,
   "scripts": {
-    "generate:config": "cd .. && yarn generate-config-schema",
-    "prestart": "yarn generate:config",
-    "start": "docusaurus start",
-    "prebuild:prod": "yarn generate:config",
-    "build:prod": "docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy"
+    "build": "next build",
+    "dev": "concurrently -r \"next-remote-watch ./docs ./src/pages/_app.tsx ./src/pages/_document.tsx\" \"wait-on -s 1 http://localhost:3000 && open-cli http://localhost:3000\"",
+    "next": "next",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "@theguild/components": "1.7.1",
+    "@chakra-ui/icons": "^1.0.15",
+    "@chakra-ui/react": "^1.6.8",
+    "@chakra-ui/theme-tools": "^1.2.1",
+    "@chakra-ui/utils": "^1.8.2",
     "@docusaurus/core": "2.0.0-beta.ff31de0ff",
     "@docusaurus/preset-classic": "2.0.0-beta.ff31de0ff",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@guild-docs/client": "^1.0.7",
+    "@guild-docs/server": "^1.0.4",
+    "@mdx-js/react": "^1.6.22",
     "babel-preset-minify": "0.5.1",
     "classnames": "2.3.1",
+    "framer-motion": "^4.1.17",
+    "next": "^11.1.2",
+    "next-i18next": "^8.8.0",
+    "next-seo": "^4.28.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-icons": "^4.3.1",
+    "react-use": "^17.3.1",
+    "remark-admonitions": "^1.2.1",
     "remark-code-import": "0.4.0",
-    "remark-import-partial": "0.0.2"
+    "remark-import-partial": "0.0.2",
+    "shiki": "^0.9.11"
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+  },
+  "pnpm": { "overrides": { "esbuild": "^0.12.9" } },
+  "resolutions": { "esbuild": "^0.12.9" },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^11.1.2",
+    "@types/concurrently": "^6.2.1",
+    "@types/mdx-js__react": "^1.5.4",
+    "@types/node": "^16.10.2",
+    "@types/react": "^17.0.27",
+    "@types/react-dom": "^17.0.9",
+    "concurrently": "^6.3.0",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.12.29",
+    "esbuild-register": "^3.0.0",
+    "next-remote-watch": "^1.0.0",
+    "open-cli": "^7.0.1",
+    "typescript": "^4.4.3",
+    "wait-on": "^6.0.0"
   }
 }

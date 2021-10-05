@@ -41,3 +41,8 @@
   margin-bottom: -100px;
   -webkit-box-reflect: right;
 }
+
+.liveDemo {
+  padding: 2rem 3rem;
+  height: 100%;
+}
