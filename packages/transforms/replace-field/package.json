@@ -25,10 +25,10 @@
   "dependencies": {
     "@graphql-mesh/types": "0.47.0",
     "@graphql-mesh/utils": "0.16.0",
-    "@graphql-tools/code-file-loader": "7.1.0",
-    "@graphql-tools/graphql-file-loader": "7.1.0",
-    "@graphql-tools/load": "7.3.0",
-    "@graphql-tools/utils": "8.2.2"
+    "@graphql-tools/code-file-loader": "7.2.0",
+    "@graphql-tools/graphql-file-loader": "7.2.0",
+    "@graphql-tools/load": "7.3.2",
+    "@graphql-tools/utils": "8.2.4"
   },
   "publishConfig": {
     "access": "public",
