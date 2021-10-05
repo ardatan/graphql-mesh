@@ -907,6 +907,7 @@ export interface TuqlHandler {
   infile?: string;
 }
 export interface Transform {
+  replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply caching for your data sources
    */
@@ -932,6 +933,36 @@ export interface Transform {
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
   [k: string]: any;
+}
+/**
+ * Transformer to replace GraphQL field with partial of full config from a different field
+ */
+export interface ReplaceFieldTransformConfig {
+  /**
+   * Additional type definition to used to replace field types
+   */
+  typeDefs?: any;
+  /**
+   * Array of rules to replace fields
+   */
+  replacements: ReplaceFieldTransformObject[];
+}
+export interface ReplaceFieldTransformObject {
+  from: ReplaceFieldConfig;
+  to: ReplaceFieldConfig1;
+  /**
+   * Allowed values: config, hoistValue
+   */
+  scope?: 'config' | 'hoistValue';
+  composer?: any;
+}
+export interface ReplaceFieldConfig {
+  type: string;
+  field: string;
+}
+export interface ReplaceFieldConfig1 {
+  type: string;
+  field: string;
 }
 export interface CacheTransformConfig {
   /**

@@ -362,6 +362,10 @@
       "type": "object",
       "title": "Transform",
       "properties": {
+        "replaceField": {
+          "$ref": "#/definitions/ReplaceFieldTransformConfig",
+          "description": "Transformer to replace GraphQL field with partial of full config from a different field"
+        },
         "cache": {
           "type": "array",
           "items": {
@@ -1746,6 +1750,86 @@
           "description": "Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)"
         }
       }
+    },
+    "ReplaceFieldTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldTransformConfig",
+      "properties": {
+        "typeDefs": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Additional type definition to used to replace field types"
+        },
+        "replacements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReplaceFieldTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of rules to replace fields"
+        }
+      },
+      "required": ["replacements"]
+    },
+    "ReplaceFieldTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldTransformObject",
+      "properties": {
+        "from": {
+          "$ref": "#/definitions/ReplaceFieldConfig"
+        },
+        "to": {
+          "$ref": "#/definitions/ReplaceFieldConfig"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["config", "hoistValue"],
+          "description": "Allowed values: config, hoistValue"
+        },
+        "composer": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        }
+      },
+      "required": ["from", "to"]
+    },
+    "ReplaceFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "field"]
     },
     "SoapHandler": {
       "additionalProperties": false,

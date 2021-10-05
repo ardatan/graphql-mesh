@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`replace-field should replace correctly field Type with additional type definitions 1`] = `
+"type Query {
+  books: [Book]
+}
+
+type Book {
+  title: String!
+  author: Author!
+}
+
+type Author {
+  name: String!
+  age: String
+}
+"
+`;
+
+exports[`replace-field should replace correctly field with resolver function 1`] = `
+"type Query {
+  books: [Book]
+}
+
+type Book {
+  title: String!
+  author: Author!
+}
+
+type Author {
+  name: String!
+  age: Int!
+}
+"
+`;
+
+exports[`replace-field should replace correctly field without resolver function 1`] = `
+"type Query {
+  books: BooksApiResponse
+}
+
+type BooksApiResponse {
+  books: [Book]
+}
+
+type Book {
+  title: String!
+  author: String!
+}
+"
+`;
+
+exports[`replace-field should replace correctly mtultiple fields with and without resolver function 1`] = `
+"type Query {
+  books: [Book]
+}
+
+type Book {
+  title: String!
+  author: String!
+}
+"
+`;

@@ -1,0 +1,34 @@
+extend type Transform {
+  """
+  Transformer to replace GraphQL field with partial of full config from a different field
+  """
+  replaceField: ReplaceFieldTransformConfig
+}
+
+type ReplaceFieldTransformConfig @md {
+  """
+  Additional type definition to used to replace field types
+  """
+  typeDefs: Any
+  """
+  Array of rules to replace fields
+  """
+  replacements: [ReplaceFieldTransformObject!]!
+}
+
+enum ReplaceFieldScope {
+  config
+  hoistValue
+}
+
+type ReplaceFieldTransformObject @md {
+  from: ReplaceFieldConfig!
+  to: ReplaceFieldConfig!
+  scope: ReplaceFieldScope
+  composer: Any
+}
+
+type ReplaceFieldConfig {
+  type: String!
+  field: String!
+}
