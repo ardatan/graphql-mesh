@@ -34,7 +34,7 @@
     "@graphql-mesh/store": "0.1.14",
     "@graphql-tools/utils": "8.2.4",
     "graphql-compose": "9.0.3",
-    "graphql-scalars": "1.10.1",
+    "graphql-scalars": "1.11.0",
     "pascal-case": "3.1.2",
     "to-json-schema": "0.2.5",
     "url-join": "4.0.1",
