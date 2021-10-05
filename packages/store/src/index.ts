@@ -1,7 +1,7 @@
 import { promises as fsPromises } from 'fs';
 import { isAbsolute, join } from 'path';
 import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
-import { Change, CriticalityLevel, diff } from '@graphql-inspector/core';
+import { CriticalityLevel, diff } from '@graphql-inspector/core';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
 
@@ -121,8 +121,8 @@ module.exports = buildSchema(source, {
   assumeValidSDL: true
 });
     `.trim(),
-    validate: (oldSchema, newSchema) => {
-      const changes: Change[] = diff(oldSchema, newSchema);
+    validate: async (oldSchema, newSchema) => {
+      const changes = await diff(oldSchema, newSchema);
       const errors: string[] = [];
       for (const change of changes) {
         if (
