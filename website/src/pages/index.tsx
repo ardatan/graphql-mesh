@@ -3,8 +3,11 @@ import {HeroGradient, InfoList} from '@theguild/components';
 import {handlePushRoute, NPMBadge} from '@guild-docs/client';
 import React, {useState} from 'react';
 import styles from './styles.module.css';
-import LiveDemo from '../components/live-demo'
+import dynamic from 'next/dynamic';
+const LiveDemo = dynamic(() => import('../components/live-demo'), { loading: () => <p>Loading...</p> })
+
 export default function Index() {
+    // Todo: Add button to toggle liveDemo
     const [showLiveDemo, setShowLiveDemo] = useState(true);
     return (
         <>
