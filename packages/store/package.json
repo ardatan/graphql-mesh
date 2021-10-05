@@ -26,7 +26,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-inspector/core": "2.9.0",
+    "@graphql-inspector/core": "3.0.1",
     "@graphql-mesh/utils": "0.17.0",
     "@graphql-tools/utils": "8.2.4"
   },
