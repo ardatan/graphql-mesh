@@ -26,7 +26,7 @@
     "@graphql-mesh/types": "0.51.0",
     "@graphql-mesh/utils": "0.17.2",
     "@graphql-tools/code-file-loader": "7.2.0",
-    "@graphql-tools/graphql-file-loader": "7.2.0",
+    "@graphql-tools/graphql-file-loader": "7.3.0",
     "@graphql-tools/load": "7.3.2",
     "@graphql-tools/utils": "8.2.5"
   },

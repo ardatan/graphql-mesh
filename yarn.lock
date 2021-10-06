@@ -2778,10 +2778,10 @@
     fs-extra "9.0.1"
     tslib "~2.0.1"
 
-"@graphql-tools/graphql-file-loader@7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-7.2.0.tgz#0b50161e57c0a87e090ec37bab02fe02d3a4ac20"
-  integrity sha512-Vg3mBE5VpAy+a3/bHKQpj22LitBCrB2eCMc2D1RID0BBfk99aUQLE5eR4VclWvCnIJI2uhEr+dt32POdUu5hrw==
+"@graphql-tools/graphql-file-loader@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-7.3.0.tgz#6223e2c72950328a5c2c8c9c2425a6b770c35907"
+  integrity sha512-m5ox7GuVI1EibDygW+P4jpmA78viRcfOw0eiE/EiuCljQsIJcA4iXTsc22KbawS+EfPS0v6hXkk/JhnhXoeX4A==
   dependencies:
     "@graphql-tools/import" "^6.5.0"
     "@graphql-tools/utils" "^8.2.0"
