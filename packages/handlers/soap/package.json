@@ -27,7 +27,7 @@
     "@graphql-mesh/store": "0.1.16",
     "@graphql-mesh/utils": "0.17.2",
     "@graphql-tools/utils": "8.2.5",
-    "graphql-scalars": "1.11.0",
+    "graphql-scalars": "1.11.1",
     "soap": "0.42.0"
   },
   "publishConfig": {
