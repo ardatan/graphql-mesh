@@ -40,6 +40,7 @@ module.exports = {
       'transforms/mock',
       'transforms/resolvers-composition',
       'transforms/filter-schema',
+      'transforms/replace-field',
       'transforms/naming-convention',
       'transforms/type-merging',
       'transforms/federation',
