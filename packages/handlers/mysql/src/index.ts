@@ -1,4 +1,12 @@
-import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
+import {
+  GetMeshSourceOptions,
+  MeshPubSub,
+  MeshHandler,
+  MeshSource,
+  YamlConfig,
+  ImportFn,
+  Logger,
+} from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -14,10 +22,11 @@ import {
   GraphQLUnsignedInt,
   GraphQLUnsignedFloat,
 } from 'graphql-scalars';
-import { specifiedDirectives } from 'graphql';
-import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { ExecutionResult, specifiedDirectives } from 'graphql';
+import { jitExecutorFactory, loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
+import { ExecutionRequest } from '@graphql-tools/utils';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -84,18 +93,30 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof MySQLHandler.prototy
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 export default class MySQLHandler implements MeshHandler {
+  private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
   private store: MeshStore;
   private importFn: ImportFn;
+  private logger: Logger;
 
-  constructor({ config, baseDir, pubsub, store, importFn }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    pubsub,
+    store,
+    importFn,
+    logger,
+  }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.store = store;
     this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getPromisifiedConnection(pool: Pool) {
@@ -487,27 +508,26 @@ export default class MySQLHandler implements MeshHandler {
 
     introspectionConnection.release();
 
-    this.pubsub.subscribe('executionDone', ({ contextValue }) => contextValue.mysqlConnection?.release());
+    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
 
     return {
       schema,
-      contextBuilder: async () => {
-        // In order to prevent unnecessary connections
-        // We need to implement some kind of lazy connections
-        let mysqlConnection$: Promise<MysqlPromisifiedConnection>;
-        return {
-          mysqlConnection: new Proxy(
-            {},
-            {
-              get: (_, pKey) => {
-                if (pKey !== 'release' && !mysqlConnection$) {
-                  mysqlConnection$ = this.getPromisifiedConnection(pool);
-                }
-                return (...args: any[]) => mysqlConnection$?.then(mysqlConnection => mysqlConnection[pKey](...args));
-              },
-            }
-          ),
-        };
+      executor: async <TResult>(executionRequest: ExecutionRequest) => {
+        const mysqlConnection = await this.getPromisifiedConnection(pool);
+        try {
+          const result = (await jitExecutor({
+            ...executionRequest,
+            context: {
+              ...executionRequest.context,
+              mysqlConnection,
+            },
+          })) as ExecutionResult<TResult>;
+          await mysqlConnection.release();
+          return result;
+        } catch (e: any) {
+          await mysqlConnection.release();
+          throw e;
+        }
       },
     };
   }

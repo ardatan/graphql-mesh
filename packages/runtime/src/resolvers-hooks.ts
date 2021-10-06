@@ -6,7 +6,11 @@ import { addResolversToSchema } from '@graphql-tools/schema';
 import { extractResolvers } from '@graphql-mesh/utils';
 import { env } from 'process';
 
-export function applyResolversHooksToResolvers(resolvers: IResolvers, pubsub: MeshPubSub): IResolvers {
+export function applyResolversHooksToResolvers(
+  resolvers: IResolvers,
+  pubsub: MeshPubSub,
+  contextBuilder: (ctx: any) => any
+): IResolvers {
   return composeResolvers(resolvers, {
     '*.*':
       (originalResolver: any) =>
@@ -38,10 +42,11 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, pubsub: Me
 
         pubsub.publish('resolverCalled', { resolverData });
 
+        const finalContext = contextBuilder(resolverData.context);
         try {
           const result = await (isArgsInResolversArgs
-            ? originalResolver(resolverData.root, resolverData.args, resolverData.context, resolverData.info)
-            : originalResolver(resolverData.root, resolverData.context, resolverData.info));
+            ? originalResolver(resolverData.root, resolverData.args, finalContext, resolverData.info)
+            : originalResolver(resolverData.root, finalContext, resolverData.info));
 
           pubsub.publish('resolverDone', { resolverData, result });
 
@@ -55,12 +60,16 @@ export function applyResolversHooksToResolvers(resolvers: IResolvers, pubsub: Me
   });
 }
 
-export function applyResolversHooksToSchema(schema: GraphQLSchema, pubsub: MeshPubSub): GraphQLSchema {
+export function applyResolversHooksToSchema(
+  schema: GraphQLSchema,
+  pubsub: MeshPubSub,
+  contextBuilder: (ctx: any) => any
+): GraphQLSchema {
   const sourceResolvers = extractResolvers(schema);
 
   return addResolversToSchema({
     schema,
-    resolvers: applyResolversHooksToResolvers(sourceResolvers, pubsub),
+    resolvers: applyResolversHooksToResolvers(sourceResolvers, pubsub, contextBuilder),
     updateResolversInPlace: true,
   });
 }

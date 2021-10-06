@@ -1,5 +1,5 @@
-import { MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
-import { printSchema, graphql, GraphQLInterfaceType } from 'graphql';
+import { MeshPubSub, KeyValueCache, Logger } from '@graphql-mesh/types';
+import { printSchema, GraphQLInterfaceType, parse, ExecutionResult } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addMock, resetMocks, MockResponse as Response, mockFetch } from './custom-fetch';
 import { readFileSync } from 'fs';
@@ -7,16 +7,21 @@ import { resolve } from 'path';
 import { PubSub } from 'graphql-subscriptions';
 import ODataHandler from '../src';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { DefaultLogger } from '@graphql-mesh/utils';
 
 const TripPinMetadata = readFileSync(resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
 const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
 const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip.json'), 'utf-8'));
 const BasicMetadata = readFileSync(resolve(__dirname, './fixtures/simple-metadata.xml'), 'utf-8');
 
+const baseDir = __dirname;
+const importFn = (id: string) => require(id);
+
 describe('odata', () => {
   let pubsub: MeshPubSub;
   let cache: KeyValueCache;
   let store: MeshStore;
+  let logger: Logger;
   beforeEach(() => {
     pubsub = new PubSub();
     cache = new InMemoryLRUCache();
@@ -24,6 +29,7 @@ describe('odata', () => {
       readonly: false,
       validate: false,
     });
+    logger = new DefaultLogger('ODataTest');
     resetMocks();
   });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
@@ -37,6 +43,9 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
     expect(printSchema(source.schema)).toMatchSnapshot();
@@ -52,6 +61,9 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
     expect(printSchema(source.schema)).toMatchSnapshot();
@@ -67,10 +79,13 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
     const personType = source.schema.getType('IPerson') as GraphQLInterfaceType;
-    const getFriendsTripsFunction = personType.getFields()['GetFriendsTrips'];
+    const getFriendsTripsFunction = personType.getFields().GetFriendsTrips;
     expect(getFriendsTripsFunction.args).toHaveLength(2);
     const personArg = getFriendsTripsFunction.args.find(arg => arg.name === 'person');
     expect(personArg).not.toBeFalsy();
@@ -97,21 +112,23 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           People {
             UserName
             FirstName
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -135,21 +152,23 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "SOMEID") {
             UserName
             FirstName
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -182,12 +201,14 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           AirportsByIcaoCode(IcaoCode: "KSFO") {
             IcaoCode
@@ -196,9 +217,9 @@ describe('odata', () => {
             }
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -222,21 +243,23 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           People(queryOptions: { filter: "FirstName eq 'Scott'" }) {
             UserName
             FirstName
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -260,18 +283,20 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           PeopleCount
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -316,23 +341,25 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      variableValues: {
+    const graphqlResult = (await source.executor({
+      variables: {
         input: correctBody,
       },
-      source: /* GraphQL */ `
+      document: parse(/* GraphQL */ `
         mutation CreatePeople($input: PersonInput) {
           createPeople(input: $input) {
             UserName
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'mutation',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -357,18 +384,20 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         mutation {
           deletePeopleByUserName(UserName: "SOMEID")
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'mutation',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -398,24 +427,26 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      variableValues: {
+    const graphqlResult = (await source.executor({
+      variables: {
         UserName: 'SOMEID',
         input: correctBody,
       },
-      source: /* GraphQL */ `
+      document: parse(/* GraphQL */ `
         mutation UpdatePeople($UserName: String!, $input: PersonUpdateInput!) {
           updatePeopleByUserName(UserName: $UserName, input: $input) {
             FirstName
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'mutation',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -446,21 +477,23 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           GetNearestAirport(lat: 33, lon: -118) {
             IcaoCode
             Name
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -497,12 +530,14 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "russellwhyte") {
             UserName
@@ -514,9 +549,9 @@ describe('odata', () => {
             }
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -547,12 +582,14 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "russellwhyte") {
             UserName
@@ -562,13 +599,13 @@ describe('odata', () => {
             }
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'query',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl.replace(/'/g, '%27',  ));// apostrophe gets percent-encoded
+    expect(sentRequest!.url).toBe(correctUrl.replace(/'/g, '%27')); // apostrophe gets percent-encoded
   });
   it('should generate correct HTTP request for invoking unbound actions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -588,18 +625,20 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         mutation {
           ResetDataSource
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'mutation',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
@@ -630,20 +669,22 @@ describe('odata', () => {
       pubsub,
       cache,
       store,
+      baseDir,
+      importFn,
+      logger,
     });
     const source = await handler.getMeshSource();
 
-    const graphqlResult = await graphql({
-      schema: source.schema,
-      source: /* GraphQL */ `
+    const graphqlResult = (await source.executor({
+      document: parse(/* GraphQL */ `
         mutation {
           PeopleByUserName(UserName: "russellwhyte") {
             ShareTrip(userName: "scottketchum", tripId: 0)
           }
         }
-      `,
-      contextValue: await source.contextBuilder({}),
-    });
+      `),
+      operationType: 'mutation',
+    })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);

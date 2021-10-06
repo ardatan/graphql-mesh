@@ -48,7 +48,6 @@ export interface MeshInstance {
   schema: GraphQLSchema;
   rawSources: RawSourceOutput[];
   sdkRequester: Requester;
-  contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   destroy: () => void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
@@ -83,7 +82,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
         rawSources.push({
           name: apiName,
-          contextBuilder: source.contextBuilder || null,
           schema: apiSchema,
           executor: source.executor,
           transforms: wrapTransforms,
@@ -114,9 +112,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     resolvers: options.additionalResolvers,
     transforms: options.transforms,
   });
-
-  getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
-  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
   getMeshLogger.debug(`Creating JIT Executor`);
   const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
@@ -271,37 +266,23 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     })
   );
 
-  async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
+  function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
     additionalContext: TAdditionalContext = {} as any
-  ): Promise<TContext> {
+  ): TContext {
     if (MESH_CONTEXT_SYMBOL in additionalContext) {
       return additionalContext as TContext;
     }
-    const context: TContext = Object.assign(additionalContext as any, baseMeshContext);
-
-    await Promise.all(
-      rawSources.map(async rawSource => {
-        const rawSourceLogger = logger.child(`${rawSource.name}`);
-        const contextBuilder = rawSource.contextBuilder;
-        if (contextBuilder) {
-          rawSourceLogger.debug(`Building context`);
-          const sourceContext = await contextBuilder(context);
-          if (sourceContext) {
-            Object.assign(context, sourceContext);
-          }
-          rawSourceLogger.debug(`Context has been built successfully`);
-        }
-      })
-    );
-
-    return context;
+    return Object.assign(additionalContext as any, baseMeshContext);
   }
+
+  getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, buildMeshContext);
 
   const executionLogger = logger.child(`Execute`);
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     document: GraphQLOperation<TData, TVariables>,
     variableValues?: TVariables,
-    context?: TContext,
+    contextValue?: TContext,
     rootValue?: TRootValue,
     operationName?: string
   ) {
@@ -312,7 +293,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       operationName = operationAst.name?.value;
     }
     const operationLogger = executionLogger.child(operationName || 'UnnamedOperation');
-    const contextValue = await buildMeshContext(context);
 
     const executionParams = {
       document: documentNode,
@@ -334,11 +314,6 @@ ${inspect({
 
     const executionResult = await liveQueryStore.execute(executionParams);
 
-    pubsub.publish('executionDone', {
-      ...executionParams,
-      executionResult: executionResult as any,
-    });
-
     operationLogger.debug(
       `Execution done with
 ${inspect({
@@ -354,7 +329,7 @@ ${inspect({
   async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     document: GraphQLOperation<TData, TVariables>,
     variableValues?: TVariables,
-    context?: TContext,
+    contextValue?: TContext,
     rootValue?: TRootValue,
     operationName?: string
   ) {
@@ -365,7 +340,6 @@ ${inspect({
       operationName = operationAst.name?.value;
     }
     const operationLogger = subscriberLogger.child(operationName || 'UnnamedOperation');
-    const contextValue = await buildMeshContext(context);
 
     const executionParams = {
       document: documentNode,
@@ -385,11 +359,6 @@ ${inspect({
 })}`
     );
     const executionResult = await subscribe(executionParams);
-
-    pubsub.publish('executionDone', {
-      ...executionParams,
-      executionResult: executionResult as any,
-    });
 
     return executionResult;
   }
@@ -448,7 +417,6 @@ ${inspect({
     execute: meshExecute,
     subscribe: meshSubscribe,
     schema: unifiedSchema,
-    contextBuilder: buildMeshContext,
     rawSources,
     sdkRequester: localRequester,
     cache,

@@ -52,7 +52,7 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
 
       Promise.resolve()
         .then(async function () {
-          const { schema, execute, subscribe, contextBuilder } = await mesh$;
+          const { schema, execute, subscribe } = await mesh$;
 
           // Validate and execute the query
           const result = await processRequest({
@@ -65,7 +65,7 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
               execute(query, variableValues, contextValue, rootValue, operationName),
             subscribe: (_schema, _documentAST, rootValue, contextValue, variableValues, operationName) =>
               subscribe(query, variableValues, contextValue, rootValue, operationName),
-            contextFactory: () => contextBuilder(req),
+            contextFactory: () => req,
           });
 
           // processRequest returns one of three types of results depending on how the server should respond
