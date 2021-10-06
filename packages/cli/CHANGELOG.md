@@ -1,5 +1,19 @@
 # @graphql-mesh/cli
 
+## 0.41.0
+
+### Minor Changes
+
+- 256abf5f7: enhance: do not use context of orchestrator but internally
+
+### Patch Changes
+
+- Updated dependencies [256abf5f7]
+  - @graphql-mesh/runtime@0.22.0
+  - @graphql-mesh/config@0.23.8
+  - @graphql-mesh/utils@0.17.2
+  - @graphql-mesh/store@0.1.16
+
 ## 0.40.2
 
 ### Patch Changes

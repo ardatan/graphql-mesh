@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.15.15",
+  "version": "0.15.16",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,9 +23,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.50.0",
-    "@graphql-mesh/utils": "0.17.1",
-    "@graphql-mesh/store": "0.1.15",
+    "@graphql-mesh/types": "0.51.0",
+    "@graphql-mesh/utils": "0.17.2",
+    "@graphql-mesh/store": "0.1.16",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "0.6.5",
     "graphql-scalars": "1.11.0",

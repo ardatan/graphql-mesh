@@ -1,5 +1,18 @@
 # @graphql-mesh/mysql
 
+## 0.13.0
+
+### Minor Changes
+
+- 256abf5f7: enhance: do not use context of orchestrator but internally
+
+### Patch Changes
+
+- Updated dependencies [256abf5f7]
+  - @graphql-mesh/types@0.51.0
+  - @graphql-mesh/utils@0.17.2
+  - @graphql-mesh/store@0.1.16
+
 ## 0.12.14
 
 ### Patch Changes
