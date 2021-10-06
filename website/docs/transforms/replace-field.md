@@ -311,3 +311,7 @@ type Author {
   age: Int!
 }
 ```
+
+## Config API Reference
+
+{@import ../generated-markdown/ReplaceFieldTransform.generated.md}
