@@ -17,7 +17,7 @@ describe('MySQL Employees', () => {
       printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
-    ).toMatchSnapshot('mysql-rfam-schema');
+    ).toMatchSnapshot('mysql-employees-schema');
   });
   it('should give correct response for example queries', async () => {
     const { documents } = await config$;

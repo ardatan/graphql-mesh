@@ -135,7 +135,7 @@ export default class MySQLHandler implements MeshHandler {
     const update = promisify(connection.update.bind(connection));
     const deleteRow = promisify(connection.delete.bind(connection));
     const count = promisify(connection.count.bind(connection));
-    const release = promisify(connection.release.bind(connection));
+    const release = connection.release.bind(connection);
 
     return {
       connection,
@@ -522,10 +522,10 @@ export default class MySQLHandler implements MeshHandler {
               mysqlConnection,
             },
           })) as ExecutionResult<TResult>;
-          await mysqlConnection.release();
+          mysqlConnection.release();
           return result;
         } catch (e: any) {
-          await mysqlConnection.release();
+          mysqlConnection.release();
           throw e;
         }
       },
