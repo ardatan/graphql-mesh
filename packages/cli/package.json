@@ -47,7 +47,7 @@
     "@graphql-mesh/utils": "0.17.1",
     "@graphql-mesh/store": "0.1.15",
     "@graphql-tools/code-file-loader": "7.2.0",
-    "@graphql-tools/utils": "8.2.4",
+    "@graphql-tools/utils": "8.2.5",
     "@graphql-tools/load": "7.3.2",
     "@graphql-tools/graphql-file-loader": "7.2.0",
     "body-parser": "1.19.0",

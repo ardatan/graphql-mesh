@@ -28,7 +28,7 @@
     "@apollo/gateway": "0.42.0",
     "@graphql-tools/schema": "8.2.0",
     "@graphql-mesh/utils": "0.17.1",
-    "@graphql-tools/utils": "8.2.4",
+    "@graphql-tools/utils": "8.2.5",
     "@graphql-mesh/store": "0.1.15"
   },
   "publishConfig": {

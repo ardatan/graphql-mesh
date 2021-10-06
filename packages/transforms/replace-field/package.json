@@ -28,7 +28,7 @@
     "@graphql-tools/code-file-loader": "7.2.0",
     "@graphql-tools/graphql-file-loader": "7.2.0",
     "@graphql-tools/load": "7.3.2",
-    "@graphql-tools/utils": "8.2.4"
+    "@graphql-tools/utils": "8.2.5"
   },
   "publishConfig": {
     "access": "public",
