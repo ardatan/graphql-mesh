@@ -6,6 +6,7 @@ import {
   MeshSource,
   KeyValueCache,
   ImportFn,
+  Logger,
 } from '@graphql-mesh/types';
 import {
   parseInterpolationStrings,
@@ -15,6 +16,7 @@ import {
   getCachedFetch,
   loadFromModuleExportExpression,
   stringInterpolator,
+  jitExecutorFactory,
 } from '@graphql-mesh/utils';
 import urljoin from 'url-join';
 import {
@@ -42,6 +44,7 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   specifiedDirectives,
+  ExecutionResult,
 } from 'graphql';
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
@@ -49,7 +52,7 @@ import { parseResponse } from 'http-string-parser';
 import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
-import { pruneSchema } from '@graphql-tools/utils';
+import { ExecutionRequest, pruneSchema, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
@@ -126,14 +129,24 @@ export default class ODataHandler implements MeshHandler {
   private eventEmitterSet = new Set<EventEmitter>();
   private metadataJson: any;
   private importFn: ImportFn;
+  private logger: Logger;
 
-  constructor({ name, config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    cache,
+    store,
+    importFn,
+    logger,
+  }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
@@ -553,7 +566,7 @@ export default class ODataHandler implements MeshHandler {
         ),
     };
 
-    const dataLoaderFactory = DATALOADER_FACTORIES[this.config.batch || 'none'];
+    const dataLoaderFactory = memoize1(DATALOADER_FACTORIES[this.config.batch || 'none']);
 
     function buildName({ schemaNamespace, name }: { schemaNamespace: string; name: string }) {
       const alias = aliasNamespaceMap.get(schemaNamespace) || schemaNamespace;
@@ -1363,12 +1376,24 @@ export default class ODataHandler implements MeshHandler {
     this.eventEmitterSet.forEach(ee => ee.removeAllListeners());
     this.eventEmitterSet.clear();
 
+    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+
     return {
       schema: pruneSchema(schema),
+      executor: <TResult>(executionRequest: ExecutionRequest) => {
+        const odataContext = {
+          [contextDataloaderName]: dataLoaderFactory(executionRequest.context),
+        };
+        return jitExecutor({
+          ...executionRequest,
+          context: {
+            ...executionRequest.context,
+            ...odataContext,
+          },
+        }) as ExecutionResult<TResult>;
+      },
       contextVariables,
-      contextBuilder: async context => ({
-        [contextDataloaderName]: dataLoaderFactory(context),
-      }),
+      batch: true,
     };
   }
 

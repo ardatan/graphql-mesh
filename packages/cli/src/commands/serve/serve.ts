@@ -23,7 +23,7 @@ import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
 import { YamlConfig, Logger } from '@graphql-mesh/types';
-import { Source , inspect } from '@graphql-tools/utils';
+import { Source, inspect } from '@graphql-tools/utils';
 
 const { readFile } = fsPromises;
 
@@ -73,7 +73,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
   } else {
     logger.info(`Generating Mesh schema...`);
     let readyFlag = false;
-    const mesh$ = getBuiltMesh()
+    const mesh$: Promise<MeshInstance> = getBuiltMesh()
       .then(mesh => {
         readyFlag = true;
         logger.info(`Serving GraphQL Mesh: ${serverUrl}`);
@@ -159,8 +159,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
             }
           }
 
-          const { contextBuilder } = await mesh$;
-          return contextBuilder(request);
+          return request;
         },
       },
       wsServer

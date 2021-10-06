@@ -48,11 +48,16 @@ export interface MeshInstance {
   schema: GraphQLSchema;
   rawSources: RawSourceOutput[];
   sdkRequester: Requester;
-  contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   destroy: () => void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   liveQueryStore: InMemoryLiveQueryStore;
+  /**
+   * @deprecated
+   * contextBuilder has no effect in the provided context anymore.
+   * It will be removed in the next version
+   */
+  contextBuilder: (ctx: any) => Promise<any>;
 }
 
 export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
@@ -83,7 +88,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
         rawSources.push({
           name: apiName,
-          contextBuilder: source.contextBuilder || null,
           schema: apiSchema,
           executor: source.executor,
           transforms: wrapTransforms,
@@ -114,9 +118,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     resolvers: options.additionalResolvers,
     transforms: options.transforms,
   });
-
-  getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
-  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
 
   getMeshLogger.debug(`Creating JIT Executor`);
   const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
@@ -166,8 +167,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     }
   });
 
-  getMeshLogger.debug(`Building Base Mesh Context`);
-  const baseMeshContext: Record<string, any> = {
+  getMeshLogger.debug(`Building Mesh Context`);
+  const meshContext: Record<string, any> = {
     pubsub,
     cache,
     liveQueryStore,
@@ -267,42 +268,22 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           }
         }
       }
-      baseMeshContext[rawSource.name] = rawSourceContext;
+      meshContext[rawSource.name] = rawSourceContext;
     })
   );
 
-  async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
-    additionalContext: TAdditionalContext = {} as any
-  ): Promise<TContext> {
-    if (MESH_CONTEXT_SYMBOL in additionalContext) {
-      return additionalContext as TContext;
-    }
-    const context: TContext = Object.assign(additionalContext as any, baseMeshContext);
-
-    await Promise.all(
-      rawSources.map(async rawSource => {
-        const rawSourceLogger = logger.child(`${rawSource.name}`);
-        const contextBuilder = rawSource.contextBuilder;
-        if (contextBuilder) {
-          rawSourceLogger.debug(`Building context`);
-          const sourceContext = await contextBuilder(context);
-          if (sourceContext) {
-            Object.assign(context, sourceContext);
-          }
-          rawSourceLogger.debug(`Context has been built successfully`);
-        }
-      })
-    );
-
-    return context;
-  }
+  getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, meshContext);
 
   const executionLogger = logger.child(`Execute`);
+  const EMPTY_ROOT_VALUE: any = {};
+  const EMPTY_CONTEXT_VALUE: any = {};
+  const EMPTY_VARIABLES_VALUE: any = {};
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     document: GraphQLOperation<TData, TVariables>,
-    variableValues?: TVariables,
-    context?: TContext,
-    rootValue?: TRootValue,
+    variableValues: TVariables = EMPTY_VARIABLES_VALUE,
+    contextValue: TContext = EMPTY_CONTEXT_VALUE,
+    rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
     const printedDocument = typeof document === 'string' ? document : print(document);
@@ -312,7 +293,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       operationName = operationAst.name?.value;
     }
     const operationLogger = executionLogger.child(operationName || 'UnnamedOperation');
-    const contextValue = await buildMeshContext(context);
 
     const executionParams = {
       document: documentNode,
@@ -334,11 +314,6 @@ ${inspect({
 
     const executionResult = await liveQueryStore.execute(executionParams);
 
-    pubsub.publish('executionDone', {
-      ...executionParams,
-      executionResult: executionResult as any,
-    });
-
     operationLogger.debug(
       `Execution done with
 ${inspect({
@@ -353,9 +328,9 @@ ${inspect({
   const subscriberLogger = logger.child(`meshSubscribe`);
   async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     document: GraphQLOperation<TData, TVariables>,
-    variableValues?: TVariables,
-    context?: TContext,
-    rootValue?: TRootValue,
+    variableValues: TVariables = EMPTY_VARIABLES_VALUE,
+    contextValue: TContext = EMPTY_CONTEXT_VALUE,
+    rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
     const printedDocument = typeof document === 'string' ? document : print(document);
@@ -365,7 +340,6 @@ ${inspect({
       operationName = operationAst.name?.value;
     }
     const operationLogger = subscriberLogger.child(operationName || 'UnnamedOperation');
-    const contextValue = await buildMeshContext(context);
 
     const executionParams = {
       document: documentNode,
@@ -385,11 +359,6 @@ ${inspect({
 })}`
     );
     const executionResult = await subscribe(executionParams);
-
-    pubsub.publish('executionDone', {
-      ...executionParams,
-      executionResult: executionResult as any,
-    });
 
     return executionResult;
   }
@@ -448,13 +417,13 @@ ${inspect({
     execute: meshExecute,
     subscribe: meshSubscribe,
     schema: unifiedSchema,
-    contextBuilder: buildMeshContext,
     rawSources,
     sdkRequester: localRequester,
     cache,
     pubsub,
     destroy: () => pubsub.publish('destroy', undefined),
     liveQueryStore,
+    contextBuilder: async ctx => ctx || {},
   };
 }
 

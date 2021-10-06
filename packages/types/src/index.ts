@@ -1,13 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { IResolvers, Executor } from '@graphql-tools/utils';
-import {
-  GraphQLSchema,
-  GraphQLResolveInfo,
-  DocumentNode,
-  ExecutionArgs,
-  ExecutionResult,
-  SelectionSetNode,
-} from 'graphql';
+import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
@@ -23,7 +16,6 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
   executor?: Executor;
   contextVariables?: (keyof InitialContext)[];
-  contextBuilder?: (initialContextValue: InitialContext) => Promise<ContextType>;
   batch?: boolean;
 };
 
@@ -62,7 +54,6 @@ export type AllHooks = {
   resolverCalled: { resolverData: ResolverData };
   resolverDone: { resolverData: ResolverData; result: any };
   resolverError: { resolverData: ResolverData; error: Error };
-  executionDone: ExecutionArgs & { executionResult: ExecutionResult };
   [key: string]: any;
 };
 export type HookName = keyof AllHooks & string;
@@ -124,8 +115,6 @@ export interface MeshMerger {
 
 export type RawSourceOutput = {
   name: string;
-  // TOOD: Remove globalContextBuilder and use hooks for that
-  contextBuilder: null | ((initialContextValue?: any) => Promise<any>);
   schema: GraphQLSchema;
   executor?: Executor;
   transforms: MeshTransform[];
