@@ -314,4 +314,4 @@ type Author {
 
 ## Config API Reference
 
-{@import ../generated-markdown/ReplaceFieldTransform.generated.md}
+{@import ../generated-markdown/ReplaceFieldTransformConfig.generated.md}
