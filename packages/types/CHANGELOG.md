@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.51.0
+
+### Minor Changes
+
+- 256abf5f7: enhance: do not use context of orchestrator but internally
+
 ## 0.50.0
 
 ### Minor Changes

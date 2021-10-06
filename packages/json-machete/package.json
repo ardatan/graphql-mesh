@@ -1,6 +1,6 @@
 {
   "name": "json-machete",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.6.19",
     "json-ptr": "2.2.0",
-    "@graphql-mesh/utils": "0.17.1"
+    "@graphql-mesh/utils": "0.17.2"
   },
   "publishConfig": {
     "access": "public",
