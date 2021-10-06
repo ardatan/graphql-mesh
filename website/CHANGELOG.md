@@ -1,5 +1,11 @@
 # @graphql-mesh/website
 
+## 0.8.0
+
+### Minor Changes
+
+- 8c9b709ae: Introduce new replace-field transform
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # @graphql-mesh/merger-stitching
 
+## 0.12.6
+
+### Patch Changes
+
+- Updated dependencies [8c9b709ae]
+  - @graphql-mesh/types@0.50.0
+  - @graphql-mesh/utils@0.17.1
+  - @graphql-mesh/store@0.1.15
+
 ## 0.12.5
 
 ### Patch Changes
