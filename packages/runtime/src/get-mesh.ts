@@ -270,11 +270,14 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, meshContext);
 
   const executionLogger = logger.child(`Execute`);
+  const EMPTY_ROOT_VALUE = {};
+  const EMPTY_CONTEXT_VALUE = {};
+  const EMPTY_VARIABLES_VALUE = {};
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     document: GraphQLOperation<TData, TVariables>,
-    variableValues?: TVariables,
-    contextValue?: TContext,
-    rootValue?: TRootValue,
+    variableValues?: TVariables = EMPTY_VARIABLES_VALUE,
+    contextValue?: TContext = DUMMY_CONTEXT_VALUE,
+    rootValue?: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
     const printedDocument = typeof document === 'string' ? document : print(document);
@@ -319,9 +322,9 @@ ${inspect({
   const subscriberLogger = logger.child(`meshSubscribe`);
   async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     document: GraphQLOperation<TData, TVariables>,
-    variableValues?: TVariables,
-    contextValue?: TContext,
-    rootValue?: TRootValue,
+    variableValues?: TVariables = EMPTY_VARIABLES_VALUE,
+    contextValue?: TContext = DUMMY_CONTEXT_VALUE,
+    rootValue?: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
     const printedDocument = typeof document === 'string' ? document : print(document);
