@@ -52,6 +52,12 @@ export interface MeshInstance {
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   liveQueryStore: InMemoryLiveQueryStore;
+  /**
+   * @deprecated
+   * contextBuilder has no effect in the provided context anymore.
+   * It will be removed in the next version
+   */
+  contextBuilder: (ctx: any) => Promise<any>;
 }
 
 export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
@@ -417,6 +423,7 @@ ${inspect({
     pubsub,
     destroy: () => pubsub.publish('destroy', undefined),
     liveQueryStore,
+    contextBuilder: async ctx => ctx || {},
   };
 }
 
