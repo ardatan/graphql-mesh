@@ -5,17 +5,17 @@ module.exports = async ({
   documents,
   logger
 }) => {
-  const { schema, contextBuilder } = await getBuiltMesh();
+  const { schema } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req }) => contextBuilder(req),
+    context: ({ req }) => req,
     playground: {
       tabs: documents.map(({ location, rawSDL }) => ({
-          name: location,
-          endpoint: '/graphql',
-          query: rawSDL,
+        name: location,
+        endpoint: '/graphql',
+        query: rawSDL,
       })),
-    }
+    },
   });
 
   const { url } = await apolloServer.listen(4000);

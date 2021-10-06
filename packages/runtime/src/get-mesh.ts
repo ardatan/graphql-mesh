@@ -161,8 +161,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     }
   });
 
-  getMeshLogger.debug(`Building Base Mesh Context`);
-  const baseMeshContext: Record<string, any> = {
+  getMeshLogger.debug(`Building Mesh Context`);
+  const meshContext: Record<string, any> = {
     pubsub,
     cache,
     liveQueryStore,
@@ -262,21 +262,12 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           }
         }
       }
-      baseMeshContext[rawSource.name] = rawSourceContext;
+      meshContext[rawSource.name] = rawSourceContext;
     })
   );
 
-  function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
-    additionalContext: TAdditionalContext = {} as any
-  ): TContext {
-    if (MESH_CONTEXT_SYMBOL in additionalContext) {
-      return additionalContext as TContext;
-    }
-    return Object.assign(additionalContext as any, baseMeshContext);
-  }
-
   getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
-  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, buildMeshContext);
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, meshContext);
 
   const executionLogger = logger.child(`Execute`);
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(

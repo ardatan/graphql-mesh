@@ -7,13 +7,13 @@ let apolloServer: ApolloServer;
 export default async function createApolloServer() {
   if (apolloServer) return apolloServer;
 
-  const { schema, contextBuilder } = await getBuiltMesh();
+  const { schema } = await getBuiltMesh();
 
   apolloServer = new ApolloServer({
     schema,
     introspection: !isProd,
     playground: !isProd,
-    context: contextBuilder,
+    context: req => req,
   });
 
   return apolloServer;

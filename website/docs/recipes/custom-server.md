@@ -16,10 +16,10 @@ The following example shows how to replace GraphQL Mesh's default server impleme
 const { ApolloServer } = require('apollo-server');
 
 module.exports = async ({ getBuiltMesh, documents, logger }) => {
-  const { schema, contextBuilder } = await getBuiltMesh();
+  const { schema } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req }) => contextBuilder(req),
+    context: ({ req }) => req,
     playground: {
       tabs: documents.map(({ location, rawSDL }) => ({
         name: location,

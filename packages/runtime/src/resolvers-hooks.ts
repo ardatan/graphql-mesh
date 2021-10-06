@@ -9,7 +9,7 @@ import { env } from 'process';
 export function applyResolversHooksToResolvers(
   resolvers: IResolvers,
   pubsub: MeshPubSub,
-  contextBuilder: (ctx: any) => any
+  meshContext: any
 ): IResolvers {
   return composeResolvers(resolvers, {
     '*.*':
@@ -42,7 +42,7 @@ export function applyResolversHooksToResolvers(
 
         pubsub.publish('resolverCalled', { resolverData });
 
-        const finalContext = contextBuilder(resolverData.context);
+        const finalContext = Object.assign(resolverData.context || {}, meshContext);
         try {
           const result = await (isArgsInResolversArgs
             ? originalResolver(resolverData.root, resolverData.args, finalContext, resolverData.info)
@@ -63,13 +63,13 @@ export function applyResolversHooksToResolvers(
 export function applyResolversHooksToSchema(
   schema: GraphQLSchema,
   pubsub: MeshPubSub,
-  contextBuilder: (ctx: any) => any
+  meshContext: any
 ): GraphQLSchema {
   const sourceResolvers = extractResolvers(schema);
 
   return addResolversToSchema({
     schema,
-    resolvers: applyResolversHooksToResolvers(sourceResolvers, pubsub, contextBuilder),
+    resolvers: applyResolversHooksToResolvers(sourceResolvers, pubsub, meshContext),
     updateResolversInPlace: true,
   });
 }
