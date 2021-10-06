@@ -32,7 +32,7 @@
     "@graphql-tools/resolvers-composition": "6.4.0",
     "@graphql-tools/schema": "8.2.0",
     "@graphql-tools/wrap": "8.1.1",
-    "@graphql-tools/utils": "8.2.4"
+    "@graphql-tools/utils": "8.2.5"
   },
   "publishConfig": {
     "access": "public",
