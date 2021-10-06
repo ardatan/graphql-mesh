@@ -39,8 +39,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
 
-      - name: Align TypeScript version with typedoc
-        run: node scripts/install-typedocs-typescript-version.js
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock && git checkout package.json
       - name: Build
