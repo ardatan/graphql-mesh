@@ -119,7 +119,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           People {
@@ -160,7 +160,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "SOMEID") {
@@ -210,7 +210,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           AirportsByIcaoCode(IcaoCode: "KSFO") {
@@ -253,7 +253,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           People(queryOptions: { filter: "FirstName eq 'Scott'" }) {
@@ -294,7 +294,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           PeopleCount
@@ -353,7 +353,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       variables: {
         input: correctBody,
       },
@@ -397,7 +397,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         mutation {
           deletePeopleByUserName(UserName: "SOMEID")
@@ -441,7 +441,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       variables: {
         UserName: 'SOMEID',
         input: correctBody,
@@ -492,7 +492,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           GetNearestAirport(lat: 33, lon: -118) {
@@ -546,7 +546,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "russellwhyte") {
@@ -599,7 +599,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "russellwhyte") {
@@ -643,7 +643,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         mutation {
           ResetDataSource
@@ -688,7 +688,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
-      contextValue: {},
+      context: {},
       document: parse(/* GraphQL */ `
         mutation {
           PeopleByUserName(UserName: "russellwhyte") {
