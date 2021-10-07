@@ -1,14 +1,15 @@
 import { ExecutionRequest } from '@graphql-tools/utils';
 import { compileQuery, isCompiledQuery } from 'graphql-jit';
 import { globalLruCache } from './global-lru-cache';
-import { GraphQLSchema, print } from 'graphql';
+import { GraphQLSchema } from 'graphql';
 import { Logger } from '@graphql-mesh/types';
+import { printWithCache } from '.';
 
 type CompileQueryResult = ReturnType<typeof compileQuery>;
 
 export const jitExecutorFactory = (schema: GraphQLSchema, prefix: string, logger: Logger) => {
   return ({ document, variables, context, operationName, rootValue, operationType }: ExecutionRequest) => {
-    const documentStr = print(document);
+    const documentStr = printWithCache(document);
     logger.debug(`Executing ${documentStr}`);
     const cacheKey = [prefix, documentStr, operationName].join('_');
     let compiledQuery: CompileQueryResult;

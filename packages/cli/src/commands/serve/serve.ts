@@ -8,7 +8,7 @@ import { playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import cors from 'cors';
-import { loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, parseWithCache, pathExists } from '@graphql-mesh/utils';
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -142,6 +142,15 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
     const { dispose: stopGraphQLWSServer } = useServer(
       {
         schema: () => mesh$.then(({ schema }) => schema),
+        onSubscribe: async (_ctx, msg) => {
+          const { schema } = await mesh$;
+          return {
+            schema,
+            operationName: msg.payload.operationName,
+            document: parseWithCache(msg.payload.query),
+            variableValues: msg.payload.variables,
+          };
+        },
         execute: args =>
           mesh$.then(({ execute }) => execute(args.document, args.variableValues, args.contextValue, args.rootValue)),
         subscribe: args =>

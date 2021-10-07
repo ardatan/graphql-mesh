@@ -3,7 +3,6 @@ import {
   GraphQLSchema,
   DocumentNode,
   GraphQLError,
-  subscribe,
   ExecutionArgs,
   GraphQLResolveInfo,
   OperationTypeNode,
@@ -27,13 +26,14 @@ import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import {
   applySchemaTransforms,
-  ensureDocumentNode,
   getInterpolatedStringFactory,
   groupTransforms,
   ResolverDataBasedFactory,
   jitExecutorFactory,
   AggregateError,
   DefaultLogger,
+  getDocumentNodeAndSDL,
+  printWithCache,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
@@ -118,9 +118,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     resolvers: options.additionalResolvers,
     transforms: options.transforms,
   });
-
-  getMeshLogger.debug(`Creating JIT Executor`);
-  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
 
   getMeshLogger.debug(`Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
@@ -275,38 +272,40 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, meshContext);
 
+  getMeshLogger.debug(`Creating JIT Executor`);
+  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
+
   const executionLogger = logger.child(`Execute`);
   const EMPTY_ROOT_VALUE: any = {};
   const EMPTY_CONTEXT_VALUE: any = {};
   const EMPTY_VARIABLES_VALUE: any = {};
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
-    document: GraphQLOperation<TData, TVariables>,
+    documentOrSDL: GraphQLOperation<TData, TVariables>,
     variableValues: TVariables = EMPTY_VARIABLES_VALUE,
     contextValue: TContext = EMPTY_CONTEXT_VALUE,
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const printedDocument = typeof document === 'string' ? document : print(document);
-    const documentNode = ensureDocumentNode(document);
+    const { document, sdl } = getDocumentNodeAndSDL(documentOrSDL);
     if (!operationName) {
-      const operationAst = getOperationAST(documentNode);
+      const operationAst = getOperationAST(document);
       operationName = operationAst.name?.value;
     }
     const operationLogger = executionLogger.child(operationName || 'UnnamedOperation');
 
-    const executionParams = {
-      document: documentNode,
+    const executionParams: ExecutionArgs = {
+      document,
       contextValue,
       rootValue,
       variableValues,
       schema: unifiedSchema,
       operationName,
-    } as const;
+    };
 
     operationLogger.debug(
       `Execution started with
 ${inspect({
-  ...(operationName ? {} : { query: printedDocument }),
+  ...(operationName ? {} : { query: sdl }),
   ...(rootValue ? { rootValue } : {}),
   ...(variableValues ? { variableValues } : {}),
 })}`
@@ -317,7 +316,7 @@ ${inspect({
     operationLogger.debug(
       `Execution done with
 ${inspect({
-  ...(operationName ? {} : { query: printedDocument }),
+  ...(operationName ? {} : { query: sdl }),
   ...executionResult,
 })}`
     );
@@ -327,38 +326,35 @@ ${inspect({
 
   const subscriberLogger = logger.child(`meshSubscribe`);
   async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
-    document: GraphQLOperation<TData, TVariables>,
-    variableValues: TVariables = EMPTY_VARIABLES_VALUE,
-    contextValue: TContext = EMPTY_CONTEXT_VALUE,
+    documentOrSDL: GraphQLOperation<TData, TVariables>,
+    variables: TVariables = EMPTY_VARIABLES_VALUE,
+    context: TContext = EMPTY_CONTEXT_VALUE,
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const printedDocument = typeof document === 'string' ? document : print(document);
-    const documentNode = ensureDocumentNode(document);
+    const { document, sdl } = getDocumentNodeAndSDL(documentOrSDL);
     if (!operationName) {
-      const operationAst = getOperationAST(documentNode);
+      const operationAst = getOperationAST(document);
       operationName = operationAst.name?.value;
     }
     const operationLogger = subscriberLogger.child(operationName || 'UnnamedOperation');
-
-    const executionParams = {
-      document: documentNode,
-      contextValue,
-      rootValue,
-      variableValues,
-      schema: unifiedSchema,
-      operationName,
-    } as const;
 
     operationLogger.debug(
       `Subscription started with
 ${inspect({
   ...(rootValue ? {} : { rootValue }),
-  ...(variableValues ? {} : { variableValues }),
-  ...(operationName ? {} : { query: printedDocument }),
+  ...(variables ? {} : { variables }),
+  ...(operationName ? {} : { query: sdl }),
 })}`
     );
-    const executionResult = await subscribe(executionParams);
+    const executionResult = await jitExecutor({
+      document,
+      context,
+      rootValue,
+      variables,
+      operationName,
+      operationType: 'subscription',
+    });
 
     return executionResult;
   }
@@ -398,7 +394,7 @@ ${inspect({
       } else {
         logger.error(`GraphQL Mesh SDK failed to execute:
         ${inspect({
-          query: print(document),
+          query: printWithCache(document),
           variables,
         })}`);
         throw new GraphQLMeshSdkError(

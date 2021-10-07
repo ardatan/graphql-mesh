@@ -13,12 +13,12 @@ import {
   DefaultLogger,
   getDefaultSyncImport,
   loadFromModuleExportExpression,
+  parseWithCache,
 } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { parse } from 'graphql';
 import { YamlConfig } from '@graphql-mesh/types';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
@@ -136,7 +136,7 @@ export async function graphqlMesh() {
             rawConfig: builtMeshArtifacts.rawConfig,
             documents: builtMeshArtifacts.documentsInSDL.map((documentSdl: string, i: number) => ({
               rawSDL: documentSdl,
-              document: parse(documentSdl),
+              document: parseWithCache(documentSdl),
               location: `document_${i}.graphql`,
             })),
           };

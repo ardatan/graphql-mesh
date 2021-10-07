@@ -42,7 +42,7 @@ export function applyResolversHooksToResolvers(
 
         pubsub.publish('resolverCalled', { resolverData });
 
-        const finalContext = Object.assign(resolverData.context || {}, meshContext);
+        const finalContext = Object.assign(resolverData.context, meshContext);
         try {
           const result = await (isArgsInResolversArgs
             ? originalResolver(resolverData.root, resolverData.args, finalContext, resolverData.info)

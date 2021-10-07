@@ -1,4 +1,3 @@
-import { parse } from 'graphql';
 import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -9,7 +8,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -69,7 +68,9 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
       cwd: baseDir,
       loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
     });
-    return sources.map(source => source.document || parse(source.rawSDL || printSchemaWithDirectives(source.schema)));
+    return sources.map(
+      source => source.document || parseWithCache(source.rawSDL || printSchemaWithDirectives(source.schema))
+    );
   }
   return undefined;
 }

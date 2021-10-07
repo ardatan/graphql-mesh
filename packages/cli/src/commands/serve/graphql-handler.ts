@@ -1,5 +1,5 @@
 import { getMesh } from '@graphql-mesh/runtime';
-import { flatString, jsonFlatStringify } from '@graphql-mesh/utils';
+import { flatString, jsonFlatStringify, parseWithCache } from '@graphql-mesh/utils';
 import { RequestHandler } from 'express';
 import { GraphQLError } from 'graphql';
 import { getGraphQLParameters, processRequest, shouldRenderGraphiQL } from 'graphql-helix';
@@ -61,6 +61,7 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
             variables,
             request,
             schema,
+            parse: parseWithCache,
             execute: (_schema, _documentAST, rootValue, contextValue, variableValues, operationName) =>
               execute(query, variableValues, contextValue, rootValue, operationName),
             subscribe: (_schema, _documentAST, rootValue, contextValue, variableValues, operationName) =>

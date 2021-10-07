@@ -7,20 +7,11 @@ import {
   MeshPubSub,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import {
-  GraphQLSchema,
-  print,
-  extendSchema,
-  DocumentNode,
-  parse,
-  execute,
-  ExecutionResult,
-  getOperationAST,
-} from 'graphql';
+import { GraphQLSchema, extendSchema, DocumentNode, parse, execute, ExecutionResult, getOperationAST } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { hashObject, jitExecutorFactory, AggregateError } from '@graphql-mesh/utils';
+import { hashObject, jitExecutorFactory, AggregateError, printWithCache } from '@graphql-mesh/utils';
 import { asArray } from '@graphql-tools/utils';
 import { env } from 'process';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
@@ -108,7 +99,7 @@ export default class FederationMerger implements MeshMerger {
     remoteSchema = wrapSchema({
       schema: remoteSchema,
       executor: ({ document, info, variables, context, operationName }): any => {
-        const documentStr = print(document);
+        const documentStr = printWithCache(document);
         const { operation } = info;
         // const operationName = operation.name?.value;
         return gatewayExecutor({
