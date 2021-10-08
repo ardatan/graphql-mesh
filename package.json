@@ -38,7 +38,7 @@
     "@types/node": "14.17.21",
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "@typescript-eslint/parser": "4.33.0",
-    "babel-jest": "27.2.4",
+    "babel-jest": "27.2.5",
     "bob-the-bundler": "1.5.1",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
@@ -50,7 +50,7 @@
     "globby": "11.0.4",
     "graphql": "15.6.1",
     "husky": "7.0.2",
-    "jest": "27.2.4",
+    "jest": "27.2.5",
     "lint-staged": "11.2.0",
     "patch-package": "6.4.7",
     "prettier": "2.4.1",
@@ -89,8 +89,8 @@
     ]
   },
   "resolutions": {
-    "babel-jest": "27.2.4",
-    "jest-runner": "27.2.4",
+    "babel-jest": "27.2.5",
+    "jest-runner": "27.2.5",
     "graphql": "15.6.1",
     "@changesets/apply-release-plan": "5.0.1"
   }
