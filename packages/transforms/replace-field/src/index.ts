@@ -7,7 +7,7 @@ import { loadTypedefsSync } from '@graphql-tools/load';
 import { MapperKind, mapSchema, selectObjectFields, pruneSchema } from '@graphql-tools/utils';
 
 type ReplaceFieldConfig = YamlConfig.ReplaceFieldConfig &
-  Pick<YamlConfig.ReplaceFieldTransformObject, 'scope' | 'composer'>;
+  Pick<YamlConfig.ReplaceFieldTransformObject, 'scope' | 'composer' | 'name'>;
 
 // Execute original field resolver and return single property to be hoisted from rsesolver reponse
 const defaultHoistFieldComposer =
@@ -37,6 +37,7 @@ export default class ReplaceFieldTransform implements MeshTransform {
         to: toConfig,
         scope,
         composer,
+        name,
       } = replacement;
       const fieldKey = `${fromTypeName}.${fromFieldName}`;
 
@@ -46,7 +47,7 @@ export default class ReplaceFieldTransform implements MeshTransform {
         syncImportFn: this.syncImportFn,
       });
 
-      this.replacementsMap.set(fieldKey, { ...toConfig, scope, composer: composerFn });
+      this.replacementsMap.set(fieldKey, { ...toConfig, scope, composer: composerFn, name });
     }
   }
 
@@ -62,15 +63,16 @@ export default class ReplaceFieldTransform implements MeshTransform {
     const transformedSchema = mapSchema(baseSchema, {
       [MapperKind.COMPOSITE_FIELD]: (
         fieldConfig: GraphQLFieldConfig<any, any>,
-        fieldName: string,
+        currentFieldName: string,
         typeName: string
       ) => {
-        const fieldKey = `${typeName}.${fieldName}`;
+        const fieldKey = `${typeName}.${currentFieldName}`;
         const newFieldConfig = this.replacementsMap.get(fieldKey);
         if (!newFieldConfig) {
           return undefined;
         }
 
+        const fieldName = newFieldConfig.name || currentFieldName;
         const targetFieldName = newFieldConfig.field;
         const targetFieldConfig = selectObjectFields(
           baseSchema,
@@ -89,6 +91,9 @@ export default class ReplaceFieldTransform implements MeshTransform {
 
         // override field type with the target type requested
         fieldConfig.type = targetFieldConfig.type;
+
+        // If renaming fields that don't have a custom resolver, we need to map response to original field name
+        if (newFieldConfig.name && !fieldConfig.resolve) fieldConfig.resolve = source => source[currentFieldName];
 
         if (newFieldConfig.scope === 'hoistValue') {
           // implement value hoisting by wrapping a default composer that hoists the value from resolver result

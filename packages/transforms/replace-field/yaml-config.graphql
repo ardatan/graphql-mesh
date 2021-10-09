@@ -26,6 +26,7 @@ type ReplaceFieldTransformObject @md {
   to: ReplaceFieldConfig!
   scope: ReplaceFieldScope
   composer: Any
+  name: String
 }
 
 type ReplaceFieldConfig {
