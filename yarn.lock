@@ -6222,7 +6222,7 @@ ajv@*, ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@8.6.3, ajv@^8.0.0, ajv@^8.0.1:
+ajv@8.6.3, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0:
   version "8.6.3"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.6.3.tgz#11a66527761dc3e9a3845ea775d2d3c0414e8764"
   integrity sha512-SMJOdDP6LqTkD0Uq8qLi+gMwSt0imXLSV080qFVwJCpH9U6Mb+SUGHAXM0KNbcBPguytWyvFxcHgMLe2D2XSpw==
@@ -8725,12 +8725,12 @@ commander@^5.0.0, commander@^5.1.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
   integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
 
-commander@^6.0.0, commander@^6.1.0, commander@^6.2.0:
+commander@^6.0.0, commander@^6.2.0:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
   integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
 
-commander@^7.0.0, commander@^7.1.0:
+commander@^7.0.0, commander@^7.1.0, commander@^7.2.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
   integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
@@ -15058,7 +15058,7 @@ js-yaml@4.1.0, js-yaml@^4.0.0, js-yaml@^4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-js-yaml@^3.12.1, js-yaml@^3.13.0, js-yaml@^3.13.1, js-yaml@^3.14.0, js-yaml@^3.6.1:
+js-yaml@^3.12.1, js-yaml@^3.13.0, js-yaml@^3.13.1, js-yaml@^3.6.1:
   version "3.14.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.1.tgz#dae812fdb3825fa306609a8717383c50c36a0537"
   integrity sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==
@@ -15212,16 +15212,16 @@ json-ptr@2.2.0:
   dependencies:
     tslib "^2.2.0"
 
-json-schema-diff@^0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/json-schema-diff/-/json-schema-diff-0.16.0.tgz#ee703abe7d23983244c0cfd7f11daca60fd31454"
-  integrity sha512-jNpsidxig8D9WdK1O4hMkcqtnNiGgtk9gxKQfhGGJT9EhOVKLR6YZX+Ft81nz1Rp5FXS4XNwgtGUMUICx3cBYA==
+json-schema-diff@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/json-schema-diff/-/json-schema-diff-0.17.1.tgz#5e0992f12aa86dbec0528b9104c7d02858ce5092"
+  integrity sha512-bBflcH+NRM/bKbw2G0WIh0ltCZb3PCyruTdopx3hZaXSHKM1+F7ILfDzyl9CxbLAS40/6EhkBYQUMFBefhBkgg==
   dependencies:
-    ajv "^6.12.3"
-    commander "^5.0.0"
+    ajv "^8.6.0"
+    commander "^7.2.0"
     json-schema-ref-parser "^9.0.6"
     json-schema-spec-types "^0.1.2"
-    lodash "^4.17.19"
+    lodash "^4.17.20"
     verror "^1.10.0"
 
 json-schema-ref-parser@^6.1.0:
@@ -17581,14 +17581,14 @@ open@7.4.2, open@^7.0.2, open@^7.0.3, open@^7.4.2:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
 
-openapi-diff@0.23.4:
-  version "0.23.4"
-  resolved "https://registry.yarnpkg.com/openapi-diff/-/openapi-diff-0.23.4.tgz#194f0a030c48319262f9bda1fa37a7b589c85c6b"
-  integrity sha512-vDyQeqWZW2bG16BdddwabYaoGaY8PmUantSCqf46BzKAuG8d/5OguPi82NRHT2ZCSVXZCiZh/H7xA3GChxgDnA==
+openapi-diff@0.23.5:
+  version "0.23.5"
+  resolved "https://registry.yarnpkg.com/openapi-diff/-/openapi-diff-0.23.5.tgz#a4fa4505bbe5686a9a9040e7ad799f3390909b27"
+  integrity sha512-dXK5NhB9nY33X4S4OLHIbT/yJUwD6sAfjotFvGjXR5x76Vi6Jcq0adNnPg0GmB9Mtc4CY0oH3ut5lHVbeKD18w==
   dependencies:
-    commander "^6.1.0"
-    js-yaml "^3.14.0"
-    json-schema-diff "^0.16.0"
+    commander "^8.2.0"
+    js-yaml "^4.0.0"
+    json-schema-diff "^0.17.1"
     jsonpointer "^4.1.0"
     lodash "^4.17.20"
     openapi3-ts "^2.0.0"
