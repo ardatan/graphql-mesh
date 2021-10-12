@@ -61,3 +61,22 @@ type Book {
 }
 "
 `;
+
+exports[`replace-field should replace correctly whole field config 1`] = `
+"type Query {
+  \\"\\"\\"Retrieve a list of Books\\"\\"\\"
+  books(maxResults: Int, orderBy: String): [Book]
+}
+
+type Book {
+  title: String!
+  author: Author!
+  code: String
+}
+
+type Author {
+  name: String!
+  age: Int!
+}
+"
+`;

@@ -8,13 +8,19 @@ import { PubSub } from 'graphql-subscriptions';
 import ReplaceFieldTransform from '../src';
 
 describe('replace-field', () => {
+  const mockQueryBooks = jest.fn().mockImplementation(() => ({ books: [{ title: 'abc' }, { title: 'def' }] }));
+  const mockBooksApiResponseBooks = jest.fn().mockImplementation(() => [{ title: 'ghi' }, { title: 'lmn' }]);
+
   const schemaDefs = /* GraphQL */ `
     type Query {
       books: BooksApiResponse
     }
 
     type BooksApiResponse {
-      books: [Book]
+      """
+      Retrieve a list of Books
+      """
+      books(maxResults: Int, orderBy: String): [Book]
     }
 
     type Book {
@@ -33,6 +39,10 @@ describe('replace-field', () => {
   const baseDir: string = undefined;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
@@ -61,13 +71,6 @@ describe('replace-field', () => {
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
-      resolvers: {
-        Query: {
-          books: () => ({
-            books: [{ title: 'abc' }, { title: 'def' }],
-          }),
-        },
-      },
     });
     const transformedSchema = transform.transformSchema(schema);
 
@@ -77,6 +80,13 @@ describe('replace-field', () => {
   });
 
   it('should replace correctly field Type with additional type definitions', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      books: [
+        { title: 'abc', author: { age: 50 } },
+        { title: 'def', author: {} },
+      ],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         typeDefs: /* GraphQL */ `
@@ -118,12 +128,10 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [
-              { title: 'abc', author: { age: 50 } },
-              { title: 'def', author: {} },
-            ],
-          }),
+          books: mockQueryBooks,
+        },
+        BooksApiResponse: {
+          books: mockBooksApiResponseBooks,
         },
       },
     });
@@ -145,6 +153,8 @@ describe('replace-field', () => {
         }
       `),
     });
+    expect(mockQueryBooks).toHaveBeenCalledTimes(1);
+    expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.books).toEqual([
       { title: 'abc', author: { age: '50' } },
       { title: 'def', author: { age: null } },
@@ -178,9 +188,10 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [{ title: 'abc' }, { title: 'def' }],
-          }),
+          books: mockQueryBooks,
+        },
+        BooksApiResponse: {
+          books: mockBooksApiResponseBooks,
         },
       },
     });
@@ -199,10 +210,19 @@ describe('replace-field', () => {
         }
       `),
     });
+    expect(mockQueryBooks).toHaveBeenCalledTimes(1);
+    expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.books).toEqual([{ title: 'abc' }, { title: 'def' }]);
   });
 
   it('should replace correctly field with hoistValue and default-field-resolver', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      books: [
+        { title: 'abc', author: { name: 'abra' } },
+        { title: 'def', author: { name: 'cadabra' } },
+      ],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         replacements: [
@@ -229,12 +249,7 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [
-              { title: 'abc', author: { name: 'abra' } },
-              { title: 'def', author: { name: 'cadabra' } },
-            ],
-          }),
+          books: mockQueryBooks,
         },
       },
     });
@@ -263,6 +278,13 @@ describe('replace-field', () => {
   });
 
   it('should replace correctly mtultiple fields with hoistValue and defined resolver function as well as default-field-resolver', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      books: [
+        { title: 'abc', author: { name: 'abra' } },
+        { title: 'def', author: { name: 'cadabra' } },
+      ],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         replacements: [
@@ -300,12 +322,10 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [
-              { title: 'abc', author: { name: 'abra' } },
-              { title: 'def', author: { name: 'cadabra' } },
-            ],
-          }),
+          books: mockQueryBooks,
+        },
+        BooksApiResponse: {
+          books: mockBooksApiResponseBooks,
         },
       },
     });
@@ -328,6 +348,8 @@ describe('replace-field', () => {
         }
       `),
     });
+    expect(mockQueryBooks).toHaveBeenCalledTimes(1);
+    expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.books).toEqual([
       { title: 'abc', author: 'abra' },
       { title: 'def', author: 'cadabra' },
@@ -335,6 +357,10 @@ describe('replace-field', () => {
   });
 
   it('should replace correctly field with composer wrapping resolver function', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      availableBooks: [{ title: 'abc' }, { title: 'def' }],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         replacements: [
@@ -361,9 +387,10 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            availableBooks: [{ title: 'abc' }, { title: 'def' }],
-          }),
+          books: mockQueryBooks,
+        },
+        BooksApiResponse: {
+          books: mockBooksApiResponseBooks,
         },
       },
     });
@@ -380,10 +407,19 @@ describe('replace-field', () => {
         }
       `),
     });
+    expect(mockQueryBooks).toHaveBeenCalledTimes(1);
+    expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.books).toEqual([{ title: 'abc' }, { title: 'def' }]);
   });
 
   it('should replace correctly field with composer wrapping default-field-resolver', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      books: [
+        { title: 'abc', code: 'def' },
+        { title: 'ghi', code: 'lmn' },
+      ],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         typeDefs: /* GraphQL */ `
@@ -415,12 +451,7 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [
-              { title: 'abc', code: 'def' },
-              { title: 'ghi', code: 'lmn' },
-            ],
-          }),
+          books: mockQueryBooks,
         },
       },
     });
@@ -448,6 +479,13 @@ describe('replace-field', () => {
   });
 
   it('should replace correctly renamed field with Type only', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      books: [
+        { title: 'abc', author: { name: 'abra' } },
+        { title: 'def', author: { name: 'cadabra' } },
+      ],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         typeDefs: /* GraphQL */ `
@@ -479,12 +517,7 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [
-              { title: 'abc', author: { name: 'def' } },
-              { title: 'ghi', author: { name: 'lmn' } },
-            ],
-          }),
+          books: mockQueryBooks,
         },
       },
     });
@@ -511,8 +544,8 @@ describe('replace-field', () => {
       `),
     });
     expect(result.data.books.books).toEqual([
-      { title: 'abc', author: { fullName: 'def' } },
-      { title: 'ghi', author: { fullName: 'lmn' } },
+      { title: 'abc', author: { fullName: 'abra' } },
+      { title: 'def', author: { fullName: 'cadabra' } },
     ]);
   });
 
@@ -544,9 +577,10 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [{ title: 'abc' }, { title: 'def' }],
-          }),
+          books: mockQueryBooks,
+        },
+        BooksApiResponse: {
+          books: mockBooksApiResponseBooks,
         },
       },
     });
@@ -568,10 +602,19 @@ describe('replace-field', () => {
         }
       `),
     });
+    expect(mockQueryBooks).toHaveBeenCalledTimes(1);
+    expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.ourBooks).toEqual([{ title: 'abc' }, { title: 'def' }]);
   });
 
   it('should replace correctly renamed field with hoistValue and default-field-resolver', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      books: [
+        { title: 'abc', author: { name: 'abra' } },
+        { title: 'def', author: { name: 'cadabra' } },
+      ],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         replacements: [
@@ -599,12 +642,7 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [
-              { title: 'abc', author: { name: 'abra' } },
-              { title: 'def', author: { name: 'cadabra' } },
-            ],
-          }),
+          books: mockQueryBooks,
         },
       },
     });
@@ -636,6 +674,10 @@ describe('replace-field', () => {
   });
 
   it('should replace correctly renamed field with composer wrapping resolver function', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      availableBooks: [{ title: 'abc' }, { title: 'def' }],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         replacements: [
@@ -663,9 +705,10 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            availableBooks: [{ title: 'abc' }, { title: 'def' }],
-          }),
+          books: mockQueryBooks,
+        },
+        BooksApiResponse: {
+          books: mockBooksApiResponseBooks,
         },
       },
     });
@@ -687,10 +730,19 @@ describe('replace-field', () => {
         }
       `),
     });
+    expect(mockQueryBooks).toHaveBeenCalledTimes(1);
+    expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.ourBooks).toEqual([{ title: 'abc' }, { title: 'def' }]);
   });
 
   it('should replace correctly renamed field with composer wrapping default-field-resolver', async () => {
+    mockQueryBooks.mockReturnValueOnce({
+      books: [
+        { title: 'abc', code: undefined },
+        { title: 'def', code: 'ghi' },
+      ],
+    });
+
     const transform = new ReplaceFieldTransform({
       config: {
         typeDefs: /* GraphQL */ `
@@ -723,12 +775,7 @@ describe('replace-field', () => {
       typeDefs: schemaDefs,
       resolvers: {
         Query: {
-          books: () => ({
-            books: [
-              { title: 'abc', code: undefined },
-              { title: 'def', code: 'ghi' },
-            ],
-          }),
+          books: mockQueryBooks,
         },
       },
     });
@@ -756,6 +803,73 @@ describe('replace-field', () => {
       { title: 'abc', isAvailable: false },
       { title: 'def', isAvailable: true },
     ]);
+  });
+
+  it('should replace correctly whole field config', async () => {
+    const transform = new ReplaceFieldTransform({
+      config: {
+        replacements: [
+          {
+            from: {
+              type: 'Query',
+              field: 'books',
+            },
+            to: {
+              type: 'BooksApiResponse',
+              field: 'books',
+            },
+            scope: 'config',
+          },
+        ],
+      },
+      cache,
+      pubsub,
+      baseDir,
+      apiName: '',
+      syncImportFn: require,
+    });
+    const schema = makeExecutableSchema({
+      typeDefs: schemaDefs,
+      resolvers: {
+        Query: { books: mockQueryBooks },
+        BooksApiResponse: {
+          books: mockBooksApiResponseBooks,
+        },
+      },
+    });
+    const transformedSchema = transform.transformSchema(schema);
+    const queryBooks = (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books;
+
+    expect(printSchema(transformedSchema)).toMatchSnapshot();
+
+    expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
+    expect(queryBooks.type.toString()).toBe('[Book]');
+    expect(queryBooks.description).toBe('Retrieve a list of Books');
+    expect(queryBooks.args).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'maxResults' }),
+        expect.objectContaining({ name: 'orderBy' }),
+      ])
+    );
+
+    expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
+    // @ts-ignore
+    queryBooks.resolve();
+    expect(mockBooksApiResponseBooks).toHaveBeenCalledTimes(1);
+
+    const result = await execute({
+      schema: transformedSchema,
+      document: parse(/* GraphQL */ `
+        {
+          books {
+            title
+          }
+        }
+      `),
+    });
+    expect(mockQueryBooks).not.toHaveBeenCalled();
+    expect(mockBooksApiResponseBooks).toHaveBeenCalledTimes(2);
+    expect(result.data.books).toEqual([{ title: 'ghi' }, { title: 'lmn' }]);
   });
 
   it('applies multiple replaces to obtain a cleaner schema', () => {
@@ -810,13 +924,6 @@ describe('replace-field', () => {
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
-      resolvers: {
-        Query: {
-          books: () => ({
-            books: [{ title: 'abc' }, { title: 'def' }],
-          }),
-        },
-      },
     });
     const transformedSchema = transform.transformSchema(schema);
 
