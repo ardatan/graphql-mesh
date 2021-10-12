@@ -80,6 +80,9 @@ export default class ReplaceFieldTransform implements MeshTransform {
           fieldName => fieldName === targetFieldName
         )[targetFieldName];
 
+        // If renaming fields that don't have a custom resolver, we need to map response to original field name
+        if (newFieldConfig.name && !fieldConfig.resolve) fieldConfig.resolve = source => source[currentFieldName];
+
         if (newFieldConfig.scope === 'config') {
           const targetResolver = targetFieldConfig.resolve;
           targetFieldConfig.resolve =
@@ -91,9 +94,6 @@ export default class ReplaceFieldTransform implements MeshTransform {
 
         // override field type with the target type requested
         fieldConfig.type = targetFieldConfig.type;
-
-        // If renaming fields that don't have a custom resolver, we need to map response to original field name
-        if (newFieldConfig.name && !fieldConfig.resolve) fieldConfig.resolve = source => source[currentFieldName];
 
         if (newFieldConfig.scope === 'hoistValue') {
           // implement value hoisting by wrapping a default composer that hoists the value from resolver result
