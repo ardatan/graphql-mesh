@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.42.2
+
+### Patch Changes
+
+- 963e064f0: chore: update scalars to support included codegen support
+
 ## 0.42.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # openapi-react-weatherbit
 
+## 0.3.104
+
+### Patch Changes
+
+- Updated dependencies [963e064f0]
+  - @graphql-mesh/openapi@0.19.2
+
 ## 0.3.103
 
 ### Patch Changes

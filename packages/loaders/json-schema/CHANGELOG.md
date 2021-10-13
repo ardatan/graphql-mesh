@@ -1,6 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.1.1
+
+### Patch Changes
+
+- 963e064f0: chore: update scalars to support included codegen support
+
 ## 0.1.0
+
 ### Minor Changes
 
 - 6f57be0c1: feat(json-schema): expose GraphQL Tools loader compatible with loadSchema

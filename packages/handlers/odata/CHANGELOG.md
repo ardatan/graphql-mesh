@@ -1,5 +1,11 @@
 # @graphql-mesh/odata
 
+## 0.13.3
+
+### Patch Changes
+
+- 963e064f0: chore: update scalars to support included codegen support
+
 ## 0.13.2
 
 ### Patch Changes

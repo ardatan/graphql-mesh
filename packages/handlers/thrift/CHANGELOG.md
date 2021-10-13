@@ -1,5 +1,11 @@
 # @graphql-mesh/thrift
 
+## 0.7.30
+
+### Patch Changes
+
+- 963e064f0: chore: update scalars to support included codegen support
+
 ## 0.7.29
 
 ### Patch Changes
