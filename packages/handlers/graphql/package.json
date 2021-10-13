@@ -23,12 +23,12 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/store": "0.1.17",
+    "@graphql-mesh/utils": "0.18.0",
     "@graphql-mesh/types": "0.52.0",
     "@graphql-tools/url-loader": "7.2.0",
     "@graphql-tools/wrap": "8.1.1",
-    "@graphql-mesh/utils": "0.18.0",
-    "@graphql-tools/delegate": "8.2.3",
-    "@graphql-mesh/store": "0.1.17"
+    "@graphql-tools/delegate": "8.2.3"
   },
   "publishConfig": {
     "access": "public",

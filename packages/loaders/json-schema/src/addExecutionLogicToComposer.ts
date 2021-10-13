@@ -47,7 +47,7 @@ export async function addExecutionLogicToComposer(
     errorMessage,
   }: AddExecutionLogicToComposerOptions
 ) {
-  logger.debug(`Attaching execution logic to the schema`);
+  logger.debug(() => `Attaching execution logic to the schema`);
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
@@ -67,18 +67,18 @@ export async function addExecutionLogicToComposer(
         }
         const interpolationData = { root, args, context, info, env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
-        operationLogger.debug(`=> Subscribing to pubSubTopic: ${pubsubTopic}`);
+        operationLogger.debug(() => `=> Subscribing to pubSubTopic: ${pubsubTopic}`);
         return pubsub.asyncIterator(pubsubTopic);
       };
       field.resolve = root => {
-        operationLogger.debug(`Received ${inspect(root)} from ${operationConfig.pubsubTopic}`);
+        operationLogger.debug(() => `Received ${inspect(root)} from ${operationConfig.pubsubTopic}`);
         return root;
       };
       interpolationStrings.push(operationConfig.pubsubTopic);
     } else if (operationConfig.path) {
       field.description = field.description || `${operationConfig.method} ${operationConfig.path}`;
       field.resolve = async (root, args, context, info) => {
-        operationLogger.debug(`=> Resolving`);
+        operationLogger.debug(() => `=> Resolving`);
         const interpolationData = { root, args, context, info, env };
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
@@ -128,7 +128,7 @@ export async function addExecutionLogicToComposer(
               throw new Error(`Unknown method ${httpMethod}`);
           }
         }
-        operationLogger.debug(`=> Fetching ${fullPath}=>${inspect(requestInit)}`);
+        operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch = context?.fetch || globalFetch;
         const response = await fetch(fullPath, requestInit);
         const responseText = await response.text();
@@ -144,7 +144,7 @@ export async function addExecutionLogicToComposer(
         } catch (e) {
           // The result might be defined as scalar
           if (isScalarType(returnType)) {
-            operationLogger.debug(` => Return type is not a JSON so returning ${responseText}`);
+            operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
           throw responseText;
@@ -177,18 +177,18 @@ export async function addExecutionLogicToComposer(
                   )
                 : normalizedErrors[0];
             aggregatedError.stack = null;
-            logger.debug(`=> Throwing the error ${inspect(aggregatedError)}`);
+            logger.debug(() => `=> Throwing the error ${inspect(aggregatedError)}`);
             return aggregatedError;
           }
         }
         if (responseJson.error) {
           if (!('getFields' in returnType && 'error' in returnType.getFields())) {
             const normalizedError = normalizeError(responseJson.error);
-            operationLogger.debug(`=> Throwing the error ${inspect(normalizedError)}`);
+            operationLogger.debug(() => `=> Throwing the error ${inspect(normalizedError)}`);
             return normalizedError;
           }
         }
-        operationLogger.debug(`=> Returning ${inspect(responseJson)}`);
+        operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
         return responseJson;
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
@@ -198,6 +198,6 @@ export async function addExecutionLogicToComposer(
     rootTypeComposer.addFieldArgs(fieldName, globalArgs);
   }
 
-  logger.debug(`Building the executable schema.`);
+  logger.debug(() => `Building the executable schema.`);
   return schemaComposer;
 }

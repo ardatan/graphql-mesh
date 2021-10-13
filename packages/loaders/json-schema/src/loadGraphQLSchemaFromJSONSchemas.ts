@@ -58,11 +58,11 @@ export async function getGraphQLSchemaFromBundledJSONSchema(
     generateInterfaceFromSharedFields,
   }: AddExecutionLogicToComposerOptions & { cwd: string; generateInterfaceFromSharedFields?: boolean }
 ) {
-  logger.debug(`Derefering the bundled JSON Schema`);
+  logger.debug(() => `Derefering the bundled JSON Schema`);
   const fullyDeferencedSchema = await dereferenceObject(bundledJSONSchema, {
     cwd,
   });
-  logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
+  logger.debug(() => `Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema(
     fullyDeferencedSchema as JSONSchemaObject,
     logger,

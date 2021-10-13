@@ -94,13 +94,13 @@ export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONS
       rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
     }
   }
-  logger.debug(`Dereferencing JSON Schema to resolve all $refs`);
+  logger.debug(() => `Dereferencing JSON Schema to resolve all $refs`);
   const fullyDeferencedSchema = await dereferenceObject(finalJsonSchema, {
     cwd,
   });
-  logger.debug(`Healing JSON Schema`);
+  logger.debug(() => `Healing JSON Schema`);
   const healedSchema = await healJSONSchema(fullyDeferencedSchema);
-  logger.debug(`Building and mapping $refs back to JSON Schema`);
+  logger.debug(() => `Building and mapping $refs back to JSON Schema`);
   const fullyReferencedSchema = await referenceJSONSchema(healedSchema as any);
   return fullyReferencedSchema;
 }
