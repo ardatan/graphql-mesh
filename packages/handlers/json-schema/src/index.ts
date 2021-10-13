@@ -122,21 +122,21 @@ export default class JsonSchemaHandler implements MeshHandler {
           rootTypeInputTypeDefinition.properties[operationConfig.field] = generatedSchema;
         }
       }
-      this.logger.debug(`Dereferencing JSON Schema to resolve all $refs`);
+      this.logger.debug(() => `Dereferencing JSON Schema to resolve all $refs`);
       const fullyDeferencedSchema = await dereferenceObject(finalJsonSchema, {
         cwd: this.baseDir,
       });
-      this.logger.debug(`Healing JSON Schema`);
+      this.logger.debug(() => `Healing JSON Schema`);
       const healedSchema = await healJSONSchema(fullyDeferencedSchema);
-      this.logger.debug(`Building and mapping $refs back to JSON Schema`);
+      this.logger.debug(() => `Building and mapping $refs back to JSON Schema`);
       const fullyReferencedSchema = await referenceJSONSchema(healedSchema as any);
       return fullyReferencedSchema;
     });
-    this.logger.debug(`Derefering the bundled JSON Schema`);
+    this.logger.debug(() => `Derefering the bundled JSON Schema`);
     const fullyDeferencedSchema = await dereferenceObject(cachedJsonSchema, {
       cwd: this.baseDir,
     });
-    this.logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
+    this.logger.debug(() => `Generating GraphQL Schema from the bundled JSON Schema`);
     const visitorResult = await getComposerFromJSONSchema(fullyDeferencedSchema as JSONSchema, this.logger);
 
     const schemaComposer = visitorResult.output as SchemaComposer;
@@ -148,7 +148,7 @@ export default class JsonSchemaHandler implements MeshHandler {
 
     const fetch = getCachedFetch(this.cache);
 
-    this.logger.debug(`Attaching execution logic to the schema`);
+    this.logger.debug(() => `Attaching execution logic to the schema`);
     for (const operationConfig of this.config.operations) {
       operationConfig.method = operationConfig.method || (operationConfig.type === 'Mutation' ? 'POST' : 'GET');
       operationConfig.type = operationConfig.type || (operationConfig.method === 'GET' ? 'Query' : 'Mutation');
@@ -182,16 +182,16 @@ export default class JsonSchemaHandler implements MeshHandler {
         field.subscribe = (root, args, context, info) => {
           const interpolationData = { root, args, context, info, env };
           const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
-          operationLogger.debug(`=> Subscribing to pubSubTopic: ${pubsubTopic}`);
+          operationLogger.debug(() => `=> Subscribing to pubSubTopic: ${pubsubTopic}`);
           return this.pubsub.asyncIterator(pubsubTopic);
         };
         field.resolve = root => {
-          operationLogger.debug(`Received ${inspect(root)} from ${operationConfig.pubsubTopic}`);
+          operationLogger.debug(() => `Received ${inspect(root)} from ${operationConfig.pubsubTopic}`);
           return root;
         };
       } else if (operationConfig.path) {
         field.resolve = async (root, args, context, info) => {
-          operationLogger.debug(`=> Resolving`);
+          operationLogger.debug(() => `=> Resolving`);
           const interpolationData = { root, args, context, info, env };
           const interpolatedBaseUrl = stringInterpolator.parse(this.config.baseUrl, interpolationData);
           const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
@@ -241,11 +241,12 @@ export default class JsonSchemaHandler implements MeshHandler {
                 throw new Error(`Unknown method ${operationConfig.method}`);
             }
           }
-          operationLogger.debug(`=> Fetching ${urlObj.toString()}=>${inspect(requestInit)}`);
+          operationLogger.debug(() => `=> Fetching ${urlObj.toString()}=>${inspect(requestInit)}`);
           const response = await fetch(urlObj.toString(), requestInit);
           const responseText = await response.text();
           operationLogger.debug(
-            `=> Fetched from ${urlObj.toString()}=>{
+            () =>
+              `=> Fetched from ${urlObj.toString()}=>{
               body: ${responseText}
             }`
           );
@@ -256,7 +257,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           } catch (e) {
             // The result might be defined as scalar
             if (isScalarType(returnType)) {
-              operationLogger.debug(` => Return type is not a JSON so returning ${responseText}`);
+              operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
               return responseText;
             }
             throw responseText;
@@ -283,24 +284,24 @@ export default class JsonSchemaHandler implements MeshHandler {
                 `${operationConfig.type}.${operationConfig.field} failed`
               );
               aggregatedError.stack = null;
-              this.logger.debug(`=> Throwing the error ${inspect(aggregatedError)}`);
+              this.logger.debug(() => `=> Throwing the error ${inspect(aggregatedError)}`);
               return aggregatedError;
             }
           }
           if (responseJson.error) {
             if (!('getFields' in returnType && 'error' in returnType.getFields())) {
               const normalizedError = normalizeError(responseJson.error);
-              operationLogger.debug(`=> Throwing the error ${inspect(normalizedError)}`);
+              operationLogger.debug(() => `=> Throwing the error ${inspect(normalizedError)}`);
               return normalizedError;
             }
           }
-          operationLogger.debug(`=> Returning ${inspect(responseJson)}`);
+          operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
           return responseJson;
         };
       }
     }
 
-    this.logger.debug(`Building the executable schema.`);
+    this.logger.debug(() => `Building the executable schema.`);
     const schema = schemaComposer.buildSchema();
     return {
       schema,

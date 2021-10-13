@@ -101,12 +101,12 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(`Stopping HTTP Server`);
+      eventLogger.debug(() => `Stopping HTTP Server`);
       httpServer.close(error => {
         if (error) {
-          eventLogger.debug(`HTTP Server couldn't be stopped: ${error.message}`);
+          eventLogger.debug(() => `HTTP Server couldn't be stopped: ${error.message}`);
         } else {
-          eventLogger.debug(`HTTP Server has been stopped`);
+          eventLogger.debug(() => `HTTP Server has been stopped`);
         }
       });
     });
@@ -129,12 +129,12 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(`Stopping WebSocket Server`);
+      eventLogger.debug(() => `Stopping WebSocket Server`);
       wsServer.close(error => {
         if (error) {
-          eventLogger.debug(`WebSocket Server couldn't be stopped: ${error.message}`);
+          eventLogger.debug(() => `WebSocket Server couldn't be stopped: ${error.message}`);
         } else {
-          eventLogger.debug(`WebSocket Server has been stopped`);
+          eventLogger.debug(() => `WebSocket Server has been stopped`);
         }
       });
     });
@@ -176,14 +176,14 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(`Stopping GraphQL WS`);
+      eventLogger.debug(() => `Stopping GraphQL WS`);
       Promise.resolve()
         .then(() => stopGraphQLWSServer())
         .then(() => {
-          eventLogger.debug(`GraphQL WS has been stopped`);
+          eventLogger.debug(() => `GraphQL WS has been stopped`);
         })
         .catch(error => {
-          eventLogger.debug(`GraphQL WS couldn't be stopped: ${error.message}`);
+          eventLogger.debug(() => `GraphQL WS couldn't be stopped: ${error.message}`);
         });
     });
 
@@ -211,18 +211,20 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
         } else if ('pubsubTopic' in handlerConfig) {
           handlerFn = (req: any, res: any) => {
             let payload = req.body;
-            handlerLogger.debug(`Payload received; ${inspect(payload)}`);
+            handlerLogger.debug(() => `Payload received; ${inspect(payload)}`);
             if (handlerConfig.payload) {
               payload = _.get(payload, handlerConfig.payload);
-              handlerLogger.debug(`Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
+              handlerLogger.debug(() => `Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
             }
-            const pubsubTopic = stringInterpolator.parse(handlerConfig.pubsubTopic, {
+            const interpolationData = {
               req,
               res,
               payload,
-            });
+            };
+            handlerLogger.debug(() => `Interpolating ${handlerConfig.pubsubTopic} with ${inspect(interpolationData)}`);
+            const pubsubTopic = stringInterpolator.parse(handlerConfig.pubsubTopic, interpolationData);
             req['pubsub'].publish(pubsubTopic, payload);
-            handlerLogger.debug(`Payload sent to ${handlerConfig.pubsubTopic}`);
+            handlerLogger.debug(() => `Payload sent to ${pubsubTopic}`);
             res.end();
           };
         }

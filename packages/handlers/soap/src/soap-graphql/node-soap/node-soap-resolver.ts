@@ -48,13 +48,13 @@ export class NodeSoapWsdlResolver {
   }
 
   debug(message: string): void {
-    this.logger.debug(message);
+    this.logger.debug(() => message);
   }
 
   createOperationArgs(operation: NodeSoapOperation): SoapOperationArg[] {
     const inputContent: WsdlInputContent = operation.content().input;
 
-    this.debug(`creating args for operation '${operation.name()}' from content '${inspect(inputContent)}'`);
+    this.debug(() => `creating args for operation '${operation.name()}' from content '${inspect(inputContent)}'`);
 
     if (!inputContent) {
       this.warn(`no input definition for operation '${operation.name()}'`);
@@ -79,7 +79,7 @@ export class NodeSoapWsdlResolver {
     argWsdlFieldName: string,
     argContent: WsdlArgContent
   ): SoapOperationArg {
-    this.debug(`creating arg for operation '${operation.name()}' from content '${inspect(argContent)}'`);
+    this.debug(() => `creating arg for operation '${operation.name()}' from content '${inspect(argContent)}'`);
 
     const parsedArgName: { name: string; isList: boolean } = parseWsdlFieldName(argWsdlFieldName);
 
@@ -103,7 +103,7 @@ export class NodeSoapWsdlResolver {
   } {
     const outputContent: WsdlOutputContent = operation.content().output;
 
-    this.debug(`creating output for operation '${operation.name()}' from content '${inspect(outputContent)}'`);
+    this.debug(() => `creating output for operation '${operation.name()}' from content '${inspect(outputContent)}'`);
 
     // determine type and field name
     let resultType: SoapType;
@@ -158,7 +158,7 @@ export class NodeSoapWsdlResolver {
     typeContent: WsdlTypeContent,
     ownerStringForLog: string
   ): SoapType {
-    this.debug(`resolving soap type for ${ownerStringForLog} from content '${inspect(typeContent)}'`);
+    this.debug(() => `resolving soap type for ${ownerStringForLog} from content '${inspect(typeContent)}'`);
 
     // determine name of the type
     let wsdlTypeName;
@@ -195,7 +195,7 @@ export class NodeSoapWsdlResolver {
 
   resolveWsdlNameToSoapType(namespace: string, wsdlTypeName: string, ownerStringForLog: string): SoapType {
     this.debug(
-      `resolving soap type for ${ownerStringForLog} from namespace '${namespace}', type name '${wsdlTypeName}'`
+      () => `resolving soap type for ${ownerStringForLog} from namespace '${namespace}', type name '${wsdlTypeName}'`
     );
 
     // lookup cache; this accomplishes three things:
@@ -203,7 +203,7 @@ export class NodeSoapWsdlResolver {
     // 2) every type definition (primitive and complex) has only one instance of SoapType
     // 3) resolve circular dependencies between types
     if (this.alreadyResolved.has(namespace + wsdlTypeName)) {
-      this.debug(`resolved soap type for namespace: '${namespace}', typeName: '${wsdlTypeName}' from cache`);
+      this.debug(() => `resolved soap type for namespace: '${namespace}', typeName: '${wsdlTypeName}' from cache`);
       return this.alreadyResolved.get(namespace + wsdlTypeName);
     }
 
@@ -216,7 +216,9 @@ export class NodeSoapWsdlResolver {
       const soapType: string = wsdlTypeName;
       this.alreadyResolved.set(namespace + wsdlTypeName, soapType);
 
-      this.debug(`resolved namespace: '${namespace}', typeName: '${wsdlTypeName}' to primitive type '${soapType}'`);
+      this.debug(
+        () => `resolved namespace: '${namespace}', typeName: '${wsdlTypeName}' to primitive type '${soapType}'`
+      );
 
       return soapType;
     } else {
@@ -232,7 +234,7 @@ export class NodeSoapWsdlResolver {
       this.resolveTypeBody(soapType, namespace, xsdTypeDefinition);
 
       this.debug(
-        `resolved namespace: '${namespace}', typeName: '${wsdlTypeName}' to object type '${inspect(soapType)}'`
+        () => `resolved namespace: '${namespace}', typeName: '${wsdlTypeName}' to object type '${inspect(soapType)}'`
       );
 
       return soapType;
@@ -245,9 +247,10 @@ export class NodeSoapWsdlResolver {
 
   private resolveTypeBody(soapType: SoapObjectType, namespace: string, typeDefinition: XsdTypeDefinition): void {
     this.debug(
-      `resolving body of soap type '${soapType.name}' from namespace '${namespace}', definition '${inspect(
-        typeDefinition
-      )}'`
+      () =>
+        `resolving body of soap type '${soapType.name}' from namespace '${namespace}', definition '${inspect(
+          typeDefinition
+        )}'`
     );
 
     const typeName: string = typeDefinition.$name;

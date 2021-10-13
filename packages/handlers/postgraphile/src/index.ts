@@ -59,13 +59,13 @@ export default class PostGraphileHandler implements MeshHandler {
       const pgLogger = this.logger.child('PostgreSQL');
       pgPool = new pg.Pool({
         connectionString: this.config.connectionString,
-        log: messages => pgLogger.debug(messages),
+        log: messages => pgLogger.debug(() => messages),
         ...this.config?.pool,
       });
     }
 
     this.pubsub.subscribe('destroy', () => {
-      this.logger.debug('Destroying PostgreSQL pool');
+      this.logger.debug(() => 'Destroying PostgreSQL pool');
       pgPool.end();
     });
 

@@ -238,7 +238,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(operation.servers[0]);
 
     if (Array.isArray(operation.servers) && operation.servers.length > 1) {
-      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -250,7 +250,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(oas.servers[0]);
 
     if (Array.isArray(oas.servers) && oas.servers.length > 1) {
-      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -788,7 +788,7 @@ export function getParameters(
 
   if (!isHttpMethod(method)) {
     translationLogger.debug(
-      `Warning: attempted to get parameters for ${method} ${path}, ` + `which is not an operation.`
+      () => `Warning: attempted to get parameters for ${method} ${path}, ` + `which is not an operation.`
     );
     return parameters;
   }
@@ -1016,7 +1016,8 @@ export function storeSaneName(
     const translationLogger = logger.child('translation');
     // TODO: Follow warning model
     translationLogger.debug(
-      `Warning: '${str}' and '${mapping[saneStr]}' both sanitize ` +
+      () =>
+        `Warning: '${str}' and '${mapping[saneStr]}' both sanitize ` +
         `to '${saneStr}' - collision possible. Desanitize to '${str}'.`
     );
     let appendix = 2;

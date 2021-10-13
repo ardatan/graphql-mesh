@@ -1,12 +1,21 @@
-import { Logger } from '@graphql-mesh/types';
+import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 import { env } from 'process';
 import chalk from 'chalk';
 
-const warnColor = chalk.keyword(`orange`);
-const infoColor = chalk.cyan;
-const errorColor = chalk.red;
-const debugColor = chalk.magenta;
-const titleBold = chalk.bold;
+type MessageTransformer = (msg: string) => string;
+
+const warnColor: MessageTransformer = chalk.keyword(`orange`);
+const infoColor: MessageTransformer = chalk.cyan;
+const errorColor: MessageTransformer = chalk.red;
+const debugColor: MessageTransformer = chalk.magenta;
+const titleBold: MessageTransformer = chalk.bold;
+
+function handleLazyMessage(lazyMessage: LazyLoggerMessage) {
+  if (typeof lazyMessage === 'function') {
+    return lazyMessage();
+  }
+  return lazyMessage;
+}
 
 export class DefaultLogger implements Logger {
   constructor(public name?: string) {}
@@ -27,8 +36,9 @@ export class DefaultLogger implements Logger {
     return this.log(errorColor(message));
   }
 
-  debug(message: string) {
+  debug(lazyMessage: LazyLoggerMessage) {
     if ((env.DEBUG && env.DEBUG === '1') || this.name.includes(env.DEBUG)) {
+      const message = handleLazyMessage(lazyMessage);
       return this.log(debugColor(message));
     }
   }

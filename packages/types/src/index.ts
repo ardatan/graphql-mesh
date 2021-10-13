@@ -129,13 +129,15 @@ export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVari
 export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
 export type SyncImportFn = <T = any>(moduleId: string) => T;
 
+export type LazyLoggerMessage = () => string;
+
 export type Logger = {
   name?: string;
   log: (message: string) => void;
   warn: (message: string) => void;
   info: (message: string) => void;
   error: (message: string) => void;
-  debug: (message: string) => void;
+  debug: (message: LazyLoggerMessage) => void;
   child: (name: string) => Logger;
 };
 
