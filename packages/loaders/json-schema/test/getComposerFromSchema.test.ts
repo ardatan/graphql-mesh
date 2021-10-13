@@ -525,15 +525,6 @@ type ExampleAnyOf {
     expect(result.input.getType()).toBe(GraphQLTime);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLTime);
   });
-  it('should return Date scalar for date format', async () => {
-    const inputSchema: JSONSchema = {
-      type: 'string',
-      format: 'date',
-    };
-    const result = await getComposerFromJSONSchema(inputSchema, logger);
-    expect(result.input.getType()).toBe(GraphQLDate);
-    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLDate);
-  });
   it('should return EmailAddress scalar for email format', async () => {
     const inputSchema: JSONSchema = {
       type: 'string',

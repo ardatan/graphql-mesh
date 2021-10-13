@@ -37,7 +37,8 @@
       "@graphql-mesh/transform-*": ["packages/transforms/*/src/index.ts"],
       "@graphql-mesh/merger-*": ["packages/mergers/*/src/index.ts"],
       "@graphql-mesh/*": ["packages/handlers/*/src/index.ts"],
-      "json-machete": ["packages/json-machete/src/index.ts"]
+      "json-machete": ["packages/json-machete/src/index.ts"],
+      "@omnigraph/*": ["packages/loaders/*/src/index.ts"]
     }
   },
   "include": ["./declarations.d.ts", "packages"],

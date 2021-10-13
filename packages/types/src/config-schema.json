@@ -891,12 +891,18 @@
         "operations": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/JsonSchemaOperation"
+            "description": "Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation",
+            "anyOf": [
+              {
+                "$ref": "#/definitions/JsonSchemaHTTPOperation"
+              },
+              {
+                "$ref": "#/definitions/JsonSchemaPubSubOperation"
+              }
+            ]
           },
-          "additionalItems": false
-        },
-        "disableTimestampScalar": {
-          "type": "boolean"
+          "additionalItems": false,
+          "description": "Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation"
         },
         "errorMessage": {
           "type": "string",
@@ -905,18 +911,12 @@
       },
       "required": ["operations"]
     },
-    "JsonSchemaOperation": {
+    "JsonSchemaHTTPOperation": {
       "additionalProperties": false,
       "type": "object",
-      "title": "JsonSchemaOperation",
+      "title": "JsonSchemaHTTPOperation",
       "properties": {
         "field": {
-          "type": "string"
-        },
-        "path": {
-          "type": "string"
-        },
-        "pubsubTopic": {
           "type": "string"
         },
         "description": {
@@ -926,11 +926,6 @@
           "type": "string",
           "enum": ["Query", "Mutation", "Subscription"],
           "description": "Allowed values: Query, Mutation, Subscription"
-        },
-        "method": {
-          "type": "string",
-          "enum": ["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"],
-          "description": "Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH"
         },
         "requestSchema": {
           "anyOf": [
@@ -1002,12 +997,112 @@
           "type": "object",
           "properties": {}
         },
+        "path": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"],
+          "description": "Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH"
+        },
         "headers": {
           "type": "object",
           "properties": {}
         }
       },
-      "required": ["field", "type"]
+      "required": ["field", "type", "path"]
+    },
+    "JsonSchemaPubSubOperation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaPubSubOperation",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["Query", "Mutation", "Subscription"],
+          "description": "Allowed values: Query, Mutation, Subscription"
+        },
+        "requestSchema": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "requestSample": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "requestTypeName": {
+          "type": "string"
+        },
+        "responseSchema": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "responseSample": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "responseTypeName": {
+          "type": "string"
+        },
+        "argTypeMap": {
+          "type": "object",
+          "properties": {}
+        },
+        "pubsubTopic": {
+          "type": "string"
+        }
+      },
+      "required": ["field", "type", "pubsubTopic"]
     },
     "MongooseHandler": {
       "additionalProperties": false,

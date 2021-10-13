@@ -10,7 +10,6 @@ type JsonSchemaHandler @md {
   operationHeaders: JSON
   schemaHeaders: JSON
   operations: [JsonSchemaOperation!]!
-  disableTimestampScalar: Boolean
   """
   Field name of your custom error object (default: 'message')
   """
@@ -35,13 +34,26 @@ enum JsonSchemaOperationMethod {
   PATCH
 }
 
-type JsonSchemaOperation {
+interface JsonSchemaBaseOperation {
   field: String!
-  path: String
-  pubsubTopic: String
   description: String
   type: JsonSchemaOperationType!
-  method: JsonSchemaOperationMethod
+
+  requestSchema: Any
+  requestSample: Any
+  requestTypeName: String
+
+  responseSchema: Any
+  responseSample: Any
+  responseTypeName: String
+
+  argTypeMap: JSON
+}
+
+type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
+  field: String!
+  description: String
+  type: JsonSchemaOperationType!
 
   requestSchema: Any
   requestSample: Any
@@ -53,5 +65,27 @@ type JsonSchemaOperation {
 
   argTypeMap: JSON
 
+  path: String!
+  method: JsonSchemaOperationMethod
   headers: JSON
 }
+
+type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {
+  field: String!
+  description: String
+  type: JsonSchemaOperationType!
+
+  requestSchema: Any
+  requestSample: Any
+  requestTypeName: String
+
+  responseSchema: Any
+  responseSample: Any
+  responseTypeName: String
+
+  argTypeMap: JSON
+
+  pubsubTopic: String!
+}
+
+union JsonSchemaOperation = JsonSchemaHTTPOperation | JsonSchemaPubSubOperation

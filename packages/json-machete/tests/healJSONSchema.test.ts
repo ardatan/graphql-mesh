@@ -52,4 +52,11 @@ describe('healJSONSchema', () => {
     const healedSchema = (await healJSONSchema(schema)) as JSONSchemaObject;
     expect(healedSchema.properties.foo.type).toBe('array');
   });
+  it('should add missing properties if required is provided but no properties', async () => {
+    const schema = {
+      required: ['foo'],
+    };
+    const healedSchema = (await healJSONSchema(schema)) as JSONSchemaObject;
+    expect(healedSchema.properties.foo).toBeDefined();
+  });
 });

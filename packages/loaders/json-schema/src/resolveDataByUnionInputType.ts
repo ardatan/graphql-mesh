@@ -15,11 +15,12 @@ export const resolveDataByUnionInputType = (data: any, type: GraphQLInputType, s
       const isOneOf = schemaComposer.getAnyTC(type).getDirectiveByName('oneOf');
       data = asArray(data)[0];
       for (const fieldName in data) {
-        if (isOneOf) {
-          return data[fieldName];
-        }
         const field = fieldMap[fieldName];
         if (field) {
+          if (isOneOf) {
+            const resolvedData = resolveDataByUnionInputType(data[fieldName], field.type, schemaComposer);
+            return resolvedData;
+          }
           data[fieldName] = resolveDataByUnionInputType(data[fieldName], field.type, schemaComposer);
         }
       }

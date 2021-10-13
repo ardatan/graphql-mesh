@@ -1,6 +1,6 @@
 {
-  "name": "@graphql-mesh/graphql",
-  "version": "0.18.17",
+  "name": "@omnigraph/json-schema",
+  "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -22,13 +22,24 @@
   "peerDependencies": {
     "graphql": "*"
   },
+  "devDependencies": {
+    "@types/to-json-schema": "0.2.1",
+    "@types/url-join": "4.0.1",
+    "@types/qs": "6.9.7"
+  },
   "dependencies": {
-    "@graphql-mesh/store": "0.1.17",
-    "@graphql-mesh/utils": "0.18.0",
+    "json-machete": "0.0.18",
     "@graphql-mesh/types": "0.52.0",
-    "@graphql-tools/url-loader": "7.2.0",
-    "@graphql-tools/wrap": "8.1.1",
-    "@graphql-tools/delegate": "8.2.3"
+    "@graphql-mesh/utils": "0.18.0",
+    "@graphql-tools/utils": "8.2.3",
+    "to-json-schema": "0.2.5",
+    "graphql-compose": "9.0.3",
+    "graphql-scalars": "1.10.1",
+    "cross-fetch": "3.1.4",
+    "ajv": "8.6.3",
+    "ajv-formats": "2.1.1",
+    "url-join": "4.0.1",
+    "qs": "6.10.1"
   },
   "publishConfig": {
     "access": "public",
