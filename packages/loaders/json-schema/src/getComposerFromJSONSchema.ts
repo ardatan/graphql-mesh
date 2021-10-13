@@ -281,11 +281,16 @@ export function getComposerFromJSONSchema(
         };
       }
       if (subSchema.const) {
-        const scalarType = new RegularExpression(getValidTypeName(false), new RegExp(subSchema.const), {
-          description: subSchema.description,
-          errorMessage: (_r, v: string) => `Expected ${subSchema.const} but got ${v.toString()}`,
+        const tsTypeName = JSON.stringify(subSchema.const);
+        const scalarTypeName = getValidTypeName(false);
+        const scalarType = new RegularExpression(scalarTypeName, new RegExp(subSchema.const), {
+          description: subSchema.description || `A field whose value is ${tsTypeName}`,
+          errorMessage: (_r, v: string) => `Expected ${tsTypeName} but got ${JSON.stringify(v)}`,
         });
-        const typeComposer = schemaComposer.getAnyTC(scalarType);
+        scalarType.extensions = {
+          codegenScalarType: tsTypeName,
+        };
+        const typeComposer = schemaComposer.get(scalarType);
         return {
           input: typeComposer,
           output: typeComposer,
