@@ -290,7 +290,7 @@ export function getComposerFromJSONSchema(
         scalarType.extensions = {
           codegenScalarType: tsTypeName,
         };
-        const typeComposer = schemaComposer.get(scalarType);
+        const typeComposer = schemaComposer.createScalarTC(scalarType);
         return {
           input: typeComposer,
           output: typeComposer,
