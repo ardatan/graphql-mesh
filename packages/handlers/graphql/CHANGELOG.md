@@ -1,5 +1,17 @@
 # @graphql-mesh/graphql
 
+## 0.18.17
+
+### Patch Changes
+
+- b03081079: fix(graphql): use the endpointFactory when fetching introspection results
+- Updated dependencies [4ec7a14ba]
+- Updated dependencies [811960cdc]
+- Updated dependencies [6f5ffe766]
+  - @graphql-mesh/utils@0.18.0
+  - @graphql-mesh/types@0.52.0
+  - @graphql-mesh/store@0.1.17
+
 ## 0.18.16
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-cache",
-  "version": "0.9.18",
+  "version": "0.9.19",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,8 +23,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.51.0",
-    "@graphql-mesh/utils": "0.17.2",
+    "@graphql-mesh/types": "0.52.0",
+    "@graphql-mesh/utils": "0.18.0",
     "date-fns": "2.25.0",
     "@graphql-tools/resolvers-composition": "6.4.0",
     "@graphql-tools/schema": "8.2.0",

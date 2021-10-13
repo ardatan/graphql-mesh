@@ -1,5 +1,19 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.12.0
+
+### Minor Changes
+
+- 6b09f8e49: Introduce input object field filtering to "bare" mode of filter-schema transform
+
+### Patch Changes
+
+- Updated dependencies [4ec7a14ba]
+- Updated dependencies [811960cdc]
+- Updated dependencies [6f5ffe766]
+  - @graphql-mesh/utils@0.18.0
+  - @graphql-mesh/types@0.52.0
+
 ## 0.11.6
 
 ### Patch Changes
