@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.52.0
+
+### Minor Changes
+
+- 811960cdc: feat(runtime): use factory functions for debug messages
+- 6f5ffe766: Add rename functionality to replace-field transform
+
 ## 0.51.0
 
 ### Minor Changes

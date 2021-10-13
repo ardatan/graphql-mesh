@@ -1,5 +1,18 @@
 # @graphql-mesh/utils
 
+## 0.18.0
+
+### Minor Changes
+
+- 4ec7a14ba: enhance: memoize parse/print document node
+- 811960cdc: feat(runtime): use factory functions for debug messages
+
+### Patch Changes
+
+- Updated dependencies [811960cdc]
+- Updated dependencies [6f5ffe766]
+  - @graphql-mesh/types@0.52.0
+
 ## 0.17.2
 
 ### Patch Changes
