@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 0.24.1
+
+### Patch Changes
+
+- 3a90e217e: Use bracket notation for handlers + transforms
+- Updated dependencies [6f57be0c1]
+  - @graphql-mesh/types@0.53.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.24
+  - @graphql-mesh/merger-bare@0.10.1
+  - @graphql-mesh/merger-stitching@0.13.1
+  - @graphql-mesh/runtime@0.23.1
+  - @graphql-mesh/utils@0.18.1
+  - @graphql-mesh/store@0.1.18
+
 ## 0.24.0
 
 ### Minor Changes
