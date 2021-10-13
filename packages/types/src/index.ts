@@ -129,7 +129,7 @@ export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVari
 export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
 export type SyncImportFn = <T = any>(moduleId: string) => T;
 
-export type LazyLoggerMessage = () => string;
+export type LazyLoggerMessage = (() => string) | string;
 
 export type Logger = {
   name?: string;

@@ -237,7 +237,7 @@ export function getPublishResolver<TSource, TContext, TArgs>({
     pubSubLogger.debug(() => `Message received: ${responseName}, ${typeOfResponse}, ${JSON.stringify(payload)}`);
 
     let responseBody;
-    let saneData;
+    let saneData: any;
 
     if (typeof payload === 'object') {
       if (typeOfResponse === 'object') {

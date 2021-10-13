@@ -4,7 +4,7 @@ import { SoapType, SoapOperationArg, SoapObjectType, SoapField } from '../soap2g
 import { inspect } from '@graphql-tools/utils';
 import { NodeSoapOperation } from './node-soap-endpoint';
 import { NodeSoapWsdl } from './node-soap';
-import { Logger } from '@graphql-mesh/types';
+import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
 // an content object ... basically a plain JS object
 type WsdlContent = { [key: string]: any };
@@ -47,8 +47,8 @@ export class NodeSoapWsdlResolver {
     this.logger.warn(message);
   }
 
-  debug(message: string): void {
-    this.logger.debug(() => message);
+  debug(message: LazyLoggerMessage): void {
+    this.logger.debug(message);
   }
 
   createOperationArgs(operation: NodeSoapOperation): SoapOperationArg[] {

@@ -2,7 +2,7 @@ import { SoapOperation } from '../soap2graphql/soap-endpoint';
 import { SoapCaller, SoapCallInput } from '../soap2graphql/soap-caller';
 import { NodeSoapClient } from './node-soap';
 import { inspect, promisify } from 'util';
-import { Logger } from '@graphql-mesh/types';
+import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
 /**
  * Default implementation of SoapCaller for node-soap.
@@ -67,7 +67,7 @@ export class NodeSoapCaller implements SoapCaller {
     }
   }
 
-  protected debug(message: string): void {
-    this.logger.debug(() => message);
+  protected debug(message: LazyLoggerMessage): void {
+    this.logger.debug(message);
   }
 }
