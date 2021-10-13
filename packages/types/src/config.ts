@@ -907,7 +907,6 @@ export interface TuqlHandler {
   infile?: string;
 }
 export interface Transform {
-  replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply caching for your data sources
    */
@@ -926,6 +925,7 @@ export interface Transform {
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
   rename?: RenameTransform | any;
+  replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
@@ -933,36 +933,6 @@ export interface Transform {
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
   [k: string]: any;
-}
-/**
- * Transformer to replace GraphQL field with partial of full config from a different field
- */
-export interface ReplaceFieldTransformConfig {
-  /**
-   * Additional type definition to used to replace field types
-   */
-  typeDefs?: any;
-  /**
-   * Array of rules to replace fields
-   */
-  replacements: ReplaceFieldTransformObject[];
-}
-export interface ReplaceFieldTransformObject {
-  from: ReplaceFieldConfig;
-  to: ReplaceFieldConfig1;
-  /**
-   * Allowed values: config, hoistValue
-   */
-  scope?: 'config' | 'hoistValue';
-  composer?: any;
-}
-export interface ReplaceFieldConfig {
-  type: string;
-  field: string;
-}
-export interface ReplaceFieldConfig1 {
-  type: string;
-  field: string;
 }
 export interface CacheTransformConfig {
   /**
@@ -1262,6 +1232,37 @@ export interface RenameConfig {
 export interface RenameConfig1 {
   type?: string;
   field?: string;
+}
+/**
+ * Transformer to replace GraphQL field with partial of full config from a different field
+ */
+export interface ReplaceFieldTransformConfig {
+  /**
+   * Additional type definition to used to replace field types
+   */
+  typeDefs?: any;
+  /**
+   * Array of rules to replace fields
+   */
+  replacements: ReplaceFieldTransformObject[];
+}
+export interface ReplaceFieldTransformObject {
+  from: ReplaceFieldConfig;
+  to: ReplaceFieldConfig1;
+  /**
+   * Allowed values: config, hoistValue
+   */
+  scope?: 'config' | 'hoistValue';
+  composer?: any;
+  name?: string;
+}
+export interface ReplaceFieldConfig {
+  type: string;
+  field: string;
+}
+export interface ReplaceFieldConfig1 {
+  type: string;
+  field: string;
 }
 export interface ResolversCompositionTransform {
   /**

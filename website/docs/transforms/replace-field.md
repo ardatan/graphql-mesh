@@ -52,7 +52,7 @@ As you can see you would have to request a GraphQL Document like the following, 
 }
 ```
 
-This is not ideal because you have to request `books` as a child `books`, so in this case hoisting the value from child to parent would lead to a cleaner schema and request Document.
+This is not ideal because you have to request `books` as a child of `books`, so in this case hoisting the value from child to parent would lead to a cleaner schema and request Document.
 
 To achieve this you can add the following configuration to your Mesh config file:
 
@@ -120,9 +120,9 @@ to:
   field: books
 ```
 
-To summarise the configuration above we want field `books` in type `Query` to be replaced from being of type `BooksApiResponse` to become type `[Book]`.
+To summarise, with the configuration above we want field `books` in type `Query` to be replaced from being of type `BooksApiResponse` to become type `[Book]`.
 
-Finally, since we no longer have any reference to type `BooksApiResponse` this becomes a loose type, and so the transform will purge it from the GraphQL schema.
+Finally, since we no longer have any reference to `BooksApiResponse` this becomes a loose type, and so the transform will purge it from the GraphQL schema.
 
 ## Transform scopes
 
@@ -135,7 +135,7 @@ We could say that the scope property could also take a `type` value, but since i
 
 ### scope: config
 
-When you pass `config: scope` the transform will replace the full field config.
+When you pass `scope: config` the transform will replace the full field config.
 A field config includes properties of the field such as description, type, args, resolve, subscribe, deprecationReason, extensions, astNode.
 
 As you can see this is very comprehensive as it includes things like arguments as well as the resolve and subscribe functions.
@@ -148,7 +148,7 @@ However, you should be careful in doing this when you fully understand the impli
 We have seen how `hoistValue` can be useful in the full example described in the "How to use?" paragraph.
 
 Once again, by default, the transform will replace the Type of the field only.
-When passing `scope: hoistValue` in addition to replacing the Type, the transform will wrap the resolver of the original field (source) with a function. This function intercepts the return value of the resolver to ultimately return only the direct child property that has the same name as the target field; hence performing value hoisting.
+When passing `scope: hoistValue` in addition to replacing the Type, the transform will wrap the resolve function of the original field (source) with an extra function. This function intercepts the return value of the resolver to ultimately return only the direct child property that has the same name as the target field; hence performing value hoisting.
 
 Taking into account the original schema shared above, originally `Query.books` would return a value like this:
 
@@ -217,7 +217,7 @@ type Author {
 Performing value hoisting or replacing the full field config is powerful, but it might not always fully satisfy custom needs.
 For instance, if you applied transforms to the bare schema (such as field renaming) the built-in value hoisting functionality won't work, because you'd need to hoist the child property provided by the original schema, and not the renamed version.
 
-The transform allows you to assign composers to each replace rule, which lets you define your custom logic on top of resolve functions.
+The transform allows you to assign composers to each replace rule, which lets you define your custom logic on top of fields' resolve functions.
 
 A composer is a function that wraps the resolve function, giving you access to this before it is executed. You can then intercept its output value so that finally you can also define a custom return value.
 
@@ -239,7 +239,7 @@ transforms:
           to:
             type: NewBook
             field: isAvailable
-          composer: ./customResolvers.js#isAvailable
+          composer: ./customComposers.js#isAvailable
 ```
 
 ```js
@@ -247,7 +247,7 @@ transforms:
 
 module.exports = {
   isAvailable: next => async (root, args, context, info) => {
-    // 'next' is the original resolve function
+    // 'next' is the field resolve function
     const code = await next(root, args, context, info);
     return Boolean(code);
   },
@@ -256,9 +256,14 @@ module.exports = {
 
 Now our `code` field will return a Boolean as per custom logic implemented through the javascript function above.
 
-We probably want to finish this up with an extra touch to rename the field `code` to `isAvailable`, even though that's a detail beyond the scope of the replace field transform.
 
-Let's wrap this up:
+## Renaming fields
+
+If we continue to elaborate from what we did above, when attaching composers to field resolvers to implement custom logic; it seems logical that a field that has been changed in Type and so return value, even with the addition of custom logic, has certainly evolved from the original field and so it would probably be best to rename it.
+
+Replace-field transform allows you to do that directly as part of the replacements rules; you just need to pass the `name` property to define a new name for your target field.
+
+Let's wrap this up by adding a finishing touch to our schema:
 
 ```yml
 transforms:
@@ -282,15 +287,7 @@ transforms:
             type: NewBook
             field: isAvailable
           composer: ./customResolvers.js#isAvailable
-    - rename:
-      mode: bare | wrap
-      renames:
-        - from:
-            type: Book
-            field: code
-          to:
-            type: Book
-            field: isAvailable
+          name: isAvailable
 ```
 
 And now we have the following shiny GraphQL schema:

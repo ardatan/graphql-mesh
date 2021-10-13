@@ -1,23 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`replace-field should replace correctly field Type with additional type definitions 1`] = `
+exports[`replace-field applies multiple replaces to obtain a cleaner schema 1`] = `
 "type Query {
   books: [Book]
 }
 
 type Book {
   title: String!
-  author: Author!
-}
-
-type Author {
-  name: String!
-  age: String
+  author: String!
+  isAvailable: Boolean
 }
 "
 `;
 
-exports[`replace-field should replace correctly field with resolver function 1`] = `
+exports[`replace-field should replace correctly field Type only 1`] = `
 "type Query {
   books: [Book]
 }
@@ -25,6 +21,7 @@ exports[`replace-field should replace correctly field with resolver function 1`]
 type Book {
   title: String!
   author: Author!
+  code: String
 }
 
 type Author {
@@ -34,23 +31,25 @@ type Author {
 "
 `;
 
-exports[`replace-field should replace correctly field without resolver function 1`] = `
+exports[`replace-field should replace correctly field Type with additional type definitions 1`] = `
 "type Query {
-  books: BooksApiResponse
-}
-
-type BooksApiResponse {
   books: [Book]
 }
 
 type Book {
   title: String!
-  author: String!
+  author: Author!
+  code: String
+}
+
+type Author {
+  name: String!
+  age: String
 }
 "
 `;
 
-exports[`replace-field should replace correctly mtultiple fields with and without resolver function 1`] = `
+exports[`replace-field should replace correctly mtultiple fields with hoistValue and defined resolver function as well as default-field-resolver 1`] = `
 "type Query {
   books: [Book]
 }
@@ -58,6 +57,26 @@ exports[`replace-field should replace correctly mtultiple fields with and withou
 type Book {
   title: String!
   author: String!
+  code: String
+}
+"
+`;
+
+exports[`replace-field should replace correctly whole field config 1`] = `
+"type Query {
+  \\"\\"\\"Retrieve a list of Books\\"\\"\\"
+  books(maxResults: Int, orderBy: String): [Book]
+}
+
+type Book {
+  title: String!
+  author: Author!
+  code: String
+}
+
+type Author {
+  name: String!
+  age: Int!
 }
 "
 `;
