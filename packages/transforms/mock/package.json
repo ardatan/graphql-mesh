@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-mock",
-  "version": "0.10.19",
+  "version": "0.10.20",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

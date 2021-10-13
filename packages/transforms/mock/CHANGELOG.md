@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-mock
 
+## 0.10.20
+
+### Patch Changes
+
+- 963e064f0: chore: update scalars to support included codegen support
+
 ## 0.10.19
 
 ### Patch Changes
