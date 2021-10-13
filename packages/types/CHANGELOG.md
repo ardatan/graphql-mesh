@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.53.0
+
+### Minor Changes
+
+- 6f57be0c1: feat(json-schema): expose GraphQL Tools loader compatible with loadSchema
+
 ## 0.52.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -23,13 +23,13 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.5.23",
-    "@graphql-mesh/merger-bare": "0.10.0",
-    "@graphql-mesh/merger-stitching": "0.13.0",
-    "@graphql-mesh/runtime": "0.23.0",
-    "@graphql-mesh/types": "0.52.0",
-    "@graphql-mesh/store": "0.1.17",
-    "@graphql-mesh/utils": "0.18.0",
+    "@graphql-mesh/cache-inmemory-lru": "0.5.24",
+    "@graphql-mesh/merger-bare": "0.10.1",
+    "@graphql-mesh/merger-stitching": "0.13.1",
+    "@graphql-mesh/runtime": "0.23.1",
+    "@graphql-mesh/types": "0.53.0",
+    "@graphql-mesh/store": "0.1.18",
+    "@graphql-mesh/utils": "0.18.1",
     "@graphql-tools/merge": "8.1.2",
     "@graphql-tools/utils": "8.3.0",
     "@graphql-tools/load": "7.3.2",
