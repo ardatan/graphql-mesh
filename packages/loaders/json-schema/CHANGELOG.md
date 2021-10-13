@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.1.2
+
+### Patch Changes
+
+- 47c4fb402: fix(json-schema): correct TS type for const scalars
+
 ## 0.1.1
 
 ### Patch Changes
