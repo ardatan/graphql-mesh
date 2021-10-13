@@ -112,12 +112,12 @@ export default class GraphQLHandler implements MeshHandler {
       schemaHeaders = await schemaHeaders;
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
+    const endpointFactory = getInterpolatedStringFactory(endpoint);
     async function introspectionExecutor(params: ExecutionRequest) {
-      const executor = await getExecutorForParams(params, schemaHeadersFactory, () => endpoint);
+      const executor = await getExecutorForParams(params, schemaHeadersFactory, endpointFactory);
       return executor(params);
     }
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
-    const endpointFactory = getInterpolatedStringFactory(endpoint);
 
     const nonExecutableSchema = await this.nonExecutableSchema.getWithSet(async () => {
       const schemaFromIntrospection = await (introspection
