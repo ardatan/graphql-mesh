@@ -271,28 +271,21 @@ export function getComposerFromJSONSchema(
         };
       };
       if (subSchema.pattern) {
-        const typeComposer = schemaComposer.createScalarTC({
-          ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.pattern), {
-            description: subSchema.description,
-          }),
-          extensions: {
-            codegenScalarType: 'string',
-          },
+        const scalarType = new RegularExpression(getValidTypeName(false), new RegExp(subSchema.pattern), {
+          description: subSchema.description,
         });
+        const typeComposer = schemaComposer.getAnyTC(scalarType);
         return {
           input: typeComposer,
           output: typeComposer,
         };
       }
       if (subSchema.const) {
-        const typeComposer = schemaComposer.createScalarTC({
-          ...new RegularExpression(getValidTypeName(false), new RegExp(subSchema.const), {
-            description: subSchema.description,
-          }),
-          extensions: {
-            codegenScalarType: `'${subSchema.const}'`,
-          },
+        const scalarType = new RegularExpression(getValidTypeName(false), new RegExp(subSchema.const), {
+          description: subSchema.description,
+          errorMessage: (_r, v: string) => `Expected ${subSchema.const} but got ${v.toString()}`,
         });
+        const typeComposer = schemaComposer.getAnyTC(scalarType);
         return {
           input: typeComposer,
           output: typeComposer,
