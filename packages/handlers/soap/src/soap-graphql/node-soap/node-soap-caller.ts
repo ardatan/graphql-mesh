@@ -11,7 +11,7 @@ export class NodeSoapCaller implements SoapCaller {
   constructor(protected soapClient: NodeSoapClient, protected logger: Logger) {}
 
   async call(input: SoapCallInput): Promise<any> {
-    this.debug(`call operation '${input.operation.name()}' with args '${inspect(input.graphqlArgs, false, 5)}'`);
+    this.debug(() => `call operation '${input.operation.name()}' with args '${inspect(input.graphqlArgs, false, 5)}'`);
 
     const requestFunction = promisify(this.requestFunctionForOperation(input.operation), this);
 
@@ -57,7 +57,7 @@ export class NodeSoapCaller implements SoapCaller {
   }
 
   protected async createGraphqlResult(input: SoapCallInput, result: any): Promise<any> {
-    this.debug(`operation '${input.operation.name()}' returned '${inspect(result, false, 5)}'`);
+    this.debug(() => `operation '${input.operation.name()}' returned '${inspect(result, false, 5)}'`);
 
     if (!input.operation.resultField()) {
       // void operation
@@ -68,6 +68,6 @@ export class NodeSoapCaller implements SoapCaller {
   }
 
   protected debug(message: string): void {
-    this.logger.debug(message);
+    this.logger.debug(() => message);
   }
 }

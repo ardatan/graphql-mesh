@@ -35,14 +35,14 @@ export default class Neo4JHandler implements MeshHandler {
         },
       });
       this.pubsub.subscribe('destroy', () => {
-        this.logger.debug('Closing Neo4j');
+        this.logger.debug(() => 'Closing Neo4j');
         this.driver
           .close()
           .then(() => {
-            this.logger.debug('Neo4j has been closed');
+            this.logger.debug(() => 'Neo4j has been closed');
           })
           .catch(error => {
-            this.logger.debug(`Neo4j couldn't be closed: ${error.message}`);
+            this.logger.debug(() => `Neo4j couldn't be closed: ${error.message}`);
           });
       });
     }

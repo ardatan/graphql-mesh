@@ -137,7 +137,7 @@ export function handleWarning<TSource, TContext, TArgs>({
     throw new Error(`${warning.type} - ${warning.message}`);
   } else {
     const output = `Warning: ${warning.message} - ${warning.mitigation}`;
-    logger.debug(output);
+    logger.debug(() => output);
     data.options.report.warnings.push(warning);
   }
 }

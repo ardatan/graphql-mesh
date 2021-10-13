@@ -204,7 +204,8 @@ export default class OpenAPIHandler implements MeshHandler {
           searchParamsFactory(resolverData, urlObj.searchParams);
         } else {
           this.logger.debug(
-            `Warning: There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
+            () =>
+              `Warning: There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
           );
         }
 

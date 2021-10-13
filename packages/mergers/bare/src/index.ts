@@ -37,12 +37,12 @@ export default class BareMerger implements MeshMerger {
       });
     }
     if (typeDefs || resolvers) {
-      this.logger.debug(`Applying additionalTypeDefs`);
+      this.logger.debug(() => `Applying additionalTypeDefs`);
       typeDefs?.forEach(typeDef => {
         schema = extendSchema(schema, typeDef);
       });
       if (resolvers) {
-        this.logger.debug(`Applying additionalResolvers`);
+        this.logger.debug(() => `Applying additionalResolvers`);
         for (const resolversObj of asArray(resolvers)) {
           schema = addResolversToSchema({
             schema,

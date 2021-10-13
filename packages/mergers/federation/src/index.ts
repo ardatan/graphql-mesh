@@ -30,7 +30,7 @@ export default class FederationMerger implements MeshMerger {
   }
 
   async getUnifiedSchema({ rawSources, typeDefs, resolvers, transforms }: MeshMergerContext) {
-    this.logger.debug(`Creating localServiceList for gateway`);
+    this.logger.debug(() => `Creating localServiceList for gateway`);
     const rawSourceMap = new Map<string, RawSourceOutput>();
     const localServiceList: { name: string; typeDefs: DocumentNode }[] = [];
     const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
@@ -42,7 +42,7 @@ export default class FederationMerger implements MeshMerger {
         const sdl = await this.store
           .proxy(`${rawSource.name}_sdl`, PredefinedProxyOptions.StringWithoutValidation)
           .getWithSet(async () => {
-            this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
+            this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${rawSource.name}`);
             const sdlQueryResult = await execute({
               schema: transformedSchema,
               document: parse(SERVICE_DEFINITION_QUERY),
@@ -58,12 +58,12 @@ export default class FederationMerger implements MeshMerger {
         });
       })
     );
-    this.logger.debug(`Creating ApolloGateway`);
+    this.logger.debug(() => `Creating ApolloGateway`);
     const rootValue = {};
     const gateway = new ApolloGateway({
       localServiceList,
       buildService: ({ name }) => {
-        this.logger.debug(`Building federation service: ${name}`);
+        this.logger.debug(() => `Building federation service: ${name}`);
         const rawSource = rawSourceMap.get(name);
         const transformedSchema = sourceMap.get(rawSource);
         const jitExecute = jitExecutorFactory(transformedSchema, name, this.logger.child('JIT Executor'));
@@ -91,11 +91,11 @@ export default class FederationMerger implements MeshMerger {
       debug: !!env.DEBUG,
       serviceHealthCheck: true,
     });
-    this.logger.debug(`Loading gateway`);
+    this.logger.debug(() => `Loading gateway`);
     const { schema, executor: gatewayExecutor } = await gateway.load();
     const schemaHash: any = hashObject({ schema });
     let remoteSchema: GraphQLSchema = schema;
-    this.logger.debug(`Wrapping gateway executor in a unified schema`);
+    this.logger.debug(() => `Wrapping gateway executor in a unified schema`);
     remoteSchema = wrapSchema({
       schema: remoteSchema,
       executor: ({ document, info, variables, context, operationName }): any => {
@@ -125,12 +125,12 @@ export default class FederationMerger implements MeshMerger {
       batch: true,
     });
     this.pubsub.subscribe('destroy', () => gateway.stop());
-    this.logger.debug(`Applying additionalTypeDefs`);
+    this.logger.debug(() => `Applying additionalTypeDefs`);
     typeDefs?.forEach(typeDef => {
       remoteSchema = extendSchema(remoteSchema, typeDef);
     });
     if (resolvers) {
-      this.logger.debug(`Applying additionalResolvers`);
+      this.logger.debug(() => `Applying additionalResolvers`);
       for (const resolversObj of asArray(resolvers)) {
         remoteSchema = addResolversToSchema({
           schema: remoteSchema,
@@ -140,14 +140,14 @@ export default class FederationMerger implements MeshMerger {
       }
     }
     if (transforms?.length) {
-      this.logger.debug(`Applying root level transforms`);
+      this.logger.debug(() => `Applying root level transforms`);
       remoteSchema = wrapSchema({
         schema: remoteSchema,
         transforms,
         batch: true,
       });
     }
-    this.logger.debug(`Attaching sourceMap to the unified schema`);
+    this.logger.debug(() => `Attaching sourceMap to the unified schema`);
     remoteSchema.extensions = remoteSchema.extensions || {};
     Object.defineProperty(remoteSchema.extensions, 'sourceMap', {
       get: () => sourceMap,
