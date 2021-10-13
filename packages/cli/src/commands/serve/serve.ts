@@ -8,7 +8,7 @@ import { playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import cors from 'cors';
-import { loadFromModuleExportExpression, parseWithCache, pathExists } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, parseWithCache, pathExists, stringInterpolator } from '@graphql-mesh/utils';
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -216,7 +216,12 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
               payload = _.get(payload, handlerConfig.payload);
               handlerLogger.debug(`Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
             }
-            req['pubsub'].publish(handlerConfig.pubsubTopic, payload);
+            const pubsubTopic = stringInterpolator.parse(handlerConfig.pubsubTopic, {
+              req,
+              res,
+              payload,
+            });
+            req['pubsub'].publish(pubsubTopic, payload);
             handlerLogger.debug(`Payload sent to ${handlerConfig.pubsubTopic}`);
             res.end();
           };
