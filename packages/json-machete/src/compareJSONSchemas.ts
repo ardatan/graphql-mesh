@@ -58,7 +58,7 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
 
         if (oldSubSchema.properties) {
           for (const propertyName in oldSubSchema.properties) {
-            if (!(propertyName in newSubSchema?.properties)) {
+            if (!(newSubSchema?.properties?.[propertyName])) {
               breakingChanges.push(`${path}/properties doesn't have ${propertyName}`);
             }
           }
