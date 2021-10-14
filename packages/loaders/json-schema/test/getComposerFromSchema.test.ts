@@ -23,7 +23,6 @@ import {
 import { JSONSchema } from '@json-schema-tools/meta-schema';
 import {
   GraphQLBigInt,
-  GraphQLDate,
   GraphQLDateTime,
   GraphQLEmailAddress,
   GraphQLIPv4,
