@@ -198,13 +198,18 @@ export async function generateTsArtifacts({
             if (importPath.startsWith('.')) {
               importPath = join(baseDir, importPath);
             }
+
             if (isAbsolute(importPath)) {
               moduleMapProp = relative(baseDir, importedModuleName).split('\\').join('/');
               importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
             }
+
             const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
-            importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
-            return `  // @ts-ignore\n  [${JSON.stringify(moduleMapProp)}]: ${importedModuleVariable}`;
+            importCodes.push(`import * as ${importedModuleVariable} from '${importPath}';`);
+
+            return `  // @ts-ignore\n  [${JSON.stringify(
+              moduleMapProp
+            )}]: ${importedModuleVariable}['default'] || ${importedModuleVariable}`;
           });
 
           const meshMethods = `
