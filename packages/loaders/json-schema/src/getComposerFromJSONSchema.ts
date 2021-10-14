@@ -4,11 +4,13 @@ import {
   camelCase,
   EnumTypeComposerValueConfigDefinition,
   GraphQLJSON,
+  InputTypeComposerFieldConfigAsObjectDefinition,
   InputTypeComposerFieldConfigMap,
   isSomeInputTypeComposer,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
   ObjectTypeComposerFieldConfigMap,
+  ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
 } from 'graphql-compose';
@@ -633,8 +635,8 @@ export function getComposerFromJSONSchema(
             };
           }
         case 'object':
-          const fieldMap: any = {};
-          let inputFieldMap: any = {};
+          const fieldMap: ObjectTypeComposerFieldConfigMapDefinition<any, any> = {};
+          let inputFieldMap: Record<string, InputTypeComposerFieldConfigAsObjectDefinition & { type: any }> = {};
           if (subSchema.properties) {
             subSchema.type = 'object';
             for (const propertyName in subSchema.properties) {
@@ -643,17 +645,24 @@ export function getComposerFromJSONSchema(
                 continue;
               }
               const typeComposers = subSchema.properties[propertyName];
-              fieldMap[propertyName] = {
+              const fieldName = sanitizeNameForGraphQL(propertyName);
+              fieldMap[fieldName] = {
                 type: () =>
                   subSchema.required?.includes(propertyName)
                     ? typeComposers.output.getTypeNonNull()
                     : typeComposers.output,
+                // Make sure you get the right property
+                resolve: root => root[propertyName],
               };
-              inputFieldMap[propertyName] = {
+              inputFieldMap[fieldName] = {
                 type: () =>
                   subSchema.required?.includes(propertyName)
                     ? typeComposers.input?.getTypeNonNull()
                     : typeComposers.input,
+                // Let execution logic know what is the expected propertyName
+                extensions: {
+                  propertyName,
+                },
               };
             }
           }
@@ -771,7 +780,9 @@ export function getComposerFromJSONSchema(
             output,
           };
       }
-      logger.warn(`GraphQL Type cannot be created for this JSON Schema definition: ${inspect({ subSchema, path })}`);
+      logger.warn(`GraphQL Type cannot be created for this JSON Schema definition;
+subSchema: ${inspect(subSchema)}
+path: ${inspect(path)}`);
       const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
       return {
         input: typeComposer,
