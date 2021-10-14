@@ -294,7 +294,7 @@ export async function processConfig(
         )}';`
       );
       codes.push(
-        `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
+        `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}['resolvers'] || additionalResolvers$${additionalResolverDefinitionIndex}['default'] || additionalResolvers$${additionalResolverDefinitionIndex})`
       );
     } else {
       codes.push(
