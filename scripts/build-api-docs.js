@@ -169,7 +169,7 @@ sidebar_label: "${id}"
   }
 
   function convertNameToId(name) {
-    return name.replace(`@${MONOREPO}/`, '');
+    return name.replace(`@${MONOREPO}/`, '').replace('/', '_');
   }
 
   function getSidebarItemsByDirectory(dirName) {
