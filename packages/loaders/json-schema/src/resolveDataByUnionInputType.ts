@@ -1,6 +1,7 @@
 import { GraphQLInputType, isListType, isNonNullType, isInputObjectType } from 'graphql';
 import { asArray } from '@graphql-tools/utils';
 import { SchemaComposer } from 'graphql-compose';
+import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 
 export const resolveDataByUnionInputType = (data: any, type: GraphQLInputType, schemaComposer: SchemaComposer): any => {
   if (data) {
@@ -14,7 +15,8 @@ export const resolveDataByUnionInputType = (data: any, type: GraphQLInputType, s
       const fieldMap = type.getFields();
       const isOneOf = schemaComposer.getAnyTC(type).getDirectiveByName('oneOf');
       data = asArray(data)[0];
-      for (const fieldName in data) {
+      for (const propertyName in data) {
+        const fieldName = sanitizeNameForGraphQL(propertyName);
         const field = fieldMap[fieldName];
         if (field) {
           if (isOneOf) {

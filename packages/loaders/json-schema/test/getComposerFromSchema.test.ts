@@ -33,6 +33,8 @@ import {
   GraphQLVoid,
 } from 'graphql-scalars';
 import { DefaultLogger } from '@graphql-mesh/utils';
+import { JSONSchemaObject } from 'packages/json-machete/src/types';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('getComposerFromJSONSchema', () => {
   const logger = new DefaultLogger('getComposerFromJSONSchema - test');
@@ -111,12 +113,12 @@ enum ExampleEnum {
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as EnumTypeComposer;
     expect(outputComposer.toSDL()).toMatchInlineSnapshot(`
-"enum ExampleEnum {
-  _0_MINUS_foo
-  _1_PLUS_bar
-  _2_RIGHT_PARENTHESIS_qux
-}"
-`);
+      "enum ExampleEnum {
+        _0_MINUS_foo
+        _1_PLUS_bar
+        _2_RIGHT_PARENTHESIS_qux
+      }"
+    `);
   });
   it('should generate union types from oneOf object types', async () => {
     const inputSchema: JSONSchema = {
@@ -939,23 +941,23 @@ input Foo_Input {
     const enumTypeComposer = output as EnumTypeComposer;
     const enumValuesMap = enumTypeComposer.getFields();
     expect(enumValuesMap).toMatchInlineSnapshot(`
-Object {
-  "NEGATIVE_1": Object {
-    "deprecationReason": undefined,
-    "description": undefined,
-    "directives": Array [],
-    "extensions": Object {},
-    "value": -1,
-  },
-  "_1": Object {
-    "deprecationReason": undefined,
-    "description": undefined,
-    "directives": Array [],
-    "extensions": Object {},
-    "value": 1,
-  },
-}
-`);
+      Object {
+        "NEGATIVE_1": Object {
+          "deprecationReason": undefined,
+          "description": undefined,
+          "directives": Array [],
+          "extensions": Object {},
+          "value": -1,
+        },
+        "_1": Object {
+          "deprecationReason": undefined,
+          "description": undefined,
+          "directives": Array [],
+          "extensions": Object {},
+          "value": 1,
+        },
+      }
+    `);
   });
   it('should handle strings with non-latin characters', async () => {
     const FooEnum = {
@@ -985,6 +987,93 @@ Object {
           "value": "לא",
         },
       }
+    `);
+  });
+  it('should handle invalid property names', async () => {
+    const jsonSchema: JSONSchemaObject = {
+      type: 'object',
+      title: '_schema',
+      properties: {
+        query: {
+          type: 'object',
+          title: 'Query',
+          properties: {
+            foo: {
+              type: 'object',
+              title: 'Foo',
+              properties: {
+                '0Bar': {
+                  type: 'object',
+                  title: 'Bar',
+                  properties: {
+                    barId: {
+                      type: 'string',
+                    },
+                  },
+                },
+                '1Baz': {
+                  type: 'object',
+                  title: 'Baz',
+                  properties: {
+                    bazId: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        queryInput: {
+          type: 'object',
+          title: 'QueryInput',
+          properties: {
+            foo: {
+              type: 'object',
+              title: 'Foo_Input',
+              properties: {
+                '0BarId': {
+                  type: 'string',
+                },
+                '1BazId': {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema(jsonSchema, logger);
+    expect(output instanceof SchemaComposer).toBeTruthy();
+    const schema = (output as SchemaComposer).buildSchema();
+    expect(printSchemaWithDirectives(schema)).toMatchInlineSnapshot(`
+      "schema {
+        query: Query
+      }
+
+      type Query {
+        foo(input: Foo_Input_Input): Foo
+      }
+
+      type Foo {
+        _0Bar: Bar
+        _1Baz: Baz
+      }
+
+      type Bar {
+        barId: String
+      }
+
+      type Baz {
+        bazId: String
+      }
+
+      input Foo_Input_Input {
+        _0BarId: String
+        _1BazId: String
+      }
+      "
     `);
   });
 });
