@@ -192,8 +192,8 @@ export async function generateTsArtifacts({
               importPath = join(baseDir, importPath);
             }
             if (isAbsolute(importPath)) {
-              moduleMapProp = relative(baseDir, importedModuleName).split('\\').join('/');
-              importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
+              moduleMapProp = relative(baseDir, importPath).split('\\').join('/');
+              importPath = `./${relative(artifactsDir, importPath).split('\\').join('/')}`;
             }
             const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
             importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
