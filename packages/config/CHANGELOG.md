@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.24.2
+
+### Patch Changes
+
+- f04d44327: fix(config): fix build
+
 ## 0.24.1
 
 ### Patch Changes
