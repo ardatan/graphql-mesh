@@ -22,11 +22,13 @@ You can also point to a specific directory which contains the source files (`.me
 mesh dev --dir some/path/to-configuration/
 ```
 
-GraphQL Mesh's HTTP Server can be configured using `serve` command like below;
+GraphQL Mesh's HTTP Server can be configured by setting the `serve` object in `.meshrc.yaml` like below:
 
 ```yaml
 serve:
     port: 5000
+    browser: false
+    playground: false
 ```
 
 {@import ../generated-markdown/ServeConfig.generated.md}
