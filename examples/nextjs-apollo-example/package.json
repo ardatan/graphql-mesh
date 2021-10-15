@@ -8,7 +8,7 @@
     "prebuild": "yarn build:mesh",
     "build": "next build",
     "start:prod": "next start",
-    "mesh:build": "mesh build --dir ./server/"
+    "build:mesh": "mesh build --dir ./server/"
   },
   "dependencies": {
     "@graphql-mesh/cli": "^0.42.0",
