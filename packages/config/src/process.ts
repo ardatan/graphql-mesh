@@ -145,7 +145,7 @@ export async function processConfig(
               importCodes.push(`import ${handlerImportName} from '${moduleName}'`);
               codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
               name: rawConfig.sources[${sourceIndex}].name,
-              config: rawConfig.sources[${sourceIndex}].handler['${handlerName}']',
+              config: rawConfig.sources[${sourceIndex}].handler[${JSON.stringify(handlerName)}],
               baseDir,
               cache,
               pubsub,
@@ -181,7 +181,9 @@ export async function processConfig(
               codes.push(`${transformsVariableName}.push(
                 new ${transformImportName}({
                   apiName: rawConfig.sources[${sourceIndex}].name,
-                  config: rawConfig.sources[${sourceIndex}].transforms[${transformIndex}]['${transformName}']',
+                  config: rawConfig.sources[${sourceIndex}].transforms[${transformIndex}][${JSON.stringify(
+                transformName
+              )}],
                   baseDir,
                   cache,
                   pubsub,
@@ -231,7 +233,7 @@ export async function processConfig(
         codes.push(`transforms.push(
           new ${transformImportName}({
             apiName: '',
-            config: rawConfig.transforms[${transformIndex}]['${transformName}']',
+            config: rawConfig.transforms[${transformIndex}][${JSON.stringify(transformName)}],
             baseDir,
             cache,
             pubsub,
