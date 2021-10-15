@@ -5067,6 +5067,11 @@
   resolved "https://registry.yarnpkg.com/@types/html-minifier-terser/-/html-minifier-terser-5.1.1.tgz#3c9ee980f1a10d6021ae6632ca3e79ca2ec4fb50"
   integrity sha512-giAlZwstKbmvMk1OO7WXSj4OZ0keXAcl2TQq4LWHiiPH2ByaH7WeUzng+Qej8UPxxv+8lRTuouo0iaNDBuzIBA==
 
+"@types/html-minifier-terser@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@types/html-minifier-terser/-/html-minifier-terser-6.0.0.tgz#563c1c6c132cd204e71512f9c0b394ff90d3fae7"
+  integrity sha512-NZwaaynfs1oIoLAV1vg18e7QMVDvw+6SQrdJc8w3BwUaoroVSf6EBj/Sk4PBWGxsq0dzhA2drbsuMC1/6C6KgQ==
+
 "@types/http-assert@*":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
@@ -8501,10 +8506,10 @@ clean-css@^4.2.3:
   dependencies:
     source-map "~0.6.0"
 
-clean-css@^5.1.2:
-  version "5.1.3"
-  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-5.1.3.tgz#42348778c3acb0083946ba340896802be5517ee2"
-  integrity sha512-qGXzUCDpLwAlPx0kYeU4QXjzQIcIYZbJjD4FNm7NnSjoP0hYMVZhHOpUYJ6AwfkMX2cceLRq54MeCgHy/va1cA==
+clean-css@^5.1.2, clean-css@^5.1.5:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-5.2.1.tgz#e5bdb1bee5f332c67e98cb6181251d4f88c0a6ab"
+  integrity sha512-ooQCa1/70oRfVdUUGjKpbHuxgMgm8BsDT5EBqBGvPxMoRoGXf4PNx5mMnkjzJ9Ptx4vvmDdha0QVh86QtYIk1g==
   dependencies:
     source-map "~0.6.0"
 
@@ -8823,7 +8828,7 @@ commander@^7.0.0, commander@^7.1.0, commander@^7.2.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
   integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
 
-commander@^8.2.0:
+commander@^8.1.0, commander@^8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-8.2.0.tgz#37fe2bde301d87d47a53adeff8b5915db1381ca8"
   integrity sha512-LLKxDvHeL91/8MIyTAD5BFMNtoIwztGPMiM/7Bl8rIPmHCZXRxmSWr91h57dpOpnQ6jIUqEWdXE/uBYMfiVZDA==
@@ -13108,6 +13113,19 @@ html-minifier-terser@^5.0.1, html-minifier-terser@^5.1.1:
     relateurl "^0.2.7"
     terser "^4.6.3"
 
+html-minifier-terser@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/html-minifier-terser/-/html-minifier-terser-6.0.2.tgz#14059ad64b69bf9f8b8a33f25b53411d8321e75d"
+  integrity sha512-AgYO3UGhMYQx2S/FBJT3EM0ZYcKmH6m9XL9c1v77BeK/tYJxGPxT1/AtsdUi4FcP8kZGmqqnItCcjFPcX9hk6A==
+  dependencies:
+    camel-case "^4.1.2"
+    clean-css "^5.1.5"
+    commander "^8.1.0"
+    he "^1.2.0"
+    param-case "^3.0.4"
+    relateurl "^0.2.7"
+    terser "^5.7.2"
+
 html-tags@^1.0.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-1.2.0.tgz#c78de65b5663aa597989dd2b7ab49200d7e4db98"
@@ -13147,13 +13165,13 @@ html-webpack-plugin@4.5.0:
     tapable "^1.1.3"
     util.promisify "1.0.0"
 
-html-webpack-plugin@5.3.2, html-webpack-plugin@^5.3.1:
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-5.3.2.tgz#7b04bf80b1f6fe84a6d3f66c8b79d64739321b08"
-  integrity sha512-HvB33boVNCz2lTyBsSiMffsJ+m0YLIQ+pskblXgN9fnjS1BgEcuAfdInfXfGrkdXV406k9FiDi86eVCDBgJOyQ==
+html-webpack-plugin@5.4.0, html-webpack-plugin@^5.3.1:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-5.4.0.tgz#d016cd9594be5c243bb5c12287af43babbe1c094"
+  integrity sha512-cSUdckNOIqKc0nOrCJG7zkvzEIUcXjzEiVbKdEdIzW3BD5T4xPK6boV1mrTrPDZiL+aAr/j45eqbNL1akU2ZRA==
   dependencies:
-    "@types/html-minifier-terser" "^5.0.0"
-    html-minifier-terser "^5.0.1"
+    "@types/html-minifier-terser" "^6.0.0"
+    html-minifier-terser "^6.0.2"
     lodash "^4.17.21"
     pretty-error "^3.0.4"
     tapable "^2.0.0"
@@ -21949,10 +21967,10 @@ source-map-resolve@^0.6.0:
     atob "^2.1.2"
     decode-uri-component "^0.2.0"
 
-source-map-support@^0.5.17, source-map-support@^0.5.6, source-map-support@~0.5.12, source-map-support@~0.5.19:
-  version "0.5.19"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.19.tgz#a98b62f86dcaf4f67399648c085291ab9e8fed61"
-  integrity sha512-Wonm7zOCIJzBGQdB+thsPar0kYuCIzYvxZwlBa87yi/Mdjv7Tip2cyVbLj5o0cFPN4EVkuTwb3GDDyUx2DGnGw==
+source-map-support@^0.5.17, source-map-support@^0.5.6, source-map-support@~0.5.12, source-map-support@~0.5.20:
+  version "0.5.20"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.20.tgz#12166089f8f5e5e8c56926b377633392dd2cb6c9"
+  integrity sha512-n1lZZ8Ve4ksRqizaBQgxXDgKwttHDhyfQjA6YZZn8+AroHbsIz+JjwxQDxbp+7y5OYCI8t1Yk7etjD9CRd2hIw==
   dependencies:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
@@ -22936,14 +22954,14 @@ terser@^4.1.2, terser@^4.6.2, terser@^4.6.3:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-terser@^5.2.0, terser@^5.3.4, terser@^5.6.1, terser@^5.7.0:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/terser/-/terser-5.7.1.tgz#2dc7a61009b66bb638305cb2a824763b116bf784"
-  integrity sha512-b3e+d5JbHAe/JSjwsC3Zn55wsBIM7AsHLjKxT31kGCldgbpFePaFo+PiddtO6uwRZWRw7sPXmAN8dTW61xmnSg==
+terser@^5.2.0, terser@^5.3.4, terser@^5.6.1, terser@^5.7.0, terser@^5.7.2:
+  version "5.9.0"
+  resolved "https://registry.yarnpkg.com/terser/-/terser-5.9.0.tgz#47d6e629a522963240f2b55fcaa3c99083d2c351"
+  integrity sha512-h5hxa23sCdpzcye/7b8YqbE5OwKca/ni0RQz1uRX3tGh8haaGHqcuSqbGRybuAKNdntZ0mDgFNXPJ48xQ2RXKQ==
   dependencies:
     commander "^2.20.0"
     source-map "~0.7.2"
-    source-map-support "~0.5.19"
+    source-map-support "~0.5.20"
 
 test-exclude@^6.0.0:
   version "6.0.0"
