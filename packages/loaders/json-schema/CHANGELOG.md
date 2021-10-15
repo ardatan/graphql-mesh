@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.1.3
+
+### Patch Changes
+
+- 932ce6063: fix(json-schema): sanitize invalid property names for GraphQL
+
 ## 0.1.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @graphql-mesh/container
 
+## 0.0.108
+
+### Patch Changes
+
+- @graphql-mesh/json-schema@0.21.3
+
 ## 0.0.107
 
 ### Patch Changes
