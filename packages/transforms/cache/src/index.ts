@@ -47,7 +47,7 @@ export default class CacheTransform implements MeshTransform {
           return cachedValue;
         }
 
-        const resolverResult = await originalResolver(root, args, context, info);
+        const resolverResult = Promise.resolve().then(() => originalResolver(root, args, context, info));
 
         await cache.set(cacheKey, resolverResult, {
           ttl: cacheItem.invalidate?.ttl || undefined,
