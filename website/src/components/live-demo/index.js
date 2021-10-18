@@ -35,6 +35,9 @@ const EXAMPLES = {
   'Apache Thrift': {
     Calculator: 'thrift-calculator',
   },
+  'gRPC': {
+   'Movies Example': 'grpc-example'
+  }
 };
 
 export default () => {
