@@ -36,6 +36,9 @@ export default class CacheTransform implements MeshTransform {
           .catch(e => console.error(e));
       }
 
+      // Not ideal solution because this will only wait for local cache entries
+      const cacheKeyWritePromises = new Map<string, Promise<any>>();
+
       compositions[cacheItem.field] = (originalResolver => async (root: any, args: any, context: any, info: any) => {
         const cacheKey = computeCacheKey({
           keyStr: cacheItem.cacheKey,
@@ -45,17 +48,37 @@ export default class CacheTransform implements MeshTransform {
 
         const cachedValue = await cache.get(cacheKey);
 
-        if (cachedValue) {
+        // This will wait for other instances
+        const waitForOtherCacheWrite = !!cachedValue?.__WAIT_FOR_CACHE_WRITE;
+
+        if (cachedValue && !waitForOtherCacheWrite) {
           return cachedValue;
         }
 
-        const resolverResult = Promise.resolve().then(() => originalResolver(root, args, context, info));
+        if (!waitForOtherCacheWrite) {
+          await cache.set(cacheKey, { __WAIT_FOR_CACHE_WRITE: true });
+        }
 
-        await cache.set(cacheKey, resolverResult, {
-          ttl: cacheItem.invalidate?.ttl || undefined,
-        });
+        let cacheKeyWritePromise = cacheKeyWritePromises.get(cacheKey);
 
-        return resolverResult;
+        if (!cacheKeyWritePromise) {
+          cacheKeyWritePromise = Promise.resolve().then(async () => {
+            const resolverResult = await originalResolver(root, args, context, info);
+
+            if (!waitForOtherCacheWrite) {
+              await cache.set(cacheKey, resolverResult, {
+                ttl: cacheItem.invalidate?.ttl || undefined,
+              });
+            }
+
+            cacheKeyWritePromises.delete(cacheKey);
+
+            return resolverResult;
+          });
+          cacheKeyWritePromises.set(cacheKey, cacheKeyWritePromise);
+        }
+
+        return cacheKeyWritePromise;
       }) as ResolversComposition;
     }
 

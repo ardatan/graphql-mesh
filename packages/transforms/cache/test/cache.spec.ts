@@ -1,6 +1,6 @@
-import { YamlConfig, MeshPubSub, KeyValueCache, ImportFn } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, KeyValueCache, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { addResolversToSchema } from '@graphql-tools/schema';
+import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import {
   GraphQLSchema,
   buildSchema,
@@ -107,6 +107,8 @@ const spies = {
     }),
   },
 };
+
+const syncImportFn = (mod: string) => require(mod);
 
 describe('cache', () => {
   let schema: GraphQLSchema;
@@ -546,6 +548,100 @@ describe('cache', () => {
         expect(spies.Query.user.mock.calls.length).toBe(2);
         expect(repeat1.user.friend.id).toBe('2');
         expect(repeat2.user.friend.id).toBe('3');
+      });
+    });
+    describe('Race condition', () => {
+      it('should wait for local cache transform to finish writing the entry', async () => {
+        const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
+          apiName: 'test',
+          importFn,
+          config: [
+            {
+              field: 'Query.foo',
+              cacheKey: 'random',
+            },
+          ],
+          cache,
+          pubsub,
+          baseDir,
+        };
+        const schema = makeExecutableSchema({
+          typeDefs: /* GraphQL */ `
+            type Query {
+              foo: String
+            }
+          `,
+          resolvers: {
+            Query: {
+              foo: () => new Promise(resolve => setTimeout(() => resolve(Date.now().toString()), 300)),
+            },
+          },
+        });
+        const transform = new CacheTransform(options);
+        const transformedSchema = transform.transformSchema(schema);
+        const query = /* GraphQL */ `
+          {
+            foo
+          }
+        `;
+        const results = await Promise.all([
+          execute({
+            schema: transformedSchema,
+            document: parse(query),
+          }),
+          execute({
+            schema: transformedSchema,
+            document: parse(query),
+          }),
+        ]);
+        expect(results[0]).toStrictEqual(results[1]);
+      });
+      it('should wait for other cache transform to finish writing the entry', async () => {
+        const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
+          apiName: 'test',
+          importFn,
+          config: [
+            {
+              field: 'Query.foo',
+              cacheKey: 'random',
+            },
+          ],
+          cache,
+          pubsub,
+          baseDir,
+        };
+        const schema = makeExecutableSchema({
+          typeDefs: /* GraphQL */ `
+            type Query {
+              foo: String
+            }
+          `,
+          resolvers: {
+            Query: {
+              foo: () => new Promise(resolve => setTimeout(() => resolve(Date.now().toString()), 300)),
+            },
+          },
+        });
+        const transform1 = new CacheTransform(options);
+        const transformedSchema1 = transform1.transformSchema(schema);
+        const transform2 = new CacheTransform(options);
+        const transformedSchema2 = transform2.transformSchema(schema);
+        const query = /* GraphQL */ `
+          {
+            foo
+          }
+        `;
+        const results = await Promise.all([
+          execute({
+            schema: transformedSchema1,
+            document: parse(query),
+          }),
+          execute({
+            schema: transformedSchema2,
+            document: parse(query),
+          }),
+        ]);
+        expect(results[0]).toStrictEqual(results[1]);
       });
     });
   });
