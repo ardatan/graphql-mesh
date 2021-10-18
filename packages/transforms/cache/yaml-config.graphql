@@ -12,15 +12,21 @@ type CacheTransformConfig @md {
   field: String!
   """
   Cache key to use to store your resolvers responses.
-  The defualt is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
+  The default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
 
-  Available variables:
-  - {args.argName} - use resolver argument
+  Available variables and how to use them:
   - {typeName} - use name of the type
   - {fieldName} - use name of the field
+  - {args.argName} - use a resolver argument
   - {argsHash} - a hash based on the 'args' object
-  - {fieldNamesHash} - a hash based on the field names selected by the client
+  - {fieldNamesHash} - a hash based on the field nodes. Please note:
+    - fieldNodes includes the source code positions of fields in an operation
+    - this means if you provide the same fields in different order the hash will be different
+    - in fact any character including new line will be taken into account
+    - usually this is not an issue as queries coming from a client are 'stable'
+    - however when testing if the cache works properly via a playground this can lead to different cache keys being generated. Hence leading to cache misses.
   - {info} - the GraphQLResolveInfo of the resolver
+  - {env} - the properties defined in in process.env
 
   Available interpolations:
   - {format|date} - returns the current date with a specific format
