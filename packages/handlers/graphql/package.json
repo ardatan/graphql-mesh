@@ -27,8 +27,8 @@
     "@graphql-mesh/utils": "0.18.1",
     "@graphql-mesh/types": "0.53.0",
     "@graphql-tools/url-loader": "7.2.0",
-    "@graphql-tools/wrap": "8.1.1",
-    "@graphql-tools/delegate": "8.2.3"
+    "@graphql-tools/wrap": "8.2.0",
+    "@graphql-tools/delegate": "8.3.0"
   },
   "publishConfig": {
     "access": "public",
