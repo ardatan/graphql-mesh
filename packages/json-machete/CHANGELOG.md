@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.0.20
+
+### Patch Changes
+
+- ac95631ea: fix(compareJSONSchemas): check nullability with "== null"
+
 ## 0.0.19
 
 ### Patch Changes
