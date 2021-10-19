@@ -27,8 +27,8 @@
     "@graphql-mesh/utils": "0.18.1",
     "@graphql-tools/code-file-loader": "7.2.1",
     "@graphql-tools/graphql-file-loader": "7.3.1",
-    "@graphql-tools/load": "7.3.2",
-    "@graphql-tools/utils": "8.3.0"
+    "@graphql-tools/load": "7.4.0",
+    "@graphql-tools/utils": "8.4.0"
   },
   "publishConfig": {
     "access": "public",
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@graphql-mesh/cache-inmemory-lru": "^0.5.24",
-    "@graphql-tools/schema": "8.2.0",
+    "@graphql-tools/schema": "8.3.0",
     "graphql-subscriptions": "1.2.1"
   }
 }
