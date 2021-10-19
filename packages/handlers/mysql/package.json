@@ -29,7 +29,7 @@
     "@graphql-mesh/types": "0.53.0",
     "@graphql-mesh/store": "0.1.18",
     "@graphql-mesh/utils": "0.18.1",
-    "graphql-compose": "9.0.3",
+    "graphql-compose": "9.0.4",
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",
     "mysql-utilities": "1.1.3",
