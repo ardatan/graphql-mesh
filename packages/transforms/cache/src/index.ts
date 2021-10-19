@@ -1,5 +1,5 @@
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { ResolversComposerMapping, ResolversComposition, composeResolvers } from '@graphql-tools/resolvers-composition';
+import { ResolversComposerMapping, composeResolvers } from '@graphql-tools/resolvers-composition';
 import { computeCacheKey } from './compute-cache-key';
 import { extractResolvers } from '@graphql-mesh/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
@@ -36,10 +36,9 @@ export default class CacheTransform implements MeshTransform {
           .catch(e => console.error(e));
       }
 
-      // Not ideal solution because this will only wait for local cache entries
-      const cacheKeyWritePromises = new Map<string, Promise<any>>();
+      const transformId = Date.now();
 
-      compositions[cacheItem.field] = (originalResolver => async (root: any, args: any, context: any, info: any) => {
+      compositions[cacheItem.field] = originalResolver => async (root, args, context, info) => {
         const cacheKey = computeCacheKey({
           keyStr: cacheItem.cacheKey,
           args,
@@ -48,38 +47,34 @@ export default class CacheTransform implements MeshTransform {
 
         const cachedValue = await cache.get(cacheKey);
 
-        // This will wait for other instances
-        const waitForOtherCacheWrite = !!cachedValue?.__WAIT_FOR_CACHE_WRITE;
-
-        if (cachedValue && !waitForOtherCacheWrite) {
+        if (cachedValue) {
           return cachedValue;
         }
 
-        if (!waitForOtherCacheWrite) {
-          await cache.set(cacheKey, { __WAIT_FOR_CACHE_WRITE: true });
-        }
+        const shouldWaitCacheKey = `${cacheKey}_shouldWait`;
+        const pubsubTopic = `${cacheKey}_resolved`;
 
-        let cacheKeyWritePromise = cacheKeyWritePromises.get(cacheKey);
+        const shouldWait = await cache.get(shouldWaitCacheKey);
 
-        if (!cacheKeyWritePromise) {
-          cacheKeyWritePromise = Promise.resolve().then(async () => {
-            const resolverResult = await originalResolver(root, args, context, info);
-
-            if (!waitForOtherCacheWrite) {
-              await cache.set(cacheKey, resolverResult, {
-                ttl: cacheItem.invalidate?.ttl || undefined,
-              });
-            }
-
-            cacheKeyWritePromises.delete(cacheKey);
-
-            return resolverResult;
+        if (shouldWait) {
+          return new Promise(resolve => {
+            const subId$ = pubsub.subscribe(pubsubTopic, async data => {
+              if (data) {
+                subId$.then(subId => pubsub.unsubscribe(subId));
+                resolve(data);
+              }
+            });
           });
-          cacheKeyWritePromises.set(cacheKey, cacheKeyWritePromise);
         }
 
-        return cacheKeyWritePromise;
-      }) as ResolversComposition;
+        cache.set(shouldWaitCacheKey, transformId);
+        const result = await originalResolver(root, args, context, info);
+        cache.set(cacheKey, result, {
+          ttl: cacheItem.invalidate?.ttl,
+        });
+        pubsub.publish(pubsubTopic, result);
+        return result;
+      };
     }
 
     const wrappedResolvers = composeResolvers(sourceResolvers, compositions);

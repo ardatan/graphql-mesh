@@ -17,6 +17,7 @@ import { hashObject } from '@graphql-mesh/utils';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 import { PubSub } from 'graphql-subscriptions';
+import { cloneSchema } from 'neo4j-graphql-js/node_modules/graphql-tools';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const importFn: ImportFn = m => import(m);
@@ -597,6 +598,7 @@ describe('cache', () => {
         expect(results[0]).toStrictEqual(results[1]);
       });
       it('should wait for other cache transform to finish writing the entry', async () => {
+        let callCount = 0;
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
           importFn,
@@ -618,20 +620,24 @@ describe('cache', () => {
           `,
           resolvers: {
             Query: {
-              foo: () => new Promise(resolve => setTimeout(() => resolve(Date.now().toString()), 300)),
+              foo: async () => {
+                callCount++;
+                await new Promise(resolve => setTimeout(resolve, 300));
+                return 'FOO';
+              },
             },
           },
         });
         const transform1 = new CacheTransform(options);
-        const transformedSchema1 = transform1.transformSchema(schema);
+        const transformedSchema1 = transform1.transformSchema(cloneSchema(schema));
         const transform2 = new CacheTransform(options);
-        const transformedSchema2 = transform2.transformSchema(schema);
+        const transformedSchema2 = transform2.transformSchema(cloneSchema(schema));
         const query = /* GraphQL */ `
           {
             foo
           }
         `;
-        const results = await Promise.all([
+        await Promise.all([
           execute({
             schema: transformedSchema1,
             document: parse(query),
@@ -641,7 +647,7 @@ describe('cache', () => {
             document: parse(query),
           }),
         ]);
-        expect(results[0]).toStrictEqual(results[1]);
+        expect(callCount).toBe(1);
       });
     });
   });
