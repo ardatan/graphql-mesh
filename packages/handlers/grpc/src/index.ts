@@ -1,6 +1,6 @@
 /* eslint-disable import/no-duplicates */
 import './patchLongJs';
-import { GetMeshSourceOptions, MeshHandler, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { withCancel } from '@graphql-mesh/utils';
 import {
   ChannelCredentials,
@@ -26,7 +26,6 @@ import { GraphQLEnumTypeConfig, specifiedDirectives } from 'graphql';
 import { join, isAbsolute } from 'path';
 import { StoreProxy } from '@graphql-mesh/store';
 import { promises as fsPromises } from 'fs';
-import { ConnectivityState } from '@grpc/grpc-js/build/src/channel.js';
 import globby from 'globby';
 
 const { readFile } = fsPromises;
@@ -50,11 +49,10 @@ export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
   private rootJsonAndDecodedDescriptorSet: StoreProxy<RootJsonAndDecodedDescriptorSet>;
+  private logger: Logger;
 
-  constructor({ config, baseDir, store }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
-    if (!config) {
-      throw new Error('Config not specified!');
-    }
+  constructor({ config, baseDir, store, logger }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
+    this.logger = logger;
     this.config = config;
     this.baseDir = baseDir;
     this.rootJsonAndDecodedDescriptorSet = store.proxy('descriptorSet.proto', {
@@ -73,6 +71,7 @@ module.exports = {
 
   getCachedDescriptorSet(creds: ChannelCredentials) {
     return this.rootJsonAndDecodedDescriptorSet.getWithSet(async () => {
+      this.logger.debug(() => `Building Root`);
       const root = new Root();
       const appendRoot = (additionalRoot: protobufjs.Root) => {
         if (additionalRoot.nested) {
@@ -84,13 +83,16 @@ module.exports = {
         }
       };
       if (this.config.useReflection) {
+        this.logger.debug(() => `Using the reflection`);
         const grpcReflectionServer = this.config.endpoint;
+        this.logger.debug(() => `Creating gRPC Reflection Client`);
         const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
         await reflectionClient.listServices().then(services =>
           Promise.all(
             services.map(async (service: string | void) => {
               if (service && !service.startsWith('grpc.')) {
                 const serviceRoot = await reflectionClient.fileContainingSymbol(service);
+                this.logger.debug(() => `Adding services to the root from the reflection response`);
                 appendRoot(serviceRoot);
               }
               return null;
@@ -119,19 +121,24 @@ module.exports = {
           fileName = this.config.descriptorSetFilePath;
         }
         const absoluteFilePath = isAbsolute(fileName) ? fileName : join(this.baseDir, fileName);
+        this.logger.debug(() => `Using the descriptor set from ${absoluteFilePath}`);
         const descriptorSetBuffer = await readFile(absoluteFilePath);
+        this.logger.debug(() => `Reading ${absoluteFilePath}`);
         let decodedDescriptorSet: DecodedDescriptorSet;
         if (absoluteFilePath.endsWith('json')) {
+          this.logger.debug(() => `Parsing ${absoluteFilePath} as json`);
           const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
           decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(descriptorSetJSON) as DecodedDescriptorSet;
         } else {
           decodedDescriptorSet = descriptor.FileDescriptorSet.decode(descriptorSetBuffer) as DecodedDescriptorSet;
         }
+        this.logger.debug(() => `Creating root from descriptor set`);
         const rootFromDescriptor = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
         appendRoot(rootFromDescriptor);
       }
 
       if (this.config.protoFilePath) {
+        this.logger.debug(() => `Using proto file(s)`);
         let protoRoot = new Root();
         let fileGlob: string;
         let options: LoadOptions = {};
@@ -156,15 +163,19 @@ module.exports = {
         const fileNames = await globby(fileGlob, {
           cwd: this.baseDir,
         });
+        this.logger.debug(() => `Loading proto files(${fileGlob}); \n ${fileNames.join('\n')}`);
         protoRoot = await protoRoot.load(
           fileNames.map(filePath => (isAbsolute(filePath) ? filePath : join(this.baseDir, filePath))),
           options
         );
+        this.logger.debug(() => `Adding proto content to the root`);
         appendRoot(protoRoot);
       }
 
+      this.logger.debug(() => `Resolving entire the root tree`);
       root.resolveAll();
 
+      this.logger.debug(() => `Creating artifacts from descriptor set and root`);
       return {
         rootJson: root.toJSON({
           keepComments: true,
@@ -177,6 +188,7 @@ module.exports = {
   async getMeshSource() {
     let creds: ChannelCredentials;
     if (this.config.credentialsSsl) {
+      this.logger.debug(() => `Using SSL Connection`);
       const absolutePrivateKeyPath = isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
         : join(this.baseDir, this.config.credentialsSsl.privateKey);
@@ -196,6 +208,7 @@ module.exports = {
     } else if (this.config.useHTTPS) {
       creds = credentials.createSsl();
     } else {
+      this.logger.debug(() => `Using insecure connection`);
       creds = credentials.createInsecure();
     }
 
@@ -207,20 +220,24 @@ module.exports = {
     schemaComposer.add(GraphQLUnsignedInt);
     schemaComposer.add(GraphQLVoid);
     schemaComposer.add(GraphQLJSON);
+    // identical of grpc's ConnectivityState
     schemaComposer.createEnumTC({
       name: 'ConnectivityState',
-      values: Object.entries(ConnectivityState).reduce((values, [key, value]) => {
-        if (typeof value === 'number') {
-          values[key] = { value };
-        }
-        return values;
-      }, {}),
+      values: {
+        IDLE: { value: 0 },
+        CONNECTING: { value: 1 },
+        READY: { value: 2 },
+        TRANSIENT_FAILURE: { value: 3 },
+        SHUTDOWN: { value: 4 },
+      },
     });
 
+    this.logger.debug(() => `Getting stored root and decoded descriptor set objects`);
     const { rootJson, decodedDescriptorSet } = await this.getCachedDescriptorSet(creds);
 
     const packageDefinition = loadFileDescriptorSetFromObject(decodedDescriptorSet);
 
+    this.logger.debug(() => `Creating package definitions`);
     const grpcObject = loadPackageDefinition(packageDefinition);
 
     const walkToFindTypePath = (pathWithName: string[], baseTypePath: string[]) => {
@@ -236,6 +253,7 @@ module.exports = {
 
     const visit = async (nested: AnyNestedObject, name: string, currentPath: string[]) => {
       const pathWithName = [...currentPath, ...name.split('.')].filter(Boolean);
+      this.logger.debug(() => `Visiting ${currentPath}`);
       if ('nested' in nested) {
         await Promise.all(
           Object.keys(nested.nested).map(async (key: string) => {
@@ -395,11 +413,13 @@ module.exports = {
         });
       }
     };
+    this.logger.debug(() => `Building the schema structure based on the root object`);
     await visit(rootJson, '', []);
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
+    this.logger.debug(() => `Building the final GraphQL Schema`);
     const schema = schemaComposer.buildSchema();
 
     return {
