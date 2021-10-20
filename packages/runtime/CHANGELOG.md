@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.24.0
+
+### Minor Changes
+
+- eb3f68e4d: feat(grpc): more debugging logs
+
 ## 0.23.1
 
 ### Patch Changes

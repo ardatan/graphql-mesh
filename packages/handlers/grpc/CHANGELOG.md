@@ -1,5 +1,15 @@
 # @graphql-mesh/grpc
 
+## 0.16.0
+
+### Minor Changes
+
+- eb3f68e4d: feat(grpc): more debugging logs
+
+### Patch Changes
+
+- eb3f68e4d: fix(grpc): do not use ConnectivityState TS enum to generate GraphQL Enum
+
 ## 0.15.19
 
 ### Patch Changes
