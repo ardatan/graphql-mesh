@@ -1,18 +1,18 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.0.110",
+  "version": "0.0.111",
   "scripts": {
     "start": "graphql-mesh dev"
   },
   "dependencies": {
     "graphql": "15.6.1",
-    "@graphql-mesh/cli": "0.42.3",
-    "@graphql-mesh/config": "0.24.2",
-    "@graphql-mesh/runtime": "0.23.1",
+    "@graphql-mesh/cli": "0.42.4",
+    "@graphql-mesh/config": "0.24.3",
+    "@graphql-mesh/runtime": "0.24.0",
     "@graphql-mesh/openapi": "0.19.2",
     "@graphql-mesh/graphql": "0.18.18",
-    "@graphql-mesh/grpc": "0.15.19",
+    "@graphql-mesh/grpc": "0.16.0",
     "@graphql-mesh/json-schema": "0.21.4",
     "@graphql-mesh/odata": "0.13.3",
     "@graphql-mesh/soap": "0.8.2",
