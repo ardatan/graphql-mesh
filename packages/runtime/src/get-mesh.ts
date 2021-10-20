@@ -98,6 +98,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         });
       } catch (e: any) {
         sourceLogger.error(`Failed to generate schema: ${e.message || e}`);
+        sourceLogger.debug(() => e);
         failed = true;
       }
     })
