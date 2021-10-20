@@ -26,7 +26,6 @@ import { GraphQLEnumTypeConfig, specifiedDirectives } from 'graphql';
 import { join, isAbsolute } from 'path';
 import { StoreProxy } from '@graphql-mesh/store';
 import { promises as fsPromises } from 'fs';
-import { ConnectivityState } from '@grpc/grpc-js/build/src/channel.js';
 import globby from 'globby';
 
 const { readFile } = fsPromises;
@@ -221,14 +220,16 @@ module.exports = {
     schemaComposer.add(GraphQLUnsignedInt);
     schemaComposer.add(GraphQLVoid);
     schemaComposer.add(GraphQLJSON);
+    // identical of grpc's ConnectivityState
     schemaComposer.createEnumTC({
       name: 'ConnectivityState',
-      values: Object.entries(ConnectivityState).reduce((values, [key, value]) => {
-        if (typeof value === 'number') {
-          values[key] = { value };
-        }
-        return values;
-      }, {}),
+      values: {
+        IDLE: { value: 0 },
+        CONNECTING: { value: 1 },
+        READY: { value: 2 },
+        TRANSIENT_FAILURE: { value: 3 },
+        SHUTDOWN: { value: 4 },
+      },
     });
 
     this.logger.debug(() => `Getting stored root and decoded descriptor set objects`);
