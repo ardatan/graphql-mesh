@@ -1,4 +1,4 @@
-FROM node:16-alpine 
+FROM node:17-alpine 
 
 RUN addgroup -S mesh && adduser -S mesh -G mesh
 
