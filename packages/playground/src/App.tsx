@@ -54,17 +54,17 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
             schemaDescription: true,
           }
         ).then(schema => setSchema(schema));
-        setFetcher(() => (graphQLParams, opts) => {
-          const document = parse(graphQLParams.query);
-          const operationAst = getOperationAST(document, graphQLParams.operationName);
+        setFetcher(() => ({ query, operationName }, opts) => {
+          const document = parse(query);
+          const operationAst = getOperationAST(document, operationName);
           if (!operationAst) {
-            throw new Error(`Operation ${graphQLParams.operationName} cannot be found!`);
+            throw new Error(`Operation ${operationName} cannot be found!`);
           }
           return executor({
-            document: parse(graphQLParams.query),
-            variables: graphQLParams.variables,
+            document,
+            variables,
             extensions: opts,
-            operationName: graphQLParams.operationName,
+            operationName,
             operationType: operationAst.operation,
           }) as FetcherResult;
         });
