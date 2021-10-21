@@ -293,11 +293,6 @@
   dependencies:
     tslib "~2.0.1"
 
-"@ardatan/fetch-event-source@2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@ardatan/fetch-event-source/-/fetch-event-source-2.0.2.tgz#734aa3eaa0da456453d24d8dc7c14d5e366a8d21"
-  integrity sha512-mcpz/wJ7s50PJIVz4OQ1Yim3w/AAchtYtIg0QMWiMR2cZZoI9t23hRyqeumtD5EmyJu0fxtjmQ5WY8GI86V4rQ==
-
 "@ardatan/graphql-to-config-schema@0.1.25":
   version "0.1.25"
   resolved "https://registry.yarnpkg.com/@ardatan/graphql-to-config-schema/-/graphql-to-config-schema-0.1.25.tgz#f38a7cefc4914c550d9044162d29cd1c1d8cc411"
@@ -3132,18 +3127,17 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.2.0.tgz#f70f77b9a3cfb8de0460a05a93590d16a68af09a"
-  integrity sha512-1HOyt89TlzINko/Sa39oNQCzvbIshAiz+ECaoJKkIfkQZzXWzRkDrU5nEIPGm/FsCHm519OiJeaLwPLbdqnrLw==
+"@graphql-tools/url-loader@7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.2.1.tgz#7f3f09d53100b9c32ce22dff00b5b85321d4bf10"
+  integrity sha512-HxnB79vdHpSmkKjKlOM3AHIXjPHey+Sv+cl+Hv63Pd57OvMzyBvb/OkKA2nEj/jMp5VgfJaNwy0mYqNgUH/Fvg==
   dependencies:
-    "@ardatan/fetch-event-source" "2.0.2"
     "@graphql-tools/delegate" "^8.2.0"
     "@graphql-tools/utils" "^8.2.0"
     "@graphql-tools/wrap" "^8.1.0"
     "@n1ru4l/graphql-live-query" "0.8.1"
     "@types/websocket" "1.0.4"
-    "@types/ws" "^7.4.7"
+    "@types/ws" "^8.0.0"
     abort-controller "3.0.0"
     cross-fetch "3.1.4"
     extract-files "11.0.0"
@@ -3155,11 +3149,11 @@
     lodash "4.17.21"
     meros "1.1.4"
     subscriptions-transport-ws "^0.10.0"
-    sync-fetch "0.3.0"
+    sync-fetch "0.3.1"
     tslib "~2.3.0"
     valid-url "1.0.9"
-    value-or-promise "1.0.10"
-    ws "8.2.2"
+    value-or-promise "1.0.11"
+    ws "8.2.3"
 
 "@graphql-tools/url-loader@^6", "@graphql-tools/url-loader@^6.0.0", "@graphql-tools/url-loader@^6.3.2", "@graphql-tools/url-loader@^6.8.2":
   version "6.10.1"
@@ -5609,14 +5603,14 @@
     "@types/node" "*"
     "@types/webidl-conversions" "*"
 
-"@types/ws@8.2.0":
+"@types/ws@8.2.0", "@types/ws@^8.0.0":
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.2.0.tgz#75faefbe2328f3b833cb8dc640658328990d04f3"
   integrity sha512-cyeefcUCgJlEk+hk2h3N+MqKKsPViQgF5boi9TTHSK+PoR9KWBb/C5ccPcDyAqgsbAYHTwulch725DV84+pSpg==
   dependencies:
     "@types/node" "*"
 
-"@types/ws@^7.0.0", "@types/ws@^7.4.0", "@types/ws@^7.4.7":
+"@types/ws@^7.0.0", "@types/ws@^7.4.0":
   version "7.4.7"
   resolved "https://registry.yarnpkg.com/@types/ws/-/ws-7.4.7.tgz#f7c390a36f7a0679aa69de2d501319f4f8d9b702"
   integrity sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==
@@ -22758,6 +22752,14 @@ sync-fetch@0.3.0:
     buffer "^5.7.0"
     node-fetch "^2.6.1"
 
+sync-fetch@0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/sync-fetch/-/sync-fetch-0.3.1.tgz#62aa82c4b4d43afd6906bfd7b5f92056458509f0"
+  integrity sha512-xj5qiCDap/03kpci5a+qc5wSJjc8ZSixgG2EUmH1B8Ea2sfWclQA7eH40hiHPCtkCn6MCk4Wb+dqcXdCy2PP3g==
+  dependencies:
+    buffer "^5.7.0"
+    node-fetch "^2.6.1"
+
 tabbable@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-5.2.1.tgz#e3fda7367ddbb172dcda9f871c0fdb36d1c4cd9c"
@@ -25056,11 +25058,6 @@ ws@7.4.5, "ws@^5.2.0 || ^6.0.0 || ^7.0.0", ws@^7.0.0, ws@^7.3.1, ws@^7.4.2, ws@^
   version "7.4.5"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
   integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
-
-ws@8.2.2:
-  version "8.2.2"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.2.2.tgz#ca684330c6dd6076a737250ed81ac1606cb0a63e"
-  integrity sha512-Q6B6H2oc8QY3llc3cB8kVmQ6pnJWVQbP7Q5algTcIxx7YEpc0oU4NBVHlztA7Ekzfhw2r0rPducMUiCGWKQRzw==
 
 ws@8.2.3:
   version "8.2.3"
