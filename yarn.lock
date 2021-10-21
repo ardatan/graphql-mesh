@@ -2960,10 +2960,10 @@
     "@graphql-tools/utils" "8.0.2"
     tslib "~2.3.0"
 
-"@graphql-tools/mock@8.4.0":
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.4.0.tgz#c4a5d0c35cc5760b99b3e062145f36ac9cfe9ffb"
-  integrity sha512-RKcqmw7P5pC2ULh2/kg/erxxsd7lEV/wnI5jNgahkCw8wiSC8OI3SwNMwjfrlpYogs7eEhiXi7Ix6abCiFUURw==
+"@graphql-tools/mock@8.4.1":
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.4.1.tgz#c75fae7e4271224c4efbf57e388cb3eb344be59d"
+  integrity sha512-eIW2H1k9b4Sczzy1Za+GdaKBc8lTXo8MbJH4oivh1AoGl6/Tu9jTOOTS/b07zQzG+6sIQG54o9W6s2TqDmD+YQ==
   dependencies:
     "@graphql-tools/schema" "^8.2.0"
     "@graphql-tools/utils" "^8.2.3"
@@ -3127,10 +3127,10 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.2.1":
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.2.1.tgz#7f3f09d53100b9c32ce22dff00b5b85321d4bf10"
-  integrity sha512-HxnB79vdHpSmkKjKlOM3AHIXjPHey+Sv+cl+Hv63Pd57OvMzyBvb/OkKA2nEj/jMp5VgfJaNwy0mYqNgUH/Fvg==
+"@graphql-tools/url-loader@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.3.0.tgz#9d8dc21c9ca72016818891a74118a376190e97c1"
+  integrity sha512-VZeeQCt1FotPis87bbjRno/nPN0UbQeTDwF2pXgdlab2X/xw58IPcOZz5cS5lx0qO5zYrs3734fSAo0WjkQtsg==
   dependencies:
     "@graphql-tools/delegate" "^8.2.0"
     "@graphql-tools/utils" "^8.2.0"
@@ -3140,13 +3140,13 @@
     "@types/ws" "^8.0.0"
     abort-controller "3.0.0"
     cross-fetch "3.1.4"
+    dset "^3.1.0"
     extract-files "11.0.0"
     form-data "4.0.0"
     graphql-sse "^1.0.1"
     graphql-ws "^5.4.1"
     is-promise "4.0.0"
     isomorphic-ws "4.0.1"
-    lodash "4.17.21"
     meros "1.1.4"
     subscriptions-transport-ws "^0.10.0"
     sync-fetch "0.3.1"
