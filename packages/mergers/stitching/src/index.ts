@@ -70,7 +70,6 @@ export default class StitchingMerger implements MeshMerger {
         this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${rawSource.name}`);
         const sdlQueryResult = (await rawSource.executor({
           document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
-          operationType: 'query',
         })) as ExecutionResult;
         if (sdlQueryResult.errors?.length) {
           throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${rawSource.name}`);

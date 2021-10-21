@@ -56,11 +56,11 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
             contextFactory: () => request,
           })
         )
-        .then(result =>
-          sendResult(result, response, (result: { data: any; errors: any[] }) => {
-            result.errors = result.errors?.map(normalizeGraphQLError);
-            return result;
-          })
+        .then(processedResult =>
+          sendResult(processedResult, response, result => ({
+            ...result,
+            errors: result.errors?.map(normalizeGraphQLError) as any[],
+          }))
         )
         .catch((e: Error | AggregateError) => {
           response.status(500);

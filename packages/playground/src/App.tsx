@@ -56,16 +56,11 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
         ).then(schema => setSchema(schema));
         setFetcher(() => ({ query, operationName }, opts) => {
           const document = parse(query);
-          const operationAst = getOperationAST(document, operationName);
-          if (!operationAst) {
-            throw new Error(`Operation ${operationName} cannot be found!`);
-          }
           return executor({
             document,
-            variables,
+            variables: JSON.parse(variables),
             extensions: opts,
             operationName,
-            operationType: operationAst.operation,
           }) as FetcherResult;
         });
       });

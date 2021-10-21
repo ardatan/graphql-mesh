@@ -128,7 +128,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -169,7 +168,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -221,7 +219,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -262,7 +259,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -300,7 +296,6 @@ describe('odata', () => {
           PeopleCount
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -364,7 +359,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'mutation',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -403,7 +397,6 @@ describe('odata', () => {
           deletePeopleByUserName(UserName: "SOMEID")
         }
       `),
-      operationType: 'mutation',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -453,7 +446,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'mutation',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -501,7 +493,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -560,7 +551,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -611,7 +601,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'query',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -649,7 +638,6 @@ describe('odata', () => {
           ResetDataSource
         }
       `),
-      operationType: 'mutation',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
@@ -696,7 +684,6 @@ describe('odata', () => {
           }
         }
       `),
-      operationType: 'mutation',
     })) as ExecutionResult;
 
     expect(graphqlResult.errors).toBeFalsy();
