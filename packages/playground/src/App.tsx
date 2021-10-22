@@ -9,28 +9,6 @@ import GraphiQLExplorer from 'graphiql-explorer';
 import 'graphiql/graphiql.css';
 import './App.css';
 
-let fakeStorageObj = {};
-const fakeStorageInstance: Storage = {
-  getItem(key) {
-    return fakeStorageObj[key];
-  },
-  setItem(key, val) {
-    fakeStorageObj[key] = val;
-  },
-  clear() {
-    fakeStorageObj = {};
-  },
-  key(i) {
-    return Object.keys(fakeStorageObj)[i];
-  },
-  removeItem(key) {
-    delete fakeStorageObj[key];
-  },
-  get length() {
-    return Object.keys(fakeStorageObj).length;
-  },
-};
-
 const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuery = '', endpoint }) => {
   const urlLoader = new UrlLoader();
   const [query, setQuery] = useState<string | undefined>(defaultQuery);
@@ -97,7 +75,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
         fetcher={fetcher}
         query={query}
         onEditQuery={query => setQuery(query)}
-        storage={fakeStorageInstance}
+        storage={sessionStorage}
       >
         <GraphiQL.Logo>
           <img src="https://www.graphql-mesh.com/img/mesh-logo.svg" style={{ width: '32px', height: '32px' }} />
