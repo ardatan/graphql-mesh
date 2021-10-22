@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-extend
 
+## 0.6.35
+
+### Patch Changes
+
+- Updated dependencies [0dc08e5cc]
+  - @graphql-mesh/utils@0.19.0
+
 ## 0.6.34
 
 ### Patch Changes
