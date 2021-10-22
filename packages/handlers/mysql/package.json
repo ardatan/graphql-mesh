@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.53.0",
-    "@graphql-mesh/store": "0.1.18",
-    "@graphql-mesh/utils": "0.18.1",
+    "@graphql-mesh/store": "0.1.19",
+    "@graphql-mesh/utils": "0.19.0",
     "graphql-compose": "9.0.4",
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",

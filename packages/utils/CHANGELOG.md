@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.19.0
+
+### Minor Changes
+
+- 0dc08e5cc: enhance: improve jitExecutorFactory
+
 ## 0.18.1
 
 ### Patch Changes
