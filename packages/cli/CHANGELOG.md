@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.42.5
+
+### Patch Changes
+
+- ae24a2969: chore(cli-serve/playground): update graphql-helix and url-loader
+
 ## 0.42.4
 
 ### Patch Changes
