@@ -39,6 +39,7 @@ export const playgroundMiddlewareFactory = ({
         <html>
         <head>
           <title>GraphQL Mesh</title>
+          <link rel="shortcut icon" href="https://www.graphql-mesh.com/img/favicon.ico">
         </head>
         <body>
           <script>
