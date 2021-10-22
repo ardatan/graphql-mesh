@@ -4,7 +4,7 @@ import { JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig, HTTPMethod 
 export function isPubSubOperationConfig(
   operationConfig: JSONSchemaOperationConfig
 ): operationConfig is JSONSchemaPubSubOperationConfig {
-  return 'pubSubTopic' in operationConfig;
+  return 'pubsubTopic' in operationConfig;
 }
 
 export function getOperationMetadata(operationConfig: JSONSchemaOperationConfig) {
