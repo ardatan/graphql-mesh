@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.1.6
+
+### Patch Changes
+
+- 0a1756f9c: fix(json-schema): handle subscriptions correctly
+
 ## 0.1.5
 
 ### Patch Changes
