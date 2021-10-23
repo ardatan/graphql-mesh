@@ -3127,10 +3127,10 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.4.0":
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.4.0.tgz#17811ae20231776d52fc3b0afaa1007a6bccb395"
-  integrity sha512-rb+nJ/6urZQaNlbOOCQckzJpOb8Vs8xchLs8wRCERFezvU8rS6R86Hf6gjAEXcMCs3Cl5m9znErgcoUaTiabqg==
+"@graphql-tools/url-loader@7.4.1":
+  version "7.4.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.4.1.tgz#2cdae0d27271aa7f8d88788698f6490dd88de4cf"
+  integrity sha512-RrgXxiabfCH0gTvn86o6wOKXCqhb5EFoZlbK2TzWECA4i3mJehrxZ+FSIDrbcFcpgrE94SNj9a/xXK4VcgJNKg==
   dependencies:
     "@graphql-tools/delegate" "^8.4.0"
     "@graphql-tools/utils" "^8.5.0"
