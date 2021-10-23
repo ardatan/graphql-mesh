@@ -1,5 +1,5 @@
-const path = require("path");
-const webpack = require("webpack");
+const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 
@@ -14,8 +14,11 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        loader: 'babel-loader',
         exclude: /node_modules/,
+        options: {
+          presets: ['@babel/react', '@babel/typescript'],
+        },
       },
     ],
   },
@@ -28,7 +31,7 @@ module.exports = {
       setImmediate: 'setTimeout',
     }),
     new HtmlWebpackPlugin({
-      title: 'GraphQL Mesh'
+      title: 'GraphQL Mesh',
     }),
   ],
   resolve: {

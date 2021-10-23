@@ -22,7 +22,7 @@
     "@types/react-dom": "17.0.10",
     "html-webpack-plugin": "5.4.0",
     "html-webpack-inline-source-plugin": "1.0.0-beta.2",
-    "ts-loader": "9.2.6",
+    "babel-loader": "8.2.3",
     "webpack": "5.59.1",
     "webpack-cli": "4.9.1",
     "css-loader": "6.4.0",
