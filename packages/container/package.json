@@ -1,13 +1,13 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.0.113",
+  "version": "0.0.114",
   "scripts": {
     "start": "graphql-mesh dev"
   },
   "dependencies": {
     "graphql": "15.6.1",
-    "@graphql-mesh/cli": "0.42.5",
+    "@graphql-mesh/cli": "0.42.6",
     "@graphql-mesh/config": "0.24.4",
     "@graphql-mesh/runtime": "0.24.1",
     "@graphql-mesh/openapi": "0.19.3",
