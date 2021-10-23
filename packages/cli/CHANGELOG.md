@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.42.6
+
+### Patch Changes
+
+- dcda7e17c: fix(playground): bump graphql-tools/url-loader to fix subscriptions issues
+
 ## 0.42.5
 
 ### Patch Changes
