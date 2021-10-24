@@ -438,10 +438,6 @@
             }
           ]
         },
-        "replaceField": {
-          "$ref": "#/definitions/ReplaceFieldTransformConfig",
-          "description": "Transformer to replace GraphQL field with partial of full config from a different field"
-        },
         "resolversComposition": {
           "description": "Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)",
           "anyOf": [
@@ -472,6 +468,14 @@
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
+        },
+        "replaceField": {
+          "$ref": "#/definitions/ReplaceFieldTransformConfig",
+          "description": "Transformer to replace GraphQL field with partial of full config from a different field"
+        },
+        "transferField": {
+          "$ref": "#/definitions/TransferFieldTransformConfig",
+          "description": "Transformer to replace GraphQL field with partial of full config from a different field"
         }
       }
     },
@@ -2500,89 +2504,6 @@
         }
       }
     },
-    "ReplaceFieldTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ReplaceFieldTransformConfig",
-      "properties": {
-        "typeDefs": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Additional type definition to used to replace field types"
-        },
-        "replacements": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ReplaceFieldTransformObject"
-          },
-          "additionalItems": false,
-          "description": "Array of rules to replace fields"
-        }
-      },
-      "required": ["replacements"]
-    },
-    "ReplaceFieldTransformObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ReplaceFieldTransformObject",
-      "properties": {
-        "from": {
-          "$ref": "#/definitions/ReplaceFieldConfig"
-        },
-        "to": {
-          "$ref": "#/definitions/ReplaceFieldConfig"
-        },
-        "scope": {
-          "type": "string",
-          "enum": ["config", "hoistValue"],
-          "description": "Allowed values: config, hoistValue"
-        },
-        "composer": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "required": ["from", "to"]
-    },
-    "ReplaceFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ReplaceFieldConfig",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "field": {
-          "type": "string"
-        }
-      },
-      "required": ["type", "field"]
-    },
     "ResolversCompositionTransform": {
       "additionalProperties": false,
       "type": "object",
@@ -2817,6 +2738,174 @@
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
       }
+    },
+    "ReplaceFieldTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldTransformConfig",
+      "properties": {
+        "typeDefs": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Additional type definition to used to replace field types"
+        },
+        "replacements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReplaceFieldTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of rules to replace fields"
+        }
+      },
+      "required": ["replacements"]
+    },
+    "ReplaceFieldTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldTransformObject",
+      "properties": {
+        "from": {
+          "$ref": "#/definitions/ReplaceFieldConfig"
+        },
+        "to": {
+          "$ref": "#/definitions/ReplaceFieldConfig"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["config", "hoistValue"],
+          "description": "Allowed values: config, hoistValue"
+        },
+        "composer": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["from", "to"]
+    },
+    "ReplaceFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "field"]
+    },
+    "TransferFieldTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TransferFieldTransformConfig",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TransferFieldTransformFieldConfigObject"
+          },
+          "additionalItems": false,
+          "description": "Array of hoist field configs"
+        },
+        "defaults": {
+          "$ref": "#/definitions/TransferFieldTransformConfigDefaults"
+        }
+      },
+      "required": ["fields"]
+    },
+    "TransferFieldTransformConfigDefaults": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TransferFieldTransformConfigDefaults",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["copy", "move"],
+          "description": "Allowed values: copy, move"
+        },
+        "useRegExp": {
+          "type": "boolean",
+          "description": "Use Regular Expression for field names"
+        },
+        "regExpFlags": {
+          "type": "string",
+          "description": "Flags to use in the Regular Expression"
+        }
+      }
+    },
+    "TransferFieldTransformFieldConfigObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TransferFieldTransformFieldConfigObject",
+      "properties": {
+        "from": {
+          "$ref": "#/definitions/TransferConfig"
+        },
+        "to": {
+          "$ref": "#/definitions/TransferConfig"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["copy", "move"],
+          "description": "Action to perform default is move unless otherwise specified in defaults (Allowed values: copy, move)"
+        },
+        "useRegExp": {
+          "type": "boolean",
+          "description": "Use Regular Expression for field names"
+        },
+        "regExpFlags": {
+          "type": "string",
+          "description": "Flags to use in the Regular Expression"
+        }
+      },
+      "required": ["from", "to"]
+    },
+    "TransferConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TransferConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "field"]
     }
   },
   "title": "Config",

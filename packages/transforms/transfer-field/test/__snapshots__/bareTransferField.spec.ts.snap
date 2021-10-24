@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform-field should copy field to different type - regex 1`] = `
+"type Query {
+  dummy: String
+
+  \\"\\"\\"Retrieve a list of Books\\"\\"\\"
+  books(maxResults: Int, orderBy: String): [Book]
+}
+
+type Mutation {
+  \\"\\"\\"Retrieve a list of Books\\"\\"\\"
+  books(maxResults: Int, orderBy: String): [Book]
+}
+
+type Book {
+  title: String!
+  author: Author!
+  code: String
+}
+
+type Author {
+  name: String!
+  age: Int!
+}
+"
+`;
+
+exports[`transform-field should move field to different type - no regex 1`] = `
+"type Query {
+  dummy: String
+
+  \\"\\"\\"Retrieve a list of Books\\"\\"\\"
+  books(maxResults: Int, orderBy: String): [Book]
+}
+
+type Book {
+  title: String!
+  author: Author!
+  code: String
+}
+
+type Author {
+  name: String!
+  age: Int!
+}
+"
+`;
+
+exports[`transform-field should move field to different type - regex 1`] = `
+"type Query {
+  dummy: String
+
+  \\"\\"\\"Retrieve a list of Books\\"\\"\\"
+  books(maxResults: Int, orderBy: String): [Book]
+}
+
+type Book {
+  title: String!
+  author: Author!
+  code: String
+}
+
+type Author {
+  name: String!
+  age: Int!
+}
+"
+`;

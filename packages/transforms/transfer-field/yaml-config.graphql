@@ -1,0 +1,58 @@
+extend type Transform {
+  """
+  Transformer to replace GraphQL field with partial of full config from a different field
+  """
+  transferField: TransferFieldTransformConfig
+}
+
+type TransferFieldTransformConfig @md {
+  """
+  Specify to apply filter-schema transforms to bare schema or by wrapping original schema
+  """
+  mode: FilterSchemaTransformMode
+  """
+  Array of hoist field configs
+  """
+  fields: [TransferFieldTransformFieldConfigObject!]!
+
+  defaults: TransferFieldTransformConfigDefaults
+}
+
+type TransferFieldTransformConfigDefaults {
+  action: TransferFieldTransformFieldConfigAction
+  """
+  Use Regular Expression for field names
+  """
+  useRegExp: Boolean
+  """
+  Flags to use in the Regular Expression
+  """
+  regExpFlags: String
+}
+
+type TransferFieldTransformFieldConfigObject @md {
+  from: TransferConfig!
+  to: TransferConfig!
+  """
+  Action to perform default is move unless otherwise specified in defaults
+  """
+  action: TransferFieldTransformFieldConfigAction
+  """
+  Use Regular Expression for field names
+  """
+  useRegExp: Boolean
+  """
+  Flags to use in the Regular Expression
+  """
+  regExpFlags: String
+}
+
+type TransferConfig {
+  type: String!
+  field: String!
+}
+
+enum TransferFieldTransformFieldConfigAction {
+  copy
+  move
+}

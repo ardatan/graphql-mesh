@@ -944,13 +944,14 @@ export interface Transform {
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
   rename?: RenameTransform | any;
-  replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
+  replaceField?: ReplaceFieldTransformConfig;
+  transferField?: TransferFieldTransformConfig;
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1252,37 +1253,6 @@ export interface RenameConfig1 {
   type?: string;
   field?: string;
 }
-/**
- * Transformer to replace GraphQL field with partial of full config from a different field
- */
-export interface ReplaceFieldTransformConfig {
-  /**
-   * Additional type definition to used to replace field types
-   */
-  typeDefs?: any;
-  /**
-   * Array of rules to replace fields
-   */
-  replacements: ReplaceFieldTransformObject[];
-}
-export interface ReplaceFieldTransformObject {
-  from: ReplaceFieldConfig;
-  to: ReplaceFieldConfig1;
-  /**
-   * Allowed values: config, hoistValue
-   */
-  scope?: 'config' | 'hoistValue';
-  composer?: any;
-  name?: string;
-}
-export interface ReplaceFieldConfig {
-  type: string;
-  field: string;
-}
-export interface ReplaceFieldConfig1 {
-  type: string;
-  field: string;
-}
 export interface ResolversCompositionTransform {
   /**
    * Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
@@ -1411,6 +1381,89 @@ export interface MergedRootFieldConfig {
    *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
    */
   argsExpr?: string;
+}
+/**
+ * Transformer to replace GraphQL field with partial of full config from a different field
+ */
+export interface ReplaceFieldTransformConfig {
+  /**
+   * Additional type definition to used to replace field types
+   */
+  typeDefs?: any;
+  /**
+   * Array of rules to replace fields
+   */
+  replacements: ReplaceFieldTransformObject[];
+}
+export interface ReplaceFieldTransformObject {
+  from: ReplaceFieldConfig;
+  to: ReplaceFieldConfig1;
+  /**
+   * Allowed values: config, hoistValue
+   */
+  scope?: 'config' | 'hoistValue';
+  composer?: any;
+  name?: string;
+}
+export interface ReplaceFieldConfig {
+  type: string;
+  field: string;
+}
+export interface ReplaceFieldConfig1 {
+  type: string;
+  field: string;
+}
+/**
+ * Transformer to replace GraphQL field with partial of full config from a different field
+ */
+export interface TransferFieldTransformConfig {
+  /**
+   * Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of hoist field configs
+   */
+  fields: TransferFieldTransformFieldConfigObject[];
+  defaults?: TransferFieldTransformConfigDefaults;
+}
+export interface TransferFieldTransformFieldConfigObject {
+  from: TransferConfig;
+  to: TransferConfig1;
+  /**
+   * Action to perform default is move unless otherwise specified in defaults (Allowed values: copy, move)
+   */
+  action?: 'copy' | 'move';
+  /**
+   * Use Regular Expression for field names
+   */
+  useRegExp?: boolean;
+  /**
+   * Flags to use in the Regular Expression
+   */
+  regExpFlags?: string;
+}
+export interface TransferConfig {
+  type: string;
+  field: string;
+}
+export interface TransferConfig1 {
+  type: string;
+  field: string;
+}
+export interface TransferFieldTransformConfigDefaults {
+  /**
+   * Allowed values: copy, move
+   */
+  action?: 'copy' | 'move';
+  /**
+   * Use Regular Expression for field names
+   */
+  useRegExp?: boolean;
+  /**
+   * Flags to use in the Regular Expression
+   */
+  regExpFlags?: string;
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;
