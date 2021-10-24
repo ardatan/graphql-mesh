@@ -13,15 +13,23 @@ export default class TransferFieldTransform implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
-    const { defaults = {} } = this.config;
+    const {
+      defaults: {
+        useRegExp: useRegExpDefault = false,
+        regExpFlags: regExpFlagsDefault = undefined,
+        action: actionDefault = 'move',
+      } = {},
+      fields: fieldConfigs,
+    } = this.config;
+
     let transformedSchema: GraphQLSchema = schema;
-    for (const fieldConfig of this.config.fields) {
+    for (const fieldConfig of fieldConfigs) {
       const {
         from: { type: fromTypeName, field: fromFieldName },
         to: { type: toTypeName, field: toFieldName },
-        useRegExp = defaults.useRegExp || false,
-        regExpFlags = defaults.regExpFlags || undefined,
-        action = defaults.action || 'move',
+        useRegExp = useRegExpDefault,
+        regExpFlags = regExpFlagsDefault,
+        action = actionDefault,
       } = fieldConfig;
 
       const [schemaWithoutFields, sourceFieldConfigMap] = removeObjectFields(
