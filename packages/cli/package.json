@@ -54,7 +54,7 @@
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
     "express": "4.17.1",
-    "graphql-helix": "1.8.3",
+    "graphql-helix": "1.8.4",
     "graphql-upload": "12.0.0",
     "graphql-ws": "5.5.3",
     "change-case": "4.1.2",
