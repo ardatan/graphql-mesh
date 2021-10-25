@@ -11,6 +11,25 @@ export interface BundleJSONSchemasOptions {
   logger: Logger;
 }
 
+const anySchema: JSONSchemaObject = {
+  title: 'Any',
+  anyOf: [
+    {
+      type: 'object',
+      additionalProperties: true,
+    },
+    {
+      type: 'string',
+    },
+    {
+      type: 'number',
+    },
+    {
+      type: 'boolean',
+    },
+  ],
+};
+
 export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONSchemasOptions) {
   const finalJsonSchema: JSONSchema = {
     type: 'object',
@@ -53,10 +72,12 @@ export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONS
       generatedSchema.title = operationConfig.responseTypeName;
       rootTypeDefinition.properties[fieldName] = generatedSchema;
     } else {
-      const generatedSchema: JSONSchemaObject = {
-        type: 'object',
-      };
-      generatedSchema.title = operationConfig.responseTypeName;
+      const generatedSchema: JSONSchemaObject = operationConfig.responseTypeName
+        ? {
+            ...anySchema,
+            title: operationConfig.responseTypeName,
+          }
+        : anySchema;
       rootTypeDefinition.properties[fieldName] = generatedSchema;
     }
 

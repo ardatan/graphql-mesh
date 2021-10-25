@@ -129,8 +129,9 @@ export async function addExecutionLogicToComposer(
           }
         }
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
-        const fetch = context?.fetch || globalFetch;
+        const fetch: typeof globalFetch = context?.fetch || globalFetch;
         const response = await fetch(fullPath, requestInit);
+        operationLogger.debug(() => `=> Received ${inspect(response)}`);
         const responseText = await response.text();
         operationLogger.debug(
           `=> Fetched from ${fullPath}=>{
