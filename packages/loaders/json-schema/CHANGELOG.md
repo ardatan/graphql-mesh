@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.1.7
+
+### Patch Changes
+
+- 592afa2b9: fix(json-schema): if responseSchema not defined, pass the HTTP response as-is
+
 ## 0.1.6
 
 ### Patch Changes

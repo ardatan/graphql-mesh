@@ -1,6 +1,6 @@
 {
   "name": "hasura-openbrewery-geodb",
-  "version": "0.5.149",
+  "version": "0.5.150",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.42.6",
-    "@graphql-mesh/json-schema": "0.21.6",
+    "@graphql-mesh/json-schema": "0.21.7",
     "graphql": "15.4.0"
   }
 }
