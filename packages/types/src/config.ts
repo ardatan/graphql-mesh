@@ -741,6 +741,10 @@ export interface OpenapiHandler {
    * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
    */
   selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
+  /**
+   * Overwrite automatic wrapping of errors into GraphqlErrors
+   */
+   provideErrorExtensions?: boolean;
 }
 export interface SelectQueryOrMutationFieldConfig {
   /**
