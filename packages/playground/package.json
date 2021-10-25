@@ -23,7 +23,7 @@
     "html-webpack-plugin": "5.5.0",
     "html-webpack-inline-source-plugin": "1.0.0-beta.2",
     "babel-loader": "8.2.3",
-    "webpack": "5.59.1",
+    "webpack": "5.60.0",
     "webpack-cli": "4.9.1",
     "css-loader": "6.4.0",
     "style-loader": "3.3.1"
