@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JSON Schema Example should generate correct schema 1`] = `
-"\\"\\"\\"Fake Company\\"\\"\\"
+"scalar Any
+
+\\"\\"\\"Fake Company\\"\\"\\"
 type Company {
   employers: [User]
   name: String
@@ -27,6 +29,9 @@ type Foo {
 type Mutation {
   \\"\\"\\"PUT /user\\"\\"\\"
   createUser(input: CreateUpdateUser_Input): User
+
+  \\"\\"\\"DELETE /user/{args.id}\\"\\"\\"
+  deleteUser(id: ID!): Any
 
   \\"\\"\\"POST /user/{args.id}\\"\\"\\"
   updateUser(id: ID!, input: CreateUpdateUser_Input): User
