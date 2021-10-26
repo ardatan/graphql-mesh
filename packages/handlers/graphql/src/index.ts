@@ -8,7 +8,15 @@ import {
   ImportFn,
 } from '@graphql-mesh/types';
 import { UrlLoader, SubscriptionProtocol } from '@graphql-tools/url-loader';
-import { GraphQLSchema, buildSchema, DocumentNode, Kind, buildASTSchema } from 'graphql';
+import {
+  GraphQLSchema,
+  buildSchema,
+  DocumentNode,
+  Kind,
+  buildASTSchema,
+  IntrospectionQuery,
+  buildClientSchema,
+} from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
   getInterpolatedHeadersFactory,
@@ -19,7 +27,7 @@ import {
   getCachedFetch,
   readFileOrUrl,
 } from '@graphql-mesh/utils';
-import { ExecutionRequest } from '@graphql-tools/utils';
+import { ExecutionRequest, isDocumentNode } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { env } from 'process';
 
@@ -40,7 +48,13 @@ export default class GraphQLHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     const { endpoint, schemaHeaders: configHeaders, introspection } = this.config;
-    const customFetch = getCachedFetch(this.cache);
+    const customFetch = this.config.customFetch
+      ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch, {
+          cwd: this.baseDir,
+          defaultExportName: 'default',
+          importFn: this.importFn,
+        })
+      : getCachedFetch(this.cache);
 
     if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
       // Loaders logic should be here somehow
@@ -91,8 +105,8 @@ export default class GraphQLHandler implements MeshHandler {
       const headers = getHeadersObject(headersFactory(resolverData));
       const endpoint = endpointFactory(resolverData);
       return urlLoader.getExecutorAsync(endpoint, {
-        customFetch,
         ...this.config,
+        customFetch,
         subscriptionsProtocol: this.config.subscriptionsProtocol as SubscriptionProtocol,
         headers,
       });
@@ -113,23 +127,33 @@ export default class GraphQLHandler implements MeshHandler {
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
     const endpointFactory = getInterpolatedStringFactory(endpoint);
-    async function introspectionExecutor(params: ExecutionRequest) {
-      const executor = await getExecutorForParams(params, schemaHeadersFactory, endpointFactory);
-      return executor(params);
-    }
     const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
 
     const nonExecutableSchema = await this.nonExecutableSchema.getWithSet(async () => {
-      const schemaFromIntrospection = await (introspection
-        ? urlLoader
-            .handleSDL(introspection, customFetch, {
-              ...this.config,
-              subscriptionsProtocol: this.config.subscriptionsProtocol as SubscriptionProtocol,
-              headers: schemaHeaders,
-            })
-            .then(({ schema }) => schema)
-        : introspectSchema(introspectionExecutor));
-      return schemaFromIntrospection;
+      if (introspection) {
+        const headers = schemaHeadersFactory({
+          env,
+        });
+        const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(endpoint, {
+          cwd: this.baseDir,
+          allowUnknownExtensions: true,
+          fetch: customFetch,
+          headers,
+        });
+        if (typeof sdlOrIntrospection === 'string') {
+          return buildSchema(sdlOrIntrospection);
+        } else if (isDocumentNode(sdlOrIntrospection)) {
+          return buildASTSchema(sdlOrIntrospection);
+        } else {
+          return buildClientSchema(sdlOrIntrospection);
+        }
+      } else {
+        const introspectionExecutor = async function introspectionExecutor(request: ExecutionRequest) {
+          const executor = await getExecutorForParams(request, schemaHeadersFactory, endpointFactory);
+          return executor(request);
+        };
+        return introspectSchema(introspectionExecutor);
+      }
     });
     return {
       schema: nonExecutableSchema,
