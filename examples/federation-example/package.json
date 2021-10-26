@@ -1,6 +1,6 @@
 {
   "name": "federation-handler-example",
-  "version": "0.5.143",
+  "version": "0.5.144",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.42.6",
-    "@graphql-mesh/graphql": "0.18.19",
+    "@graphql-mesh/graphql": "0.19.0",
     "@graphql-mesh/transform-federation": "0.6.11",
     "apollo-server": "2.21.0",
     "delay-cli": "^1.1.0",
