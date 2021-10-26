@@ -27,7 +27,7 @@ import {
   getCachedFetch,
   readFileOrUrl,
 } from '@graphql-mesh/utils';
-import { ExecutionRequest, isDocumentNode, isDocumentString } from '@graphql-tools/utils';
+import { ExecutionRequest, isDocumentNode } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { env } from 'process';
 
