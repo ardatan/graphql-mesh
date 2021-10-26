@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import express, { RequestHandler } from 'express';
-import { fork as clusterFork, isMaster } from 'cluster';
+import cluster from 'cluster';
 import { cpus } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
@@ -63,10 +63,10 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
-  if (isMaster && fork) {
+  if (!cluster.isWorker && fork) {
     const forkNum = fork > 1 ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {
-      const worker = clusterFork();
+      const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
     logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
