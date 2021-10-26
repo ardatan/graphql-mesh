@@ -1,5 +1,15 @@
 # @graphql-mesh/graphql
 
+## 0.19.0
+
+### Minor Changes
+
+- f2b654a17: feat(graphql): ability to use local schema files
+
+### Patch Changes
+
+- f2b654a17: fix(graphql): use Mesh's import for customFetch
+
 ## 0.18.19
 
 ### Patch Changes
