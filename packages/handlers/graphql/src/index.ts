@@ -40,7 +40,13 @@ export default class GraphQLHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     const { endpoint, schemaHeaders: configHeaders, introspection } = this.config;
-    const customFetch = getCachedFetch(this.cache);
+    const customFetch = this.config.customFetch
+      ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch, {
+          cwd: this.baseDir,
+          defaultExportName: 'default',
+          importFn: this.importFn,
+        })
+      : getCachedFetch(this.cache);
 
     if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
       // Loaders logic should be here somehow
@@ -91,8 +97,8 @@ export default class GraphQLHandler implements MeshHandler {
       const headers = getHeadersObject(headersFactory(resolverData));
       const endpoint = endpointFactory(resolverData);
       return urlLoader.getExecutorAsync(endpoint, {
-        customFetch,
         ...this.config,
+        customFetch,
         subscriptionsProtocol: this.config.subscriptionsProtocol as SubscriptionProtocol,
         headers,
       });
@@ -124,6 +130,7 @@ export default class GraphQLHandler implements MeshHandler {
         ? urlLoader
             .handleSDL(introspection, customFetch, {
               ...this.config,
+              customFetch,
               subscriptionsProtocol: this.config.subscriptionsProtocol as SubscriptionProtocol,
               headers: schemaHeaders,
             })
