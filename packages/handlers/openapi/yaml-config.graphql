@@ -51,6 +51,10 @@ type OpenapiHandler @md {
   Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
   """
   selectQueryOrMutationField: [SelectQueryOrMutationFieldConfig]
+  """
+  Overwrite automatic wrapping of errors into GraphqlErrors
+  """
+  provideErrorExtensions: Boolean
 }
 
 enum SourceFormat {
