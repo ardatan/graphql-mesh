@@ -1,5 +1,5 @@
 const express = require('express');
-const { fetch } = require('cross-fetch');
+const { fetch } = require('cross-undici-fetch');
 const bodyParser = require('body-parser');
 
 const app = express();

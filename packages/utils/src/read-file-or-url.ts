@@ -1,5 +1,5 @@
 import { fetchFactory, KeyValueCache } from 'fetchache';
-import { fetch as crossFetch, Request, Response } from 'cross-fetch';
+import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
 import { load as loadYaml } from 'js-yaml';
 import { isAbsolute, resolve } from 'path';
@@ -66,6 +66,7 @@ export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOption
 export async function readUrl<T>(path: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
   const fetch = config?.fetch || crossFetch;
+  config.headers = config.headers || {};
   const response = await fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();

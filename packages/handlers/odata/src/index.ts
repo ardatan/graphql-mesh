@@ -53,7 +53,7 @@ import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
 import { ExecutionRequest, pruneSchema, memoize1 } from '@graphql-tools/utils';
-import { Request, Response } from 'cross-fetch';
+import { Request, Response } from 'cross-undici-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
 

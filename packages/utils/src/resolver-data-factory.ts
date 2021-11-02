@@ -1,5 +1,5 @@
 import { stringInterpolator } from './string-interpolator';
-import { Headers } from 'cross-fetch';
+import { Headers } from 'cross-undici-fetch';
 import { ResolverData } from '@graphql-mesh/types';
 
 export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
