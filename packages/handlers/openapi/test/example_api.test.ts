@@ -417,7 +417,10 @@ test('Get nested lists of resources without specifying a path param for the pare
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then(result => {
     expect(result).toEqual({
       data: {
         users: [
