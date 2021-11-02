@@ -1,5 +1,23 @@
 # @graphql-mesh/openapi
 
+## 0.20.0
+
+### Minor Changes
+
+- c4d8be6f4: enhance: use undici for Node >v16
+- 09f81dd74: GraphQL v16 compatibility
+- 09f81dd74: GraphQL v16 compability
+
+### Patch Changes
+
+- 438cab64c: Expose provideErrorExtensions configuration for openapi
+- 6889a5eaf: fixes #3085
+- Updated dependencies [09f81dd74]
+- Updated dependencies [09f81dd74]
+  - @graphql-mesh/store@0.2.0
+  - @graphql-mesh/types@0.54.0
+  - @graphql-mesh/utils@0.20.0
+
 ## 0.19.3
 
 ### Patch Changes

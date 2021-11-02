@@ -1,5 +1,22 @@
 # @omnigraph/json-schema
 
+## 0.2.0
+
+### Minor Changes
+
+- c4d8be6f4: enhance: use undici for Node >v16
+- 09f81dd74: GraphQL v16 compatibility
+- 267573a16: enhance: resolve all promises
+- 09f81dd74: GraphQL v16 compability
+
+### Patch Changes
+
+- Updated dependencies [09f81dd74]
+- Updated dependencies [09f81dd74]
+  - @graphql-mesh/types@0.54.0
+  - @graphql-mesh/utils@0.20.0
+  - json-machete@0.0.22
+
 ## 0.1.7
 
 ### Patch Changes

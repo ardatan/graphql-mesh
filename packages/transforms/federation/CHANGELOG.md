@@ -1,5 +1,19 @@
 # @graphql-mesh/transform-federation
 
+## 0.7.0
+
+### Minor Changes
+
+- 09f81dd74: GraphQL v16 compatibility
+- 09f81dd74: GraphQL v16 compability
+
+### Patch Changes
+
+- Updated dependencies [09f81dd74]
+- Updated dependencies [09f81dd74]
+  - @graphql-mesh/types@0.54.0
+  - @graphql-mesh/utils@0.20.0
+
 ## 0.6.11
 
 ### Patch Changes
