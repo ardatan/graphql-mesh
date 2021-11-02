@@ -17,7 +17,6 @@
 '@graphql-mesh/merger-bare': minor
 '@graphql-mesh/merger-federation': minor
 '@graphql-mesh/merger-stitching': minor
-'@graphql-mesh/playground': minor
 '@graphql-mesh/runtime': minor
 '@graphql-mesh/store': minor
 '@graphql-mesh/transform-cache': minor
