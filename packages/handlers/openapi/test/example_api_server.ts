@@ -360,10 +360,8 @@ export function startServer(PORT: number) {
 
   app.get('/api/users', (req, res) => {
     const limit = req.query.limit;
-    console.log('limit: ', limit);
     if (typeof limit === 'string') {
       const results = Object.values(Users).slice(0, Number(limit));
-      console.log('results with limit: ', results);
       res.send(results);
     } else {
       res.send(Object.values(Users));
