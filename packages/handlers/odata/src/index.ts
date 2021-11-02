@@ -414,11 +414,8 @@ export default class ODataHandler implements MeshHandler {
     const origHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const headersFactory = (resolverData: ResolverData, method: string) => {
       const headers = origHeadersFactory(resolverData);
-      if (!headers.has('Accept')) {
-        headers.set('Accept', 'application/json');
-      }
-      if (!headers.has('Content-Type') && method !== 'GET') {
-        headers.set('Content-Type', 'application/json');
+      if (headers.accept == null) {
+        headers.accept = 'application/json';
       }
       return headers;
     };
@@ -501,7 +498,7 @@ export default class ODataHandler implements MeshHandler {
           }
           requestBody += `--${requestBoundary}--\n`;
           const batchHeaders = headersFactory({ context, env }, 'POST');
-          batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
+          batchHeaders['content-type'] = `multipart/mixed;boundary=${requestBoundary}`;
           const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: requestBody,
@@ -530,7 +527,7 @@ export default class ODataHandler implements MeshHandler {
       json: (context: any) =>
         new DataLoader(async (requests: Request[]): Promise<Response[]> => {
           const batchHeaders = headersFactory({ context, env }, 'POST');
-          batchHeaders.set('Content-Type', 'application/json');
+          batchHeaders['content-type'] = 'application/json';
           const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: jsonFlatStringify({

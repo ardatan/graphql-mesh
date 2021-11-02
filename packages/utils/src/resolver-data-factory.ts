@@ -1,5 +1,4 @@
 import { stringInterpolator } from './string-interpolator';
-import { Headers } from 'cross-undici-fetch';
 import { ResolverData } from '@graphql-mesh/types';
 
 export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
@@ -38,13 +37,13 @@ export function getInterpolatedStringFactory(nonInterpolatedString: string): Res
 
 export function getInterpolatedHeadersFactory(
   nonInterpolatedHeaders: Record<string, string> = {}
-): ResolverDataBasedFactory<Headers> {
+): ResolverDataBasedFactory<Record<string, string>> {
   return resolverData => {
-    const headers = new Headers();
+    const headers: Record<string, string> = {};
     for (const headerName in nonInterpolatedHeaders) {
       const headerValue = nonInterpolatedHeaders[headerName];
       if (headerValue) {
-        headers.set(headerName, stringInterpolator.parse(headerValue, resolverData));
+        headers[headerName.toLowerCase()] = stringInterpolator.parse(headerValue, resolverData);
       }
     }
     return headers;

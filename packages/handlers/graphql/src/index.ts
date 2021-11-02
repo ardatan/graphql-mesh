@@ -21,7 +21,6 @@ import { introspectSchema } from '@graphql-tools/wrap';
 import {
   getInterpolatedHeadersFactory,
   ResolverDataBasedFactory,
-  getHeadersObject,
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
   getCachedFetch,
@@ -93,7 +92,7 @@ export default class GraphQLHandler implements MeshHandler {
     const urlLoader = new UrlLoader();
     const getExecutorForParams = (
       params: ExecutionRequest,
-      headersFactory: ResolverDataBasedFactory<Headers>,
+      headersFactory: ResolverDataBasedFactory<Record<string, string>>,
       endpointFactory: ResolverDataBasedFactory<string>
     ) => {
       const resolverData: ResolverData = {
@@ -102,7 +101,7 @@ export default class GraphQLHandler implements MeshHandler {
         context: params.context,
         env,
       };
-      const headers = getHeadersObject(headersFactory(resolverData));
+      const headers = headersFactory(resolverData);
       const endpoint = endpointFactory(resolverData);
       return urlLoader.getExecutorAsync(endpoint, {
         ...this.config,

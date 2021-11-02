@@ -436,7 +436,7 @@ test('Link parameters as constants and variables', () => {
             body: '123',
           },
           everythingLink: {
-            body: 'http://localhost:3002/api/scanner_get_200_hello_application/json_close',
+            body: 'http://localhost:3002/api/scanner_get_200_hello_application/json_keep-alive',
           },
         },
       },
@@ -497,9 +497,9 @@ test('Nested links with constants and variables', () => {
             constantLink: {
               body: '123',
               everythingLink: {
-                body: 'http://localhost:3002/api/copier_get_200_123_application/json_close',
+                body: 'http://localhost:3002/api/copier_get_200_123_application/json_keep-alive',
                 everythingLink: {
-                  body: 'http://localhost:3002/api/copier_get_200_http://localhost:3002/api/copier_get_200_123_application/json_close_application/json_close',
+                  body: 'http://localhost:3002/api/copier_get_200_http://localhost:3002/api/copier_get_200_123_application/json_keep-alive_application/json_keep-alive',
                 },
               },
             },
@@ -508,7 +508,7 @@ test('Nested links with constants and variables', () => {
             body: '123',
           },
           everythingLink: {
-            body: 'http://localhost:3002/api/scanner_get_200_val_application/json_close',
+            body: 'http://localhost:3002/api/scanner_get_200_val_application/json_keep-alive',
           },
         },
       },
@@ -532,7 +532,7 @@ test('Link parameters as constants and variables with request payload', () => {
         postScanner: {
           body: 'req.body: body, req.query.query: query, req.path.path: path',
           everythingLink2: {
-            body: 'http://localhost:3002/api/scanner/path_post_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_close',
+            body: 'http://localhost:3002/api/scanner/path_post_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_keep-alive',
           },
         },
       },
