@@ -9300,10 +9300,10 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.4, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-undici-fetch@0.0.14:
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.0.14.tgz#2fef41f03edbd649b93f71dbb81399e5174bcef1"
-  integrity sha512-naQ+qd0s+i4YiLdmdBB6Bm37ufCk364CcEK9cBJp4J5sNBaKncQBW6kt2z9JeuvLSuZzG3pfN/VtYisHh/qX2g==
+cross-undici-fetch@0.0.15:
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.0.15.tgz#d3890ae44ee17caec12f27b9d9ae89c06a1a9830"
+  integrity sha512-XcruD2gZYDF32GSJBvytg3pQuVcd1XARPrctuUx0ufK3Vt1IMjT5QaaPqvVHLaIK3lZMawcwSCitUQiPGlSfsw==
   dependencies:
     node-fetch "^2.6.5"
     undici "^4.9.3"
