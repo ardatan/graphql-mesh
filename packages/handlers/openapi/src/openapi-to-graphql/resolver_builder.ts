@@ -934,6 +934,13 @@ function resolveLinkParameter(
 ): any {
   const httpLogger = logger.child('http');
 
+  const useParamValueFallbackFromRoot = (_val: any) => {
+    if (!_val) {
+      return root[paramName];
+    }
+    return _val;
+  };
+
   if (value === '$url') {
     return resolveData.url;
   } else if (value === '$method') {
@@ -959,11 +966,15 @@ function resolveLinkParameter(
 
       // CASE: parameter in previous query parameter
     } else if (value.startsWith('$request.query')) {
-      return resolveData.usedParams[Oas3Tools.sanitize(value.split('query.')[1], Oas3Tools.CaseStyle.camelCase)];
+      return useParamValueFallbackFromRoot(
+        resolveData.usedParams[Oas3Tools.sanitize(value.split('query.')[1], Oas3Tools.CaseStyle.camelCase)]
+      );
 
       // CASE: parameter in previous path parameter
     } else if (value.startsWith('$request.path')) {
-      return resolveData.usedParams[Oas3Tools.sanitize(value.split('path.')[1], Oas3Tools.CaseStyle.camelCase)];
+      return useParamValueFallbackFromRoot(
+        resolveData.usedParams[Oas3Tools.sanitize(value.split('path.')[1], Oas3Tools.CaseStyle.camelCase)]
+      );
 
       // CASE: parameter in previous header parameter
     } else if (value.startsWith('$request.header')) {
