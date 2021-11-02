@@ -51,6 +51,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          syncImportFn: require,
         }),
       ],
     });
@@ -70,6 +71,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          syncImportFn: require,
         }),
       ],
     });
@@ -89,6 +91,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          syncImportFn: require,
         }),
       ],
     });
@@ -114,11 +117,12 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          syncImportFn: require,
         }),
       ],
     });
 
-    const { data: resultAfter } = await execute({
+    const { data: resultAfter }: any = await execute({
       schema: newSchema,
       document: parse(`{ test { getSomething } }`),
     });
@@ -142,11 +146,12 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          syncImportFn: require,
         }),
       ],
     });
 
-    const { data: resultAfter } = await execute({
+    const { data: resultAfter }: any = await execute({
       schema: newSchema,
       document: parse(`mutation { test { doSomething } }`),
     });
@@ -178,6 +183,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          syncImportFn: require,
         }),
       ],
     });

@@ -206,7 +206,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const addUserResult = await execute(mockedSchema, ADD_USER);
+    const addUserResult: any = await execute({
+      schema: mockedSchema,
+      document: ADD_USER,
+    });
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
     const GET_USER = parse(/* GraphQL */ `
@@ -217,7 +220,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult = await execute(mockedSchema, GET_USER);
+    const getUserResult: any = await execute({ schema: mockedSchema, document: GET_USER });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
     const UPDATE_USER = parse(/* GraphQL */ `
@@ -228,7 +231,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult = await execute(mockedSchema, UPDATE_USER);
+    const updateUserResult: any = await execute({ schema: mockedSchema, document: UPDATE_USER });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });
@@ -307,7 +310,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const addUserResult = await execute(mockedSchema, ADD_USER);
+    const addUserResult: any = await execute({ schema: mockedSchema, document: ADD_USER });
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
     const GET_USER = parse(/* GraphQL */ `
@@ -318,7 +321,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult = await execute(mockedSchema, GET_USER);
+    const getUserResult: any = await execute({ schema: mockedSchema, document: GET_USER });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
     const UPDATE_USER = parse(/* GraphQL */ `
@@ -329,7 +332,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult = await execute(mockedSchema, UPDATE_USER);
+    const updateUserResult: any = await execute({ schema: mockedSchema, document: UPDATE_USER });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });

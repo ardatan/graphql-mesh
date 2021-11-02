@@ -355,7 +355,7 @@ function createOrReuseUnion<TSource, TContext, TArgs>({
           }
 
           return false;
-        });
+        })?.name;
       },
     });
 
@@ -611,7 +611,7 @@ function createFields<TSource, TContext, TArgs>({
       const sanePropName = Oas3Tools.storeSaneName(saneFieldTypeKey, fieldTypeKey, data.saneMap, logger);
 
       fields[sanePropName] = {
-        type: requiredProperty ? new GraphQLNonNull(objectType) : (objectType as GraphQLOutputType),
+        type: (requiredProperty ? new GraphQLNonNull(objectType) : objectType) as GraphQLOutputType,
 
         description: typeof fieldSchema === 'object' ? fieldSchema.description : null,
       };

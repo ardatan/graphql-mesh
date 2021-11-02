@@ -59,7 +59,7 @@ export default class FederationTransform implements MeshTransform {
             if (objectType) {
               const existingType = objectType.getFields()[fieldName].type;
               objectType.getFields()[fieldName].type = isNonNullType(existingType)
-                ? GraphQLNonNull(GraphQLID)
+                ? new GraphQLNonNull(GraphQLID)
                 : GraphQLID;
             }
           }

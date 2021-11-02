@@ -165,7 +165,7 @@ test('Properly treat null values during sanitization', () => {
     }
   }`;
 
-  graphql(schema, query).then((result: any) => {
+  graphql({ schema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         User: {

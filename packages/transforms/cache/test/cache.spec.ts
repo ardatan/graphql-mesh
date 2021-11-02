@@ -163,6 +163,8 @@ describe('cache', () => {
       expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(spies.Query.user.bind(null).name);
 
       const transform = new CacheTransform({
+        apiName: 'test',
+        syncImportFn: require,
         cache,
         config: [
           {
@@ -183,6 +185,8 @@ describe('cache', () => {
       expect(schema.getQueryType()?.getFields().users.resolve.name).toBe(spies.Query.users.bind(null).name);
 
       const transform = new CacheTransform({
+        apiName: 'test',
+        syncImportFn: require,
         cache,
         config: [
           {
@@ -205,6 +209,8 @@ describe('cache', () => {
   describe('Cache Wrapper', () => {
     const checkCache = async (config: YamlConfig.CacheTransformConfig[], cacheKeyToCheck?: string) => {
       const transform = new CacheTransform({
+        apiName: 'test',
+        syncImportFn: require,
         cache,
         config,
         pubsub,
@@ -411,9 +417,11 @@ describe('cache', () => {
 
   describe('Opration-based invalidation', () => {
     it('Should invalidate cache when mutation is done based on key', async () => {
-      const schemaWithHooks = applyResolversHooksToSchema(schema, pubsub);
+      const schemaWithHooks = applyResolversHooksToSchema(schema, pubsub, {});
 
       const transform = new CacheTransform({
+        apiName: 'test',
+        syncImportFn: require,
         config: [
           {
             field: 'Query.user',
@@ -488,6 +496,8 @@ describe('cache', () => {
     describe('Subfields', () => {
       it('Should cache queries including subfield arguments', async () => {
         const transform = new CacheTransform({
+          apiName: 'test',
+          syncImportFn: require,
           config: [{ field: 'Query.user' }],
           cache,
           pubsub,
@@ -508,7 +518,7 @@ describe('cache', () => {
             }
           `),
         };
-        const { data: actual1 } = await execute(executeOptions1);
+        const { data: actual1 }: any = await execute(executeOptions1);
         expect(spies.Query.user.mock.calls.length).toBe(1);
         expect(actual1.user.friend.id).toBe('2');
 
@@ -525,13 +535,13 @@ describe('cache', () => {
             }
           `),
         };
-        const { data: actual2 } = await execute(executeOptions2);
+        const { data: actual2 }: any = await execute(executeOptions2);
         expect(spies.Query.user.mock.calls.length).toBe(2);
         expect(actual2.user.friend.id).toBe('3');
 
         // Repeat both queries, no new calls for resolver
-        const { data: repeat1 } = await execute(executeOptions1);
-        const { data: repeat2 } = await execute(executeOptions2);
+        const { data: repeat1 }: any = await execute(executeOptions1);
+        const { data: repeat2 }: any = await execute(executeOptions2);
         expect(spies.Query.user.mock.calls.length).toBe(2);
         expect(repeat1.user.friend.id).toBe('2');
         expect(repeat2.user.friend.id).toBe('3');

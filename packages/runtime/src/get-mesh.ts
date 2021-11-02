@@ -168,7 +168,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     [MESH_CONTEXT_SYMBOL]: true,
   };
   getMeshLogger.debug(() => `Attaching in-context SDK, pubsub, cache and liveQueryStore to the context`);
-  const sourceMap: Map<RawSourceOutput, GraphQLSchema> = unifiedSchema.extensions.sourceMap;
+  const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   await Promise.all(
     rawSources.map(async rawSource => {
       const rawSourceLogger = logger.child(`${rawSource.name}`);
@@ -295,7 +295,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       document,
       contextValue,
       rootValue,
-      variableValues,
+      variableValues: variableValues as any,
       schema: unifiedSchema,
       operationName,
     };
@@ -390,7 +390,7 @@ ${inspect({
 
     if ('data' in executionResult || 'errors' in executionResult) {
       if (executionResult.data && !executionResult.errors) {
-        return executionResult.data as Result;
+        return executionResult.data as unknown as Result;
       } else {
         logger.error(`GraphQL Mesh SDK failed to execute:
         ${inspect({

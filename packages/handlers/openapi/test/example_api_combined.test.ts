@@ -50,7 +50,7 @@ test('addLimitArgument and allOf', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result.data.cars.length).toEqual(1);
     });
   });
@@ -72,7 +72,7 @@ test('addLimitArgument but no value provided', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result.errors).toBeUndefined();
       expect(result.data.cars.length).toEqual(4);
     });

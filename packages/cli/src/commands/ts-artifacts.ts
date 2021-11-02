@@ -41,7 +41,7 @@ function buildSignatureBasedOnRootFields(
     const field = fields[fieldName];
     const argsExists = field.args && field.args.length > 0;
     const argsName = argsExists ? `${type.name}${field.name}Args` : '{}';
-    const parentTypeNode = {
+    const parentTypeNode: NamedTypeNode = {
       kind: Kind.NAMED_TYPE,
       name: {
         kind: Kind.NAME,

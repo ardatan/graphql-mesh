@@ -13,7 +13,7 @@ export function getOperationMetadata(operationConfig: JSONSchemaOperationConfig)
   let rootTypeName: 'Query' | 'Mutation' | 'Subscription';
   if (isPubSubOperationConfig(operationConfig)) {
     httpMethod = null;
-    operationType = 'subscription';
+    operationType = 'subscription' as OperationTypeNode;
     rootTypeName = 'Subscription';
   } else {
     httpMethod = operationConfig.method;

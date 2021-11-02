@@ -58,7 +58,7 @@ test('Basic simpleNames option test', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         o_d_d___n_a_m_e: {
@@ -82,7 +82,7 @@ test('Basic simpleNames option test with GraphQL unsafe values', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         weird___name: {
@@ -106,7 +106,7 @@ test('Basic simpleNames option test with GraphQL unsafe values and a parameter',
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         weird___name2: {
@@ -130,7 +130,7 @@ test('Basic simpleNames option test with a link', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         o_d_d___n_a_m_e: {
@@ -156,7 +156,7 @@ test('Basic simpleNames option test with a link that has parameters', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         o_d_d___n_a_m_e: {
@@ -182,7 +182,7 @@ test('Basic simpleNames option test with a link that has exposed parameters', ()
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         o_d_d___n_a_m_e: {

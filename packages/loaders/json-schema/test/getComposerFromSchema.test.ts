@@ -902,7 +902,7 @@ input Foo_Input {
       },
     });
     const schema = schemaComposer.buildSchema();
-    const executionResponse = await execute({
+    const executionResponse: any = await execute({
       schema,
       document: parse(/* GraphQL */ `
         fragment FooOrBarFragment on FooOrBar {
