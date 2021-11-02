@@ -30,14 +30,14 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: 17
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-17-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-17-yarn-${{ hashFiles('yarn.lock') }}
 
       - name: Install Dependencies using Yarn
         run: yarn install && git checkout yarn.lock && git checkout package.json
