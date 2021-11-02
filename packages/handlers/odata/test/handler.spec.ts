@@ -325,10 +325,10 @@ describe('odata', () => {
         },
       ],
     };
-    let sentRequest: Request;
+    let sentRequest: any;
     addMock(correctUrl, async request => {
-      sentRequest = request;
-      const bodyObj = JSON.parse(request.body as any);
+      sentRequest = request.clone();
+      const bodyObj = await request.json();
       bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new Response(JSON.stringify(bodyObj));
     });
@@ -364,7 +364,7 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-    expect(JSON.parse(sentRequest!.body as any)).toStrictEqual(correctBody);
+    expect(await sentRequest!.json()).toStrictEqual(correctBody);
   });
   it('should generate correct HTTP request for deleting an entity', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
@@ -413,8 +413,8 @@ describe('odata', () => {
     };
     let sentRequest: Request;
     addMock(correctUrl, async request => {
-      sentRequest = request;
-      const returnBody = JSON.parse(request.body as any);
+      sentRequest = request.clone();
+      const returnBody = await request.json();
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new Response(JSON.stringify(returnBody));
     });
@@ -605,7 +605,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl.replace(/'/g, '%27')); // apostrophe gets percent-encoded
+    expect(sentRequest!.url.replace(/'/g, '%27')).toBe(correctUrl.replace(/'/g, '%27')); // apostrophe gets percent-encoded
   });
   it('should generate correct HTTP request for invoking unbound actions', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));

@@ -1,5 +1,4 @@
 import { SchemaComposer } from 'graphql-compose';
-import crossFetch from 'cross-fetch';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig } from './utils';
@@ -12,7 +11,7 @@ import { stringify as qsStringify } from 'qs';
 import { isScalarType } from 'graphql';
 
 export interface AddExecutionLogicToComposerOptions {
-  fetch: typeof crossFetch;
+  fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: Record<string, string>;
@@ -63,7 +62,7 @@ export async function addExecutionLogicToComposer(
       field.subscribe = (root, args, context, info) => {
         const pubsub = context?.pubsub || globalPubsub;
         if (!pubsub) {
-          throw new Error(`You should have PubSub defined in the config or the context!`);
+          throw new Error(`You should have PubSub defined in either the config or the context!`);
         }
         const interpolationData = { root, args, context, info, env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
@@ -130,14 +129,12 @@ export async function addExecutionLogicToComposer(
         }
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
+        if (!fetch) {
+          throw new Error(`You should have PubSub defined in either the config or the context!`);
+        }
         const response = await fetch(fullPath, requestInit);
         operationLogger.debug(() => `=> Received ${inspect(response)}`);
         const responseText = await response.text();
-        operationLogger.debug(
-          `=> Fetched from ${fullPath}=>{
-              body: ${responseText}
-            }`
-        );
         const returnType = field.type;
         let responseJson: any;
         try {

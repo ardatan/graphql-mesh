@@ -13,7 +13,7 @@ import { graphql, GraphQLSchema } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { startServer, stopServer } from './example_api_server';
 
-import fetch from 'cross-fetch';
+import fetch from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas.json');
 const PORT = 3003;
@@ -326,7 +326,7 @@ test('Get project using API key 3 passed in the requestOptions - viewer is disab
 });
 
 test('Basic AnyAuth usage', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiBasicProtocol: {username: "arlene123", password: "password123"}) {
       patentWithId (patentId: "100") {
         patentId
@@ -347,7 +347,7 @@ test('Basic AnyAuth usage', () => {
 });
 
 test('Basic AnyAuth usage with extraneous auth data', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiKeyProtocol: {apiKey: "abcdef"}, exampleApiBasicProtocol: {username: "arlene123", password: "password123"}) {
       patentWithId (patentId: "100") {
         patentId
@@ -368,7 +368,7 @@ test('Basic AnyAuth usage with extraneous auth data', () => {
 });
 
 test('Basic AnyAuth usage with multiple operations', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiKeyProtocol2: {apiKey: "abcdef"}) {
       patentWithId (patentId: "100") {
         patentId
@@ -395,7 +395,7 @@ test('Basic AnyAuth usage with multiple operations', () => {
 });
 
 test('AnyAuth with multiple operations with different auth requirements', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiBasicProtocol: {username: "arlene123", password: "password123"}, exampleApiKeyProtocol: {apiKey: "abcdef"}) {
       patentWithId (patentId: "100") {
         patentId
@@ -423,7 +423,7 @@ test('AnyAuth with multiple operations with different auth requirements', () => 
 
 // This request can only be fulfilled using AnyAuth
 test.skip('AnyAuth with multiple operations with different auth requirements in a link', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiBasicProtocol: {username: "arlene123", password: "password123"}, exampleApiKeyProtocol: {apiKey: "abcdef"}) {
       projectWithId (projectId: 3) {
         projectId

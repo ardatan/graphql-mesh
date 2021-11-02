@@ -97,6 +97,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           merge: apiSource.merge,
         });
       } catch (e: any) {
+        console.log(e);
         sourceLogger.error(`Failed to generate schema: ${e.message || e}`);
         sourceLogger.debug(() => inspect(e));
         failed = true;
@@ -146,7 +147,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   });
 
   getMeshLogger.debug(() => `Creating event listener (resolverDone) for Live Query Store`);
-  pubsub.subscribe('resolverDone', ({ result, resolverData }) => {
+  await pubsub.subscribe('resolverDone', async ({ result, resolverData }) => {
     if (resolverData?.info?.parentType && resolverData?.info?.fieldName) {
       const path = `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`;
       if (liveQueryInvalidationFactoryMap.has(path)) {
@@ -154,7 +155,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
           invalidationPathFactory({ ...resolverData, result })
         );
-        liveQueryStore.invalidate(invalidationPaths);
+        await liveQueryStore.invalidate(invalidationPaths);
       }
     }
   });

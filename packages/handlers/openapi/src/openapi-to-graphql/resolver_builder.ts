@@ -464,7 +464,7 @@ export function getResolver<TSource, TContext, TArgs>(
       for (const headerName in headers) {
         const headerValue = headers[headerName];
         if (headerValue) {
-          options.headers[headerName] = headerValue;
+          options.headers[headerName.toLowerCase()] = headerValue;
         }
       }
     } else {

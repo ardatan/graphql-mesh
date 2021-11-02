@@ -499,7 +499,7 @@ export default class MySQLHandler implements MeshHandler {
         });
       })
     );
-    this.pubsub.subscribe('destroy', () => pool.end());
+    await this.pubsub.subscribe('destroy', () => pool.end());
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));

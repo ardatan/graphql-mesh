@@ -3,7 +3,6 @@ import {
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
-  getHeadersObject,
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
   getCachedFetch,
@@ -185,7 +184,7 @@ export default class OpenAPIHandler implements MeshHandler {
         const resolverData: ResolverData = { root, args, context, info, env };
         const resolverParams = getResolverParams();
         resolverParams.requestOptions = {
-          headers: getHeadersObject(headersFactory(resolverData)),
+          headers: headersFactory(resolverData),
         };
         resolverParams.qs = qs;
 

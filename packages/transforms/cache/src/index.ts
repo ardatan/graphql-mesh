@@ -17,21 +17,23 @@ export default class CacheTransform implements MeshTransform {
       const effectingOperations = cacheItem.invalidate?.effectingOperations || [];
 
       if (effectingOperations.length > 0) {
-        pubsub.subscribe('resolverDone', async ({ resolverData }) => {
-          const effectingRule = effectingOperations.find(
-            o => o.operation === `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`
-          );
+        pubsub
+          .subscribe('resolverDone', async ({ resolverData }) => {
+            const effectingRule = effectingOperations.find(
+              o => o.operation === `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`
+            );
 
-          if (effectingRule) {
-            const cacheKey = computeCacheKey({
-              keyStr: effectingRule.matchKey,
-              args: resolverData.args,
-              info: resolverData.info,
-            });
+            if (effectingRule) {
+              const cacheKey = computeCacheKey({
+                keyStr: effectingRule.matchKey,
+                args: resolverData.args,
+                info: resolverData.info,
+              });
 
-            await cache.delete(cacheKey);
-          }
-        });
+              await cache.delete(cacheKey);
+            }
+          })
+          .catch(e => console.error(e));
       }
 
       compositions[cacheItem.field] = (originalResolver => async (root: any, args: any, context: any, info: any) => {

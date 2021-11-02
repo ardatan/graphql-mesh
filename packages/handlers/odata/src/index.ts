@@ -53,7 +53,7 @@ import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
 import { ExecutionRequest, pruneSchema, memoize1 } from '@graphql-tools/utils';
-import { Request, Response } from 'cross-fetch';
+import { Request, Response } from 'cross-undici-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
 
@@ -414,11 +414,11 @@ export default class ODataHandler implements MeshHandler {
     const origHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const headersFactory = (resolverData: ResolverData, method: string) => {
       const headers = origHeadersFactory(resolverData);
-      if (!headers.has('Accept')) {
-        headers.set('Accept', 'application/json');
+      if (headers.accept == null) {
+        headers.accept = 'application/json';
       }
-      if (!headers.has('Content-Type') && method !== 'GET') {
-        headers.set('Content-Type', 'application/json');
+      if (headers['content-type'] == null && method !== 'GET') {
+        headers['content-type'] = 'application/json';
       }
       return headers;
     };
@@ -461,7 +461,11 @@ export default class ODataHandler implements MeshHandler {
         throw error;
       }
       if (!('responses' in batchResponseJson)) {
-        const error = new Error(`Batch Request didn't return a valid response.`);
+        const error = new Error(
+          batchResponseJson.ExceptionMessage ||
+            batchResponseJson.Message ||
+            `Batch Request didn't return a valid response.`
+        );
         Object.assign(error, {
           extensions: batchResponseJson,
         });
@@ -501,18 +505,17 @@ export default class ODataHandler implements MeshHandler {
           }
           requestBody += `--${requestBoundary}--\n`;
           const batchHeaders = headersFactory({ context, env }, 'POST');
-          batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
-          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+          batchHeaders['content-type'] = `multipart/mixed;boundary=${requestBoundary}`;
+          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: requestBody,
             headers: batchHeaders,
           });
-          const batchResponse = await fetch(batchRequest);
-          const batchResponseText = await batchResponse.text();
-          if (!batchResponseText.startsWith('--')) {
-            const batchResponseJson = JSON.parse(batchResponseText);
+          if (batchResponse.headers.get('content-type').includes('json')) {
+            const batchResponseJson = await batchResponse.json();
             return handleBatchJsonResults(batchResponseJson, requests);
           }
+          const batchResponseText = await batchResponse.text();
           const responseLines = batchResponseText.split('\n');
           const responseBoundary = responseLines[0];
           const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
@@ -530,8 +533,8 @@ export default class ODataHandler implements MeshHandler {
       json: (context: any) =>
         new DataLoader(async (requests: Request[]): Promise<Response[]> => {
           const batchHeaders = headersFactory({ context, env }, 'POST');
-          batchHeaders.set('Content-Type', 'application/json');
-          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+          batchHeaders['content-type'] = 'application/json';
+          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: jsonFlatStringify({
               requests: await Promise.all(
@@ -543,6 +546,7 @@ export default class ODataHandler implements MeshHandler {
                   request.headers?.forEach((value, key) => {
                     headers[key] = value;
                   });
+                  console.log(request.headers, headers);
                   return {
                     id,
                     url,
@@ -555,9 +559,7 @@ export default class ODataHandler implements MeshHandler {
             }),
             headers: batchHeaders,
           });
-          const batchResponse = await fetch(batchRequest);
-          const batchResponseText = await batchResponse.text();
-          const batchResponseJson = JSON.parse(batchResponseText);
+          const batchResponseJson = await batchResponse.json();
           return handleBatchJsonResults(batchResponseJson, requests);
         }),
       none: () =>
