@@ -34,7 +34,7 @@
     "@graphql-tools/utils": "8.5.1",
     "to-json-schema": "0.2.5",
     "graphql-compose": "9.0.4",
-    "graphql-scalars": "1.12.0",
+    "graphql-scalars": "1.13.1",
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1",
     "url-join": "4.0.1",
