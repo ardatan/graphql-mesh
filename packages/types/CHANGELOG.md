@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.54.0
+
+### Minor Changes
+
+- 09f81dd74: GraphQL v16 compatibility
+- 09f81dd74: GraphQL v16 compability
+
 ## 0.53.0
 
 ### Minor Changes

@@ -1,5 +1,25 @@
 # @graphql-mesh/config
 
+## 0.25.0
+
+### Minor Changes
+
+- 09f81dd74: GraphQL v16 compatibility
+- 09f81dd74: GraphQL v16 compability
+
+### Patch Changes
+
+- Updated dependencies [09f81dd74]
+- Updated dependencies [267573a16]
+- Updated dependencies [09f81dd74]
+  - @graphql-mesh/merger-bare@0.11.0
+  - @graphql-mesh/merger-stitching@0.14.0
+  - @graphql-mesh/runtime@0.25.0
+  - @graphql-mesh/store@0.2.0
+  - @graphql-mesh/types@0.54.0
+  - @graphql-mesh/utils@0.20.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.26
+
 ## 0.24.4
 
 ### Patch Changes

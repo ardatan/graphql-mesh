@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-cache
 
+## 0.10.0
+
+### Minor Changes
+
+- 09f81dd74: GraphQL v16 compatibility
+- 267573a16: enhance: resolve all promises
+- 09f81dd74: GraphQL v16 compability
+
+### Patch Changes
+
+- Updated dependencies [09f81dd74]
+- Updated dependencies [09f81dd74]
+  - @graphql-mesh/types@0.54.0
+  - @graphql-mesh/utils@0.20.0
+
 ## 0.9.21
 
 ### Patch Changes
