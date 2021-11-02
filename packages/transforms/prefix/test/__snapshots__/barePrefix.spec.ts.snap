@@ -13,6 +13,5 @@ type T_User {
 type T_Post {
   id: ID!
   title: String!
-}
-"
+}"
 `;

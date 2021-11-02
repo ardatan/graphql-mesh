@@ -27,6 +27,5 @@ type Province {
   country: Country
   id: String
   name: String
-}
-"
+}"
 `;

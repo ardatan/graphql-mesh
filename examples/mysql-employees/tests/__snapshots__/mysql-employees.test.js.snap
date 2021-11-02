@@ -848,8 +848,7 @@ input v_full_employees_WhereInput {
 enum v_full_employees_gender {
   F
   M
-}
-"
+}"
 `;
 
 exports[`MySQL Employees should give correct response for example queries: example-query.graphql-query-result 1`] = `

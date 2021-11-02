@@ -80,6 +80,5 @@ type Query {
 
 type QueryByName_DataSet {
   undefined: String
-}
-"
+}"
 `;

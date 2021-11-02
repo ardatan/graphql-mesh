@@ -443,8 +443,7 @@ input AirportUpdateInput {
   IcaoCode: String
   IataCode: String
   Location: AirportLocationInput
-}
-"
+}"
 `;
 
 exports[`odata should create correct GraphQL schema for functions with entity set paths 1`] = `
@@ -546,6 +545,5 @@ input PersonUpdateInput {
   MiddleName: String
   Age: BigInt
   Emails: [String]
-}
-"
+}"
 `;

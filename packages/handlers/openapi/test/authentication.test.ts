@@ -523,7 +523,7 @@ test('Extract token from context', () => {
       return graphql({
         schema,
         source: query,
-        variableValues: { user: { token: 'abcdef' } },
+        contextValue: { user: { token: 'abcdef' } },
       }).then((result: any) => {
         expect(result).toEqual({
           data: {

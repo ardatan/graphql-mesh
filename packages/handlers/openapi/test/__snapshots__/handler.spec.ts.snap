@@ -666,8 +666,7 @@ enum Action {
   UNBLOCK
   APPROVE
   IGNORE
-}
-"
+}"
 `;
 
 exports[`openapi should create a GraphQL schema from some complex local swagger file 1`] = `
@@ -14651,7 +14650,7 @@ type IoK8sApimachineryPkgApisMetaV1ObjectMeta {
 }
 
 \\"\\"\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"\\"\\"
-scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+scalar JSON
 
 \\"\\"\\"ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource that the fieldset applies to.\\"\\"\\"
 type IoK8sApimachineryPkgApisMetaV1ManagedFieldsEntry {
@@ -39854,6 +39853,5 @@ input IoK8sApiAutoscalingV1ScaleStatusInput {
   replicas: Int!
   \\"\\"\\"label query over pods that should match the replicas count. This is same as the label selector but in the string format to avoid introspection by clients. The string will be in the same format as the query-param syntax. More info about label selectors: http://kubernetes.io/docs/user-guide/labels#label-selectors\\"\\"\\"
   selector: String
-}
-"
+}"
 `;

@@ -53,6 +53,5 @@ type User {
   foos: [Foo]
   jobTitle: String
   lastName: String
-}
-"
+}"
 `;

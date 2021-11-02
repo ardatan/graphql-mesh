@@ -147,7 +147,7 @@ Object {
         "kind": "OBJECT",
         "name": "Airline",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -184,7 +184,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AirlineInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -217,7 +217,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AirlineUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -276,7 +276,7 @@ Object {
         "kind": "OBJECT",
         "name": "Airport",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -335,7 +335,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AirportInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -385,7 +385,7 @@ Object {
         "kind": "OBJECT",
         "name": "AirportLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -429,7 +429,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AirportLocationInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -484,7 +484,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AirportUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -494,7 +494,7 @@ Object {
         "kind": "SCALAR",
         "name": "BigInt",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -504,7 +504,7 @@ Object {
         "kind": "SCALAR",
         "name": "Boolean",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -548,7 +548,7 @@ Object {
         "kind": "OBJECT",
         "name": "City",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -592,7 +592,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "CityInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -602,7 +602,7 @@ Object {
         "kind": "SCALAR",
         "name": "DateTime",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1104,7 +1104,7 @@ Object {
         "kind": "OBJECT",
         "name": "Employee",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1214,7 +1214,7 @@ Object {
         "kind": "OBJECT",
         "name": "Event",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1264,7 +1264,7 @@ Object {
         "kind": "OBJECT",
         "name": "EventLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -1295,7 +1295,7 @@ Object {
         "kind": "ENUM",
         "name": "Feature",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1438,7 +1438,7 @@ Object {
         "kind": "OBJECT",
         "name": "Flight",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1448,7 +1448,7 @@ Object {
         "kind": "SCALAR",
         "name": "Float",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1458,7 +1458,7 @@ Object {
         "kind": "SCALAR",
         "name": "GUID",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1468,7 +1468,7 @@ Object {
         "kind": "SCALAR",
         "name": "ID",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1517,7 +1517,7 @@ Object {
             "ofType": null,
           },
         ],
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1964,7 +1964,7 @@ Object {
             "ofType": null,
           },
         ],
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2062,7 +2062,7 @@ Object {
             "ofType": null,
           },
         ],
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2166,7 +2166,7 @@ Object {
             "ofType": null,
           },
         ],
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2176,7 +2176,7 @@ Object {
         "kind": "SCALAR",
         "name": "ISO8601Duration",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -2197,7 +2197,7 @@ Object {
         "kind": "ENUM",
         "name": "InlineCount",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2207,7 +2207,7 @@ Object {
         "kind": "SCALAR",
         "name": "Int",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2217,7 +2217,7 @@ Object {
         "kind": "SCALAR",
         "name": "JSON",
         "possibleTypes": null,
-        "specifiedByUrl": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
+        "specifiedByURL": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
       },
       Object {
         "enumValues": null,
@@ -2256,7 +2256,7 @@ Object {
         "kind": "OBJECT",
         "name": "Location",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2289,7 +2289,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LocationInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2802,7 +2802,7 @@ Object {
         "kind": "OBJECT",
         "name": "Manager",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3250,7 +3250,7 @@ Object {
         "kind": "OBJECT",
         "name": "Mutation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3687,7 +3687,7 @@ Object {
         "kind": "OBJECT",
         "name": "Person",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -3713,7 +3713,7 @@ Object {
         "kind": "ENUM",
         "name": "PersonGender",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3877,7 +3877,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PersonInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4021,7 +4021,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PersonUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4109,7 +4109,7 @@ Object {
         "kind": "OBJECT",
         "name": "PlanItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4213,7 +4213,7 @@ Object {
         "kind": "OBJECT",
         "name": "PublicTransportation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4519,7 +4519,7 @@ Object {
         "kind": "OBJECT",
         "name": "Query",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4596,7 +4596,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "QueryOptions",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4606,7 +4606,7 @@ Object {
         "kind": "SCALAR",
         "name": "String",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4806,7 +4806,7 @@ Object {
         "kind": "OBJECT",
         "name": "Trip",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4929,7 +4929,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TripInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5039,7 +5039,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Directive",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -5145,7 +5145,7 @@ Object {
         "kind": "ENUM",
         "name": "__DirectiveLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5208,7 +5208,7 @@ Object {
         "kind": "OBJECT",
         "name": "__EnumValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5321,7 +5321,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Field",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5410,7 +5410,7 @@ Object {
         "kind": "OBJECT",
         "name": "__InputValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5515,7 +5515,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Schema",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5561,7 +5561,7 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "specifiedByUrl",
+            "name": "specifiedByURL",
             "type": Object {
               "kind": "SCALAR",
               "name": "String",
@@ -5716,7 +5716,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Type",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -5767,7 +5767,7 @@ Object {
         "kind": "ENUM",
         "name": "__TypeKind",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
     ],
   },

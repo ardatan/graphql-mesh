@@ -38,7 +38,8 @@
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1",
     "url-join": "4.0.1",
-    "qs": "6.10.1"
+    "qs": "6.10.1",
+    "pascal-case": "3.1.2"
   },
   "publishConfig": {
     "access": "public",

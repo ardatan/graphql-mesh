@@ -1071,8 +1071,7 @@ input Foo_Input {
       input Foo_Input_Input {
         _0BarId: String
         _1BazId: String
-      }
-      "
+      }"
     `);
   });
 });

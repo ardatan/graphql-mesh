@@ -1296,7 +1296,7 @@ test('Option provideErrorExtensions should prevent error extensions from being c
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
     return graphql({ schema, source: query }).then((result: any) => {
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         errors: [
           {
             message: 'Could not invoke operation GET /users/{username}',
