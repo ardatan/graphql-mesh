@@ -14,7 +14,7 @@ import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
 import _ from 'lodash';
-import { entitiesField, EntityType, serviceField } from '@apollo/federation/dist/types.js';
+import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 export default class FederationTransform implements MeshTransform {
@@ -170,7 +170,7 @@ export default class FederationTransform implements MeshTransform {
         if (!isObjectType(type)) {
           throw new Error(`Type "${objectName}" is not an object type and can't have a resolveReference function`);
         }
-        type.resolveReference = currentFederationConfig.resolveReference;
+        type.resolveObject = currentFederationConfig.resolveReference;
       }
     });
 
