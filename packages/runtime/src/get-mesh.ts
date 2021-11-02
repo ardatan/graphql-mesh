@@ -97,6 +97,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           merge: apiSource.merge,
         });
       } catch (e: any) {
+        console.log(e);
         sourceLogger.error(`Failed to generate schema: ${e.message || e}`);
         sourceLogger.debug(() => inspect(e));
         failed = true;
