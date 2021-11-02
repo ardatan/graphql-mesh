@@ -49,7 +49,7 @@ export default class MongooseHandler implements MeshHandler {
         useUnifiedTopology: true,
       } as ConnectOptions).catch(e => console.error(e));
 
-      this.pubsub.subscribe('destroy', () => disconnect());
+      await this.pubsub.subscribe('destroy', () => disconnect());
     }
 
     const schemaComposer = new SchemaComposer();

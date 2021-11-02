@@ -5,7 +5,6 @@ import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema';
 import { SchemaComposer } from 'graphql-compose';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import crossFetch from 'cross-fetch';
 import { JSONSchemaOperationConfig } from './types';
 import { addExecutionLogicToComposer, AddExecutionLogicToComposerOptions } from './addExecutionLogicToComposer';
 import { bundleJSONSchemas } from './bundleJSONSchemas';
@@ -18,7 +17,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   errorMessage?: string;
   logger?: Logger;
   pubsub?: MeshPubSub;
-  fetch?: typeof crossFetch;
+  fetch?: WindowOrWorkerGlobalScope['fetch'];
   generateInterfaceFromSharedFields?: boolean;
 }
 
@@ -31,7 +30,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     cwd,
     logger,
   });
-  return getGraphQLSchemaFromBundledJSONSchema(bundledJSONSchema, {
+  const graphqlSchema = await getGraphQLSchemaFromBundledJSONSchema(bundledJSONSchema, {
     cwd,
     fetch: options.fetch,
     logger,
@@ -42,13 +41,14 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     errorMessage: options.errorMessage,
     generateInterfaceFromSharedFields: options.generateInterfaceFromSharedFields,
   });
+  return graphqlSchema;
 }
 
 export async function getGraphQLSchemaFromBundledJSONSchema(
   bundledJSONSchema: JSONSchemaObject,
   {
     cwd,
-    fetch = crossFetch,
+    fetch: globalFetch = globalThis.fetch,
     logger,
     operations,
     operationHeaders,
@@ -69,13 +69,19 @@ export async function getGraphQLSchemaFromBundledJSONSchema(
     generateInterfaceFromSharedFields
   );
 
-  const schemaComposer = visitorResult.output as SchemaComposer;
+  const schemaComposerWithoutExecutionLogic = visitorResult.output;
+
+  if (!(schemaComposerWithoutExecutionLogic instanceof SchemaComposer)) {
+    throw new Error('The visitor result should be a SchemaComposer instance.');
+  }
 
   // graphql-compose doesn't add @defer and @stream to the schema
-  specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
+  for (const directive of specifiedDirectives) {
+    schemaComposerWithoutExecutionLogic.addDirective(directive);
+  }
 
-  addExecutionLogicToComposer(schemaComposer, {
-    fetch,
+  const schemaComposerWithExecutionLogic = await addExecutionLogicToComposer(schemaComposerWithoutExecutionLogic, {
+    fetch: globalFetch,
     logger,
     operations,
     operationHeaders,
@@ -84,5 +90,5 @@ export async function getGraphQLSchemaFromBundledJSONSchema(
     errorMessage,
   });
 
-  return schemaComposer.buildSchema();
+  return schemaComposerWithExecutionLogic.buildSchema();
 }

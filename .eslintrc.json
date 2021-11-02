@@ -24,6 +24,7 @@
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/return-await": "error",
     "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-floating-promises": "error",
     "no-eval": "off",
     "no-use-before-define": "off"
   },

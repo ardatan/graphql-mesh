@@ -146,7 +146,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   });
 
   getMeshLogger.debug(() => `Creating event listener (resolverDone) for Live Query Store`);
-  pubsub.subscribe('resolverDone', ({ result, resolverData }) => {
+  await pubsub.subscribe('resolverDone', async ({ result, resolverData }) => {
     if (resolverData?.info?.parentType && resolverData?.info?.fieldName) {
       const path = `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`;
       if (liveQueryInvalidationFactoryMap.has(path)) {
@@ -154,7 +154,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
           invalidationPathFactory({ ...resolverData, result })
         );
-        liveQueryStore.invalidate(invalidationPaths);
+        await liveQueryStore.invalidate(invalidationPaths);
       }
     }
   });

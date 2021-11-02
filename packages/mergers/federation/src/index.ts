@@ -7,12 +7,12 @@ import {
   MeshPubSub,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import { GraphQLSchema, extendSchema, DocumentNode, parse, execute, ExecutionResult, getOperationAST } from 'graphql';
+import { GraphQLSchema, extendSchema, DocumentNode, parse, execute, ExecutionResult } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { hashObject, jitExecutorFactory, AggregateError, printWithCache } from '@graphql-mesh/utils';
-import { asArray } from '@graphql-tools/utils';
+import { hashObject, jitExecutorFactory, AggregateError, printWithCache, parseWithCache } from '@graphql-mesh/utils';
+import { asArray, ExecutionRequest } from '@graphql-tools/utils';
 import { env } from 'process';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 
@@ -69,20 +69,14 @@ export default class FederationMerger implements MeshMerger {
         const jitExecute = jitExecutorFactory(transformedSchema, name, this.logger.child('JIT Executor'));
         return {
           async process({ request: { query, variables, operationName, extensions }, context }) {
-            const document = parse(query);
-            const operationAst = getOperationAST(document, operationName);
-            if (!operationAst) {
-              throw new Error(`Operation ${operationName} cannot be found!`);
-            }
-            const operationType = operationAst.operation;
+            const document = parseWithCache(query);
             return jitExecute({
-              document: parse(query),
+              document,
               variables,
               operationName,
               extensions,
               context,
               rootValue,
-              operationType,
             }) as ExecutionResult;
           },
         };
@@ -98,7 +92,7 @@ export default class FederationMerger implements MeshMerger {
     this.logger.debug(() => `Wrapping gateway executor in a unified schema`);
     remoteSchema = wrapSchema({
       schema: remoteSchema,
-      executor: ({ document, info, variables, context, operationName }): any => {
+      executor: <TReturn>({ document, info, variables, context, operationName }: ExecutionRequest) => {
         const documentStr = printWithCache(document);
         const { operation } = info;
         // const operationName = operation.name?.value;
@@ -120,11 +114,11 @@ export default class FederationMerger implements MeshMerger {
           schema,
           schemaHash,
           overallCachePolicy: {} as any,
-        });
+        }) as ExecutionResult<TReturn>;
       },
       batch: true,
     });
-    this.pubsub.subscribe('destroy', () => gateway.stop());
+    await this.pubsub.subscribe('destroy', () => gateway.stop());
     this.logger.debug(() => `Applying additionalTypeDefs`);
     typeDefs?.forEach(typeDef => {
       remoteSchema = extendSchema(remoteSchema, typeDef);

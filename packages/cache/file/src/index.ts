@@ -27,10 +27,11 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
   async set(name: string, value: V) {
     const json = await this.json$;
     _.set(json, name, value);
-    this.writeDataLoader.load({});
+    await this.writeDataLoader.load({});
   }
 
   async delete(name: string) {
-    this.json$.then(json => (json[name] = undefined));
+    const json = await this.json$;
+    json[name] = undefined;
   }
 }
