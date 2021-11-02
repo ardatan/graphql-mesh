@@ -1,7 +1,6 @@
 /* eslint-disable no-case-declarations */
 import {
   AnyTypeComposer,
-  camelCase,
   EnumTypeComposerValueConfigDefinition,
   GraphQLJSON,
   InputTypeComposerFieldConfigAsObjectDefinition,
@@ -40,6 +39,7 @@ import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { inspect } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
+import { pascalCase } from 'pascal-case';
 
 interface TypeComposers {
   input?: AnyTypeComposer<any>;
@@ -71,7 +71,7 @@ const JSONSchemaStringFormatScalarMapFactory = (ajv: Ajv) =>
         throw new Error(`Expected ${format} but got: ${value}`);
       };
       const scalar = new GraphQLScalarType({
-        name: camelCase(format),
+        name: pascalCase(format),
         description: `Represents ${format} values`,
         serialize: coerceString,
         parseValue: coerceString,

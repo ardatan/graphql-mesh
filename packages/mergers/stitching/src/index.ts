@@ -68,7 +68,7 @@ export default class StitchingMerger implements MeshMerger {
       .proxy(`${rawSource.name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
       .getWithSet(async () => {
         this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${rawSource.name}`);
-        const sdlQueryResult = (await rawSource.executor({
+        const sdlQueryResult: any = (await rawSource.executor({
           document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
         })) as ExecutionResult;
         if (sdlQueryResult.errors?.length) {
@@ -136,7 +136,7 @@ export default class StitchingMerger implements MeshMerger {
         get: (_, pKey) => {
           if (pKey === 'get') {
             return (rawSource: RawSourceOutput) => {
-              const stitchingInfo: StitchingInfo = unifiedSchema.extensions.stitchingInfo;
+              const stitchingInfo = unifiedSchema.extensions.stitchingInfo as StitchingInfo;
               for (const [subschemaConfig, subschema] of stitchingInfo.subschemaMap) {
                 if ((subschemaConfig as RawSourceOutput).name === rawSource.name) {
                   return subschema.transformedSchema;

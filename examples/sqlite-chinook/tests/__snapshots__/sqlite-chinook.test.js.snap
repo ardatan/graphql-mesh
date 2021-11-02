@@ -237,7 +237,7 @@ Object {
         "kind": "OBJECT",
         "name": "Album",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -334,7 +334,7 @@ Object {
         "kind": "OBJECT",
         "name": "Artist",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -344,7 +344,7 @@ Object {
         "kind": "SCALAR",
         "name": "Boolean",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -585,7 +585,7 @@ Object {
         "kind": "OBJECT",
         "name": "Customer",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -904,7 +904,7 @@ Object {
         "kind": "OBJECT",
         "name": "Employee",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -926,7 +926,7 @@ Object {
         "kind": "OBJECT",
         "name": "GenericResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1023,7 +1023,7 @@ Object {
         "kind": "OBJECT",
         "name": "Genre",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1033,7 +1033,7 @@ Object {
         "kind": "SCALAR",
         "name": "Int",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1230,7 +1230,7 @@ Object {
         "kind": "OBJECT",
         "name": "Invoice",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1338,7 +1338,7 @@ Object {
         "kind": "OBJECT",
         "name": "InvoiceItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1435,7 +1435,7 @@ Object {
         "kind": "OBJECT",
         "name": "MediaType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3450,7 +3450,7 @@ Object {
         "kind": "OBJECT",
         "name": "Mutation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3502,7 +3502,7 @@ Object {
         "kind": "OBJECT",
         "name": "Playlist",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4453,7 +4453,7 @@ Object {
         "kind": "OBJECT",
         "name": "Query",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4463,7 +4463,7 @@ Object {
         "kind": "SCALAR",
         "name": "SequelizeJSON",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4473,7 +4473,7 @@ Object {
         "kind": "SCALAR",
         "name": "String",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4711,7 +4711,7 @@ Object {
         "kind": "OBJECT",
         "name": "Track",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4821,7 +4821,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Directive",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -4927,7 +4927,7 @@ Object {
         "kind": "ENUM",
         "name": "__DirectiveLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4990,7 +4990,7 @@ Object {
         "kind": "OBJECT",
         "name": "__EnumValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5103,7 +5103,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Field",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5192,7 +5192,7 @@ Object {
         "kind": "OBJECT",
         "name": "__InputValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5297,7 +5297,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Schema",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5343,7 +5343,7 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "specifiedByUrl",
+            "name": "specifiedByURL",
             "type": Object {
               "kind": "SCALAR",
               "name": "String",
@@ -5498,7 +5498,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Type",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -5549,7 +5549,7 @@ Object {
         "kind": "ENUM",
         "name": "__TypeKind",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
     ],
   },

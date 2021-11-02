@@ -12,8 +12,7 @@ type MyUser {
 
 type MyBook {
   id: ID!
-}
-"
+}"
 `;
 
 exports[`rename should change the name of a type 1`] = `
@@ -28,8 +27,7 @@ type User {
 
 type MyBook {
   id: ID!
-}
-"
+}"
 `;
 
 exports[`rename should change the name of multiple fields 1`] = `
@@ -44,8 +42,7 @@ type MyUser {
 
 type MyBook {
   false: ID!
-}
-"
+}"
 `;
 
 exports[`rename should change the name of multiple type names 1`] = `
@@ -60,8 +57,7 @@ type User {
 
 type Book {
   id: ID!
-}
-"
+}"
 `;
 
 exports[`rename should replace all occurrences of a substring in a field 1`] = `
@@ -71,8 +67,7 @@ exports[`rename should replace all occurrences of a substring in a field 1`] = `
 
 type ApiUserV1Api {
   false: ID!
-}
-"
+}"
 `;
 
 exports[`rename should replace all occurrences of a substring in a type 1`] = `
@@ -82,8 +77,7 @@ exports[`rename should replace all occurrences of a substring in a type 1`] = `
 
 type UserV1 {
   id: ID!
-}
-"
+}"
 `;
 
 exports[`rename should replace all occurrences of multiple substrings in a field 1`] = `
@@ -93,8 +87,7 @@ exports[`rename should replace all occurrences of multiple substrings in a field
 
 type ApiUserV1Api {
   false: ID!
-}
-"
+}"
 `;
 
 exports[`rename should replace all occurrences of multiple substrings in a type 1`] = `
@@ -104,8 +97,7 @@ exports[`rename should replace all occurrences of multiple substrings in a type 
 
 type User {
   id: ID!
-}
-"
+}"
 `;
 
 exports[`rename should replace the first occurrence of a substring in a field 1`] = `
@@ -120,6 +112,5 @@ type MyUser {
 
 type MyBook {
   false: ID!
-}
-"
+}"
 `;

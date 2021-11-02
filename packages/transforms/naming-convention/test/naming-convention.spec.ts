@@ -24,6 +24,7 @@ describe('namingConvention', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
+  const syncImportFn = require;
 
   beforeEach(() => {
     cache = new InMemoryLRUCache();
@@ -35,6 +36,8 @@ describe('namingConvention', () => {
       schema,
       transforms: [
         new NamingConventionTransform({
+          apiName: '',
+          syncImportFn,
           config: {
             typeNames: 'pascalCase',
             enumValues: 'upperCase',
@@ -96,6 +99,8 @@ describe('namingConvention', () => {
       schema,
       transforms: [
         new NamingConventionTransform({
+          apiName: '',
+          syncImportFn,
           cache,
           pubsub,
           config: {
@@ -150,6 +155,8 @@ describe('namingConvention', () => {
       schema,
       transforms: [
         new NamingConventionTransform({
+          apiName: '',
+          syncImportFn,
           cache,
           pubsub,
           config: {

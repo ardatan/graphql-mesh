@@ -146,6 +146,5 @@ type _records_items_fields {
   country_name: String
   value: Float
   year: String
-}
-"
+}"
 `;

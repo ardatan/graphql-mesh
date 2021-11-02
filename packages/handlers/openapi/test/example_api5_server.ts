@@ -36,6 +36,8 @@ export function startServer(PORT: number) {
    * "The name of route parameters must be made up of "word characters"
    * ([A-Za-z0-9_])."
    */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   app.get('/api/w-e-i-r-d___n-a-m-e2/:funky___parameter', (req, res) => {
     res.send({
       data: `weird name 2 param: ${req.params.funky___parameter}`,
@@ -64,5 +66,5 @@ export function stopServer() {
 
 // if run from command line, start server:
 if (require.main === module) {
-  startServer(3005);
+  startServer(3005).catch(console.error);
 }

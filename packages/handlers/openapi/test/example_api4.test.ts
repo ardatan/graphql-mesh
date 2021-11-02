@@ -79,7 +79,10 @@ const oneOfQuery = `{
  * 'commonAttribute' field
  */
 test('Basic anyOf test using the same member schemas\n\nEquivalent to GET /anyOf', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf';
@@ -113,7 +116,10 @@ test('Basic anyOf test using the same member schemas\n\nEquivalent to GET /anyOf
  * fields
  */
 test('Basic anyOf test with different member schemas\n\nEquivalent to GET /anyOf2', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf2';
@@ -152,7 +158,10 @@ test('Basic anyOf test with different member schemas\n\nEquivalent to GET /anyOf
  * field
  */
 test('anyOf test with the same nested member schemas\n\nEquivalent to GET /anyOf3', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf3';
@@ -186,7 +195,10 @@ test('anyOf test with the same nested member schemas\n\nEquivalent to GET /anyOf
  * should have two fields.
  */
 test('anyOf test with different nested member schemas\n\nEquivalent to GET /anyOf4', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf4';
@@ -226,7 +238,10 @@ test('anyOf test with different nested member schemas\n\nEquivalent to GET /anyO
  * result, the field will use the arbitrary JSON type.
  */
 test('anyOf test with different nested member schemas, leading to conflict\n\nEquivalent to GET /anyOf5', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf5';
@@ -260,7 +275,10 @@ test('anyOf test with different nested member schemas, leading to conflict\n\nEq
  * type.
  */
 test('anyOf test with incompatible member schema types\n\nEquivalent to GET /anyOf6', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf6';
@@ -286,7 +304,10 @@ test('anyOf test with incompatible member schema types\n\nEquivalent to GET /any
  * defaulting to the arbitrary JSON type.
  */
 test('anyOf test with some extraneous member schemas\n\nEquivalent to GET /anyOf7', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf7';
@@ -317,7 +338,10 @@ test('anyOf test with some extraneous member schemas\n\nEquivalent to GET /anyOf
  * arbitrary JSON type.
  */
 test('anyOf test with no object type member schemas\n\nEquivalent to GET /anyOf8', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf8';
@@ -341,7 +365,10 @@ test('anyOf test with no object type member schemas\n\nEquivalent to GET /anyOf8
  * external type provided in the root schema, it can utilize the proper typing.
  */
 test('anyOf test with extraneous member schemas with external type\n\nEquivalent to GET /anyOf9', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf9';
@@ -364,7 +391,10 @@ test('anyOf test with extraneous member schemas with external type\n\nEquivalent
  * None of the schemas have conflicts so all three should be utilized
  */
 test('Basic anyOf test with allOf\n\nEquivalent to GET /anyOf10', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf10';
@@ -408,7 +438,10 @@ test('Basic anyOf test with allOf\n\nEquivalent to GET /anyOf10', () => {
  * and allow all three schemas to be utilized
  */
 test('anyOf test with allOf, requiring anyOf collapse\n\nEquivalent to GET /anyOf11', () => {
-  return graphql(createdSchema, anyOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: anyOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'anyOf11';
@@ -451,7 +484,10 @@ test('anyOf test with allOf, requiring anyOf collapse\n\nEquivalent to GET /anyO
  * type has two differnet member types.
  */
 test('Basic oneOf test\n\nEquivalent to GET /oneOf', () => {
-  return graphql(createdSchema, oneOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: oneOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'oneOf';
@@ -496,7 +532,10 @@ test('Basic oneOf test\n\nEquivalent to GET /oneOf', () => {
  * the arbitrary JSON type.
  */
 test('oneOf test with non-object type member schema\n\nEquivalent to GET /oneOf2', () => {
-  return graphql(createdSchema, oneOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: oneOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'oneOf2';
@@ -520,7 +559,10 @@ test('oneOf test with non-object type member schema\n\nEquivalent to GET /oneOf2
  * the arbitrary JSON type.
  */
 test('oneOf test with no object type member schemas\n\nEquivalent to GET /oneOf3', () => {
-  return graphql(createdSchema, oneOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: oneOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'oneOf3';
@@ -544,7 +586,10 @@ test('oneOf test with no object type member schemas\n\nEquivalent to GET /oneOf3
  * type, it is able to utilize the proper type.
  */
 test('oneOf test with extraneous member schemas\n\nEquivalent to GET /oneOf4', () => {
-  return graphql(createdSchema, oneOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: oneOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'oneOf4';
@@ -569,7 +614,10 @@ test('oneOf test with extraneous member schemas\n\nEquivalent to GET /oneOf4', (
  * TODO: verify this behavior and also create a test with additional root properties
  */
 test('Basic oneOf test with allOf\n\nEquivalent to GET /oneOf5', () => {
-  return graphql(createdSchema, oneOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: oneOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'oneOf5';
@@ -615,7 +663,10 @@ test('Basic oneOf test with allOf\n\nEquivalent to GET /oneOf5', () => {
  * and allow all three schemas to be utilized
  */
 test('oneOf test with allOf, requiring oneOf collapse\n\nEquivalent to GET /oneOf6', () => {
-  return graphql(createdSchema, oneOfQuery).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: oneOfQuery,
+  }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'oneOf6';

@@ -1,0 +1,32 @@
+diff --git a/node_modules/apollo-server-core/dist/utils/schemaHash.js b/node_modules/apollo-server-core/dist/utils/schemaHash.js
+index bf16589..71d59a0 100644
+--- a/node_modules/apollo-server-core/dist/utils/schemaHash.js
++++ b/node_modules/apollo-server-core/dist/utils/schemaHash.js
+@@ -12,7 +12,10 @@ const createSHA_1 = __importDefault(require("./createSHA"));
+ function generateSchemaHash(schema) {
+     const introspectionQuery = utilities_1.getIntrospectionQuery();
+     const documentAST = language_1.parse(introspectionQuery);
+-    const result = execution_1.execute(schema, documentAST);
++    const result = execution_1.execute({
++        schema,
++        document: documentAST
++    });
+     if (result &&
+         typeof result.then === 'function') {
+         throw new Error([
+diff --git a/node_modules/apollo-server-core/src/utils/schemaHash.ts b/node_modules/apollo-server-core/src/utils/schemaHash.ts
+index 7137b9d..c04aa32 100644
+--- a/node_modules/apollo-server-core/src/utils/schemaHash.ts
++++ b/node_modules/apollo-server-core/src/utils/schemaHash.ts
+@@ -9,7 +9,10 @@ import { SchemaHash } from "apollo-server-types";
+ export function generateSchemaHash(schema: GraphQLSchema): SchemaHash {
+   const introspectionQuery = getIntrospectionQuery();
+   const documentAST = parse(introspectionQuery);
+-  const result = execute(schema, documentAST) as ExecutionResult;
++  const result = execute({
++    schema,
++    document: documentAST,
++  }) as ExecutionResult;
+ 
+   // If the execution of an introspection query results in a then-able, it
+   // indicates that one or more of its resolvers is behaving in an asynchronous

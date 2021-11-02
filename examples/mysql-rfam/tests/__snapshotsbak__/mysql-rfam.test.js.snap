@@ -277,7 +277,7 @@ Object {
         "kind": "OBJECT",
         "name": "AlignmentAndTree",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -384,7 +384,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AlignmentAndTreeInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -483,7 +483,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AlignmentAndTreeOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -514,7 +514,7 @@ Object {
         "kind": "ENUM",
         "name": "AlignmentAndTreeType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -613,7 +613,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AlignmentAndTreeUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -712,7 +712,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AlignmentAndTreeWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -839,7 +839,7 @@ Object {
         "kind": "OBJECT",
         "name": "AnnotatedFile",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -906,7 +906,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AnnotatedFileInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -961,7 +961,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AnnotatedFileOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1016,7 +1016,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AnnotatedFileUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1071,7 +1071,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AnnotatedFileWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1156,7 +1156,7 @@ Object {
         "kind": "OBJECT",
         "name": "Author",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1241,7 +1241,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AuthorInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1318,7 +1318,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AuthorOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1395,7 +1395,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AuthorUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1472,7 +1472,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "AuthorWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1482,7 +1482,7 @@ Object {
         "kind": "SCALAR",
         "name": "BigInt",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1492,7 +1492,7 @@ Object {
         "kind": "SCALAR",
         "name": "Boolean",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1603,7 +1603,7 @@ Object {
         "kind": "OBJECT",
         "name": "Clan",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1741,7 +1741,7 @@ Object {
         "kind": "OBJECT",
         "name": "ClanDatabaseLink",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1819,7 +1819,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanDatabaseLinkInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1885,7 +1885,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanDatabaseLinkOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1951,7 +1951,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanDatabaseLinkUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2017,7 +2017,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanDatabaseLinkWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2128,7 +2128,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2311,7 +2311,7 @@ Object {
         "kind": "OBJECT",
         "name": "ClanLiteratureReference",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2374,7 +2374,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanLiteratureReferenceInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2429,7 +2429,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanLiteratureReferenceOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2484,7 +2484,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanLiteratureReferenceUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2539,7 +2539,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanLiteratureReferenceWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2700,7 +2700,7 @@ Object {
         "kind": "OBJECT",
         "name": "ClanMembership",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2741,7 +2741,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanMembershipInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2774,7 +2774,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanMembershipOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2807,7 +2807,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanMembershipUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2840,7 +2840,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanMembershipWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2939,7 +2939,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3038,7 +3038,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3137,7 +3137,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ClanWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3275,7 +3275,7 @@ Object {
         "kind": "OBJECT",
         "name": "DatabaseLink",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3353,7 +3353,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DatabaseLinkInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3419,7 +3419,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DatabaseLinkOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3485,7 +3485,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DatabaseLinkUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3551,7 +3551,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DatabaseLinkWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3561,7 +3561,7 @@ Object {
         "kind": "SCALAR",
         "name": "Date",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3571,7 +3571,7 @@ Object {
         "kind": "SCALAR",
         "name": "DateTime",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3686,7 +3686,7 @@ Object {
         "kind": "OBJECT",
         "name": "DbVersion",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3801,7 +3801,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DbVersionInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3900,7 +3900,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DbVersionOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3999,7 +3999,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DbVersionUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4098,7 +4098,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DbVersionWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4176,7 +4176,7 @@ Object {
         "kind": "OBJECT",
         "name": "DeadClan",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4254,7 +4254,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadClanInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4320,7 +4320,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadClanOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4386,7 +4386,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadClanUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4452,7 +4452,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadClanWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4541,7 +4541,7 @@ Object {
         "kind": "OBJECT",
         "name": "DeadFamily",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4630,7 +4630,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadFamilyInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4707,7 +4707,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadFamilyOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4784,7 +4784,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadFamilyUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4861,7 +4861,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "DeadFamilyWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4898,7 +4898,7 @@ Object {
         "kind": "OBJECT",
         "name": "EnsemblNames",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4935,7 +4935,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "EnsemblNamesInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4968,7 +4968,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "EnsemblNamesOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5001,7 +5001,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "EnsemblNamesUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5034,7 +5034,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "EnsemblNamesWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5510,7 +5510,7 @@ Object {
         "kind": "OBJECT",
         "name": "Family",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5566,7 +5566,7 @@ Object {
         "kind": "OBJECT",
         "name": "FamilyAuthor",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5622,7 +5622,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyAuthorInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5666,7 +5666,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyAuthorOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5710,7 +5710,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyAuthorUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5754,7 +5754,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyAuthorWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5870,7 +5870,7 @@ Object {
         "kind": "OBJECT",
         "name": "FamilyFile",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5926,7 +5926,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyFileInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5970,7 +5970,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyFileOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6014,7 +6014,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyFileUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6058,7 +6058,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyFileWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6474,7 +6474,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6657,7 +6657,7 @@ Object {
         "kind": "OBJECT",
         "name": "FamilyLiteratureReference",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6720,7 +6720,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLiteratureReferenceInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6775,7 +6775,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLiteratureReferenceOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6830,7 +6830,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLiteratureReferenceUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6885,7 +6885,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLiteratureReferenceWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6993,7 +6993,7 @@ Object {
         "kind": "OBJECT",
         "name": "FamilyLong",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7041,7 +7041,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLongInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7085,7 +7085,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLongOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7129,7 +7129,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLongUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7173,7 +7173,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyLongWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7345,7 +7345,7 @@ Object {
         "kind": "OBJECT",
         "name": "FamilyNcbi",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7397,7 +7397,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyNcbiInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7441,7 +7441,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyNcbiOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7485,7 +7485,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyNcbiUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7529,7 +7529,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyNcbiWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7925,7 +7925,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -8321,7 +8321,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -8717,7 +8717,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FamilyWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -8896,7 +8896,7 @@ Object {
         "kind": "OBJECT",
         "name": "Features",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9015,7 +9015,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FeaturesInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9114,7 +9114,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FeaturesOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9213,7 +9213,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FeaturesUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9312,7 +9312,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FeaturesWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9322,7 +9322,7 @@ Object {
         "kind": "SCALAR",
         "name": "Float",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9618,7 +9618,7 @@ Object {
         "kind": "OBJECT",
         "name": "FullRegion",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9794,7 +9794,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FullRegionInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -9926,7 +9926,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FullRegionOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -9957,7 +9957,7 @@ Object {
         "kind": "ENUM",
         "name": "FullRegionTruncated",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -9978,7 +9978,7 @@ Object {
         "kind": "ENUM",
         "name": "FullRegionType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -10110,7 +10110,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FullRegionUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -10242,7 +10242,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "FullRegionWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -10519,7 +10519,7 @@ Object {
         "kind": "OBJECT",
         "name": "Genome",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -10550,7 +10550,7 @@ Object {
         "kind": "ENUM",
         "name": "GenomeAssemblyLevel",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -10680,7 +10680,7 @@ Object {
         "kind": "OBJECT",
         "name": "GenomeData",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -10810,7 +10810,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeDataInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -10920,7 +10920,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeDataOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -10956,7 +10956,7 @@ Object {
         "kind": "ENUM",
         "name": "GenomeDataStatus",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -11066,7 +11066,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeDataUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -11176,7 +11176,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeDataWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -11453,7 +11453,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -11706,7 +11706,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -11959,7 +11959,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12212,7 +12212,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenomeWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12282,7 +12282,7 @@ Object {
         "kind": "OBJECT",
         "name": "Genseq",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12352,7 +12352,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenseqInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12418,7 +12418,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenseqOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12484,7 +12484,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenseqUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12550,7 +12550,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "GenseqWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12688,7 +12688,7 @@ Object {
         "kind": "OBJECT",
         "name": "HtmlAlignment",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12766,7 +12766,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "HtmlAlignmentInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12832,7 +12832,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "HtmlAlignmentOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -12863,7 +12863,7 @@ Object {
         "kind": "ENUM",
         "name": "HtmlAlignmentType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12929,7 +12929,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "HtmlAlignmentUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12995,7 +12995,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "HtmlAlignmentWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13005,7 +13005,7 @@ Object {
         "kind": "SCALAR",
         "name": "Int",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13108,7 +13108,7 @@ Object {
         "kind": "OBJECT",
         "name": "Keywords",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13211,7 +13211,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "KeywordsInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13310,7 +13310,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "KeywordsOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13409,7 +13409,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "KeywordsUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13508,7 +13508,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "KeywordsWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13567,7 +13567,7 @@ Object {
         "kind": "OBJECT",
         "name": "LiteratureReference",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13626,7 +13626,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LiteratureReferenceInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13681,7 +13681,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LiteratureReferenceOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13736,7 +13736,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LiteratureReferenceUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13791,7 +13791,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LiteratureReferenceWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13858,7 +13858,7 @@ Object {
         "kind": "OBJECT",
         "name": "Lock",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13925,7 +13925,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LockInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13980,7 +13980,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LockOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14035,7 +14035,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LockUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14090,7 +14090,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "LockWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14213,7 +14213,7 @@ Object {
         "kind": "OBJECT",
         "name": "MatchesAndFasta",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14276,7 +14276,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MatchesAndFastaInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14331,7 +14331,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MatchesAndFastaOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -14357,7 +14357,7 @@ Object {
         "kind": "ENUM",
         "name": "MatchesAndFastaType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14412,7 +14412,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MatchesAndFastaUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14467,7 +14467,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MatchesAndFastaWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14776,7 +14776,7 @@ Object {
         "kind": "OBJECT",
         "name": "Motif",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14914,7 +14914,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifDatabaseLink",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14992,7 +14992,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifDatabaseLinkInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15058,7 +15058,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifDatabaseLinkOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15124,7 +15124,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifDatabaseLinkUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15190,7 +15190,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifDatabaseLinkWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15395,7 +15395,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifFamilyStats",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15480,7 +15480,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFamilyStatsInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15557,7 +15557,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFamilyStatsOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15634,7 +15634,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFamilyStatsUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15711,7 +15711,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFamilyStatsWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15827,7 +15827,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifFile",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15883,7 +15883,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFileInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15927,7 +15927,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFileOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -15971,7 +15971,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFileUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -16015,7 +16015,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifFileWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -16324,7 +16324,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -16507,7 +16507,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifLiterature",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -16570,7 +16570,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifLiteratureInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -16625,7 +16625,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifLiteratureOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -16680,7 +16680,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifLiteratureUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -16735,7 +16735,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifLiteratureWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -17055,7 +17055,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifMatches",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -17195,7 +17195,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifMatchesInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -17327,7 +17327,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifMatchesOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -17459,7 +17459,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifMatchesUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -17591,7 +17591,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifMatchesWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -17856,7 +17856,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifOld",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -18121,7 +18121,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifOldInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -18374,7 +18374,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifOldOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -18627,7 +18627,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifOldUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -18880,7 +18880,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifOldWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19177,7 +19177,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19311,7 +19311,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifPdb",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19385,7 +19385,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifPdbInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19451,7 +19451,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifPdbOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19517,7 +19517,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifPdbUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19583,7 +19583,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifPdbWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19755,7 +19755,7 @@ Object {
         "kind": "OBJECT",
         "name": "MotifSsImage",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19807,7 +19807,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifSsImageInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19851,7 +19851,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifSsImageOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19895,7 +19895,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifSsImageUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -19939,7 +19939,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifSsImageWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -20236,7 +20236,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -20533,7 +20533,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MotifWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -25736,7 +25736,7 @@ Object {
         "kind": "OBJECT",
         "name": "Mutation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -25757,7 +25757,7 @@ Object {
         "kind": "ENUM",
         "name": "OrderBy",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -25827,7 +25827,7 @@ Object {
         "kind": "OBJECT",
         "name": "Overlap",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -25897,7 +25897,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26058,7 +26058,7 @@ Object {
         "kind": "OBJECT",
         "name": "OverlapMembership",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26099,7 +26099,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapMembershipInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26132,7 +26132,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapMembershipOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26165,7 +26165,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapMembershipUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26198,7 +26198,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapMembershipWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26264,7 +26264,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26330,7 +26330,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26396,7 +26396,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "OverlapWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26488,7 +26488,7 @@ Object {
         "kind": "OBJECT",
         "name": "Pdb",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26716,7 +26716,7 @@ Object {
         "kind": "OBJECT",
         "name": "PdbFullRegion",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -26884,7 +26884,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbFullRegionInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -27016,7 +27016,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbFullRegionOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -27148,7 +27148,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbFullRegionUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -27280,7 +27280,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbFullRegionWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -27372,7 +27372,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -27460,7 +27460,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -27848,7 +27848,7 @@ Object {
         "kind": "OBJECT",
         "name": "PdbRfamReg",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -27996,7 +27996,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbRfamRegInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28128,7 +28128,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbRfamRegOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28260,7 +28260,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbRfamRegUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28392,7 +28392,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbRfamRegWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28504,7 +28504,7 @@ Object {
         "kind": "OBJECT",
         "name": "PdbSequence",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28556,7 +28556,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbSequenceInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28600,7 +28600,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbSequenceOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28644,7 +28644,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbSequenceUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28688,7 +28688,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbSequenceWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28776,7 +28776,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -28864,7 +28864,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PdbWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29054,7 +29054,7 @@ Object {
         "kind": "OBJECT",
         "name": "PostProcess",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29184,7 +29184,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PostProcessInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29294,7 +29294,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PostProcessOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -29330,7 +29330,7 @@ Object {
         "kind": "ENUM",
         "name": "PostProcessStatus",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29440,7 +29440,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PostProcessUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29550,7 +29550,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PostProcessWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29735,7 +29735,7 @@ Object {
         "kind": "OBJECT",
         "name": "ProcessedData",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29860,7 +29860,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ProcessedDataInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -29981,7 +29981,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ProcessedDataOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -30102,7 +30102,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ProcessedDataUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -30223,7 +30223,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "ProcessedDataWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -30350,7 +30350,7 @@ Object {
         "kind": "OBJECT",
         "name": "Pseudoknot",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -30417,7 +30417,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PseudoknotInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -30472,7 +30472,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PseudoknotOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -30493,7 +30493,7 @@ Object {
         "kind": "ENUM",
         "name": "PseudoknotSource",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -30548,7 +30548,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PseudoknotUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -30603,7 +30603,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "PseudoknotWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -35511,7 +35511,7 @@ Object {
         "kind": "OBJECT",
         "name": "Query",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -35570,7 +35570,7 @@ Object {
         "kind": "OBJECT",
         "name": "Refseq",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -35836,7 +35836,7 @@ Object {
         "kind": "OBJECT",
         "name": "RefseqFullRegion",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -35982,7 +35982,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqFullRegionInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36092,7 +36092,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqFullRegionOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -36123,7 +36123,7 @@ Object {
         "kind": "ENUM",
         "name": "RefseqFullRegionTruncated",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36233,7 +36233,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqFullRegionUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36343,7 +36343,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqFullRegionWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36402,7 +36402,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36457,7 +36457,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36512,7 +36512,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36567,7 +36567,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RefseqWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36765,7 +36765,7 @@ Object {
         "kind": "OBJECT",
         "name": "Rfamseq",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -36903,7 +36903,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RfamseqInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -37049,7 +37049,7 @@ Object {
         "kind": "ENUM",
         "name": "RfamseqMolType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37159,7 +37159,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RfamseqOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37269,7 +37269,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RfamseqUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37379,7 +37379,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RfamseqWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37472,7 +37472,7 @@ Object {
         "kind": "OBJECT",
         "name": "RnacentralMatches",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37565,7 +37565,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RnacentralMatchesInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37642,7 +37642,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RnacentralMatchesOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -37663,7 +37663,7 @@ Object {
         "kind": "ENUM",
         "name": "RnacentralMatchesType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37740,7 +37740,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RnacentralMatchesUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37817,7 +37817,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RnacentralMatchesWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -37942,7 +37942,7 @@ Object {
         "kind": "OBJECT",
         "name": "RscapeAnnotations",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38067,7 +38067,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RscapeAnnotationsInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38188,7 +38188,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RscapeAnnotationsOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38309,7 +38309,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RscapeAnnotationsUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38430,7 +38430,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "RscapeAnnotationsWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38538,7 +38538,7 @@ Object {
         "kind": "OBJECT",
         "name": "SecondaryStructureImage",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38586,7 +38586,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SecondaryStructureImageInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38630,7 +38630,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SecondaryStructureImageOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -38706,7 +38706,7 @@ Object {
         "kind": "ENUM",
         "name": "SecondaryStructureImageType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38750,7 +38750,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SecondaryStructureImageUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38794,7 +38794,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SecondaryStructureImageWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -38992,7 +38992,7 @@ Object {
         "kind": "OBJECT",
         "name": "SeedRegion",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39070,7 +39070,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SeedRegionInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39136,7 +39136,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SeedRegionOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39202,7 +39202,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SeedRegionUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39268,7 +39268,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SeedRegionWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39278,7 +39278,7 @@ Object {
         "kind": "SCALAR",
         "name": "String",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39394,7 +39394,7 @@ Object {
         "kind": "OBJECT",
         "name": "Sunburst",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39450,7 +39450,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SunburstInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39494,7 +39494,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SunburstOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -39520,7 +39520,7 @@ Object {
         "kind": "ENUM",
         "name": "SunburstType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39564,7 +39564,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SunburstUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39608,7 +39608,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "SunburstWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39700,7 +39700,7 @@ Object {
         "kind": "OBJECT",
         "name": "TaxonomicTree",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39792,7 +39792,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomicTreeInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39880,7 +39880,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomicTreeOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -39968,7 +39968,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomicTreeUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40056,7 +40056,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomicTreeWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40130,7 +40130,7 @@ Object {
         "kind": "OBJECT",
         "name": "Taxonomy",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40204,7 +40204,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40270,7 +40270,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40336,7 +40336,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40450,7 +40450,7 @@ Object {
         "kind": "OBJECT",
         "name": "TaxonomyWebsearch",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40564,7 +40564,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyWebsearchInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40674,7 +40674,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyWebsearchOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40784,7 +40784,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyWebsearchUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40894,7 +40894,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyWebsearchWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40960,7 +40960,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TaxonomyWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -40970,7 +40970,7 @@ Object {
         "kind": "SCALAR",
         "name": "Timestamp",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41041,7 +41041,7 @@ Object {
         "kind": "OBJECT",
         "name": "Version",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41112,7 +41112,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "VersionInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41167,7 +41167,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "VersionOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41222,7 +41222,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "VersionUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41277,7 +41277,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "VersionWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41318,7 +41318,7 @@ Object {
         "kind": "OBJECT",
         "name": "Wikitext",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41359,7 +41359,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "WikitextInsertInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41392,7 +41392,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "WikitextOrderByInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41425,7 +41425,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "WikitextUpdateInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41458,7 +41458,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "WikitextWhereInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41556,7 +41556,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Directive",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -41662,7 +41662,7 @@ Object {
         "kind": "ENUM",
         "name": "__DirectiveLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41725,7 +41725,7 @@ Object {
         "kind": "OBJECT",
         "name": "__EnumValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41838,7 +41838,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Field",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -41927,7 +41927,7 @@ Object {
         "kind": "OBJECT",
         "name": "__InputValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -42032,7 +42032,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Schema",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -42078,7 +42078,7 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "specifiedByUrl",
+            "name": "specifiedByURL",
             "type": Object {
               "kind": "SCALAR",
               "name": "String",
@@ -42233,7 +42233,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Type",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -42284,7 +42284,7 @@ Object {
         "kind": "ENUM",
         "name": "__TypeKind",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
     ],
   },

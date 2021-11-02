@@ -97,6 +97,5 @@ type Location {
 
   \\"\\"\\"\\"\\"\\"
   longitude: Float!
-}
-"
+}"
 `;

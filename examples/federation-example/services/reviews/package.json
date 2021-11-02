@@ -7,8 +7,8 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@apollo/federation": "0.21.0",
+    "@apollo/federation": "0.33.6",
     "apollo-server": "2.21.0",
-    "graphql": "15.5.0"
+    "graphql": "16.0.1"
   }
 }

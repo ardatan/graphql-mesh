@@ -1,5 +1,5 @@
 import GraphiQLExplorer from 'graphiql-explorer';
-import { isEnumType, isWrappingType } from 'graphql';
+import { isEnumType, isWrappingType, Kind } from 'graphql';
 
 import type {
   GraphQLField,
@@ -40,14 +40,14 @@ export function getDefaultScalarArgValue(
   switch (unwrappedType.name) {
     case 'GitHubRepository':
       if (arg.name === 'name') {
-        return { kind: 'StringValue', value: 'graphql-js' };
+        return { kind: Kind.STRING, value: 'graphql-js' };
       } else if (arg.name === 'owner') {
-        return { kind: 'StringValue', value: 'graphql' };
+        return { kind: Kind.STRING, value: 'graphql' };
       }
       break;
     case 'NpmPackage':
       if (arg.name === 'name') {
-        return { kind: 'StringValue', value: 'graphql' };
+        return { kind: Kind.STRING, value: 'graphql' };
       }
       break;
     default:
@@ -59,7 +59,7 @@ export function getDefaultScalarArgValue(
             .map(x => x.name)
             .includes('DESC')
         ) {
-          return { kind: 'EnumValue', value: 'DESC' };
+          return { kind: Kind.ENUM, value: 'DESC' };
         } else if (
           arg.name === 'field' &&
           argType
@@ -67,7 +67,7 @@ export function getDefaultScalarArgValue(
             .map(x => x.name)
             .includes('CREATED_AT')
         ) {
-          return { kind: 'EnumValue', value: 'CREATED_AT' };
+          return { kind: Kind.ENUM, value: 'CREATED_AT' };
         }
       }
       return GraphiQLExplorer.defaultValue(argType);

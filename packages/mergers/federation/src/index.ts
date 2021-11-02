@@ -43,7 +43,7 @@ export default class FederationMerger implements MeshMerger {
           .proxy(`${rawSource.name}_sdl`, PredefinedProxyOptions.StringWithoutValidation)
           .getWithSet(async () => {
             this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${rawSource.name}`);
-            const sdlQueryResult = await execute({
+            const sdlQueryResult: any = await execute({
               schema: transformedSchema,
               document: parse(SERVICE_DEFINITION_QUERY),
             });

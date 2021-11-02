@@ -24,7 +24,7 @@ import {
   Logger,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
-import { GraphQLID, GraphQLInputType } from 'graphql';
+import { GraphQLArgument, GraphQLID, GraphQLInputType } from 'graphql';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
@@ -232,7 +232,7 @@ export default class OpenAPIHandler implements MeshHandler {
       rootFields.map(rootField =>
         Promise.all(
           Object.entries(args).map(async ([argName, { type }]) =>
-            rootField?.args.push({
+            (rootField?.args as GraphQLArgument[]).push({
               name: argName,
               description: undefined,
               defaultValue: undefined,

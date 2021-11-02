@@ -666,8 +666,7 @@ enum Action {
   UNBLOCK
   APPROVE
   IGNORE
-}
-"
+}"
 `;
 
 exports[`openapi should create a GraphQL schema from some complex local swagger file 1`] = `
@@ -39854,6 +39853,5 @@ input IoK8sApiAutoscalingV1ScaleStatusInput {
   replicas: Int!
   \\"\\"\\"label query over pods that should match the replicas count. This is same as the label selector but in the string format to avoid introspection by clients. The string will be in the same format as the query-param syntax. More info about label selectors: http://kubernetes.io/docs/user-guide/labels#label-selectors\\"\\"\\"
   selector: String
-}
-"
+}"
 `;

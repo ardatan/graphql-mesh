@@ -185,7 +185,7 @@ Object {
         "kind": "OBJECT",
         "name": "AQCurrent",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -277,7 +277,7 @@ Object {
         "kind": "OBJECT",
         "name": "AQCurrentGroup",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -387,7 +387,7 @@ Object {
         "kind": "OBJECT",
         "name": "AQHour",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -479,7 +479,7 @@ Object {
         "kind": "OBJECT",
         "name": "AQHourly",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -489,7 +489,7 @@ Object {
         "kind": "SCALAR",
         "name": "Boolean",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -522,7 +522,7 @@ Object {
         "kind": "OBJECT",
         "name": "CitiesError",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -1458,7 +1458,7 @@ Object {
         "kind": "ENUM",
         "name": "Code4",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1525,7 +1525,7 @@ Object {
         "kind": "OBJECT",
         "name": "CountriesResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1606,7 +1606,7 @@ Object {
         "kind": "OBJECT",
         "name": "CountryDetails",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1643,7 +1643,7 @@ Object {
         "kind": "OBJECT",
         "name": "CountryResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1702,7 +1702,7 @@ Object {
         "kind": "OBJECT",
         "name": "CountrySummary",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1769,7 +1769,7 @@ Object {
         "kind": "OBJECT",
         "name": "CurrenciesResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1817,7 +1817,7 @@ Object {
         "kind": "OBJECT",
         "name": "Currency",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2224,7 +2224,7 @@ Object {
         "kind": "OBJECT",
         "name": "CurrentObs",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2261,7 +2261,7 @@ Object {
         "kind": "OBJECT",
         "name": "CurrentObsGroup",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2298,7 +2298,7 @@ Object {
         "kind": "OBJECT",
         "name": "DateTimeResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2335,7 +2335,7 @@ Object {
         "kind": "OBJECT",
         "name": "DistanceResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2577,7 +2577,7 @@ Object {
         "kind": "OBJECT",
         "name": "EnergyObs",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2636,7 +2636,7 @@ Object {
         "kind": "OBJECT",
         "name": "EnergyObsGroup",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2750,7 +2750,7 @@ Object {
         "kind": "OBJECT",
         "name": "EnergyObsGroupForecast",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2926,7 +2926,7 @@ Object {
         "kind": "OBJECT",
         "name": "EnergyObsSeries",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -2967,7 +2967,7 @@ Object {
         "kind": "ENUM",
         "name": "ErrorCode",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2977,7 +2977,7 @@ Object {
         "kind": "SCALAR",
         "name": "Float",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3340,7 +3340,7 @@ Object {
         "kind": "OBJECT",
         "name": "Forecast",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3432,7 +3432,7 @@ Object {
         "kind": "OBJECT",
         "name": "ForecastDay",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3751,7 +3751,7 @@ Object {
         "kind": "OBJECT",
         "name": "ForecastHour",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3843,7 +3843,7 @@ Object {
         "kind": "OBJECT",
         "name": "ForecastHourly",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -3950,7 +3950,7 @@ Object {
         "kind": "OBJECT",
         "name": "History",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4057,7 +4057,7 @@ Object {
         "kind": "OBJECT",
         "name": "HistoryDay",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4376,7 +4376,7 @@ Object {
         "kind": "OBJECT",
         "name": "HistoryDayObj",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4640,7 +4640,7 @@ Object {
         "kind": "OBJECT",
         "name": "HistoryObj",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -4656,7 +4656,7 @@ Object {
         "kind": "ENUM",
         "name": "Include",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4666,7 +4666,7 @@ Object {
         "kind": "SCALAR",
         "name": "Int",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -4842,7 +4842,7 @@ Object {
         "kind": "ENUM",
         "name": "Lang",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4875,7 +4875,7 @@ Object {
         "kind": "OBJECT",
         "name": "LanguageDescriptor",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4942,7 +4942,7 @@ Object {
         "kind": "OBJECT",
         "name": "LanguagesResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4975,7 +4975,7 @@ Object {
         "kind": "OBJECT",
         "name": "Link",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -4997,7 +4997,7 @@ Object {
         "kind": "OBJECT",
         "name": "Locale",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5064,7 +5064,7 @@ Object {
         "kind": "OBJECT",
         "name": "LocalesResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -5080,7 +5080,7 @@ Object {
         "kind": "ENUM",
         "name": "Marine",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5113,7 +5113,7 @@ Object {
         "kind": "OBJECT",
         "name": "Metadata",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5278,7 +5278,7 @@ Object {
         "kind": "OBJECT",
         "name": "PopulatedPlaceDetails",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5315,7 +5315,7 @@ Object {
         "kind": "OBJECT",
         "name": "PopulatedPlaceResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5484,7 +5484,7 @@ Object {
         "kind": "OBJECT",
         "name": "PopulatedPlaceSummary",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -5505,7 +5505,7 @@ Object {
         "kind": "ENUM",
         "name": "PopulatedPlaceType",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5572,7 +5572,7 @@ Object {
         "kind": "OBJECT",
         "name": "PopulatedPlacesResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12510,7 +12510,7 @@ Object {
         "kind": "OBJECT",
         "name": "Query",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12598,7 +12598,7 @@ Object {
         "kind": "OBJECT",
         "name": "RegionDetails",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12635,7 +12635,7 @@ Object {
         "kind": "OBJECT",
         "name": "RegionResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12701,7 +12701,7 @@ Object {
         "kind": "OBJECT",
         "name": "RegionSummary",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12768,7 +12768,7 @@ Object {
         "kind": "OBJECT",
         "name": "RegionsResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12778,7 +12778,7 @@ Object {
         "kind": "SCALAR",
         "name": "String",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12815,7 +12815,7 @@ Object {
         "kind": "OBJECT",
         "name": "TimeResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12859,7 +12859,7 @@ Object {
         "kind": "OBJECT",
         "name": "TimeZoneDescriptor",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -12926,7 +12926,7 @@ Object {
         "kind": "OBJECT",
         "name": "TimeZonesResponse",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -12947,7 +12947,7 @@ Object {
         "kind": "ENUM",
         "name": "Tp",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -12973,7 +12973,7 @@ Object {
         "kind": "ENUM",
         "name": "Tp2",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -12994,7 +12994,7 @@ Object {
         "kind": "ENUM",
         "name": "Tz",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -13015,7 +13015,7 @@ Object {
         "kind": "ENUM",
         "name": "Units",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13059,7 +13059,7 @@ Object {
         "kind": "OBJECT",
         "name": "Weather",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13103,7 +13103,7 @@ Object {
         "kind": "OBJECT",
         "name": "Weather2",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13147,7 +13147,7 @@ Object {
         "kind": "OBJECT",
         "name": "Weather3",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13191,7 +13191,7 @@ Object {
         "kind": "OBJECT",
         "name": "Weather4",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13239,7 +13239,7 @@ Object {
         "kind": "OBJECT",
         "name": "WeatherAlert",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13353,7 +13353,7 @@ Object {
         "kind": "OBJECT",
         "name": "WeatherAlertGroup",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13386,7 +13386,7 @@ Object {
         "kind": "OBJECT",
         "name": "WeatherError",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13496,7 +13496,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Directive",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -13602,7 +13602,7 @@ Object {
         "kind": "ENUM",
         "name": "__DirectiveLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13665,7 +13665,7 @@ Object {
         "kind": "OBJECT",
         "name": "__EnumValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13778,7 +13778,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Field",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13867,7 +13867,7 @@ Object {
         "kind": "OBJECT",
         "name": "__InputValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -13972,7 +13972,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Schema",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -14018,7 +14018,7 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "specifiedByUrl",
+            "name": "specifiedByURL",
             "type": Object {
               "kind": "SCALAR",
               "name": "String",
@@ -14173,7 +14173,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Type",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -14224,7 +14224,7 @@ Object {
         "kind": "ENUM",
         "name": "__TypeKind",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
     ],
   },

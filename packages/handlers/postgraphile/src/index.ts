@@ -134,7 +134,7 @@ export default class PostGraphileHandler implements MeshHandler {
             const executionArgs: ExecutionArgs = {
               schema,
               document,
-              variableValues: variables,
+              variableValues: variables as any,
               contextValue: {
                 ...meshContext,
                 ...pgContext,

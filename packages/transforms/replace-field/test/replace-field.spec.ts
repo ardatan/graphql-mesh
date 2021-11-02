@@ -258,7 +258,7 @@ describe('replace-field', () => {
     expect(transformedSchema.getType('Author')).toBeUndefined();
     expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString()).toBe('String!');
 
-    const result = await execute({
+    const result: any = await execute({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -459,7 +459,7 @@ describe('replace-field', () => {
 
     expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().code.type.toString()).toBe('String!');
 
-    const result = await execute({
+    const result: any = await execute({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -528,7 +528,7 @@ describe('replace-field', () => {
       'String'
     );
 
-    const result = await execute({
+    const result: any = await execute({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -654,7 +654,7 @@ describe('replace-field', () => {
       'String!'
     );
 
-    const result = await execute({
+    const result: any = await execute({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -786,7 +786,7 @@ describe('replace-field', () => {
       'Boolean'
     );
 
-    const result = await execute({
+    const result: any = await execute({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -853,6 +853,7 @@ describe('replace-field', () => {
     );
 
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     queryBooks.resolve();
     expect(mockBooksApiResponseBooks).toHaveBeenCalledTimes(1);

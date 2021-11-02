@@ -45,6 +45,7 @@ import {
   GraphQLSchema,
   specifiedDirectives,
   ExecutionResult,
+  getNamedType,
 } from 'graphql';
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
@@ -287,8 +288,8 @@ export default class ODataHandler implements MeshHandler {
       }
       const urlStringWithoutSearchParams = urlString.split('?')[0];
       if (isListType(info.returnType)) {
-        const actualReturnType: GraphQLObjectType = info.returnType.ofType;
-        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
+        const actualReturnType = getNamedType(info.returnType) as GraphQLObjectType;
+        const entityTypeExtensions = actualReturnType.extensions as unknown as EntityTypeExtensions;
         if ('Message' in responseJson && !('value' in responseJson)) {
           const error = new Error(responseJson.Message);
           Object.assign(error, { extensions: responseJson });
@@ -346,7 +347,7 @@ export default class ODataHandler implements MeshHandler {
         });
       } else {
         const actualReturnType = info.returnType as GraphQLObjectType;
-        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
+        const entityTypeExtensions = actualReturnType.extensions as unknown as EntityTypeExtensions;
         if (!entityTypeExtensions?.entityInfo) {
           return responseJson;
         }
@@ -729,7 +730,7 @@ export default class ODataHandler implements MeshHandler {
                 const url = new URL(root['@odata.id']);
                 url.href = urljoin(url.href, '/' + navigationPropertyName);
                 const returnType = info.returnType as GraphQLObjectType;
-                const { entityInfo } = returnType.extensions as EntityTypeExtensions;
+                const { entityInfo } = returnType.extensions as unknown as EntityTypeExtensions;
                 addIdentifierToUrl(url, entityInfo.identifierFieldName, entityInfo.identifierFieldTypeRef, args);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -1418,7 +1419,7 @@ export default class ODataHandler implements MeshHandler {
     const isSelectable = !isAbstractType(returnType);
 
     if (isSelectable) {
-      const { entityInfo } = returnType.extensions as EntityTypeExtensions;
+      const { entityInfo } = returnType.extensions as unknown as EntityTypeExtensions;
       const selectionFields: string[] = [];
       const expandedFields: string[] = [];
       for (const fieldName in fields) {

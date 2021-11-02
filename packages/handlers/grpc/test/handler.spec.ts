@@ -42,6 +42,8 @@ describe.each<[string, string]>([
       pubsub,
       store,
       logger,
+      importFn: m => import(m),
+      baseDir: __dirname,
     });
 
     const { schema } = await handler.getMeshSource();

@@ -34,8 +34,7 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the Custom Message2 proto 1`] = `
@@ -67,8 +66,7 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the Empty proto 1`] = `
@@ -158,8 +156,7 @@ type Subscription {
 
 input io_xtech_SearchByCastRequest_Input {
   castName: String
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the Import Nested proto 1`] = `
@@ -192,8 +189,7 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the Movie proto 1`] = `
@@ -280,8 +276,7 @@ type Subscription {
 
 input io_xtech_SearchByCastRequest_Input {
   castName: String
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the Nested proto 1`] = `
@@ -312,8 +307,7 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the No Package Nested proto 1`] = `
@@ -344,8 +338,7 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the Outside proto 1`] = `
@@ -443,8 +436,7 @@ type Subscription {
 
 input io_xtech_SearchByCastRequest_Input {
   castName: String
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the With All Values proto 1`] = `
@@ -510,8 +502,7 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
-}
-"
+}"
 `;
 
 exports[`Interpreting Protos should load the With Underscores proto 1`] = `
@@ -598,6 +589,5 @@ type Subscription {
 
 input io_xtech_SearchByCastRequest_Input {
   castName: String
-}
-"
+}"
 `;

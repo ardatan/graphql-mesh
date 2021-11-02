@@ -15,6 +15,7 @@ import { readJSON, mkdir, rmdirs } from '@graphql-mesh/utils';
 describe('snapshot', () => {
   const baseDir: string = undefined;
   const outputDir = join(tmpdir(), '__snapshots__');
+  const syncImportFn = require;
   const users = [
     {
       id: '0',
@@ -62,6 +63,8 @@ describe('snapshot', () => {
       }),
       transforms: [
         new SnapshotTransform({
+          apiName: '',
+          syncImportFn,
           config: {
             apply: ['Query.user'],
             outputDir,
@@ -129,6 +132,8 @@ describe('snapshot', () => {
       }),
       transforms: [
         new SnapshotTransform({
+          apiName: '',
+          syncImportFn,
           config: {
             apply: ['Query.user'],
             outputDir,
@@ -192,6 +197,8 @@ describe('snapshot', () => {
       }),
       transforms: [
         new SnapshotTransform({
+          apiName: '',
+          syncImportFn,
           config: {
             apply: ['Query.user'],
             outputDir,

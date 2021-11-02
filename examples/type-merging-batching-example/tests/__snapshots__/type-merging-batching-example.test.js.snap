@@ -23,8 +23,7 @@ type Query {
   authors(ids: [ID]): [Author] @merge(keyField: \\"id\\")
   book(id: ID): Book @merge(keyField: \\"id\\")
   books: [Book]
-}
-"
+}"
 `;
 
 exports[`Type Merging and Batching Example should give correct response for example queries: Author.graphql-query-result 1`] = `

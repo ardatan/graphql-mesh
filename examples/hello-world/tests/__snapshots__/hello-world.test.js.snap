@@ -118,7 +118,7 @@ Object {
         "kind": "SCALAR",
         "name": "Boolean",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -140,7 +140,7 @@ Object {
         "kind": "OBJECT",
         "name": "Query",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -150,7 +150,7 @@ Object {
         "kind": "SCALAR",
         "name": "String",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -260,7 +260,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Directive",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -366,7 +366,7 @@ Object {
         "kind": "ENUM",
         "name": "__DirectiveLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -429,7 +429,7 @@ Object {
         "kind": "OBJECT",
         "name": "__EnumValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -542,7 +542,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Field",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -631,7 +631,7 @@ Object {
         "kind": "OBJECT",
         "name": "__InputValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -736,7 +736,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Schema",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -782,7 +782,7 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "specifiedByUrl",
+            "name": "specifiedByURL",
             "type": Object {
               "kind": "SCALAR",
               "name": "String",
@@ -937,7 +937,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Type",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -988,7 +988,7 @@ Object {
         "kind": "ENUM",
         "name": "__TypeKind",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
     ],
   },

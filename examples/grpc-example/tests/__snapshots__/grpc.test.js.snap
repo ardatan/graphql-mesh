@@ -83,8 +83,7 @@ type google_protobuf_Timestamp {
 input google_protobuf_Timestamp_Input {
   nanos: Int
   seconds: BigInt
-}
-"
+}"
 `;
 
 exports[`gRPC Example should get movies correctly: get-movies-grpc-example-result 1`] = `

@@ -38,7 +38,7 @@ export default class TypeMerging implements MeshTransform {
       for (const mergedTypeConfig of this.config.types) {
         const type = schema.getType(mergedTypeConfig.typeName);
         type.extensions = type.extensions || {};
-        const typeDirectiveExtensions = ((type.extensions.directives as any) = type.extensions.directives || {});
+        const typeDirectiveExtensions: any = ((type.extensions.directives as any) = type.extensions.directives || {});
         if (mergedTypeConfig.key) {
           typeDirectiveExtensions.key = mergedTypeConfig.key;
         }
@@ -53,7 +53,8 @@ export default class TypeMerging implements MeshTransform {
           for (const fieldConfig of mergedTypeConfig.fields) {
             const field = fieldMap[fieldConfig.fieldName];
             field.extensions = field.extensions || {};
-            const fieldDirectiveExtensions = ((field.extensions.directives as any) = field.extensions.directives || {});
+            const fieldDirectiveExtensions: any = ((field.extensions.directives as any) =
+              field.extensions.directives || {});
             if (fieldConfig.computed) {
               fieldDirectiveExtensions.computed = fieldConfig.computed;
             }
@@ -66,7 +67,8 @@ export default class TypeMerging implements MeshTransform {
       for (const { queryFieldName, ...rootFieldConfig } of this.config.queryFields) {
         const field = queryFieldMap[queryFieldName];
         field.extensions = field.extensions || {};
-        const fieldDirectiveExtensions = ((field.extensions.directives as any) = field.extensions.directives || {});
+        const fieldDirectiveExtensions: any = ((field.extensions.directives as any) =
+          field.extensions.directives || {});
         fieldDirectiveExtensions.merge = rootFieldConfig;
       }
     }

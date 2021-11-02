@@ -9,8 +9,7 @@ type Book {
   title: String!
   author: String!
   isAvailable: Boolean
-}
-"
+}"
 `;
 
 exports[`replace-field should replace correctly field Type only 1`] = `
@@ -27,8 +26,7 @@ type Book {
 type Author {
   name: String!
   age: Int!
-}
-"
+}"
 `;
 
 exports[`replace-field should replace correctly field Type with additional type definitions 1`] = `
@@ -45,8 +43,7 @@ type Book {
 type Author {
   name: String!
   age: String
-}
-"
+}"
 `;
 
 exports[`replace-field should replace correctly mtultiple fields with hoistValue and defined resolver function as well as default-field-resolver 1`] = `
@@ -58,8 +55,7 @@ type Book {
   title: String!
   author: String!
   code: String
-}
-"
+}"
 `;
 
 exports[`replace-field should replace correctly whole field config 1`] = `
@@ -77,6 +73,5 @@ type Book {
 type Author {
   name: String!
   age: Int!
-}
-"
+}"
 `;
