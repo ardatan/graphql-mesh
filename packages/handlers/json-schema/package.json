@@ -27,7 +27,7 @@
     "@graphql-mesh/types": "0.53.0",
     "@graphql-mesh/utils": "0.19.0",
     "@graphql-mesh/store": "0.1.19",
-    "@graphql-tools/utils": "8.5.1",
+    "@graphql-tools/utils": "8.5.2",
     "graphql-compose": "9.0.4",
     "@omnigraph/json-schema": "0.1.7"
   },

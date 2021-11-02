@@ -28,7 +28,7 @@
     "fetchache": "0.1.1",
     "@graphql-tools/schema": "8.3.1",
     "@graphql-tools/wrap": "8.3.1",
-    "@graphql-tools/utils": "8.5.1"
+    "@graphql-tools/utils": "8.5.2"
   },
   "publishConfig": {
     "access": "public",
