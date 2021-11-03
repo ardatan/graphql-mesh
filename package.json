@@ -79,7 +79,7 @@
       "./packages/transforms/*",
       "./packages/mergers/*",
       "./examples/*",
-      "./examples/federation-example/services/*",
+      "./examples/federation-example/*",
       "./examples/graphql-file-upload-example/frontend",
       "./website",
       "./packages/loaders/*"

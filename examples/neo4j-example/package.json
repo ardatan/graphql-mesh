@@ -10,9 +10,9 @@
     "@graphql-mesh/cli": "0.43.0",
     "@graphql-mesh/neo4j": "0.16.0",
     "@graphql-mesh/cache-file": "0.7.0",
-    "graphql": "15.4.0"
+    "graphql": "16.0.1"
   },
   "resolutions": {
-    "graphql": "15.4.0"
+    "graphql": "16.0.1"
   }
 }

@@ -1,0 +1,52 @@
+diff --git a/node_modules/graphql-language-service-interface/dist/getDiagnostics.js b/node_modules/graphql-language-service-interface/dist/getDiagnostics.js
+index 07a1648..ab9f45b 100644
+--- a/node_modules/graphql-language-service-interface/dist/getDiagnostics.js
++++ b/node_modules/graphql-language-service-interface/dist/getDiagnostics.js
+@@ -5,6 +5,8 @@ const graphql_1 = require("graphql");
+ const graphql_2 = require("graphql");
+ const graphql_language_service_parser_1 = require("graphql-language-service-parser");
+ const graphql_language_service_utils_1 = require("graphql-language-service-utils");
++const graphql_validation = require('graphql/validation');
++
+ exports.SEVERITY = {
+     Error: 'Error',
+     Warning: 'Warning',
+@@ -54,12 +56,18 @@ function getDiagnostics(query, schema = null, customRules, isRelayCompatMode, ex
+     return validateQuery(ast, schema, customRules, isRelayCompatMode);
+ }
+ exports.getDiagnostics = getDiagnostics;
++
++
++function findDeprecatedUsages(schema, ast) {
++  return graphql_2.validate(schema, ast, [graphql_validation.NoDeprecatedCustomRule]);
++}
++
+ function validateQuery(ast, schema = null, customRules, isRelayCompatMode) {
+     if (!schema) {
+         return [];
+     }
+     const validationErrorAnnotations = mapCat(graphql_language_service_utils_1.validateWithCustomRules(schema, ast, customRules, isRelayCompatMode), error => annotations(error, exports.DIAGNOSTIC_SEVERITY.Error, 'Validation'));
+-    const deprecationWarningAnnotations = mapCat(graphql_2.findDeprecatedUsages(schema, ast), error => annotations(error, exports.DIAGNOSTIC_SEVERITY.Warning, 'Deprecation'));
++    const deprecationWarningAnnotations = mapCat(findDeprecatedUsages(schema, ast), error => annotations(error, exports.DIAGNOSTIC_SEVERITY.Warning, 'Deprecation'));
+     return validationErrorAnnotations.concat(deprecationWarningAnnotations);
+ }
+ exports.validateQuery = validateQuery;
+diff --git a/node_modules/graphql-language-service-interface/esm/getDiagnostics.js b/node_modules/graphql-language-service-interface/esm/getDiagnostics.js
+index 020292e..1111da2 100644
+--- a/node_modules/graphql-language-service-interface/esm/getDiagnostics.js
++++ b/node_modules/graphql-language-service-interface/esm/getDiagnostics.js
+@@ -1,7 +1,12 @@
+-import { print, } from 'graphql';
+-import { findDeprecatedUsages, parse } from 'graphql';
++import { print, validate, parse } from 'graphql';
+ import { CharacterStream, onlineParser } from 'graphql-language-service-parser';
+ import { Range, validateWithCustomRules, Position, } from 'graphql-language-service-utils';
++import { NoDeprecatedCustomRule } from 'graphql/validation';
++
++function findDeprecatedUsages(schema, ast) {
++  return validate(schema, ast, [NoDeprecatedCustomRule]);
++}
++
+ export const SEVERITY = {
+     Error: 'Error',
+     Warning: 'Warning',

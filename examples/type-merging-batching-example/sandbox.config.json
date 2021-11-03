@@ -3,6 +3,6 @@
   "hardReloadOnChange": true,
   "view": "browser",
   "container": {
-    "node": "14"
+    "node": "16"
   }
 }

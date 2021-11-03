@@ -9,9 +9,9 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.43.0",
     "@graphql-mesh/tuql": "0.4.75",
-    "graphql": "15.4.0"
+    "graphql": "16.0.1"
   },
   "resolutions": {
-    "graphql": "15.4.0"
+    "graphql": "16.0.1"
   }
 }

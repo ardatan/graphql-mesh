@@ -1,14 +1,13 @@
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
-const { basename, join } = require('path');
+const { join } = require('path');
 
-const { lexicographicSortSchema } = require('graphql');
 const { mkdirSync, readFileSync, writeFileSync } = require('fs');
 
 const problematicModulePath = join(__dirname, '../../../node_modules/core-js/features/array');
 const emptyModuleContent = 'module.exports = {};';
 
-const exampleQuery = readFileSync(join(__dirname, '../example-query.graphql'), 'utf8');
+const exampleQuery = readFileSync(join(__dirname, '../gateway/example-query.graphql'), 'utf8');
 const exampleResult = require('./federation-example-result.json');
 
 // Fix core-js issue
@@ -18,7 +17,7 @@ writeFileSync(join(problematicModulePath, './flat-map.js'), emptyModuleContent);
 
 const configAndServices$ = Promise.all([
     findAndParseConfig({
-        dir: join(__dirname, '..'),
+        dir: join(__dirname, '../gateway'),
     }),
     require('../services/accounts'),
     require('../services/inventory'),

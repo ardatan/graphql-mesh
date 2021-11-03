@@ -1747,6 +1747,10 @@
           },
           "additionalItems": false,
           "description": "Allows to explicitly override the default operation (Query or Mutation) for any OAS operation"
+        },
+        "provideErrorExtensions": {
+          "type": "boolean",
+          "description": "Overwrite automatic wrapping of errors into GraphqlErrors"
         }
       },
       "required": ["source"]

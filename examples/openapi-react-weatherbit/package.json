@@ -19,7 +19,7 @@
     "@graphql-mesh/merger-bare": "0.11.0",
     "@graphql-mesh/transform-cache": "0.10.0",
     "graphql-subscriptions": "1.1.0",
-    "graphql": "15.4.0"
+    "graphql": "16.0.1"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.43.0",

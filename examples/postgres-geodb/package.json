@@ -22,9 +22,9 @@
     "@graphql-mesh/cache-file": "0.7.0",
     "@graphql-mesh/config": "0.25.0",
     "@graphql-mesh/runtime": "0.25.0",
-    "graphql": "15.4.0"
+    "graphql": "16.0.1"
   },
   "resolutions": {
-    "graphql": "15.4.0"
+    "graphql": "16.0.1"
   }
 }

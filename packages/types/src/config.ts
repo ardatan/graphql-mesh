@@ -744,7 +744,7 @@ export interface OpenapiHandler {
   /**
    * Overwrite automatic wrapping of errors into GraphqlErrors
    */
-   provideErrorExtensions?: boolean;
+  provideErrorExtensions?: boolean;
 }
 export interface SelectQueryOrMutationFieldConfig {
   /**
