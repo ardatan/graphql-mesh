@@ -395,6 +395,10 @@
             }
           ]
         },
+        "transferSchema": {
+          "$ref": "#/definitions/TransferSchemaTransformConfig",
+          "description": "Transformer to transfer (move or copy) GraphQL parts of GraphQL schema across Types and Fields"
+        },
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
@@ -3806,6 +3810,41 @@
         }
       },
       "required": ["resolver", "composer"]
+    },
+    "TransferSchemaTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TransferSchemaTransformConfig",
+      "properties": {
+        "transfers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TransferSchemaTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of rules to transfer fields or args"
+        }
+      },
+      "required": ["transfers"]
+    },
+    "TransferSchemaTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TransferSchemaTransformObject",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["move", "copy"],
+          "description": "Allowed values: move, copy"
+        }
+      },
+      "required": ["from", "to"]
     },
     "TypeMergingConfig": {
       "additionalProperties": false,
