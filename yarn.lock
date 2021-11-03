@@ -3132,27 +3132,25 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.4.2":
-  version "7.4.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.4.2.tgz#f2b8b5b34102bfb85e42bb4ebc40c1eca75df880"
-  integrity sha512-dS/cTux3Xw5flM9KHCwPzq7S0Yy7ff8mOmvq2quDfYmn0OawhccyEcjGnrgQ896ujwg+qYQqEyB62hv4A5962w==
+"@graphql-tools/url-loader@7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.5.0.tgz#d6b4d14bff1f1a1da5703650d642669abe92beff"
+  integrity sha512-itSxMZs0/Qy89uzC8ncR9dWewspLympWLaI1pA7oEcz3sMiO/TslA86SG2CzIp76KdQMd5HsPpsz6w3jfhhYnQ==
   dependencies:
     "@graphql-tools/delegate" "^8.4.1"
     "@graphql-tools/utils" "^8.5.1"
     "@graphql-tools/wrap" "^8.3.1"
-    "@n1ru4l/graphql-live-query" "0.8.1"
+    "@n1ru4l/graphql-live-query" "0.8.2"
     "@types/websocket" "1.0.4"
     "@types/ws" "^8.0.0"
-    abort-controller "3.0.0"
-    cross-fetch "3.1.4"
+    cross-undici-fetch "0.0.19"
     dset "^3.1.0"
     extract-files "11.0.0"
-    form-data "4.0.0"
     graphql-sse "^1.0.1"
     graphql-ws "^5.4.1"
     isomorphic-ws "4.0.1"
     meros "1.1.4"
-    subscriptions-transport-ws "^0.10.0"
+    subscriptions-transport-ws "^0.11.0"
     sync-fetch "0.3.1"
     tslib "~2.3.0"
     valid-url "1.0.9"
@@ -3815,11 +3813,6 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@microsoft/fetch-event-source/-/fetch-event-source-2.0.1.tgz#9ceecc94b49fbaa15666e38ae8587f64acce007d"
   integrity sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==
-
-"@n1ru4l/graphql-live-query@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.8.1.tgz#2d6ca6157dafdc5d122a1aeb623b43e939c4b238"
-  integrity sha512-x5SLY+L9/5s07OJprISXx4csNBPF74UZeTI01ZPSaxOtRz2Gljk652kSPf6OjMLtx5uATr35O0M3G0LYhHBLtg==
 
 "@n1ru4l/graphql-live-query@0.8.2":
   version "0.8.2"
@@ -9357,6 +9350,16 @@ cross-undici-fetch@0.0.18:
   version "0.0.18"
   resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.0.18.tgz#9964d6b214ecf540d0c7f35b9fa00c31bed6f558"
   integrity sha512-4xoy51cs1TDucWtZ9UA6GHDLJHoMKD5bBG0pMn4WbtoXdFmJw3JdL5ntz2e72YZ/WJdiWfHs9/8+wSQ80QsFvQ==
+  dependencies:
+    abort-controller "^3.0.0"
+    form-data "^4.0.0"
+    node-fetch "^2.6.5"
+    undici "^4.9.3"
+
+cross-undici-fetch@0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.0.19.tgz#3feb25d72bbf536e194affac138eab55bd72b7e1"
+  integrity sha512-6FToDMNXfNQvnyhXBtjPvNujeHBzwCSXcljFB+MKws8tEmDQvSBU3hyiZVSulQIEpsxn9vIlNh71qmOEmH7fzA==
   dependencies:
     abort-controller "^3.0.0"
     form-data "^4.0.0"
@@ -22709,10 +22712,10 @@ subscriptions-transport-ws@0.9.18:
     symbol-observable "^1.0.4"
     ws "^5.2.0"
 
-subscriptions-transport-ws@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/subscriptions-transport-ws/-/subscriptions-transport-ws-0.10.0.tgz#91fce775b31935e4ca995895a40942268877d23f"
-  integrity sha512-k28LhLn3abJ1mowFW+LP4QGggE0e3hrk55zXbMHyAeZkCUYtC0owepiwqMD3zX8DglQVaxnhE760pESrNSEzpg==
+subscriptions-transport-ws@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/subscriptions-transport-ws/-/subscriptions-transport-ws-0.11.0.tgz#baf88f050cba51d52afe781de5e81b3c31f89883"
+  integrity sha512-8D4C6DIH5tGiAIpp5I0wD/xRlNiZAPGHygzCe7VzyzUoxHtawzjNAY9SUTXU05/EY2NMY9/9GF0ycizkXr1CWQ==
   dependencies:
     backo2 "^1.0.2"
     eventemitter3 "^3.1.0"
