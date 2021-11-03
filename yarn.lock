@@ -9353,6 +9353,16 @@ cross-undici-fetch@0.0.16:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
+cross-undici-fetch@0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.0.18.tgz#9964d6b214ecf540d0c7f35b9fa00c31bed6f558"
+  integrity sha512-4xoy51cs1TDucWtZ9UA6GHDLJHoMKD5bBG0pMn4WbtoXdFmJw3JdL5ntz2e72YZ/WJdiWfHs9/8+wSQ80QsFvQ==
+  dependencies:
+    abort-controller "^3.0.0"
+    form-data "^4.0.0"
+    node-fetch "^2.6.5"
+    undici "^4.9.3"
+
 crypto-browserify@3.12.0, crypto-browserify@^3.11.0, crypto-browserify@^3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/crypto-browserify/-/crypto-browserify-3.12.0.tgz#396cf9f3137f03e4b8e532c58f698254e00f80ec"
@@ -11894,7 +11904,7 @@ fork-ts-checker-webpack-plugin@4.1.6:
     tapable "^1.0.0"
     worker-rpc "^0.1.0"
 
-form-data@4.0.0:
+form-data@4.0.0, form-data@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.0.tgz#93919daeaf361ee529584b9b31664dc12c9fa452"
   integrity sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==
