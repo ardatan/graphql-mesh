@@ -12,7 +12,7 @@
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
-    "@theguild/components": "1.7.0",
+    "@theguild/components": "1.7.1",
     "@docusaurus/core": "2.0.0-beta.ff31de0ff",
     "@docusaurus/preset-classic": "2.0.0-beta.ff31de0ff",
     "babel-preset-minify": "0.5.1",
