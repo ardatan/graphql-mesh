@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.43.1
+
+### Patch Changes
+
+- 588fe51aa: fix(playground): Fix v16 support by patching graphql-language server
+
 ## 0.43.0
 
 ### Minor Changes
