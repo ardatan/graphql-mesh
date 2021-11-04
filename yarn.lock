@@ -3197,7 +3197,7 @@
   dependencies:
     tslib "~2.3.0"
 
-"@graphql-tools/utils@8.5.2", "@graphql-tools/utils@^8.0.0", "@graphql-tools/utils@^8.1.1", "@graphql-tools/utils@^8.2.0", "@graphql-tools/utils@^8.3.0", "@graphql-tools/utils@^8.5.1":
+"@graphql-tools/utils@8.5.2", "@graphql-tools/utils@^8.1.1", "@graphql-tools/utils@^8.2.0", "@graphql-tools/utils@^8.3.0", "@graphql-tools/utils@^8.5.1", "@graphql-tools/utils@^8.5.2":
   version "8.5.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-8.5.2.tgz#fa775d92c19237f648105f7d4aeeeb63ba3d257f"
   integrity sha512-wxA51td/759nQziPYh+HxE0WbURRufrp1lwfOYMgfK4e8Aa6gCa1P1p6ERogUIm423NrIfOVau19Q/BBpHdolw==
@@ -3817,13 +3817,13 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.9.0.tgz#defaebdd31f625bee49e6745934f36312532b2bc"
   integrity sha512-BTpWy1e+FxN82RnLz4x1+JcEewVdfmUhV1C6/XYD5AjS7PQp9QFF7K8bCD6gzPTr2l+prvqOyVueQhFJxB1vfg==
 
-"@n1ru4l/in-memory-live-query-store@0.7.4":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.7.4.tgz#bfa5712ea17ea30806ca33c46c5f9ecbe5e74a34"
-  integrity sha512-/V1cNTBZjyrufoeXIr5J0ViA9j9en6X0dUkcFGNxrvOt68T4d935UtsISVy94/H6hv0nSsC0lpMm9/nhlec4ew==
+"@n1ru4l/in-memory-live-query-store@0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.8.0.tgz#2f2dcf5a8a34ae5db0aeb28e50ebc167b8e3695e"
+  integrity sha512-vfI2yCi9CsP0wPAHFPBs4chRGRJszZKFR0jQ4nHSJeNxZJxvUkP5d1m6MGyS6LrJH3TlBW3R/ovGpnSfIvCYBA==
   dependencies:
-    "@graphql-tools/utils" "^8.0.0"
-    "@n1ru4l/graphql-live-query" "0.8.2"
+    "@graphql-tools/utils" "^8.5.2"
+    "@n1ru4l/graphql-live-query" "0.9.0"
     "@n1ru4l/push-pull-async-iterable-iterator" "^3.0.0"
 
 "@n1ru4l/push-pull-async-iterable-iterator@^3.0.0":
