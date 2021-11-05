@@ -90,10 +90,12 @@ export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONS
       properties: {},
     });
     if ('binary' in operationConfig) {
-      rootTypeInputTypeDefinition.properties.binary = {
+      const generatedSchema = {
+        title: operationConfig.requestTypeName || 'Upload',
         type: 'string',
-        format: 'blob',
+        format: 'upload',
       };
+      rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
     } else if ('requestSchema' in operationConfig) {
       rootTypeInputTypeDefinition.properties[fieldName] = {
         $ref: operationConfig.requestSchema,
