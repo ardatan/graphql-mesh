@@ -129,8 +129,11 @@ export default class PostGraphileHandler implements MeshHandler {
         withPostGraphileContext(
           {
             pgPool,
+            queryDocumentAst: document,
+            operationName,
+            variables,
           },
-          async pgContext => {
+          pgContext => {
             const executionArgs: ExecutionArgs = {
               schema,
               document,

@@ -6,10 +6,6 @@ export interface JSONSchemaBaseOperationConfig {
   field: string;
   description?: string;
 
-  requestSchema?: string | JSONSchema;
-  requestSample?: any;
-  requestTypeName?: string;
-
   responseSchema?: string | JSONSchema;
   responseSample?: any;
   responseTypeName?: string;
@@ -17,17 +13,36 @@ export interface JSONSchemaBaseOperationConfig {
   argTypeMap?: Record<string, string>;
 }
 
+export interface JSONSchemaBaseOperationConfigWithJSONRequest extends JSONSchemaBaseOperationConfig {
+  requestSchema?: string | JSONSchema;
+  requestSample?: any;
+  requestTypeName?: string;
+}
+
 export type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
 
-export interface JSONSchemaHTTPOperationConfig extends JSONSchemaBaseOperationConfig {
+export interface JSONSchemaHTTPBaseOperationConfig extends JSONSchemaBaseOperationConfig {
   path: string;
   method?: HTTPMethod;
 
   headers?: Record<string, string>;
 }
 
-export interface JSONSchemaPubSubOperationConfig extends JSONSchemaBaseOperationConfig {
+export interface JSONSchemaHTTPJSONOperationConfig
+  extends JSONSchemaHTTPBaseOperationConfig,
+    JSONSchemaBaseOperationConfigWithJSONRequest {}
+
+export interface JSONSchemaPubSubOperationConfig extends JSONSchemaBaseOperationConfigWithJSONRequest {
   pubsubTopic: string;
 }
 
-export type JSONSchemaOperationConfig = JSONSchemaHTTPOperationConfig | JSONSchemaPubSubOperationConfig;
+export interface JSONSchemaHTTPBinaryConfig extends JSONSchemaHTTPBaseOperationConfig {
+  path: string;
+  method?: HTTPMethod;
+  binary: true;
+}
+
+export type JSONSchemaOperationConfig =
+  | JSONSchemaHTTPJSONOperationConfig
+  | JSONSchemaHTTPBinaryConfig
+  | JSONSchemaPubSubOperationConfig;

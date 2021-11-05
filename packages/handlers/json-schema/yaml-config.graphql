@@ -68,6 +68,13 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   path: String!
   method: JsonSchemaOperationMethod
   headers: JSON
+
+  """
+  If true, this operation cannot have requestSchema or requestSample
+  And the request body will be passed as binary with its mime type
+  unless you define an explicit Content-Type header
+  """
+  binary: Boolean
 }
 
 type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {

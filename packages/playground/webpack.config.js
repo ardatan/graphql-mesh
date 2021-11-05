@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -27,11 +26,8 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
-    new webpack.DefinePlugin({
-      setImmediate: 'setTimeout',
-    }),
     new HtmlWebpackPlugin({
-      title: 'GraphQL Mesh',
+      title: 'GraphiQL Mesh',
     }),
   ],
   resolve: {

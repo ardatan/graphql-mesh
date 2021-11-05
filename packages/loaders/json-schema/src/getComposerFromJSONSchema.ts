@@ -40,6 +40,7 @@ import addFormats from 'ajv-formats';
 import { inspect } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
 import { pascalCase } from 'pascal-case';
+import { GraphQLUpload } from 'graphql-upload';
 
 interface TypeComposers {
   input?: AnyTypeComposer<any>;
@@ -579,6 +580,13 @@ export function getComposerFromJSONSchema(
             case 'uri-template': {
               // Trust ajv
               const typeComposer = schemaComposer.getAnyTC(formatScalarMap.get(subSchema.format));
+              return {
+                input: typeComposer,
+                output: typeComposer,
+              };
+            }
+            case 'blob': {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLUpload);
               return {
                 input: typeComposer,
                 output: typeComposer,

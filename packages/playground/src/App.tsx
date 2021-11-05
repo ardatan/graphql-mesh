@@ -24,6 +24,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
       }),
     [endpoint]
   );
+
   const fetcher: Fetcher = useCallback(
     async (params, opts) => {
       const executor = await executor$;
@@ -38,17 +39,21 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
   );
 
   const [schema, setSchema] = useState<GraphQLSchema | undefined>();
+  const [error, setError] = useState<Error | undefined>();
+
   useEffect(() => {
-    Promise.resolve().then(async () => {
-      const executor = await executor$;
-      const schema = await introspectSchema(executor, undefined, {
-        specifiedByUrl: true,
-        directiveIsRepeatable: true,
-        schemaDescription: true,
-      });
-      setSchema(schema);
-    });
-  }, [endpoint]);
+    Promise.resolve()
+      .then(async () => {
+        const executor = await executor$;
+        const schema = await introspectSchema(executor, undefined, {
+          specifiedByUrl: true,
+          directiveIsRepeatable: true,
+          schemaDescription: true,
+        });
+        setSchema(schema);
+      })
+      .catch(e => setError(e));
+  }, [executor$]);
 
   const graphiqlRef = React.useRef<GraphiQL | null>(null);
 
@@ -100,8 +105,10 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
         </GraphiQL.Toolbar>
       </GraphiQL>
     </div>
+  ) : error ? (
+    <p>{error}</p>
   ) : (
-    <progress />
+    'GraphiQL Mesh is loading!'
   );
 };
 

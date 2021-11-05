@@ -1,5 +1,6 @@
 import { OperationTypeNode } from 'graphql';
 import { JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig, HTTPMethod } from './types';
+import { FileUpload } from 'graphql-upload';
 
 export function isPubSubOperationConfig(
   operationConfig: JSONSchemaOperationConfig
@@ -39,4 +40,22 @@ export function getOperationMetadata(operationConfig: JSONSchemaOperationConfig)
     rootTypeName,
     fieldName: operationConfig.field,
   };
+}
+
+export function cleanObject(obj: any) {
+  if (typeof obj === 'object' && obj != null) {
+    const newObj = {};
+    for (const key in obj) {
+      const newObjForKey = cleanObject(obj[key]);
+      if (newObjForKey != null) {
+        newObj[key] = newObjForKey;
+      }
+    }
+    return newObj;
+  }
+  return obj;
+}
+
+export function isFileUpload(obj: any): obj is FileUpload {
+  return 'createReadStream' in obj;
 }

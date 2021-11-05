@@ -1,14 +1,14 @@
 import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
-import { getOperationMetadata, isPubSubOperationConfig } from './utils';
+import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
 import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
 import { inspect } from '@graphql-tools/utils';
 import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify } from 'qs';
-import { isScalarType } from 'graphql';
+import { getNamedType, isScalarType } from 'graphql';
 
 export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
@@ -18,20 +18,6 @@ export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
   pubsub?: MeshPubSub;
   errorMessage?: string;
-}
-
-function cleanObject(obj: any) {
-  if (typeof obj === 'object' && obj != null) {
-    const newObj = {};
-    for (const key in obj) {
-      const newObjForKey = cleanObject(obj[key]);
-      if (newObjForKey != null) {
-        newObj[key] = newObjForKey;
-      }
-    }
-    return newObj;
-  }
-  return obj;
 }
 
 export async function addExecutionLogicToComposer(
@@ -93,38 +79,59 @@ export async function addExecutionLogicToComposer(
           method: httpMethod,
           headers,
         };
-        // Resolve union input
-        const input = resolveDataByUnionInputType(
-          cleanObject(args.input),
-          field.args?.input?.type?.getType(),
-          schemaComposer
-        );
-        if (input != null) {
-          switch (httpMethod) {
-            case 'GET':
-            case 'HEAD':
-            case 'CONNECT':
-            case 'OPTIONS':
-            case 'TRACE': {
-              fullPath += fullPath.includes('?') ? '&' : '?';
-              fullPath += qsStringify(input, { encode: false });
-              break;
-            }
-            case 'POST':
-            case 'PUT':
-            case 'PATCH':
-            case 'DELETE': {
-              const [, contentType] =
-                Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
-              if (contentType?.startsWith('application/x-www-form-urlencoded')) {
-                requestInit.body = qsStringify(input);
-              } else {
-                requestInit.body = jsonFlatStringify(input);
+        // Handle binary data
+        if ('binary' in operationConfig) {
+          const binaryUpload = await args.input;
+          if (isFileUpload(binaryUpload)) {
+            const readable = binaryUpload.createReadStream();
+            const chunks: number[] = [];
+            for await (const chunk of readable) {
+              for (const byte of chunk) {
+                chunks.push(byte);
               }
-              break;
             }
-            default:
-              throw new Error(`Unknown method ${httpMethod}`);
+            requestInit.body = new Uint8Array(chunks);
+
+            const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
+            if (!contentType) {
+              headers['content-type'] = binaryUpload.mimetype;
+            }
+          }
+          requestInit.body = binaryUpload;
+        } else {
+          // Resolve union input
+          const input = resolveDataByUnionInputType(
+            cleanObject(args.input),
+            field.args?.input?.type?.getType(),
+            schemaComposer
+          );
+          if (input != null) {
+            switch (httpMethod) {
+              case 'GET':
+              case 'HEAD':
+              case 'CONNECT':
+              case 'OPTIONS':
+              case 'TRACE': {
+                fullPath += fullPath.includes('?') ? '&' : '?';
+                fullPath += qsStringify(input, { encode: false });
+                break;
+              }
+              case 'POST':
+              case 'PUT':
+              case 'PATCH':
+              case 'DELETE': {
+                const [, contentType] =
+                  Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
+                if (contentType?.startsWith('application/x-www-form-urlencoded')) {
+                  requestInit.body = qsStringify(input);
+                } else {
+                  requestInit.body = jsonFlatStringify(input);
+                }
+                break;
+              }
+              default:
+                throw new Error(`Unknown method ${httpMethod}`);
+            }
           }
         }
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
@@ -135,13 +142,13 @@ export async function addExecutionLogicToComposer(
         const response = await fetch(fullPath, requestInit);
         operationLogger.debug(() => `=> Received ${inspect(response)}`);
         const responseText = await response.text();
-        const returnType = field.type;
+        const returnGraphQLType = getNamedType(field.type.getType());
         let responseJson: any;
         try {
           responseJson = JSON.parse(responseText);
         } catch (e) {
           // The result might be defined as scalar
-          if (isScalarType(returnType)) {
+          if (isScalarType(returnGraphQLType)) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
@@ -163,7 +170,7 @@ export async function addExecutionLogicToComposer(
         // Make sure the return type doesn't have a field `errors`
         // so ignore auto error detection if the return type has that field
         if (errors?.length) {
-          if (!('getFields' in returnType && 'errors' in returnType.getFields())) {
+          if (!('getFields' in returnGraphQLType && 'errors' in returnGraphQLType.getFields())) {
             const normalizedErrors: Error[] = errors.map(normalizeError);
             const aggregatedError =
               errors.length > 1
@@ -180,7 +187,7 @@ export async function addExecutionLogicToComposer(
           }
         }
         if (responseJson.error) {
-          if (!('getFields' in returnType && 'error' in returnType.getFields())) {
+          if (!('getFields' in returnGraphQLType && 'error' in returnGraphQLType.getFields())) {
             const normalizedError = normalizeError(responseJson.error);
             operationLogger.debug(() => `=> Throwing the error ${inspect(normalizedError)}`);
             return normalizedError;

@@ -89,11 +89,16 @@ export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONS
       title: rootInputTypeName,
       properties: {},
     });
-    if (operationConfig.requestSchema) {
+    if ('binary' in operationConfig) {
+      rootTypeInputTypeDefinition.properties.binary = {
+        type: 'string',
+        format: 'blob',
+      };
+    } else if ('requestSchema' in operationConfig) {
       rootTypeInputTypeDefinition.properties[fieldName] = {
         $ref: operationConfig.requestSchema,
       };
-    } else if (operationConfig.requestSample) {
+    } else if ('requestSample' in operationConfig) {
       const sample = await readFileOrUrl(operationConfig.requestSample, {
         cwd,
       }).catch((e: any) => {
