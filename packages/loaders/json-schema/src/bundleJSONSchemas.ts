@@ -90,7 +90,7 @@ export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONS
       properties: {},
     });
     if ('binary' in operationConfig) {
-      rootTypeInputTypeDefinition.properties.binary = {
+      rootTypeInputTypeDefinition.properties[fieldName] = {
         type: 'string',
         format: 'blob',
       };
