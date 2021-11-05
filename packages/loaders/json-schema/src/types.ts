@@ -39,6 +39,7 @@ export interface JSONSchemaPubSubOperationConfig extends JSONSchemaBaseOperation
 export interface JSONSchemaHTTPBinaryConfig extends JSONSchemaHTTPBaseOperationConfig {
   path: string;
   method?: HTTPMethod;
+  requestTypeName?: string;
   binary: true;
 }
 

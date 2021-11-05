@@ -585,7 +585,8 @@ export function getComposerFromJSONSchema(
                 output: typeComposer,
               };
             }
-            case 'blob': {
+            // Special case for upload
+            case 'upload': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLUpload);
               return {
                 input: typeComposer,
