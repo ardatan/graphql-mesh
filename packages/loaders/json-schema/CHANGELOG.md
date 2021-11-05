@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.3.0
+
+### Minor Changes
+
+- b7241ebb6: feat(json-schema): Binary Operation support
+
 ## 0.2.0
 
 ### Minor Changes

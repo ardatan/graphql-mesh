@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.26.0
+
+### Minor Changes
+
+- 0f476c201: feat(runtime): adapt new LiveQuery changes
+
 ## 0.25.0
 
 ### Minor Changes
