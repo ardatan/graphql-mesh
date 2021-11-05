@@ -10,7 +10,6 @@ import {
   getOperationAST,
   print,
   SelectionSetNode,
-  ExecutionResult,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
 import {
@@ -124,16 +123,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   getMeshLogger.debug(() => `Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
     includeIdentifierExtension: true,
-    execute: (args: any) => {
-      const { document, contextValue, variableValues, rootValue, operationName }: ExecutionArgs = args;
-      return jitExecutor({
-        document,
-        context: contextValue,
-        variables: variableValues,
-        operationName,
-        rootValue,
-      }) as ExecutionResult;
-    },
   });
 
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
@@ -277,6 +266,18 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const EMPTY_ROOT_VALUE: any = {};
   const EMPTY_CONTEXT_VALUE: any = {};
   const EMPTY_VARIABLES_VALUE: any = {};
+
+  const liveQueryExecute = liveQueryStore.makeExecute(
+    ({ document, contextValue: context, variableValues: variables, rootValue, operationName }): any =>
+      jitExecutor({
+        document,
+        context,
+        variables,
+        operationName,
+        rootValue,
+      })
+  );
+
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
     documentOrSDL: GraphQLOperation<TData, TVariables>,
     variableValues: TVariables = EMPTY_VARIABLES_VALUE,
@@ -310,7 +311,7 @@ ${inspect({
 })}`
     );
 
-    const executionResult = await liveQueryStore.execute(executionParams);
+    const executionResult = await liveQueryExecute(executionParams);
 
     operationLogger.debug(
       () =>
