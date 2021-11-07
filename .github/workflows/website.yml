@@ -9,7 +9,7 @@ jobs:
     name: Deploy Website
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, '[deploy_website]') || contains(github.ref, 'refs/tags/')
+    if: contains(github.event.head_commit.message, '[deploy_website]') || contains(github.event.head_commit.message, 'chore(release)') || contains(github.ref, 'refs/tags/')
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
@@ -37,10 +37,10 @@ jobs:
           path: '**/node_modules'
           key: ${{ runner.os }}-17-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-17-yarn-${{ hashFiles('yarn.lock') }}
+            ${{ runner.os }}-17-yarn-
 
       - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock && git checkout package.json
+        run: yarn install && git checkout yarn.lock
       - name: Build
         run: yarn build
       - name: Deploy 🚀
