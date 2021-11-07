@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.43.3
+
+### Patch Changes
+
+- 761b16ed9: fix(serve): fix critical bug
+  - @graphql-mesh/config@0.25.2
+  - @graphql-mesh/runtime@0.26.1
+  - @graphql-mesh/utils@0.20.1
+  - @graphql-mesh/store@0.2.1
+
 ## 0.43.2
 
 ### Patch Changes

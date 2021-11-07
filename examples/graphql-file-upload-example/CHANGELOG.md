@@ -1,5 +1,13 @@
 # graphql-file-upload-example
 
+## 0.6.113
+
+### Patch Changes
+
+- Updated dependencies [761b16ed9]
+  - @graphql-mesh/cli@0.43.3
+  - @graphql-mesh/graphql@0.20.1
+
 ## 0.6.112
 
 ### Patch Changes
