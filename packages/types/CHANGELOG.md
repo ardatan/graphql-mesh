@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.54.1
+
+### Patch Changes
+
+- 761b16ed9: fix(serve): fix critical bug
+
 ## 0.54.0
 
 ### Minor Changes

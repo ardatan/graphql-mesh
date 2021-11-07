@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-type-merging",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,10 +23,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.54.0",
+    "@graphql-mesh/types": "0.54.1",
     "@graphql-tools/stitching-directives": "2.2.1",
     "@graphql-tools/delegate": "8.4.1",
-    "@graphql-mesh/utils": "0.20.0",
+    "@graphql-mesh/utils": "0.20.1",
     "lodash": "4.17.21"
   },
   "publishConfig": {

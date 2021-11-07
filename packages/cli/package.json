@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.43.2",
+  "version": "0.43.3",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -41,11 +41,11 @@
     "@graphql-codegen/typescript": "2.3.1",
     "@graphql-codegen/typescript-generic-sdk": "2.2.0",
     "@graphql-codegen/typescript-operations": "2.2.0",
-    "@graphql-mesh/config": "0.25.1",
+    "@graphql-mesh/config": "0.25.2",
     "@graphql-codegen/typescript-resolvers": "2.4.0",
-    "@graphql-mesh/runtime": "0.26.0",
-    "@graphql-mesh/utils": "0.20.0",
-    "@graphql-mesh/store": "0.2.0",
+    "@graphql-mesh/runtime": "0.26.1",
+    "@graphql-mesh/utils": "0.20.1",
+    "@graphql-mesh/store": "0.2.1",
     "@graphql-tools/code-file-loader": "7.2.2",
     "@graphql-tools/utils": "8.5.2",
     "@graphql-tools/load": "7.4.1",

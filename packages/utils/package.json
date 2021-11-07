@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -31,7 +31,7 @@
     "@graphql-tools/delegate": "8.4.1",
     "@graphql-tools/utils": "8.5.2",
     "@graphql-typed-document-node/core": "3.1.0",
-    "@graphql-mesh/types": "0.54.0",
+    "@graphql-mesh/types": "0.54.1",
     "cross-undici-fetch": "0.0.20",
     "chalk": "4.1.2",
     "date-fns": "2.25.0",
