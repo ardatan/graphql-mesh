@@ -30,7 +30,7 @@
     "@graphql-mesh/types": "0.54.1",
     "@graphql-mesh/store": "0.2.1",
     "@graphql-mesh/utils": "0.20.1",
-    "@graphql-tools/utils": "8.5.2",
+    "@graphql-tools/utils": "8.5.3",
     "deep-equal": "2.0.5",
     "form-urlencoded": "6.0.5",
     "jsonpath-plus": "6.0.1",
