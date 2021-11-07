@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.21.0
+
+### Minor Changes
+
+- 875d0e48d: enhance: small improvements
+
 ## 0.20.1
 
 ### Patch Changes

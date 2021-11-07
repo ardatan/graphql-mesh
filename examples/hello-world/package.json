@@ -1,15 +1,15 @@
 {
   "name": "json-schema-hello-world",
-  "version": "0.0.86",
+  "version": "0.0.87",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.43.3",
-    "@graphql-mesh/json-schema": "0.22.2",
-    "@graphql-mesh/transform-mock": "0.11.1",
+    "@graphql-mesh/cli": "0.43.4",
+    "@graphql-mesh/json-schema": "0.22.3",
+    "@graphql-mesh/transform-mock": "0.11.2",
     "graphql": "16.0.1"
   },
   "devDependencies": {
