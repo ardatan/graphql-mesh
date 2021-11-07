@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-snapshot
 
+## 0.12.0
+
+### Minor Changes
+
+- 875d0e48d: enhance: small improvements
+
+### Patch Changes
+
+- Updated dependencies [875d0e48d]
+  - @graphql-mesh/utils@0.21.0
+
 ## 0.11.1
 
 ### Patch Changes

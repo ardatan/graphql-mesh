@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-type-merging
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [875d0e48d]
+  - @graphql-mesh/utils@0.21.0
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-extend
 
+## 0.8.0
+
+### Minor Changes
+
+- 875d0e48d: enhance: small improvements
+
+### Patch Changes
+
+- Updated dependencies [875d0e48d]
+  - @graphql-mesh/utils@0.21.0
+
 ## 0.7.1
 
 ### Patch Changes
