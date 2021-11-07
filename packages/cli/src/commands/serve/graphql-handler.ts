@@ -49,10 +49,10 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
             request,
             schema,
             parse: parseWithCache,
-            execute: (_schema, _documentAST, rootValue, contextValue, variableValues, operationName) =>
-              execute(query, variableValues, contextValue, rootValue, operationName),
-            subscribe: (_schema, _documentAST, rootValue, contextValue, variableValues, operationName) =>
-              subscribe(query, variableValues, contextValue, rootValue, operationName),
+            execute: ({ document, rootValue, contextValue, variableValues, operationName }) =>
+              execute(document, variableValues, contextValue, rootValue, operationName),
+            subscribe: ({ document, rootValue, contextValue, variableValues, operationName }) =>
+              subscribe(document, variableValues, contextValue, rootValue, operationName),
             contextFactory: () => request,
           })
         )

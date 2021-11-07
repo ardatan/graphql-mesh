@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/index.tsx',
-  mode: 'development',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   module: {
     rules: [
       {
@@ -26,6 +26,9 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
+    new webpack.DefinePlugin({
+      setImmediate: 'setTimeout',
+    }),
     new HtmlWebpackPlugin({
       title: 'GraphiQL Mesh',
     }),

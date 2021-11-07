@@ -1008,6 +1008,10 @@
         "headers": {
           "type": "object",
           "properties": {}
+        },
+        "binary": {
+          "type": "boolean",
+          "description": "If true, this operation cannot have requestSchema or requestSample\nAnd the request body will be passed as binary with its mime type\nunless you define an explicit Content-Type header"
         }
       },
       "required": ["field", "type", "path"]

@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-1 1`] = `
+Object {
+  "done": false,
+  "value": Object {
+    "data": Object {
+      "exampleSearchMoviesByCast": Object {
+        "cast": Array [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 2015n,
+      },
+    },
+  },
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-2 1`] = `
+Object {
+  "done": false,
+  "value": Object {
+    "data": Object {
+      "exampleSearchMoviesByCast": Object {
+        "cast": Array [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 2018n,
+      },
+    },
+  },
+}
+`;
+
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
 "\\"\\"\\"
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
@@ -97,7 +137,6 @@ Object {
             "Jonah Hill",
             "Margot Robbie",
           ],
-          "genre": "DRAMA",
           "name": "The Wolf of Wall Street",
           "rating": 0.7799999713897705,
           "time": Object {

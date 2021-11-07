@@ -188,11 +188,12 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
     });
 
     const pubSubHandler: RequestHandler = (req, _res, next) => {
-      Promise.resolve().then(async () => {
-        const { pubsub } = await mesh$;
-        req['pubsub'] = pubsub;
-        next();
-      });
+      mesh$
+        .then(({ pubsub }) => {
+          req['pubsub'] = pubsub;
+          next();
+        })
+        .catch(e => handleFatalError(e, logger));
     };
     app.use(pubSubHandler);
 

@@ -3,4 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 
-ReactDOM.render(<App defaultQuery={(window as any).defaultQuery} endpoint={(window as any).endpoint} />, document.body);
+const rootElement = document.createElement('div');
+rootElement.id = 'root';
+document.body.appendChild(rootElement);
+ReactDOM.render(<App defaultQuery={(window as any).defaultQuery} endpoint={(window as any).endpoint} />, rootElement);

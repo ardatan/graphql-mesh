@@ -371,6 +371,12 @@ export interface JsonSchemaHTTPOperation {
   headers?: {
     [k: string]: any;
   };
+  /**
+   * If true, this operation cannot have requestSchema or requestSample
+   * And the request body will be passed as binary with its mime type
+   * unless you define an explicit Content-Type header
+   */
+  binary?: boolean;
 }
 export interface JsonSchemaPubSubOperation {
   field: string;
