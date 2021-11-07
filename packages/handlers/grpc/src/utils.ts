@@ -52,7 +52,7 @@ export function addMetaDataToCall(
   input: unknown,
   context: Record<string, unknown>,
   metaData: Record<string, string | string[] | Buffer>
-): Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>> {
+) {
   if (metaData) {
     const meta = new Metadata();
     for (const [key, value] of Object.entries(metaData)) {

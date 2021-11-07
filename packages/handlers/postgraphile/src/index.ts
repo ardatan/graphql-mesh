@@ -13,7 +13,7 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { execute, ExecutionArgs, subscribe } from 'graphql';
 
@@ -119,7 +119,7 @@ export default class PostGraphileHandler implements MeshHandler {
 
     if (!cachedIntrospection) {
       await writeCache();
-      cachedIntrospection = await readJSON(dummyCacheFilePath);
+      cachedIntrospection = await import(dummyCacheFilePath);
       await this.pgCache.set(cachedIntrospection);
     }
 

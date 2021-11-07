@@ -2,14 +2,7 @@
 import './patchLongJs';
 import { GetMeshSourceOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { withCancel } from '@graphql-mesh/utils';
-import {
-  ChannelCredentials,
-  ClientReadableStream,
-  ClientUnaryCall,
-  Metadata,
-  credentials,
-  loadPackageDefinition,
-} from '@grpc/grpc-js';
+import { ChannelCredentials, ClientUnaryCall, Metadata, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt, GraphQLVoid, GraphQLJSON } from 'graphql-scalars';
@@ -364,8 +357,8 @@ module.exports = {
               },
             };
             if (method.responseStream) {
-              const clientMethod: ClientMethod = (input: unknown = {}, metaData: Metadata) => {
-                const responseStream = client[methodName](input, metaData) as ClientReadableStream<any>;
+              const clientMethod: any = (input: unknown = {}, metaData: Metadata) => {
+                const responseStream = client[methodName](input, metaData);
                 let isCancelled = false;
                 const responseStreamWithCancel = withCancel(responseStream, () => {
                   if (!isCancelled) {

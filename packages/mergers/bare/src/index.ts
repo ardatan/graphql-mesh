@@ -1,7 +1,8 @@
 import { MeshMerger, MeshMergerContext, MeshTransform, Logger, MeshMergerOptions } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { groupTransforms, applySchemaTransforms, asArray } from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
+import { asArray } from '@graphql-tools/utils';
 import { extendSchema } from 'graphql';
 
 export default class BareMerger implements MeshMerger {

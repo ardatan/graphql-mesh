@@ -1,5 +1,4 @@
 import { JsonPointer } from 'json-ptr';
-import { readJSON } from '@graphql-mesh/utils';
 import { dirname, isAbsolute, join } from 'path';
 import { healJSONSchema } from './healJSONSchema';
 
@@ -53,7 +52,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           const newCwd = dirname(externalFilePath);
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
-            externalFile = await readJSON(externalFilePath);
+            externalFile = await import(externalFilePath);
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }

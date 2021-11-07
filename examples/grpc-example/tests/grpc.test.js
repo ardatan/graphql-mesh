@@ -34,8 +34,9 @@ describe('gRPC Example', () => {
     const MoviesByCastSubscription = await readFile(join(__dirname, '../example-queries/MoviesByCast.subscription.graphql'), 'utf8');
     const { subscribe } = await mesh$;
     await grpc$;
-    const resultIterator = await subscribe(MoviesByCastSubscription);
-    expect(Symbol.asyncIterator in resultIterator).toBeTruthy();
+    const result = await subscribe(MoviesByCastSubscription);
+    expect(Symbol.asyncIterator in result).toBeTruthy();
+    const resultIterator = result[Symbol.asyncIterator]();
     expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-1');
     expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-2');
     await resultIterator.return();

@@ -6,16 +6,7 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
-
-const asArray = <T>(maybeArray: T | T[]): T[] => {
-  if (Array.isArray(maybeArray)) {
-    return maybeArray;
-  } else if (maybeArray) {
-    return [maybeArray];
-  } else {
-    return [];
-  }
-};
+import { asArray } from '@graphql-tools/utils';
 
 export default class ExtendTransform implements MeshTransform {
   noWrap = true;

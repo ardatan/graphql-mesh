@@ -48,8 +48,8 @@ import { createAndLoadViewer } from './auth_builder';
 import { GraphQLSchemaConfig } from 'graphql/type/schema';
 import { sortObject, handleWarning, MitigationTypes } from './utils';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { asArray, DefaultLogger } from '@graphql-mesh/utils';
-import { inspect } from '@graphql-tools/utils';
+import { DefaultLogger } from '@graphql-mesh/utils';
+import { asArray, inspect } from '@graphql-tools/utils';
 
 type Result = {
   schema: GraphQLSchema;

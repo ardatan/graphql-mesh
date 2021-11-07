@@ -7,9 +7,9 @@ import {
   loadFromModuleExportExpression,
   getCachedFetch,
   jsonFlatStringify,
-  asArray,
   stringInterpolator,
 } from '@graphql-mesh/utils';
+import { asArray } from '@graphql-tools/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
 import {

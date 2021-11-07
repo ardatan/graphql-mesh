@@ -10,7 +10,7 @@ import { tmpdir } from 'os';
 import { wrapSchema } from '@graphql-tools/wrap';
 import _ from 'lodash';
 import graphqlFields from 'graphql-fields';
-import { readJSON, mkdir, rmdirs } from '@graphql-mesh/utils';
+import { mkdir, rmdirs } from '@graphql-mesh/utils';
 
 describe('snapshot', () => {
   const baseDir: string = undefined;
@@ -102,7 +102,7 @@ describe('snapshot', () => {
       outputDir,
     });
 
-    expect(await readJSON(fileName)).toMatchObject(users[0]);
+    expect(await import(fileName)).toMatchObject(users[0]);
   });
 
   it('should not call again if there is snapshot created', async () => {
