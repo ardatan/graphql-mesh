@@ -3135,15 +3135,15 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.5.1":
-  version "7.5.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.5.1.tgz#cf624823670e600a3b3364aa80964019622c160d"
-  integrity sha512-P782cv7xB0D98ExUBUvNXmMckDIEgJjcNRRfe20fEa3Bh6snhNwL1aIHfQ3w6bzqU8Kdp4pMiOkamoHWbEsOHw==
+"@graphql-tools/url-loader@7.5.2":
+  version "7.5.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.5.2.tgz#fb3737fd1269ab61b195b63052179b6049d90ce1"
+  integrity sha512-EilHqbhUY/qg55SSEdklDhPXgSz9+9a63SX3mcD8J2qwZHJD/wOLcyKs8m6BXfuGwUiuB0j3fmDSEVmva2onBg==
   dependencies:
     "@graphql-tools/delegate" "^8.4.1"
     "@graphql-tools/utils" "^8.5.1"
     "@graphql-tools/wrap" "^8.3.1"
-    "@n1ru4l/graphql-live-query" "0.8.2"
+    "@n1ru4l/graphql-live-query" "0.9.0"
     "@types/websocket" "1.0.4"
     "@types/ws" "^8.0.0"
     cross-undici-fetch "^0.0.20"
@@ -3816,11 +3816,6 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@microsoft/fetch-event-source/-/fetch-event-source-2.0.1.tgz#9ceecc94b49fbaa15666e38ae8587f64acce007d"
   integrity sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==
-
-"@n1ru4l/graphql-live-query@0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.8.2.tgz#b6e4a256f294f88c616a4c03c323860f803c96e0"
-  integrity sha512-StBuj5gxoVbFx2axvJF6ArnHVqVnibYeekRjO2T1KbUWyR+SbxaqDg9E3Ch9XkJnQAb+7HKW2JSUc+jnuqsXxQ==
 
 "@n1ru4l/graphql-live-query@0.9.0":
   version "0.9.0"
