@@ -1891,9 +1891,51 @@
           "type": "object",
           "properties": {},
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
+        },
+        "includePorts": {
+          "type": "boolean",
+          "description": "If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the operations of the port.\n\nMost soap-endpoints only define one port; so including it in the schema will just be inconvenient.\nBut if there are multiple ports with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\n\ndefault: false"
+        },
+        "includeServices": {
+          "type": "boolean",
+          "description": "If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').\n\nMost soap-endpoints only define one service; so including it in the schema will just be inconvenient.\nBut if there are multiple services with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\n\ndefault: false"
+        },
+        "selectQueryOrMutationField": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SoapSelectQueryOrMutationFieldConfig"
+          },
+          "additionalItems": false,
+          "description": "Allows to explicitly override the default operation (Query or Mutation) for any SOAP operation"
+        },
+        "selectQueryOperationsAuto": {
+          "type": "boolean",
+          "description": "Automatically put operations starts with `query` or `get` into the Query type"
         }
       },
       "required": ["wsdl"]
+    },
+    "SoapSelectQueryOrMutationFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SoapSelectQueryOrMutationFieldConfig",
+      "properties": {
+        "service": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["query", "mutation"],
+          "description": "Allowed values: query, mutation"
+        }
+      },
+      "required": ["service", "port", "operation", "type"]
     },
     "SoapSecurityBasicAuthConfig": {
       "additionalProperties": false,

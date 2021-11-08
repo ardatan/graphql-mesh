@@ -36,7 +36,7 @@ export default class FederationMerger implements MeshMerger {
     const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
     await Promise.all(
       rawSources.map(async rawSource => {
-        const transformedSchema = wrapSchema(rawSource);
+        const transformedSchema = wrapSchema(rawSource as any);
         rawSourceMap.set(rawSource.name, rawSource);
         sourceMap.set(rawSource, transformedSchema);
         const sdl = await this.store

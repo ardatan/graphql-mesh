@@ -8,7 +8,7 @@
     "debug": "cross-env DEBUG=1 yarn dev",
     "build": "mesh build",
     "start:prod": "mesh start",
-    "start": "yarn debug"
+    "start": "yarn dev"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.43.4",

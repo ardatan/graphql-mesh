@@ -69,7 +69,23 @@ export type SchemaOptions = {
    * default: WSDL type name + 'Input'.
    */
   inputNameResolver?: NameResolver;
+  /**
+   * Automatically put operations starts with `query` or `get` into the Query type
+   * default: false
+   */
+  selectQueryOperationsAuto?: boolean;
+  /**
+   * Allows to explicitly override the default operation(Query or Mutation) for any SOAP operation
+   */
+  selectQueryOrMutationField?: SoapSelectQueryOrMutationFieldConfig[];
 };
+
+export interface SoapSelectQueryOrMutationFieldConfig {
+  service: string;
+  port: string;
+  operation: string;
+  type: 'query' | 'mutation';
+}
 
 export function createSchemaConfig(
   endpoint: SoapEndpoint,

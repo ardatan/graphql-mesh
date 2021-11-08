@@ -101,6 +101,12 @@ export default class SoapHandler implements MeshHandler {
       logger: this.logger,
       debug: !!env.DEBUG,
       warnings: !!env.DEBUG,
+      schemaOptions: {
+        includePorts: this.config.includePorts,
+        includeServices: this.config.includeServices,
+        selectQueryOrMutationField: this.config.selectQueryOrMutationField,
+        selectQueryOperationsAuto: this.config.selectQueryOperationsAuto,
+      },
     });
 
     return {

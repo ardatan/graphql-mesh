@@ -1,4 +1,4 @@
-mutation GetListByName {
+query GetListByName {
   GetListByName(name: "Newton") {
     PersonIdentification {
       Name

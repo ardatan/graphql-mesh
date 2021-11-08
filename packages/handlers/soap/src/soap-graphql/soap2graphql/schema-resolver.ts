@@ -32,6 +32,9 @@ import {
   GraphQLString,
 } from 'graphql';
 import { Logger } from '@graphql-mesh/types';
+import { GraphQLJSON } from 'graphql-scalars';
+
+type RootType = 'query' | 'mutation';
 
 export class SchemaResolver {
   private readonly options: SchemaOptions;
@@ -78,59 +81,69 @@ export class SchemaResolver {
     };
   }
 
+  getFields(rootType: RootType): GraphQLFieldConfigMap<any, any> {
+    const fields: GraphQLFieldConfigMap<any, any> =
+      rootType === 'query'
+        ? {
+            description: {
+              type: GraphQLString,
+              resolve: () => {
+                return this.soapEndpoint.description();
+              },
+            },
+          }
+        : {};
+
+    this.soapEndpoint.services().forEach((service: SoapService) => {
+      if (this.options.includeServices) {
+        const fieldName = service.name();
+        fields[fieldName] = this.createSoapServiceField(service, rootType);
+      } else if (this.options.includePorts) {
+        service.ports().forEach((port: SoapPort) => {
+          const fieldName = port.name();
+          fields[fieldName] = this.createSoapPortField(service, port, rootType);
+        });
+      } else {
+        service.ports().forEach((port: SoapPort) => {
+          port.operations().forEach((operation: SoapOperation) => {
+            const fieldConfig = this.createSoapOperationField(operation, rootType);
+            if (fieldConfig) {
+              fields[operation.name()] = fieldConfig;
+            }
+          });
+        });
+      }
+    });
+    return fields;
+  }
+
   createQueryObject(): GraphQLObjectType {
     return new GraphQLObjectType({
       name: 'Query',
-      fields: {
-        description: {
-          type: GraphQLString,
-          resolve: () => {
-            return this.soapEndpoint.description();
-          },
-        },
-      },
+      fields: () => this.getFields('query'),
     });
   }
 
   createMutationObject(): GraphQLObjectType {
-    const fieldsThunk = (): GraphQLFieldConfigMap<any, any> => {
-      const fields: GraphQLFieldConfigMap<any, any> = {};
-
-      this.soapEndpoint.services().forEach((service: SoapService) => {
-        if (this.options.includeServices) {
-          fields[service.name()] = this.createSoapServiceField(service);
-        } else if (this.options.includePorts) {
-          service.ports().forEach((port: SoapPort) => {
-            fields[port.name()] = this.createSoapPortField(service, port);
-          });
-        } else {
-          service.ports().forEach((port: SoapPort) => {
-            port.operations().forEach((operation: SoapOperation) => {
-              fields[operation.name()] = this.createSoapOperationField(operation);
-            });
-          });
-        }
-      });
-
-      return fields;
-    };
-
     return new GraphQLObjectType({
       name: 'Mutation',
-      fields: fieldsThunk,
+      fields: () => this.getFields('mutation'),
     });
   }
 
-  createSoapServiceField(service: SoapService): GraphQLFieldConfig<any, any> {
+  createSoapServiceField(service: SoapService, rootType: RootType): GraphQLFieldConfig<any, any> {
     const fieldsThunk = (): GraphQLFieldConfigMap<any, any> => {
       const fields: GraphQLFieldConfigMap<any, any> = {};
 
       service.ports().forEach((port: SoapPort) => {
         if (this.options.includePorts) {
-          fields[port.name()] = this.createSoapPortField(service, port);
+          fields[port.name()] = this.createSoapPortField(service, port, rootType);
         } else {
           port.operations().forEach((operation: SoapOperation) => {
-            fields[operation.name()] = this.createSoapOperationField(operation);
+            const fieldConfig = this.createSoapOperationField(operation, rootType);
+            if (fieldConfig) {
+              fields[operation.name()] = fieldConfig;
+            }
           });
         }
       });
@@ -139,7 +152,7 @@ export class SchemaResolver {
     };
 
     const returnType = new GraphQLObjectType({
-      name: service.name() + 'Service',
+      name: service.name() + 'Service' + (rootType === 'query' ? 'Query' : ''),
       description: `Service ${service.name()}`,
       fields: fieldsThunk,
     });
@@ -153,19 +166,22 @@ export class SchemaResolver {
     };
   }
 
-  createSoapPortField(service: SoapService, port: SoapPort): GraphQLFieldConfig<any, any> {
+  createSoapPortField(service: SoapService, port: SoapPort, rootType: RootType): GraphQLFieldConfig<any, any> {
     const fieldsThunk = (): GraphQLFieldConfigMap<any, any> => {
       const fields: GraphQLFieldConfigMap<any, any> = {};
 
       port.operations().forEach((operation: SoapOperation) => {
-        fields[operation.name()] = this.createSoapOperationField(operation);
+        const fieldConfig = this.createSoapOperationField(operation, rootType);
+        if (fieldConfig) {
+          fields[operation.name()] = fieldConfig;
+        }
       });
 
       return fields;
     };
 
     const returnType = new GraphQLObjectType({
-      name: port.name() + 'Port',
+      name: port.name() + 'Port' + (rootType === 'query' ? 'Query' : ''),
       description: `Port ${port.name()}, service ${service.name()}`,
       fields: fieldsThunk,
     });
@@ -179,7 +195,7 @@ export class SchemaResolver {
     };
   }
 
-  createSoapOperationField(operation: SoapOperation): GraphQLFieldConfig<any, any> {
+  getFieldConfig(operation: SoapOperation): GraphQLFieldConfig<any, any> {
     const args: GraphQLFieldConfigArgumentMap = this.createSoapOperationFieldArgs(operation);
     const returnType: GraphQLOutputType = this.resolveSoapOperationReturnType(operation);
     const resolver: GraphQLFieldResolver<any, any, any> = this.createSoapOperationFieldResolver(operation);
@@ -191,6 +207,45 @@ export class SchemaResolver {
       args: args,
       resolve: resolver,
     };
+  }
+
+  createSoapOperationField(operation: SoapOperation, rootType: RootType): GraphQLFieldConfig<any, any> {
+    if (this.options.selectQueryOrMutationField?.length) {
+      const selectionConfig = this.options.selectQueryOrMutationField.find(
+        configElem =>
+          configElem.service === operation.service().name() &&
+          configElem.port === operation.port().name() &&
+          configElem.operation === operation.name()
+      );
+      if (selectionConfig != null) {
+        if (selectionConfig.type === rootType) {
+          return this.getFieldConfig(operation);
+        } else {
+          return undefined;
+        }
+      }
+    }
+
+    if (this.options.selectQueryOperationsAuto) {
+      if (
+        operation.name().toLowerCase().startsWith('get') ||
+        operation.name().toLowerCase().startsWith('find') ||
+        operation.name().toLowerCase().startsWith('list') ||
+        operation.name().toLowerCase().startsWith('query') ||
+        operation.name().toLowerCase().startsWith('search')
+      ) {
+        if (rootType === 'query') {
+          return this.getFieldConfig(operation);
+        }
+      } else {
+        if (rootType === 'mutation') {
+          return this.getFieldConfig(operation);
+        }
+      }
+    } else if (rootType === 'mutation') {
+      return this.getFieldConfig(operation);
+    }
+    return undefined;
   }
 
   createSoapOperationFieldArgs(operation: SoapOperation): GraphQLFieldConfigArgumentMap {
@@ -263,9 +318,9 @@ class GraphqlOutputFieldResolver {
       }
     }
 
-    this.logger.warn(`could not resolve output type '${soapType}'; using GraphQLString instead`);
-    this.alreadyResolvedOutputTypes.set(soapType, GraphQLString);
-    return GraphQLString;
+    this.logger.warn(`could not resolve output type '${inspect(soapType)}'; using GraphQLJSON instead`);
+    this.alreadyResolvedOutputTypes.set(soapType, GraphQLJSON);
+    return GraphQLJSON;
   }
 
   private createObjectType(soapType: SoapObjectType): GraphQLObjectType {

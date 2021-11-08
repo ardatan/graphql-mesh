@@ -9,13 +9,14 @@ import {
   GraphQLResolveInfo,
   isListType,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput, SyncImportFn } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig, MeshTransformOptions, SyncImportFn } from '@graphql-mesh/types';
 import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
 import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
 import _ from 'lodash';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { SubschemaConfig } from '@graphql-tools/delegate';
 
 export default class FederationTransform implements MeshTransform {
   private apiName: string;
@@ -30,7 +31,7 @@ export default class FederationTransform implements MeshTransform {
     this.syncImportFn = syncImportFn;
   }
 
-  transformSchema(schema: GraphQLSchema, rawSource: RawSourceOutput) {
+  transformSchema(schema: GraphQLSchema, rawSource: SubschemaConfig) {
     const federationConfig: FederationConfig<any> = {};
 
     rawSource.merge = {};

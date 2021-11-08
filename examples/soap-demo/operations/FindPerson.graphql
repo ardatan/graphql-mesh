@@ -1,4 +1,4 @@
-mutation FindPerson {
+query FindPerson {
   FindPerson(id: "1") {
     Age
     DOB

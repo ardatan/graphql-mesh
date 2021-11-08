@@ -832,6 +832,36 @@ export interface SoapHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  /**
+   * If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.
+   * The fields of the object will be the operations of the port.
+   *
+   * Most soap-endpoints only define one port; so including it in the schema will just be inconvenient.
+   * But if there are multiple ports with operations of the same name, you should set this option to true.
+   * Otherwise only one of the identical-named operations will be callable.
+   *
+   * default: false
+   */
+  includePorts?: boolean;
+  /**
+   * If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.
+   * The fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').
+   *
+   * Most soap-endpoints only define one service; so including it in the schema will just be inconvenient.
+   * But if there are multiple services with operations of the same name, you should set this option to true.
+   * Otherwise only one of the identical-named operations will be callable.
+   *
+   * default: false
+   */
+  includeServices?: boolean;
+  /**
+   * Allows to explicitly override the default operation (Query or Mutation) for any SOAP operation
+   */
+  selectQueryOrMutationField?: SoapSelectQueryOrMutationFieldConfig[];
+  /**
+   * Automatically put operations starts with `query` or `get` into the Query type
+   */
+  selectQueryOperationsAuto?: boolean;
 }
 /**
  * Basic Authentication Configuration
@@ -876,6 +906,15 @@ export interface SoapSecurityCertificateConfig {
    * Path to the file or URL contains your password
    */
   passwordPath?: string;
+}
+export interface SoapSelectQueryOrMutationFieldConfig {
+  service: string;
+  port: string;
+  operation: string;
+  /**
+   * Allowed values: query, mutation
+   */
+  type: 'query' | 'mutation';
 }
 /**
  * Handler for OData

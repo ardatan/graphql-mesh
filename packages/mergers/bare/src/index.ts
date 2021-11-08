@@ -35,7 +35,7 @@ export default class BareMerger implements MeshMerger {
         schema,
         transforms: firstRoundTransforms,
         batch: true,
-      });
+      } as any);
     }
     if (typeDefs || resolvers) {
       this.logger.debug(() => `Applying additionalTypeDefs`);
@@ -85,7 +85,7 @@ export default class BareMerger implements MeshMerger {
           schema,
           transforms: source.transforms,
           batch: true,
-        });
+        } as any);
       }
       sourceMap.set(source, schema);
       return schema;

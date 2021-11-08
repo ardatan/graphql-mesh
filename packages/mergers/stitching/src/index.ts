@@ -8,7 +8,7 @@ import {
   AggregateError,
   jitExecutorFactory,
 } from '@graphql-mesh/utils';
-import { StitchingInfo } from '@graphql-tools/delegate';
+import { StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
 import {
   stitchingDirectives,
   federationToStitchingSDL,
@@ -119,7 +119,7 @@ export default class StitchingMerger implements MeshMerger {
     */
     this.logger.debug(() => `Stitching the source schemas`);
     let unifiedSchema = stitchSchemas({
-      subschemas: rawSources,
+      subschemas: rawSources as SubschemaConfig[],
       typeDefs,
       resolvers,
       subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],

@@ -36,7 +36,7 @@ import {
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { delegateToSchema, IDelegateToSchemaOptions } from '@graphql-tools/delegate';
+import { delegateToSchema, IDelegateToSchemaOptions, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { inspect, isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
@@ -82,7 +82,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
         if (noWrapTransforms?.length) {
           sourceLogger.debug(() => `${noWrapTransforms.length} bare transforms found and applying`);
-          apiSchema = applySchemaTransforms(apiSchema, source, null, noWrapTransforms);
+          apiSchema = applySchemaTransforms(apiSchema, source as SubschemaConfig, null, noWrapTransforms);
         }
 
         rawSources.push({
@@ -208,7 +208,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 - key: ${inspect(key)}`
               );
               const commonDelegateOptions: IDelegateToSchemaOptions = {
-                schema: rawSource,
+                schema: rawSource as SubschemaConfig,
                 rootValue: root,
                 operation: operationType as OperationTypeNode,
                 fieldName,

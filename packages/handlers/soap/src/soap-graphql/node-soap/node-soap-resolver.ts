@@ -273,17 +273,19 @@ export class NodeSoapWsdlResolver {
       fields = [];
     }
 
-    const soapFields: SoapField[] = fields.map((field: XsdFieldDefinition) => {
-      return {
-        name: field.$name,
-        type: this.resolveWsdlNameToSoapType(
-          field.$targetNamespace,
-          withoutNamespace(field.$type),
-          `field '${field.$name}' of soap type '${soapType.name}'`
-        ),
-        isList: !!field.$maxOccurs && field.$maxOccurs === 'unbounded',
-      };
-    });
+    const soapFields: SoapField[] = fields
+      .filter(field => field.$name)
+      .map((field: XsdFieldDefinition) => {
+        return {
+          name: field.$name,
+          type: this.resolveWsdlNameToSoapType(
+            field.$targetNamespace,
+            withoutNamespace(field.$type),
+            `field '${field.$name}' of soap type '${soapType.name}'`
+          ),
+          isList: !!field.$maxOccurs && field.$maxOccurs === 'unbounded',
+        };
+      });
 
     // @todo in XSD it is possible to inherit a type from a primitive ... may have to handle this
     const baseType: SoapObjectType = !baseTypeName

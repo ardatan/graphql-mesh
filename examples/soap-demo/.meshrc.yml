@@ -3,3 +3,7 @@ sources:
     handler:
       soap:
         wsdl: https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
+        selectQueryOperationsAuto: true
+
+documents:
+  - ./operations/*.graphql
