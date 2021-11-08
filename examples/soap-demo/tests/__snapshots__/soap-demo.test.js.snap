@@ -142,11 +142,3 @@ Object {
   },
 }
 `;
-
-exports[`SOAP Country Info should give correct response for example queries: Mission.graphql-soap-demo-result 1`] = `
-Object {
-  "data": Object {
-    "Mission": "Specializing in the development and manufacturing of breakthrough Web 3.0 XML productivity tools for consumers.",
-  },
-}
-`;
