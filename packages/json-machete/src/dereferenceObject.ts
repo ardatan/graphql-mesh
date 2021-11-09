@@ -52,7 +52,11 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           const newCwd = dirname(externalFilePath);
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
-            externalFile = await import(externalFilePath);
+            const importedJSON = await import(externalFilePath);
+            externalFile = {};
+            for (const key in importedJSON) {
+              externalFile[key] = importedJSON[key];
+            }
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }
