@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.55.0
+
+### Minor Changes
+
+- 1b332487c: feat(soap): ability to select query or mutation
+
 ## 0.54.1
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.43.5
+
+### Patch Changes
+
+- c5fdaf06a: fix(playground): do not send specifiedByUrl in introspection
+  - @graphql-mesh/config@0.25.4
+  - @graphql-mesh/runtime@0.26.3
+  - @graphql-mesh/utils@0.21.1
+  - @graphql-mesh/store@0.2.3
+
 ## 0.43.4
 
 ### Patch Changes
