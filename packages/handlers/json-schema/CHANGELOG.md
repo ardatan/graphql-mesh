@@ -1,5 +1,14 @@
 # @graphql-mesh/json-schema
 
+## 0.22.5
+
+### Patch Changes
+
+- 8de12b4d8: fix(json-machete): dereference imported json files correctly
+- Updated dependencies [8de12b4d8]
+  - json-machete@0.0.26
+  - @omnigraph/json-schema@0.3.4
+
 ## 0.22.4
 
 ### Patch Changes
