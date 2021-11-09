@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.26.2",
+  "version": "0.26.3",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -25,8 +25,8 @@
   "dependencies": {
     "@n1ru4l/graphql-live-query": "0.9.0",
     "@n1ru4l/in-memory-live-query-store": "0.8.0",
-    "@graphql-mesh/types": "0.54.1",
-    "@graphql-mesh/utils": "0.21.0",
+    "@graphql-mesh/types": "0.55.0",
+    "@graphql-mesh/utils": "0.21.1",
     "@graphql-tools/delegate": "8.4.2",
     "@graphql-tools/batch-delegate": "8.2.1",
     "@graphql-tools/resolvers-composition": "6.4.1",
