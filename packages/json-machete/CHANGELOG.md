@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.0.26
+
+### Patch Changes
+
+- 8de12b4d8: fix(json-machete): dereference imported json files correctly
+
 ## 0.0.25
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.3.4
+
+### Patch Changes
+
+- 8de12b4d8: fix(json-machete): dereference imported json files correctly
+- Updated dependencies [8de12b4d8]
+  - json-machete@0.0.26
+
 ## 0.3.3
 
 ### Patch Changes
