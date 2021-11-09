@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SOAP Loader should generate the schema correctly 1`] = `
+"type Query {
+  placeholder: Void
+}
+
+"""Represents NULL values"""
+scalar Void
+
+type Mutation {
+  tns_TempConvert_TempConvertSoap_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse
+  tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse
+  tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse
+  tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse
+  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String): String
+  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String): String
+}
+
+type tns_FahrenheitToCelsiusResponse {
+  FahrenheitToCelsiusResult: String!
+}
+
+input tns_FahrenheitToCelsius_Input {
+  Fahrenheit: String
+}
+
+type tns_CelsiusToFahrenheitResponse {
+  CelsiusToFahrenheitResult: String!
+}
+
+input tns_CelsiusToFahrenheit_Input {
+  Celsius: String
+}"
+`;

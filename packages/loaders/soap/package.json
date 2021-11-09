@@ -1,6 +1,6 @@
 {
-  "name": "@graphql-mesh/soap",
-  "version": "0.14.27",
+  "name": "@omnigraph/soap",
+  "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,22 +19,18 @@
     }
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/handlers/soap"
-  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.2.7",
-    "@graphql-mesh/types": "0.85.4",
-    "@graphql-mesh/store": "0.8.59",
-    "@graphql-mesh/utils": "0.42.3",
-    "@graphql-tools/utils": "8.13.0",
-    "graphql-scalars": "1.20.0",
-    "tslib": "^2.4.0"
+    "@graphql-mesh/types": "0.85.1",
+    "@graphql-tools/utils": "8.12.0",
+    "fast-xml-parser": "3.21.1",
+    "graphql-compose": "9.0.4",
+    "graphql-scalars": "1.13.1"
+  },
+  "devDependencies": {
+    "@whatwg-node/fetch": "0.4.7"
   },
   "publishConfig": {
     "access": "public",
