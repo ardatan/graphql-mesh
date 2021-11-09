@@ -16,7 +16,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
   const executor$ = useMemo(
     () =>
       urlLoader.getExecutorAsync(endpoint, {
-        specifiedByUrl: true,
+        specifiedByUrl: false,
         directiveIsRepeatable: true,
         schemaDescription: true,
         subscriptionsEndpoint: endpoint,
@@ -46,7 +46,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
       .then(async () => {
         const executor = await executor$;
         const schema = await introspectSchema(executor, undefined, {
-          specifiedByUrl: true,
+          specifiedByUrl: false,
           directiveIsRepeatable: true,
           schemaDescription: true,
         });
@@ -108,7 +108,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
   ) : error ? (
     <p>{error}</p>
   ) : (
-    'GraphiQL Mesh is loading!'
+    <p>'GraphiQL Mesh is loading!'</p>
   );
 };
 
