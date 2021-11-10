@@ -49,7 +49,7 @@
     "@graphql-tools/code-file-loader": "7.2.2",
     "@graphql-tools/utils": "8.5.3",
     "@graphql-tools/load": "7.4.1",
-    "@graphql-tools/graphql-file-loader": "7.3.2",
+    "@graphql-tools/graphql-file-loader": "7.3.3",
     "body-parser": "1.19.0",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
