@@ -2804,10 +2804,10 @@
     fs-extra "9.0.1"
     tslib "~2.0.1"
 
-"@graphql-tools/graphql-file-loader@7.3.2":
-  version "7.3.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-7.3.2.tgz#b35a67bfc38455edb6c6062ff1fc1613dee0fb71"
-  integrity sha512-4vzHdPIYo25bleMeZNZf1IV6Betd5COERn+fTGQDBS98ONDU2d/kXe4lD1N2bBNp5bwrd1Sd5TeDgHPYXKB8kQ==
+"@graphql-tools/graphql-file-loader@7.3.3":
+  version "7.3.3"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-7.3.3.tgz#7cee2f84f08dc13fa756820b510248b857583d36"
+  integrity sha512-6kUJZiNpYKVhum9E5wfl5PyLLupEDYdH7c8l6oMrk6c7EPEVs6iSUyB7yQoWrtJccJLULBW2CRQ5IHp5JYK0mA==
   dependencies:
     "@graphql-tools/import" "^6.5.7"
     "@graphql-tools/utils" "^8.5.1"
@@ -2968,10 +2968,10 @@
     "@graphql-tools/utils" "8.0.2"
     tslib "~2.3.0"
 
-"@graphql-tools/mock@8.4.2":
-  version "8.4.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.4.2.tgz#301b8baf47588bf1cd87de4ad2130eb9f406781b"
-  integrity sha512-2v4v99mWUB1by+6Bk01PoJCUVnYoNSOT0E5VvFRf5oMwJPaRKLAbC+IjZaRoen1tWpVrg+3Coub7co8jyhvm/Q==
+"@graphql-tools/mock@8.4.3":
+  version "8.4.3"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.4.3.tgz#9d4838ba583969ae70c187e5cdb5cf286e266cd7"
+  integrity sha512-jj7obzDz4FAfmIGSh1Mo6cUs9d8MSaN6TH/iju3Qyuz6CZ6NLuJrWOg50ysEUgkT4Y/Aey8SlWOf/U15Z7qWYw==
   dependencies:
     "@graphql-tools/schema" "^8.3.1"
     "@graphql-tools/utils" "^8.5.1"
