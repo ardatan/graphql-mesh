@@ -27,10 +27,11 @@ jobs:
           git fetch
           git checkout master
           git reset --hard
-      - name: Use Node
+      - name: Use Node 14.18.1
         uses: actions/setup-node@v2
         with:
-          node-version: 17
+          node-version: 14.18.1
+      # Workaround for the issue https://exerror.com/failed-to-construct-transformer-error-error0308010cdigital-envelope-routinesunsupported/#:~:text=%3A%3Aunsupported%20Error%20%3F-,To%20Solve%20Failed%20to%20construct%20transformer%3A%20Error%3A%20error%3A0308010C,your%20error%20must%20be%20solved.
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
