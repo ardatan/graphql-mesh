@@ -8,38 +8,33 @@ type LoadFromModuleExportExpressionOptions = {
   importFn: ImportFn;
 };
 
-export async function loadFromModuleExportExpression<T>(
+export function loadFromModuleExportExpression<T>(
   expression: T | string,
   options: LoadFromModuleExportExpressionOptions
 ): Promise<T> {
   if (typeof expression !== 'string') {
-    return expression;
+    return Promise.resolve(expression);
   }
 
   const { defaultExportName, cwd, importFn = getDefaultImport() } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = await tryImport(modulePath, cwd, importFn);
-
-  return mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod;
+  return tryImport(modulePath, cwd, importFn).then(
+    mod => mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod
+  );
 }
 
-async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
-  try {
-    return await importFn(modulePath);
-  } catch (e1) {
+function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
+  return importFn(modulePath).catch((e1: Error): any => {
     if (!isAbsolute(modulePath)) {
       const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
-      try {
-        return await importFn(absoluteModulePath);
-      } catch (e2) {
+      return importFn(absoluteModulePath).catch(e2 => {
         if (e2.message.startsWith('Cannot find')) {
           throw e1;
         }
         throw e2;
-      }
+      });
     }
-    throw e1;
-  }
+  });
 }
 
 export function getDefaultImport(): ImportFn {
