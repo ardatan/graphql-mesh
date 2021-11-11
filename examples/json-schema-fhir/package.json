@@ -7,9 +7,9 @@
     "download-fhir-schema": "node scripts/download-fhir-schema.js",
     "prebuild": "yarn download-fhir-schema",
     "build": "mesh build",
-    "start": "mesh start",
-    "predev": "yarn download-fhir-schema",
-    "dev": "mesh dev"
+    "prestart": "yarn download-fhir-schema",
+    "start": "mesh dev",
+    "start:prod": "mesh start"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.43.6",
