@@ -12,7 +12,6 @@ import {
 } from 'graphql';
 import {
   EnumTypeComposer,
-  GraphQLJSON,
   InputTypeComposer,
   ListComposer,
   ObjectTypeComposer,
@@ -27,6 +26,7 @@ import {
   GraphQLEmailAddress,
   GraphQLIPv4,
   GraphQLIPv6,
+  GraphQLJSON,
   GraphQLTime,
   GraphQLURL,
   GraphQLVoid,

@@ -2,7 +2,6 @@
 import {
   AnyTypeComposer,
   EnumTypeComposerValueConfigDefinition,
-  GraphQLJSON,
   InputTypeComposerFieldConfigAsObjectDefinition,
   InputTypeComposerFieldConfigMap,
   isSomeInputTypeComposer,
@@ -17,6 +16,7 @@ import {
   GraphQLBoolean,
   GraphQLFloat,
   GraphQLInt,
+  GraphQLResolveInfo,
   GraphQLScalarType,
   GraphQLString,
   isNonNullType,
@@ -26,6 +26,7 @@ import {
   GraphQLBigInt,
   GraphQLDateTime,
   GraphQLEmailAddress,
+  GraphQLJSON,
   GraphQLIPv4,
   GraphQLIPv6,
   GraphQLTime,
@@ -196,7 +197,7 @@ export function getComposerFromJSONSchema(
 
         let output: AnyTypeComposer<any>;
         if (ableToUseGraphQLUnionType) {
-          const resolveType = (data: any) => {
+          const resolveType = (data: any, context: any, info: GraphQLResolveInfo): any => {
             if (data.__typename) {
               return data.__typename;
             } else if (data.resourceType) {

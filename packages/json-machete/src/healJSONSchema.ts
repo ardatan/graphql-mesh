@@ -1,3 +1,4 @@
+import { inspect } from 'util';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 
@@ -5,7 +6,7 @@ const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
 function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
   if (typeof schema === 'object' && schema != null) {
-    const stringified = JSON.stringify(schema);
+    const stringified = inspect(schema, undefined, 3);
     const seen = seenMap.get(stringified);
     if (seen) {
       return seen;

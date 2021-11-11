@@ -1,7 +1,7 @@
 import { getMesh } from '@graphql-mesh/runtime';
 import { parseWithCache } from '@graphql-mesh/utils';
 import { RequestHandler } from 'express';
-import { GraphQLError } from 'graphql';
+import { GraphQLError, print } from 'graphql';
 import { getGraphQLParameters, processRequest, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
 
 function normalizeGraphQLError(error: GraphQLError) {
@@ -11,7 +11,7 @@ function normalizeGraphQLError(error: GraphQLError) {
     locations: error.locations,
     message: error.message,
     name: error.name,
-    nodes: error.nodes,
+    nodes: error.nodes?.map(node => print(node)),
     originalError: {
       ...error?.originalError,
       name: error?.originalError?.name,
