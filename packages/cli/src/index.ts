@@ -217,9 +217,11 @@ export async function graphqlMesh() {
           const importedModulesSet = new Set<string>();
           const importFn = (moduleId: string) => {
             importedModulesSet.add(moduleId);
-            return import(moduleId).then(m => {
-              return m.default || m;
-            });
+            return import(moduleId)
+              .then(m => {
+                return m.default || m;
+              })
+              .catch(e => handleFatalError(e, logger));
           };
 
           const store = new MeshStore(

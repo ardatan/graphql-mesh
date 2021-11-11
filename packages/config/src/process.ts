@@ -26,7 +26,7 @@ import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@
 import { env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
-import { getDefaultImport, getDefaultSyncImport, resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { getDefaultImport, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -88,7 +88,7 @@ export async function processConfig(
     `export async function getMeshOptions(): GetMeshOptions {`,
   ];
 
-  const { dir, importFn = getDefaultImport(dir), store: providedStore } = options || {};
+  const { dir, importFn = getDefaultImport(), store: providedStore } = options || {};
 
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
