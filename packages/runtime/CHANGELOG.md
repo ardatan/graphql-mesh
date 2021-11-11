@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.26.4
+
+### Patch Changes
+
+- 3bded2bad: disable JIT execution for now
+
 ## 0.26.3
 
 ### Patch Changes

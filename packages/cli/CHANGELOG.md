@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.43.6
+
+### Patch Changes
+
+- 5555daf59: enhance(cli): show field nodes as SDL
+- Updated dependencies [3bded2bad]
+  - @graphql-mesh/runtime@0.26.4
+  - @graphql-mesh/config@0.25.5
+
 ## 0.43.5
 
 ### Patch Changes

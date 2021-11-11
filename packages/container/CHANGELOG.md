@@ -1,5 +1,16 @@
 # @graphql-mesh/container
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [3bded2bad]
+- Updated dependencies [5555daf59]
+  - @graphql-mesh/runtime@0.26.4
+  - @graphql-mesh/cli@0.43.6
+  - @graphql-mesh/config@0.25.5
+  - @graphql-mesh/json-schema@0.22.6
+
 ## 0.1.6
 
 ### Patch Changes

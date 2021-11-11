@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.3.5
+
+### Patch Changes
+
+- 3bded2bad: enhance(json-schema): use correct GraphQLJSON scalar
+- Updated dependencies [3bded2bad]
+  - json-machete@0.0.27
+
 ## 0.3.4
 
 ### Patch Changes
