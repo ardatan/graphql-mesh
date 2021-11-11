@@ -209,14 +209,13 @@ ${importedModulesCodes.join(',\n')}
 
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
-const syncImportFn = (moduleId: string) => {
+const importFn = (moduleId: string) => {
   const relativeModuleId = (isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId).split('\\\\').join('/');
   if (!(relativeModuleId in importedModules)) {
     throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
   }
-  return importedModules[relativeModuleId];
+  return Promise.resolve(importedModules[relativeModuleId]);
 };
-const importFn = async (moduleId: string) => syncImportFn(moduleId);
 
 const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
   cwd: baseDir,

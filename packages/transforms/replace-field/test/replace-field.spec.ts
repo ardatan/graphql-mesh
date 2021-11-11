@@ -67,7 +67,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -122,7 +122,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -182,7 +182,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -243,7 +243,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -316,7 +316,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -381,7 +381,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -445,7 +445,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -511,7 +511,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -571,7 +571,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -636,7 +636,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -699,7 +699,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -769,7 +769,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -826,7 +826,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -921,7 +921,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,

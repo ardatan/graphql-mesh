@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/return-await */
 import { isAbsolute, join } from 'path';
-import { createRequire } from 'module';
-import { ImportFn, SyncImportFn } from '@graphql-mesh/types';
-import { cwd } from 'process';
+import { ImportFn } from '@graphql-mesh/types';
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;
@@ -18,7 +16,7 @@ export async function loadFromModuleExportExpression<T>(
     return expression;
   }
 
-  const { defaultExportName, cwd, importFn = getDefaultImport(cwd) } = options || {};
+  const { defaultExportName, cwd, importFn = getDefaultImport() } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
   const mod = await tryImport(modulePath, cwd, importFn);
 
@@ -34,75 +32,16 @@ async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
       try {
         return await importFn(absoluteModulePath);
       } catch (e2) {
-        try {
-          const cwdRequire = createRequire(join(cwd, 'mesh.config.js'));
-          return cwdRequire(absoluteModulePath);
-        } catch (e3) {
-          if (e3.message.startsWith('Cannot find')) {
-            if (e2.message.startsWith('Cannot find')) {
-              throw e1;
-            }
-            throw e2;
-          }
-          throw e3;
-        }
-      }
-    }
-    throw e1;
-  }
-}
-type LoadFromModuleExportExpressionSyncOptions = {
-  defaultExportName: string;
-  cwd: string;
-  syncImportFn: SyncImportFn;
-};
-
-export function loadFromModuleExportExpressionSync<T>(
-  expression: T | string,
-  options: LoadFromModuleExportExpressionSyncOptions
-): T {
-  if (typeof expression !== 'string') {
-    return expression;
-  }
-
-  const { defaultExportName = 'default', cwd, syncImportFn } = options || {};
-  const [modulePath, exportName = defaultExportName] = expression.split('#');
-  const mod = tryImportSync(modulePath, cwd, syncImportFn);
-
-  return mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod;
-}
-
-function tryImportSync(modulePath: string, cwd: string, syncImportFn: SyncImportFn) {
-  try {
-    return syncImportFn(modulePath);
-  } catch (e1) {
-    if (!isAbsolute(modulePath)) {
-      try {
-        const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
-        return syncImportFn(absoluteModulePath);
-      } catch (e2) {
         if (e2.message.startsWith('Cannot find')) {
           throw e1;
-        } else {
-          throw e2;
         }
+        throw e2;
       }
     }
     throw e1;
   }
 }
 
-export function getDefaultImport(baseDir: string): ImportFn {
-  const syncImport = getDefaultSyncImport(baseDir);
-  return m => import(m).catch(() => syncImport(m));
-}
-
-export function getDefaultSyncImport(baseDir: string): SyncImportFn {
-  const absoluteBaseDir = isAbsolute(baseDir) ? baseDir : join(cwd(), baseDir);
-  const fakeBaseModulePath = join(absoluteBaseDir, 'fake.js');
-  const relativeRequire = createRequire(fakeBaseModulePath);
-
-  return function syncImportFn(moduleId: string) {
-    return relativeRequire(moduleId);
-  };
+export function getDefaultImport(): ImportFn {
+  return m => import(m);
 }

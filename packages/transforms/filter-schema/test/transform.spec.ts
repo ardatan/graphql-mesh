@@ -2,13 +2,14 @@ import { buildSchema, printSchema } from 'graphql';
 import FilterSchemaTransform from '../src';
 import { PubSub } from 'graphql-subscriptions';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
   const pubsub = new PubSub() as MeshPubSub;
   const baseDir: string = undefined;
+  const importFn: ImportFn = m => import(m);
 
   it('filters correctly with array of rules', async () => {
     let schema = buildSchema(/* GraphQL */ `
@@ -44,7 +45,7 @@ describe('filter', () => {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -105,7 +106,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -193,7 +194,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -245,7 +246,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -291,7 +292,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -337,7 +338,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -383,7 +384,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -438,7 +439,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -485,7 +486,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -532,7 +533,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -589,7 +590,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -658,7 +659,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -729,7 +730,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -791,7 +792,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -855,7 +856,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -918,7 +919,7 @@ type Query {
           cache,
           pubsub,
           baseDir,
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });

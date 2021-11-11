@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { YamlConfig, MeshPubSub } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, ImportFn } from '@graphql-mesh/types';
 import { buildSchema, execute, graphql, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { PubSub } from 'graphql-subscriptions';
@@ -10,6 +10,7 @@ describe('mocking', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const baseDir: string = __dirname;
+  const importFn: ImportFn = m => import(m);
 
   beforeEach(() => {
     cache = new InMemoryLRUCache();
@@ -62,7 +63,7 @@ describe('mocking', () => {
           pubsub,
           baseDir,
           apiName: '',
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -132,7 +133,7 @@ describe('mocking', () => {
           pubsub,
           baseDir,
           apiName: '',
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -194,7 +195,7 @@ describe('mocking', () => {
           pubsub,
           baseDir,
           apiName: '',
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });
@@ -298,7 +299,7 @@ describe('mocking', () => {
           pubsub,
           baseDir,
           apiName: '',
-          syncImportFn: require,
+          importFn,
         }),
       ],
     });

@@ -1,4 +1,4 @@
-import { YamlConfig, MeshPubSub, KeyValueCache } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, KeyValueCache, ImportFn } from '@graphql-mesh/types';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import {
@@ -19,6 +19,7 @@ import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 import { PubSub } from 'graphql-subscriptions';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
+const importFn: ImportFn = m => import(m);
 
 const MOCK_DATA = [
   {
@@ -164,7 +165,7 @@ describe('cache', () => {
 
       const transform = new CacheTransform({
         apiName: 'test',
-        syncImportFn: require,
+        importFn,
         cache,
         config: [
           {
@@ -186,7 +187,7 @@ describe('cache', () => {
 
       const transform = new CacheTransform({
         apiName: 'test',
-        syncImportFn: require,
+        importFn,
         cache,
         config: [
           {
@@ -210,7 +211,7 @@ describe('cache', () => {
     const checkCache = async (config: YamlConfig.CacheTransformConfig[], cacheKeyToCheck?: string) => {
       const transform = new CacheTransform({
         apiName: 'test',
-        syncImportFn: require,
+        importFn,
         cache,
         config,
         pubsub,
@@ -421,7 +422,7 @@ describe('cache', () => {
 
       const transform = new CacheTransform({
         apiName: 'test',
-        syncImportFn: require,
+        importFn,
         config: [
           {
             field: 'Query.user',
@@ -497,7 +498,7 @@ describe('cache', () => {
       it('Should cache queries including subfield arguments', async () => {
         const transform = new CacheTransform({
           apiName: 'test',
-          syncImportFn: require,
+          importFn,
           config: [{ field: 'Query.user' }],
           cache,
           pubsub,

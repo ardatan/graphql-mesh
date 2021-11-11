@@ -11,7 +11,6 @@ import {
   pathExists,
   rmdirs,
   DefaultLogger,
-  getDefaultSyncImport,
   loadFromModuleExportExpression,
   parseWithCache,
 } from '@graphql-mesh/utils';
@@ -216,17 +215,11 @@ export async function graphqlMesh() {
           await rmdirs(outputDir);
 
           const importedModulesSet = new Set<string>();
-          const importFn = (moduleId: string) =>
-            import(moduleId).then(m => {
-              importedModulesSet.add(moduleId);
+          const importFn = (moduleId: string) => {
+            importedModulesSet.add(moduleId);
+            return import(moduleId).then(m => {
               return m.default || m;
             });
-
-          const baseDirRequire = getDefaultSyncImport(baseDir);
-          const syncImportFn = (moduleId: string) => {
-            const m = baseDirRequire(moduleId);
-            importedModulesSet.add(moduleId);
-            return m;
           };
 
           const store = new MeshStore(
@@ -246,7 +239,6 @@ export async function graphqlMesh() {
             dir: baseDir,
             store,
             importFn,
-            syncImportFn,
             ignoreAdditionalResolvers: true,
           });
           logger = meshConfig.logger;

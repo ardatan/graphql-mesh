@@ -35,7 +35,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -65,7 +65,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -102,7 +102,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -136,7 +136,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -175,7 +175,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -223,7 +223,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -266,7 +266,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -309,7 +309,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -357,7 +357,7 @@ describe('rename', () => {
       transforms: [
         new RenameTransform({
           apiName: '',
-          syncImportFn: require,
+          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -403,7 +403,7 @@ describe('rename', () => {
 
     const transform = new RenameTransform({
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
       config: {
         mode: 'bare',
         renames: [

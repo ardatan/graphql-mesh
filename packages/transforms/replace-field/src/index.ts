@@ -1,6 +1,6 @@
 import { extendSchema, defaultFieldResolver, GraphQLFieldConfig, GraphQLFieldResolver, GraphQLSchema } from 'graphql';
-import { MeshTransform, MeshTransformOptions, SyncImportFn, YamlConfig } from '@graphql-mesh/types';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';
@@ -22,14 +22,14 @@ export default class ReplaceFieldTransform implements MeshTransform {
   private baseDir: string;
   private typeDefs: Pick<YamlConfig.ReplaceFieldTransformConfig, 'typeDefs'>;
   private replacementsMap: Map<string, ReplaceFieldConfig>;
-  private syncImportFn: SyncImportFn;
+  private importFn: ImportFn;
 
   constructor(options: MeshTransformOptions<YamlConfig.ReplaceFieldTransformConfig>) {
-    const { baseDir, config, syncImportFn } = options;
+    const { baseDir, config, importFn } = options;
     this.baseDir = baseDir;
     this.typeDefs = config.typeDefs;
     this.replacementsMap = new Map();
-    this.syncImportFn = syncImportFn;
+    this.importFn = importFn;
 
     for (const replacement of config.replacements) {
       const {
@@ -41,13 +41,18 @@ export default class ReplaceFieldTransform implements MeshTransform {
       } = replacement;
       const fieldKey = `${fromTypeName}.${fromFieldName}`;
 
-      const composerFn = loadFromModuleExportExpressionSync(composer, {
+      const composerFn$ = loadFromModuleExportExpression<any>(composer, {
         cwd: this.baseDir,
         defaultExportName: 'default',
-        syncImportFn: this.syncImportFn,
+        importFn: this.importFn,
       });
 
-      this.replacementsMap.set(fieldKey, { ...toConfig, scope, composer: composerFn, name });
+      this.replacementsMap.set(fieldKey, {
+        ...toConfig,
+        scope,
+        composer: (...args: any[]) => composerFn$.then(composerFn => composerFn(...args)),
+        name,
+      });
     }
   }
 

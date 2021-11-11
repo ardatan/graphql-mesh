@@ -20,7 +20,7 @@ describe('transform', () => {
       ],
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -58,7 +58,7 @@ describe('transform', () => {
       ],
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

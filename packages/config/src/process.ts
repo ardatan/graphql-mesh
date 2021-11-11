@@ -9,7 +9,6 @@ import {
   MeshPubSub,
   MeshTransform,
   MeshTransformLibrary,
-  SyncImportFn,
   YamlConfig,
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
@@ -32,7 +31,6 @@ import { getDefaultImport, getDefaultSyncImport, resolveAdditionalResolvers } fr
 export type ConfigProcessOptions = {
   dir?: string;
   importFn?: ImportFn;
-  syncImportFn?: SyncImportFn;
   store?: MeshStore;
   ignoreAdditionalResolvers?: boolean;
 };
@@ -90,12 +88,7 @@ export async function processConfig(
     `export async function getMeshOptions(): GetMeshOptions {`,
   ];
 
-  const {
-    dir,
-    importFn = getDefaultImport(dir),
-    syncImportFn = getDefaultSyncImport(dir),
-    store: providedStore,
-  } = options || {};
+  const { dir, importFn = getDefaultImport(dir), store: providedStore } = options || {};
 
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
@@ -187,7 +180,7 @@ export async function processConfig(
                   baseDir,
                   cache,
                   pubsub,
-                  syncImportFn
+                  importFn
                 })
               );`);
 
@@ -197,7 +190,7 @@ export async function processConfig(
                 baseDir: dir,
                 cache,
                 pubsub,
-                syncImportFn,
+                importFn,
               });
             })
           ),
@@ -237,7 +230,7 @@ export async function processConfig(
             baseDir,
             cache,
             pubsub,
-            syncImportFn
+            importFn
           })
         )`);
         return new TransformLibrary({
@@ -246,7 +239,7 @@ export async function processConfig(
           baseDir: dir,
           cache,
           pubsub,
-          syncImportFn,
+          importFn,
         });
       }) || []
     ),

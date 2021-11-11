@@ -1,22 +1,22 @@
-import { MeshTransform, MeshTransformOptions, SyncImportFn, YamlConfig } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, ImportFn, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLSchema } from 'graphql';
 import _ from 'lodash';
 import { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
-import { inspect } from 'util';
 
 export default class TypeMerging implements MeshTransform {
   private config: YamlConfig.Transform['typeMerging'];
-  private baseDir: string;
-  syncImportFn: SyncImportFn;
-  constructor({ config, baseDir, syncImportFn }: MeshTransformOptions<YamlConfig.Transform['typeMerging']>) {
+  // private baseDir: string;
+  importFn: ImportFn;
+  constructor({ config, baseDir, importFn }: MeshTransformOptions<YamlConfig.Transform['typeMerging']>) {
     this.config = config;
-    this.baseDir = baseDir;
-    this.syncImportFn = syncImportFn;
+    // this.baseDir = baseDir;
+    this.importFn = importFn;
   }
 
   public transformSchema(schema: GraphQLSchema, subschemaConfig: SubschemaConfig) {
+    /**
+     *
     if (this.config.additionalConfiguration) {
       const additionalConfiguration = loadFromModuleExportExpressionSync(this.config.additionalConfiguration, {
         cwd: this.baseDir,
@@ -33,6 +33,7 @@ export default class TypeMerging implements MeshTransform {
       subschemaConfig.merge = subschemaConfig.merge || {};
       Object.assign(subschemaConfig.merge, additionalConfiguration);
     }
+     */
     const { stitchingDirectivesTransformer } = stitchingDirectives();
     if (this.config.types) {
       for (const mergedTypeConfig of this.config.types) {

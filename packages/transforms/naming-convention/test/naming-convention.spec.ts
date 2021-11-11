@@ -1,7 +1,7 @@
 import NamingConventionTransform from '../src/index';
 import { buildSchema, printSchema, GraphQLObjectType, GraphQLEnumType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from 'graphql-subscriptions';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
@@ -24,7 +24,7 @@ describe('namingConvention', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
-  const syncImportFn = require;
+  const importFn: ImportFn = m => import(m);
 
   beforeEach(() => {
     cache = new InMemoryLRUCache();
@@ -37,7 +37,7 @@ describe('namingConvention', () => {
       transforms: [
         new NamingConventionTransform({
           apiName: '',
-          syncImportFn,
+          importFn,
           config: {
             typeNames: 'pascalCase',
             enumValues: 'upperCase',
@@ -100,7 +100,7 @@ describe('namingConvention', () => {
       transforms: [
         new NamingConventionTransform({
           apiName: '',
-          syncImportFn,
+          importFn,
           cache,
           pubsub,
           config: {
@@ -156,7 +156,7 @@ describe('namingConvention', () => {
       transforms: [
         new NamingConventionTransform({
           apiName: '',
-          syncImportFn,
+          importFn,
           cache,
           pubsub,
           config: {
