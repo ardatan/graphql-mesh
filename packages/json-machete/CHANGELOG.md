@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.0.27
+
+### Patch Changes
+
+- 3bded2bad: fix(json-machete): stringify circular objects correctly to compare for deduplicating schema
+
 ## 0.0.26
 
 ### Patch Changes

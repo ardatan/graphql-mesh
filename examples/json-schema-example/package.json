@@ -1,6 +1,6 @@
 {
   "name": "json-schema-example",
-  "version": "0.5.160",
+  "version": "0.5.161",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.43.5",
-    "@graphql-mesh/json-schema": "0.22.5",
+    "@graphql-mesh/cli": "0.43.6",
+    "@graphql-mesh/json-schema": "0.22.6",
     "@graphql-mesh/transform-mock": "0.11.3",
     "graphql": "16.0.1"
   },
