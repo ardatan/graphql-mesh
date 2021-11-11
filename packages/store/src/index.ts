@@ -43,7 +43,7 @@ export interface FsStoreStorageAdapterOptions {
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
   private getWrittenFileName(key: string) {
-    const jsFileName = `${key}.js`;
+    const jsFileName = `${key}.cjs`;
     return isAbsolute(jsFileName) ? jsFileName : join(this.options.cwd, jsFileName);
   }
 
