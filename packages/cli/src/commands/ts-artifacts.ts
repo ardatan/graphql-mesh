@@ -9,7 +9,7 @@ import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
-import { writeFile } from '@graphql-mesh/utils';
+import { writeFile, writeJSON } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { generateOperations } from './generate-operations';
 
@@ -294,6 +294,29 @@ export async function getMeshSDK() {
 
   logger.info('Compiling TS file as CommonJS Module to `index.js`');
   compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
+
+  await writeJSON(join(artifactsDir, 'package.json'), {
+    name: 'mesh-artifacts',
+    private: true,
+    type: 'commonjs',
+    main: 'index.js',
+    module: 'index.mjs',
+    sideEffects: false,
+    typings: 'index.d.ts',
+    typescript: {
+      definition: 'index.d.ts',
+    },
+    exports: {
+      '.': {
+        require: './index.js',
+        import: './index.mjs',
+      },
+      './*': {
+        require: './*.js',
+        import: './*.mjs',
+      },
+    },
+  });
 
   logger.info('Deleting index.ts');
   await unlink(tsFilePath);

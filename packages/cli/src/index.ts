@@ -215,14 +215,17 @@ export async function graphqlMesh() {
           await rmdirs(outputDir);
 
           const importedModulesSet = new Set<string>();
+          const importPromises: Promise<any>[] = [];
           const importFn = (moduleId: string) => {
-            importedModulesSet.add(moduleId);
-            return import(moduleId)
-              .then(m => {
-                return m.default || m;
-              })
-              .catch(e => handleFatalError(e, logger));
+            const importPromise = import(moduleId).then(m => {
+              importedModulesSet.add(moduleId);
+              return m.default || m;
+            });
+            importPromises.push(importPromise.catch(() => {}));
+            return importPromise;
           };
+
+          await Promise.all(importPromises);
 
           const store = new MeshStore(
             rootArtifactsName,

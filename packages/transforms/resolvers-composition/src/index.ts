@@ -26,7 +26,10 @@ export default class ResolversCompositionTransform implements MeshTransform {
         defaultExportName: 'default',
         importFn: this.importFn,
       });
-      resolversComposition[resolver] = (...args: any[]) => composerFn$.then(composerFn => composerFn(...args)) as any;
+      resolversComposition[resolver] =
+        next =>
+        (...args) =>
+          composerFn$.then(composerFn => (composerFn ? composerFn(next) : next)).then(next => next(...args));
     }
 
     const resolvers = extractResolvers(schema);
