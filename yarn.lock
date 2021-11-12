@@ -7015,19 +7015,19 @@ axe-core@^4.0.2:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.2.3.tgz#2a3afc332f0031b42f602f4a3de03c211ca98f72"
   integrity sha512-pXnVMfJKSIWU2Ml4JHP7pZEPIrgBO1Fd3WGx+fPBsS+KRGhE4vxooD8XBGWbQOIVSZsVK7pUDBBkCicNu80yzQ==
 
-axios-ntlm@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/axios-ntlm/-/axios-ntlm-1.1.6.tgz#242971c9b8ee1e548e8507b22c37e15ae3f798ab"
-  integrity sha512-82tpPDjnTWijSfihRinNxvxhmagsgMHWffMgKrWNtD6zt2DbhLOuOa85gWhAK0u4khhhMXwoDsi+gXaUtqTZoQ==
+axios-ntlm@^1.2.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/axios-ntlm/-/axios-ntlm-1.2.1.tgz#8facad74cdf5a53eab34fa2fe91c8d4358950ed4"
+  integrity sha512-M8qLdkOjVSrYmzOs7sxc/Ynu54yT2YHVOLFiTxicwPnll0H+sP3fkEQHGgEzpBcH4UA/ovRgTioR/vjelUG35A==
   dependencies:
-    axios "^0.21.1"
+    axios "^0.21.3"
 
-axios@^0.21.1:
-  version "0.21.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
-  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+axios@^0.21.1, axios@^0.21.3:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
   dependencies:
-    follow-redirects "^1.10.0"
+    follow-redirects "^1.14.0"
 
 axobject-query@^2.2.0:
   version "2.2.0"
@@ -11786,10 +11786,10 @@ focus-trap@^6.6.1:
   dependencies:
     tabbable "^5.2.1"
 
-follow-redirects@^1.0.0, follow-redirects@^1.10.0:
-  version "1.14.1"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.1.tgz#d9114ded0a1cfdd334e164e6662ad02bfd91ff43"
-  integrity sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==
+follow-redirects@^1.0.0, follow-redirects@^1.14.0:
+  version "1.14.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.5.tgz#f09a5848981d3c772b5392309778523f8d85c381"
+  integrity sha512-wtphSXy7d4/OR+MvIFbCVBDzZ5520qV8XfPklSN5QtxuMUJZ+b0Wnst1e1lCDocfzuCkHqj8k0FpZqO+UIaKNA==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -13344,19 +13344,6 @@ http2-client@^1.2.5:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/http2-client/-/http2-client-1.3.3.tgz#90fc15d646cca86956b156d07c83947d57d659a9"
   integrity sha512-nUxLymWQ9pzkzTmir24p2RtsgruLmhje7lH3hLX1IpwvyTg77fW+1brenPPP3USAR+rQ36p5sTA/x7sjCJVkAA==
-
-httpntlm@^1.5.2:
-  version "1.7.7"
-  resolved "https://registry.yarnpkg.com/httpntlm/-/httpntlm-1.7.7.tgz#51b914f18e5de2868d4bfe50aeecdb1db23218a1"
-  integrity sha512-Pv2Rvrz8H0qv1Dne5mAdZ9JegG1uc6Vu5lwLflIY6s8RKHdZQbW39L4dYswSgqMDT0pkJILUTKjeyU0VPNRZjA==
-  dependencies:
-    httpreq ">=0.4.22"
-    underscore "~1.12.1"
-
-httpreq@>=0.4.22:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/httpreq/-/httpreq-0.5.2.tgz#be6777292fa1038d7771d7c01d9a5e1219de951c"
-  integrity sha512-2Jm+x9WkExDOeFRrdBCBSpLPT5SokTcRHkunV3pjKmX/cx6av8zQ0WtHUMDrYb6O4hBFzNU6sxJEypvRUVYKnw==
 
 https-browserify@1.0.0, https-browserify@^1.0.0:
   version "1.0.0"
@@ -21863,18 +21850,17 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-soap@0.42.0:
-  version "0.42.0"
-  resolved "https://registry.yarnpkg.com/soap/-/soap-0.42.0.tgz#33f6ce109f9e6fdc9b61c3665c592c6d0e18e0ab"
-  integrity sha512-7q4tYAkK0+KIeYRK0n/JBFP7XdZChqfGUfcDQRXt5uvKkRtj0gxTEc7WbfLnOqjyif86v5/MosE/4K+8ZYaB1Q==
+soap@0.43.0:
+  version "0.43.0"
+  resolved "https://registry.yarnpkg.com/soap/-/soap-0.43.0.tgz#3172b7de12011dfc6981db99be9bc1df2a05a94a"
+  integrity sha512-Dgp6TD9f3NXvKhBy95XXphiSlNIU2RSc9PP1NEgBOE1laUWP+bdF+8uT1lf1tFadFEAYurFg6/s2tNil6rlltw==
   dependencies:
     axios "^0.21.1"
-    axios-ntlm "^1.1.6"
+    axios-ntlm "^1.2.0"
     content-type-parser "^1.0.2"
-    debug "^4.3.1"
+    debug "^4.3.2"
     formidable "^1.2.2"
     get-stream "^6.0.1"
-    httpntlm "^1.5.2"
     lodash "^4.17.21"
     sax ">=0.6"
     strip-bom "^3.0.0"
@@ -23724,11 +23710,6 @@ undefsafe@^2.0.3:
   integrity sha512-nrXZwwXrD/T/JXeygJqdCO6NZZ1L66HrxM/Z7mIq2oPanoN0F1nLx3lwJMu6AwJY69hdixaFQOuoYsMjE5/C2A==
   dependencies:
     debug "^2.2.0"
-
-underscore@~1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.12.1.tgz#7bb8cc9b3d397e201cf8553336d262544ead829e"
-  integrity sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==
 
 underscore@~1.8.3:
   version "1.8.3"
