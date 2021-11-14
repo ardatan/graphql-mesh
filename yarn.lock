@@ -2597,10 +2597,10 @@
     auto-bind "~4.0.0"
     tslib "~2.3.0"
 
-"@graphql-codegen/typescript-resolvers@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-2.4.0.tgz#94a818f7e903ab50c67461ab73aea7b74dfefbde"
-  integrity sha512-yz1hG9NK3MRePPixWnEU70WvtjxJxqXrNOV/t4/VK2Z38lmDH98TpCQvYq/kAoGb3Y7RqU5K+Ms7DJD6VQB+sg==
+"@graphql-codegen/typescript-resolvers@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-2.4.1.tgz#2d5bd359c682ede84fade3f7d0e0686408da0263"
+  integrity sha512-6RXfZd8dIWT1C01pHI3rO49H9ynxC9f5zAxIOC2oKr/EwoHQWOqG+7TPWPvG0WT9RtceXi8jazjdTR8iD291+Q==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.3.0"
     "@graphql-codegen/typescript" "^2.3.0"

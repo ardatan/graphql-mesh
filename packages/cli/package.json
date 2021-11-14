@@ -42,7 +42,7 @@
     "@graphql-codegen/typescript-generic-sdk": "2.2.0",
     "@graphql-codegen/typescript-operations": "2.2.0",
     "@graphql-mesh/config": "0.25.5",
-    "@graphql-codegen/typescript-resolvers": "2.4.0",
+    "@graphql-codegen/typescript-resolvers": "2.4.1",
     "@graphql-mesh/runtime": "0.26.4",
     "@graphql-mesh/utils": "0.21.1",
     "@graphql-mesh/store": "0.2.3",
