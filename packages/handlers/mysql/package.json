@@ -33,7 +33,7 @@
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",
     "mysql-utilities": "1.1.3",
-    "graphql-scalars": "1.13.1"
+    "graphql-scalars": "1.13.3"
   },
   "devDependencies": {
     "@types/graphql-fields": "1.3.4",
