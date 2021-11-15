@@ -1,4 +1,4 @@
-const { getBuiltMesh } = require('./.mesh');
+import { getBuiltMesh } from './.mesh/index.mjs';
 
 async function main() {
   const client = await getBuiltMesh();

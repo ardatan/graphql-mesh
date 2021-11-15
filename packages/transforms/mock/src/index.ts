@@ -1,8 +1,8 @@
 import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, SyncImportFn } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
 import faker from 'faker';
-import { getInterpolatedStringFactory, loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { getInterpolatedStringFactory, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 
@@ -11,12 +11,12 @@ import { env } from 'process';
 export default class MockingTransform implements MeshTransform {
   private config: YamlConfig.MockingConfig;
   private baseDir: string;
-  private syncImportFn: SyncImportFn;
+  private importFn: ImportFn;
 
-  constructor({ baseDir, config, syncImportFn }: MeshTransformOptions<YamlConfig.MockingConfig>) {
+  constructor({ baseDir, config, importFn }: MeshTransformOptions<YamlConfig.MockingConfig>) {
     this.config = config;
     this.baseDir = baseDir;
-    this.syncImportFn = syncImportFn;
+    this.importFn = importFn;
   }
 
   transformSchema(schema: GraphQLSchema) {
@@ -28,12 +28,13 @@ export default class MockingTransform implements MeshTransform {
       };
       const resolvers: any = {};
       if (this.config.initializeStore) {
-        const initializeStoreFn = loadFromModuleExportExpressionSync(this.config.initializeStore, {
+        const initializeStoreFn$ = loadFromModuleExportExpression(this.config.initializeStore, {
           cwd: this.baseDir,
           defaultExportName: 'default',
-          syncImportFn: this.syncImportFn,
+          importFn: this.importFn,
         });
-        initializeStoreFn(store);
+        // eslint-disable-next-line no-void
+        void initializeStoreFn$.then(fn => fn());
       }
       if (this.config.mocks) {
         for (const fieldConfig of this.config.mocks) {
@@ -52,21 +53,18 @@ export default class MockingTransform implements MeshTransform {
                 resolvers[typeName] = resolvers[typeName] || {};
                 resolvers[typeName][fieldName] = fakerFn;
               } else if (fieldConfig.custom) {
-                const exportedVal = loadFromModuleExportExpressionSync<any>(fieldConfig.custom, {
+                const exportedVal$ = loadFromModuleExportExpression<any>(fieldConfig.custom, {
                   cwd: this.baseDir,
                   defaultExportName: 'default',
-                  syncImportFn: this.syncImportFn,
+                  importFn: this.importFn,
                 });
                 resolvers[typeName] = resolvers[typeName] || {};
-                resolvers[typeName][fieldName] = async (
-                  root: any,
-                  args: any,
-                  context: any,
-                  info: GraphQLResolveInfo
-                ) => {
+                resolvers[typeName][fieldName] = (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
                   context = context || {};
                   context.mockStore = store;
-                  return typeof exportedVal === 'function' ? exportedVal(root, args, context, info) : exportedVal;
+                  return exportedVal$.then(exportedVal =>
+                    typeof exportedVal === 'function' ? exportedVal(root, args, context, info) : exportedVal
+                  );
                 };
               } else if ('length' in fieldConfig) {
                 resolvers[typeName] = resolvers[typeName] || {};
@@ -108,13 +106,15 @@ export default class MockingTransform implements MeshTransform {
                 }
                 mocks[typeName] = fakerFn;
               } else if (fieldConfig.custom) {
-                const exportedVal = loadFromModuleExportExpressionSync<any>(fieldConfig.custom, {
+                const exportedVal$ = loadFromModuleExportExpression<any>(fieldConfig.custom, {
                   cwd: this.baseDir,
                   defaultExportName: 'default',
-                  syncImportFn: this.syncImportFn,
+                  importFn: this.importFn,
                 });
-                mocks[typeName] = async () => {
-                  return typeof exportedVal === 'function' ? exportedVal(store) : exportedVal;
+                mocks[typeName] = () => {
+                  return exportedVal$.then(exportedVal =>
+                    typeof exportedVal === 'function' ? exportedVal(store) : exportedVal
+                  );
                 };
               }
             }

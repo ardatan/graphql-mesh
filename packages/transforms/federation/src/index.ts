@@ -9,8 +9,8 @@ import {
   GraphQLResolveInfo,
   isListType,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, SyncImportFn } from '@graphql-mesh/types';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
 import _ from 'lodash';
@@ -22,13 +22,13 @@ export default class FederationTransform implements MeshTransform {
   private apiName: string;
   private config: YamlConfig.Transform['federation'];
   private baseDir: string;
-  private syncImportFn: SyncImportFn;
+  private importFn: ImportFn;
 
-  constructor({ apiName, baseDir, config, syncImportFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+  constructor({ apiName, baseDir, config, importFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.apiName = apiName;
     this.config = config;
     this.baseDir = baseDir;
-    this.syncImportFn = syncImportFn;
+    this.importFn = importFn;
   }
 
   transformSchema(schema: GraphQLSchema, rawSource: SubschemaConfig) {
@@ -70,12 +70,12 @@ export default class FederationTransform implements MeshTransform {
         if (type.config?.resolveReference) {
           const resolveReferenceConfig = type.config.resolveReference;
           if (typeof resolveReferenceConfig === 'string') {
-            const resolveReferenceFn = loadFromModuleExportExpressionSync<any>(resolveReferenceConfig, {
+            const fn$ = loadFromModuleExportExpression<any>(resolveReferenceConfig, {
               cwd: this.baseDir,
-              syncImportFn: this.syncImportFn,
               defaultExportName: 'default',
+              importFn: this.importFn,
             });
-            resolveReference = resolveReferenceFn;
+            resolveReference = (...args: any[]) => fn$.then(fn => fn(...args));
           } else if (typeof resolveReferenceConfig === 'function') {
             resolveReference = type.config.resolveReference;
           } else {

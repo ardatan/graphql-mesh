@@ -43,7 +43,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -66,7 +66,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -87,7 +87,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -107,7 +107,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -130,7 +130,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -152,7 +152,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -176,7 +176,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -205,7 +205,7 @@ describe('wrapPrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });

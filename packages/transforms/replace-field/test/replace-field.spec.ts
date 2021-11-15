@@ -1,11 +1,17 @@
 import { join } from 'path';
 import { execute, parse, printSchema, GraphQLObjectType } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PubSub } from 'graphql-subscriptions';
 
 import ReplaceFieldTransform from '../src';
+
+const importFn: ImportFn = m =>
+  import(m).catch(e => {
+    console.error(`Import failed;`, e);
+    throw e;
+  });
 
 describe('replace-field', () => {
   const mockQueryBooks = jest.fn().mockImplementation(() => ({ books: [{ title: 'abc' }, { title: 'def' }] }));
@@ -67,7 +73,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -122,7 +128,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -182,7 +188,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -243,7 +249,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -316,7 +322,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -381,7 +387,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -445,7 +451,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -511,7 +517,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -571,7 +577,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -636,7 +642,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -699,7 +705,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -769,7 +775,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -826,7 +832,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -855,7 +861,7 @@ describe('replace-field', () => {
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    queryBooks.resolve();
+    await queryBooks.resolve();
     expect(mockBooksApiResponseBooks).toHaveBeenCalledTimes(1);
 
     const result = await execute({
@@ -921,7 +927,7 @@ describe('replace-field', () => {
       pubsub,
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,

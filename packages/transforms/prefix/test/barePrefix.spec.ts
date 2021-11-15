@@ -44,7 +44,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -67,7 +67,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -89,7 +89,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -109,7 +109,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -133,7 +133,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -156,7 +156,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -181,7 +181,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });
@@ -211,7 +211,7 @@ describe('barePrefix', () => {
           baseDir,
           cache,
           pubsub,
-          syncImportFn: require,
+          importFn: m => import(m),
         }),
       ],
     });

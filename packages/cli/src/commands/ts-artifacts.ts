@@ -9,7 +9,7 @@ import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
 import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
-import { writeFile } from '@graphql-mesh/utils';
+import { writeFile, writeJSON } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { generateOperations } from './generate-operations';
 
@@ -209,14 +209,13 @@ ${importedModulesCodes.join(',\n')}
 
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
-const syncImportFn = (moduleId: string) => {
+const importFn = (moduleId: string) => {
   const relativeModuleId = (isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId).split('\\\\').join('/');
   if (!(relativeModuleId in importedModules)) {
     throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
   }
-  return importedModules[relativeModuleId];
+  return Promise.resolve(importedModules[relativeModuleId]);
 };
-const importFn = async (moduleId: string) => syncImportFn(moduleId);
 
 const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
   cwd: baseDir,
@@ -295,6 +294,29 @@ export async function getMeshSDK() {
 
   logger.info('Compiling TS file as CommonJS Module to `index.js`');
   compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
+
+  await writeJSON(join(artifactsDir, 'package.json'), {
+    name: 'mesh-artifacts',
+    private: true,
+    type: 'commonjs',
+    main: 'index.js',
+    module: 'index.mjs',
+    sideEffects: false,
+    typings: 'index.d.ts',
+    typescript: {
+      definition: 'index.d.ts',
+    },
+    exports: {
+      '.': {
+        require: './index.js',
+        import: './index.mjs',
+      },
+      './*': {
+        require: './*.js',
+        import: './*.mjs',
+      },
+    },
+  });
 
   logger.info('Deleting index.ts');
   await unlink(tsFilePath);

@@ -75,7 +75,7 @@ export interface MeshTransformOptions<Config = any> {
   baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  syncImportFn: SyncImportFn;
+  importFn: ImportFn;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -127,7 +127,6 @@ export type RawSourceOutput = {
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
 export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
-export type SyncImportFn = <T = any>(moduleId: string) => T;
 
 export type LazyLoggerMessage = (() => string) | string;
 
