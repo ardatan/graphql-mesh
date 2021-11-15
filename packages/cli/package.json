@@ -38,7 +38,7 @@
     "ajv": "8.8.0",
     "cosmiconfig": "7.0.1",
     "@graphql-codegen/core": "2.3.0",
-    "@graphql-codegen/typescript": "2.3.1",
+    "@graphql-codegen/typescript": "2.4.0",
     "@graphql-codegen/typescript-generic-sdk": "2.2.0",
     "@graphql-codegen/typescript-operations": "2.2.0",
     "@graphql-mesh/config": "0.25.5",
