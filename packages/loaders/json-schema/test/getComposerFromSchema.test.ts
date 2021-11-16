@@ -33,8 +33,7 @@ import {
 } from 'graphql-scalars';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dereferenceObject, JSONSchemaObject } from 'json-machete';
-import { fetch } from 'cross-undici-fetch';
+import { JSONSchemaObject } from 'json-machete';
 
 describe('getComposerFromJSONSchema', () => {
   const logger = new DefaultLogger('getComposerFromJSONSchema - test');
@@ -925,6 +924,7 @@ input Foo_Input {
         }
       `),
     });
+    console.log(executionResponse);
     expect(executionResponse?.data?.fooOrBarButFoo?.__typename).toBe('Foo');
     expect(executionResponse?.data?.fooOrBarButFoo?.fooId).toBe(fooId);
     expect(executionResponse?.data?.fooOrBarButBar?.__typename).toBe('Bar');

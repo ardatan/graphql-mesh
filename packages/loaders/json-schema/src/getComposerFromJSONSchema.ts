@@ -4,24 +4,12 @@ import {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposerFieldConfigAsObjectDefinition,
   InputTypeComposerFieldConfigMap,
-  isSomeInputTypeComposer,
-  ObjectTypeComposer,
-  ObjectTypeComposerFieldConfig,
   ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
 } from 'graphql-compose';
-import {
-  GraphQLBoolean,
-  GraphQLFloat,
-  GraphQLInt,
-  GraphQLResolveInfo,
-  GraphQLScalarType,
-  GraphQLString,
-  isNonNullType,
-  Kind,
-} from 'graphql';
+import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
 import {
   GraphQLBigInt,
   GraphQLDateTime,
@@ -36,64 +24,22 @@ import {
 } from 'graphql-scalars';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
-import Ajv, { ValidateFunction } from 'ajv';
+import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { inspect } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
-import { pascalCase } from 'pascal-case';
 import { GraphQLUpload } from 'graphql-upload';
+import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
+import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap';
+import { getUnionTypeComposers } from './getUnionTypeComposers';
+import { getValidTypeName } from './getValidTypeName';
+import { getGenericJSONScalar } from './getGenericJSONScalar';
+import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath';
 
 interface TypeComposers {
   input?: AnyTypeComposer<any>;
   output: AnyTypeComposer<any> | SchemaComposer;
 }
-
-const JSONSchemaStringFormats = [
-  'date',
-  'hostname',
-  'regex',
-  'json-pointer',
-  'relative-json-pointer',
-  'uri-reference',
-  'uri-template',
-];
-
-const JSONSchemaStringFormatScalarMapFactory = (ajv: Ajv) =>
-  new Map<string, GraphQLScalarType>(
-    JSONSchemaStringFormats.map(format => {
-      const schema = {
-        type: 'string',
-        format,
-      };
-      const validate = ajv.compile(schema);
-      const coerceString = (value: string) => {
-        if (validate(value)) {
-          return value;
-        }
-        throw new Error(`Expected ${format} but got: ${value}`);
-      };
-      const scalar = new GraphQLScalarType({
-        name: pascalCase(format),
-        description: `Represents ${format} values`,
-        serialize: coerceString,
-        parseValue: coerceString,
-        parseLiteral: ast => {
-          if (ast.kind === Kind.STRING) {
-            return coerceString(ast.value);
-          }
-          throw new Error(`Expected string in ${format} format but got: ${(ast as any).value}`);
-        },
-        extensions: {
-          codegenScalarType: 'string',
-        },
-      });
-      return [format, scalar];
-    })
-  );
-
-const ONE_OF_DEFINITION = /* GraphQL */ `
-  directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
-`;
 
 export function getComposerFromJSONSchema(
   schema: JSONSchema,
@@ -105,7 +51,7 @@ export function getComposerFromJSONSchema(
     strict: false,
   });
   addFormats(ajv);
-  const formatScalarMap = JSONSchemaStringFormatScalarMapFactory(ajv);
+  const formatScalarMap = getJSONSchemaStringFormatScalarMap(ajv);
   const futureTasks = new Set<VoidFunction>();
   return visitJSONSchema(schema, function mutateFn(subSchema, { path }): any {
     const getTypeComposer = (): any => {
@@ -118,166 +64,20 @@ export function getComposerFromJSONSchema(
             }
           : undefined;
       }
-      const getValidTypeName = (isInput: boolean) => {
-        const sanitizedName = sanitizeNameForGraphQL(isInput ? subSchema.title + '_Input' : subSchema.title);
-        if (schemaComposer.has(sanitizedName)) {
-          let i = 2;
-          while (schemaComposer.has(sanitizedName + i)) {
-            i++;
-          }
-          return sanitizedName + i;
-        }
-        return sanitizedName;
-      };
-      const validate = (data: any) =>
-        ajv.validate(
-          {
-            $ref: '#/definitions/schema' + path,
-            definitions: {
-              schema,
-            },
-          },
-          data
-        );
-      const getGenericJSONScalar = (isInput: boolean, description?: string) => {
-        const coerceValue = (value: any) => {
-          if (!validate(value)) {
-            throw new Error(`${inspect(value)} is not valid!`);
-          }
-          return value;
-        };
-        return schemaComposer.createScalarTC({
-          name: getValidTypeName(isInput),
-          description: subSchema.description || description,
-          serialize: coerceValue,
-          parseValue: coerceValue,
-          parseLiteral: (...args) => {
-            const value = GraphQLJSON.parseLiteral(...args);
-            return coerceValue(value);
-          },
-        });
-      };
+      const validateWithJSONSchema = getValidateFnForSchemaPath(ajv, path, schema);
 
-      const getUnionTypeComposers = (typeComposersList: any[]) => {
-        // Filter null types
-        typeComposersList = typeComposersList.filter(
-          typeComposers => typeComposers.input.getTypeName() !== 'Void' || typeComposers.output.getTypeName() !== 'Void'
-        );
-        if (typeComposersList.length === 1) {
-          return typeComposersList[0];
-        }
-        const unionInputFields: Record<string, any> = {};
-        const outputTypeComposers: ObjectTypeComposer<any>[] = [];
-        let ableToUseGraphQLUnionType = true;
-        typeComposersList.forEach(typeComposers => {
-          const { input, output } = typeComposers;
-          if (isSomeInputTypeComposer(output)) {
-            ableToUseGraphQLUnionType = false;
-          } else {
-            outputTypeComposers.push(output);
-          }
-          unionInputFields[input.getTypeName()] = {
-            type: input,
-          };
-        });
-        const input = schemaComposer.createInputTC({
-          name: getValidTypeName(true),
-          description: subSchema.description,
-          fields: unionInputFields,
-        });
-        if (!schemaComposer.hasDirective('oneOf')) {
-          schemaComposer.addTypeDefs(ONE_OF_DEFINITION);
-        }
-        input.setDirectives([
-          {
-            name: 'oneOf',
-            args: {},
-          },
-        ]);
-
-        let output: AnyTypeComposer<any>;
-        if (ableToUseGraphQLUnionType) {
-          const resolveType = (data: any, context: any, info: GraphQLResolveInfo): any => {
-            if (data.__typename) {
-              return data.__typename;
-            } else if (data.resourceType) {
-              return data.resourceType;
-            }
-            const errors = new Map<string, string>();
-            for (const outputTypeComposer of outputTypeComposers) {
-              const validateFn = outputTypeComposer.getExtension('validate') as ValidateFunction;
-              if (validateFn) {
-                const isValid = validateFn(data);
-                const typeName = outputTypeComposer.getTypeName();
-                if (isValid) {
-                  return typeName;
-                }
-                errors.set(typeName, inspect(ajv.errors));
-              }
-            }
-            throw new AggregateError(
-              errors.values(),
-              `Received data doesn't met the union; \n Data: ${inspect(data)} \n Errors:\n${[...errors.entries()].map(
-                ([typeName, error]) => ` - ${typeName}: \n      ${error}\n`
-              )}`
-            );
-          };
-          let sharedFields: Record<string, ObjectTypeComposerFieldConfig<any, any, any>>;
-          if (generateInterfaceFromSharedFields) {
-            for (const typeComposer of outputTypeComposers) {
-              const fieldMap = typeComposer.getFields();
-              if (!sharedFields) {
-                sharedFields = { ...fieldMap };
-              } else {
-                for (const potentialSharedFieldName in sharedFields) {
-                  if (
-                    !(
-                      potentialSharedFieldName in fieldMap &&
-                      fieldMap[potentialSharedFieldName].type.getTypeName() ===
-                        sharedFields[potentialSharedFieldName].type.getTypeName()
-                    )
-                  ) {
-                    sharedFields[potentialSharedFieldName] = undefined;
-                    delete sharedFields[potentialSharedFieldName];
-                  }
-                }
-              }
-            }
-          }
-
-          if (sharedFields && Object.keys(sharedFields).length > 0) {
-            output = schemaComposer.createInterfaceTC({
-              name: getValidTypeName(false),
-              description: subSchema.description,
-              fields: sharedFields,
-              resolveType,
-            });
-            for (const typeComposer of outputTypeComposers) {
-              typeComposer.addInterface(output);
-              // GraphQL removes implementations
-              schemaComposer.addSchemaMustHaveType(typeComposer);
-            }
-          } else {
-            // If no shared fields found
-            output = schemaComposer.createUnionTC({
-              name: getValidTypeName(false),
-              description: subSchema.description,
-              types: outputTypeComposers,
-              resolveType,
-            });
-          }
-        } else {
-          output = getGenericJSONScalar(false);
-        }
-        return {
-          input,
-          output,
-        };
-      };
       if (subSchema.pattern) {
-        const scalarType = new RegularExpression(getValidTypeName(false), new RegExp(subSchema.pattern), {
-          description: subSchema.description,
-        });
+        const scalarType = new RegularExpression(
+          getValidTypeName({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+          }),
+          new RegExp(subSchema.pattern),
+          {
+            description: subSchema.description,
+          }
+        );
         const typeComposer = schemaComposer.getAnyTC(scalarType);
         return {
           input: typeComposer,
@@ -286,7 +86,11 @@ export function getComposerFromJSONSchema(
       }
       if (subSchema.const) {
         const tsTypeName = JSON.stringify(subSchema.const);
-        const scalarTypeName = getValidTypeName(false);
+        const scalarTypeName = getValidTypeName({
+          schemaComposer,
+          isInput: false,
+          subSchema,
+        });
         const scalarType = new RegularExpression(scalarTypeName, new RegExp(subSchema.const), {
           description: subSchema.description || `A field whose value is ${tsTypeName}`,
           errorMessage: (_r, v: string) => `Expected ${tsTypeName} but got ${JSON.stringify(v)}`,
@@ -309,7 +113,11 @@ export function getComposerFromJSONSchema(
           };
         }
         const typeComposer = schemaComposer.createEnumTC({
-          name: getValidTypeName(false),
+          name: getValidTypeName({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+          }),
           values,
         });
         return {
@@ -319,7 +127,14 @@ export function getComposerFromJSONSchema(
       }
 
       if (subSchema.oneOf && !subSchema.properties) {
-        return getUnionTypeComposers(subSchema.oneOf);
+        return getUnionTypeComposers({
+          schemaComposer,
+          ajv,
+          typeComposersList: subSchema.oneOf as any[],
+          subSchema,
+          generateInterfaceFromSharedFields,
+          validateWithJSONSchema,
+        });
       }
 
       if (subSchema.allOf && !subSchema.properties) {
@@ -354,22 +169,42 @@ export function getComposerFromJSONSchema(
         let inputTypeComposer, outputTypeComposer;
         if (ableToUseGraphQLObjectType) {
           outputTypeComposer = schemaComposer.createObjectTC({
-            name: getValidTypeName(false),
+            name: getValidTypeName({
+              schemaComposer,
+              isInput: false,
+              subSchema,
+            }),
             description: subSchema.description,
             fields: fieldMap,
           });
         } else {
-          outputTypeComposer = getGenericJSONScalar(false);
+          outputTypeComposer = getGenericJSONScalar({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+            validateWithJSONSchema,
+          });
         }
 
         if (ableToUseGraphQLInputObjectType) {
           inputTypeComposer = schemaComposer.createInputTC({
-            name: getValidTypeName(true),
+            name: getValidTypeName({
+              schemaComposer,
+              isInput: true,
+              subSchema,
+            }),
             description: subSchema.description,
             fields: inputFieldMap,
           });
         } else {
-          inputTypeComposer = ableToUseGraphQLObjectType ? getGenericJSONScalar(true) : outputTypeComposer;
+          inputTypeComposer = ableToUseGraphQLObjectType
+            ? getGenericJSONScalar({
+                schemaComposer,
+                isInput: true,
+                subSchema,
+                validateWithJSONSchema,
+              })
+            : outputTypeComposer;
         }
 
         return {
@@ -407,12 +242,10 @@ export function getComposerFromJSONSchema(
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
               const field = typeElemFieldMap[fieldName];
-              fieldMap[fieldName] = isNonNullType(field.type.getType())
-                ? {
-                    ...field,
-                    type: () => field.type.ofType,
-                  }
-                : field;
+              fieldMap[fieldName] = {
+                type: () => getNamedType(field.type.getType()),
+                ...field,
+              };
             }
           }
         }
@@ -420,22 +253,42 @@ export function getComposerFromJSONSchema(
         let inputTypeComposer, outputTypeComposer;
         if (ableToUseGraphQLObjectType) {
           outputTypeComposer = schemaComposer.createObjectTC({
-            name: getValidTypeName(false),
+            name: getValidTypeName({
+              schemaComposer,
+              isInput: false,
+              subSchema,
+            }),
             description: subSchema.description,
             fields: fieldMap,
           });
         } else {
-          outputTypeComposer = getGenericJSONScalar(false);
+          outputTypeComposer = getGenericJSONScalar({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+            validateWithJSONSchema,
+          });
         }
 
         if (ableToUseGraphQLInputObjectType) {
           inputTypeComposer = schemaComposer.createInputTC({
-            name: getValidTypeName(true),
+            name: getValidTypeName({
+              schemaComposer,
+              isInput: true,
+              subSchema,
+            }),
             description: subSchema.description,
             fields: inputFieldMap,
           });
         } else {
-          inputTypeComposer = ableToUseGraphQLObjectType ? getGenericJSONScalar(true) : outputTypeComposer;
+          inputTypeComposer = ableToUseGraphQLObjectType
+            ? getGenericJSONScalar({
+                schemaComposer,
+                isInput: true,
+                subSchema,
+                validateWithJSONSchema,
+              })
+            : outputTypeComposer;
         }
 
         return {
@@ -450,7 +303,12 @@ export function getComposerFromJSONSchema(
           subSchema.type = validTypes[0];
           // continue with the single type
         } else {
-          const typeComposer = getGenericJSONScalar(false);
+          const typeComposer = getGenericJSONScalar({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+            validateWithJSONSchema,
+          });
           return {
             input: typeComposer,
             output: typeComposer,
@@ -494,33 +352,13 @@ export function getComposerFromJSONSchema(
             output: typeComposer,
           };
         }
-        case 'string':
+        case 'string': {
           if (subSchema.minLength || subSchema.maxLength) {
-            const typeComposerName = getValidTypeName(false);
-            const coerceString = (v: any) => {
-              if (v != null) {
-                const vStr = v.toString();
-                if (typeof subSchema.minLength !== 'undefined' && vStr.length < subSchema.minLength) {
-                  throw new Error(`${typeComposerName} cannot be less than ${subSchema.minLength} but given ${vStr}`);
-                }
-                if (typeof subSchema.maxLength !== 'undefined' && vStr.length > subSchema.maxLength) {
-                  throw new Error(`${typeComposerName} cannot be more than ${subSchema.maxLength} but given ${vStr}`);
-                }
-                return vStr;
-              }
-            };
-            const typeComposer = schemaComposer.createScalarTC({
-              name: typeComposerName,
-              description: subSchema.description,
-              serialize: coerceString,
-              parseValue: coerceString,
-              parseLiteral: ast => {
-                if ('value' in ast) {
-                  return coerceString(ast.value);
-                }
-                return null;
-              },
+            const scalarType = getStringScalarWithMinMaxLength({
+              schemaComposer,
+              subSchema,
             });
+            const typeComposer = schemaComposer.getAnyTC(scalarType);
             return {
               input: typeComposer,
               output: typeComposer,
@@ -569,23 +407,6 @@ export function getComposerFromJSONSchema(
                 output: typeComposer,
               };
             }
-            case 'date':
-            case 'idn-email':
-            case 'hostname':
-            case 'regex':
-            case 'json-pointer':
-            case 'relative-json-pointer':
-            case 'uri-reference':
-            case 'iri':
-            case 'iri-reference':
-            case 'uri-template': {
-              // Trust ajv
-              const typeComposer = schemaComposer.getAnyTC(formatScalarMap.get(subSchema.format));
-              return {
-                input: typeComposer,
-                output: typeComposer,
-              };
-            }
             // Special case for upload
             case 'upload': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLUpload);
@@ -595,14 +416,15 @@ export function getComposerFromJSONSchema(
               };
             }
             default: {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLString);
+              const formatScalar = formatScalarMap.get(subSchema.format) || GraphQLString;
+              const typeComposer = schemaComposer.getAnyTC(formatScalar);
               return {
                 input: typeComposer,
                 output: typeComposer,
               };
             }
           }
-
+        }
         case 'array':
           if (
             typeof subSchema.items === 'object' &&
@@ -617,7 +439,12 @@ export function getComposerFromJSONSchema(
           }
           if (subSchema.contains) {
             // Scalars cannot be in union type
-            const typeComposer = getGenericJSONScalar(false).getTypePlural();
+            const typeComposer = getGenericJSONScalar({
+              schemaComposer,
+              isInput: false,
+              subSchema,
+              validateWithJSONSchema,
+            }).getTypePlural();
             return {
               input: typeComposer,
               output: typeComposer,
@@ -630,7 +457,14 @@ export function getComposerFromJSONSchema(
               existingItems.push(subSchema.additionalItems);
             }
             */
-            const { input: inputTypeComposer, output: outputTypeComposer } = getUnionTypeComposers(existingItems);
+            const { input: inputTypeComposer, output: outputTypeComposer } = getUnionTypeComposers({
+              schemaComposer,
+              ajv,
+              typeComposersList: existingItems,
+              subSchema,
+              validateWithJSONSchema,
+              generateInterfaceFromSharedFields,
+            });
             return {
               input: inputTypeComposer.getTypePlural(),
               output: outputTypeComposer.getTypePlural(),
@@ -638,7 +472,12 @@ export function getComposerFromJSONSchema(
           }
           // If it doesn't have any clue
           {
-            const typeComposer = getGenericJSONScalar(false).getTypePlural();
+            const typeComposer = getGenericJSONScalar({
+              schemaComposer,
+              isInput: false,
+              subSchema,
+              validateWithJSONSchema,
+            }).getTypePlural();
             return {
               input: typeComposer,
               output: typeComposer,
@@ -766,21 +605,39 @@ export function getComposerFromJSONSchema(
 
           const output =
             Object.keys(fieldMap).length === 0
-              ? getGenericJSONScalar(false)
+              ? getGenericJSONScalar({
+                  schemaComposer,
+                  isInput: false,
+                  subSchema,
+                  validateWithJSONSchema,
+                })
               : schemaComposer.createObjectTC({
-                  name: getValidTypeName(false),
+                  name: getValidTypeName({
+                    schemaComposer,
+                    isInput: false,
+                    subSchema,
+                  }),
                   description: subSchema.description,
                   fields: fieldMap,
                   extensions: {
-                    validate,
+                    validateWithJSONSchema,
                   },
                 });
 
           const input =
             Object.keys(inputFieldMap).length === 0
-              ? getGenericJSONScalar(true)
+              ? getGenericJSONScalar({
+                  schemaComposer,
+                  isInput: true,
+                  subSchema,
+                  validateWithJSONSchema,
+                })
               : schemaComposer.createInputTC({
-                  name: getValidTypeName(true),
+                  name: getValidTypeName({
+                    schemaComposer,
+                    isInput: true,
+                    subSchema,
+                  }),
                   description: subSchema.description,
                   fields: inputFieldMap,
                 });
