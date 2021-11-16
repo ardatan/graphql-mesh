@@ -1,15 +1,8 @@
-import { Logger } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { dereferenceObject, healJSONSchema, JSONSchema, JSONSchemaObject, referenceJSONSchema } from 'json-machete';
+import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata } from './utils';
-
-export interface BundleJSONSchemasOptions {
-  operations: JSONSchemaOperationConfig[];
-  cwd: string;
-  logger: Logger;
-}
 
 const anySchema: JSONSchemaObject = {
   title: 'Any',
@@ -30,7 +23,13 @@ const anySchema: JSONSchemaObject = {
   ],
 };
 
-export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONSchemasOptions) {
+export async function getReferencedJSONSchemaFromOperations({
+  operations,
+  cwd,
+}: {
+  operations: JSONSchemaOperationConfig[];
+  cwd: string;
+}) {
   const finalJsonSchema: JSONSchema = {
     type: 'object',
     title: '_schema',
@@ -122,13 +121,5 @@ export async function bundleJSONSchemas({ operations, cwd, logger }: BundleJSONS
       rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
     }
   }
-  logger.debug(() => `Dereferencing JSON Schema to resolve all $refs`);
-  const fullyDeferencedSchema = await dereferenceObject(finalJsonSchema, {
-    cwd,
-  });
-  logger.debug(() => `Healing JSON Schema`);
-  const healedSchema = await healJSONSchema(fullyDeferencedSchema);
-  logger.debug(() => `Building and mapping $refs back to JSON Schema`);
-  const fullyReferencedSchema = await referenceJSONSchema(healedSchema as any);
-  return fullyReferencedSchema;
+  return finalJsonSchema;
 }
