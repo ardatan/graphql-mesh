@@ -924,7 +924,6 @@ input Foo_Input {
         }
       `),
     });
-    console.log(executionResponse);
     expect(executionResponse?.data?.fooOrBarButFoo?.__typename).toBe('Foo');
     expect(executionResponse?.data?.fooOrBarButFoo?.fooId).toBe(fooId);
     expect(executionResponse?.data?.fooOrBarButBar?.__typename).toBe('Bar');
