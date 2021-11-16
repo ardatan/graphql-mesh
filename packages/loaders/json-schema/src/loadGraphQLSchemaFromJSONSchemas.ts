@@ -1,13 +1,13 @@
 import { BaseLoaderOptions } from '@graphql-tools/utils';
 import { specifiedDirectives } from 'graphql';
-import { dereferenceObject, JSONSchemaObject } from 'json-machete';
+import { dereferenceObject, healJSONSchema, JSONSchemaObject } from 'json-machete';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema';
 import { SchemaComposer } from 'graphql-compose';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { JSONSchemaOperationConfig } from './types';
 import { addExecutionLogicToComposer, AddExecutionLogicToComposerOptions } from './addExecutionLogicToComposer';
-import { bundleJSONSchemas } from './bundleJSONSchemas';
+import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   baseUrl?: string;
@@ -21,17 +21,42 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   generateInterfaceFromSharedFields?: boolean;
 }
 
+export async function getDereferencedJSONSchemaFromOperations({
+  operations,
+  cwd = process.cwd(),
+  logger,
+  fetch,
+}: {
+  operations: JSONSchemaOperationConfig[];
+  cwd: string;
+  logger: Logger;
+  fetch: WindowOrWorkerGlobalScope['fetch'];
+}): Promise<JSONSchemaObject> {
+  const referencedJSONSchema = await getReferencedJSONSchemaFromOperations({
+    operations,
+    cwd,
+  });
+  logger.debug(() => `Dereferencing JSON Schema to resolve all $refs`);
+  const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {
+    cwd,
+    fetch,
+  });
+  logger.debug(() => `Healing JSON Schema`);
+  const healedSchema = await healJSONSchema(fullyDeferencedSchema);
+  return healedSchema;
+}
+
 export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JSONSchemaLoaderOptions) {
   const logger = options.logger || new DefaultLogger(name);
   const operations = options.operations;
   const cwd = options.cwd || process.cwd();
-  const bundledJSONSchema = await bundleJSONSchemas({
+  const fullyDeferencedSchema = await getDereferencedJSONSchemaFromOperations({
     operations,
     cwd,
     logger,
+    fetch: options.fetch,
   });
-  const graphqlSchema = await getGraphQLSchemaFromBundledJSONSchema(bundledJSONSchema, {
-    cwd,
+  const graphqlSchema = await getGraphQLSchemaFromDereferencedJSONSchema(fullyDeferencedSchema, {
     fetch: options.fetch,
     logger,
     operations,
@@ -44,11 +69,10 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
   return graphqlSchema;
 }
 
-export async function getGraphQLSchemaFromBundledJSONSchema(
-  bundledJSONSchema: JSONSchemaObject,
+export async function getGraphQLSchemaFromDereferencedJSONSchema(
+  fullyDeferencedSchema: JSONSchemaObject,
   {
-    cwd,
-    fetch: globalFetch = globalThis.fetch,
+    fetch,
     logger,
     operations,
     operationHeaders,
@@ -56,15 +80,11 @@ export async function getGraphQLSchemaFromBundledJSONSchema(
     pubsub,
     errorMessage,
     generateInterfaceFromSharedFields,
-  }: AddExecutionLogicToComposerOptions & { cwd: string; generateInterfaceFromSharedFields?: boolean }
+  }: AddExecutionLogicToComposerOptions & { generateInterfaceFromSharedFields?: boolean }
 ) {
-  logger.debug(() => `Derefering the bundled JSON Schema`);
-  const fullyDeferencedSchema = await dereferenceObject(bundledJSONSchema, {
-    cwd,
-  });
   logger.debug(() => `Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema(
-    fullyDeferencedSchema as JSONSchemaObject,
+    fullyDeferencedSchema,
     logger,
     generateInterfaceFromSharedFields
   );
@@ -81,7 +101,7 @@ export async function getGraphQLSchemaFromBundledJSONSchema(
   }
 
   const schemaComposerWithExecutionLogic = await addExecutionLogicToComposer(schemaComposerWithoutExecutionLogic, {
-    fetch: globalFetch,
+    fetch,
     logger,
     operations,
     operationHeaders,

@@ -3,7 +3,7 @@ import { asArray } from '@graphql-tools/utils';
 import { SchemaComposer } from 'graphql-compose';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 
-export const resolveDataByUnionInputType = (data: any, type: GraphQLInputType, schemaComposer: SchemaComposer): any => {
+export function resolveDataByUnionInputType(data: any, type: GraphQLInputType, schemaComposer: SchemaComposer): any {
   if (data) {
     if (isListType(type)) {
       return asArray(data).map(elem => resolveDataByUnionInputType(elem, type.ofType, schemaComposer));
@@ -29,4 +29,4 @@ export const resolveDataByUnionInputType = (data: any, type: GraphQLInputType, s
     }
   }
   return data;
-};
+}
