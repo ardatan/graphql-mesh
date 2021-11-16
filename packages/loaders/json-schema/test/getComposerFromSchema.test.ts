@@ -32,8 +32,9 @@ import {
   GraphQLVoid,
 } from 'graphql-scalars';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { JSONSchemaObject } from 'packages/json-machete/src/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { dereferenceObject, JSONSchemaObject } from 'json-machete';
+import { fetch } from 'cross-undici-fetch';
 
 describe('getComposerFromJSONSchema', () => {
   const logger = new DefaultLogger('getComposerFromJSONSchema - test');

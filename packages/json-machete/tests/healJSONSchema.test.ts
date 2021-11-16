@@ -23,8 +23,8 @@ describe('healJSONSchema', () => {
       },
     };
     const healedSchema = (await healJSONSchema(schema)) as JSONSchemaObject;
-    expect(healedSchema.properties.bar.title).toBe('_bar');
-    expect(healedSchema.properties.foo.title).toBe('_foo');
+    expect(healedSchema.properties.bar.title).toBe('bar');
+    expect(healedSchema.properties.foo.title).toBe('foo');
   });
   it('should add missing type: object if properties are in the definitions', async () => {
     const schema = {

@@ -54,8 +54,16 @@ export async function healJSONSchema(schema: JSONSchema) {
         }
         if (!subSchema.title && !subSchema.$ref) {
           // Try to get definition name if missing
-          const maybeDefinitionBasedPath = path.includes('/definitions/') ? path.split('/definitions/')[1] : path;
-          let pathBasedName = maybeDefinitionBasedPath.split('/properties').join('').split('/').join('_');
+          const splitByDefinitions = path.split('/definitions/');
+          const maybeDefinitionBasedPath = path.includes('/definitions/')
+            ? splitByDefinitions[splitByDefinitions.length - 1]
+            : path;
+          let pathBasedName = maybeDefinitionBasedPath
+            .split('/properties')
+            .join('')
+            .split('/')
+            .filter(Boolean)
+            .join('_');
           switch (subSchema.type) {
             case 'string':
               // If it has special pattern, use path based name because it is specific
@@ -77,7 +85,7 @@ export async function healJSONSchema(schema: JSONSchema) {
           if (reservedTypeNames.includes(pathBasedName)) {
             pathBasedName += '_';
           }
-          subSchema.title = subSchema.title || pathBasedName;
+          subSchema.title = subSchema.title || pathBasedName || 'Root';
         }
         // Try to find the type
         if (!subSchema.type) {
