@@ -26,7 +26,7 @@ import {
   getCachedFetch,
   readFileOrUrl,
 } from '@graphql-mesh/utils';
-import { ExecutionRequest, isDocumentNode } from '@graphql-tools/utils';
+import { ExecutionRequest, isDocumentNode, inspect } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { env } from 'process';
 
@@ -73,7 +73,9 @@ export default class GraphQLHandler implements MeshHandler {
         schema = buildASTSchema(schemaOrStringOrDocumentNode);
       } else {
         throw new Error(
-          `Provided file '${endpoint} exports an unknown type: ${typeof schemaOrStringOrDocumentNode}': expected GraphQLSchema, SDL or DocumentNode.`
+          `Provided file '${endpoint} exports an unknown type: ${inspect(
+            schemaOrStringOrDocumentNode
+          )}': expected GraphQLSchema, SDL or DocumentNode.`
         );
       }
       return {
