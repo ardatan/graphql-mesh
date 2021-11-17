@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.56.0
+
+### Minor Changes
+
+- ec0d1d639: enhance: avoid sync require but collect import sync
+
 ## 0.55.0
 
 ### Minor Changes

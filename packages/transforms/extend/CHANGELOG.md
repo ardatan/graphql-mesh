@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-extend
 
+## 0.9.0
+
+### Minor Changes
+
+- ec0d1d639: enhance: avoid sync require but collect import sync
+
+### Patch Changes
+
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/types@0.56.0
+  - @graphql-mesh/utils@0.22.0
+
 ## 0.8.1
 
 ### Patch Changes

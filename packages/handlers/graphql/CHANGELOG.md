@@ -1,5 +1,17 @@
 # @graphql-mesh/graphql
 
+## 0.20.4
+
+### Patch Changes
+
+- 211c954c2: fix(graphql): download introspection from the pointer provided as introspection in the config
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/store@0.3.0
+  - @graphql-mesh/types@0.56.0
+  - @graphql-mesh/utils@0.22.0
+
 ## 0.20.3
 
 ### Patch Changes
