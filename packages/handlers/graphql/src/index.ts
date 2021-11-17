@@ -133,7 +133,7 @@ export default class GraphQLHandler implements MeshHandler {
         const headers = schemaHeadersFactory({
           env,
         });
-        const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(endpoint, {
+        const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(introspection, {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
           fetch: customFetch,
