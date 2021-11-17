@@ -5633,10 +5633,10 @@
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.0.tgz#dd3e6699ba3237f0348cd085e4698780204842f9"
   integrity sha512-37RSHht+gzzgYeobbG+KWryeAW8J33Nhr69cjTqSYymXVZEN9NbRYWoYlRtDhHKPVT1FyNKwaTPC1NynKZpzRA==
 
-"@types/yargs@17.0.5":
-  version "17.0.5"
-  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-17.0.5.tgz#1e7e59a88420872875842352b73618f5e77e835f"
-  integrity sha512-4HNq144yhaVjJs+ON6A07NEoi9Hh0Rhl/jI9Nt/l/YRjt+T6St/QK3meFARWZ8IgkzoD1LC0PdTdJenlQQi2WQ==
+"@types/yargs@17.0.6":
+  version "17.0.6"
+  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-17.0.6.tgz#675136e8ec0009f4f04aafc1273a9ca6d2a9e368"
+  integrity sha512-6jzGs5Kb3Rqe98q8CPKPABvzgnueEzGMLd8aT4FD3HrtO8Ju7Efnb8pyUSL22IoQ5WfUH7eMVQ2AwjO5EOIXFQ==
   dependencies:
     "@types/yargs-parser" "*"
 
