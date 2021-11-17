@@ -34,7 +34,7 @@
     "deep-equal": "2.0.5",
     "form-urlencoded": "6.0.5",
     "jsonpath-plus": "6.0.1",
-    "json-ptr": "2.2.0",
+    "json-ptr": "3.0.0",
     "openapi-diff": "0.23.5",
     "graphql-scalars": "1.13.6",
     "graphql-subscriptions": "2.0.0",

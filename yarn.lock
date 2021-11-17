@@ -15479,12 +15479,10 @@ json-parse-even-better-errors@^2.3.0:
   resolved "https://registry.yarnpkg.com/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz#7c47805a94319928e05777405dc12e1f7a4ee02d"
   integrity sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==
 
-json-ptr@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/json-ptr/-/json-ptr-2.2.0.tgz#a4de4ed638cb23ae4cd4b51f8bf972a1c2293f1e"
-  integrity sha512-w9f6/zhz4kykltXMG7MLJWMajxiPj0q+uzQPR1cggNAE/sXoq/C5vjUb/7QNcC3rJsVIIKy37ALTXy1O+3c8QQ==
-  dependencies:
-    tslib "^2.2.0"
+json-ptr@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/json-ptr/-/json-ptr-3.0.0.tgz#77dc484740270c6148fd2778f000f439c7f08ff2"
+  integrity sha512-p3hBrUrcbzAdmIVOQA85C/TvapouI1M1YxLbrM0lEs0AVLweBqNfZcS1mlo83uneHBYYtc/T4pzHZzrYNQpu+w==
 
 json-schema-diff@^0.17.1:
   version "0.17.1"

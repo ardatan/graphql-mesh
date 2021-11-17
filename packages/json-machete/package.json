@@ -22,7 +22,7 @@
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.6.19",
     "cross-undici-fetch": "0.0.26",
-    "json-ptr": "2.2.0",
+    "json-ptr": "3.0.0",
     "@graphql-mesh/utils": "0.22.0",
     "url-join": "4.0.1"
   },
