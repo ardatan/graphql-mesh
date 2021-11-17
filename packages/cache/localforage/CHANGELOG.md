@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-localforage
 
+## 0.5.24
+
+### Patch Changes
+
+- 1cc0acb9a: fix: normalize imported modules
+- Updated dependencies [ec0d1d639]
+  - @graphql-mesh/types@0.56.0
+
 ## 0.5.23
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/cache-file
 
+## 0.7.4
+
+### Patch Changes
+
+- 1cc0acb9a: fix: normalize imported modules
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/types@0.56.0
+  - @graphql-mesh/utils@0.22.0
+
 ## 0.7.3
 
 ### Patch Changes

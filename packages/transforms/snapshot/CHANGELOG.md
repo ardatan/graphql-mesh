@@ -1,5 +1,19 @@
 # @graphql-mesh/transform-snapshot
 
+## 0.13.0
+
+### Minor Changes
+
+- ec0d1d639: enhance: avoid sync require but collect import sync
+
+### Patch Changes
+
+- 1cc0acb9a: fix: normalize imported modules
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/types@0.56.0
+  - @graphql-mesh/utils@0.22.0
+
 ## 0.12.1
 
 ### Patch Changes

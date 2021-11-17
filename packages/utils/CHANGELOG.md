@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.22.0
+
+### Minor Changes
+
+- ec0d1d639: enhance: avoid sync require but collect import sync
+
+### Patch Changes
+
+- 1cc0acb9a: fix: normalize imported modules
+- Updated dependencies [ec0d1d639]
+  - @graphql-mesh/types@0.56.0
+
 ## 0.21.1
 
 ### Patch Changes

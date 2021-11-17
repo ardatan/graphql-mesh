@@ -1,5 +1,25 @@
 # @graphql-mesh/config
 
+## 0.26.0
+
+### Minor Changes
+
+- ec0d1d639: enhance: avoid sync require but collect import sync
+
+### Patch Changes
+
+- 1cc0acb9a: fix: normalize imported modules
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/store@0.3.0
+  - @graphql-mesh/types@0.56.0
+  - @graphql-mesh/utils@0.22.0
+  - @graphql-mesh/merger-stitching@0.14.4
+  - @graphql-mesh/cache-inmemory-lru@0.5.30
+  - @graphql-mesh/merger-bare@0.12.2
+  - @graphql-mesh/runtime@0.26.5
+
 ## 0.25.5
 
 ### Patch Changes

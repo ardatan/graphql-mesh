@@ -1,5 +1,19 @@
 # json-machete
 
+## 0.1.0
+
+### Minor Changes
+
+- f40b0d42c: Refactor JSON Schema handler code
+- f40b0d42c: enhance(json-schema): better auto naming
+
+### Patch Changes
+
+- 1cc0acb9a: fix: normalize imported modules
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/utils@0.22.0
+
 ## 0.0.27
 
 ### Patch Changes

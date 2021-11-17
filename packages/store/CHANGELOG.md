@@ -1,5 +1,18 @@
 # @graphql-mesh/store
 
+## 0.3.0
+
+### Minor Changes
+
+- ec0d1d639: enhance(store): use cjs extension for artifacts to support Node ESM
+
+### Patch Changes
+
+- 1cc0acb9a: fix: normalize imported modules
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/utils@0.22.0
+
 ## 0.2.3
 
 ### Patch Changes
