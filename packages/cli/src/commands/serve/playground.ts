@@ -34,8 +34,9 @@ export const playgroundMiddlewareFactory = ({
       return;
     }
 
-    defaultQuery$.then(defaultQuery => {
-      res.send(`
+    defaultQuery$
+      .then(defaultQuery => {
+        res.send(`
         <html>
         <head>
           <title>GraphQL Mesh</title>
@@ -52,6 +53,7 @@ export const playgroundMiddlewareFactory = ({
         </body>
       </html>
       `);
-    });
+      })
+      .catch(e => handleFatalError(e, logger));
   };
 };

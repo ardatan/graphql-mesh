@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/return-await */
 import { isAbsolute, join } from 'path';
 import { ImportFn } from '@graphql-mesh/types';
+import { defaultImportFn } from '.';
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;
@@ -16,7 +17,7 @@ export function loadFromModuleExportExpression<T>(
     return Promise.resolve(expression);
   }
 
-  const { defaultExportName, cwd, importFn = getDefaultImport() } = options || {};
+  const { defaultExportName, cwd, importFn = defaultImportFn } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
   return tryImport(modulePath, cwd, importFn).then(
     mod => mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod
@@ -35,8 +36,4 @@ function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
       });
     }
   });
-}
-
-export function getDefaultImport(): ImportFn {
-  return m => import(m);
 }

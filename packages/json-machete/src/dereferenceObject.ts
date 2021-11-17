@@ -3,6 +3,7 @@ import { dirname, isAbsolute, join } from 'path';
 import { healJSONSchema } from './healJSONSchema';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
+import { defaultImportFn } from '@graphql-mesh/utils';
 
 export const resolvePath = (path: string, root: any): any => {
   return JsonPointer.get(root, path);
@@ -60,12 +61,14 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     refMap = new Map<string, any>(),
     root = obj as any,
     fetch = crossUndiciFetch,
+    importFn = defaultImportFn,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
     refMap?: Map<string, any>;
     root?: TRoot;
     fetch?: WindowOrWorkerGlobalScope['fetch'];
+    importFn?: (moduleId: string) => Promise<any>;
   } = {}
 ): Promise<T> {
   if (typeof obj === 'object') {
@@ -80,13 +83,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           const newCwd = isURL(externalFilePath) ? getCwdForUrl(externalFilePath) : dirname(externalFilePath);
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
-            const importedJSON = isURL(externalFilePath)
+            externalFile = isURL(externalFilePath)
               ? await fetch(externalFilePath).then(res => res.json())
-              : await import(externalFilePath);
-            externalFile = {};
-            for (const key in importedJSON) {
-              externalFile[key] = importedJSON[key];
-            }
+              : await importFn(externalFilePath);
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }

@@ -17,3 +17,4 @@ export { AggregateError } from '@graphql-tools/utils';
 export * from './resolve-additional-resolvers';
 export * from './logger';
 export * from './parseAndPrintWithCache';
+export * from './defaultImportFn';

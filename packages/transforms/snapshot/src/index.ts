@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import { YamlConfig, MeshTransform, MeshTransformOptions } from '@graphql-mesh/types';
+import { YamlConfig, MeshTransform, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
 import { isAbsolute, join } from 'path';
@@ -18,10 +18,12 @@ export default class SnapshotTransform implements MeshTransform {
   noWrap = true;
   private config: YamlConfig.SnapshotTransformConfig;
   private baseDir: string;
+  private importFn: ImportFn;
 
-  constructor({ baseDir, config }: MeshTransformOptions<YamlConfig.SnapshotTransformConfig>) {
+  constructor({ baseDir, config, importFn }: MeshTransformOptions<YamlConfig.SnapshotTransformConfig>) {
     this.config = config;
     this.baseDir = baseDir;
+    this.importFn = importFn;
   }
 
   transformSchema(schema: GraphQLSchema) {
@@ -49,7 +51,7 @@ export default class SnapshotTransform implements MeshTransform {
           respectSelectionSet: this.config.respectSelectionSet,
         });
         if (snapshotFilePath in require.cache || (await pathExists(snapshotFilePath))) {
-          return import(snapshotFilePath);
+          return this.importFn(snapshotFilePath);
         }
         const result = await next(root, args, context, info);
         await writeSnapshotFile(snapshotFilePath, result);

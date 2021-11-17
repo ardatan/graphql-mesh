@@ -13,6 +13,7 @@ import {
   DefaultLogger,
   loadFromModuleExportExpression,
   parseWithCache,
+  defaultImportFn,
 } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
@@ -40,7 +41,7 @@ export async function graphqlMesh() {
           externalModules.map(module => {
             const localModulePath = resolve(baseDir, module);
             const islocalModule = existsSync(localModulePath);
-            return import(islocalModule ? localModulePath : module);
+            return defaultImportFn(islocalModule ? localModulePath : module);
           })
         ),
     })
@@ -93,7 +94,7 @@ export async function graphqlMesh() {
               {
                 defaultExportName: 'default',
                 cwd: baseDir,
-                importFn: m => import(m).then(m => m.default || m),
+                importFn: defaultImportFn,
               }
             );
             await customServerHandler(serveMeshOptions);
@@ -123,7 +124,7 @@ export async function graphqlMesh() {
           }
           env.NODE_ENV = 'production';
           const mainModule = join(builtMeshArtifactsPath, 'index.js');
-          const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
+          const builtMeshArtifacts = await defaultImportFn(mainModule);
           const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
           logger = getMeshOptions.logger;
           const rawConfig: YamlConfig.Config = builtMeshArtifacts.rawConfig;
@@ -143,7 +144,7 @@ export async function graphqlMesh() {
             const customServerHandler = await loadFromModuleExportExpression<any>(rawConfig.serve.customServerHandler, {
               defaultExportName: 'default',
               cwd: baseDir,
-              importFn: m => import(m).then(m => m.default || m),
+              importFn: defaultImportFn,
             });
             await customServerHandler(serveMeshOptions);
           } else {
@@ -167,13 +168,11 @@ export async function graphqlMesh() {
             );
           }
 
-          const importFn = (moduleId: string) => import(moduleId).then(m => m.default || m);
-
           const store = new MeshStore(
             '.mesh',
             new FsStoreStorageAdapter({
               cwd: baseDir,
-              importFn,
+              importFn: defaultImportFn,
             }),
             {
               readonly: false,
@@ -185,7 +184,7 @@ export async function graphqlMesh() {
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             store,
-            importFn,
+            importFn: defaultImportFn,
             ignoreAdditionalResolvers: true,
           });
           logger = meshConfig.logger;
@@ -217,9 +216,9 @@ export async function graphqlMesh() {
           const importedModulesSet = new Set<string>();
           const importPromises: Promise<any>[] = [];
           const importFn = (moduleId: string) => {
-            const importPromise = import(moduleId).then(m => {
+            const importPromise = defaultImportFn(moduleId).then(m => {
               importedModulesSet.add(moduleId);
-              return m.default || m;
+              return m;
             });
             importPromises.push(importPromise.catch(() => {}));
             return importPromise;

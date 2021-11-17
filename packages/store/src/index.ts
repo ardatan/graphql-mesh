@@ -60,7 +60,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   }
 
   async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
-    const asString = options.codify(data, key);
+    const asString = await options.codify(data, key);
     const filePath = this.getWrittenFileName(key);
     await writeFile(filePath, flatString(asString));
     await this.options.importFn(filePath);
@@ -81,7 +81,7 @@ export type StoreProxy<TData> = {
 };
 
 export type ProxyOptions<TData> = {
-  codify: (value: TData, identifier: string) => string;
+  codify: (value: TData, identifier: string) => string | Promise<string>;
   validate: (oldValue: TData, newValue: TData, identifier: string) => void | Promise<void>;
 };
 

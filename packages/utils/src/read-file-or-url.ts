@@ -4,6 +4,8 @@ import isUrl from 'is-url';
 import { load as loadYaml } from 'js-yaml';
 import { isAbsolute, resolve } from 'path';
 import { promises as fsPromises } from 'fs';
+import { ImportFn } from '@graphql-mesh/types';
+import { defaultImportFn } from '.';
 
 const { readFile: readFileFromFS } = fsPromises || {};
 
@@ -14,6 +16,7 @@ export interface ReadFileOrUrlOptions extends RequestInit {
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
   fetch?: typeof crossFetch;
+  importFn?: ImportFn;
 }
 
 export function getCachedFetch(cache: KeyValueCache): typeof crossFetch {
@@ -34,15 +37,13 @@ export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileO
 }
 
 export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
-  const { allowUnknownExtensions, cwd, fallbackFormat } = config || {};
+  const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
   const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
-  if (/js$/.test(filePath) || /ts$/.test(filePath)) {
-    return import(filePath).then(m => m.default || m);
+  if (/js$/.test(actualPath) || /ts$/.test(actualPath) || /json$/.test(actualPath)) {
+    return importFn(actualPath);
   }
   const rawResult = await readFileFromFS(actualPath, 'utf-8');
-  if (/json$/.test(filePath)) {
-    return JSON.parse(rawResult);
-  } else if (/yaml$/.test(filePath) || /yml$/.test(filePath)) {
+  if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
     return loadYaml(rawResult) as T;
   } else if (fallbackFormat) {
     switch (fallbackFormat) {
@@ -52,7 +53,7 @@ export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOption
         return loadYaml(rawResult) as T;
       case 'ts':
       case 'js':
-        return import(filePath).then(m => m.default || m);
+        return importFn(actualPath);
     }
   } else if (!allowUnknownExtensions) {
     throw new Error(
