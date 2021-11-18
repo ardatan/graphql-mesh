@@ -1,13 +1,10 @@
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
-
 import { DocsContent, DocsTOC, MDXPage } from '@guild-docs/client';
 import { MDXPaths, MDXProps } from '@guild-docs/server';
-
 import { getRoutes } from '../../../routes';
 
-import type { GetStaticPaths, GetStaticProps } from 'next';
-
-export default MDXPage(function PostPage({ content, TOC, MetaHead, BottomNavigation }) {
+export default MDXPage(({ content, TOC, MetaHead, BottomNavigation }) => {
   return (
     <>
       <Head>{MetaHead}</Head>
@@ -23,12 +20,10 @@ export default MDXPage(function PostPage({ content, TOC, MetaHead, BottomNavigat
 export const getStaticProps: GetStaticProps = ctx => {
   return MDXProps(
     ({ readMarkdownFile, getArrayParam }) => {
-      return readMarkdownFile('docs/', getArrayParam('slug'));
+      return readMarkdownFile('docs/', getArrayParam('slug'), { importPartialMarkdown: true });
     },
     ctx,
-    {
-      getRoutes,
-    }
+    { getRoutes }
   );
 };
 

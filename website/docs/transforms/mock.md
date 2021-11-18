@@ -75,7 +75,7 @@ const fullNames = generateNames();
 
 export const fullName = () => fullNames.next().value;
 ```
-and in case you are using [typescript](https://www.graphql-mesh.com/docs/recipes/typescript) in `user-mocks.ts` file:
+and in case you are using [typescript](https://graphql-mesh.com/docs/recipes/typescript) in `user-mocks.ts` file:
 ```ts
 import { User } from './types/mesh';
 
@@ -270,7 +270,7 @@ module.exports = {
 
 
 
-> Learn more about GraphQL Tools Mocking; https://www.graphql-tools.com/docs/mocking
+> Learn more about GraphQL Tools Mocking https://graphql-tools.com/docs/mocking
 
 ## Codesandbox Example
 

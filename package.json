@@ -11,7 +11,7 @@
     "prebuild": "yarn generate-config-schema && yarn build:playground && yarn copy-playground",
     "transpile-ts": "tsc --project tsconfig.build.json",
     "build": "yarn transpile-ts && bob build",
-    "build:api-docs": "node scripts/build-api-docs.js",
+    "build:api-docs": "ts-node --compiler-options='{\"module\":\"commonjs\"}' scripts/build-api-docs",
     "build:playground": "cd packages/playground && yarn build",
     "copy-playground": "node scripts/generate-playground.js",
     "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
@@ -54,8 +54,9 @@
     "patch-package": "6.4.7",
     "prettier": "2.4.1",
     "ts-jest": "27.0.7",
-    "typedoc": "0.21.9",
-    "typedoc-plugin-markdown": "3.9.0",
+    "typedoc": "0.22.9",
+    "typedoc-plugin-markdown": "3.11.6",
+    "typedoc-plugin-rename-defaults": "0.4.0",
     "typescript": "4.5.2"
   },
   "husky": {
@@ -83,9 +84,6 @@
       "./examples/graphql-file-upload-example/frontend",
       "./website",
       "./packages/loaders/*"
-    ],
-    "nohoist": [
-      "@graphql-mesh/website/@docusaurus/*"
     ]
   },
   "resolutions": {

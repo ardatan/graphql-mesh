@@ -5,12 +5,12 @@ sidebar_label: SOAP
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79220083-0a1d3a00-7e5c-11ea-9ac5-855428121143.png)
 
-This handler allows you to consume [SOAP](https://www.soapui.org/) `WSDL` files and generate a remote executable schema for those services.
+This handler allows you to consume [SOAP](https://soapui.org) `WSDL` files and generate a remote executable schema for those services.
 
 To get started, install the handler library from NPM:
 
-```
-$ yarn add @graphql-mesh/soap
+```sh
+yarn add @graphql-mesh/soap
 ```
 
 Now, you can use it directly in your Mesh config file:

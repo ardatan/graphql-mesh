@@ -4,16 +4,13 @@ title: Live Queries
 sidebar_label: Live Queries
 ---
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/n1ru4l/graphql-live-query/main/assets/logo.svg" width="300" alt="GraphQL Live Query" />
-  <br/>
-</p>
+<img src="https://raw.githubusercontent.com/n1ru4l/graphql-live-query/main/assets/logo.svg" width="300" alt="GraphQL Live Query" style={{ margin: '0 auto' }} />
 
 GraphQL Live Query implementation from [Laurin Quast](https://github.com/n1ru4l) can be used in GraphQL Mesh with a few addition in the configuration.
 
 ### Basic Usage
 
-Let's say you have a `Query` root field that returns all `Todo` entities from your data source like below;
+Let's say you have a `Query` root field that returns all `Todo` entities from your data source like below.
 
 ```graphql
 query getTodos {
@@ -26,7 +23,7 @@ query getTodos {
 
 And you want to update this operation result automatically without manual refresh when `Mutation.addTodo` is called.
 
-The only thing you need is to add the following configuration to your existing configuration;
+The only thing you need is to add the following configuration to your existing configuration.
 
 ```yml
 additionalTypeDefs: |
@@ -37,7 +34,7 @@ liveQueryInvalidations:
         - Query.todos
 ```
 
-Then you can send a live query with `@live` directive;
+Then you can send a live query with `@live` directive.
 
 ```graphql
 query getTodos @live {
@@ -99,7 +96,7 @@ And in this code file;
 
 ```js
 module.exports = {
-    invalidateTodo: next => (root, args, context, info) => {
+    invalidateTodo: next => async (root, args, context, info) => {
         const result = await next(root, args, context, info);
         context.liveQueryStore.invalidate(`Todo:${args.id}`);
         return result;

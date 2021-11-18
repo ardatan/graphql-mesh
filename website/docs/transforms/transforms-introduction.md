@@ -82,7 +82,7 @@ Wrap is the default mode for schema manipulation transforms, because is safe and
   This might be not ideal, for example, when implementing custom resolvers, where you mght want to access several properties returned by your REST service in order to compute custom data; but instead you will only be able to access properties requested with the GraphQL query.
   If you don't want/can't opt into "bare" mode, this can be easily solved by explicitly declaring a `SelectionSet`, within your custom resolver, to list all properties required in order to compute your custom data.
 
-> NOTE: "wrap" is the only approach that works with data sources that already "speaks" GraphQL, or when you want to transform at all-sources (root) level, unless you're using [merger-bare](/docs/api/modules/merger-bare/). If you want to remove the possible runtime implications, consider either moving your transforms at the data source level, or opting into `merger-bare`; in order to take advantage of "bare" mode.
+> NOTE: "wrap" is the only approach that works with data sources that already "speaks" GraphQL, or when you want to transform at all-sources (root) level, unless you're using [merger-bare](/docs/api/modules/merger-bare). If you want to remove the possible runtime implications, consider either moving your transforms at the data source level, or opting into `merger-bare`; in order to take advantage of "bare" mode.
 
 Example:
 
@@ -145,7 +145,7 @@ Bare does provide performance improvements over "wrap", however it has a main re
   The suggestion in this case is to apply "wrap" transforms to your GraphQL data sources and "bare" transforms to sources "translated" into GraphQL.
 
 - You are applying transforms at all-sources (root) level
-  This means that "bare" would receive a composed GraphQL schema, rather than a bare and "translated" schema. If you do want to use "bare" at the root level, your only choice is to opt into [merger-bare](/docs/api/modules/merger-bare/), which lets transforms access the bare schemas; because it merges sources without wrapping them. This works when you don't have (or you take care of) conflicts between your sources, and you are not applying root-level transforms to data sources that already "speaks" GraphQL.
+  This means that "bare" would receive a composed GraphQL schema, rather than a bare and "translated" schema. If you do want to use "bare" at the root level, your only choice is to opt into [merger-bare](/docs/api/modules/merger-bare), which lets transforms access the bare schemas; because it merges sources without wrapping them. This works when you don't have (or you take care of) conflicts between your sources, and you are not applying root-level transforms to data sources that already "speaks" GraphQL.
 
 - You are mixing transforms that supports "bare" with transforms that don't
   Again, "bare" always needs to access the bare schema. If you define other transforms that don't support "bare" mode, you will most likely have troubles, since those transforms will apply a wrapping layer which will provide "bare" transforms the wrapping layer, as opposed to the original bare schema.

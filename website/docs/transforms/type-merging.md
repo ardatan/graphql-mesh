@@ -4,7 +4,7 @@ title: Type Merging Transform
 sidebar_label: Type Merging
 ---
 
-This transform helps you to use [Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) approach of Schema Stitching in your GraphQL Mesh sources.
+This transform helps you to use [Type Merging](https://graphql-tools.com/docs/stitch-type-merging) approach of Schema Stitching in your GraphQL Mesh sources.
 
 > If you don't know when to use `Type Merging`, please check
 [Merging types from different sources (using Type Merging)](/docs/recipes/multiple-apis#merging-types-from-different-sources-using-type-merging) chapter first.

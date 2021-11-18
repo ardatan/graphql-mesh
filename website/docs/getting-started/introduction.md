@@ -12,6 +12,7 @@ The goal of GraphQL Mesh is to simplify access to your data-sources, and use Gra
 You can use one of the handlers that we wrote (GraphQL, gRPC, Swagger, OpenAPI, SOAP, Postgres and more), or write your own handler to access your data.
 
 ### How it works?
+
 1. Collect API schema specifications from services
 2. Create a runtime instance of fully-typed SDK for the services.
 3. Convert API specs to GraphQL schema
@@ -19,12 +20,13 @@ You can use one of the handlers that we wrote (GraphQL, gRPC, Swagger, OpenAPI, 
 5. Creates fully-typed, single schema and GraphQL SDK to fetch data from your services.
 
 ### How it can be used?
+
 - [As an SDK](/docs/recipes/as-sdk)
 - [As a Gateway](/docs/recipes/as-gateway)
 
 <img
   width="60%"
-  style={{textAlign: 'center'}}
+  style={{ margin: '0 auto' }}
   alt="GraphQL Mesh"
-  src="/img/mesh-example.png"
+  src="/static/img/mesh-example.png"
 />

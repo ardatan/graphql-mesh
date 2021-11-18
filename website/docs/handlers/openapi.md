@@ -5,14 +5,14 @@ sidebar_label: 'OpenAPI / Swagger'
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218686-7ba7b900-7e59-11ea-8a5e-676a83b9f86e.png)
 
-This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io/) schemas. Based on [OpenAPI-to-GraphQL](https://developer.ibm.com/open/projects/openapi-to-graphql/).
+This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io) schemas. Based on [OpenAPI-to-GraphQL](https://developer.ibm.com/open/projects/openapi-to-graphql).
 
 You can import it using remote/local `.json` or `.yaml`.
 
 To get started, install the handler library from NPM:
 
-```
-$ yarn add @graphql-mesh/openapi
+```sh
+yarn add @graphql-mesh/openapi
 ```
 
 Now, you can use it directly in your Mesh config file:
@@ -26,7 +26,7 @@ sources:
 ```
 
 ## Overriding default Query/Mutation operations
-By default OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option you can manually override this process.
+By default, OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option you can manually override this process.
 In order to switch between Query and Mutation operations, and vice versa, you need to define a rule per override, consisting of: OAS title, path of the operation, method of the operation and finally the destination type (e.g. Query or Mutation).
 See example below:
 
@@ -112,7 +112,7 @@ Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Co
 ```js
 const fetch = require('node-fetch')
 
-module.exports = function (url, args, context) {
+module.exports = (url, args, context) => {
   // Set Authorization header dynamically to context value, or input cookie, or input header
   args.headers['authorization'] = context.authorization || args.headers['authorization-cookie'] || args.headers['authorization-header'];
   // Clean up headers forwarded to the Rest API
@@ -151,7 +151,7 @@ const oneYear = 365 * 24 * 3600
 
 const resolvers = {
   Mutation: {
-    login: async (root, args, context, info) => {
+    async login(root, args, context, info) {
       // Call the Rest API's login operation
       const result = await context.Rest.Mutation.accountLogin({
         root,
@@ -167,7 +167,7 @@ const resolvers = {
 
       return result
     },
-    logout: async (_root, _args, { res }) => {
+    logout(root, args, { res }) {
       // use old date to unset cookie
       res.set('Set-Cookie', `accessToken=logout; Path=/; Secure; HttpOnly; Expires=Thu, 1 Jan 1970 00:00:00 GMT;`)
 

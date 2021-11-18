@@ -8,7 +8,7 @@ By default, GraphQL Mesh provides you an HTTP server. You can see the details in
 
 ## How to do?
 
-The following example shows how to replace GraphQL Mesh's default server implementation with [Apollo Server](https://www.apollographql.com/docs/apollo-server/);
+The following example shows how to replace GraphQL Mesh's default server implementation with [Apollo Server](https://apollographql.com/docs/apollo-server).
 
 `myServerHandler.js`
 
@@ -34,7 +34,7 @@ module.exports = async ({ getBuiltMesh, documents, logger }) => {
 };
 ```
 
-Then add the following line to your configuration file;
+Then add the following line to your configuration file.
 
 ```yml
 serve:
