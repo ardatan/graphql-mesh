@@ -1068,6 +1068,10 @@ export interface Transform {
    * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
    */
   filterSchema?: FilterSchemaTransform | any;
+  /**
+   * Transformer to hoist GraphQL fields
+   */
+  hoist: HoistFieldTransformObject[];
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -1202,6 +1206,35 @@ export interface FilterSchemaTransform {
    * Array of filter rules
    */
   filters: string[];
+}
+export interface HoistFieldTransformObject {
+  /**
+   * Type name that defines where field should be hoisted to
+   */
+  typeName: string;
+  /**
+   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldPathConfigObject)
+   */
+  pathConfig: (string | HoistFieldPathConfigObject)[];
+  /**
+   * Name the hoisted field should have when hoisted to the type specified in typeName
+   */
+  newFieldName: string;
+  alias?: string;
+  /**
+   * Defines if args in path are filtered (default = false)
+   */
+  filterArgsInPath?: boolean;
+}
+export interface HoistFieldPathConfigObject {
+  /**
+   * Field name
+   */
+  fieldName: string;
+  /**
+   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
+   */
+  filterArgs: string[];
 }
 /**
  * Mock configuration for your source

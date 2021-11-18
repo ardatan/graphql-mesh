@@ -1,0 +1,36 @@
+{
+  "name": "@graphql-mesh/transform-hoist-field",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.49.0",
+    "@graphql-mesh/utils": "0.16.2",
+    "@graphql-tools/delegate": "8.2.1",
+    "@graphql-tools/wrap": "8.1.0",
+    "@graphql-tools/utils": "8.2.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}
