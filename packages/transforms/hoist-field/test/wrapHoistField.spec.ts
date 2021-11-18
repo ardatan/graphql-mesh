@@ -4,7 +4,7 @@ import { wrapSchema } from '@graphql-tools/wrap';
 import { buildSchema, GraphQLField, GraphQLObjectType, printSchema } from 'graphql';
 import { PubSub } from 'graphql-subscriptions';
 
-import HoistFieldTransform from './../src';
+import WrapHoistField from '../src/wrapHoistField';
 
 describe('hoist', () => {
   const schema = buildSchema(/* GraphQL */ `
@@ -35,16 +35,19 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new HoistFieldTransform({
+        new WrapHoistField({
           apiName: '',
           syncImportFn: require,
-          config: [
-            {
-              typeName: 'Query',
-              pathConfig: ['users', 'results'],
-              newFieldName: 'users',
-            },
-          ],
+          config: {
+            mode: 'wrap',
+            fields: [
+              {
+                typeName: 'Query',
+                pathConfig: ['users', 'results'],
+                newFieldName: 'users',
+              },
+            ],
+          },
           cache,
           pubsub,
           baseDir,
@@ -65,22 +68,25 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new HoistFieldTransform({
+        new WrapHoistField({
           apiName: '',
           syncImportFn: require,
-          config: [
-            {
-              typeName: 'Query',
-              pathConfig: [
-                {
-                  fieldName: 'users',
-                  filterArgs: [],
-                },
-                'results',
-              ],
-              newFieldName: 'users',
-            },
-          ],
+          config: {
+            mode: 'wrap',
+            fields: [
+              {
+                typeName: 'Query',
+                pathConfig: [
+                  {
+                    fieldName: 'users',
+                    filterArgs: [],
+                  },
+                  'results',
+                ],
+                newFieldName: 'users',
+              },
+            ],
+          },
           cache,
           pubsub,
           baseDir,
@@ -101,17 +107,20 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new HoistFieldTransform({
+        new WrapHoistField({
           apiName: '',
           syncImportFn: require,
-          config: [
-            {
-              typeName: 'Query',
-              pathConfig: ['users', 'results'],
-              newFieldName: 'users',
-              filterArgsInPath: true,
-            },
-          ],
+          config: {
+            mode: 'wrap',
+            fields: [
+              {
+                typeName: 'Query',
+                pathConfig: ['users', 'results'],
+                newFieldName: 'users',
+                filterArgsInPath: true,
+              },
+            ],
+          },
           cache,
           pubsub,
           baseDir,
@@ -135,22 +144,25 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new HoistFieldTransform({
+        new WrapHoistField({
           apiName: '',
           syncImportFn: require,
-          config: [
-            {
-              typeName: 'Query',
-              pathConfig: [
-                {
-                  fieldName: 'users',
-                  filterArgs: ['limit'],
-                },
-                'results',
-              ],
-              newFieldName: 'users',
-            },
-          ],
+          config: {
+            mode: 'wrap',
+            fields: [
+              {
+                typeName: 'Query',
+                pathConfig: [
+                  {
+                    fieldName: 'users',
+                    filterArgs: ['limit'],
+                  },
+                  'results',
+                ],
+                newFieldName: 'users',
+              },
+            ],
+          },
           cache,
           pubsub,
           baseDir,
@@ -175,23 +187,26 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new HoistFieldTransform({
+        new WrapHoistField({
           apiName: '',
           syncImportFn: require,
-          config: [
-            {
-              typeName: 'Query',
-              pathConfig: [
-                {
-                  fieldName: 'users',
-                  filterArgs: ['limit'],
-                },
-                'results',
-              ],
-              newFieldName: 'users',
-              filterArgsInPath: true,
-            },
-          ],
+          config: {
+            mode: 'wrap',
+            fields: [
+              {
+                typeName: 'Query',
+                pathConfig: [
+                  {
+                    fieldName: 'users',
+                    filterArgs: ['limit'],
+                  },
+                  'results',
+                ],
+                newFieldName: 'users',
+                filterArgsInPath: true,
+              },
+            ],
+          },
           cache,
           pubsub,
           baseDir,

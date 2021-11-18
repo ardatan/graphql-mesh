@@ -1068,10 +1068,7 @@ export interface Transform {
    * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
    */
   filterSchema?: FilterSchemaTransform | any;
-  /**
-   * Transformer to hoist GraphQL fields
-   */
-  hoist: HoistFieldTransformObject[];
+  hoistField?: HoistFieldTransformConfig;
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -1084,13 +1081,13 @@ export interface Transform {
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
   rename?: RenameTransform | any;
-  replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
+  replaceField?: ReplaceFieldTransformConfig;
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1207,15 +1204,28 @@ export interface FilterSchemaTransform {
    */
   filters: string[];
 }
-export interface HoistFieldTransformObject {
+/**
+ * Transformer to hoist GraphQL fields
+ */
+export interface HoistFieldTransformConfig {
+  /**
+   * Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
+   * Array of hoist field configs
+   */
+  fields: HoistFieldTransformFieldConfigObject[];
+}
+export interface HoistFieldTransformFieldConfigObject {
   /**
    * Type name that defines where field should be hoisted to
    */
   typeName: string;
   /**
-   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldPathConfigObject)
+   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
    */
-  pathConfig: (string | HoistFieldPathConfigObject)[];
+  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
   /**
    * Name the hoisted field should have when hoisted to the type specified in typeName
    */
@@ -1226,7 +1236,7 @@ export interface HoistFieldTransformObject {
    */
   filterArgsInPath?: boolean;
 }
-export interface HoistFieldPathConfigObject {
+export interface HoistFieldTransformFieldPathConfigObject {
   /**
    * Field name
    */
@@ -1495,37 +1505,6 @@ export interface RenameConfig1 {
   field?: string;
   argument?: string;
 }
-/**
- * Transformer to replace GraphQL field with partial of full config from a different field
- */
-export interface ReplaceFieldTransformConfig {
-  /**
-   * Additional type definition to used to replace field types
-   */
-  typeDefs?: any;
-  /**
-   * Array of rules to replace fields
-   */
-  replacements: ReplaceFieldTransformObject[];
-}
-export interface ReplaceFieldTransformObject {
-  from: ReplaceFieldConfig;
-  to: ReplaceFieldConfig1;
-  /**
-   * Allowed values: config, hoistValue
-   */
-  scope?: 'config' | 'hoistValue';
-  composer?: any;
-  name?: string;
-}
-export interface ReplaceFieldConfig {
-  type: string;
-  field: string;
-}
-export interface ReplaceFieldConfig1 {
-  type: string;
-  field: string;
-}
 export interface ResolversCompositionTransform {
   /**
    * Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
@@ -1654,6 +1633,37 @@ export interface MergedRootFieldConfig {
    *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
    */
   argsExpr?: string;
+}
+/**
+ * Transformer to replace GraphQL field with partial of full config from a different field
+ */
+export interface ReplaceFieldTransformConfig {
+  /**
+   * Additional type definition to used to replace field types
+   */
+  typeDefs?: any;
+  /**
+   * Array of rules to replace fields
+   */
+  replacements: ReplaceFieldTransformObject[];
+}
+export interface ReplaceFieldTransformObject {
+  from: ReplaceFieldConfig;
+  to: ReplaceFieldConfig1;
+  /**
+   * Allowed values: config, hoistValue
+   */
+  scope?: 'config' | 'hoistValue';
+  composer?: any;
+  name?: string;
+}
+export interface ReplaceFieldConfig {
+  type: string;
+  field: string;
+}
+export interface ReplaceFieldConfig1 {
+  type: string;
+  field: string;
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;

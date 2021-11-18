@@ -2,10 +2,21 @@ extend type Transform {
   """
   Transformer to hoist GraphQL fields
   """
-  hoist: [HoistFieldTransformObject!]!
+  hoistField: HoistFieldTransformConfig
 }
 
-type HoistFieldTransformObject @md {
+type HoistFieldTransformConfig @md {
+  """
+  Specify to apply filter-schema transforms to bare schema or by wrapping original schema
+  """
+  mode: FilterSchemaTransformMode
+  """
+  Array of hoist field configs
+  """
+  fields: [HoistFieldTransformFieldConfigObject!]!
+}
+
+type HoistFieldTransformFieldConfigObject @md {
   """
   Type name that defines where field should be hoisted to
   """
@@ -13,7 +24,7 @@ type HoistFieldTransformObject @md {
   """
   Array of fieldsNames to reach the field to be hoisted
   """
-  pathConfig: [HoistFieldPathConfig!]!
+  pathConfig: [HoistFieldTransformFieldPathConfig!]!
   """
   Name the hoisted field should have when hoisted to the type specified in typeName
   """
@@ -26,9 +37,9 @@ type HoistFieldTransformObject @md {
   filterArgsInPath: Boolean
 }
 
-union HoistFieldPathConfig = String | HoistFieldPathConfigObject
+union HoistFieldTransformFieldPathConfig = String | HoistFieldTransformFieldPathConfigObject
 
-type HoistFieldPathConfigObject @md {
+type HoistFieldTransformFieldPathConfigObject @md {
   """
   Field name
   """
