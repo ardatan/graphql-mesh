@@ -7,7 +7,7 @@ extend type Transform {
 
 type HoistFieldTransformConfig @md {
   """
-  Specify to apply filter-schema transforms to bare schema or by wrapping original schema
+  Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema
   """
   mode: FilterSchemaTransformMode
   """
