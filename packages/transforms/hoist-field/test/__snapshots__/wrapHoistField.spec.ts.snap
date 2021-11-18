@@ -12,8 +12,7 @@ type UserSearchResult {
 type User {
   id: ID!
   name: String!
-}
-"
+}"
 `;
 
 exports[`hoist should hoist field and filter individual args via pathConfig 1`] = `
@@ -28,8 +27,7 @@ type UserSearchResult {
 type User {
   id: ID!
   name: String!
-}
-"
+}"
 `;
 
 exports[`hoist should hoist field and filter individual args via pathConfig independent of global flag 1`] = `
@@ -44,8 +42,7 @@ type UserSearchResult {
 type User {
   id: ID!
   name: String!
-}
-"
+}"
 `;
 
 exports[`hoist should hoist field with mixed pathConfig array 1`] = `
@@ -60,8 +57,7 @@ type UserSearchResult {
 type User {
   id: ID!
   name: String!
-}
-"
+}"
 `;
 
 exports[`hoist should hoist field with string pathConfig array 1`] = `
@@ -76,6 +72,5 @@ type UserSearchResult {
 type User {
   id: ID!
   name: String!
-}
-"
+}"
 `;
