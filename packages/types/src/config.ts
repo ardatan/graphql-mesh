@@ -1209,7 +1209,7 @@ export interface FilterSchemaTransform {
  */
 export interface HoistFieldTransformConfig {
   /**
-   * Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   * Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
    */
   mode?: 'bare' | 'wrap';
   /**

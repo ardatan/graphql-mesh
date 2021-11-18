@@ -2497,7 +2497,7 @@
         "mode": {
           "type": "string",
           "enum": ["bare", "wrap"],
-          "description": "Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+          "description": "Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
         "fields": {
           "type": "array",
