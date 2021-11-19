@@ -62,6 +62,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     root = obj as any,
     fetch = crossUndiciFetch,
     importFn = defaultImportFn,
+    schemaHeaders,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
@@ -69,6 +70,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     root?: TRoot;
     fetch?: WindowOrWorkerGlobalScope['fetch'];
     importFn?: (moduleId: string) => Promise<any>;
+    schemaHeaders?: Record<string, string>;
   } = {}
 ): Promise<T> {
   if (typeof obj === 'object') {
@@ -84,7 +86,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
             externalFile = isURL(externalFilePath)
-              ? await fetch(externalFilePath).then(res => res.json())
+              ? await fetch(externalFilePath, {
+                  headers: schemaHeaders,
+                }).then(res => res.json())
               : await importFn(externalFilePath);
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);

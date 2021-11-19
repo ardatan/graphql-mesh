@@ -26,9 +26,11 @@ const anySchema: JSONSchemaObject = {
 export async function getReferencedJSONSchemaFromOperations({
   operations,
   cwd,
+  schemaHeaders,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
+  schemaHeaders?: { [key: string]: string };
 }) {
   const finalJsonSchema: JSONSchema = {
     type: 'object',
@@ -53,6 +55,7 @@ export async function getReferencedJSONSchemaFromOperations({
     } else if (operationConfig.responseSample) {
       const sample = await readFileOrUrl(operationConfig.responseSample, {
         cwd,
+        headers: schemaHeaders,
       }).catch((e: any) => {
         throw new Error(`responseSample - ${e.message}`);
       });
@@ -102,6 +105,7 @@ export async function getReferencedJSONSchemaFromOperations({
     } else if ('requestSample' in operationConfig) {
       const sample = await readFileOrUrl(operationConfig.requestSample, {
         cwd,
+        headers: schemaHeaders,
       }).catch((e: any) => {
         throw new Error(`requestSample:${operationConfig.requestSample} cannot be read - ${e.message}`);
       });
