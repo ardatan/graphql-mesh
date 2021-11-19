@@ -85,7 +85,7 @@ export async function healJSONSchema(schema: JSONSchema) {
           if (reservedTypeNames.includes(pathBasedName)) {
             pathBasedName += '_';
           }
-          subSchema.title = subSchema.title || pathBasedName || 'Root';
+          subSchema.title = subSchema.title || pathBasedName;
         }
         // Try to find the type
         if (!subSchema.type) {

@@ -62,7 +62,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     root = obj as any,
     fetch = crossUndiciFetch,
     importFn = defaultImportFn,
-    schemaHeaders,
+    headers,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
@@ -70,7 +70,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     root?: TRoot;
     fetch?: WindowOrWorkerGlobalScope['fetch'];
     importFn?: (moduleId: string) => Promise<any>;
-    schemaHeaders?: Record<string, string>;
+    headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
   if (typeof obj === 'object') {
@@ -87,7 +87,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           if (!externalFile) {
             externalFile = isURL(externalFilePath)
               ? await fetch(externalFilePath, {
-                  headers: schemaHeaders,
+                  headers,
                 }).then(res => res.json())
               : await importFn(externalFilePath);
             externalFile = await healJSONSchema(externalFile);
@@ -126,6 +126,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
                 },
               }),
               fetch,
+              headers,
             }
           );
         } else {
@@ -137,6 +138,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             refMap,
             root,
             fetch,
+            headers,
           });
         }
       }
@@ -144,7 +146,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
       await Promise.all(
         Object.entries(obj).map(async ([key, val]) => {
           if (typeof val === 'object') {
-            obj[key] = await dereferenceObject<any>(val, { cwd, externalFileCache, refMap, root, fetch });
+            obj[key] = await dereferenceObject<any>(val, { cwd, externalFileCache, refMap, root, fetch, headers });
           }
         })
       );

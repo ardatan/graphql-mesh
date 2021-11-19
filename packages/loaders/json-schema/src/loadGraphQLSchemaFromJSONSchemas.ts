@@ -37,12 +37,13 @@ export async function getDereferencedJSONSchemaFromOperations({
   const referencedJSONSchema = await getReferencedJSONSchemaFromOperations({
     operations,
     cwd,
+    schemaHeaders,
   });
   logger.debug(() => `Dereferencing JSON Schema to resolve all $refs`);
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {
     cwd,
     fetch,
-    schemaHeaders,
+    headers: schemaHeaders,
   });
   logger.debug(() => `Healing JSON Schema`);
   const healedSchema = await healJSONSchema(fullyDeferencedSchema);
