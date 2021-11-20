@@ -15,6 +15,8 @@ export function computeCacheKey(options: {
   }
 
   const templateData = {
+    typeName: options.info.parentType.name,
+    fieldName: options.info.fieldName,
     args: options.args,
     argsHash,
     fieldNamesHash,
