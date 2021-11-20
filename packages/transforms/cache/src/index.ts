@@ -71,6 +71,7 @@ export default class CacheTransform implements MeshTransform {
           ttl: cacheItem.invalidate?.ttl,
         });
         pubsub.publish(pubsubTopic, result);
+        cache.delete(shouldWaitCacheKey);
         return result;
       };
     }
