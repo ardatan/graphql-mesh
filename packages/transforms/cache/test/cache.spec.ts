@@ -596,7 +596,7 @@ describe('cache', () => {
         expect(result.data.foo2).toBe(result.data.foo1);
       });
 
-      it('should wait for other cache transform to finish writing the entry (delayed)', async () => {
+      it('should wait for other cache transform to finish writing the entry when delay >= safe threshold)', async () => {
         let callCount = 0;
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
@@ -650,7 +650,7 @@ describe('cache', () => {
         expect(callCount).toBe(1);
       });
 
-      it('should fail to wait for other cache transform to finish writing the entry (no-delay)', async () => {
+      it('should fail to wait for other cache transform to finish writing the entry when delay < safe threshold', async () => {
         let callCount = 0;
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
