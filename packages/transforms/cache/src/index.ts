@@ -7,6 +7,11 @@ import { GraphQLSchema } from 'graphql';
 
 export default class CacheTransform implements MeshTransform {
   noWrap = true;
+
+  private readonly shouldWaitLocal: {
+    [cacheKey: string]: true;
+  } = {};
+
   constructor(private options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]>) {}
   transformSchema(schema: GraphQLSchema) {
     const { config, pubsub, cache } = this.options;
@@ -34,8 +39,6 @@ export default class CacheTransform implements MeshTransform {
         });
       }
 
-      const transformId = Date.now();
-
       compositions[cacheItem.field] = originalResolver => async (root, args, context, info) => {
         const cacheKey = computeCacheKey({
           keyStr: cacheItem.cacheKey,
@@ -52,27 +55,47 @@ export default class CacheTransform implements MeshTransform {
         const shouldWaitCacheKey = `${cacheKey}_shouldWait`;
         const pubsubTopic = `${cacheKey}_resolved`;
 
-        const shouldWait = await cache.get(shouldWaitCacheKey);
-
-        if (shouldWait) {
-          return new Promise(resolve => {
-            const subId$ = pubsub.subscribe(pubsubTopic, async data => {
-              if (data) {
-                subId$.then(subId => pubsub.unsubscribe(subId));
-                resolve(data);
-              }
-            });
-          });
+        const shouldWaitLocal = this.shouldWaitLocal[shouldWaitCacheKey];
+        if (shouldWaitLocal) {
+          return this.waitAndReturn(pubsubTopic);
         }
 
-        cache.set(shouldWaitCacheKey, transformId);
-        const result = await originalResolver(root, args, context, info);
-        cache.set(cacheKey, result, {
-          ttl: cacheItem.invalidate?.ttl,
-        });
-        pubsub.publish(pubsubTopic, result);
-        cache.delete(shouldWaitCacheKey);
-        return result;
+        const shouldWaitGlobal = await cache.get(shouldWaitCacheKey);
+        if (shouldWaitGlobal) {
+          return this.waitAndReturn(pubsubTopic);
+        }
+
+        this.createShouldWait(shouldWaitCacheKey);
+
+        try {
+          const result = await originalResolver(root, args, context, info);
+          await cache.set(cacheKey, result, {
+            ttl: cacheItem.invalidate?.ttl,
+          });
+
+          // do not await setting the cache here, otherwise we would delay returnig the result unnecessarily
+          // instead await as part of shouldWait cleanup
+          const setCachePromise = this.options.cache.set(cacheKey, result, {
+            ttl: cacheItem.invalidate?.ttl,
+          });
+
+          // do not wait for cleanup to complete
+          this.cleanupShouldWait({
+            shouldWaitCacheKey,
+            pubsubTopic,
+            data: { result },
+            setCachePromise,
+          });
+
+          return result;
+        } catch (error) {
+          this.cleanupShouldWait({
+            shouldWaitCacheKey,
+            pubsubTopic,
+            data: { error },
+          });
+          throw error;
+        }
       };
     }
 
@@ -81,6 +104,52 @@ export default class CacheTransform implements MeshTransform {
       schema,
       resolvers: wrappedResolvers,
       updateResolversInPlace: true,
+    });
+  }
+
+  private createShouldWait(shouldWaitCacheKey: string) {
+    this.options.cache.set(shouldWaitCacheKey, true);
+    this.shouldWaitLocal[shouldWaitCacheKey] = true;
+  }
+
+  private async cleanupShouldWait({
+    shouldWaitCacheKey,
+    pubsubTopic,
+    data,
+    setCachePromise,
+  }: {
+    shouldWaitCacheKey: string;
+    pubsubTopic: string;
+    data: { result: unknown } | { error: unknown };
+    setCachePromise?: Promise<void>;
+  }) {
+    if (setCachePromise) {
+      // we need to wait for cache to be filled before removing the shouldWait keys
+      await setCachePromise;
+    }
+
+    // the below order is deliberate and important
+    // we need to delete the shouldWait keys first
+    // this ensures that no new subscriptions for topic are created after publish is called
+    // since the cache is async we need to await the delete
+    await this.options.cache.delete(shouldWaitCacheKey);
+    delete this.shouldWaitLocal[shouldWaitCacheKey];
+    this.options.pubsub.publish(pubsubTopic, data);
+  }
+
+  private waitAndReturn(pubsubTopic: string) {
+    return new Promise((resolve, reject) => {
+      const subId$ = this.options.pubsub.subscribe(pubsubTopic, async ({ result, error }) => {
+        subId$.then(subId => this.options.pubsub.unsubscribe(subId));
+
+        if (error) {
+          reject(error);
+        }
+
+        if (result) {
+          resolve(result);
+        }
+      });
     });
   }
 }
