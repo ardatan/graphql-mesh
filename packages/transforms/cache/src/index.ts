@@ -55,17 +55,12 @@ export default class CacheTransform implements MeshTransform {
         const shouldWaitCacheKey = `${cacheKey}_shouldWait`;
         const pubsubTopic = `${cacheKey}_resolved`;
 
-        const shouldWaitLocal = this.shouldWaitLocal[shouldWaitCacheKey];
-        if (shouldWaitLocal) {
+        const shouldWait = await this.shouldWait(shouldWaitCacheKey);
+        if (shouldWait) {
           return this.waitAndReturn(pubsubTopic);
         }
 
-        const shouldWaitGlobal = await cache.get(shouldWaitCacheKey);
-        if (shouldWaitGlobal) {
-          return this.waitAndReturn(pubsubTopic);
-        }
-
-        this.createShouldWait(shouldWaitCacheKey);
+        this.setShouldWait(shouldWaitCacheKey);
 
         try {
           const result = await originalResolver(root, args, context, info);
@@ -107,7 +102,24 @@ export default class CacheTransform implements MeshTransform {
     });
   }
 
-  private createShouldWait(shouldWaitCacheKey: string) {
+  private async shouldWait(shouldWaitCacheKey: string) {
+    // this is to prevent a call to a the cache (which might be distributed)
+    // when the should wait was set from current instance
+    const shouldWaitLocal = this.shouldWaitLocal[shouldWaitCacheKey];
+    if (shouldWaitLocal) {
+      return true;
+    }
+
+    const shouldWaitGlobal = await this.options.cache.get(shouldWaitCacheKey);
+    if (shouldWaitGlobal) {
+      return true;
+    }
+
+    // requried to be called after async check to eliminate local race condition
+    return this.shouldWaitLocal[shouldWaitCacheKey];
+  }
+
+  private setShouldWait(shouldWaitCacheKey: string) {
     this.options.cache.set(shouldWaitCacheKey, true);
     this.shouldWaitLocal[shouldWaitCacheKey] = true;
   }
@@ -124,7 +136,7 @@ export default class CacheTransform implements MeshTransform {
     setCachePromise?: Promise<void>;
   }) {
     if (setCachePromise) {
-      // we need to wait for cache to be filled before removing the shouldWait keys
+      // we need to wait for cache to be filled before removing the shouldWait
       await setCachePromise;
     }
 
