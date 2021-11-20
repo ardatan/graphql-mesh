@@ -1,5 +1,5 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { buildSchema, GraphQLField, GraphQLObjectType, printSchema } from 'graphql';
 import { PubSub } from 'graphql-subscriptions';
@@ -7,6 +7,7 @@ import { PubSub } from 'graphql-subscriptions';
 import WrapHoistField from '../src/wrapHoistField';
 
 describe('hoist', () => {
+  const importFn: ImportFn = m => import(m);
   const schema = buildSchema(/* GraphQL */ `
     type Query {
       users(limit: Int!, page: Int): UserSearchResult
@@ -36,8 +37,6 @@ describe('hoist', () => {
       schema,
       transforms: [
         new WrapHoistField({
-          apiName: '',
-          syncImportFn: require,
           config: {
             mode: 'wrap',
             fields: [
@@ -48,9 +47,11 @@ describe('hoist', () => {
               },
             ],
           },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          importFn,
         }),
       ],
     });
@@ -69,8 +70,6 @@ describe('hoist', () => {
       schema,
       transforms: [
         new WrapHoistField({
-          apiName: '',
-          syncImportFn: require,
           config: {
             mode: 'wrap',
             fields: [
@@ -87,9 +86,11 @@ describe('hoist', () => {
               },
             ],
           },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          importFn,
         }),
       ],
     });
@@ -108,8 +109,6 @@ describe('hoist', () => {
       schema,
       transforms: [
         new WrapHoistField({
-          apiName: '',
-          syncImportFn: require,
           config: {
             mode: 'wrap',
             fields: [
@@ -121,9 +120,11 @@ describe('hoist', () => {
               },
             ],
           },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          importFn,
         }),
       ],
     });
@@ -145,8 +146,6 @@ describe('hoist', () => {
       schema,
       transforms: [
         new WrapHoistField({
-          apiName: '',
-          syncImportFn: require,
           config: {
             mode: 'wrap',
             fields: [
@@ -163,9 +162,11 @@ describe('hoist', () => {
               },
             ],
           },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          importFn,
         }),
       ],
     });
@@ -188,8 +189,6 @@ describe('hoist', () => {
       schema,
       transforms: [
         new WrapHoistField({
-          apiName: '',
-          syncImportFn: require,
           config: {
             mode: 'wrap',
             fields: [
@@ -207,9 +206,11 @@ describe('hoist', () => {
               },
             ],
           },
+          apiName: '',
           cache,
           pubsub,
           baseDir,
+          importFn,
         }),
       ],
     });
