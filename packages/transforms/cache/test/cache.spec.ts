@@ -550,6 +550,7 @@ describe('cache', () => {
         expect(repeat2.user.friend.id).toBe('3');
       });
     });
+
     describe('Race condition', () => {
       it('should wait for local cache transform to finish writing the entry', async () => {
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
@@ -595,7 +596,8 @@ describe('cache', () => {
         expect(result.data.foo2).toBe(result.data.foo1);
       });
 
-      it('should wait for distributed cache transform to finish writing the entry', async () => {
+      it('should wait for other cache transform to finish writing the entry (delayed)', async () => {
+        let callCount = 0;
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
           syncImportFn,
@@ -609,8 +611,6 @@ describe('cache', () => {
           pubsub,
           baseDir,
         };
-
-        let callCount = 0;
         const schema = makeExecutableSchema({
           typeDefs: /* GraphQL */ `
             type Query {
@@ -619,35 +619,38 @@ describe('cache', () => {
           `,
           resolvers: {
             Query: {
-              foo: () => new Promise(resolve => setTimeout(() => resolve((callCount++).toString()), 300)),
+              foo: async () => {
+                callCount++;
+                await new Promise(resolve => setTimeout(resolve, 300));
+                return 'FOO';
+              },
             },
           },
         });
-        const transform = new CacheTransform(options);
-        const transformedSchema = transform.transformSchema(schema);
+        const transform1 = new CacheTransform(options);
+        const transformedSchema1 = transform1.transformSchema(cloneSchema(schema));
+        const transform2 = new CacheTransform(options);
+        const transformedSchema2 = transform2.transformSchema(cloneSchema(schema));
         const query = /* GraphQL */ `
           {
-            foo1: foo
-            foo2: foo
+            foo
           }
         `;
 
-        const cacheSet = cache.set.bind(cache);
-        jest.spyOn(cache, 'set').mockImplementation(async (key, value, options) => {
-          await wait(0); // emulate async IO, duration doesn't matter
-
-          return cacheSet(key, value, options);
+        await execute({
+          schema: transformedSchema1,
+          document: parse(query),
         });
-
-        const result = await execute({
-          schema: transformedSchema,
+        await wait(0);
+        await execute({
+          schema: transformedSchema2,
           document: parse(query),
         });
 
-        expect(result.data.foo2).toBe(result.data.foo1);
+        expect(callCount).toBe(1);
       });
 
-      it('should wait for other cache transform to finish writing the entry', async () => {
+      it('should fail to wait for other cache transform to finish writing the entry (no-delay)', async () => {
         let callCount = 0;
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
@@ -697,7 +700,7 @@ describe('cache', () => {
             document: parse(query),
           }),
         ]);
-        expect(callCount).toBe(1);
+        expect(callCount).toBe(2);
       });
     });
   });
