@@ -20,3 +20,17 @@ article {
 #__next {
   font-family: TGCFont, sans-serif;
 }
+
+
+aside {
+  position: static !important;
+}
+
+code {
+  margin-top: 15px !important;
+}
+
+.chakra-text a {
+  font-weight: 700;
+  color: #1bcbe2;
+}

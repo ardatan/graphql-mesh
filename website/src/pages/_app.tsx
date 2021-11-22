@@ -64,7 +64,7 @@ const AppContent: FC<AppProps> = appProps => {
         activeLink={router.asPath}
         product={{
           title: 'GraphQL Mesh',
-          description: '',
+          description: 'Query anything, run anywhere.',
           image: {
             src: '/assets/subheader-logo.svg',
             alt: 'GraphQL Mesh',
