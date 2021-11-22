@@ -36,7 +36,7 @@ export default function Index() {
           href: '/docs/getting-started/introduction',
           children: 'View Docs',
           title: 'Get started with GraphQL Mesh',
-          onClick: e => handlePushRoute('/docs', e),
+          onClick: e => handlePushRoute('/docs/getting-started/introduction', e),
         }}
         version={<NPMBadge name="@graphql-mesh/cli" />}
         colors={['#000', '#1cc8ee']}
