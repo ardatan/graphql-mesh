@@ -1,4 +1,4 @@
-[![Mesh GIF](./website/static/img/twitter_1200X345.gif)](https://graphql-mesh.com)
+[![Mesh GIF](./website/public/static/img/twitter_1200X345.gif)](https://graphql-mesh.com)
 
 [![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcli)
 ![CI](https://github.com/Urigo/graphql-mesh/workflows/CI/badge.svg)
