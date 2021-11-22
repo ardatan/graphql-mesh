@@ -25,7 +25,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.56.0",
     "@graphql-mesh/utils": "0.22.0",
-    "date-fns": "2.25.0",
+    "date-fns": "2.26.0",
     "@graphql-tools/resolvers-composition": "6.4.1",
     "@graphql-tools/schema": "8.3.1",
     "@graphql-tools/utils": "8.5.3"
