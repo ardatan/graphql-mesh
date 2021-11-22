@@ -36,5 +36,8 @@ export function getStringScalarWithMinMaxLength({
       }
       return null;
     },
+    extensions: {
+      codegenScalarType: 'string',
+    },
   });
 }

@@ -26,20 +26,24 @@ export async function getDereferencedJSONSchemaFromOperations({
   cwd = process.cwd(),
   logger,
   fetch,
+  schemaHeaders,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   logger: Logger;
   fetch: WindowOrWorkerGlobalScope['fetch'];
+  schemaHeaders?: Record<string, string>;
 }): Promise<JSONSchemaObject> {
   const referencedJSONSchema = await getReferencedJSONSchemaFromOperations({
     operations,
     cwd,
+    schemaHeaders,
   });
   logger.debug(() => `Dereferencing JSON Schema to resolve all $refs`);
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {
     cwd,
     fetch,
+    headers: schemaHeaders,
   });
   logger.debug(() => `Healing JSON Schema`);
   const healedSchema = await healJSONSchema(fullyDeferencedSchema);
@@ -55,6 +59,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     cwd,
     logger,
     fetch: options.fetch,
+    schemaHeaders: options.schemaHeaders,
   });
   const graphqlSchema = await getGraphQLSchemaFromDereferencedJSONSchema(fullyDeferencedSchema, {
     fetch: options.fetch,

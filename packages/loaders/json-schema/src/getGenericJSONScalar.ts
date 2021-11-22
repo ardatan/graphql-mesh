@@ -33,5 +33,8 @@ export function getGenericJSONScalar({
       const value = GraphQLJSON.parseLiteral(...args);
       return coerceGenericJSONScalar(value);
     },
+    extensions: {
+      codegenScalarType: 'any',
+    },
   });
 }

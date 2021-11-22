@@ -62,6 +62,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     root = obj as any,
     fetch = crossUndiciFetch,
     importFn = defaultImportFn,
+    headers,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
@@ -69,6 +70,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     root?: TRoot;
     fetch?: WindowOrWorkerGlobalScope['fetch'];
     importFn?: (moduleId: string) => Promise<any>;
+    headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
   if (typeof obj === 'object') {
@@ -84,7 +86,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
             externalFile = isURL(externalFilePath)
-              ? await fetch(externalFilePath).then(res => res.json())
+              ? await fetch(externalFilePath, {
+                  headers,
+                }).then(res => res.json())
               : await importFn(externalFilePath);
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
@@ -122,6 +126,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
                 },
               }),
               fetch,
+              headers,
             }
           );
         } else {
@@ -133,6 +138,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             refMap,
             root,
             fetch,
+            headers,
           });
         }
       }
@@ -140,7 +146,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
       await Promise.all(
         Object.entries(obj).map(async ([key, val]) => {
           if (typeof val === 'object') {
-            obj[key] = await dereferenceObject<any>(val, { cwd, externalFileCache, refMap, root, fetch });
+            obj[key] = await dereferenceObject<any>(val, { cwd, externalFileCache, refMap, root, fetch, headers });
           }
         })
       );
