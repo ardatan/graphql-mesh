@@ -3,7 +3,7 @@ import { dirname, isAbsolute, join } from 'path';
 import { healJSONSchema } from './healJSONSchema';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
-import { defaultImportFn } from '@graphql-mesh/utils';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 
 export const resolvePath = (path: string, root: any): any => {
   return JsonPointer.get(root, path);
@@ -39,7 +39,7 @@ function normalizeUrl(url: string) {
   return new URL(url).toString();
 }
 
-function getAbsolutePath(path: string, cwd: string) {
+export function getAbsolutePath(path: string, cwd: string) {
   if (isURL(path)) {
     return path;
   }
@@ -52,6 +52,10 @@ function getAbsolutePath(path: string, cwd: string) {
   return join(cwd, path);
 }
 
+export function getCwd(path: string) {
+  return isURL(path) ? getCwdForUrl(path) : dirname(path);
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
@@ -61,7 +65,6 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     refMap = new Map<string, any>(),
     root = obj as any,
     fetch = crossUndiciFetch,
-    importFn = defaultImportFn,
     headers,
   }: {
     cwd?: string;
@@ -69,7 +72,6 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     refMap?: Map<string, any>;
     root?: TRoot;
     fetch?: WindowOrWorkerGlobalScope['fetch'];
-    importFn?: (moduleId: string) => Promise<any>;
     headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
@@ -82,14 +84,17 @@ export async function dereferenceObject<T extends object, TRoot = T>(
         const [externalRelativeFilePath, refPath] = $ref.split('#');
         if (externalRelativeFilePath) {
           const externalFilePath = getAbsolutePath(externalRelativeFilePath, cwd);
-          const newCwd = isURL(externalFilePath) ? getCwdForUrl(externalFilePath) : dirname(externalFilePath);
+          const newCwd = getCwd(externalFilePath);
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
-            externalFile = isURL(externalFilePath)
-              ? await fetch(externalFilePath, {
-                  headers,
-                }).then(res => res.json())
-              : await importFn(externalFilePath);
+            externalFile = await readFileOrUrl(externalFilePath, {
+              fetch,
+              headers,
+              cwd,
+              fallbackFormat: 'json',
+            }).catch(() => {
+              throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
+            });
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }
@@ -131,6 +136,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           );
         } else {
           const result = resolvePath(refPath, root);
+          if (!result.title && (obj as any).title) {
+            result.title = (obj as any).title;
+          }
           refMap.set($ref, result);
           return dereferenceObject(result, {
             cwd,
@@ -146,7 +154,14 @@ export async function dereferenceObject<T extends object, TRoot = T>(
       await Promise.all(
         Object.entries(obj).map(async ([key, val]) => {
           if (typeof val === 'object') {
-            obj[key] = await dereferenceObject<any>(val, { cwd, externalFileCache, refMap, root, fetch, headers });
+            obj[key] = await dereferenceObject<any>(val, {
+              cwd,
+              externalFileCache,
+              refMap,
+              root,
+              fetch,
+              headers,
+            });
           }
         })
       );

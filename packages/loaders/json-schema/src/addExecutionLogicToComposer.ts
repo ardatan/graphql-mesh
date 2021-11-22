@@ -1,4 +1,4 @@
-import { SchemaComposer } from 'graphql-compose';
+import { SchemaComposer, getComposeTypeName, ObjectTypeComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
@@ -11,13 +11,13 @@ import { stringify as qsStringify } from 'qs';
 import { getNamedType, isScalarType } from 'graphql';
 
 export interface AddExecutionLogicToComposerOptions {
-  fetch: WindowOrWorkerGlobalScope['fetch'];
-  logger: Logger;
+  baseUrl: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: Record<string, string>;
-  baseUrl: string;
-  pubsub?: MeshPubSub;
   errorMessage?: string;
+  fetch: WindowOrWorkerGlobalScope['fetch'];
+  logger: Logger;
+  pubsub?: MeshPubSub;
 }
 
 export async function addExecutionLogicToComposer(
@@ -43,8 +43,24 @@ export async function addExecutionLogicToComposer(
 
     const field = rootTypeComposer.getField(fieldName);
 
+    if (operationConfig.requestTypeName) {
+      const tcName = getComposeTypeName(field.args.input.type, schemaComposer);
+      const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
+      if (tcName !== operationConfig.requestTypeName) {
+        tcWithName.setTypeName(operationConfig.requestTypeName);
+      }
+    }
+
+    if (operationConfig.responseTypeName) {
+      const tcName = getComposeTypeName(field.type, schemaComposer);
+      if (tcName !== operationConfig.responseTypeName) {
+        const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
+        tcWithName.setTypeName(operationConfig.responseTypeName);
+      }
+    }
+
     if (isPubSubOperationConfig(operationConfig)) {
-      field.description = field.description || `PubSub Topic: ${operationConfig.pubsubTopic}`;
+      field.description = operationConfig.description || `PubSub Topic: ${operationConfig.pubsubTopic}`;
       field.subscribe = (root, args, context, info) => {
         const pubsub = context?.pubsub || globalPubsub;
         if (!pubsub) {
@@ -61,7 +77,7 @@ export async function addExecutionLogicToComposer(
       };
       interpolationStrings.push(operationConfig.pubsubTopic);
     } else if (operationConfig.path) {
-      field.description = field.description || `${operationConfig.method} ${operationConfig.path}`;
+      field.description = operationConfig.description || `${operationConfig.method} ${operationConfig.path}`;
       field.resolve = async (root, args, context, info) => {
         operationLogger.debug(() => `=> Resolving`);
         const interpolationData = { root, args, context, info, env };

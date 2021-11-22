@@ -1,0 +1,37 @@
+{
+  "name": "@omnigraph/raml",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "cross-undici-fetch": "0.0.26",
+    "@omnigraph/json-schema": "0.5.0",
+    "raml-1-parser": "1.1.67",
+    "json-machete": "0.2.0",
+    "to-json-schema": "0.2.5",
+    "@graphql-mesh/utils": "0.22.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

@@ -1,6 +1,6 @@
 import { memoize2 } from '@graphql-tools/utils';
 import { JSONSchema, resolvePath } from 'json-machete';
-import Ajv from 'packages/cli/node_modules/ajv/dist/ajv';
+import Ajv from 'ajv';
 
 const ajvMemoizedCompile = memoize2(function ajvCompile(ajv: Ajv, jsonSchema: JSONSchema) {
   return ajv.compile(jsonSchema);

@@ -66,6 +66,10 @@ export function getComposerFromJSONSchema(
       }
       const validateWithJSONSchema = getValidateFnForSchemaPath(ajv, path, schema);
 
+      if (!subSchema) {
+        throw new Error(`Something is wrong with ${path}`);
+      }
+
       if (subSchema.pattern) {
         const scalarType = new RegularExpression(
           getValidTypeName({
@@ -472,12 +476,13 @@ export function getComposerFromJSONSchema(
           }
           // If it doesn't have any clue
           {
-            const typeComposer = getGenericJSONScalar({
-              schemaComposer,
-              isInput: false,
-              subSchema,
-              validateWithJSONSchema,
-            }).getTypePlural();
+            // const typeComposer = getGenericJSONScalar({
+            //   schemaComposer,
+            //   isInput: false,
+            //   subSchema,
+            //   validateWithJSONSchema,
+            // }).getTypePlural();
+            const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
             return {
               input: typeComposer,
               output: typeComposer,
@@ -502,6 +507,7 @@ export function getComposerFromJSONSchema(
                     : typeComposers.output,
                 // Make sure you get the right property
                 resolve: root => root[propertyName],
+                description: typeComposers.description || typeComposers.output?.description,
               };
               inputFieldMap[fieldName] = {
                 type: () =>
@@ -512,6 +518,7 @@ export function getComposerFromJSONSchema(
                 extensions: {
                   propertyName,
                 },
+                description: typeComposers.description || typeComposers.input?.description,
               };
             }
           }

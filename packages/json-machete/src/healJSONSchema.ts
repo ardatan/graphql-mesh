@@ -6,7 +6,14 @@ const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
 function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
   if (typeof schema === 'object' && schema != null) {
+    const titleReserved = schema.title;
+    if (titleReserved) {
+      schema.title = undefined;
+    }
     const stringified = inspect(schema, undefined, 3);
+    if (titleReserved) {
+      schema.title = titleReserved;
+    }
     const seen = seenMap.get(stringified);
     if (seen) {
       return seen;
@@ -105,7 +112,7 @@ export async function healJSONSchema(schema: JSONSchema) {
             }
           }
           // Properties only exist in objects
-          if (subSchema.properties) {
+          if (subSchema.properties || subSchema.patternProperties || 'additionalProperties' in subSchema) {
             subSchema.type = 'object';
           }
           // Items only exist in arrays

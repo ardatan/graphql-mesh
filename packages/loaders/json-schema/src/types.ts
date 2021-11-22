@@ -1,5 +1,19 @@
+import { MeshPubSub, Logger } from '@graphql-mesh/types';
+import { BaseLoaderOptions } from '@graphql-tools/utils';
 import { OperationTypeNode } from 'graphql';
 import { JSONSchema } from 'json-machete';
+
+export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
+  baseUrl?: string;
+  operationHeaders?: Record<string, string>;
+  schemaHeaders?: Record<string, string>;
+  operations: JSONSchemaOperationConfig[];
+  errorMessage?: string;
+  logger?: Logger;
+  pubsub?: MeshPubSub;
+  fetch?: WindowOrWorkerGlobalScope['fetch'];
+  generateInterfaceFromSharedFields?: boolean;
+}
 
 export interface JSONSchemaBaseOperationConfig {
   type: OperationTypeNode;
