@@ -8,7 +8,7 @@ GraphQL Mesh comes in multiple packages, which you should install according to y
 
 To get started with the basics, install the following:
 
-```
+```sh
 yarn add graphql @graphql-mesh/cli
 ```
 
@@ -16,7 +16,7 @@ Then, you need to install a Mesh handler, according to your API needs. You can s
 
 For example, if you wish to use OpenAPI handler, install the handler that matches you needs:
 
-```
+```sh
 yarn add graphql @graphql-mesh/openapi
 ```
 

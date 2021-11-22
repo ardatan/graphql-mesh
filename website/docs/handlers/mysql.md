@@ -9,8 +9,8 @@ This handler allows you to generate GraphQL schema from an existing MySQL databa
 
 To get started, install the handler library from NPM:
 
-```
-$ yarn add @graphql-mesh/mysql
+```sh
+yarn add @graphql-mesh/mysql
 ```
 
 Now, you can use it directly in your Mesh config file:
@@ -29,7 +29,7 @@ sources:
 
 ### How does `where` work?
 
-Every CRUD operation has `where` field in their input so you can see all the columns of a table. `where` works like below;
+Every CRUD operation has `where` field in their input, so you can see all the columns of a table. `where` works like below;
 ```graphql
 {
   getProduct(where: {

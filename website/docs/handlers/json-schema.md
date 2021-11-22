@@ -5,14 +5,14 @@ sidebar_label: JSON Schema or Samples
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218994-11434880-7e5a-11ea-8594-08185526080f.png)
 
-This handler allows you to load any remote REST service, and describe it's request/response using the YAML config.
+This handler allows you to load any remote REST service, and describe its request/response using the YAML config.
 
 With this handler, you can easily customize and control the built GraphQL schema.
 
 To get started, install the handler library from NPM:
 
-```
-$ yarn add @graphql-mesh/json-schema
+```sh
+yarn add @graphql-mesh/json-schema
 ```
 
 Now, you can use it directly in your Mesh config file:

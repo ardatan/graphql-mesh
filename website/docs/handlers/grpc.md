@@ -5,10 +5,10 @@ sidebar_label: gRPC / Protobuf
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
 
-This handler allows you to load [gRPC](https://grpc.io/) definition files (`.proto`).
+This handler allows you to load [gRPC](https://grpc.io) definition files (`.proto`).
 
-```
-$ yarn add @graphql-mesh/grpc
+```sh
+yarn add @graphql-mesh/grpc
 ```
 
 Now, you can use it directly in your Mesh config file:

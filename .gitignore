@@ -5,7 +5,6 @@ out
 build
 generated
 yarn-error.log
-temp
 *.generated.graphql
 ignored-*
 package-lock.json
@@ -14,3 +13,4 @@ package-lock.json
 .DS_Store
 .mesh
 .parcel-cache
+.idea

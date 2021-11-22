@@ -7,5 +7,5 @@
     "automerge": false
   },
   "labels": ["dependencies"],
-  "ignoreDeps": ["typedoc", "typedoc-plugin-markdown"]
+  "ignoreDeps": ["typedoc", "typedoc-plugin-markdown", "typedoc-plugin-rename-defaults"]
 }

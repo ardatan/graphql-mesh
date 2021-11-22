@@ -8,7 +8,7 @@ sidebar_label: Build Artifacts
 
 After you tested your Mesh with `dev` command, it is time to build Mesh artifacts for advanced usage with the following command.
 
-```
+```sh
 yarn mesh build
 ```
 
@@ -21,9 +21,9 @@ By following the steps below, you can instead move this dependency from runtime 
 
 ### Run Mesh Gateway safely without relying on the sources
 
-Mesh is now able to start a GraphQL Server and it doesn't need other services running.
+Mesh is now able to start a GraphQL Server, and it doesn't need other services running.
 
-```
+```sh
 yarn mesh start
 ```
 
@@ -33,7 +33,7 @@ yarn mesh start
 
 You can use the Mesh `GraphQLSchema` instance to query your data from your application code by using `getBuiltMesh` with your configuration object.
 
-This will return for your a modified version of GraphQL's `execute`, so you can use it directly to fetch your data:
+This will return for your modified version of GraphQL's `execute`, so you can use it directly to fetch your data:
 
 ```js
 const { getBuiltMesh } = require('./.mesh');
@@ -65,13 +65,13 @@ async function test() {
 
 You can find dumped schema under `.mesh` folder as `schema.graphql`.
 
-This is useful if you need to feed other tools (like [graphql-codegen](https://graphql-code-generator.com/), [graphql-eslint](https://github.com/dotansimha/graphql-eslint), [graphql-inspector](https://graphql-inspector.com/) and more) with the static GraphQL schema.
+This is useful if you need to feed other tools (like [graphql-codegen](https://graphql-code-generator.com), [graphql-eslint](https://github.com/dotansimha/graphql-eslint), [graphql-inspector](https://graphql-inspector.com) and more) with the static GraphQL schema.
 
 ### Validate your existing Mesh artifacts
 
 You can make sure your existing Mesh artifacts are still valid and safe to use in production. So when you run the following command, Mesh will validate the existing artifacts by introspecting the input sources again.
 
-```
+```sh
 yarn mesh validate
 ```
 

@@ -26,7 +26,7 @@ additionalResolvers:
 ```
 
 Then, use the CLI command to generate the typings file based on your unified GraphQL schema:
-```
+```sh
 mesh build
 ```
 

@@ -1,6 +1,10 @@
+.pickerSelector {
+    color: black;
+}
+
 .picker {
     padding-left: 30px;
-    padding-bottom: 5px;
+    padding-bottom: 2rem;
     white-space: nowrap;
   }
 
