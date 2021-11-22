@@ -92,7 +92,7 @@ title: '${match
 ${match}`
       )
       // Fix links
-      .replaceAll('.md', '')
+      .split('.md').join('')
       .replace(/\[([^\]]+)]\((\.\.\/(classes|interfaces|enums)\/([^)]+))\)/g, '[$1](/docs/api/$3/$4)');
     await fsPromises.writeFile(filePath, contentsTrimmed);
     console.log('✅ ', chalk.green(path.relative(process.cwd(), filePath)));

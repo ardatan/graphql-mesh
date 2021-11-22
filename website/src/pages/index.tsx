@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { HeroGradient, InfoList } from '@theguild/components';
 import { handlePushRoute, NPMBadge } from '@guild-docs/client';
@@ -17,7 +16,7 @@ function FeatureTitle({ imgSrc, title }: { imgSrc: any; title: string }) {
   return (
     <>
       <HStack>
-        <Image src={imgSrc} width="120px" height="120px" style={{ margin: 'auto' }} />
+        <Image src={imgSrc} width="120px" height="120px" alt={title} />
       </HStack>
       <br />
       <HStack>
