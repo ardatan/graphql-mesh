@@ -3,7 +3,7 @@ import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 import { globalLruCache } from './global-lru-cache';
 import { ExecutionResult, GraphQLSchema } from 'graphql';
 import { Logger } from '@graphql-mesh/types';
-import { printWithCache } from '.';
+import { printWithCache } from './parseAndPrintWithCache';
 
 export function jitExecutorFactory(schema: GraphQLSchema, prefix: string, logger: Logger): Executor {
   return function jitExecutor<TReturn>(request: ExecutionRequest) {

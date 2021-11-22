@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/return-await */
 import { isAbsolute, join } from 'path';
 import { ImportFn } from '@graphql-mesh/types';
-import { defaultImportFn } from '.';
+import { defaultImportFn } from './defaultImportFn';
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;

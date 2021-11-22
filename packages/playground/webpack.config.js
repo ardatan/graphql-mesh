@@ -19,6 +19,10 @@ module.exports = {
           presets: ['@babel/react', '@babel/typescript'],
         },
       },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack', 'url-loader'],
+      },
     ],
   },
   output: {

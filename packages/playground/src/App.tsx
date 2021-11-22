@@ -8,6 +8,7 @@ import { makeDefaultArg, getDefaultScalarArgValue } from './CustomArgs';
 import GraphiQLExplorer from 'graphiql-explorer';
 import 'graphiql/graphiql.css';
 import './App.css';
+import meshLogoUrl from './mesh-logo.svg';
 
 const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuery = '', endpoint }) => {
   const urlLoader = new UrlLoader();
@@ -83,7 +84,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
         storage={sessionStorage}
       >
         <GraphiQL.Logo>
-          <img src="https://www.graphql-mesh.com/img/mesh-logo.svg" style={{ width: '32px', height: '32px' }} />
+          <img src={meshLogoUrl} style={{ width: '32px', height: '32px' }} alt="GraphiQL Mesh" />
         </GraphiQL.Logo>
         <GraphiQL.Toolbar>
           <GraphiQL.Button

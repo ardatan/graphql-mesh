@@ -25,6 +25,8 @@
     "webpack": "5.64.1",
     "webpack-cli": "4.9.1",
     "css-loader": "6.5.1",
-    "style-loader": "3.3.1"
+    "style-loader": "3.3.1",
+    "@svgr/webpack": "5.5.0",
+    "url-loader": "4.1.1"
   }
 }

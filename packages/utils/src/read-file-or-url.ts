@@ -5,7 +5,7 @@ import { load as loadYaml } from 'js-yaml';
 import { isAbsolute, resolve } from 'path';
 import { promises as fsPromises } from 'fs';
 import { ImportFn } from '@graphql-mesh/types';
-import { defaultImportFn } from '.';
+import { defaultImportFn } from './defaultImportFn';
 
 const { readFile: readFileFromFS } = fsPromises || {};
 
