@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.44.1
+
+### Patch Changes
+
+- c22eb1b5e: feat(playground): embed GraphQL Mesh logo in GraphiQL
+- Updated dependencies [c22eb1b5e]
+  - @graphql-mesh/utils@0.22.1
+  - @graphql-mesh/config@0.26.1
+  - @graphql-mesh/runtime@0.26.6
+  - @graphql-mesh/store@0.3.1
+
 ## 0.44.0
 
 ### Minor Changes

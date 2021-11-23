@@ -1,5 +1,16 @@
 # json-machete
 
+## 0.2.0
+
+### Minor Changes
+
+- e8cc53f11: feat(json-schema): support schemaHeaders for sample and schemas
+
+### Patch Changes
+
+- Updated dependencies [c22eb1b5e]
+  - @graphql-mesh/utils@0.22.1
+
 ## 0.1.0
 
 ### Minor Changes
