@@ -2400,6 +2400,71 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@codemirror/highlight@^0.19.0":
+  version "0.19.6"
+  resolved "https://registry.yarnpkg.com/@codemirror/highlight/-/highlight-0.19.6.tgz#7f2e066f83f5649e8e0748a3abe0aaeaf64b8ac2"
+  integrity sha512-+eibu6on9quY8uN3xJ/n3rH+YIDLlpX7YulVmFvqAIz/ukRQ5tWaBmB7fMixHmnmRIRBRZgB8rNtonuMwZSAHQ==
+  dependencies:
+    "@codemirror/language" "^0.19.0"
+    "@codemirror/rangeset" "^0.19.0"
+    "@codemirror/state" "^0.19.0"
+    "@codemirror/view" "^0.19.0"
+    "@lezer/common" "^0.15.0"
+    style-mod "^4.0.0"
+
+"@codemirror/language@^0.19.0":
+  version "0.19.5"
+  resolved "https://registry.yarnpkg.com/@codemirror/language/-/language-0.19.5.tgz#4d816ce3f72974ad443cbf1a18ff4fcd1e56f1d0"
+  integrity sha512-FnIST07vaM99mv1mJaMMLvxiHSDGgP3wdlcEZzmidndWdbxjrYYYnJzVUOEkeZJNGOfrtPRMF62UCyrTjQMR3g==
+  dependencies:
+    "@codemirror/state" "^0.19.0"
+    "@codemirror/text" "^0.19.0"
+    "@codemirror/view" "^0.19.0"
+    "@lezer/common" "^0.15.5"
+    "@lezer/lr" "^0.15.0"
+
+"@codemirror/rangeset@^0.19.0":
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/@codemirror/rangeset/-/rangeset-0.19.2.tgz#d7a999e4273c00fecef4aba8535a426073cdcddf"
+  integrity sha512-5d+X8LtmeZtfFtKrSx57bIHRUpKv2HD0b74clp4fGA7qJLLfYehF6FGkJJxJb8lKsqAga1gdjjWr0jiypmIxoQ==
+  dependencies:
+    "@codemirror/state" "^0.19.0"
+
+"@codemirror/state@^0.19.0", "@codemirror/state@^0.19.3":
+  version "0.19.6"
+  resolved "https://registry.yarnpkg.com/@codemirror/state/-/state-0.19.6.tgz#d631f041d39ce41b7891b099fca26cb1fdb9763e"
+  integrity sha512-sqIQZE9VqwQj7D4c2oz9mfLhlT1ElAzGB5lO1lE33BPyrdNy1cJyCIOecT4cn4VeJOFrnjOeu+IftZ3zqdFETw==
+  dependencies:
+    "@codemirror/text" "^0.19.0"
+
+"@codemirror/stream-parser@^0.19.2":
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/@codemirror/stream-parser/-/stream-parser-0.19.2.tgz#793428e55aa7b9daa64cb733973e5d5e3d9a2306"
+  integrity sha512-hBKRQlyu8GUOrY33xZ6/1kAfNZ8ZUm6cX9a7mPx8zAAqnpz/fpksC/qJRrkg1mPMBwxm+JG4fqAwDGJ3gLVniQ==
+  dependencies:
+    "@codemirror/highlight" "^0.19.0"
+    "@codemirror/language" "^0.19.0"
+    "@codemirror/state" "^0.19.0"
+    "@codemirror/text" "^0.19.0"
+    "@lezer/common" "^0.15.0"
+    "@lezer/lr" "^0.15.0"
+
+"@codemirror/text@^0.19.0":
+  version "0.19.5"
+  resolved "https://registry.yarnpkg.com/@codemirror/text/-/text-0.19.5.tgz#75033af2476214e79eae22b81ada618815441c18"
+  integrity sha512-Syu5Xc7tZzeUAM/y4fETkT0zgGr48rDG+w4U38bPwSIUr+L9S/7w2wDE1WGNzjaZPz12F6gb1gxWiSTg9ocLow==
+
+"@codemirror/view@^0.19.0":
+  version "0.19.20"
+  resolved "https://registry.yarnpkg.com/@codemirror/view/-/view-0.19.20.tgz#77969ff93cb097e3d4c9245b32e220efb80131be"
+  integrity sha512-j4cI/Egdhha77pMfKQQWZmpkcF7vhe21LqdZs8hsG09OtvsPVCHUXmfB0u7nMpcX1JR8aZ3ob9g6FMr+OVtjgA==
+  dependencies:
+    "@codemirror/rangeset" "^0.19.0"
+    "@codemirror/state" "^0.19.3"
+    "@codemirror/text" "^0.19.0"
+    style-mod "^4.0.0"
+    w3c-keyname "^2.2.4"
+
 "@creditkarma/thrift-client@0.17.2":
   version "0.17.2"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-client/-/thrift-client-0.17.2.tgz#20c7a637948660e60cedfa3ce751d6d0d3fdcfce"
@@ -2653,13 +2718,12 @@
   dependencies:
     tslib "^2.0.1"
 
-"@graphiql/toolkit@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@graphiql/toolkit/-/toolkit-0.4.0.tgz#9f89f9cf0d12f977d731b0e10d0872f63e1f7f79"
-  integrity sha512-a5MC4h9Sn34CYooBoCW+wrUHXvRgvUJp11zdjstZuszSO1HjZ3iuJSD3JngPbQc7iWA+RaaLmP14+D3GDc1h8A==
+"@graphiql/toolkit@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@graphiql/toolkit/-/toolkit-0.4.1.tgz#13f456df90d37c10f176b7a4f6884852981bd7fa"
+  integrity sha512-aPkb0VtCZd+WgH0DAB9yaQFxMI3rZld2JySg0r/B/2eQlzTKIVIxQf77kjKwVx4nBoOxopXED/uiEx82xX1GUQ==
   dependencies:
-    "@n1ru4l/push-pull-async-iterable-iterator" "^3.0.0"
-    graphql-ws "^4.9.0"
+    "@n1ru4l/push-pull-async-iterable-iterator" "^3.1.0"
     meros "^1.1.4"
 
 "@graphql-codegen/cli@1.21.4":
@@ -4027,6 +4091,18 @@
   resolved "https://registry.yarnpkg.com/@json-schema-tools/meta-schema/-/meta-schema-1.6.19.tgz#295301c2d4a0c01eb2eafbf605aca8ebc0dfbbb6"
   integrity sha512-55zuWFW7tr4tf/G5AYmybcPdGOkVAreQbt2JdnogX4I2r/zkxZiimYPJESDf5je9BI2oRveak2p296HzDppeaA==
 
+"@lezer/common@^0.15.0", "@lezer/common@^0.15.5":
+  version "0.15.8"
+  resolved "https://registry.yarnpkg.com/@lezer/common/-/common-0.15.8.tgz#e9d87b5f05c18feb51b7f04d74b124caea32a94b"
+  integrity sha512-zpS/xty48huX4uBidupmWDYCRBYpVtoTiFhzYhd6GsQwU67WsdSImdWzZJDrF/DhcQ462wyrZahHlo2grFB5ig==
+
+"@lezer/lr@^0.15.0":
+  version "0.15.4"
+  resolved "https://registry.yarnpkg.com/@lezer/lr/-/lr-0.15.4.tgz#634670d7224040fddac1370af01211eecd9ac0a0"
+  integrity sha512-vwgG80sihEGJn6wJp6VijXrnzVai/KPva/OzYKaWvIx0IiXKjoMQ8UAwcgpSBwfS4Fbz3IKOX/cCNXU3r1FvpQ==
+  dependencies:
+    "@lezer/common" "^0.15.0"
+
 "@manypkg/find-root@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@manypkg/find-root/-/find-root-1.1.0.tgz#a62d8ed1cd7e7d4c11d9d52a8397460b5d4ad29f"
@@ -4102,10 +4178,10 @@
     "@n1ru4l/graphql-live-query" "0.9.0"
     "@n1ru4l/push-pull-async-iterable-iterator" "^3.0.0"
 
-"@n1ru4l/push-pull-async-iterable-iterator@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@n1ru4l/push-pull-async-iterable-iterator/-/push-pull-async-iterable-iterator-3.0.0.tgz#22dc34094c2de5f21b9a798d0ffab16b45de0eb7"
-  integrity sha512-gwoIwo/Dt1GOI+lbcG1G7IeRM2K+Fo0op3OGyFJ4tXUCf2a3Q8lUCm81aoevrXC0nu4gbAXeOWy7wWxjpSvZUw==
+"@n1ru4l/push-pull-async-iterable-iterator@^3.0.0", "@n1ru4l/push-pull-async-iterable-iterator@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/push-pull-async-iterable-iterator/-/push-pull-async-iterable-iterator-3.1.0.tgz#be450c97d1c7cd6af1a992d53232704454345df9"
+  integrity sha512-K4scWxGhdQM0masHHy4gIQs2iGiLEXCrXttumknyPJqtdl4J179BjpibWSSQ1fxKdCcHgIlCTKXJU6cMM6D6Wg==
 
 "@napi-rs/triples@1.0.3":
   version "1.0.3"
@@ -8893,13 +8969,13 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
-codemirror-graphql@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/codemirror-graphql/-/codemirror-graphql-1.1.0.tgz#dd22ddf7761efa9131fa99a70a4a85fe653484e5"
-  integrity sha512-bp2XUg7epL07kJcylM8VCISK6X+rFsHL2lUkPQAw2v721MVhn+80FgjMP8tiZCOfJgHn1+JgsA71L5nOHWgUdA==
+codemirror-graphql@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/codemirror-graphql/-/codemirror-graphql-1.2.0.tgz#cd8b656ffb87024e002828ffd1623ea4a16e10fb"
+  integrity sha512-bF38tqwNxVmgUSL91+9xcKKUQt0j0Gv3jn5oqdPt0LD6temE0gZo+wHeN2PyHO487cKdvBwxG9f19l5D5iCoaQ==
   dependencies:
-    graphql-language-service-interface "^2.9.0"
-    graphql-language-service-parser "^1.10.0"
+    "@codemirror/stream-parser" "^0.19.2"
+    graphql-language-service "^3.2.1"
 
 codemirror@^5.58.2:
   version "5.63.3"
@@ -12708,14 +12784,14 @@ graphiql-explorer@0.6.3:
   resolved "https://registry.yarnpkg.com/graphiql-explorer/-/graphiql-explorer-0.6.3.tgz#870428eb5973de2aa9caa3ca0fd581c36cc3b8c9"
   integrity sha512-TYQZm5aaHt1bRtoJAcur0fZpvSO3pvYiz22fgrBeEfeqMYKtzabaVQlRSTpyAhmlsTppR+O3qK7c77CFsGN/+A==
 
-graphiql@1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-1.5.1.tgz#f1f0ae7ce757693164fcc0a18147f1f9da9f62c6"
-  integrity sha512-D/ihDMKk+NJwgi6aNSzyNJbK5prg7oDL4F2jLcyZJj0E/ZzBldTDJwvZfoRVBCJCEK5HhvPhxBieH90bhdZTig==
+graphiql@1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-1.5.2.tgz#f99295b65a781fb35c6ab200eb5d572eef692dc6"
+  integrity sha512-gFIYTwbbfBPELcr8BKGOxuaiXak5HwKy7UI3kFSI+gaA8PoTVv7Kw2I4+r5bsxVUPqv1WdL5c2Mj/RFRnfrFPA==
   dependencies:
-    "@graphiql/toolkit" "^0.4.0"
+    "@graphiql/toolkit" "^0.4.1"
     codemirror "^5.58.2"
-    codemirror-graphql "^1.1.0"
+    codemirror-graphql "^1.2.0"
     copy-to-clipboard "^3.2.0"
     dset "^3.1.0"
     entities "^2.0.0"
@@ -12809,7 +12885,7 @@ graphql-jit@0.7.1:
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
 
-graphql-language-service-interface@^2.9.0, graphql-language-service-interface@^2.9.1:
+graphql-language-service-interface@^2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/graphql-language-service-interface/-/graphql-language-service-interface-2.9.1.tgz#be0b11b06b78730ea9d250e0e2290e7ed9c8d283"
   integrity sha512-yGsE67fxJBXxY82+rLDMvUpmzpOUM8XFB+k+xOTUyABWs27osKaoGiuDDXAVGg1adhm+cpunWbipe763ZJkAVA==
@@ -12996,7 +13072,7 @@ graphql-ws@5.5.5, graphql-ws@^5.1.2, graphql-ws@^5.4.1:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.5.5.tgz#f375486d3f196e2a2527b503644693ae3a8670a9"
   integrity sha512-hvyIS71vs4Tu/yUYHPvGXsTgo0t3arU820+lT5VjZS2go0ewp2LqyCgxEN56CzOG7Iys52eRhHBiD1gGRdiQtw==
 
-graphql-ws@^4.4.1, graphql-ws@^4.9.0:
+graphql-ws@^4.4.1:
   version "4.9.0"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-4.9.0.tgz#5cfd8bb490b35e86583d8322f5d5d099c26e365c"
   integrity sha512-sHkK9+lUm20/BGawNEWNtVAeJzhZeBg21VmvmLoT5NdGVeZWv5PdIhkcayQIAgjSyyQ17WMKmbDijIPG2On+Ag==
@@ -22687,6 +22763,11 @@ style-loader@3.3.1:
   resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.3.1.tgz#057dfa6b3d4d7c7064462830f9113ed417d38575"
   integrity sha512-GPcQ+LDJbrcxHORTRes6Jy2sfvK2kS6hpSfI/fXhPt+spVzxF6LJ1dHLN9zIGmVaaP044YKaIatFaufENRiDoQ==
 
+style-mod@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/style-mod/-/style-mod-4.0.0.tgz#97e7c2d68b592975f2ca7a63d0dd6fcacfe35a01"
+  integrity sha512-OPhtyEjyyN9x3nhPsu76f52yUGXiZcgvsrFVtvTkyGRQJ0XK+GPc6ov1z+lRpbeabka+MYEQxOYRnt5nF30aMw==
+
 style-to-object@0.3.0, style-to-object@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/style-to-object/-/style-to-object-0.3.0.tgz#b1b790d205991cc783801967214979ee19a76e46"
@@ -24513,6 +24594,11 @@ w3c-hr-time@^1.0.1, w3c-hr-time@^1.0.2:
   integrity sha512-z8P5DvDNjKDoFIHK7q8r8lackT6l+jo/Ye3HOle7l9nICP9lf1Ci25fy9vHd0JOWewkIFzXIEig3TdKT7JQ5fQ==
   dependencies:
     browser-process-hrtime "^1.0.0"
+
+w3c-keyname@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.4.tgz#4ade6916f6290224cdbd1db8ac49eab03d0eef6b"
+  integrity sha512-tOhfEwEzFLJzf6d1ZPkYfGj+FWhIpBux9ppoP3rlclw3Z0BZv3N7b7030Z1kYth+6rDuAsXUFr+d0VE6Ed1ikw==
 
 w3c-xmlserializer@^1.1.2:
   version "1.1.2"
