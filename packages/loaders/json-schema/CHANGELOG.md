@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.5.0
+
+### Minor Changes
+
+- e8cc53f11: feat(json-schema): support schemaHeaders for sample and schemas
+
+### Patch Changes
+
+- Updated dependencies [c22eb1b5e]
+- Updated dependencies [e8cc53f11]
+  - @graphql-mesh/utils@0.22.1
+  - json-machete@0.2.0
+
 ## 0.4.0
 
 ### Minor Changes

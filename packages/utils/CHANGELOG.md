@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.22.1
+
+### Patch Changes
+
+- c22eb1b5e: feat(playground): embed GraphQL Mesh logo in GraphiQL
+
 ## 0.22.0
 
 ### Minor Changes
