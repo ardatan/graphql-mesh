@@ -1,6 +1,6 @@
 {
   "name": "openapi-react-weatherbit",
-  "version": "0.3.114",
+  "version": "0.3.115",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.6",
@@ -17,7 +17,7 @@
     "@graphql-mesh/openapi": "0.21.3",
     "@graphql-mesh/cache-localforage": "0.5.24",
     "@graphql-mesh/merger-bare": "0.12.3",
-    "@graphql-mesh/transform-cache": "0.11.1",
+    "@graphql-mesh/transform-cache": "0.11.2",
     "graphql-subscriptions": "1.1.0",
     "graphql": "16.0.1"
   },

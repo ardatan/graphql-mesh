@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-cache",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
