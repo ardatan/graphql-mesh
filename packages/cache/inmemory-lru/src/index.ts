@@ -5,7 +5,6 @@ type CacheEntry<V> = { expiresAt: number; value: V };
 
 export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
   private cacheIdentifier = Date.now();
-  constructor({ max = Infinity } = {}) {}
 
   private nextTick() {
     // Make sure this is scheduled for next tick because LRU Cache is synchronous

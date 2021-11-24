@@ -109,8 +109,6 @@ const spies = {
   },
 };
 
-const syncImportFn = (mod: string) => require(mod);
-
 describe('cache', () => {
   let schema: GraphQLSchema;
   let cache: KeyValueCache;
@@ -601,7 +599,7 @@ describe('cache', () => {
         let callCount = 0;
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
-          syncImportFn,
+          importFn,
           config: [
             {
               field: 'Query.foo',
