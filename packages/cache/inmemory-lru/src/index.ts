@@ -24,6 +24,7 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
+    await this.nextTick();
     globalLruCache.set(`${this.cacheIdentifier}-${key}`, {
       expiresAt: options?.ttl ? Date.now() + options.ttl * 1000 : Infinity,
       value,
@@ -31,6 +32,7 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
   }
 
   async delete(key: string) {
+    await this.nextTick();
     globalLruCache.delete(`${this.cacheIdentifier}-${key}`);
   }
 }

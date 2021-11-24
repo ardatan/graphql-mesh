@@ -551,11 +551,57 @@ describe('cache', () => {
         expect(repeat2.user.friend.id).toBe('3');
       });
     });
+
     describe('Race condition', () => {
       it('should wait for local cache transform to finish writing the entry', async () => {
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
           importFn,
+          config: [
+            {
+              field: 'Query.foo',
+              cacheKey: 'random',
+            },
+          ],
+          cache,
+          pubsub,
+          baseDir,
+        };
+
+        let callCount = 0;
+        const schema = makeExecutableSchema({
+          typeDefs: /* GraphQL */ `
+            type Query {
+              foo: String
+            }
+          `,
+          resolvers: {
+            Query: {
+              foo: () => new Promise(resolve => setTimeout(() => resolve((callCount++).toString()), 300)),
+            },
+          },
+        });
+        const transform = new CacheTransform(options);
+        const transformedSchema = transform.transformSchema(schema);
+        const query = /* GraphQL */ `
+          {
+            foo1: foo
+            foo2: foo
+          }
+        `;
+        const result = await execute({
+          schema: transformedSchema,
+          document: parse(query),
+        });
+
+        expect(result.data.foo2).toBe(result.data.foo1);
+      });
+
+      it('should wait for other cache transform to finish writing the entry when delay >= safe threshold)', async () => {
+        let callCount = 0;
+        const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
+          apiName: 'test',
+          syncImportFn,
           config: [
             {
               field: 'Query.foo',
@@ -574,30 +620,38 @@ describe('cache', () => {
           `,
           resolvers: {
             Query: {
-              foo: () => new Promise(resolve => setTimeout(() => resolve(Date.now().toString()), 300)),
+              foo: async () => {
+                callCount++;
+                await new Promise(resolve => setTimeout(resolve, 300));
+                return 'FOO';
+              },
             },
           },
         });
-        const transform = new CacheTransform(options);
-        const transformedSchema = transform.transformSchema(schema);
+        const transform1 = new CacheTransform(options);
+        const transformedSchema1 = transform1.transformSchema(cloneSchema(schema));
+        const transform2 = new CacheTransform(options);
+        const transformedSchema2 = transform2.transformSchema(cloneSchema(schema));
         const query = /* GraphQL */ `
           {
             foo
           }
         `;
-        const results = await Promise.all([
-          execute({
-            schema: transformedSchema,
-            document: parse(query),
-          }),
-          execute({
-            schema: transformedSchema,
-            document: parse(query),
-          }),
-        ]);
-        expect(results[0]).toStrictEqual(results[1]);
+
+        await execute({
+          schema: transformedSchema1,
+          document: parse(query),
+        });
+        await wait(0);
+        await execute({
+          schema: transformedSchema2,
+          document: parse(query),
+        });
+
+        expect(callCount).toBe(1);
       });
-      it('should wait for other cache transform to finish writing the entry', async () => {
+
+      it('should fail to wait for other cache transform to finish writing the entry when delay < safe threshold', async () => {
         let callCount = 0;
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
@@ -647,7 +701,7 @@ describe('cache', () => {
             document: parse(query),
           }),
         ]);
-        expect(callCount).toBe(1);
+        expect(callCount).toBe(2);
       });
     });
   });
