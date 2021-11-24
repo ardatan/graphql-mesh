@@ -14,19 +14,6 @@ const OUTPUT_PATH = path.join(__dirname, '../website/docs/api');
 const SIDEBAR_PATH = path.join(__dirname, '../website/api-sidebar.json');
 
 async function buildApiDocs(): Promise<void> {
-  // // Get the upstream git remote -- we don't want to assume it exists or is named "upstream"
-  // const gitRemote = execSync('git remote -v', { encoding: 'utf-8' })
-  //   .trimEnd()
-  //   .split('\n')
-  //   .map(line => line.split('\t'))
-  //   .find(([_name, description]) => description.includes('(fetch)'));
-
-  // const gitRemoteName = gitRemote && gitRemote[0];
-
-  // if (!gitRemoteName) {
-  //   throw new Error('Unable to locate upstream git remote');
-  // }
-
   // An array of tuples where the first element is the package's name and the
   // the second element is the relative path to the package's entry point
   const packageJsonFiles = globby.sync(workspacePackageJson.workspaces.packages.map(f => `${f}/package.json`));
@@ -61,7 +48,6 @@ async function buildApiDocs(): Promise<void> {
     excludeProtected: true,
     readme: 'none',
     hideGenerator: true,
-    // gitRemote: gitRemoteName,
     gitRevision: 'master',
     tsconfig: path.resolve(__dirname, '../tsconfig.build.json'),
     entryPoints: modules.map(([_name, filePath]) => filePath),

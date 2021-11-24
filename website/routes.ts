@@ -5,12 +5,14 @@ export function getRoutes(): IRoutes {
   const Routes: IRoutes = {
     _: {
       docs: {
+        $name: 'Docs',
         _: {
           'getting-started': {
             $name: 'Getting Started',
             $routes: ['introduction', 'installation', 'basic-usage'],
           },
           recipes: {
+            $name: 'Recipes',
             $routes: [
               'multiple-apis',
               'build-mesh-artifacts',
@@ -41,6 +43,7 @@ export function getRoutes(): IRoutes {
             ],
           },
           transforms: {
+            $name: 'Transforms',
             $routes: [
               'transforms-introduction',
               'rename',
@@ -59,6 +62,7 @@ export function getRoutes(): IRoutes {
             ],
           },
           cache: {
+            $name: 'Cache',
             $routes: ['inmemory-lru', 'file', 'localforage', 'redis'],
           },
           api: apiSidebar,

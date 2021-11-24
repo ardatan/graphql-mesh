@@ -21,6 +21,8 @@ const styles: typeof chakraTheme['styles'] = {
   }),
 };
 
+const accentColor = '#1cc8ee';
+
 const theme = extendTheme({
   colors: {
     gray: {
@@ -36,6 +38,7 @@ const theme = extendTheme({
       850: '#1b1b1b',
       900: '#171717',
     },
+    accentColor,
   },
   fonts: {
     heading: 'TGCFont, sans-serif',
@@ -47,8 +50,6 @@ const theme = extendTheme({
   },
   styles,
 });
-
-const accentColor = '#1cc8ee';
 
 const serializedMdx = process.env.SERIALIZED_MDX_ROUTES;
 const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
