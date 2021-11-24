@@ -10,7 +10,7 @@
     "@graphql-tools/url-loader": "7.5.2",
     "@graphql-tools/wrap": "8.3.2",
     "copy-to-clipboard": "3.3.1",
-    "graphiql": "1.5.3",
+    "graphiql": "1.5.4",
     "graphiql-explorer": "0.6.3",
     "graphql": "16.0.1",
     "react": "17.0.2",
