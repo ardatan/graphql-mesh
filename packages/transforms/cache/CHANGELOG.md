@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-cache
 
+## 0.11.2
+
+### Patch Changes
+
+- ec8ce0a0b: fix(transform-cache): store promises of returned value from resolvers to prevent race condition
+
 ## 0.11.1
 
 ### Patch Changes
