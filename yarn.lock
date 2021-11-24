@@ -2950,10 +2950,10 @@
     cross-fetch "3.0.6"
     tslib "~2.0.1"
 
-"@graphql-tools/batch-delegate@8.2.1":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-8.2.1.tgz#e6e4b5364ffa66ea9f7c28d5f5ad13cfadcb0f7e"
-  integrity sha512-gE4zLRzJnWQeg3GySjPgY9s4YmCXsR/b13lLIJKGupT3yhdSgGov687ZAaOixRZY/PrOlE3BGBoaFmi7/IowCw==
+"@graphql-tools/batch-delegate@8.2.2":
+  version "8.2.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-8.2.2.tgz#bc5b494ae6196ea67366b4db35962039dfa598e3"
+  integrity sha512-zFQvr1cPnPuw0kqivzN20Xyni/pKht0Jy9o6TaopjXMpM5TtlKltr8E+CroA1UfZKELlqkbkncmwtdyu50l6og==
   dependencies:
     "@graphql-tools/delegate" "^8.4.1"
     "@graphql-tools/utils" "^8.5.1"
@@ -3238,10 +3238,10 @@
     "@graphql-tools/utils" "8.0.2"
     tslib "~2.3.0"
 
-"@graphql-tools/mock@8.4.3":
-  version "8.4.3"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.4.3.tgz#9d4838ba583969ae70c187e5cdb5cf286e266cd7"
-  integrity sha512-jj7obzDz4FAfmIGSh1Mo6cUs9d8MSaN6TH/iju3Qyuz6CZ6NLuJrWOg50ysEUgkT4Y/Aey8SlWOf/U15Z7qWYw==
+"@graphql-tools/mock@8.4.4":
+  version "8.4.4"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.4.4.tgz#857eaae73b53a1e72ebec9b602ceb0e31e64a38a"
+  integrity sha512-lRdU6XaKxZk7qv4G+1IhbVF7gvb3AaOQUC3Xx1M0/1/fRwt+zcUOWzgC/LNjxAIOI2T8Eh9eqKyQXBIWbTA02Q==
   dependencies:
     "@graphql-tools/schema" "^8.3.1"
     "@graphql-tools/utils" "^8.5.1"
@@ -3355,12 +3355,12 @@
     tslib "~2.2.0"
     value-or-promise "1.0.6"
 
-"@graphql-tools/stitch@8.4.1":
-  version "8.4.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.4.1.tgz#4db431a3f5ec3b31a022deb3386ce344bceca2a6"
-  integrity sha512-WfbWyTo+6Jo9dLvfmIubnmpwUbma2WU1Ygnv/ePxgTDZfcnRbpYi/dAMOZ0Aqq18ecui8RwoyzR+VjmTrQjecg==
+"@graphql-tools/stitch@8.4.2":
+  version "8.4.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.4.2.tgz#3357be03e4f59910e404c46d177d3435b6acb38e"
+  integrity sha512-lgwyb1pqKUVSz98cyhQ6sU39sdpk+6wFkVU4q2kx4GCm3uIChAf4QCSt5uqO35MwsXw4JGwlp5jfWKp5VIgMWg==
   dependencies:
-    "@graphql-tools/batch-delegate" "8.2.1"
+    "@graphql-tools/batch-delegate" "8.2.2"
     "@graphql-tools/delegate" "^8.4.1"
     "@graphql-tools/merge" "^8.2.1"
     "@graphql-tools/schema" "^8.3.1"
@@ -3405,10 +3405,10 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.5.2":
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.5.2.tgz#fb3737fd1269ab61b195b63052179b6049d90ce1"
-  integrity sha512-EilHqbhUY/qg55SSEdklDhPXgSz9+9a63SX3mcD8J2qwZHJD/wOLcyKs8m6BXfuGwUiuB0j3fmDSEVmva2onBg==
+"@graphql-tools/url-loader@7.5.3":
+  version "7.5.3"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.5.3.tgz#a594be40e3bc68d22f76746356e7f0b8117b7137"
+  integrity sha512-VKMRJ4TOeVIdulkCLGSBUr4stRRwOGcVRXDeoUF+86K32Ufo0H2V0lz7QwS/bCl8GXV19FMgHZCDl4BMJyOXEA==
   dependencies:
     "@graphql-tools/delegate" "^8.4.1"
     "@graphql-tools/utils" "^8.5.1"
@@ -3416,7 +3416,7 @@
     "@n1ru4l/graphql-live-query" "0.9.0"
     "@types/websocket" "1.0.4"
     "@types/ws" "^8.0.0"
-    cross-undici-fetch "^0.0.20"
+    cross-undici-fetch "^0.0.26"
     dset "^3.1.0"
     extract-files "11.0.0"
     graphql-sse "^1.0.1"
@@ -3428,7 +3428,7 @@
     tslib "~2.3.0"
     valid-url "1.0.9"
     value-or-promise "1.0.11"
-    ws "8.2.3"
+    ws "8.3.0"
 
 "@graphql-tools/url-loader@^6", "@graphql-tools/url-loader@^6.0.0", "@graphql-tools/url-loader@^6.3.2", "@graphql-tools/url-loader@^6.8.2":
   version "6.10.1"
@@ -9560,20 +9560,10 @@ cross-undici-fetch@0.0.16:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
-cross-undici-fetch@0.0.26:
+cross-undici-fetch@0.0.26, cross-undici-fetch@^0.0.26:
   version "0.0.26"
   resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.0.26.tgz#29d93d56609f4d2334f9d5333d23ef7a242842a7"
   integrity sha512-aMDRrLbWr0TGXfY92stlV+XOGpskeqFmWmrKSWsnc8w6gK5LPE83NBh7O7N6gCb2xjwHcm1Yn2nBXMEVH2RBcA==
-  dependencies:
-    abort-controller "^3.0.0"
-    form-data "^4.0.0"
-    node-fetch "^2.6.5"
-    undici "^4.9.3"
-
-cross-undici-fetch@^0.0.20:
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.0.20.tgz#6b7c5ac82a3601edd439f37275ac0319d77a120a"
-  integrity sha512-5d3WBC4VRHpFndECK9bx4TngXrw0OUXdhX561Ty1ZoqMASz9uf55BblhTC1CO6GhMWnvk9SOqYEXQliq6D2P4A==
   dependencies:
     abort-controller "^3.0.0"
     form-data "^4.0.0"
@@ -25342,11 +25332,6 @@ ws@7.4.5, "ws@^5.2.0 || ^6.0.0 || ^7.0.0", ws@^7.0.0, ws@^7.3.1, ws@^7.4.2, ws@^
   version "7.4.5"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
   integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
-
-ws@8.2.3:
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.2.3.tgz#63a56456db1b04367d0b721a0b80cae6d8becbba"
-  integrity sha512-wBuoj1BDpC6ZQ1B7DWQBYVLphPWkm8i9Y0/3YdHjHKHiohOJ1ws+3OccDWtH+PoC9DZD5WOTrJvNbWvjS6JWaA==
 
 ws@8.3.0:
   version "8.3.0"

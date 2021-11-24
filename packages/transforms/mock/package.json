@@ -29,7 +29,7 @@
     "@graphql-mesh/types": "0.56.0",
     "@graphql-mesh/utils": "0.22.1",
     "@graphql-tools/utils": "8.5.3",
-    "@graphql-tools/mock": "8.4.3",
+    "@graphql-tools/mock": "8.4.4",
     "faker": "5.5.3",
     "graphql-scalars": "1.13.6"
   },
