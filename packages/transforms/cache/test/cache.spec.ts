@@ -1,6 +1,6 @@
-import { YamlConfig, MeshPubSub, KeyValueCache, ImportFn } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, KeyValueCache, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { addResolversToSchema } from '@graphql-tools/schema';
+import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import {
   GraphQLSchema,
   buildSchema,
@@ -17,6 +17,7 @@ import { hashObject } from '@graphql-mesh/utils';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 import { PubSub } from 'graphql-subscriptions';
+import { cloneSchema } from 'neo4j-graphql-js/node_modules/graphql-tools';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const importFn: ImportFn = m => import(m);
@@ -546,6 +547,159 @@ describe('cache', () => {
         expect(spies.Query.user.mock.calls.length).toBe(2);
         expect(repeat1.user.friend.id).toBe('2');
         expect(repeat2.user.friend.id).toBe('3');
+      });
+    });
+
+    describe('Race condition', () => {
+      it('should wait for local cache transform to finish writing the entry', async () => {
+        const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
+          apiName: 'test',
+          importFn,
+          config: [
+            {
+              field: 'Query.foo',
+              cacheKey: 'random',
+            },
+          ],
+          cache,
+          pubsub,
+          baseDir,
+        };
+
+        let callCount = 0;
+        const schema = makeExecutableSchema({
+          typeDefs: /* GraphQL */ `
+            type Query {
+              foo: String
+            }
+          `,
+          resolvers: {
+            Query: {
+              foo: () => new Promise(resolve => setTimeout(() => resolve((callCount++).toString()), 300)),
+            },
+          },
+        });
+        const transform = new CacheTransform(options);
+        const transformedSchema = transform.transformSchema(schema);
+        const query = /* GraphQL */ `
+          {
+            foo1: foo
+            foo2: foo
+          }
+        `;
+        const result = await execute({
+          schema: transformedSchema,
+          document: parse(query),
+        });
+
+        expect(result.data.foo2).toBe(result.data.foo1);
+      });
+
+      it('should wait for other cache transform to finish writing the entry when delay >= safe threshold)', async () => {
+        let callCount = 0;
+        const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
+          apiName: 'test',
+          importFn,
+          config: [
+            {
+              field: 'Query.foo',
+              cacheKey: 'random',
+            },
+          ],
+          cache,
+          pubsub,
+          baseDir,
+        };
+        const schema = makeExecutableSchema({
+          typeDefs: /* GraphQL */ `
+            type Query {
+              foo: String
+            }
+          `,
+          resolvers: {
+            Query: {
+              foo: async () => {
+                callCount++;
+                await new Promise(resolve => setTimeout(resolve, 300));
+                return 'FOO';
+              },
+            },
+          },
+        });
+        const transform1 = new CacheTransform(options);
+        const transformedSchema1 = transform1.transformSchema(cloneSchema(schema));
+        const transform2 = new CacheTransform(options);
+        const transformedSchema2 = transform2.transformSchema(cloneSchema(schema));
+        const query = /* GraphQL */ `
+          {
+            foo
+          }
+        `;
+
+        await execute({
+          schema: transformedSchema1,
+          document: parse(query),
+        });
+        await wait(0);
+        await execute({
+          schema: transformedSchema2,
+          document: parse(query),
+        });
+
+        expect(callCount).toBe(1);
+      });
+
+      it('should fail to wait for other cache transform to finish writing the entry when delay < safe threshold', async () => {
+        let callCount = 0;
+        const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
+          apiName: 'test',
+          importFn,
+          config: [
+            {
+              field: 'Query.foo',
+              cacheKey: 'random',
+            },
+          ],
+          cache,
+          pubsub,
+          baseDir,
+        };
+        const schema = makeExecutableSchema({
+          typeDefs: /* GraphQL */ `
+            type Query {
+              foo: String
+            }
+          `,
+          resolvers: {
+            Query: {
+              foo: async () => {
+                callCount++;
+                await new Promise(resolve => setTimeout(resolve, 300));
+                return 'FOO';
+              },
+            },
+          },
+        });
+        const transform1 = new CacheTransform(options);
+        const transformedSchema1 = transform1.transformSchema(cloneSchema(schema));
+        const transform2 = new CacheTransform(options);
+        const transformedSchema2 = transform2.transformSchema(cloneSchema(schema));
+        const query = /* GraphQL */ `
+          {
+            foo
+          }
+        `;
+        await Promise.all([
+          execute({
+            schema: transformedSchema1,
+            document: parse(query),
+          }),
+          execute({
+            schema: transformedSchema2,
+            document: parse(query),
+          }),
+        ]);
+        expect(callCount).toBe(2);
       });
     });
   });
