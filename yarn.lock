@@ -8970,10 +8970,10 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
-codemirror-graphql@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/codemirror-graphql/-/codemirror-graphql-1.2.2.tgz#8921b71f3bac17a96d975882fa7d8129f7910d73"
-  integrity sha512-52fJOx9JdPejPfbBr9fMGspBo3qRfYu1Cuwr4Z6Rtd13n42mCfdCnAnCSnOtzr9oiTj1hva+CDZhbA1vkUtaDg==
+codemirror-graphql@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/codemirror-graphql/-/codemirror-graphql-1.2.3.tgz#06c9fe1e143e12ed7ad87c33c25cda5d08ae29e8"
+  integrity sha512-fc/ZUr2SGqro4rjM/uqhOJdSWXWb++4sEovX4UzQfJcF+vCe2EqCBDo4kPF99DBqj5c9V7Bm+KWad07N0S6ziQ==
   dependencies:
     "@codemirror/stream-parser" "^0.19.2"
     graphql-language-service "^3.2.3"
@@ -12775,14 +12775,14 @@ graphiql-explorer@0.6.3:
   resolved "https://registry.yarnpkg.com/graphiql-explorer/-/graphiql-explorer-0.6.3.tgz#870428eb5973de2aa9caa3ca0fd581c36cc3b8c9"
   integrity sha512-TYQZm5aaHt1bRtoJAcur0fZpvSO3pvYiz22fgrBeEfeqMYKtzabaVQlRSTpyAhmlsTppR+O3qK7c77CFsGN/+A==
 
-graphiql@1.5.4:
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-1.5.4.tgz#95d2117a70f10d98a482862f426e4ac759efda4f"
-  integrity sha512-VWxV6w4vneFqW/hUBGlNMnSO2Zi+4BKv5SK+f9K3pvhRIIjBtXpzHluEpwYHyi+CuiEEuaSCpmqes/CItpDkYw==
+graphiql@1.5.5:
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-1.5.5.tgz#0e41e4b9484326c9c361d7fd2e4e469537c815e2"
+  integrity sha512-0NiWlSZZI20rrWAHMnvk4GoraQU2zF+znEABcVf3ucLc0L+yGpa3xdgaLHZxzqADx3SmVmJ23Lollb4fVmJ5Cw==
   dependencies:
     "@graphiql/toolkit" "^0.4.2"
     codemirror "^5.58.2"
-    codemirror-graphql "^1.2.2"
+    codemirror-graphql "^1.2.3"
     copy-to-clipboard "^3.2.0"
     dset "^3.1.0"
     entities "^2.0.0"
