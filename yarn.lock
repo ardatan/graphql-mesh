@@ -12785,10 +12785,10 @@ graphiql-explorer@0.6.3:
   resolved "https://registry.yarnpkg.com/graphiql-explorer/-/graphiql-explorer-0.6.3.tgz#870428eb5973de2aa9caa3ca0fd581c36cc3b8c9"
   integrity sha512-TYQZm5aaHt1bRtoJAcur0fZpvSO3pvYiz22fgrBeEfeqMYKtzabaVQlRSTpyAhmlsTppR+O3qK7c77CFsGN/+A==
 
-graphiql@1.5.6:
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-1.5.6.tgz#17a638c40dcdb9466e5aad893f6f24d5f1572bc5"
-  integrity sha512-/9iPpXAn9bUnTRYnIlR1XCnmvoMRDzg0bk2EYy+DUlpyTPxLKX4cNDU24+AztwZ0wYWh9lur/a++Umy2igyYKg==
+graphiql@1.5.7:
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-1.5.7.tgz#e37fcbc3997b11eb578303735f2fb7de23d3ba35"
+  integrity sha512-rKkxQJxpBwJWuQ32orSzFnp/hbJOKBB5Da6leL3NEHN/WnFF8SzKwtfUnx3gM3j4Me7iu32lZ74NzDYGw26DwA==
   dependencies:
     "@graphiql/toolkit" "^0.4.2"
     codemirror "^5.58.2"
