@@ -42,12 +42,15 @@ const EXAMPLES = {
 
 const LiveDemo: FC<{ className?: string }> = ({ className }) => {
   const [exampleRepo, setExampleRepo] = useState('json-schema-example');
+  const [loading, setLoading] = useState(true);
+
   return (
     <div className={className}>
       Choose Live Example:{' '}
       <select
         value={exampleRepo}
         onChange={e => {
+          setLoading(true);
           setExampleRepo(e.target.value);
         }}
       >
@@ -63,10 +66,24 @@ const LiveDemo: FC<{ className?: string }> = ({ className }) => {
       </select>
       <iframe
         src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
-        css={[tw`w-full h-[500px] rounded pt-8`]}
+        onLoad={() => setLoading(false)}
+        css={[
+          tw`w-full h-[500px] rounded pt-8`,
+          loading
+            ? `
+                animation: blur 0.2s linear forwards;
+
+                @keyframes blur {
+                  to {
+                    filter: blur(5px);
+                  }
+                }
+              `
+            : '',
+        ]}
         title={exampleRepo}
-        allow='geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb'
-        sandbox='allow-modals allow-forms allow-popups allow-scripts allow-same-origin'
+        allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+        sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
       />
     </div>
   );
