@@ -6,11 +6,9 @@ sidebar_label: Mock
 
 The `mock` transform allow you to apply mocking for development usage.
 
-To get started with this transform, install it from npm:
+To get started with this transform, install it:
 
-```
-yarn add @graphql-mesh/transform-mock
-```
+<PackageInstall packages="@graphql-mesh/transform-mock" />
 
 ## How to use?
 
@@ -34,7 +32,7 @@ You can mock a specific field of a type;
 ```yml
 transforms:
   - mock:
-      mocks: 
+      mocks:
         - apply: User.fullName
           custom: ./user-mocks#fullName
 ```
@@ -48,7 +46,7 @@ transforms:
   - mock:
       mocks:
         - apply: DateTime
-          custom: graphql-scalars#DateTimeMock 
+          custom: graphql-scalars#DateTimeMock
           # This will import `DateTimeMock` from `graphql-scalars` for example. Local paths are also supported
 ```
 
@@ -112,7 +110,7 @@ Then a configuration like below;
 ```yml
 transforms:
   - mock:
-      mocks: 
+      mocks:
         - apply: User.fullName
           faker: '{{name.fullName}}'
         - apply: Query.users
@@ -127,7 +125,7 @@ Now `{ users { id fullName } }` query will return 3 of `User` item;
     {
       "id": "SOME_RANDOM_ID",
       "fullName": "John Doe"
-    },    
+    },
     {
       "id": "SOME_RANDOM_ID",
       "fullName": "Jane Doe"
@@ -196,11 +194,11 @@ type Query {
 transforms:
   - mock:
       initializeStore: absolute-path-to-file/myMock#initializeStore
-      mocks: 
+      mocks:
         - apply: Query.user
           store:
             type: User
-            key: "{args.id}" 
+            key: "{args.id}"
 ```
 
 ### Mutate data in the store
@@ -222,25 +220,25 @@ type Mutation {
 ```yml
 transforms:
   - mock:
-      mocks: 
+      mocks:
         - apply: Mutation.changeMyName
           custom: ./myMocks#changeMyName
-          
+
         - apply: Mutation.addUser
           updateStore:
             type: User
             key: "{random}"
             fieldName: name
             value: "{args.name}"
-            
+
           # return created user
           store:
             type: User
             key: "{random}"
-            
+
         - apply: Mutation.updateUser
           custom: ./mocks#updateUser
-          
+
           # or you can do the following
           updateStore:
             type: User
@@ -248,7 +246,7 @@ transforms:
             fieldName: name
             value: "{args.name}"
           # return updated user
-          store: 
+          store:
             type: User
             key: "{args.id}"
 ```

@@ -9,11 +9,9 @@ This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](http
 
 You can import it using remote/local `.json` or `.yaml`.
 
-To get started, install the handler library from NPM:
+To get started, install the handler library:
 
-```sh
-yarn add @graphql-mesh/openapi
-```
+<PackageInstall packages="@graphql-mesh/openapi" />
 
 Now, you can use it directly in your Mesh config file:
 
@@ -123,7 +121,9 @@ module.exports = (url, args, context) => {
 }
 ```
 
-Of course, `node-fetch` needs to be added to your project: `npm add node-fetch`.
+Of course, `node-fetch` needs to be added to your project:
+
+<PackageInstall packages="node-fetch" />
 
 ### Setting / Unsetting the cookie
 

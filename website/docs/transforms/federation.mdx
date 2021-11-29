@@ -6,9 +6,7 @@ sidebar_label: Apollo Federation
 
 `federation` transform allows to add the resolvers and directives to conform to the federation specification. Much of the federation sourcecode could be reused ensuring it is compliant to the specification. This transform uses [`graphql-transform-federation`](https://github.com/0xR/graphql-transform-federation) package.
 
-```
-yarn add @graphql-mesh/transform-federation
-```
+<PackageInstall packages="@graphql-mesh/transform-federation" />
 
 ## How to use?
 
@@ -16,7 +14,7 @@ Add the following configuration to your Mesh config file:
 
 ```yml
 transforms:
-  - federation: 
+  - federation:
         types:
             # Ensure the root queries of this schema show up the combined schema
             - name: Query
@@ -49,7 +47,7 @@ resolveReference: ./userResolveReference.js
 `./userResolveReference.js`
 ```js
 // So we can point to an existing query field to resolve that entity
-module.exports = (root, context, info) => 
+module.exports = (root, context, info) =>
                     context.accounts.Query.user({ root, args: { id: root.id }, context, info })
 ```
 

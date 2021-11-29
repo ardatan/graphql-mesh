@@ -6,15 +6,13 @@ sidebar_label: Cache
 
 The `cache` transform allow you to apply caching over your data-sources easily.
 
-It allow you to configure custom invalidation rules (by ttl / mutation), and selective caching, according to your needs.
+It allows you to configure custom invalidation rules (by ttl / mutation), and selective caching, according to your needs.
 
 > This transform is being applied globally, because of the need to communicate with other GraphQL operations from your mesh.
 
-To get started with this transform, install it from npm:
+To get started with this transform, install it:
 
-```
-yarn add @graphql-mesh/transform-cache
-```
+<PackageInstall packages="@graphql-mesh/transform-cache" />
 
 > GraphQL Mesh uses a default in-memory LRU cache, but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/inmemory-lru) for more info.
 

@@ -7,11 +7,9 @@ sidebar_label: PostgreSQL / PostGraphile
 
 This handler allows you to use GraphQL schema created by [PostGraphile](https://graphile.org/postgraphile), based on a PostgreSQL database schema.
 
-To get started, install the handler library from NPM:
+To get started, install the handler library:
 
-```sh
-yarn add @graphql-mesh/postgraphile
-```
+<PackageInstall packages="@graphql-mesh/postgraphile" />
 
 Now, you can use it directly in your Mesh config file:
 
@@ -27,11 +25,9 @@ sources:
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
 
 ## External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)
-You can add [PostGraphile plugins](https://graphile.org/postgraphile/community-plugins) for example FederationPlugin. You can install it using npm or yarn like below;
+You can add [PostGraphile plugins](https://graphile.org/postgraphile/community-plugins) for example FederationPlugin. You can install it like below:
 
-```sh
-yarn add @graphile/federation
-```
+<PackageInstall packages="@graphile/federation" />
 
 and add those in your configuration file;
 
@@ -48,13 +44,17 @@ sources:
 [Learn more about PostGraphile plugins](https://graphile.org/postgraphile/extending)
 
 ### Federation and Automatic Type Merging support
-Federation plugin converts your Postgraphile schema into a federated schema that can also be recognized by Stitching and this brings Automatic Type Merging. So you can install `@graphile/federation` package like above and add it under `appendPlugins`
+Federation plugin converts your Postgraphile schema into a federated schema that can also be recognized by Stitching and this brings Automatic Type Merging. So you can install `@graphile/federation` package like above and add it under `appendPlugins`.
 
 ### Many-to-Many support
-If you want to have automatic many-to-many mapping across your entities. You can install `@graphile-contrib/pg-many-to-many` with `yarn add @graphile-contrib/pg-many-to-many` and add it under `appendPlugins`
+If you want to have automatic many-to-many mapping across your entities. You can install `@graphile-contrib/pg-many-to-many` and add it under `appendPlugins`.
+
+<PackageInstall packages="@graphile-contrib/pg-many-to-many" />
 
 ### PostGIS Support
 If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile/postgis` package and add it under `appendPlugins`.
+
+<PackageInstall packages="@graphile/postgis" />
 
 > See more [plugins](https://graphile.org/postgraphile/community-plugins) to improve the experience!
 
