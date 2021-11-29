@@ -1,9 +1,10 @@
+import { FC } from 'react';
 import dynamic from 'next/dynamic';
 import { HeroGradient, InfoList } from '@theguild/components';
 import { handlePushRoute, NPMBadge } from '@guild-docs/client';
-import styles from './styles.module.css';
 import { Heading, HStack } from '@chakra-ui/react';
 import Image from 'next/image';
+import tw from 'twin.macro';
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
@@ -12,7 +13,7 @@ const LiveDemo = dynamic(() => import('../components/live-demo'), {
   loading: () => <p>Loading...</p>,
 });
 
-function FeatureTitle({ imgSrc, title }: { imgSrc: any; title: string }) {
+const FeatureTitle: FC<{ imgSrc: string; title: string }> = ({ imgSrc, title }) => {
   return (
     <>
       <HStack>
@@ -74,8 +75,7 @@ export default function Index() {
         ]}
       /> */}
 
-      <div className={styles.liveDemo}>
-        <a id="live-demo" />
+      <div css={[tw`hidden lg:block px-8 py-12`]}>
         <LiveDemo />
       </div>
 
@@ -87,7 +87,7 @@ export default function Index() {
             description: `Use GraphQL as a query language to fetch data from your data-sources directly, without the need for a running gateway server, or any other bottleneck.`,
           },
           {
-            title: <FeatureTitle title="Any Data Source" imgSrc={MeshExampleLogo} />,
+            title: <FeatureTitle title="Any Data Source" imgSrc={MeshExampleLogo as any} />,
             description: `With GraphQL Mesh, you can use GraphQL query language to fetch from (almost) any data source, without changing the source or modify it's code.`,
           },
           {

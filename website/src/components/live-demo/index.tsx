@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import styles from './styles.module.css';
+import { FC, useState } from 'react';
+import tw from 'twin.macro';
 
 const EXAMPLES = {
   OpenAPI: {
@@ -40,51 +40,52 @@ const EXAMPLES = {
   },
 };
 
-const LiveDemo = () => {
+const LiveDemo: FC<{ className?: string }> = ({ className }) => {
   const [exampleRepo, setExampleRepo] = useState('json-schema-example');
   const [loading, setLoading] = useState(true);
 
   return (
-    <>
-      <div className={styles.picker}>
-        Choose Live Example:{' '}
-        <select
-          className={styles.pickerSelector}
-          value={exampleRepo}
-          onChange={e => {
-            setLoading(true);
-            setExampleRepo(e.target.value);
-          }}
-        >
-          {Object.entries(EXAMPLES).map(([groupName, group]) => (
-            <optgroup key={groupName} label={groupName}>
-              {Object.entries(group).map(([exampleName, value]) => (
-                <option key={exampleName} label={exampleName} value={value}>
-                  {exampleName}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-      </div>
-      <div className={styles.container}>
-        <iframe
-          src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
-          style={{
-            width: '100%',
-            height: 500,
-            border: 0,
-            borderRadius: 4,
-            overflow: 'hidden',
-          }}
-          className={loading ? styles.blur : ''}
-          title={exampleRepo}
-          allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-          sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-          onLoad={() => setLoading(false)}
-        />
-      </div>
-    </>
+    <div className={className}>
+      Choose Live Example:{' '}
+      <select
+        value={exampleRepo}
+        onChange={e => {
+          setLoading(true);
+          setExampleRepo(e.target.value);
+        }}
+      >
+        {Object.entries(EXAMPLES).map(([groupName, group]) => (
+          <optgroup key={groupName} label={groupName}>
+            {Object.entries(group).map(([exampleName, value]) => (
+              <option key={exampleName} label={exampleName} value={value}>
+                {exampleName}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+      <iframe
+        src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
+        onLoad={() => setLoading(false)}
+        css={[
+          tw`w-full h-[500px] rounded pt-8`,
+          loading
+            ? `
+                animation: blur 0.2s linear forwards;
+
+                @keyframes blur {
+                  to {
+                    filter: blur(5px);
+                  }
+                }
+              `
+            : '',
+        ]}
+        title={exampleRepo}
+        allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+        sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+      />
+    </div>
   );
 };
 

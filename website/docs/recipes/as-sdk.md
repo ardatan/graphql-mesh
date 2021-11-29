@@ -35,7 +35,7 @@ documents:
 
 You can run `mesh dev` to try your operations in the playground;
 
-```
+```sh
 yarn mesh dev
 ```
 
@@ -53,13 +53,13 @@ sdk:
 
 This will generate an SDK inside your Mesh artifacts under `.mesh` directory;
 
-```
+```sh
 yarn mesh build
 ```
 
 ## Using the generated SDK in the code
 
-Now, instead of using `execute` manually, you can use the generated `getSdk` method with your a GraphQL Mesh client, and use the functions that are generated based on your operations:
+Now, instead of using `execute` manually, you can use the generated `getSdk` method with your GraphQL Mesh client, and use the functions that are generated based on your operations:
 
 ```ts
 import { getMeshSdk } from './.mesh';
@@ -77,4 +77,4 @@ async function test() {
 > You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb#using-the-generated-sdk)
 
 
-![GraphQL Mesh](/img/as-sdk.png)
+![GraphQL Mesh](/static/img/as-sdk.png)
