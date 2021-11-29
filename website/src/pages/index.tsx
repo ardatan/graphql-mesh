@@ -87,7 +87,7 @@ export default function Index() {
             description: `Use GraphQL as a query language to fetch data from your data-sources directly, without the need for a running gateway server, or any other bottleneck.`,
           },
           {
-            title: <FeatureTitle title="Any Data Source" imgSrc={MeshExampleLogo} />,
+            title: <FeatureTitle title="Any Data Source" imgSrc={MeshExampleLogo as any} />,
             description: `With GraphQL Mesh, you can use GraphQL query language to fetch from (almost) any data source, without changing the source or modify it's code.`,
           },
           {
