@@ -27,7 +27,7 @@
     "@graphql-mesh/store": "0.3.1",
     "@graphql-mesh/utils": "0.22.1",
     "postgraphile-core": "4.12.2",
-    "postgraphile": "4.12.5",
+    "postgraphile": "4.12.6",
     "pg": "^8.6.0"
   },
   "publishConfig": {
