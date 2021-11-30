@@ -19929,10 +19929,10 @@ postgraphile-core@4.12.2:
     graphile-build-pg "4.12.2"
     tslib "^2.0.1"
 
-postgraphile@4.12.5:
-  version "4.12.5"
-  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.12.5.tgz#269c07d6ac30c23260a05e12653253851507b230"
-  integrity sha512-4KLEv4IV8ROhzc6Qb6rpzXuCEs/ifIf9mZlq99sB00T7OWYax7PqfDHXPlpnI0SZNYG2YYFWJu0A0sWQY3Ty/A==
+postgraphile@4.12.6:
+  version "4.12.6"
+  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.12.6.tgz#99b1e51b578c640adc668998309aa38f7fe19f06"
+  integrity sha512-+XfcGKYFcM785U247nRQVkJqLIuFq5AZ1HfZ2VAN2iAEKFiIX8NxivRjnXe3OG2hk1rkP75tfFAAqy03m37FRg==
   dependencies:
     "@graphile/lru" "4.11.0"
     "@types/json5" "^0.0.30"
