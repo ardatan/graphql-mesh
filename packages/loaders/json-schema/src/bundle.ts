@@ -8,11 +8,11 @@ import { GraphQLSchema } from 'graphql';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema';
 
 export interface JSONSchemaLoaderBundle {
-  name: string;
-  baseUrl: string;
+  name?: string;
+  baseUrl?: string;
   operations: JSONSchemaOperationConfig[];
-  operationHeaders: Record<string, string>;
-  errorMessage: string;
+  operationHeaders?: Record<string, string>;
+  errorMessage?: string;
 
   referencedSchema: JSONSchemaObject;
 }
