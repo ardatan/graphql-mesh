@@ -25,7 +25,7 @@
   "dependencies": {
     "cross-undici-fetch": "0.1.1",
     "@omnigraph/json-schema": "0.5.0",
-    "raml-1-parser": "1.1.67",
+    "@ardatan/raml-1-parser": "1.1.68",
     "json-machete": "0.2.0",
     "to-json-schema": "0.2.5",
     "@graphql-mesh/utils": "0.22.1"
