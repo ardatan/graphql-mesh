@@ -1,7 +1,7 @@
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { HTTPMethod, JSONSchemaOperationConfig } from '@omnigraph/json-schema';
 import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
-import { api10, loadApi } from 'raml-1-parser';
+import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import toJsonSchema from 'to-json-schema';
 import { RAMLLoaderOptions } from './types';
