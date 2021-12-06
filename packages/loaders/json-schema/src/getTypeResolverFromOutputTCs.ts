@@ -1,7 +1,7 @@
 import { inspect } from '@graphql-tools/utils';
 import { GraphQLResolveInfo } from 'graphql';
 import { ObjectTypeComposer } from 'graphql-compose';
-import Ajv, { ValidateFunction } from 'packages/cli/node_modules/ajv/dist/ajv';
+import Ajv, { ValidateFunction } from 'ajv';
 
 export function getTypeResolverFromOutputTCs(ajv: Ajv, outputTypeComposers: ObjectTypeComposer[]) {
   return function resolveType(data: any, content: any, info: GraphQLResolveInfo) {

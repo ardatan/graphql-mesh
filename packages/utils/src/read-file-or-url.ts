@@ -39,10 +39,13 @@ export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileO
 export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
   const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
-  if (/js$/.test(actualPath) || /ts$/.test(actualPath) || /json$/.test(actualPath)) {
+  if (/js$/.test(actualPath) || /ts$/.test(actualPath)) {
     return importFn(actualPath);
   }
   const rawResult = await readFileFromFS(actualPath, 'utf-8');
+  if (/json$/.test(actualPath)) {
+    return JSON.parse(rawResult);
+  }
   if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
     return loadYaml(rawResult) as T;
   } else if (fallbackFormat) {

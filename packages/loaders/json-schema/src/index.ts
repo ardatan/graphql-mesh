@@ -1,7 +1,7 @@
 import { loadGraphQLSchemaFromJSONSchemas } from './loadGraphQLSchemaFromJSONSchemas';
 export default loadGraphQLSchemaFromJSONSchemas;
-export * from './addExecutionLogicToComposer';
-export * from './getReferencedJSONSchemaFromOperations';
-export * from './getComposerFromJSONSchema';
-export * from './loadGraphQLSchemaFromJSONSchemas';
+export { loadGraphQLSchemaFromJSONSchemas };
+export * from './getDereferencedJSONSchemaFromOperations';
+export * from './getGraphQLSchemaFromDereferencedJSONSchema';
 export * from './types';
+export * from './bundle';

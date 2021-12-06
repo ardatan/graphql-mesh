@@ -49,16 +49,22 @@ export async function getReferencedJSONSchemaFromOperations({
     });
     rootTypeDefinition.properties = rootTypeDefinition.properties || {};
     if (operationConfig.responseSchema) {
-      rootTypeDefinition.properties[fieldName] = {
-        $ref: operationConfig.responseSchema,
-      };
+      rootTypeDefinition.properties[fieldName] =
+        typeof operationConfig.responseSchema === 'string'
+          ? {
+              $ref: operationConfig.responseSchema,
+            }
+          : operationConfig.responseSchema;
     } else if (operationConfig.responseSample) {
-      const sample = await readFileOrUrl(operationConfig.responseSample, {
-        cwd,
-        headers: schemaHeaders,
-      }).catch((e: any) => {
-        throw new Error(`responseSample - ${e.message}`);
-      });
+      const sample =
+        typeof operationConfig.responseSchema === 'object'
+          ? operationConfig.responseSample
+          : await readFileOrUrl(operationConfig.responseSample, {
+              cwd,
+              headers: schemaHeaders,
+            }).catch((e: any) => {
+              throw new Error(`responseSample - ${e.message}`);
+            });
       const generatedSchema = toJsonSchema(sample, {
         required: false,
         objects: {
@@ -98,17 +104,23 @@ export async function getReferencedJSONSchemaFromOperations({
         format: 'upload',
       };
       rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
-    } else if ('requestSchema' in operationConfig) {
-      rootTypeInputTypeDefinition.properties[fieldName] = {
-        $ref: operationConfig.requestSchema,
-      };
+    } else if ('requestSchema' in operationConfig && operationConfig.requestSchema) {
+      rootTypeInputTypeDefinition.properties[fieldName] =
+        typeof operationConfig.requestSchema === 'string'
+          ? {
+              $ref: operationConfig.requestSchema,
+            }
+          : operationConfig.requestSchema;
     } else if ('requestSample' in operationConfig) {
-      const sample = await readFileOrUrl(operationConfig.requestSample, {
-        cwd,
-        headers: schemaHeaders,
-      }).catch((e: any) => {
-        throw new Error(`requestSample:${operationConfig.requestSample} cannot be read - ${e.message}`);
-      });
+      const sample =
+        typeof operationConfig.requestSample === 'object'
+          ? operationConfig.requestSample
+          : await readFileOrUrl(operationConfig.requestSample, {
+              cwd,
+              headers: schemaHeaders,
+            }).catch((e: any) => {
+              throw new Error(`requestSample:${operationConfig.requestSample} cannot be read - ${e.message}`);
+            });
       const generatedSchema = toJsonSchema(sample, {
         required: false,
         objects: {

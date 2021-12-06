@@ -1,7 +1,6 @@
 {
-  "name": "json-machete",
-  "version": "0.2.0",
-  "license": "MIT",
+  "name": "@omnigraph/raml",
+  "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,12 +18,17 @@
       "import": "./dist/*.mjs"
     }
   },
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
   "dependencies": {
-    "@json-schema-tools/meta-schema": "1.6.19",
     "cross-undici-fetch": "0.1.1",
-    "json-ptr": "3.0.1",
-    "@graphql-mesh/utils": "0.22.1",
-    "url-join": "4.0.1"
+    "@omnigraph/json-schema": "0.5.0",
+    "@ardatan/raml-1-parser": "1.1.69",
+    "json-machete": "0.2.0",
+    "to-json-schema": "0.2.5",
+    "@graphql-mesh/utils": "0.22.1"
   },
   "publishConfig": {
     "access": "public",

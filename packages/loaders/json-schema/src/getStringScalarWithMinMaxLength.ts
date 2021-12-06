@@ -9,6 +9,11 @@ export function getStringScalarWithMinMaxLength({
   schemaComposer: SchemaComposer;
   subSchema: JSONSchemaObject;
 }) {
+  const name = getValidTypeName({
+    schemaComposer,
+    isInput: false,
+    subSchema,
+  });
   function coerceString(value: any) {
     if (value != null) {
       const vStr = value.toString();
@@ -22,11 +27,7 @@ export function getStringScalarWithMinMaxLength({
     }
   }
   return schemaComposer.createScalarTC({
-    name: getValidTypeName({
-      schemaComposer,
-      isInput: false,
-      subSchema,
-    }),
+    name,
     description: subSchema.description,
     serialize: coerceString,
     parseValue: coerceString,
