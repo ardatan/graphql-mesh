@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.22.2
+
+### Patch Changes
+
+- 6c216c309: fix(readFileOrUrl): read JSON from FS not CJS
+
 ## 0.22.1
 
 ### Patch Changes
