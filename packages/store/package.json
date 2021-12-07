@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/store",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@graphql-inspector/core": "3.0.2",
-    "@graphql-mesh/utils": "0.22.1",
+    "@graphql-mesh/utils": "0.22.2",
     "@graphql-tools/utils": "8.5.3"
   },
   "publishConfig": {

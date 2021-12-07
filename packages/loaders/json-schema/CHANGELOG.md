@@ -1,5 +1,16 @@
 # @omnigraph/json-schema
 
+## 0.5.1
+
+### Patch Changes
+
+- 6c216c309: fix(json-schema): do not process arrays if there is no clue
+- 6c216c309: fix(json-schema): handle descriptions correctly
+- 8d233db89: fix(json-schema): respect arrays in request object
+- Updated dependencies [6c216c309]
+  - @graphql-mesh/utils@0.22.2
+  - json-machete@0.2.1
+
 ## 0.5.0
 
 ### Minor Changes
