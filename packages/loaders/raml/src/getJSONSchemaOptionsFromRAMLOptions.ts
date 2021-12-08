@@ -6,6 +6,11 @@ import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import toJsonSchema from 'to-json-schema';
 import { RAMLLoaderOptions } from './types';
 
+/**
+ * Generates the options for JSON Schema Loader
+ * from RAML Loader options by extracting the JSON Schema references
+ * from RAML API Document
+ */
 export async function getJSONSchemaOptionsFromRAMLOptions({
   ramlFilePath,
   cwd: ramlFileCwd = process.cwd(),

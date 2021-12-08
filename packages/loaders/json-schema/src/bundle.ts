@@ -68,6 +68,11 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   logger?: Logger;
   operationHeaders?: Record<string, string>;
 }
+
+/**
+ * Generates a local GraphQLSchema instance from
+ * previously generated JSON Schema bundle
+ */
 export async function getGraphQLSchemaFromBundle(
   {
     name,
