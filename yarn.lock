@@ -17524,10 +17524,10 @@ mongoose@5.10.9:
     sift "7.0.1"
     sliced "1.0.1"
 
-mongoose@6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.1.0.tgz#958a2cdf126cf1af4bae576e9331e58bb03b434d"
-  integrity sha512-w3lA9ua4nD0qnsl+p4ExnK7wf/+BBFAiv/V/ufiWbV5qe1GT/IUzvP7E9rhxlBpTKL81M501wrrUr3Nc1dvBxw==
+mongoose@6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.1.1.tgz#5a4a0031e0e1d8d8e248e5d48de027f4777938d8"
+  integrity sha512-9IODOeFDxW0hzvGmE2Yvy/TaFGLIXQWgE/L1D/x3lKVo8PGyokklgnvX0/Qia7lxiZvxe6+na1aA7v0gT+TN+g==
   dependencies:
     bson "^4.2.2"
     kareem "2.3.2"
