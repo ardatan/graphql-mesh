@@ -29,7 +29,7 @@
     "ioredis": "4.28.2"
   },
   "devDependencies": {
-    "@types/ioredis": "4.28.2"
+    "@types/ioredis": "4.28.3"
   },
   "publishConfig": {
     "access": "public",
