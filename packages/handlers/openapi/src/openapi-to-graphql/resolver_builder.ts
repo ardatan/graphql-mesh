@@ -24,6 +24,7 @@ import urlJoin from 'url-join';
 import { Path } from 'graphql/jsutils/Path';
 import { ConnectOptions, RequestOptions } from './types/options';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { Headers } from 'cross-undici-fetch';
 
 // Type definitions & exports:
 type AuthReqAndProtcolName = {
@@ -586,7 +587,7 @@ export function getResolver<TSource, TContext, TArgs>(
 
     const urlWithoutQuery = urlObject.href.replace(urlObject.search, '');
     resolveData.url = urlWithoutQuery;
-    resolveData.usedRequestOptions = options;
+    resolveData.usedRequestOptions = Object.assign({}, options);
     resolveData.usedStatusCode = operation.statusCode;
 
     // Make the call
@@ -978,7 +979,7 @@ function resolveLinkParameter(
 
       // CASE: parameter in previous header parameter
     } else if (value.startsWith('$request.header')) {
-      return resolveData.usedRequestOptions.headers[value.split('header.')[1]];
+      return new Headers(resolveData.usedRequestOptions.headers || {}).get(value.split('header.')[1]);
     }
   } else if (value.startsWith('$response.')) {
     /**
@@ -1021,7 +1022,7 @@ function resolveLinkParameter(
 
       // CASE: parameter in header parameter
     } else if (value.startsWith('$response.header')) {
-      return resolveData.responseHeaders[value.split('header.')[1]];
+      return new Headers(resolveData.responseHeaders || {}).get(value.split('header.')[1]);
     }
   }
 
@@ -1077,7 +1078,8 @@ function resolveRuntimeExpression(
 
       // CASE: parameter in previous header parameter
     } else if (value.startsWith('$request.header')) {
-      return resolveData.usedRequestOptions.headers[value.split('header.')[1]];
+      console.log(value, resolveData.usedRequestOptions);
+      return new Headers(resolveData.usedRequestOptions.headers || {}).get(value.split('header.')[1]);
     }
   } else if (value.startsWith('$response.')) {
     /**
@@ -1120,7 +1122,7 @@ function resolveRuntimeExpression(
 
       // CASE: parameter in header parameter
     } else if (value.startsWith('$response.header')) {
-      return resolveData.responseHeaders[value.split('header.')[1]];
+      return new Headers(resolveData.responseHeaders || {}).get(value.split('header.')[1]);
     }
   }
 

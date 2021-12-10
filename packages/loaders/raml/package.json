@@ -23,7 +23,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "cross-undici-fetch": "0.1.1",
+    "cross-undici-fetch": "0.1.4",
     "@omnigraph/json-schema": "0.5.1",
     "@ardatan/raml-1-parser": "1.1.69",
     "json-machete": "0.2.1",
