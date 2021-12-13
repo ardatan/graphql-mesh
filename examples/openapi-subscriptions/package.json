@@ -1,14 +1,14 @@
 {
   "name": "openapi-subscriptions",
-  "version": "0.0.146",
+  "version": "0.0.147",
   "private": true,
   "scripts": {
     "start:api": "node api.js",
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.44.2",
-    "@graphql-mesh/openapi": "0.21.4",
+    "@graphql-mesh/cli": "0.44.3",
+    "@graphql-mesh/openapi": "0.22.0",
     "graphql": "16.0.1",
     "body-parser": "1.19.0",
     "express": "4.17.1",

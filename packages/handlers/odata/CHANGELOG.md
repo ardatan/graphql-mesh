@@ -1,5 +1,17 @@
 # @graphql-mesh/odata
 
+## 0.15.0
+
+### Minor Changes
+
+- 5666484d6: update cross-undici-fetch
+
+### Patch Changes
+
+- Updated dependencies [5666484d6]
+  - @graphql-mesh/utils@0.23.0
+  - @graphql-mesh/store@0.3.3
+
 ## 0.14.6
 
 ### Patch Changes

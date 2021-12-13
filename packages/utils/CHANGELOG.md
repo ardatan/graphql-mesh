@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.23.0
+
+### Minor Changes
+
+- 5666484d6: update cross-undici-fetch
+
 ## 0.22.2
 
 ### Patch Changes
