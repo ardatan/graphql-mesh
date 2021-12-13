@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.56.0",
-    "@graphql-tools/stitch": "8.4.2",
+    "@graphql-tools/stitch": "8.4.3",
     "@graphql-tools/wrap": "8.3.2",
     "@graphql-mesh/utils": "0.22.2",
-    "@graphql-tools/delegate": "8.4.2",
+    "@graphql-tools/delegate": "8.4.3",
     "@graphql-tools/stitching-directives": "2.2.1",
     "@graphql-tools/schema": "8.3.1",
     "@graphql-mesh/store": "0.3.2"
