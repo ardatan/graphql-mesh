@@ -1,5 +1,17 @@
 # @graphql-mesh/openapi
 
+## 0.22.0
+
+### Minor Changes
+
+- 5666484d6: update cross-undici-fetch
+
+### Patch Changes
+
+- Updated dependencies [5666484d6]
+  - @graphql-mesh/utils@0.23.0
+  - @graphql-mesh/store@0.3.3
+
 ## 0.21.4
 
 ### Patch Changes

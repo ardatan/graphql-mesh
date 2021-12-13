@@ -1,5 +1,16 @@
 # json-machete
 
+## 0.3.0
+
+### Minor Changes
+
+- 5666484d6: update cross-undici-fetch
+
+### Patch Changes
+
+- Updated dependencies [5666484d6]
+  - @graphql-mesh/utils@0.23.0
+
 ## 0.2.1
 
 ### Patch Changes

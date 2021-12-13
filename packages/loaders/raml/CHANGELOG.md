@@ -1,6 +1,20 @@
 # @omnigraph/raml
 
+## 0.2.0
+
+### Minor Changes
+
+- 5666484d6: update cross-undici-fetch
+
+### Patch Changes
+
+- Updated dependencies [5666484d6]
+  - json-machete@0.3.0
+  - @omnigraph/json-schema@0.6.0
+  - @graphql-mesh/utils@0.23.0
+
 ## 0.1.0
+
 ### Minor Changes
 
 - 6c216c309: new RAML Handler
