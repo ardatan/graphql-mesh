@@ -10,7 +10,7 @@ import {
   isAbstractType,
   GraphQLType,
 } from 'graphql';
-import { withFilter } from '@graphql-mesh/utils';
+import { withFilter } from 'graphql-subscriptions';
 import _ from 'lodash';
 import { stringInterpolator } from './string-interpolator';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
@@ -174,7 +174,7 @@ export function resolveAdditionalResolvers(
                   (root, args, context, info) => {
                     const resolverData = { root, args, context, info, env };
                     const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-                    return pubsub.asyncIterator(topic);
+                    return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
                   },
                   (root, args, context, info) => {
                     return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;

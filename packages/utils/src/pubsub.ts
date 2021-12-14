@@ -44,13 +44,13 @@ export class PubSub {
     }
   }
 
-  asyncIterator<THook extends HookName>(triggerName: THook): AsyncGenerator<AllHooks[THook]> {
+  asyncIterator<THook extends HookName>(triggerName: THook): AsyncIterable<AllHooks[THook]> {
     const abortController = new AbortController();
     return withCancel(
       on(this.eventEmitter, triggerName, {
         signal: abortController.signal,
       }),
       () => abortController.abort()
-    ) as AsyncGenerator<AllHooks[THook]>;
+    );
   }
 }
