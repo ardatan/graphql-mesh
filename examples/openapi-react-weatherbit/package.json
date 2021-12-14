@@ -18,7 +18,6 @@
     "@graphql-mesh/cache-localforage": "0.5.24",
     "@graphql-mesh/merger-bare": "0.12.5",
     "@graphql-mesh/transform-cache": "0.11.4",
-    "graphql-subscriptions": "1.1.0",
     "graphql": "16.0.1"
   },
   "devDependencies": {

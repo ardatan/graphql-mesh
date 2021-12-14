@@ -3,7 +3,7 @@ import { execute, parse, printSchema, GraphQLObjectType } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 
 import ReplaceFieldTransform from '../src';
 

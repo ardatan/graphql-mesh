@@ -4,11 +4,9 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { PubSub } from 'graphql-subscriptions';
-import { EventEmitter } from 'events';
+import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
-import { DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -140,15 +138,10 @@ export async function resolvePubSub(
       pubsub,
     };
   } else {
-    const eventEmitter = new EventEmitter({ captureRejections: true });
-    eventEmitter.setMaxListeners(Infinity);
-    const pubsub = new PubSub({ eventEmitter }) as MeshPubSub;
+    const pubsub = new PubSub();
 
-    const importCode = `import { PubSub } from 'graphql-subscriptions';
-import { EventEmitter } from 'events';`;
-    const code = `const eventEmitter = new (EventEmitter as any)({ captureRejections: true });
-eventEmitter.setMaxListeners(Infinity);
-const pubsub = new PubSub({ eventEmitter });`;
+    const importCode = `import { PubSub } from '@graphql-mesh/utils';`;
+    const code = `const pubsub = new PubSub();`;
 
     return {
       importCode,

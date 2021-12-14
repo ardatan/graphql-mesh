@@ -1,7 +1,7 @@
 import OpenAPIHandler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { resolve } from 'path';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';

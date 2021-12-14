@@ -1,13 +1,13 @@
 import { buildSchema, printSchema } from 'graphql';
 import FilterSchemaTransform from '../src';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import { ImportFn } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
-  const pubsub = new PubSub() as MeshPubSub;
+  const pubsub = new PubSub();
   const baseDir: string = undefined;
   const importFn: ImportFn = m => import(m);
 

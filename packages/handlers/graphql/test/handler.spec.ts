@@ -1,11 +1,10 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '../src';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub, defaultImportFn, DefaultLogger } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema } from 'graphql';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, DefaultLogger } from '@graphql-mesh/utils';
 
 const { readFile } = fsPromises;
 

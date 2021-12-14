@@ -4,7 +4,7 @@ import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { addMock, resetMocks, MockResponse as Response, mockFetch } from './custom-fetch';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import ODataHandler from '../src';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';

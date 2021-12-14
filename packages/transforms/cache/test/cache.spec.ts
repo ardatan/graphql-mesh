@@ -13,10 +13,9 @@ import {
 } from 'graphql';
 import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
-import { hashObject } from '@graphql-mesh/utils';
+import { hashObject, PubSub } from '@graphql-mesh/utils';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
-import { PubSub } from 'graphql-subscriptions';
 import { cloneSchema } from 'neo4j-graphql-js/node_modules/graphql-tools';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -154,7 +153,7 @@ describe('cache', () => {
     });
 
     cache = new InMemoryLRUCache();
-    pubsub = new PubSub() as MeshPubSub;
+    pubsub = new PubSub();
 
     spies.Query.user.mockClear();
     spies.Query.users.mockClear();

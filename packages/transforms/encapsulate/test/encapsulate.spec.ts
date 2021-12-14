@@ -2,7 +2,7 @@ import Transform from '../src/index';
 import { execute, parse, getIntrospectionQuery } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 

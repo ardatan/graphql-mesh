@@ -66,7 +66,7 @@ export interface MeshPubSub {
     options?: any
   ): Promise<number>;
   unsubscribe(subId: number): void;
-  asyncIterator<THook extends HookName>(triggers: THook): AsyncIterator<AllHooks[THook]>;
+  asyncIterator<THook extends HookName>(triggers: THook): AsyncGenerator<AllHooks[THook]>;
 }
 
 export interface MeshTransformOptions<Config = any> {

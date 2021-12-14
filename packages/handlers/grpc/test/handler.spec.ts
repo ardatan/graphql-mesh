@@ -2,7 +2,7 @@ import { join } from 'path';
 import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import GrpcHandler from '../src';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';

@@ -10,7 +10,7 @@ import {
   isAbstractType,
   GraphQLType,
 } from 'graphql';
-import { withFilter } from 'graphql-subscriptions';
+import { withFilter } from '@graphql-mesh/utils';
 import _ from 'lodash';
 import { stringInterpolator } from './string-interpolator';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';

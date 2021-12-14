@@ -1,6 +1,6 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';
 import ResolversCompositionTransform, { ResolversComposition } from '../src';
 import { execute, parse } from 'graphql';

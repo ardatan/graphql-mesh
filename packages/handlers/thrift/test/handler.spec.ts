@@ -2,7 +2,7 @@ import ThriftHandler from '../src';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { join } from 'path';
 import { printSchema } from 'graphql';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';
 
