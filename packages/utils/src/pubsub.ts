@@ -1,5 +1,5 @@
 import { HookName, AllHooks } from '@graphql-mesh/types';
-import { inspect, withCancel } from '@graphql-tools/utils';
+import { withCancel } from '@graphql-tools/utils';
 import { AbortController } from 'cross-undici-fetch';
 import EventEmitter, { on } from 'events';
 
@@ -15,10 +15,7 @@ export class PubSub {
   }
 
   async publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void> {
-    const isEmitted = this.eventEmitter.emit(triggerName, payload);
-    if (!isEmitted) {
-      throw new Error(`${triggerName} cannot emit ${inspect(payload)}`);
-    }
+    this.eventEmitter.emit(triggerName, payload);
   }
 
   private listenerIdMap = new Map<

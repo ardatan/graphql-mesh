@@ -66,6 +66,7 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   pubsub?: MeshPubSub;
   logger?: Logger;
+  baseUrl?: string;
   operationHeaders?: Record<string, string>;
 }
 
@@ -76,7 +77,7 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
 export async function getGraphQLSchemaFromBundle(
   {
     name,
-    baseUrl,
+    baseUrl: bundledBaseUrl,
     operations,
     operationHeaders: bundledOperationHeaders = {},
     errorMessage,
@@ -87,6 +88,7 @@ export async function getGraphQLSchemaFromBundle(
     fetch = crossUndiciFetch,
     pubsub,
     logger = new DefaultLogger(name),
+    baseUrl: overwrittenBaseUrl,
     operationHeaders: additionalOperationHeaders = {},
   }: JSONSchemaLoaderBundleToGraphQLSchemaOptions = {}
 ): Promise<GraphQLSchema> {
@@ -100,7 +102,7 @@ export async function getGraphQLSchemaFromBundle(
     fetch,
     pubsub,
     logger,
-    baseUrl,
+    baseUrl: overwrittenBaseUrl || bundledBaseUrl,
     operations,
     operationHeaders,
     errorMessage,
