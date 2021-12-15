@@ -1,5 +1,5 @@
 import { HookName, AllHooks } from '@graphql-mesh/types';
-import { withCancel } from '@graphql-tools/utils';
+import { mapAsyncIterator, withCancel } from '@graphql-tools/utils';
 import { AbortController } from 'cross-undici-fetch';
 import EventEmitter, { on } from 'events';
 
@@ -44,9 +44,12 @@ export class PubSub {
   asyncIterator<THook extends HookName>(triggerName: THook): AsyncIterable<AllHooks[THook]> {
     const abortController = new AbortController();
     return withCancel(
-      on(this.eventEmitter, triggerName, {
-        signal: abortController.signal,
-      }),
+      mapAsyncIterator(
+        on(this.eventEmitter, triggerName, {
+          signal: abortController.signal,
+        }),
+        ([value]) => value
+      ),
       () => abortController.abort()
     );
   }
