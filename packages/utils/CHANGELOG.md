@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.24.1
+
+### Patch Changes
+
+- 26d685f2a: fix(pubsub): get correct value from event
+
 ## 0.24.0
 
 ### Minor Changes

@@ -1,14 +1,14 @@
 {
   "name": "openapi-stackexchange",
-  "version": "0.6.159",
+  "version": "0.6.160",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.44.4",
-    "@graphql-mesh/openapi": "0.22.1",
+    "@graphql-mesh/cli": "0.44.5",
+    "@graphql-mesh/openapi": "0.22.2",
     "graphql": "16.0.1"
   }
 }
