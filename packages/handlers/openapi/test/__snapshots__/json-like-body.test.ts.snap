@@ -2,18 +2,10 @@
 
 exports[`JSON Like Bodies should treat */* as application/json: */* snapshot 1`] = `
 "type Query {
-  \\"\\"\\"
-  
-  
-  Equivalent to GET /api/v1/countries
-  \\"\\"\\"
+  \\"\\\\n\\\\nEquivalent to GET /api/v1/countries\\"
   apiV1Countries: [Country]
 
-  \\"\\"\\"
-  
-  
-  Equivalent to GET /api/v1/provinces/country/{countryID}
-  \\"\\"\\"
+  \\"\\\\n\\\\nEquivalent to GET /api/v1/provinces/country/{countryID}\\"
   apiV1ProvincesCountry(countryID: String!): [Province]
 }
 
