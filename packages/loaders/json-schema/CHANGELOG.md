@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.7.0
+
+### Minor Changes
+
+- baf004f78: feat(json-schema): respect baseUrl given on loading bundle
+
+### Patch Changes
+
+- Updated dependencies [cfca98d34]
+  - @graphql-mesh/types@0.57.0
+  - @graphql-mesh/utils@0.24.0
+  - json-machete@0.3.1
+
 ## 0.6.0
 
 ### Minor Changes

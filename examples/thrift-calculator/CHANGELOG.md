@@ -1,5 +1,12 @@
 # thrift-calculator
 
+## 0.5.148
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.44.4
+- @graphql-mesh/thrift@0.8.8
+
 ## 0.5.147
 
 ### Patch Changes
