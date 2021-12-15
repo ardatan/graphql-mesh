@@ -102,7 +102,7 @@ export async function getGraphQLSchemaFromBundle(
     fetch,
     pubsub,
     logger,
-    baseUrl: bundledBaseUrl || overwrittenBaseUrl,
+    baseUrl: overwrittenBaseUrl || bundledBaseUrl,
     operations,
     operationHeaders,
     errorMessage,
