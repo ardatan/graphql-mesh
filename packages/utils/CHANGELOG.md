@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.24.0
+
+### Minor Changes
+
+- cfca98d34: feat(utils): drop graphql-subscriptions and use events for PubSub Impl
+
+### Patch Changes
+
+- Updated dependencies [cfca98d34]
+  - @graphql-mesh/types@0.57.0
+
 ## 0.23.0
 
 ### Minor Changes
