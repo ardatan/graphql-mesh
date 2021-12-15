@@ -5421,10 +5421,10 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@theguild/components@1.8.4":
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-1.8.4.tgz#e2b73265e5831cba860589fb52565aa79d86c6d4"
-  integrity sha512-LhoCouBVEt1L0OJ3/30ZEwlkT/l4Jinos1iGtMw3yancMF8KJbpanha2SRvV+UUw2ei1mfmmAKLYj0ILEZ8ygw==
+"@theguild/components@1.8.6":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-1.8.6.tgz#32a9a61c0ae829a2a70d42e071365fe99d5ec63f"
+  integrity sha512-MCB7eWEu6yGIuJfg3cA7dI/aza5XOwRYP59PsSogwZZmOFHRtuoaHZFu6V1NaQlhQQZvzN3hTtd5W5I6tX+tbQ==
   dependencies:
     "@emotion/react" "11.7.0"
     "@emotion/styled" "11.6.0"
@@ -5437,7 +5437,6 @@
     tailwindcss "2.2.19"
     twin.macro "2.8.2"
     use-debounce "7.0.1"
-    validator "13.7.0"
 
 "@tokenizer/token@^0.3.0":
   version "0.3.0"
@@ -24908,11 +24907,6 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validator@13.7.0, validator@^13.7.0:
-  version "13.7.0"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-13.7.0.tgz#4f9658ba13ba8f3d82ee881d3516489ea85c0857"
-  integrity sha512-nYXQLCBkpJ8X6ltALua9dRrZDHVYxjJ1wgskNt1lH9fzGjs3tgojGSCBjmEPwkWS1y29+DrizMTW19Pr9uB2nw==
-
 validator@^10.0.0, validator@^10.11.0:
   version "10.11.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.11.0.tgz#003108ea6e9a9874d31ccc9e5006856ccd76b228"
@@ -24922,6 +24916,11 @@ validator@^12.0.0:
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-12.2.0.tgz#660d47e96267033fd070096c3b1a6f2db4380a0a"
   integrity sha512-jJfE/DW6tIK1Ek8nCfNFqt8Wb3nzMoAbocBF6/Icgg1ZFSBpObdnwVY2jQj6qUqzhx5jc71fpvBWyLGO7Xl+nQ==
+
+validator@^13.7.0:
+  version "13.7.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-13.7.0.tgz#4f9658ba13ba8f3d82ee881d3516489ea85c0857"
+  integrity sha512-nYXQLCBkpJ8X6ltALua9dRrZDHVYxjJ1wgskNt1lH9fzGjs3tgojGSCBjmEPwkWS1y29+DrizMTW19Pr9uB2nw==
 
 value-or-promise@1.0.10:
   version "1.0.10"
