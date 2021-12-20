@@ -9733,10 +9733,10 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.4, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-undici-fetch@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.4.tgz#6058950dc6bf451f81a51582258f4e5a5a01b702"
-  integrity sha512-jIcyxjQ6mEvUS3y2yhIVktOR7wlGZuyjFAK8woo7pMb+BR1f2ylfTxsN01UPwhqT8gtYPmZ2rPdyoInr1Cdrrw==
+cross-undici-fetch@0.1.12, cross-undici-fetch@^0.1.4:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.12.tgz#2985bdbb28c182eae1744832c087559083ac06db"
+  integrity sha512-JNUr0ANEwc3MEUT5xBl2fVnCJqcPa7hpQfEYNsrCG/7/M4pUH5W0nQOe6FKAQGB6SqFPyAeoEn8G375QXWxwWQ==
   dependencies:
     abort-controller "^3.0.0"
     form-data-encoder "^1.7.1"
@@ -9744,10 +9744,10 @@ cross-undici-fetch@0.1.4:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
-cross-undici-fetch@0.1.8, cross-undici-fetch@^0.1.4:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.8.tgz#2df68f50eeac32b8a8fb4856d8491e148c1222d1"
-  integrity sha512-mJmzyt7GYFlSiDOJ0pQYj2YHIpeLSqO4TfsTQWYxfwPueKHbCzWFunfe2zcsEtGISAcR3EfZMB89aDzYXlb8Yg==
+cross-undici-fetch@0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.4.tgz#6058950dc6bf451f81a51582258f4e5a5a01b702"
+  integrity sha512-jIcyxjQ6mEvUS3y2yhIVktOR7wlGZuyjFAK8woo7pMb+BR1f2ylfTxsN01UPwhqT8gtYPmZ2rPdyoInr1Cdrrw==
   dependencies:
     abort-controller "^3.0.0"
     form-data-encoder "^1.7.1"
