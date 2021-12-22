@@ -35,7 +35,7 @@
     "@graphql-mesh/utils": "0.24.1",
     "@graphql-tools/utils": "8.5.5",
     "to-json-schema": "0.2.5",
-    "graphql-compose": "9.0.5",
+    "graphql-compose": "9.0.6",
     "graphql-scalars": "1.14.1",
     "graphql-upload": "13.0.0",
     "ajv": "8.8.2",

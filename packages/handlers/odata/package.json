@@ -35,7 +35,7 @@
     "cross-undici-fetch": "0.1.12",
     "dataloader": "2.0.0",
     "fast-xml-parser": "3.21.1",
-    "graphql-compose": "9.0.5",
+    "graphql-compose": "9.0.6",
     "graphql-parse-resolve-info": "4.12.0",
     "graphql-scalars": "1.14.1",
     "pascal-case": "3.1.2",
