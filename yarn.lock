@@ -5963,10 +5963,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.3.tgz#e1c09064121f894baaad2bd9f12ce4a41bffb274"
   integrity sha512-33/L34xS7HVUx23e0wOT2V1qPF1IrHgQccdJVm9uXGTB9vFBrrzBtkQymT8VskeKOxjz55MSqMv0xuLq+u98WQ==
 
-"@types/node@16.11.16":
-  version "16.11.16"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.16.tgz#d43e1adeca5f6baaa74725725e8947b06c56b908"
-  integrity sha512-Mt07oPv0YcV0OQMZ+ZDZbuNeL8024sJb1OJTtzG014ACGHVLB3sXzuXhnQaHI8fgMOLLTeHOasaltpGUMD0zrg==
+"@types/node@16.11.17":
+  version "16.11.17"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.17.tgz#ae146499772e33fc6382e1880bc567e41a528586"
+  integrity sha512-C1vTZME8cFo8uxY2ui41xcynEotVkczIVI5AjLmy5pkpBv/FtG+jhtOlfcPysI8VRVwoOMv6NJm44LGnoMSWkw==
 
 "@types/node@^10.0.3", "@types/node@^10.1.0":
   version "10.17.60"
