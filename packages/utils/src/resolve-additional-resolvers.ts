@@ -80,7 +80,8 @@ function generateSelectionSetFactory(
     return (subtree: SelectionSetNode) => {
       let finalSelectionSet = subtree;
       let isLastResult = true;
-      for (const pathElem of resultPath) {
+      const resultPathReversed = [...resultPath].reverse();
+      for (const pathElem of resultPathReversed) {
         // Ensure the path elem is not array index
         if (Number.isNaN(parseInt(pathElem))) {
           if (isLastResult && abstractResultType) {

@@ -35,7 +35,7 @@ import {
 } from 'graphql';
 
 // Imports:
-import { GraphQLJSON, GraphQLBigInt } from 'graphql-scalars';
+import { GraphQLJSON, GraphQLBigInt, GraphQLDateTime } from 'graphql-scalars';
 import * as Oas3Tools from './oas_3_tools';
 import { getResolver } from './resolver_builder';
 import { createDataDef } from './preprocessor';
@@ -546,6 +546,9 @@ function getScalarType<TSource, TContext, TArgs>({
       break;
     case 'json':
       def.graphQLType = GraphQLJSON;
+      break;
+    case 'dateTime':
+      def.graphQLType = GraphQLDateTime;
       break;
     default:
       throw new Error(`Cannot process schema type '${def.targetGraphQLType}'.`);
