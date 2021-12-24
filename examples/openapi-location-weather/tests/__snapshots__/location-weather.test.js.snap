@@ -5583,6 +5583,175 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
+                "name": "callback",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "city",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "country",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "state",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "aQCurrentGroup",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "AQCurrentGroup",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "callback",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "city",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "country",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "hours",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "state",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "aQHourly",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "AQHourly",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
                 "name": "asciiMode",
                 "type": Object {
                   "kind": "SCALAR",
@@ -5594,29 +5763,7 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "countryIds",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "distanceUnit",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "excludedCountryIds",
+                "name": "currencyCode",
                 "type": Object {
                   "kind": "SCALAR",
                   "name": "String",
@@ -5631,17 +5778,6 @@ Object {
                 "type": Object {
                   "kind": "SCALAR",
                   "name": "Boolean",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "includeDeleted",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
                   "ofType": null,
                 },
               },
@@ -5671,39 +5807,6 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "location",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "maxPopulation",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "minPopulation",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
                 "name": "namePrefix",
                 "type": Object {
                   "kind": "SCALAR",
@@ -5722,11 +5825,98 @@ Object {
                   "ofType": null,
                 },
               },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "countriesResponse",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "CountriesResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
               Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "radius",
+                "name": "asciiMode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "countryId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "languageCode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "countryResponse",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "CountryResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "countryId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "hateoasMode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "limit",
                 "type": Object {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -5737,7 +5927,30 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "sort",
+                "name": "offset",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "currenciesResponse",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "CurrenciesResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "callback",
                 "type": Object {
                   "kind": "SCALAR",
                   "name": "String",
@@ -5748,20 +5961,445 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "timeZoneIds",
+                "name": "cities",
                 "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lang",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Lang",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "marine",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Marine",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "units",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Units",
                   "ofType": null,
                 },
               },
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "findAdminDivisionsUsingGET",
+            "name": "currentObsGroup",
             "type": Object {
               "kind": "OBJECT",
-              "name": "PopulatedPlacesResponse",
+              "name": "CurrentObsGroup",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "cityId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "dateTimeResponse",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "DateTimeResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "cityId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "distanceUnit",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "toCityId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "distanceResponse",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "DistanceResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "callback",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "endDate",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lat1",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lat2",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lon1",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lon2",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "startDate",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "threshold",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Float",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "units",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Units",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "energyObsGroup",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "EnergyObsGroup",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "callback",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lat",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lon",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "threshold",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Float",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "tp",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Tp",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "units",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Units",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "energyObsGroupForecast",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "EnergyObsGroupForecast",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "file",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "error",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "WeatherError",
               "ofType": null,
             },
           },
@@ -7300,10 +7938,10 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "asciiMode",
+                "name": "callback",
                 "type": Object {
                   "kind": "SCALAR",
-                  "name": "Boolean",
+                  "name": "String",
                   "ofType": null,
                 },
               },
@@ -7311,7 +7949,7 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "divisionId",
+                "name": "city",
                 "type": Object {
                   "kind": "NON_NULL",
                   "name": null,
@@ -7326,20 +7964,83 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "languageCode",
+                "name": "country",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "days",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Float",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lang",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Lang",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "state",
                 "type": Object {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "units",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Units",
+                  "ofType": null,
+                },
+              },
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getAdminDivisionUsingGET",
+            "name": "forecastDay",
             "type": Object {
               "kind": "OBJECT",
-              "name": "PopulatedPlaceResponse",
+              "name": "ForecastDay",
               "ofType": null,
             },
           },
@@ -7360,7 +8061,7 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "key",
+                "name": "city",
                 "type": Object {
                   "kind": "NON_NULL",
                   "name": null,
@@ -7375,49 +8076,7 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "lat",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lon",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getAlertsLatequalToLatLonLon",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "WeatherAlert",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "file",
+                "name": "country",
                 "type": Object {
                   "kind": "NON_NULL",
                   "name": null,
@@ -7426,6 +8085,17 @@ Object {
                     "name": "String",
                     "ofType": null,
                   },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "days",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Float",
+                  "ofType": null,
                 },
               },
               Object {
@@ -7443,65 +8113,22 @@ Object {
                   },
                 },
               },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getBulkFilesFile",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "WeatherError",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
               Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "cityId",
+                "name": "lang",
                 "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getCityDateTimeUsingGET",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "DateTimeResponse",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "cityId",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
+                  "kind": "ENUM",
+                  "name": "Lang",
+                  "ofType": null,
                 },
               },
               Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "distanceUnit",
+                "name": "state",
                 "type": Object {
                   "kind": "SCALAR",
                   "name": "String",
@@ -7512,24 +8139,20 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "toCityId",
+                "name": "units",
                 "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
+                  "kind": "ENUM",
+                  "name": "Units",
+                  "ofType": null,
                 },
               },
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getCityDistanceUsingGET",
+            "name": "forecastHourly",
             "type": Object {
               "kind": "OBJECT",
-              "name": "DistanceResponse",
+              "name": "ForecastHourly",
               "ofType": null,
             },
           },
@@ -7588,33 +8211,6 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "cityId",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getCityTimeUsingGET",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "TimeResponse",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
                 "name": "asciiMode",
                 "type": Object {
                   "kind": "SCALAR",
@@ -7655,204 +8251,6 @@ Object {
             "type": Object {
               "kind": "OBJECT",
               "name": "PopulatedPlaceResponse",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "asciiMode",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "currencyCode",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "hateoasMode",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "languageCode",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "limit",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "namePrefix",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "offset",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getCountriesUsingGET",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "CountriesResponse",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "asciiMode",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "countryId",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "languageCode",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getCountryUsingGET",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "CountryResponse",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "countryId",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "hateoasMode",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "limit",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "offset",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getCurrenciesUsingGET",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "CurrenciesResponse",
               "ofType": null,
             },
           },
@@ -7903,85 +8301,6 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "getCurrentAirqualityCityIdequalToCityId",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "AQCurrentGroup",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "city",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "country",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "state",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getCurrentAirqualityCityequalToCityCountryCountry",
             "type": Object {
               "kind": "OBJECT",
               "name": "AQCurrentGroup",
@@ -8117,92 +8436,6 @@ Object {
             "type": Object {
               "kind": "OBJECT",
               "name": "AQCurrentGroup",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "cities",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lang",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Lang",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "marine",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Marine",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "units",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Units",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getCurrentCitiesequalToCities",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "CurrentObsGroup",
               "ofType": null,
             },
           },
@@ -8910,118 +9143,6 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "city",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "country",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "days",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lang",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Lang",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "state",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "units",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Units",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getForecast3hourlyCityequalToCityCountryCountry",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "ForecastHourly",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
                 "name": "days",
                 "type": Object {
                   "kind": "SCALAR",
@@ -9261,96 +9382,6 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "getForecastAirqualityCityIdequalToCityId",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "AQHourly",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "city",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "country",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "hours",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "state",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getForecastAirqualityCityequalToCityCountryCountry",
             "type": Object {
               "kind": "OBJECT",
               "name": "AQHourly",
@@ -9614,118 +9645,6 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "city",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "country",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "days",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lang",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Lang",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "state",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "units",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Units",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getForecastDailyCityequalToCityCountryCountry",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "ForecastDay",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
                 "name": "days",
                 "type": Object {
                   "kind": "SCALAR",
@@ -9904,107 +9823,6 @@ Object {
             "type": Object {
               "kind": "OBJECT",
               "name": "ForecastDay",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lat",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lon",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "threshold",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "tp",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Tp",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "units",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Units",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getForecastEnergyLatequalToLatLonLon",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "EnergyObsGroupForecast",
               "ofType": null,
             },
           },
@@ -10790,137 +10608,6 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "city",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "country",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "endDate",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lang",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Lang",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "startDate",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "state",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "units",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Units",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getHistoryDailyCityequalToCityCountryCountry",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "HistoryDay",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
                 "name": "endDate",
                 "type": Object {
                   "kind": "NON_NULL",
@@ -11292,156 +10979,6 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "lat1",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lat2",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lon1",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lon2",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "startDate",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "threshold",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "units",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Units",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getHistoryEnergyBboxLat1equalToLat1Lon1Lon1Lat2Lat2Lon2Lon2",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "EnergyObsGroup",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "endDate",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
                 "name": "lat",
                 "type": Object {
                   "kind": "NON_NULL",
@@ -11636,148 +11173,6 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "getHistoryHourlyCityIdequalToCityId",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "History",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "callback",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "city",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "country",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "endDate",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "key",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lang",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Lang",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "startDate",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "state",
-                "type": Object {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "tz",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Tz",
-                  "ofType": null,
-                },
-              },
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "units",
-                "type": Object {
-                  "kind": "ENUM",
-                  "name": "Units",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getHistoryHourlyCityequalToCityCountryCountry",
             "type": Object {
               "kind": "OBJECT",
               "name": "History",
@@ -12164,6 +11559,333 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
+                "name": "zoneId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "getTimeZoneDateTimeUsingGET",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "DateTimeResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "zoneId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "getTimeZoneTimeUsingGET",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "TimeResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "callback",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "city",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "country",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "endDate",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lang",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Lang",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "startDate",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "state",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "tz",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Tz",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "units",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Units",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "history",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "History",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "callback",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "city",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "country",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "endDate",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lang",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Lang",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "startDate",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "state",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "units",
+                "type": Object {
+                  "kind": "ENUM",
+                  "name": "Units",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "historyDay",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "HistoryDay",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
                 "name": "hateoasMode",
                 "type": Object {
                   "kind": "SCALAR",
@@ -12196,7 +11918,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getLanguagesUsingGET",
+            "name": "languagesResponse",
             "type": Object {
               "kind": "OBJECT",
               "name": "LanguagesResponse",
@@ -12241,10 +11963,247 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getLocalesUsingGET",
+            "name": "localesResponse",
             "type": Object {
               "kind": "OBJECT",
               "name": "LocalesResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "asciiMode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "divisionId",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "languageCode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "populatedPlaceResponse",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "PopulatedPlaceResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "asciiMode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "countryIds",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "distanceUnit",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "excludedCountryIds",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "hateoasMode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeleted",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "languageCode",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "limit",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "location",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "maxPopulation",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "minPopulation",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "namePrefix",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "offset",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "radius",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "sort",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "timeZoneIds",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "populatedPlacesResponse",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "PopulatedPlacesResponse",
               "ofType": null,
             },
           },
@@ -12305,7 +12264,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getRegionUsingGET",
+            "name": "regionResponse",
             "type": Object {
               "kind": "OBJECT",
               "name": "RegionResponse",
@@ -12398,7 +12357,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getRegionsUsingGET",
+            "name": "regionsResponse",
             "type": Object {
               "kind": "OBJECT",
               "name": "RegionsResponse",
@@ -12411,7 +12370,7 @@ Object {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": "zoneId",
+                "name": "cityId",
                 "type": Object {
                   "kind": "NON_NULL",
                   "name": null,
@@ -12425,34 +12384,7 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getTimeZoneDateTimeUsingGET",
-            "type": Object {
-              "kind": "OBJECT",
-              "name": "DateTimeResponse",
-              "ofType": null,
-            },
-          },
-          Object {
-            "args": Array [
-              Object {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "zoneId",
-                "type": Object {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": Object {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "getTimeZoneTimeUsingGET",
+            "name": "timeResponse",
             "type": Object {
               "kind": "OBJECT",
               "name": "TimeResponse",
@@ -12497,10 +12429,78 @@ Object {
             ],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "getTimezonesUsingGET",
+            "name": "timeZonesResponse",
             "type": Object {
               "kind": "OBJECT",
               "name": "TimeZonesResponse",
+              "ofType": null,
+            },
+          },
+          Object {
+            "args": Array [
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "callback",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "key",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lat",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              Object {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lon",
+                "type": Object {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": Object {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "weatherAlert",
+            "type": Object {
+              "kind": "OBJECT",
+              "name": "WeatherAlert",
               "ofType": null,
             },
           },
