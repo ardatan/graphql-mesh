@@ -5936,10 +5936,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/mysql@2.15.19":
-  version "2.15.19"
-  resolved "https://registry.yarnpkg.com/@types/mysql/-/mysql-2.15.19.tgz#d158927bb7c1a78f77e56de861a3b15cae0e7aed"
-  integrity sha512-wSRg2QZv14CWcZXkgdvHbbV2ACufNy5EgI8mBBxnJIptchv7DBy/h53VMa2jDhyo0C9MO4iowE6z9vF8Ja1DkQ==
+"@types/mysql@2.15.20":
+  version "2.15.20"
+  resolved "https://registry.yarnpkg.com/@types/mysql/-/mysql-2.15.20.tgz#9b4a3e11391bee82dc96659405d899228c157d19"
+  integrity sha512-QyOqSRhe540jmdg3AqiS8AbCDvSwDgxAJcsBkMqDQw0y87OQla7y8RFW/MYcUUHBFi1AZrRYkjzSAL/bfCKMuQ==
   dependencies:
     "@types/node" "*"
 
