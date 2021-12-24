@@ -5749,10 +5749,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/http-string-parser@0.0.29":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.29.tgz#0256e22f357a2e822ac8b848b545e06153c32ede"
-  integrity sha1-AlbiLzV6LoIqyLhItUXgYVPDLt4=
+"@types/http-string-parser@0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.30.tgz#a2ec779b2918afb818351342805f2283e8fb2a25"
+  integrity sha512-YeB/nirRo6eCsT2QNxwsEhzy2J2k6bA0SQBheTs+9sS5UMtKWsiCaCnckSI1Fm1RAKsk5fKN+XBHfivzTH+z3g==
 
 "@types/ioredis@4.28.5":
   version "4.28.5"
