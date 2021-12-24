@@ -23,7 +23,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/http-string-parser": "0.0.29",
+    "@types/http-string-parser": "0.0.30",
     "@types/url-join": "4.0.1"
   },
   "dependencies": {
