@@ -16,7 +16,7 @@ enum CompanyType {
   Public_Limited
 }
 
-input CreateUpdateUser {
+input CreateUpdateUser_Input {
   firstName: String
   jobTitle: String
   lastName: String
@@ -28,13 +28,13 @@ type Foo {
 
 type Mutation {
   \\"\\"\\"PUT /user\\"\\"\\"
-  createUser(input: CreateUpdateUser): User
+  createUser(input: CreateUpdateUser_Input): User
 
   \\"\\"\\"DELETE /user/{args.id}\\"\\"\\"
   deleteUser(id: ID!): Any
 
   \\"\\"\\"POST /user/{args.id}\\"\\"\\"
-  updateUser(id: ID!, input: CreateUpdateUser): User
+  updateUser(id: ID!, input: CreateUpdateUser_Input): User
 }
 
 type Query {
