@@ -9744,17 +9744,6 @@ cross-undici-fetch@0.1.12, cross-undici-fetch@^0.1.4:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
-cross-undici-fetch@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.4.tgz#6058950dc6bf451f81a51582258f4e5a5a01b702"
-  integrity sha512-jIcyxjQ6mEvUS3y2yhIVktOR7wlGZuyjFAK8woo7pMb+BR1f2ylfTxsN01UPwhqT8gtYPmZ2rPdyoInr1Cdrrw==
-  dependencies:
-    abort-controller "^3.0.0"
-    form-data-encoder "^1.7.1"
-    formdata-node "^4.3.1"
-    node-fetch "^2.6.5"
-    undici "^4.9.3"
-
 crypto-browserify@3.12.0, crypto-browserify@^3.11.0, crypto-browserify@^3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/crypto-browserify/-/crypto-browserify-3.12.0.tgz#396cf9f3137f03e4b8e532c58f698254e00f80ec"
@@ -11135,12 +11124,13 @@ esbuild-openbsd-64@0.14.8:
   resolved "https://registry.yarnpkg.com/esbuild-openbsd-64/-/esbuild-openbsd-64-0.14.8.tgz#2a9498d881a3ab94927c724f34dd1160eef1f3b8"
   integrity sha512-zAKKV15fIyAuDDga5rQv0lW2ufBWj/OCjqjDBb3dJf5SfoAi/DMIHuzmkKQeDQ+oxt9Rp1D7ZOlOBVflutFTqQ==
 
-esbuild-register@3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/esbuild-register/-/esbuild-register-3.2.1.tgz#500db2ed42f35d1d5139a9a5d657b86fcd0ec387"
-  integrity sha512-LFgzsqCHsFUpTZdYJFTl1o5p60+C4nZ65BzFYPS1jKGwiKk6JLH8tuLwuydvpgreNUAeDUhTPJgJNjmpZKSOpQ==
+esbuild-register@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/esbuild-register/-/esbuild-register-3.3.0.tgz#4acbf8aba540cf73bbc5b475c4ba7d11aeb71258"
+  integrity sha512-X4irLPLJwwuy8WSI9KsG2htKOoQBveVbmjYGBeBNnha+9IL56wffjj4VeU5zDb3PQtWaE7cdAML87L3rZUYhZw==
   dependencies:
     jsonc-parser "^3.0.0"
+    tsconfig-paths "^3.12.0"
 
 esbuild-sunos-64@0.14.8:
   version "0.14.8"
@@ -24148,10 +24138,10 @@ ts-structure-model@0.0.1:
   resolved "https://registry.yarnpkg.com/ts-structure-model/-/ts-structure-model-0.0.1.tgz#6e6c9ad489b8c9065c83f8e9d215dd09a20188ee"
   integrity sha512-7hqYQx4kPWUkJXTVsZe++1IMd63jZAjW6O00+kHJf9/DcNaxCJxNjsQhLVcC57HZhK4SUPSxMZd+AnGrLA6Itw==
 
-tsconfig-paths@^3.11.0, tsconfig-paths@^3.9.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.11.0.tgz#954c1fe973da6339c78e06b03ce2e48810b65f36"
-  integrity sha512-7ecdYDnIdmv639mmDwslG6KQg1Z9STTz1j7Gcz0xa+nshh/gKDAHcPxRbWOsA3SPp0tXP2leTcY9Kw+NAkfZzA==
+tsconfig-paths@^3.11.0, tsconfig-paths@^3.12.0, tsconfig-paths@^3.9.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.12.0.tgz#19769aca6ee8f6a1a341e38c8fa45dd9fb18899b"
+  integrity sha512-e5adrnOYT6zqVnWqZu7i/BQ3BnhzvGbjEjejFXO20lKIKpwTaupkCPgEfv4GZK1IBciJUEhYs3J3p75FdaTFVg==
   dependencies:
     "@types/json5" "^0.0.29"
     json5 "^1.0.1"
