@@ -7,4 +7,7 @@ extend type Handler {
 
 type NewOpenapiHandler {
   oasFilePath: String!
+  baseUrl: String
+  schemaHeaders: JSON
+  operationHeaders: JSON
 }

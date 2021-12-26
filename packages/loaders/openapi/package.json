@@ -25,7 +25,9 @@
   "dependencies": {
     "@omnigraph/json-schema": "0.7.1",
     "@graphql-mesh/utils": "0.24.1",
-    "pluralize": "^8.0.0"
+    "json-machete": "0.3.2",
+    "openapi-types": "10.0.0",
+    "swagger2openapi": "7.0.8"
   },
   "publishConfig": {
     "access": "public",

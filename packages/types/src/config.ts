@@ -988,6 +988,13 @@ export interface TuqlHandler {
  */
 export interface NewOpenapiHandler {
   oasFilePath: string;
+  baseUrl?: string;
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  operationHeaders?: {
+    [k: string]: any;
+  };
 }
 export interface Transform {
   /**

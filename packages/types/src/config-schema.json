@@ -2883,6 +2883,17 @@
       "properties": {
         "oasFilePath": {
           "type": "string"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {}
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {}
         }
       },
       "required": ["oasFilePath"]
