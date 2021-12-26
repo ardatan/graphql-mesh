@@ -91,6 +91,7 @@ export default class OpenAPIHandler implements MeshHandler {
     const source = stringInterpolator.parse(nonInterpolatedSource, {
       env,
     });
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     return this.oasSchema.getWithSet(async () => {
       let rawSpec: Oas3 | Oas2 | (Oas3 | Oas2)[];
       if (typeof source !== 'string') {
@@ -99,7 +100,9 @@ export default class OpenAPIHandler implements MeshHandler {
         rawSpec = await readFileOrUrl(source, {
           cwd: this.baseDir,
           fallbackFormat: this.config.sourceFormat,
-          headers: this.config.schemaHeaders,
+          headers: schemaHeadersFactory({
+            env,
+          }),
           fetch,
         });
       }
@@ -146,7 +149,7 @@ export default class OpenAPIHandler implements MeshHandler {
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
       baseUrl,
-      operationIdFieldNames: true,
+      operationIdFieldNames: this.config.operationIdFieldNames,
       fillEmptyResponses: true,
       includeHttpDetails: this.config.includeHttpDetails,
       provideErrorExtensions: this.config.provideErrorExtensions,

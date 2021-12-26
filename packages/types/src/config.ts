@@ -751,6 +751,14 @@ export interface OpenapiHandler {
    * Overwrite automatic wrapping of errors into GraphqlErrors
    */
   provideErrorExtensions?: boolean;
+  /**
+   * Field names can only be sanitized operationIds
+   *
+   * By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
+   *
+   * This option forces OpenAPI handler to only create field names based on the operationId.
+   */
+  operationIdFieldNames?: boolean;
 }
 export interface SelectQueryOrMutationFieldConfig {
   /**

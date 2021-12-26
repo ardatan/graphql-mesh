@@ -46,14 +46,14 @@ export async function addExecutionLogicToComposer(
     if (operationConfig.requestTypeName) {
       const tcName = getComposeTypeName(field.args.input.type, schemaComposer);
       const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
-      if (tcName !== operationConfig.requestTypeName) {
+      if (tcName !== operationConfig.requestTypeName && !schemaComposer.has(operationConfig.requestTypeName)) {
         tcWithName.setTypeName(operationConfig.requestTypeName);
       }
     }
 
     if (operationConfig.responseTypeName) {
       const tcName = getComposeTypeName(field.type, schemaComposer);
-      if (tcName !== operationConfig.responseTypeName) {
+      if (tcName !== operationConfig.responseTypeName && !schemaComposer.has(operationConfig.responseTypeName)) {
         const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
         tcWithName.setTypeName(operationConfig.responseTypeName);
       }

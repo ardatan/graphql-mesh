@@ -57,6 +57,7 @@ describe('openapi', () => {
       name: 'Example OAS3',
       config: {
         source: resolve(__dirname, './fixtures/example_oas_combined.json'),
+        operationIdFieldNames: true,
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
@@ -83,6 +84,7 @@ describe('openapi', () => {
       config: {
         source: resolve(__dirname, './fixtures/example_oas_combined.json'),
         addLimitArgument: false,
+        operationIdFieldNames: true,
       },
       pubsub: new PubSub(),
       cache: new InMemoryLRUCache(),
