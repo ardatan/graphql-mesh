@@ -215,6 +215,7 @@ export interface Handler {
   soap?: SoapHandler;
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
+  newOpenapi?: NewOpenapiHandler;
   [k: string]: any;
 }
 /**
@@ -981,6 +982,12 @@ export interface TuqlHandler {
    * Path to the SQL Dump file if you want to build a in-memory database
    */
   infile?: string;
+}
+/**
+ * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
+ */
+export interface NewOpenapiHandler {
+  oasFilePath: string;
 }
 export interface Transform {
   /**

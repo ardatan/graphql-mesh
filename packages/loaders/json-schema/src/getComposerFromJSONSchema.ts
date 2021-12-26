@@ -123,6 +123,7 @@ export function getComposerFromJSONSchema(
             subSchema,
           }),
           values,
+          description: subSchema.description,
         });
         return {
           input: typeComposer,

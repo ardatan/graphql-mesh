@@ -61,10 +61,11 @@ export async function healJSONSchema(schema: JSONSchema) {
         }
         if (!subSchema.title && !subSchema.$ref) {
           // Try to get definition name if missing
-          const splitByDefinitions = path.split('/definitions/');
-          const maybeDefinitionBasedPath = path.includes('/definitions/')
-            ? splitByDefinitions[splitByDefinitions.length - 1]
-            : path;
+          const splitByDefinitions = path.includes('/components/schemas/')
+            ? path.split('/components/schemas/')
+            : path.split('/definitions/');
+          const maybeDefinitionBasedPath =
+            splitByDefinitions.length > 1 ? splitByDefinitions[splitByDefinitions.length - 1] : path;
           let pathBasedName = maybeDefinitionBasedPath
             .split('/properties')
             .join('')

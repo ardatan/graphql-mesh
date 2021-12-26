@@ -525,6 +525,10 @@
         "tuql": {
           "$ref": "#/definitions/TuqlHandler",
           "description": "Handler for SQLite database, based on `tuql`"
+        },
+        "newOpenapi": {
+          "$ref": "#/definitions/NewOpenapiHandler",
+          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
         }
       }
     },
@@ -2871,6 +2875,17 @@
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
       }
+    },
+    "NewOpenapiHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "NewOpenapiHandler",
+      "properties": {
+        "oasFilePath": {
+          "type": "string"
+        }
+      },
+      "required": ["oasFilePath"]
     }
   },
   "title": "Config",
