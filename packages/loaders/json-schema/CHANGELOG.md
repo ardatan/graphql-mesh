@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.7.2
+
+### Patch Changes
+
+- 4fe346123: fix(json-schema): prevent collision with requestTypeName and responseTypeName
+
 ## 0.7.1
 
 ### Patch Changes

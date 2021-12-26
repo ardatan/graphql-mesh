@@ -1,5 +1,12 @@
 # @graphql-mesh/openapi
 
+## 0.23.0
+
+### Minor Changes
+
+- 4fe346123: feat(openapi): do not enforce operationIds as fieldNames
+- 4fe346123: feat(openapi): support dateTime scalar
+
 ## 0.22.2
 
 ### Patch Changes
