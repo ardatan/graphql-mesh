@@ -68,7 +68,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (!operationConfig.path.includes('?')) {
                 operationConfig.path += '?';
               }
-              operationConfig.path += `{args.${paramObj.name}}`;
+              operationConfig.path += `${paramObj.name}={args.${paramObj.name}}`;
             } else {
               const requestSchema = (operationConfig.requestSchema = operationConfig.requestSchema || {
                 type: 'object',
