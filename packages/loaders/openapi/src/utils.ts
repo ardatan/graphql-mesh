@@ -20,9 +20,8 @@ export function getFieldNameFromPath(path: string, method: string, responseTypeS
   }
 
   // If path doesn't give any field name, we can use the return type with HTTP Method name
-  if (!fieldName && responseTypeSchema.$ref) {
-    const refPathElems = responseTypeSchema.$ref.split('/');
-    fieldName = refPathElems[refPathElems.length - 1];
+  if (!fieldName && responseTypeSchema.title) {
+    fieldName = responseTypeSchema.title;
   }
 
   return method + fieldName;
