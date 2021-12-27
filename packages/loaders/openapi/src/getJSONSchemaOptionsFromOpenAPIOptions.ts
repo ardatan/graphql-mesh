@@ -13,6 +13,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   baseUrl?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
+  respectErrorResponses?: boolean;
 }
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions({
@@ -23,6 +24,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   baseUrl,
   schemaHeaders,
   operationHeaders,
+  respectErrorResponses,
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
@@ -89,6 +91,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
+        // Only take successful responses
+        if (!respectErrorResponses && !(responseKey.startsWith('2') || responseKey === 'default')) {
+          continue;
+        }
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
         let schemaObj: JSONSchemaObject;
 
@@ -112,6 +118,11 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         if (!operationConfig.field) {
           // Operation ID might not be avaiable so let's generate field name from path and response type schema
           operationConfig.field = sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj.$ref));
+        }
+
+        // If we don't need unsuccessful response types, just break the loop to have singular response type
+        if (!respectErrorResponses) {
+          break;
         }
       }
 
