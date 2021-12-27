@@ -83,6 +83,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         }
       }
 
+      const responseSchemaUnion = (operationConfig.responseSchema = {
+        oneOf: [],
+      }) as JSONSchemaObject;
+
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
@@ -90,20 +94,30 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
         if ('content' in responseObj) {
           const contentKey = Object.keys(responseObj.content)[0];
-          operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
-            .split('/')
-            .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`;
+          responseSchemaUnion.oneOf.push({
+            $ref: `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`,
+          });
           schemaObj = responseObj.content[contentKey].schema as any;
         } else if ('schema' in responseObj) {
-          operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
-            .split('/')
-            .join('~1')}/${method}/responses/${responseKey}/schema`;
+          responseSchemaUnion.oneOf.push({
+            $ref: `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/responses/${responseKey}/schema`,
+          });
           schemaObj = responseObj.schema as any;
         }
 
-        // Operation ID might not be avaiable so let's generate field name from path and response type schema
-        operationConfig.field =
-          operationConfig.field || sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj.$ref));
+        if (!operationConfig.field) {
+          // Operation ID might not be avaiable so let's generate field name from path and response type schema
+          operationConfig.field = sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj.$ref));
+        }
+      }
+
+      // If response types are singular, no need to have unions
+      if (responseSchemaUnion.oneOf.length === 1) {
+        operationConfig.responseSchema = responseSchemaUnion.oneOf[0];
       }
     }
   }
