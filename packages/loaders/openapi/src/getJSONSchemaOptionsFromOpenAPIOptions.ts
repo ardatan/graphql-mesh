@@ -91,12 +91,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
           .split('/')
           .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`;
-        schemaObj = responseObj.content[contentKey].schema;
+        schemaObj = responseObj.content[contentKey].schema as any;
       } else if ('schema' in responseObj) {
         operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
           .split('/')
           .join('~1')}/${method}/responses/${responseKey}/schema`;
-        schemaObj = responseObj.schema;
+        schemaObj = responseObj.schema as any;
       }
 
       // Operation ID might not be avaiable so let's generate field name from path and response type schema
