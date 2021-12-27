@@ -49,18 +49,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
     const pathObj = healedOasSchema.paths[relativePath];
     for (const method in pathObj) {
       const methodObj = pathObj[method] as OpenAPIV3.OperationObject;
-      const requestSchema: JSONSchemaObject = {
-        type: 'object',
-        properties: {},
-        required: [],
-      };
       const operationConfig = {
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
         field: methodObj.operationId || sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method)),
         description: methodObj.description,
-        requestSchema,
         schemaHeaders,
         operationHeaders,
       } as JSONSchemaHTTPJSONOperationConfig;
@@ -68,15 +62,23 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
       for (const paramObj of methodObj.parameters as OpenAPIV3.ParameterObject[]) {
         switch (paramObj.in) {
           case 'query':
-            requestSchema.properties[paramObj.name] = paramObj.schema || paramObj;
-            if (!requestSchema.properties[paramObj.name].title) {
-              requestSchema.properties[paramObj.name].name = paramObj.name;
-            }
-            if (!requestSchema.properties[paramObj.name].description) {
-              requestSchema.properties[paramObj.name].description = paramObj.description;
-            }
             if (paramObj.required) {
-              requestSchema.required.push(paramObj.name);
+              if (!operationConfig.path.includes('?')) {
+                operationConfig.path += '?';
+              }
+              operationConfig.path += `{args.${paramObj.name}}`;
+            } else {
+              const requestSchema = (operationConfig.requestSchema = operationConfig.requestSchema || {
+                type: 'object',
+                properties: {},
+              }) as JSONSchemaObject;
+              requestSchema.properties[paramObj.name] = paramObj.schema || paramObj;
+              if (!requestSchema.properties[paramObj.name].title) {
+                requestSchema.properties[paramObj.name].name = paramObj.name;
+              }
+              if (!requestSchema.properties[paramObj.name].description) {
+                requestSchema.properties[paramObj.name].description = paramObj.description;
+              }
             }
             break;
           case 'path':
