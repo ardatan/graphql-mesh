@@ -1,4 +1,6 @@
-export function getFieldNameFromPath(path: string, method: string) {
+import { JSONSchemaObject } from 'json-machete';
+
+export function getFieldNameFromPath(path: string, method: string, responseTypeSchema: JSONSchemaObject) {
   const parts = path.split('/').filter(Boolean);
   let fieldName = '';
 
@@ -15,6 +17,12 @@ export function getFieldNameFromPath(path: string, method: string) {
     if (fieldName.includes('{')) {
       fieldName = fieldName.split('{').join('by_').split('}').join('');
     }
+  }
+
+  // If path doesn't give any field name, we can use the return type with HTTP Method name
+  if (!fieldName && responseTypeSchema.$ref) {
+    const refPathElems = responseTypeSchema.$ref.split('/');
+    fieldName = refPathElems[refPathElems.length - 1];
   }
 
   return method + fieldName;

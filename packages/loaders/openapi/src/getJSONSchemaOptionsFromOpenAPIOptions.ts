@@ -1,5 +1,5 @@
 import { getInterpolatedHeadersFactory, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { dereferenceObject, healJSONSchema, JSONSchema, JSONSchemaObject } from 'json-machete';
+import { dereferenceObject, healJSONSchema, JSONSchemaObject } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import { HTTPMethod, JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from '@omnigraph/json-schema';
 import { env } from 'process';
@@ -53,7 +53,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
-        field: methodObj.operationId || sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method)),
+        field: methodObj.operationId,
         description: methodObj.description,
         schemaHeaders,
         operationHeaders,
@@ -89,7 +89,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
       }
       const responseObj = methodObj.responses[Object.keys(methodObj.responses)[0]] as OpenAPIV3.ResponseObject;
       const contentObj = responseObj.content[Object.keys(responseObj.content)[0]];
-      operationConfig.responseSchema = contentObj.schema as JSONSchema;
+      operationConfig.responseSchema = contentObj.schema as JSONSchemaObject;
+
+      // Operation ID might not be avaiable so let's generate field name from path and response type schema
+      operationConfig.field =
+        operationConfig.field ||
+        sanitizeNameForGraphQL(
+          getFieldNameFromPath(relativePath, method, operationConfig.responseSchema as JSONSchemaObject)
+        );
     }
   }
 
