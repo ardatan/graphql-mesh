@@ -1078,7 +1078,6 @@ function resolveRuntimeExpression(
 
       // CASE: parameter in previous header parameter
     } else if (value.startsWith('$request.header')) {
-      console.log(value, resolveData.usedRequestOptions);
       return new Headers(resolveData.usedRequestOptions.headers || {}).get(value.split('header.')[1]);
     }
   } else if (value.startsWith('$response.')) {

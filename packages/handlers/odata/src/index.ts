@@ -547,7 +547,6 @@ export default class ODataHandler implements MeshHandler {
                   request.headers?.forEach((value, key) => {
                     headers[key] = value;
                   });
-                  console.log(request.headers, headers);
                   return {
                     id,
                     url,

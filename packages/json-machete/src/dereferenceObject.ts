@@ -91,7 +91,6 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               fetch,
               headers,
               cwd,
-              fallbackFormat: 'json',
             }).catch(() => {
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
             });
