@@ -82,26 +82,29 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             break;
         }
       }
-      const responseKey = Object.keys(methodObj.responses)[0];
-      const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
-      let schemaObj: JSONSchemaObject;
 
-      if ('content' in responseObj) {
-        const contentKey = Object.keys(responseObj.content)[0];
-        operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
-          .split('/')
-          .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`;
-        schemaObj = responseObj.content[contentKey].schema as any;
-      } else if ('schema' in responseObj) {
-        operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
-          .split('/')
-          .join('~1')}/${method}/responses/${responseKey}/schema`;
-        schemaObj = responseObj.schema as any;
+      // Handling multiple response types
+      for (const responseKey in methodObj.responses) {
+        const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
+        let schemaObj: JSONSchemaObject;
+
+        if ('content' in responseObj) {
+          const contentKey = Object.keys(responseObj.content)[0];
+          operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
+            .split('/')
+            .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`;
+          schemaObj = responseObj.content[contentKey].schema as any;
+        } else if ('schema' in responseObj) {
+          operationConfig.responseSchema = `${oasFilePath}#/paths/${relativePath
+            .split('/')
+            .join('~1')}/${method}/responses/${responseKey}/schema`;
+          schemaObj = responseObj.schema as any;
+        }
+
+        // Operation ID might not be avaiable so let's generate field name from path and response type schema
+        operationConfig.field =
+          operationConfig.field || sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj.$ref));
       }
-
-      // Operation ID might not be avaiable so let's generate field name from path and response type schema
-      operationConfig.field =
-        operationConfig.field || sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj.$ref));
     }
   }
 
