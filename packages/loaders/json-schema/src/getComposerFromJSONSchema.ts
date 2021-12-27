@@ -132,6 +132,24 @@ export function getComposerFromJSONSchema(
       }
 
       if (subSchema.oneOf && !subSchema.properties) {
+        const isPlural = (subSchema.oneOf as TypeComposers[]).some(({ output }) => 'ofType' in output);
+        if (isPlural) {
+          const { input, output } = getUnionTypeComposers({
+            schemaComposer,
+            ajv,
+            typeComposersList: (subSchema.oneOf as any).map(({ input, output }: any) => ({
+              input: input.ofType || input,
+              output: output.ofType || output,
+            })) as any[],
+            subSchema,
+            generateInterfaceFromSharedFields,
+            validateWithJSONSchema,
+          });
+          return {
+            input: input.getTypePlural(),
+            output: output.getTypePlural(),
+          };
+        }
         return getUnionTypeComposers({
           schemaComposer,
           ajv,
