@@ -209,13 +209,13 @@ export interface Handler {
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
+  newOpenapi?: NewOpenapiHandler;
   odata?: ODataHandler;
   openapi?: OpenapiHandler;
   postgraphile?: PostGraphileHandler;
   soap?: SoapHandler;
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
-  newOpenapi?: NewOpenapiHandler;
   [k: string]: any;
 }
 /**
@@ -657,6 +657,19 @@ export interface Neo4JHandler {
   typeDefs?: string;
 }
 /**
+ * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
+ */
+export interface NewOpenapiHandler {
+  oasFilePath: string;
+  baseUrl?: string;
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  operationHeaders?: {
+    [k: string]: any;
+  };
+}
+/**
  * Handler for OData
  */
 export interface ODataHandler {
@@ -982,19 +995,6 @@ export interface TuqlHandler {
    * Path to the SQL Dump file if you want to build a in-memory database
    */
   infile?: string;
-}
-/**
- * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
- */
-export interface NewOpenapiHandler {
-  oasFilePath: string;
-  baseUrl?: string;
-  schemaHeaders?: {
-    [k: string]: any;
-  };
-  operationHeaders?: {
-    [k: string]: any;
-  };
 }
 export interface Transform {
   /**
