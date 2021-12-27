@@ -121,6 +121,10 @@ export async function healJSONSchema(schema: JSONSchema) {
             subSchema.type = 'array';
           }
         }
+        // Some JSON Schemas use this broken pattern and refer the type using `items`
+        if (subSchema.type === 'object' && subSchema.items) {
+          return subSchema.items;
+        }
       }
       return subSchema;
     },
