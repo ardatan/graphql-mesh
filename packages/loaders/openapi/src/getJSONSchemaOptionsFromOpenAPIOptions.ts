@@ -11,6 +11,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   fallbackFormat,
   cwd,
   fetch,
+  baseUrl,
   schemaHeaders,
   operationHeaders,
 }: {
@@ -18,6 +19,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
+  baseUrl?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
 }) {
@@ -38,7 +40,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         warnOnly: true,
       }).then(({ openapi }: any) => openapi)
     : fileContent;
-  const baseUrl = convertedOasv3.servers[0].url;
+  baseUrl = baseUrl || convertedOasv3.servers[0].url;
   const dereferencedOasSchema = await dereferenceObject(convertedOasv3, {
     cwd,
     fetch,

@@ -14,8 +14,16 @@ export async function createBundle(
   name: string,
   openApiLoaderOptions: OpenAPILoaderOptions
 ): Promise<OpenAPILoaderBundle> {
-  const { operations, baseUrl, fetch } = await getJSONSchemaOptionsFromOpenAPIOptions(openApiLoaderOptions);
-  return createJSONSchemaLoaderBundle(name, { ...openApiLoaderOptions, baseUrl, operations, fetch });
+  const { operations, baseUrl, cwd, fetch, schemaHeaders, operationHeaders } =
+    await getJSONSchemaOptionsFromOpenAPIOptions(openApiLoaderOptions);
+  return createJSONSchemaLoaderBundle(name, {
+    operations,
+    baseUrl,
+    cwd,
+    fetch,
+    schemaHeaders,
+    operationHeaders,
+  });
 }
 
 export { getGraphQLSchemaFromBundle, OpenAPILoaderBundle };
