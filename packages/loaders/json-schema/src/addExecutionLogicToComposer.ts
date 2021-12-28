@@ -183,9 +183,11 @@ export async function addExecutionLogicToComposer(
 
         // Delete unused queryparams
         const [actualPath, queryString] = fullPath.split('?');
-        const queryParams = queryString ? qsParse(queryString) : {};
-        const cleanedQueryParams = cleanObject(queryParams);
-        fullPath = actualPath + qsStringify(cleanedQueryParams, { encode: false });
+        if (queryString) {
+          const queryParams = qsParse(queryString);
+          const cleanedQueryParams = cleanObject(queryParams);
+          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { encode: false });
+        }
 
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
