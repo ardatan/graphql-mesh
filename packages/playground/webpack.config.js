@@ -44,4 +44,9 @@ module.exports = {
     contentBase: path.join(__dirname, 'dist'),
     port: 9000,
   },
+  cache: {
+    type: 'filesystem',
+    allowCollectingMemory: true,
+    version: require('./package.json').version
+  },
 };
