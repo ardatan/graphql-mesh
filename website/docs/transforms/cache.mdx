@@ -16,6 +16,8 @@ To get started with this transform, install it:
 
 > GraphQL Mesh uses a default in-memory LRU cache, but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/inmemory-lru) for more info.
 
+> We'd recommend this transform to be used on the root level, not handler level. It might not work as expected if you use it on a handler level.
+
 ## How to use?
 
 ### Simple caching
