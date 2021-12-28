@@ -76,6 +76,24 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
                 operationConfig.path += '?';
               }
               operationConfig.path += `${paramObj.name}={args.${paramObj.name}}`;
+              switch (paramObj.schema?.type || (paramObj as any).type) {
+                case 'string':
+                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+                  operationConfig.argTypeMap[paramObj.name] = 'String';
+                  break;
+                case 'integer':
+                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+                  operationConfig.argTypeMap[paramObj.name] = 'Int';
+                  break;
+                case 'number':
+                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+                  operationConfig.argTypeMap[paramObj.name] = 'Float';
+                  break;
+                case 'boolean':
+                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+                  operationConfig.argTypeMap[paramObj.name] = 'Boolean';
+                  break;
+              }
             }
             break;
           case 'path':
@@ -142,6 +160,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           operationConfig.field = sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj.$ref));
         }
 
+        // Give a better name to the request input object
         if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
           operationConfig.requestSchema.title = operationConfig.field + '_input';
         }
