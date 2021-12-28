@@ -142,6 +142,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           operationConfig.field = sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj.$ref));
         }
 
+        if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
+          operationConfig.requestSchema.title = operationConfig.field + '_input';
+        }
+
         // If we don't need unsuccessful response types, just break the loop to have singular response type
         if (!respectErrorResponses) {
           break;
