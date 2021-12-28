@@ -11124,13 +11124,10 @@ esbuild-openbsd-64@0.14.8:
   resolved "https://registry.yarnpkg.com/esbuild-openbsd-64/-/esbuild-openbsd-64-0.14.8.tgz#2a9498d881a3ab94927c724f34dd1160eef1f3b8"
   integrity sha512-zAKKV15fIyAuDDga5rQv0lW2ufBWj/OCjqjDBb3dJf5SfoAi/DMIHuzmkKQeDQ+oxt9Rp1D7ZOlOBVflutFTqQ==
 
-esbuild-register@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/esbuild-register/-/esbuild-register-3.3.0.tgz#4acbf8aba540cf73bbc5b475c4ba7d11aeb71258"
-  integrity sha512-X4irLPLJwwuy8WSI9KsG2htKOoQBveVbmjYGBeBNnha+9IL56wffjj4VeU5zDb3PQtWaE7cdAML87L3rZUYhZw==
-  dependencies:
-    jsonc-parser "^3.0.0"
-    tsconfig-paths "^3.12.0"
+esbuild-register@3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/esbuild-register/-/esbuild-register-3.3.1.tgz#2ae8d6ee43c9c7e742b114a8971da8918592ae75"
+  integrity sha512-DjK9rOeo+Dhq8DXKy52DF2+O7zNPXkFRg9lZfqXDGLU6AzrULxBJZPOOFcH6WCNfkwqymKOZoNvd/ncCvEjwdw==
 
 esbuild-sunos-64@0.14.8:
   version "0.14.8"
@@ -24138,7 +24135,7 @@ ts-structure-model@0.0.1:
   resolved "https://registry.yarnpkg.com/ts-structure-model/-/ts-structure-model-0.0.1.tgz#6e6c9ad489b8c9065c83f8e9d215dd09a20188ee"
   integrity sha512-7hqYQx4kPWUkJXTVsZe++1IMd63jZAjW6O00+kHJf9/DcNaxCJxNjsQhLVcC57HZhK4SUPSxMZd+AnGrLA6Itw==
 
-tsconfig-paths@^3.11.0, tsconfig-paths@^3.12.0, tsconfig-paths@^3.9.0:
+tsconfig-paths@^3.11.0, tsconfig-paths@^3.9.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.12.0.tgz#19769aca6ee8f6a1a341e38c8fa45dd9fb18899b"
   integrity sha512-e5adrnOYT6zqVnWqZu7i/BQ3BnhzvGbjEjejFXO20lKIKpwTaupkCPgEfv4GZK1IBciJUEhYs3J3p75FdaTFVg==
