@@ -162,7 +162,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
         // Give a better name to the request input object
         if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
-          operationConfig.requestSchema.title = operationConfig.field + '_input';
+          operationConfig.requestSchema.title = operationConfig.field + '_request';
         }
 
         // If we don't need unsuccessful response types, just break the loop to have singular response type
