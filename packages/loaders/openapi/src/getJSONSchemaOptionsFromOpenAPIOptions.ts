@@ -59,12 +59,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
       for (const paramObj of methodObj.parameters as OpenAPIV2.ParameterObject[] | OpenAPIV3.ParameterObject[]) {
         switch (paramObj.in) {
           case 'query':
-            if (paramObj.required) {
-              if (!operationConfig.path.includes('?')) {
-                operationConfig.path += '?';
-              }
-              operationConfig.path += `${paramObj.name}={args.${paramObj.name}}`;
-            } else {
+            if (method.toUpperCase() === 'GET') {
               const requestSchema = (operationConfig.requestSchema = operationConfig.requestSchema || {
                 type: 'object',
                 properties: {},
@@ -76,13 +71,40 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (!requestSchema.properties[paramObj.name].description) {
                 requestSchema.properties[paramObj.name].description = paramObj.description;
               }
+            } else {
+              if (!operationConfig.path.includes('?')) {
+                operationConfig.path += '?';
+              }
+              operationConfig.path += `${paramObj.name}={args.${paramObj.name}}`;
             }
             break;
           case 'path':
             // If it is in the path, let JSON Schema handler put it
             operationConfig.path = operationConfig.path.replace(`{${paramObj.name}}`, `{args.${paramObj.name}}`);
             break;
+          case 'header':
+            operationConfig.headers = operationConfig.headers || {};
+            operationConfig.headers[paramObj.name] = `{args.${paramObj.name}}`;
+            break;
+          case 'cookie': {
+            operationConfig.headers = operationConfig.headers || {};
+            operationConfig.headers.cookie = operationConfig.headers.cookie || '';
+            const cookieParams = operationConfig.headers.cookie.split('; ');
+            cookieParams.push(`${paramObj.name}={args.${paramObj.name}}`);
+            operationConfig.headers.cookie = cookieParams.join('; ');
+            break;
+          }
+          case 'body':
+            operationConfig.requestSchema = paramObj.schema;
+            break;
         }
+      }
+
+      if ('requestBody' in methodObj) {
+        const requestBodyObj = methodObj.requestBody as OpenAPIV3.RequestBodyObject;
+        const contentKey = Object.keys(requestBodyObj.content)[0];
+        const contentObj = requestBodyObj.content[contentKey];
+        operationConfig.requestSchema = contentObj.schema as any;
       }
 
       const responseSchemaUnion = (operationConfig.responseSchema = {

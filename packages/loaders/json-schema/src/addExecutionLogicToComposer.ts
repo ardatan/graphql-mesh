@@ -7,7 +7,7 @@ import { inspect } from '@graphql-tools/utils';
 import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
-import { stringify as qsStringify } from 'qs';
+import { stringify as qsStringify, parse as qsParse } from 'qs';
 import {
   getNamedType,
   GraphQLOutputType,
@@ -180,6 +180,13 @@ export async function addExecutionLogicToComposer(
             }
           }
         }
+
+        // Delete unused queryparams
+        const [actualPath, queryString] = fullPath.split('?');
+        const queryParams = queryString ? qsParse(queryString) : {};
+        const cleanedQueryParams = cleanObject(queryParams);
+        fullPath = actualPath + qsStringify(cleanedQueryParams, { encode: false });
+
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
