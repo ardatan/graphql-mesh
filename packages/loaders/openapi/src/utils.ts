@@ -1,27 +1,38 @@
+import { camelCase } from 'change-case';
+
 export function getFieldNameFromPath(path: string, method: string, responseTypeSchemaRef: string) {
-  const parts = path.split('/').filter(Boolean);
-  let fieldName = '';
+  // Replace identifiers with "by"
+  path = path.split('{').join('by_').split('}').join('');
 
-  for (const part of parts) {
-    const [actualPart, allQueryPart] = part.split('?');
-    fieldName += '_' + actualPart;
-    if (allQueryPart) {
-      const queryParts = allQueryPart.split('&');
-      for (const queryPart of queryParts) {
-        const [queryName] = queryPart.split('=');
-        fieldName += '_' + 'by' + '_' + queryName;
-      }
-    }
-    if (fieldName.includes('{')) {
-      fieldName = fieldName.split('{').join('by_').split('}').join('');
-    }
-  }
+  const [actualPartsStr, allQueryPartsStr] = path.split('?');
 
-  // If path doesn't give any field name, we can use the return type with HTTP Method name
-  if (!fieldName && responseTypeSchemaRef) {
+  const actualParts = actualPartsStr.split('/').filter(Boolean);
+
+  let fieldNameWithoutMethod = actualParts.join('_');
+
+  // If path doesn't give any field name without identifiers, we can use the return type with HTTP Method name
+  if ((!fieldNameWithoutMethod || fieldNameWithoutMethod.startsWith('by')) && responseTypeSchemaRef) {
     const refArr = responseTypeSchemaRef.split('/');
-    fieldName = refArr[refArr.length - 1];
+    // lowercase looks better in the schema
+    const prefix = camelCase(refArr[refArr.length - 1]);
+    if (fieldNameWithoutMethod) {
+      fieldNameWithoutMethod = prefix + '_' + fieldNameWithoutMethod;
+    } else {
+      fieldNameWithoutMethod = prefix;
+    }
   }
 
-  return method + fieldName;
+  if (allQueryPartsStr) {
+    const queryParts = allQueryPartsStr.split('&');
+    for (const queryPart of queryParts) {
+      const [queryName] = queryPart.split('=');
+      fieldNameWithoutMethod += '_' + 'by' + '_' + queryName;
+    }
+  }
+
+  // get_ doesn't look good in field names
+  if (method === 'get') {
+    return fieldNameWithoutMethod;
+  }
+  return method + '_' + fieldNameWithoutMethod;
 }

@@ -26,7 +26,8 @@
     "@omnigraph/json-schema": "0.7.2",
     "@graphql-mesh/utils": "0.24.1",
     "json-machete": "0.3.2",
-    "openapi-types": "10.0.0"
+    "openapi-types": "10.0.0",
+    "change-case": "4.1.2"
   },
   "publishConfig": {
     "access": "public",

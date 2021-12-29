@@ -39,6 +39,7 @@ import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath';
 interface TypeComposers {
   input?: AnyTypeComposer<any>;
   output: AnyTypeComposer<any> | SchemaComposer;
+  description?: string;
 }
 
 export function getComposerFromJSONSchema(
@@ -345,6 +346,7 @@ export function getComposerFromJSONSchema(
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'null': {
@@ -352,6 +354,7 @@ export function getComposerFromJSONSchema(
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'integer': {
@@ -360,12 +363,14 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposer,
               output: typeComposer,
+              description: subSchema.description,
             };
           }
           const typeComposer = schemaComposer.getAnyTC(GraphQLInt);
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'number': {
@@ -373,6 +378,7 @@ export function getComposerFromJSONSchema(
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'string': {
@@ -385,6 +391,7 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposer,
               output: typeComposer,
+              description: subSchema.description,
             };
           }
           switch (subSchema.format) {
@@ -393,6 +400,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'time': {
@@ -400,6 +408,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'email': {
@@ -407,6 +416,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'ipv4': {
@@ -414,6 +424,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'ipv6': {
@@ -421,6 +432,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'uri': {
@@ -428,6 +440,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             // Special case for upload
@@ -436,6 +449,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             default: {
@@ -444,6 +458,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
           }
@@ -588,6 +603,7 @@ export function getComposerFromJSONSchema(
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
                     type: () => inputFieldMap[fieldName].type(),
+                    description: inputFieldMap[fieldName].description,
                   },
                 })
               );
@@ -604,6 +620,7 @@ export function getComposerFromJSONSchema(
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
                     type: () => inputFieldMap[fieldName].type(),
+                    description: inputFieldMap[fieldName].description,
                   },
                 })
               );
@@ -620,6 +637,7 @@ export function getComposerFromJSONSchema(
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
                     type: () => inputFieldMap[fieldName].type(),
+                    description: inputFieldMap[fieldName].description,
                   },
                 })
               );
