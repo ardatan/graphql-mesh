@@ -20,12 +20,14 @@ export function getGenericJSONScalar({
     }
     return value;
   }
+  const name = getValidTypeName({
+    schemaComposer,
+    isInput,
+    subSchema,
+  });
+
   return schemaComposer.createScalarTC({
-    name: getValidTypeName({
-      schemaComposer,
-      isInput,
-      subSchema,
-    }),
+    name,
     description: subSchema.description,
     serialize: coerceGenericJSONScalar,
     parseValue: coerceGenericJSONScalar,

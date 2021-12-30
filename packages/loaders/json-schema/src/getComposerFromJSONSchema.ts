@@ -2,8 +2,10 @@
 import {
   AnyTypeComposer,
   EnumTypeComposerValueConfigDefinition,
+  InputTypeComposer,
   InputTypeComposerFieldConfigAsObjectDefinition,
   InputTypeComposerFieldConfigMap,
+  ObjectTypeComposer,
   ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
@@ -473,6 +475,7 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposers.input.getTypePlural(),
               output: typeComposers.output.getTypePlural(),
+              description: subSchema.description,
             };
           }
           if (subSchema.contains) {
@@ -506,6 +509,7 @@ export function getComposerFromJSONSchema(
             return {
               input: inputTypeComposer.getTypePlural(),
               output: outputTypeComposer.getTypePlural(),
+              description: subSchema.description,
             };
           }
           // If it doesn't have any clue
@@ -520,6 +524,7 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposer,
               output: typeComposer,
+              description: subSchema.description,
             };
           }
         case 'object':
@@ -554,6 +559,27 @@ export function getComposerFromJSONSchema(
                 },
                 description: typeComposers.description || typeComposers.input?.description,
               };
+            }
+          }
+
+          if (subSchema.allOf) {
+            for (const typeComposers of subSchema.allOf) {
+              const outputTC: ObjectTypeComposer = (typeComposers as any).output;
+              if (schemaComposer.isObjectType(outputTC)) {
+                for (const outputFieldName of outputTC.getFieldNames()) {
+                  if (!fieldMap[outputFieldName]) {
+                    fieldMap[outputFieldName] = outputTC.getField(outputFieldName);
+                  }
+                }
+              }
+              const inputTC: InputTypeComposer = (typeComposers as any).input;
+              if (schemaComposer.isInputObjectType(inputTC)) {
+                for (const inputFieldName of inputTC.getFieldNames()) {
+                  if (!inputFieldMap[inputFieldName]) {
+                    inputFieldMap[inputFieldName] = inputTC.getField(inputFieldName);
+                  }
+                }
+              }
             }
           }
 

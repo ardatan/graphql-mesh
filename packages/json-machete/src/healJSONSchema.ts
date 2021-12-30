@@ -1,6 +1,7 @@
 import { inspect } from 'util';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
+import toJsonSchema from 'to-json-schema';
 
 const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
@@ -124,6 +125,28 @@ export async function healJSONSchema(schema: JSONSchema) {
         // Some JSON Schemas use this broken pattern and refer the type using `items`
         if (subSchema.type === 'object' && subSchema.items) {
           return subSchema.items;
+        }
+        // If it is an object type but no properties given while example is available
+        if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
+          const generatedSchema = toJsonSchema(subSchema.example, {
+            required: false,
+            objects: {
+              additionalProperties: false,
+            },
+            strings: {
+              detectFormat: true,
+            },
+            arrays: {
+              mode: 'first',
+            },
+          });
+          subSchema.properties = generatedSchema.properties;
+          // If type for properties is already given, use it
+          if (typeof subSchema.additionalProperties === 'object') {
+            for (const propertyName in subSchema.properties) {
+              subSchema.properties[propertyName] = subSchema.additionalProperties;
+            }
+          }
         }
       }
       return subSchema;
