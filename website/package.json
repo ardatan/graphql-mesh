@@ -42,7 +42,7 @@
     "@types/react-dom": "17.0.11",
     "concurrently": "6.5.1",
     "cross-env": "7.0.3",
-    "esbuild": "0.14.9",
+    "esbuild": "0.14.10",
     "esbuild-register": "3.3.1",
     "eslint-config-next": "12.0.7",
     "next-remote-watch": "1.0.0",
