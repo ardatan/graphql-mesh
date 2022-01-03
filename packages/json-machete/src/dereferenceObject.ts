@@ -97,11 +97,10 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }
-          return dereferenceObject(
+          const result = await dereferenceObject(
             refPath
               ? {
                   $ref: `#${refPath}`,
-                  ...externalFile,
                 }
               : externalFile,
             {
@@ -131,25 +130,27 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               }),
               fetch,
               headers,
+              root: externalFile,
             }
           );
+          refMap.set($ref, result);
+          return result;
         } else {
           const resolvedObj = resolvePath(refPath, root);
-          const result$ = dereferenceObject(resolvedObj, {
+          refMap.set($ref, resolvedObj);
+          const result = await dereferenceObject(resolvedObj, {
             cwd,
             externalFileCache,
             refMap,
             root,
             fetch,
             headers,
-          }).then(result => {
-            if (!result.title && (obj as any).title) {
-              result.title = (obj as any).title;
-            }
-            return result;
           });
-          refMap.set($ref, result$);
-          return result$;
+          if (!result.title && (obj as any).title) {
+            result.title = (obj as any).title;
+          }
+          refMap.set($ref, result);
+          return result;
         }
       }
     } else {

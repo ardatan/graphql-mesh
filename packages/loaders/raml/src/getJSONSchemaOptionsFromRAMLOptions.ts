@@ -112,7 +112,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         if (bodyNode.name().includes('application/json')) {
           const bodyJson = bodyNode.toJSON();
           if (bodyJson.schemaPath) {
-            requestSchema = bodyNode.toJSON().schemaPath;
+            requestSchema = bodyJson.schemaPath;
           } else if (bodyJson.type) {
             const typeName = asArray(bodyJson.type)[0];
             requestSchema = typePathMap.get(typeName);
@@ -125,7 +125,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
             if (bodyNode.name().includes('application/json')) {
               const bodyJson = bodyNode.toJSON();
               if (bodyJson.schemaPath) {
-                responseSchema = bodyNode.toJSON().schemaPath;
+                responseSchema = bodyJson.schemaPath;
               } else if (bodyJson.type) {
                 const typeName = asArray(bodyJson.type)[0];
                 responseSchema = typePathMap.get(typeName);
