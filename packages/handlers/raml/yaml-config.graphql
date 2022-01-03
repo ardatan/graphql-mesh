@@ -1,0 +1,10 @@
+extend type Handler {
+  raml: RAMLHandler
+}
+
+type RAMLHandler {
+  ramlFilePath: String!
+  baseUrl: String
+  schemaHeaders: JSON
+  operationHeaders: JSON
+}
