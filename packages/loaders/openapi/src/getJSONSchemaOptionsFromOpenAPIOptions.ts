@@ -180,7 +180,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
       }
 
       // If response types are singular, no need to have unions
-      if (responseSchemaUnion.oneOf.length === 1) {
+      if (responseSchemaUnion.oneOf.length <= 1) {
         operationConfig.responseSchema =
           (responseSchemaUnion.oneOf[0] as JSONSchemaObject)?.$ref || responseSchemaUnion.oneOf[0];
       }
