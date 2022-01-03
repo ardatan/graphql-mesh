@@ -134,19 +134,22 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             }
           );
         } else {
-          const result = resolvePath(refPath, root);
-          if (!result.title && (obj as any).title) {
-            result.title = (obj as any).title;
-          }
-          refMap.set($ref, result);
-          return dereferenceObject(result, {
+          const resolvedObj = resolvePath(refPath, root);
+          const result$ = dereferenceObject(resolvedObj, {
             cwd,
             externalFileCache,
             refMap,
             root,
             fetch,
             headers,
+          }).then(result => {
+            if (!result.title && (obj as any).title) {
+              result.title = (obj as any).title;
+            }
+            return result;
           });
+          refMap.set($ref, result$);
+          return result$;
         }
       }
     } else {

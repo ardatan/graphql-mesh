@@ -213,10 +213,10 @@ export interface Handler {
   odata?: ODataHandler;
   openapi?: OpenapiHandler;
   postgraphile?: PostGraphileHandler;
+  raml?: RAMLHandler;
   soap?: SoapHandler;
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
-  raml?: RAMLHandler;
   [k: string]: any;
 }
 /**
@@ -834,6 +834,16 @@ export interface PostGraphileHandler {
    */
   live?: boolean;
 }
+export interface RAMLHandler {
+  ramlFilePath: string;
+  baseUrl?: string;
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  operationHeaders?: {
+    [k: string]: any;
+  };
+}
 /**
  * Handler for SOAP
  */
@@ -996,16 +1006,6 @@ export interface TuqlHandler {
    * Path to the SQL Dump file if you want to build a in-memory database
    */
   infile?: string;
-}
-export interface RAMLHandler {
-  ramlFilePath: string;
-  baseUrl?: string;
-  schemaHeaders?: {
-    [k: string]: any;
-  };
-  operationHeaders?: {
-    [k: string]: any;
-  };
 }
 export interface Transform {
   /**
