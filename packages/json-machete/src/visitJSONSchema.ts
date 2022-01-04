@@ -177,6 +177,20 @@ export async function visitJSONSchema<T>(
         });
       }
 
+      if (schema.components) {
+        visitedSchema.components = keepObjectRef ? visitedSchema.components : {};
+        visitedSchema.components.schemas = keepObjectRef ? visitedSchema.components.schemas : {};
+        const entries = Object.entries(schema.components.schemas);
+        for (const [schemaName, subSchema] of entries) {
+          visitedSchema.components.schemas[schemaName] = await visitJSONSchema(subSchema, visitorFn, {
+            visitedSubschemaResultMap,
+            path: path + '/components/schemas/' + schemaName,
+            keepObjectRef,
+            onCircularReference,
+          });
+        }
+      }
+
       const visitorResult = await visitorFn(visitedSchema, {
         visitedSubschemaResultMap,
         path,

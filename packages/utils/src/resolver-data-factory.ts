@@ -3,11 +3,15 @@ import { ResolverData } from '@graphql-mesh/types';
 
 export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
 
-export function parseInterpolationStrings(interpolationStrings: string[], argTypeMap?: Record<string, string>) {
-  const interpolationKeys = interpolationStrings.reduce(
+export function getInterpolationKeys(...interpolationStrings: string[]) {
+  return interpolationStrings.reduce(
     (keys, str) => [...keys, ...(str ? stringInterpolator.parseRules(str).map((match: any) => match.key) : [])],
     [] as string[]
   );
+}
+
+export function parseInterpolationStrings(interpolationStrings: string[], argTypeMap?: Record<string, string>) {
+  const interpolationKeys = getInterpolationKeys(...interpolationStrings);
 
   const args: Record<string, { type: string }> = {};
   const contextVariables: string[] = [];

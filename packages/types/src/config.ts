@@ -209,9 +209,11 @@ export interface Handler {
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
+  newOpenapi?: NewOpenapiHandler;
   odata?: ODataHandler;
   openapi?: OpenapiHandler;
   postgraphile?: PostGraphileHandler;
+  raml?: RAMLHandler;
   soap?: SoapHandler;
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
@@ -656,6 +658,19 @@ export interface Neo4JHandler {
   typeDefs?: string;
 }
 /**
+ * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
+ */
+export interface NewOpenapiHandler {
+  oasFilePath: string;
+  baseUrl?: string;
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  operationHeaders?: {
+    [k: string]: any;
+  };
+}
+/**
  * Handler for OData
  */
 export interface ODataHandler {
@@ -818,6 +833,16 @@ export interface PostGraphileHandler {
    * Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
    */
   live?: boolean;
+}
+export interface RAMLHandler {
+  ramlFilePath: string;
+  baseUrl?: string;
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  operationHeaders?: {
+    [k: string]: any;
+  };
 }
 /**
  * Handler for SOAP

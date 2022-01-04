@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v2
         with:
           node-version: 17
       - name: Cache Yarn
@@ -42,7 +42,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v2
         with:
           node-version: 17
       - name: Cache Yarn
@@ -99,7 +99,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node ${{matrix.node-version}}
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - name: Cache Yarn

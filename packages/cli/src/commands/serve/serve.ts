@@ -54,7 +54,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
   const {
     fork,
     port: configPort,
-    hostname = 'localhost',
+    hostname = '0.0.0.0',
     cors: corsConfig,
     handlers,
     staticFiles,

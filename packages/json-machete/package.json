@@ -24,7 +24,8 @@
     "cross-undici-fetch": "0.1.12",
     "json-ptr": "3.0.1",
     "@graphql-mesh/utils": "0.24.1",
-    "url-join": "4.0.1"
+    "url-join": "4.0.1",
+    "to-json-schema": "0.2.5"
   },
   "publishConfig": {
     "access": "public",

@@ -1,6 +1,6 @@
 {
-  "name": "@omnigraph/raml",
-  "version": "0.2.3",
+  "name": "@graphql-mesh/new-openapi",
+  "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,16 +23,18 @@
     "graphql": "*"
   },
   "dependencies": {
-    "cross-undici-fetch": "0.1.12",
-    "@omnigraph/json-schema": "0.7.2",
-    "@ardatan/raml-1-parser": "1.1.69",
-    "json-machete": "0.3.2",
-    "to-json-schema": "0.2.5",
-    "@graphql-mesh/utils": "0.24.1",
-    "swagger2openapi": "^7.0.8"
+    "@graphql-mesh/store": "0.3.5",
+    "@graphql-mesh/types": "0.57.0",
+    "@omnigraph/openapi": "0.0.0",
+    "@graphql-mesh/utils": "0.24.1"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "buildOptions": {
+    "external": [
+      "cross-fetch"
+    ]
   }
 }

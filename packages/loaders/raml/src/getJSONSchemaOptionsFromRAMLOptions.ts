@@ -1,10 +1,12 @@
-import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { getInterpolatedHeadersFactory, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { HTTPMethod, JSONSchemaOperationConfig } from '@omnigraph/json-schema';
 import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
 import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import toJsonSchema from 'to-json-schema';
 import { RAMLLoaderOptions } from './types';
+import { env } from 'process';
+import { asArray } from '@graphql-tools/utils';
 
 /**
  * Generates the options for JSON Schema Loader
@@ -26,11 +28,12 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
 }> {
   const operations = extraOperations || [];
   const ramlAbsolutePath = getAbsolutePath(ramlFilePath, ramlFileCwd);
+  const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   const ramlAPI = (await loadApi(ramlAbsolutePath, [], {
     httpResolver: {
       getResourceAsync: async (url: string) => {
         const fetchResponse = await fetch(url, {
-          headers: schemaHeaders,
+          headers: schemaHeadersFactory({ env }),
         });
         const content = await fetchResponse.text();
         return {
@@ -51,12 +54,14 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     }
   }
   const pathTypeMap = new Map<string, string>();
+  const typePathMap = new Map<string, string>();
   for (const typeNode of ramlAPI.types()) {
     const typeNodeJson = typeNode.toJSON();
     for (const typeName in typeNodeJson) {
       const { schemaPath } = typeNodeJson[typeName];
       if (schemaPath) {
         pathTypeMap.set(schemaPath, typeName);
+        typePathMap.set(typeName, schemaPath);
       }
     }
   }
@@ -66,7 +71,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       let requestSchema: string | JSONSchemaObject;
       let responseSchema: string;
       const method = methodNode.method().toUpperCase() as HTTPMethod;
-      const fieldName = methodNode.displayName();
+      const fieldName = methodNode.displayName()?.replace('GET_', '');
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
       let fullRelativeUrl = resourceNode.completeRelativeUri();
       for (const uriParameterNode of resourceNode.uriParameters()) {
@@ -105,14 +110,26 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
 
       for (const bodyNode of methodNode.body()) {
         if (bodyNode.name().includes('application/json')) {
-          requestSchema = bodyNode.toJSON().schemaPath;
+          const bodyJson = bodyNode.toJSON();
+          if (bodyJson.schemaPath) {
+            requestSchema = bodyJson.schemaPath;
+          } else if (bodyJson.type) {
+            const typeName = asArray(bodyJson.type)[0];
+            requestSchema = typePathMap.get(typeName);
+          }
         }
       }
       for (const responseNode of methodNode.responses()) {
         if (responseNode.code().value().startsWith('2')) {
           for (const bodyNode of responseNode.body()) {
             if (bodyNode.name().includes('application/json')) {
-              responseSchema = bodyNode.toJSON().schemaPath;
+              const bodyJson = bodyNode.toJSON();
+              if (bodyJson.schemaPath) {
+                responseSchema = bodyJson.schemaPath;
+              } else if (bodyJson.type) {
+                const typeName = asArray(bodyJson.type)[0];
+                responseSchema = typePathMap.get(typeName);
+              }
             }
           }
         }

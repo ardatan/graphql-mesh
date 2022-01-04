@@ -2,8 +2,10 @@
 import {
   AnyTypeComposer,
   EnumTypeComposerValueConfigDefinition,
+  InputTypeComposer,
   InputTypeComposerFieldConfigAsObjectDefinition,
   InputTypeComposerFieldConfigMap,
+  ObjectTypeComposer,
   ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
@@ -39,6 +41,7 @@ import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath';
 interface TypeComposers {
   input?: AnyTypeComposer<any>;
   output: AnyTypeComposer<any> | SchemaComposer;
+  description?: string;
 }
 
 export function getComposerFromJSONSchema(
@@ -123,6 +126,7 @@ export function getComposerFromJSONSchema(
             subSchema,
           }),
           values,
+          description: subSchema.description,
         });
         return {
           input: typeComposer,
@@ -131,6 +135,24 @@ export function getComposerFromJSONSchema(
       }
 
       if (subSchema.oneOf && !subSchema.properties) {
+        const isPlural = (subSchema.oneOf as TypeComposers[]).some(({ output }) => 'ofType' in output);
+        if (isPlural) {
+          const { input, output } = getUnionTypeComposers({
+            schemaComposer,
+            ajv,
+            typeComposersList: (subSchema.oneOf as any).map(({ input, output }: any) => ({
+              input: input.ofType || input,
+              output: output.ofType || output,
+            })) as any[],
+            subSchema,
+            generateInterfaceFromSharedFields,
+            validateWithJSONSchema,
+          });
+          return {
+            input: input.getTypePlural(),
+            output: output.getTypePlural(),
+          };
+        }
         return getUnionTypeComposers({
           schemaComposer,
           ajv,
@@ -326,6 +348,7 @@ export function getComposerFromJSONSchema(
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'null': {
@@ -333,6 +356,7 @@ export function getComposerFromJSONSchema(
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'integer': {
@@ -341,12 +365,14 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposer,
               output: typeComposer,
+              description: subSchema.description,
             };
           }
           const typeComposer = schemaComposer.getAnyTC(GraphQLInt);
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'number': {
@@ -354,6 +380,7 @@ export function getComposerFromJSONSchema(
           return {
             input: typeComposer,
             output: typeComposer,
+            description: subSchema.description,
           };
         }
         case 'string': {
@@ -366,6 +393,7 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposer,
               output: typeComposer,
+              description: subSchema.description,
             };
           }
           switch (subSchema.format) {
@@ -374,6 +402,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'time': {
@@ -381,6 +410,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'email': {
@@ -388,6 +418,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'ipv4': {
@@ -395,6 +426,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'ipv6': {
@@ -402,6 +434,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             case 'uri': {
@@ -409,6 +442,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             // Special case for upload
@@ -417,6 +451,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
             default: {
@@ -425,6 +460,7 @@ export function getComposerFromJSONSchema(
               return {
                 input: typeComposer,
                 output: typeComposer,
+                description: subSchema.description,
               };
             }
           }
@@ -439,6 +475,7 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposers.input.getTypePlural(),
               output: typeComposers.output.getTypePlural(),
+              description: subSchema.description,
             };
           }
           if (subSchema.contains) {
@@ -472,6 +509,7 @@ export function getComposerFromJSONSchema(
             return {
               input: inputTypeComposer.getTypePlural(),
               output: outputTypeComposer.getTypePlural(),
+              description: subSchema.description,
             };
           }
           // If it doesn't have any clue
@@ -486,6 +524,7 @@ export function getComposerFromJSONSchema(
             return {
               input: typeComposer,
               output: typeComposer,
+              description: subSchema.description,
             };
           }
         case 'object':
@@ -520,6 +559,27 @@ export function getComposerFromJSONSchema(
                 },
                 description: typeComposers.description || typeComposers.input?.description,
               };
+            }
+          }
+
+          if (subSchema.allOf) {
+            for (const typeComposers of subSchema.allOf) {
+              const outputTC: ObjectTypeComposer = (typeComposers as any).output;
+              if (schemaComposer.isObjectType(outputTC)) {
+                for (const outputFieldName of outputTC.getFieldNames()) {
+                  if (!fieldMap[outputFieldName]) {
+                    fieldMap[outputFieldName] = outputTC.getField(outputFieldName);
+                  }
+                }
+              }
+              const inputTC: InputTypeComposer = (typeComposers as any).input;
+              if (schemaComposer.isInputObjectType(inputTC)) {
+                for (const inputFieldName of inputTC.getFieldNames()) {
+                  if (!inputFieldMap[inputFieldName]) {
+                    inputFieldMap[inputFieldName] = inputTC.getField(inputFieldName);
+                  }
+                }
+              }
             }
           }
 
@@ -569,6 +629,7 @@ export function getComposerFromJSONSchema(
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
                     type: () => inputFieldMap[fieldName].type(),
+                    description: inputFieldMap[fieldName].description,
                   },
                 })
               );
@@ -585,6 +646,7 @@ export function getComposerFromJSONSchema(
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
                     type: () => inputFieldMap[fieldName].type(),
+                    description: inputFieldMap[fieldName].description,
                   },
                 })
               );
@@ -601,6 +663,7 @@ export function getComposerFromJSONSchema(
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
                     type: () => inputFieldMap[fieldName].type(),
+                    description: inputFieldMap[fieldName].description,
                   },
                 })
               );

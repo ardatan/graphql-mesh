@@ -1,0 +1,13 @@
+extend type Handler {
+  """
+  Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
+  """
+  newOpenapi: NewOpenapiHandler
+}
+
+type NewOpenapiHandler {
+  oasFilePath: String!
+  baseUrl: String
+  schemaHeaders: JSON
+  operationHeaders: JSON
+}

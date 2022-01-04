@@ -7,8 +7,16 @@ import { inspect } from '@graphql-tools/utils';
 import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
-import { stringify as qsStringify } from 'qs';
-import { getNamedType, isScalarType } from 'graphql';
+import { stringify as qsStringify, parse as qsParse } from 'qs';
+import {
+  getNamedType,
+  GraphQLOutputType,
+  GraphQLSchema,
+  isAbstractType,
+  isListType,
+  isNonNullType,
+  isScalarType,
+} from 'graphql';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -18,6 +26,28 @@ export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
+}
+
+function isListTypeOrNonNullListType(type: GraphQLOutputType) {
+  if (isNonNullType(type)) {
+    return isListType(type.ofType);
+  }
+  return isListType(type);
+}
+
+function getErrorTypeName(schema: GraphQLSchema, type: GraphQLOutputType, errorFieldName: string): string | void {
+  const namedType = getNamedType(type);
+  if (isAbstractType(namedType)) {
+    for (const possibleType of schema.getPossibleTypes(namedType)) {
+      const errorTypeName = getErrorTypeName(schema, possibleType, errorFieldName);
+      if (errorTypeName) {
+        return errorTypeName;
+      }
+    }
+  }
+  if ('getFields' in type && type.getFields()[errorFieldName]) {
+    return type.name;
+  }
 }
 
 export async function addExecutionLogicToComposer(
@@ -150,21 +180,36 @@ export async function addExecutionLogicToComposer(
             }
           }
         }
+
+        // Delete unused queryparams
+        const [actualPath, queryString] = fullPath.split('?');
+        if (queryString) {
+          const queryParams = qsParse(queryString);
+          const cleanedQueryParams = cleanObject(queryParams);
+          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { encode: false });
+        }
+
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
           throw new Error(`You should have PubSub defined in either the config or the context!`);
         }
         const response = await fetch(fullPath, requestInit);
-        operationLogger.debug(() => `=> Received ${inspect(response)}`);
         const responseText = await response.text();
-        const returnGraphQLType = getNamedType(field.type.getType());
+        operationLogger.debug(
+          () =>
+            `=> Received ${inspect({
+              headers: response.headers,
+              text: responseText,
+            })}`
+        );
         let responseJson: any;
         try {
           responseJson = JSON.parse(responseText);
         } catch (e) {
+          const returnNamedGraphQLType = getNamedType(info.returnType);
           // The result might be defined as scalar
-          if (isScalarType(returnGraphQLType)) {
+          if (isScalarType(returnNamedGraphQLType)) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
@@ -182,14 +227,17 @@ export async function addExecutionLogicToComposer(
             return error;
           }
         }
-        const errors = responseJson.errors || responseJson._errors;
+
         // Make sure the return type doesn't have a field `errors`
         // so ignore auto error detection if the return type has that field
-        if (errors?.length) {
-          if (!('getFields' in returnGraphQLType && 'errors' in returnGraphQLType.getFields())) {
-            const normalizedErrors: Error[] = errors.map(normalizeError);
+        if (responseJson.errors?.length) {
+          const errorTypeName = getErrorTypeName(info.schema, info.returnType, 'errors');
+          if (errorTypeName) {
+            responseJson.__typename = errorTypeName;
+          } else {
+            const normalizedErrors: Error[] = responseJson.errors.map(normalizeError);
             const aggregatedError =
-              errors.length > 1
+              responseJson.errors.length > 1
                 ? new AggregateError(
                     normalizedErrors,
                     `${rootTypeName}.${fieldName} failed; \n${normalizedErrors
@@ -202,14 +250,30 @@ export async function addExecutionLogicToComposer(
             return aggregatedError;
           }
         }
+
         if (responseJson.error) {
-          if (!('getFields' in returnGraphQLType && 'error' in returnGraphQLType.getFields())) {
+          const errorTypeName = getErrorTypeName(info.schema, info.returnType, 'error');
+          if (errorTypeName) {
+            responseJson.__typename = errorTypeName;
+          } else {
             const normalizedError = normalizeError(responseJson.error);
             operationLogger.debug(() => `=> Throwing the error ${inspect(normalizedError)}`);
             return normalizedError;
           }
         }
+
         operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
+        // Sometimes API returns an array but the return type is not an array
+        const isListReturnType = isListTypeOrNonNullListType(info.returnType);
+        const isArrayResponse = Array.isArray(responseJson);
+        if (isListReturnType && !isArrayResponse) {
+          operationLogger.debug(() => `Response is not array but return type is list. Normalizing the response`);
+          responseJson = [responseJson];
+        }
+        if (!isListReturnType && isArrayResponse) {
+          operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
+          responseJson = responseJson[0];
+        }
         return responseJson;
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));

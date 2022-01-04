@@ -91,18 +91,16 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               fetch,
               headers,
               cwd,
-              fallbackFormat: 'json',
             }).catch(() => {
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
             });
             externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }
-          return dereferenceObject(
+          const result = await dereferenceObject(
             refPath
               ? {
                   $ref: `#${refPath}`,
-                  ...externalFile,
                 }
               : externalFile,
             {
@@ -132,15 +130,15 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               }),
               fetch,
               headers,
+              root: externalFile,
             }
           );
-        } else {
-          const result = resolvePath(refPath, root);
-          if (!result.title && (obj as any).title) {
-            result.title = (obj as any).title;
-          }
           refMap.set($ref, result);
-          return dereferenceObject(result, {
+          return result;
+        } else {
+          const resolvedObj = resolvePath(refPath, root);
+          refMap.set($ref, resolvedObj);
+          const result = await dereferenceObject(resolvedObj, {
             cwd,
             externalFileCache,
             refMap,
@@ -148,6 +146,11 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             fetch,
             headers,
           });
+          if (!result.title && (obj as any).title) {
+            result.title = (obj as any).title;
+          }
+          refMap.set($ref, result);
+          return result;
         }
       }
     } else {

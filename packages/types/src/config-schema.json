@@ -502,6 +502,10 @@
           "$ref": "#/definitions/Neo4jHandler",
           "description": "Handler for Neo4j"
         },
+        "newOpenapi": {
+          "$ref": "#/definitions/NewOpenapiHandler",
+          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
+        },
         "odata": {
           "$ref": "#/definitions/ODataHandler",
           "description": "Handler for OData"
@@ -513,6 +517,9 @@
         "postgraphile": {
           "$ref": "#/definitions/PostGraphileHandler",
           "description": "Handler for Postgres database, based on `postgraphile`"
+        },
+        "raml": {
+          "$ref": "#/definitions/RAMLHandler"
         },
         "soap": {
           "$ref": "#/definitions/SoapHandler",
@@ -1620,6 +1627,28 @@
       },
       "required": ["url", "username", "password"]
     },
+    "NewOpenapiHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "NewOpenapiHandler",
+      "properties": {
+        "oasFilePath": {
+          "type": "string"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {}
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["oasFilePath"]
+    },
     "ODataHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -1857,6 +1886,28 @@
           "description": "Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)"
         }
       }
+    },
+    "RAMLHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RAMLHandler",
+      "properties": {
+        "ramlFilePath": {
+          "type": "string"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {}
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["ramlFilePath"]
     },
     "SoapHandler": {
       "additionalProperties": false,
