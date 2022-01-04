@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.45.0
+
+### Minor Changes
+
+- d907351c5: feat(cli): hostname defaults to 0.0.0.0 to support Docker
+- 80eb8e92b: feat(SDK): use JIT SDK instead of regular generic SDK
+
+### Patch Changes
+
+- Updated dependencies [d907351c5]
+- Updated dependencies [80eb8e92b]
+  - @graphql-mesh/utils@0.24.2
+  - @graphql-mesh/runtime@0.27.0
+  - @graphql-mesh/config@0.27.2
+  - @graphql-mesh/store@0.3.6
+
 ## 0.44.5
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.24.2
+
+### Patch Changes
+
+- d907351c5: new OpenAPI Handler
+- Updated dependencies [d907351c5]
+  - @graphql-mesh/types@0.57.1
+
 ## 0.24.1
 
 ### Patch Changes
