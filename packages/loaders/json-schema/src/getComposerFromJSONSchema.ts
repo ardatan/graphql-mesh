@@ -116,7 +116,9 @@ export function getComposerFromJSONSchema(
         for (const value of subSchema.enum) {
           const enumKey = sanitizeNameForGraphQL(value.toString());
           values[enumKey] = {
-            value,
+            // Falsy values are ignored by GraphQL
+            // eslint-disable-next-line no-unneeded-ternary
+            value: value ? value : value?.toString(),
           };
         }
         const typeComposer = schemaComposer.createEnumTC({

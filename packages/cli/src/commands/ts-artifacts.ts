@@ -179,7 +179,7 @@ export async function generateTsArtifacts({
             .join(' & ')} & BaseMeshContext;`;
 
           const importCodes = [
-            `import { parse } from 'graphql';`,
+            `import { parse, DocumentNode } from 'graphql';`,
             `import { getMesh } from '@graphql-mesh/runtime';`,
             `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
             `import { cwd } from 'process';`,
@@ -237,9 +237,15 @@ export async function getBuiltMesh(): Promise<MeshInstance> {
   return getMesh(meshConfig);
 }
 
-export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(globalContext?: TGlobalContext) {
+export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
   const { schema } = await getBuiltMesh();
-  return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, globalContext);
+  return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, {
+    jitOptions: {
+      disableLeafSerialization: true,
+      disablingCapturingStackErrors: true
+    },
+    ...sdkOptions,
+  });
 }`;
 
           return {
