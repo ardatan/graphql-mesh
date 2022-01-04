@@ -114,7 +114,13 @@ export function getComposerFromJSONSchema(
       if (subSchema.enum) {
         const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
         for (const value of subSchema.enum) {
-          const enumKey = sanitizeNameForGraphQL(value.toString());
+          let enumKey = sanitizeNameForGraphQL(value.toString());
+          if (enumKey === 'false' || enumKey === 'true' || enumKey === 'null') {
+            enumKey = enumKey.toUpperCase();
+          }
+          if (typeof enumKey === 'string' && enumKey.length === 0) {
+            enumKey = '_';
+          }
           values[enumKey] = {
             // Falsy values are ignored by GraphQL
             // eslint-disable-next-line no-unneeded-ternary

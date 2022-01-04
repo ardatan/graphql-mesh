@@ -22,10 +22,6 @@
           "items": {
             "$ref": "user.json#/definitions/Foo"
           }
-        },
-        "some_enum": {
-          "type": "number",
-          "enum": [0, 1, 2, 3]
         }
       }
     },
