@@ -135,6 +135,7 @@ export async function generateTsArtifacts({
       namingConvention: 'keep',
       documentMode: 'documentNode',
       enumsAsTypes: true,
+      ignoreEnumValuesFromSchema: true,
     },
     schemaAst: unifiedSchema,
     schema: undefined as any, // This is not necessary on codegen.
