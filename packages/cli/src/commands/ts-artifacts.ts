@@ -29,6 +29,7 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
+  importNamespace: string,
   type: Maybe<GraphQLObjectType>
 ): Record<string, string> {
   if (!type) {
@@ -40,7 +41,7 @@ function buildSignatureBasedOnRootFields(
   for (const fieldName in fields) {
     const field = fields[fieldName];
     const argsExists = field.args && field.args.length > 0;
-    const argsName = argsExists ? `${type.name}${field.name}Args` : '{}';
+    const argsName = argsExists ? `${importNamespace}.${type.name}${pascalCase(field.name)}Args` : '{}';
     const parentTypeNode: NamedTypeNode = {
       kind: Kind.NAMED_TYPE,
       name: {
@@ -49,7 +50,7 @@ function buildSignatureBasedOnRootFields(
       },
     };
 
-    operationMap[fieldName] = `  ${field.name}: InContextSdkMethod<${codegenHelpers.getTypeToUse(
+    operationMap[fieldName] = `  ${field.name}: InContextSdkMethod<${importNamespace}.${codegenHelpers.getTypeToUse(
       parentTypeNode
     )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }
@@ -60,10 +61,19 @@ function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
   const sdkIdentifier = pascalCase(`${options.name}Sdk`);
   const contextIdentifier = pascalCase(`${options.name}Context`);
-  const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType());
-  const mutationOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType());
+  const queryOperationMap = buildSignatureBasedOnRootFields(
+    codegenHelpers,
+    options.name,
+    options.schema.getQueryType()
+  );
+  const mutationOperationMap = buildSignatureBasedOnRootFields(
+    codegenHelpers,
+    options.name,
+    options.schema.getMutationType()
+  );
   const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
+    options.name,
     options.schema.getSubscriptionType()
   );
 
@@ -121,6 +131,40 @@ export async function generateTsArtifacts({
   sdkConfig: YamlConfig.SDKConfig;
 }) {
   const artifactsDir = join(baseDir, '.mesh');
+
+  const sourceTypeDeclarations = await rawSources.reduce(async (accumulatorP, source) => {
+    const accumulator = await accumulatorP;
+
+    logger.info(`Generating type declarations for source ${source.name}`);
+
+    const codegenOutput = await codegen({
+      filename: 'types.ts',
+      documents: [],
+      config: {},
+      schema: undefined as any,
+      schemaAst: source.schema,
+      pluginMap: {
+        typescript: tsBasePlugin,
+      },
+      plugins: [
+        {
+          typescript: {},
+        },
+      ],
+    });
+
+    const normalizedSourceName = pascalCase(source.name);
+    const sourceTypesFilePath = join(artifactsDir, `${pascalCase(normalizedSourceName)}.ts`);
+    logger.info(`Writing ${sourceTypesFilePath} to the disk.`);
+    await writeFile(sourceTypesFilePath, codegenOutput);
+
+    const importStatement = `import * as ${normalizedSourceName} from "./${normalizedSourceName}";`;
+
+    accumulator.push({ sourceName: source.name, normalizedSourceName, importStatement });
+
+    return accumulator;
+  }, Promise.resolve<Array<{ sourceName: string; normalizedSourceName: string; importStatement: string }>>([]));
+
   logger.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
     const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(rawSource);
@@ -156,15 +200,19 @@ export async function generateTsArtifacts({
             `import { MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
             `import { InContextSdkMethod } from '@graphql-mesh/types';`,
           ];
+          const sourceTypeDeclarationImports = sourceTypeDeclarations.map(d => d.importStatement);
           const sdkItems: string[] = [];
           const contextItems: string[] = [];
           const results = await Promise.all(
             rawSources.map(source => {
               const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
               const sourceSchema = sourceMap.get(source);
+              const { normalizedSourceName } = sourceTypeDeclarations.find(
+                ({ sourceName }) => sourceName === source.name
+              )!;
               const item = generateTypesForApi({
                 schema: sourceSchema,
-                name: source.name,
+                name: normalizedSourceName,
               });
 
               if (item) {
@@ -254,7 +302,14 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
 }`;
 
           return {
-            content: [...commonTypes, ...sdkItems, ...contextItems, contextType, meshMethods].join('\n\n'),
+            content: [
+              ...commonTypes,
+              ...sourceTypeDeclarationImports,
+              ...sdkItems,
+              ...contextItems,
+              contextType,
+              meshMethods,
+            ].join('\n\n'),
           };
         },
       },
