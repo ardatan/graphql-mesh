@@ -39,7 +39,7 @@
     "cosmiconfig": "7.0.1",
     "@graphql-codegen/core": "2.4.0",
     "@graphql-codegen/typescript": "2.4.2",
-    "@graphql-codegen/typescript-jit-sdk": "2.0.0-alpha-71a5c833b.0",
+    "@graphql-codegen/typescript-jit-sdk": "2.0.0",
     "@graphql-codegen/typescript-operations": "2.2.2",
     "@graphql-mesh/config": "0.27.1",
     "@graphql-codegen/typescript-resolvers": "2.4.3",
