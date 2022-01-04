@@ -6,7 +6,7 @@ import { codegen } from '@graphql-codegen/core';
 import { pascalCase } from 'pascal-case';
 import { Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
-import * as tsGenericSdkPlugin from '@graphql-codegen/typescript-generic-sdk';
+import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
 import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
 import { writeFile, writeJSON } from '@graphql-mesh/utils';
@@ -134,6 +134,7 @@ export async function generateTsArtifacts({
       preResolveTypes: flattenTypes,
       namingConvention: 'keep',
       documentMode: 'documentNode',
+      enumsAsTypes: true,
     },
     schemaAst: unifiedSchema,
     schema: undefined as any, // This is not necessary on codegen.
@@ -141,7 +142,7 @@ export async function generateTsArtifacts({
     pluginMap: {
       typescript: tsBasePlugin,
       typescriptOperations: tsOperationsPlugin,
-      typescriptGenericSdk: tsGenericSdkPlugin,
+      typescriptJitSdk: tsJitSdkPlugin,
       resolvers: tsResolversPlugin,
       contextSdk: {
         plugin: async () => {
@@ -236,9 +237,9 @@ export async function getBuiltMesh(): Promise<MeshInstance> {
   return getMesh(meshConfig);
 }
 
-export async function getMeshSDK() {
-  const { sdkRequester } = await getBuiltMesh();
-  return getSdk(sdkRequester);
+export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(globalContext?: TGlobalContext) {
+  const { schema } = await getBuiltMesh();
+  return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, globalContext);
 }`;
 
           return {
@@ -266,7 +267,7 @@ export async function getMeshSDK() {
         typescriptOperations: {},
       },
       {
-        typescriptGenericSdk: {},
+        typescriptJitSdk: {},
       },
     ],
   });

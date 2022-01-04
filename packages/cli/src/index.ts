@@ -216,10 +216,18 @@ export async function graphqlMesh() {
           const importedModulesSet = new Set<string>();
           const importPromises: Promise<any>[] = [];
           const importFn = (moduleId: string) => {
-            const importPromise = defaultImportFn(moduleId).then(m => {
-              importedModulesSet.add(moduleId);
-              return m;
-            });
+            const importPromise = defaultImportFn(moduleId)
+              .catch(e => {
+                if (e.message.includes('getter')) {
+                  return e;
+                } else {
+                  throw e;
+                }
+              })
+              .then(m => {
+                importedModulesSet.add(moduleId);
+                return m;
+              });
             importPromises.push(importPromise.catch(() => {}));
             return importPromise;
           };

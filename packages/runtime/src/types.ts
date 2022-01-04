@@ -49,8 +49,6 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   operationName?: string
 ) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
 
-export type Requester<C = any> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
-
 export type APIContextMethodParams = {
   root?: any;
   args?: any;
