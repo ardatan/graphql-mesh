@@ -34,7 +34,7 @@
     "@babel/preset-typescript": "7.16.7",
     "@changesets/cli": "2.18.0",
     "@types/jest": "27.4.0",
-    "@types/node": "16.11.18",
+    "@types/node": "16.11.19",
     "@typescript-eslint/eslint-plugin": "5.9.0",
     "@typescript-eslint/parser": "5.9.0",
     "babel-jest": "27.4.5",
