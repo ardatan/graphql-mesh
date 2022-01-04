@@ -1074,4 +1074,20 @@ input Foo_Input {
       }"
     `);
   });
+  it('should workaround GraphQLjs falsy enum values bug', async () => {
+    const values = [0, false, ''];
+    const FooEnum = {
+      title: 'FooEnum',
+      type: ['number', 'boolean', 'string'] as any,
+      enum: values,
+    };
+    const { output } = await getComposerFromJSONSchema(FooEnum, logger);
+    expect(output instanceof EnumTypeComposer).toBeTruthy();
+    const enumTypeComposer = output as EnumTypeComposer;
+    const enumValuesMap = enumTypeComposer.getFields();
+    Object.values(enumValuesMap).forEach((valueConfig, i) => {
+      expect(valueConfig.value).toBe(values[i]?.toString());
+    });
+    expect.assertions(4);
+  });
 });

@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import {
   GraphQLSchema,
-  DocumentNode,
-  GraphQLError,
   ExecutionArgs,
   GraphQLResolveInfo,
   OperationTypeNode,
@@ -13,7 +11,7 @@ import {
   execute,
   subscribe,
 } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
+import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
 import {
   MeshPubSub,
   KeyValueCache,
@@ -30,10 +28,8 @@ import {
   getInterpolatedStringFactory,
   groupTransforms,
   ResolverDataBasedFactory,
-  AggregateError,
   DefaultLogger,
   getDocumentNodeAndSDL,
-  printWithCache,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
@@ -47,7 +43,6 @@ export interface MeshInstance {
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
   rawSources: RawSourceOutput[];
-  sdkRequester: Requester;
   destroy: () => void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
@@ -374,62 +369,11 @@ ${inspect({
     return executionResult;
   }
 
-  class GraphQLMeshSdkError<Data = any, Variables = any> extends AggregateError {
-    constructor(
-      errors: ReadonlyArray<GraphQLError>,
-      public document: DocumentNode,
-      public variables: Variables,
-      public data: Data
-    ) {
-      super(
-        errors,
-        `GraphQL Mesh SDK ${getOperationAST(document).operation} ${getOperationAST(document).name?.value || ''} failed!`
-      );
-    }
-  }
-
-  const localRequester: Requester = async <Result, TVariables, TContext, TRootValue>(
-    document: DocumentNode,
-    variables: TVariables,
-    contextValue?: TContext,
-    rootValue?: TRootValue,
-    operationName?: string
-  ) => {
-    const executionResult = await meshExecute<TVariables, TContext, TRootValue>(
-      document,
-      variables,
-      contextValue,
-      rootValue,
-      operationName
-    );
-
-    if ('data' in executionResult || 'errors' in executionResult) {
-      if (executionResult.data && !executionResult.errors) {
-        return executionResult.data as unknown as Result;
-      } else {
-        logger.error(`GraphQL Mesh SDK failed to execute:
-        ${inspect({
-          query: printWithCache(document),
-          variables,
-        })}`);
-        throw new GraphQLMeshSdkError(
-          executionResult.errors as ReadonlyArray<GraphQLError>,
-          document,
-          variables,
-          executionResult.data
-        );
-      }
-    } else {
-      throw new Error('Not implemented');
-    }
-  };
-
   return {
     execute: meshExecute,
     subscribe: meshSubscribe,
     schema: unifiedSchema,
     rawSources,
-    sdkRequester: localRequester,
     cache,
     pubsub,
     destroy: () => pubsub.publish('destroy', undefined),
