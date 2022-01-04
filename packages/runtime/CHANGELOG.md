@@ -1,5 +1,17 @@
 # @graphql-mesh/runtime
 
+## 0.27.0
+
+### Minor Changes
+
+- 80eb8e92b: feat(SDK): use JIT SDK instead of regular generic SDK
+
+### Patch Changes
+
+- Updated dependencies [d907351c5]
+  - @graphql-mesh/types@0.57.1
+  - @graphql-mesh/utils@0.24.2
+
 ## 0.26.10
 
 ### Patch Changes

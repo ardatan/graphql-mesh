@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.7.3
+
+### Patch Changes
+
+- 80eb8e92b: fix(json-schema): workaround for falsy enum values
+- d907351c5: fix(json-schema): consume array results with singular return types
+  fix(json-schema): handle dynamic values from env in schemaHeaders
+- Updated dependencies [d907351c5]
+- Updated dependencies [d907351c5]
+  - json-machete@0.3.3
+  - @graphql-mesh/types@0.57.1
+  - @graphql-mesh/utils@0.24.2
+
 ## 0.7.2
 
 ### Patch Changes

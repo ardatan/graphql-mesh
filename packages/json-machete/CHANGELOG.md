@@ -1,5 +1,14 @@
 # json-machete
 
+## 0.3.3
+
+### Patch Changes
+
+- d907351c5: fix(json-machete): respect object.items pattern
+- d907351c5: new OpenAPI Handler
+- Updated dependencies [d907351c5]
+  - @graphql-mesh/utils@0.24.2
+
 ## 0.3.2
 
 ### Patch Changes
