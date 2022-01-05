@@ -32,7 +32,7 @@
     "@graphql-mesh/utils": "0.24.2",
     "@graphql-tools/utils": "8.6.0",
     "http-string-parser": "0.0.6",
-    "cross-undici-fetch": "0.1.12",
+    "cross-undici-fetch": "0.1.13",
     "dataloader": "2.0.0",
     "fast-xml-parser": "3.21.1",
     "graphql-compose": "9.0.6",
