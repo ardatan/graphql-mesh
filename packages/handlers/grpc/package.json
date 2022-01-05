@@ -27,7 +27,7 @@
     "@graphql-mesh/utils": "0.24.2",
     "@graphql-mesh/store": "0.3.6",
     "@grpc/grpc-js": "^1.1.7",
-    "@grpc/proto-loader": "0.6.8",
+    "@grpc/proto-loader": "0.6.9",
     "graphql-scalars": "1.14.1",
     "graphql-compose": "9.0.6",
     "grpc-reflection-js": "0.1.2",
