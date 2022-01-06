@@ -1,5 +1,5 @@
 query GetMovies {
-  Example_GetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
+  MoviesService_GetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
     result {
       name
       year
