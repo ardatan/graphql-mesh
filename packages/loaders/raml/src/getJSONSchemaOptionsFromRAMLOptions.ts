@@ -7,6 +7,7 @@ import toJsonSchema from 'to-json-schema';
 import { RAMLLoaderOptions } from './types';
 import { env } from 'process';
 import { asArray } from '@graphql-tools/utils';
+import { getFieldNameFromPath } from './utils';
 
 /**
  * Generates the options for JSON Schema Loader
@@ -71,7 +72,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       let requestSchema: string | JSONSchemaObject;
       let responseSchema: string;
       const method = methodNode.method().toUpperCase() as HTTPMethod;
-      const fieldName = methodNode.displayName()?.replace('GET_', '');
+      let fieldName = methodNode.displayName()?.replace('GET_', '');
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
       let fullRelativeUrl = resourceNode.completeRelativeUri();
       for (const uriParameterNode of resourceNode.uriParameters()) {
@@ -95,12 +96,15 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
             enum: queryParameterNodeJson.enum,
           };
         } else {
-          (requestSchema as JSONSchemaObject).properties[parameterName] = toJsonSchema(queryParameterNodeJson.example, {
-            required: false,
-            strings: {
-              detectFormat: true,
-            },
-          });
+          (requestSchema as JSONSchemaObject).properties[parameterName] = toJsonSchema(
+            queryParameterNodeJson.example || queryParameterNodeJson.default,
+            {
+              required: false,
+              strings: {
+                detectFormat: true,
+              },
+            }
+          );
         }
         if (queryParameterNode.description) {
           (requestSchema as JSONSchemaObject).properties[parameterName].description =
@@ -134,6 +138,8 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           }
         }
       }
+      const responseTypeName = pathTypeMap.get(responseSchema);
+      fieldName = fieldName || getFieldNameFromPath(fullRelativeUrl, method, responseTypeName);
       if (fieldName) {
         const operationType: any = method === 'GET' ? 'query' : 'mutation';
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);
@@ -146,7 +152,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           requestSchema,
           requestTypeName: typeof requestSchema === 'string' ? pathTypeMap.get(requestSchema) : undefined,
           responseSchema,
-          responseTypeName: pathTypeMap.get(responseSchema),
+          responseTypeName: responseTypeName,
         });
       }
     }

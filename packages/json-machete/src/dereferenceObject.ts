@@ -137,7 +137,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           return result;
         } else {
           const resolvedObj = resolvePath(refPath, root);
-          refMap.set($ref, resolvedObj);
+          if (typeof resolvedObj === 'object' && !resolvedObj.$ref) {
+            refMap.set($ref, resolvedObj);
+          }
           const result = await dereferenceObject(resolvedObj, {
             cwd,
             externalFileCache,
