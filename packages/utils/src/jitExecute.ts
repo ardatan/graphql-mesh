@@ -14,10 +14,7 @@ export function jitExecutorFactory(schema: GraphQLSchema, prefix: string, logger
     let compiledQueryFn: CompiledQuery['query'] | CompiledQuery['subscribe'] = globalLruCache.get(cacheKey);
     if (!compiledQueryFn) {
       logger.debug(() => `Compiling ${documentStr}`);
-      const compiledQuery = compileQuery(schema, document, operationName, {
-        disableLeafSerialization: true,
-        customJSONSerializer: true,
-      });
+      const compiledQuery = compileQuery(schema, document, operationName);
       if (isCompiledQuery(compiledQuery)) {
         const { operation } = getOperationASTFromRequest(request);
         if (operation === 'subscription') {
