@@ -74,10 +74,10 @@ exports[`Interpreting Protos should load the Empty proto 1`] = `
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
   io_xtech_Example_GetEmpty(input: io_xtech_MovieRequest_Input): io_xtech_EmptyRequest
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
 
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
@@ -162,8 +162,8 @@ input io_xtech_SearchByCastRequest_Input {
 exports[`Interpreting Protos should load the Import Nested proto 1`] = `
 "type Query {
   io_xtech_outer_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
-  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
   io_xtech_outer_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+  io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
@@ -196,10 +196,10 @@ exports[`Interpreting Protos should load the Movie proto 1`] = `
 "type Query {
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
 
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
@@ -344,14 +344,14 @@ enum ConnectivityState {
 exports[`Interpreting Protos should load the Outside proto 1`] = `
 "type Query {
   io_outside_Example_GetMovies(input: io_outside_MovieRequest_Input): io_outside_MoviesResult
+  io_outside_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
 
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
 
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_AnotherExample_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
-  io_outside_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
@@ -408,6 +408,14 @@ input google_protobuf_Timestamp_Input {
   nanos: Int
 }
 
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
 \\"\\"\\"movie result message, contains list of movies\\"\\"\\"
 type io_xtech_MoviesResult {
   \\"\\"\\"list of movies\\"\\"\\"
@@ -416,14 +424,6 @@ type io_xtech_MoviesResult {
 
 input io_xtech_MovieRequest_Input {
   movie: io_xtech_Movie_Input
-}
-
-enum ConnectivityState {
-  IDLE
-  CONNECTING
-  READY
-  TRANSIENT_FAILURE
-  SHUTDOWN
 }
 
 type Subscription {
@@ -509,10 +509,10 @@ exports[`Interpreting Protos should load the With Underscores proto 1`] = `
 "type Query {
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
 
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_AnotherExample_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 

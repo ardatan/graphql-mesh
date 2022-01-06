@@ -1,5 +1,5 @@
 subscription SearchMoviesByCast {
-  Example_SearchMoviesByCast(input: { castName: "Tom Cruise" }) {
+  MovieSearchService_SearchMoviesByCast(input: { castName: "Tom Cruise" }) {
     name
     year
     rating

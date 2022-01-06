@@ -51,7 +51,7 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
     includeDirs: [join(__dirname, './proto')],
   });
   const grpcObject = loadPackageDefinition(packageDefinition);
-  server.addService(grpcObject.Example.service, {
+  server.addService(grpcObject.MoviesService.service, {
     getMovies(call, callback) {
       const result = Movies.filter(movie => {
         for (const [key, value] of Object.entries(call.request.movie)) {
@@ -63,6 +63,8 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
       const moviesResult = { result };
       callback(null, moviesResult);
     },
+  });
+  server.addService(grpcObject.MovieSearchService.service, {
     searchMoviesByCast(call) {
       const input = call.request;
       call.on('error', error => {
