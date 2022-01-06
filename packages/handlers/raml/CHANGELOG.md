@@ -1,6 +1,16 @@
 # @graphql-mesh/raml
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [2b876f2b8]
+  - @graphql-mesh/utils@0.25.0
+  - @omnigraph/raml@0.2.5
+  - @graphql-mesh/store@0.3.7
+
 ## 0.0.1
+
 ### Patch Changes
 
 - d907351c5: NEW Raml Handler

@@ -1,5 +1,17 @@
 # @graphql-mesh/grpc
 
+## 0.19.0
+
+### Minor Changes
+
+- 10e37a960: feat(grpc): refactor to handle service roots individually
+
+### Patch Changes
+
+- Updated dependencies [2b876f2b8]
+  - @graphql-mesh/utils@0.25.0
+  - @graphql-mesh/store@0.3.7
+
 ## 0.18.8
 
 ### Patch Changes
