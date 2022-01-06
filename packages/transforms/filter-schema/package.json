@@ -29,7 +29,7 @@
     "@graphql-mesh/types": "0.57.1",
     "@graphql-mesh/utils": "0.25.0",
     "micromatch": "4.0.4",
-    "@graphql-tools/wrap": "8.3.2",
+    "@graphql-tools/wrap": "8.3.3",
     "@graphql-tools/delegate": "8.4.3",
     "@graphql-tools/utils": "8.6.0"
   },
