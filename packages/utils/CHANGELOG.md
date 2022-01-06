@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.25.0
+
+### Minor Changes
+
+- 2b876f2b8: feat(core): re-enable leaf serialization and custom JSON serializer during execution
+
 ## 0.24.2
 
 ### Patch Changes

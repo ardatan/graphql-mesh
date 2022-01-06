@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.23.1",
+  "version": "0.23.2",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.57.1",
-    "@graphql-mesh/store": "0.3.6",
-    "@graphql-mesh/utils": "0.24.2",
+    "@graphql-mesh/store": "0.3.7",
+    "@graphql-mesh/utils": "0.25.0",
     "@graphql-tools/utils": "8.6.0",
     "cross-undici-fetch": "0.1.13",
     "deep-equal": "2.0.5",
