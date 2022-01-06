@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "mesh dev",
+    "build": "mesh build",
     "test": "jest"
   },
   "dependencies": {

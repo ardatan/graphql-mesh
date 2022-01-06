@@ -11,18 +11,37 @@
         "description": "Result of API",
         "properties": {
           "fields": {
-            "type": "object",
-            "properties": {
-              "country_name": {
-                "type": "string"
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "country_name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  },
+                  "year": {
+                    "type": "string"
+                  }
+                }
               },
-              "value": {
-                "type": "number"
-              },
-              "year": {
-                "type": "string"
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Error",
+                "required": ["error"],
+                "properties": {
+                  "errorCode": {
+                    "type": "number"
+                  },
+                  "errorMessage": {
+                    "type": "string"
+                  }
+                }
               }
-            }
+            ]
           }
         }
       }
