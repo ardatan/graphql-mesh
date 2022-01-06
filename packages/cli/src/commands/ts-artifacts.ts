@@ -240,13 +240,7 @@ export async function getBuiltMesh(): Promise<MeshInstance> {
 
 export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
   const { schema } = await getBuiltMesh();
-  return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, {
-    jitOptions: {
-      disableLeafSerialization: true,
-      disablingCapturingStackErrors: true
-    },
-    ...sdkOptions,
-  });
+  return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, sdkOptions);
 }`;
 
           return {
