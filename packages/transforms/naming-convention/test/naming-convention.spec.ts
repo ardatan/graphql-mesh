@@ -176,4 +176,27 @@ describe('namingConvention', () => {
     });
     expect(data?._).toEqual('test');
   });
+  it('should skip fields of Federation spec', async () => {
+    const typeDefs = /* GraphQL */ `
+type Query {
+  _service: String!
+  _entities: [String!]!
+}`.trim();
+    const schema = wrapSchema({
+      schema: buildSchema(typeDefs),
+      transforms: [
+        new NamingConventionTransform({
+          apiName: '',
+          importFn,
+          cache,
+          pubsub,
+          config: {
+            fieldNames: 'snakeCase',
+          },
+          baseDir,
+        }),
+      ],
+    });
+    expect(printSchema(schema)).toBe(typeDefs);
+  });
 });

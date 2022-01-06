@@ -3,8 +3,6 @@ import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/t
 import {
   RenameTypes,
   RenameObjectFields,
-  RenameRootFields,
-  RenameRootTypes,
   RenameInputObjectFields,
   TransformEnumValues,
   RenameInterfaceFields,
@@ -49,22 +47,23 @@ const NAMING_CONVENTIONS: Record<NamingConventionType, NamingConventionFn> = {
   lowerCase,
 };
 
+// Ignore fields needed by Federation spec
+const IGNORED_ROOT_FIELD_NAMES = ['_service', '_entities'];
+
 export default class NamingConventionTransform implements MeshTransform {
   private transforms: Transform[] = [];
 
   constructor(options: MeshTransformOptions<YamlConfig.NamingConventionTransformConfig>) {
     if (options.config.typeNames) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.typeNames];
-      this.transforms.push(
-        new RenameTypes(typeName => namingConventionFn(typeName) || typeName),
-        new RenameRootTypes(typeName => namingConventionFn(typeName) || typeName)
-      );
+      this.transforms.push(new RenameTypes(typeName => namingConventionFn(typeName) || typeName));
     }
     if (options.config.fieldNames) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.fieldNames];
       this.transforms.push(
-        new RenameObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
-        new RenameRootFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
+        new RenameObjectFields((_, fieldName) =>
+          IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : namingConventionFn(fieldName) || fieldName
+        ),
         new RenameInputObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
         new RenameInterfaceFields((_, fieldName) => namingConventionFn(fieldName) || fieldName)
       );
