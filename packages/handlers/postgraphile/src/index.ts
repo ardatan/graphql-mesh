@@ -13,9 +13,8 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { jitExecutorFactory, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import { execute, ExecutionArgs, subscribe } from 'graphql';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -123,9 +122,11 @@ export default class PostGraphileHandler implements MeshHandler {
       await this.pgCache.set(cachedIntrospection);
     }
 
+    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+
     return {
       schema,
-      executor: ({ document, variables, context: meshContext, rootValue, operationName, operationType }) =>
+      executor: ({ document, variables, context: meshContext, rootValue, operationName, extensions }) =>
         withPostGraphileContext(
           {
             pgPool,
@@ -133,23 +134,18 @@ export default class PostGraphileHandler implements MeshHandler {
             operationName,
             variables,
           },
-          pgContext => {
-            const executionArgs: ExecutionArgs = {
-              schema,
+          pgContext =>
+            jitExecutor({
               document,
-              variableValues: variables as any,
-              contextValue: {
+              variables,
+              context: {
                 ...meshContext,
                 ...pgContext,
               },
               rootValue,
               operationName,
-            };
-            if (operationType === 'subscription') {
-              return subscribe(executionArgs) as any;
-            }
-            return execute(executionArgs) as any;
-          }
+              extensions,
+            }) as any
         ) as any,
     };
   }

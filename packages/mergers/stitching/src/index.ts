@@ -46,49 +46,43 @@ export default class StitchingMerger implements MeshMerger {
   }
 
   private async replaceFederationSDLWithStitchingSDL(
-    rawSource: RawSourceOutput,
+    name: string,
+    oldSchema: GraphQLSchema,
+    executor: Executor,
     stitchingDirectives: StitchingDirectivesResult
   ) {
-    const rawSourceLogger = this.logger.child(rawSource.name);
-
-    const oldSchema = rawSource.schema;
+    const rawSourceLogger = this.logger.child(name);
 
     rawSourceLogger.debug(() => `Extracting existing resolvers if available`);
     const resolvers = extractResolvers(oldSchema);
 
-    rawSource.executor =
-      rawSource.executor ||
-      (jitExecutorFactory(
-        oldSchema,
-        rawSource.name,
-        this.logger.child(`${rawSource.name} - JIT Executor`)
-      ) as Executor);
-
-    rawSource.schema = await this.store
-      .proxy(`${rawSource.name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
+    let newSchema = await this.store
+      .proxy(`${name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
       .getWithSet(async () => {
-        this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${rawSource.name}`);
-        const sdlQueryResult: any = (await rawSource.executor({
+        this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${name}`);
+        const sdlQueryResult: any = (await executor({
           document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
         })) as ExecutionResult;
         if (sdlQueryResult.errors?.length) {
-          throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${rawSource.name}`);
+          throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${name}`);
         }
         const federationSdl = sdlQueryResult.data._service.sdl;
-        this.logger.debug(() => `Generating Stitching SDL for ${rawSource.name}`);
+        this.logger.debug(() => `Generating Stitching SDL for ${name}`);
         const stitchingSdl = federationToStitchingSDL(federationSdl, stitchingDirectives);
         return buildSchema(stitchingSdl);
       });
 
     rawSourceLogger.debug(() => `Adding existing resolvers back to the schema`);
-    addResolversToSchema({
-      schema: rawSource.schema,
+    newSchema = addResolversToSchema({
+      schema: newSchema,
       resolvers,
       updateResolversInPlace: true,
       resolverValidationOptions: {
         requireResolversToMatchSchema: 'ignore',
       },
     });
+
+    return newSchema;
   }
 
   async getUnifiedSchema(context: MeshMergerContext) {
@@ -98,28 +92,37 @@ export default class StitchingMerger implements MeshMerger {
       pathToDirectivesInExtensions: ['directives'],
     });
     this.logger.debug(() => `Checking if any of sources has federation metadata`);
-    await Promise.all(
+    const subschemas = (await Promise.all(
       rawSources.map(async rawSource => {
-        if (this.isFederatedSchema(rawSource.schema)) {
-          this.logger.debug(() => `${rawSource.name} has federated schema.`);
-          await this.replaceFederationSDLWithStitchingSDL(rawSource, defaultStitchingDirectives);
+        let newExecutor = rawSource.executor;
+        if (!newExecutor) {
+          newExecutor = jitExecutorFactory(
+            rawSource.schema,
+            rawSource.name,
+            this.logger.child(`${rawSource.name} - JIT Executor`)
+          );
         }
+        let newSchema = rawSource.schema;
+        if (this.isFederatedSchema(newSchema)) {
+          this.logger.debug(() => `${rawSource.name} has federated schema.`);
+          newSchema = await this.replaceFederationSDLWithStitchingSDL(
+            rawSource.name,
+            newSchema,
+            newExecutor,
+            defaultStitchingDirectives
+          );
+        }
+        return {
+          batch: true,
+          ...rawSource,
+          schema: newSchema,
+          executor: newExecutor,
+        };
       })
-    );
-    /*
-    rawSources.forEach(rawSource => {
-      if (!rawSource.executor) {
-        rawSource.executor = jitExecutorFactory(
-          rawSource.schema,
-          rawSource.name,
-          logger.child(`${rawSource.name} - JIT Executor`)
-        );
-      }
-    });
-    */
+    )) as SubschemaConfig[];
     this.logger.debug(() => `Stitching the source schemas`);
     let unifiedSchema = stitchSchemas({
-      subschemas: rawSources as SubschemaConfig[],
+      subschemas,
       typeDefs,
       resolvers,
       subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],
@@ -159,7 +162,7 @@ export default class StitchingMerger implements MeshMerger {
           schema: unifiedSchema,
           transforms: wrapTransforms,
           batch: true,
-          // executor: jitExecutorFactory(unifiedSchema, 'wrapped', logger.child('JIT Executor')),
+          executor: jitExecutorFactory(unifiedSchema, 'root-wrapped', this.logger.child('JIT Executor')) as any,
         });
       }
       if (noWrapTransforms.length) {

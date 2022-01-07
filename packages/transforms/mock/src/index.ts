@@ -9,6 +9,7 @@ import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { env } from 'process';
 
 export default class MockingTransform implements MeshTransform {
+  noWrap = true;
   private config: YamlConfig.MockingConfig;
   private baseDir: string;
   private importFn: ImportFn;
