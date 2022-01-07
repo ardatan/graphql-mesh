@@ -88,7 +88,7 @@ export async function addExecutionLogicToComposer(
       field.subscribe = (root, args, context, info) => {
         const pubsub = context?.pubsub || globalPubsub;
         if (!pubsub) {
-          throw new Error(`You should have PubSub defined in either the config or the context!`);
+          return new Error(`You should have PubSub defined in either the config or the context!`);
         }
         const interpolationData = { root, args, context, info, env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
@@ -170,7 +170,7 @@ export async function addExecutionLogicToComposer(
                 break;
               }
               default:
-                throw createError(`Unknown HTTP Method: ${httpMethod}`, fullPath, requestInit);
+                return createError(`Unknown HTTP Method: ${httpMethod}`, fullPath, requestInit);
             }
           }
         }
@@ -186,7 +186,7 @@ export async function addExecutionLogicToComposer(
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
-          throw createError(
+          return createError(
             `You should have PubSub defined in either the config or the context!`,
             fullPath,
             requestInit
@@ -211,18 +211,17 @@ export async function addExecutionLogicToComposer(
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
-          throw createError(`Could not parse response as JSON`, fullPath, requestInit, {
+          return createError(`Could not parse response as JSON`, fullPath, requestInit, {
             error,
             response: responseText,
           });
         }
 
         if (throwOnHttpError && !response.status.toString().startsWith('2')) {
-          const error = createError(`HTTP Error: ${response.status}`, fullPath, requestInit, {
+          return createError(`HTTP Error: ${response.status}`, fullPath, requestInit, {
             status: response.statusText,
             response: responseJson,
           });
-          throw error;
         }
 
         operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
