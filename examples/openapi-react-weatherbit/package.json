@@ -21,7 +21,7 @@
     "graphql": "16.0.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.46.1",
+    "@graphql-mesh/cli": "0.47.0",
     "parcel": "2.0.0-beta.3.1"
   },
   "scripts": {

@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.47.0
+
+### Minor Changes
+
+- e30494c95: feat: better error messages
+
 ## 0.46.1
 
 ### Patch Changes
