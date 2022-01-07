@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.57.2
+
+### Patch Changes
+
+- 1ab0aebbc: feat(json-schema): better error handling
+
 ## 0.57.1
 
 ### Patch Changes

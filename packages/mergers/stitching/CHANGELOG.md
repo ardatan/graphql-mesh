@@ -1,5 +1,21 @@
 # @graphql-mesh/merger-stitching
 
+## 0.15.0
+
+### Minor Changes
+
+- 56e2257fa: feat: use JIT in all execution phases
+
+### Patch Changes
+
+- f60bcb083: fix(core): update wrap to fix #3424
+- Updated dependencies [1ab0aebbc]
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - @graphql-mesh/types@0.57.2
+  - @graphql-mesh/utils@0.26.0
+  - @graphql-mesh/store@0.3.8
+
 ## 0.14.11
 
 ### Patch Changes

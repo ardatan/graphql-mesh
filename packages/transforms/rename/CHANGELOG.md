@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-rename
 
+## 0.11.8
+
+### Patch Changes
+
+- f60bcb083: fix(core): update wrap to fix #3424
+- Updated dependencies [1ab0aebbc]
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - @graphql-mesh/types@0.57.2
+  - @graphql-mesh/utils@0.26.0
+
 ## 0.11.7
 
 ### Patch Changes
