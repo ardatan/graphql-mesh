@@ -2,19 +2,13 @@ import { SchemaComposer, getComposeTypeName, ObjectTypeComposer } from 'graphql-
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import {
-  getHeadersObject,
-  jsonFlatStringify,
-  parseInterpolationStrings,
-  stringInterpolator,
-} from '@graphql-mesh/utils';
+import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
 import { inspect } from '@graphql-tools/utils';
 import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
 import { getNamedType, GraphQLError, GraphQLOutputType, isListType, isNonNullType, isScalarType } from 'graphql';
-import { Headers } from 'cross-undici-fetch';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -33,15 +27,8 @@ function isListTypeOrNonNullListType(type: GraphQLOutputType) {
   return isListType(type);
 }
 
-function createError(message: string, url: string, requestInit: RequestInit, extensions?: any) {
-  return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, {
-    request: {
-      url,
-      method: requestInit.method,
-      headers: getHeadersObject(new Headers(requestInit.headers)),
-    },
-    ...extensions,
-  });
+function createError(message: string, extensions?: any) {
+  return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
 }
 
 export async function addExecutionLogicToComposer(
@@ -170,7 +157,10 @@ export async function addExecutionLogicToComposer(
                 break;
               }
               default:
-                return createError(`Unknown HTTP Method: ${httpMethod}`, fullPath, requestInit);
+                return createError(`Unknown HTTP Method: ${httpMethod}`, {
+                  url: fullPath,
+                  method: httpMethod,
+                });
             }
           }
         }
@@ -186,11 +176,10 @@ export async function addExecutionLogicToComposer(
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
-          return createError(
-            `You should have fetch defined in either the config or the context!`,
-            fullPath,
-            requestInit
-          );
+          return createError(`You should have fetch defined in either the config or the context!`, {
+            url: fullPath,
+            method: httpMethod,
+          });
         }
         const response = await fetch(fullPath, requestInit);
         const responseText = await response.text();
@@ -211,16 +200,18 @@ export async function addExecutionLogicToComposer(
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
-          return createError(`Could not parse response as JSON`, fullPath, requestInit, {
-            error,
-            response: responseText,
+          return createError(`Could not parse response as JSON`, {
+            url: fullPath,
+            method: httpMethod,
           });
         }
 
         if (throwOnHttpError && !response.status.toString().startsWith('2')) {
-          return createError(`HTTP Error: ${response.status}`, fullPath, requestInit, {
+          return createError(`HTTP Error: ${response.status}`, {
+            url: fullPath,
+            method: httpMethod,
             ...(response.statusText ? { status: response.statusText } : {}),
-            response: responseJson,
+            responseJson,
           });
         }
 
