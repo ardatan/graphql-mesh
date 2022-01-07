@@ -88,7 +88,7 @@ export async function addExecutionLogicToComposer(
       field.subscribe = (root, args, context, info) => {
         const pubsub = context?.pubsub || globalPubsub;
         if (!pubsub) {
-          return new Error(`You should have PubSub defined in either the config or the context!`);
+          return new GraphQLError(`You should have PubSub defined in either the config or the context!`);
         }
         const interpolationData = { root, args, context, info, env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
@@ -187,7 +187,7 @@ export async function addExecutionLogicToComposer(
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
           return createError(
-            `You should have PubSub defined in either the config or the context!`,
+            `You should have fetch defined in either the config or the context!`,
             fullPath,
             requestInit
           );
@@ -219,7 +219,7 @@ export async function addExecutionLogicToComposer(
 
         if (throwOnHttpError && !response.status.toString().startsWith('2')) {
           return createError(`HTTP Error: ${response.status}`, fullPath, requestInit, {
-            status: response.statusText,
+            ...(response.statusText ? { status: response.statusText } : {}),
             response: responseJson,
           });
         }
