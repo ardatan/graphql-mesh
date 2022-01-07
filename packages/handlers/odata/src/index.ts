@@ -52,7 +52,7 @@ import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
-import { parse as parseXML } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 import { ExecutionRequest, pruneSchema, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-undici-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
@@ -131,6 +131,16 @@ export default class ODataHandler implements MeshHandler {
   private metadataJson: any;
   private importFn: ImportFn;
   private logger: Logger;
+  private xmlParser = new XMLParser({
+    attributeNamePrefix: '',
+    attributesGroupName: 'attributes',
+    textNodeName: 'innerText',
+    ignoreAttributes: false,
+    removeNSPrefix: true,
+    isArray: (_, __, ___, isAttribute) => !isAttribute,
+    allowBooleanAttributes: true,
+    preserveOrder: false,
+  });
 
   constructor({
     name,
@@ -163,15 +173,7 @@ export default class ODataHandler implements MeshHandler {
         fetch,
       });
 
-      return parseXML(metadataText, {
-        attributeNamePrefix: '',
-        attrNodeName: 'attributes',
-        textNodeName: 'innerText',
-        ignoreAttributes: false,
-        ignoreNameSpace: true,
-        arrayMode: true,
-        allowBooleanAttributes: true,
-      });
+      return this.xmlParser.parse(metadataText);
     });
   }
 
