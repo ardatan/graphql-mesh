@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.10.0
+
+### Minor Changes
+
+- 6d76179e4: feat(json-schema): return text in the error if response is not json as expected
+
 ## 0.9.0
 
 ### Minor Changes
