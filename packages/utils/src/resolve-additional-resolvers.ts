@@ -234,6 +234,25 @@ export function resolveAdditionalResolvers(
               [additionalResolver.targetFieldName]: {
                 selectionSet: additionalResolver.requiredSelectionSet,
                 resolve: (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+                  // Assert source exists
+                  if (!context[additionalResolver.sourceName]) {
+                    throw new Error(`No source found named "${additionalResolver.sourceName}"`);
+                  }
+                  if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
+                    throw new Error(
+                      `No type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}`
+                    );
+                  }
+                  if (
+                    !context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                      additionalResolver.sourceFieldName
+                    ]
+                  ) {
+                    throw new Error(
+                      `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`
+                    );
+                  }
+
                   if (!baseOptions.selectionSet) {
                     baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
                   }

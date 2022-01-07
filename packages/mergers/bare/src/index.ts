@@ -1,9 +1,8 @@
-import { MeshMerger, MeshMergerContext, MeshTransform, Logger, MeshMergerOptions } from '@graphql-mesh/types';
+import { MeshMerger, MeshMergerContext, Logger, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { groupTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
-import { asArray } from '@graphql-tools/utils';
-import { extendSchema } from 'graphql';
+import { mergeSchemas } from '@graphql-tools/schema';
+import { GraphQLSchema } from 'graphql';
 
 export default class BareMerger implements MeshMerger {
   name = 'bare';
@@ -12,114 +11,63 @@ export default class BareMerger implements MeshMerger {
     this.logger = options.logger;
   }
 
-  handleSingleSource({ rawSources, typeDefs, resolvers, transforms }: MeshMergerContext) {
-    const [source] = rawSources;
-    let schema = source.schema;
-
-    let wrapTransforms: MeshTransform[] = [];
-    let noWrapTransforms: MeshTransform[] = [];
-
-    if (transforms?.length) {
-      const transformGroups = groupTransforms(transforms);
-      wrapTransforms = transformGroups.wrapTransforms;
-      noWrapTransforms = transformGroups.noWrapTransforms;
-    }
-
-    if (source.executor || source.transforms.length) {
-      const firstRoundTransforms = [...source.transforms];
-      if (!typeDefs && !resolvers) {
-        firstRoundTransforms.push(...wrapTransforms, ...noWrapTransforms);
-      }
-      schema = wrapSchema({
-        ...source,
-        schema,
-        transforms: firstRoundTransforms,
-        batch: true,
-      } as any);
-    }
-    if (typeDefs || resolvers) {
-      this.logger.debug(() => `Applying additionalTypeDefs`);
-      typeDefs?.forEach(typeDef => {
-        schema = extendSchema(schema, typeDef);
-      });
-      if (resolvers) {
-        this.logger.debug(() => `Applying additionalResolvers`);
-        for (const resolversObj of asArray(resolvers)) {
-          schema = addResolversToSchema({
-            schema,
-            resolvers: resolversObj,
-            updateResolversInPlace: true,
-          });
-        }
-      }
-      if (wrapTransforms.length) {
-        schema = wrapSchema({
-          schema,
-          transforms: [...wrapTransforms, ...noWrapTransforms],
-          batch: true,
-        });
-      } else if (noWrapTransforms.length) {
-        schema = applySchemaTransforms(schema, undefined, schema, noWrapTransforms);
-      }
-    }
-    schema.extensions = schema.extensions || {};
-    Object.defineProperty(schema.extensions, 'sourceMap', {
-      get: () => new Map([[source, schema]]),
-    });
-    return schema;
-  }
-
-  async getUnifiedSchema(mergerContext: MeshMergerContext) {
-    if (mergerContext.rawSources.length === 1) {
-      return this.handleSingleSource(mergerContext);
-    }
-
-    const { rawSources, typeDefs, resolvers, transforms } = mergerContext;
-    const sourceMap = new Map();
+  async getUnifiedSchema({ rawSources, typeDefs, resolvers, transforms }: MeshMergerContext) {
+    const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
+    this.logger.debug(() => `Applying transforms for each source`);
     const schemas = rawSources.map(source => {
       let schema = source.schema;
+      let sourceLevelSchema = source.schema;
 
-      if (source.executor || source.transforms.length) {
+      const handlerLevelTransformGroups = groupTransforms(source.transforms || []);
+
+      if (handlerLevelTransformGroups.wrapTransforms.length > 0 || source.executor) {
         schema = wrapSchema({
+          batch: true,
           ...source,
           schema,
-          transforms: source.transforms,
-          batch: true,
         } as any);
+      } else {
+        schema = applySchemaTransforms(schema, undefined, schema, handlerLevelTransformGroups.noWrapTransforms);
       }
-      sourceMap.set(source, schema);
+
+      // After that step, it will be considered as root level schema
+      sourceLevelSchema = schema;
+
+      sourceMap.set(source, sourceLevelSchema);
+
       return schema;
     });
 
-    let schema = mergeSchemas({
+    this.logger.debug(() => `Merging sources`);
+    let unifiedSchema = mergeSchemas({
       schemas,
       typeDefs,
       resolvers,
     });
 
-    let wrapTransforms: MeshTransform[] = [];
-    let noWrapTransforms: MeshTransform[] = [];
+    this.logger.debug(() => `Handling root level transforms`);
+    const rootLevelTransformGroups = groupTransforms(transforms || []);
 
-    if (transforms?.length) {
-      const transformGroups = groupTransforms(transforms);
-      wrapTransforms = transformGroups.wrapTransforms;
-      noWrapTransforms = transformGroups.noWrapTransforms;
-    }
-
-    if (wrapTransforms.length) {
-      schema = wrapSchema({
-        schema,
-        transforms: [...wrapTransforms, ...noWrapTransforms],
+    if (rootLevelTransformGroups.wrapTransforms.length > 0) {
+      unifiedSchema = wrapSchema({
+        schema: unifiedSchema,
         batch: true,
-      });
-    } else if (noWrapTransforms.length) {
-      schema = applySchemaTransforms(schema, undefined, schema, noWrapTransforms);
+        transforms,
+      } as any);
+    } else {
+      unifiedSchema = applySchemaTransforms(
+        unifiedSchema,
+        undefined,
+        unifiedSchema,
+        rootLevelTransformGroups.noWrapTransforms
+      );
     }
 
-    schema.extensions = schema.extensions || {};
-    Object.defineProperty(schema.extensions, 'sourceMap', {
+    this.logger.debug(() => `Attaching sources to the unified schema`);
+    unifiedSchema.extensions = unifiedSchema.extensions || {};
+    Object.defineProperty(unifiedSchema.extensions, 'sourceMap', {
       get: () => sourceMap,
     });
-    return schema;
+    return unifiedSchema;
   }
 }
