@@ -200,9 +200,11 @@ export async function addExecutionLogicToComposer(
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
-          return createError(`Could not parse response as JSON`, {
+          return createError(`Unexpected response`, {
             url: fullPath,
             method: httpMethod,
+            responseText,
+            error,
           });
         }
 
