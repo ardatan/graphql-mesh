@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.9.0
+
+### Minor Changes
+
+- e30494c95: feat: better error messages
+
 ## 0.8.0
 
 ### Minor Changes
