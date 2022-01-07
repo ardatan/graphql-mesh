@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.26.0
+
+### Minor Changes
+
+- 56e2257fa: feat: use JIT in all execution phases
+
+### Patch Changes
+
+- 56e2257fa: fix(merger-bare): handle single source transforms correctly
+- Updated dependencies [1ab0aebbc]
+  - @graphql-mesh/types@0.57.2
+
 ## 0.25.0
 
 ### Minor Changes

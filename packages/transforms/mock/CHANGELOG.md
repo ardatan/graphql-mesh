@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-mock
 
+## 0.13.0
+
+### Minor Changes
+
+- 56e2257fa: feat: use JIT in all execution phases
+
+### Patch Changes
+
+- 56e2257fa: fix(merger-bare): handle single source transforms correctly
+- Updated dependencies [1ab0aebbc]
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - @graphql-mesh/types@0.57.2
+  - @graphql-mesh/utils@0.26.0
+
 ## 0.12.7
 
 ### Patch Changes

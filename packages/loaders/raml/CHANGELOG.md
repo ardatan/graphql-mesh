@@ -1,5 +1,18 @@
 # @omnigraph/raml
 
+## 0.2.6
+
+### Patch Changes
+
+- 8e52fd06a: fix: handle references correctly
+- Updated dependencies [8e52fd06a]
+- Updated dependencies [1ab0aebbc]
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - json-machete@0.3.5
+  - @omnigraph/json-schema@0.8.0
+  - @graphql-mesh/utils@0.26.0
+
 ## 0.2.5
 
 ### Patch Changes

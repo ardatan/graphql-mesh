@@ -1,5 +1,23 @@
 # @graphql-mesh/json-schema
 
+## 0.23.0
+
+### Minor Changes
+
+- 1ab0aebbc: feat(json-schema): better error handling
+
+### Patch Changes
+
+- Updated dependencies [8e52fd06a]
+- Updated dependencies [1ab0aebbc]
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - json-machete@0.3.5
+  - @omnigraph/json-schema@0.8.0
+  - @graphql-mesh/types@0.57.2
+  - @graphql-mesh/utils@0.26.0
+  - @graphql-mesh/store@0.3.8
+
 ## 0.22.15
 
 ### Patch Changes

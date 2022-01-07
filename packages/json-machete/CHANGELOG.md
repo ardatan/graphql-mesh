@@ -1,5 +1,14 @@
 # json-machete
 
+## 0.3.5
+
+### Patch Changes
+
+- 8e52fd06a: fix: handle references correctly
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - @graphql-mesh/utils@0.26.0
+
 ## 0.3.4
 
 ### Patch Changes
