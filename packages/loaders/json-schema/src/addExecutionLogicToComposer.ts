@@ -27,12 +27,8 @@ function isListTypeOrNonNullListType(type: GraphQLOutputType) {
   return isListType(type);
 }
 
-function createError(message: string, url: string, requestInit: RequestInit, extensions?: any) {
-  return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, {
-    url,
-    ...requestInit,
-    ...extensions,
-  });
+function createError(message: string, extensions?: any) {
+  return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
 }
 
 export async function addExecutionLogicToComposer(
@@ -79,7 +75,7 @@ export async function addExecutionLogicToComposer(
       field.subscribe = (root, args, context, info) => {
         const pubsub = context?.pubsub || globalPubsub;
         if (!pubsub) {
-          throw new Error(`You should have PubSub defined in either the config or the context!`);
+          return new GraphQLError(`You should have PubSub defined in either the config or the context!`);
         }
         const interpolationData = { root, args, context, info, env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
@@ -161,7 +157,10 @@ export async function addExecutionLogicToComposer(
                 break;
               }
               default:
-                throw createError(`Unknown HTTP Method: ${httpMethod}`, fullPath, requestInit);
+                return createError(`Unknown HTTP Method: ${httpMethod}`, {
+                  url: fullPath,
+                  method: httpMethod,
+                });
             }
           }
         }
@@ -177,11 +176,10 @@ export async function addExecutionLogicToComposer(
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
-          throw createError(
-            `You should have PubSub defined in either the config or the context!`,
-            fullPath,
-            requestInit
-          );
+          return createError(`You should have fetch defined in either the config or the context!`, {
+            url: fullPath,
+            method: httpMethod,
+          });
         }
         const response = await fetch(fullPath, requestInit);
         const responseText = await response.text();
@@ -195,24 +193,26 @@ export async function addExecutionLogicToComposer(
         let responseJson: any;
         try {
           responseJson = JSON.parse(responseText);
-        } catch (e) {
+        } catch (error) {
           const returnNamedGraphQLType = getNamedType(info.returnType);
           // The result might be defined as scalar
           if (isScalarType(returnNamedGraphQLType)) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
-          throw createError(`Could not parse response as JSON: ${responseText}`, fullPath, requestInit, e);
+          return createError(`Could not parse response as JSON`, {
+            url: fullPath,
+            method: httpMethod,
+          });
         }
 
         if (throwOnHttpError && !response.status.toString().startsWith('2')) {
-          const error = createError(
-            `HTTP Error: ${response.status} ${response.statusText || ''}`,
-            fullPath,
-            requestInit,
-            responseJson
-          );
-          throw error;
+          return createError(`HTTP Error: ${response.status}`, {
+            url: fullPath,
+            method: httpMethod,
+            ...(response.statusText ? { status: response.statusText } : {}),
+            responseJson,
+          });
         }
 
         operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
