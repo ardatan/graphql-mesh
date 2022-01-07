@@ -2,13 +2,19 @@ import { SchemaComposer, getComposeTypeName, ObjectTypeComposer } from 'graphql-
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
+import {
+  getHeadersObject,
+  jsonFlatStringify,
+  parseInterpolationStrings,
+  stringInterpolator,
+} from '@graphql-mesh/utils';
 import { inspect } from '@graphql-tools/utils';
 import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
 import { getNamedType, GraphQLError, GraphQLOutputType, isListType, isNonNullType, isScalarType } from 'graphql';
+import { Headers } from 'cross-undici-fetch';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -29,8 +35,11 @@ function isListTypeOrNonNullListType(type: GraphQLOutputType) {
 
 function createError(message: string, url: string, requestInit: RequestInit, extensions?: any) {
   return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, {
-    url,
-    ...requestInit,
+    request: {
+      url,
+      method: requestInit.method,
+      headers: getHeadersObject(new Headers(requestInit.headers)),
+    },
     ...extensions,
   });
 }
@@ -195,23 +204,24 @@ export async function addExecutionLogicToComposer(
         let responseJson: any;
         try {
           responseJson = JSON.parse(responseText);
-        } catch (e) {
+        } catch (error) {
           const returnNamedGraphQLType = getNamedType(info.returnType);
           // The result might be defined as scalar
           if (isScalarType(returnNamedGraphQLType)) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
-          throw createError(`Could not parse response as JSON: ${responseText}`, fullPath, requestInit, e);
+          throw createError(`Could not parse response as JSON`, fullPath, requestInit, {
+            error,
+            response: responseText,
+          });
         }
 
         if (throwOnHttpError && !response.status.toString().startsWith('2')) {
-          const error = createError(
-            `HTTP Error: ${response.status} ${response.statusText || ''}`,
-            fullPath,
-            requestInit,
-            responseJson
-          );
+          const error = createError(`HTTP Error: ${response.status}`, fullPath, requestInit, {
+            status: response.statusText,
+            response: responseJson,
+          });
           throw error;
         }
 

@@ -1,36 +1,7 @@
 import { getMesh } from '@graphql-mesh/runtime';
 import { parseWithCache } from '@graphql-mesh/utils';
 import { RequestHandler } from 'express';
-import { GraphQLError, print } from 'graphql';
 import { getGraphQLParameters, processRequest, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
-
-function normalizeGraphQLError(error: GraphQLError) {
-  return {
-    ...error,
-    extensions: error.extensions,
-    locations: error.locations,
-    message: error.message,
-    name: error.name,
-    nodes: error.nodes?.map(node => print(node)),
-    originalError: {
-      ...error?.originalError,
-      name: error?.originalError?.name,
-      message: error?.originalError?.message,
-      stack: error?.originalError?.stack?.split('\n'),
-    },
-    path: error.path,
-    positions: error.positions,
-    source: {
-      body: error.source?.body?.split('\n'),
-      name: error.source?.name,
-      locationOffset: {
-        line: error.source?.locationOffset?.line,
-        column: error.source?.locationOffset?.column,
-      },
-    },
-    stack: error.stack?.split('\n'),
-  };
-}
 
 export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandler =>
   function (request, response, next) {
@@ -56,12 +27,7 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
             contextFactory: () => request,
           })
         )
-        .then(processedResult =>
-          sendResult(processedResult, response, result => ({
-            ...result,
-            errors: result.errors?.map(normalizeGraphQLError) as any[],
-          }))
-        )
+        .then(processedResult => sendResult(processedResult, response))
         .catch((e: Error | AggregateError) => {
           response.status(500);
           response.write(
