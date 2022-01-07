@@ -3553,7 +3553,7 @@
     is-promise "4.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/wrap@8.3.3":
+"@graphql-tools/wrap@8.3.3", "@graphql-tools/wrap@^8.3.1":
   version "8.3.3"
   resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-8.3.3.tgz#014aa04a6cf671ffe477516255d1134777da056a"
   integrity sha512-TpXN1S4Cv+oMA1Zsg9Nu4N9yrFxLuJkX+CTtSRrrdfETGHIxqfyDkm5slPDCckxP+RILA00g8ny2jzsYyNvX1w==
@@ -3574,17 +3574,6 @@
     "@graphql-tools/utils" "^7.8.1"
     tslib "~2.2.0"
     value-or-promise "1.0.6"
-
-"@graphql-tools/wrap@^8.3.1":
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-8.3.2.tgz#d3bcecb7529d071e4ecc4dfc75b9566e3da79d4f"
-  integrity sha512-7DcOBFB+Dd84x9dxSm7qS4iJONMyfLnCJb8A19vGPffpu4SMJ3sFcgwibKFu5l6mMUiigKgXna2RRgWI+02bKQ==
-  dependencies:
-    "@graphql-tools/delegate" "^8.4.2"
-    "@graphql-tools/schema" "^8.3.1"
-    "@graphql-tools/utils" "^8.5.3"
-    tslib "~2.3.0"
-    value-or-promise "1.0.11"
 
 "@graphql-typed-document-node/core@3.1.0":
   version "3.1.0"
@@ -11976,10 +11965,10 @@ extsprintf@1.3.0, extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.3.0.tgz#96918440e3041a7a414f8c52e3c574eb3c3e1e05"
   integrity sha1-lpGEQOMEGnpBT4xS48V06zw+HgU=
 
-faker@5.5.3:
-  version "5.5.3"
-  resolved "https://registry.yarnpkg.com/faker/-/faker-5.5.3.tgz#c57974ee484431b25205c2c8dc09fda861e51e0e"
-  integrity sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==
+faker@6.6.6:
+  version "6.6.6"
+  resolved "https://registry.yarnpkg.com/faker/-/faker-6.6.6.tgz#e9529da0109dca4c7c5dbfeaadbd9234af943033"
+  integrity sha512-9tCqYEDHI5RYFQigXFwF1hnCwcWCOJl/hmll0lr5D2Ljjb0o4wphb69wikeJDz5qCEzXCoPvG6ss5SDP6IfOdg==
 
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
