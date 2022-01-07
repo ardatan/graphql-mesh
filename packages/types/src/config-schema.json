@@ -911,9 +911,8 @@
           "additionalItems": false,
           "description": "Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation"
         },
-        "errorMessage": {
-          "type": "string",
-          "description": "Field name of your custom error object (default: 'message')"
+        "throwOnHttpError": {
+          "type": "boolean"
         }
       },
       "required": ["operations"]

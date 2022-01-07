@@ -8,24 +8,16 @@ import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
-import {
-  getNamedType,
-  GraphQLOutputType,
-  GraphQLSchema,
-  isAbstractType,
-  isListType,
-  isNonNullType,
-  isScalarType,
-} from 'graphql';
+import { getNamedType, GraphQLError, GraphQLOutputType, isListType, isNonNullType, isScalarType } from 'graphql';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: Record<string, string>;
-  errorMessage?: string;
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
+  throwOnHttpError?: boolean;
 }
 
 function isListTypeOrNonNullListType(type: GraphQLOutputType) {
@@ -35,19 +27,12 @@ function isListTypeOrNonNullListType(type: GraphQLOutputType) {
   return isListType(type);
 }
 
-function getErrorTypeName(schema: GraphQLSchema, type: GraphQLOutputType, errorFieldName: string): string | void {
-  const namedType = getNamedType(type);
-  if (isAbstractType(namedType)) {
-    for (const possibleType of schema.getPossibleTypes(namedType)) {
-      const errorTypeName = getErrorTypeName(schema, possibleType, errorFieldName);
-      if (errorTypeName) {
-        return errorTypeName;
-      }
-    }
-  }
-  if ('getFields' in type && type.getFields()[errorFieldName]) {
-    return type.name;
-  }
+function createError(message: string, url: string, requestInit: RequestInit, extensions?: any) {
+  return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, {
+    url,
+    ...requestInit,
+    ...extensions,
+  });
 }
 
 export async function addExecutionLogicToComposer(
@@ -59,7 +44,7 @@ export async function addExecutionLogicToComposer(
     operationHeaders,
     baseUrl,
     pubsub: globalPubsub,
-    errorMessage,
+    throwOnHttpError = true,
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(() => `Attaching execution logic to the schema`);
@@ -176,7 +161,7 @@ export async function addExecutionLogicToComposer(
                 break;
               }
               default:
-                throw new Error(`Unknown method ${httpMethod}`);
+                throw createError(`Unknown HTTP Method: ${httpMethod}`, fullPath, requestInit);
             }
           }
         }
@@ -192,7 +177,11 @@ export async function addExecutionLogicToComposer(
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
-          throw new Error(`You should have PubSub defined in either the config or the context!`);
+          throw createError(
+            `You should have PubSub defined in either the config or the context!`,
+            fullPath,
+            requestInit
+          );
         }
         const response = await fetch(fullPath, requestInit);
         const responseText = await response.text();
@@ -213,53 +202,17 @@ export async function addExecutionLogicToComposer(
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
-          throw responseText;
-        }
-        const errorMessageTemplate = errorMessage || 'message';
-        function normalizeError(error: any): Error {
-          const errorMessage = stringInterpolator.parse(errorMessageTemplate, error);
-          if (typeof error === 'object' && errorMessage) {
-            const errorObj = new Error(errorMessage);
-            errorObj.stack = null;
-            Object.assign(errorObj, error);
-            return errorObj;
-          } else {
-            return error;
-          }
+          throw createError(`Could not parse response as JSON: ${responseText}`, fullPath, requestInit, e);
         }
 
-        // Make sure the return type doesn't have a field `errors`
-        // so ignore auto error detection if the return type has that field
-        if (responseJson.errors?.length) {
-          const errorTypeName = getErrorTypeName(info.schema, info.returnType, 'errors');
-          if (errorTypeName) {
-            responseJson.__typename = errorTypeName;
-          } else {
-            const normalizedErrors: Error[] = responseJson.errors.map(normalizeError);
-            const aggregatedError =
-              responseJson.errors.length > 1
-                ? new AggregateError(
-                    normalizedErrors,
-                    `${rootTypeName}.${fieldName} failed; \n${normalizedErrors
-                      .map(error => ` - ${error.message || error}`)
-                      .join('\n')}\n`
-                  )
-                : normalizedErrors[0];
-            aggregatedError.stack = null;
-            logger.debug(() => `=> Throwing the error ${inspect(aggregatedError)}`);
-            return aggregatedError;
-          }
-        }
-
-        if (responseJson.error) {
-          const errorTypeName = getErrorTypeName(info.schema, info.returnType, 'error');
-          if (errorTypeName) {
-            responseJson.__typename = errorTypeName;
-          } else {
-            const normalizedError = normalizeError(responseJson.error);
-            operationLogger.debug(() => `=> Throwing the error ${inspect(normalizedError)}`);
-            return normalizedError;
-          }
+        if (throwOnHttpError && !response.status.toString().startsWith('2')) {
+          const error = createError(
+            `HTTP Error: ${response.status} ${response.statusText || ''}`,
+            fullPath,
+            requestInit,
+            responseJson
+          );
+          throw error;
         }
 
         operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);

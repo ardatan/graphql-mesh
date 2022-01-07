@@ -344,10 +344,7 @@ export interface JsonSchemaHandler {
    * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
-  /**
-   * Field name of your custom error object (default: 'message')
-   */
-  errorMessage?: string;
+  throwOnHttpError?: boolean;
 }
 export interface JsonSchemaHTTPOperation {
   field: string;

@@ -12,7 +12,6 @@ export interface JSONSchemaLoaderBundle {
   baseUrl?: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: Record<string, string>;
-  errorMessage?: string;
 
   referencedSchema: JSONSchemaObject;
 }
@@ -22,7 +21,6 @@ export interface JSONSchemaLoaderBundleOptions {
   operations: JSONSchemaOperationConfig[];
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
-  errorMessage?: string;
   cwd?: string;
 
   fetch?: WindowOrWorkerGlobalScope['fetch'];
@@ -36,7 +34,6 @@ export async function createBundle(
     operations,
     schemaHeaders,
     operationHeaders,
-    errorMessage,
     cwd = process.cwd(),
     fetch = crossUndiciFetch,
     logger = new DefaultLogger(name),
@@ -56,7 +53,6 @@ export async function createBundle(
     baseUrl,
     operations,
     operationHeaders,
-    errorMessage,
     referencedSchema,
   };
 }
@@ -68,6 +64,7 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   logger?: Logger;
   baseUrl?: string;
   operationHeaders?: Record<string, string>;
+  throwOnHttpError?: boolean;
 }
 
 /**
@@ -80,7 +77,6 @@ export async function getGraphQLSchemaFromBundle(
     baseUrl: bundledBaseUrl,
     operations,
     operationHeaders: bundledOperationHeaders = {},
-    errorMessage,
     referencedSchema,
   }: JSONSchemaLoaderBundle,
   {
@@ -90,6 +86,7 @@ export async function getGraphQLSchemaFromBundle(
     logger = new DefaultLogger(name),
     baseUrl: overwrittenBaseUrl,
     operationHeaders: additionalOperationHeaders = {},
+    throwOnHttpError,
   }: JSONSchemaLoaderBundleToGraphQLSchemaOptions = {}
 ): Promise<GraphQLSchema> {
   const fullyDeferencedSchema = await dereferenceObject(referencedSchema, {
@@ -105,6 +102,6 @@ export async function getGraphQLSchemaFromBundle(
     baseUrl: overwrittenBaseUrl || bundledBaseUrl,
     operations,
     operationHeaders,
-    errorMessage,
+    throwOnHttpError,
   });
 }

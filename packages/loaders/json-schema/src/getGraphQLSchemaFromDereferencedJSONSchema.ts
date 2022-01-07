@@ -13,8 +13,8 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     operationHeaders,
     baseUrl,
     pubsub,
-    errorMessage,
     generateInterfaceFromSharedFields,
+    throwOnHttpError,
   }: AddExecutionLogicToComposerOptions & { generateInterfaceFromSharedFields?: boolean }
 ) {
   logger.debug(() => `Generating GraphQL Schema from the bundled JSON Schema`);
@@ -42,7 +42,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     operationHeaders,
     baseUrl,
     pubsub,
-    errorMessage,
+    throwOnHttpError,
   });
 
   return schemaComposerWithExecutionLogic.buildSchema();

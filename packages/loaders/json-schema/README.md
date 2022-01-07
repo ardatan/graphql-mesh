@@ -16,8 +16,6 @@ schema:
       Accept: application/json
       Content-Type: application/json
       Authorization: Bearer TOKEN
-    # In case of error, the path of the error message shown to the user
-    errorMessage: error.message
     # Endpoints
     operations:
       # Root Type
