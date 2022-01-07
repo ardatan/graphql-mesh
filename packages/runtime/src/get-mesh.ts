@@ -8,8 +8,6 @@ import {
   getOperationAST,
   print,
   SelectionSetNode,
-  execute,
-  subscribe,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
 import {
@@ -30,6 +28,7 @@ import {
   ResolverDataBasedFactory,
   DefaultLogger,
   getDocumentNodeAndSDL,
+  jitExecutorFactory,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
@@ -254,10 +253,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   getMeshLogger.debug(() => `Attaching resolver hooks to the unified schema`);
   unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, meshContext);
 
-  /*
   getMeshLogger.debug(() => `Creating JIT Executor`);
   const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
-  */
 
   const executionLogger = logger.child(`Execute`);
   const EMPTY_ROOT_VALUE: any = {};
@@ -265,7 +262,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const EMPTY_VARIABLES_VALUE: any = {};
 
   const liveQueryExecute = liveQueryStore.makeExecute(
-    /* ({ document, contextValue: context, variableValues: variables, rootValue, operationName }): any =>
+    ({ document, contextValue: context, variableValues: variables, rootValue, operationName }): any =>
       jitExecutor({
         document,
         context,
@@ -273,8 +270,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         operationName,
         rootValue,
       })
-    */
-    execute
   );
 
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
@@ -348,21 +343,12 @@ ${inspect({
   ...(operationName ? {} : { query: sdl }),
 })}`
     );
-    /*
+
     const executionResult = await jitExecutor({
       document,
       context,
       rootValue,
       variables,
-      operationName,
-    });
-    */
-    const executionResult = await subscribe({
-      schema: unifiedSchema,
-      document,
-      contextValue: context,
-      rootValue,
-      variableValues: variables as any,
       operationName,
     });
 

@@ -39,11 +39,14 @@ export default class BareMerger implements MeshMerger {
     });
 
     this.logger.debug(() => `Merging sources`);
-    let unifiedSchema = mergeSchemas({
-      schemas,
-      typeDefs,
-      resolvers,
-    });
+    let unifiedSchema =
+      schemas.length === 1 && !typeDefs?.length && !resolvers
+        ? schemas[0]
+        : mergeSchemas({
+            schemas,
+            typeDefs,
+            resolvers,
+          });
 
     this.logger.debug(() => `Handling root level transforms`);
     const rootLevelTransformGroups = groupTransforms(transforms || []);
