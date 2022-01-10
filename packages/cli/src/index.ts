@@ -20,6 +20,7 @@ import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { YamlConfig } from '@graphql-mesh/types';
+import { serveSource } from './commands/serve/serve-source';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -279,6 +280,24 @@ export async function graphqlMesh() {
         } catch (e) {
           handleFatalError(e, logger);
         }
+      }
+    )
+    .command<{ source: string }>(
+      'serve-source <source>',
+      'Serves specific source',
+      builder => {
+        builder.positional('source', {
+          type: 'string',
+          requiresArg: true,
+        });
+      },
+      async args => {
+        env.NODE_ENV = 'development';
+        const meshConfig = await findAndParseConfig({
+          dir: baseDir,
+        });
+        logger = meshConfig.logger;
+        await serveSource(meshConfig, args.source);
       }
     ).argv;
 }
