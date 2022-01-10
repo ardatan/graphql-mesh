@@ -4,7 +4,7 @@ import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
 import { codegen } from '@graphql-codegen/core';
 import { pascalCase } from 'pascal-case';
-import { Source } from '@graphql-tools/utils';
+import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
 import { isAbsolute, relative, join, normalize } from 'path';
@@ -122,6 +122,11 @@ export async function generateTsArtifacts({
 }) {
   const artifactsDir = join(baseDir, '.mesh');
   logger.info('Generating index file in TypeScript');
+  for (const rawSource of rawSources) {
+    const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(rawSource);
+    const sdl = printSchemaWithDirectives(transformedSchema);
+    await writeFile(join(artifactsDir, `sources/${rawSource.name}/schema.graphql`), sdl);
+  }
   const codegenOutput = await codegen({
     filename: 'types.ts',
     documents: sdkConfig?.generateOperations
