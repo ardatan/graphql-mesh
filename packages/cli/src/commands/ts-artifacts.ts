@@ -140,7 +140,9 @@ export async function generateTsArtifacts({
     const codegenOutput = await codegen({
       filename: 'types.ts',
       documents: [],
-      config: {},
+      config: {
+        enumsAsTypes: true,
+      },
       schema: undefined as any,
       schemaAst: source.schema,
       pluginMap: {
