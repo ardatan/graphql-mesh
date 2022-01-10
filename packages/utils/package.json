@@ -32,7 +32,7 @@
     "@graphql-tools/utils": "8.6.1",
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/types": "0.57.2",
-    "cross-undici-fetch": "0.1.13",
+    "cross-undici-fetch": "0.1.14",
     "chalk": "4.1.2",
     "date-fns": "2.28.0",
     "fetchache": "0.1.1",
