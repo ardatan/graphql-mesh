@@ -119,10 +119,6 @@ type Query {
 
   \\"\\"\\"\\"\\"\\"
   daily: [Daily]
-
-  \\"\\"\\"
-  GET /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
-  \\"\\"\\"
   population(country: String): ApiPopulation
   stat(country: String!): Stat
 }

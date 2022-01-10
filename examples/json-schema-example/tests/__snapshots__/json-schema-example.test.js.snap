@@ -27,21 +27,13 @@ type Foo {
 }
 
 type Mutation {
-  \\"\\"\\"PUT /user\\"\\"\\"
   createUser(input: CreateUpdateUser_Input): User
-
-  \\"\\"\\"DELETE /user/{args.id}\\"\\"\\"
   deleteUser(id: ID!): Any
-
-  \\"\\"\\"POST /user/{args.id}\\"\\"\\"
   updateUser(id: ID!, input: CreateUpdateUser_Input): User
 }
 
 type Query {
-  \\"\\"\\"GET /company/{args.id}\\"\\"\\"
   company(id: ID!): Company
-
-  \\"\\"\\"GET /me\\"\\"\\"
   me: User
 }
 

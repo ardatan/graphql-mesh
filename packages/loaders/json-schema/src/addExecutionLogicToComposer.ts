@@ -88,7 +88,16 @@ export async function addExecutionLogicToComposer(
       };
       interpolationStrings.push(operationConfig.pubsubTopic);
     } else if (operationConfig.path) {
-      field.description = operationConfig.description || `${operationConfig.method} ${operationConfig.path}`;
+      if (process.env.DEBUG) {
+        field.description = `
+    Original Description: ${operationConfig.description || '(none)'}
+    Method: ${operationConfig.method}
+    baseUrl: ${baseUrl}
+    Path: ${operationConfig.path}
+`;
+      } else {
+        field.description = operationConfig.description;
+      }
       field.resolve = async (root, args, context, info) => {
         operationLogger.debug(() => `=> Resolving`);
         const interpolationData = { root, args, context, info, env };
