@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.48.0
+
+### Minor Changes
+
+- 3b0919137: feat(cli): serve-source command to serve individual sources
+
 ## 0.47.0
 
 ### Minor Changes
