@@ -2513,6 +2513,25 @@
             "lowerCase"
           ],
           "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
+        },
+        "fieldArgumentNames": {
+          "type": "string",
+          "enum": [
+            "camelCase",
+            "capitalCase",
+            "constantCase",
+            "dotCase",
+            "headerCase",
+            "noCase",
+            "paramCase",
+            "pascalCase",
+            "pathCase",
+            "sentenceCase",
+            "snakeCase",
+            "upperCase",
+            "lowerCase"
+          ],
+          "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
         }
       }
     },

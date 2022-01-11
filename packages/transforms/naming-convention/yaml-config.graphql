@@ -9,6 +9,7 @@ type NamingConventionTransformConfig @md {
   typeNames: NamingConventionType
   fieldNames: NamingConventionType
   enumValues: NamingConventionType
+  fieldArgumentNames: NamingConventionType
 }
 
 enum NamingConventionType {

@@ -1275,6 +1275,23 @@ export interface NamingConventionTransformConfig {
     | 'snakeCase'
     | 'upperCase'
     | 'lowerCase';
+  /**
+   * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
+   */
+  fieldArgumentNames?:
+    | 'camelCase'
+    | 'capitalCase'
+    | 'constantCase'
+    | 'dotCase'
+    | 'headerCase'
+    | 'noCase'
+    | 'paramCase'
+    | 'pascalCase'
+    | 'pathCase'
+    | 'sentenceCase'
+    | 'snakeCase'
+    | 'upperCase'
+    | 'lowerCase';
 }
 /**
  * Prefix transform

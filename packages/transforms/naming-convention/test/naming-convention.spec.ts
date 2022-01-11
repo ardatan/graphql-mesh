@@ -10,6 +10,7 @@ describe('namingConvention', () => {
   const schema = buildSchema(/* GraphQL */ `
     type Query {
       user: user!
+      userById(userId: ID!): user!
     }
     type user {
       Id: ID!
@@ -31,7 +32,7 @@ describe('namingConvention', () => {
     pubsub = new PubSub();
   });
 
-  it('should change the name of a type', () => {
+  it('should change the name of a types, enums, fields and fieldArguments', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -42,6 +43,7 @@ describe('namingConvention', () => {
             typeNames: 'pascalCase',
             enumValues: 'upperCase',
             fieldNames: 'camelCase',
+            fieldArgumentNames: 'snakeCase',
           },
           cache,
           pubsub,
@@ -65,6 +67,10 @@ describe('namingConvention', () => {
     const adminValue = userTypeEnumType.getValue('ADMIN');
     expect(adminValue).toBeDefined();
     expect(adminValue.value).toBe('admin');
+
+    const queryRootFields = (newSchema.getType('Query') as GraphQLObjectType).getFields();
+    expect(queryRootFields.userById.args[0].name).toBe('user_id');
+
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
   it('should execute the transformed schema properly', async () => {
