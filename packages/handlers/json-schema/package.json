@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.23.2",
+  "version": "0.23.3",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,7 +29,7 @@
     "@graphql-mesh/store": "0.3.8",
     "@graphql-tools/utils": "8.6.1",
     "graphql-compose": "9.0.6",
-    "@omnigraph/json-schema": "0.10.0"
+    "@omnigraph/json-schema": "0.11.0"
   },
   "publishConfig": {
     "access": "public",
