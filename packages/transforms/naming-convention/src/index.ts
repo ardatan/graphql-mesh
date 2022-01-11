@@ -2,7 +2,6 @@ import { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import {
   RenameTypes,
-  RenameObjectFields,
   TransformEnumValues,
   RenameInterfaceFields,
   TransformObjectFields,
