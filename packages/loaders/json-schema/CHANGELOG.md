@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.11.0
+
+### Minor Changes
+
+- b69233517: feat(json-schema): detailed description for DEBUG mode
+
 ## 0.10.0
 
 ### Minor Changes
