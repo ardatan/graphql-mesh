@@ -1,4 +1,4 @@
-import { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import {
   RenameTypes,
@@ -58,15 +58,27 @@ export default class NamingConventionTransform implements MeshTransform {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.typeNames];
       this.transforms.push(new RenameTypes(typeName => namingConventionFn(typeName) || typeName));
     }
-    if (options.config.fieldNames) {
-      const namingConventionFn = NAMING_CONVENTIONS[options.config.fieldNames];
+    if (options.config.fieldNames || options.config.fieldArgumentNames) {
+      const fieldNamingConventionFn = options.config.fieldNames
+        ? NAMING_CONVENTIONS[options.config.fieldNames]
+        : (s: string) => s;
+      const fieldArgNamingConventionFn = options.config.fieldArgumentNames
+        ? NAMING_CONVENTIONS[options.config.fieldArgumentNames]
+        : (s: string) => s;
       this.transforms.push(
-        new RenameInputObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
+        new RenameInputObjectFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName),
         new TransformObjectFields((_, fieldName, fieldConfig) => [
-          IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : namingConventionFn(fieldName) || fieldName,
-          this.transformFieldArguments(options, fieldConfig),
+          IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : fieldNamingConventionFn(fieldName) || fieldName,
+          options.config.fieldArgumentNames
+            ? {
+                ...fieldConfig,
+                args: Object.fromEntries(
+                  Object.entries(fieldConfig.args).map(([k, v]) => [fieldArgNamingConventionFn(k), v])
+                ),
+              }
+            : fieldConfig,
         ]),
-        new RenameInterfaceFields((_, fieldName) => namingConventionFn(fieldName) || fieldName)
+        new RenameInterfaceFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName)
       );
     }
     if (options.config.enumValues) {
@@ -78,23 +90,6 @@ export default class NamingConventionTransform implements MeshTransform {
           enumValueConfig,
         ])
       );
-    }
-  }
-
-  private transformFieldArguments(
-    options: MeshTransformOptions<YamlConfig.NamingConventionTransformConfig>,
-    fieldConfig: GraphQLFieldConfig<any, Record<string, any>, any>
-  ): GraphQLFieldConfig<any, Record<string, any>, any> {
-    if (!options.config.fieldArgumentNames) {
-      return fieldConfig;
-    } else {
-      const namingConventionFn = options.config.fieldArgumentNames
-        ? NAMING_CONVENTIONS[options.config.fieldArgumentNames]
-        : null;
-      return {
-        ...fieldConfig,
-        args: Object.fromEntries(Object.entries(fieldConfig.args).map(([k, v]) => [namingConventionFn(k), v])),
-      };
     }
   }
 
