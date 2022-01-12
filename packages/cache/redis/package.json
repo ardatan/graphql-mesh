@@ -26,7 +26,7 @@
     "@graphql-mesh/types": "0.57.2",
     "@graphql-mesh/utils": "0.26.0",
     "dataloader": "2.0.0",
-    "ioredis": "4.28.2"
+    "ioredis": "4.28.3"
   },
   "devDependencies": {
     "@types/ioredis": "4.28.7"
