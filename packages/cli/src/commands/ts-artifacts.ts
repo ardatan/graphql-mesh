@@ -207,13 +207,11 @@ export async function generateTsArtifacts({
           const contextItems: string[] = [];
           const results = await Promise.all(
             rawSources.map(source => {
-              const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
-              const sourceSchema = sourceMap.get(source);
               const { normalizedSourceName } = sourceTypeDeclarations.find(
                 ({ sourceName }) => sourceName === source.name
               )!;
               const item = generateTypesForApi({
-                schema: sourceSchema,
+                schema: source.schema,
                 name: normalizedSourceName,
               });
 
