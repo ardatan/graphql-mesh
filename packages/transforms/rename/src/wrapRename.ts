@@ -5,8 +5,13 @@ import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
+type TypeName = string;
+type FieldName = string;
+
 export default class WrapRename implements MeshTransform {
   private transforms: Transform[] = [];
+  public reverseTypeNameMapping: Partial<Record<TypeName, TypeName>> = {};
+  public reverseFieldNameMapping: Partial<Record<TypeName, Partial<Record<FieldName, FieldName>>>> = {};
 
   constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
     const { config } = options;
@@ -24,9 +29,25 @@ export default class WrapRename implements MeshTransform {
         let replaceTypeNameFn: (t: string) => string;
         if (useRegExpForTypes) {
           const typeNameRegExp = new RegExp(fromTypeName, regExpFlags);
-          replaceTypeNameFn = (t: string) => t.replace(typeNameRegExp, toTypeName);
+          replaceTypeNameFn = (t: string) => {
+            const replaced = t.replace(typeNameRegExp, toTypeName);
+
+            if (t !== replaced) {
+              this.reverseTypeNameMapping[replaced] = t;
+            }
+
+            return replaced;
+          };
         } else {
-          replaceTypeNameFn = t => (t === fromTypeName ? toTypeName : t);
+          replaceTypeNameFn = t => {
+            const replaced = t === fromTypeName ? toTypeName : t;
+
+            if (t !== replaced) {
+              this.reverseTypeNameMapping[replaced] = t;
+            }
+
+            return replaced;
+          };
         }
         this.transforms.push(new RenameTypes(replaceTypeNameFn));
       }
@@ -36,11 +57,27 @@ export default class WrapRename implements MeshTransform {
 
         if (useRegExpForFields) {
           const fieldNameRegExp = new RegExp(fromFieldName, regExpFlags);
-          replaceFieldNameFn = (typeName, fieldName) =>
-            typeName === toTypeName ? fieldName.replace(fieldNameRegExp, toFieldName) : fieldName;
+          replaceFieldNameFn = (typeName, fieldName) => {
+            const replaced = typeName === toTypeName ? fieldName.replace(fieldNameRegExp, toFieldName) : fieldName;
+
+            if (fieldName !== replaced) {
+              const fieldMap = (this.reverseFieldNameMapping[typeName] ||= {});
+              fieldMap[replaced] = fieldName;
+            }
+
+            return replaced;
+          };
         } else {
-          replaceFieldNameFn = (typeName, fieldName) =>
-            typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName;
+          replaceFieldNameFn = (typeName, fieldName) => {
+            const replaced = typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName;
+
+            if (fieldName !== replaced) {
+              const fieldMap = (this.reverseFieldNameMapping[typeName] ||= {});
+              fieldMap[replaced] = fieldName;
+            }
+
+            return replaced;
+          };
         }
         this.transforms.push(new RenameObjectFields(replaceFieldNameFn));
         this.transforms.push(new RenameInputObjectFields(replaceFieldNameFn));
@@ -66,5 +103,13 @@ export default class WrapRename implements MeshTransform {
 
   transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
     return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+  }
+
+  getOriginalTypeName(typeName: string): string | undefined {
+    return this.reverseTypeNameMapping[typeName];
+  }
+
+  getOriginalFieldName(typeName: string, fieldName: string): string | undefined {
+    return this.reverseFieldNameMapping[typeName]?.[fieldName];
   }
 }

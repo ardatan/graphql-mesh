@@ -18,3 +18,5 @@ export default (function RenameTransform(options: MeshTransformOptions<YamlConfi
   }
   return options.config.mode === 'bare' ? new BareRename(options) : new WrapRename(options);
 } as unknown as RenameTransformConstructor);
+
+export { WrapRename };

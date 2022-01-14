@@ -9,6 +9,7 @@ import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
 import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
+import { WrapRename } from '@graphql-mesh/transform-rename';
 import { writeFile, writeJSON } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { generateOperations } from './generate-operations';
@@ -30,7 +31,8 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
   importNamespace: string,
-  type: Maybe<GraphQLObjectType>
+  type: Maybe<GraphQLObjectType>,
+  renames: WrapRename[]
 ): Record<string, string> {
   if (!type) {
     return {};
@@ -41,7 +43,27 @@ function buildSignatureBasedOnRootFields(
   for (const fieldName in fields) {
     const field = fields[fieldName];
     const argsExists = field.args && field.args.length > 0;
-    const argsName = argsExists ? `${importNamespace}.${type.name}${pascalCase(field.name)}Args` : '{}';
+    const originalFieldName = renames.reduceRight((accumulator, rename) => {
+      let nextAccumulator: string | undefined = accumulator;
+      let found = true;
+
+      while (found) {
+        const maybeRename = rename.getOriginalFieldName(type.name, nextAccumulator);
+
+        if (maybeRename === undefined) {
+          found = false;
+        } else {
+          nextAccumulator = maybeRename;
+        }
+      }
+
+      return nextAccumulator;
+    }, fieldName);
+    const casedOriginalFileName = originalFieldName
+      .split('_')
+      .map(segment => pascalCase(segment))
+      .join('_');
+    const argsName = argsExists ? `${importNamespace}.${type.name}${casedOriginalFileName}Args` : '{}';
     const parentTypeNode: NamedTypeNode = {
       kind: Kind.NAMED_TYPE,
       name: {
@@ -52,29 +74,32 @@ function buildSignatureBasedOnRootFields(
 
     operationMap[fieldName] = `  ${field.name}: InContextSdkMethod<${importNamespace}.${codegenHelpers.getTypeToUse(
       parentTypeNode
-    )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
+    )}['${originalFieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }
   return operationMap;
 }
 
-function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
+function generateTypesForApi(options: { schema: GraphQLSchema; name: string; renames: WrapRename[] }) {
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
   const sdkIdentifier = pascalCase(`${options.name}Sdk`);
   const contextIdentifier = pascalCase(`${options.name}Context`);
   const queryOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.name,
-    options.schema.getQueryType()
+    options.schema.getQueryType(),
+    options.renames
   );
   const mutationOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.name,
-    options.schema.getMutationType()
+    options.schema.getMutationType(),
+    options.renames
   );
   const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.name,
-    options.schema.getSubscriptionType()
+    options.schema.getSubscriptionType(),
+    options.renames
   );
 
   const sdk = {
@@ -212,9 +237,11 @@ export async function generateTsArtifacts({
               const { normalizedSourceName } = sourceTypeDeclarations.find(
                 ({ sourceName }) => sourceName === source.name
               )!;
+              const renames = source.transforms.filter<WrapRename>((t): t is WrapRename => t instanceof WrapRename);
               const item = generateTypesForApi({
                 schema: sourceSchema,
                 name: normalizedSourceName,
+                renames,
               });
 
               if (item) {
