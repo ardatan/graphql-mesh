@@ -122,6 +122,7 @@ export type RawSourceOutput = {
   handler: MeshHandler;
   batch: boolean;
   merge?: Record<string, MergedTypeConfig>;
+  sdkOnly: boolean;
 };
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;

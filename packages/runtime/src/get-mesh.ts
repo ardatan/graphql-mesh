@@ -89,6 +89,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
           merge: apiSource.merge,
+          sdkOnly: apiSource.sdkOnly,
         });
       } catch (e: any) {
         sourceLogger.error(`Failed to generate schema: ${e.message || e}`);
@@ -108,7 +109,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   getMeshLogger.debug(() => `Merging schemas using the defined merging strategy.`);
   let unifiedSchema = await options.merger.getUnifiedSchema({
-    rawSources,
+    rawSources: rawSources.filter(source => !source.sdkOnly),
     typeDefs: options.additionalTypeDefs,
     resolvers: options.additionalResolvers,
     transforms: options.transforms,

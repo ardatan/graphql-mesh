@@ -206,6 +206,7 @@ export async function processConfig(
           name: source.name,
           handler,
           transforms,
+          sdkOnly: source.sdkOnly || false,
         };
       })
     ),

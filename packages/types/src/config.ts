@@ -198,6 +198,10 @@ export interface Source {
    * List of transforms to apply to the current API source, before unifying it with the rest of the sources
    */
   transforms?: Transform[];
+  /**
+   * Whether this source should only generate an SDK, and not participate in schema stitching too.
+   */
+  sdkOnly?: boolean;
 }
 /**
  * Point to the handler you wish to use, it can either be a predefined handler, or a custom

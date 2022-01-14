@@ -29,6 +29,7 @@ export type GetMeshOptions = {
 export type MeshResolvedSource<TContext = any> = {
   name: string;
   handler: MeshHandler<TContext>;
+  sdkOnly: boolean;
   transforms?: MeshTransform[];
   merge?: Record<string, MergedTypeConfig>;
 };

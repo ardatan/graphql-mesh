@@ -353,6 +353,10 @@
           },
           "additionalItems": false,
           "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
+        },
+        "sdkOnly": {
+          "type": "boolean",
+          "description": "Whether this source should only generate an SDK, and not participate in schema stitching too."
         }
       },
       "required": ["name", "handler"]

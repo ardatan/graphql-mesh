@@ -66,6 +66,10 @@ type Source {
   List of transforms to apply to the current API source, before unifying it with the rest of the sources
   """
   transforms: [Transform]
+  """
+  Whether this source should only generate an SDK, and not participate in schema stitching too.
+  """
+  sdkOnly: Boolean
 }
 
 type Transform @withAdditionalProperties
