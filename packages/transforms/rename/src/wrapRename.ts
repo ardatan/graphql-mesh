@@ -10,7 +10,7 @@ type FieldName = string;
 
 export default class WrapRename implements MeshTransform {
   private transforms: Transform[] = [];
-  public reverseFieldNameMapping: Partial<Record<TypeName, Partial<Record<FieldName, FieldName>>>> = {};
+  private reverseFieldNameMapping: Partial<Record<TypeName, Partial<Record<FieldName, FieldName>>>> = {};
 
   constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
     const { config } = options;
