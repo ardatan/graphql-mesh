@@ -389,6 +389,55 @@ describe('rename', () => {
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
+  it('should only affect specified type', () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new RenameTransform({
+          apiName: '',
+          importFn: m => import(m),
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  type: 'Query',
+                  field: 'o(.*)',
+                },
+                to: {
+                  type: 'Query',
+                  field: '$1',
+                },
+                useRegExpForFields: true,
+              },
+            ],
+          },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    const fieldMap = queryType.getFields();
+
+    expect(fieldMap.my_book).toBeUndefined();
+    expect(fieldMap.my_bok).toBeDefined();
+
+    const myUserType = newSchema.getType('MyUser') as GraphQLObjectType;
+    const myUserFields = myUserType.getFields();
+
+    expect(myUserFields.id).toBeDefined();
+
+    const myBookType = newSchema.getType('MyBook') as GraphQLObjectType;
+    const myBookFields = myBookType.getFields();
+
+    expect(myBookFields.id).toBeDefined();
+
+    expect(printSchema(newSchema)).toMatchSnapshot();
+  });
+
   // TODO
   it.skip('should move a root field from a root type to another', () => {
     const schema = buildSchema(/* GraphQL */ `
