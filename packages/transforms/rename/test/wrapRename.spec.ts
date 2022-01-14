@@ -1,4 +1,4 @@
-import RenameTransform from './../src/index';
+import RenameTransform, { WrapRename } from './../src/index';
 import { buildSchema, GraphQLObjectType, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
@@ -479,6 +479,43 @@ describe('rename', () => {
     const queryFieldMap = queryType.getFields();
 
     expect(queryFieldMap.bar).toBeDefined();
+    expect(printSchema(newSchema)).toMatchSnapshot();
+  });
+
+  it('should track the original name of a renamed field', () => {
+    const transform = new RenameTransform({
+      apiName: '',
+      importFn: m => import(m),
+      config: {
+        mode: 'wrap',
+        renames: [
+          {
+            from: {
+              type: 'Query',
+              field: 'my_user',
+            },
+            to: {
+              type: 'Query',
+              field: 'user',
+            },
+          },
+        ],
+      },
+      cache,
+      pubsub,
+      baseDir,
+    });
+
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [transform],
+    });
+
+    expect(transform).toBeInstanceOf(WrapRename);
+
+    const wrapTransform = transform as WrapRename;
+
+    expect(wrapTransform.getOriginalFieldName('Query', 'user')).toEqual('my_user');
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 });
