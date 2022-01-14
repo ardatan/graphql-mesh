@@ -10,7 +10,6 @@ type FieldName = string;
 
 export default class WrapRename implements MeshTransform {
   private transforms: Transform[] = [];
-  public reverseTypeNameMapping: Partial<Record<TypeName, TypeName>> = {};
   public reverseFieldNameMapping: Partial<Record<TypeName, Partial<Record<FieldName, FieldName>>>> = {};
 
   constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
@@ -29,25 +28,9 @@ export default class WrapRename implements MeshTransform {
         let replaceTypeNameFn: (t: string) => string;
         if (useRegExpForTypes) {
           const typeNameRegExp = new RegExp(fromTypeName, regExpFlags);
-          replaceTypeNameFn = (t: string) => {
-            const replaced = t.replace(typeNameRegExp, toTypeName);
-
-            if (t !== replaced) {
-              this.reverseTypeNameMapping[replaced] = t;
-            }
-
-            return replaced;
-          };
+          replaceTypeNameFn = (t: string) => t.replace(typeNameRegExp, toTypeName);
         } else {
-          replaceTypeNameFn = t => {
-            const replaced = t === fromTypeName ? toTypeName : t;
-
-            if (t !== replaced) {
-              this.reverseTypeNameMapping[replaced] = t;
-            }
-
-            return replaced;
-          };
+          replaceTypeNameFn = t => (t === fromTypeName ? toTypeName : t);
         }
         this.transforms.push(new RenameTypes(replaceTypeNameFn));
       }
@@ -103,10 +86,6 @@ export default class WrapRename implements MeshTransform {
 
   transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
     return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
-  }
-
-  getOriginalTypeName(typeName: string): string | undefined {
-    return this.reverseTypeNameMapping[typeName];
   }
 
   getOriginalFieldName(typeName: string, fieldName: string): string | undefined {
