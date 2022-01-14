@@ -70,7 +70,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
   if (!cluster.isWorker && fork) {
-    const forkNum = fork > 1 ? fork : cpus().length;
+    const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {
       const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
