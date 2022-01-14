@@ -161,7 +161,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         rawSource,
         [MESH_API_CONTEXT_SYMBOL]: true,
       };
-      const transformedSchema = sourceMap.get(rawSource);
+      const transformedSchema = rawSource.sdkOnly ? rawSource.schema : sourceMap.get(rawSource);
       const rootTypes: Record<OperationTypeNode, GraphQLObjectType> = {
         query: transformedSchema.getQueryType(),
         mutation: transformedSchema.getMutationType(),

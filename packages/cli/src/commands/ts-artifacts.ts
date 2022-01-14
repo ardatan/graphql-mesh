@@ -123,7 +123,9 @@ export async function generateTsArtifacts({
   const artifactsDir = join(baseDir, '.mesh');
   logger.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
-    const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(rawSource);
+    const transformedSchema = rawSource.sdkOnly
+      ? rawSource.schema
+      : (unifiedSchema.extensions as any).sourceMap.get(rawSource);
     const sdl = printSchemaWithDirectives(transformedSchema);
     await writeFile(join(artifactsDir, `sources/${rawSource.name}/schema.graphql`), sdl);
   }
@@ -161,7 +163,7 @@ export async function generateTsArtifacts({
           const results = await Promise.all(
             rawSources.map(source => {
               const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
-              const sourceSchema = sourceMap.get(source);
+              const sourceSchema = source.sdkOnly ? source.schema : sourceMap.get(source);
               const item = generateTypesForApi({
                 schema: sourceSchema,
                 name: source.name,
