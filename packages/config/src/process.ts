@@ -199,7 +199,8 @@ export async function processConfig(
         codes.push(`sources.push({
           name: '${source.name}',
           handler: ${handlerVariableName},
-          transforms: ${transformsVariableName}
+          transforms: ${transformsVariableName},
+          sdkOnly: ${source.sdkOnly || false}
         })`);
 
         return {
