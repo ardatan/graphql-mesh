@@ -93,32 +93,34 @@ export default class StitchingMerger implements MeshMerger {
     });
     this.logger.debug(() => `Checking if any of sources has federation metadata`);
     const subschemas = (await Promise.all(
-      rawSources.map(async rawSource => {
-        let newExecutor = rawSource.executor;
-        if (!newExecutor) {
-          newExecutor = jitExecutorFactory(
-            rawSource.schema,
-            rawSource.name,
-            this.logger.child(`${rawSource.name} - JIT Executor`)
-          );
-        }
-        let newSchema = rawSource.schema;
-        if (this.isFederatedSchema(newSchema)) {
-          this.logger.debug(() => `${rawSource.name} has federated schema.`);
-          newSchema = await this.replaceFederationSDLWithStitchingSDL(
-            rawSource.name,
-            newSchema,
-            newExecutor,
-            defaultStitchingDirectives
-          );
-        }
-        return {
-          batch: true,
-          ...rawSource,
-          schema: newSchema,
-          executor: newExecutor,
-        };
-      })
+      rawSources
+        .filter(({ sdkOnly }) => !sdkOnly)
+        .map(async rawSource => {
+          let newExecutor = rawSource.executor;
+          if (!newExecutor) {
+            newExecutor = jitExecutorFactory(
+              rawSource.schema,
+              rawSource.name,
+              this.logger.child(`${rawSource.name} - JIT Executor`)
+            );
+          }
+          let newSchema = rawSource.schema;
+          if (this.isFederatedSchema(newSchema)) {
+            this.logger.debug(() => `${rawSource.name} has federated schema.`);
+            newSchema = await this.replaceFederationSDLWithStitchingSDL(
+              rawSource.name,
+              newSchema,
+              newExecutor,
+              defaultStitchingDirectives
+            );
+          }
+          return {
+            batch: true,
+            ...rawSource,
+            schema: newSchema,
+            executor: newExecutor,
+          };
+        })
     )) as SubschemaConfig[];
     this.logger.debug(() => `Stitching the source schemas`);
     let unifiedSchema = stitchSchemas({
