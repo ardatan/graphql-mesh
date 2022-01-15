@@ -172,7 +172,7 @@ export async function processConfig(
               const transformImportName = pascalCase(transformName + '_Transform');
               importCodes.push(`import ${transformImportName} from '${moduleName}';`);
               codes.push(`${transformsVariableName}.push(
-                new ${transformImportName}({
+                new (${transformImportName}["default"] || ${transformImportName})({
                   apiName: rawConfig.sources[${sourceIndex}].name,
                   config: rawConfig.sources[${sourceIndex}].transforms[${transformIndex}][${JSON.stringify(
                 transformName
