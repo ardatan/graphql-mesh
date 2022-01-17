@@ -1,4 +1,4 @@
-import { SchemaComposer, getComposeTypeName, ObjectTypeComposer } from 'graphql-compose';
+import { SchemaComposer, getComposeTypeName, ObjectTypeComposer, AnyTypeComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
@@ -31,6 +31,13 @@ function createError(message: string, extensions?: any) {
   return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
 }
 
+function getActualType(type: AnyTypeComposer<any>): AnyTypeComposer<any> {
+  if ('ofType' in type) {
+    return getActualType(type.ofType);
+  }
+  return type;
+}
+
 export async function addExecutionLogicToComposer(
   schemaComposer: SchemaComposer,
   {
@@ -55,7 +62,8 @@ export async function addExecutionLogicToComposer(
     const field = rootTypeComposer.getField(fieldName);
 
     if (operationConfig.requestTypeName) {
-      const tcName = getComposeTypeName(field.args.input.type, schemaComposer);
+      const actualType = getActualType(field.args.input.type);
+      const tcName = getComposeTypeName(actualType, schemaComposer);
       const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
       if (tcName !== operationConfig.requestTypeName && !schemaComposer.has(operationConfig.requestTypeName)) {
         tcWithName.setTypeName(operationConfig.requestTypeName);
@@ -63,7 +71,8 @@ export async function addExecutionLogicToComposer(
     }
 
     if (operationConfig.responseTypeName) {
-      const tcName = getComposeTypeName(field.type, schemaComposer);
+      const actualType = getActualType(field.type);
+      const tcName = getComposeTypeName(actualType, schemaComposer);
       if (tcName !== operationConfig.responseTypeName && !schemaComposer.has(operationConfig.responseTypeName)) {
         const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
         tcWithName.setTypeName(operationConfig.responseTypeName);

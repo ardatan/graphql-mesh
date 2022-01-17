@@ -592,11 +592,28 @@ export function getComposerFromJSONSchema(
           }
 
           if (subSchema.additionalProperties) {
-            fieldMap.additionalProperties = {
-              type: GraphQLJSON,
-              resolve: (root: any) => root,
-            };
-            inputFieldMap = {};
+            if (typeof subSchema.additionalProperties === 'object') {
+              if (Object.keys(fieldMap).length === 0) {
+                return subSchema.additionalProperties;
+              } else {
+                const outputTC: ObjectTypeComposer = (subSchema.additionalProperties as any).output;
+                const outputTCFieldMap = outputTC.getFields();
+                for (const fieldName in outputTCFieldMap) {
+                  fieldMap[fieldName] = outputTCFieldMap[fieldName];
+                }
+                const inputTC: InputTypeComposer = (subSchema.additionalProperties as any).input;
+                const inputTCFieldMap = inputTC.getFields();
+                for (const fieldName in inputTCFieldMap) {
+                  inputFieldMap[fieldName] = inputTCFieldMap[fieldName];
+                }
+              }
+            } else {
+              fieldMap.additionalProperties = {
+                type: GraphQLJSON,
+                resolve: (root: any) => root,
+              };
+              inputFieldMap = {};
+            }
           }
 
           if (subSchema.title === '_schema') {
