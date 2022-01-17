@@ -30,8 +30,9 @@ export function getFieldNameFromPath(path: string, method: string, typeName: str
   }
 
   // get_ doesn't look good in field names
-  if (method === 'get') {
+  const methodPrefix = method.toLowerCase();
+  if (methodPrefix === 'get') {
     return fieldNameWithoutMethod;
   }
-  return method + '_' + fieldNameWithoutMethod;
+  return methodPrefix + '_' + fieldNameWithoutMethod;
 }

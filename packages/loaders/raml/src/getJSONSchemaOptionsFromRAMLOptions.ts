@@ -74,7 +74,8 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       const method = methodNode.method().toUpperCase() as HTTPMethod;
       let fieldName = methodNode.displayName()?.replace('GET_', '');
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
-      let fullRelativeUrl = resourceNode.completeRelativeUri();
+      const originalFullRelativeUrl = resourceNode.completeRelativeUri();
+      let fullRelativeUrl = originalFullRelativeUrl;
       for (const uriParameterNode of resourceNode.uriParameters()) {
         const paramName = uriParameterNode.name();
         fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${paramName}}`);
@@ -139,7 +140,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         }
       }
       const responseTypeName = pathTypeMap.get(responseSchema);
-      fieldName = fieldName || getFieldNameFromPath(fullRelativeUrl, method, responseTypeName);
+      fieldName = fieldName || getFieldNameFromPath(originalFullRelativeUrl, method, responseTypeName);
       if (fieldName) {
         const operationType: any = method === 'GET' ? 'query' : 'mutation';
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);

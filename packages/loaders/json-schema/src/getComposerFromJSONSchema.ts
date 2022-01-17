@@ -117,7 +117,7 @@ export function getComposerFromJSONSchema(
           output: typeComposer,
         };
       }
-      if (subSchema.enum) {
+      if (subSchema.enum && subSchema.type !== 'boolean') {
         const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
         for (const value of subSchema.enum) {
           let enumKey = sanitizeNameForGraphQL(value.toString());
