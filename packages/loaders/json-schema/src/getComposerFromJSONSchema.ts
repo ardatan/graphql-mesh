@@ -225,6 +225,9 @@ export function getComposerFromJSONSchema(
             }),
             description: subSchema.description,
             fields: fieldMap,
+            extensions: {
+              validateWithJSONSchema,
+            },
           });
         } else {
           outputTypeComposer = getGenericJSONScalar({
@@ -309,6 +312,9 @@ export function getComposerFromJSONSchema(
             }),
             description: subSchema.description,
             fields: fieldMap,
+            extensions: {
+              validateWithJSONSchema,
+            },
           });
         } else {
           outputTypeComposer = getGenericJSONScalar({
