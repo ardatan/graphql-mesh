@@ -121,10 +121,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           if (bodyJson.schemaPath) {
             const schemaPath = bodyJson.schemaPath;
             requestTypeName = pathTypeMap.get(schemaPath);
-            requestSchema = {
-              title: requestTypeName,
-              $ref: schemaPath,
-            };
+            requestSchema = schemaPath;
           } else if (bodyJson.type) {
             const typeNames = asArray(bodyJson.type);
             requestSchema = {
@@ -148,10 +145,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
               if (bodyJson.schemaPath) {
                 const schemaPath = bodyJson.schemaPath;
                 const typeName = pathTypeMap.get(schemaPath);
-                responseSchema = {
-                  title: typeName,
-                  $ref: schemaPath,
-                };
+                responseSchema = schemaPath;
                 responseTypeName = typeName;
               } else if (bodyJson.type) {
                 const typeNames = asArray(bodyJson.type);
