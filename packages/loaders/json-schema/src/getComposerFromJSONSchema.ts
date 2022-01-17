@@ -10,6 +10,7 @@ import {
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
+  ListComposer,
 } from 'graphql-compose';
 import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
 import {
@@ -28,7 +29,7 @@ import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { inspect } from '@graphql-tools/utils';
+import { inspect, memoize1 } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
 import { GraphQLUpload } from 'graphql-upload';
 import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
@@ -37,6 +38,10 @@ import { getUnionTypeComposers } from './getUnionTypeComposers';
 import { getValidTypeName } from './getValidTypeName';
 import { getGenericJSONScalar } from './getGenericJSONScalar';
 import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath';
+
+const isListTC = memoize1(function isListTC(type: any): type is ListComposer {
+  return type instanceof ListComposer;
+});
 
 interface TypeComposers {
   input?: AnyTypeComposer<any>;
@@ -553,7 +558,17 @@ export function getComposerFromJSONSchema(
                     ? typeComposers.output.getTypeNonNull()
                     : typeComposers.output,
                 // Make sure you get the right property
-                resolve: root => root[propertyName],
+                resolve: root => {
+                  const actualFieldObj = root[propertyName];
+                  const isArray = Array.isArray(actualFieldObj);
+                  const isListType = isListTC(typeComposers.output);
+                  if (isListType && !isArray) {
+                    return [actualFieldObj];
+                  } else if (!isListTC(typeComposers.output) && isArray) {
+                    return actualFieldObj[0];
+                  }
+                  return actualFieldObj;
+                },
                 description: typeComposers.description || typeComposers.output?.description,
               };
               inputFieldMap[fieldName] = {
@@ -592,7 +607,10 @@ export function getComposerFromJSONSchema(
           }
 
           if (subSchema.additionalProperties) {
-            if (typeof subSchema.additionalProperties === 'object') {
+            if (
+              typeof subSchema.additionalProperties === 'object' &&
+              subSchema.additionalProperties.output instanceof ObjectTypeComposer
+            ) {
               if (Object.keys(fieldMap).length === 0) {
                 return subSchema.additionalProperties;
               } else {
