@@ -132,7 +132,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             }
           );
           refMap.set($ref, result);
-          result.$resolvedRef = $ref;
+          if (result && !result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
           if ((obj as any).title) {
             result.title = (obj as any).title;
           }
@@ -141,6 +143,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           const resolvedObj = resolvePath(refPath, root);
           if (typeof resolvedObj === 'object' && !resolvedObj.$ref) {
             refMap.set($ref, resolvedObj);
+          }
+          if (resolvedObj && !resolvedObj.$resolvedRef) {
+            resolvedObj.$resolvedRef = refPath;
           }
           const result = await dereferenceObject(resolvedObj, {
             cwd,
@@ -154,7 +159,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             result.title = (obj as any).title;
           }
           refMap.set($ref, result);
-          result.$resolvedRef = $ref;
+          if (result && !result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
           return result;
         }
       }

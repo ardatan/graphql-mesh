@@ -71,6 +71,8 @@ export async function healJSONSchema(schema: JSONSchema) {
           let pathBasedName = maybeDefinitionBasedPath
             .split('/properties')
             .join('')
+            .split('-')
+            .join('_')
             .split('/')
             .filter(Boolean)
             .join('_');
