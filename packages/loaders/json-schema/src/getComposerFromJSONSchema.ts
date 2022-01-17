@@ -11,6 +11,7 @@ import {
   ScalarTypeComposer,
   SchemaComposer,
   ListComposer,
+  UnionTypeComposer,
 } from 'graphql-compose';
 import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
 import {
@@ -196,6 +197,15 @@ export function getComposerFromJSONSchema(
 
           if (outputTypeComposer instanceof ScalarTypeComposer) {
             ableToUseGraphQLObjectType = false;
+          } else if (outputTypeComposer instanceof UnionTypeComposer) {
+            const outputTCElems = outputTypeComposer.getTypes() as ObjectTypeComposer[];
+            for (const outputTCElem of outputTCElems) {
+              const outputTypeElemFieldMap = outputTCElem.getFields();
+              for (const fieldName in outputTypeElemFieldMap) {
+                const field = outputTypeElemFieldMap[fieldName];
+                fieldMap[fieldName] = field;
+              }
+            }
           } else {
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
@@ -560,12 +570,14 @@ export function getComposerFromJSONSchema(
                 // Make sure you get the right property
                 resolve: root => {
                   const actualFieldObj = root[propertyName];
-                  const isArray = Array.isArray(actualFieldObj);
-                  const isListType = isListTC(typeComposers.output);
-                  if (isListType && !isArray) {
-                    return [actualFieldObj];
-                  } else if (!isListTC(typeComposers.output) && isArray) {
-                    return actualFieldObj[0];
+                  if (actualFieldObj != null) {
+                    const isArray = Array.isArray(actualFieldObj);
+                    const isListType = isListTC(typeComposers.output);
+                    if (isListType && !isArray) {
+                      return [actualFieldObj];
+                    } else if (!isListTC(typeComposers.output) && isArray) {
+                      return actualFieldObj[0];
+                    }
                   }
                   return actualFieldObj;
                 },
