@@ -124,8 +124,8 @@ export async function healJSONSchema(schema: JSONSchema) {
           }
         }
         // Some JSON Schemas use this broken pattern and refer the type using `items`
-        if (subSchema.type === 'object' && subSchema.items) {
-          return subSchema.items;
+        if (subSchema.type !== 'array' && subSchema.items) {
+          subSchema.type = 'array';
         }
         // If it is an object type but no properties given while example is available
         if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
