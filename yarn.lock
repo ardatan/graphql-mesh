@@ -9813,10 +9813,10 @@ cross-undici-fetch@0.1.12:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
-cross-undici-fetch@0.1.15, cross-undici-fetch@^0.1.13, cross-undici-fetch@^0.1.4:
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.15.tgz#eedc07993ca844bedb72925d31c7418b460c39cb"
-  integrity sha512-V7605qS5d7eFF33gt11SKYHnyHifwgm2TyHnCfDMSJKD4tU09qHlRo1MyRLHoHkWloX7tjupIXG+4j8yb7qlGQ==
+cross-undici-fetch@0.1.16, cross-undici-fetch@^0.1.13, cross-undici-fetch@^0.1.4:
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.16.tgz#48ce18c701c7cf8053afe3c1d7e4d62a1952e0cc"
+  integrity sha512-VoL+4GLbq2R7cfpM3wc3RClV6boUAjbpZ485YHsIeBnWYUi4osdDZhh1ohk9+BjrLvAvwmvQwZC5rTEIVQ2eVQ==
   dependencies:
     abort-controller "^3.0.0"
     form-data-encoder "^1.7.1"
