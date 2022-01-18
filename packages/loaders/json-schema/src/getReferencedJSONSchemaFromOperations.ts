@@ -53,6 +53,7 @@ export async function getReferencedJSONSchemaFromOperations({
         typeof operationConfig.responseSchema === 'string'
           ? {
               $ref: operationConfig.responseSchema,
+              title: operationConfig.responseTypeName,
             }
           : operationConfig.responseSchema;
     } else if (operationConfig.responseSample) {
@@ -109,6 +110,7 @@ export async function getReferencedJSONSchemaFromOperations({
         typeof operationConfig.requestSchema === 'string'
           ? {
               $ref: operationConfig.requestSchema,
+              title: operationConfig.requestTypeName,
             }
           : operationConfig.requestSchema;
     } else if ('requestSample' in operationConfig) {

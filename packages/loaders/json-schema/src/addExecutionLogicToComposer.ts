@@ -1,9 +1,9 @@
-import { SchemaComposer, getComposeTypeName, ObjectTypeComposer, AnyTypeComposer } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
 import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
-import { inspect } from '@graphql-tools/utils';
+import { inspect, memoize1 } from '@graphql-tools/utils';
 import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
@@ -20,22 +20,15 @@ export interface AddExecutionLogicToComposerOptions {
   throwOnHttpError?: boolean;
 }
 
-function isListTypeOrNonNullListType(type: GraphQLOutputType) {
+const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
   if (isNonNullType(type)) {
     return isListType(type.ofType);
   }
   return isListType(type);
-}
+});
 
 function createError(message: string, extensions?: any) {
   return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
-}
-
-function getActualType(type: AnyTypeComposer<any>): AnyTypeComposer<any> {
-  if ('ofType' in type) {
-    return getActualType(type.ofType);
-  }
-  return type;
 }
 
 export async function addExecutionLogicToComposer(
@@ -60,22 +53,6 @@ export async function addExecutionLogicToComposer(
     const rootTypeComposer = schemaComposer[rootTypeName];
 
     const field = rootTypeComposer.getField(fieldName);
-
-    if (operationConfig.requestTypeName) {
-      const actualType = getActualType(field.args.input.type) as ObjectTypeComposer;
-      const tcName = getComposeTypeName(actualType, schemaComposer);
-      if (tcName !== operationConfig.requestTypeName && !schemaComposer.has(operationConfig.requestTypeName)) {
-        actualType.setTypeName(operationConfig.responseTypeName);
-      }
-    }
-
-    if (operationConfig.responseTypeName) {
-      const actualType = getActualType(field.type) as ObjectTypeComposer;
-      const tcName = getComposeTypeName(actualType, schemaComposer);
-      if (tcName !== operationConfig.responseTypeName && !schemaComposer.has(operationConfig.responseTypeName)) {
-        actualType.setTypeName(operationConfig.responseTypeName);
-      }
-    }
 
     if (isPubSubOperationConfig(operationConfig)) {
       field.description = operationConfig.description || `PubSub Topic: ${operationConfig.pubsubTopic}`;

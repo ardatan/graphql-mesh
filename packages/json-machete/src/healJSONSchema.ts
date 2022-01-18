@@ -63,7 +63,7 @@ export async function healJSONSchema(schema: JSONSchema) {
         if (!subSchema.title && !subSchema.$ref) {
           const realPath = subSchema.$resolvedRef || path;
           // Try to get definition name if missing
-          const splitByDefinitions = path.includes('/components/schemas/')
+          const splitByDefinitions = realPath.includes('/components/schemas/')
             ? realPath.split('/components/schemas/')
             : realPath.split('/definitions/');
           const maybeDefinitionBasedPath =
