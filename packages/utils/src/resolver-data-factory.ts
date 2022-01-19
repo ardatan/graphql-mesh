@@ -47,7 +47,7 @@ export function getInterpolatedHeadersFactory(
     for (const headerName in nonInterpolatedHeaders) {
       const headerValue = nonInterpolatedHeaders[headerName];
       if (headerValue) {
-        headers[headerName.toLowerCase()] = stringInterpolator.parse(headerValue, resolverData);
+        headers[headerName] = stringInterpolator.parse(headerValue, resolverData);
       }
     }
     return headers;
