@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.3.6
+
+### Patch Changes
+
+- 92d687133: fix(json-machete): respect reference titles while dereferencing
+
 ## 0.3.5
 
 ### Patch Changes

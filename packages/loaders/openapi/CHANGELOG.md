@@ -1,5 +1,15 @@
 # @omnigraph/openapi
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [92d687133]
+- Updated dependencies [92d687133]
+- Updated dependencies [92d687133]
+  - @omnigraph/json-schema@0.11.1
+  - json-machete@0.3.6
+
 ## 0.0.6
 
 ### Patch Changes
