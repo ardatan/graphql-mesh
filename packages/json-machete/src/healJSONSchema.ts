@@ -60,45 +60,6 @@ export async function healJSONSchema(schema: JSONSchema) {
         if (duplicatedTypeNames.has(subSchema.title)) {
           delete subSchema.title;
         }
-        if (!subSchema.title && !subSchema.$ref) {
-          const realPath = subSchema.$resolvedRef || path;
-          // Try to get definition name if missing
-          const splitByDefinitions = realPath.includes('/components/schemas/')
-            ? realPath.split('/components/schemas/')
-            : realPath.split('/definitions/');
-          const maybeDefinitionBasedPath =
-            splitByDefinitions.length > 1 ? splitByDefinitions[splitByDefinitions.length - 1] : realPath;
-          let pathBasedName = maybeDefinitionBasedPath
-            .split('/properties')
-            .join('')
-            .split('-')
-            .join('_')
-            .split('/')
-            .filter(Boolean)
-            .join('_');
-          switch (subSchema.type) {
-            case 'string':
-              // If it has special pattern, use path based name because it is specific
-              if (subSchema.pattern || subSchema.maxLength || subSchema.minLength || subSchema.enum) {
-                subSchema.title = pathBasedName;
-                // Otherwise use the format name
-              } else if (subSchema.format) {
-                subSchema.title = subSchema.format;
-              }
-              break;
-            case 'integer':
-              // Use format name
-              if (subSchema.format) {
-                subSchema.title = subSchema.format;
-              }
-              break;
-          }
-          // If type name is reserved, add a suffix
-          if (reservedTypeNames.includes(pathBasedName)) {
-            pathBasedName += '_';
-          }
-          subSchema.title = subSchema.title || pathBasedName;
-        }
         // Try to find the type
         if (!subSchema.type) {
           // If required exists without properties
@@ -149,6 +110,50 @@ export async function healJSONSchema(schema: JSONSchema) {
             for (const propertyName in subSchema.properties) {
               subSchema.properties[propertyName] = subSchema.additionalProperties;
             }
+          }
+        }
+        if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array') {
+          const realPath = subSchema.$resolvedRef || path;
+          // Try to get definition name if missing
+          const splitByDefinitions = realPath.includes('/components/schemas/')
+            ? realPath.split('/components/schemas/')
+            : realPath.split('/definitions/');
+          const maybeDefinitionBasedPath =
+            splitByDefinitions.length > 1 ? splitByDefinitions[splitByDefinitions.length - 1] : realPath;
+          let pathBasedName = maybeDefinitionBasedPath
+            .split('~1')
+            .join('/')
+            .split('/properties')
+            .join('')
+            .split('-')
+            .join('_')
+            .split('/')
+            .filter(Boolean)
+            .join('_');
+          switch (subSchema.type) {
+            case 'string':
+              // If it has special pattern, use path based name because it is specific
+              if (subSchema.pattern || subSchema.maxLength || subSchema.minLength || subSchema.enum) {
+                subSchema.title = pathBasedName;
+                // Otherwise use the format name
+              } else if (subSchema.format) {
+                subSchema.title = subSchema.format;
+              }
+              break;
+            case 'integer':
+              // Use format name
+              if (subSchema.format) {
+                subSchema.title = subSchema.format;
+              }
+              break;
+            case 'array':
+              break;
+            default:
+              subSchema.title = subSchema.title || pathBasedName;
+          }
+          // If type name is reserved, add a suffix
+          if (reservedTypeNames.includes(pathBasedName)) {
+            pathBasedName += '_';
           }
         }
       }

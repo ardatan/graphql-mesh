@@ -155,9 +155,6 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             fetch,
             headers,
           });
-          if ((obj as any).title) {
-            result.title = (obj as any).title;
-          }
           refMap.set($ref, result);
           if (result && !result.$resolvedRef) {
             result.$resolvedRef = refPath;
