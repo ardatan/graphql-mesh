@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-rename
 
+## 0.11.9
+
+### Patch Changes
+
+- b1246dd71: fix(transforms/rename): renaming fields should only affect specified …
+
 ## 0.11.8
 
 ### Patch Changes

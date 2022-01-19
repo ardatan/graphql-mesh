@@ -1,5 +1,11 @@
 # @graphql-mesh/website
 
+## 0.8.1
+
+### Patch Changes
+
+- 4896f1625: fix(deps): update dependency @theguild/components to v1.8.7
+
 ## 0.8.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "scripts": {
     "start": "graphql-mesh dev"
   },
@@ -23,7 +23,7 @@
     "@graphql-mesh/transform-cache": "0.11.9",
     "@graphql-mesh/transform-filter-schema": "0.14.8",
     "@graphql-mesh/transform-extend": "0.9.8",
-    "@graphql-mesh/transform-rename": "0.11.8",
+    "@graphql-mesh/transform-rename": "0.11.9",
     "@graphql-mesh/transform-resolvers-composition": "0.12.8"
   },
   "publishConfig": {
