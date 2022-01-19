@@ -1,6 +1,6 @@
 {
   "name": "typescript-location-weather-example",
-  "version": "0.5.167",
+  "version": "0.5.168",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "@graphql-mesh/openapi": "0.23.3",
     "@graphql-mesh/runtime": "0.28.0",
     "@graphql-mesh/transform-cache": "0.11.9",
-    "@graphql-mesh/transform-rename": "0.11.8",
+    "@graphql-mesh/transform-rename": "0.11.9",
     "apollo-server": "^2.25.3",
     "graphql": "16.0.1"
   }
