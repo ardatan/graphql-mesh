@@ -10,6 +10,8 @@ import {
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
+  ListComposer,
+  UnionTypeComposer,
 } from 'graphql-compose';
 import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
 import {
@@ -28,7 +30,7 @@ import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { inspect } from '@graphql-tools/utils';
+import { inspect, memoize1 } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
 import { GraphQLUpload } from 'graphql-upload';
 import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
@@ -37,6 +39,10 @@ import { getUnionTypeComposers } from './getUnionTypeComposers';
 import { getValidTypeName } from './getValidTypeName';
 import { getGenericJSONScalar } from './getGenericJSONScalar';
 import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath';
+
+const isListTC = memoize1(function isListTC(type: any): type is ListComposer {
+  return type instanceof ListComposer;
+});
 
 interface TypeComposers {
   input?: AnyTypeComposer<any>;
@@ -111,7 +117,7 @@ export function getComposerFromJSONSchema(
           output: typeComposer,
         };
       }
-      if (subSchema.enum) {
+      if (subSchema.enum && subSchema.type !== 'boolean') {
         const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
         for (const value of subSchema.enum) {
           let enumKey = sanitizeNameForGraphQL(value.toString());
@@ -191,6 +197,15 @@ export function getComposerFromJSONSchema(
 
           if (outputTypeComposer instanceof ScalarTypeComposer) {
             ableToUseGraphQLObjectType = false;
+          } else if (outputTypeComposer instanceof UnionTypeComposer) {
+            const outputTCElems = outputTypeComposer.getTypes() as ObjectTypeComposer[];
+            for (const outputTCElem of outputTCElems) {
+              const outputTypeElemFieldMap = outputTCElem.getFields();
+              for (const fieldName in outputTypeElemFieldMap) {
+                const field = outputTypeElemFieldMap[fieldName];
+                fieldMap[fieldName] = field;
+              }
+            }
           } else {
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
@@ -210,6 +225,9 @@ export function getComposerFromJSONSchema(
             }),
             description: subSchema.description,
             fields: fieldMap,
+            extensions: {
+              validateWithJSONSchema,
+            },
           });
         } else {
           outputTypeComposer = getGenericJSONScalar({
@@ -294,6 +312,9 @@ export function getComposerFromJSONSchema(
             }),
             description: subSchema.description,
             fields: fieldMap,
+            extensions: {
+              validateWithJSONSchema,
+            },
           });
         } else {
           outputTypeComposer = getGenericJSONScalar({
@@ -553,7 +574,19 @@ export function getComposerFromJSONSchema(
                     ? typeComposers.output.getTypeNonNull()
                     : typeComposers.output,
                 // Make sure you get the right property
-                resolve: root => root[propertyName],
+                resolve: root => {
+                  const actualFieldObj = root[propertyName];
+                  if (actualFieldObj != null) {
+                    const isArray = Array.isArray(actualFieldObj);
+                    const isListType = isListTC(typeComposers.output);
+                    if (isListType && !isArray) {
+                      return [actualFieldObj];
+                    } else if (!isListTC(typeComposers.output) && isArray) {
+                      return actualFieldObj[0];
+                    }
+                  }
+                  return actualFieldObj;
+                },
                 description: typeComposers.description || typeComposers.output?.description,
               };
               inputFieldMap[fieldName] = {
@@ -592,11 +625,31 @@ export function getComposerFromJSONSchema(
           }
 
           if (subSchema.additionalProperties) {
-            fieldMap.additionalProperties = {
-              type: GraphQLJSON,
-              resolve: (root: any) => root,
-            };
-            inputFieldMap = {};
+            if (
+              typeof subSchema.additionalProperties === 'object' &&
+              subSchema.additionalProperties.output instanceof ObjectTypeComposer
+            ) {
+              if (Object.keys(fieldMap).length === 0) {
+                return subSchema.additionalProperties;
+              } else {
+                const outputTC: ObjectTypeComposer = (subSchema.additionalProperties as any).output;
+                const outputTCFieldMap = outputTC.getFields();
+                for (const fieldName in outputTCFieldMap) {
+                  fieldMap[fieldName] = outputTCFieldMap[fieldName];
+                }
+                const inputTC: InputTypeComposer = (subSchema.additionalProperties as any).input;
+                const inputTCFieldMap = inputTC.getFields();
+                for (const fieldName in inputTCFieldMap) {
+                  inputFieldMap[fieldName] = inputTCFieldMap[fieldName];
+                }
+              }
+            } else {
+              fieldMap.additionalProperties = {
+                type: GraphQLJSON,
+                resolve: (root: any) => root,
+              };
+              inputFieldMap = {};
+            }
           }
 
           if (subSchema.title === '_schema') {

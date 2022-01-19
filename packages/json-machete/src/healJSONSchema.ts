@@ -60,42 +60,6 @@ export async function healJSONSchema(schema: JSONSchema) {
         if (duplicatedTypeNames.has(subSchema.title)) {
           delete subSchema.title;
         }
-        if (!subSchema.title && !subSchema.$ref) {
-          // Try to get definition name if missing
-          const splitByDefinitions = path.includes('/components/schemas/')
-            ? path.split('/components/schemas/')
-            : path.split('/definitions/');
-          const maybeDefinitionBasedPath =
-            splitByDefinitions.length > 1 ? splitByDefinitions[splitByDefinitions.length - 1] : path;
-          let pathBasedName = maybeDefinitionBasedPath
-            .split('/properties')
-            .join('')
-            .split('/')
-            .filter(Boolean)
-            .join('_');
-          switch (subSchema.type) {
-            case 'string':
-              // If it has special pattern, use path based name because it is specific
-              if (subSchema.pattern || subSchema.maxLength || subSchema.minLength || subSchema.enum) {
-                subSchema.title = pathBasedName;
-                // Otherwise use the format name
-              } else if (subSchema.format) {
-                subSchema.title = subSchema.format;
-              }
-              break;
-            case 'integer':
-              // Use format name
-              if (subSchema.format) {
-                subSchema.title = subSchema.format;
-              }
-              break;
-          }
-          // If type name is reserved, add a suffix
-          if (reservedTypeNames.includes(pathBasedName)) {
-            pathBasedName += '_';
-          }
-          subSchema.title = subSchema.title || pathBasedName;
-        }
         // Try to find the type
         if (!subSchema.type) {
           // If required exists without properties
@@ -123,8 +87,8 @@ export async function healJSONSchema(schema: JSONSchema) {
           }
         }
         // Some JSON Schemas use this broken pattern and refer the type using `items`
-        if (subSchema.type === 'object' && subSchema.items) {
-          return subSchema.items;
+        if (subSchema.type !== 'array' && subSchema.items) {
+          subSchema.type = 'array';
         }
         // If it is an object type but no properties given while example is available
         if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
@@ -146,6 +110,50 @@ export async function healJSONSchema(schema: JSONSchema) {
             for (const propertyName in subSchema.properties) {
               subSchema.properties[propertyName] = subSchema.additionalProperties;
             }
+          }
+        }
+        if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array') {
+          const realPath = subSchema.$resolvedRef || path;
+          // Try to get definition name if missing
+          const splitByDefinitions = realPath.includes('/components/schemas/')
+            ? realPath.split('/components/schemas/')
+            : realPath.split('/definitions/');
+          const maybeDefinitionBasedPath =
+            splitByDefinitions.length > 1 ? splitByDefinitions[splitByDefinitions.length - 1] : realPath;
+          let pathBasedName = maybeDefinitionBasedPath
+            .split('~1')
+            .join('/')
+            .split('/properties')
+            .join('')
+            .split('-')
+            .join('_')
+            .split('/')
+            .filter(Boolean)
+            .join('_');
+          switch (subSchema.type) {
+            case 'string':
+              // If it has special pattern, use path based name because it is specific
+              if (subSchema.pattern || subSchema.maxLength || subSchema.minLength || subSchema.enum) {
+                subSchema.title = pathBasedName;
+                // Otherwise use the format name
+              } else if (subSchema.format) {
+                subSchema.title = subSchema.format;
+              }
+              break;
+            case 'integer':
+              // Use format name
+              if (subSchema.format) {
+                subSchema.title = subSchema.format;
+              }
+              break;
+            case 'array':
+              break;
+            default:
+              subSchema.title = subSchema.title || pathBasedName;
+          }
+          // If type name is reserved, add a suffix
+          if (reservedTypeNames.includes(pathBasedName)) {
+            pathBasedName += '_';
           }
         }
       }

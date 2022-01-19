@@ -51,7 +51,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
         field: methodObj.operationId,
-        description: methodObj.description,
+        description: methodObj.description || methodObj.summary,
         schemaHeaders,
         operationHeaders,
       } as JSONSchemaHTTPJSONOperationConfig;

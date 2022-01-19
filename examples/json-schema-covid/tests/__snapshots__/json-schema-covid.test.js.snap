@@ -125,7 +125,7 @@ type Query {
 
 \\"\\"\\"Result of API\\"\\"\\"
 type Result {
-  fields: records_items_fields
+  fields: query_population_records_items_fields
 }
 
 type Stat {
@@ -138,7 +138,7 @@ type Stat {
 \\"\\"\\"The \`Upload\` scalar type represents a file upload.\\"\\"\\"
 scalar Upload
 
-type records_items_fields {
+type query_population_records_items_fields {
   country_name: String
   value: Float
   year: String

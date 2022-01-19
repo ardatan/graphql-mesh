@@ -1,6 +1,5 @@
 import { JsonPointer } from 'json-ptr';
 import { dirname, isAbsolute, join } from 'path';
-import { healJSONSchema } from './healJSONSchema';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import { readFileOrUrl } from '@graphql-mesh/utils';
@@ -94,7 +93,6 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             }).catch(() => {
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
             });
-            externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
           }
           const result = await dereferenceObject(
@@ -134,11 +132,20 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             }
           );
           refMap.set($ref, result);
+          if (result && !result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
+          if ((obj as any).title) {
+            result.title = (obj as any).title;
+          }
           return result;
         } else {
           const resolvedObj = resolvePath(refPath, root);
           if (typeof resolvedObj === 'object' && !resolvedObj.$ref) {
             refMap.set($ref, resolvedObj);
+          }
+          if (resolvedObj && !resolvedObj.$resolvedRef) {
+            resolvedObj.$resolvedRef = refPath;
           }
           const result = await dereferenceObject(resolvedObj, {
             cwd,
@@ -148,10 +155,10 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             fetch,
             headers,
           });
-          if (!result.title && (obj as any).title) {
-            result.title = (obj as any).title;
-          }
           refMap.set($ref, result);
+          if (result && !result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
           return result;
         }
       }

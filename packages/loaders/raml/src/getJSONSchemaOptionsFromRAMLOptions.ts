@@ -70,11 +70,14 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   for (const resourceNode of ramlAPI.allResources()) {
     for (const methodNode of resourceNode.methods()) {
       let requestSchema: string | JSONSchemaObject;
-      let responseSchema: string;
+      let requestTypeName: string;
+      let responseSchema: string | JSONSchemaObject;
+      let responseTypeName: string;
       const method = methodNode.method().toUpperCase() as HTTPMethod;
       let fieldName = methodNode.displayName()?.replace('GET_', '');
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
-      let fullRelativeUrl = resourceNode.completeRelativeUri();
+      const originalFullRelativeUrl = resourceNode.completeRelativeUri();
+      let fullRelativeUrl = originalFullRelativeUrl;
       for (const uriParameterNode of resourceNode.uriParameters()) {
         const paramName = uriParameterNode.name();
         fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${paramName}}`);
@@ -116,10 +119,21 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         if (bodyNode.name().includes('application/json')) {
           const bodyJson = bodyNode.toJSON();
           if (bodyJson.schemaPath) {
-            requestSchema = bodyJson.schemaPath;
+            const schemaPath = bodyJson.schemaPath;
+            requestTypeName = pathTypeMap.get(schemaPath);
+            requestSchema = schemaPath;
           } else if (bodyJson.type) {
-            const typeName = asArray(bodyJson.type)[0];
-            requestSchema = typePathMap.get(typeName);
+            const typeNames = asArray(bodyJson.type);
+            requestSchema = {
+              oneOf: typeNames.map(typeName => ({
+                title: typeName,
+                $ref: typePathMap.get(typeName),
+              })),
+            };
+            if (requestSchema.oneOf?.length === 1) {
+              requestSchema = requestSchema.oneOf[0] as any;
+              requestTypeName = (requestSchema as any).title;
+            }
           }
         }
       }
@@ -129,17 +143,28 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
             if (bodyNode.name().includes('application/json')) {
               const bodyJson = bodyNode.toJSON();
               if (bodyJson.schemaPath) {
-                responseSchema = bodyJson.schemaPath;
+                const schemaPath = bodyJson.schemaPath;
+                const typeName = pathTypeMap.get(schemaPath);
+                responseSchema = schemaPath;
+                responseTypeName = typeName;
               } else if (bodyJson.type) {
-                const typeName = asArray(bodyJson.type)[0];
-                responseSchema = typePathMap.get(typeName);
+                const typeNames = asArray(bodyJson.type);
+                responseSchema = {
+                  oneOf: typeNames.map(typeName => ({
+                    title: typeName,
+                    $ref: typePathMap.get(typeName),
+                  })),
+                };
+                if (responseSchema.oneOf?.length === 1) {
+                  responseSchema = responseSchema.oneOf[0] as any;
+                  responseTypeName = (responseSchema as any).title;
+                }
               }
             }
           }
         }
       }
-      const responseTypeName = pathTypeMap.get(responseSchema);
-      fieldName = fieldName || getFieldNameFromPath(fullRelativeUrl, method, responseTypeName);
+      fieldName = fieldName || getFieldNameFromPath(originalFullRelativeUrl, method, responseTypeName);
       if (fieldName) {
         const operationType: any = method === 'GET' ? 'query' : 'mutation';
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);
@@ -150,9 +175,9 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           path: fullRelativeUrl,
           method,
           requestSchema,
-          requestTypeName: typeof requestSchema === 'string' ? pathTypeMap.get(requestSchema) : undefined,
+          requestTypeName,
           responseSchema,
-          responseTypeName: responseTypeName,
+          responseTypeName,
         });
       }
     }
