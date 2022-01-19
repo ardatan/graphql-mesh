@@ -1,5 +1,15 @@
 # @omnigraph/json-schema
 
+## 0.11.1
+
+### Patch Changes
+
+- 92d687133: fix(json-schema): boolean types shouldn't be enums
+- 92d687133: fix(json-schema): handle additionalProperties as a part of the actual type
+- 92d687133: fix(json-machete): respect reference titles while dereferencing
+- Updated dependencies [92d687133]
+  - json-machete@0.3.6
+
 ## 0.11.0
 
 ### Minor Changes

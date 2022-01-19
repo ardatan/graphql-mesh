@@ -1,5 +1,16 @@
 # @omnigraph/raml
 
+## 0.2.10
+
+### Patch Changes
+
+- 92d687133: fix(json-machete): respect reference titles while dereferencing
+- Updated dependencies [92d687133]
+- Updated dependencies [92d687133]
+- Updated dependencies [92d687133]
+  - @omnigraph/json-schema@0.11.1
+  - json-machete@0.3.6
+
 ## 0.2.9
 
 ### Patch Changes

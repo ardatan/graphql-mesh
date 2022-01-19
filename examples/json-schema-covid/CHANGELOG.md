@@ -1,5 +1,11 @@
 # covid-mesh
 
+## 0.5.180
+
+### Patch Changes
+
+- @graphql-mesh/json-schema@0.23.4
+
 ## 0.5.179
 
 ### Patch Changes
