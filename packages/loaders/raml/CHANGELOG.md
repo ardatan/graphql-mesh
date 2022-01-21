@@ -1,5 +1,11 @@
 # @omnigraph/raml
 
+## 0.2.12
+
+### Patch Changes
+
+- 7a65a594c: fix(raml): fix schemaPath mapping
+
 ## 0.2.11
 
 ### Patch Changes
