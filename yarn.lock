@@ -12529,10 +12529,10 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-framer-motion@6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-6.0.0.tgz#08e44c42b67c967774a197b3994f8475cd486c32"
-  integrity sha512-wVI+hVRkvQeWSvkxk8z5bTg+jBs9vfEZOist2s0e9tQzZvt+OBuAoAcvCvl+ADmFd4ncC2934vkwiJPZ8nSvMg==
+framer-motion@6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-6.2.1.tgz#e0d02dd47211fe87e43bf5a0779991372bdadb1c"
+  integrity sha512-/8MMBCKgiuO6V/raGsJ+2dFZw5kteXsX1cSarxiM8o1F0XNlzd+4WGTIos85G2nZpwpmReJuUk+Hz4S3Y7fwPw==
   dependencies:
     framesync "6.0.1"
     hey-listen "^1.0.8"
