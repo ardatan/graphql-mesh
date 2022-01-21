@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
