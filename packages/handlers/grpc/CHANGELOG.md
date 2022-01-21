@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.19.2
+
+### Patch Changes
+
+- 3e510809e: fix(grpc): fix syntax error in artifacts
+
 ## 0.19.1
 
 ### Patch Changes
