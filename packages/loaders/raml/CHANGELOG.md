@@ -1,5 +1,11 @@
 # @omnigraph/raml
 
+## 0.2.13
+
+### Patch Changes
+
+- 084d511c1: fix(raml): set correct schema
+
 ## 0.2.12
 
 ### Patch Changes
