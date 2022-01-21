@@ -125,7 +125,8 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           } else if (bodyJson.type) {
             const typeName = asArray(bodyJson.type)[0];
             requestTypeName = typeName;
-            requestSchema = typePathMap;
+            const schemaPath = typePathMap.get(typeName);
+            requestSchema = schemaPath;
           }
         }
       }
@@ -136,13 +137,14 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
               const bodyJson = bodyNode.toJSON();
               if (bodyJson.schemaPath) {
                 const schemaPath = bodyJson.schemaPath;
-                const typeName = pathTypeMap.get(schemaPath);
                 responseSchema = schemaPath;
+                const typeName = pathTypeMap.get(schemaPath);
                 responseTypeName = typeName;
               } else if (bodyJson.type) {
                 const typeName = asArray(bodyJson.type)[0];
                 requestTypeName = typeName;
-                requestSchema = typePathMap;
+                const schemaPath = typePathMap.get(typeName);
+                requestSchema = schemaPath;
               }
             }
           }
