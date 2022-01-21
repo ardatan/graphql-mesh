@@ -142,9 +142,9 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
                 responseTypeName = typeName;
               } else if (bodyJson.type) {
                 const typeName = asArray(bodyJson.type)[0];
-                requestTypeName = typeName;
+                responseTypeName = typeName;
                 const schemaPath = typePathMap.get(typeName);
-                requestSchema = schemaPath;
+                responseSchema = schemaPath;
               }
             }
           }
