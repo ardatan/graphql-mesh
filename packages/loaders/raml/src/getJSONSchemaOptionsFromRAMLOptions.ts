@@ -123,17 +123,9 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
             requestTypeName = pathTypeMap.get(schemaPath);
             requestSchema = schemaPath;
           } else if (bodyJson.type) {
-            const typeNames = asArray(bodyJson.type);
-            requestSchema = {
-              oneOf: typeNames.map(typeName => ({
-                title: typeName,
-                $ref: typePathMap.get(typeName),
-              })),
-            };
-            if (requestSchema.oneOf?.length === 1) {
-              requestSchema = requestSchema.oneOf[0] as any;
-              requestTypeName = (requestSchema as any).title;
-            }
+            const typeName = asArray(bodyJson.type)[0];
+            requestTypeName = typeName;
+            requestSchema = typePathMap;
           }
         }
       }
@@ -148,17 +140,9 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
                 responseSchema = schemaPath;
                 responseTypeName = typeName;
               } else if (bodyJson.type) {
-                const typeNames = asArray(bodyJson.type);
-                responseSchema = {
-                  oneOf: typeNames.map(typeName => ({
-                    title: typeName,
-                    $ref: typePathMap.get(typeName),
-                  })),
-                };
-                if (responseSchema.oneOf?.length === 1) {
-                  responseSchema = responseSchema.oneOf[0] as any;
-                  responseTypeName = (responseSchema as any).title;
-                }
+                const typeName = asArray(bodyJson.type)[0];
+                requestTypeName = typeName;
+                requestSchema = typePathMap;
               }
             }
           }
