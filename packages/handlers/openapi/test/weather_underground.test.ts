@@ -9,7 +9,7 @@
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { GraphQLSchema } from 'graphql';
-import fetch from 'cross-undici-fetch';
+import { fetch } from 'cross-undici-fetch';
 import { getValidOAS3 } from '../src/openapi-to-graphql/oas_3_tools';
 
 /**
