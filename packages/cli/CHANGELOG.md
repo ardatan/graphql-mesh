@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.48.1
+
+### Patch Changes
+
+- 2ee6025e2: fix(server): fork=1 should spawn 1 child process
+
 ## 0.48.0
 
 ### Minor Changes
