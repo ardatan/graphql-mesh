@@ -24,11 +24,17 @@ export default class WrapPrefix implements MeshTransform {
 
     const ignoreList = config.ignore || [];
 
-    this.transforms.push(
-      new RenameTypes(typeName => (ignoreList.includes(typeName) ? typeName : `${prefix}${typeName}`))
-    );
+    const includeTypes = config.includeTypes !== false;
 
-    if (config.includeRootOperations) {
+    if (includeTypes) {
+      this.transforms.push(
+        new RenameTypes(typeName => (ignoreList.includes(typeName) ? typeName : `${prefix}${typeName}`))
+      );
+    }
+
+    const includeRootOperations = config.includeRootOperations === true;
+
+    if (includeRootOperations) {
       this.transforms.push(
         new RenameRootFields((typeName, fieldName) =>
           ignoreList.includes(typeName) || ignoreList.includes(`${typeName}.${fieldName}`)

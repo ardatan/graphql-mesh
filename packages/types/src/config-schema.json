@@ -2541,6 +2541,10 @@
         "includeRootOperations": {
           "type": "boolean",
           "description": "Changes root types and changes the field names"
+        },
+        "includeTypes": {
+          "type": "boolean",
+          "description": "Changes types"
         }
       }
     },

@@ -19,9 +19,13 @@ type PrefixTransformConfig @md {
   """
   ignore: [String!]
   """
-  Changes root types and changes the field names
+  Changes root types and changes the field names (default: false)
   """
   includeRootOperations: Boolean
+  """
+  Changes types (default: true)
+  """
+  includeTypes: Boolean
 }
 
 enum PrefixTransformMode {

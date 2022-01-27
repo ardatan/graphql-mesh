@@ -82,9 +82,9 @@ export async function addExecutionLogicToComposer(
       } else {
         field.description = operationConfig.description;
       }
-      field.resolve = async (root, args, context, info) => {
+      field.resolve = async (root, args, context) => {
         operationLogger.debug(() => `=> Resolving`);
-        const interpolationData = { root, args, context, info, env };
+        const interpolationData = { root, args, context, env };
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
         let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
@@ -187,7 +187,7 @@ export async function addExecutionLogicToComposer(
         try {
           responseJson = JSON.parse(responseText);
         } catch (error) {
-          const returnNamedGraphQLType = getNamedType(info.returnType);
+          const returnNamedGraphQLType = getNamedType(field.type.getType());
           // The result might be defined as scalar
           if (isScalarType(returnNamedGraphQLType)) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
@@ -212,7 +212,7 @@ export async function addExecutionLogicToComposer(
 
         operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
         // Sometimes API returns an array but the return type is not an array
-        const isListReturnType = isListTypeOrNonNullListType(info.returnType);
+        const isListReturnType = isListTypeOrNonNullListType(field.type.getType());
         const isArrayResponse = Array.isArray(responseJson);
         if (isListReturnType && !isArrayResponse) {
           operationLogger.debug(() => `Response is not array but return type is list. Normalizing the response`);

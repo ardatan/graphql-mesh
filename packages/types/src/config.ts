@@ -1296,6 +1296,10 @@ export interface PrefixTransformConfig {
    * Changes root types and changes the field names
    */
   includeRootOperations?: boolean;
+  /**
+   * Changes types
+   */
+  includeTypes?: boolean;
 }
 export interface RenameTransform {
   /**

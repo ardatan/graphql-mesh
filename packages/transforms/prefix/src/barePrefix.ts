@@ -8,12 +8,14 @@ export default class BarePrefix implements MeshTransform {
   noWrap = true;
   private ignoreList: string[];
   private includeRootOperations: boolean;
+  private includeTypes: boolean;
   private prefix: string;
 
   constructor(options: MeshTransformOptions<YamlConfig.PrefixTransformConfig>) {
     const { apiName, config } = options;
     this.ignoreList = config.ignore || [];
-    this.includeRootOperations = config.includeRootOperations;
+    this.includeRootOperations = config.includeRootOperations === true;
+    this.includeTypes = config.includeTypes !== false;
     this.prefix = null;
 
     if (config.value) {
@@ -30,10 +32,13 @@ export default class BarePrefix implements MeshTransform {
   transformSchema(schema: GraphQLSchema) {
     return mapSchema(schema, {
       [MapperKind.TYPE]: (type: GraphQLNamedType) => {
-        if (isSpecifiedScalarType(type)) return undefined;
-
-        const currentName = type.name;
-        return this.ignoreList.includes(currentName) ? undefined : renameType(type, this.prefix + currentName);
+        if (this.includeTypes && !isSpecifiedScalarType(type)) {
+          const currentName = type.name;
+          if (!this.ignoreList.includes(currentName)) {
+            return renameType(type, this.prefix + currentName);
+          }
+        }
+        return undefined;
       },
       [MapperKind.ROOT_OBJECT]() {
         return undefined;
