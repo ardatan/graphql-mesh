@@ -629,9 +629,21 @@ export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
     );
     let responseSchema = responseObject.content[availableSimilarContentType || contentTypes[0]].schema;
     let fromRef: string;
-    if ('$ref' in responseSchema) {
-      fromRef = responseSchema.$ref.split('/').pop();
-      responseSchema = resolveRef(responseSchema.$ref, oas);
+
+    if (responseSchema) {
+      if ('$ref' in responseSchema) {
+        fromRef = responseSchema.$ref.split('/').pop();
+        responseSchema = resolveRef(responseSchema.$ref, oas);
+      }
+    } else if (options.allowUndefinedSchemaRefTags) {
+      options.logger.info(`${path}:${method.toUpperCase()}:${statusCode}`);
+      fromRef = 'Unknown';
+      responseSchema = {
+        description: `Placeholder for missing ${path}:${method.toUpperCase()}:${statusCode} schema ref`,
+        type: options.defaultUndefinedSchemaType || 'object',
+      };
+    } else {
+      throw new Error(`${path}:${method.toUpperCase()}:${statusCode} has an undefined schema ref`);
     }
 
     const responseSchemaNames = {
