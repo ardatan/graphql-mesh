@@ -49,7 +49,9 @@ function buildSignatureBasedOnRootFields(
       },
     };
 
-    operationMap[fieldName] = `  ${field.name}: InContextSdkMethod<${codegenHelpers.getTypeToUse(
+    operationMap[fieldName] = `  /** ${field.description} **/\n  ${
+      field.name
+    }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
       parentTypeNode
     )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }

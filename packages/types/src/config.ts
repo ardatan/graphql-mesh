@@ -1293,11 +1293,11 @@ export interface PrefixTransformConfig {
    */
   ignore?: string[];
   /**
-   * Changes root types and changes the field names
+   * Changes root types and changes the field names (default: false)
    */
   includeRootOperations?: boolean;
   /**
-   * Changes types
+   * Changes types (default: true)
    */
   includeTypes?: boolean;
 }
@@ -1575,7 +1575,7 @@ export interface LocalforageConfig {
 }
 export interface RedisConfig {
   host?: string;
-  port?: number;
+  port?: string;
   password?: string;
   url?: string;
 }

@@ -80,7 +80,7 @@
           "type": "string"
         },
         "port": {
-          "type": "integer"
+          "type": "string"
         },
         "password": {
           "type": "string"
@@ -2540,11 +2540,11 @@
         },
         "includeRootOperations": {
           "type": "boolean",
-          "description": "Changes root types and changes the field names"
+          "description": "Changes root types and changes the field names (default: false)"
         },
         "includeTypes": {
           "type": "boolean",
-          "description": "Changes types"
+          "description": "Changes types (default: true)"
         }
       }
     },
