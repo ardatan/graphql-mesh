@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.58.0
+
+### Minor Changes
+
+- 6bb4cf673: feat(prefix): allow to prefix only fields
+
 ## 0.57.2
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @omnigraph/json-schema
 
+## 0.11.2
+
+### Patch Changes
+
+- 6bb4cf673: enhance(json-schema): remove the need of info
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+  - json-machete@0.3.7
+
 ## 0.11.1
 
 ### Patch Changes
