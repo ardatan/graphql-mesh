@@ -21,6 +21,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { YamlConfig } from '@graphql-mesh/types';
 import { serveSource } from './commands/serve/serve-source';
+import { register } from 'ts-node';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -56,6 +57,13 @@ export async function graphqlMesh() {
         } else {
           baseDir = resolve(cwd(), dir);
         }
+        register({
+          transpileOnly: true,
+          typeCheck: false,
+          preferTsExts: true,
+          dir: baseDir,
+          require: ['tsconfig-paths/register'],
+        });
       },
     })
     .command(
@@ -202,10 +210,14 @@ export async function graphqlMesh() {
         }
       }
     )
-    .command(
+    .command<{ tsOnly: boolean }>(
       'build',
       'Builds artifacts',
-      builder => {},
+      builder => {
+        builder.option('tsOnly', {
+          type: 'boolean',
+        });
+      },
       async args => {
         try {
           const rootArtifactsName = '.mesh';
@@ -272,6 +284,7 @@ export async function graphqlMesh() {
             meshConfigCode: meshConfig.code,
             logger,
             sdkConfig: meshConfig.config.sdk,
+            tsOnly: args.tsOnly,
           });
 
           logger.info(`Cleanup`);

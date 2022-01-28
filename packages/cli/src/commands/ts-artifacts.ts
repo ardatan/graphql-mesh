@@ -110,6 +110,7 @@ export async function generateTsArtifacts({
   meshConfigCode,
   logger,
   sdkConfig,
+  tsOnly = false,
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: RawSourceOutput[];
@@ -121,6 +122,7 @@ export async function generateTsArtifacts({
   meshConfigCode: string;
   logger: Logger;
   sdkConfig: YamlConfig.SDKConfig;
+  tsOnly: boolean;
 }) {
   const artifactsDir = join(baseDir, '.mesh');
   logger.info('Generating index file in TypeScript');
@@ -290,45 +292,47 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
   const tsFilePath = join(artifactsDir, 'index.ts');
   await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
 
-  logger.info('Compiling TS file as ES Module to `index.mjs`');
-  const jsFilePath = join(artifactsDir, 'index.js');
-  const dtsFilePath = join(artifactsDir, 'index.d.ts');
-  compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
+  if (!tsOnly) {
+    logger.info('Compiling TS file as ES Module to `index.mjs`');
+    const jsFilePath = join(artifactsDir, 'index.js');
+    const dtsFilePath = join(artifactsDir, 'index.d.ts');
+    compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
 
-  const mjsFilePath = join(artifactsDir, 'index.mjs');
-  await rename(jsFilePath, mjsFilePath);
+    const mjsFilePath = join(artifactsDir, 'index.mjs');
+    await rename(jsFilePath, mjsFilePath);
 
-  logger.info('Writing index.ts for CJS to the disk.');
-  await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
+    logger.info('Writing index.ts for CJS to the disk.');
+    await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
 
-  logger.info('Compiling TS file as CommonJS Module to `index.js`');
-  compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
+    logger.info('Compiling TS file as CommonJS Module to `index.js`');
+    compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
-  await writeJSON(join(artifactsDir, 'package.json'), {
-    name: 'mesh-artifacts',
-    private: true,
-    type: 'commonjs',
-    main: 'index.js',
-    module: 'index.mjs',
-    sideEffects: false,
-    typings: 'index.d.ts',
-    typescript: {
-      definition: 'index.d.ts',
-    },
-    exports: {
-      '.': {
-        require: './index.js',
-        import: './index.mjs',
+    await writeJSON(join(artifactsDir, 'package.json'), {
+      name: 'mesh-artifacts',
+      private: true,
+      type: 'commonjs',
+      main: 'index.js',
+      module: 'index.mjs',
+      sideEffects: false,
+      typings: 'index.d.ts',
+      typescript: {
+        definition: 'index.d.ts',
       },
-      './*': {
-        require: './*.js',
-        import: './*.mjs',
+      exports: {
+        '.': {
+          require: './index.js',
+          import: './index.mjs',
+        },
+        './*': {
+          require: './*.js',
+          import: './*.mjs',
+        },
       },
-    },
-  });
+    });
 
-  logger.info('Deleting index.ts');
-  await unlink(tsFilePath);
+    logger.info('Deleting index.ts');
+    await unlink(tsFilePath);
+  }
 }
 
 export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: string[]) {
