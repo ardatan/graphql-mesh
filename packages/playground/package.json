@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=development webpack serve"
   },
   "dependencies": {
-    "@graphql-tools/url-loader": "7.7.0",
+    "@graphql-tools/url-loader": "7.7.1",
     "@graphql-tools/wrap": "8.3.3",
     "copy-to-clipboard": "3.3.1",
     "graphiql": "1.5.16",

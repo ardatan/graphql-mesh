@@ -3489,10 +3489,10 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.7.0", "@graphql-tools/url-loader@^7.4.2":
-  version "7.7.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.7.0.tgz#504f0030c75b61bca4ac07da49e8cd872c316972"
-  integrity sha512-mBBb+aJqI4E0MVEzyfi76Pi/G6lGxGTVt/tP1YtKJly7UnonNoWOtDusdL3zIVAGhGgLsNrLbGhLDbwSd6TV6A==
+"@graphql-tools/url-loader@7.7.1", "@graphql-tools/url-loader@^7.4.2":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.7.1.tgz#2faabdc1d2c47edc8edc9cc938eee2767189869f"
+  integrity sha512-K/5amdeHtKYI976HVd/AXdSNvLL7vx5QVjMlwN0OHeYyxSgC+UOH+KkS7cshYgL13SekGu0Mxbg9ABfgQ34ECA==
   dependencies:
     "@graphql-tools/delegate" "^8.4.1"
     "@graphql-tools/utils" "^8.5.1"
@@ -3500,7 +3500,7 @@
     "@n1ru4l/graphql-live-query" "^0.9.0"
     "@types/websocket" "^1.0.4"
     "@types/ws" "^8.0.0"
-    cross-undici-fetch "^0.1.4"
+    cross-undici-fetch "^0.1.19"
     dset "^3.1.0"
     extract-files "^11.0.0"
     graphql-sse "^1.0.1"
@@ -9818,7 +9818,7 @@ cross-undici-fetch@0.1.12:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
-cross-undici-fetch@0.1.16, cross-undici-fetch@^0.1.13, cross-undici-fetch@^0.1.4:
+cross-undici-fetch@0.1.16:
   version "0.1.16"
   resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.16.tgz#48ce18c701c7cf8053afe3c1d7e4d62a1952e0cc"
   integrity sha512-VoL+4GLbq2R7cfpM3wc3RClV6boUAjbpZ485YHsIeBnWYUi4osdDZhh1ohk9+BjrLvAvwmvQwZC5rTEIVQ2eVQ==
@@ -9827,6 +9827,18 @@ cross-undici-fetch@0.1.16, cross-undici-fetch@^0.1.13, cross-undici-fetch@^0.1.4
     form-data-encoder "^1.7.1"
     formdata-node "^4.3.1"
     node-fetch "^2.6.5"
+    undici "^4.9.3"
+    web-streams-polyfill "^3.2.0"
+
+cross-undici-fetch@^0.1.13, cross-undici-fetch@^0.1.19:
+  version "0.1.19"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.19.tgz#1bef41652c33ec812b51cd3b4e1295114cd62d4c"
+  integrity sha512-bNBuesVn09Iy15mAM/hpt97fLWSexblVYpUYa5FjbtLHA7om9w3g1uRGGwrEnmVxy3wouNvZyJwQzAPHXgOrxQ==
+  dependencies:
+    abort-controller "^3.0.0"
+    form-data-encoder "^1.7.1"
+    formdata-node "^4.3.1"
+    node-fetch "^2.6.7"
     undici "^4.9.3"
     web-streams-polyfill "^3.2.0"
 
@@ -18157,10 +18169,10 @@ node-fetch@2.6.1:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
-node-fetch@^2.3.0, node-fetch@^2.6.1, node-fetch@^2.6.5, node-fetch@^2.6.6:
-  version "2.6.6"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.6.tgz#1751a7c01834e8e1697758732e9efb6eeadfaf89"
-  integrity sha512-Z8/6vRlTUChSdIgMa51jxQ4lrw/Jy5SOW10ObaA47/RElsAN2c5Pn8bTgFGWn/ibwzXTE8qwr1Yzx28vsecXEA==
+node-fetch@^2.3.0, node-fetch@^2.6.1, node-fetch@^2.6.5, node-fetch@^2.6.6, node-fetch@^2.6.7:
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
+  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
   dependencies:
     whatwg-url "^5.0.0"
 
