@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.49.0
+
+### Minor Changes
+
+- 6601a949e: feat(runtime): export ServeMeshOption for custom server handler
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6601a949e]
+- Updated dependencies [6601a949e]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/runtime@0.29.0
+  - @graphql-mesh/config@0.27.5
+  - @graphql-mesh/store@0.3.9
+
 ## 0.48.1
 
 ### Patch Changes

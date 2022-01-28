@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-prefix
 
+## 0.10.0
+
+### Minor Changes
+
+- 6bb4cf673: feat(prefix): allow to prefix only fields
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+
 ## 0.9.8
 
 ### Patch Changes

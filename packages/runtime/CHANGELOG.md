@@ -1,5 +1,19 @@
 # @graphql-mesh/runtime
 
+## 0.29.0
+
+### Minor Changes
+
+- 6601a949e: enhance(runtime): expose logger in the context and MeshInstance
+- 6601a949e: feat(runtime): export ServeMeshOption for custom server handler
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+
 ## 0.28.0
 
 ### Minor Changes

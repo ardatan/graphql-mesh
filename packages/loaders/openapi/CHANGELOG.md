@@ -1,5 +1,16 @@
 # @omnigraph/openapi
 
+## 0.0.8
+
+### Patch Changes
+
+- 50684ddbf: fix(openapi): add lowercased method prefix
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @omnigraph/json-schema@0.11.2
+  - json-machete@0.3.7
+
 ## 0.0.7
 
 ### Patch Changes
