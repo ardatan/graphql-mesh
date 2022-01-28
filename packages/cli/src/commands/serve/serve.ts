@@ -23,24 +23,14 @@ import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
 import { promises as fsPromises } from 'fs';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
-import { YamlConfig, Logger } from '@graphql-mesh/types';
-import { Source, inspect } from '@graphql-tools/utils';
+import { inspect } from '@graphql-tools/utils';
 
 const { readFile } = fsPromises;
-
-export interface ServeMeshOptions {
-  baseDir: string;
-  getBuiltMesh: () => Promise<MeshInstance>;
-  logger: Logger;
-  rawConfig: YamlConfig.Config;
-  documents: Source[];
-  argsPort?: number;
-}
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -269,7 +259,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
       .listen(parseInt(port.toString()), hostname, () => {
         const shouldntOpenBrowser = env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
-          open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => { });
+          open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
         }
       })
       .on('error', handleFatalError);

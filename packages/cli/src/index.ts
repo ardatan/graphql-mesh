@@ -1,7 +1,7 @@
 import { findAndParseConfig } from './config';
-import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
+import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
-import { serveMesh, ServeMeshOptions } from './commands/serve/serve';
+import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
 import { existsSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';

@@ -17,6 +17,7 @@ import {
   GraphQLOperation,
   SelectionSetParamOrFactory,
   SelectionSetParam,
+  Logger,
 } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
@@ -46,6 +47,7 @@ export interface MeshInstance {
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   liveQueryStore: InMemoryLiveQueryStore;
+  logger: Logger;
   /**
    * @deprecated
    * contextBuilder has no effect in the provided context anymore.
@@ -148,6 +150,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     pubsub,
     cache,
     liveQueryStore,
+    logger,
     [MESH_CONTEXT_SYMBOL]: true,
   };
   getMeshLogger.debug(() => `Attaching in-context SDK, pubsub, cache and liveQueryStore to the context`);
@@ -364,6 +367,7 @@ ${inspect({
     pubsub,
     destroy: () => pubsub.publish('destroy', undefined),
     liveQueryStore,
+    logger,
     contextBuilder: async ctx => ctx || {},
   };
 }

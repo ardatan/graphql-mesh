@@ -10,9 +10,11 @@ import {
   MeshMerger,
 } from '@graphql-mesh/types';
 import { DocumentNode, GraphQLResolveInfo } from 'graphql';
-import { IResolvers } from '@graphql-tools/utils';
+import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { MeshInstance } from './get-mesh';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -67,4 +69,13 @@ export type APIContext = {
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
   [key: string]: APIContext;
-} & { pubsub: MeshPubSub; cache: KeyValueCache };
+} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; liveQueryStore: InMemoryLiveQueryStore };
+
+export interface ServeMeshOptions {
+  baseDir: string;
+  getBuiltMesh: () => Promise<MeshInstance>;
+  logger: Logger;
+  rawConfig: YamlConfig.Config;
+  documents: Source[];
+  argsPort?: number;
+}
