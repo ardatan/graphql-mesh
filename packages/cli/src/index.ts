@@ -21,7 +21,9 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { YamlConfig } from '@graphql-mesh/types';
 import { serveSource } from './commands/serve/serve-source';
-import { register } from 'ts-node';
+import { register as tsNodeRegister } from 'ts-node';
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+import { config as dotEnvRegister } from 'dotenv';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -57,13 +59,29 @@ export async function graphqlMesh() {
         } else {
           baseDir = resolve(cwd(), dir);
         }
-        register({
-          transpileOnly: true,
-          typeCheck: false,
-          preferTsExts: true,
-          dir: baseDir,
-          require: ['tsconfig-paths/register'],
-        });
+        if (existsSync(join(baseDir, 'tsconfig.json'))) {
+          tsNodeRegister({
+            transpileOnly: true,
+            typeCheck: false,
+            preferTsExts: true,
+            dir: baseDir,
+            require: ['graphql-import-node/register'],
+          });
+          defaultImportFn(join(baseDir, 'tsconfig.json'))
+            .then(tsConfig => {
+              tsConfig = tsConfig.default;
+              tsConfigPathsRegister({
+                baseUrl: baseDir,
+                paths: tsConfig.compilerOptions.paths,
+              });
+            })
+            .catch(() => {});
+        }
+        if (existsSync(join(baseDir, '.env'))) {
+          dotEnvRegister({
+            path: join(baseDir, '.env'),
+          });
+        }
       },
     })
     .command(
