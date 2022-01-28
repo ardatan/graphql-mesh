@@ -246,7 +246,7 @@ export async function processConfig(
     resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
       codes.push(
         `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
-          parsedTypeDefs => `parse(/* GraphQL */\`${print(parsedTypeDefs)}\`),`
+          parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}\`),`
         )}] as any[];`
       );
       return additionalTypeDefs;

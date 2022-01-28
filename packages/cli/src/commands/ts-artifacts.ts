@@ -290,7 +290,10 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
 
   logger.info('Writing index.ts for ESM to the disk.');
   const tsFilePath = join(artifactsDir, 'index.ts');
-  await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
+  await writeFile(
+    tsFilePath,
+    '// @ts-nocheck\n' + codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM)
+  );
 
   if (!tsOnly) {
     logger.info('Compiling TS file as ES Module to `index.mjs`');
