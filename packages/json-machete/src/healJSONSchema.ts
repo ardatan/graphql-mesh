@@ -6,7 +6,7 @@ import toJsonSchema from 'to-json-schema';
 const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
 function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
-  if (typeof schema === 'object' && schema != null) {
+  if (typeof schema === 'object' && schema != null && !schema.$comment) {
     const titleReserved = schema.title;
     if (titleReserved) {
       schema.title = undefined;

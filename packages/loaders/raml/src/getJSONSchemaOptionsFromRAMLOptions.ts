@@ -124,9 +124,8 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           const bodyJson = bodyNode.toJSON();
           if (bodyJson.schemaPath) {
             const schemaPath = bodyJson.schemaPath;
-            const typeName = pathTypeMap.get(schemaPath);
-            requestTypeName = pathTypeMap.get(schemaPath);
             requestSchema = schemaPath;
+            requestTypeName = pathTypeMap.get(schemaPath);
           } else if (bodyJson.type) {
             const typeName = asArray(bodyJson.type)[0];
             requestTypeName = typeName;
