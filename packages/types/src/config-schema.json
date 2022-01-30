@@ -910,9 +910,6 @@
           },
           "additionalItems": false,
           "description": "Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation"
-        },
-        "throwOnHttpError": {
-          "type": "boolean"
         }
       },
       "required": ["operations"]
@@ -3034,7 +3031,7 @@
         "type": "string"
       },
       "additionalItems": false,
-      "description": "Provide a query or queries for GraphQL Playground, validation and SDK Generation\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.\nBut TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)"
+      "description": "Provide a query or queries for GraphQL Playground, validation and SDK Generation\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported."
     },
     "logger": {
       "anyOf": [

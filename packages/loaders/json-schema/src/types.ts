@@ -1,7 +1,7 @@
 import { MeshPubSub, Logger } from '@graphql-mesh/types';
 import { BaseLoaderOptions } from '@graphql-tools/utils';
 import { OperationTypeNode } from 'graphql';
-import { JSONSchema } from 'json-machete';
+import { JSONSchema, JSONSchemaObject } from 'json-machete';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   baseUrl?: string;
@@ -15,47 +15,53 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   generateInterfaceFromSharedFields?: boolean;
 }
 
-export interface JSONSchemaBaseOperationConfig {
+export interface JSONSchemaOperationResponseConfig {
+  responseSchema?: string | JSONSchemaObject;
+  responseSample?: any;
+  responseTypeName?: string;
+}
+
+export type JSONSchemaBaseOperationConfig = {
   type: OperationTypeNode;
   field: string;
   description?: string;
 
-  responseSchema?: string | JSONSchema;
-  responseSample?: any;
-  responseTypeName?: string;
-
   argTypeMap?: Record<string, string>;
-}
+} & (
+  | {
+      responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
+    }
+  | JSONSchemaOperationResponseConfig
+);
 
-export interface JSONSchemaBaseOperationConfigWithJSONRequest extends JSONSchemaBaseOperationConfig {
+export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperationConfig & {
   requestSchema?: string | JSONSchema;
   requestSample?: any;
   requestTypeName?: string;
-}
+};
 
 export type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
 
-export interface JSONSchemaHTTPBaseOperationConfig extends JSONSchemaBaseOperationConfig {
+export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & {
   path: string;
   method?: HTTPMethod;
 
   headers?: Record<string, string>;
-}
+};
 
-export interface JSONSchemaHTTPJSONOperationConfig
-  extends JSONSchemaHTTPBaseOperationConfig,
-    JSONSchemaBaseOperationConfigWithJSONRequest {}
+export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &
+  JSONSchemaBaseOperationConfigWithJSONRequest;
 
-export interface JSONSchemaPubSubOperationConfig extends JSONSchemaBaseOperationConfigWithJSONRequest {
+export type JSONSchemaPubSubOperationConfig = JSONSchemaBaseOperationConfigWithJSONRequest & {
   pubsubTopic: string;
-}
+};
 
-export interface JSONSchemaHTTPBinaryConfig extends JSONSchemaHTTPBaseOperationConfig {
+export type JSONSchemaHTTPBinaryConfig = JSONSchemaHTTPBaseOperationConfig & {
   path: string;
   method?: HTTPMethod;
   requestTypeName?: string;
   binary: true;
-}
+};
 
 export type JSONSchemaOperationConfig =
   | JSONSchemaHTTPJSONOperationConfig

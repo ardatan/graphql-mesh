@@ -56,7 +56,6 @@ export default class JsonSchemaHandler implements MeshHandler {
       operationHeaders: this.config.operationHeaders,
       baseUrl: this.config.baseUrl,
       pubsub: this.pubsub,
-      throwOnHttpError: this.config.throwOnHttpError,
     });
     return {
       schema,

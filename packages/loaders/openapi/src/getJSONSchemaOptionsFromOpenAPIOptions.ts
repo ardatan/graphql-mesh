@@ -1,7 +1,12 @@
 import { getInterpolatedHeadersFactory, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { JSONSchemaObject } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
-import { HTTPMethod, JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from '@omnigraph/json-schema';
+import {
+  HTTPMethod,
+  JSONSchemaHTTPJSONOperationConfig,
+  JSONSchemaOperationConfig,
+  JSONSchemaOperationResponseConfig,
+} from '@omnigraph/json-schema';
 import { env } from 'process';
 import { getFieldNameFromPath } from './utils';
 
@@ -13,7 +18,6 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   baseUrl?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
-  respectErrorResponses?: boolean;
 }
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions({
@@ -24,7 +28,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   baseUrl,
   schemaHeaders,
   operationHeaders,
-  respectErrorResponses,
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
@@ -54,7 +57,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         description: methodObj.description || methodObj.summary,
         schemaHeaders,
         operationHeaders,
-      } as JSONSchemaHTTPJSONOperationConfig;
+        responseByStatusCode: {},
+      } as JSONSchemaHTTPJSONOperationConfig & {
+        responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
+      };
       operations.push(operationConfig);
       for (const paramObjIndex in methodObj.parameters) {
         const paramObj = methodObj.parameters[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
@@ -129,16 +135,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           .join('~1')}/${method}/requestBody/content/${contentKey}/schema`;
       }
 
-      const responseSchemaUnion = (operationConfig.responseSchema = {
-        oneOf: [],
-      }) as JSONSchemaObject;
+      const responseByStatusCode = operationConfig.responseByStatusCode;
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
-        // Only take successful responses
-        if (!respectErrorResponses && !(responseKey.startsWith('2') || responseKey === 'default')) {
-          continue;
-        }
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
         let schemaObj: JSONSchemaObject;
 
@@ -146,20 +146,20 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           const contentKey = Object.keys(responseObj.content)[0];
           schemaObj = responseObj.content[contentKey].schema as any;
           if (schemaObj) {
-            responseSchemaUnion.oneOf.push({
-              $ref: `${oasFilePath}#/paths/${relativePath
+            responseByStatusCode[responseKey] = {
+              responseSchema: `${oasFilePath}#/paths/${relativePath
                 .split('/')
                 .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`,
-            });
+            };
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;
           if (schemaObj) {
-            responseSchemaUnion.oneOf.push({
-              $ref: `${oasFilePath}#/paths/${relativePath
+            responseByStatusCode[responseKey] = {
+              responseSchema: `${oasFilePath}#/paths/${relativePath
                 .split('/')
                 .join('~1')}/${method}/responses/${responseKey}/schema`,
-            });
+            };
           }
         }
 
@@ -172,17 +172,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
           operationConfig.requestSchema.title = operationConfig.field + '_request';
         }
-
-        // If we don't need unsuccessful response types, just break the loop to have singular response type
-        if (!respectErrorResponses) {
-          break;
-        }
-      }
-
-      // If response types are singular, no need to have unions
-      if (responseSchemaUnion.oneOf.length <= 1) {
-        operationConfig.responseSchema =
-          (responseSchemaUnion.oneOf[0] as JSONSchemaObject)?.$ref || responseSchemaUnion.oneOf[0];
       }
     }
   }

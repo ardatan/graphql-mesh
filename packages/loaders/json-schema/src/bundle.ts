@@ -64,7 +64,6 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   logger?: Logger;
   baseUrl?: string;
   operationHeaders?: Record<string, string>;
-  throwOnHttpError?: boolean;
 }
 
 /**
@@ -86,7 +85,6 @@ export async function getGraphQLSchemaFromBundle(
     logger = new DefaultLogger(name),
     baseUrl: overwrittenBaseUrl,
     operationHeaders: additionalOperationHeaders = {},
-    throwOnHttpError,
   }: JSONSchemaLoaderBundleToGraphQLSchemaOptions = {}
 ): Promise<GraphQLSchema> {
   const fullyDeferencedSchema = await dereferenceObject(referencedSchema, {
@@ -102,6 +100,5 @@ export async function getGraphQLSchemaFromBundle(
     baseUrl: overwrittenBaseUrl || bundledBaseUrl,
     operations,
     operationHeaders,
-    throwOnHttpError,
   });
 }

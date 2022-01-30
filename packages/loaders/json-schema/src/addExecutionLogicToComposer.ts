@@ -8,7 +8,15 @@ import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
-import { getNamedType, GraphQLError, GraphQLOutputType, isListType, isNonNullType, isScalarType } from 'graphql';
+import {
+  getNamedType,
+  GraphQLError,
+  GraphQLOutputType,
+  isListType,
+  isNonNullType,
+  isScalarType,
+  isUnionType,
+} from 'graphql';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -17,7 +25,6 @@ export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
-  throwOnHttpError?: boolean;
 }
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
@@ -40,7 +47,6 @@ export async function addExecutionLogicToComposer(
     operationHeaders,
     baseUrl,
     pubsub: globalPubsub,
-    throwOnHttpError = true,
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(() => `Attaching execution logic to the schema`);
@@ -201,13 +207,16 @@ export async function addExecutionLogicToComposer(
           });
         }
 
-        if (throwOnHttpError && !response.status.toString().startsWith('2')) {
-          return createError(`HTTP Error: ${response.status}`, {
-            url: fullPath,
-            method: httpMethod,
-            ...(response.statusText ? { status: response.statusText } : {}),
-            responseJson,
-          });
+        if (!response.status.toString().startsWith('2')) {
+          const returnNamedGraphQLType = getNamedType(field.type.getType());
+          if (!isUnionType(returnNamedGraphQLType)) {
+            return createError(`HTTP Error: ${response.status}`, {
+              url: fullPath,
+              method: httpMethod,
+              ...(response.statusText ? { status: response.statusText } : {}),
+              responseJson,
+            });
+          }
         }
 
         operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
@@ -222,7 +231,15 @@ export async function addExecutionLogicToComposer(
           operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
           responseJson = responseJson[0];
         }
-        return responseJson;
+        return {
+          ...responseJson,
+          __response: {
+            url: fullPath,
+            method: httpMethod,
+            status: response.status,
+            statusText: response.statusText,
+          },
+        };
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);

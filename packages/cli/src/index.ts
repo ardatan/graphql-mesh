@@ -3,7 +3,7 @@ import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import {
@@ -67,15 +67,18 @@ export async function graphqlMesh() {
             dir: baseDir,
             require: ['graphql-import-node/register'],
           });
-          defaultImportFn(join(baseDir, 'tsconfig.json'))
-            .then(tsConfig => {
-              tsConfig = tsConfig.default;
+          try {
+            const tsConfigStr = readFileSync(join(baseDir, 'tsconfig.json'), 'utf-8');
+            const tsConfig = JSON.parse(tsConfigStr);
+            if (tsConfig.compilerOptions?.paths) {
               tsConfigPathsRegister({
                 baseUrl: baseDir,
                 paths: tsConfig.compilerOptions.paths,
               });
-            })
-            .catch(() => {});
+            }
+          } catch (e) {
+            logger.warn(e);
+          }
         }
         if (existsSync(join(baseDir, '.env'))) {
           dotEnvRegister({

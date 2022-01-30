@@ -1,13 +1,41 @@
-import { GraphQLError, GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
 import { ObjectTypeComposer } from 'graphql-compose';
 import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
 
-export function getTypeResolverFromOutputTCs(ajv: Ajv, outputTypeComposers: ObjectTypeComposer[]) {
-  return function resolveType(data: any, content: any, info: GraphQLResolveInfo) {
+export function getTypeResolverFromOutputTCs(
+  ajv: Ajv,
+  outputTypeComposers: ObjectTypeComposer[],
+  statusCodeOneOfIndexMap?: Record<string, number>
+): GraphQLTypeResolver<any, any> {
+  return function resolveType(data: any, context: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       return data.__typename;
     } else if (data.resourceType) {
       return data.resourceType;
+    }
+    if (data.__response && statusCodeOneOfIndexMap) {
+      const responseData: {
+        status: number;
+        url: string;
+        statusText: string;
+      } = data.__response;
+      if (responseData.status in statusCodeOneOfIndexMap) {
+        const oneOfIndex = statusCodeOneOfIndexMap[responseData.status];
+        return outputTypeComposers[oneOfIndex].getTypeName();
+      } else {
+        return new GraphQLError(
+          `HTTP Error: ${data.__statusCode}`,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          {
+            ...responseData,
+            responseJson: data,
+          }
+        );
+      }
     }
     const validationErrors: Record<string, ErrorObject[]> = {};
     for (const outputTypeComposer of outputTypeComposers) {

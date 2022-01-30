@@ -22,6 +22,7 @@ export interface GetUnionTypeComposersOpts {
   subSchema: JSONSchemaObject;
   generateInterfaceFromSharedFields: boolean;
   validateWithJSONSchema: (data: any) => boolean;
+  statusCodeOneOfIndexMap?: Record<string, number>;
 }
 
 export function getUnionTypeComposers({
@@ -31,6 +32,7 @@ export function getUnionTypeComposers({
   subSchema,
   generateInterfaceFromSharedFields,
   validateWithJSONSchema,
+  statusCodeOneOfIndexMap,
 }: GetUnionTypeComposersOpts) {
   // Filter null types
   typeComposersList = typeComposersList.filter(
@@ -97,7 +99,7 @@ export function getUnionTypeComposers({
       }
     }
 
-    const resolveType = getTypeResolverFromOutputTCs(ajv, outputTypeComposers);
+    const resolveType = getTypeResolverFromOutputTCs(ajv, outputTypeComposers, statusCodeOneOfIndexMap);
     if (sharedFields && Object.keys(sharedFields).length > 0) {
       output = schemaComposer.createInterfaceTC({
         name: getValidTypeName({

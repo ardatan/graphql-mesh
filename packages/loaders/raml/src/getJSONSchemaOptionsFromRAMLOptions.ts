@@ -1,5 +1,5 @@
 import { getInterpolatedHeadersFactory, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { HTTPMethod, JSONSchemaOperationConfig } from '@omnigraph/json-schema';
+import { HTTPMethod, JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from '@omnigraph/json-schema';
 import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
 import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
@@ -37,6 +37,11 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           headers: schemaHeadersFactory({ env }),
         });
         const content = await fetchResponse.text();
+        if (!content.includes('RAML')) {
+          return {
+            errorMessage: `RAML API Document at ${url} is not a RAML API Document; ${content}`,
+          };
+        }
         return {
           content,
         };
@@ -71,8 +76,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     for (const methodNode of resourceNode.methods()) {
       let requestSchema: string | JSONSchemaObject;
       let requestTypeName: string;
-      let responseSchema: string | JSONSchemaObject;
-      let responseTypeName: string;
+      const responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig> = {};
       const method = methodNode.method().toUpperCase() as HTTPMethod;
       let fieldName = methodNode.displayName()?.replace('GET_', '');
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
@@ -131,26 +135,29 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         }
       }
       for (const responseNode of methodNode.responses()) {
-        if (responseNode.code().value().startsWith('2')) {
-          for (const bodyNode of responseNode.body()) {
-            if (bodyNode.name().includes('application/json')) {
-              const bodyJson = bodyNode.toJSON();
-              if (bodyJson.schemaPath) {
-                const schemaPath = bodyJson.schemaPath;
-                responseSchema = schemaPath;
-                const typeName = pathTypeMap.get(schemaPath);
-                responseTypeName = typeName;
-              } else if (bodyJson.type) {
-                const typeName = asArray(bodyJson.type)[0];
-                responseTypeName = typeName;
-                const schemaPath = typePathMap.get(typeName);
-                responseSchema = schemaPath;
-              }
+        const statusCode = responseNode.code().value();
+        for (const bodyNode of responseNode.body()) {
+          if (bodyNode.name().includes('application/json')) {
+            const bodyJson = bodyNode.toJSON();
+            const responseByStatusCodeConfig: JSONSchemaOperationResponseConfig = {};
+            if (bodyJson.schemaPath) {
+              const schemaPath = bodyJson.schemaPath;
+              responseByStatusCodeConfig.responseSchema = schemaPath;
+              const typeName = pathTypeMap.get(schemaPath);
+              responseByStatusCodeConfig.responseTypeName = typeName;
+            } else if (bodyJson.type) {
+              const typeName = asArray(bodyJson.type)[0];
+              responseByStatusCodeConfig.responseTypeName = typeName;
+              const schemaPath = typePathMap.get(typeName);
+              responseByStatusCodeConfig.responseSchema = schemaPath;
             }
+            responseByStatusCode[statusCode] = responseByStatusCodeConfig;
           }
         }
       }
-      fieldName = fieldName || getFieldNameFromPath(originalFullRelativeUrl, method, responseTypeName);
+      fieldName =
+        fieldName ||
+        getFieldNameFromPath(originalFullRelativeUrl, method, responseByStatusCode['200']?.responseTypeName);
       if (fieldName) {
         const operationType: any = method === 'GET' ? 'query' : 'mutation';
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);
@@ -162,8 +169,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           method,
           requestSchema,
           requestTypeName,
-          responseSchema,
-          responseTypeName,
+          responseByStatusCode,
         });
       }
     }
