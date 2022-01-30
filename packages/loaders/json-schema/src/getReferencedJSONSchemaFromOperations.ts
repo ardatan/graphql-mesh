@@ -113,6 +113,7 @@ export async function getReferencedJSONSchemaFromOperations({
           schemaHeaders,
         });
         statusCodeOneOfIndexMap[statusCode] = responseSchemas.length;
+        responseOperationSchema.title = responseOperationSchema.title || `${fieldName}_${statusCode}_response`;
         responseSchemas.push(responseOperationSchema);
       }
       if (responseSchemas.length === 1) {
@@ -120,6 +121,7 @@ export async function getReferencedJSONSchemaFromOperations({
       }
       rootTypeDefinition.properties[fieldName] = {
         $comment: `statusCodeOneOfIndexMap:${JSON.stringify(statusCodeOneOfIndexMap)}`,
+        title: fieldName + '_response',
         oneOf: responseSchemas,
       };
     } else {

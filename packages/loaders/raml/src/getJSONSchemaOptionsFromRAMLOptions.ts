@@ -77,7 +77,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       const queryParameters: api10.TypeDeclaration[] = [];
       const bodyNodes: api10.TypeDeclaration[] = [];
       const responses: api10.Response[] = [];
-      for (const traitRef of resourceNode.is()) {
+      for (const traitRef of methodNode.is()) {
         const traitNode = traitRef.trait();
         if (traitNode) {
           queryParameters.push(...traitNode.queryParameters());
@@ -111,14 +111,19 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         if (queryParameterNodeJson.required) {
           (requestSchema as JSONSchemaObject).required.push(parameterName);
         }
-        if ('enum' in queryParameterNodeJson) {
+        if (queryParameterNodeJson.enum) {
           (requestSchema as JSONSchemaObject).properties[parameterName] = {
             type: 'string',
             enum: queryParameterNodeJson.enum,
           };
+        }
+        if (queryParameterNodeJson.type) {
+          (requestSchema as JSONSchemaObject).properties[parameterName] = {
+            type: asArray(queryParameterNodeJson.type)[0] || 'string',
+          };
         } else {
           (requestSchema as JSONSchemaObject).properties[parameterName] = toJsonSchema(
-            queryParameterNodeJson.example || queryParameterNodeJson.default,
+            queryParameterNodeJson.example ?? queryParameterNodeJson.default,
             {
               required: false,
               strings: {
@@ -126,6 +131,9 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
               },
             }
           );
+        }
+        if (queryParameterNodeJson.displayName) {
+          (requestSchema as JSONSchemaObject).properties[parameterName].title = queryParameterNodeJson.displayName;
         }
         if (queryParameterNode.description) {
           (requestSchema as JSONSchemaObject).properties[parameterName].description =
