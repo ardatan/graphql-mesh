@@ -115,6 +115,9 @@ export async function getReferencedJSONSchemaFromOperations({
         statusCodeOneOfIndexMap[statusCode] = responseSchemas.length;
         responseSchemas.push(responseOperationSchema);
       }
+      if (responseSchemas.length === 1) {
+        rootTypeDefinition.properties[fieldName] = responseSchemas[0];
+      }
       rootTypeDefinition.properties[fieldName] = {
         $comment: `statusCodeOneOfIndexMap:${JSON.stringify(statusCodeOneOfIndexMap)}`,
         oneOf: responseSchemas,
