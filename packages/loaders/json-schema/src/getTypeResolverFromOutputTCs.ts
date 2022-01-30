@@ -24,7 +24,7 @@ export function getTypeResolverFromOutputTCs(
         return outputTypeComposers[oneOfIndex].getTypeName();
       } else {
         return new GraphQLError(
-          `HTTP Error: ${data.__statusCode}`,
+          `HTTP Error: ${responseData.status}`,
           undefined,
           undefined,
           undefined,
