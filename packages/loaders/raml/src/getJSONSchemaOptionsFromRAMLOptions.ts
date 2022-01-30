@@ -37,9 +37,9 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           headers: schemaHeadersFactory({ env }),
         });
         const content = await fetchResponse.text();
-        if (!content.includes('RAML')) {
+        if (fetchResponse.status !== 200) {
           return {
-            errorMessage: `RAML API Document at ${url} is not a RAML API Document; ${content}`,
+            errorMessage: content,
           };
         }
         return {
@@ -124,6 +124,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           const bodyJson = bodyNode.toJSON();
           if (bodyJson.schemaPath) {
             const schemaPath = bodyJson.schemaPath;
+            const typeName = pathTypeMap.get(schemaPath);
             requestTypeName = pathTypeMap.get(schemaPath);
             requestSchema = schemaPath;
           } else if (bodyJson.type) {
@@ -143,8 +144,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
             if (bodyJson.schemaPath) {
               const schemaPath = bodyJson.schemaPath;
               responseByStatusCodeConfig.responseSchema = schemaPath;
-              const typeName = pathTypeMap.get(schemaPath);
-              responseByStatusCodeConfig.responseTypeName = typeName;
+              responseByStatusCodeConfig.responseTypeName = pathTypeMap.get(schemaPath);
             } else if (bodyJson.type) {
               const typeName = asArray(bodyJson.type)[0];
               responseByStatusCodeConfig.responseTypeName = typeName;
