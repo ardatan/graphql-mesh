@@ -74,6 +74,20 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   const cwd = getCwd(ramlAbsolutePath);
   for (const resourceNode of ramlAPI.allResources()) {
     for (const methodNode of resourceNode.methods()) {
+      const queryParameters: api10.TypeDeclaration[] = [];
+      const bodyNodes: api10.TypeDeclaration[] = [];
+      const responses: api10.Response[] = [];
+      for (const traitRef of resourceNode.is()) {
+        const traitNode = traitRef.trait();
+        if (traitNode) {
+          queryParameters.push(...traitNode.queryParameters());
+          bodyNodes.push(...traitNode.body());
+          responses.push(...traitNode.responses());
+        }
+      }
+      queryParameters.push(...methodNode.queryParameters());
+      bodyNodes.push(...methodNode.body());
+      responses.push(...methodNode.responses());
       let requestSchema: string | JSONSchemaObject;
       let requestTypeName: string;
       const responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig> = {};
@@ -86,7 +100,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         const paramName = uriParameterNode.name();
         fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${paramName}}`);
       }
-      for (const queryParameterNode of methodNode.queryParameters()) {
+      for (const queryParameterNode of queryParameters) {
         requestSchema = requestSchema || {
           type: 'object',
           properties: {},
@@ -119,7 +133,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         }
       }
 
-      for (const bodyNode of methodNode.body()) {
+      for (const bodyNode of bodyNodes) {
         if (bodyNode.name().includes('application/json')) {
           const bodyJson = bodyNode.toJSON();
           if (bodyJson.schemaPath) {
@@ -134,7 +148,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           }
         }
       }
-      for (const responseNode of methodNode.responses()) {
+      for (const responseNode of responses) {
         const statusCode = responseNode.code().value();
         for (const bodyNode of responseNode.body()) {
           if (bodyNode.name().includes('application/json')) {
