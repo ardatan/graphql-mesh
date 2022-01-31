@@ -47,7 +47,6 @@ export interface Config {
    * Provide a query or queries for GraphQL Playground, validation and SDK Generation
    * The value can be the file path, glob expression for the file paths or the SDL.
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
    */
   documents?: string[];
   /**
@@ -344,7 +343,7 @@ export interface JsonSchemaHandler {
    * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
-  throwOnHttpError?: boolean;
+  ignoreErrorResponses?: boolean;
 }
 export interface JsonSchemaHTTPOperation {
   field: string;
@@ -666,6 +665,7 @@ export interface NewOpenapiHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  ignoreErrorResponses?: boolean;
 }
 /**
  * Handler for OData
@@ -840,6 +840,7 @@ export interface RAMLHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  ignoreErrorResponses?: boolean;
 }
 /**
  * Handler for SOAP
@@ -1293,11 +1294,11 @@ export interface PrefixTransformConfig {
    */
   ignore?: string[];
   /**
-   * Changes root types and changes the field names
+   * Changes root types and changes the field names (default: false)
    */
   includeRootOperations?: boolean;
   /**
-   * Changes types
+   * Changes types (default: true)
    */
   includeTypes?: boolean;
 }
@@ -1575,7 +1576,7 @@ export interface LocalforageConfig {
 }
 export interface RedisConfig {
   host?: string;
-  port?: number;
+  port?: string;
   password?: string;
   url?: string;
 }

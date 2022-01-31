@@ -7,19 +7,21 @@ const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
 function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
   if (typeof schema === 'object' && schema != null) {
-    const titleReserved = schema.title;
-    if (titleReserved) {
-      schema.title = undefined;
+    if (!schema.$comment) {
+      const titleReserved = schema.title;
+      if (titleReserved) {
+        schema.title = undefined;
+      }
+      const stringified = inspect(schema, undefined, 3);
+      if (titleReserved) {
+        schema.title = titleReserved;
+      }
+      const seen = seenMap.get(stringified);
+      if (seen) {
+        return seen;
+      }
+      seenMap.set(stringified, schema);
     }
-    const stringified = inspect(schema, undefined, 3);
-    if (titleReserved) {
-      schema.title = titleReserved;
-    }
-    const seen = seenMap.get(stringified);
-    if (seen) {
-      return seen;
-    }
-    seenMap.set(stringified, schema);
     for (const key in schema) {
       schema[key] = deduplicateJSONSchema(schema[key], seenMap);
     }

@@ -1,5 +1,5 @@
 import { getInterpolatedHeadersFactory, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { HTTPMethod, JSONSchemaOperationConfig } from '@omnigraph/json-schema';
+import { HTTPMethod, JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from '@omnigraph/json-schema';
 import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
 import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
@@ -37,6 +37,11 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           headers: schemaHeadersFactory({ env }),
         });
         const content = await fetchResponse.text();
+        if (fetchResponse.status !== 200) {
+          return {
+            errorMessage: content,
+          };
+        }
         return {
           content,
         };
@@ -67,12 +72,29 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     }
   }
   const cwd = getCwd(ramlAbsolutePath);
+  const commonQueryParameters: api10.TypeDeclaration[] = [];
+  for (const traitNode of ramlAPI.traits()) {
+    commonQueryParameters.push(...traitNode.queryParameters());
+  }
   for (const resourceNode of ramlAPI.allResources()) {
     for (const methodNode of resourceNode.methods()) {
+      const queryParameters: api10.TypeDeclaration[] = [...commonQueryParameters];
+      const bodyNodes: api10.TypeDeclaration[] = [];
+      const responses: api10.Response[] = [];
+      for (const traitRef of methodNode.is()) {
+        const traitNode = traitRef.trait();
+        if (traitNode) {
+          queryParameters.push(...traitNode.queryParameters());
+          bodyNodes.push(...traitNode.body());
+          responses.push(...traitNode.responses());
+        }
+      }
+      queryParameters.push(...methodNode.queryParameters());
+      bodyNodes.push(...methodNode.body());
+      responses.push(...methodNode.responses());
       let requestSchema: string | JSONSchemaObject;
       let requestTypeName: string;
-      let responseSchema: string | JSONSchemaObject;
-      let responseTypeName: string;
+      const responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig> = {};
       const method = methodNode.method().toUpperCase() as HTTPMethod;
       let fieldName = methodNode.displayName()?.replace('GET_', '');
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
@@ -82,7 +104,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         const paramName = uriParameterNode.name();
         fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${paramName}}`);
       }
-      for (const queryParameterNode of methodNode.queryParameters()) {
+      for (const queryParameterNode of queryParameters) {
         requestSchema = requestSchema || {
           type: 'object',
           properties: {},
@@ -93,14 +115,19 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         if (queryParameterNodeJson.required) {
           (requestSchema as JSONSchemaObject).required.push(parameterName);
         }
-        if ('enum' in queryParameterNodeJson) {
+        if (queryParameterNodeJson.enum) {
           (requestSchema as JSONSchemaObject).properties[parameterName] = {
             type: 'string',
             enum: queryParameterNodeJson.enum,
           };
+        }
+        if (queryParameterNodeJson.type) {
+          (requestSchema as JSONSchemaObject).properties[parameterName] = {
+            type: asArray(queryParameterNodeJson.type)[0] || 'string',
+          };
         } else {
           (requestSchema as JSONSchemaObject).properties[parameterName] = toJsonSchema(
-            queryParameterNodeJson.example || queryParameterNodeJson.default,
+            queryParameterNodeJson.example ?? queryParameterNodeJson.default,
             {
               required: false,
               strings: {
@@ -109,19 +136,22 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
             }
           );
         }
+        if (queryParameterNodeJson.displayName) {
+          (requestSchema as JSONSchemaObject).properties[parameterName].title = queryParameterNodeJson.displayName;
+        }
         if (queryParameterNode.description) {
           (requestSchema as JSONSchemaObject).properties[parameterName].description =
             queryParameterNodeJson.description;
         }
       }
 
-      for (const bodyNode of methodNode.body()) {
+      for (const bodyNode of bodyNodes) {
         if (bodyNode.name().includes('application/json')) {
           const bodyJson = bodyNode.toJSON();
           if (bodyJson.schemaPath) {
             const schemaPath = bodyJson.schemaPath;
-            requestTypeName = pathTypeMap.get(schemaPath);
             requestSchema = schemaPath;
+            requestTypeName = pathTypeMap.get(schemaPath);
           } else if (bodyJson.type) {
             const typeName = asArray(bodyJson.type)[0];
             requestTypeName = typeName;
@@ -130,27 +160,29 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           }
         }
       }
-      for (const responseNode of methodNode.responses()) {
-        if (responseNode.code().value().startsWith('2')) {
-          for (const bodyNode of responseNode.body()) {
-            if (bodyNode.name().includes('application/json')) {
-              const bodyJson = bodyNode.toJSON();
-              if (bodyJson.schemaPath) {
-                const schemaPath = bodyJson.schemaPath;
-                responseSchema = schemaPath;
-                const typeName = pathTypeMap.get(schemaPath);
-                responseTypeName = typeName;
-              } else if (bodyJson.type) {
-                const typeName = asArray(bodyJson.type)[0];
-                responseTypeName = typeName;
-                const schemaPath = typePathMap.get(typeName);
-                responseSchema = schemaPath;
-              }
+      for (const responseNode of responses) {
+        const statusCode = responseNode.code().value();
+        for (const bodyNode of responseNode.body()) {
+          if (bodyNode.name().includes('application/json')) {
+            const bodyJson = bodyNode.toJSON();
+            const responseByStatusCodeConfig: JSONSchemaOperationResponseConfig = {};
+            if (bodyJson.schemaPath) {
+              const schemaPath = bodyJson.schemaPath;
+              responseByStatusCodeConfig.responseSchema = schemaPath;
+              responseByStatusCodeConfig.responseTypeName = pathTypeMap.get(schemaPath);
+            } else if (bodyJson.type) {
+              const typeName = asArray(bodyJson.type)[0];
+              responseByStatusCodeConfig.responseTypeName = typeName;
+              const schemaPath = typePathMap.get(typeName);
+              responseByStatusCodeConfig.responseSchema = schemaPath;
             }
+            responseByStatusCode[statusCode] = responseByStatusCodeConfig;
           }
         }
       }
-      fieldName = fieldName || getFieldNameFromPath(originalFullRelativeUrl, method, responseTypeName);
+      fieldName =
+        fieldName ||
+        getFieldNameFromPath(originalFullRelativeUrl, method, responseByStatusCode['200']?.responseTypeName);
       if (fieldName) {
         const operationType: any = method === 'GET' ? 'query' : 'mutation';
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);
@@ -162,8 +194,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           method,
           requestSchema,
           requestTypeName,
-          responseSchema,
-          responseTypeName,
+          responseByStatusCode,
         });
       }
     }

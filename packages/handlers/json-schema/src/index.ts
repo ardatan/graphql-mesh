@@ -40,6 +40,7 @@ export default class JsonSchemaHandler implements MeshHandler {
         cwd: this.baseDir,
         logger: this.logger,
         fetch: this.fetch,
+        ignoreErrorResponses: this.config.ignoreErrorResponses,
       });
       const referencedSchema = await referenceJSONSchema(dereferencedSchema);
       await this.jsonSchema.set(referencedSchema);
@@ -56,7 +57,6 @@ export default class JsonSchemaHandler implements MeshHandler {
       operationHeaders: this.config.operationHeaders,
       baseUrl: this.config.baseUrl,
       pubsub: this.pubsub,
-      throwOnHttpError: this.config.throwOnHttpError,
     });
     return {
       schema,

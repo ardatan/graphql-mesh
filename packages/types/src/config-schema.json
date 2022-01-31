@@ -80,7 +80,7 @@
           "type": "string"
         },
         "port": {
-          "type": "integer"
+          "type": "string"
         },
         "password": {
           "type": "string"
@@ -911,7 +911,7 @@
           "additionalItems": false,
           "description": "Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation"
         },
-        "throwOnHttpError": {
+        "ignoreErrorResponses": {
           "type": "boolean"
         }
       },
@@ -1644,6 +1644,9 @@
         "operationHeaders": {
           "type": "object",
           "properties": {}
+        },
+        "ignoreErrorResponses": {
+          "type": "boolean"
         }
       },
       "required": ["oasFilePath"]
@@ -1904,6 +1907,9 @@
         "operationHeaders": {
           "type": "object",
           "properties": {}
+        },
+        "ignoreErrorResponses": {
+          "type": "boolean"
         }
       },
       "required": ["ramlFilePath"]
@@ -2540,11 +2546,11 @@
         },
         "includeRootOperations": {
           "type": "boolean",
-          "description": "Changes root types and changes the field names"
+          "description": "Changes root types and changes the field names (default: false)"
         },
         "includeTypes": {
           "type": "boolean",
-          "description": "Changes types"
+          "description": "Changes types (default: true)"
         }
       }
     },
@@ -3034,7 +3040,7 @@
         "type": "string"
       },
       "additionalItems": false,
-      "description": "Provide a query or queries for GraphQL Playground, validation and SDK Generation\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.\nBut TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)"
+      "description": "Provide a query or queries for GraphQL Playground, validation and SDK Generation\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported."
     },
     "logger": {
       "anyOf": [

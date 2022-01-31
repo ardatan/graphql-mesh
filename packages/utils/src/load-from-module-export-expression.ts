@@ -28,12 +28,7 @@ function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
   return importFn(modulePath).catch((e1: Error): any => {
     if (!isAbsolute(modulePath)) {
       const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
-      return importFn(absoluteModulePath).catch(e2 => {
-        if (e2.message.startsWith('Cannot find')) {
-          throw e1;
-        }
-        throw e2;
-      });
+      return importFn(absoluteModulePath);
     }
   });
 }

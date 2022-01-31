@@ -77,4 +77,4 @@ documents:
   - ./example-query.graphql
 
 serve:
-  customServerHandler: ./customServerHandler.js
+  customServerHandler: ./customServerHandler.ts

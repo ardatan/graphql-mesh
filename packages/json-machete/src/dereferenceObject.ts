@@ -135,7 +135,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           if (result && !result.$resolvedRef) {
             result.$resolvedRef = refPath;
           }
-          if ((obj as any).title) {
+          if ((obj as any).title && !result.title) {
             result.title = (obj as any).title;
           }
           return result;

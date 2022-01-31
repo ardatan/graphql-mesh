@@ -149,6 +149,11 @@ export function getComposerFromJSONSchema(
       }
 
       if (subSchema.oneOf && !subSchema.properties) {
+        let statusCodeOneOfIndexMap: Record<string, number> | undefined;
+        if (subSchema.$comment?.startsWith('statusCodeOneOfIndexMap:')) {
+          const statusCodeOneOfIndexMapStr = subSchema.$comment.replace('statusCodeOneOfIndexMap:', '');
+          statusCodeOneOfIndexMap = JSON.parse(statusCodeOneOfIndexMapStr);
+        }
         const isPlural = (subSchema.oneOf as TypeComposers[]).some(({ output }) => 'ofType' in output);
         if (isPlural) {
           const { input, output } = getUnionTypeComposers({
@@ -161,6 +166,7 @@ export function getComposerFromJSONSchema(
             subSchema,
             generateInterfaceFromSharedFields,
             validateWithJSONSchema,
+            statusCodeOneOfIndexMap,
           });
           return {
             input: input.getTypePlural(),
@@ -174,6 +180,7 @@ export function getComposerFromJSONSchema(
           subSchema,
           generateInterfaceFromSharedFields,
           validateWithJSONSchema,
+          statusCodeOneOfIndexMap,
         });
       }
 

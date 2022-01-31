@@ -23,6 +23,7 @@ export async function createBundle(
     fetch,
     schemaHeaders,
     operationHeaders,
+    ignoreErrorResponses: openApiLoaderOptions.ignoreErrorResponses,
   });
 }
 

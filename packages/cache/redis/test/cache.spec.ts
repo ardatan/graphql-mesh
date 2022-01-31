@@ -1,3 +1,4 @@
+/* eslint-disable no-new */
 import RedisCache from '../src';
 import Redis from 'ioredis';
 
@@ -7,16 +8,10 @@ describe('redis', () => {
   beforeEach(() => jest.clearAllMocks());
 
   describe('constructor', () => {
-    it('passes configuration to redis client with default options, no config', async () => {
+    it('never call Redis constructor if no config is provided', async () => {
       new RedisCache();
 
-      expect(Redis).toHaveBeenCalledWith({
-        enableAutoPipelining: true,
-        lazyConnect: true,
-        password: undefined,
-        host: undefined,
-        port: undefined,
-      });
+      expect(Redis).toHaveBeenCalledTimes(0);
     });
 
     it('passes configuration to redis client with default options, url case', async () => {
@@ -33,7 +28,7 @@ describe('redis', () => {
         host: 'localhost',
         lazyConnect: true,
         password: 'testpassword',
-        port: '6379',
+        port: 6379,
       });
     });
 

@@ -10,15 +10,8 @@ GraphQL Mesh supports TypeScript, and you can easily use it to generate typings 
 
 GraphQL Mesh allows for API handler packages to provide TypeScript typings in order to have types support in your code.
 
-First you need to install `ts-node` to allow NodeJS handle `.ts` files before adding `require` section to your configuration file like below:
-
-<PackageInstall packages="ts-node" />
-
 Then in your `.meshrc.yml` file;
 ```yaml
-require:
-  - ts-node/register/transpile-only
-
 additionalResolvers:
   - ./src/mesh-resolvers.ts
 ```

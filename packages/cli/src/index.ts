@@ -3,7 +3,7 @@ import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import {
@@ -21,6 +21,9 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { YamlConfig } from '@graphql-mesh/types';
 import { serveSource } from './commands/serve/serve-source';
+import { register as tsNodeRegister } from 'ts-node';
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+import { config as dotEnvRegister } from 'dotenv';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -55,6 +58,40 @@ export async function graphqlMesh() {
           baseDir = dir;
         } else {
           baseDir = resolve(cwd(), dir);
+        }
+        const tsConfigExists = existsSync(join(baseDir, 'tsconfig.json'));
+        tsNodeRegister({
+          transpileOnly: true,
+          typeCheck: false,
+          preferTsExts: true,
+          dir: baseDir,
+          require: ['graphql-import-node/register'],
+          ...(tsConfigExists
+            ? {}
+            : {
+                compilerOptions: {
+                  module: 'commonjs',
+                },
+              }),
+        });
+        if (tsConfigExists) {
+          try {
+            const tsConfigStr = readFileSync(join(baseDir, 'tsconfig.json'), 'utf-8');
+            const tsConfig = JSON.parse(tsConfigStr);
+            if (tsConfig.compilerOptions?.paths) {
+              tsConfigPathsRegister({
+                baseUrl: baseDir,
+                paths: tsConfig.compilerOptions.paths,
+              });
+            }
+          } catch (e) {
+            logger.warn(e);
+          }
+        }
+        if (existsSync(join(baseDir, '.env'))) {
+          dotEnvRegister({
+            path: join(baseDir, '.env'),
+          });
         }
       },
     })
@@ -202,10 +239,14 @@ export async function graphqlMesh() {
         }
       }
     )
-    .command(
+    .command<{ tsOnly: boolean }>(
       'build',
       'Builds artifacts',
-      builder => {},
+      builder => {
+        builder.option('tsOnly', {
+          type: 'boolean',
+        });
+      },
       async args => {
         try {
           const rootArtifactsName = '.mesh';
@@ -272,6 +313,7 @@ export async function graphqlMesh() {
             meshConfigCode: meshConfig.code,
             logger,
             sdkConfig: meshConfig.config.sdk,
+            tsOnly: args.tsOnly,
           });
 
           logger.info(`Cleanup`);

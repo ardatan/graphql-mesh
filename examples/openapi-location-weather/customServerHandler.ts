@@ -1,10 +1,7 @@
-const { ApolloServer } = require('apollo-server');
+import { ApolloServer } from 'apollo-server';
+import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 
-module.exports = async ({
-  getBuiltMesh,
-  documents,
-  logger
-}) => {
+export default async function ({ getBuiltMesh, documents, logger }: ServeMeshOptions): Promise<void> {
   const { schema } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,
@@ -20,4 +17,4 @@ module.exports = async ({
 
   const { url } = await apolloServer.listen(4000);
   logger.info(`🚀 Server ready at ${url}`);
-};
+}

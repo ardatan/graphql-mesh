@@ -36,6 +36,7 @@ export default class OpenAPIHandler implements MeshHandler {
         cwd: this.baseDir,
         fetch: this.fetch,
         logger: this.logger,
+        ignoreErrorResponses: this.config.ignoreErrorResponses,
       });
     });
   }
