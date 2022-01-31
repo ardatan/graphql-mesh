@@ -38,7 +38,7 @@ import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batc
 import { WrapQuery } from '@graphql-tools/wrap';
 import { inspect, isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
 
-export interface MeshInstance {
+export interface MeshInstance<TMeshContext = any> {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
@@ -48,6 +48,7 @@ export interface MeshInstance {
   cache: KeyValueCache;
   liveQueryStore: InMemoryLiveQueryStore;
   logger: Logger;
+  meshContext: TMeshContext;
   /**
    * @deprecated
    * contextBuilder has no effect in the provided context anymore.
@@ -56,7 +57,7 @@ export interface MeshInstance {
   contextBuilder: (ctx: any) => Promise<any>;
 }
 
-export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
+export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Promise<MeshInstance<TMeshContext>> {
   const rawSources: RawSourceOutput[] = [];
   const { pubsub, cache, logger = new DefaultLogger('🕸️') } = options;
 
@@ -369,6 +370,7 @@ ${inspect({
     liveQueryStore,
     logger,
     contextBuilder: async ctx => ctx || {},
+    meshContext: meshContext as TMeshContext,
   };
 }
 

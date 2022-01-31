@@ -242,9 +242,9 @@ export const documentsInSDL = /*#__PURE__*/ [${documents.map(
             documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
           )}];
 
-export async function getBuiltMesh(): Promise<MeshInstance> {
+export async function getBuiltMesh(): Promise<MeshInstance<MeshContext>> {
   const meshConfig = await getMeshOptions();
-  return getMesh(meshConfig);
+  return getMesh<MeshContext>(meshConfig);
 }
 
 export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
