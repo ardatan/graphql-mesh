@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.50.0
+
+### Minor Changes
+
+- 020431bdc: feat(cli): ignore ts errors in artifacts
+- 020431bdc: feat(cli): built-in typescript support
+- 020431bdc: feat(cli): add field descriptions to InContext SDK
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/config@0.28.0
+  - @graphql-mesh/runtime@0.29.1
+  - @graphql-mesh/utils@0.26.2
+  - @graphql-mesh/store@0.3.10
+
 ## 0.49.0
 
 ### Minor Changes

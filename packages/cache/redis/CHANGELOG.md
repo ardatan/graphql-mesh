@@ -1,5 +1,20 @@
 # @graphql-mesh/cache-redis
 
+## 0.7.0
+
+### Minor Changes
+
+- 020431bdc: feat(redis): fallback to inmemory cache and support env interpolation
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.40
+  - @graphql-mesh/utils@0.26.2
+
 ## 0.6.33
 
 ### Patch Changes

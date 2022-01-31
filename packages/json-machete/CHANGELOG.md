@@ -1,5 +1,15 @@
 # json-machete
 
+## 0.4.0
+
+### Minor Changes
+
+- 020431bdc: enhance(json-machete): do not look for annotated schemas
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.26.2
+
 ## 0.3.7
 
 ### Patch Changes

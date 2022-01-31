@@ -1,6 +1,6 @@
 {
   "name": "openapi-react-weatherbit",
-  "version": "0.3.124",
+  "version": "0.3.125",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.6",
@@ -13,15 +13,15 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "typescript": "~4.0.5",
-    "@graphql-mesh/runtime": "0.29.0",
-    "@graphql-mesh/openapi": "0.23.4",
-    "@graphql-mesh/cache-localforage": "0.5.28",
-    "@graphql-mesh/merger-bare": "0.13.1",
-    "@graphql-mesh/transform-cache": "0.11.10",
+    "@graphql-mesh/runtime": "0.29.1",
+    "@graphql-mesh/openapi": "0.23.5",
+    "@graphql-mesh/cache-localforage": "0.5.29",
+    "@graphql-mesh/merger-bare": "0.13.2",
+    "@graphql-mesh/transform-cache": "0.11.11",
     "graphql": "16.0.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.49.0",
+    "@graphql-mesh/cli": "0.50.0",
     "parcel": "2.0.0-beta.3.1"
   },
   "scripts": {
