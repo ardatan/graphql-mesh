@@ -72,9 +72,13 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     }
   }
   const cwd = getCwd(ramlAbsolutePath);
+  const commonQueryParameters: api10.TypeDeclaration[] = [];
+  for (const traitNode of ramlAPI.traits()) {
+    commonQueryParameters.push(...traitNode.queryParameters());
+  }
   for (const resourceNode of ramlAPI.allResources()) {
     for (const methodNode of resourceNode.methods()) {
-      const queryParameters: api10.TypeDeclaration[] = [];
+      const queryParameters: api10.TypeDeclaration[] = [...commonQueryParameters];
       const bodyNodes: api10.TypeDeclaration[] = [];
       const responses: api10.Response[] = [];
       for (const traitRef of methodNode.is()) {
