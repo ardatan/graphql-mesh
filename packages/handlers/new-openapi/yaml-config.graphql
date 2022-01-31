@@ -10,4 +10,5 @@ type NewOpenapiHandler {
   baseUrl: String
   schemaHeaders: JSON
   operationHeaders: JSON
+  ignoreErrorResponses: Boolean
 }

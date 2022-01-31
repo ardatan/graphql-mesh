@@ -80,10 +80,12 @@ export async function getReferencedJSONSchemaFromOperations({
   operations,
   cwd,
   schemaHeaders,
+  ignoreErrorResponses,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   schemaHeaders?: { [key: string]: string };
+  ignoreErrorResponses?: boolean;
 }) {
   const finalJsonSchema: JSONSchema = {
     type: 'object',
@@ -107,6 +109,9 @@ export async function getReferencedJSONSchemaFromOperations({
       const statusCodeOneOfIndexMap: Record<string, number> = {};
       const responseSchemas: JSONSchemaObject[] = [];
       for (const statusCode in operationConfig.responseByStatusCode) {
+        if (ignoreErrorResponses && !statusCode.startsWith('2')) {
+          continue;
+        }
         const responseOperationConfig = operationConfig.responseByStatusCode[statusCode];
         const responseOperationSchema = await handleOperationResponseConfig(responseOperationConfig, {
           cwd,

@@ -7,4 +7,5 @@ type RAMLHandler {
   baseUrl: String
   schemaHeaders: JSON
   operationHeaders: JSON
+  ignoreErrorResponses: Boolean
 }

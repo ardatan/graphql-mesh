@@ -10,6 +10,7 @@ type JsonSchemaHandler @md {
   operationHeaders: JSON
   schemaHeaders: JSON
   operations: [JsonSchemaOperation!]!
+  ignoreErrorResponses: Boolean
 }
 
 enum JsonSchemaOperationType {

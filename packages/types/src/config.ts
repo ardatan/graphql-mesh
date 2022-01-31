@@ -343,6 +343,7 @@ export interface JsonSchemaHandler {
    * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
+  ignoreErrorResponses?: boolean;
 }
 export interface JsonSchemaHTTPOperation {
   field: string;
@@ -664,6 +665,7 @@ export interface NewOpenapiHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  ignoreErrorResponses?: boolean;
 }
 /**
  * Handler for OData
@@ -838,6 +840,7 @@ export interface RAMLHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  ignoreErrorResponses?: boolean;
 }
 /**
  * Handler for SOAP

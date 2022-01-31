@@ -910,6 +910,9 @@
           },
           "additionalItems": false,
           "description": "Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation"
+        },
+        "ignoreErrorResponses": {
+          "type": "boolean"
         }
       },
       "required": ["operations"]
@@ -1641,6 +1644,9 @@
         "operationHeaders": {
           "type": "object",
           "properties": {}
+        },
+        "ignoreErrorResponses": {
+          "type": "boolean"
         }
       },
       "required": ["oasFilePath"]
@@ -1901,6 +1907,9 @@
         "operationHeaders": {
           "type": "object",
           "properties": {}
+        },
+        "ignoreErrorResponses": {
+          "type": "boolean"
         }
       },
       "required": ["ramlFilePath"]

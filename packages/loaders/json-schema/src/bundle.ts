@@ -22,6 +22,7 @@ export interface JSONSchemaLoaderBundleOptions {
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
   cwd?: string;
+  ignoreErrorResponses?: boolean;
 
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   logger?: Logger;
@@ -37,6 +38,7 @@ export async function createBundle(
     cwd = process.cwd(),
     fetch = crossUndiciFetch,
     logger = new DefaultLogger(name),
+    ignoreErrorResponses = false,
   }: JSONSchemaLoaderBundleOptions
 ): Promise<JSONSchemaLoaderBundle> {
   const dereferencedSchema = await getDereferencedJSONSchemaFromOperations({
@@ -45,6 +47,7 @@ export async function createBundle(
     logger,
     fetch,
     schemaHeaders,
+    ignoreErrorResponses,
   });
   const referencedSchema = await referenceJSONSchema(dereferencedSchema);
 

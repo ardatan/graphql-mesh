@@ -13,6 +13,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   pubsub?: MeshPubSub;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   generateInterfaceFromSharedFields?: boolean;
+  ignoreErrorResponses?: boolean;
 }
 
 export interface JSONSchemaOperationResponseConfig {
