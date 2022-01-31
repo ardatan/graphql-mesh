@@ -13,7 +13,7 @@ import {
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { KeyValueCache } from 'fetchache';
-import { DocumentNode, print } from 'graphql';
+import { DocumentNode } from 'graphql';
 import {
   getPackage,
   resolveAdditionalTypeDefs,
