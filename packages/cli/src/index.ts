@@ -59,14 +59,22 @@ export async function graphqlMesh() {
         } else {
           baseDir = resolve(cwd(), dir);
         }
-        if (existsSync(join(baseDir, 'tsconfig.json'))) {
-          tsNodeRegister({
-            transpileOnly: true,
-            typeCheck: false,
-            preferTsExts: true,
-            dir: baseDir,
-            require: ['graphql-import-node/register'],
-          });
+        const tsConfigExists = existsSync(join(baseDir, 'tsconfig.json'));
+        tsNodeRegister({
+          transpileOnly: true,
+          typeCheck: false,
+          preferTsExts: true,
+          dir: baseDir,
+          require: ['graphql-import-node/register'],
+          ...(tsConfigExists
+            ? {}
+            : {
+                compilerOptions: {
+                  module: 'commonjs',
+                },
+              }),
+        });
+        if (tsConfigExists) {
           try {
             const tsConfigStr = readFileSync(join(baseDir, 'tsconfig.json'), 'utf-8');
             const tsConfig = JSON.parse(tsConfigStr);
