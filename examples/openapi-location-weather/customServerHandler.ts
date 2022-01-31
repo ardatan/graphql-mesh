@@ -1,10 +1,6 @@
 const { ApolloServer } = require('apollo-server');
 
-module.exports = async ({
-  getBuiltMesh,
-  documents,
-  logger
-}) => {
+module.exports = async ({ getBuiltMesh, documents, logger }) => {
   const { schema } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,
