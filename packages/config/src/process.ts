@@ -245,8 +245,8 @@ export async function processConfig(
     ),
     resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
       codes.push(
-        `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
-          parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}\`),`
+        `const additionalTypeDefs: DocumentNode[] = [${(additionalTypeDefs || []).map(
+          parsedTypeDefs => `(${JSON.stringify(parsedTypeDefs)} as any),`
         )}] as any[];`
       );
       return additionalTypeDefs;
