@@ -1,5 +1,24 @@
 # @graphql-mesh/config
 
+## 0.28.0
+
+### Minor Changes
+
+- 020431bdc: feat(cli): built-in typescript support
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.40
+  - @graphql-mesh/merger-bare@0.13.2
+  - @graphql-mesh/merger-stitching@0.15.2
+  - @graphql-mesh/runtime@0.29.1
+  - @graphql-mesh/utils@0.26.2
+  - @graphql-mesh/store@0.3.10
+
 ## 0.27.5
 
 ### Patch Changes

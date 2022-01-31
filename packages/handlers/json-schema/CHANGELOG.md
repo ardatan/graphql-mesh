@@ -1,5 +1,23 @@
 # @graphql-mesh/json-schema
 
+## 0.24.0
+
+### Minor Changes
+
+- 020431bdc: feat(json-schema/openapi/raml): respect error status codes
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - json-machete@0.4.0
+  - @omnigraph/json-schema@0.12.0
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/utils@0.26.2
+  - @graphql-mesh/store@0.3.10
+
 ## 0.23.5
 
 ### Patch Changes

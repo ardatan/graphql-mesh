@@ -1,5 +1,20 @@
 # @omnigraph/raml
 
+## 0.3.0
+
+### Minor Changes
+
+- 020431bdc: feat(json-schema/openapi/raml): respect error status codes
+- 020431bdc: feat(raml): respect trait definitions
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - json-machete@0.4.0
+  - @omnigraph/json-schema@0.12.0
+  - @graphql-mesh/utils@0.26.2
+
 ## 0.2.14
 
 ### Patch Changes

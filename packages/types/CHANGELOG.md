@@ -1,5 +1,13 @@
 # @graphql-mesh/types
 
+## 0.59.0
+
+### Minor Changes
+
+- 020431bdc: feat(json-schema/openapi/raml): respect error status codes
+- 020431bdc: feat(redis): fallback to inmemory cache and support env interpolation
+- 020431bdc: feat(cli): built-in typescript support
+
 ## 0.58.0
 
 ### Minor Changes
