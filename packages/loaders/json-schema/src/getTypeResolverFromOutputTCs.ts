@@ -22,6 +22,8 @@ export function getTypeResolverFromOutputTCs(
       if (responseData.status in statusCodeOneOfIndexMap) {
         const oneOfIndex = statusCodeOneOfIndexMap[responseData.status];
         return outputTypeComposers[oneOfIndex].getTypeName();
+      } else if (statusCodeOneOfIndexMap?.default) {
+        return outputTypeComposers[statusCodeOneOfIndexMap.default].getTypeName();
       } else {
         return new GraphQLError(
           `HTTP Error: ${responseData.status}`,
