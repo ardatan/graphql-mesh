@@ -124,27 +124,23 @@ export async function graphqlMesh() {
             dir: baseDir,
           });
           logger = meshConfig.logger;
-          const serveMeshOptions: ServeMeshOptions = {
-            baseDir,
-            argsPort: args.port,
-            getBuiltMesh: () => {
-              const meshInstance$ = getMesh(meshConfig);
-              meshInstance$
-                .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema)))
-                .catch(e => {
-                  logger.error(`An error occured while writing the schema file: ${e.message}`);
-                });
-              meshInstance$
-                .then(({ schema, rawSources }) =>
-                  generateTsArtifacts({
-                    unifiedSchema: schema,
-                    rawSources,
-                    mergerType: meshConfig.merger.name,
-                    documents: meshConfig.documents,
-                    flattenTypes: false,
-                    importedModulesSet: new Set(),
-                    baseDir,
-                    meshConfigCode: `
+          const meshInstance$ = getMesh(meshConfig);
+          meshInstance$
+            .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema)))
+            .catch(e => {
+              logger.error(`An error occured while writing the schema file: ${e.message}`);
+            });
+          meshInstance$
+            .then(({ schema, rawSources }) =>
+              generateTsArtifacts({
+                unifiedSchema: schema,
+                rawSources,
+                mergerType: meshConfig.merger.name,
+                documents: meshConfig.documents,
+                flattenTypes: false,
+                importedModulesSet: new Set(),
+                baseDir,
+                meshConfigCode: `
                 import { findAndParseConfig } from '@graphql-mesh/cli';
                 function getMeshOptions() {
                   console.warn('WARNING: These artifacts are built for development mode. Please run "mesh build" to build production artifacts');
@@ -153,16 +149,18 @@ export async function graphqlMesh() {
                   });
                 }
               `,
-                    logger,
-                    sdkConfig: meshConfig.config.sdk,
-                    tsOnly: true,
-                  })
-                )
-                .catch(e => {
-                  logger.error(`An error occurred while building the mesh artifacts: ${e.message}`);
-                });
-              return meshInstance$;
-            },
+                logger,
+                sdkConfig: meshConfig.config.sdk,
+                tsOnly: true,
+              })
+            )
+            .catch(e => {
+              logger.error(`An error occurred while building the mesh artifacts: ${e.message}`);
+            });
+          const serveMeshOptions: ServeMeshOptions = {
+            baseDir,
+            argsPort: args.port,
+            getBuiltMesh: () => meshInstance$,
             logger: meshConfig.logger.child('Server'),
             rawConfig: meshConfig.config,
             documents: meshConfig.documents,
