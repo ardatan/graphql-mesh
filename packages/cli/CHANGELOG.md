@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.51.0
+
+### Minor Changes
+
+- fb63fa534: feat(cli): build TS artifacts in development mode
+
 ## 0.50.0
 
 ### Minor Changes
