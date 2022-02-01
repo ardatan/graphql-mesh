@@ -7,6 +7,13 @@ export function getTypeResolverFromOutputTCs(
   outputTypeComposers: ObjectTypeComposer[],
   statusCodeOneOfIndexMap?: Record<string, number>
 ): GraphQLTypeResolver<any, any> {
+  const statusCodeTypenameMap = new Map<string, string>();
+  for (const statusCode in statusCodeOneOfIndexMap) {
+    statusCodeTypenameMap.set(
+      statusCode.toString(),
+      outputTypeComposers[statusCodeOneOfIndexMap[statusCode]].getTypeName()
+    );
+  }
   return function resolveType(data: any, context: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       return data.__typename;
@@ -19,11 +26,12 @@ export function getTypeResolverFromOutputTCs(
         url: string;
         statusText: string;
       } = data.__response;
-      if (responseData.status in statusCodeOneOfIndexMap) {
-        const oneOfIndex = statusCodeOneOfIndexMap[responseData.status];
-        return outputTypeComposers[oneOfIndex].getTypeName();
+      const typeName =
+        statusCodeTypenameMap.get(responseData.status.toString()) || statusCodeTypenameMap.get('default');
+      if (typeName) {
+        return typeName;
       } else {
-        return new GraphQLError(
+        const error = new GraphQLError(
           `HTTP Error: ${responseData.status}`,
           undefined,
           undefined,
@@ -35,6 +43,8 @@ export function getTypeResolverFromOutputTCs(
             responseJson: data,
           }
         );
+        console.error(error);
+        return error;
       }
     }
     const validationErrors: Record<string, ErrorObject[]> = {};

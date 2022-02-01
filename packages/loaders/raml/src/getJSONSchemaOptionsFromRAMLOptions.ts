@@ -21,12 +21,17 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   baseUrl: forcedBaseUrl,
   fetch = crossUndiciFetch,
   schemaHeaders = {},
+  selectQueryOrMutationField = [],
 }: RAMLLoaderOptions): Promise<{
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   baseUrl: string;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
 }> {
+  const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
+  for (const { fieldName, type } of selectQueryOrMutationField) {
+    fieldTypeMap[fieldName] = type;
+  }
   const operations = extraOperations || [];
   const ramlAbsolutePath = getAbsolutePath(ramlFilePath, ramlFileCwd);
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
@@ -184,8 +189,8 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         fieldName ||
         getFieldNameFromPath(originalFullRelativeUrl, method, responseByStatusCode['200']?.responseTypeName);
       if (fieldName) {
-        const operationType: any = method === 'GET' ? 'query' : 'mutation';
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);
+        const operationType: any = fieldTypeMap[graphQLFieldName] ?? method === 'GET' ? 'query' : 'mutation';
         operations.push({
           type: operationType,
           field: graphQLFieldName,

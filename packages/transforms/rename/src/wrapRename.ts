@@ -4,6 +4,18 @@ import { RenameTypes, RenameObjectFields, RenameInputObjectFields } from '@graph
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+import { resolvers as scalarsResolversMap } from 'graphql-scalars';
+
+const ignoreList = [
+  'date',
+  'hostname',
+  'regex',
+  'json-pointer',
+  'relative-json-pointer',
+  'uri-reference',
+  'uri-template',
+  ...Object.keys(scalarsResolversMap),
+];
 
 export default class WrapRename implements MeshTransform {
   private transforms: Transform[] = [];
@@ -28,7 +40,14 @@ export default class WrapRename implements MeshTransform {
         } else {
           replaceTypeNameFn = t => (t === fromTypeName ? toTypeName : t);
         }
-        this.transforms.push(new RenameTypes(replaceTypeNameFn));
+        this.transforms.push(
+          new RenameTypes(typeName => {
+            if (typeName in scalarsResolversMap || ignoreList.includes(typeName)) {
+              return typeName;
+            }
+            return replaceTypeNameFn(typeName);
+          })
+        );
       }
 
       if (fromFieldName && toFieldName && fromFieldName !== toFieldName) {
