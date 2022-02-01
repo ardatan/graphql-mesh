@@ -121,7 +121,37 @@ export async function graphqlMesh() {
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
-            getBuiltMesh: () => getMesh(meshConfig),
+            getBuiltMesh: () => {
+              const meshInstance$ = getMesh(meshConfig);
+              meshInstance$
+                .then(({ schema, rawSources }) =>
+                  generateTsArtifacts({
+                    unifiedSchema: schema,
+                    rawSources,
+                    mergerType: meshConfig.merger.name,
+                    documents: meshConfig.documents,
+                    flattenTypes: false,
+                    importedModulesSet: new Set(),
+                    baseDir,
+                    meshConfigCode: `
+                import { findAndParseConfig } from '@graphql-mesh/cli';
+                function getMeshOptions() {
+                  console.warn('WARNING: These artifacts are built for development mode. Please run "mesh build" to build production artifacts');
+                  return findAndParseConfig({
+                    baseDir
+                  });
+                }
+              `,
+                    logger,
+                    sdkConfig: meshConfig.config.sdk,
+                    tsOnly: true,
+                  })
+                )
+                .catch(e => {
+                  logger.error(`An error occurred while building the mesh artifacts: ${e.message}`);
+                });
+              return meshInstance$;
+            },
             logger: meshConfig.logger.child('Server'),
             rawConfig: meshConfig.config,
             documents: meshConfig.documents,

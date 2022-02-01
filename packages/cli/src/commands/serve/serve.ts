@@ -1,7 +1,7 @@
 /* eslint-disable dot-notation */
 import express, { RequestHandler } from 'express';
 import cluster from 'cluster';
-import { cpus } from 'os';
+import { cpus, platform } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import { playgroundMiddlewareFactory } from './playground';
@@ -44,7 +44,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
   const {
     fork,
     port: configPort,
-    hostname = '0.0.0.0',
+    hostname = platform() === 'win32' ? 'localhost' : '0.0.0.0',
     cors: corsConfig,
     handlers,
     staticFiles,

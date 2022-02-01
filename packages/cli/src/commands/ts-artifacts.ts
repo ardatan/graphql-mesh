@@ -288,7 +288,7 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
   )}');`;
   const baseUrlAssignmentCJS = `const baseDir = join(__dirname, '${relative(artifactsDir, baseDir)}');`;
 
-  logger.info('Writing index.ts for ESM to the disk.');
+  logger.info('Writing TypeScript artifacts to the disk.');
   const tsFilePath = join(artifactsDir, 'index.ts');
   await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
 

@@ -109,7 +109,7 @@ const App: React.FC<{ defaultQuery: string; endpoint: string }> = ({ defaultQuer
   ) : error ? (
     <p>{error}</p>
   ) : (
-    <p>'GraphiQL Mesh is loading!'</p>
+    <p>GraphiQL Mesh is loading!</p>
   );
 };
 
