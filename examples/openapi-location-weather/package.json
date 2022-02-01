@@ -1,13 +1,13 @@
 {
   "name": "typescript-location-weather-example",
-  "version": "0.5.171",
+  "version": "0.5.172",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.50.0",
+    "@graphql-mesh/cli": "0.51.0",
     "@graphql-mesh/openapi": "0.23.5",
     "@graphql-mesh/runtime": "0.29.1",
     "@graphql-mesh/transform-cache": "0.11.11",
