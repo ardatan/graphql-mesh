@@ -113,6 +113,12 @@ export async function graphqlMesh() {
       },
       async args => {
         try {
+          const rootArtifactsName = '.mesh';
+          const outputDir = join(baseDir, rootArtifactsName);
+
+          logger.info('Cleaning existing artifacts');
+          await rmdirs(outputDir);
+
           env.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
@@ -123,6 +129,11 @@ export async function graphqlMesh() {
             argsPort: args.port,
             getBuiltMesh: () => {
               const meshInstance$ = getMesh(meshConfig);
+              meshInstance$
+                .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema)))
+                .catch(e => {
+                  logger.error(`An error occured while writing the schema file: ${e.message}`);
+                });
               meshInstance$
                 .then(({ schema, rawSources }) =>
                   generateTsArtifacts({

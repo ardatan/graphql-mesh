@@ -93,7 +93,7 @@ export async function resolveCache(
     store: rootStore.child('cache'),
   });
 
-  const code = `const cache = new MeshCache({
+  const code = `const cache = new (MeshCache as any)({
       ...(rawConfig.cache || {}),
       store: rootStore.child('cache'),
     } as any)`;

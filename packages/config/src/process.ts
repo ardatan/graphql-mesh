@@ -84,8 +84,8 @@ export async function processConfig(
     `import { YamlConfig } from '@graphql-mesh/types';`,
   ];
   const codes: string[] = [
-    `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)}`,
-    `export async function getMeshOptions(): GetMeshOptions {`,
+    `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)} as any`,
+    `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
   ];
 
   const { dir, importFn = defaultImportFn, store: providedStore } = options || {};
@@ -224,7 +224,7 @@ export async function processConfig(
         importCodes.push(`import ${transformImportName} from '${moduleName}';`);
 
         codes.push(`transforms.push(
-          new ${transformImportName}({
+          new (${transformImportName} as any)({
             apiName: '',
             config: rawConfig.transforms[${transformIndex}][${JSON.stringify(transformName)}],
             baseDir,

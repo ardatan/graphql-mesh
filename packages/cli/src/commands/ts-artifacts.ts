@@ -9,11 +9,11 @@ import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
 import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
-import { writeFile, writeJSON } from '@graphql-mesh/utils';
+import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { generateOperations } from './generate-operations';
 
-const { unlink, rename } = fsPromises;
+const { unlink, rename, readFile } = fsPromises;
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -29,7 +29,8 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
-  type: Maybe<GraphQLObjectType>
+  type: Maybe<GraphQLObjectType>,
+  namespace: string
 ): Record<string, string> {
   if (!type) {
     return {};
@@ -40,7 +41,7 @@ function buildSignatureBasedOnRootFields(
   for (const fieldName in fields) {
     const field = fields[fieldName];
     const argsExists = field.args && field.args.length > 0;
-    const argsName = argsExists ? `${type.name}${field.name}Args` : '{}';
+    const argsName = argsExists ? `${namespace}.${type.name}${field.name}Args` : '{}';
     const parentTypeNode: NamedTypeNode = {
       kind: Kind.NAMED_TYPE,
       name: {
@@ -51,27 +52,58 @@ function buildSignatureBasedOnRootFields(
 
     operationMap[fieldName] = `  /** ${field.description} **/\n  ${
       field.name
-    }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
+    }: InContextSdkMethod<${namespace}.${codegenHelpers.getTypeToUse(
       parentTypeNode
     )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }
   return operationMap;
 }
 
-function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
+async function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
+  const baseTypes = await codegen({
+    filename: options.name + '_types.ts',
+    documents: [],
+    config: {
+      skipTypename: true,
+      namingConvention: 'keep',
+      enumsAsTypes: true,
+      ignoreEnumValuesFromSchema: true,
+    },
+    schemaAst: options.schema,
+    schema: undefined as any, // This is not necessary on codegen.
+    skipDocumentsValidation: true,
+    plugins: [
+      {
+        typescript: {},
+      },
+    ],
+    pluginMap: {
+      typescript: tsBasePlugin,
+    },
+  });
   const codegenHelpers = new CodegenHelpers(options.schema, {}, {});
+  const namespace = pascalCase(`${options.name}Types`);
   const sdkIdentifier = pascalCase(`${options.name}Sdk`);
   const contextIdentifier = pascalCase(`${options.name}Context`);
-  const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType());
-  const mutationOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType());
+  const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType(), namespace);
+  const mutationOperationMap = buildSignatureBasedOnRootFields(
+    codegenHelpers,
+    options.schema.getMutationType(),
+    namespace
+  );
   const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
-    options.schema.getSubscriptionType()
+    options.schema.getSubscriptionType(),
+    namespace
   );
 
   const sdk = {
     identifier: sdkIdentifier,
-    codeAst: `export type Query${sdkIdentifier} = {
+    codeAst: `
+    export namespace ${namespace} {
+      ${baseTypes}
+    }
+    export type Query${sdkIdentifier} = {
 ${Object.values(queryOperationMap).join(',\n')}
 };
 
@@ -163,10 +195,10 @@ export async function generateTsArtifacts({
           const sdkItems: string[] = [];
           const contextItems: string[] = [];
           const results = await Promise.all(
-            rawSources.map(source => {
+            rawSources.map(async source => {
               const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
               const sourceSchema = sourceMap.get(source);
-              const item = generateTypesForApi({
+              const item = await generateTypesForApi({
                 schema: sourceSchema,
                 name: source.name,
               });
@@ -189,10 +221,8 @@ export async function generateTsArtifacts({
             .join(' & ')} & BaseMeshContext;`;
 
           const importCodes = [
-            `import { parse, DocumentNode } from 'graphql';`,
             `import { getMesh } from '@graphql-mesh/runtime';`,
             `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-            `import { cwd } from 'process';`,
             `import { join, relative, isAbsolute, dirname } from 'path';`,
             `import { fileURLToPath } from 'url';`,
           ];
@@ -290,24 +320,44 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
 
   logger.info('Writing TypeScript artifacts to the disk.');
   const tsFilePath = join(artifactsDir, 'index.ts');
-  await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
 
-  if (!tsOnly) {
-    logger.info('Compiling TS file as ES Module to `index.mjs`');
-    const jsFilePath = join(artifactsDir, 'index.js');
-    const dtsFilePath = join(artifactsDir, 'index.d.ts');
-    compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
+  const jobs: (() => Promise<void>)[] = [];
+  const jsFilePath = join(artifactsDir, 'index.js');
+  const dtsFilePath = join(artifactsDir, 'index.d.ts');
 
-    const mjsFilePath = join(artifactsDir, 'index.mjs');
-    await rename(jsFilePath, mjsFilePath);
+  const esmJob = (ext: 'mjs' | 'js') => async () => {
+    logger.info('Writing index.ts for ESM to the disk.');
+    await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
 
+    if (!tsOnly) {
+      logger.info(`Compiling TS file as ES Module to "index.${ext}"`);
+      compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
+
+      if (ext === 'mjs') {
+        const mjsFilePath = join(artifactsDir, 'index.mjs');
+        await rename(jsFilePath, mjsFilePath);
+      }
+
+      logger.info('Deleting index.ts');
+      await unlink(tsFilePath);
+    }
+  };
+
+  const cjsJob = async () => {
     logger.info('Writing index.ts for CJS to the disk.');
     await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
 
-    logger.info('Compiling TS file as CommonJS Module to `index.js`');
-    compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
+    if (!tsOnly) {
+      logger.info('Compiling TS file as CommonJS Module to `index.js`');
+      compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
-    await writeJSON(join(artifactsDir, 'package.json'), {
+      logger.info('Deleting index.ts');
+      await unlink(tsFilePath);
+    }
+  };
+
+  const packageJsonJob = () =>
+    writeJSON(join(artifactsDir, 'package.json'), {
       name: 'mesh-artifacts',
       private: true,
       type: 'commonjs',
@@ -330,8 +380,26 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
       },
     });
 
-    logger.info('Deleting index.ts');
-    await unlink(tsFilePath);
+  const tsConfigPath = join(baseDir, 'tsconfig.json');
+  if (await pathExists(tsConfigPath)) {
+    const tsConfigStr = await readFile(tsConfigPath, 'utf8');
+    const tsConfig = JSON.parse(tsConfigStr);
+    if (tsConfig.compilerOptions.module.startsWith('es')) {
+      jobs.push(esmJob('js'));
+    } else {
+      jobs.push(cjsJob);
+    }
+  } else {
+    jobs.push(esmJob('mjs'));
+    jobs.push(cjsJob);
+  }
+
+  if (!tsOnly) {
+    jobs.push(packageJsonJob);
+  }
+
+  for (const job of jobs) {
+    await job();
   }
 }
 
