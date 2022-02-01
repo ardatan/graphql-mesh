@@ -149,7 +149,7 @@ export async function graphqlMesh() {
                 function getMeshOptions() {
                   console.warn('WARNING: These artifacts are built for development mode. Please run "mesh build" to build production artifacts');
                   return findAndParseConfig({
-                    baseDir
+                    dir: baseDir
                   });
                 }
               `,
