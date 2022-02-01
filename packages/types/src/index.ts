@@ -155,7 +155,7 @@ export type InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn> = {
 };
 
 export type InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn> = {
-  root: any;
+  root?: any;
   context: TContext;
   info: GraphQLResolveInfo;
   // Use this parameter if the selection set of the return type doesn't match
