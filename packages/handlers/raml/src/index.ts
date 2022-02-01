@@ -29,6 +29,10 @@ export default class RAMLHandler implements MeshHandler {
         fetch: this.fetch,
         logger: this.logger,
         ignoreErrorResponses: this.config.ignoreErrorResponses,
+        selectQueryOrMutationField: this.config.selectQueryOrMutationField.map(({ type, fieldName }) => ({
+          type: type.toLowerCase() as any,
+          fieldName,
+        })),
       });
     });
   }

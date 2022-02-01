@@ -782,9 +782,9 @@ export interface SelectQueryOrMutationFieldConfig {
    */
   path?: string;
   /**
-   * Target Root Type for this operation (Allowed values: Query, Mutation)
+   * Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)
    */
-  type?: 'Query' | 'Mutation';
+  type?: 'query' | 'mutation' | 'Query' | 'Mutation';
   /**
    * Which method is used for this operation
    */
@@ -841,6 +841,14 @@ export interface RAMLHandler {
     [k: string]: any;
   };
   ignoreErrorResponses?: boolean;
+  selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
+}
+export interface RAMLSelectQueryOrMutationFieldConfig {
+  /**
+   * Allowed values: query, mutation, Query, Mutation
+   */
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
 }
 /**
  * Handler for SOAP
