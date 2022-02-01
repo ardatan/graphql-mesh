@@ -1,5 +1,20 @@
 # @graphql-mesh/raml
 
+## 0.1.0
+
+### Minor Changes
+
+- a79268b3a: feat(raml): ability to select operation type by fieldname
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @omnigraph/raml@0.4.0
+  - @graphql-mesh/utils@0.26.3
+  - @graphql-mesh/store@0.3.11
+
 ## 0.0.12
 
 ### Patch Changes

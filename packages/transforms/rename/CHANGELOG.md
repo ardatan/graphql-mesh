@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.0
+
+### Minor Changes
+
+- a79268b3a: feat(transforms): do not rename shared scalar types
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/utils@0.26.3
+
 ## 0.11.11
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.60.0
+
+### Minor Changes
+
+- a79268b3a: feat(raml): ability to select operation type by fieldname
+
+### Patch Changes
+
+- a79268b3a: enhance(types): more strict incontext sdk types
+
 ## 0.59.0
 
 ### Minor Changes

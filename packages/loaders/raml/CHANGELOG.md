@@ -1,5 +1,18 @@
 # @omnigraph/raml
 
+## 0.4.0
+
+### Minor Changes
+
+- a79268b3a: feat(raml): ability to select operation type by fieldname
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+  - @omnigraph/json-schema@0.13.0
+  - @graphql-mesh/utils@0.26.3
+  - json-machete@0.4.1
+
 ## 0.3.0
 
 ### Minor Changes
