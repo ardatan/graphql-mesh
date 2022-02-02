@@ -116,9 +116,6 @@ export async function graphqlMesh() {
           const rootArtifactsName = '.mesh';
           const outputDir = join(baseDir, rootArtifactsName);
 
-          logger.info('Cleaning existing artifacts');
-          await rmdirs(outputDir);
-
           env.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
