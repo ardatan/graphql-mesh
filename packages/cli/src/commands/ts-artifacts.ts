@@ -328,7 +328,11 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
     logger.info('Writing index.ts for ESM to the disk.');
     await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
 
-    await unlink(join(artifactsDir, 'index.' + ext));
+    const esmJsFilePath = join(artifactsDir, `index.${ext}`);
+    if (await pathExists(esmJsFilePath)) {
+      await unlink(esmJsFilePath);
+    }
+
     if (!tsOnly) {
       logger.info(`Compiling TS file as ES Module to "index.${ext}"`);
       compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
@@ -347,7 +351,9 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
     logger.info('Writing index.ts for CJS to the disk.');
     await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
 
-    await unlink(join(artifactsDir, 'index.js'));
+    if (await pathExists(jsFilePath)) {
+      await unlink(jsFilePath);
+    }
     if (!tsOnly) {
       logger.info('Compiling TS file as CommonJS Module to `index.js`');
       compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
