@@ -8,6 +8,10 @@ type Query {
   SDK Configuration
   """
   sdk: SDKConfig
+  """
+  Codegen Configuration
+  """
+  codegen: Any
 }
 
 type ServeConfig @md {

@@ -2969,6 +2969,22 @@
       "$ref": "#/definitions/SDKConfig",
       "description": "SDK Configuration"
     },
+    "codegen": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
+      "description": "Codegen Configuration"
+    },
     "require": {
       "type": "array",
       "items": {

@@ -143,6 +143,7 @@ export async function generateTsArtifacts({
   logger,
   sdkConfig,
   tsOnly = false,
+  codegenConfig = {},
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: RawSourceOutput[];
@@ -155,6 +156,7 @@ export async function generateTsArtifacts({
   logger: Logger;
   sdkConfig: YamlConfig.SDKConfig;
   tsOnly: boolean;
+  codegenConfig: any;
 }) {
   const artifactsDir = join(baseDir, '.mesh');
   logger.info('Generating index file in TypeScript');
@@ -177,6 +179,11 @@ export async function generateTsArtifacts({
       documentMode: 'documentNode',
       enumsAsTypes: true,
       ignoreEnumValuesFromSchema: true,
+      useIndexSignature: true,
+      noSchemaStitching: mergerType !== 'stitching',
+      contextType: unifiedContextIdentifier,
+      federation: mergerType === 'federation',
+      ...codegenConfig,
     },
     schemaAst: unifiedSchema,
     schema: undefined as any, // This is not necessary on codegen.
@@ -293,12 +300,7 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
         typescript: {},
       },
       {
-        resolvers: {
-          useIndexSignature: true,
-          noSchemaStitching: mergerType !== 'stitching',
-          contextType: unifiedContextIdentifier,
-          federation: mergerType === 'federation',
-        },
+        resolvers: {},
       },
       {
         contextSdk: {},
