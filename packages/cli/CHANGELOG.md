@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.51.2
+
+### Patch Changes
+
+- 572d0f1ab: fix(cli): do not delete existing artifacts on dev mode
+
 ## 0.51.1
 
 ### Patch Changes
