@@ -13,7 +13,7 @@ import {
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { KeyValueCache } from 'fetchache';
-import { DocumentNode } from 'graphql';
+import { DocumentNode, print } from 'graphql';
 import {
   getPackage,
   resolveAdditionalTypeDefs,
@@ -82,6 +82,7 @@ export async function processConfig(
   const importCodes: string[] = [
     `import { GetMeshOptions } from '@graphql-mesh/runtime';`,
     `import { YamlConfig } from '@graphql-mesh/types';`,
+    `import { parse } from 'graphql';`,
   ];
   const codes: string[] = [
     `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)} as any`,
@@ -246,7 +247,7 @@ export async function processConfig(
     resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
       codes.push(
         `const additionalTypeDefs: DocumentNode[] = [${(additionalTypeDefs || []).map(
-          parsedTypeDefs => `(${JSON.stringify(parsedTypeDefs)} as any),`
+          parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
         )}] as any[];`
       );
       return additionalTypeDefs;
