@@ -8,6 +8,10 @@
 export interface Config {
   serve?: ServeConfig;
   sdk?: SDKConfig;
+  /**
+   * Codegen Configuration
+   */
+  codegen?: any;
   require?: string[];
   /**
    * Defines the list of your external data sources for your API mesh

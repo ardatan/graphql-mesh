@@ -149,6 +149,7 @@ export async function graphqlMesh() {
                 logger,
                 sdkConfig: meshConfig.config.sdk,
                 tsOnly: true,
+                codegenConfig: meshConfig.config.codegen,
               })
             )
             .catch(e => {
@@ -350,6 +351,7 @@ export async function graphqlMesh() {
             logger,
             sdkConfig: meshConfig.config.sdk,
             tsOnly: args.tsOnly,
+            codegenConfig: meshConfig.config.codegen,
           });
 
           logger.info(`Cleanup`);
