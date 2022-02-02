@@ -1,5 +1,19 @@
 # @graphql-mesh/cli
 
+## 0.52.0
+
+### Minor Changes
+
+- 66ca1a366: feat(cli): ability to provide custom codegen config
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/config@0.29.0
+  - @graphql-mesh/runtime@0.29.3
+  - @graphql-mesh/utils@0.26.4
+  - @graphql-mesh/store@0.3.12
+
 ## 0.51.2
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 0.29.0
+
+### Minor Changes
+
+- 66ca1a366: enhance(config): use print/parse for additionalTypeDefs in artifacts
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.42
+  - @graphql-mesh/merger-bare@0.13.4
+  - @graphql-mesh/merger-stitching@0.15.4
+  - @graphql-mesh/runtime@0.29.3
+  - @graphql-mesh/utils@0.26.4
+  - @graphql-mesh/store@0.3.12
+
 ## 0.28.1
 
 ### Patch Changes

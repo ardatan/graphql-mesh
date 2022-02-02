@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.61.0
+
+### Minor Changes
+
+- 66ca1a366: feat(cli): ability to provide custom codegen config
+
 ## 0.60.0
 
 ### Minor Changes
