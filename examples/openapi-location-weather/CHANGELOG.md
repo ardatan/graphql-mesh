@@ -1,5 +1,16 @@
 # typescript-location-weather-example
 
+## 0.5.175
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/cli@0.52.0
+  - @graphql-mesh/openapi@0.23.7
+  - @graphql-mesh/runtime@0.29.3
+  - @graphql-mesh/transform-cache@0.11.13
+  - @graphql-mesh/transform-rename@0.12.1
+
 ## 0.5.174
 
 ### Patch Changes
