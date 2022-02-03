@@ -1,5 +1,6 @@
 import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
 import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
+import { loadYaml } from '@graphql-mesh/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { isAbsolute, join } from 'path';
@@ -22,10 +23,11 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
   const explorer = cosmiconfig(configName, {
     loaders: {
       '.json': customLoader('json'),
-      '.yaml': customLoader('yaml'),
-      '.yml': customLoader('yaml'),
+      '.yaml': loadYaml,
+      '.yml': loadYaml,
       '.js': customLoader('js'),
-      noExt: customLoader('yaml'),
+      '.ts': path => options.importFn(path),
+      noExt: loadYaml,
     },
   });
   const results = await explorer.search(dir);

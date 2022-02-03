@@ -1,11 +1,12 @@
 import { fetchFactory, KeyValueCache } from 'fetchache';
 import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
-import { load as loadYaml } from 'js-yaml';
+import { load as loadYamlFromJsYaml } from 'js-yaml';
 import { isAbsolute, resolve } from 'path';
 import { promises as fsPromises } from 'fs';
 import { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
+import { setBaseFile, YAML_INCLUDE_SCHEMA } from 'yaml-include';
 
 const { readFile: readFileFromFS } = fsPromises || {};
 
@@ -36,6 +37,11 @@ export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileO
   }
 }
 
+export function loadYaml<T = any>(filepath: string, content: string): T {
+  setBaseFile(filepath);
+  return loadYamlFromJsYaml(content, { schema: YAML_INCLUDE_SCHEMA, filename: filepath }) as any;
+}
+
 export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
   const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
@@ -47,13 +53,13 @@ export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOption
     return JSON.parse(rawResult);
   }
   if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
-    return loadYaml(rawResult) as T;
+    return loadYaml(actualPath, rawResult);
   } else if (fallbackFormat) {
     switch (fallbackFormat) {
       case 'json':
         return JSON.parse(rawResult);
       case 'yaml':
-        return loadYaml(rawResult) as T;
+        return loadYaml(actualPath, rawResult);
       case 'ts':
       case 'js':
         return importFn(actualPath);
@@ -83,7 +89,7 @@ export async function readUrl<T>(path: string, config?: ReadFileOrUrlOptions): P
     contentType.includes('yml') ||
     fallbackFormat === 'yaml'
   ) {
-    return loadYaml(responseText) as any as T;
+    return loadYaml(path, responseText);
   } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure URL '${path}' has ` +

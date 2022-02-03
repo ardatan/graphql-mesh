@@ -21276,6 +21276,11 @@ rechoir@^0.7.0:
   dependencies:
     resolve "^1.9.0"
 
+recursive-readdir-sync@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/recursive-readdir-sync/-/recursive-readdir-sync-1.0.6.tgz#1dbf6d32f3c5bb8d3cde97a6c588d547a9e13d56"
+  integrity sha1-Hb9tMvPFu4083pemxYjVR6nhPVY=
+
 recursive-readdir@2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/recursive-readdir/-/recursive-readdir-2.2.2.tgz#9946fb3274e1628de6e36b2f6714953b4845094f"
@@ -26205,6 +26210,16 @@ yaml-ast-parser@0.0.43, yaml-ast-parser@^0.0.43:
   version "0.0.43"
   resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.43.tgz#e8a23e6fb4c38076ab92995c5dca33f3d3d7c9bb"
   integrity sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==
+
+yaml-include@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/yaml-include/-/yaml-include-1.2.1.tgz#4f30aa12c08fba8cdb8230cebd400bdea93cd29c"
+  integrity sha512-d2Ayx9GykZwXHRdSlnlOOdcgbGzb8jjC0WPZicsTUjEbvwDMXDbJ8AMwLe8YCMa3BYeZSiUPcUYdUEjnwlUNGw==
+  dependencies:
+    debug "^4.1.1"
+    js-yaml "^3.13.1"
+    lodash.merge "^4.6.2"
+    recursive-readdir-sync "^1.0.6"
 
 yaml@^1.10.0, yaml@^1.10.2, yaml@^1.7.2:
   version "1.10.2"
