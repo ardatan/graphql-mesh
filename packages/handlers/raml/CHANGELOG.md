@@ -1,5 +1,11 @@
 # @graphql-mesh/raml
 
+## 0.1.2
+
+### Patch Changes
+
+- d53770f9c: fix(raml): selectQueryOrMutationField can be empty
+
 ## 0.1.1
 
 ### Patch Changes
