@@ -2,11 +2,11 @@ import { fetchFactory, KeyValueCache } from 'fetchache';
 import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
 import { load as loadYamlFromJsYaml } from 'js-yaml';
-import { isAbsolute, resolve } from 'path';
+import { dirname, isAbsolute, resolve } from 'path';
 import { promises as fsPromises } from 'fs';
 import { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
-import { setBaseFile, YAML_INCLUDE_SCHEMA } from 'yaml-include';
+import { getSchema } from 'yaml-import';
 
 const { readFile: readFileFromFS } = fsPromises || {};
 
@@ -37,9 +37,9 @@ export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileO
   }
 }
 
-export function loadYaml<T = any>(filepath: string, content: string): T {
-  setBaseFile(filepath);
-  return loadYamlFromJsYaml(content, { schema: YAML_INCLUDE_SCHEMA, filename: filepath }) as any;
+export function loadYaml(filepath: string, content: string): any {
+  const schema = getSchema(dirname(filepath));
+  return loadYamlFromJsYaml(content, { schema });
 }
 
 export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
