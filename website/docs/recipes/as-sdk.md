@@ -24,8 +24,7 @@ In this case we only have `fieldA` and `fieldB` in our result so those are not a
 Now, point to those operations in your `.meshrc.yml`;
 
 ```yml
-sources:
-  ...
+sources: ...
 
 documents:
   - ./src/**/*.graphql
@@ -46,7 +45,7 @@ Mesh can generate the operations for you if you don't want to use manually writt
 ```yaml
 sdk:
   generateOperations:
-     selectionSetDepth: 2 # This is the maximum level of selection set
+    selectionSetDepth: 2 # This is the maximum level of selection set
 ```
 
 ## Build your SDK with Mesh artifacts
@@ -76,5 +75,18 @@ async function test() {
 
 > You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb#using-the-generated-sdk)
 
-
 ![GraphQL Mesh](/static/img/as-sdk.png)
+
+### With Next.js
+
+> Watch [Episode #15 of `graphql.wtf`](https://graphql.wtf/episodes/15-graphql-mesh-sdk-with-nextjs) for a quick introduction to using GraphQL Mesh with Next.js:
+
+<iframe
+  width="100%"
+  height="400"
+  src="https://www.youtube.com/embed/XkzppOTs7ZU"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
