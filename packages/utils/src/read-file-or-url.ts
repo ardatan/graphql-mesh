@@ -6,7 +6,6 @@ import { dirname, isAbsolute, resolve } from 'path';
 import { promises as fsPromises, readdirSync, readFileSync } from 'fs';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
-import { join } from 'path/posix';
 
 const { readFile: readFileFromFS } = fsPromises || {};
 
@@ -47,7 +46,7 @@ function getSchema(filepath: string, logger?: Logger): Schema {
       },
       construct(path: string) {
         const newCwd = dirname(filepath);
-        const absoluteFilePath = isAbsolute(path) ? path : join(newCwd, path);
+        const absoluteFilePath = isAbsolute(path) ? path : resolve(newCwd, path);
         const content = readFileSync(absoluteFilePath, 'utf8');
         return loadYaml(absoluteFilePath, content, logger);
       },
@@ -59,10 +58,10 @@ function getSchema(filepath: string, logger?: Logger): Schema {
       },
       construct(path: string) {
         const newCwd = dirname(filepath);
-        const absoluteDirPath = isAbsolute(path) ? path : join(newCwd, path);
+        const absoluteDirPath = isAbsolute(path) ? path : resolve(newCwd, path);
         const files = readdirSync(absoluteDirPath);
         return files.map(filePath => {
-          const absoluteFilePath = join(absoluteDirPath, filePath);
+          const absoluteFilePath = resolve(absoluteDirPath, filePath);
           const fileContent = readFileSync(absoluteFilePath, 'utf8');
           return loadYaml(absoluteFilePath, fileContent, logger);
         });
