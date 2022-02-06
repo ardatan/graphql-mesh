@@ -1,12 +1,12 @@
 import { fetchFactory, KeyValueCache } from 'fetchache';
 import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
-import { load as loadYamlFromJsYaml } from 'js-yaml';
+import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Type } from 'js-yaml';
 import { dirname, isAbsolute, resolve } from 'path';
-import { promises as fsPromises } from 'fs';
+import { promises as fsPromises, readdirSync, readFileSync } from 'fs';
 import { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
-import { getSchema } from 'yaml-import';
+import { join } from 'path/posix';
 
 const { readFile: readFileFromFS } = fsPromises || {};
 
@@ -37,9 +37,43 @@ export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileO
   }
 }
 
+function getSchema(filepath: string) {
+  return DEFAULT_SCHEMA.extend([
+    new Type('!include', {
+      kind: 'scalar',
+      resolve(path: string) {
+        return typeof path === 'string';
+      },
+      construct(path: string) {
+        const newCwd = dirname(filepath);
+        const absoluteFilePath = isAbsolute(path) ? path : join(newCwd, path);
+        const content = readFileSync(absoluteFilePath, 'utf8');
+        return loadYaml(absoluteFilePath, content);
+      },
+    }),
+    new Type('!includes', {
+      kind: 'scalar',
+      resolve(path: string) {
+        return typeof path === 'string';
+      },
+      construct(path: string) {
+        const newCwd = dirname(filepath);
+        const absoluteDirPath = isAbsolute(path) ? path : join(newCwd, path);
+        const files = readdirSync(absoluteDirPath);
+        return files.map(filePath => {
+          const absoluteFilePath = join(absoluteDirPath, filePath);
+          const fileContent = readFileSync(absoluteFilePath, 'utf8');
+          return loadYaml(absoluteFilePath, fileContent);
+        });
+      },
+    }),
+  ]);
+}
+
 export function loadYaml(filepath: string, content: string): any {
-  const schema = getSchema(dirname(filepath));
-  return loadYamlFromJsYaml(content, { schema });
+  return loadYamlFromJsYaml(content, {
+    schema: getSchema(filepath),
+  });
 }
 
 export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {

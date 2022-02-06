@@ -1,4 +1,4 @@
-sources: !!import/sequence [./sources]
+sources: !includes sources
 
 additionalTypeDefs: |
   extend type Case {

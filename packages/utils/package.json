@@ -44,8 +44,7 @@
     "is-url": "1.2.4",
     "js-yaml": "4.1.0",
     "object-hash": "2.2.0",
-    "tiny-lru": "7.0.6",
-    "yaml-import": "2.0.0"
+    "tiny-lru": "7.0.6"
   },
   "publishConfig": {
     "access": "public",

@@ -9056,20 +9056,6 @@ clean-stack@^2.0.0:
   resolved "https://registry.yarnpkg.com/clean-stack/-/clean-stack-2.2.0.tgz#ee8472dbb129e727b31e8a10a427dee9dfe4008b"
   integrity sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==
 
-cli-belt@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/cli-belt/-/cli-belt-0.3.1.tgz#3836f221215c6ecd1d2fcb8656e8a9ac79c0b96d"
-  integrity sha512-cQfBIWcwZCXAGLLdyH5XAMmP3KWnqOTWH4HO8a2J/ALEHA59TzLQ+KeOxc2b1I1NSfekvchWexq4EnRctELo0g==
-  dependencies:
-    "@types/normalize-package-data" "^2.4.0"
-    camelcase "^5.3.1"
-    chalk "^2.4.2"
-    errorish "^0.4.0"
-    execall "^2.0.0"
-    find-up "^4.0.0"
-    fs-extra "^8.0.1"
-    normalize-package-data "^2.5.0"
-
 cli-boxes@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/cli-boxes/-/cli-boxes-1.0.0.tgz#4fa917c3e59c94a004cd61f8ee509da651687143"
@@ -9175,13 +9161,6 @@ clone-deep@^4.0.1:
     is-plain-object "^2.0.4"
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
-
-clone-regexp@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/clone-regexp/-/clone-regexp-2.2.0.tgz#7d65e00885cd8796405c35a737e7a86b7429e36f"
-  integrity sha512-beMpP7BOtTipFuW8hrJvREQ2DrRu3BE7by0ZpibtfBA+qfHYvMGTc2Yb1JMYPKg/JUw0CHYvpg796aNTSW9z7Q==
-  dependencies:
-    is-regexp "^2.0.0"
 
 clone-response@^1.0.2:
   version "1.0.2"
@@ -11100,13 +11079,6 @@ error-stack-parser@^2.0.6:
   dependencies:
     stackframe "^1.1.1"
 
-errorish@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/errorish/-/errorish-0.4.0.tgz#d70dd7ceba15d75a5f2384692cbe4f3c281a68f4"
-  integrity sha512-6bbH/9cgdngn9vrgEGaqhLX61yn0L/ub3Zl3cr3Emo2JxNR4viV+9T/LxWs+s2vRA2zeoyCTl+/gzufh+iBcuw==
-  dependencies:
-    promist "^0.7.0"
-
 es-abstract@^1.18.0-next.1, es-abstract@^1.18.0-next.2, es-abstract@^1.19.0, es-abstract@^1.19.1:
   version "1.19.1"
   resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.19.1.tgz#d4885796876916959de78edaa0df456627115ec3"
@@ -11875,13 +11847,6 @@ execa@^5.0.0, execa@^5.1.1:
     onetime "^5.1.2"
     signal-exit "^3.0.3"
     strip-final-newline "^2.0.0"
-
-execall@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/execall/-/execall-2.0.0.tgz#16a06b5fe5099df7d00be5d9c06eecded1663b45"
-  integrity sha512-0FU2hZ5Hh6iQnarpRtQurM/aAvp3RIbfvgLHrcqJYzhXyV2KFruhuChf9NC6waAhiUR7FFtlugkI4p7f2Fqlow==
-  dependencies:
-    clone-regexp "^2.1.0"
 
 exit@^0.1.2:
   version "0.1.2"
@@ -12708,11 +12673,6 @@ fs-minipass@^2.0.0:
   integrity sha512-V/JgOLFCS+R6Vcq0slCuaeWEdNC3ouDlJMNIsacH2VtALiu9mV4LPrHc5cDl8k5aw6J8jwgWWpiTo5RYhmIzvg==
   dependencies:
     minipass "^3.0.0"
-
-fs-readdir-recursive@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/fs-readdir-recursive/-/fs-readdir-recursive-1.1.0.tgz#e32fc030a2ccee44a6b5371308da54be0b397d27"
-  integrity sha512-GNanXlVr2pf02+sPN40XN8HG+ePaNcvM0q5mZBd668Obwb0yD5GiUbZOFgwn8kGMY6I3mdyDJzieUy3PTYyTRA==
 
 fs-write-stream-atomic@^1.0.8:
   version "1.0.10"
@@ -15005,11 +14965,6 @@ is-regexp@^1.0.0:
   resolved "https://registry.yarnpkg.com/is-regexp/-/is-regexp-1.0.0.tgz#fd2d883545c46bac5a633e7b9a09e87fa2cb5069"
   integrity sha1-/S2INUXEa6xaYz57mgnof6LLUGk=
 
-is-regexp@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/is-regexp/-/is-regexp-2.1.0.tgz#cd734a56864e23b956bf4e7c66c396a4c0b22c2d"
-  integrity sha512-OZ4IlER3zmRIoB9AqNhEggVxqIH4ofDns5nRrPS6yQxXE1TPCUpFznBfRQmQa8uC+pXqjMnukiJBxCisIxiLGA==
-
 is-relative@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-relative/-/is-relative-1.0.0.tgz#a1bb6935ce8c5dba1e8b9754b9b2dcc020e2260d"
@@ -16943,7 +16898,7 @@ lodash.merge@4.6.2, lodash.merge@^4.6.2:
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
-lodash.mergewith@4.6.2, lodash.mergewith@^4.6.1:
+lodash.mergewith@4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.mergewith/-/lodash.mergewith-4.6.2.tgz#617121f89ac55f59047c7aec1ccd6654c6590f55"
   integrity sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==
@@ -17427,14 +17382,6 @@ merge-descriptors@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/merge-descriptors/-/merge-descriptors-1.0.1.tgz#b00aaa556dd8b44568150ec9d1b953f3f90cbb61"
   integrity sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=
-
-merge-strategies@^0.1.1:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/merge-strategies/-/merge-strategies-0.1.6.tgz#0f8ce96fa278210762f101ba9cd22f136352689f"
-  integrity sha512-JaiqrKkE8Bw0WT7AKLyxGCIfN9LilaZ/K/sagxWqnN13LPi1IVMhsvieIQrTuBRjs2l6xQ77kyJo0Uo6J5iLYA==
-  dependencies:
-    lodash.clonedeep "^4.5.0"
-    lodash.mergewith "^4.6.1"
 
 merge-stream@^2.0.0:
   version "2.0.0"
@@ -17933,13 +17880,6 @@ mz@^2.7.0:
     any-promise "^1.0.0"
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
-
-namify@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/namify/-/namify-0.1.3.tgz#fa8bb14d5893443a83a697ead0c46864ff41bdfa"
-  integrity sha1-+ouxTViTRDqDppfq0MRoZP9Bvfo=
-  dependencies:
-    reserved "^0.1.0"
 
 nan@^2.12.1, nan@^2.14.0:
   version "2.14.2"
@@ -20549,11 +20489,6 @@ promise@^8.1.0:
   dependencies:
     asap "~2.0.6"
 
-promist@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/promist/-/promist-0.7.0.tgz#7378f065e39a2f361f15c58f08b32af88461f9fb"
-  integrity sha512-kcfKZ07y7P4LudEUGTcmO63g0L06+MyjzuYTfqghS0t/V8r52ovzVV1qkhc2GQrdy6NHS8kyUppCjMYTAQz27g==
-
 prompts@2.4.0, prompts@^2.0.1:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/prompts/-/prompts-2.4.0.tgz#4aa5de0723a231d1ee9121c40fdf663df73f61d7"
@@ -21763,11 +21698,6 @@ requizzle@~0.2.1:
   integrity sha512-YanoyJjykPxGHii0fZP0uUPEXpvqfBDxWV7s6GKAiiOsiqhX6vHNyW3Qzdmqp/iq/ExbhaGbVrjB4ruEVSM4GQ==
   dependencies:
     lodash "^4.17.14"
-
-reserved@^0.1.0:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/reserved/-/reserved-0.1.2.tgz#707b1246a3269f755da7cfcf9af6f4983bef105c"
-  integrity sha1-cHsSRqMmn3Vdp8/Pmvb0mDvvEFw=
 
 resize-observer-polyfill@^1.5.1:
   version "1.5.1"
@@ -26275,20 +26205,6 @@ yaml-ast-parser@0.0.43, yaml-ast-parser@^0.0.43:
   version "0.0.43"
   resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.43.tgz#e8a23e6fb4c38076ab92995c5dca33f3d3d7c9bb"
   integrity sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==
-
-yaml-import@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/yaml-import/-/yaml-import-2.0.0.tgz#b67ab1db5c0cd2bc13d419303ec0a41782b15c32"
-  integrity sha512-2QfVEAmkPk+/L3XYqReD6qega0B1pfLtrgpD48ik38MI9CE/X51l5pdF883LiLaNPh/ssmH688xvdDfKkpqNhQ==
-  dependencies:
-    ajv "^6.10.0"
-    arg "^4.1.0"
-    cli-belt "^0.3.1"
-    common-tags "^1.8.0"
-    fs-readdir-recursive "^1.1.0"
-    js-yaml "^3.13.1"
-    merge-strategies "^0.1.1"
-    namify "^0.1.3"
 
 yaml@^1.10.0, yaml@^1.10.2, yaml@^1.7.2:
   version "1.10.2"
