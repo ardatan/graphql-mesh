@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.53.2
+
+### Patch Changes
+
+- 813f6761c: fix(cli): use defaultImportFn if importFn isn't provided
+
 ## 0.53.1
 
 ### Patch Changes
