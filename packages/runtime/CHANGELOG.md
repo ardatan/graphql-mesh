@@ -1,5 +1,16 @@
 # @graphql-mesh/runtime
 
+## 0.30.0
+
+### Minor Changes
+
+- 900a01355: feat(serve-source): use the same server for serve-source cmd
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+
 ## 0.29.3
 
 ### Patch Changes

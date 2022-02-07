@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-mock
 
+## 0.13.5
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+
 ## 0.13.4
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-federation",
-  "version": "0.11.16",
+  "version": "0.11.17",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -27,9 +27,9 @@
     "@graphql-tools/wrap": "8.3.3",
     "@apollo/gateway": "0.46.0",
     "@graphql-tools/schema": "8.3.1",
-    "@graphql-mesh/utils": "0.26.4",
+    "@graphql-mesh/utils": "0.27.0",
     "@graphql-tools/utils": "8.6.1",
-    "@graphql-mesh/store": "0.3.12"
+    "@graphql-mesh/store": "0.3.13"
   },
   "publishConfig": {
     "access": "public",
