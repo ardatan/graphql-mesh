@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.27.0
+
+### Minor Changes
+
+- 900a01355: Support YAML include
+
 ## 0.26.4
 
 ### Patch Changes
