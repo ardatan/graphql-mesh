@@ -9,11 +9,13 @@ export const playgroundMiddlewareFactory = ({
   documents,
   graphqlPath,
   logger,
+  title = 'GraphQL Mesh',
 }: {
   baseDir: string;
   documents: Source[];
   graphqlPath: string;
   logger: Logger;
+  title?: string;
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
 
@@ -39,7 +41,7 @@ export const playgroundMiddlewareFactory = ({
         res.send(`
         <html>
         <head>
-          <title>GraphQL Mesh</title>
+          <title>${title}</title>
           <link rel="shortcut icon" href="https://www.graphql-mesh.com/img/favicon.ico">
         </head>
         <body>

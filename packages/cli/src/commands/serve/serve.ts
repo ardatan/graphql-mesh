@@ -40,7 +40,15 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
   }
 }
 
-export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents }: ServeMeshOptions) {
+export async function serveMesh({
+  baseDir,
+  argsPort,
+  getBuiltMesh,
+  logger,
+  rawConfig,
+  documents,
+  graphiqlTitle,
+}: ServeMeshOptions) {
   const {
     fork,
     port: configPort,
@@ -247,7 +255,8 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
         baseDir,
         documents,
         graphqlPath,
-        logger: logger,
+        logger,
+        title: graphiqlTitle,
       });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
