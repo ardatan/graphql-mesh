@@ -1,5 +1,6 @@
 import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
-import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
+import { ImportFn, jsonSchema, YamlConfig } from '@graphql-mesh/types';
+import { loadYaml } from '@graphql-mesh/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { isAbsolute, join } from 'path';
@@ -21,11 +22,12 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
   const dir = isAbsolute(configDir) ? configDir : join(cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     loaders: {
-      '.json': customLoader('json'),
-      '.yaml': customLoader('yaml'),
-      '.yml': customLoader('yaml'),
-      '.js': customLoader('js'),
-      noExt: customLoader('yaml'),
+      '.json': customLoader('json', options?.importFn),
+      '.yaml': customLoader('yaml', options?.importFn),
+      '.yml': customLoader('yaml', options?.importFn),
+      '.js': customLoader('js', options?.importFn),
+      '.ts': customLoader('js', options?.importFn),
+      noExt: customLoader('yaml', options?.importFn),
     },
   });
   const results = await explorer.search(dir);
@@ -39,7 +41,7 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
   return processConfig(config, { dir, ...restOptions });
 }
 
-function customLoader(ext: 'json' | 'yaml' | 'js') {
+function customLoader(ext: 'json' | 'yaml' | 'js', importFn: ImportFn) {
   function loader(filepath: string, content: string) {
     if (env) {
       content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
@@ -61,11 +63,11 @@ function customLoader(ext: 'json' | 'yaml' | 'js') {
     }
 
     if (ext === 'yaml') {
-      return defaultLoaders['.yaml'](filepath, content);
+      return loadYaml(filepath, content);
     }
 
     if (ext === 'js') {
-      return defaultLoaders['.js'](filepath, content);
+      return importFn(filepath);
     }
   }
 

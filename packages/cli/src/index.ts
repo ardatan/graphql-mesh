@@ -20,7 +20,6 @@ import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { YamlConfig } from '@graphql-mesh/types';
-import { serveSource } from './commands/serve/serve-source';
 import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
@@ -364,7 +363,7 @@ export async function graphqlMesh() {
     )
     .command<{ source: string }>(
       'serve-source <source>',
-      'Serves specific source',
+      'Serves specific source in development mode',
       builder => {
         builder.positional('source', {
           type: 'string',
@@ -377,7 +376,39 @@ export async function graphqlMesh() {
           dir: baseDir,
         });
         logger = meshConfig.logger;
-        await serveSource(meshConfig, args.source);
+        const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);
+        if (sourceIndex === -1) {
+          throw new Error(`Source ${args.source} not found`);
+        }
+        const meshInstance$ = getMesh({
+          ...meshConfig,
+          additionalTypeDefs: undefined,
+          additionalResolvers: [],
+          transforms: [],
+          sources: [meshConfig.sources[sourceIndex]],
+        });
+        const serveMeshOptions: ServeMeshOptions = {
+          baseDir,
+          argsPort: 4000 + sourceIndex + 1,
+          getBuiltMesh: () => meshInstance$,
+          logger: meshConfig.logger.child('Server'),
+          rawConfig: meshConfig.config,
+          documents: [],
+          graphiqlTitle: `${args.source} GraphiQL`,
+        };
+        if (meshConfig.config.serve?.customServerHandler) {
+          const customServerHandler = await loadFromModuleExportExpression<any>(
+            meshConfig.config.serve.customServerHandler,
+            {
+              defaultExportName: 'default',
+              cwd: baseDir,
+              importFn: defaultImportFn,
+            }
+          );
+          await customServerHandler(serveMeshOptions);
+        } else {
+          await serveMesh(serveMeshOptions);
+        }
       }
     ).argv;
 }

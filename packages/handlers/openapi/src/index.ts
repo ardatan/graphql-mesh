@@ -104,6 +104,7 @@ export default class OpenAPIHandler implements MeshHandler {
             env,
           }),
           fetch,
+          logger: this.logger,
         });
       }
       return Promise.all(asArray(rawSpec).map(singleSpec => getValidOAS3(singleSpec)));
