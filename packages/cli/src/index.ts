@@ -5,7 +5,6 @@ import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
 import { existsSync, readFileSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import {
   writeFile,
   pathExists,
@@ -23,6 +22,7 @@ import { YamlConfig } from '@graphql-mesh/types';
 import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
+import { printSchema } from 'graphql';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -122,7 +122,7 @@ export async function graphqlMesh() {
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
           meshInstance$
-            .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema)))
+            .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchema(schema)))
             .catch(e => {
               logger.error(`An error occured while writing the schema file: ${e.message}`);
             });
@@ -335,7 +335,7 @@ export async function graphqlMesh() {
 
           logger.info(`Generating Mesh schema`);
           const { schema, destroy, rawSources } = await getMesh(meshConfig);
-          await writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
+          await writeFile(join(outputDir, 'schema.graphql'), printSchema(schema));
 
           logger.info(`Generating artifacts`);
           await generateTsArtifacts({
