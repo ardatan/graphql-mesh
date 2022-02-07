@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.53.1
+
+### Patch Changes
+
+- 080929554: fix(cli): write schema.graphql with printSchema
+
 ## 0.53.0
 
 ### Minor Changes
