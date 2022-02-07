@@ -382,6 +382,8 @@ export async function graphqlMesh() {
         }
         const meshInstance$ = getMesh({
           ...meshConfig,
+          additionalTypeDefs: undefined,
+          additionalResolvers: [],
           transforms: [],
           sources: [meshConfig.sources[sourceIndex]],
         });
