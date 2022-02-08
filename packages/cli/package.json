@@ -6,9 +6,9 @@
     "graphql": "*"
   },
   "bin": {
-    "mesh": "dist/bin.js",
-    "gql-mesh": "dist/bin.js",
-    "graphql-mesh": "dist/bin.js"
+    "mesh": "dist/bin.mjs",
+    "gql-mesh": "dist/bin.mjs",
+    "graphql-mesh": "dist/bin.mjs"
   },
   "sideEffects": false,
   "main": "dist/index.js",

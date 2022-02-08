@@ -6,7 +6,7 @@ import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import { playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
-import ws from 'ws';
+import { WebSocketServer } from 'ws';
 import cors from 'cors';
 import {
   defaultImportFn,
@@ -27,7 +27,7 @@ import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { env, on as processOn } from 'process';
+import process from 'process';
 import { inspect } from '@graphql-tools/utils';
 
 const { readFile } = fsPromises;
@@ -36,7 +36,7 @@ const terminateEvents = ['SIGINT', 'SIGTERM'];
 
 function registerTerminateHandler(callback: (eventName: string) => void) {
   for (const eventName of terminateEvents) {
-    processOn(eventName, () => callback(eventName));
+    process.on(eventName, () => callback(eventName));
   }
 }
 
@@ -63,7 +63,7 @@ export async function serveMesh({
     endpoint: graphqlPath = '/graphql',
     browser,
   } = rawConfig.serve || {};
-  const port = argsPort || parseInt(env.PORT) || configPort || 4000;
+  const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
@@ -126,7 +126,7 @@ export async function serveMesh({
     );
     app.use(cookieParser());
 
-    const wsServer = new ws.Server({
+    const wsServer = new WebSocketServer({
       path: graphqlPath,
       server: httpServer,
     });
@@ -250,7 +250,7 @@ export async function serveMesh({
 
     app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
 
-    if (typeof playground !== 'undefined' ? playground : env.NODE_ENV?.toLowerCase() !== 'production') {
+    if (typeof playground !== 'undefined' ? playground : process.env.NODE_ENV?.toLowerCase() !== 'production') {
       const playgroundMiddleware = playgroundMiddlewareFactory({
         baseDir,
         documents,
@@ -266,7 +266,7 @@ export async function serveMesh({
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
-        const shouldntOpenBrowser = env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
+        const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
           open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
         }
