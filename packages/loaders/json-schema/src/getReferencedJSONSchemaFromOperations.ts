@@ -123,12 +123,15 @@ export async function getReferencedJSONSchemaFromOperations({
       }
       if (responseSchemas.length === 1) {
         rootTypeDefinition.properties[fieldName] = responseSchemas[0];
+      } else if (responseSchemas.length === 0) {
+        rootTypeDefinition.properties[fieldName] = anySchema;
+      } else {
+        rootTypeDefinition.properties[fieldName] = {
+          $comment: `statusCodeOneOfIndexMap:${JSON.stringify(statusCodeOneOfIndexMap)}`,
+          title: fieldName + '_response',
+          oneOf: responseSchemas,
+        };
       }
-      rootTypeDefinition.properties[fieldName] = {
-        $comment: `statusCodeOneOfIndexMap:${JSON.stringify(statusCodeOneOfIndexMap)}`,
-        title: fieldName + '_response',
-        oneOf: responseSchemas,
-      };
     } else {
       rootTypeDefinition.properties[fieldName] = await handleOperationResponseConfig(
         operationConfig as JSONSchemaOperationResponseConfig,
