@@ -1,4 +1,4 @@
-const { unlinkSync } = require('fs');
+const { unlinkSync, existsSync } = require('fs');
 const { readdirSync, lstatSync, ensureSymlinkSync, chmodSync, writeFileSync } = require('fs-extra');
 const { resolve, join } = require('path');
 
@@ -11,7 +11,9 @@ for (const path of dir) {
         const execNames = ['mesh', 'gql-mesh', 'graphql-mesh'];
         for (const execName of execNames) {
             const targetPath = join(absolutePath, 'node_modules', '.bin', execName);
-            unlinkSync(targetPath);
+            if (existsSync(targetPath)) {
+              unlinkSync(targetPath);
+            }
             ensureSymlinkSync(absoluteGraphqlMeshBinPath, targetPath);
             chmodSync(targetPath, '755');
             const targetCmdPath = targetPath + '.cmd';

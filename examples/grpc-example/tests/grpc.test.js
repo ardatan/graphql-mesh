@@ -36,10 +36,13 @@ describe('gRPC Example', () => {
     await grpc$;
     const result = await subscribe(MoviesByCastSubscription);
     expect(Symbol.asyncIterator in result).toBeTruthy();
-    const resultIterator = result[Symbol.asyncIterator]();
-    expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-1');
-    expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-2');
-    await resultIterator.return();
+    let i = 0;
+    for await (const singleResult of result) {
+      expect(singleResult).toMatchSnapshot('movies-by-cast-grpc-example-result-' + i++);
+      if (i > 2) {
+        break;
+      }
+    }
   })
   afterAll(() => {
       mesh$.then(mesh => mesh.destroy());
