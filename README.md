@@ -55,7 +55,7 @@ Then, this handler will be available for you to use in your config file.
 </p>
 </details>
 
-[Basic Usage](https://graphql-mesh.com/docs/getting-started/basic-example)
+[Basic Usage](https://www.graphql-mesh.com/docs/getting-started/introduction)
 
 [Supported APIs](https://www.graphql-mesh.com/docs/handlers/handlers-introduction)
 
