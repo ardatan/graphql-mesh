@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.13.3
+
+### Patch Changes
+
+- 49e9ca808: fix(json-schema): use Any scalar for empty responses
+- Updated dependencies [49e9ca808]
+  - json-machete@0.5.0
+
 ## 0.13.2
 
 ### Patch Changes
