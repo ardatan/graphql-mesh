@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.54.0
+
+### Minor Changes
+
+- 49e9ca808: feat(cli): skip type check for artifacts
+
 ## 0.53.2
 
 ### Patch Changes

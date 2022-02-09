@@ -1,5 +1,11 @@
 # @graphql-mesh/raml
 
+## 0.1.4
+
+### Patch Changes
+
+- @omnigraph/raml@0.4.3
+
 ## 0.1.3
 
 ### Patch Changes

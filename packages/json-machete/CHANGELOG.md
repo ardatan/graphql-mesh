@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.5.0
+
+### Minor Changes
+
+- 49e9ca808: feat(json-machete): trim descriptions
+
 ## 0.4.3
 
 ### Patch Changes
