@@ -163,20 +163,19 @@ export async function dereferenceObject<T extends object, TRoot = T>(
         }
       }
     } else {
-      await Promise.all(
-        Object.entries(obj).map(async ([key, val]) => {
-          if (typeof val === 'object') {
-            obj[key] = await dereferenceObject<any>(val, {
-              cwd,
-              externalFileCache,
-              refMap,
-              root,
-              fetch,
-              headers,
-            });
-          }
-        })
-      );
+      for (const key in obj) {
+        const val = obj[key];
+        if (typeof val === 'object') {
+          obj[key] = await dereferenceObject<any>(val, {
+            cwd,
+            externalFileCache,
+            refMap,
+            root,
+            fetch,
+            headers,
+          });
+        }
+      }
     }
   }
   return obj;
