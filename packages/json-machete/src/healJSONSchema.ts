@@ -158,6 +158,9 @@ export async function healJSONSchema(schema: JSONSchema) {
             pathBasedName += '_';
           }
         }
+        if (subSchema.description != null) {
+          subSchema.description = subSchema.description.trim();
+        }
       }
       return subSchema;
     },

@@ -29,7 +29,8 @@
     "json-machete": "0.4.3",
     "to-json-schema": "0.2.5",
     "@graphql-mesh/utils": "0.27.0",
-    "swagger2openapi": "^7.0.8"
+    "swagger2openapi": "^7.0.8",
+    "@graphql-tools/utils": "8.6.1"
   },
   "publishConfig": {
     "access": "public",
