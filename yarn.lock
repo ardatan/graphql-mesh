@@ -9745,22 +9745,10 @@ cross-undici-fetch@0.1.12:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
-cross-undici-fetch@0.1.16:
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.16.tgz#48ce18c701c7cf8053afe3c1d7e4d62a1952e0cc"
-  integrity sha512-VoL+4GLbq2R7cfpM3wc3RClV6boUAjbpZ485YHsIeBnWYUi4osdDZhh1ohk9+BjrLvAvwmvQwZC5rTEIVQ2eVQ==
-  dependencies:
-    abort-controller "^3.0.0"
-    form-data-encoder "^1.7.1"
-    formdata-node "^4.3.1"
-    node-fetch "^2.6.5"
-    undici "^4.9.3"
-    web-streams-polyfill "^3.2.0"
-
-cross-undici-fetch@^0.1.19:
-  version "0.1.19"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.19.tgz#1bef41652c33ec812b51cd3b4e1295114cd62d4c"
-  integrity sha512-bNBuesVn09Iy15mAM/hpt97fLWSexblVYpUYa5FjbtLHA7om9w3g1uRGGwrEnmVxy3wouNvZyJwQzAPHXgOrxQ==
+cross-undici-fetch@0.1.23, cross-undici-fetch@^0.1.19:
+  version "0.1.23"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.23.tgz#254c5f7d11f0e462a57187db94383ee6ca9f1525"
+  integrity sha512-PxSFKt7owZrL/WWowlOXVyD86HcUXePQ0853p/6DGktaONK10hVixV9RmqPaEsdrCTJkeBDlnXFT2tp6db0K0g==
   dependencies:
     abort-controller "^3.0.0"
     form-data-encoder "^1.7.1"
