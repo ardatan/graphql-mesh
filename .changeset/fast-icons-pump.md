@@ -1,5 +1,5 @@
 ---
-'@omnigraph/openapi': patch
+'json-machete': patch
 ---
 
 fix(openapi): respect definition name

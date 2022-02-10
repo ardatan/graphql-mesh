@@ -45,24 +45,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
     baseUrl = baseUrl || oasOrSwagger.servers[0].url;
   }
 
-  if ('definitions' in oasOrSwagger) {
-    for (const definitionName in oasOrSwagger.definitions) {
-      const definition = oasOrSwagger.definitions[definitionName];
-      if (!definition.title) {
-        definition.title = definitionName;
-      }
-    }
-  }
-
-  if ('components' in oasOrSwagger && oasOrSwagger.components?.schemas) {
-    for (const definitionName in oasOrSwagger.components.schemas) {
-      const definition: any = oasOrSwagger.components.schemas[definitionName];
-      if (!definition.title) {
-        definition.title = definitionName;
-      }
-    }
-  }
-
   for (const relativePath in oasOrSwagger.paths) {
     const pathObj = oasOrSwagger.paths[relativePath];
     for (const method in pathObj) {

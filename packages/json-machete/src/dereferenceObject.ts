@@ -75,6 +75,25 @@ export async function dereferenceObject<T extends object, TRoot = T>(
   } = {}
 ): Promise<T> {
   if (typeof obj === 'object') {
+    // Title should not be overwritten by the title given from the reference
+    if ('definitions' in obj) {
+      for (const definitionName in (obj as any).definitions) {
+        const definition = (obj as any).definitions[definitionName];
+        if (!definition.title) {
+          definition.title = definitionName;
+        }
+      }
+    }
+
+    if ('components' in obj && (obj as any).components?.schemas) {
+      for (const definitionName in (obj as any).components.schemas) {
+        const definition: any = (obj as any).components.schemas[definitionName];
+        if (!definition.title) {
+          definition.title = definitionName;
+        }
+      }
+    }
+
     if (isRefObject(obj)) {
       const $ref = obj.$ref;
       if (refMap.has($ref)) {
