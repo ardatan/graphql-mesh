@@ -1,5 +1,12 @@
 # @omnigraph/json-schema
 
+## 0.13.4
+
+### Patch Changes
+
+- Updated dependencies [1c8827604]
+  - json-machete@0.5.1
+
 ## 0.13.3
 
 ### Patch Changes

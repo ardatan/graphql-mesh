@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.5.1
+
+### Patch Changes
+
+- 1c8827604: fix(openapi): respect definition name
+
 ## 0.5.0
 
 ### Minor Changes
