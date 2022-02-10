@@ -170,18 +170,21 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         for (const bodyNode of responseNode.body()) {
           if (bodyNode.name().includes('application/json')) {
             const bodyJson = bodyNode.toJSON();
-            const responseByStatusCodeConfig: JSONSchemaOperationResponseConfig = {};
             if (bodyJson.schemaPath) {
               const schemaPath = bodyJson.schemaPath;
-              responseByStatusCodeConfig.responseSchema = schemaPath;
-              responseByStatusCodeConfig.responseTypeName = pathTypeMap.get(schemaPath);
+              const typeName = pathTypeMap.get(schemaPath);
+              responseByStatusCode[statusCode] = {
+                responseSchema: schemaPath,
+                responseTypeName: typeName,
+              };
             } else if (bodyJson.type) {
               const typeName = asArray(bodyJson.type)[0];
-              responseByStatusCodeConfig.responseTypeName = typeName;
               const schemaPath = typePathMap.get(typeName);
-              responseByStatusCodeConfig.responseSchema = schemaPath;
+              responseByStatusCode[statusCode] = {
+                responseSchema: schemaPath,
+                responseTypeName: typeName,
+              };
             }
-            responseByStatusCode[statusCode] = responseByStatusCodeConfig;
           }
         }
       }

@@ -94,6 +94,26 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
             });
             externalFileCache.set(externalFilePath, externalFile);
+
+            // Title should not be overwritten by the title given from the reference
+            // Usually Swagger and OpenAPI Schemas have this
+            if (externalFile.definitions) {
+              for (const definitionName in externalFile.definitions) {
+                const definition = externalFile.definitions[definitionName];
+                if (!definition.title) {
+                  definition.title = definitionName;
+                }
+              }
+            }
+
+            if (externalFile.components?.schemas) {
+              for (const definitionName in externalFile.components.schemas) {
+                const definition = externalFile.components.schemas[definitionName];
+                if (!definition.title) {
+                  definition.title = definitionName;
+                }
+              }
+            }
           }
           const result = await dereferenceObject(
             refPath
