@@ -1,5 +1,14 @@
 # @omnigraph/raml
 
+## 0.4.4
+
+### Patch Changes
+
+- 1c8827604: fix(raml): handle error responses from traits correctly
+- Updated dependencies [1c8827604]
+  - json-machete@0.5.1
+  - @omnigraph/json-schema@0.13.4
+
 ## 0.4.3
 
 ### Patch Changes

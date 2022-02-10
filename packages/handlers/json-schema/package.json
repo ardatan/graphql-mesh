@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.24.4",
+  "version": "0.24.5",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,13 +23,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "json-machete": "0.5.0",
+    "json-machete": "0.5.1",
     "@graphql-mesh/types": "0.61.0",
     "@graphql-mesh/utils": "0.27.0",
     "@graphql-mesh/store": "0.3.13",
     "@graphql-tools/utils": "8.6.1",
     "graphql-compose": "9.0.6",
-    "@omnigraph/json-schema": "0.13.3"
+    "@omnigraph/json-schema": "0.13.4"
   },
   "publishConfig": {
     "access": "public",
