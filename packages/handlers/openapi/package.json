@@ -31,7 +31,7 @@
     "@graphql-mesh/store": "0.3.13",
     "@graphql-mesh/utils": "0.27.0",
     "@graphql-tools/utils": "8.6.1",
-    "cross-undici-fetch": "0.1.16",
+    "cross-undici-fetch": "0.1.23",
     "deep-equal": "2.0.5",
     "form-urlencoded": "6.0.5",
     "jsonpath-plus": "6.0.1",
