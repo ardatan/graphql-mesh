@@ -1,5 +1,12 @@
 # @omnigraph/raml
 
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies [05ec30255]
+  - @omnigraph/json-schema@0.13.5
+
 ## 0.4.4
 
 ### Patch Changes

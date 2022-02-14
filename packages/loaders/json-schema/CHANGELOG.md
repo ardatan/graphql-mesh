@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.13.5
+
+### Patch Changes
+
+- 05ec30255: fix(json-schema): revert breaking change in the API (export getComposerFromJSONSchema)
+
 ## 0.13.4
 
 ### Patch Changes
