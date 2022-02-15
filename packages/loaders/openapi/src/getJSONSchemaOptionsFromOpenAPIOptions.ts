@@ -132,7 +132,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         const contentKey = Object.keys(requestBodyObj.content)[0];
         operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
           .split('/')
-          .join('~1')}/${method}/requestBody/content/${contentKey}/schema`;
+          .join('~1')}/${method}/requestBody/content/${contentKey.split('/').join('~1')}/schema`;
       }
 
       const responseByStatusCode = operationConfig.responseByStatusCode;
@@ -149,7 +149,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             responseByStatusCode[responseKey] = {
               responseSchema: `${oasFilePath}#/paths/${relativePath
                 .split('/')
-                .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`,
+                .join('~1')}/${method}/responses/${responseKey}/content/${contentKey.split('/').join('~1')}/schema`,
             };
           }
         } else if ('schema' in responseObj) {
