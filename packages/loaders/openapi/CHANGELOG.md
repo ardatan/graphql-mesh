@@ -1,5 +1,11 @@
 # @omnigraph/openapi
 
+## 0.1.7
+
+### Patch Changes
+
+- fb974bf73: fix(openapi): escape slashes in the content mimetype keys
+
 ## 0.1.6
 
 ### Patch Changes
