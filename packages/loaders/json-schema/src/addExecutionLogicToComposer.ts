@@ -139,7 +139,7 @@ export async function addExecutionLogicToComposer(
               case 'OPTIONS':
               case 'TRACE': {
                 fullPath += fullPath.includes('?') ? '&' : '?';
-                fullPath += qsStringify(input, { encode: false });
+                fullPath += qsStringify(input);
                 break;
               }
               case 'POST':
@@ -169,7 +169,7 @@ export async function addExecutionLogicToComposer(
         if (queryString) {
           const queryParams = qsParse(queryString);
           const cleanedQueryParams = cleanObject(queryParams);
-          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { encode: false });
+          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams);
         }
 
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
