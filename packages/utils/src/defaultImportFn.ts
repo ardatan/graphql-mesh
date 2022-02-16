@@ -12,7 +12,7 @@ export async function defaultImportFn(path: string) {
           get: () => module[key],
         });
       }
-      module = normalizedVal;
+      return normalizedVal;
     }
   }
   return module;

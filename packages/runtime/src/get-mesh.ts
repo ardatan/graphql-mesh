@@ -9,6 +9,8 @@ import {
   print,
   SelectionSetNode,
   Kind,
+  isLeafType,
+  getNamedType,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
 import {
@@ -181,6 +183,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
           for (const fieldName in rootTypeFieldMap) {
             const rootTypeField = rootTypeFieldMap[fieldName];
             const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
+            const shouldHaveSelectionSet = !isLeafType(getNamedType(rootTypeField.type));
             rawSourceContext[rootType.name][fieldName] = async ({
               root,
               args,
@@ -222,7 +225,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
                 const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
                 commonDelegateOptions.transforms = [wrapQueryTransform];
               }
-              if (!('getFields' in rootTypeField.type)) {
+              if (shouldHaveSelectionSet) {
                 let selectionCount = 0;
                 for (const fieldNode of info.fieldNodes) {
                   if (fieldNode.selectionSet != null) {
