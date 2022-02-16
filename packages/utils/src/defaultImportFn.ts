@@ -8,9 +8,11 @@ export async function defaultImportFn(path: string) {
     if (prototypeOfObject == null || prototypeOfObject === Object.prototype) {
       const normalizedVal = {};
       for (const key in module) {
-        normalizedVal[key] = module[key];
+        Object.defineProperty(normalizedVal, key, {
+          get: () => module[key],
+        });
       }
-      module = normalizedVal;
+      return normalizedVal;
     }
   }
   return module;
