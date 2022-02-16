@@ -12402,10 +12402,10 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-form-urlencoded@6.0.5:
-  version "6.0.5"
-  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-6.0.5.tgz#61263c5cb6806523d0c6124318a9bcb612b7742b"
-  integrity sha512-7M7IhZNujsHqjYovM1WTSqcAVOqfvgF8acu6ok1ct1a00l6LVrmagJKkOdRUH/PYKEDOZ7ZAw/Mtq1/Q8CuRTQ==
+form-urlencoded@6.0.6:
+  version "6.0.6"
+  resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-6.0.6.tgz#6505aca762436f90f2a736f79c24ad30787daacc"
+  integrity sha512-5n3L86l3uVJLFk8w+HTcuaV8WrEeH9pPqJcICxAbs3oW/gsKg9kJ8XVPZ3I1PJR50ld2fQjstT94p4G90JDMAg==
 
 format-util@^1.0.3:
   version "1.0.5"

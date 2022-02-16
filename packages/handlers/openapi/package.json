@@ -33,7 +33,7 @@
     "@graphql-tools/utils": "8.6.1",
     "cross-undici-fetch": "0.1.23",
     "deep-equal": "2.0.5",
-    "form-urlencoded": "6.0.5",
+    "form-urlencoded": "6.0.6",
     "jsonpath-plus": "6.0.1",
     "json-ptr": "2.2.0",
     "openapi-diff": "0.23.5",
