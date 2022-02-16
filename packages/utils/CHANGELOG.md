@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.27.1
+
+### Patch Changes
+
+- fcbd12a35: fix(utils): normalize module objects with Object.defineProperty not with regular assignment
+- Updated dependencies [240ec7b38]
+  - @graphql-mesh/types@0.62.0
+
 ## 0.27.0
 
 ### Minor Changes

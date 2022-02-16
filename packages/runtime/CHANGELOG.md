@@ -1,5 +1,15 @@
 # @graphql-mesh/runtime
 
+## 0.30.1
+
+### Patch Changes
+
+- fcbd12a35: fix(runtime): fallback to a dummy selectionSet if parent return type doesn't have one
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+
 ## 0.30.0
 
 ### Minor Changes

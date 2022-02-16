@@ -1,5 +1,16 @@
 # @omnigraph/json-schema
 
+## 0.13.6
+
+### Patch Changes
+
+- 3a21004c9: fix(json-schema): encode query parameters
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+  - json-machete@0.5.2
+
 ## 0.13.5
 
 ### Patch Changes
