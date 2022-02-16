@@ -9,6 +9,8 @@ import {
 } from '@omnigraph/json-schema';
 import { env } from 'process';
 import { getFieldNameFromPath } from './utils';
+import { OperationTypeNode } from 'graphql';
+import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
@@ -18,6 +20,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   baseUrl?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
+  selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
 }
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions({
@@ -28,7 +31,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   baseUrl,
   schemaHeaders,
   operationHeaders,
+  selectQueryOrMutationField = [],
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
+  const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
+  for (const { fieldName, type } of selectQueryOrMutationField) {
+    fieldTypeMap[fieldName] = type;
+  }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
     typeof oasFilePath === 'string'
@@ -175,6 +183,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
           operationConfig.requestSchema.title = operationConfig.field + '_request';
         }
+      }
+
+      if (fieldTypeMap[operationConfig.field]) {
+        operationConfig.type = fieldTypeMap[operationConfig.field] as OperationTypeNode;
       }
     }
   }

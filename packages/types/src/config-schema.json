@@ -1647,9 +1647,32 @@
         },
         "ignoreErrorResponses": {
           "type": "boolean"
+        },
+        "selectQueryOrMutationField": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OASSelectQueryOrMutationFieldConfig"
+          },
+          "additionalItems": false
         }
       },
       "required": ["oasFilePath"]
+    },
+    "OASSelectQueryOrMutationFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OASSelectQueryOrMutationFieldConfig",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["query", "mutation", "Query", "Mutation"],
+          "description": "Allowed values: query, mutation, Query, Mutation"
+        },
+        "fieldName": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "fieldName"]
     },
     "ODataHandler": {
       "additionalProperties": false,

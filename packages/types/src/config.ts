@@ -670,6 +670,14 @@ export interface NewOpenapiHandler {
     [k: string]: any;
   };
   ignoreErrorResponses?: boolean;
+  selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
+}
+export interface OASSelectQueryOrMutationFieldConfig {
+  /**
+   * Allowed values: query, mutation, Query, Mutation
+   */
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
 }
 /**
  * Handler for OData
