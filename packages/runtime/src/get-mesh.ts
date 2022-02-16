@@ -8,6 +8,7 @@ import {
   getOperationAST,
   print,
   SelectionSetNode,
+  Kind,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
 import {
@@ -215,6 +216,43 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
                 transformedSchema,
                 info,
               };
+              if (selectionSet) {
+                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                const path = [fieldName];
+                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
+                commonDelegateOptions.transforms = [wrapQueryTransform];
+              }
+              if ('getFields' in rootTypeField.type) {
+                let selectionCount = 0;
+                for (const fieldNode of info.fieldNodes) {
+                  if (fieldNode.selectionSet != null) {
+                    selectionCount += fieldNode.selectionSet.selections.length;
+                  }
+                }
+                if (selectionCount === 0) {
+                  commonDelegateOptions.info = {
+                    ...info,
+                    fieldNodes: [
+                      {
+                        ...info.fieldNodes[0],
+                        selectionSet: {
+                          kind: Kind.SELECTION_SET,
+                          selections: [
+                            {
+                              kind: Kind.FIELD,
+                              name: {
+                                kind: Kind.NAME,
+                                value: '__typename',
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      ...info.fieldNodes.slice(1),
+                    ],
+                  };
+                }
+              }
               if (key && argsFromKeys) {
                 const batchDelegationOptions: BatchDelegateOptions = {
                   ...commonDelegateOptions,
@@ -222,24 +260,12 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
                   argsFromKeys,
                   valuesFromResults,
                 };
-                if (selectionSet) {
-                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
-                  const path = [fieldName];
-                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
-                  batchDelegationOptions.transforms = [wrapQueryTransform];
-                }
                 return batchDelegateToSchema(batchDelegationOptions);
               } else {
                 const options: IDelegateToSchemaOptions = {
                   ...commonDelegateOptions,
                   args,
                 };
-                if (selectionSet) {
-                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
-                  const path = [fieldName];
-                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
-                  options.transforms = [wrapQueryTransform];
-                }
                 const result = await delegateToSchema(options);
                 if (valuesFromResults) {
                   return valuesFromResults(result);
