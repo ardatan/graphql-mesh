@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.62.0
+
+### Minor Changes
+
+- 240ec7b38: feat(openapi): selectQueryOrMutationField flag to choose what field belongs to what root type
+
 ## 0.61.0
 
 ### Minor Changes

@@ -1,5 +1,20 @@
 # @graphql-mesh/new-openapi
 
+## 0.1.0
+
+### Minor Changes
+
+- 240ec7b38: feat(openapi): selectQueryOrMutationField flag to choose what field belongs to what root type
+
+### Patch Changes
+
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @omnigraph/openapi@0.2.0
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+  - @graphql-mesh/store@0.3.14
+
 ## 0.0.16
 
 ### Patch Changes

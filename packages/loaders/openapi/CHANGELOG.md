@@ -1,5 +1,19 @@
 # @omnigraph/openapi
 
+## 0.2.0
+
+### Minor Changes
+
+- 240ec7b38: feat(openapi): selectQueryOrMutationField flag to choose what field belongs to what root type
+
+### Patch Changes
+
+- Updated dependencies [fcbd12a35]
+- Updated dependencies [3a21004c9]
+  - @graphql-mesh/utils@0.27.1
+  - @omnigraph/json-schema@0.13.6
+  - json-machete@0.5.2
+
 ## 0.1.7
 
 ### Patch Changes
