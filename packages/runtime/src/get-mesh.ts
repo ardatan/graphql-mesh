@@ -222,7 +222,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
                 const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
                 commonDelegateOptions.transforms = [wrapQueryTransform];
               }
-              if ('getFields' in rootTypeField.type) {
+              if (!('getFields' in rootTypeField.type)) {
                 let selectionCount = 0;
                 for (const fieldNode of info.fieldNodes) {
                   if (fieldNode.selectionSet != null) {
