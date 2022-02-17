@@ -54,7 +54,7 @@
     "body-parser": "1.19.1",
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",
-    "dotenv": "14.3.2",
+    "dotenv": "16.0.0",
     "graphql-import-node": "0.0.4",
     "express": "4.17.2",
     "graphql-helix": "1.11.0",
