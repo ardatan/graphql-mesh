@@ -1,159 +1,208 @@
-## GraphQL Mesh Commands
+---
+id: cli-commands
+title: CLI commands
+sidebar_label: CLI commands
+---
 
-Graphql Mesh exposes a number of commands that can be used to determine interactions as well as startup behavior.
 
-When running mesh commands please be aware that some will work differently based on the context you are executing them in. Global installed CLI vs local CLI do not return the exact same results in all circumstances.
+## Installation
 
-Global installation:
+If you have installed the CLI globally, you can use `mesh` directly from anywhere in the terminal.
+However, please be aware that Global installed CLI versus local CLI does not return the same results in all circumstances.
+
+We recommend installing GraphQL Mesh locally, allowing you to run it as follow:
+
+```bash
+yarn mesh
 ```
-yarn global add graphql @graphql-mesh/cli
-```
 
-If you have a installed the CLI globally, you can use `graphql-mesh` directly from anywhere in the terminal.
-
-As already indicated, the result of the command may differ based on whether you run the global CLI command or the locally-installed CLI inside your target project's root directory.
-The safest method is to use the local CLI.
-
-Here's an example of how to run project-specific commands using the local CLI:
-
-> windows     `node node_modules\\.bin\\graphql-mesh dump-schema --output ./schema.json`
-
-> mac/linux   `node node_modules/.bin/graphql-mesh dump-schema --output ./schema.json`
-
-
-
-If you are running a project-specific command repeatedly, you may find it more practical to add a script reference inside your `package.json` like so:
+If you are using npm, you will need to add it to your `package.json` `scripts` as follow:
 
 ```json
-script: {
-    "dump": "node_modules\\.bin\\graphql-mesh dump-schema --output ./schema.json",
+{
+  "scripts": {
+    "mesh": "mesh",
+  }
+}
 ```
 
+which will allow you to use it as follows:
+
+```bash
+npm run mesh -- # options...
+```
+
+
+
+<p>
+&nbsp;
+</p>
 
 ## Global Options
 
-All commands can take  two global options. Options are marked with a double dash `--` while commands themselves do not have a prefix.
-Options are not required.
+All commands can take two global optional options.
 
-A simple type system is used in commands and option parameters. Here are the basic variable types used on command line:
-- string : standard characters [A-z, 0-9]
-- number : 0-9
-- array  : elements are separated by space on command line.
-- boolean: "true" | "false"
+<p>
+&nbsp;
+</p>
 
-###  r (alias: require)  [array]
+###  `--r (alias: require)  [array]`
 
 Loads specific require.extensions before running the codegen and reading the configuration.
 
 
-#### Examples
+#### Example
+
+```bash
+yarn graphql-mesh --r lodash
+yarn graphql-mesh --require lodash fluke2
 ```
-yarn graphql-mesh --r lowdash
-yarn graphql-mesh --require lowdash fluke2
-```
 
+<p>
+&nbsp;
+</p>
 
-### dir  [string]
+### `--dir  [string]`
 
-Modified the base directory to use for looking for meshrc config file.
+Used to modify the base directory for looking for a `.meshrc` config file.
 
-#### Examples
+#### Example
 ```
 yarn graphql-mesh --dir ./mystuff/meshproject
 ```
 
+<p>
+&nbsp;
+</p>
+
 
 ## List of Commands
 
-### serve
+### `mesh dev`
 
-Serves a GraphQL server with GraphQL interface to test your Mesh API. Can have an optional port argument.
+Serves a GraphQL server with a GraphQL interface to test your Mesh API locally.
+
+Can have an optional `--port` argument.
+
+> GraphQL Mesh does not currently support hot reloading.
+
 
 #### Options
 
-##### port [number]
+##### `--port [number]`
 
-The system port on which graphql-mesh will be made available. This should be one of the normal system ports [1-65386] not currently used by any other service.
+The system port on which graphql-mesh will be made available.
+
+This should be one of the normal system ports [1-65386] not currently used by any other service.
 
 
 #### Example
+
+```bash
+yarn graphql-mesh dev --port 4002
 ```
-yarn graphql-mesh serve --port 4002
-```
+
+<p>
+&nbsp;
+</p>
 
 
-### generate-sdk
 
-Generates fully type-safe SDK based on unified GraphQL schema and GraphQL operations.
+### `mesh build`
+
+Builds artifacts required to use `mesh start` for a gateway (production) server.
+
+More information about this on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
+
+<p>
+&nbsp;
+</p>
+
+
+### `mesh validate`
+
+Validate the built artifacts (`mesh build`) required to use `mesh start` for a gateway (production) server.
+
+More information about this on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
+
+<p>
+&nbsp;
+</p>
+
+### `mesh start`
+
+Serves a GraphQL server using the built artifacts.
+`mesh start` compared to `mesh dev` does not rely on the sources to build the schema.
+Instead, it uses the built artifacts.
+Therefore, `mesh start` is recommended to start a mesh server in production.
+
+More information about `mesh start` on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
+
+Can have an optional `--port` argument.
 
 #### Options
 
-##### output [string] - required
+##### `--port [number]`
 
-The target output file.
+The system port on which graphql-mesh will be made available.
 
-##### operations [array]
-
-[need example]
-
-##### depth [number]
-
-The recursion depth of operations.
-
-##### flatten-types [boolean]
-
-Whether types should be flattened.
-
-#### Example
-```
-yarn graphql-mesh generate-sdk --output ./myoutput.json
-```
-[TODO:verify]
-
-
-### dump-schema
-
-Generates a JSON introspection or GraphQL SDL schema file from your mesh. Output format will depend on your output file name extension.
-
-#### Options
-
-##### output [string] - required
-The target file name, which should either have a `.json` or `.graphql` extension. Alternate supported file extension are: `graphqls`, `gql`, `gqls`.
-
-
-#### Examples
-```
-yarn graphql-mesh dump-schema --output ./schema.json
-or
-yarn graphql-mesh dump-schema --output ./schema.graphql
-```
-
-### typescript
-
-Generates TypeScript typings for the generated mesh.
-
-#### Options
-
-##### output [string] - required
-The target file name, which should have a `.d.ts` extension.
+This should be one of the normal system ports [1-65386] not currently used by any other service.
 
 
 #### Example
+
+```bash
+yarn graphql-mesh start --port 4002
 ```
-yarn graphql-mesh typescript --output ./myschema.d.ts
-```
 
+<p>
+&nbsp;
+</p>
 
-### write-introspection-cache
+### `mesh serve-source`
 
-Writes introspection cache and creates it from scratch. The filename and directory are resolved from your `.meshrc.yaml` directives:
+`serve-source` helps with quickly assessing that Mesh properly ingests a source.
+Given a source name as the only argument, Mesh will serve a GraphQL API only exposing the given source.
+
+This command is handy to debug a source.
+
+#### Example
+
+Given the following configuration:
 
 ```yaml
-introspectionCache: ./introspectionCache.json
+sources:
+  - name: Cities
+    handler:
+      openapi:
+        source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
+    transforms:
+      - rename:
+          - from:
+              type: Error
+            to:
+              type: CitiesError
+
+  - name: Weather
+    handler:
+      openapi:
+        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+    transforms:
+      - rename:
+          - from:
+              type: Error
+            to:
+              type: WeatherError
 ```
 
+You can test that the "Weather" source is properly ingested by mesh by running:
 
-#### Example
+```bash
+yarn graphql-mesh serve-source Weather
 ```
-yarn graphql-mesh write-introspection-cache
-```
+
+Then, Mesh will serve a GraphQL API only exposing the "Weather" source.
+
+<p>
+&nbsp;
+</p>
