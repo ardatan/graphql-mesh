@@ -13,8 +13,9 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { jitExecutorFactory, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { jitExecutorFactory, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { env } from 'process';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -57,7 +58,7 @@ export default class PostGraphileHandler implements MeshHandler {
     if (!pgPool || !('connect' in pgPool)) {
       const pgLogger = this.logger.child('PostgreSQL');
       pgPool = new pg.Pool({
-        connectionString: this.config.connectionString,
+        connectionString: stringInterpolator.parse(this.config.connectionString, { env }),
         log: messages => pgLogger.debug(() => messages),
         ...this.config?.pool,
       });
