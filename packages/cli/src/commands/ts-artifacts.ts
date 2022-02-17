@@ -395,7 +395,7 @@ export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOpera
   if (await pathExists(tsConfigPath)) {
     const tsConfigStr = await readFile(tsConfigPath, 'utf8');
     const tsConfig = JSON.parse(tsConfigStr);
-    if (tsConfig.compilerOptions.module.startsWith('es')) {
+    if (tsConfig?.compilerOptions?.module.startsWith('es')) {
       jobs.push(esmJob('js'));
     } else {
       jobs.push(cjsJob);
