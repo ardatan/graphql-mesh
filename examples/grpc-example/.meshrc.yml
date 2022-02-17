@@ -3,15 +3,11 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
-        credentialsSsl:
-          rootCA: ./certs/ca.crt
-          certChain: ./certs/server.crt
-          privateKey: ./certs/server.key
         metaData:
           someKey: 'someValue'
           connection_type: ['headers', 'connection']
         protoFilePath:
-          file: ./proto/io/xtech/service.proto
+          file: ./proto/service.proto
           load:
             includeDirs:
               - ./proto

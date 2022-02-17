@@ -15,7 +15,7 @@ import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
 import { startServer, stopServer } from './example_api_server';
 import { GraphQLOperationType } from '../src/openapi-to-graphql/types/graphql';
-import fetch from 'cross-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas.json');
 const PORT = 3002;
@@ -59,7 +59,7 @@ test('Get descriptions', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         __type: {
@@ -99,7 +99,7 @@ test('Get resource (incl. enum)', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: { user: { name: 'Arlene L McMahon', status: 'STAFF' } },
     });
@@ -113,7 +113,7 @@ test('Get resource 2', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({ data: { company: { legalForm: 'public' } } });
   });
 });
@@ -127,7 +127,7 @@ test('Get resource with status code: 2XX', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         papers: [
@@ -152,7 +152,7 @@ test('Get resource with no response schema and status code: 204 and fillEmptyRes
     bonuses
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         bonuses: null,
@@ -172,7 +172,7 @@ test('Get nested resource via link $response.body#/...', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         user: {
@@ -196,7 +196,7 @@ test('Get nested resource via link $request.path#/... and $request.query#/', () 
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         productWithId: {
@@ -219,7 +219,7 @@ test('Get nested resource via link operationRef', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         productWithId: {
@@ -247,7 +247,7 @@ test('Get nested lists of resources', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         user: {
@@ -401,6 +401,181 @@ test('Get nested lists of resources', () => {
   });
 });
 
+test('Get nested lists of resources without specifying a path param for the parent resource', () => {
+  const query = `{
+    users(limit: 1) {
+      name
+      friends {
+        name
+        friends {
+          name
+          friends {
+            name
+          }
+        }
+      }
+    }
+  }`;
+
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then(result => {
+    expect(result).toEqual({
+      data: {
+        users: [
+          {
+            name: 'Arlene L McMahon',
+            friends: [
+              {
+                name: 'William B Ropp',
+                friends: [
+                  {
+                    name: 'William B Ropp',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'John C Barnes',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'Heather J Tate',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: 'John C Barnes',
+                friends: [
+                  {
+                    name: 'William B Ropp',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'John C Barnes',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'Heather J Tate',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: 'Heather J Tate',
+                friends: [
+                  {
+                    name: 'William B Ropp',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'John C Barnes',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'Heather J Tate',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+});
+
 // Links can be defined with some parameters as constants or variables
 test('Link parameters as constants and variables', () => {
   const query = `{
@@ -421,7 +596,7 @@ test('Link parameters as constants and variables', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         scanner: {
@@ -436,7 +611,7 @@ test('Link parameters as constants and variables', () => {
             body: '123',
           },
           everythingLink: {
-            body: 'http://localhost:3002/api/scanner_get_200_hello_application/json_close',
+            body: 'http://localhost:3002/api/scanner_get_200_hello_application/json_keep-alive',
           },
         },
       },
@@ -478,7 +653,7 @@ test('Nested links with constants and variables', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         scanner: {
@@ -497,10 +672,9 @@ test('Nested links with constants and variables', () => {
             constantLink: {
               body: '123',
               everythingLink: {
-                body: 'http://localhost:3002/api/copier_get_200_123_application/json_close',
+                body: 'http://localhost:3002/api/copier_get_200_123_application/json_keep-alive',
                 everythingLink: {
-                  body:
-                    'http://localhost:3002/api/copier_get_200_http://localhost:3002/api/copier_get_200_123_application/json_close_application/json_close',
+                  body: 'http://localhost:3002/api/copier_get_200_http://localhost:3002/api/copier_get_200_123_application/json_keep-alive_application/json_keep-alive',
                 },
               },
             },
@@ -509,7 +683,7 @@ test('Nested links with constants and variables', () => {
             body: '123',
           },
           everythingLink: {
-            body: 'http://localhost:3002/api/scanner_get_200_val_application/json_close',
+            body: 'http://localhost:3002/api/scanner_get_200_val_application/json_keep-alive',
           },
         },
       },
@@ -527,16 +701,47 @@ test('Link parameters as constants and variables with request payload', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         postScanner: {
           body: 'req.body: body, req.query.query: query, req.path.path: path',
           everythingLink2: {
-            body:
-              'http://localhost:3002/api/scanner/path_post_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_close',
+            body: 'http://localhost:3002/api/scanner/path_post_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_keep-alive',
           },
         },
+      },
+    });
+  });
+});
+
+test('Get response for users with providing correct parameter', () => {
+  const query = `{
+    users (limit: 2) {
+      name
+    }
+  }`;
+
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
+    expect(result).toEqual({
+      data: {
+        users: [{ name: 'Arlene L McMahon' }, { name: 'William B Ropp' }],
+      },
+    });
+  });
+});
+
+test('Get response with providing parameter with falsy value', () => {
+  const query = `{
+    users (limit: 0) {
+      name
+    }
+  }`;
+
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
+    expect(result).toEqual({
+      data: {
+        users: [],
       },
     });
   });
@@ -549,7 +754,7 @@ test('Get response without providing parameter with default value', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         productReviews: [{ text: 'Great product' }, { text: 'I love it' }],
@@ -563,7 +768,7 @@ test('Get response with header parameters', () => {
     snack(snackType: CHIPS, snackSize: SMALL)
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         snack: 'Here is a small chips',
@@ -584,7 +789,7 @@ test('Get JSON response even with non-JSON accept header', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         office: {
@@ -601,7 +806,7 @@ test('Get response with cookies', () => {
     cookie (cookieType: CHOCOLATE_CHIP, cookieSize: MEGA_SIZED)
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         cookie: 'Thanks for your cookie preferences: "cookie_type=chocolate chip; cookie_size=mega-sized;"',
@@ -620,7 +825,7 @@ test('Ensure good naming for operations with duplicated schemas', () => {
     dirtyDesks
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         cleanDesks: '5 clean desks',
@@ -641,7 +846,7 @@ test('Get response containing 64-bit integer (using GraphQLBigInt)', async () =>
     }
   }`;
 
-  const result = await graphql(createdSchema, query);
+  const result = await graphql({ schema: createdSchema, source: query });
   expect(result).toEqual({
     data: {
       productReviews: [{ timestamp: 1502787600000000 }, { timestamp: 1502787400000000 }],
@@ -656,7 +861,7 @@ test('Get array of strings', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         user: {
@@ -676,7 +881,7 @@ test('Get array of objects', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         company: {
@@ -707,7 +912,7 @@ test('Get single resource', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         user: {
@@ -739,7 +944,7 @@ test('Post resource', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         postUser: {
@@ -770,7 +975,7 @@ test('Post resource and get nested resource back', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         postUser: {
@@ -790,7 +995,7 @@ test('Post resource with non-application/json content-type request and response 
   const query = `mutation {
     postPaper(textPlainInput: "happy")
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         postPaper: 'You sent the paper idea: happy',
@@ -811,7 +1016,7 @@ test(
       }
     }`;
 
-    return graphql(createdSchema, query).then(result => {
+    return graphql({ schema: createdSchema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           productWithId: {
@@ -837,7 +1042,7 @@ test('Request data is correctly de-sanitized to be sent', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         postProductWithId: {
@@ -865,7 +1070,10 @@ test('Fields with arbitrary JSON (e.g., maps) can be returned', () => {
     }
   }`;
 
-  const promise = graphql(createdSchema, query, null, {}).then(result => {
+  const promise = graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         cars: [
@@ -893,7 +1101,10 @@ test('Fields with arbitrary JSON (e.g., maps) can be returned', () => {
     });
   });
 
-  const promise2 = graphql(createdSchema, query2, null, {}).then(result => {
+  const promise2 = graphql({
+    schema: createdSchema,
+    source: query2,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         cars: [
@@ -926,7 +1137,10 @@ test('Capitalized enum values can be returned', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         car: {
@@ -956,7 +1170,7 @@ test('Define header and query options', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           status2: 'Ok',
@@ -977,7 +1191,10 @@ test('Resolve simple allOf', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         user: {
@@ -1005,7 +1222,10 @@ test('Resolve ref in allOf', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         user: {
@@ -1034,7 +1254,10 @@ test('Resolve nested allOf', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         user: {
@@ -1063,7 +1286,10 @@ test('Resolve circular allOf', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(
       result.data.__type.fields.find((field: { name: string }) => {
         return field.name === 'familyCircular';
@@ -1088,7 +1314,10 @@ test('Resolve oneOf, which becomes a union type', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     type carType = {
       name: string;
       description: string;
@@ -1139,7 +1368,10 @@ test('Union type', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         asset: [
@@ -1201,7 +1433,10 @@ test('Error contains extension', () => {
     }
   }`;
 
-  return graphql(createdSchema, query, null, {}).then(error => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then(error => {
     const extensions = error.errors[0].extensions;
     expect(extensions).toBeDefined();
 
@@ -1235,8 +1470,8 @@ test('Option provideErrorExtensions should prevent error extensions from being c
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
-      expect(result).toEqual({
+    return graphql({ schema, source: query }).then((result: any) => {
+      expect(result).toMatchObject({
         errors: [
           {
             message: 'Could not invoke operation GET /users/{username}',
@@ -1283,7 +1518,7 @@ test('Option customResolver', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           user: {
@@ -1330,7 +1565,7 @@ test('Option customResolver with links', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           user: {
@@ -1376,7 +1611,7 @@ test('Option customResolver using resolver arguments', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           user: {
@@ -1415,7 +1650,7 @@ test('Option customResolver using resolver arguments that are sanitized', () => 
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           productWithId: {
@@ -1452,7 +1687,7 @@ test('Option addLimitArgument', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           user: {
@@ -1537,7 +1772,7 @@ test('Content property in parameter object', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         coordinates: {
@@ -1560,7 +1795,7 @@ test('Handle objects without defined properties with arbitrary GraphQL JSON type
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         trashcan: {
@@ -1626,7 +1861,7 @@ test('Handle input objects without defined properties with arbitrary GraphQL JSO
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         postOfficeTrashCan: {
@@ -1685,7 +1920,7 @@ test('Generate "Equivalent to..." messages', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       // Make sure all query fields have the message
       expect(
         result.data.__schema.queryType.fields.every((field: { description: string | string[] }) => {
@@ -1726,7 +1961,10 @@ test('Generate "Equivalent to..." messages', () => {
     }
   }`;
 
-  const promise2 = graphql(createdSchema, query2).then(result => {
+  const promise2 = graphql({
+    schema: createdSchema,
+    source: query2,
+  }).then((result: any) => {
     expect(
       result.data.__type.fields.find((field: { type: { name: string } }) => {
         return field.type.name === 'Company';
@@ -1776,7 +2014,7 @@ test('Withhold "Equivalent to..." messages', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__schema.queryType.fields.every((field: { description: string | string[] }) => {
           return field.description.includes('\n\nEquivalent to GET ');
@@ -1807,7 +2045,10 @@ test('Withhold "Equivalent to..." messages', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query2).then(result => {
+    return graphql({
+      schema,
+      source: query2,
+    }).then((result: any) => {
       expect(
         result.data.__type.fields.find((field: { type: { name: string } }) => {
           return field.type.name === 'Company';
@@ -1837,7 +2078,7 @@ test('UUID format becomes GraphQL ID type', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(
       result.data.__type.fields.find((field: { name: string }) => {
         return field.name === 'id';
@@ -1878,7 +2119,7 @@ test('Option idFormats', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__type.fields.find((field: { name: string }) => {
           return field.name === 'patentId';
@@ -1924,7 +2165,7 @@ test('Option selectQueryOrMutationField', () => {
   }`;
 
   // The users field should exist as a Query field
-  const promise = graphql(createdSchema, query).then(result => {
+  const promise = graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(
       result.data.__schema.queryType.fields.find((field: { name: string }) => {
         return field.name === 'user';
@@ -1957,7 +2198,7 @@ test('Option selectQueryOrMutationField', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__schema.queryType.fields.find((field: { name: string }) => {
           return field.name === 'getUserByUsername';
@@ -2005,7 +2246,7 @@ test('Header arguments are not created when they are provided through headers op
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__schema.queryType.fields.find((field: { name: string }) => {
           return field.name === 'snack';
@@ -2047,7 +2288,7 @@ test('Header arguments are not created when they are provided through requestOpt
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__schema.queryType.fields.find((field: { name: string }) => {
           return field.name === 'snack';
@@ -2086,7 +2327,7 @@ test('Query string arguments are not created when they are provided through qs o
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__schema.queryType.fields.find((field: { name: string }) => {
           return field.name === 'users';
@@ -2122,7 +2363,7 @@ test('Option genericPayloadArgName', () => {
   }`;
 
   // The postUser field should have a userInput argument
-  const promise = graphql(createdSchema, query).then(result => {
+  const promise = graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(
       result.data.__schema.mutationType.fields.find((field: { name: string }) => {
         return field.name === 'postUser';
@@ -2147,7 +2388,7 @@ test('Option genericPayloadArgName', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__schema.mutationType.fields.find((field: { name: string }) => {
           return field.name === 'postUser';
@@ -2187,7 +2428,7 @@ test('Non-nullable properties from nested allOf', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(
         result.data.__type.fields.find((field: { name: string }) => {
           return field.name === 'family';

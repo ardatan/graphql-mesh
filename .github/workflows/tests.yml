@@ -1,9 +1,6 @@
 name: Tests
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -18,19 +15,19 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 17
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-17-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-16-node-modules-
+            ${{ runner.os }}-17-yarn-
+
       - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock
+        run: yarn install --ignore-engines && git checkout yarn.lock
       - name: Lint
         run: yarn lint
   typecheck:
@@ -42,29 +39,31 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 17
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-17-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-16-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-16-node-modules-
+            ${{ runner.os }}-17-yarn-
+
       - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock
-      - name: Build
-        run: yarn build # We need build for playground
+        run: yarn install --ignore-engines && git checkout yarn.lock
+      - name: Build Playground
+        run: yarn build:playground && yarn copy-playground
+      - name: Type Checking
+        run: yarn transpile-ts --noEmit # We need build for playground
 
   test:
-    name: Testing on Node ${{matrix.node_version}}
+    name: Testing on Node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [12, 16]
+        node-version: [12, 17]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -96,28 +95,26 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Use Node ${{matrix.node_version}}
-        uses: actions/setup-node@master
+      - name: Use Node ${{matrix.node-version}}
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node_version }}
+          node-version: ${{ matrix.node-version }}
       - name: Cache Yarn
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-${{matrix.node_version}}-node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{matrix.node-version}}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{matrix.node_version}}-node-modules-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-${{matrix.node_version}}-node-modules-
+            ${{ runner.os }}-${{matrix.node-version}}-yarn-
       - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock
+        run: yarn install --ignore-engines && git checkout yarn.lock
       - name: Cache Jest
         uses: actions/cache@v2
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{matrix.node-version}}-jest-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
-            ${{ runner.os }}-${{matrix.node_version}}-jest-
+            ${{ runner.os }}-${{matrix.node-version}}-jest-
       - name: Download Postgres Dump
         run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
       - name: Load Postgres Data
@@ -125,6 +122,8 @@ jobs:
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
+      - name: Build Playground
+        run: yarn build:playground && yarn copy-playground
       - name: Test
         run: yarn test
         env:

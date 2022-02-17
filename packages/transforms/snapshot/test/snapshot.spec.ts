@@ -4,13 +4,13 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql, GraphQLResolveInfo } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { wrapSchema } from '@graphql-tools/wrap';
 import _ from 'lodash';
 import graphqlFields from 'graphql-fields';
-import { readJSON, mkdir, rmdirs } from '@graphql-mesh/utils';
+import { mkdir, rmdirs } from '@graphql-mesh/utils';
 
 describe('snapshot', () => {
   const baseDir: string = undefined;
@@ -62,6 +62,8 @@ describe('snapshot', () => {
       }),
       transforms: [
         new SnapshotTransform({
+          apiName: '',
+          importFn: m => import(m),
           config: {
             apply: ['Query.user'],
             outputDir,
@@ -99,7 +101,7 @@ describe('snapshot', () => {
       outputDir,
     });
 
-    expect(await readJSON(fileName)).toMatchObject(users[0]);
+    expect(await import(fileName)).toMatchObject(users[0]);
   });
 
   it('should not call again if there is snapshot created', async () => {
@@ -129,6 +131,8 @@ describe('snapshot', () => {
       }),
       transforms: [
         new SnapshotTransform({
+          apiName: '',
+          importFn: m => import(m),
           config: {
             apply: ['Query.user'],
             outputDir,
@@ -192,6 +196,8 @@ describe('snapshot', () => {
       }),
       transforms: [
         new SnapshotTransform({
+          apiName: '',
+          importFn: m => import(m),
           config: {
             apply: ['Query.user'],
             outputDir,

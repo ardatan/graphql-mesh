@@ -36,13 +36,16 @@ type Query {
   Provide a query or queries for GraphQL Playground, validation and SDK Generation
   The value can be the file path, glob expression for the file paths or the SDL.
   (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-  But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
   """
   documents: [String!]
   """
   Logger instance that matches `Console` interface of NodeJS
   """
   logger: Any
+  """
+  Allow connections to an SSL endpoint without certificates
+  """
+  skipSSLValidation: Boolean
 }
 
 scalar JSON
@@ -98,12 +101,22 @@ type AdditionalStitchingBatchResolverObject {
   sourceName: String!
   sourceTypeName: String!
   sourceFieldName: String!
+  sourceSelectionSet: String
+  requiredSelectionSet: String
   keyField: String!
   keysArg: String!
   additionalArgs: JSON
-  requiredSelectionSet: String
   targetTypeName: String!
   targetFieldName: String!
+  """
+  Extract specific property from the result
+  """
+  result: String
+  """
+  If return types don't match,
+  you can specify a result type to apply inline fragment
+  """
+  resultType: String
 }
 
 type AdditionalSubscriptionObject {

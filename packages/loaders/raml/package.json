@@ -1,0 +1,39 @@
+{
+  "name": "@omnigraph/raml",
+  "version": "0.4.6",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "cross-undici-fetch": "0.1.23",
+    "@omnigraph/json-schema": "0.13.6",
+    "@ardatan/raml-1-parser": "1.1.69",
+    "json-machete": "0.5.2",
+    "to-json-schema": "0.2.5",
+    "@graphql-mesh/utils": "0.27.1",
+    "swagger2openapi": "^7.0.8",
+    "@graphql-tools/utils": "8.6.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

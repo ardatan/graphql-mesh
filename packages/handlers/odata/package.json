@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/odata",
-  "version": "0.11.8",
+  "version": "0.16.6",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,24 +23,23 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/http-string-parser": "0.0.29",
+    "@types/http-string-parser": "0.0.30",
     "@types/url-join": "4.0.1"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.42.0",
-    "@graphql-mesh/store": "0.0.0",
-    "@graphql-mesh/utils": "0.12.0",
-    "@graphql-tools/utils": "8.0.0-alpha-e6320b00.0",
+    "@graphql-mesh/types": "0.62.0",
+    "@graphql-mesh/store": "0.3.14",
+    "@graphql-mesh/utils": "0.27.1",
+    "@graphql-tools/utils": "8.6.1",
     "http-string-parser": "0.0.6",
-    "cross-fetch": "3.1.4",
+    "cross-undici-fetch": "0.1.23",
     "dataloader": "2.0.0",
-    "fast-xml-parser": "3.19.0",
-    "graphql-compose": "9.0.1",
+    "fast-xml-parser": "4.0.1",
+    "graphql-compose": "9.0.6",
     "graphql-parse-resolve-info": "4.12.0",
-    "graphql-scalars": "1.10.0",
+    "graphql-scalars": "1.14.1",
     "pascal-case": "3.1.2",
-    "url-join": "4.0.1",
-    "undici": "4.2.2"
+    "url-join": "4.0.1"
   },
   "publishConfig": {
     "access": "public",

@@ -1,0 +1,22 @@
+{
+  "name": "mesh-artifacts",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "module": "index.mjs",
+  "sideEffects": false,
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./*": {
+      "require": "./*.js",
+      "import": "./*.mjs"
+    }
+  }
+}

@@ -1,5 +1,5 @@
-query citiesAndDevelopers($city: String! = "London") {
-  allCities(orderBy: ID_ASC, first: 1, condition: { name: $city }) {
+query citiesAndDevelopers {
+  allCities(orderBy: ID_ASC, first: 1, condition: { name: "London" }) {
     nodes {
       name
       countrycode

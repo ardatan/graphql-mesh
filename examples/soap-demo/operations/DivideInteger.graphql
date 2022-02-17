@@ -1,0 +1,3 @@
+mutation DivideInteger {
+  DivideInteger(Arg1: 10, Arg2: 2)
+}

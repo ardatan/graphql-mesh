@@ -6,15 +6,17 @@ import {
   MeshSource,
   KeyValueCache,
   ImportFn,
+  Logger,
 } from '@graphql-mesh/types';
 import {
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
-  readFileOrUrlWithCache,
+  readFileOrUrl,
   jsonFlatStringify,
   getCachedFetch,
   loadFromModuleExportExpression,
   stringInterpolator,
+  jitExecutorFactory,
 } from '@graphql-mesh/utils';
 import urljoin from 'url-join';
 import {
@@ -42,16 +44,17 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   specifiedDirectives,
+  ExecutionResult,
+  getNamedType,
 } from 'graphql';
 import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
-import { nativeFetch } from './native-fetch';
 import { pascalCase } from 'pascal-case';
 import { EventEmitter } from 'events';
-import { parse as parseXML } from 'fast-xml-parser';
-import { pruneSchema } from '@graphql-tools/utils';
-import { Request, Response } from 'cross-fetch';
+import { XMLParser } from 'fast-xml-parser';
+import { ExecutionRequest, pruneSchema, memoize1 } from '@graphql-tools/utils';
+import { Request, Response } from 'cross-undici-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
 
@@ -127,14 +130,34 @@ export default class ODataHandler implements MeshHandler {
   private eventEmitterSet = new Set<EventEmitter>();
   private metadataJson: any;
   private importFn: ImportFn;
+  private logger: Logger;
+  private xmlParser = new XMLParser({
+    attributeNamePrefix: '',
+    attributesGroupName: 'attributes',
+    textNodeName: 'innerText',
+    ignoreAttributes: false,
+    removeNSPrefix: true,
+    isArray: (_, __, ___, isAttribute) => !isAttribute,
+    allowBooleanAttributes: true,
+    preserveOrder: false,
+  });
 
-  constructor({ name, config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    cache,
+    store,
+    importFn,
+    logger,
+  }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
@@ -143,22 +166,14 @@ export default class ODataHandler implements MeshHandler {
         env,
       });
       const metadataUrl = urljoin(baseUrl, '$metadata');
-      const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
+      const metadataText = await readFileOrUrl<string>(this.config.metadata || metadataUrl, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         headers: this.config.schemaHeaders,
         fetch,
       });
 
-      return parseXML(metadataText, {
-        attributeNamePrefix: '',
-        attrNodeName: 'attributes',
-        textNodeName: 'innerText',
-        ignoreAttributes: false,
-        ignoreNameSpace: true,
-        arrayMode: true,
-        allowBooleanAttributes: true,
-      });
+      return this.xmlParser.parse(metadataText);
     });
   }
 
@@ -275,8 +290,8 @@ export default class ODataHandler implements MeshHandler {
       }
       const urlStringWithoutSearchParams = urlString.split('?')[0];
       if (isListType(info.returnType)) {
-        const actualReturnType: GraphQLObjectType = info.returnType.ofType;
-        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
+        const actualReturnType = getNamedType(info.returnType) as GraphQLObjectType;
+        const entityTypeExtensions = actualReturnType.extensions as unknown as EntityTypeExtensions;
         if ('Message' in responseJson && !('value' in responseJson)) {
           const error = new Error(responseJson.Message);
           Object.assign(error, { extensions: responseJson });
@@ -334,7 +349,7 @@ export default class ODataHandler implements MeshHandler {
         });
       } else {
         const actualReturnType = info.returnType as GraphQLObjectType;
-        const entityTypeExtensions = actualReturnType.extensions as EntityTypeExtensions;
+        const entityTypeExtensions = actualReturnType.extensions as unknown as EntityTypeExtensions;
         if (!entityTypeExtensions?.entityInfo) {
           return responseJson;
         }
@@ -402,11 +417,11 @@ export default class ODataHandler implements MeshHandler {
     const origHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const headersFactory = (resolverData: ResolverData, method: string) => {
       const headers = origHeadersFactory(resolverData);
-      if (!headers.has('Accept')) {
-        headers.set('Accept', 'application/json');
+      if (headers.accept == null) {
+        headers.accept = 'application/json';
       }
-      if (!headers.has('Content-Type') && method !== 'GET') {
-        headers.set('Content-Type', 'application/json');
+      if (headers['content-type'] == null && method !== 'GET') {
+        headers['content-type'] = 'application/json';
       }
       return headers;
     };
@@ -449,7 +464,11 @@ export default class ODataHandler implements MeshHandler {
         throw error;
       }
       if (!('responses' in batchResponseJson)) {
-        const error = new Error(`Batch Request didn't return a valid response.`);
+        const error = new Error(
+          batchResponseJson.ExceptionMessage ||
+            batchResponseJson.Message ||
+            `Batch Request didn't return a valid response.`
+        );
         Object.assign(error, {
           extensions: batchResponseJson,
         });
@@ -489,18 +508,17 @@ export default class ODataHandler implements MeshHandler {
           }
           requestBody += `--${requestBoundary}--\n`;
           const batchHeaders = headersFactory({ context, env }, 'POST');
-          batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
-          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+          batchHeaders['content-type'] = `multipart/mixed;boundary=${requestBoundary}`;
+          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: requestBody,
             headers: batchHeaders,
           });
-          const batchResponse = await nativeFetch(batchRequest);
-          const batchResponseText = await batchResponse.text();
-          if (!batchResponseText.startsWith('--')) {
-            const batchResponseJson = JSON.parse(batchResponseText);
+          if (batchResponse.headers.get('content-type').includes('json')) {
+            const batchResponseJson = await batchResponse.json();
             return handleBatchJsonResults(batchResponseJson, requests);
           }
+          const batchResponseText = await batchResponse.text();
           const responseLines = batchResponseText.split('\n');
           const responseBoundary = responseLines[0];
           const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
@@ -518,8 +536,8 @@ export default class ODataHandler implements MeshHandler {
       json: (context: any) =>
         new DataLoader(async (requests: Request[]): Promise<Response[]> => {
           const batchHeaders = headersFactory({ context, env }, 'POST');
-          batchHeaders.set('Content-Type', 'application/json');
-          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+          batchHeaders['content-type'] = 'application/json';
+          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: jsonFlatStringify({
               requests: await Promise.all(
@@ -543,9 +561,7 @@ export default class ODataHandler implements MeshHandler {
             }),
             headers: batchHeaders,
           });
-          const batchResponse = await fetch(batchRequest);
-          const batchResponseText = await batchResponse.text();
-          const batchResponseJson = JSON.parse(batchResponseText);
+          const batchResponseJson = await batchResponse.json();
           return handleBatchJsonResults(batchResponseJson, requests);
         }),
       none: () =>
@@ -554,7 +570,7 @@ export default class ODataHandler implements MeshHandler {
         ),
     };
 
-    const dataLoaderFactory = DATALOADER_FACTORIES[this.config.batch || 'none'];
+    const dataLoaderFactory = memoize1(DATALOADER_FACTORIES[this.config.batch || 'none']);
 
     function buildName({ schemaNamespace, name }: { schemaNamespace: string; name: string }) {
       const alias = aliasNamespaceMap.get(schemaNamespace) || schemaNamespace;
@@ -715,7 +731,7 @@ export default class ODataHandler implements MeshHandler {
                 const url = new URL(root['@odata.id']);
                 url.href = urljoin(url.href, '/' + navigationPropertyName);
                 const returnType = info.returnType as GraphQLObjectType;
-                const { entityInfo } = returnType.extensions as EntityTypeExtensions;
+                const { entityInfo } = returnType.extensions as unknown as EntityTypeExtensions;
                 addIdentifierToUrl(url, entityInfo.identifierFieldName, entityInfo.identifierFieldTypeRef, args);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -909,7 +925,9 @@ export default class ODataHandler implements MeshHandler {
           ...commonArgs,
         };
         // eslint-disable-next-line prefer-const
-        let entitySetPath = boundFunctionObj.attributes.EntitySetPath;
+        let entitySetPath = boundFunctionObj.attributes.EntitySetPath?.split('/')[0];
+        let field: ObjectTypeComposerFieldConfigDefinition<any, any, any>;
+        let boundEntityTypeName: string;
         boundFunctionObj.Parameter?.forEach((parameterObj: any) => {
           const parameterName = parameterObj.attributes.Name;
           const parameterTypeRef = parameterObj.attributes.Type;
@@ -920,26 +938,31 @@ export default class ODataHandler implements MeshHandler {
             isRequired,
           });
           // If entitySetPath is not available, take first parameter as entity
-          entitySetPath = entitySetPath || parameterName;
+          // The first segment of the entity set path must match the binding parameter name
+          // (see: http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#_Toc38530388)
+          entitySetPath = (entitySetPath && entitySetPath.split('/')[0]) || parameterName;
           if (entitySetPath === parameterName) {
-            const boundEntityTypeName = getTypeNameFromRef({
+            boundEntityTypeName = getTypeNameFromRef({
               typeRef: parameterTypeRef,
               isInput: false,
               isRequired: false,
             })
               .replace('[', '')
               .replace(']', '');
-            const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
-            const boundEntityOtherType = getTCByTypeNames(
-              'I' + boundEntityTypeName,
-              'T' + boundEntityTypeName
-            ) as InterfaceTypeComposer;
-            const field: ObjectTypeComposerFieldConfigDefinition<any, any, any> = {
+            field = {
               type: returnType,
               args,
               resolve: async (root, args, context, info) => {
                 const url = new URL(root['@odata.id']);
                 url.href = urljoin(url.href, '/' + functionRef);
+                const argsEntries = Object.entries(args);
+                if (argsEntries.length) {
+                  url.href += `(${argsEntries
+                    .filter(argEntry => argEntry[0] !== 'queryOptions')
+                    .map(([argName, value]) => [argName, typeof value === 'string' ? `'${value}'` : value])
+                    .map(argEntry => argEntry.join('='))
+                    .join(',')})`;
+                }
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
                 searchParams?.forEach((value, key) => {
@@ -956,16 +979,21 @@ export default class ODataHandler implements MeshHandler {
                 return handleResponseText(responseText, urlString, info);
               },
             };
-            boundEntityType.addFields({
-              [functionName]: field,
-            });
-            boundEntityOtherType?.addFields({
-              [functionName]: field,
-            });
           }
           args[parameterName] = {
             type: parameterTypeName,
           };
+        });
+        const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
+        const boundEntityOtherType = getTCByTypeNames(
+          'I' + boundEntityTypeName,
+          'T' + boundEntityTypeName
+        ) as InterfaceTypeComposer;
+        boundEntityType.addFields({
+          [functionName]: field,
+        });
+        boundEntityOtherType?.addFields({
+          [functionName]: field,
         });
       };
 
@@ -1129,7 +1157,9 @@ export default class ODataHandler implements MeshHandler {
         baseEventEmitter.on('onFieldChange', baseEventEmitterListener);
         baseEventEmitterListener();
       });
+    });
 
+    schemas?.forEach((schemaObj: any) => {
       schemaObj.EntityContainer?.forEach((entityContainerObj: any) => {
         entityContainerObj.Singleton?.forEach((singletonObj: any) => {
           const singletonName = singletonObj.attributes.Name;
@@ -1350,12 +1380,24 @@ export default class ODataHandler implements MeshHandler {
     this.eventEmitterSet.forEach(ee => ee.removeAllListeners());
     this.eventEmitterSet.clear();
 
+    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+
     return {
       schema: pruneSchema(schema),
+      executor: <TResult>(executionRequest: ExecutionRequest) => {
+        const odataContext = {
+          [contextDataloaderName]: dataLoaderFactory(executionRequest.context),
+        };
+        return jitExecutor({
+          ...executionRequest,
+          context: {
+            ...executionRequest.context,
+            ...odataContext,
+          },
+        }) as ExecutionResult<TResult>;
+      },
       contextVariables,
-      contextBuilder: async context => ({
-        [contextDataloaderName]: dataLoaderFactory(context),
-      }),
+      batch: true,
     };
   }
 
@@ -1378,7 +1420,7 @@ export default class ODataHandler implements MeshHandler {
     const isSelectable = !isAbstractType(returnType);
 
     if (isSelectable) {
-      const { entityInfo } = returnType.extensions as EntityTypeExtensions;
+      const { entityInfo } = returnType.extensions as unknown as EntityTypeExtensions;
       const selectionFields: string[] = [];
       const expandedFields: string[] = [];
       for (const fieldName in fields) {

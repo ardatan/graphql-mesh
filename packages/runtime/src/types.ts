@@ -10,9 +10,11 @@ import {
   MeshMerger,
 } from '@graphql-mesh/types';
 import { DocumentNode, GraphQLResolveInfo } from 'graphql';
-import { IResolvers } from '@graphql-tools/utils';
+import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { MeshInstance } from './get-mesh';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -21,7 +23,6 @@ export type GetMeshOptions = {
   additionalResolvers?: IResolvers | IResolvers[];
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  ignoreAdditionalResolvers?: boolean;
   merger: MeshMerger;
   logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
@@ -50,8 +51,6 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   operationName?: string
 ) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
 
-export type Requester<C = any> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>;
-
 export type APIContextMethodParams = {
   root?: any;
   args?: any;
@@ -70,4 +69,14 @@ export type APIContext = {
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
   [key: string]: APIContext;
-} & { pubsub: MeshPubSub; cache: KeyValueCache };
+} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; liveQueryStore: InMemoryLiveQueryStore };
+
+export interface ServeMeshOptions {
+  baseDir: string;
+  getBuiltMesh: () => Promise<MeshInstance>;
+  logger: Logger;
+  rawConfig: YamlConfig.Config;
+  documents: Source[];
+  argsPort?: number;
+  graphiqlTitle?: string;
+}

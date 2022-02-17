@@ -1,27 +1,26 @@
-import { parse } from 'graphql';
 import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { resolve } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { PubSub } from 'graphql-subscriptions';
-import { EventEmitter } from 'events';
+import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
-import { DefaultLogger } from '@graphql-mesh/utils';
 
 type ResolvedPackage<T> = {
   moduleName: string;
   resolved: T;
 };
 
-export async function getPackage<T>(
-  name: string,
-  type: string,
-  importFn: ImportFn,
-  cwd: string
-): Promise<ResolvedPackage<T>> {
+interface GetPackageOptions {
+  name: string;
+  type: string;
+  importFn: ImportFn;
+  cwd: string;
+}
+
+export async function getPackage<T>({ name, type, importFn, cwd }: GetPackageOptions): Promise<ResolvedPackage<T>> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
@@ -47,12 +46,13 @@ export async function getPackage<T>(
         resolved,
       };
     } catch (err) {
+      const error: Error = err;
       if (
-        !err.message.includes(`Cannot find module '${moduleName}'`) &&
-        !err.message.includes(`Cannot find package '${moduleName}'`) &&
-        !err.message.includes(`Could not locate module`)
+        !error.message.includes(`Cannot find module '${moduleName}'`) &&
+        !error.message.includes(`Cannot find package '${moduleName}'`) &&
+        !error.message.includes(`Could not locate module`)
       ) {
-        throw new Error(`Unable to load ${type} matching ${name}: ${err.message}`);
+        throw new Error(`Unable to load ${type} matching ${name}: ${error.message}`);
       }
     }
   }
@@ -66,7 +66,9 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
       cwd: baseDir,
       loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
     });
-    return sources.map(source => source.document || parse(source.rawSDL || printSchemaWithDirectives(source.schema)));
+    return sources.map(
+      source => source.document || parseWithCache(source.rawSDL || printSchemaWithDirectives(source.schema))
+    );
   }
   return undefined;
 }
@@ -84,14 +86,14 @@ export async function resolveCache(
   const cacheName = Object.keys(cacheConfig)[0].toString();
   const config = cacheConfig[cacheName];
 
-  const { moduleName, resolved: Cache } = await getPackage<any>(cacheName, 'cache', importFn, cwd);
+  const { moduleName, resolved: Cache } = await getPackage<any>({ name: cacheName, type: 'cache', importFn, cwd });
 
   const cache = new Cache({
     ...config,
     store: rootStore.child('cache'),
   });
 
-  const code = `const cache = new MeshCache({
+  const code = `const cache = new (MeshCache as any)({
       ...(rawConfig.cache || {}),
       store: rootStore.child('cache'),
     } as any)`;
@@ -123,7 +125,7 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const { moduleName, resolved: PubSub } = await getPackage<any>(pubsubName, 'pubsub', importFn, cwd);
+    const { moduleName, resolved: PubSub } = await getPackage<any>({ name: pubsubName, type: 'pubsub', importFn, cwd });
 
     const pubsub = new PubSub(pubsubConfig);
 
@@ -136,15 +138,10 @@ export async function resolvePubSub(
       pubsub,
     };
   } else {
-    const eventEmitter = new EventEmitter({ captureRejections: true });
-    eventEmitter.setMaxListeners(Infinity);
-    const pubsub = new PubSub({ eventEmitter }) as MeshPubSub;
+    const pubsub = new PubSub();
 
-    const importCode = `import { PubSub } from 'graphql-subscriptions';
-import { EventEmitter } from 'events';`;
-    const code = `const eventEmitter = new EventEmitter({ captureRejections: true });
-eventEmitter.setMaxListeners(Infinity);
-const pubsub = new PubSub({ eventEmitter });`;
+    const importCode = `import { PubSub } from '@graphql-mesh/utils';`;
+    const code = `const pubsub = new PubSub();`;
 
     return {
       importCode,
@@ -175,17 +172,22 @@ export async function resolveLogger(
   logger: Logger;
 }> {
   if (typeof loggerConfig === 'string') {
-    const { moduleName, resolved: logger } = await getPackage<Logger>(loggerConfig, 'logger', importFn, cwd);
+    const { moduleName, resolved: logger } = await getPackage<Logger>({
+      name: loggerConfig,
+      type: 'logger',
+      importFn,
+      cwd,
+    });
     return {
       logger,
       importCode: `import logger from '${moduleName}';`,
       code: '',
     };
   }
-  const logger = new DefaultLogger('Mesh');
+  const logger = new DefaultLogger('🕸️');
   return {
     logger,
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger('Mesh');`,
+    code: `const logger = new DefaultLogger('🕸️');`,
   };
 }

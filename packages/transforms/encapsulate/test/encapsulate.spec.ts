@@ -1,13 +1,14 @@
 import Transform from '../src/index';
 import { execute, parse, getIntrospectionQuery } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from 'graphql-subscriptions';
+import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('encapsulate', () => {
   const baseDir: string = undefined;
+  const importFn: ImportFn = m => import(m);
   const schema = makeExecutableSchema({
     typeDefs: /* GraphQL */ `
       type Query {
@@ -51,6 +52,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          importFn,
         }),
       ],
     });
@@ -70,6 +72,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          importFn,
         }),
       ],
     });
@@ -89,6 +92,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          importFn,
         }),
       ],
     });
@@ -114,11 +118,12 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          importFn,
         }),
       ],
     });
 
-    const { data: resultAfter } = await execute({
+    const { data: resultAfter }: any = await execute({
       schema: newSchema,
       document: parse(`{ test { getSomething } }`),
     });
@@ -142,11 +147,12 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          importFn,
         }),
       ],
     });
 
-    const { data: resultAfter } = await execute({
+    const { data: resultAfter }: any = await execute({
       schema: newSchema,
       document: parse(`mutation { test { doSomething } }`),
     });
@@ -178,6 +184,7 @@ describe('encapsulate', () => {
           pubsub,
           baseDir,
           apiName: 'test',
+          importFn,
         }),
       ],
     });

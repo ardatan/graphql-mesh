@@ -30,7 +30,7 @@ docker run -d -p 8080:8080 \
 
 ### Create GraphQL Mesh Project
 
-We need to have `yarn` and Node.js on our computer to run GraphQL Mesh locally. 
+We need to have `yarn` and Node.js on our computer to run GraphQL Mesh locally.
 Run the following command to create a new project on an empty directory;
 ```bash
 yarn init
@@ -103,7 +103,7 @@ sources:
 
 Run our new GraphQL Mesh instance with the following command;
 ```bash
-yarn mesh serve
+yarn mesh dev
 ```
 
 ### Connect new OpenBrewery API to Hasura

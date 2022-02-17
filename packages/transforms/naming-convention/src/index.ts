@@ -3,8 +3,6 @@ import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/t
 import {
   RenameTypes,
   RenameObjectFields,
-  RenameRootFields,
-  RenameRootTypes,
   RenameInputObjectFields,
   TransformEnumValues,
   RenameInterfaceFields,
@@ -29,6 +27,7 @@ import {
 
 import { upperCase } from 'upper-case';
 import { lowerCase } from 'lower-case';
+import { resolvers as scalarsResolversMap } from 'graphql-scalars';
 
 type NamingConventionFn = (input: string) => string;
 type NamingConventionType = YamlConfig.NamingConventionTransformConfig['typeNames'];
@@ -49,6 +48,20 @@ const NAMING_CONVENTIONS: Record<NamingConventionType, NamingConventionFn> = {
   lowerCase,
 };
 
+// Ignore fields needed by Federation spec
+const IGNORED_ROOT_FIELD_NAMES = ['_service', '_entities'];
+
+const IGNORED_TYPE_NAMES = [
+  'date',
+  'hostname',
+  'regex',
+  'json-pointer',
+  'relative-json-pointer',
+  'uri-reference',
+  'uri-template',
+  ...Object.keys(scalarsResolversMap),
+];
+
 export default class NamingConventionTransform implements MeshTransform {
   private transforms: Transform[] = [];
 
@@ -56,15 +69,17 @@ export default class NamingConventionTransform implements MeshTransform {
     if (options.config.typeNames) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.typeNames];
       this.transforms.push(
-        new RenameTypes(typeName => namingConventionFn(typeName) || typeName),
-        new RenameRootTypes(typeName => namingConventionFn(typeName) || typeName)
+        new RenameTypes(typeName =>
+          IGNORED_TYPE_NAMES.includes(typeName) ? typeName : namingConventionFn(typeName) || typeName
+        )
       );
     }
     if (options.config.fieldNames) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.fieldNames];
       this.transforms.push(
-        new RenameObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
-        new RenameRootFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
+        new RenameObjectFields((_, fieldName) =>
+          IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : namingConventionFn(fieldName) || fieldName
+        ),
         new RenameInputObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
         new RenameInterfaceFields((_, fieldName) => namingConventionFn(fieldName) || fieldName)
       );

@@ -1,0 +1,3 @@
+mutation AddInteger {
+  AddInteger(Arg1: 2, Arg2: 3)
+}

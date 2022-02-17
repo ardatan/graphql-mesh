@@ -7,6 +7,7 @@ import {
   GraphQLInt,
   GraphQLOutputType,
   GraphQLInputType,
+  GraphQLList,
 } from 'graphql';
 import {
   GraphQLByte,
@@ -19,6 +20,8 @@ import {
   GraphQLPositiveInt,
   GraphQLNegativeInt,
   GraphQLDuration,
+  GraphQLURL,
+  GraphQLHexadecimal,
 } from 'graphql-scalars';
 
 /**
@@ -39,15 +42,15 @@ export interface CustomTypeResolver {
  */
 export class DefaultTypeResolver implements CustomTypeResolver {
   string = GraphQLString;
-  base64Binary = GraphQLString;
-  hexBinary = GraphQLString;
+  base64Binary = GraphQLByte;
+  hexBinary = GraphQLHexadecimal;
   duration = GraphQLDuration;
   gYearMonth = GraphQLString;
   gYear = GraphQLString;
   gMonthDay = GraphQLString;
   gDay = GraphQLString;
   gMonth = GraphQLString;
-  anyURI = GraphQLString;
+  anyURI = GraphQLURL;
   QName = GraphQLString;
   normalizedString = GraphQLString;
   token = GraphQLString;
@@ -56,10 +59,10 @@ export class DefaultTypeResolver implements CustomTypeResolver {
   language = GraphQLString;
   Name = GraphQLString;
   NCName = GraphQLString;
-  IDREF = GraphQLString;
-  IDREFS = GraphQLString;
-  ENTITY = GraphQLString;
-  ENTITIES = GraphQLString;
+  IDREF = GraphQLID;
+  IDREFS = new GraphQLList(GraphQLID);
+  ENTITY = GraphQLID;
+  ENTITIES = new GraphQLList(GraphQLID);
 
   ID = GraphQLID;
 

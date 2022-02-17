@@ -1,4 +1,4 @@
-const { findAndParseConfig } = require('@graphql-mesh/config');
+const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { basename, join } = require('path');
 
@@ -14,10 +14,9 @@ describe('PostgresGeoDB', () => {
   it('should give correct response for example queries', async () => {
     const { documents } = await config$;
     const { execute } = await mesh$;
-    for (const source of documents) {
-      const result = await execute(source.document);
-      expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
-    }
+    const result = await execute(documents[0].document);
+    expect(result?.data?.allCities?.nodes?.[0]?.countrycode).toBeTruthy();
+    expect(result?.data?.allCities?.nodes?.[0]?.developers?.[0]?.login).toBeTruthy();
   });
   afterAll(() => mesh$.then(mesh => mesh.destroy()));
 });

@@ -1,11 +1,10 @@
-const path = require("path");
-const webpack = require("webpack");
+const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 
 module.exports = {
   entry: './src/index.tsx',
-  mode: process.env.NODE_ENV ?? 'development',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   module: {
     rules: [
       {
@@ -14,8 +13,15 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        loader: 'babel-loader',
         exclude: /node_modules/,
+        options: {
+          presets: ['@babel/react', '@babel/typescript'],
+        },
+      },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack', 'url-loader'],
       },
     ],
   },
@@ -25,21 +31,22 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_DEBUG': 'undefined',
       setImmediate: 'setTimeout',
     }),
     new HtmlWebpackPlugin({
-      title: 'GraphQL Mesh'
+      title: 'GraphiQL Mesh',
     }),
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
-    alias: {
-      meros: require.resolve('meros/browser'),
-    },
   },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     port: 9000,
+  },
+  cache: {
+    type: 'filesystem',
+    allowCollectingMemory: true,
+    version: require('./package.json').version
   },
 };

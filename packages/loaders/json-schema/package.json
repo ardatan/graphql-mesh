@@ -1,0 +1,51 @@
+{
+  "name": "@omnigraph/json-schema",
+  "version": "0.13.6",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "@types/to-json-schema": "0.2.1",
+    "@types/url-join": "4.0.1",
+    "@types/qs": "6.9.7",
+    "@types/graphql-upload": "8.0.10"
+  },
+  "dependencies": {
+    "cross-undici-fetch": "0.1.23",
+    "json-machete": "0.5.2",
+    "@graphql-mesh/types": "0.62.0",
+    "@graphql-mesh/utils": "0.27.1",
+    "@graphql-tools/utils": "8.6.1",
+    "to-json-schema": "0.2.5",
+    "graphql-compose": "9.0.6",
+    "graphql-scalars": "1.14.1",
+    "graphql-upload": "13.0.0",
+    "ajv": "8.9.0",
+    "ajv-formats": "2.1.1",
+    "url-join": "4.0.1",
+    "qs": "6.10.3",
+    "pascal-case": "3.1.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

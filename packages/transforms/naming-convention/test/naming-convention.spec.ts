@@ -1,8 +1,8 @@
 import NamingConventionTransform from '../src/index';
 import { buildSchema, printSchema, GraphQLObjectType, GraphQLEnumType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from 'graphql-subscriptions';
+import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
@@ -24,6 +24,7 @@ describe('namingConvention', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
+  const importFn: ImportFn = m => import(m);
 
   beforeEach(() => {
     cache = new InMemoryLRUCache();
@@ -35,6 +36,8 @@ describe('namingConvention', () => {
       schema,
       transforms: [
         new NamingConventionTransform({
+          apiName: '',
+          importFn,
           config: {
             typeNames: 'pascalCase',
             enumValues: 'upperCase',
@@ -96,6 +99,8 @@ describe('namingConvention', () => {
       schema,
       transforms: [
         new NamingConventionTransform({
+          apiName: '',
+          importFn,
           cache,
           pubsub,
           config: {
@@ -150,6 +155,8 @@ describe('namingConvention', () => {
       schema,
       transforms: [
         new NamingConventionTransform({
+          apiName: '',
+          importFn,
           cache,
           pubsub,
           config: {
@@ -168,5 +175,28 @@ describe('namingConvention', () => {
       `),
     });
     expect(data?._).toEqual('test');
+  });
+  it('should skip fields of Federation spec', async () => {
+    const typeDefs = /* GraphQL */ `
+type Query {
+  _service: String!
+  _entities: [String!]!
+}`.trim();
+    const schema = wrapSchema({
+      schema: buildSchema(typeDefs),
+      transforms: [
+        new NamingConventionTransform({
+          apiName: '',
+          importFn,
+          cache,
+          pubsub,
+          config: {
+            fieldNames: 'snakeCase',
+          },
+          baseDir,
+        }),
+      ],
+    });
+    expect(printSchema(schema)).toBe(typeDefs);
   });
 });

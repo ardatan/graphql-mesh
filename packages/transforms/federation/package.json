@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-federation",
-  "version": "0.5.15",
+  "version": "0.8.14",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,14 +23,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/federation": "0.27.0",
-    "@graphql-mesh/types": "0.42.0",
-    "@graphql-mesh/utils": "0.12.0",
+    "@apollo/subgraph": "0.1.5",
+    "@graphql-mesh/types": "0.62.0",
+    "@graphql-mesh/utils": "0.27.1",
     "graphql-transform-federation": "2.2.0",
     "lodash": "4.17.21",
-    "@graphql-tools/utils": "8.0.0-alpha-e6320b00.0",
-    "@graphql-tools/stitching-directives": "2.0.0-alpha-e6320b00.0",
-    "@graphql-tools/delegate": "8.0.0-alpha-e6320b00.0"
+    "@graphql-tools/utils": "8.6.1",
+    "@graphql-tools/stitching-directives": "2.2.1",
+    "@graphql-tools/delegate": "8.4.3"
   },
   "publishConfig": {
     "access": "public",

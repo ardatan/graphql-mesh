@@ -7,19 +7,26 @@ import {
   KeyValueCache,
   ImportFn,
 } from '@graphql-mesh/types';
-import { UrlLoader } from '@graphql-tools/url-loader';
-import { GraphQLSchema, buildSchema, DocumentNode, Kind, buildASTSchema } from 'graphql';
+import { UrlLoader, SubscriptionProtocol } from '@graphql-tools/url-loader';
+import {
+  GraphQLSchema,
+  buildSchema,
+  DocumentNode,
+  Kind,
+  buildASTSchema,
+  IntrospectionQuery,
+  buildClientSchema,
+} from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
   getInterpolatedHeadersFactory,
   ResolverDataBasedFactory,
-  getHeadersObject,
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
   getCachedFetch,
-  readFileOrUrlWithCache,
+  readFileOrUrl,
 } from '@graphql-mesh/utils';
-import { ExecutionRequest } from '@graphql-tools/utils';
+import { ExecutionRequest, isDocumentNode, inspect } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { env } from 'process';
 
@@ -40,7 +47,13 @@ export default class GraphQLHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     const { endpoint, schemaHeaders: configHeaders, introspection } = this.config;
-    const customFetch = getCachedFetch(this.cache);
+    const customFetch = this.config.customFetch
+      ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch, {
+          cwd: this.baseDir,
+          defaultExportName: 'default',
+          importFn: this.importFn,
+        })
+      : getCachedFetch(this.cache);
 
     if (endpoint.endsWith('.js') || endpoint.endsWith('.ts')) {
       // Loaders logic should be here somehow
@@ -60,14 +73,16 @@ export default class GraphQLHandler implements MeshHandler {
         schema = buildASTSchema(schemaOrStringOrDocumentNode);
       } else {
         throw new Error(
-          `Provided file '${endpoint} exports an unknown type: ${typeof schemaOrStringOrDocumentNode}': expected GraphQLSchema, SDL or DocumentNode.`
+          `Provided file '${endpoint} exports an unknown type: ${inspect(
+            schemaOrStringOrDocumentNode
+          )}': expected GraphQLSchema, SDL or DocumentNode.`
         );
       }
       return {
         schema,
       };
     } else if (endpoint.endsWith('.graphql')) {
-      const rawSDL = await readFileOrUrlWithCache<string>(endpoint, this.cache, {
+      const rawSDL = await readFileOrUrl<string>(endpoint, {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
       });
@@ -79,7 +94,7 @@ export default class GraphQLHandler implements MeshHandler {
     const urlLoader = new UrlLoader();
     const getExecutorForParams = (
       params: ExecutionRequest,
-      headersFactory: ResolverDataBasedFactory<Headers>,
+      headersFactory: ResolverDataBasedFactory<Record<string, string>>,
       endpointFactory: ResolverDataBasedFactory<string>
     ) => {
       const resolverData: ResolverData = {
@@ -88,11 +103,12 @@ export default class GraphQLHandler implements MeshHandler {
         context: params.context,
         env,
       };
-      const headers = getHeadersObject(headersFactory(resolverData));
+      const headers = headersFactory(resolverData);
       const endpoint = endpointFactory(resolverData);
       return urlLoader.getExecutorAsync(endpoint, {
-        customFetch,
         ...this.config,
+        customFetch,
+        subscriptionsProtocol: this.config.subscriptionsProtocol as SubscriptionProtocol,
         headers,
       });
     };
@@ -111,23 +127,34 @@ export default class GraphQLHandler implements MeshHandler {
       schemaHeaders = await schemaHeaders;
     }
     const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders || {});
-    async function introspectionExecutor(params: ExecutionRequest) {
-      const executor = await getExecutorForParams(params, schemaHeadersFactory, () => endpoint);
-      return executor(params);
-    }
-    const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
     const endpointFactory = getInterpolatedStringFactory(endpoint);
+    const operationHeadersFactory = getInterpolatedHeadersFactory(this.config.operationHeaders);
 
     const nonExecutableSchema = await this.nonExecutableSchema.getWithSet(async () => {
-      const schemaFromIntrospection = await (introspection
-        ? urlLoader
-            .handleSDL(introspection, customFetch, {
-              ...this.config,
-              headers: schemaHeaders,
-            })
-            .then(({ schema }) => schema)
-        : introspectSchema(introspectionExecutor));
-      return schemaFromIntrospection;
+      if (introspection) {
+        const headers = schemaHeadersFactory({
+          env,
+        });
+        const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(introspection, {
+          cwd: this.baseDir,
+          allowUnknownExtensions: true,
+          fetch: customFetch,
+          headers,
+        });
+        if (typeof sdlOrIntrospection === 'string') {
+          return buildSchema(sdlOrIntrospection);
+        } else if (isDocumentNode(sdlOrIntrospection)) {
+          return buildASTSchema(sdlOrIntrospection);
+        } else {
+          return buildClientSchema(sdlOrIntrospection);
+        }
+      } else {
+        const introspectionExecutor = async function introspectionExecutor(request: ExecutionRequest) {
+          const executor = await getExecutorForParams(request, schemaHeadersFactory, endpointFactory);
+          return executor(request);
+        };
+        return introspectSchema(introspectionExecutor);
+      }
     });
     return {
       schema: nonExecutableSchema,

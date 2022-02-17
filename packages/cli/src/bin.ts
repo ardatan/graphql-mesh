@@ -4,4 +4,4 @@ import { handleFatalError } from './handleFatalError';
 
 graphqlMesh()
   .then(() => {})
-  .catch(e => handleFatalError(e, new DefaultLogger('Mesh')));
+  .catch(e => handleFatalError(e, new DefaultLogger('🕸️')));

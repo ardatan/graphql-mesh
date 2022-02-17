@@ -51,7 +51,7 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
     includeDirs: [join(__dirname, './proto')],
   });
   const grpcObject = loadPackageDefinition(packageDefinition);
-  server.addService(grpcObject.Example.service, {
+  server.addService(grpcObject.MoviesService.service, {
     getMovies(call, callback) {
       const result = Movies.filter(movie => {
         for (const [key, value] of Object.entries(call.request.movie)) {
@@ -61,12 +61,11 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
         }
       });
       const moviesResult = { result };
-      console.log('called with MetaData:', JSON.stringify(call.metadata.getMap()));
       callback(null, moviesResult);
     },
+  });
+  server.addService(grpcObject.MovieSearchService.service, {
     searchMoviesByCast(call) {
-      console.log('call started');
-      console.log('called with MetaData:', JSON.stringify(call.metadata.getMap()));
       const input = call.request;
       call.on('error', error => {
         console.error(error);
@@ -77,11 +76,9 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
           if (movie.cast.indexOf(input.castName) > -1) {
             setTimeout(() => {
               if (call.cancelled || call.destroyed) {
-                console.log('call ended');
                 clearInterval(interval);
                 return;
               }
-              console.log('call received', movie);
               call.write(movie);
             }, i * subscriptionInterval);
           }
@@ -98,7 +95,7 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
       }
       server.start();
 
-      console.log('Server started, listening: 0.0.0.0:' + port);
+      console.log('gRPC Server started, listening: 0.0.0.0:' + port);
     }
   );
   return server;

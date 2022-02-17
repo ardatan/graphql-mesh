@@ -13,7 +13,7 @@ import { graphql, GraphQLSchema } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { startServer, stopServer } from './example_api_server';
 
-import fetch from 'cross-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas.json');
 const PORT = 3003;
@@ -49,7 +49,10 @@ test('Get patent using basic auth', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerBasicAuth: {
@@ -70,7 +73,10 @@ test('Get patent using API key', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerApiKey2: {
@@ -91,7 +97,10 @@ test('Get patent using API key 3', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerApiKey3: {
@@ -113,7 +122,10 @@ test('Get project using API key 1', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerApiKey: {
@@ -140,7 +152,10 @@ test('Get project using API key passed as option - viewer is disabled', async ()
       projectId
     }
   }`;
-  return graphql(schema, query, null, {}).then(result => {
+  return graphql({
+    schema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         projectWithId: {
@@ -166,7 +181,10 @@ test('Get project using API key passed in the requestOptions - viewer is disable
       projectId
     }
   }`;
-  return graphql(schema, query, null, {}).then(result => {
+  return graphql({
+    schema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         projectWithId: {
@@ -185,7 +203,10 @@ test('Get project using API key 2', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerApiKey2: {
@@ -211,7 +232,10 @@ test('Post project using API key 1', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         mutationViewerApiKey: {
@@ -239,7 +263,10 @@ test('Post project using API key 2', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         mutationViewerApiKey2: {
@@ -262,7 +289,10 @@ test('Get project using API key 3', async () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerApiKey3: {
@@ -288,7 +318,10 @@ test('Get project using API key 3 passed as option - viewer is disabled', async 
       projectId
     }
   }`;
-  return graphql(schema, query, null, {}).then(result => {
+  return graphql({
+    schema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         projectWithId: {
@@ -314,7 +347,10 @@ test('Get project using API key 3 passed in the requestOptions - viewer is disab
       projectId
     }
   }`;
-  return graphql(schema, query, null, {}).then(result => {
+  return graphql({
+    schema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         projectWithId: {
@@ -326,14 +362,17 @@ test('Get project using API key 3 passed in the requestOptions - viewer is disab
 });
 
 test('Basic AnyAuth usage', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiBasicProtocol: {username: "arlene123", password: "password123"}) {
       patentWithId (patentId: "100") {
         patentId
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerAnyAuth: {
@@ -347,14 +386,17 @@ test('Basic AnyAuth usage', () => {
 });
 
 test('Basic AnyAuth usage with extraneous auth data', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiKeyProtocol: {apiKey: "abcdef"}, exampleApiBasicProtocol: {username: "arlene123", password: "password123"}) {
       patentWithId (patentId: "100") {
         patentId
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerAnyAuth: {
@@ -368,7 +410,7 @@ test('Basic AnyAuth usage with extraneous auth data', () => {
 });
 
 test('Basic AnyAuth usage with multiple operations', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiKeyProtocol2: {apiKey: "abcdef"}) {
       patentWithId (patentId: "100") {
         patentId
@@ -378,7 +420,10 @@ test('Basic AnyAuth usage with multiple operations', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerAnyAuth: {
@@ -395,7 +440,7 @@ test('Basic AnyAuth usage with multiple operations', () => {
 });
 
 test('AnyAuth with multiple operations with different auth requirements', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiBasicProtocol: {username: "arlene123", password: "password123"}, exampleApiKeyProtocol: {apiKey: "abcdef"}) {
       patentWithId (patentId: "100") {
         patentId
@@ -405,7 +450,10 @@ test('AnyAuth with multiple operations with different auth requirements', () => 
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerAnyAuth: {
@@ -423,7 +471,7 @@ test('AnyAuth with multiple operations with different auth requirements', () => 
 
 // This request can only be fulfilled using AnyAuth
 test.skip('AnyAuth with multiple operations with different auth requirements in a link', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiBasicProtocol: {username: "arlene123", password: "password123"}, exampleApiKeyProtocol: {apiKey: "abcdef"}) {
       projectWithId (projectId: 3) {
         projectId
@@ -437,7 +485,10 @@ test.skip('AnyAuth with multiple operations with different auth requirements in 
       }
     }
   }`;
-  return graphql(createdSchema, query, null, {}).then(result => {
+  return graphql({
+    schema: createdSchema,
+    source: query,
+  }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerAnyAuth: {
@@ -469,7 +520,11 @@ test('Extract token from context', () => {
       fetch,
     })
     .then(({ schema }) => {
-      return graphql(schema, query, null, { user: { token: 'abcdef' } }).then(result => {
+      return graphql({
+        schema,
+        source: query,
+        contextValue: { user: { token: 'abcdef' } },
+      }).then((result: any) => {
         expect(result).toEqual({
           data: {
             secure: 'A secure message.',

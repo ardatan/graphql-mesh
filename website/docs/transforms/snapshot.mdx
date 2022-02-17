@@ -1,0 +1,45 @@
+---
+id: snapshot
+title: Snapshot Transform
+sidebar_label: Snapshot
+---
+
+The `snapshot` transform allow you to apply snapshot for development usage.
+
+The snapshot transform writes the responses of your remote data source to your file-system and then uses it instead of re-fetching it every time. It's alse useful because you can easily manipulate your data manually, and see how your API mesh responds to it.
+
+To get started with this transform, install it:
+
+<PackageInstall packages="@graphql-mesh/transform-snapshot" />
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yml
+transforms:
+  - snapshot:
+      if: "process.env.NODE_ENV != 'production'"
+      apply:
+        - Query.*
+      outputDir: __snapshots__
+```
+
+The following snapshot will work if you are in development environment (see the `if` command).
+
+To modify your snapshots and change the responses, go to `__snapshots__` and modify the responses under those files.
+
+## Codesandbox Example
+
+You can check out our example that uses SOAP Handler with snapshot transform.
+
+<iframe
+     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/soap-country-info?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
+     title="country-info-example"
+     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" />
+
+## Config API Reference
+
+{@import ../generated-markdown/SnapshotTransformConfig.generated.md}

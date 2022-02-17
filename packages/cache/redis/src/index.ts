@@ -1,19 +1,52 @@
 import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
-import { jsonFlatStringify } from '@graphql-mesh/utils';
+import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
 import DataLoader from 'dataloader';
+import { URL } from 'url';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import { env } from 'process';
+
+function interpolateStrWithEnv(str: string): string {
+  return stringInterpolator.parse(str, { env });
+}
 
 export default class RedisCache<V = string> implements KeyValueCache<V> {
   private client: Redis.Redis;
 
   constructor(options: YamlConfig.Transform['redis'] = {}) {
-    const redisClient = new Redis({
-      host: options.host,
-      port: options.port,
-      password: options.password,
-      lazyConnect: true,
-      enableAutoPipelining: true,
-    });
+    let redisClient: Redis.Redis;
+
+    if (options.url) {
+      const redisUrl = new URL(options.url);
+
+      redisUrl.searchParams.set('lazyConnect', 'true');
+      redisUrl.searchParams.set('enableAutoPipelining', 'true');
+
+      if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
+        throw new Error('Redis URL must use either redis:// or rediss://');
+      }
+
+      const fullUrl = redisUrl.toString();
+      const parsedFullUrl = interpolateStrWithEnv(fullUrl);
+
+      redisClient = new Redis(parsedFullUrl);
+    } else {
+      const parsedHost = interpolateStrWithEnv(options.host);
+      const parsedPort = interpolateStrWithEnv(options.port);
+      const parsedPassword = interpolateStrWithEnv(options.password);
+      if (parsedHost) {
+        redisClient = new Redis({
+          host: parsedHost,
+          port: parseInt(parsedPort),
+          password: parsedPassword,
+          lazyConnect: true,
+          enableAutoPipelining: true,
+        });
+      } else {
+        return new InMemoryLRUCache() as any;
+      }
+    }
+
     const dataLoader = new DataLoader<string[], [any, string]>(async (commands: string[][]) => {
       const responses = await redisClient.pipeline(commands).exec();
       return responses.map(([err, data]) => {

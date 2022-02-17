@@ -1,5 +1,5 @@
-mutation GetMovies {
-  ioXtechExampleGetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
+query GetMovies {
+  exampleGetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
     result {
       name
       year
@@ -8,7 +8,6 @@ mutation GetMovies {
       time {
         seconds
       }
-      genre
     }
   }
 }

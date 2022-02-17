@@ -7,33 +7,37 @@ import {
   isObjectType,
   GraphQLUnionType,
   GraphQLResolveInfo,
+  isListType,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, RawSourceOutput, SyncImportFn } from '@graphql-mesh/types';
-import { loadFromModuleExportExpressionSync } from '@graphql-mesh/utils';
+import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
 import _ from 'lodash';
-import { entitiesField, EntityType, serviceField } from '@apollo/federation/dist/types.js';
+import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { SubschemaConfig } from '@graphql-tools/delegate';
 
 export default class FederationTransform implements MeshTransform {
   private apiName: string;
   private config: YamlConfig.Transform['federation'];
   private baseDir: string;
-  private syncImportFn: SyncImportFn;
+  private importFn: ImportFn;
 
-  constructor({ apiName, baseDir, config, syncImportFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+  constructor({ apiName, baseDir, config, importFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.apiName = apiName;
     this.config = config;
     this.baseDir = baseDir;
-    this.syncImportFn = syncImportFn;
+    this.importFn = importFn;
   }
 
-  transformSchema(schema: GraphQLSchema, rawSource: RawSourceOutput) {
+  transformSchema(schema: GraphQLSchema, rawSource: SubschemaConfig) {
     const federationConfig: FederationConfig<any> = {};
 
     rawSource.merge = {};
     if (this.config?.types) {
+      const queryType = schema.getQueryType();
+      const queryTypeFields = queryType.getFields();
       for (const type of this.config.types) {
         rawSource.merge[type.name] = {};
         const fields: FederationFieldsConfig = {};
@@ -56,7 +60,7 @@ export default class FederationTransform implements MeshTransform {
             if (objectType) {
               const existingType = objectType.getFields()[fieldName].type;
               objectType.getFields()[fieldName].type = isNonNullType(existingType)
-                ? GraphQLNonNull(GraphQLID)
+                ? new GraphQLNonNull(GraphQLID)
                 : GraphQLID;
             }
           }
@@ -66,28 +70,34 @@ export default class FederationTransform implements MeshTransform {
         if (type.config?.resolveReference) {
           const resolveReferenceConfig = type.config.resolveReference;
           if (typeof resolveReferenceConfig === 'string') {
-            const resolveReferenceFn = loadFromModuleExportExpressionSync<any>(resolveReferenceConfig, {
+            const fn$ = loadFromModuleExportExpression<any>(resolveReferenceConfig, {
               cwd: this.baseDir,
-              syncImportFn: this.syncImportFn,
               defaultExportName: 'default',
+              importFn: this.importFn,
             });
-            resolveReference = resolveReferenceFn;
+            resolveReference = (...args: any[]) => fn$.then(fn => fn(...args));
           } else if (typeof resolveReferenceConfig === 'function') {
             resolveReference = type.config.resolveReference;
           } else {
-            const { queryFieldName, keyArg = schema.getQueryType().getFields()[queryFieldName].args[0].name } =
-              resolveReferenceConfig;
+            const queryField = queryTypeFields[resolveReferenceConfig.queryFieldName];
+            const keyArg = resolveReferenceConfig.keyArg || queryField.args[0].name;
             const keyField = type.config.keyFields[0];
+            const isBatch = isListType(queryField.args.find(arg => arg.name === keyArg));
             resolveReference = async (root: any, context: any, info: GraphQLResolveInfo) => {
-              const result = await context[this.apiName].Query[queryFieldName]({
+              const result = await context[this.apiName].Query[queryField.name]({
                 root,
-                key: keyField,
-                argsFromKeys: (keys: string[]) => ({
-                  [keyArg]: keys,
-                }),
-                args: {
-                  [keyArg]: root[keyField],
-                },
+                ...(isBatch
+                  ? {
+                      key: root[keyField],
+                      argsFromKeys: (keys: string[]) => ({
+                        [keyArg]: keys,
+                      }),
+                    }
+                  : {
+                      args: {
+                        [keyArg]: root[keyField],
+                      },
+                    }),
                 context,
                 info,
               });
@@ -161,7 +171,7 @@ export default class FederationTransform implements MeshTransform {
         if (!isObjectType(type)) {
           throw new Error(`Type "${objectName}" is not an object type and can't have a resolveReference function`);
         }
-        type.resolveReference = currentFederationConfig.resolveReference;
+        type.resolveObject = currentFederationConfig.resolveReference;
       }
     });
 

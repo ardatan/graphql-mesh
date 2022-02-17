@@ -13,3 +13,4 @@ documents:
 serve:
   port: 4000
   staticFiles: public
+  playground: true

@@ -1,6 +1,6 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';
 import ResolversCompositionTransform, { ResolversComposition } from '../src';
 import { execute, parse } from 'graphql';
@@ -20,7 +20,7 @@ describe('transform', () => {
       ],
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -58,7 +58,7 @@ describe('transform', () => {
       ],
       baseDir,
       apiName: '',
-      syncImportFn: require,
+      importFn: m => import(m),
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

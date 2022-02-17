@@ -1,20 +1,18 @@
 /* eslint-disable no-unused-expressions */
 import {
   GraphQLSchema,
-  DocumentNode,
-  GraphQLError,
-  subscribe,
   ExecutionArgs,
   GraphQLResolveInfo,
   OperationTypeNode,
   GraphQLObjectType,
   getOperationAST,
   print,
-  isListType,
   SelectionSetNode,
-  ExecutionResult,
+  Kind,
+  isLeafType,
+  getNamedType,
 } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, Requester, SubscribeMeshFn } from './types';
+import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
 import {
   MeshPubSub,
   KeyValueCache,
@@ -22,81 +20,99 @@ import {
   GraphQLOperation,
   SelectionSetParamOrFactory,
   SelectionSetParam,
+  Logger,
 } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import {
   applySchemaTransforms,
-  ensureDocumentNode,
   getInterpolatedStringFactory,
   groupTransforms,
   ResolverDataBasedFactory,
-  jitExecutorFactory,
-  AggregateError,
   DefaultLogger,
+  getDocumentNodeAndSDL,
+  jitExecutorFactory,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { delegateToSchema, IDelegateToSchemaOptions } from '@graphql-tools/delegate';
+import { delegateToSchema, IDelegateToSchemaOptions, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
-import { inspect } from 'util';
-import { isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
+import { inspect, isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
 
-export interface MeshInstance {
+export interface MeshInstance<TMeshContext = any> {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
   rawSources: RawSourceOutput[];
-  sdkRequester: Requester;
-  contextBuilder: (initialContextValue?: any) => Promise<Record<string, any>>;
   destroy: () => void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   liveQueryStore: InMemoryLiveQueryStore;
+  logger: Logger;
+  meshContext: TMeshContext;
+  /**
+   * @deprecated
+   * contextBuilder has no effect in the provided context anymore.
+   * It will be removed in the next version
+   */
+  contextBuilder: (ctx: any) => Promise<any>;
 }
 
-export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
+export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Promise<MeshInstance<TMeshContext>> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubsub, cache, logger = new DefaultLogger('Mesh') } = options;
+  const { pubsub, cache, logger = new DefaultLogger('🕸️') } = options;
 
-  const getMeshLogger = logger.child('getMesh/runtime');
-  getMeshLogger.debug(`Getting subschemas from source handlers`);
-  await Promise.all(
+  const getMeshLogger = logger.child('GetMesh');
+  getMeshLogger.debug(() => `Getting subschemas from source handlers`);
+  let failed = false;
+  await Promise.allSettled(
     options.sources.map(async apiSource => {
       const apiName = apiSource.name;
       const sourceLogger = logger.child(apiName);
-      sourceLogger.debug(`Generating the schema`);
-      const source = await apiSource.handler.getMeshSource();
-      sourceLogger.debug(`The schema has been generated successfully`);
+      sourceLogger.debug(() => `Generating the schema`);
+      try {
+        const source = await apiSource.handler.getMeshSource();
+        sourceLogger.debug(() => `The schema has been generated successfully`);
 
-      let apiSchema = source.schema;
+        let apiSchema = source.schema;
 
-      sourceLogger.debug(`Analyzing transforms`);
-      const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
+        sourceLogger.debug(() => `Analyzing transforms`);
+        const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
-      if (noWrapTransforms?.length) {
-        sourceLogger.debug(`${noWrapTransforms.length} bare transforms found and applying`);
-        apiSchema = applySchemaTransforms(apiSchema, source, null, noWrapTransforms);
+        if (noWrapTransforms?.length) {
+          sourceLogger.debug(() => `${noWrapTransforms.length} bare transforms found and applying`);
+          apiSchema = applySchemaTransforms(apiSchema, source as SubschemaConfig, null, noWrapTransforms);
+        }
+
+        rawSources.push({
+          name: apiName,
+          schema: apiSchema,
+          executor: source.executor,
+          transforms: wrapTransforms,
+          contextVariables: source.contextVariables || [],
+          handler: apiSource.handler,
+          batch: 'batch' in source ? source.batch : true,
+          merge: apiSource.merge,
+        });
+      } catch (e: any) {
+        sourceLogger.error(`Failed to generate schema: ${e.message || e}`);
+        sourceLogger.debug(() => inspect(e));
+        failed = true;
       }
-
-      rawSources.push({
-        name: apiName,
-        contextBuilder: source.contextBuilder || null,
-        schema: apiSchema,
-        executor: source.executor,
-        transforms: wrapTransforms,
-        contextVariables: source.contextVariables || [],
-        handler: apiSource.handler,
-        batch: 'batch' in source ? source.batch : true,
-        merge: apiSource.merge,
-      });
     })
   );
-  getMeshLogger.debug(`Schemas have been generated by the source handlers`);
 
-  getMeshLogger.debug(`Merging schemas using the defined merging strategy.`);
+  if (failed) {
+    throw new Error(
+      `Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.`
+    );
+  }
+
+  getMeshLogger.debug(() => `Schemas have been generated by the source handlers`);
+
+  getMeshLogger.debug(() => `Merging schemas using the defined merging strategy.`);
   let unifiedSchema = await options.merger.getUnifiedSchema({
     rawSources,
     typeDefs: options.additionalTypeDefs,
@@ -104,31 +120,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     transforms: options.transforms,
   });
 
-  getMeshLogger.debug(`Attaching resolver hooks to the unified schema`);
-  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub);
-
-  getMeshLogger.debug(`Creating JIT Executor`);
-  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
-
-  getMeshLogger.debug(`Creating Live Query Store`);
+  getMeshLogger.debug(() => `Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
     includeIdentifierExtension: true,
-    execute: (args: any) => {
-      const { document, contextValue, variableValues, rootValue, operationName }: ExecutionArgs = args;
-      const operationAst = getOperationAST(document, operationName);
-      if (!operationAst) {
-        throw new Error(`Operation ${operationName} cannot be found!`);
-      }
-      const operationType = operationAst.operation;
-      return jitExecutor({
-        document,
-        context: contextValue,
-        variables: variableValues,
-        operationName,
-        rootValue,
-        operationType,
-      }) as ExecutionResult;
-    },
   });
 
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
@@ -141,8 +135,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
   });
 
-  getMeshLogger.debug(`Creating event listener (resolverDone) for Live Query Store`);
-  pubsub.subscribe('resolverDone', ({ result, resolverData }) => {
+  getMeshLogger.debug(() => `Creating event listener (resolverDone) for Live Query Store`);
+  await pubsub.subscribe('resolverDone', async ({ result, resolverData }) => {
     if (resolverData?.info?.parentType && resolverData?.info?.fieldName) {
       const path = `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`;
       if (liveQueryInvalidationFactoryMap.has(path)) {
@@ -150,20 +144,21 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
           invalidationPathFactory({ ...resolverData, result })
         );
-        liveQueryStore.invalidate(invalidationPaths);
+        await liveQueryStore.invalidate(invalidationPaths);
       }
     }
   });
 
-  getMeshLogger.debug(`Building Base Mesh Context`);
-  const baseMeshContext: Record<string, any> = {
+  getMeshLogger.debug(() => `Building Mesh Context`);
+  const meshContext: Record<string, any> = {
     pubsub,
     cache,
     liveQueryStore,
+    logger,
     [MESH_CONTEXT_SYMBOL]: true,
   };
-  getMeshLogger.debug(`Attaching in-context SDK, pubsub, cache and liveQueryStore to the context`);
-  const sourceMap: Map<RawSourceOutput, GraphQLSchema> = unifiedSchema.extensions.sourceMap;
+  getMeshLogger.debug(() => `Attaching in-context SDK, pubsub, cache and liveQueryStore to the context`);
+  const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   await Promise.all(
     rawSources.map(async rawSource => {
       const rawSourceLogger = logger.child(`${rawSource.name}`);
@@ -179,7 +174,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         subscription: transformedSchema.getSubscriptionType(),
       };
 
-      rawSourceLogger.debug(`Generating In Context SDK`);
+      rawSourceLogger.debug(() => `Generating In Context SDK`);
       for (const operationType in rootTypes) {
         const rootType: GraphQLObjectType = rootTypes[operationType];
         if (rootType) {
@@ -188,7 +183,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           for (const fieldName in rootTypeFieldMap) {
             const rootTypeField = rootTypeFieldMap[fieldName];
             const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
-            rawSourceContext[rootType.name][fieldName] = ({
+            const shouldHaveSelectionSet = !isLeafType(getNamedType(rootTypeField.type));
+            rawSourceContext[rootType.name][fieldName] = async ({
               root,
               args,
               context,
@@ -196,6 +192,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               selectionSet,
               key,
               argsFromKeys,
+              valuesFromResults,
             }: {
               root: any;
               args: any;
@@ -204,13 +201,16 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               selectionSet: SelectionSetParamOrFactory;
               key?: string;
               argsFromKeys?: (keys: string[]) => any;
+              valuesFromResults?: (result: any, keys?: string[]) => any;
             }) => {
-              inContextSdkLogger.debug(`Called with
+              inContextSdkLogger.debug(
+                () => `Called with
 - root: ${inspect(root)}
 - args: ${inspect(args)}
-- key: ${inspect(key)}`);
+- key: ${inspect(key)}`
+              );
               const commonDelegateOptions: IDelegateToSchemaOptions = {
-                schema: rawSource,
+                schema: rawSource as SubschemaConfig,
                 rootValue: root,
                 operation: operationType as OperationTypeNode,
                 fieldName,
@@ -219,120 +219,134 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                 transformedSchema,
                 info,
               };
-              if (isListType(rootTypeField.type) && key && argsFromKeys) {
+              if (selectionSet) {
+                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                const path = [fieldName];
+                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
+                commonDelegateOptions.transforms = [wrapQueryTransform];
+              }
+              if (shouldHaveSelectionSet) {
+                let selectionCount = 0;
+                for (const fieldNode of info.fieldNodes) {
+                  if (fieldNode.selectionSet != null) {
+                    selectionCount += fieldNode.selectionSet.selections.length;
+                  }
+                }
+                if (selectionCount === 0) {
+                  commonDelegateOptions.info = {
+                    ...info,
+                    fieldNodes: [
+                      {
+                        ...info.fieldNodes[0],
+                        selectionSet: {
+                          kind: Kind.SELECTION_SET,
+                          selections: [
+                            {
+                              kind: Kind.FIELD,
+                              name: {
+                                kind: Kind.NAME,
+                                value: '__typename',
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      ...info.fieldNodes.slice(1),
+                    ],
+                  };
+                }
+              }
+              if (key && argsFromKeys) {
                 const batchDelegationOptions: BatchDelegateOptions = {
                   ...commonDelegateOptions,
                   key,
                   argsFromKeys,
+                  valuesFromResults,
                 };
                 return batchDelegateToSchema(batchDelegationOptions);
-              } else if (selectionSet) {
-                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
-                const path = [fieldName];
-                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
-                return delegateToSchema({
-                  ...commonDelegateOptions,
-                  args,
-                  transforms: [wrapQueryTransform],
-                });
               } else {
-                return delegateToSchema({
+                const options: IDelegateToSchemaOptions = {
                   ...commonDelegateOptions,
                   args,
-                });
+                };
+                const result = await delegateToSchema(options);
+                if (valuesFromResults) {
+                  return valuesFromResults(result);
+                }
+                return result;
               }
             };
           }
         }
       }
-      baseMeshContext[rawSource.name] = rawSourceContext;
+      meshContext[rawSource.name] = rawSourceContext;
     })
   );
 
-  async function buildMeshContext<TAdditionalContext, TContext extends TAdditionalContext = any>(
-    additionalContext: TAdditionalContext = {} as any
-  ): Promise<TContext> {
-    if (MESH_CONTEXT_SYMBOL in additionalContext) {
-      return additionalContext as TContext;
-    }
-    const context: TContext = Object.assign(additionalContext as any, baseMeshContext);
+  getMeshLogger.debug(() => `Attaching resolver hooks to the unified schema`);
+  unifiedSchema = applyResolversHooksToSchema(unifiedSchema, pubsub, meshContext);
 
-    await Promise.all(
-      rawSources.map(async rawSource => {
-        const rawSourceLogger = logger.child(`${rawSource.name}`);
-        const contextBuilder = rawSource.contextBuilder;
-        if (contextBuilder) {
-          rawSourceLogger.debug(`Building context`);
-          const sourceContext = await contextBuilder(context);
-          if (sourceContext) {
-            Object.assign(context, sourceContext);
-          }
-          rawSourceLogger.debug(`Context has been built successfully`);
-        }
+  getMeshLogger.debug(() => `Creating JIT Executor`);
+  const jitExecutor = jitExecutorFactory(unifiedSchema, 'unified', logger.child('JIT Executor'));
+
+  const executionLogger = logger.child(`Execute`);
+  const EMPTY_ROOT_VALUE: any = {};
+  const EMPTY_CONTEXT_VALUE: any = {};
+  const EMPTY_VARIABLES_VALUE: any = {};
+
+  const liveQueryExecute = liveQueryStore.makeExecute(
+    ({ document, contextValue: context, variableValues: variables, rootValue, operationName }): any =>
+      jitExecutor({
+        document,
+        context,
+        variables,
+        operationName,
+        rootValue,
       })
-    );
+  );
 
-    return context;
-  }
-
-  const executionLogger = logger.child(`meshExecute`);
   async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
-    document: GraphQLOperation<TData, TVariables>,
-    variableValues?: TVariables,
-    context?: TContext,
-    rootValue?: TRootValue,
+    documentOrSDL: GraphQLOperation<TData, TVariables>,
+    variableValues: TVariables = EMPTY_VARIABLES_VALUE,
+    contextValue: TContext = EMPTY_CONTEXT_VALUE,
+    rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const printedDocument = typeof document === 'string' ? document : print(document);
-    const documentNode = ensureDocumentNode(document);
+    const { document, sdl } = getDocumentNodeAndSDL(documentOrSDL);
     if (!operationName) {
-      const operationAst = getOperationAST(documentNode);
+      const operationAst = getOperationAST(document);
       operationName = operationAst.name?.value;
     }
     const operationLogger = executionLogger.child(operationName || 'UnnamedOperation');
-    const contextValue = await buildMeshContext(context);
 
-    const executionParams = {
-      document: documentNode,
+    const executionParams: ExecutionArgs = {
+      document,
       contextValue,
       rootValue,
-      variableValues,
+      variableValues: variableValues as any,
       schema: unifiedSchema,
       operationName,
-    } as const;
+    };
 
     operationLogger.debug(
-      `Execution started with
-${inspect(
-  {
-    ...(operationName ? {} : { query: printedDocument }),
-    ...(rootValue ? { rootValue } : {}),
-    ...(variableValues ? { variableValues } : {}),
-  },
-  true,
-  2,
-  true
-)}`
+      () =>
+        `Execution started with
+${inspect({
+  ...(operationName ? {} : { query: sdl }),
+  ...(rootValue ? { rootValue } : {}),
+  ...(variableValues ? { variableValues } : {}),
+})}`
     );
 
-    const executionResult = await liveQueryStore.execute(executionParams);
-
-    pubsub.publish('executionDone', {
-      ...executionParams,
-      executionResult: executionResult as any,
-    });
+    const executionResult = await liveQueryExecute(executionParams);
 
     operationLogger.debug(
-      `Execution done with
-${inspect(
-  {
-    ...(operationName ? {} : { query: printedDocument }),
-    ...executionResult,
-  },
-  true,
-  2,
-  true
-)}`
+      () =>
+        `Execution done with
+${inspect({
+  ...(operationName ? {} : { query: sdl }),
+  ...executionResult,
+})}`
     );
 
     return executionResult;
@@ -340,114 +354,52 @@ ${inspect(
 
   const subscriberLogger = logger.child(`meshSubscribe`);
   async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
-    document: GraphQLOperation<TData, TVariables>,
-    variableValues?: TVariables,
-    context?: TContext,
-    rootValue?: TRootValue,
+    documentOrSDL: GraphQLOperation<TData, TVariables>,
+    variables: TVariables = EMPTY_VARIABLES_VALUE,
+    context: TContext = EMPTY_CONTEXT_VALUE,
+    rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const printedDocument = typeof document === 'string' ? document : print(document);
-    const documentNode = ensureDocumentNode(document);
+    const { document, sdl } = getDocumentNodeAndSDL(documentOrSDL);
     if (!operationName) {
-      const operationAst = getOperationAST(documentNode);
+      const operationAst = getOperationAST(document);
       operationName = operationAst.name?.value;
     }
     const operationLogger = subscriberLogger.child(operationName || 'UnnamedOperation');
-    const contextValue = await buildMeshContext(context);
-
-    const executionParams = {
-      document: documentNode,
-      contextValue,
-      rootValue,
-      variableValues,
-      schema: unifiedSchema,
-      operationName,
-    } as const;
 
     operationLogger.debug(
-      `Subscription started with
-${inspect(
-  {
-    ...(rootValue ? {} : { rootValue }),
-    ...(variableValues ? {} : { variableValues }),
-    ...(operationName ? {} : { query: printedDocument }),
-  },
-  true,
-  2,
-  true
-)}`
+      () =>
+        `Subscription started with
+${inspect({
+  ...(rootValue ? {} : { rootValue }),
+  ...(variables ? {} : { variables }),
+  ...(operationName ? {} : { query: sdl }),
+})}`
     );
-    const executionResult = await subscribe(executionParams);
 
-    pubsub.publish('executionDone', {
-      ...executionParams,
-      executionResult: executionResult as any,
+    const executionResult = await jitExecutor({
+      document,
+      context,
+      rootValue,
+      variables,
+      operationName,
     });
 
     return executionResult;
   }
 
-  class GraphQLMeshSdkError<Data = any, Variables = any> extends AggregateError {
-    constructor(
-      errors: ReadonlyArray<GraphQLError>,
-      public document: DocumentNode,
-      public variables: Variables,
-      public data: Data
-    ) {
-      super(
-        errors,
-        `GraphQL Mesh SDK ${getOperationAST(document).operation} ${getOperationAST(document).name?.value || ''} failed!`
-      );
-    }
-  }
-
-  const localRequester: Requester = async <Result, TVariables, TContext, TRootValue>(
-    document: DocumentNode,
-    variables: TVariables,
-    contextValue?: TContext,
-    rootValue?: TRootValue,
-    operationName?: string
-  ) => {
-    const executionResult = await meshExecute<TVariables, TContext, TRootValue>(
-      document,
-      variables,
-      contextValue,
-      rootValue,
-      operationName
-    );
-
-    if ('data' in executionResult || 'errors' in executionResult) {
-      if (executionResult.data && !executionResult.errors) {
-        return executionResult.data as Result;
-      } else {
-        logger.error(`GraphQL Mesh SDK failed to execute:
-        ${inspect({
-          query: print(document),
-          variables,
-        })}`);
-        throw new GraphQLMeshSdkError(
-          executionResult.errors as ReadonlyArray<GraphQLError>,
-          document,
-          variables,
-          executionResult.data
-        );
-      }
-    } else {
-      throw new Error('Not implemented');
-    }
-  };
-
   return {
     execute: meshExecute,
     subscribe: meshSubscribe,
     schema: unifiedSchema,
-    contextBuilder: buildMeshContext,
     rawSources,
-    sdkRequester: localRequester,
     cache,
     pubsub,
     destroy: () => pubsub.publish('destroy', undefined),
     liveQueryStore,
+    logger,
+    contextBuilder: async ctx => ctx || {},
+    meshContext: meshContext as TMeshContext,
   };
 }
 

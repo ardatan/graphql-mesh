@@ -7,7 +7,7 @@ import { graphql, parse, validate } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
 import { startServer, stopServer } from './example_api_server';
-import fetch from 'cross-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas_combined.json');
 const PORT = 3010;
@@ -50,7 +50,7 @@ test('addLimitArgument and allOf', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result.data.cars.length).toEqual(1);
     });
   });
@@ -72,7 +72,7 @@ test('addLimitArgument but no value provided', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result.errors).toBeUndefined();
       expect(result.data.cars.length).toEqual(4);
     });

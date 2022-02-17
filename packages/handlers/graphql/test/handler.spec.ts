@@ -1,12 +1,14 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '../src';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub, defaultImportFn, DefaultLogger } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema } from 'graphql';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 
 const { readFile } = fsPromises;
+
+const logger = new DefaultLogger('tests');
 
 describe('graphql', () => {
   it('handle SDL files correctly as endpoint', async () => {
@@ -24,6 +26,8 @@ describe('graphql', () => {
       cache: new InMemoryLRUCache(),
       pubsub: new PubSub(),
       store,
+      importFn: defaultImportFn,
+      logger,
     });
     const absoluteFilePath = join(__dirname, sdlFilePath);
     const schemaStringFromFile = await readFile(absoluteFilePath, 'utf-8');
@@ -46,6 +50,8 @@ describe('graphql', () => {
       cache: new InMemoryLRUCache(),
       pubsub: new PubSub(),
       store,
+      importFn: defaultImportFn,
+      logger,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaFromFile = require(absoluteFilePath);
@@ -67,6 +73,8 @@ describe('graphql', () => {
       cache: new InMemoryLRUCache(),
       pubsub: new PubSub(),
       store,
+      importFn: defaultImportFn,
+      logger,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaDocumentFromFile = require(absoluteFilePath);
@@ -89,6 +97,8 @@ describe('graphql', () => {
       cache: new InMemoryLRUCache(),
       pubsub: new PubSub(),
       store,
+      importFn: defaultImportFn,
+      logger,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaStringFromFile = require(absoluteFilePath);

@@ -13,4 +13,17 @@ type MySQLHandler @md {
   Format: modulePath#exportName
   """
   pool: Any
+  """
+  Use specific tables for your schema
+  """
+  tables: [String!]
+  """
+  Use specific fields of specific tables
+  """
+  tableFields: [TableField!]
+}
+
+type TableField {
+  table: String!
+  fields: [String!]!
 }

@@ -21,11 +21,14 @@ export default class BareRename implements MeshTransform {
         useRegExpForTypes,
         useRegExpForFields,
       } = rename;
+
+      const regExpFlags = rename.regExpFlags || undefined;
+
       if (fromTypeName && !fromFieldName && toTypeName && !toFieldName && fromTypeName !== toTypeName) {
-        this.typesMap.set(useRegExpForTypes ? new RegExp(fromTypeName) : fromTypeName, toTypeName);
+        this.typesMap.set(useRegExpForTypes ? new RegExp(fromTypeName, regExpFlags) : fromTypeName, toTypeName);
       }
       if (fromTypeName && fromFieldName && toTypeName && toFieldName && fromFieldName !== toFieldName) {
-        const fromName = useRegExpForFields ? new RegExp(fromFieldName) : fromFieldName;
+        const fromName = useRegExpForFields ? new RegExp(fromFieldName, regExpFlags) : fromFieldName;
         const typeMap = this.fieldsMap.get(fromTypeName) || new Map();
         this.fieldsMap.set(fromTypeName, typeMap.set(fromName, toFieldName));
       }

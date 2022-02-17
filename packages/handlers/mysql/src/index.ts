@@ -1,4 +1,12 @@
-import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
+import {
+  GetMeshSourceOptions,
+  MeshPubSub,
+  MeshHandler,
+  MeshSource,
+  YamlConfig,
+  ImportFn,
+  Logger,
+} from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -14,10 +22,11 @@ import {
   GraphQLUnsignedInt,
   GraphQLUnsignedFloat,
 } from 'graphql-scalars';
-import { specifiedDirectives } from 'graphql';
-import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { ExecutionResult, specifiedDirectives } from 'graphql';
+import { jitExecutorFactory, loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { env } from 'process';
+import { ExecutionRequest } from '@graphql-tools/utils';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -84,18 +93,30 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof MySQLHandler.prototy
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 export default class MySQLHandler implements MeshHandler {
+  private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
   private store: MeshStore;
   private importFn: ImportFn;
+  private logger: Logger;
 
-  constructor({ config, baseDir, pubsub, store, importFn }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    pubsub,
+    store,
+    importFn,
+    logger,
+  }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.store = store;
     this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getPromisifiedConnection(pool: Pool) {
@@ -114,7 +135,7 @@ export default class MySQLHandler implements MeshHandler {
     const update = promisify(connection.update.bind(connection));
     const deleteRow = promisify(connection.delete.bind(connection));
     const count = promisify(connection.count.bind(connection));
-    const release = promisify(connection.release.bind(connection));
+    const release = connection.release.bind(connection);
 
     return {
       connection,
@@ -200,14 +221,18 @@ export default class MySQLHandler implements MeshHandler {
       },
     });
     const tables = await introspectionConnection.getDatabaseTables(pool.config.connectionConfig.database);
+    const tableNames = this.config.tables || Object.keys(tables);
     await Promise.all(
-      Object.keys(tables).map(async tableName => {
+      tableNames.map(async tableName => {
+        if (this.config.tables && !this.config.tables.includes(tableName)) {
+          return;
+        }
         const table = tables[tableName];
-        const objectTypeName = table.TABLE_NAME;
-        const insertInputName = table.TABLE_NAME + '_InsertInput';
-        const updateInputName = table.TABLE_NAME + '_UpdateInput';
-        const whereInputName = table.TABLE_NAME + '_WhereInput';
-        const orderByInputName = table.TABLE_NAME + '_OrderByInput';
+        const objectTypeName = sanitizeNameForGraphQL(table.TABLE_NAME);
+        const insertInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_InsertInput');
+        const updateInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_UpdateInput');
+        const whereInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_WhereInput');
+        const orderByInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_OrderByInput');
         const tableTC = schemaComposer.createObjectTC({
           name: objectTypeName,
           description: table.TABLE_COMMENT,
@@ -240,8 +265,10 @@ export default class MySQLHandler implements MeshHandler {
         });
         const primaryKeyMetadata = await introspectionConnection.getTablePrimaryKeyMetadata(tableName);
         const fields = await introspectionConnection.getTableFields(tableName);
+        const fieldNames =
+          this.config.tableFields?.find(({ table }) => table === tableName)?.fields || Object.keys(fields);
         await Promise.all(
-          Object.keys(fields).map(async fieldName => {
+          fieldNames.map(async fieldName => {
             const tableField = fields[fieldName];
             const typePattern = tableField.Type;
             const [realTypeNameCased, restTypePattern] = typePattern.split('(');
@@ -250,7 +277,7 @@ export default class MySQLHandler implements MeshHandler {
             let type: string = SCALARS[realTypeName];
             if (realTypeName === 'enum' || realTypeName === 'set') {
               const enumValues = typeDetails.split(`'`).join('').split(',');
-              const enumTypeName = tableName + '_' + fieldName;
+              const enumTypeName = sanitizeNameForGraphQL(tableName + '_' + fieldName);
               schemaComposer.createEnumTC({
                 name: enumTypeName,
                 values: enumValues.reduce((prev, curr) => {
@@ -309,17 +336,24 @@ export default class MySQLHandler implements MeshHandler {
           Object.keys(tableForeigns).map(async foreignName => {
             const tableForeign = tableForeigns[foreignName];
             const columnName = tableForeign.COLUMN_NAME;
+            if (!fieldNames.includes(columnName)) {
+              return;
+            }
             const foreignTableName = tableForeign.REFERENCED_TABLE_NAME;
             const foreignColumnName = tableForeign.REFERENCED_COLUMN_NAME;
+
+            const foreignObjectTypeName = sanitizeNameForGraphQL(foreignTableName);
+            const foreignWhereInputName = sanitizeNameForGraphQL(foreignTableName + '_WhereInput');
+            const foreignOrderByInputName = sanitizeNameForGraphQL(foreignTableName + '_OrderByInput');
             tableTC.addFields({
               [foreignTableName]: {
-                type: '[' + foreignTableName + ']',
+                type: '[' + foreignObjectTypeName + ']',
                 args: {
                   where: {
-                    type: foreignTableName + '_WhereInput',
+                    type: foreignWhereInputName,
                   },
                   orderBy: {
-                    type: foreignTableName + '_OrderByInput',
+                    type: foreignOrderByInputName,
                   },
                   limit: {
                     type: 'Int',
@@ -465,7 +499,7 @@ export default class MySQLHandler implements MeshHandler {
         });
       })
     );
-    this.pubsub.subscribe('destroy', () => pool.end());
+    await this.pubsub.subscribe('destroy', () => pool.end());
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
@@ -474,27 +508,26 @@ export default class MySQLHandler implements MeshHandler {
 
     introspectionConnection.release();
 
-    this.pubsub.subscribe('executionDone', ({ contextValue }) => contextValue.mysqlConnection?.release());
+    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
 
     return {
       schema,
-      contextBuilder: async () => {
-        // In order to prevent unnecessary connections
-        // We need to implement some kind of lazy connections
-        let mysqlConnection$: Promise<MysqlPromisifiedConnection>;
-        return {
-          mysqlConnection: new Proxy(
-            {},
-            {
-              get: (_, pKey) => {
-                if (pKey !== 'release' && !mysqlConnection$) {
-                  mysqlConnection$ = this.getPromisifiedConnection(pool);
-                }
-                return (...args: any[]) => mysqlConnection$?.then(mysqlConnection => mysqlConnection[pKey](...args));
-              },
-            }
-          ),
-        };
+      executor: async <TResult>(executionRequest: ExecutionRequest) => {
+        const mysqlConnection = await this.getPromisifiedConnection(pool);
+        try {
+          const result = (await jitExecutor({
+            ...executionRequest,
+            context: {
+              ...executionRequest.context,
+              mysqlConnection,
+            },
+          })) as ExecutionResult<TResult>;
+          mysqlConnection.release();
+          return result;
+        } catch (e: any) {
+          mysqlConnection.release();
+          throw e;
+        }
       },
     };
   }

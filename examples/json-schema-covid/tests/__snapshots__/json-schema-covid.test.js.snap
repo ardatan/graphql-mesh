@@ -119,17 +119,13 @@ type Query {
 
   \\"\\"\\"\\"\\"\\"
   daily: [Daily]
-
-  \\"\\"\\"
-  GET /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
-  \\"\\"\\"
   population(country: String): ApiPopulation
   stat(country: String!): Stat
 }
 
 \\"\\"\\"Result of API\\"\\"\\"
 type Result {
-  fields: _records_items_fields
+  fields: query_population_records_items_fields
 }
 
 type Stat {
@@ -137,16 +133,14 @@ type Stat {
   confirmedRatio: Float
   deathRatio: Float
   population: ApiPopulation
-  recoveredRatio: Float
 }
 
 \\"\\"\\"The \`Upload\` scalar type represents a file upload.\\"\\"\\"
 scalar Upload
 
-type _records_items_fields {
+type query_population_records_items_fields {
   country_name: String
   value: Float
   year: String
-}
-"
+}"
 `;

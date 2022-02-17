@@ -21,6 +21,7 @@ sources:
             path: /user
             method: PUT
             requestSample: ./json-samples/user-input.json
+            requestTypeName: CreateUpdateUser
             responseSchema: ./json-schemas/user.json#/definitions/User
           - type: Mutation
             field: updateUser
@@ -29,7 +30,15 @@ sources:
               id: ID!
             method: POST
             requestSample: ./json-samples/user-input.json
+            requestTypeName: CreateUpdateUser
             responseSchema: ./json-schemas/user.json#/definitions/User # This can be `responseSample` with a sample JSON file
+          - type: Mutation
+            field: deleteUser
+            path: /user/{args.id}
+            argTypeMap:
+              id: ID!
+            method: DELETE
+
 additionalTypeDefs: |
   extend type User {
     company: Company

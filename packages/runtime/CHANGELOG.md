@@ -1,5 +1,402 @@
 # @graphql-mesh/runtime
 
+## 0.30.1
+
+### Patch Changes
+
+- fcbd12a35: fix(runtime): fallback to a dummy selectionSet if parent return type doesn't have one
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+
+## 0.30.0
+
+### Minor Changes
+
+- 900a01355: feat(serve-source): use the same server for serve-source cmd
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+
+## 0.29.3
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/utils@0.26.4
+
+## 0.29.2
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/utils@0.26.3
+
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/utils@0.26.2
+
+## 0.29.0
+
+### Minor Changes
+
+- 6601a949e: enhance(runtime): expose logger in the context and MeshInstance
+- 6601a949e: feat(runtime): export ServeMeshOption for custom server handler
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+
+## 0.28.0
+
+### Minor Changes
+
+- 56e2257fa: feat: use JIT in all execution phases
+
+### Patch Changes
+
+- f60bcb083: fix(core): update wrap to fix #3424
+- Updated dependencies [1ab0aebbc]
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - @graphql-mesh/types@0.57.2
+  - @graphql-mesh/utils@0.26.0
+
+## 0.27.1
+
+### Patch Changes
+
+- Updated dependencies [2b876f2b8]
+  - @graphql-mesh/utils@0.25.0
+
+## 0.27.0
+
+### Minor Changes
+
+- 80eb8e92b: feat(SDK): use JIT SDK instead of regular generic SDK
+
+### Patch Changes
+
+- Updated dependencies [d907351c5]
+  - @graphql-mesh/types@0.57.1
+  - @graphql-mesh/utils@0.24.2
+
+## 0.26.10
+
+### Patch Changes
+
+- Updated dependencies [26d685f2a]
+  - @graphql-mesh/utils@0.24.1
+
+## 0.26.9
+
+### Patch Changes
+
+- Updated dependencies [cfca98d34]
+  - @graphql-mesh/types@0.57.0
+  - @graphql-mesh/utils@0.24.0
+
+## 0.26.8
+
+### Patch Changes
+
+- Updated dependencies [5666484d6]
+  - @graphql-mesh/utils@0.23.0
+
+## 0.26.7
+
+### Patch Changes
+
+- Updated dependencies [6c216c309]
+  - @graphql-mesh/utils@0.22.2
+
+## 0.26.6
+
+### Patch Changes
+
+- Updated dependencies [c22eb1b5e]
+  - @graphql-mesh/utils@0.22.1
+
+## 0.26.5
+
+### Patch Changes
+
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/types@0.56.0
+  - @graphql-mesh/utils@0.22.0
+
+## 0.26.4
+
+### Patch Changes
+
+- 3bded2bad: disable JIT execution for now
+
+## 0.26.3
+
+### Patch Changes
+
+- Updated dependencies [1b332487c]
+  - @graphql-mesh/types@0.55.0
+  - @graphql-mesh/utils@0.21.1
+
+## 0.26.2
+
+### Patch Changes
+
+- Updated dependencies [875d0e48d]
+  - @graphql-mesh/utils@0.21.0
+
+## 0.26.1
+
+### Patch Changes
+
+- Updated dependencies [761b16ed9]
+  - @graphql-mesh/types@0.54.1
+  - @graphql-mesh/utils@0.20.1
+
+## 0.26.0
+
+### Minor Changes
+
+- 0f476c201: feat(runtime): adapt new LiveQuery changes
+
+## 0.25.0
+
+### Minor Changes
+
+- 09f81dd74: GraphQL v16 compatibility
+- 267573a16: enhance: resolve all promises
+- 09f81dd74: GraphQL v16 compability
+
+### Patch Changes
+
+- Updated dependencies [09f81dd74]
+- Updated dependencies [09f81dd74]
+  - @graphql-mesh/types@0.54.0
+  - @graphql-mesh/utils@0.20.0
+
+## 0.24.1
+
+### Patch Changes
+
+- Updated dependencies [0dc08e5cc]
+  - @graphql-mesh/utils@0.19.0
+
+## 0.24.0
+
+### Minor Changes
+
+- eb3f68e4d: feat(grpc): more debugging logs
+
+## 0.23.1
+
+### Patch Changes
+
+- Updated dependencies [6f57be0c1]
+  - @graphql-mesh/types@0.53.0
+  - @graphql-mesh/utils@0.18.1
+
+## 0.23.0
+
+### Minor Changes
+
+- 4ec7a14ba: enhance: memoize parse/print document node
+- 811960cdc: feat(runtime): use factory functions for debug messages
+
+### Patch Changes
+
+- Updated dependencies [4ec7a14ba]
+- Updated dependencies [811960cdc]
+- Updated dependencies [6f5ffe766]
+  - @graphql-mesh/utils@0.18.0
+  - @graphql-mesh/types@0.52.0
+
+## 0.22.0
+
+### Minor Changes
+
+- 256abf5f7: enhance: do not use context of orchestrator but internally
+
+### Patch Changes
+
+- Updated dependencies [256abf5f7]
+  - @graphql-mesh/types@0.51.0
+  - @graphql-mesh/utils@0.17.2
+
+## 0.21.2
+
+### Patch Changes
+
+- Updated dependencies [8c9b709ae]
+  - @graphql-mesh/types@0.50.0
+  - @graphql-mesh/utils@0.17.1
+
+## 0.21.1
+
+### Patch Changes
+
+- Updated dependencies [7bd145769]
+  - @graphql-mesh/utils@0.17.0
+
+## 0.21.0
+
+### Minor Changes
+
+- 4263ed47e: feat(runtime): list errors from all sources
+
+### Patch Changes
+
+- Updated dependencies [472c5887b]
+  - @graphql-mesh/utils@0.16.3
+
+## 0.20.2
+
+### Patch Changes
+
+- Updated dependencies [6ce43ddac]
+  - @graphql-mesh/types@0.49.0
+  - @graphql-mesh/utils@0.16.2
+
+## 0.20.1
+
+### Patch Changes
+
+- Updated dependencies [46a4f7b73]
+- Updated dependencies [aa804d043]
+- Updated dependencies [67552c8f8]
+  - @graphql-mesh/utils@0.16.1
+  - @graphql-mesh/types@0.48.0
+
+## 0.20.0
+
+### Minor Changes
+
+- 9eff8a396: enhance(logging): ability to filter debug messages
+
+### Patch Changes
+
+- Updated dependencies [9eff8a396]
+  - @graphql-mesh/types@0.47.0
+  - @graphql-mesh/utils@0.16.0
+
+## 0.19.1
+
+### Patch Changes
+
+- Updated dependencies [f4f30741d]
+  - @graphql-mesh/utils@0.15.0
+
+## 0.19.0
+
+### Minor Changes
+
+- 4545fe72d: Some improvements on additional resolvers;
+
+  - Now you can point to the nested fields in `keyArgs`; e.g. `keysArg: "where.ids"`
+  - You don't need `returnType` for abstract types anymore, because it's inferred from the type of `targetFieldName`.
+
+### Patch Changes
+
+- Updated dependencies [4545fe72d]
+- Updated dependencies [d189b4034]
+- Updated dependencies [f23820ed0]
+- Updated dependencies [06d688e70]
+  - @graphql-mesh/types@0.46.0
+  - @graphql-mesh/utils@0.14.0
+
+## 0.18.7
+
+### Patch Changes
+
+- fc51c574d: Dependency updates
+- Updated dependencies [fc51c574d]
+  - @graphql-mesh/types@0.45.2
+  - @graphql-mesh/utils@0.13.7
+
+## 0.18.6
+
+### Patch Changes
+
+- Updated dependencies [1c2667489]
+  - @graphql-mesh/types@0.45.1
+  - @graphql-mesh/utils@0.13.6
+
+## 0.18.5
+
+### Patch Changes
+
+- Updated dependencies [7080a2f1d]
+  - @graphql-mesh/utils@0.13.5
+
+## 0.18.4
+
+### Patch Changes
+
+- cb70939cc: fix(transforms): handle non nullable input variables correctly
+- Updated dependencies [6266d1774]
+- Updated dependencies [94606e7b9]
+- Updated dependencies [2b8dae1cb]
+- Updated dependencies [0c97b4b75]
+  - @graphql-mesh/types@0.45.0
+  - @graphql-mesh/utils@0.13.4
+
+## 0.18.3
+
+### Patch Changes
+
+- Updated dependencies [25d10cc23]
+  - @graphql-mesh/types@0.44.2
+  - @graphql-mesh/utils@0.13.3
+
+## 0.18.2
+
+### Patch Changes
+
+- 49c8ceb38: fix(core): bump packages to fix variables issue
+- Updated dependencies [49c8ceb38]
+  - @graphql-mesh/types@0.44.1
+  - @graphql-mesh/utils@0.13.2
+
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [1ee417e3d]
+  - @graphql-mesh/types@0.44.0
+  - @graphql-mesh/utils@0.13.1
+
+## 0.18.0
+
+### Minor Changes
+
+- e5fdcfdcc: fix(config): do not ignore additional resolvers while building artifacts
+
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/types@0.43.0
+  - @graphql-mesh/utils@0.13.0
+
 ## 0.17.0
 
 ### Minor Changes

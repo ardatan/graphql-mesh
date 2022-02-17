@@ -1,16 +1,15 @@
 import {
-  readFileOrUrlWithCache,
+  readFileOrUrl,
   parseInterpolationStrings,
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
-  getHeadersObject,
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
   getCachedFetch,
   jsonFlatStringify,
-  asArray,
   stringInterpolator,
 } from '@graphql-mesh/utils';
+import { asArray } from '@graphql-tools/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
 import {
@@ -25,7 +24,7 @@ import {
   Logger,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
-import { GraphQLID, GraphQLInputType } from 'graphql';
+import { GraphQLArgument, GraphQLID, GraphQLInputType } from 'graphql';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
@@ -92,16 +91,20 @@ export default class OpenAPIHandler implements MeshHandler {
     const source = stringInterpolator.parse(nonInterpolatedSource, {
       env,
     });
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     return this.oasSchema.getWithSet(async () => {
       let rawSpec: Oas3 | Oas2 | (Oas3 | Oas2)[];
       if (typeof source !== 'string') {
         rawSpec = source;
       } else {
-        rawSpec = await readFileOrUrlWithCache(source, this.cache, {
+        rawSpec = await readFileOrUrl(source, {
           cwd: this.baseDir,
           fallbackFormat: this.config.sourceFormat,
-          headers: this.config.schemaHeaders,
+          headers: schemaHeadersFactory({
+            env,
+          }),
           fetch,
+          logger: this.logger,
         });
       }
       return Promise.all(asArray(rawSpec).map(singleSpec => getValidOAS3(singleSpec)));
@@ -132,8 +135,6 @@ export default class OpenAPIHandler implements MeshHandler {
 
     const spec = await this.getCachedSpec(fetch);
 
-    const baseUrlFactory = getInterpolatedStringFactory(baseUrl);
-
     const headersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
     for (const queryName in qs || {}) {
@@ -148,10 +149,11 @@ export default class OpenAPIHandler implements MeshHandler {
 
     const { schema } = await createGraphQLSchema(spec, {
       fetch,
-      baseUrl: baseUrl,
-      operationIdFieldNames: true,
+      baseUrl,
+      operationIdFieldNames: this.config.operationIdFieldNames,
       fillEmptyResponses: true,
       includeHttpDetails: this.config.includeHttpDetails,
+      provideErrorExtensions: this.config.provideErrorExtensions,
       genericPayloadArgName: genericPayloadArgName === undefined ? false : genericPayloadArgName,
       selectQueryOrMutationField:
         selectQueryOrMutationField === undefined
@@ -187,7 +189,7 @@ export default class OpenAPIHandler implements MeshHandler {
         const resolverData: ResolverData = { root, args, context, info, env };
         const resolverParams = getResolverParams();
         resolverParams.requestOptions = {
-          headers: getHeadersObject(headersFactory(resolverData)),
+          headers: headersFactory(resolverData),
         };
         resolverParams.qs = qs;
 
@@ -197,8 +199,8 @@ export default class OpenAPIHandler implements MeshHandler {
         }
         */
 
-        if (!resolverParams.baseUrl && baseUrl) {
-          resolverParams.baseUrl = baseUrlFactory(resolverData);
+        if (baseUrl) {
+          resolverParams.baseUrl = stringInterpolator.parse(baseUrl, resolverData);
         }
 
         if (resolverParams.baseUrl) {
@@ -206,7 +208,8 @@ export default class OpenAPIHandler implements MeshHandler {
           searchParamsFactory(resolverData, urlObj.searchParams);
         } else {
           this.logger.debug(
-            `Warning: There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
+            () =>
+              `Warning: There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
           );
         }
 
@@ -234,7 +237,7 @@ export default class OpenAPIHandler implements MeshHandler {
       rootFields.map(rootField =>
         Promise.all(
           Object.entries(args).map(async ([argName, { type }]) =>
-            rootField?.args.push({
+            (rootField?.args as GraphQLArgument[]).push({
               name: argName,
               description: undefined,
               defaultValue: undefined,

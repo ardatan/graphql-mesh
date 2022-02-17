@@ -7,6 +7,11 @@
 
 export interface Config {
   serve?: ServeConfig;
+  sdk?: SDKConfig;
+  /**
+   * Codegen Configuration
+   */
+  codegen?: any;
   require?: string[];
   /**
    * Defines the list of your external data sources for your API mesh
@@ -46,13 +51,16 @@ export interface Config {
    * Provide a query or queries for GraphQL Playground, validation and SDK Generation
    * The value can be the file path, glob expression for the file paths or the SDL.
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
    */
   documents?: string[];
   /**
    * Logger instance that matches `Console` interface of NodeJS
    */
   logger?: any;
+  /**
+   * Allow connections to an SSL endpoint without certificates
+   */
+  skipSSLValidation?: boolean;
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
@@ -99,6 +107,11 @@ export interface ServeConfig {
    * This feature can be disable by passing `false` (Any of: String, Boolean)
    */
   browser?: string | boolean;
+  /**
+   * If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler
+   * With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
+   */
+  customServerHandler?: string;
 }
 /**
  * Configuration for CORS
@@ -165,6 +178,19 @@ export interface HTTPSConfig {
   key: string;
   cert: string;
 }
+/**
+ * SDK Configuration
+ */
+export interface SDKConfig {
+  generateOperations?: GenerateOperationsConfig;
+}
+/**
+ * Use this only if you don't want to use `documents` for SDK,
+ * and let Mesh generate them for you
+ */
+export interface GenerateOperationsConfig {
+  selectionSetDepth?: number;
+}
 export interface Source {
   /**
    * The name you wish to set to your remote API, this will be used for building the GraphQL context
@@ -186,9 +212,11 @@ export interface Handler {
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
+  newOpenapi?: NewOpenapiHandler;
   odata?: ODataHandler;
   openapi?: OpenapiHandler;
   postgraphile?: PostGraphileHandler;
+  raml?: RAMLHandler;
   soap?: SoapHandler;
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
@@ -224,10 +252,6 @@ export interface GraphQLHandler {
    */
   method?: 'GET' | 'POST';
   /**
-   * Use Server Sent Events instead of WebSocket for Subscriptions
-   */
-  useSSEForSubscription?: boolean;
-  /**
    * Path to a custom W3 Compatible Fetch Implementation
    */
   customFetch?: any;
@@ -235,10 +259,6 @@ export interface GraphQLHandler {
    * Path to a custom W3 Compatible WebSocket Implementation
    */
   webSocketImpl?: string;
-  /**
-   * Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`
-   */
-  useWebSocketLegacyProtocol?: boolean;
   /**
    * Path to the introspection
    * You can seperately give schema introspection
@@ -252,6 +272,12 @@ export interface GraphQLHandler {
    * Batch requests
    */
   batch?: boolean;
+  /**
+   * SSE - Server Sent Events
+   * WS - New graphql-ws
+   * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)
+   */
+  subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
 }
 /**
  * Handler for gRPC and Protobuf schemas
@@ -317,26 +343,19 @@ export interface JsonSchemaHandler {
   schemaHeaders?: {
     [k: string]: any;
   };
-  operations: JsonSchemaOperation[];
-  disableTimestampScalar?: boolean;
   /**
-   * Field name of your custom error object (default: 'message')
+   * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
-  errorMessage?: string;
+  operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
+  ignoreErrorResponses?: boolean;
 }
-export interface JsonSchemaOperation {
+export interface JsonSchemaHTTPOperation {
   field: string;
-  path?: string;
-  pubsubTopic?: string;
   description?: string;
   /**
    * Allowed values: Query, Mutation, Subscription
    */
   type: 'Query' | 'Mutation' | 'Subscription';
-  /**
-   * Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
-   */
-  method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;
@@ -346,14 +365,46 @@ export interface JsonSchemaOperation {
   argTypeMap?: {
     [k: string]: any;
   };
+  path: string;
+  /**
+   * Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
+   */
+  method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
   headers?: {
     [k: string]: any;
   };
+  /**
+   * If true, this operation cannot have requestSchema or requestSample
+   * And the request body will be passed as binary with its mime type
+   * unless you define an explicit Content-Type header
+   */
+  binary?: boolean;
+}
+export interface JsonSchemaPubSubOperation {
+  field: string;
+  description?: string;
+  /**
+   * Allowed values: Query, Mutation, Subscription
+   */
+  type: 'Query' | 'Mutation' | 'Subscription';
+  requestSchema?: any;
+  requestSample?: any;
+  requestTypeName?: string;
+  responseSchema?: any;
+  responseSample?: any;
+  responseTypeName?: string;
+  argTypeMap?: {
+    [k: string]: any;
+  };
+  pubsubTopic: string;
 }
 export interface MongooseHandler {
   connectionString?: string;
   models?: MongooseModel[];
   discriminators?: MongooseModel[];
+  /**
+   * Enable Automatic Type Merging/Federation support
+   */
   autoTypeMerging?: boolean;
 }
 export interface MongooseModel {
@@ -564,6 +615,18 @@ export interface MySQLHandler {
    * Format: modulePath#exportName
    */
   pool?: any;
+  /**
+   * Use specific tables for your schema
+   */
+  tables?: string[];
+  /**
+   * Use specific fields of specific tables
+   */
+  tableFields?: TableField[];
+}
+export interface TableField {
+  table: string;
+  fields: string[];
 }
 /**
  * Handler for Neo4j
@@ -593,6 +656,28 @@ export interface Neo4JHandler {
    * Provide GraphQL Type Definitions instead of inferring
    */
   typeDefs?: string;
+}
+/**
+ * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
+ */
+export interface NewOpenapiHandler {
+  oasFilePath: string;
+  baseUrl?: string;
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  operationHeaders?: {
+    [k: string]: any;
+  };
+  ignoreErrorResponses?: boolean;
+  selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
+}
+export interface OASSelectQueryOrMutationFieldConfig {
+  /**
+   * Allowed values: query, mutation, Query, Mutation
+   */
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
 }
 /**
  * Handler for OData
@@ -686,6 +771,18 @@ export interface OpenapiHandler {
    * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
    */
   selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
+  /**
+   * Overwrite automatic wrapping of errors into GraphqlErrors
+   */
+  provideErrorExtensions?: boolean;
+  /**
+   * Field names can only be sanitized operationIds
+   *
+   * By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
+   *
+   * This option forces OpenAPI handler to only create field names based on the operationId.
+   */
+  operationIdFieldNames?: boolean;
 }
 export interface SelectQueryOrMutationFieldConfig {
   /**
@@ -697,9 +794,9 @@ export interface SelectQueryOrMutationFieldConfig {
    */
   path?: string;
   /**
-   * Target Root Type for this operation (Allowed values: Query, Mutation)
+   * Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)
    */
-  type?: 'Query' | 'Mutation';
+  type?: 'query' | 'mutation' | 'Query' | 'Mutation';
   /**
    * Which method is used for this operation
    */
@@ -746,6 +843,25 @@ export interface PostGraphileHandler {
    */
   live?: boolean;
 }
+export interface RAMLHandler {
+  ramlFilePath: string;
+  baseUrl?: string;
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  operationHeaders?: {
+    [k: string]: any;
+  };
+  ignoreErrorResponses?: boolean;
+  selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
+}
+export interface RAMLSelectQueryOrMutationFieldConfig {
+  /**
+   * Allowed values: query, mutation, Query, Mutation
+   */
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
+}
 /**
  * Handler for SOAP
  */
@@ -767,6 +883,36 @@ export interface SoapHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  /**
+   * If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.
+   * The fields of the object will be the operations of the port.
+   *
+   * Most soap-endpoints only define one port; so including it in the schema will just be inconvenient.
+   * But if there are multiple ports with operations of the same name, you should set this option to true.
+   * Otherwise only one of the identical-named operations will be callable.
+   *
+   * default: false
+   */
+  includePorts?: boolean;
+  /**
+   * If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.
+   * The fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').
+   *
+   * Most soap-endpoints only define one service; so including it in the schema will just be inconvenient.
+   * But if there are multiple services with operations of the same name, you should set this option to true.
+   * Otherwise only one of the identical-named operations will be callable.
+   *
+   * default: false
+   */
+  includeServices?: boolean;
+  /**
+   * Allows to explicitly override the default operation (Query or Mutation) for any SOAP operation
+   */
+  selectQueryOrMutationField?: SoapSelectQueryOrMutationFieldConfig[];
+  /**
+   * Automatically put operations starts with `query` or `get` into the Query type
+   */
+  selectQueryOperationsAuto?: boolean;
 }
 /**
  * Basic Authentication Configuration
@@ -811,6 +957,15 @@ export interface SoapSecurityCertificateConfig {
    * Path to the file or URL contains your password
    */
   passwordPath?: string;
+}
+export interface SoapSelectQueryOrMutationFieldConfig {
+  service: string;
+  port: string;
+  operation: string;
+  /**
+   * Allowed values: query, mutation
+   */
+  type: 'query' | 'mutation';
 }
 /**
  * Handler for OData
@@ -889,6 +1044,7 @@ export interface Transform {
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
   rename?: RenameTransform | any;
+  replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
@@ -1146,6 +1302,10 @@ export interface NamingConventionTransformConfig {
  */
 export interface PrefixTransformConfig {
   /**
+   * Specify to apply prefix transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
    * The prefix to apply to the schema types. By default it's the API name.
    */
   value?: string;
@@ -1154,9 +1314,13 @@ export interface PrefixTransformConfig {
    */
   ignore?: string[];
   /**
-   * Changes root types and changes the field names
+   * Changes root types and changes the field names (default: false)
    */
   includeRootOperations?: boolean;
+  /**
+   * Changes types (default: true)
+   */
+  includeTypes?: boolean;
 }
 export interface RenameTransform {
   /**
@@ -1179,6 +1343,10 @@ export interface RenameTransformObject {
    * Use Regular Expression for field names
    */
   useRegExpForFields?: boolean;
+  /**
+   * Flags to use in the Regular Expression
+   */
+  regExpFlags?: string;
 }
 export interface RenameConfig {
   type?: string;
@@ -1187,6 +1355,37 @@ export interface RenameConfig {
 export interface RenameConfig1 {
   type?: string;
   field?: string;
+}
+/**
+ * Transformer to replace GraphQL field with partial of full config from a different field
+ */
+export interface ReplaceFieldTransformConfig {
+  /**
+   * Additional type definition to used to replace field types
+   */
+  typeDefs?: any;
+  /**
+   * Array of rules to replace fields
+   */
+  replacements: ReplaceFieldTransformObject[];
+}
+export interface ReplaceFieldTransformObject {
+  from: ReplaceFieldConfig;
+  to: ReplaceFieldConfig1;
+  /**
+   * Allowed values: config, hoistValue
+   */
+  scope?: 'config' | 'hoistValue';
+  composer?: any;
+  name?: string;
+}
+export interface ReplaceFieldConfig {
+  type: string;
+  field: string;
+}
+export interface ReplaceFieldConfig1 {
+  type: string;
+  field: string;
 }
 export interface ResolversCompositionTransform {
   /**
@@ -1251,6 +1450,10 @@ export interface TypeMergingConfig {
    * Directive arguments tune the merge behavior
    */
   queryFields?: MergedRootFieldConfig[];
+  /**
+   * The path to a code file that has additional type merging configuration
+   */
+  additionalConfiguration?: any;
 }
 export interface MergedTypeConfig {
   /**
@@ -1338,14 +1541,24 @@ export interface AdditionalStitchingBatchResolverObject {
   sourceName: string;
   sourceTypeName: string;
   sourceFieldName: string;
+  sourceSelectionSet?: string;
+  requiredSelectionSet?: string;
   keyField: string;
   keysArg: string;
   additionalArgs?: {
     [k: string]: any;
   };
-  requiredSelectionSet?: string;
   targetTypeName: string;
   targetFieldName: string;
+  /**
+   * Extract specific property from the result
+   */
+  result?: string;
+  /**
+   * If return types don't match,
+   * you can specify a result type to apply inline fragment
+   */
+  resultType?: string;
 }
 export interface AdditionalSubscriptionObject {
   targetTypeName: string;
@@ -1383,8 +1596,9 @@ export interface LocalforageConfig {
 }
 export interface RedisConfig {
   host?: string;
-  port?: number;
+  port?: string;
   password?: string;
+  url?: string;
 }
 export interface PubSubConfig {
   name: string;

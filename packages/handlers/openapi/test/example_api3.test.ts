@@ -12,7 +12,7 @@ import { Options } from '../src/openapi-to-graphql/types/options';
 import { graphql, parse, validate, GraphQLSchema } from 'graphql';
 import * as api from './example_api_server';
 import * as api2 from './example_api3_server';
-import fetch from 'cross-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas.json');
 const oas3 = require('./fixtures/example_oas3.json');
@@ -61,7 +61,7 @@ test('Basic query on two APIs', () => {
       name
     }
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         author: {
@@ -106,7 +106,7 @@ test('Two APIs with independent links', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         author: {
@@ -163,7 +163,7 @@ test('Two APIs with interrelated links', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         author: {
@@ -208,7 +208,7 @@ test('Two APIs with viewers', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerApiKey: {
@@ -230,7 +230,7 @@ test('Two APIs with viewers', () => {
 });
 
 test('Two APIs with AnyAuth viewer', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiKeyProtocol2: {apiKey: "abcdef"}, exampleApi3BasicProtocol: {username: "arlene123", password: "password123"}) {
       projectWithId(projectId: 1) {
         projectLead{
@@ -242,7 +242,7 @@ test('Two APIs with AnyAuth viewer', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerAnyAuth: {
@@ -261,7 +261,7 @@ test('Two APIs with AnyAuth viewer', () => {
 });
 
 test('Two APIs with AnyAuth viewer and interrelated links', () => {
-  const query = `{ 
+  const query = `{
     viewerAnyAuth(exampleApiKeyProtocol2: {apiKey: "abcdef"}, exampleApi3BasicProtocol: {username: "arlene123", password: "password123"}) {
       projectWithId(projectId: 1) {
         projectLead{
@@ -276,7 +276,7 @@ test('Two APIs with AnyAuth viewer and interrelated links', () => {
       }
     }
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         viewerAnyAuth: {
@@ -333,7 +333,7 @@ test('Option customResolver with two APIs', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           user: {
@@ -409,7 +409,7 @@ test('Option customResolver with two APIs and interrelated links', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query).then(result => {
+    return graphql({ schema, source: query }).then((result: any) => {
       expect(result).toEqual({
         data: {
           author: {

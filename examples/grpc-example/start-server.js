@@ -52,11 +52,11 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
       const logger = debug ? (...args) => console.log(...args) : () => {};
       const server = new Server();
 
-      const packageDefinition = await load('./io/xtech/service.proto', {
+      const packageDefinition = await load('./service.proto', {
         includeDirs: [join(__dirname, './proto')],
       });
       const grpcObject = loadPackageDefinition(packageDefinition);
-      server.addService(grpcObject.io['xtech'].Example.service, {
+      server.addService(grpcObject.Example.service, {
         getMovies(call, callback) {
           const result = Movies.filter(movie => {
             for (const [key, value] of Object.entries(call.request.movie)) {
@@ -101,7 +101,7 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
       ]);
       server.bindAsync(
         '0.0.0.0:50051',
-        ServerCredentials.createSsl(rootCA, [{ private_key, cert_chain }]),
+        ServerCredentials.createInsecure(),
         (error, port) => {
           if (error) {
             reject(error);

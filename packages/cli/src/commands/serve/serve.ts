@@ -1,14 +1,20 @@
 /* eslint-disable dot-notation */
 import express, { RequestHandler } from 'express';
-import { fork as clusterFork, isMaster } from 'cluster';
-import { cpus } from 'os';
+import cluster from 'cluster';
+import { cpus, platform } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import { playgroundMiddlewareFactory } from './playground';
 import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import cors from 'cors';
-import { loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  loadFromModuleExportExpression,
+  parseWithCache,
+  pathExists,
+  stringInterpolator,
+} from '@graphql-mesh/utils';
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -17,42 +23,36 @@ import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
 import { promises as fsPromises } from 'fs';
-import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
+import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { env } from 'process';
-import { YamlConfig } from '@graphql-mesh/types';
-import { Source } from '@graphql-tools/utils';
-import { inspect } from 'util';
+import { env, on as processOn } from 'process';
+import { inspect } from '@graphql-tools/utils';
 
 const { readFile } = fsPromises;
 
-interface ServeMeshOptions {
-  baseDir: string;
-  getMeshOptions: GetMeshOptions;
-  rawConfig: YamlConfig.Config;
-  documents: Source[];
-  argsPort?: number;
+const terminateEvents = ['SIGINT', 'SIGTERM'];
+
+function registerTerminateHandler(callback: (eventName: string) => void) {
+  for (const eventName of terminateEvents) {
+    processOn(eventName, () => callback(eventName));
+  }
 }
 
-export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, documents }: ServeMeshOptions) {
-  getMeshOptions.logger.info(`Generating Mesh schema...`);
-  let readyFlag = false;
-
-  const mesh$ = getMesh(getMeshOptions)
-    .then(mesh => {
-      readyFlag = true;
-      if (!fork) {
-        getMeshOptions.logger.info(`🕸️ => Serving GraphQL Mesh: ${serverUrl}`);
-      }
-      return mesh;
-    })
-    .catch(e => handleFatalError(e, getMeshOptions.logger));
+export async function serveMesh({
+  baseDir,
+  argsPort,
+  getBuiltMesh,
+  logger,
+  rawConfig,
+  documents,
+  graphiqlTitle,
+}: ServeMeshOptions) {
   const {
     fork,
     port: configPort,
-    hostname = 'localhost',
+    hostname = platform() === 'win32' ? 'localhost' : '0.0.0.0',
     cors: corsConfig,
     handlers,
     staticFiles,
@@ -67,13 +67,28 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
-  if (isMaster && fork) {
-    const forkNum = fork > 1 ? fork : cpus().length;
+  if (!cluster.isWorker && Boolean(fork)) {
+    const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {
-      clusterFork();
+      const worker = cluster.fork();
+      registerTerminateHandler(eventName => worker.kill(eventName));
     }
-    getMeshOptions.logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
+    logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
   } else {
+    logger.info(`Generating Mesh schema...`);
+    let readyFlag = false;
+    const mesh$: Promise<MeshInstance> = getBuiltMesh()
+      .then(mesh => {
+        readyFlag = true;
+        logger.info(`Serving GraphQL Mesh: ${serverUrl}`);
+        registerTerminateHandler(eventName => {
+          const eventLogger = logger.child(`${eventName}💀`);
+          eventLogger.info(`Destroying GraphQL Mesh`);
+          mesh.destroy();
+        });
+        return mesh;
+      })
+      .catch(e => handleFatalError(e, logger));
     const app = express();
     app.set('trust proxy', 'loopback');
     let httpServer: Server;
@@ -87,6 +102,18 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
     } else {
       httpServer = createHTTPServer(app);
     }
+
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}💀`);
+      eventLogger.debug(() => `Stopping HTTP Server`);
+      httpServer.close(error => {
+        if (error) {
+          eventLogger.debug(() => `HTTP Server couldn't be stopped: ${error.message}`);
+        } else {
+          eventLogger.debug(() => `HTTP Server has been stopped`);
+        }
+      });
+    });
 
     if (corsConfig) {
       app.use(cors(corsConfig));
@@ -104,29 +131,73 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
       server: httpServer,
     });
 
-    useServer(
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}💀`);
+      eventLogger.debug(() => `Stopping WebSocket Server`);
+      wsServer.close(error => {
+        if (error) {
+          eventLogger.debug(() => `WebSocket Server couldn't be stopped: ${error.message}`);
+        } else {
+          eventLogger.debug(() => `WebSocket Server has been stopped`);
+        }
+      });
+    });
+
+    const { dispose: stopGraphQLWSServer } = useServer(
       {
         schema: () => mesh$.then(({ schema }) => schema),
+        onSubscribe: async (_ctx, msg) => {
+          const { schema } = await mesh$;
+          return {
+            schema,
+            operationName: msg.payload.operationName,
+            document: parseWithCache(msg.payload.query),
+            variableValues: msg.payload.variables,
+          };
+        },
         execute: args =>
           mesh$.then(({ execute }) => execute(args.document, args.variableValues, args.contextValue, args.rootValue)),
         subscribe: args =>
           mesh$.then(({ subscribe }) =>
             subscribe(args.document, args.variableValues, args.contextValue, args.rootValue)
           ),
-        context: async ctx => {
-          const { contextBuilder } = await mesh$;
-          return contextBuilder(ctx.extra.request);
+        context: async ({ connectionParams, extra: { request } }) => {
+          // spread connectionParams.headers to upgrade request headers.
+          // we completely ignore the root connectionParams because
+          // [@graphql-tools/url-loader adds the headers inside the "headers" field](https://github.com/ardatan/graphql-tools/blob/9a13357c4be98038c645f6efb26f0584828177cf/packages/loaders/url/src/index.ts#L597)
+          for (const [key, value] of Object.entries(connectionParams.headers ?? {})) {
+            // dont overwrite existing upgrade headers due to security reasons
+            if (!(key.toLowerCase() in request.headers)) {
+              request.headers[key.toLowerCase()] = value;
+            }
+          }
+
+          return request;
         },
       },
       wsServer
     );
 
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}💀`);
+      eventLogger.debug(() => `Stopping GraphQL WS`);
+      Promise.resolve()
+        .then(() => stopGraphQLWSServer())
+        .then(() => {
+          eventLogger.debug(() => `GraphQL WS has been stopped`);
+        })
+        .catch(error => {
+          eventLogger.debug(() => `GraphQL WS couldn't be stopped: ${error.message}`);
+        });
+    });
+
     const pubSubHandler: RequestHandler = (req, _res, next) => {
-      Promise.resolve().then(async () => {
-        const { pubsub } = await mesh$;
-        req['pubsub'] = pubsub;
-        next();
-      });
+      mesh$
+        .then(({ pubsub }) => {
+          req['pubsub'] = pubsub;
+          next();
+        })
+        .catch(e => handleFatalError(e, logger));
     };
     app.use(pubSubHandler);
 
@@ -135,23 +206,30 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
       handlers?.map(async handlerConfig => {
         registeredPaths.add(handlerConfig.path);
         let handlerFn: any;
-        const handlerLogger = getMeshOptions.logger.child(handlerConfig.path);
+        const handlerLogger = logger.child(handlerConfig.path);
         if ('handler' in handlerConfig) {
           handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler, {
             cwd: baseDir,
             defaultExportName: 'default',
-            importFn: m => import(m),
+            importFn: defaultImportFn,
           });
         } else if ('pubsubTopic' in handlerConfig) {
           handlerFn = (req: any, res: any) => {
             let payload = req.body;
-            handlerLogger.debug(`Payload received; ${inspect(payload)}`);
+            handlerLogger.debug(() => `Payload received; ${inspect(payload)}`);
             if (handlerConfig.payload) {
               payload = _.get(payload, handlerConfig.payload);
-              handlerLogger.debug(`Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
+              handlerLogger.debug(() => `Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
             }
-            req['pubsub'].publish(handlerConfig.pubsubTopic, payload);
-            handlerLogger.debug(`Payload sent to ${handlerConfig.pubsubTopic}`);
+            const interpolationData = {
+              req,
+              res,
+              payload,
+            };
+            handlerLogger.debug(() => `Interpolating ${handlerConfig.pubsubTopic} with ${inspect(interpolationData)}`);
+            const pubsubTopic = stringInterpolator.parse(handlerConfig.pubsubTopic, interpolationData);
+            req['pubsub'].publish(pubsubTopic, payload);
+            handlerLogger.debug(() => `Payload sent to ${pubsubTopic}`);
             res.end();
           };
         }
@@ -177,7 +255,8 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
         baseDir,
         documents,
         graphqlPath,
-        logger: getMeshOptions.logger,
+        logger,
+        title: graphiqlTitle,
       });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);
@@ -199,7 +278,7 @@ export async function serveMesh({ baseDir, argsPort, getMeshOptions, rawConfig, 
       httpServer,
       app,
       readyFlag,
-      logger: getMeshOptions.logger,
+      logger: logger,
     }));
   }
   return null;

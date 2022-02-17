@@ -1,0 +1,22 @@
+extend type Handler {
+  raml: RAMLHandler
+}
+
+type RAMLHandler {
+  ramlFilePath: String!
+  baseUrl: String
+  schemaHeaders: JSON
+  operationHeaders: JSON
+  ignoreErrorResponses: Boolean
+  selectQueryOrMutationField: [RAMLSelectQueryOrMutationFieldConfig]
+}
+
+enum QueryOrMutation {
+  query
+  mutation
+}
+
+type RAMLSelectQueryOrMutationFieldConfig {
+  type: QueryOrMutation!
+  fieldName: String!
+}

@@ -1,5 +1,394 @@
 # @graphql-mesh/graphql
 
+## 0.20.18
+
+### Patch Changes
+
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+  - @graphql-mesh/store@0.3.14
+
+## 0.20.17
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+  - @graphql-mesh/store@0.3.13
+
+## 0.20.16
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/utils@0.26.4
+  - @graphql-mesh/store@0.3.12
+
+## 0.20.15
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/utils@0.26.3
+  - @graphql-mesh/store@0.3.11
+
+## 0.20.14
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/utils@0.26.2
+  - @graphql-mesh/store@0.3.10
+
+## 0.20.13
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+  - @graphql-mesh/store@0.3.9
+
+## 0.20.12
+
+### Patch Changes
+
+- f60bcb083: fix(core): update wrap to fix #3424
+- Updated dependencies [1ab0aebbc]
+- Updated dependencies [56e2257fa]
+- Updated dependencies [56e2257fa]
+  - @graphql-mesh/types@0.57.2
+  - @graphql-mesh/utils@0.26.0
+  - @graphql-mesh/store@0.3.8
+
+## 0.20.11
+
+### Patch Changes
+
+- Updated dependencies [2b876f2b8]
+  - @graphql-mesh/utils@0.25.0
+  - @graphql-mesh/store@0.3.7
+
+## 0.20.10
+
+### Patch Changes
+
+- Updated dependencies [d907351c5]
+  - @graphql-mesh/types@0.57.1
+  - @graphql-mesh/utils@0.24.2
+  - @graphql-mesh/store@0.3.6
+
+## 0.20.9
+
+### Patch Changes
+
+- Updated dependencies [26d685f2a]
+  - @graphql-mesh/utils@0.24.1
+  - @graphql-mesh/store@0.3.5
+
+## 0.20.8
+
+### Patch Changes
+
+- Updated dependencies [cfca98d34]
+  - @graphql-mesh/types@0.57.0
+  - @graphql-mesh/utils@0.24.0
+  - @graphql-mesh/store@0.3.4
+
+## 0.20.7
+
+### Patch Changes
+
+- Updated dependencies [5666484d6]
+  - @graphql-mesh/utils@0.23.0
+  - @graphql-mesh/store@0.3.3
+
+## 0.20.6
+
+### Patch Changes
+
+- Updated dependencies [6c216c309]
+  - @graphql-mesh/utils@0.22.2
+  - @graphql-mesh/store@0.3.2
+
+## 0.20.5
+
+### Patch Changes
+
+- Updated dependencies [c22eb1b5e]
+  - @graphql-mesh/utils@0.22.1
+  - @graphql-mesh/store@0.3.1
+
+## 0.20.4
+
+### Patch Changes
+
+- 211c954c2: fix(graphql): download introspection from the pointer provided as introspection in the config
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [ec0d1d639]
+- Updated dependencies [1cc0acb9a]
+  - @graphql-mesh/store@0.3.0
+  - @graphql-mesh/types@0.56.0
+  - @graphql-mesh/utils@0.22.0
+
+## 0.20.3
+
+### Patch Changes
+
+- Updated dependencies [1b332487c]
+  - @graphql-mesh/types@0.55.0
+  - @graphql-mesh/utils@0.21.1
+  - @graphql-mesh/store@0.2.3
+
+## 0.20.2
+
+### Patch Changes
+
+- Updated dependencies [875d0e48d]
+  - @graphql-mesh/utils@0.21.0
+  - @graphql-mesh/store@0.2.2
+
+## 0.20.1
+
+### Patch Changes
+
+- Updated dependencies [761b16ed9]
+  - @graphql-mesh/types@0.54.1
+  - @graphql-mesh/utils@0.20.1
+  - @graphql-mesh/store@0.2.1
+
+## 0.20.0
+
+### Minor Changes
+
+- c4d8be6f4: enhance: use undici for Node >v16
+- 09f81dd74: GraphQL v16 compatibility
+- 09f81dd74: GraphQL v16 compability
+
+### Patch Changes
+
+- Updated dependencies [09f81dd74]
+- Updated dependencies [09f81dd74]
+  - @graphql-mesh/store@0.2.0
+  - @graphql-mesh/types@0.54.0
+  - @graphql-mesh/utils@0.20.0
+
+## 0.19.0
+
+### Minor Changes
+
+- f2b654a17: feat(graphql): ability to use local schema files
+
+### Patch Changes
+
+- f2b654a17: fix(graphql): use Mesh's import for customFetch
+
+## 0.18.19
+
+### Patch Changes
+
+- Updated dependencies [0dc08e5cc]
+  - @graphql-mesh/utils@0.19.0
+  - @graphql-mesh/store@0.1.19
+
+## 0.18.18
+
+### Patch Changes
+
+- Updated dependencies [6f57be0c1]
+  - @graphql-mesh/types@0.53.0
+  - @graphql-mesh/utils@0.18.1
+  - @graphql-mesh/store@0.1.18
+
+## 0.18.17
+
+### Patch Changes
+
+- b03081079: fix(graphql): use the endpointFactory when fetching introspection results
+- Updated dependencies [4ec7a14ba]
+- Updated dependencies [811960cdc]
+- Updated dependencies [6f5ffe766]
+  - @graphql-mesh/utils@0.18.0
+  - @graphql-mesh/types@0.52.0
+  - @graphql-mesh/store@0.1.17
+
+## 0.18.16
+
+### Patch Changes
+
+- Updated dependencies [256abf5f7]
+  - @graphql-mesh/types@0.51.0
+  - @graphql-mesh/utils@0.17.2
+  - @graphql-mesh/store@0.1.16
+
+## 0.18.15
+
+### Patch Changes
+
+- Updated dependencies [8c9b709ae]
+  - @graphql-mesh/types@0.50.0
+  - @graphql-mesh/utils@0.17.1
+  - @graphql-mesh/store@0.1.15
+
+## 0.18.14
+
+### Patch Changes
+
+- Updated dependencies [7bd145769]
+  - @graphql-mesh/utils@0.17.0
+  - @graphql-mesh/store@0.1.14
+
+## 0.18.13
+
+### Patch Changes
+
+- 472c5887b: enhance(readFileOrUrl): remove unnecessary caching
+- Updated dependencies [472c5887b]
+  - @graphql-mesh/utils@0.16.3
+  - @graphql-mesh/store@0.1.13
+
+## 0.18.12
+
+### Patch Changes
+
+- Updated dependencies [6ce43ddac]
+  - @graphql-mesh/types@0.49.0
+  - @graphql-mesh/utils@0.16.2
+  - @graphql-mesh/store@0.1.12
+
+## 0.18.11
+
+### Patch Changes
+
+- Updated dependencies [46a4f7b73]
+- Updated dependencies [aa804d043]
+- Updated dependencies [67552c8f8]
+  - @graphql-mesh/utils@0.16.1
+  - @graphql-mesh/types@0.48.0
+  - @graphql-mesh/store@0.1.11
+
+## 0.18.10
+
+### Patch Changes
+
+- Updated dependencies [9eff8a396]
+  - @graphql-mesh/types@0.47.0
+  - @graphql-mesh/utils@0.16.0
+  - @graphql-mesh/store@0.1.10
+
+## 0.18.9
+
+### Patch Changes
+
+- Updated dependencies [f4f30741d]
+  - @graphql-mesh/utils@0.15.0
+  - @graphql-mesh/store@0.1.9
+
+## 0.18.8
+
+### Patch Changes
+
+- Updated dependencies [4545fe72d]
+- Updated dependencies [d189b4034]
+- Updated dependencies [f23820ed0]
+- Updated dependencies [06d688e70]
+  - @graphql-mesh/types@0.46.0
+  - @graphql-mesh/utils@0.14.0
+  - @graphql-mesh/store@0.1.8
+
+## 0.18.7
+
+### Patch Changes
+
+- fc51c574d: Dependency updates
+- Updated dependencies [fc51c574d]
+  - @graphql-mesh/store@0.1.7
+  - @graphql-mesh/types@0.45.2
+  - @graphql-mesh/utils@0.13.7
+
+## 0.18.6
+
+### Patch Changes
+
+- 1c2667489: fix(graphql): Replace old flags with subscriptionsProtocol
+- Updated dependencies [1c2667489]
+  - @graphql-mesh/types@0.45.1
+  - @graphql-mesh/utils@0.13.6
+  - @graphql-mesh/store@0.1.6
+
+## 0.18.5
+
+### Patch Changes
+
+- Updated dependencies [7080a2f1d]
+  - @graphql-mesh/utils@0.13.5
+  - @graphql-mesh/store@0.1.5
+
+## 0.18.4
+
+### Patch Changes
+
+- cb70939cc: fix(transforms): handle non nullable input variables correctly
+- Updated dependencies [6266d1774]
+- Updated dependencies [94606e7b9]
+- Updated dependencies [2b8dae1cb]
+- Updated dependencies [0c97b4b75]
+  - @graphql-mesh/types@0.45.0
+  - @graphql-mesh/utils@0.13.4
+  - @graphql-mesh/store@0.1.4
+
+## 0.18.3
+
+### Patch Changes
+
+- Updated dependencies [25d10cc23]
+  - @graphql-mesh/types@0.44.2
+  - @graphql-mesh/utils@0.13.3
+  - @graphql-mesh/store@0.1.3
+
+## 0.18.2
+
+### Patch Changes
+
+- 49c8ceb38: fix(core): bump packages to fix variables issue
+- Updated dependencies [49c8ceb38]
+  - @graphql-mesh/types@0.44.1
+  - @graphql-mesh/utils@0.13.2
+  - @graphql-mesh/store@0.1.2
+
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [1ee417e3d]
+  - @graphql-mesh/types@0.44.0
+  - @graphql-mesh/utils@0.13.1
+  - @graphql-mesh/store@0.1.1
+
+## 0.18.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+
+### Patch Changes
+
+- Updated dependencies [885ea439a]
+- Updated dependencies [d8051f87d]
+- Updated dependencies [d8051f87d]
+  - @graphql-mesh/store@0.1.0
+  - @graphql-mesh/types@0.43.0
+  - @graphql-mesh/utils@0.13.0
+
 ## 0.17.10
 
 ### Patch Changes

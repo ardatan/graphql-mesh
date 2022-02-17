@@ -9,11 +9,13 @@ export const playgroundMiddlewareFactory = ({
   documents,
   graphqlPath,
   logger,
+  title = 'GraphQL Mesh',
 }: {
   baseDir: string;
   documents: Source[];
   graphqlPath: string;
   logger: Logger;
+  title?: string;
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
 
@@ -34,11 +36,13 @@ export const playgroundMiddlewareFactory = ({
       return;
     }
 
-    defaultQuery$.then(defaultQuery => {
-      res.send(`
+    defaultQuery$
+      .then(defaultQuery => {
+        res.send(`
         <html>
         <head>
-          <title>GraphQL Mesh</title>
+          <title>${title}</title>
+          <link rel="shortcut icon" href="https://www.graphql-mesh.com/img/favicon.ico">
         </head>
         <body>
           <script>
@@ -51,6 +55,7 @@ export const playgroundMiddlewareFactory = ({
         </body>
       </html>
       `);
-    });
+      })
+      .catch(e => handleFatalError(e, logger));
   };
 };

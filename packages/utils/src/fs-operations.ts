@@ -1,8 +1,8 @@
-import { MakeDirectoryOptions, promises as fsPromises, readFileSync } from 'fs';
+import { MakeDirectoryOptions, promises as fsPromises } from 'fs';
 import { dirname, join } from 'path';
 import { jsonFlatStringify } from './flat-string';
 
-const { stat, writeFile: fsWriteFile, readFile, mkdir: fsMkdir, readdir, unlink, rmdir } = fsPromises || {};
+const { stat, writeFile: fsWriteFile, mkdir: fsMkdir, readdir, unlink, rmdir } = fsPromises || {};
 
 export async function pathExists(path: string) {
   if (!path) {
@@ -18,16 +18,6 @@ export async function pathExists(path: string) {
       throw e;
     }
   }
-}
-
-export function readJSONSync<T = any>(path: string): T {
-  const fileContent = readFileSync(path, 'utf-8');
-  return JSON.parse(fileContent);
-}
-
-export async function readJSON<T = any>(path: string): Promise<T> {
-  const fileContent = await readFile(path, 'utf-8');
-  return JSON.parse(fileContent);
 }
 
 export function writeJSON<T>(
@@ -60,17 +50,21 @@ export async function mkdir(path: string, options: MakeDirectoryOptions = { recu
 export async function rmdirs(dir: string) {
   if (await pathExists(dir)) {
     const entries = await readdir(dir, { withFileTypes: true });
-    const results = await Promise.all(
+    const results = await Promise.allSettled(
       entries.map(entry => {
         const fullPath = join(dir, entry.name);
-        const task = entry.isDirectory() ? rmdirs(fullPath) : unlink(fullPath);
-        return task.catch(error => ({ error }));
+        if (entry.isDirectory()) {
+          return rmdirs(fullPath);
+        } else {
+          return unlink(fullPath);
+        }
       })
     );
-    results.forEach(result => {
-      // Ignore missing files/directories; bail on other errors
-      if (result && result.error.code !== 'ENOENT') throw result.error;
-    });
+    for (const result of results) {
+      if (result.status === 'rejected' && result.reason.code !== 'ENOENT') {
+        throw result.reason;
+      }
+    }
     await rmdir(dir);
   }
 }

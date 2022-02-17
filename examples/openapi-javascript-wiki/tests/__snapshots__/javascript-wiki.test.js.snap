@@ -136,7 +136,7 @@ Object {
         "kind": "OBJECT",
         "name": "AbsoluteBytesDifference",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -162,7 +162,7 @@ Object {
         "kind": "OBJECT",
         "name": "AbsoluteBytesDifferencePerPage",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -193,7 +193,7 @@ Object {
         "kind": "ENUM",
         "name": "Access5",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -219,7 +219,7 @@ Object {
         "kind": "ENUM",
         "name": "AccessSite3",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -255,7 +255,7 @@ Object {
         "kind": "ENUM",
         "name": "ActivityLevel3",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -281,7 +281,7 @@ Object {
         "kind": "ENUM",
         "name": "Agent3",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -312,7 +312,7 @@ Object {
         "kind": "ENUM",
         "name": "Agent4",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -356,7 +356,7 @@ Object {
         "kind": "OBJECT",
         "name": "ArticlesListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -462,7 +462,7 @@ Object {
         "kind": "OBJECT",
         "name": "Availability",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -472,7 +472,7 @@ Object {
         "kind": "SCALAR",
         "name": "Boolean",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -498,7 +498,7 @@ Object {
         "kind": "OBJECT",
         "name": "ByCountry",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -542,7 +542,7 @@ Object {
         "kind": "OBJECT",
         "name": "CountriesListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -579,7 +579,7 @@ Object {
         "kind": "OBJECT",
         "name": "CxDict",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -620,7 +620,7 @@ Object {
         "kind": "OBJECT",
         "name": "CxLanguagepairs",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -646,7 +646,7 @@ Object {
         "kind": "OBJECT",
         "name": "CxListTools",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -668,7 +668,7 @@ Object {
         "kind": "OBJECT",
         "name": "CxMt",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -694,7 +694,7 @@ Object {
         "kind": "OBJECT",
         "name": "EditedPages",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -730,7 +730,7 @@ Object {
         "kind": "ENUM",
         "name": "EditorType16",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -756,7 +756,7 @@ Object {
         "kind": "OBJECT",
         "name": "Editors",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -782,7 +782,7 @@ Object {
         "kind": "OBJECT",
         "name": "EditsPerPage",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -792,7 +792,7 @@ Object {
         "kind": "SCALAR",
         "name": "Float",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -818,7 +818,7 @@ Object {
         "kind": "ENUM",
         "name": "Format",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -839,7 +839,7 @@ Object {
         "kind": "ENUM",
         "name": "Granularity21",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -865,7 +865,7 @@ Object {
         "kind": "ENUM",
         "name": "Granularity22",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -875,7 +875,7 @@ Object {
         "kind": "SCALAR",
         "name": "Int",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -945,7 +945,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items2ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1015,7 +1015,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items3ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1085,7 +1085,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items4ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1166,7 +1166,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items5ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1236,7 +1236,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items6ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1306,7 +1306,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items7ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1376,7 +1376,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items8ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1446,7 +1446,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items9ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1527,7 +1527,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items10ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1597,7 +1597,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items11ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1667,7 +1667,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items12ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1737,7 +1737,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items13ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1807,7 +1807,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items14ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1877,7 +1877,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items15ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -1943,7 +1943,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items16ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2020,7 +2020,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items17ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2108,7 +2108,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items18ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2178,7 +2178,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items19ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2259,7 +2259,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items20ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2307,7 +2307,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items21ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2373,7 +2373,7 @@ Object {
         "kind": "OBJECT",
         "name": "Items22ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2443,7 +2443,7 @@ Object {
         "kind": "OBJECT",
         "name": "ItemsListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2453,7 +2453,7 @@ Object {
         "kind": "SCALAR",
         "name": "JSON",
         "possibleTypes": null,
-        "specifiedByUrl": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
+        "specifiedByURL": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
       },
       Object {
         "enumValues": null,
@@ -2479,7 +2479,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "MediaMathCheckInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2505,7 +2505,7 @@ Object {
         "kind": "OBJECT",
         "name": "MetricsEditsAggregate",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2687,7 +2687,7 @@ Object {
         "kind": "OBJECT",
         "name": "Mutation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2713,7 +2713,7 @@ Object {
         "kind": "OBJECT",
         "name": "NetBytesDifference",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2739,7 +2739,7 @@ Object {
         "kind": "OBJECT",
         "name": "NetBytesDifferencePerPage",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2765,7 +2765,7 @@ Object {
         "kind": "OBJECT",
         "name": "NewPages",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2791,7 +2791,7 @@ Object {
         "kind": "OBJECT",
         "name": "NewRegisteredUsers",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -2817,7 +2817,7 @@ Object {
         "kind": "ENUM",
         "name": "PageType13",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2843,7 +2843,7 @@ Object {
         "kind": "OBJECT",
         "name": "PagecountsProject",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2869,7 +2869,7 @@ Object {
         "kind": "OBJECT",
         "name": "PageviewArticle",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2895,7 +2895,7 @@ Object {
         "kind": "OBJECT",
         "name": "PageviewProject",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -2921,7 +2921,7 @@ Object {
         "kind": "OBJECT",
         "name": "PageviewTops",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -2947,7 +2947,7 @@ Object {
         "kind": "ENUM",
         "name": "Provider",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -2968,7 +2968,7 @@ Object {
         "kind": "ENUM",
         "name": "Provider2",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5582,7 +5582,7 @@ Object {
         "kind": "OBJECT",
         "name": "Query",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5615,7 +5615,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results2ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5648,7 +5648,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results3ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5681,7 +5681,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results4ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5718,7 +5718,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results5ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5755,7 +5755,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results6ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5792,7 +5792,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results7ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5825,7 +5825,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results8ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5862,7 +5862,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results9ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5899,7 +5899,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results10ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5936,7 +5936,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results11ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -5969,7 +5969,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results12ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6002,7 +6002,7 @@ Object {
         "kind": "OBJECT",
         "name": "Results13ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6035,7 +6035,7 @@ Object {
         "kind": "OBJECT",
         "name": "ResultsListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6045,7 +6045,7 @@ Object {
         "kind": "SCALAR",
         "name": "String",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -6066,7 +6066,7 @@ Object {
         "kind": "ENUM",
         "name": "Tool",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6110,7 +6110,7 @@ Object {
         "kind": "OBJECT",
         "name": "Top2ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6154,7 +6154,7 @@ Object {
         "kind": "OBJECT",
         "name": "Top3ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6198,7 +6198,7 @@ Object {
         "kind": "OBJECT",
         "name": "Top4ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6242,7 +6242,7 @@ Object {
         "kind": "OBJECT",
         "name": "Top5ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6286,7 +6286,7 @@ Object {
         "kind": "OBJECT",
         "name": "Top6ListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6312,7 +6312,7 @@ Object {
         "kind": "OBJECT",
         "name": "TopEditedPagesByAbsBytesDiff",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6338,7 +6338,7 @@ Object {
         "kind": "OBJECT",
         "name": "TopEditedPagesByEdits",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6364,7 +6364,7 @@ Object {
         "kind": "OBJECT",
         "name": "TopEditedPagesByNetBytesDiff",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6390,7 +6390,7 @@ Object {
         "kind": "OBJECT",
         "name": "TopEditorsByAbsBytesDiff",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6416,7 +6416,7 @@ Object {
         "kind": "OBJECT",
         "name": "TopEditorsByEdits",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6442,7 +6442,7 @@ Object {
         "kind": "OBJECT",
         "name": "TopEditorsByNetBytesDiff",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6486,7 +6486,7 @@ Object {
         "kind": "OBJECT",
         "name": "TopListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6512,7 +6512,7 @@ Object {
         "kind": "INPUT_OBJECT",
         "name": "TransformHtmlFromToInput",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6556,7 +6556,7 @@ Object {
         "kind": "OBJECT",
         "name": "TranslationsListItem",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -6582,7 +6582,7 @@ Object {
         "kind": "ENUM",
         "name": "Type",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6608,7 +6608,7 @@ Object {
         "kind": "OBJECT",
         "name": "UniqueDevices",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6678,7 +6678,19 @@ Object {
             },
           },
           Object {
-            "args": Array [],
+            "args": Array [
+              Object {
+                "defaultValue": "false",
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeprecated",
+                "type": Object {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+            ],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "args",
@@ -6706,7 +6718,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Directive",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -6812,7 +6824,7 @@ Object {
         "kind": "ENUM",
         "name": "__DirectiveLocation",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6875,7 +6887,7 @@ Object {
         "kind": "OBJECT",
         "name": "__EnumValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -6988,7 +7000,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Field",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7077,7 +7089,7 @@ Object {
         "kind": "OBJECT",
         "name": "__InputValue",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7182,7 +7194,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Schema",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": null,
@@ -7228,7 +7240,7 @@ Object {
             "args": Array [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "specifiedByUrl",
+            "name": "specifiedByURL",
             "type": Object {
               "kind": "SCALAR",
               "name": "String",
@@ -7383,7 +7395,7 @@ Object {
         "kind": "OBJECT",
         "name": "__Type",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
       Object {
         "enumValues": Array [
@@ -7434,7 +7446,7 @@ Object {
         "kind": "ENUM",
         "name": "__TypeKind",
         "possibleTypes": null,
-        "specifiedByUrl": null,
+        "specifiedByURL": null,
       },
     ],
   },

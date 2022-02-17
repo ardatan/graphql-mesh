@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`wrapPrefix should prefix all schema types when prefix is specified explicitly 1`] = `
+"type Query {
+  user: T_User!
+  posts: [T_Post!]!
+}
+
+type T_User {
+  id: ID!
+}
+
+type T_Post {
+  id: ID!
+  title: String!
+}"
+`;

@@ -24,8 +24,7 @@ In this case we only have `fieldA` and `fieldB` in our result so those are not a
 Now, point to those operations in your `.meshrc.yml`;
 
 ```yml
-sources:
-  ...
+sources: ...
 
 documents:
   - ./src/**/*.graphql
@@ -35,21 +34,31 @@ documents:
 
 You can run `mesh dev` to try your operations in the playground;
 
-```
+```sh
 yarn mesh dev
+```
+
+## Generate operations automatically
+
+Mesh can generate the operations for you if you don't want to use manually written operations. Just add the following to your configuration;
+
+```yaml
+sdk:
+  generateOperations:
+    selectionSetDepth: 2 # This is the maximum level of selection set
 ```
 
 ## Build your SDK with Mesh artifacts
 
 This will generate an SDK inside your Mesh artifacts under `.mesh` directory;
 
-```
+```sh
 yarn mesh build
 ```
 
 ## Using the generated SDK in the code
 
-Now, instead of using `execute` manually, you can use the generated `getSdk` method with your a GraphQL Mesh client, and use the functions that are generated based on your operations:
+Now, instead of using `execute` manually, you can use the generated `getSdk` method with your GraphQL Mesh client, and use the functions that are generated based on your operations:
 
 ```ts
 import { getMeshSdk } from './.mesh';
@@ -66,5 +75,18 @@ async function test() {
 
 > You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb#using-the-generated-sdk)
 
+![GraphQL Mesh](/static/img/as-sdk.png)
 
-![GraphQL Mesh](/img/as-sdk.png)
+### With Next.js
+
+> Watch [Episode #15 of `graphql.wtf`](https://graphql.wtf/episodes/15-graphql-mesh-sdk-with-nextjs) for a quick introduction to using GraphQL Mesh with Next.js:
+
+<iframe
+  width="100%"
+  height="400"
+  src="https://www.youtube.com/embed/XkzppOTs7ZU"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>

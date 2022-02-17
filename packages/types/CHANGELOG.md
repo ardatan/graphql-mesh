@@ -1,5 +1,190 @@
 # @graphql-mesh/types
 
+## 0.62.0
+
+### Minor Changes
+
+- 240ec7b38: feat(openapi): selectQueryOrMutationField flag to choose what field belongs to what root type
+
+## 0.61.0
+
+### Minor Changes
+
+- 66ca1a366: feat(cli): ability to provide custom codegen config
+
+## 0.60.0
+
+### Minor Changes
+
+- a79268b3a: feat(raml): ability to select operation type by fieldname
+
+### Patch Changes
+
+- a79268b3a: enhance(types): more strict incontext sdk types
+
+## 0.59.0
+
+### Minor Changes
+
+- 020431bdc: feat(json-schema/openapi/raml): respect error status codes
+- 020431bdc: feat(redis): fallback to inmemory cache and support env interpolation
+- 020431bdc: feat(cli): built-in typescript support
+
+## 0.58.0
+
+### Minor Changes
+
+- 6bb4cf673: feat(prefix): allow to prefix only fields
+
+## 0.57.2
+
+### Patch Changes
+
+- 1ab0aebbc: feat(json-schema): better error handling
+
+## 0.57.1
+
+### Patch Changes
+
+- d907351c5: new OpenAPI Handler
+
+## 0.57.0
+
+### Minor Changes
+
+- cfca98d34: feat(utils): drop graphql-subscriptions and use events for PubSub Impl
+
+## 0.56.0
+
+### Minor Changes
+
+- ec0d1d639: enhance: avoid sync require but collect import sync
+
+## 0.55.0
+
+### Minor Changes
+
+- 1b332487c: feat(soap): ability to select query or mutation
+
+## 0.54.1
+
+### Patch Changes
+
+- 761b16ed9: fix(serve): fix critical bug
+
+## 0.54.0
+
+### Minor Changes
+
+- 09f81dd74: GraphQL v16 compatibility
+- 09f81dd74: GraphQL v16 compability
+
+## 0.53.0
+
+### Minor Changes
+
+- 6f57be0c1: feat(json-schema): expose GraphQL Tools loader compatible with loadSchema
+
+## 0.52.0
+
+### Minor Changes
+
+- 811960cdc: feat(runtime): use factory functions for debug messages
+- 6f5ffe766: Add rename functionality to replace-field transform
+
+## 0.51.0
+
+### Minor Changes
+
+- 256abf5f7: enhance: do not use context of orchestrator but internally
+
+## 0.50.0
+
+### Minor Changes
+
+- 8c9b709ae: Introduce new replace-field transform
+
+## 0.49.0
+
+### Minor Changes
+
+- 6ce43ddac: feat(type-merging): additional type merging configuration for edge cases
+
+## 0.48.0
+
+### Minor Changes
+
+- 67552c8f8: feat(types): update prefix transform
+
+## 0.47.0
+
+### Minor Changes
+
+- 9eff8a396: enhance(logging): ability to filter debug messages
+
+## 0.46.0
+
+### Minor Changes
+
+- 4545fe72d: Some improvements on additional resolvers;
+
+  - Now you can point to the nested fields in `keyArgs`; e.g. `keysArg: "where.ids"`
+  - You don't need `returnType` for abstract types anymore, because it's inferred from the type of `targetFieldName`.
+
+- f23820ed0: feat(types): update in-context SDK types
+- 06d688e70: feat(config): new skipSSLValidation configuration field that disabled SSL check on HTTP requests
+
+## 0.45.2
+
+### Patch Changes
+
+- fc51c574d: Dependency updates
+
+## 0.45.1
+
+### Patch Changes
+
+- 1c2667489: fix(graphql): Replace old flags with subscriptionsProtocol
+
+## 0.45.0
+
+### Minor Changes
+
+- 6266d1774: feat(cli): ability to use a custom server handler
+- 2b8dae1cb: feat(cli): generate operations for sdk
+
+### Patch Changes
+
+- 94606e7b9: Enable flags for regular expressions in rename transform
+
+## 0.44.2
+
+### Patch Changes
+
+- 25d10cc23: fix(types): do not resolve json module
+
+## 0.44.1
+
+### Patch Changes
+
+- 49c8ceb38: fix(core): bump packages to fix variables issue
+
+## 0.44.0
+
+### Minor Changes
+
+- 1ee417e3d: feat(mysql): ability to select some specific tables
+
+## 0.43.0
+
+### Minor Changes
+
+- 885ea439a: New MeshStore approach
+
+### Patch Changes
+
+- d8051f87d: GraphQLHandler endpoint validation
+
 ## 0.42.0
 
 ### Minor Changes

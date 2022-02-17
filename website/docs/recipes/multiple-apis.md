@@ -123,9 +123,9 @@ const resolvers = {
 module.exports = { resolvers };
 ```
 
-Now run `graphql-mesh serve` and you'll be able to see your new field as part of your GraphQL schema, and you'll be able to query for it.
+Now run `mesh dev` and you'll be able to see your new field as part of your GraphQL schema, and you'll be able to query for it.
 
-And now we run the the following GraphQL query to fetch the simplified data:
+And now we run the following GraphQL query to fetch the simplified data:
 
 ```graphql
 query viewsInPastMonth {
@@ -239,7 +239,7 @@ module.exports = {
           longitude
         }
       `,
-      resolve: (root, args, context, info) => {
+      async resolve(root, args, context, info) {
         const result = await context.Weather.Query.getForecastDailyLatLatLonLon({
           root,
           args: {
@@ -264,7 +264,7 @@ module.exports = {
 };
 ```
 
-> Also checkout [Postgres GeoDB example](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb) example that combines GitHub API and a Postgres DB sources.
+> Also, checkout [Postgres GeoDB example](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb) example that combines GitHub API and a Postgres DB sources.
 
 ## Merging types from different sources (using Type Merging)
 
@@ -289,7 +289,7 @@ type Query {
   books(ids: [ID!]): [Book!]!
   book(id: ID!): Book!
   authorWithBooks(id: ID!): Author!
-  authorsWithBooks(ids: [ID!])
+  authorsWithBooks(ids: [ID!]): [Author!]!
 }
 
 type Book {
@@ -304,7 +304,7 @@ type AuthorWithBooks {
 }
 ```
 
-And you renamed `AuthorWithBooks` to `Author` using [`Rename`](http://localhost:3000/docs/transforms/rename) transform.
+And you renamed `AuthorWithBooks` to `Author` using [`Rename`](/docs/transforms/rename) transform.
 ```yml
 - sources:
   - name: BookService
@@ -395,7 +395,7 @@ sources:
 
 Then now our query will work as expected!
 
-[Check this out learn more about Type Merging transform](http://localhost:3000/docs/transforms/type-merging).
+[Check this out learn more about Type Merging transform](/docs/transforms/type-merging).
 
 ## Batching requests between sources to prevent N+1 problem
 
@@ -452,7 +452,7 @@ sources:
 
 And now it batches the requests to the inner sources.
 
-## In regular `additionalResolvers`
+### In regular `additionalResolvers`
 
 In the current example, we want to have a field called `author` under `Book` property then point it to `author`.
 
@@ -492,20 +492,17 @@ additionalResolvers:
     targetFieldName: author
 ```
 
-And that's it. Now GraphQL Mesh will `Author` by `authorId` field.
+And that's it. Now GraphQL Mesh will batch the queries of `Book.author` by using `authorId` field into `Query.authors`.
 
 ## Consuming Apollo Federation Services inside GraphQL Mesh
 
 GraphQL Mesh uses [the approach of Schema Stitching](https://github.com/gmac/schema-stitching-handbook/tree/master/federation-services) in order to consume the existing Apollo Federation services inside GraphQL Mesh. So you can combine Federation and Type Merging in GraphQL Mesh
 
-<p align="center">
-  <img src="https://storage.googleapis.com/xebia-blog/1/2019/10/apollo-federation.jpg" width="300" alt="Apollo Federation" />
-<br/>
-</p>
+<img src="https://storage.googleapis.com/xebia-blog/1/2019/10/apollo-federation.jpg" width="300" alt="Apollo Federation" style={{ margin: '0 auto' }} />
 
 You can follow Apollo Federation spec and integrate your existing Federated services into GraphQL Mesh.
 
-GraphQL Mesh is smart enough to mix and match Federation and Stitching approaches including all other transforms (Type Merging, Rename, Filter etc)
+GraphQL Mesh is smart enough to mix and match Federation and Stitching approaches including all other transforms (Type Merging, Rename, Filter etc.)
 
 You can also transform your existing non-federated schemas into federated service.
 

@@ -238,7 +238,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(operation.servers[0]);
 
     if (Array.isArray(operation.servers) && operation.servers.length > 1) {
-      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -250,7 +250,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(oas.servers[0]);
 
     if (Array.isArray(oas.servers) && oas.servers.length > 1) {
-      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -455,20 +455,22 @@ export function getRequestBodyObject(
       const content: MediaTypesObject = requestBodyObject.content;
 
       const contentTypes = Object.keys(content);
-      const isJsonContent = contentTypes.some(contentType => contentType.toString().includes('application/json'));
-      const isFormData = contentTypes.some(contentType =>
-        contentType.toString().includes('application/x-www-form-urlencoded')
-      );
+      const jsonContentType = contentTypes
+        .find(contentType => contentType.toString().includes('application/json'))
+        ?.toString();
+      const formDataContentType = contentTypes
+        .find(contentType => contentType.toString().includes('application/x-www-form-urlencoded'))
+        ?.toString();
 
       // Prioritize content-type JSON
-      if (isJsonContent) {
+      if (jsonContentType) {
         return {
-          payloadContentType: 'application/json',
+          payloadContentType: jsonContentType,
           requestBodyObject,
         };
-      } else if (isFormData) {
+      } else if (formDataContentType) {
         return {
-          payloadContentType: 'application/x-www-form-urlencoded',
+          payloadContentType: formDataContentType,
           requestBodyObject,
         };
       } else {
@@ -786,7 +788,7 @@ export function getParameters(
 
   if (!isHttpMethod(method)) {
     translationLogger.debug(
-      `Warning: attempted to get parameters for ${method} ${path}, ` + `which is not an operation.`
+      () => `Warning: attempted to get parameters for ${method} ${path}, ` + `which is not an operation.`
     );
     return parameters;
   }
@@ -1014,7 +1016,8 @@ export function storeSaneName(
     const translationLogger = logger.child('translation');
     // TODO: Follow warning model
     translationLogger.debug(
-      `Warning: '${str}' and '${mapping[saneStr]}' both sanitize ` +
+      () =>
+        `Warning: '${str}' and '${mapping[saneStr]}' both sanitize ` +
         `to '${saneStr}' - collision possible. Desanitize to '${str}'.`
     );
     let appendix = 2;

@@ -16,6 +16,10 @@ type TypeMergingConfig @md {
   Directive arguments tune the merge behavior
   """
   queryFields: [MergedRootFieldConfig!]
+  """
+  The path to a code file that has additional type merging configuration
+  """
+  additionalConfiguration: Any
 }
 
 type MergedRootFieldConfig {

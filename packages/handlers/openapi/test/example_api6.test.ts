@@ -12,7 +12,7 @@ import { graphql, parse, validate, GraphQLSchema } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
 import { startServer, stopServer } from './example_api6_server';
-import fetch from 'cross-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas6.json');
 const PORT = 3008;
@@ -53,7 +53,7 @@ test('Option requestOptions should work with links', () => {
     }
   }`;
 
-  const promise = graphql(createdSchema, query).then(result => {
+  const promise = graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       object: {
         object2Link: {
@@ -87,7 +87,10 @@ test('Option requestOptions should work with links', () => {
     const ast = parse(query2);
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
-    return graphql(schema, query2).then(result => {
+    return graphql({
+      schema: schema,
+      source: query2,
+    }).then((result: any) => {
       expect(result).toEqual({
         data: {
           object: {
@@ -117,7 +120,7 @@ test('Simple request body using application/x-www-form-urlencoded', () => {
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       postFormUrlEncoded: {
         name: 'Mittens',
@@ -143,7 +146,7 @@ test('Request body using application/x-www-form-urlencoded and desanitization of
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       postFormUrlEncoded: {
         previousOwner: 'Martin',
@@ -171,7 +174,7 @@ test('Request body using application/x-www-form-urlencoded containing object', (
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       postFormUrlEncoded: {
         history: {
@@ -194,7 +197,7 @@ test('Request body using application/x-www-form-urlencoded containing object wit
     }
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       postFormUrlEncoded: {
         history2: {
@@ -215,7 +218,7 @@ test('inferResourceNameFromPath() field with simple plural form', () => {
     car (id: "Super Speed")
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       car: 'Car ID: Super Speed',
     });
@@ -233,7 +236,7 @@ test('inferResourceNameFromPath() field with irregular plural form', () => {
     cactus (cactusId: "Spikey")
   }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       cactus: 'Cactus ID: Spikey',
     });
@@ -252,7 +255,7 @@ test('inferResourceNameFromPath() field with long path', () => {
   eateryBreadDish(eatery: "Mike's", breadName:"challah", dishKey: "bread pudding")
  }`;
 
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result.data).toEqual({
       eateryBreadDish: "Parameters combined: Mike's challah bread pudding",
     });

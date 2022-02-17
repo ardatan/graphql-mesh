@@ -4,6 +4,7 @@ type Cache {
 
 type RedisConfig @md {
   host: String
-  port: Int
+  port: String
   password: String
+  url: String
 }

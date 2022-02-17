@@ -3,7 +3,6 @@ query getData_step2 {
   case(countryRegion: "France") {
     confirmed
     deaths
-    recovered
     population {
       records {
         fields {

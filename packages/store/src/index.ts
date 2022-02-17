@@ -1,7 +1,7 @@
 import { promises as fsPromises } from 'fs';
 import { isAbsolute, join } from 'path';
 import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
-import { Change, CriticalityLevel, diff } from '@graphql-inspector/core';
+import { CriticalityLevel, diff } from '@graphql-inspector/core';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
 
@@ -43,7 +43,7 @@ export interface FsStoreStorageAdapterOptions {
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
   private getWrittenFileName(key: string) {
-    const jsFileName = `${key}.js`;
+    const jsFileName = `${key}.cjs`;
     return isAbsolute(jsFileName) ? jsFileName : join(this.options.cwd, jsFileName);
   }
 
@@ -60,7 +60,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   }
 
   async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
-    const asString = options.codify(data, key);
+    const asString = await options.codify(data, key);
     const filePath = this.getWrittenFileName(key);
     await writeFile(filePath, flatString(asString));
     await this.options.importFn(filePath);
@@ -81,7 +81,7 @@ export type StoreProxy<TData> = {
 };
 
 export type ProxyOptions<TData> = {
-  codify: (value: TData, identifier: string) => string;
+  codify: (value: TData, identifier: string) => string | Promise<string>;
   validate: (oldValue: TData, newValue: TData, identifier: string) => void | Promise<void>;
 };
 
@@ -121,8 +121,8 @@ module.exports = buildSchema(source, {
   assumeValidSDL: true
 });
     `.trim(),
-    validate: (oldSchema, newSchema) => {
-      const changes: Change[] = diff(oldSchema, newSchema);
+    validate: async (oldSchema, newSchema) => {
+      const changes = await diff(oldSchema, newSchema);
       const errors: string[] = [];
       for (const change of changes) {
         if (

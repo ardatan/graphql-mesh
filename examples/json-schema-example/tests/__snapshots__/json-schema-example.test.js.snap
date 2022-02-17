@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JSON Schema Example should generate correct schema 1`] = `
-"\\"\\"\\"Fake Company\\"\\"\\"
+"scalar Any
+
+\\"\\"\\"Fake Company\\"\\"\\"
 type Company {
   employers: [User]
   name: String
@@ -14,23 +16,24 @@ enum CompanyType {
   Public_Limited
 }
 
+input CreateUpdateUser_Input {
+  firstName: String
+  jobTitle: String
+  lastName: String
+}
+
 type Foo {
   id: String
 }
 
 type Mutation {
-  \\"\\"\\"PUT /user\\"\\"\\"
-  createUser(input: _mutationInput_createUser_Input!): User
-
-  \\"\\"\\"POST /user/{args.id}\\"\\"\\"
-  updateUser(id: ID!, input: _mutationInput_updateUser_Input!): User
+  createUser(input: CreateUpdateUser_Input): User
+  deleteUser(id: ID!): Any
+  updateUser(id: ID!, input: CreateUpdateUser_Input): User
 }
 
 type Query {
-  \\"\\"\\"GET /company/{args.id}\\"\\"\\"
   company(id: ID!): Company
-
-  \\"\\"\\"GET /me\\"\\"\\"
   me: User
 }
 
@@ -42,18 +45,5 @@ type User {
   foos: [Foo]
   jobTitle: String
   lastName: String
-}
-
-input _mutationInput_createUser_Input {
-  firstName: String
-  jobTitle: String
-  lastName: String
-}
-
-input _mutationInput_updateUser_Input {
-  firstName: String
-  jobTitle: String
-  lastName: String
-}
-"
+}"
 `;

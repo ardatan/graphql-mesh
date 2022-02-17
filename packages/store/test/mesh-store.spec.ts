@@ -48,9 +48,8 @@ describe('MeshStore and storage', () => {
       expect.assertions(3);
       const store = new MeshStore('test', storage, { readonly: false, validate: true });
       const item = store.proxy('file.json', {
-        parse: JSON.parse,
-        serialize: JSON.stringify,
-        validate: (a, b) => {
+        codify: value => `module.exports = ${JSON.stringify(value)}`,
+        validate: (a: any, b: any) => {
           if (a.test === 1 && b.test === 2) {
             throw new Error('Validation failed! you changed 1 to 2!');
           }

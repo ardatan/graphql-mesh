@@ -11,7 +11,7 @@ import { graphql, GraphQLSchema } from 'graphql';
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { startServer, stopServer } from './example_api2_server';
-import fetch from 'cross-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas2.json');
 const PORT = 3004;
@@ -75,7 +75,7 @@ test('Querying the two operations', () => {
       name
     }
   }`;
-  return graphql(createdSchema, query).then(result => {
+  return graphql({ schema: createdSchema, source: query }).then((result: any) => {
     expect(result).toEqual({
       data: {
         getUser: {

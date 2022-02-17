@@ -30,10 +30,6 @@ type GraphQLHandler @md {
   """
   method: GraphQLHandlerHTTPMethod
   """
-  Use Server Sent Events instead of WebSocket for Subscriptions
-  """
-  useSSEForSubscription: Boolean
-  """
   Path to a custom W3 Compatible Fetch Implementation
   """
   customFetch: Any
@@ -41,10 +37,6 @@ type GraphQLHandler @md {
   Path to a custom W3 Compatible WebSocket Implementation
   """
   webSocketImpl: String
-  """
-  Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`
-  """
-  useWebSocketLegacyProtocol: Boolean
   """
   Path to the introspection
   You can seperately give schema introspection
@@ -58,6 +50,18 @@ type GraphQLHandler @md {
   Batch requests
   """
   batch: Boolean
+  """
+  SSE - Server Sent Events
+  WS - New graphql-ws
+  LEGACY_WS - Legacy subscriptions-transport-ws
+  """
+  subscriptionsProtocol: SubscriptionProtocol
+}
+
+enum SubscriptionProtocol {
+  SSE
+  WS
+  LEGACY_WS
 }
 
 enum GraphQLHandlerHTTPMethod {

@@ -1,20 +1,14 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { IResolvers, Executor } from '@graphql-tools/utils';
-import {
-  GraphQLSchema,
-  GraphQLResolveInfo,
-  DocumentNode,
-  ExecutionArgs,
-  ExecutionResult,
-  SelectionSetNode,
-} from 'graphql';
+import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
+import configSchema from './config-schema.json';
 
-export { default as jsonSchema } from './config-schema.json';
+export const jsonSchema: any = configSchema;
 
 export { YamlConfig };
 
@@ -22,7 +16,6 @@ export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
   executor?: Executor;
   contextVariables?: (keyof InitialContext)[];
-  contextBuilder?: (initialContextValue: InitialContext) => Promise<ContextType>;
   batch?: boolean;
 };
 
@@ -61,7 +54,6 @@ export type AllHooks = {
   resolverCalled: { resolverData: ResolverData };
   resolverDone: { resolverData: ResolverData; result: any };
   resolverError: { resolverData: ResolverData; error: Error };
-  executionDone: ExecutionArgs & { executionResult: ExecutionResult };
   [key: string]: any;
 };
 export type HookName = keyof AllHooks & string;
@@ -74,7 +66,7 @@ export interface MeshPubSub {
     options?: any
   ): Promise<number>;
   unsubscribe(subId: number): void;
-  asyncIterator<THook extends HookName>(triggers: THook): AsyncIterator<AllHooks[THook]>;
+  asyncIterator<THook extends HookName>(triggers: THook): AsyncIterable<AllHooks[THook]>;
 }
 
 export interface MeshTransformOptions<Config = any> {
@@ -83,7 +75,7 @@ export interface MeshTransformOptions<Config = any> {
   baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  syncImportFn: SyncImportFn;
+  importFn: ImportFn;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -123,8 +115,6 @@ export interface MeshMerger {
 
 export type RawSourceOutput = {
   name: string;
-  // TOOD: Remove globalContextBuilder and use hooks for that
-  contextBuilder: null | ((initialContextValue?: any) => Promise<any>);
   schema: GraphQLSchema;
   executor?: Executor;
   transforms: MeshTransform[];
@@ -137,17 +127,44 @@ export type RawSourceOutput = {
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
 export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
-export type SyncImportFn = <T = any>(moduleId: string) => T;
+
+export type LazyLoggerMessage = (() => string) | string;
 
 export type Logger = {
-  name: string;
+  name?: string;
   log: (message: string) => void;
   warn: (message: string) => void;
   info: (message: string) => void;
   error: (message: string) => void;
-  debug: (message: string) => void;
+  debug: (message: LazyLoggerMessage) => void;
   child: (name: string) => Logger;
 };
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
 export type SelectionSetParamOrFactory = ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;
+
+export type InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn> = {
+  key: TKey;
+  argsFromKeys: (keys: TKey[]) => TArgs;
+  valuesFromResults?: (results: TDefaultReturn, keys: TKey[]) => TReturn | TReturn[];
+};
+
+export type InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn> = {
+  args?: TArgs;
+  valuesFromResults?: (results: TDefaultReturn) => TReturn | TReturn[];
+};
+
+export type InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn> = {
+  root?: any;
+  context: TContext;
+  info: GraphQLResolveInfo;
+  // Use this parameter if the selection set of the return type doesn't match
+  selectionSet?: SelectionSetParamOrFactory;
+} & (
+  | InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn>
+  | InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn>
+);
+
+export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <TKey, TReturn = TDefaultReturn>(
+  params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>
+) => Promise<TReturn>;

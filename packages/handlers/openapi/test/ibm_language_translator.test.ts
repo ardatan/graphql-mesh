@@ -9,7 +9,7 @@
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { GraphQLSchema, GraphQLObjectType } from 'graphql';
-import fetch from 'cross-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 /**
  * Set up the schema first

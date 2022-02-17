@@ -1,25 +1,27 @@
 import { makeAugmentedSchema, inferSchema } from 'neo4j-graphql-js';
 import neo4j, { Driver } from 'neo4j-driver';
-import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger, KeyValueCache } from '@graphql-mesh/types';
+import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { readFileOrUrlWithCache } from '@graphql-mesh/utils';
+import { jitExecutorFactory, readFileOrUrl } from '@graphql-mesh/utils';
 import { env } from 'process';
+import { ExecutionRequest } from '@graphql-tools/utils';
+import { ExecutionResult } from 'graphql';
 
 export default class Neo4JHandler implements MeshHandler {
+  private name: string;
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
   private typeDefs: StoreProxy<string>;
   private logger: Logger;
-  private cache: KeyValueCache<string>;
 
-  constructor({ config, baseDir, pubsub, store, logger, cache }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+  constructor({ name, config, baseDir, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.typeDefs = store.proxy('typeDefs.graphql', PredefinedProxyOptions.StringWithoutValidation);
     this.logger = logger;
-    this.cache = cache;
   }
 
   private driver: Driver;
@@ -32,7 +34,19 @@ export default class Neo4JHandler implements MeshHandler {
           logger: (level, message) => this.logger[level](message),
         },
       });
-      this.pubsub.subscribe('destroy', () => this.driver.close());
+      this.pubsub
+        .subscribe('destroy', () => {
+          this.logger.debug(() => 'Closing Neo4j');
+          this.driver
+            .close()
+            .then(() => {
+              this.logger.debug(() => 'Neo4j has been closed');
+            })
+            .catch(error => {
+              this.logger.debug(() => `Neo4j couldn't be closed: ${error.message}`);
+            });
+        })
+        .catch(e => this.logger.error(e));
     }
     return this.driver;
   }
@@ -40,9 +54,10 @@ export default class Neo4JHandler implements MeshHandler {
   getCachedTypeDefs() {
     return this.typeDefs.getWithSet(async () => {
       if (this.config.typeDefs) {
-        return readFileOrUrlWithCache(this.config.typeDefs, this.cache, {
+        return readFileOrUrl(this.config.typeDefs, {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
+          logger: this.logger,
         });
       } else {
         const { typeDefs } = await inferSchema(this.getDriver(), {
@@ -65,9 +80,26 @@ export default class Neo4JHandler implements MeshHandler {
       logger: this.logger,
     });
 
+    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+    const driverGetter = () => this.getDriver();
+    const neo4jContext = {
+      get driver() {
+        return driverGetter();
+      },
+      neo4jDatabase: this.config.database,
+    };
+
     return {
       schema,
-      contextBuilder: async () => ({ driver: this.getDriver(), neo4jDatabase: this.config.database }),
+      executor: <TResult>(executionRequest: ExecutionRequest) => {
+        return jitExecutor({
+          ...executionRequest,
+          context: {
+            ...executionRequest.context,
+            ...neo4jContext,
+          },
+        }) as ExecutionResult<TResult>;
+      },
     };
   }
 }

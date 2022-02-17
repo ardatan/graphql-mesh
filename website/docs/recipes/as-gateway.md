@@ -4,27 +4,40 @@ title: Mesh as Gateway
 sidebar_label: Mesh as Gateway
 ---
 
-<p align="center">
-  <img src="/img/as-gateway.png" width="450" alt="Apollo Federation" />
-  <br/>
-</p>
+<img src="/static/img/as-gateway.png" width="450" alt="Apollo Federation" style={{ margin: '0 auto' }} />
 
-You can use GraphQL Mesh as a gateway for your data sources. CLI's `dev` command creates a GraphQL Endpoint with GraphQL Playground.
+You can use GraphQL Mesh as an HTTP gateway proxy for your data sources. GraphQL Mesh provides you an HTTP server with [Express](https://expressjs.com), [GraphQL Helix](https://github.com/contrawork/graphql-helix), [GraphQL-WS](https://github.com/enisdenjo/graphql-ws#readme) and [GraphiQL Explorer](https://github.com/OneGraph/graphiql-explorer) with a bunch of configurable features out-of-box.
 
-```bash
-mesh serve
-```
+> Watch [Episode #1 of `graphql.wtf`](https://graphql.wtf/episodes/1-graphql-mesh-as-a-gateway) for a quick introduction to GraphQL Mesh:
+
+<iframe
+  width="100%"
+  height="400"
+  src="https://www.youtube.com/embed/fhTg5wPU5LY"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
+There are two commands for GraphQL Mesh's HTTP Server;
+
+- `dev` commands generates the unified schema without using any existing artifacts on the disk, and it introspects all the schemas, but it doesn't save it.
+- `start` commands generates the unified schema by using the existing artifacts previously created by `mesh build` command. [Learn more about Mesh artifacts.](/docs/recipes/build-mesh-artifacts).
+
 You can also point to a specific directory which contains the source files (`.meshrc.yaml`, etc.)
 
-```bash
+```sh
 mesh dev --dir some/path/to-configuration/
 ```
 
-You can configure `dev` command like below in `.meshrc.yml`;
+GraphQL Mesh's HTTP Server can be configured by setting the `serve` object in `.meshrc.yaml` like below:
 
 ```yaml
-serve: 
+serve:
     port: 5000
+    browser: false
+    playground: false
 ```
 
 {@import ../generated-markdown/ServeConfig.generated.md}

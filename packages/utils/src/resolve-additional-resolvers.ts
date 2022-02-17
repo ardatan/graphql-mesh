@@ -1,11 +1,139 @@
-import { YamlConfig, MeshPubSub, SyncImportFn } from '@graphql-mesh/types';
+import { YamlConfig, MeshPubSub, ImportFn } from '@graphql-mesh/types';
 import { IResolvers, parseSelectionSet } from '@graphql-tools/utils';
-import { GraphQLResolveInfo, SelectionSetNode, Kind } from 'graphql';
+import {
+  GraphQLResolveInfo,
+  SelectionSetNode,
+  Kind,
+  GraphQLSchema,
+  GraphQLObjectType,
+  getNamedType,
+  isAbstractType,
+  GraphQLType,
+} from 'graphql';
 import { withFilter } from 'graphql-subscriptions';
 import _ from 'lodash';
 import { stringInterpolator } from './string-interpolator';
-import { loadFromModuleExportExpressionSync } from './load-from-module-export-expression';
+import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 import { env } from 'process';
+
+function getTypeByPath(type: GraphQLType, path: string[]): GraphQLType {
+  if ('ofType' in type) {
+    return getTypeByPath(type.ofType, path);
+  }
+  if (path.length === 0) {
+    return type;
+  }
+  if (!('getFields' in type)) {
+    throw new Error(`${type} cannot have a path ${path.join('.')}`);
+  }
+  const fieldMap = type.getFields();
+  const currentFieldName = path[0];
+  // Might be an index of an array
+  if (!Number.isNaN(parseInt(currentFieldName))) {
+    return getTypeByPath(type, path.slice(1));
+  }
+  const field = fieldMap[currentFieldName];
+  if (!field?.type) {
+    throw new Error(`${type}.${currentFieldName} is not a valid field.`);
+  }
+  return getTypeByPath(field.type, path.slice(1));
+}
+
+function generateSelectionSetFactory(
+  schema: GraphQLSchema,
+  additionalResolver: YamlConfig.AdditionalStitchingBatchResolverObject | YamlConfig.AdditionalStitchingResolverObject
+) {
+  if (additionalResolver.sourceSelectionSet) {
+    return () => parseSelectionSet(additionalResolver.sourceSelectionSet);
+    // If result path provided without a selectionSet
+  } else if (additionalResolver.result) {
+    const resultPath = _.toPath(additionalResolver.result);
+    let abstractResultType: string;
+
+    const sourceType = schema.getType(additionalResolver.sourceTypeName) as GraphQLObjectType;
+    const sourceTypeFields = sourceType.getFields();
+    const sourceField = sourceTypeFields[additionalResolver.sourceFieldName];
+    const resultFieldType = getTypeByPath(sourceField.type, resultPath);
+
+    if (isAbstractType(resultFieldType)) {
+      if (additionalResolver.resultType) {
+        abstractResultType = additionalResolver.resultType;
+      } else {
+        const targetType = schema.getType(additionalResolver.targetTypeName) as GraphQLObjectType;
+        const targetTypeFields = targetType.getFields();
+        const targetField = targetTypeFields[additionalResolver.targetFieldName];
+        const targetFieldType = getNamedType(targetField.type);
+        abstractResultType = targetFieldType?.name;
+      }
+      const possibleTypes = schema.getPossibleTypes(resultFieldType);
+      if (!possibleTypes.some(possibleType => possibleType.name === abstractResultType)) {
+        throw new Error(
+          `${additionalResolver.sourceTypeName}.${additionalResolver.sourceFieldName}.${resultPath.join(
+            '.'
+          )} doesn't implement ${abstractResultType}. Please specify one of the following types as "returnType"; ${possibleTypes.map(
+            t => t.name
+          )}`
+        );
+      }
+    }
+
+    return (subtree: SelectionSetNode) => {
+      let finalSelectionSet = subtree;
+      let isLastResult = true;
+      const resultPathReversed = [...resultPath].reverse();
+      for (const pathElem of resultPathReversed) {
+        // Ensure the path elem is not array index
+        if (Number.isNaN(parseInt(pathElem))) {
+          if (isLastResult && abstractResultType) {
+            finalSelectionSet = {
+              kind: Kind.SELECTION_SET,
+              selections: [
+                {
+                  kind: Kind.INLINE_FRAGMENT,
+                  typeCondition: {
+                    kind: Kind.NAMED_TYPE,
+                    name: {
+                      kind: Kind.NAME,
+                      value: abstractResultType,
+                    },
+                  },
+                  selectionSet: finalSelectionSet,
+                },
+              ],
+            };
+          }
+          finalSelectionSet = {
+            kind: Kind.SELECTION_SET,
+            selections: [
+              {
+                // we create a wrapping AST Field
+                kind: Kind.FIELD,
+                name: {
+                  kind: Kind.NAME,
+                  value: pathElem,
+                },
+                // Inside the field selection
+                selectionSet: finalSelectionSet,
+              },
+            ],
+          };
+          isLastResult = false;
+        }
+      }
+      return finalSelectionSet;
+    };
+  }
+  return undefined;
+}
+
+function generateValuesFromResults(resultExpression: string): (result: any) => any {
+  return function valuesFromResults(result: any): any {
+    if (Array.isArray(result)) {
+      return result.map(valuesFromResults);
+    }
+    return _.get(result, resultExpression);
+  };
+}
 
 export function resolveAdditionalResolvers(
   baseDir: string,
@@ -15,165 +143,149 @@ export function resolveAdditionalResolvers(
     | YamlConfig.AdditionalSubscriptionObject
     | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
-  syncImportFn: SyncImportFn,
+  importFn: ImportFn,
   pubsub: MeshPubSub
-): IResolvers[] {
-  return (additionalResolvers || []).map(additionalResolver => {
-    if (typeof additionalResolver === 'string') {
-      const resolvers = loadFromModuleExportExpressionSync<any>(additionalResolver, {
-        cwd: baseDir,
-        defaultExportName: 'resolvers',
-        syncImportFn,
-      });
+): Promise<IResolvers[]> {
+  return Promise.all(
+    (additionalResolvers || []).map(async additionalResolver => {
+      if (typeof additionalResolver === 'string') {
+        const resolvers = await loadFromModuleExportExpression<any>(additionalResolver, {
+          cwd: baseDir,
+          defaultExportName: 'resolvers',
+          importFn,
+        });
 
-      if (!resolvers) {
-        console.warn(`Unable to load resolvers from file: ${additionalResolver}`);
+        if (!resolvers) {
+          console.warn(`Unable to load resolvers from file: ${additionalResolver}`);
 
-        return {};
-      }
+          return {};
+        }
 
-      return resolvers;
-    } else {
-      if ('pubsubTopic' in additionalResolver) {
-        return {
-          [additionalResolver.targetTypeName]: {
-            [additionalResolver.targetFieldName]: {
-              subscribe: withFilter(
-                (root, args, context, info) => {
-                  const resolverData = { root, args, context, info, env };
-                  const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-                  return pubsub.asyncIterator(topic);
-                },
-                (root, args, context, info) => {
-                  return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
-                }
-              ),
-              resolve: (payload: any) => {
-                if (additionalResolver.result) {
-                  return _.get(payload, additionalResolver.result);
-                }
-                return payload;
-              },
-            },
-          },
-        };
-      } else if ('keysArg' in additionalResolver) {
-        return {
-          [additionalResolver.targetTypeName]: {
-            [additionalResolver.targetFieldName]: {
-              selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
-              resolve: async (root: any, args: any, context: any, info: any) => {
-                const resolverData = { root, args, context, info, env };
-                const targetArgs: any = {};
-                for (const argPath in additionalResolver.additionalArgs || {}) {
-                  _.set(
-                    targetArgs,
-                    argPath,
-                    stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
-                  );
-                }
-                return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                  additionalResolver.sourceFieldName
-                ]({
-                  root,
-                  context,
-                  info,
-                  argsFromKeys: (keys: string[]) => ({
-                    [additionalResolver.keysArg]: keys,
-                    ...targetArgs,
-                  }),
-                  key: _.get(root, additionalResolver.keyField),
-                });
-              },
-            },
-          },
-        };
+        return resolvers;
       } else {
-        return {
-          [additionalResolver.targetTypeName]: {
-            [additionalResolver.targetFieldName]: {
-              selectionSet: additionalResolver.requiredSelectionSet,
-              resolve: async (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
-                const resolverData = { root, args, context, info, env };
-                const targetArgs: any = {};
-                for (const argPath in additionalResolver.sourceArgs) {
-                  _.set(
-                    targetArgs,
-                    argPath,
-                    stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
-                  );
-                }
-                const options: any = {
-                  root,
-                  args: targetArgs,
-                  context,
-                  info,
-                };
-                if (additionalResolver.sourceSelectionSet) {
-                  options.selectionSet = () => parseSelectionSet(additionalResolver.sourceSelectionSet);
-                  // If result path provided without a selectionSet
-                } else if (additionalResolver.result) {
-                  const resultPathReversed = _.toPath(additionalResolver.result);
-                  options.selectionSet = (subtree: SelectionSetNode) => {
-                    let finalSelectionSet = subtree;
-                    let isLastResult = true;
-                    for (const pathElem of resultPathReversed) {
-                      // Ensure the path elem is not array index
-                      if (Number.isNaN(parseInt(pathElem))) {
-                        if (isLastResult && additionalResolver.resultType) {
-                          finalSelectionSet = {
-                            kind: Kind.SELECTION_SET,
-                            selections: [
-                              {
-                                kind: Kind.INLINE_FRAGMENT,
-                                typeCondition: {
-                                  kind: Kind.NAMED_TYPE,
-                                  name: {
-                                    kind: Kind.NAME,
-                                    value: additionalResolver.resultType,
-                                  },
-                                },
-                                selectionSet: finalSelectionSet,
-                              },
-                            ],
-                          };
-                        }
-                        finalSelectionSet = {
-                          kind: Kind.SELECTION_SET,
-                          selections: [
-                            {
-                              // we create a wrapping AST Field
-                              kind: Kind.FIELD,
-                              name: {
-                                kind: Kind.NAME,
-                                value: pathElem,
-                              },
-                              // Inside the field selection
-                              selectionSet: finalSelectionSet,
-                            },
-                          ],
-                        };
-                        isLastResult = false;
-                      }
-                    }
-                    return finalSelectionSet;
-                  };
-                }
-                const result = await context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                  additionalResolver.sourceFieldName
-                ](options);
-                if (additionalResolver.result) {
-                  if (Array.isArray(additionalResolver.result)) {
-                    return result.map((elem: any) => _.get(elem, additionalResolver.result));
+        const baseOptions: any = {};
+        if (additionalResolver.result) {
+          baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
+        }
+        if ('pubsubTopic' in additionalResolver) {
+          return {
+            [additionalResolver.targetTypeName]: {
+              [additionalResolver.targetFieldName]: {
+                subscribe: withFilter(
+                  (root, args, context, info) => {
+                    const resolverData = { root, args, context, info, env };
+                    const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+                    return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
+                  },
+                  (root, args, context, info) => {
+                    return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
                   }
-                  return _.get(result, additionalResolver.result);
-                }
-                return result;
+                ),
+                resolve: (payload: any) => {
+                  if (baseOptions.valuesFromResults) {
+                    return baseOptions.valuesFromResults(payload);
+                  }
+                  return payload;
+                },
               },
             },
-          },
-        };
+          };
+        } else if ('keysArg' in additionalResolver) {
+          return {
+            [additionalResolver.targetTypeName]: {
+              [additionalResolver.targetFieldName]: {
+                selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
+                resolve: async (root: any, args: any, context: any, info: any) => {
+                  if (!baseOptions.selectionSet) {
+                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                  }
+                  const resolverData = { root, args, context, info, env };
+                  const targetArgs: any = {};
+                  for (const argPath in additionalResolver.additionalArgs || {}) {
+                    _.set(
+                      targetArgs,
+                      argPath,
+                      stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
+                    );
+                  }
+                  const options: any = {
+                    ...baseOptions,
+                    root,
+                    context,
+                    info,
+                    argsFromKeys: (keys: string[]) => {
+                      const args: any = {};
+                      _.set(args, additionalResolver.keysArg, keys);
+                      Object.assign(args, targetArgs);
+                      return args;
+                    },
+                    key: _.get(root, additionalResolver.keyField),
+                  };
+                  return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                    additionalResolver.sourceFieldName
+                  ](options);
+                },
+              },
+            },
+          };
+        } else if ('targetTypeName' in additionalResolver) {
+          return {
+            [additionalResolver.targetTypeName]: {
+              [additionalResolver.targetFieldName]: {
+                selectionSet: additionalResolver.requiredSelectionSet,
+                resolve: (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+                  // Assert source exists
+                  if (!context[additionalResolver.sourceName]) {
+                    throw new Error(`No source found named "${additionalResolver.sourceName}"`);
+                  }
+                  if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
+                    throw new Error(
+                      `No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
+                        `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(
+                          ','
+                        )})}}`
+                    );
+                  }
+                  if (
+                    !context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                      additionalResolver.sourceFieldName
+                    ]
+                  ) {
+                    throw new Error(
+                      `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`
+                    );
+                  }
+
+                  if (!baseOptions.selectionSet) {
+                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                  }
+                  const resolverData = { root, args, context, info, env };
+                  const targetArgs: any = {};
+                  for (const argPath in additionalResolver.sourceArgs) {
+                    _.set(
+                      targetArgs,
+                      argPath,
+                      stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
+                    );
+                  }
+                  const options: any = {
+                    ...baseOptions,
+                    root,
+                    args: targetArgs,
+                    context,
+                    info,
+                  };
+                  return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                    additionalResolver.sourceFieldName
+                  ](options);
+                },
+              },
+            },
+          };
+        } else {
+          return additionalResolver;
+        }
       }
-    }
-  });
+    })
+  );
 }

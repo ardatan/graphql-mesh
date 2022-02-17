@@ -13,9 +13,9 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
+import { jitExecutorFactory, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import { execute, ExecutionArgs, subscribe } from 'graphql';
+import { env } from 'process';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -45,7 +45,7 @@ export default class PostGraphileHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    let pgPool: pg.Pool;
+    let pgPool: any;
 
     if (typeof this.config?.pool === 'string') {
       pgPool = await loadFromModuleExportExpression<any>(this.config.pool, {
@@ -58,13 +58,16 @@ export default class PostGraphileHandler implements MeshHandler {
     if (!pgPool || !('connect' in pgPool)) {
       const pgLogger = this.logger.child('PostgreSQL');
       pgPool = new pg.Pool({
-        connectionString: this.config.connectionString,
-        log: messages => pgLogger.debug(messages),
+        connectionString: stringInterpolator.parse(this.config.connectionString, { env }),
+        log: messages => pgLogger.debug(() => messages),
         ...this.config?.pool,
       });
     }
 
-    this.pubsub.subscribe('destroy', () => pgPool.end());
+    await this.pubsub.subscribe('destroy', () => {
+      this.logger.debug(() => 'Destroying PostgreSQL pool');
+      pgPool.end();
+    });
 
     const cacheKey = this.name + '_introspection.json';
 
@@ -116,34 +119,34 @@ export default class PostGraphileHandler implements MeshHandler {
 
     if (!cachedIntrospection) {
       await writeCache();
-      cachedIntrospection = await readJSON(dummyCacheFilePath);
+      cachedIntrospection = await import(dummyCacheFilePath);
       await this.pgCache.set(cachedIntrospection);
     }
 
+    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+
     return {
       schema,
-      executor: ({ document, variables, context: meshContext, rootValue, operationName, operationType }) =>
+      executor: ({ document, variables, context: meshContext, rootValue, operationName, extensions }) =>
         withPostGraphileContext(
           {
             pgPool,
+            queryDocumentAst: document,
+            operationName,
+            variables,
           },
-          async pgContext => {
-            const executionArgs: ExecutionArgs = {
-              schema,
+          pgContext =>
+            jitExecutor({
               document,
-              variableValues: variables,
-              contextValue: {
+              variables,
+              context: {
                 ...meshContext,
                 ...pgContext,
               },
               rootValue,
               operationName,
-            };
-            if (operationType === 'subscription') {
-              return subscribe(executionArgs) as any;
-            }
-            return execute(executionArgs) as any;
-          }
+              extensions,
+            }) as any
         ) as any,
     };
   }

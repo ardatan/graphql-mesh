@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.12.0",
+  "version": "0.27.1",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
     "@types/is-url": "1.2.30",
-    "@types/object-hash": "2.1.1"
+    "@types/object-hash": "2.2.1",
+    "@types/js-yaml": "4.0.5"
   },
   "sideEffects": false,
   "main": "dist/index.js",
@@ -28,17 +29,17 @@
   },
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.12",
-    "@graphql-tools/delegate": "8.0.0-alpha-e6320b00.0",
-    "@graphql-tools/utils": "8.0.0-alpha-e6320b00.0",
-    "@graphql-typed-document-node/core": "3.1.0",
-    "@graphql-mesh/types": "0.42.0",
-    "cross-fetch": "3.1.4",
-    "chalk": "4.1.1",
-    "date-fns": "2.23.0",
+    "@graphql-tools/delegate": "8.4.3",
+    "@graphql-tools/utils": "8.6.1",
+    "@graphql-typed-document-node/core": "3.1.1",
+    "@graphql-mesh/types": "0.62.0",
+    "cross-undici-fetch": "0.1.23",
+    "chalk": "4.1.2",
+    "date-fns": "2.28.0",
     "fetchache": "0.1.1",
     "flatstr": "1.0.12",
-    "graphql-jit": "0.5.2",
-    "graphql-subscriptions": "1.2.1",
+    "graphql-jit": "0.7.2",
+    "graphql-subscriptions": "2.0.0",
     "lodash": "4.17.21",
     "is-url": "1.2.4",
     "js-yaml": "4.1.0",

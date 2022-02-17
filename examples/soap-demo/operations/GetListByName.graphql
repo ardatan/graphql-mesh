@@ -1,0 +1,10 @@
+query GetListByName {
+  GetListByName(name: "Newton") {
+    PersonIdentification {
+      Name
+      DOB
+      ID
+      SSN
+    }
+  }
+}

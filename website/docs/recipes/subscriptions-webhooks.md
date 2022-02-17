@@ -4,10 +4,7 @@ title: Handle Webhooks with GraphQL Subscriptions
 sidebar_label: Subscriptions & Webhooks
 ---
 
-<p align="center">
-  <img src="https://the-guild.dev/blog-assets/graphql-mesh-subscriptions/cover.png" width="300"  />
-  <br/>
-</p>
+<img src="https://the-guild.dev/blog-assets/graphql-mesh-subscriptions/cover.png" width="300" style={{ margin: '0 auto' }} />
 
 GraphQL Mesh can consume Webhooks as GraphQL Subscriptions in the unified schema by using built-in PubSub implementation
 

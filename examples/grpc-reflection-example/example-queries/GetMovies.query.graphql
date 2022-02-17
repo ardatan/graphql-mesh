@@ -1,5 +1,5 @@
-mutation GetMovies {
-  ioXtechExampleGetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
+query GetMovies {
+  MoviesService_GetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
     result {
       name
       year

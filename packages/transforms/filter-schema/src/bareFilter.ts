@@ -37,7 +37,7 @@ export default class BareFilter implements MeshTransform {
       }
 
       const mapName = argsGlob ? 'argsMap' : 'fieldsMap';
-      const mapKey = argsGlob ? `${typeName}_${fieldNameOrGlob}` : typeName;
+      const mapKey = argsGlob ? `${typeName}.${fieldNameOrGlob}` : typeName;
       const currentRules = this[mapName].get(mapKey) || [];
 
       this[mapName].set(mapKey, [...currentRules, polishedGlob]);
@@ -60,7 +60,9 @@ export default class BareFilter implements MeshTransform {
       ...((this.fieldsMap.size || this.argsMap.size) && {
         [MapperKind.COMPOSITE_FIELD]: (fieldConfig, fieldName, typeName) => {
           const fieldRules = this.fieldsMap.get(typeName);
-          const argRules = this.argsMap.get(`${typeName}_${fieldName}`);
+          const wildcardArgRules = this.argsMap.get(`${typeName}.*`) || [];
+          const fieldArgRules = this.argsMap.get(`${typeName}.${fieldName}`) || [];
+          const argRules = wildcardArgRules.concat(fieldArgRules);
           const hasFieldRules = Boolean(fieldRules && fieldRules.length);
           const hasArgRules = Boolean(argRules && argRules.length);
 
@@ -74,6 +76,16 @@ export default class BareFilter implements MeshTransform {
           );
 
           return { ...fieldConfig, args: fieldArgs };
+        },
+      }),
+      ...(this.fieldsMap.size && {
+        [MapperKind.INPUT_OBJECT_FIELD]: (_, fieldName, typeName) => {
+          const fieldRules = this.fieldsMap.get(typeName);
+          const hasFieldRules = Boolean(fieldRules && fieldRules.length);
+
+          if (hasFieldRules && this.matchInArray(fieldRules, fieldName) === null) return null;
+
+          return undefined;
         },
       }),
     });

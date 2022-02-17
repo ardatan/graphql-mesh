@@ -1,20 +1,4 @@
-sources:
-  - name: Covid
-    handler:
-      graphql:
-        endpoint: https://covid-19-two-rust.vercel.app/api/graphql
-  - name: WorldPop
-    handler:
-      jsonSchema:
-        baseUrl: https://datasource.kapsarc.org/api/records/1.0/search
-        operations:
-          - type: Query
-            field: population
-            path: /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
-            method: GET
-            responseSchema: ./src/json-schemas/worldPop.json
-            argTypeMap:
-              country: String
+sources: !includes sources
 
 additionalTypeDefs: |
   extend type Case {
@@ -26,7 +10,6 @@ additionalTypeDefs: |
   type Stat {
     confirmedRatio: Float
     deathRatio: Float
-    recoveredRatio: Float
     case: Case
     population: ApiPopulation
   }
@@ -34,8 +17,8 @@ additionalResolvers:
   - targetTypeName: Case
     targetFieldName: population
     requiredSelectionSet: |
-      { 
-        countryRegion 
+      {
+        countryRegion
       }
     sourceName: WorldPop
     sourceTypeName: Query
