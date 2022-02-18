@@ -1,5 +1,11 @@
 # @omnigraph/openapi
 
+## 0.3.1
+
+### Patch Changes
+
+- a00a88a97: fix(openapi): fix an issue when an arg is required
+
 ## 0.3.0
 
 ### Minor Changes
