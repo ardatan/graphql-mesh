@@ -46,6 +46,7 @@
     "@graphql-mesh/runtime": "0.30.1",
     "@graphql-mesh/utils": "0.27.1",
     "@graphql-mesh/store": "0.3.14",
+    "@graphql-mesh/types": "0.62.0",
     "@graphql-tools/code-file-loader": "7.2.3",
     "@graphql-tools/utils": "8.6.1",
     "@graphql-tools/load": "7.5.1",
