@@ -21,6 +21,7 @@ import {
   SelectionSetParamOrFactory,
   SelectionSetParam,
   Logger,
+  MeshTransform,
 } from '@graphql-mesh/types';
 
 import { applyResolversHooksToSchema } from './resolvers-hooks';
@@ -79,18 +80,23 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
         let apiSchema = source.schema;
 
         sourceLogger.debug(() => `Analyzing transforms`);
+
+        let transforms: MeshTransform[];
+
         const { wrapTransforms, noWrapTransforms } = groupTransforms(apiSource.transforms);
 
-        if (noWrapTransforms?.length) {
+        if (!wrapTransforms?.length && noWrapTransforms?.length) {
           sourceLogger.debug(() => `${noWrapTransforms.length} bare transforms found and applying`);
           apiSchema = applySchemaTransforms(apiSchema, source as SubschemaConfig, null, noWrapTransforms);
+        } else {
+          transforms = apiSource.transforms;
         }
 
         rawSources.push({
           name: apiName,
           schema: apiSchema,
           executor: source.executor,
-          transforms: wrapTransforms,
+          transforms,
           contextVariables: source.contextVariables || [],
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
