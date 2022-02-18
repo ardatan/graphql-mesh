@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-mock
 
+## 0.14.1
+
+### Patch Changes
+
+- 16321ddc9: fix(mock): fix the issue when you provide no configuration
+
 ## 0.14.0
 
 ### Minor Changes

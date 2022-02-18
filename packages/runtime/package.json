@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.30.2",
+  "version": "0.30.3",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"

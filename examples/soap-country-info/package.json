@@ -1,13 +1,13 @@
 {
   "name": "country-info-example",
-  "version": "0.5.166",
+  "version": "0.5.167",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.54.2",
+    "@graphql-mesh/cli": "0.54.3",
     "@graphql-mesh/soap": "0.10.16",
     "@graphql-mesh/transform-snapshot": "0.13.15",
     "graphql": "16.0.1"

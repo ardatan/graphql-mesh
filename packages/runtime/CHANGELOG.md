@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.30.3
+
+### Patch Changes
+
+- 3272bb516: fix(runtime): consider noWrap transforms as wrap if the source is wrapped already
+
 ## 0.30.2
 
 ### Patch Changes
