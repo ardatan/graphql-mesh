@@ -1,5 +1,11 @@
 # neo4j-example
 
+## 0.6.153
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.3
+
 ## 0.6.152
 
 ### Patch Changes
