@@ -29,7 +29,7 @@
     "@graphql-mesh/store": "0.3.14",
     "@graphql-mesh/utils": "0.27.1",
     "@graphql-mesh/types": "0.62.0",
-    "neo4j-driver": "4.4.1",
+    "neo4j-driver": "4.4.2",
     "neo4j-graphql-js": "2.19.4"
   },
   "publishConfig": {
