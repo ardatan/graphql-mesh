@@ -1,5 +1,11 @@
 # @omnigraph/openapi
 
+## 0.3.2
+
+### Patch Changes
+
+- 0454c0f8a: fix(openapi): Interpolated required argument should be ID! not String!
+
 ## 0.3.1
 
 ### Patch Changes
