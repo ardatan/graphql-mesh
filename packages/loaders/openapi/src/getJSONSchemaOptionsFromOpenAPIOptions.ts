@@ -149,6 +149,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             break;
         }
         if (paramObj.required) {
+          operationConfig.argTypeMap = operationConfig.argTypeMap || {};
           operationConfig.argTypeMap[paramObj.name] = operationConfig.argTypeMap[paramObj.name] || 'String';
           operationConfig.argTypeMap[paramObj.name] += '!';
         }
