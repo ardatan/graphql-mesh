@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-mock
 
+## 0.14.0
+
+### Minor Changes
+
+- 15e1f68c5: feat(json-schema): respect given samples in mocks transform
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+
 ## 0.13.6
 
 ### Patch Changes

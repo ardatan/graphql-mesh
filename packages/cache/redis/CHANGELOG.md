@@ -1,5 +1,15 @@
 # @graphql-mesh/cache-redis
 
+## 0.7.5
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+  - @graphql-mesh/cache-inmemory-lru@0.5.45
+
 ## 0.7.4
 
 ### Patch Changes

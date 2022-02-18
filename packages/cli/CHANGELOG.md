@@ -1,5 +1,19 @@
 # @graphql-mesh/cli
 
+## 0.54.2
+
+### Patch Changes
+
+- 2bf6930b7: fix(cli/artifacts): ignore tsConfig if compilerOptions not present
+- 447bc3697: fix(types): add missing store dependency
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+  - @graphql-mesh/config@0.29.3
+  - @graphql-mesh/runtime@0.30.2
+  - @graphql-mesh/store@0.3.15
+
 ## 0.54.1
 
 ### Patch Changes
