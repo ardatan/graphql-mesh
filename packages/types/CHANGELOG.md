@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.62.1
+
+### Patch Changes
+
+- 447bc3697: fix(types): add missing store dependency
+  - @graphql-mesh/store@0.3.15
+
 ## 0.62.0
 
 ### Minor Changes

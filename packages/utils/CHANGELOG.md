@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.27.2
+
+### Patch Changes
+
+- c71b29004: fix(utils): revert unnecessary change
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/types@0.62.1
+
 ## 0.27.1
 
 ### Patch Changes

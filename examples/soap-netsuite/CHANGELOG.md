@@ -1,5 +1,14 @@
 # soap-netsuite
 
+## 0.0.65
+
+### Patch Changes
+
+- Updated dependencies [2bf6930b7]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/cli@0.54.2
+  - @graphql-mesh/soap@0.10.16
+
 ## 0.0.64
 
 ### Patch Changes
