@@ -86,6 +86,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (!requestSchema.properties[paramObj.name].description) {
                 requestSchema.properties[paramObj.name].description = paramObj.description;
               }
+              if (requestSchema.properties.__typename) {
+                delete requestSchema.properties.__typename;
+              }
+              if (paramObj.required) {
+                requestSchema.required = requestSchema.required || [];
+                requestSchema.required.push(paramObj.name);
+              }
             } else {
               if (!operationConfig.path.includes('?')) {
                 operationConfig.path += '?';
@@ -128,19 +135,40 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             break;
           }
           case 'body':
-            operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
-              .split('/')
-              .join('~1')}/${method}/parameters/${paramObjIndex}/schema`;
+            if (paramObj.schema) {
+              operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
+                .split('/')
+                .join('~1')}/${method}/parameters/${paramObjIndex}/schema`;
+            }
+            if (paramObj.example) {
+              operationConfig.requestSample = paramObj.example;
+            }
+            if (paramObj.examples) {
+              operationConfig.requestSample = Object.values(paramObj.examples)[0];
+            }
             break;
+        }
+        if (paramObj.required) {
+          operationConfig.argTypeMap[paramObj.name] = operationConfig.argTypeMap[paramObj.name] || 'String';
+          operationConfig.argTypeMap[paramObj.name] += '!';
         }
       }
 
       if ('requestBody' in methodObj) {
-        const requestBodyObj = methodObj.requestBody as OpenAPIV3.RequestBodyObject;
-        const contentKey = Object.keys(requestBodyObj.content)[0];
-        operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
-          .split('/')
-          .join('~1')}/${method}/requestBody/content/${contentKey?.toString().split('/').join('~1')}/schema`;
+        const requestBodyObj = methodObj.requestBody;
+        if ('content' in requestBodyObj) {
+          const contentKey = Object.keys(requestBodyObj.content)[0];
+          const contentSchema = requestBodyObj.content[contentKey]?.schema;
+          if (contentSchema) {
+            operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/requestBody/content/${contentKey?.toString().split('/').join('~1')}/schema`;
+          }
+          const examplesObj = requestBodyObj.content[contentKey]?.examples;
+          if (examplesObj) {
+            operationConfig.requestSample = Object.values(examplesObj)[0];
+          }
+        }
       }
 
       const responseByStatusCode = operationConfig.responseByStatusCode;
@@ -154,23 +182,36 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           const contentKey = Object.keys(responseObj.content)[0];
           schemaObj = responseObj.content[contentKey].schema as any;
           if (schemaObj) {
-            responseByStatusCode[responseKey] = {
-              responseSchema: `${oasFilePath}#/paths/${relativePath
-                .split('/')
-                .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
-                ?.toString()
-                .split('/')
-                .join('~1')}/schema`,
-            };
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
+              ?.toString()
+              .split('/')
+              .join('~1')}/schema`;
+          }
+          const examplesObj = responseObj.content[contentKey].examples;
+          if (examplesObj) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSample = Object.values(examplesObj)[0];
+          }
+          const example = responseObj.content[contentKey].example;
+          if (example) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSample = example;
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;
           if (schemaObj) {
-            responseByStatusCode[responseKey] = {
-              responseSchema: `${oasFilePath}#/paths/${relativePath
-                .split('/')
-                .join('~1')}/${method}/responses/${responseKey}/schema`,
-            };
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/responses/${responseKey}/schema`;
+          }
+          if (responseObj.examples) {
+            const examples = Object.values(responseObj.examples);
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSample = examples[0];
           }
         }
 

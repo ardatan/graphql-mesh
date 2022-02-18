@@ -38,6 +38,12 @@ sources:
             argTypeMap:
               id: ID!
             method: DELETE
+          - type: Query
+            field: hello
+            path: /hello
+            method: GET
+            responseSample: ./json-samples/foo.json
+            responseTypeName: Bar
 
 additionalTypeDefs: |
   extend type User {
