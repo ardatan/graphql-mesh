@@ -21,7 +21,7 @@ export default class MockingTransform implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
-    const configIf = 'if' in this.config ? this.config.if : true;
+    const configIf = this.config != null && 'if' in this.config ? this.config.if : true;
     if (configIf) {
       const mocks: IMocks = {
         ...graphqlScalarsMocks,
@@ -35,7 +35,7 @@ export default class MockingTransform implements MeshTransform {
           mocks[typeName] = () => examples[Math.floor(Math.random() * examples.length)];
         }
       }
-      if (this.config.mocks) {
+      if (this.config?.mocks?.length) {
         for (const fieldConfig of this.config.mocks) {
           const fieldConfigIf = 'if' in fieldConfig ? fieldConfig.if : true;
           if (fieldConfigIf) {
@@ -121,7 +121,7 @@ export default class MockingTransform implements MeshTransform {
         }
       }
       const store = createMockStore({ schema, mocks });
-      if (this.config.initializeStore) {
+      if (this.config?.initializeStore) {
         const initializeStoreFn$ = loadFromModuleExportExpression(this.config.initializeStore, {
           cwd: this.baseDir,
           defaultExportName: 'default',
