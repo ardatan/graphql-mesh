@@ -4,4 +4,4 @@
 '@graphql-mesh/transform-mock': minor
 ---
 
-feat(json-schema): respect samples given as samples
+feat(json-schema): respect given samples in mocks transform
