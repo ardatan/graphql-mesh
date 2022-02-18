@@ -48,6 +48,9 @@ additionalTypeDefs: |
   }
 
 transforms:
+  - namingConvention:
+      typeNames: pascalCase
+      fieldNames: camelCase
   - mock:
       mocks:
         - apply: User.firstName
