@@ -141,6 +141,10 @@ export function getComposerFromJSONSchema(
           }),
           values,
           description: subSchema.description,
+          extensions: {
+            examples: subSchema.examples,
+            default: subSchema.default,
+          },
         });
         return {
           input: typeComposer,
@@ -234,6 +238,8 @@ export function getComposerFromJSONSchema(
             fields: fieldMap,
             extensions: {
               validateWithJSONSchema,
+              examples: subSchema.examples,
+              default: subSchema.default,
             },
           });
         } else {
@@ -254,6 +260,10 @@ export function getComposerFromJSONSchema(
             }),
             description: subSchema.description,
             fields: inputFieldMap,
+            extensions: {
+              examples: subSchema.examples,
+              default: subSchema.default,
+            },
           });
         } else {
           inputTypeComposer = ableToUseGraphQLObjectType
@@ -321,6 +331,8 @@ export function getComposerFromJSONSchema(
             fields: fieldMap,
             extensions: {
               validateWithJSONSchema,
+              examples: subSchema.examples,
+              default: subSchema.default,
             },
           });
         } else {
@@ -341,6 +353,10 @@ export function getComposerFromJSONSchema(
             }),
             description: subSchema.description,
             fields: inputFieldMap,
+            extensions: {
+              examples: subSchema.examples,
+              default: subSchema.default,
+            },
           });
         } else {
           inputTypeComposer = ableToUseGraphQLObjectType
@@ -606,6 +622,7 @@ export function getComposerFromJSONSchema(
                   propertyName,
                 },
                 description: typeComposers.description || typeComposers.input?.description,
+                defaultValue: typeComposers?.extensions?.default || typeComposers.input?.default,
               };
             }
           }
@@ -759,6 +776,8 @@ export function getComposerFromJSONSchema(
                   fields: fieldMap,
                   extensions: {
                     validateWithJSONSchema,
+                    examples: subSchema.examples,
+                    default: subSchema.default,
                   },
                 });
 
@@ -778,6 +797,10 @@ export function getComposerFromJSONSchema(
                   }),
                   description: subSchema.description,
                   fields: inputFieldMap,
+                  extensions: {
+                    examples: subSchema.examples,
+                    default: subSchema.default,
+                  },
                 });
 
           return {

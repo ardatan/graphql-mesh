@@ -35,12 +35,17 @@ async function handleOperationResponseConfig(
   }
 ): Promise<JSONSchemaObject> {
   if (operationResponseConfig.responseSchema) {
-    return typeof operationResponseConfig.responseSchema === 'string'
-      ? {
-          $ref: operationResponseConfig.responseSchema,
-          title: operationResponseConfig.responseTypeName,
-        }
-      : operationResponseConfig.responseSchema;
+    const schema =
+      typeof operationResponseConfig.responseSchema === 'string'
+        ? {
+            $ref: operationResponseConfig.responseSchema,
+            title: operationResponseConfig.responseTypeName,
+          }
+        : operationResponseConfig.responseSchema;
+    if (operationResponseConfig.responseSample) {
+      schema.examples = schema.examples || [operationResponseConfig.responseSample];
+    }
+    return schema;
   } else if (operationResponseConfig.responseSample) {
     const sample =
       typeof operationResponseConfig.responseSample === 'object'
@@ -64,6 +69,7 @@ async function handleOperationResponseConfig(
       },
     });
     generatedSchema.title = operationResponseConfig.responseTypeName;
+    generatedSchema.examples = [sample];
     return generatedSchema as any;
   } else {
     const generatedSchema: JSONSchemaObject = operationResponseConfig.responseTypeName
@@ -165,6 +171,10 @@ export async function getReferencedJSONSchemaFromOperations({
               title: operationConfig.requestTypeName,
             }
           : operationConfig.requestSchema;
+      if (operationConfig.requestSample) {
+        rootTypeInputTypeDefinition.properties[fieldName].examples = rootTypeInputTypeDefinition.properties[fieldName]
+          .examples || [operationConfig.requestSample];
+      }
     } else if ('requestSample' in operationConfig) {
       const sample =
         typeof operationConfig.requestSample === 'object'
@@ -188,6 +198,7 @@ export async function getReferencedJSONSchemaFromOperations({
         },
       });
       generatedSchema.title = operationConfig.requestTypeName;
+      generatedSchema.examples = [sample];
       rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
     }
   }

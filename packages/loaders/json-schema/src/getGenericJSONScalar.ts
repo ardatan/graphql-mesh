@@ -37,6 +37,8 @@ export function getGenericJSONScalar({
     },
     extensions: {
       codegenScalarType: 'any',
+      examples: subSchema.examples,
+      default: subSchema.default,
     },
   });
 }
