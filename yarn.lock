@@ -6135,10 +6135,10 @@
     "@types/node" "*"
     "@types/webidl-conversions" "*"
 
-"@types/ws@8.2.2", "@types/ws@^8.0.0":
-  version "8.2.2"
-  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.2.2.tgz#7c5be4decb19500ae6b3d563043cd407bf366c21"
-  integrity sha512-NOn5eIcgWLOo6qW8AcuLZ7G8PycXu0xTxxkS6Q18VWFxgPUSOwV0pBj2a/4viNZVu25i7RIB7GttdkAIUUXOOg==
+"@types/ws@8.2.3", "@types/ws@^8.0.0":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.2.3.tgz#0bca6b03ba2f41e0fab782d4a573fe284aa907ae"
+  integrity sha512-ahRJZquUYCdOZf/rCsWg88S0/+cb9wazUBHv6HZEe3XdYaBe2zr/slM8J28X07Hn88Pnm4ezo7N8/ofnOgrPVQ==
   dependencies:
     "@types/node" "*"
 
