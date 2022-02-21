@@ -64,7 +64,7 @@ export interface Config {
   /**
    * You can provide Envelop plugins
    */
-  additionalEnvelopPlugins?: any;
+  additionalEnvelopPlugins?: string;
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
