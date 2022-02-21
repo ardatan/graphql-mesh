@@ -46,6 +46,10 @@ type Query {
   Allow connections to an SSL endpoint without certificates
   """
   skipSSLValidation: Boolean
+  """
+  You can provide Envelop plugins
+  """
+  additionalEnvelopPlugins: String
 }
 
 scalar JSON

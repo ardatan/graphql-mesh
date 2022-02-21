@@ -27,6 +27,7 @@ import { env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { envelop } from '@envelop/core';
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -48,6 +49,7 @@ export type ProcessedConfig = {
   logger: Logger;
   store: MeshStore;
   code: string;
+  additionalEnvelopPlugins: Parameters<typeof envelop>[0]['plugins'];
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn) {
@@ -308,6 +310,17 @@ export async function processConfig(
 
   codes.push(`const liveQueryInvalidations = rawConfig.liveQueryInvalidations;`);
 
+  if (config.additionalEnvelopPlugins) {
+    importCodes.push(`import additionalEnvelopPlugins from '${join('..', config.additionalEnvelopPlugins)}';`);
+  } else {
+    codes.push(`const additionalEnvelopPlugins = [];`);
+  }
+
+  let additionalEnvelopPlugins = [];
+  if (config.additionalEnvelopPlugins) {
+    additionalEnvelopPlugins = await importFn(config.additionalEnvelopPlugins);
+  }
+
   codes.push(`
   return {
     sources,
@@ -319,6 +332,7 @@ export async function processConfig(
     merger,
     logger,
     liveQueryInvalidations,
+    additionalEnvelopPlugins,
   };
 }`);
   return {
@@ -333,6 +347,7 @@ export async function processConfig(
     documents,
     logger,
     store: rootStore,
+    additionalEnvelopPlugins,
     code: [...new Set([...importCodes, ...codes])].join('\n'),
   };
 }

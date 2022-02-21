@@ -2684,6 +2684,27 @@
     ts-node "^9"
     tslib "^2"
 
+"@envelop/core@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-2.0.0.tgz#6ce0040df2f705f2e8c657203fe57c8cee49a3c4"
+  integrity sha512-Crp//PEcF3jvj9tOtwO0jMWBBlC+1IjdfzZUvjVNF7nx/IMiojb6P99yj0KXrcoxyyc5Csaq5YwSap1WKdXNcQ==
+  dependencies:
+    "@envelop/types" "2.0.0"
+
+"@envelop/live-query@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-3.0.0.tgz#0527027590b183545343d78b8025e5880682f403"
+  integrity sha512-Zi9in0KGt2f/dSrsmjS/FFGBkouI4ON+942ROANDLRy10F7JVvm1kkabVRgjTVrOsdkFg9WhiOVZNYXgejrJCw==
+  dependencies:
+    "@graphql-tools/utils" "^8.6.1"
+    "@n1ru4l/graphql-live-query" "^0.9.0"
+    "@n1ru4l/in-memory-live-query-store" "^0.9.0"
+
+"@envelop/types@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@envelop/types/-/types-2.0.0.tgz#5e357cdc7c9d19b3283432540f757a0f2e22d204"
+  integrity sha512-X6KUeCikfr6/yx02WiClIQwx3mZJbR8m20/UEfpLC8QjcVG3Vox+QK1EOnXiZkvpQVe3FA05Rp0o+PCla30idA==
+
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"
@@ -3496,7 +3517,7 @@
   dependencies:
     tslib "~2.3.0"
 
-"@graphql-tools/utils@8.6.1", "@graphql-tools/utils@^8.1.1", "@graphql-tools/utils@^8.2.0", "@graphql-tools/utils@^8.3.0", "@graphql-tools/utils@^8.5.1", "@graphql-tools/utils@^8.5.2", "@graphql-tools/utils@^8.5.3", "@graphql-tools/utils@^8.5.4", "@graphql-tools/utils@^8.6.0":
+"@graphql-tools/utils@8.6.1", "@graphql-tools/utils@^8.1.1", "@graphql-tools/utils@^8.2.0", "@graphql-tools/utils@^8.3.0", "@graphql-tools/utils@^8.5.1", "@graphql-tools/utils@^8.5.2", "@graphql-tools/utils@^8.5.3", "@graphql-tools/utils@^8.5.4", "@graphql-tools/utils@^8.6.0", "@graphql-tools/utils@^8.6.1":
   version "8.6.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-8.6.1.tgz#52c7eb108f2ca2fd01bdba8eef85077ead1bf882"
   integrity sha512-uxcfHCocp4ENoIiovPxUWZEHOnbXqj3ekWc0rm7fUhW93a1xheARNHcNKhwMTR+UKXVJbTFQdGI1Rl5XdyvDBg==
@@ -4180,7 +4201,7 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.9.0.tgz#defaebdd31f625bee49e6745934f36312532b2bc"
   integrity sha512-BTpWy1e+FxN82RnLz4x1+JcEewVdfmUhV1C6/XYD5AjS7PQp9QFF7K8bCD6gzPTr2l+prvqOyVueQhFJxB1vfg==
 
-"@n1ru4l/in-memory-live-query-store@0.9.0":
+"@n1ru4l/in-memory-live-query-store@0.9.0", "@n1ru4l/in-memory-live-query-store@^0.9.0":
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/@n1ru4l/in-memory-live-query-store/-/in-memory-live-query-store-0.9.0.tgz#8e0d7e56292389bacaacb228c2f4c86c38b8c3c0"
   integrity sha512-nLq8oUoVfj3givm7pAxL5f2a8IvmsCEeKnG9Fw29KYVTKL4jNUM90LQYBTkwLnjhxgzu+9WwLQmjOx1bEOHRUA==

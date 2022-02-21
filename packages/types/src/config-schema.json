@@ -189,6 +189,31 @@
         }
       }
     },
+    "EnvelopPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "EnvelopPluginConfig",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        }
+      }
+    },
     "CorsConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -3123,6 +3148,22 @@
     "skipSSLValidation": {
       "type": "boolean",
       "description": "Allow connections to an SSL endpoint without certificates"
+    },
+    "additionalEnvelopPlugins": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
+      "description": "You can provide Envelop plugins"
     }
   },
   "additionalProperties": false

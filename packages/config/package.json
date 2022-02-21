@@ -35,7 +35,8 @@
     "@graphql-tools/load": "7.5.1",
     "@graphql-tools/code-file-loader": "7.2.3",
     "@graphql-tools/graphql-file-loader": "7.3.3",
-    "param-case": "3.0.4"
+    "param-case": "3.0.4",
+    "@envelop/core": "2.0.0"
   },
   "devDependencies": {
     "@types/ajv": "1.0.0"

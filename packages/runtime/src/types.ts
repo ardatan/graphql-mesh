@@ -15,6 +15,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { MeshInstance } from './get-mesh';
+import { envelop } from '@envelop/core';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -26,6 +27,7 @@ export type GetMeshOptions = {
   merger: MeshMerger;
   logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
+  additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
 };
 
 export type MeshResolvedSource<TContext = any> = {

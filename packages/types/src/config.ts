@@ -61,6 +61,10 @@ export interface Config {
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;
+  /**
+   * You can provide Envelop plugins
+   */
+  additionalEnvelopPlugins?: any;
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
