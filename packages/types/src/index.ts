@@ -154,16 +154,24 @@ export type InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn> = {
   valuesFromResults?: (results: TDefaultReturn) => TReturn | TReturn[];
 };
 
+export type InContextSdkMethodCustomSelectionSetParams = {
+  // Use this parameter if the selection set of the return type doesn't match
+  selectionSet: SelectionSetParamOrFactory;
+  info?: GraphQLResolveInfo;
+};
+
+export type InContextSdkMethodInfoParams = {
+  info: GraphQLResolveInfo;
+};
+
 export type InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn> = {
   root?: any;
   context: TContext;
-  info: GraphQLResolveInfo;
-  // Use this parameter if the selection set of the return type doesn't match
-  selectionSet?: SelectionSetParamOrFactory;
-} & (
-  | InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn>
-  | InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn>
-);
+} & (InContextSdkMethodCustomSelectionSetParams | InContextSdkMethodInfoParams) &
+  (
+    | InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn>
+    | InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn>
+  );
 
 export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <TKey, TReturn = TDefaultReturn>(
   params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>
