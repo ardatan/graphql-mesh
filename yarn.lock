@@ -3481,10 +3481,10 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/render-graphiql@0.1.0-canary-7bc20b9.0":
-  version "0.1.0-canary-7bc20b9.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/render-graphiql/-/render-graphiql-0.1.0-canary-7bc20b9.0.tgz#83a76a41c3c0df4f6080c3b511964d12cc8421f1"
-  integrity sha512-zsrN/zZ4+BiXA4Oz0E6bwdUh8Ig/9ym2vLhO8ivEkp26fwQJ1p2MBjJ88gmlq6rxoxBEp8GMgiQe+8Xz3ULqwg==
+"@graphql-yoga/render-graphiql@0.1.0-beta.1":
+  version "0.1.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/render-graphiql/-/render-graphiql-0.1.0-beta.1.tgz#e04ef6fba2791d87d1d7c6b38f1c6f6a4235889d"
+  integrity sha512-SvZgqjK9JsFNV/c2AvaFAnlyiCgVjvxFLnI7IhLW3gMfd3YsdjUhiHsWeE7fNyDKrIqUls/GYAe6hsuAvwsUig==
 
 "@grpc/grpc-js@1.1.7":
   version "1.1.7"
