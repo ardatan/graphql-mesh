@@ -331,7 +331,6 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
 
   const getEnveloped = envelop({
     plugins,
-    enableInternalTracing: true,
   });
 
   const EMPTY_ROOT_VALUE: any = {};

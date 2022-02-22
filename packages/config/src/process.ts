@@ -11,7 +11,7 @@ import {
   MeshTransformLibrary,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { asArray, IResolvers, Source } from '@graphql-tools/utils';
+import { IResolvers, Source } from '@graphql-tools/utils';
 import { KeyValueCache } from 'fetchache';
 import { DocumentNode, print } from 'graphql';
 import {
