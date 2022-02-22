@@ -51,8 +51,6 @@ All commands can take two global optional options.
 Loads specific require.extensions before running the codegen and reading the configuration.
 
 
-#### Example
-
 ```bash
 yarn graphql-mesh --r lodash
 yarn graphql-mesh --require lodash fluke2
@@ -66,7 +64,6 @@ yarn graphql-mesh --require lodash fluke2
 
 Used to modify the base directory for looking for a `.meshrc` config file.
 
-#### Example
 ```
 yarn graphql-mesh --dir ./mystuff/meshproject
 ```
@@ -87,16 +84,14 @@ Can have an optional `--port` argument.
 > GraphQL Mesh does not currently support hot reloading.
 
 
-#### Options
+**Options**
 
-##### `--port [number]`
+**`--port [number]`**
 
 The system port on which graphql-mesh will be made available.
 
 This should be one of the normal system ports [1-65386] not currently used by any other service.
 
-
-#### Example
 
 ```bash
 yarn graphql-mesh dev --port 4002
@@ -122,6 +117,10 @@ More information about this on the [Build Artifacts](/docs/recipes/build-mesh-ar
 ### `mesh validate`
 
 Validate the built artifacts (`mesh build`) required to use `mesh start` for a gateway (production) server.
+The validation will check the following:
+- presence of the `.mesh/` folder
+- validation of the mesh configuration (see [`packages/types/src/config-schema.json`](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config-schema.json))
+- configured sources are valid
 
 More information about this on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
 
@@ -140,16 +139,14 @@ More information about `mesh start` on the [Build Artifacts](/docs/recipes/build
 
 Can have an optional `--port` argument.
 
-#### Options
+**Options**
 
-##### `--port [number]`
+**`--port [number]`**
 
 The system port on which graphql-mesh will be made available.
 
 This should be one of the normal system ports [1-65386] not currently used by any other service.
 
-
-#### Example
 
 ```bash
 yarn graphql-mesh start --port 4002
@@ -166,7 +163,7 @@ Given a source name as the only argument, Mesh will serve a GraphQL API only exp
 
 This command is handy to debug a source.
 
-#### Example
+**Example**
 
 Given the following configuration:
 
