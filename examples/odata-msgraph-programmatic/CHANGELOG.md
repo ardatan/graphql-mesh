@@ -1,5 +1,15 @@
 # odata-msgraph-programmatic
 
+## 0.0.72
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/runtime@0.30.4
+  - @graphql-mesh/cli@0.54.4
+  - @graphql-mesh/config@0.29.5
+  - @graphql-mesh/odata@0.16.8
+
 ## 0.0.71
 
 ### Patch Changes
