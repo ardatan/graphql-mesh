@@ -1,5 +1,18 @@
 # @graphql-mesh/runtime
 
+## 0.31.0
+
+### Minor Changes
+
+- b6eca9baa: feat(core): Envelop integration
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/utils@0.27.4
+
 ## 0.30.4
 
 ### Patch Changes
