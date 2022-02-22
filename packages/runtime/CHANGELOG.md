@@ -1,5 +1,14 @@
 # @graphql-mesh/runtime
 
+## 0.30.4
+
+### Patch Changes
+
+- 0d43ecf19: fix(runtime): add mock info if not present
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/utils@0.27.3
+
 ## 0.30.3
 
 ### Patch Changes
