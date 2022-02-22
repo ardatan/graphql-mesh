@@ -394,7 +394,7 @@ export async function graphqlMesh() {
           logger: meshConfig.logger.child('Server'),
           rawConfig: meshConfig.config,
           documents: [],
-          graphiqlTitle: `${args.source} GraphiQL`,
+          playgroundTitle: `${args.source} GraphiQL`,
         };
         if (meshConfig.config.serve?.customServerHandler) {
           const customServerHandler = await loadFromModuleExportExpression<any>(

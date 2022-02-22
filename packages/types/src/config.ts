@@ -116,6 +116,10 @@ export interface ServeConfig {
    * With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
    */
   customServerHandler?: string;
+  /**
+   * Title of GraphiQL Playground
+   */
+  playgroundTitle?: string;
 }
 /**
  * Configuration for CORS

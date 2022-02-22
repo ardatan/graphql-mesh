@@ -70,6 +70,10 @@ type ServeConfig @md {
   With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
   """
   customServerHandler: String
+  """
+  Title of GraphiQL Playground
+  """
+  playgroundTitle: String
 }
 
 union Port = Int | String

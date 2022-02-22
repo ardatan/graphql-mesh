@@ -41,7 +41,7 @@ export async function serveMesh({
   logger,
   rawConfig,
   documents,
-  graphiqlTitle,
+  playgroundTitle,
 }: ServeMeshOptions) {
   const {
     fork,
@@ -61,6 +61,9 @@ export async function serveMesh({
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
+  if (!playgroundTitle) {
+    playgroundTitle = rawConfig.serve?.playgroundTitle || 'GraphQL Mesh';
+  }
   if (!cluster.isWorker && Boolean(fork)) {
     const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {
@@ -251,7 +254,7 @@ export async function serveMesh({
         documents,
         graphqlPath,
         logger,
-        title: graphiqlTitle,
+        title: playgroundTitle,
       });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);

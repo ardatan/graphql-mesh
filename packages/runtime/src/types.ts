@@ -80,5 +80,5 @@ export interface ServeMeshOptions {
   rawConfig: YamlConfig.Config;
   documents: Source[];
   argsPort?: number;
-  graphiqlTitle?: string;
+  playgroundTitle?: string;
 }
