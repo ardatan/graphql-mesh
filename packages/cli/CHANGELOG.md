@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.55.0
+
+### Minor Changes
+
+- b6eca9baa: feat(serve): use YogaGraphiQL instead of custom GraphiQL package
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/config@0.30.0
+  - @graphql-mesh/runtime@0.31.0
+  - @graphql-mesh/utils@0.27.4
+  - @graphql-mesh/store@0.3.17
+
 ## 0.54.4
 
 ### Patch Changes

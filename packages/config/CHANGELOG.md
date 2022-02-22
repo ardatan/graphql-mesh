@@ -1,5 +1,23 @@
 # @graphql-mesh/config
 
+## 0.30.0
+
+### Minor Changes
+
+- b6eca9baa: feat(core): Envelop integration
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/runtime@0.31.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.47
+  - @graphql-mesh/merger-bare@0.13.9
+  - @graphql-mesh/merger-stitching@0.15.9
+  - @graphql-mesh/utils@0.27.4
+  - @graphql-mesh/store@0.3.17
+
 ## 0.29.5
 
 ### Patch Changes

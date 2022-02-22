@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.63.0
+
+### Minor Changes
+
+- b6eca9baa: feat(serve): use YogaGraphiQL instead of custom GraphiQL package
+- b6eca9baa: feat(core): Envelop integration
+
+### Patch Changes
+
+- @graphql-mesh/store@0.3.17
+
 ## 0.62.2
 
 ### Patch Changes
