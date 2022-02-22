@@ -6,5 +6,5 @@
   "access": "restricted",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["@graphql-mesh/playground"]
+  "ignore": []
 }

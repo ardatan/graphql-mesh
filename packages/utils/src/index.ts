@@ -4,7 +4,6 @@ export * from './load-from-module-export-expression';
 export * from './resolver-data-factory';
 export * from './with-cancel';
 export * from './extract-resolvers';
-export * from './getDocumentNodeAndSDL';
 export * from './group-transforms';
 export * from './apply-transforms';
 export * from './fs-operations';

@@ -186,6 +186,10 @@
         "customServerHandler": {
           "type": "string",
           "description": "If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler\nWith a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server"
+        },
+        "playgroundTitle": {
+          "type": "string",
+          "description": "Title of GraphiQL Playground"
         }
       }
     },
@@ -3123,6 +3127,10 @@
     "skipSSLValidation": {
       "type": "boolean",
       "description": "Allow connections to an SSL endpoint without certificates"
+    },
+    "additionalEnvelopPlugins": {
+      "type": "string",
+      "description": "You can provide Envelop plugins"
     }
   },
   "additionalProperties": false

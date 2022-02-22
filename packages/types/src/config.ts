@@ -61,6 +61,10 @@ export interface Config {
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;
+  /**
+   * You can provide Envelop plugins
+   */
+  additionalEnvelopPlugins?: string;
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
@@ -112,6 +116,10 @@ export interface ServeConfig {
    * With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
    */
   customServerHandler?: string;
+  /**
+   * Title of GraphiQL Playground
+   */
+  playgroundTitle?: string;
 }
 /**
  * Configuration for CORS

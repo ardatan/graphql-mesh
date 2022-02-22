@@ -51,9 +51,6 @@ export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = a
 // Hooks
 export type AllHooks = {
   destroy: void;
-  resolverCalled: { resolverData: ResolverData };
-  resolverDone: { resolverData: ResolverData; result: any };
-  resolverError: { resolverData: ResolverData; error: Error };
   [key: string]: any;
 };
 export type HookName = keyof AllHooks & string;

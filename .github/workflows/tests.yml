@@ -52,8 +52,6 @@ jobs:
 
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines && git checkout yarn.lock
-      - name: Build Playground
-        run: yarn build:playground && yarn copy-playground
       - name: Type Checking
         run: yarn transpile-ts --noEmit # We need build for playground
 
@@ -122,8 +120,6 @@ jobs:
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
-      - name: Build Playground
-        run: yarn build:playground && yarn copy-playground
       - name: Test
         run: yarn test
         env:
