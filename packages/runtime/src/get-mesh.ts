@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-expressions */
 import {
   GraphQLSchema,
-  ExecutionArgs,
   GraphQLResolveInfo,
   OperationTypeNode,
   GraphQLObjectType,
@@ -30,7 +28,7 @@ import {
   groupTransforms,
   ResolverDataBasedFactory,
   DefaultLogger,
-  getDocumentNodeAndSDL,
+  parseWithCache,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
@@ -310,6 +308,9 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
       errors.forEach(error => logger.error(inspect(error)));
     }),
     {
+      onParse({ setParseFn }) {
+        setParseFn(parseWithCache);
+      },
       async onResolverCalled(resolverData) {
         return async (result: any) => {
           if (resolverData?.info?.parentType && resolverData?.info?.fieldName) {
@@ -330,6 +331,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
 
   const getEnveloped = envelop({
     plugins,
+    enableInternalTracing: true,
   });
 
   const EMPTY_ROOT_VALUE: any = {};
@@ -343,20 +345,16 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const { document } = getDocumentNodeAndSDL(documentOrSDL);
+    const { execute, contextFactory, parse } = getEnveloped(contextValue);
 
-    const { execute, contextFactory } = getEnveloped(contextValue);
-
-    const executionParams: ExecutionArgs = {
-      document,
+    return execute({
+      document: typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL,
       contextValue: await contextFactory(),
       rootValue,
       variableValues: variableValues as any,
       schema: unifiedSchema,
       operationName,
-    };
-
-    return execute(executionParams);
+    });
   }
 
   async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
@@ -366,22 +364,16 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const { document } = getDocumentNodeAndSDL(documentOrSDL);
+    const { subscribe, contextFactory, parse } = getEnveloped(contextValue);
 
-    const { subscribe, contextFactory } = getEnveloped(contextValue);
-
-    const executionParams: ExecutionArgs = {
-      document,
+    return subscribe({
+      document: typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL,
       contextValue: await contextFactory(),
       rootValue,
       variableValues: variableValues as any,
       schema: unifiedSchema,
       operationName,
-    };
-
-    const executionResult = await subscribe(executionParams);
-
-    return executionResult;
+    });
   }
 
   return {

@@ -1,5 +1,4 @@
 import { getMesh } from '@graphql-mesh/runtime';
-import { parseWithCache } from '@graphql-mesh/utils';
 import { RequestHandler } from 'express';
 import { getGraphQLParameters, processRequest, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
 
@@ -12,21 +11,21 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
       // Extract the GraphQL parameters from the request
       const { operationName, query, variables } = getGraphQLParameters(request);
       mesh$
-        .then(({ schema, execute, subscribe }) =>
-          processRequest({
+        .then(({ getEnveloped }) => {
+          const { execute, validate, subscribe, parse, contextFactory, schema } = getEnveloped(request);
+          return processRequest({
             operationName,
             query,
             variables,
             request,
+            execute,
+            validate,
+            subscribe,
+            parse,
+            contextFactory,
             schema,
-            parse: parseWithCache,
-            execute: ({ document, rootValue, contextValue, variableValues, operationName }) =>
-              execute(document, variableValues, contextValue, rootValue, operationName),
-            subscribe: ({ document, rootValue, contextValue, variableValues, operationName }) =>
-              subscribe(document, variableValues, contextValue, rootValue, operationName),
-            contextFactory: () => request,
-          })
-        )
+          });
+        })
         .then(processedResult => sendResult(processedResult, response))
         .catch((e: Error | AggregateError) => {
           response.status(500);
