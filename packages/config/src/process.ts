@@ -1,4 +1,4 @@
-import { resolve, join } from 'path';
+import { resolve, join, isAbsolute } from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
@@ -310,15 +310,16 @@ export async function processConfig(
 
   codes.push(`const liveQueryInvalidations = rawConfig.liveQueryInvalidations;`);
 
-  if (config.additionalEnvelopPlugins) {
-    importCodes.push(`import additionalEnvelopPlugins from '${join('..', config.additionalEnvelopPlugins)}';`);
-  } else {
-    codes.push(`const additionalEnvelopPlugins = [];`);
-  }
-
   let additionalEnvelopPlugins = [];
   if (config.additionalEnvelopPlugins) {
-    additionalEnvelopPlugins = await importFn(config.additionalEnvelopPlugins);
+    importCodes.push(`import additionalEnvelopPlugins from '${join('..', config.additionalEnvelopPlugins)}';`);
+    additionalEnvelopPlugins = await importFn(
+      isAbsolute(config.additionalEnvelopPlugins)
+        ? config.additionalEnvelopPlugins
+        : join(dir, config.additionalEnvelopPlugins)
+    );
+  } else {
+    codes.push(`const additionalEnvelopPlugins = [];`);
   }
 
   codes.push(`
