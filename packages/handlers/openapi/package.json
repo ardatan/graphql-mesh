@@ -47,6 +47,7 @@
     "openapi-diff": "0.23.5",
     "graphql-scalars": "1.17.0",
     "pluralize": "8.0.0",
+    "qs": "6.10.3",
     "swagger2openapi": "7.0.8",
     "url-join": "4.0.1",
     "openapi-types": "12.0.0",

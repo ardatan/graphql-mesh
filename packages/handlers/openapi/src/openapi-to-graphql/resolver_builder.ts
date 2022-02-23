@@ -18,6 +18,7 @@ import { PreprocessingData } from './types/preprocessing_data';
 // Imports:
 import * as Oas3Tools from './oas_3_tools';
 import * as JSONPath from 'jsonpath-plus';
+import qs from 'qs';
 import { GraphQLError, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import formurlencoded from 'form-urlencoded';
 import urlJoin from 'url-join';
@@ -468,17 +469,7 @@ export function getResolver<TSource, TContext, TArgs>(
       };
     }
 
-    for (const paramName in query) {
-      const val = query[paramName];
-
-      if (Array.isArray(val)) {
-        for (let index = 0; index < val.length; index++) {
-          urlObject.searchParams.append(paramName, val[index]);
-        }
-      } else if (val !== undefined) {
-        urlObject.searchParams.set(paramName, val);
-      }
-    }
+    urlObject.search = qs.stringify(query);
 
     /**
      * Determine possible payload
