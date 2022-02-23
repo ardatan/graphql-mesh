@@ -31,6 +31,8 @@
     "@babel/preset-env": "7.16.11",
     "@babel/preset-typescript": "7.16.7",
     "@changesets/cli": "2.21.0",
+    "@parcel/packager-raw-url": "2.3.2",
+    "@parcel/transformer-webmanifest": "2.3.2",
     "@types/jest": "27.4.0",
     "@types/node": "16.11.25",
     "@typescript-eslint/eslint-plugin": "5.12.1",

@@ -126,7 +126,7 @@ export async function processConfig(
   codes.push(`const sources = [];`);
   codes.push(`const transforms = [];`);
 
-  const mergerName = config.merger || config.sources.length > 1 ? 'stitching' : 'bare';
+  const mergerName = config.merger || (config.sources.length > 1 ? 'stitching' : 'bare');
 
   const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
     Promise.all(

@@ -90,11 +90,13 @@ export async function resolveCache(
 
   const cache = new Cache({
     ...config,
+    importFn,
     store: rootStore.child('cache'),
   });
 
   const code = `const cache = new (MeshCache as any)({
       ...(rawConfig.cache || {}),
+      importFn,
       store: rootStore.child('cache'),
     } as any)`;
   const importCode = `import MeshCache from '${moduleName}';`;
