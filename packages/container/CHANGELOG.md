@@ -1,5 +1,21 @@
 # @graphql-mesh/container
 
+## 0.1.44
+
+### Patch Changes
+
+- Updated dependencies [f202f53af]
+- Updated dependencies [f0f2b69a0]
+- Updated dependencies [f0f2b69a0]
+  - @graphql-mesh/cli@0.55.1
+  - @graphql-mesh/graphql@0.20.22
+  - @graphql-mesh/runtime@0.31.1
+  - @graphql-mesh/transform-encapsulate@0.3.18
+  - @graphql-mesh/transform-filter-schema@0.14.18
+  - @graphql-mesh/transform-prefix@0.11.7
+  - @graphql-mesh/transform-rename@0.12.7
+  - @graphql-mesh/config@0.30.1
+
 ## 0.1.43
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-stitching",
-  "version": "0.15.9",
+  "version": "0.15.10",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

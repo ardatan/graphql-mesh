@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.14.18
+
+### Patch Changes
+
+- f202f53af: fix: bump wrap package and throw better error message in case of missing selectionSet for unmatching return types
+
 ## 0.14.17
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-naming-convention",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

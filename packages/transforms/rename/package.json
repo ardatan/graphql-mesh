@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.12.6",
+  "version": "0.12.7",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
