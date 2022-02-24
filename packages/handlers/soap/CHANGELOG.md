@@ -1,5 +1,15 @@
 # @graphql-mesh/soap
 
+## 0.10.19
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/store@0.3.18
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+
 ## 0.10.18
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -24,11 +24,11 @@
   },
   "dependencies": {
     "cross-undici-fetch": "0.1.24",
-    "@omnigraph/json-schema": "0.14.2",
+    "@omnigraph/json-schema": "0.14.3",
     "@ardatan/raml-1-parser": "1.1.69",
-    "json-machete": "0.5.5",
+    "json-machete": "0.5.6",
     "to-json-schema": "0.2.5",
-    "@graphql-mesh/utils": "0.27.4",
+    "@graphql-mesh/utils": "0.27.5",
     "swagger2openapi": "^7.0.8",
     "@graphql-tools/utils": "8.6.2"
   },
