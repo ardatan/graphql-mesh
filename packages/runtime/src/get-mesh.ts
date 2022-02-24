@@ -247,6 +247,11 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
                   }
                 }
                 if (selectionCount === 0) {
+                  if (!selectionSet) {
+                    throw new Error(
+                      `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`
+                    );
+                  }
                   commonDelegateOptions.info = {
                     ...info,
                     fieldNodes: [
@@ -305,7 +310,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
       logFn: (eventName, args) => logger.child(eventName).debug(() => inspect(args)),
     }),
     useErrorHandler(errors => {
-      errors.forEach(error => logger.error(inspect(error)));
+      errors.forEach(error => logger.error(error.stack || error.message));
     }),
     {
       onParse({ setParseFn }) {
