@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-stitching
 
+## 0.15.10
+
+### Patch Changes
+
+- f202f53af: fix: bump wrap package and throw better error message in case of missing selectionSet for unmatching return types
+
 ## 0.15.9
 
 ### Patch Changes

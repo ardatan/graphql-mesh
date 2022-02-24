@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.55.1
+
+### Patch Changes
+
+- f202f53af: fix: bump wrap package and throw better error message in case of missing selectionSet for unmatching return types
+- Updated dependencies [f202f53af]
+- Updated dependencies [f0f2b69a0]
+- Updated dependencies [f0f2b69a0]
+  - @graphql-mesh/runtime@0.31.1
+  - @graphql-mesh/config@0.30.1
+
 ## 0.55.0
 
 ### Minor Changes

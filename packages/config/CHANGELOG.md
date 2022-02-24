@@ -1,5 +1,16 @@
 # @graphql-mesh/config
 
+## 0.30.1
+
+### Patch Changes
+
+- f0f2b69a0: fix(config): take correct merger during build
+- f0f2b69a0: fix(config): pass importFn to cache constructor
+- Updated dependencies [f202f53af]
+  - @graphql-mesh/merger-bare@0.13.10
+  - @graphql-mesh/merger-stitching@0.15.10
+  - @graphql-mesh/runtime@0.31.1
+
 ## 0.30.0
 
 ### Minor Changes
