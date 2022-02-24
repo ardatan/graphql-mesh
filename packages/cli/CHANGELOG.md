@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.55.2
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/config@0.30.2
+  - @graphql-mesh/runtime@0.31.2
+  - @graphql-mesh/store@0.3.18
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+
 ## 0.55.1
 
 ### Patch Changes

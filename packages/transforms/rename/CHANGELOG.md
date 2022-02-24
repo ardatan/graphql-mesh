@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.8
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+
 ## 0.12.7
 
 ### Patch Changes

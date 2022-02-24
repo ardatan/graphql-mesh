@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-store",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -23,8 +23,8 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.63.0",
-    "@graphql-mesh/store": "0.3.17"
+    "@graphql-mesh/types": "0.63.1",
+    "@graphql-mesh/store": "0.3.18"
   },
   "publishConfig": {
     "access": "public",

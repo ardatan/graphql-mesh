@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 0.30.2
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/merger-bare@0.13.11
+  - @graphql-mesh/merger-stitching@0.15.11
+  - @graphql-mesh/runtime@0.31.2
+  - @graphql-mesh/store@0.3.18
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+  - @graphql-mesh/cache-inmemory-lru@0.5.48
+
 ## 0.30.1
 
 ### Patch Changes
