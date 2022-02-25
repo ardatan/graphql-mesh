@@ -8,7 +8,6 @@ import { RAMLLoaderOptions } from './types';
 import { env } from 'process';
 import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
-import { RegularExpression } from 'graphql-scalars';
 import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
 
 /**
