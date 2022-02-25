@@ -13,7 +13,15 @@ import {
   ListComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
-import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
+import {
+  getNamedType,
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLInputObjectType,
+  GraphQLInt,
+  GraphQLString,
+  isNonNullType,
+} from 'graphql';
 import {
   GraphQLBigInt,
   GraphQLDateTime,
@@ -713,7 +721,17 @@ export function getComposerFromJSONSchema(
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type(),
+                    type: () => {
+                      const inputType: InputTypeComposer = inputFieldMap[fieldName].type();
+                      const fieldMap = inputType.getFields();
+                      for (const fieldName in fieldMap) {
+                        const fieldConfig = fieldMap[fieldName];
+                        if ('ofType' in fieldConfig) {
+                          return inputType.NonNull;
+                        }
+                      }
+                      return inputType;
+                    },
                     description: inputFieldMap[fieldName].description,
                   },
                 })
@@ -730,7 +748,17 @@ export function getComposerFromJSONSchema(
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type(),
+                    type: () => {
+                      const inputType: InputTypeComposer = inputFieldMap[fieldName].type();
+                      const fieldMap = inputType.getFields();
+                      for (const fieldName in fieldMap) {
+                        const fieldConfig = fieldMap[fieldName];
+                        if ('ofType' in fieldConfig) {
+                          return inputType.NonNull;
+                        }
+                      }
+                      return inputType;
+                    },
                     description: inputFieldMap[fieldName].description,
                   },
                 })
@@ -747,7 +775,17 @@ export function getComposerFromJSONSchema(
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type(),
+                    type: () => {
+                      const inputType: InputTypeComposer = inputFieldMap[fieldName].type();
+                      const fieldMap = inputType.getFields();
+                      for (const fieldName in fieldMap) {
+                        const fieldConfig = fieldMap[fieldName];
+                        if ('ofType' in fieldConfig) {
+                          return inputType.NonNull;
+                        }
+                      }
+                      return inputType;
+                    },
                     description: inputFieldMap[fieldName].description,
                   },
                 })
