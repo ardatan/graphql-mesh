@@ -128,12 +128,14 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
               break;
           }
         }
+        /* raml pattern is different
         if (uriParameterNodeJson.pattern) {
           const typeName = sanitizeNameForGraphQL(uriParameterNodeJson.displayName || `${fieldName}_${paramName}`);
           argTypeMap[paramName] = new RegularExpression(typeName, new RegExp(uriParameterNodeJson.pattern), {
             description: uriParameterNodeJson.description,
           });
         }
+        */
         if (uriParameterNodeJson.enum) {
           const typeName = sanitizeNameForGraphQL(uriParameterNodeJson.displayName || `${fieldName}_${paramName}`);
           const values: GraphQLEnumValueConfigMap = {};
