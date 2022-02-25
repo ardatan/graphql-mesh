@@ -160,10 +160,6 @@
             }
           ]
         },
-        "upload": {
-          "$ref": "#/definitions/UploadOptions",
-          "description": "Configuration for GraphQL File Upload"
-        },
         "sslCredentials": {
           "$ref": "#/definitions/HTTPSConfig",
           "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
@@ -286,21 +282,6 @@
         }
       },
       "required": ["path", "pubsubTopic"]
-    },
-    "UploadOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "UploadOptions",
-      "properties": {
-        "maxFileSize": {
-          "type": "integer",
-          "description": "Maximum File Size for GraphQL Upload (default: `100000000`)"
-        },
-        "maxFiles": {
-          "type": "integer",
-          "description": "Maximum number of files for GraphQL Upload (default: `10`)"
-        }
-      }
     },
     "HTTPSConfig": {
       "additionalProperties": false,

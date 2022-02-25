@@ -5,7 +5,6 @@ import { cpus, platform } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import { playgroundMiddlewareFactory } from './playground';
-import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import cors from 'cors';
 import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInterpolator } from '@graphql-mesh/utils';
@@ -51,7 +50,6 @@ export async function serveMesh({
     handlers,
     staticFiles,
     playground,
-    upload: { maxFileSize = 10000000, maxFiles = 10 } = {},
     maxRequestBodySize = '100kb',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
@@ -246,7 +244,7 @@ export async function serveMesh({
       }
     }
 
-    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
+    app.use(graphqlPath, graphqlHandler(mesh$));
 
     if (typeof playground !== 'undefined' ? playground : env.NODE_ENV?.toLowerCase() !== 'production') {
       const playgroundMiddleware = playgroundMiddlewareFactory({

@@ -1,5 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>the-guild-org/shared-config:renovate"],
-  "ignoreDeps": ["typedoc", "typedoc-plugin-markdown", "typedoc-plugin-rename-defaults", "@graphql-yoga/render-graphiql"]
+  "ignoreDeps": [
+    "typedoc",
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-rename-defaults",
+    "@graphql-yoga/render-graphiql",
+    "@graphql-yoga/node"
+  ]
 }

@@ -1,35 +1,26 @@
 import { getMesh } from '@graphql-mesh/runtime';
 import { RequestHandler } from 'express';
-import { getGraphQLParameters, processRequest, sendResult, shouldRenderGraphiQL } from 'graphql-helix';
+import { shouldRenderGraphiQL } from 'graphql-helix';
+import { createServer, useExtendContext } from '@graphql-yoga/node';
+import { IncomingMessage } from 'http';
 
-export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandler =>
-  function (request, response, next) {
+export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandler => {
+  const yoga$ = mesh$.then(mesh =>
+    createServer({
+      plugins: [...mesh.plugins, useExtendContext(({ req }: { req: IncomingMessage }) => req)],
+      logging: mesh.logger,
+    })
+  );
+  return function (req, res, next) {
     // Determine whether we should render GraphiQL instead of returning an API response
-    if (shouldRenderGraphiQL(request)) {
+    if (shouldRenderGraphiQL(req)) {
       next();
     } else {
-      // Extract the GraphQL parameters from the request
-      const { operationName, query, variables } = getGraphQLParameters(request);
-      mesh$
-        .then(({ getEnveloped }) => {
-          const { execute, validate, subscribe, parse, contextFactory, schema } = getEnveloped(request);
-          return processRequest({
-            operationName,
-            query,
-            variables,
-            request,
-            execute,
-            validate,
-            subscribe,
-            parse,
-            contextFactory,
-            schema,
-          });
-        })
-        .then(processedResult => sendResult(processedResult, response))
+      yoga$
+        .then(yoga => yoga.requestListener(req, res))
         .catch((e: Error | AggregateError) => {
-          response.status(500);
-          response.write(
+          res.status(500);
+          res.write(
             JSON.stringify({
               errors:
                 'errors' in e
@@ -47,7 +38,8 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
                     ],
             })
           );
-          response.end();
+          res.end();
         });
     }
   };
+};
