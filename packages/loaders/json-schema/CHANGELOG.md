@@ -1,5 +1,19 @@
 # @omnigraph/json-schema
 
+## 0.15.0
+
+### Minor Changes
+
+- e3f941db5: feat(json-schema): make input argument nonnullable if any of fields is nonnulalble
+
+### Patch Changes
+
+- 12256ec58: fix(json-schema): fix array normalization
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/utils@0.27.6
+  - json-machete@0.5.7
+
 ## 0.14.3
 
 ### Patch Changes

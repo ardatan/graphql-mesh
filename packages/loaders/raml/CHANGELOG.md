@@ -1,5 +1,19 @@
 # @omnigraph/raml
 
+## 0.5.0
+
+### Minor Changes
+
+- e3f941db5: feat(raml): inherit types of uriParameters
+
+### Patch Changes
+
+- Updated dependencies [12256ec58]
+- Updated dependencies [e3f941db5]
+  - @omnigraph/json-schema@0.15.0
+  - @graphql-mesh/utils@0.27.6
+  - json-machete@0.5.7
+
 ## 0.4.10
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.56.0
+
+### Minor Changes
+
+- 08b250e04: feat(cli/serve): replace graphql-helix&graphql-upload with graphql-yoga
+
+### Patch Changes
+
+- ea4be4b43: fix(serve): disable maskederrors for now
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/config@0.30.3
+  - @graphql-mesh/runtime@0.31.3
+  - @graphql-mesh/utils@0.27.6
+  - @graphql-mesh/store@0.3.19
+
 ## 0.55.2
 
 ### Patch Changes
