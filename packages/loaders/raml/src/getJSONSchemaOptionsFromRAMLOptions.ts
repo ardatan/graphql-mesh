@@ -105,9 +105,29 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
       const originalFullRelativeUrl = resourceNode.completeRelativeUri();
       let fullRelativeUrl = originalFullRelativeUrl;
+      const argTypeMap: Record<string, string> = {};
       for (const uriParameterNode of resourceNode.uriParameters()) {
         const paramName = uriParameterNode.name();
         fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${paramName}}`);
+        for (const typeName of uriParameterNode.type()) {
+          switch (typeName) {
+            case 'number':
+              argTypeMap[paramName] = 'Float';
+              break;
+            case 'boolean':
+              argTypeMap[paramName] = 'Boolean';
+              break;
+            case 'integer':
+              argTypeMap[paramName] = 'Int';
+              break;
+            default:
+              argTypeMap[paramName] = 'String';
+              break;
+          }
+        }
+        if (uriParameterNode.required()) {
+          argTypeMap[paramName] += '!';
+        }
       }
       for (const queryParameterNode of queryParameters) {
         requestSchema = requestSchema || {
