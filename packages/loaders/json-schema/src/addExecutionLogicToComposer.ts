@@ -231,15 +231,19 @@ export async function addExecutionLogicToComposer(
           operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
           responseJson = responseJson[0];
         }
-        return {
-          ...responseJson,
+
+        const addResponseMetadata = (obj: any) => ({
+          ...obj,
           __response: {
             url: fullPath,
             method: httpMethod,
             status: response.status,
             statusText: response.statusText,
           },
-        };
+        });
+        return Array.isArray(responseJson)
+          ? responseJson.map(obj => addResponseMetadata(obj))
+          : addResponseMetadata(responseJson);
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);
