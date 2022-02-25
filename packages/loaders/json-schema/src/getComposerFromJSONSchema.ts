@@ -13,15 +13,7 @@ import {
   ListComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
-import {
-  getNamedType,
-  GraphQLBoolean,
-  GraphQLFloat,
-  GraphQLInputObjectType,
-  GraphQLInt,
-  GraphQLString,
-  isNonNullType,
-} from 'graphql';
+import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
 import {
   GraphQLBigInt,
   GraphQLDateTime,
