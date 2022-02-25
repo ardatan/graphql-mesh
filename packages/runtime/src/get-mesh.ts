@@ -35,7 +35,7 @@ import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { delegateToSchema, IDelegateToSchemaOptions, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
-import { inspect, isDocumentNode, parseSelectionSet } from '@graphql-tools/utils';
+import { inspect, isDocumentNode, memoize1, parseSelectionSet } from '@graphql-tools/utils';
 import { envelop, useErrorHandler, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { env } from 'process';
@@ -56,6 +56,8 @@ export interface MeshInstance<TMeshContext = any> {
   plugins: EnvelopPlugins;
   getEnveloped: ReturnType<typeof envelop>;
 }
+
+const memoizedGetEnvelopedFactory = memoize1((plugins: EnvelopPlugins) => envelop({ plugins }));
 
 export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Promise<MeshInstance<TMeshContext>> {
   const rawSources: RawSourceOutput[] = [];
@@ -334,10 +336,6 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     ...additionalEnvelopPlugins,
   ];
 
-  const getEnveloped = envelop({
-    plugins,
-  });
-
   const EMPTY_ROOT_VALUE: any = {};
   const EMPTY_CONTEXT_VALUE: any = {};
   const EMPTY_VARIABLES_VALUE: any = {};
@@ -349,6 +347,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
+    const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     const { execute, contextFactory, parse } = getEnveloped(contextValue);
 
     return execute({
@@ -368,6 +367,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
+    const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     const { subscribe, contextFactory, parse } = getEnveloped(contextValue);
 
     return subscribe({
@@ -392,7 +392,9 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     logger,
     meshContext: meshContext as TMeshContext,
     plugins,
-    getEnveloped,
+    get getEnveloped() {
+      return memoizedGetEnvelopedFactory(plugins);
+    },
   };
 }
 
