@@ -256,6 +256,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
           requestSchema,
           requestTypeName,
           responseByStatusCode,
+          argTypeMap,
         });
       }
     }
