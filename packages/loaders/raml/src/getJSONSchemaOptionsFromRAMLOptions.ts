@@ -8,6 +8,8 @@ import { RAMLLoaderOptions } from './types';
 import { env } from 'process';
 import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
+import { RegularExpression } from 'graphql-scalars';
+import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
 
 /**
  * Generates the options for JSON Schema Loader
@@ -105,11 +107,12 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
       const originalFullRelativeUrl = resourceNode.completeRelativeUri();
       let fullRelativeUrl = originalFullRelativeUrl;
-      const argTypeMap: Record<string, string> = {};
+      const argTypeMap: Record<string, string | GraphQLInputType> = {};
       for (const uriParameterNode of resourceNode.uriParameters()) {
         const paramName = uriParameterNode.name();
         fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${paramName}}`);
-        for (const typeName of uriParameterNode.type()) {
+        const uriParameterNodeJson = uriParameterNode.toJSON();
+        for (const typeName of asArray(uriParameterNodeJson.type)) {
           switch (typeName) {
             case 'number':
               argTypeMap[paramName] = 'Float';
@@ -125,7 +128,36 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
               break;
           }
         }
-        if (uriParameterNode.required()) {
+        if (uriParameterNodeJson.pattern) {
+          const typeName = sanitizeNameForGraphQL(uriParameterNodeJson.displayName || `${fieldName}_${paramName}`);
+          argTypeMap[paramName] = new RegularExpression(typeName, new RegExp(uriParameterNodeJson.pattern), {
+            description: uriParameterNodeJson.description,
+          });
+        }
+        if (uriParameterNodeJson.enum) {
+          const typeName = sanitizeNameForGraphQL(uriParameterNodeJson.displayName || `${fieldName}_${paramName}`);
+          const values: GraphQLEnumValueConfigMap = {};
+          for (const value of asArray(uriParameterNodeJson.enum)) {
+            let enumKey = sanitizeNameForGraphQL(value.toString());
+            if (enumKey === 'false' || enumKey === 'true' || enumKey === 'null') {
+              enumKey = enumKey.toUpperCase();
+            }
+            if (typeof enumKey === 'string' && enumKey.length === 0) {
+              enumKey = '_';
+            }
+            values[enumKey] = {
+              // Falsy values are ignored by GraphQL
+              // eslint-disable-next-line no-unneeded-ternary
+              value: value ? value : value?.toString(),
+            };
+          }
+          argTypeMap[paramName] = new GraphQLEnumType({
+            name: typeName,
+            description: uriParameterNodeJson.description,
+            values,
+          });
+        }
+        if (uriParameterNodeJson.required) {
           argTypeMap[paramName] += '!';
         }
       }
