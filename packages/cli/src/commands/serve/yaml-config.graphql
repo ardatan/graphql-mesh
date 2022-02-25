@@ -48,10 +48,6 @@ type ServeConfig @md {
   """
   maxRequestBodySize: RequestBodySize
   """
-  Configuration for GraphQL File Upload
-  """
-  upload: UploadOptions
-  """
   SSL Credentials for HTTPS Server
   If this is provided, Mesh will be served via HTTPS
   """
@@ -135,17 +131,6 @@ type WebhookHandler {
   Part of the object you want to pass (e.g. `data.messages`)
   """
   payload: String
-}
-
-type UploadOptions {
-  """
-  Maximum File Size for GraphQL Upload (default: `100000000`)
-  """
-  maxFileSize: Int
-  """
-  Maximum number of files for GraphQL Upload (default: `10`)
-  """
-  maxFiles: Int
 }
 
 type HTTPSConfig {

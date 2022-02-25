@@ -100,7 +100,6 @@ export interface ServeConfig {
    * Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
    */
   maxRequestBodySize?: number | string;
-  upload?: UploadOptions;
   sslCredentials?: HTTPSConfig;
   /**
    * Path to GraphQL Endpoint (default: /graphql)
@@ -164,19 +163,6 @@ export interface ExpressHandler {
    * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
    */
   method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
-}
-/**
- * Configuration for GraphQL File Upload
- */
-export interface UploadOptions {
-  /**
-   * Maximum File Size for GraphQL Upload (default: `100000000`)
-   */
-  maxFileSize?: number;
-  /**
-   * Maximum number of files for GraphQL Upload (default: `10`)
-   */
-  maxFiles?: number;
 }
 /**
  * SSL Credentials for HTTPS Server

@@ -1,7 +1,6 @@
 import {
   KeyValueCache,
   MeshPubSub,
-  RawSourceOutput,
   GraphQLOperation,
   MeshHandler,
   MeshTransform,
@@ -9,7 +8,7 @@ import {
   Logger,
   MeshMerger,
 } from '@graphql-mesh/types';
-import { DocumentNode, GraphQLResolveInfo } from 'graphql';
+import { DocumentNode } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
@@ -53,24 +52,8 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   operationName?: string
 ) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
 
-export type APIContextMethodParams = {
-  root?: any;
-  args?: any;
-  context: any;
-  info?: GraphQLResolveInfo;
-  selectionSet?: string;
-};
-
-export type APIContext = {
-  Query: Record<string, (params: APIContextMethodParams) => Promise<any>>;
-  Mutation: Record<string, (params: APIContextMethodParams) => Promise<any>>;
-  Subscription: Record<string, (params: APIContextMethodParams) => AsyncIterable<any>>;
-  rawSource: RawSourceOutput;
-};
-
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
-  [key: string]: APIContext;
 } & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; liveQueryStore: InMemoryLiveQueryStore };
 
 export interface ServeMeshOptions {
