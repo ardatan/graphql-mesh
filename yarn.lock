@@ -5626,10 +5626,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.3.tgz#e1c09064121f894baaad2bd9f12ce4a41bffb274"
   integrity sha512-33/L34xS7HVUx23e0wOT2V1qPF1IrHgQccdJVm9uXGTB9vFBrrzBtkQymT8VskeKOxjz55MSqMv0xuLq+u98WQ==
 
-"@types/node@16.11.25":
-  version "16.11.25"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.25.tgz#bb812b58bacbd060ce85921250d8b4ca553cd4a2"
-  integrity sha512-NrTwfD7L1RTc2qrHQD4RTTy4p0CO2LatKBEKEds3CaVuhoM/+DJzmWZl5f+ikR8cm8F5mfJxK+9rQq07gRiSjQ==
+"@types/node@16.11.26":
+  version "16.11.26"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.26.tgz#63d204d136c9916fb4dcd1b50f9740fe86884e47"
+  integrity sha512-GZ7bu5A6+4DtG7q9GsoHXy3ALcgeIHP4NnL0Vv2wu0uUB/yQex26v0tf6/na1mm0+bS9Uw+0DFex7aaKr2qawQ==
 
 "@types/node@^10.0.3", "@types/node@^10.1.0":
   version "10.17.60"
@@ -5900,10 +5900,10 @@
     "@types/node" "*"
     "@types/webidl-conversions" "*"
 
-"@types/ws@8.5.0", "@types/ws@^8.0.0":
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.0.tgz#805ceb3f68eaebbed1a3004a66f16e35b7f3bf14"
-  integrity sha512-mTClfhq5cuGyW4jthaFuig6Q8OVfB3IRyZfN/9SCyJtiM5H0SubwM89cHoT9UngO6HyUFic88HvT1zSNLNyxWA==
+"@types/ws@8.5.1", "@types/ws@^8.0.0":
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.1.tgz#79136958b48bc73d5165f286707ceb9f04471599"
+  integrity sha512-UxlLOfkuQnT2YSBCNq0x86SGOUxas6gAySFeDe2DcnEnA8655UIPoCDorWZCugcvKIL8IUI4oueUfJ1hhZSE2A==
   dependencies:
     "@types/node" "*"
 
@@ -9103,10 +9103,10 @@ cross-undici-fetch@0.1.12:
     node-fetch "^2.6.5"
     undici "^4.9.3"
 
-cross-undici-fetch@0.1.24, cross-undici-fetch@^0.1.19:
-  version "0.1.24"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.24.tgz#2ad23d096ba07cfa1260b1aeb9a78d2132ea3385"
-  integrity sha512-83KDV6+8pYCn51zSM2cFAwqQ5UQtDaPm89RkUwHxEMDq/cdqYgqo1q+2eM/Xhmd8HeAsGTtecsC4crrQkCn0zg==
+cross-undici-fetch@0.1.25, cross-undici-fetch@^0.1.19:
+  version "0.1.25"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.1.25.tgz#8c6826dd0ffbb45fcb1a554be5984e0eaef7f3ba"
+  integrity sha512-KS6hm/VuRO+3jIrg4uidz3mQ8NWvCbiTTOg3yoH30zuGVUvjqZlnXw66h0kuzyfP21hDkrdIbufXCW6BAQdSNw==
   dependencies:
     abort-controller "^3.0.0"
     form-data-encoder "^1.7.1"
