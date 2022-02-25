@@ -9,6 +9,7 @@ export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandle
     createServer({
       plugins: [...mesh.plugins, useExtendContext(({ req }: { req: IncomingMessage }) => req)],
       logging: mesh.logger,
+      maskedErrors: false,
     })
   );
   return function (req, res, next) {
