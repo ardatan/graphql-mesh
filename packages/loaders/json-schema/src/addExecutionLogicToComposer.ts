@@ -223,15 +223,7 @@ export async function addExecutionLogicToComposer(
         // Sometimes API returns an array but the return type is not an array
         const isListReturnType = isListTypeOrNonNullListType(field.type.getType());
         const isArrayResponse = Array.isArray(responseJson);
-        if (isListReturnType && !isArrayResponse) {
-          operationLogger.debug(() => `Response is not array but return type is list. Normalizing the response`);
-          responseJson = [responseJson];
-        }
-        if (!isListReturnType && isArrayResponse) {
-          operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
-          responseJson = responseJson[0];
-        }
-        return {
+        responseJson = {
           ...responseJson,
           __response: {
             url: fullPath,
@@ -240,6 +232,15 @@ export async function addExecutionLogicToComposer(
             statusText: response.statusText,
           },
         };
+        if (isListReturnType && !isArrayResponse) {
+          operationLogger.debug(() => `Response is not array but return type is list. Normalizing the response`);
+          responseJson = [responseJson];
+        }
+        if (!isListReturnType && isArrayResponse) {
+          operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
+          responseJson = responseJson[0];
+        }
+        return responseJson;
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);
