@@ -745,7 +745,7 @@ export function getComposerFromJSONSchema(
                       const fieldMap = inputType.getFields();
                       for (const fieldName in fieldMap) {
                         const fieldConfig = fieldMap[fieldName];
-                        if ('ofType' in fieldConfig) {
+                        if ('ofType' in fieldConfig.type) {
                           return inputType.NonNull;
                         }
                       }
