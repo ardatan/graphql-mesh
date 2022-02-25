@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.64.0
+
+### Minor Changes
+
+- 08b250e04: feat(cli/serve): replace graphql-helix&graphql-upload with graphql-yoga
+
+### Patch Changes
+
+- @graphql-mesh/store@0.3.19
+
 ## 0.63.1
 
 ### Patch Changes

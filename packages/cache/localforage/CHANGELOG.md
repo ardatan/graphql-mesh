@@ -1,5 +1,12 @@
 # @graphql-mesh/cache-localforage
 
+## 0.5.37
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+
 ## 0.5.36
 
 ### Patch Changes
