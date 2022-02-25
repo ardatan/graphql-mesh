@@ -12,7 +12,6 @@ import {
   SchemaComposer,
   ListComposer,
   UnionTypeComposer,
-  NonNullComposer,
 } from 'graphql-compose';
 import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
 import {
