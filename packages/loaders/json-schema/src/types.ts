@@ -1,6 +1,6 @@
 import { MeshPubSub, Logger } from '@graphql-mesh/types';
 import { BaseLoaderOptions } from '@graphql-tools/utils';
-import { OperationTypeNode } from 'graphql';
+import { GraphQLInputType, OperationTypeNode } from 'graphql';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
@@ -27,7 +27,7 @@ export type JSONSchemaBaseOperationConfig = {
   field: string;
   description?: string;
 
-  argTypeMap?: Record<string, string>;
+  argTypeMap?: Record<string, string | GraphQLInputType>;
 } & (
   | {
       responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;

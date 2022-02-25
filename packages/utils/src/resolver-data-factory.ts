@@ -1,5 +1,6 @@
 import { stringInterpolator } from './string-interpolator';
 import { ResolverData } from '@graphql-mesh/types';
+import { GraphQLInputType } from 'graphql';
 
 export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
 
@@ -10,10 +11,13 @@ export function getInterpolationKeys(...interpolationStrings: string[]) {
   );
 }
 
-export function parseInterpolationStrings(interpolationStrings: string[], argTypeMap?: Record<string, string>) {
+export function parseInterpolationStrings(
+  interpolationStrings: string[],
+  argTypeMap?: Record<string, string | GraphQLInputType>
+) {
   const interpolationKeys = getInterpolationKeys(...interpolationStrings);
 
-  const args: Record<string, { type: string }> = {};
+  const args: Record<string, { type: string | GraphQLInputType }> = {};
   const contextVariables: string[] = [];
 
   for (const interpolationKey of interpolationKeys) {

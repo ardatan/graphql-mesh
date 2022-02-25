@@ -707,13 +707,26 @@ export function getComposerFromJSONSchema(
             };
           }
 
+          const getCorrectInputFieldType = (fieldName: string) => {
+            const inputType: InputTypeComposer | ListComposer<InputTypeComposer> = inputFieldMap[fieldName].type();
+            const actualInputType = isListTC(inputType) ? inputType.ofType : inputType;
+            const fieldMap = actualInputType.getFields();
+            for (const fieldName in fieldMap) {
+              const fieldConfig = fieldMap[fieldName];
+              if (fieldConfig.type.getTypeName().endsWith('!')) {
+                return inputType.getTypeNonNull();
+              }
+            }
+            return inputType;
+          };
+
           if (subSchema.title === 'QueryInput') {
             const typeComposer = schemaComposer.Query;
             for (const fieldName in inputFieldMap) {
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type(),
+                    type: () => getCorrectInputFieldType(fieldName),
                     description: inputFieldMap[fieldName].description,
                   },
                 })
@@ -730,7 +743,7 @@ export function getComposerFromJSONSchema(
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type(),
+                    type: () => getCorrectInputFieldType(fieldName),
                     description: inputFieldMap[fieldName].description,
                   },
                 })
@@ -747,7 +760,7 @@ export function getComposerFromJSONSchema(
               futureTasks.add(() =>
                 typeComposer.addFieldArgs(fieldName, {
                   input: {
-                    type: () => inputFieldMap[fieldName].type(),
+                    type: () => getCorrectInputFieldType(fieldName),
                     description: inputFieldMap[fieldName].description,
                   },
                 })

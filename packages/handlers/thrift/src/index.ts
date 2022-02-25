@@ -500,8 +500,10 @@ export default class ThriftHandler implements MeshHandler {
             const { outputType: returnType } = getGraphQLFunctionType(fn.returnType, Number(fnIndex) + 1);
             const args: GraphQLFieldConfigArgumentMap = {};
             for (const argName in commonArgs) {
+              const typeNameOrType = commonArgs[argName].type;
               args[argName] = {
-                type: inputTypeMap.get(commonArgs[argName].type) || GraphQLID,
+                type:
+                  typeof typeNameOrType === 'string' ? inputTypeMap.get(typeNameOrType) : typeNameOrType || GraphQLID,
               };
             }
             const fieldTypeMap: TypeMap = {};

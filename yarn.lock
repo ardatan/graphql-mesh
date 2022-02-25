@@ -22281,7 +22281,7 @@ swagger-parser@^10.0.2:
   dependencies:
     "@apidevtools/swagger-parser" "10.0.2"
 
-swagger2openapi@7.0.8, swagger2openapi@^7.0.8:
+swagger2openapi@7.0.8:
   version "7.0.8"
   resolved "https://registry.yarnpkg.com/swagger2openapi/-/swagger2openapi-7.0.8.tgz#12c88d5de776cb1cbba758994930f40ad0afac59"
   integrity sha512-upi/0ZGkYgEcLeGieoz8gT74oWHA0E7JivX7aN9mAf+Tc7BQoRBvnIGHoPDw+f9TXTW4s6kGYCZJtauP6OYp7g==
