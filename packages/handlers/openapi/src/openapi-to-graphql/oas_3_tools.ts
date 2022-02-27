@@ -81,6 +81,8 @@ export enum HTTP_METHODS {
 
 export const SUCCESS_STATUS_RX = /2[0-9]{2}|2XX/;
 
+export const CONTENT_TYPE_JSON_RX = /^application\/(.*)json$/;
+
 /**
  * Given an HTTP method, convert it to the HTTP_METHODS enum
  */
@@ -456,7 +458,7 @@ export function getRequestBodyObject(
 
       const contentTypes = Object.keys(content);
       const jsonContentType = contentTypes
-        .find(contentType => contentType.toString().includes('application/json'))
+        .find(contentType => CONTENT_TYPE_JSON_RX.test(contentType.toString()))
         ?.toString();
       const formDataContentType = contentTypes
         .find(contentType => contentType.toString().includes('application/x-www-form-urlencoded'))
@@ -519,7 +521,7 @@ export function getRequestSchemaAndNames(path: string, operation: OperationObjec
      * with the proper content-type header
      */
     if (
-      !payloadContentType.includes('application/json') &&
+      !CONTENT_TYPE_JSON_RX.test(payloadContentType.toString()) &&
       !payloadContentType.includes('application/x-www-form-urlencoded') &&
       !payloadContentType.includes('*/*')
     ) {
@@ -581,7 +583,7 @@ export function getResponseObject(
         const content: MediaTypesObject = responseObject.content;
 
         const contentTypes = Object.keys(content);
-        const isJsonContent = contentTypes.some(contentType => contentType.toString().includes('application/json'));
+        const isJsonContent = contentTypes.some(contentType => CONTENT_TYPE_JSON_RX.test(contentType.toString()));
         // Prioritize content-type JSON
         if (isJsonContent) {
           return {
@@ -644,7 +646,7 @@ export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
      * Edge case: if response body content-type is not application/json, do not
      * parse.
      */
-    if (!responseContentType.includes('application/json') && !responseContentType.includes('*/*')) {
+    if (!CONTENT_TYPE_JSON_RX.test(responseContentType.toString()) && !responseContentType.includes('*/*')) {
       let description = 'Placeholder to access non-application/json response bodies';
 
       if ('description' in responseSchema && typeof responseSchema.description === 'string') {
