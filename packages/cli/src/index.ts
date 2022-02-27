@@ -124,7 +124,7 @@ export async function graphqlMesh() {
           meshInstance$
             .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchema(schema)))
             .catch(e => {
-              logger.error(`An error occured while writing the schema file: ${e.message}`);
+              logger.error(`An error occured while writing the schema file: ${e.stack || e.message}`);
             });
           meshInstance$
             .then(({ schema, rawSources }) =>
@@ -152,7 +152,7 @@ export async function graphqlMesh() {
               })
             )
             .catch(e => {
-              logger.error(`An error occurred while building the mesh artifacts: ${e.message}`);
+              logger.error(`An error occurred while building the mesh artifacts: ${e.stack || e.message}`);
             });
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,

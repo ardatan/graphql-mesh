@@ -1,13 +1,16 @@
-import { getMesh } from '@graphql-mesh/runtime';
+import { MeshInstance } from '@graphql-mesh/runtime';
 import { RequestHandler } from 'express';
-import { shouldRenderGraphiQL } from 'graphql-helix';
 import { createServer, useExtendContext } from '@graphql-yoga/node';
 import { IncomingMessage } from 'http';
 
-export const graphqlHandler = (mesh$: ReturnType<typeof getMesh>): RequestHandler => {
+function shouldRenderGraphiQL(req: IncomingMessage) {
+  return req.method.toLowerCase() === 'get' && req.headers.accept.includes('text/html');
+}
+
+export const graphqlHandler = (mesh$: Promise<MeshInstance>): RequestHandler => {
   const yoga$ = mesh$.then(mesh =>
     createServer({
-      plugins: [...mesh.plugins, useExtendContext(({ req }: { req: IncomingMessage }) => req)],
+      plugins: [...mesh.plugins, useExtendContext(({ req }) => req)],
       logging: mesh.logger,
       maskedErrors: false,
     })

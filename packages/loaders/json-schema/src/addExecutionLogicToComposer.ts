@@ -241,6 +241,7 @@ export async function addExecutionLogicToComposer(
             statusText: response.statusText,
           },
         });
+        operationLogger.debug(() => `Adding response metadata to the response object`);
         return Array.isArray(responseJson)
           ? responseJson.map(obj => addResponseMetadata(obj))
           : addResponseMetadata(responseJson);
