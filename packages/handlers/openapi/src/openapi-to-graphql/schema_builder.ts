@@ -1108,7 +1108,8 @@ export function getArgs<TSource, TContext, TArgs>({
     } else if (typeof parameter.content === 'object') {
       const contentTypes = Object.keys(parameter.content);
       const jsonContentType = contentTypes.find(
-        contentType => contentType.toString().includes('application/json') || contentType.toString().includes('*/*')
+        contentType =>
+          Oas3Tools.CONTENT_TYPE_JSON_RX.test(contentType.toString()) || contentType.toString().includes('*/*')
       );
       if (
         jsonContentType &&
