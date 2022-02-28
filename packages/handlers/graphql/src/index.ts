@@ -16,6 +16,7 @@ import {
   buildASTSchema,
   IntrospectionQuery,
   buildClientSchema,
+  ExecutionResult,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
@@ -209,12 +210,22 @@ export default class GraphQLHandler implements MeshHandler {
   getFallbackExecutor(executors: MeshSource['executor'][]): MeshSource['executor'] {
     return async function fallbackExecutor(params: ExecutionRequest) {
       let error: Error;
+      let response: ExecutionResult<any>;
       for (const executor of executors) {
         try {
-          return await executor(params);
+          const executorResponse = await executor(params);
+          if ('errors' in executorResponse && executorResponse.errors?.length) {
+            response = executorResponse;
+            continue;
+          } else {
+            return executorResponse;
+          }
         } catch (e) {
           error = e;
         }
+      }
+      if (response != null) {
+        return response;
       }
       throw error;
     };
