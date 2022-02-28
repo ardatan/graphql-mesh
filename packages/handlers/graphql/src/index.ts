@@ -268,7 +268,7 @@ export default class GraphQLHandler implements MeshHandler {
         return {
           schema,
           executor,
-          batch: false,
+          batch: true,
         };
       } else {
         let schema: GraphQLSchema;
@@ -294,6 +294,7 @@ export default class GraphQLHandler implements MeshHandler {
         return {
           schema,
           executor,
+          // Batching doesn't make sense with fallback strategy
           batch: false,
         };
       }
