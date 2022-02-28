@@ -20,7 +20,6 @@ import {
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
   getInterpolatedHeadersFactory,
-  ResolverDataBasedFactory,
   loadFromModuleExportExpression,
   getInterpolatedStringFactory,
   getCachedFetch,
@@ -44,29 +43,6 @@ export default class GraphQLHandler implements MeshHandler {
     this.cache = cache;
     this.nonExecutableSchema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
     this.importFn = importFn;
-  }
-
-  private async getExecutorForParams(
-    params: ExecutionRequest,
-    headersFactory: ResolverDataBasedFactory<Record<string, string>>,
-    endpointFactory: ResolverDataBasedFactory<string>,
-    httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration,
-    customFetch: ReturnType<typeof getCachedFetch>
-  ) {
-    const resolverData: ResolverData = {
-      root: params.rootValue,
-      args: params.variables,
-      context: params.context,
-      env,
-    };
-    const headers = headersFactory(resolverData);
-    const endpoint = endpointFactory(resolverData);
-    return this.urlLoader.getExecutorAsync(endpoint, {
-      ...httpSourceConfig,
-      customFetch,
-      subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
-      headers,
-    });
   }
 
   private getCustomFetchImpl(customFetchConfig: string) {
@@ -105,25 +81,36 @@ export default class GraphQLHandler implements MeshHandler {
     }
     const endpointFactory = getInterpolatedStringFactory(endpoint);
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
+    const executor = await this.urlLoader.getExecutorAsync(endpoint, {
+      ...httpSourceConfig,
+      subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
+      customFetch,
+    });
 
-    return async params => {
-      const executor = await this.getExecutorForParams(
-        params,
-        operationHeadersFactory,
-        endpointFactory,
-        httpSourceConfig,
-        customFetch
-      );
-      return executor(params);
+    return function meshExecutor(params) {
+      const resolverData: ResolverData = {
+        root: params.rootValue,
+        args: params.variables,
+        context: params.context,
+        env,
+      };
+      return executor({
+        ...params,
+        extensions: {
+          ...params.extensions,
+          headers: operationHeadersFactory(resolverData),
+          endpoint: endpointFactory(resolverData),
+        },
+      });
     };
   }
 
   async getNonExecutableSchemaForHTTPSource(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
   ): Promise<GraphQLSchema> {
-    const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
-    const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
     return this.nonExecutableSchema.getWithSet(async () => {
+      const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
+      const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
       const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch);
       if (httpSourceConfig.introspection) {
         const headers = schemaHeadersFactory({
@@ -146,17 +133,27 @@ export default class GraphQLHandler implements MeshHandler {
           return buildClientSchema(sdlOrIntrospection);
         }
       } else {
-        const introspectionExecutor = async (request: ExecutionRequest) => {
-          const executor = await this.getExecutorForParams(
-            request,
-            schemaHeadersFactory,
-            endpointFactory,
-            httpSourceConfig,
-            customFetch
-          );
-          return executor(request);
-        };
-        return introspectSchema(introspectionExecutor);
+        const executor = await this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
+          ...httpSourceConfig,
+          customFetch,
+          subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
+        });
+        return introspectSchema(function meshIntrospectionExecutor(params: ExecutionRequest) {
+          const resolverData: ResolverData = {
+            root: params.rootValue,
+            args: params.variables,
+            context: params.context,
+            env,
+          };
+          return executor({
+            ...params,
+            extensions: {
+              ...params.extensions,
+              headers: schemaHeadersFactory(resolverData),
+              endpoint: endpointFactory(resolverData),
+            },
+          });
+        });
       }
     });
   }
