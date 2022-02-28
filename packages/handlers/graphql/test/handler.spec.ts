@@ -20,7 +20,7 @@ describe('graphql', () => {
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
-        endpoint: sdlFilePath,
+        schema: sdlFilePath,
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),
@@ -44,7 +44,7 @@ describe('graphql', () => {
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
-        endpoint: schemaFilePath,
+        schema: schemaFilePath,
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),
@@ -67,7 +67,7 @@ describe('graphql', () => {
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
-        endpoint: schemaFilePath,
+        schema: schemaFilePath,
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),
@@ -91,7 +91,7 @@ describe('graphql', () => {
     const handler = new GraphQLHandler({
       name: 'SDLSchema',
       config: {
-        endpoint: schemaFilePath,
+        schema: schemaFilePath,
       },
       baseDir: __dirname,
       cache: new InMemoryLRUCache(),

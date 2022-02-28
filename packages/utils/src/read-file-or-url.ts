@@ -6,6 +6,7 @@ import { dirname, isAbsolute, resolve } from 'path';
 import { promises as fsPromises, readdirSync, readFileSync } from 'fs';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
+import { memoize1 } from '@graphql-tools/utils';
 
 const { readFile: readFileFromFS } = fsPromises || {};
 
@@ -20,14 +21,14 @@ export interface ReadFileOrUrlOptions extends RequestInit {
   logger?: Logger;
 }
 
-export function getCachedFetch(cache: KeyValueCache): typeof crossFetch {
+export const getCachedFetch = memoize1(function getCachedFetch(cache: KeyValueCache): typeof crossFetch {
   return fetchFactory({
     fetch: crossFetch,
     Request,
     Response,
     cache,
   });
-}
+});
 
 export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileOrUrlOptions): Promise<T> {
   if (isUrl(filePathOrUrl)) {
