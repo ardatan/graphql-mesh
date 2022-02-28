@@ -268,13 +268,14 @@ export default class GraphQLHandler implements MeshHandler {
         return {
           schema,
           executor,
+          batch: false,
         };
       } else {
         let schema: GraphQLSchema;
-        const executors: MeshSource['executor'][] = [];
+        const executorPromises: Promise<MeshSource['executor']>[] = [];
         let error: Error;
         for (const httpSourceConfig of this.config.sources) {
-          executors.push(await this.getExecutorForHTTPSourceConfig(httpSourceConfig));
+          executorPromises.push(this.getExecutorForHTTPSourceConfig(httpSourceConfig));
           if (schema == null) {
             try {
               schema = await this.getNonExecutableSchemaForHTTPSource(httpSourceConfig);
@@ -287,11 +288,13 @@ export default class GraphQLHandler implements MeshHandler {
           throw error;
         }
 
+        const executors = await Promise.all(executorPromises);
         const executor = this.getFallbackExecutor(executors);
 
         return {
           schema,
           executor,
+          batch: false,
         };
       }
     } else if ('endpoint' in this.config) {
@@ -302,9 +305,12 @@ export default class GraphQLHandler implements MeshHandler {
       return {
         schema,
         executor,
+        batch: true,
       };
     } else if ('schema' in this.config) {
       return this.getCodeFirstSource(this.config);
     }
+
+    throw new Error(`Unexpected config: ${inspect(this.config)}`);
   }
 }

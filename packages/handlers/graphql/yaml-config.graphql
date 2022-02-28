@@ -90,6 +90,10 @@ type GraphQLHandlerHTTPConfiguration {
   Timeout in milliseconds
   """
   timeout: Int
+  """
+  Enable/Disable automatic query batching
+  """
+  batch: Boolean
 }
 
 enum SubscriptionProtocol {
