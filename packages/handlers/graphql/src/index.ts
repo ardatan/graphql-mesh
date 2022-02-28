@@ -46,18 +46,6 @@ export default class GraphQLHandler implements MeshHandler {
     this.importFn = importFn;
   }
 
-  private getDefaultFetch(timeout?: number): ReturnType<typeof getCachedFetch> {
-    const cachedFetch = getCachedFetch(this.cache);
-    if (timeout != null) {
-      return (...args) =>
-        Promise.race([
-          cachedFetch(...args),
-          new Promise<any>((_resolve, reject) => setTimeout(() => reject(new Error('Timeout in ' + timeout)), timeout)),
-        ]);
-    }
-    return cachedFetch;
-  }
-
   private async getExecutorForParams(
     params: ExecutionRequest,
     headersFactory: ResolverDataBasedFactory<Record<string, string>>,
@@ -73,36 +61,22 @@ export default class GraphQLHandler implements MeshHandler {
     };
     const headers = headersFactory(resolverData);
     const endpoint = endpointFactory(resolverData);
-    const executor = await this.urlLoader.getExecutorAsync(endpoint, {
+    return this.urlLoader.getExecutorAsync(endpoint, {
       ...httpSourceConfig,
       customFetch,
       subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       headers,
     });
-    if (httpSourceConfig.retry) {
-      let error: Error;
-      return async function retryExecutor() {
-        for (let attempt = 0; attempt < httpSourceConfig.retry; attempt++) {
-          try {
-            return await executor(params);
-          } catch (e) {
-            error = e;
-          }
-        }
-        throw error;
-      };
-    }
-    return executor;
   }
 
-  private getCustomFetchImpl(customFetchConfig: string, timeout?: number) {
+  private getCustomFetchImpl(customFetchConfig: string) {
     return customFetchConfig
       ? loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(customFetchConfig, {
           cwd: this.baseDir,
           defaultExportName: 'default',
           importFn: this.importFn,
         })
-      : this.getDefaultFetch(timeout);
+      : getCachedFetch(this.cache);
   }
 
   async getExecutorForHTTPSourceConfig(
@@ -113,9 +87,8 @@ export default class GraphQLHandler implements MeshHandler {
       schemaHeaders: configHeaders,
       customFetch: customFetchConfig,
       operationHeaders,
-      timeout,
     } = httpSourceConfig;
-    const customFetch = await this.getCustomFetchImpl(customFetchConfig, timeout);
+    const customFetch = await this.getCustomFetchImpl(customFetchConfig);
     let schemaHeaders =
       typeof configHeaders === 'string'
         ? await loadFromModuleExportExpression(configHeaders, {
@@ -151,7 +124,7 @@ export default class GraphQLHandler implements MeshHandler {
     const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
     const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
     return this.nonExecutableSchema.getWithSet(async () => {
-      const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch, httpSourceConfig.timeout);
+      const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch);
       if (httpSourceConfig.introspection) {
         const headers = schemaHeadersFactory({
           env,

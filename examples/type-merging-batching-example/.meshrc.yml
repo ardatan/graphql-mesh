@@ -2,7 +2,7 @@ sources:
   - name: AuthorService
     handler:
       graphql:
-        endpoint: ./author-service-schema.js
+        schema: ./author-service-schema.js
     transforms:
       - typeMerging:
           queryFields:
@@ -17,7 +17,7 @@ sources:
   - name: BookService
     handler:
       graphql:
-        endpoint: ./book-service-schema.js
+        schema: ./book-service-schema.js
     transforms:
       # Rename type names and field names to let stitching merger merges them
       - rename:
