@@ -29,9 +29,20 @@ export { generateTsArtifacts, serveMesh, findAndParseConfig };
 const SERVE_COMMAND_WARNING =
   '`serve` command has been replaced by `dev` and `start` commands. Check our documentation for new usage';
 
-export async function graphqlMesh() {
+export interface GraphQLMeshCLIParams {
+  commandName: string;
+  initialLoggerPrefix: string;
+  configName: string;
+  artifactsDir: string;
+  serveMessage: string;
+  playgroundTitle: string;
+  builtMeshFactoryName: string;
+  builtMeshSDKFactoryName: string;
+}
+
+export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
   let baseDir = cwd();
-  let logger = new DefaultLogger('🕸️');
+  let logger = new DefaultLogger(cliParams.initialLoggerPrefix);
   return yargs(hideBin(process.argv))
     .help()
     .option('r', {
@@ -49,7 +60,7 @@ export async function graphqlMesh() {
         ),
     })
     .option('dir', {
-      describe: 'Modified the base directory to use for looking for meshrc config file',
+      describe: 'Modified the base directory to use for looking for ' + cliParams.configName + ' config file',
       type: 'string',
       default: baseDir,
       coerce: dir => {
@@ -104,7 +115,7 @@ export async function graphqlMesh() {
     )
     .command<{ port: number; prod: boolean; validate: boolean }>(
       'dev',
-      'Serves a GraphQL server with GraphQL interface by building Mesh artifacts on the fly',
+      'Serves a GraphQL server with GraphQL interface by building artifacts on the fly',
       builder => {
         builder.option('port', {
           type: 'number',
@@ -112,12 +123,13 @@ export async function graphqlMesh() {
       },
       async args => {
         try {
-          const rootArtifactsName = '.mesh';
-          const outputDir = join(baseDir, rootArtifactsName);
+          const outputDir = join(baseDir, cliParams.artifactsDir);
 
           env.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
+            artifactsDir: cliParams.artifactsDir,
+            configName: cliParams.configName,
           });
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
@@ -128,31 +140,38 @@ export async function graphqlMesh() {
             });
           meshInstance$
             .then(({ schema, rawSources }) =>
-              generateTsArtifacts({
-                unifiedSchema: schema,
-                rawSources,
-                mergerType: meshConfig.merger.name,
-                documents: meshConfig.documents,
-                flattenTypes: false,
-                importedModulesSet: new Set(),
-                baseDir,
-                meshConfigCode: `
+              generateTsArtifacts(
+                {
+                  unifiedSchema: schema,
+                  rawSources,
+                  mergerType: meshConfig.merger.name,
+                  documents: meshConfig.documents,
+                  flattenTypes: false,
+                  importedModulesSet: new Set(),
+                  baseDir,
+                  meshConfigCode: `
                 import { findAndParseConfig } from '@graphql-mesh/cli';
                 function getMeshOptions() {
-                  console.warn('WARNING: These artifacts are built for development mode. Please run "mesh build" to build production artifacts');
+                  console.warn('WARNING: These artifacts are built for development mode. Please run "${
+                    cliParams.commandName
+                  } build" to build production artifacts');
                   return findAndParseConfig({
-                    dir: baseDir
+                    dir: baseDir,
+                    artifactsDir: ${JSON.stringify(cliParams.artifactsDir)},
+                    configName: ${JSON.stringify(cliParams.configName)},
                   });
                 }
               `,
-                logger,
-                sdkConfig: meshConfig.config.sdk,
-                tsOnly: true,
-                codegenConfig: meshConfig.config.codegen,
-              })
+                  logger,
+                  sdkConfig: meshConfig.config.sdk,
+                  tsOnly: true,
+                  codegenConfig: meshConfig.config.codegen,
+                },
+                cliParams
+              )
             )
             .catch(e => {
-              logger.error(`An error occurred while building the mesh artifacts: ${e.stack || e.message}`);
+              logger.error(`An error occurred while building the artifacts: ${e.stack || e.message}`);
             });
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
@@ -173,7 +192,7 @@ export async function graphqlMesh() {
             );
             await customServerHandler(serveMeshOptions);
           } else {
-            await serveMesh(serveMeshOptions);
+            await serveMesh(serveMeshOptions, cliParams);
           }
         } catch (e) {
           handleFatalError(e, logger);
@@ -182,7 +201,7 @@ export async function graphqlMesh() {
     )
     .command<{ port: number; prod: boolean; validate: boolean }>(
       'start',
-      'Serves a GraphQL server with GraphQL interface based on your generated Mesh artifacts',
+      'Serves a GraphQL server with GraphQL interface based on your generated artifacts',
       builder => {
         builder.option('port', {
           type: 'number',
@@ -190,10 +209,10 @@ export async function graphqlMesh() {
       },
       async args => {
         try {
-          const builtMeshArtifactsPath = join(baseDir, '.mesh');
+          const builtMeshArtifactsPath = join(baseDir, cliParams.artifactsDir);
           if (!(await pathExists(builtMeshArtifactsPath))) {
             throw new Error(
-              `Seems like you haven't build Mesh artifacts yet to start production server! You need to build artifacts first with "mesh build" command!`
+              `Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`
             );
           }
           env.NODE_ENV = 'production';
@@ -222,7 +241,7 @@ export async function graphqlMesh() {
             });
             await customServerHandler(serveMeshOptions);
           } else {
-            await serveMesh(serveMeshOptions);
+            await serveMesh(serveMeshOptions, cliParams);
           }
         } catch (e) {
           handleFatalError(e, logger);
@@ -236,14 +255,14 @@ export async function graphqlMesh() {
       async args => {
         let destroy: VoidFunction;
         try {
-          if (!(await pathExists(join(baseDir, '.mesh')))) {
+          if (!(await pathExists(join(baseDir, cliParams.artifactsDir)))) {
             throw new Error(
-              `You cannot validate artifacts now because you don't have built artifacts yet! You need to build artifacts first with "mesh build" command!`
+              `You cannot validate artifacts now because you don't have built artifacts yet! You need to build artifacts first with "${cliParams.commandName} build" command!`
             );
           }
 
           const store = new MeshStore(
-            '.mesh',
+            cliParams.artifactsDir,
             new FsStoreStorageAdapter({
               cwd: baseDir,
               importFn: defaultImportFn,
@@ -254,16 +273,18 @@ export async function graphqlMesh() {
             }
           );
 
-          logger.info(`Reading Mesh configuration`);
+          logger.info(`Reading the configuration`);
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             store,
             importFn: defaultImportFn,
             ignoreAdditionalResolvers: true,
+            artifactsDir: cliParams.artifactsDir,
+            configName: cliParams.configName,
           });
           logger = meshConfig.logger;
 
-          logger.info(`Generating Mesh schema`);
+          logger.info(`Generating the unified schema`);
           const mesh = await getMesh(meshConfig);
           logger.info(`Artifacts have been validated successfully`);
           destroy = mesh?.destroy;
@@ -285,8 +306,7 @@ export async function graphqlMesh() {
       },
       async args => {
         try {
-          const rootArtifactsName = '.mesh';
-          const outputDir = join(baseDir, rootArtifactsName);
+          const outputDir = join(baseDir, cliParams.artifactsDir);
 
           logger.info('Cleaning existing artifacts');
           await rmdirs(outputDir);
@@ -313,7 +333,7 @@ export async function graphqlMesh() {
           await Promise.all(importPromises);
 
           const store = new MeshStore(
-            rootArtifactsName,
+            cliParams.artifactsDir,
             new FsStoreStorageAdapter({
               cwd: baseDir,
               importFn,
@@ -324,34 +344,39 @@ export async function graphqlMesh() {
             }
           );
 
-          logger.info(`Reading Mesh configuration`);
+          logger.info(`Reading the configuration`);
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             store,
             importFn,
             ignoreAdditionalResolvers: true,
+            artifactsDir: cliParams.artifactsDir,
+            configName: cliParams.configName,
           });
           logger = meshConfig.logger;
 
-          logger.info(`Generating Mesh schema`);
+          logger.info(`Generating the unified schema`);
           const { schema, destroy, rawSources } = await getMesh(meshConfig);
           await writeFile(join(outputDir, 'schema.graphql'), printSchema(schema));
 
           logger.info(`Generating artifacts`);
-          await generateTsArtifacts({
-            unifiedSchema: schema,
-            rawSources,
-            mergerType: meshConfig.merger.name,
-            documents: meshConfig.documents,
-            flattenTypes: false,
-            importedModulesSet,
-            baseDir,
-            meshConfigCode: meshConfig.code,
-            logger,
-            sdkConfig: meshConfig.config.sdk,
-            tsOnly: args.tsOnly,
-            codegenConfig: meshConfig.config.codegen,
-          });
+          await generateTsArtifacts(
+            {
+              unifiedSchema: schema,
+              rawSources,
+              mergerType: meshConfig.merger.name,
+              documents: meshConfig.documents,
+              flattenTypes: false,
+              importedModulesSet,
+              baseDir,
+              meshConfigCode: meshConfig.code,
+              logger,
+              sdkConfig: meshConfig.config.sdk,
+              tsOnly: args.tsOnly,
+              codegenConfig: meshConfig.config.codegen,
+            },
+            cliParams
+          );
 
           logger.info(`Cleanup`);
           destroy();
@@ -374,6 +399,8 @@ export async function graphqlMesh() {
         env.NODE_ENV = 'development';
         const meshConfig = await findAndParseConfig({
           dir: baseDir,
+          artifactsDir: cliParams.artifactsDir,
+          configName: cliParams.configName,
         });
         logger = meshConfig.logger;
         const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);
@@ -407,7 +434,7 @@ export async function graphqlMesh() {
           );
           await customServerHandler(serveMeshOptions);
         } else {
-          await serveMesh(serveMeshOptions);
+          await serveMesh(serveMeshOptions, cliParams);
         }
       }
     ).argv;

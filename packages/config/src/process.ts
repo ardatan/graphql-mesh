@@ -34,6 +34,8 @@ export type ConfigProcessOptions = {
   importFn?: ImportFn;
   store?: MeshStore;
   ignoreAdditionalResolvers?: boolean;
+  configName?: string;
+  artifactsDir?: string;
 };
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
@@ -54,7 +56,7 @@ export type ProcessedConfig = {
   additionalEnvelopPlugins: EnvelopPlugins;
 };
 
-function getDefaultMeshStore(dir: string, importFn: ImportFn) {
+function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
   const isProd = env.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
@@ -62,7 +64,7 @@ function getDefaultMeshStore(dir: string, importFn: ImportFn) {
         importFn,
       })
     : new InMemoryStoreStorageAdapter();
-  return new MeshStore(resolve(dir, '.mesh'), storeStorageAdapter, {
+  return new MeshStore(resolve(dir, artifactsDir), storeStorageAdapter, {
     /**
      * TODO:
      * `mesh start` => { readonly: true, validate: false }
@@ -93,7 +95,7 @@ export async function processConfig(
     `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
   ];
 
-  const { dir, importFn = defaultImportFn, store: providedStore } = options || {};
+  const { dir, importFn = defaultImportFn, store: providedStore, artifactsDir } = options || {};
 
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
@@ -102,7 +104,7 @@ export async function processConfig(
     }
   }
 
-  const rootStore = providedStore || getDefaultMeshStore(dir, importFn);
+  const rootStore = providedStore || getDefaultMeshStore(dir, importFn, artifactsDir || '.mesh');
 
   const {
     cache,

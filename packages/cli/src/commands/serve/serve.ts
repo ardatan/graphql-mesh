@@ -23,6 +23,7 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
 import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
+import { GraphQLMeshCLIParams } from '@graphql-mesh/cli';
 
 dnscache({ enable: true });
 
@@ -36,15 +37,10 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
   }
 }
 
-export async function serveMesh({
-  baseDir,
-  argsPort,
-  getBuiltMesh,
-  logger,
-  rawConfig,
-  documents,
-  playgroundTitle,
-}: ServeMeshOptions) {
+export async function serveMesh(
+  { baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents, playgroundTitle }: ServeMeshOptions,
+  cliParams: GraphQLMeshCLIParams
+) {
   const {
     fork,
     port: configPort,
@@ -63,7 +59,7 @@ export async function serveMesh({
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
   if (!playgroundTitle) {
-    playgroundTitle = rawConfig.serve?.playgroundTitle || 'GraphQL Mesh';
+    playgroundTitle = rawConfig.serve?.playgroundTitle || cliParams.playgroundTitle;
   }
   if (!cluster.isWorker && Boolean(fork)) {
     const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
@@ -71,17 +67,17 @@ export async function serveMesh({
       const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
-    logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
+    logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
   } else {
-    logger.info(`Generating Mesh schema...`);
+    logger.info(`Generating the unified schema...`);
     let readyFlag = false;
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
       .then(mesh => {
         readyFlag = true;
-        logger.info(`Serving GraphQL Mesh: ${serverUrl}`);
+        logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
         registerTerminateHandler(eventName => {
           const eventLogger = logger.child(`${eventName}💀`);
-          eventLogger.info(`Destroying GraphQL Mesh`);
+          eventLogger.info(`Destroying the server`);
           mesh.destroy();
         });
         return mesh;

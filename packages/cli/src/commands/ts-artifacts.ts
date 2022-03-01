@@ -12,6 +12,7 @@ import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { generateOperations } from './generate-operations';
+import { GraphQLMeshCLIParams } from '..';
 
 const { unlink, rename, readFile } = fsPromises;
 
@@ -131,34 +132,37 @@ ${Object.values(subscriptionsOperationMap).join(',\n')}
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
-export async function generateTsArtifacts({
-  unifiedSchema,
-  rawSources,
-  mergerType = 'stitching',
-  documents,
-  flattenTypes,
-  importedModulesSet,
-  baseDir,
-  meshConfigCode,
-  logger,
-  sdkConfig,
-  tsOnly = false,
-  codegenConfig = {},
-}: {
-  unifiedSchema: GraphQLSchema;
-  rawSources: RawSourceOutput[];
-  mergerType: string;
-  documents: Source[];
-  flattenTypes: boolean;
-  importedModulesSet: Set<string>;
-  baseDir: string;
-  meshConfigCode: string;
-  logger: Logger;
-  sdkConfig: YamlConfig.SDKConfig;
-  tsOnly: boolean;
-  codegenConfig: any;
-}) {
-  const artifactsDir = join(baseDir, '.mesh');
+export async function generateTsArtifacts(
+  {
+    unifiedSchema,
+    rawSources,
+    mergerType = 'stitching',
+    documents,
+    flattenTypes,
+    importedModulesSet,
+    baseDir,
+    meshConfigCode,
+    logger,
+    sdkConfig,
+    tsOnly = false,
+    codegenConfig = {},
+  }: {
+    unifiedSchema: GraphQLSchema;
+    rawSources: RawSourceOutput[];
+    mergerType: string;
+    documents: Source[];
+    flattenTypes: boolean;
+    importedModulesSet: Set<string>;
+    baseDir: string;
+    meshConfigCode: string;
+    logger: Logger;
+    sdkConfig: YamlConfig.SDKConfig;
+    tsOnly: boolean;
+    codegenConfig: any;
+  },
+  cliParams: GraphQLMeshCLIParams
+) {
+  const artifactsDir = join(baseDir, cliParams.artifactsDir);
   logger.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
     const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(rawSource);
@@ -267,7 +271,7 @@ const importFn = (moduleId: string) => {
   return Promise.resolve(importedModules[relativeModuleId]);
 };
 
-const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
+const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageAdapter({
   cwd: baseDir,
   importFn,
 }), {
@@ -281,13 +285,15 @@ export const documentsInSDL = /*#__PURE__*/ [${documents.map(
               documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
             )}];
 
-export async function getBuiltMesh(): Promise<MeshInstance<MeshContext>> {
+export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
   const meshConfig = await getMeshOptions();
   return getMesh<MeshContext>(meshConfig);
 }
 
-export async function getMeshSDK<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
-  const { schema } = await getBuiltMesh();
+export async function ${
+              cliParams.builtMeshSDKFactoryName
+            }<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
+  const { schema } = await ${cliParams.builtMeshFactoryName}();
   return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, sdkOptions);
 }`;
 

@@ -13,11 +13,11 @@ export function validateConfig(config: any): asserts config is YamlConfig.Config
   jsonSchema.$schema = undefined;
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
-    console.warn(`GraphQL Mesh Configuration is not valid:\n${ajv.errorsText()}`);
+    console.warn(`Configuration is not valid:\n${ajv.errorsText()}`);
   }
 }
 
-export async function findAndParseConfig(options?: { configName?: string } & ConfigProcessOptions) {
+export async function findAndParseConfig(options?: ConfigProcessOptions) {
   const { configName = 'mesh', dir: configDir = '', ...restOptions } = options || {};
   const dir = isAbsolute(configDir) ? configDir : join(cwd(), configDir);
   const explorer = cosmiconfig(configName, {
@@ -33,7 +33,7 @@ export async function findAndParseConfig(options?: { configName?: string } & Con
   const results = await explorer.search(dir);
 
   if (!results) {
-    throw new Error(`No mesh config file was found in "${dir}"!`);
+    throw new Error(`No ${configName} config file found in "${dir}"!`);
   }
 
   const config = results.config;
