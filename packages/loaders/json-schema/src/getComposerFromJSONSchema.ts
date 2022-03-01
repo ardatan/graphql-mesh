@@ -13,7 +13,15 @@ import {
   ListComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
-import { getNamedType, GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, isNonNullType } from 'graphql';
+import {
+  getNamedType,
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLInt,
+  GraphQLScalarType,
+  GraphQLString,
+  isNonNullType,
+} from 'graphql';
 import {
   GraphQLBigInt,
   GraphQLDateTime,
@@ -32,7 +40,6 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { inspect, memoize1 } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
-import { GraphQLUpload } from 'graphql-upload';
 import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
 import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap';
 import { getUnionTypeComposers } from './getUnionTypeComposers';
@@ -49,6 +56,10 @@ interface TypeComposers {
   output: AnyTypeComposer<any> | SchemaComposer;
   description?: string;
 }
+
+const GraphQLUpload = new GraphQLScalarType({
+  name: 'Upload',
+});
 
 export function getComposerFromJSONSchema(
   schema: JSONSchema,

@@ -1,9 +1,7 @@
-const express = require('express');
-const { graphqlHTTP } = require('express-graphql');
+const { createServer } = require('@graphql-yoga/node');
 const sharp = require('sharp');
-const { makeExecutableSchema } = require('@graphql-tools/schema');
 
-const schema = makeExecutableSchema({
+module.exports = createServer({
   typeDefs: /* GraphQL */ `
     type Query {
       resizeImage(image: String, width: Int, height: Int): String
@@ -19,8 +17,7 @@ const schema = makeExecutableSchema({
       },
     },
   },
+  maskedErrors: false,
+  logging: false,
+  port: 3002,
 });
-
-module.exports = express()
-  .use(require('body-parser')({ limit: '10mb' }))
-  .use('/graphql', graphqlHTTP({ schema }));

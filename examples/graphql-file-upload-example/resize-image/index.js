@@ -1,3 +1,5 @@
-require('./server').listen(3002, () => {
+require('./server')
+  .start()
+  .then(() => {
     console.info(`ResizeImage GraphQL API listening on 3002`);
   });

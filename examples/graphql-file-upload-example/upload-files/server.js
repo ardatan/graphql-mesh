@@ -1,59 +1,56 @@
-const express = require('express');
-const { graphqlHTTP } = require('express-graphql');
-const { createWriteStream, existsSync, mkdirSync } = require('fs');
-const { readdir, readFile, unlink } = require('fs/promises');
-const { GraphQLUpload, graphqlUploadExpress } = require('graphql-upload');
+const { createServer } = require('@graphql-yoga/node')
+const { existsSync, mkdirSync } = require('fs');
+const { readdir, readFile, writeFile, unlink } = require('fs/promises');
 const { join } = require('path');
-const { makeExecutableSchema } = require('@graphql-tools/schema');
-const promisifiedPipe = require('./promisifiedPipe');
-const mime = require('mime');
 
 const FILES_DIR = join(__dirname, 'files');
 if (!existsSync(FILES_DIR)) {
   mkdirSync(FILES_DIR);
 }
 
-const schema = makeExecutableSchema({
-  typeDefs: /* GraphQL */ `
-    scalar Upload
-    type Query {
-      files: [File]
-    }
-    type Mutation {
-      uploadFile(upload: Upload!): File!
-      deleteFile(filename: String): Boolean
-    }
-    type File {
-      filename: String
-      base64: String
-    }
-  `,
-  resolvers: {
-    Upload: GraphQLUpload,
-    Query: {
-      files: () => readdir(FILES_DIR).then(files => files.map(filename => ({ filename }))),
-    },
-    Mutation: {
-      uploadFile: async (_, { upload }) => {
-        const { filename, createReadStream } = await upload;
-        const readStream = createReadStream();
-        const writeStream = createWriteStream(join(FILES_DIR, filename));
-        await promisifiedPipe(readStream, writeStream);
-        return { filename };
+module.exports = createServer({
+  schema: {
+    typeDefs: /* GraphQL */ `
+      scalar Upload
+      type Query {
+        files: [File]
+      }
+      type Mutation {
+        uploadFile(upload: Upload!): File!
+        deleteFile(filename: String): Boolean
+      }
+      type File {
+        filename: String
+        base64: String
+      }
+    `,
+    resolvers: {
+      Query: {
+        files: () => readdir(FILES_DIR).then(files => files.map(filename => ({ filename }))),
       },
-      deleteFile: async (_, { filename }) => {
-        await unlink(join(FILES_DIR, filename));
-        return true;
+      Mutation: {
+        uploadFile: async (_, { upload }) => {
+          const filename = upload.name;
+          const arrayBuffer = await upload.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          try {
+            await writeFile(join(FILES_DIR, filename), buffer);
+          } catch(e) {
+            console.error(`Error writing ${filename}`, e);
+          }
+          return { filename };
+        },
+        deleteFile: async (_, { filename }) => {
+          await unlink(join(FILES_DIR, filename));
+          return true;
+        },
       },
-    },
-    File: {
-      base64: ({ filename }) => readFile(join(FILES_DIR, filename), 'base64'),
+      File: {
+        base64: ({ filename }) => readFile(join(FILES_DIR, filename), 'base64'),
+      },
     },
   },
+  port: 3001,
+  maskedErrors: false,
+  logging: false,
 });
-
-module.exports = express().use(
-  '/graphql',
-  graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
-  graphqlHTTP({ schema })
-);

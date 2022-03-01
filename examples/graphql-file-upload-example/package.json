@@ -10,12 +10,8 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.56.1",
     "@graphql-mesh/graphql": "0.20.24",
-    "@graphql-tools/schema": "8.3.2",
     "concurrently": "5.3.0",
-    "express": "4.17.1",
-    "express-graphql": "0.12.0",
-    "graphql-upload": "11.0.0",
-    "mime": "2.4.6",
+    "@graphql-yoga/node": "0.1.0-beta.4",
     "sharp": "0.26.3",
     "graphql": "16.0.1"
   }

@@ -11,31 +11,17 @@ const mesh$ = findAndParseConfig({
 }).then(config => getMesh(config));
 
 describe('Upload Example', () => {
-  let servers = [];
-  beforeAll(() => {
-    servers.push(
-    uploadFilesServer.listen(3001),
-    resizeImageServer.listen(3002))
-  })
-  afterAll(() => {
-    servers.forEach(server => server.close())
+  beforeAll(async () => {
+    await uploadFilesServer.start()
+    await resizeImageServer.start()
   });
-  it('should generate correct schema', async () => {
-    const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      })
-    ).toMatchSnapshot();
+  afterAll(async () => {
+    await uploadFilesServer.stop()
+    await resizeImageServer.stop()
   });
   it('should give correct response', async () => {
     const { execute } = await mesh$;
     const file = new File([Buffer.from('CONTENT')], 'test.txt');
-    console.log({
-      File,
-      file,
-      name: file.name
-    })
     const result = await execute(
       /* GraphQL */ `
         mutation UploadFile($upload: Upload!) {
