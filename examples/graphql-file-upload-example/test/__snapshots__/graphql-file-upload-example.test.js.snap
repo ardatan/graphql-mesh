@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Upload Example should generate correct schema 1`] = `
+"type File {
+  base64: String
+  filename: String
+  thumbnailImage(height: Int, width: Int): String
+}
+
+type Mutation {
+  deleteFile(filename: String): Boolean
+  uploadFile(upload: Upload!): File!
+}
+
+type Query {
+  files: [File]
+  resizeImage(height: Int, image: String, width: Int): String
+}
+
+\\"\\"\\"The \`Upload\` scalar type represents a file upload.\\"\\"\\"
+scalar Upload"
+`;

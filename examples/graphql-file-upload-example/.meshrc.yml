@@ -18,6 +18,7 @@ additionalResolvers:
     targetFieldName: thumbnailImage
     requiredSelectionSet: '{ base64 }'
     sourceName: ResizeImages
+    sourceTypeName: Query
     sourceFieldName: resizeImage
     sourceArgs:
       image: '{root.base64}'
