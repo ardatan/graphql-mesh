@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.15.1
+
+### Patch Changes
+
+- c84d9e95e: enhance(json-schema): add a debug message about adding response metadata to the final response object
+
 ## 0.15.0
 
 ### Minor Changes

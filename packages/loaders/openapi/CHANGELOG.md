@@ -1,5 +1,12 @@
 # @omnigraph/openapi
 
+## 0.3.7
+
+### Patch Changes
+
+- Updated dependencies [c84d9e95e]
+  - @omnigraph/json-schema@0.15.1
+
 ## 0.3.6
 
 ### Patch Changes

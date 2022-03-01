@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.31.4
+
+### Patch Changes
+
+- c84d9e95e: fix(cli/runtime): print stacktrace of error objects instead of inspecting them
+
 ## 0.31.3
 
 ### Patch Changes
