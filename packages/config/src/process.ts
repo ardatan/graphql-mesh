@@ -23,7 +23,6 @@ import {
   resolveLogger,
 } from './utils';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
-import { env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, resolveAdditionalResolvers } from '@graphql-mesh/utils';
@@ -57,7 +56,7 @@ export type ProcessedConfig = {
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
-  const isProd = env.NODE_ENV?.toLowerCase() === 'production';
+  const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
         cwd: dir,
@@ -82,7 +81,7 @@ export async function processConfig(
   options?: ConfigProcessOptions
 ): Promise<ProcessedConfig> {
   if (config.skipSSLValidation) {
-    env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
 
   const importCodes: string[] = [

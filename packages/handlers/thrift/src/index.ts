@@ -44,7 +44,6 @@ import {
 import { pascalCase } from 'pascal-case';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { inspect } from '@graphql-tools/utils';
-import { env } from 'process';
 
 export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
@@ -526,7 +525,7 @@ export default class ThriftHandler implements MeshHandler {
               args,
               resolve: async (root, args, context, info) =>
                 thriftHttpClient.doRequest(fnName, args, fieldTypeMap, {
-                  headers: headersFactory({ root, args, context, info, env }),
+                  headers: headersFactory({ root, args, context, info, env: process.env }),
                 }),
             };
             methodNames.push(fnName);

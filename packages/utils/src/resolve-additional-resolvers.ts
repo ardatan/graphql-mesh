@@ -14,7 +14,6 @@ import { withFilter } from 'graphql-subscriptions';
 import _ from 'lodash';
 import { stringInterpolator } from './string-interpolator';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
-import { env } from 'process';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLType {
   if ('ofType' in type) {
@@ -173,7 +172,7 @@ export function resolveAdditionalResolvers(
               [additionalResolver.targetFieldName]: {
                 subscribe: withFilter(
                   (root, args, context, info) => {
-                    const resolverData = { root, args, context, info, env };
+                    const resolverData = { root, args, context, info, env: process.env };
                     const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
                     return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
                   },
@@ -199,7 +198,7 @@ export function resolveAdditionalResolvers(
                   if (!baseOptions.selectionSet) {
                     baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
                   }
-                  const resolverData = { root, args, context, info, env };
+                  const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.additionalArgs || {}) {
                     _.set(
@@ -259,7 +258,7 @@ export function resolveAdditionalResolvers(
                   if (!baseOptions.selectionSet) {
                     baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
                   }
-                  const resolverData = { root, args, context, info, env };
+                  const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.sourceArgs) {
                     _.set(

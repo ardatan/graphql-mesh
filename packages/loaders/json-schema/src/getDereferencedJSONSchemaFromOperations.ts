@@ -3,7 +3,6 @@ import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchema
 import { dereferenceObject, healJSONSchema, JSONSchemaObject } from 'json-machete';
 import { Logger } from '@graphql-mesh/types';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
-import { env } from 'process';
 
 export async function getDereferencedJSONSchemaFromOperations({
   operations,
@@ -31,7 +30,7 @@ export async function getDereferencedJSONSchemaFromOperations({
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {
     cwd,
     fetch,
-    headers: schemaHeadersFactory({ env }),
+    headers: schemaHeadersFactory({ env: process.env }),
   });
   logger.debug(() => `Healing JSON Schema`);
   const healedSchema = await healJSONSchema(fullyDeferencedSchema);

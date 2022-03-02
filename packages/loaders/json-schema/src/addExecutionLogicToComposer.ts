@@ -4,7 +4,6 @@ import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
 import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
 import { inspect, memoize1 } from '@graphql-tools/utils';
-import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
@@ -68,7 +67,7 @@ export async function addExecutionLogicToComposer(
         if (!pubsub) {
           return new GraphQLError(`You should have PubSub defined in either the config or the context!`);
         }
-        const interpolationData = { root, args, context, info, env };
+        const interpolationData = { root, args, context, info, env: process.env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
         operationLogger.debug(() => `=> Subscribing to pubSubTopic: ${pubsubTopic}`);
         return pubsub.asyncIterator(pubsubTopic);
@@ -91,7 +90,7 @@ export async function addExecutionLogicToComposer(
       }
       field.resolve = async (root, args, context) => {
         operationLogger.debug(() => `=> Resolving`);
-        const interpolationData = { root, args, context, env };
+        const interpolationData = { root, args, context, env: process.env };
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
         let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);

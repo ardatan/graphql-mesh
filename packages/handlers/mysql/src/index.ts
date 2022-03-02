@@ -25,7 +25,6 @@ import {
 import { ExecutionResult, specifiedDirectives } from 'graphql';
 import { jitExecutorFactory, loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { env } from 'process';
 import { ExecutionRequest } from '@graphql-tools/utils';
 
 const SCALARS = {
@@ -189,8 +188,8 @@ export default class MySQLHandler implements MeshHandler {
           supportBigNumbers: true,
           bigNumberStrings: true,
           dateStrings: true,
-          trace: !!env.DEBUG,
-          debug: !!env.DEBUG,
+          trace: !!process.env.DEBUG,
+          debug: !!process.env.DEBUG,
           ...this.config,
         });
 

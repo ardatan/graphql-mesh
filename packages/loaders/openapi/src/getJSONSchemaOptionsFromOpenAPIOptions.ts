@@ -7,7 +7,6 @@ import {
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
 } from '@omnigraph/json-schema';
-import { env } from 'process';
 import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
@@ -43,7 +42,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
       ? await readFileOrUrl(oasFilePath, {
           cwd,
           fallbackFormat,
-          headers: schemaHeadersFactory({ env }),
+          headers: schemaHeadersFactory({ env: process.env }),
           fetch,
         })
       : oasFilePath;

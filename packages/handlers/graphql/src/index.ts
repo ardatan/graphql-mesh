@@ -28,7 +28,6 @@ import {
 } from '@graphql-mesh/utils';
 import { ExecutionRequest, isDocumentNode, inspect } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { env } from 'process';
 
 export default class GraphQLHandler implements MeshHandler {
   private config: YamlConfig.Handler['graphql'];
@@ -93,7 +92,7 @@ export default class GraphQLHandler implements MeshHandler {
         root: params.rootValue,
         args: params.variables,
         context: params.context,
-        env,
+        env: process.env,
       };
       return executor({
         ...params,
@@ -115,7 +114,7 @@ export default class GraphQLHandler implements MeshHandler {
       const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch);
       if (httpSourceConfig.introspection) {
         const headers = schemaHeadersFactory({
-          env,
+          env: process.env,
         });
         const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(
           httpSourceConfig.introspection,
@@ -144,7 +143,7 @@ export default class GraphQLHandler implements MeshHandler {
             root: params.rootValue,
             args: params.variables,
             context: params.context,
-            env,
+            env: process.env,
           };
           return executor({
             ...params,

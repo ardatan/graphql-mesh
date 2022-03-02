@@ -5,7 +5,6 @@ import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import toJsonSchema from 'to-json-schema';
 import { RAMLLoaderOptions } from './types';
-import { env } from 'process';
 import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
 import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
@@ -52,7 +51,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     httpResolver: {
       getResourceAsync: async (url: string) => {
         const fetchResponse = await fetch(url, {
-          headers: schemaHeadersFactory({ env }),
+          headers: schemaHeadersFactory({ env: process.env }),
         });
         const content = await fetchResponse.text();
         if (fetchResponse.status !== 200) {
