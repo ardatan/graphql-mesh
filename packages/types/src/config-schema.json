@@ -817,6 +817,10 @@
         "timeout": {
           "type": "integer",
           "description": "Timeout in milliseconds"
+        },
+        "batch": {
+          "type": "boolean",
+          "description": "Enable/Disable automatic query batching"
         }
       },
       "required": ["endpoint"]

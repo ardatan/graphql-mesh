@@ -216,7 +216,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
             );
           }
           env.NODE_ENV = 'production';
-          const mainModule = join(builtMeshArtifactsPath, 'index.js');
+          const mainModule = join(builtMeshArtifactsPath, 'index');
           const builtMeshArtifacts = await defaultImportFn(mainModule);
           const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
           logger = getMeshOptions.logger;
@@ -296,14 +296,10 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         }
       }
     )
-    .command<{ tsOnly: boolean }>(
+    .command(
       'build',
       'Builds artifacts',
-      builder => {
-        builder.option('tsOnly', {
-          type: 'boolean',
-        });
-      },
+      builder => {},
       async args => {
         try {
           const outputDir = join(baseDir, cliParams.artifactsDir);
@@ -372,7 +368,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
               meshConfigCode: meshConfig.code,
               logger,
               sdkConfig: meshConfig.config.sdk,
-              tsOnly: args.tsOnly,
+              tsOnly: true,
               codegenConfig: meshConfig.config.codegen,
             },
             cliParams

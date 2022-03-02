@@ -144,7 +144,7 @@ export async function generateTsArtifacts(
     meshConfigCode,
     logger,
     sdkConfig,
-    tsOnly = false,
+    tsOnly = true,
     codegenConfig = {},
   }: {
     unifiedSchema: GraphQLSchema;

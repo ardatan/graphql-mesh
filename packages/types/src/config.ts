@@ -279,6 +279,10 @@ export interface GraphQLHandlerHTTPConfiguration {
    * Timeout in milliseconds
    */
   timeout?: number;
+  /**
+   * Enable/Disable automatic query batching
+   */
+  batch?: boolean;
 }
 export interface GraphQLHandlerCodeFirstConfiguration {
   /**

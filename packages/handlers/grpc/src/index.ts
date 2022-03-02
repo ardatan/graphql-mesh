@@ -52,9 +52,9 @@ export default class GrpcHandler implements MeshHandler {
     this.rootJsonAndDecodedDescriptorSets = store.proxy('descriptorSet.proto', {
       codify: rootJsonAndDecodedDescriptorSets =>
         `
-const { FileDescriptorSet } = require('protobufjs/ext/descriptor/index.js');
+import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
 
-module.exports = [
+export default [
 ${rootJsonAndDecodedDescriptorSets
   .map(
     ({ name, rootJson, decodedDescriptorSet }) => `

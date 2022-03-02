@@ -43,7 +43,7 @@ export interface FsStoreStorageAdapterOptions {
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
   private getWrittenFileName(key: string) {
-    const jsFileName = `${key}.cjs`;
+    const jsFileName = `${key}.ts`;
     return isAbsolute(jsFileName) ? jsFileName : join(this.options.cwd, jsFileName);
   }
 
@@ -100,23 +100,23 @@ const escapeForTemplateLiteral = (str: string) => str.split('`').join('\\`').spl
 
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
-    codify: v => `module.exports = ${JSON.stringify(v, null, 2)}`,
+    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
     validate: () => null,
   },
   StringWithoutValidation: {
-    codify: v => `module.exports = \`${escapeForTemplateLiteral(v)}\``,
+    codify: v => `export default \`${escapeForTemplateLiteral(v)}\``,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
     codify: (schema, identifier) =>
       `
-const { buildSchema, Source } = require('graphql');
+import { buildSchema, Source } from 'graphql';
 
 const source = new Source(/* GraphQL */\`
 ${escapeForTemplateLiteral(printSchemaWithDirectives(schema))}
 \`, \`${identifier}\`);
 
-module.exports = buildSchema(source, {
+export default buildSchema(source, {
   assumeValid: true,
   assumeValidSDL: true
 });
