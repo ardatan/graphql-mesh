@@ -264,7 +264,7 @@ ${importedModulesCodes.join(',\n')}
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn = (moduleId: string) => {
-  const relativeModuleId = (isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId).split('\\\\').join('/');
+  const relativeModuleId = (isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   if (!(relativeModuleId in importedModules)) {
     throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
   }
@@ -401,7 +401,7 @@ export async function ${
   if (await pathExists(tsConfigPath)) {
     const tsConfigStr = await readFile(tsConfigPath, 'utf8');
     const tsConfig = JSON.parse(tsConfigStr);
-    if (tsConfig?.compilerOptions?.module.startsWith('es')) {
+    if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
       jobs.push(esmJob('js'));
     } else {
       jobs.push(cjsJob);

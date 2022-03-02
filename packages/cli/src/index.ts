@@ -76,13 +76,9 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
           preferTsExts: true,
           dir: baseDir,
           require: ['graphql-import-node/register'],
-          ...(tsConfigExists
-            ? {}
-            : {
-                compilerOptions: {
-                  module: 'commonjs',
-                },
-              }),
+          compilerOptions: {
+            module: 'commonjs',
+          },
         });
         if (tsConfigExists) {
           try {
