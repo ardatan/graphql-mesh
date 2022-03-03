@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.16.0
+
+### Minor Changes
+
+- 275f82b53: enhance(json-schema): graphql-upload is no longer needed
+
 ## 0.15.1
 
 ### Patch Changes

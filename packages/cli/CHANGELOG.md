@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.56.2
+
+### Patch Changes
+
+- 9f2423979: fix(serve): expose node request headers, cookies, response object
+
 ## 0.56.1
 
 ### Patch Changes

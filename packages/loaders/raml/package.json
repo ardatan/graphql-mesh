@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "cross-undici-fetch": "0.1.25",
-    "@omnigraph/json-schema": "0.15.1",
+    "@omnigraph/json-schema": "0.16.0",
     "@ardatan/raml-1-parser": "1.1.69",
     "json-machete": "0.5.7",
     "to-json-schema": "0.2.5",
