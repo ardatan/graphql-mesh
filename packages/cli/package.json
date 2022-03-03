@@ -51,7 +51,7 @@
     "@graphql-tools/utils": "8.6.2",
     "@graphql-tools/load": "7.5.2",
     "@graphql-tools/graphql-file-loader": "7.3.4",
-    "@graphql-tools/wrap": "8.4.2",
+    "@graphql-tools/wrap": "8.4.3",
     "@graphql-yoga/render-graphiql": "0.1.0-beta.1",
     "@graphql-yoga/node": "0.1.0-beta.4",
     "body-parser": "1.19.2",
