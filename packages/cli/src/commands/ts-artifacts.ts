@@ -237,7 +237,7 @@ export async function generateTsArtifacts(
               `import { getMesh } from '@graphql-mesh/runtime';`,
               `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
               `import { join, relative, isAbsolute, dirname } from 'path';`,
-              `import { fileURLToPath } from 'url';`,
+              `import { fileURLToPath } from '@graphql-mesh/utils';`,
             ];
             const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
               let moduleMapProp = importedModuleName;
