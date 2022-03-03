@@ -16,7 +16,7 @@ enum CompanyType {
   Public_Limited
 }
 
-input CreateUpdateUser_Input {
+input CreateUpdateUserInput {
   firstName: String
   jobTitle: String
   lastName: String
@@ -27,9 +27,9 @@ type Foo {
 }
 
 type Mutation {
-  createUser(input: CreateUpdateUser_Input): User
+  createUser(input: CreateUpdateUserInput): User
   deleteUser(id: ID!): Any
-  updateUser(id: ID!, input: CreateUpdateUser_Input): User
+  updateUser(id: ID!, input: CreateUpdateUserInput): User
 }
 
 type Query {

@@ -1,11 +1,10 @@
 import { findAndParseConfig } from './config';
-import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
+import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
-import { serveMesh, ServeMeshOptions } from './commands/serve/serve';
+import { serveMesh } from './commands/serve/serve';
 import { isAbsolute, resolve, join } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import {
   writeFile,
   pathExists,
@@ -20,7 +19,10 @@ import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { YamlConfig } from '@graphql-mesh/types';
-import { serveSource } from './commands/serve/serve-source';
+import { register as tsNodeRegister } from 'ts-node';
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+import { config as dotEnvRegister } from 'dotenv';
+import { printSchema } from 'graphql';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -56,6 +58,40 @@ export async function graphqlMesh() {
         } else {
           baseDir = resolve(cwd(), dir);
         }
+        const tsConfigExists = existsSync(join(baseDir, 'tsconfig.json'));
+        tsNodeRegister({
+          transpileOnly: true,
+          typeCheck: false,
+          preferTsExts: true,
+          dir: baseDir,
+          require: ['graphql-import-node/register'],
+          ...(tsConfigExists
+            ? {}
+            : {
+                compilerOptions: {
+                  module: 'commonjs',
+                },
+              }),
+        });
+        if (tsConfigExists) {
+          try {
+            const tsConfigStr = readFileSync(join(baseDir, 'tsconfig.json'), 'utf-8');
+            const tsConfig = JSON.parse(tsConfigStr);
+            if (tsConfig.compilerOptions?.paths) {
+              tsConfigPathsRegister({
+                baseUrl: baseDir,
+                paths: tsConfig.compilerOptions.paths,
+              });
+            }
+          } catch (e) {
+            logger.warn(e);
+          }
+        }
+        if (existsSync(join(baseDir, '.env'))) {
+          dotEnvRegister({
+            path: join(baseDir, '.env'),
+          });
+        }
       },
     })
     .command(
@@ -76,15 +112,52 @@ export async function graphqlMesh() {
       },
       async args => {
         try {
+          const rootArtifactsName = '.mesh';
+          const outputDir = join(baseDir, rootArtifactsName);
+
           env.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
           });
           logger = meshConfig.logger;
+          const meshInstance$ = getMesh(meshConfig);
+          meshInstance$
+            .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchema(schema)))
+            .catch(e => {
+              logger.error(`An error occured while writing the schema file: ${e.stack || e.message}`);
+            });
+          meshInstance$
+            .then(({ schema, rawSources }) =>
+              generateTsArtifacts({
+                unifiedSchema: schema,
+                rawSources,
+                mergerType: meshConfig.merger.name,
+                documents: meshConfig.documents,
+                flattenTypes: false,
+                importedModulesSet: new Set(),
+                baseDir,
+                meshConfigCode: `
+                import { findAndParseConfig } from '@graphql-mesh/cli';
+                function getMeshOptions() {
+                  console.warn('WARNING: These artifacts are built for development mode. Please run "mesh build" to build production artifacts');
+                  return findAndParseConfig({
+                    dir: baseDir
+                  });
+                }
+              `,
+                logger,
+                sdkConfig: meshConfig.config.sdk,
+                tsOnly: true,
+                codegenConfig: meshConfig.config.codegen,
+              })
+            )
+            .catch(e => {
+              logger.error(`An error occurred while building the mesh artifacts: ${e.stack || e.message}`);
+            });
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
-            getBuiltMesh: () => getMesh(meshConfig),
+            getBuiltMesh: () => meshInstance$,
             logger: meshConfig.logger.child('Server'),
             rawConfig: meshConfig.config,
             documents: meshConfig.documents,
@@ -202,10 +275,14 @@ export async function graphqlMesh() {
         }
       }
     )
-    .command(
+    .command<{ tsOnly: boolean }>(
       'build',
       'Builds artifacts',
-      builder => {},
+      builder => {
+        builder.option('tsOnly', {
+          type: 'boolean',
+        });
+      },
       async args => {
         try {
           const rootArtifactsName = '.mesh';
@@ -258,7 +335,7 @@ export async function graphqlMesh() {
 
           logger.info(`Generating Mesh schema`);
           const { schema, destroy, rawSources } = await getMesh(meshConfig);
-          await writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
+          await writeFile(join(outputDir, 'schema.graphql'), printSchema(schema));
 
           logger.info(`Generating artifacts`);
           await generateTsArtifacts({
@@ -272,6 +349,8 @@ export async function graphqlMesh() {
             meshConfigCode: meshConfig.code,
             logger,
             sdkConfig: meshConfig.config.sdk,
+            tsOnly: args.tsOnly,
+            codegenConfig: meshConfig.config.codegen,
           });
 
           logger.info(`Cleanup`);
@@ -284,7 +363,7 @@ export async function graphqlMesh() {
     )
     .command<{ source: string }>(
       'serve-source <source>',
-      'Serves specific source',
+      'Serves specific source in development mode',
       builder => {
         builder.positional('source', {
           type: 'string',
@@ -297,7 +376,39 @@ export async function graphqlMesh() {
           dir: baseDir,
         });
         logger = meshConfig.logger;
-        await serveSource(meshConfig, args.source);
+        const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);
+        if (sourceIndex === -1) {
+          throw new Error(`Source ${args.source} not found`);
+        }
+        const meshInstance$ = getMesh({
+          ...meshConfig,
+          additionalTypeDefs: undefined,
+          additionalResolvers: [],
+          transforms: [],
+          sources: [meshConfig.sources[sourceIndex]],
+        });
+        const serveMeshOptions: ServeMeshOptions = {
+          baseDir,
+          argsPort: 4000 + sourceIndex + 1,
+          getBuiltMesh: () => meshInstance$,
+          logger: meshConfig.logger.child('Server'),
+          rawConfig: meshConfig.config,
+          documents: [],
+          playgroundTitle: `${args.source} GraphiQL`,
+        };
+        if (meshConfig.config.serve?.customServerHandler) {
+          const customServerHandler = await loadFromModuleExportExpression<any>(
+            meshConfig.config.serve.customServerHandler,
+            {
+              defaultExportName: 'default',
+              cwd: baseDir,
+              importFn: defaultImportFn,
+            }
+          );
+          await customServerHandler(serveMeshOptions);
+        } else {
+          await serveMesh(serveMeshOptions);
+        }
       }
     ).argv;
 }

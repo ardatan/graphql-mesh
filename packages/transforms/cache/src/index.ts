@@ -15,31 +15,25 @@ export default class CacheTransform implements MeshTransform {
 
   constructor(private options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]>) {}
   transformSchema(schema: GraphQLSchema) {
-    const { config, pubsub, cache } = this.options;
+    const { config, cache } = this.options;
     const sourceResolvers = extractResolvers(schema);
     const compositions: ResolversComposerMapping = {};
 
     for (const cacheItem of config) {
       const effectingOperations = cacheItem.invalidate?.effectingOperations || [];
 
-      if (effectingOperations.length > 0) {
-        pubsub
-          .subscribe('resolverDone', async ({ resolverData }) => {
-            const effectingRule = effectingOperations.find(
-              o => o.operation === `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`
-            );
+      for (const { operation, matchKey } of effectingOperations) {
+        compositions[operation] = originalResolver => async (root, args, context, info) => {
+          const result = await originalResolver(root, args, context, info);
+          const cacheKey = computeCacheKey({
+            keyStr: matchKey,
+            args,
+            info,
+          });
 
-            if (effectingRule) {
-              const cacheKey = computeCacheKey({
-                keyStr: effectingRule.matchKey,
-                args: resolverData.args,
-                info: resolverData.info,
-              });
-
-              await cache.delete(cacheKey);
-            }
-          })
-          .catch(e => console.error(e));
+          await cache.delete(cacheKey);
+          return result;
+        };
       }
 
       compositions[cacheItem.field] = originalResolver => async (root, args, context, info) => {

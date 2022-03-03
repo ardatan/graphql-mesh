@@ -1,7 +1,7 @@
 {
   "name": "odata-msgraph-programmatic",
   "type": "module",
-  "version": "0.0.57",
+  "version": "0.0.77",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,10 +9,10 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.48.0",
-    "@graphql-mesh/config": "0.27.4",
-    "@graphql-mesh/runtime": "0.28.0",
-    "@graphql-mesh/odata": "0.16.0",
+    "@graphql-mesh/cli": "0.56.1",
+    "@graphql-mesh/config": "0.30.4",
+    "@graphql-mesh/runtime": "0.31.4",
+    "@graphql-mesh/odata": "0.16.11",
     "graphql": "16.0.1"
   }
 }

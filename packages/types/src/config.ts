@@ -8,6 +8,10 @@
 export interface Config {
   serve?: ServeConfig;
   sdk?: SDKConfig;
+  /**
+   * Codegen Configuration
+   */
+  codegen?: any;
   require?: string[];
   /**
    * Defines the list of your external data sources for your API mesh
@@ -47,7 +51,6 @@ export interface Config {
    * Provide a query or queries for GraphQL Playground, validation and SDK Generation
    * The value can be the file path, glob expression for the file paths or the SDL.
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
    */
   documents?: string[];
   /**
@@ -58,6 +61,10 @@ export interface Config {
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;
+  /**
+   * You can provide Envelop plugins
+   */
+  additionalEnvelopPlugins?: string;
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
@@ -93,7 +100,6 @@ export interface ServeConfig {
    * Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
    */
   maxRequestBodySize?: number | string;
-  upload?: UploadOptions;
   sslCredentials?: HTTPSConfig;
   /**
    * Path to GraphQL Endpoint (default: /graphql)
@@ -109,6 +115,10 @@ export interface ServeConfig {
    * With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
    */
   customServerHandler?: string;
+  /**
+   * Title of GraphiQL Playground
+   */
+  playgroundTitle?: string;
 }
 /**
  * Configuration for CORS
@@ -153,19 +163,6 @@ export interface ExpressHandler {
    * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
    */
   method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
-}
-/**
- * Configuration for GraphQL File Upload
- */
-export interface UploadOptions {
-  /**
-   * Maximum File Size for GraphQL Upload (default: `100000000`)
-   */
-  maxFileSize?: number;
-  /**
-   * Maximum number of files for GraphQL Upload (default: `10`)
-   */
-  maxFiles?: number;
 }
 /**
  * SSL Credentials for HTTPS Server
@@ -344,7 +341,7 @@ export interface JsonSchemaHandler {
    * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
-  throwOnHttpError?: boolean;
+  ignoreErrorResponses?: boolean;
 }
 export interface JsonSchemaHTTPOperation {
   field: string;
@@ -666,6 +663,15 @@ export interface NewOpenapiHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  ignoreErrorResponses?: boolean;
+  selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
+}
+export interface OASSelectQueryOrMutationFieldConfig {
+  /**
+   * Allowed values: query, mutation, Query, Mutation
+   */
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
 }
 /**
  * Handler for OData
@@ -782,9 +788,9 @@ export interface SelectQueryOrMutationFieldConfig {
    */
   path?: string;
   /**
-   * Target Root Type for this operation (Allowed values: Query, Mutation)
+   * Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)
    */
-  type?: 'Query' | 'Mutation';
+  type?: 'query' | 'mutation' | 'Query' | 'Mutation';
   /**
    * Which method is used for this operation
    */
@@ -840,6 +846,15 @@ export interface RAMLHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  ignoreErrorResponses?: boolean;
+  selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
+}
+export interface RAMLSelectQueryOrMutationFieldConfig {
+  /**
+   * Allowed values: query, mutation, Query, Mutation
+   */
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
 }
 /**
  * Handler for SOAP
@@ -1310,9 +1325,13 @@ export interface PrefixTransformConfig {
    */
   ignore?: string[];
   /**
-   * Changes root types and changes the field names
+   * Changes root types and changes the field names (default: false)
    */
   includeRootOperations?: boolean;
+  /**
+   * Changes types (default: true)
+   */
+  includeTypes?: boolean;
 }
 export interface RenameTransform {
   /**
@@ -1588,7 +1607,7 @@ export interface LocalforageConfig {
 }
 export interface RedisConfig {
   host?: string;
-  port?: number;
+  port?: string;
   password?: string;
   url?: string;
 }

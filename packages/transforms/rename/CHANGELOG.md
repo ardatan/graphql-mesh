@@ -1,5 +1,116 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.9
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/utils@0.27.6
+
+## 0.12.8
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+
+## 0.12.7
+
+### Patch Changes
+
+- f202f53af: fix: bump wrap package and throw better error message in case of missing selectionSet for unmatching return types
+
+## 0.12.6
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/utils@0.27.4
+
+## 0.12.5
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/utils@0.27.3
+
+## 0.12.4
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+
+## 0.12.3
+
+### Patch Changes
+
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+
+## 0.12.2
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/utils@0.26.4
+
+## 0.12.0
+
+### Minor Changes
+
+- a79268b3a: feat(transforms): do not rename shared scalar types
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/utils@0.26.3
+
+## 0.11.11
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/utils@0.26.2
+
+## 0.11.10
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+
+## 0.11.9
+
+### Patch Changes
+
+- b1246dd71: fix(transforms/rename): renaming fields should only affect specified …
+
 ## 0.11.8
 
 ### Patch Changes

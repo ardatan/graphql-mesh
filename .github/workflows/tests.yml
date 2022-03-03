@@ -1,9 +1,6 @@
 name: Tests
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -18,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 17
       - name: Cache Yarn
@@ -42,7 +39,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 17
       - name: Cache Yarn
@@ -55,8 +52,6 @@ jobs:
 
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines && git checkout yarn.lock
-      - name: Build Playground
-        run: yarn build:playground && yarn copy-playground
       - name: Type Checking
         run: yarn transpile-ts --noEmit # We need build for playground
 
@@ -99,7 +94,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node ${{matrix.node-version}}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Cache Yarn
@@ -125,8 +120,6 @@ jobs:
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
-      - name: Build Playground
-        run: yarn build:playground && yarn copy-playground
       - name: Test
         run: yarn test
         env:

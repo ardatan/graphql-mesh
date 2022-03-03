@@ -12,8 +12,5 @@ additionalTypeDefs: |
 additionalResolvers:
   - ./additional-resolvers.ts
 
-require:
-  - "ts-node/register/transpile-only"
-
 documents:
   - example-queries/*.graphql

@@ -1,20 +1,13 @@
 /* eslint-disable dot-notation */
 import express, { RequestHandler } from 'express';
 import cluster from 'cluster';
-import { cpus } from 'os';
+import { cpus, platform } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import { playgroundMiddlewareFactory } from './playground';
-import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import cors from 'cors';
-import {
-  defaultImportFn,
-  loadFromModuleExportExpression,
-  parseWithCache,
-  pathExists,
-  stringInterpolator,
-} from '@graphql-mesh/utils';
+import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInterpolator } from '@graphql-mesh/utils';
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -23,24 +16,14 @@ import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
 import { promises as fsPromises } from 'fs';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
-import { YamlConfig, Logger } from '@graphql-mesh/types';
-import { Source, inspect } from '@graphql-tools/utils';
+import { inspect } from '@graphql-tools/utils';
 
 const { readFile } = fsPromises;
-
-export interface ServeMeshOptions {
-  baseDir: string;
-  getBuiltMesh: () => Promise<MeshInstance>;
-  logger: Logger;
-  rawConfig: YamlConfig.Config;
-  documents: Source[];
-  argsPort?: number;
-}
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -50,16 +33,23 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
   }
 }
 
-export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents }: ServeMeshOptions) {
+export async function serveMesh({
+  baseDir,
+  argsPort,
+  getBuiltMesh,
+  logger,
+  rawConfig,
+  documents,
+  playgroundTitle,
+}: ServeMeshOptions) {
   const {
     fork,
     port: configPort,
-    hostname = '0.0.0.0',
+    hostname = platform() === 'win32' ? 'localhost' : '0.0.0.0',
     cors: corsConfig,
     handlers,
     staticFiles,
     playground,
-    upload: { maxFileSize = 10000000, maxFiles = 10 } = {},
     maxRequestBodySize = '100kb',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
@@ -69,8 +59,11 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
-  if (!cluster.isWorker && fork) {
-    const forkNum = fork > 1 ? fork : cpus().length;
+  if (!playgroundTitle) {
+    playgroundTitle = rawConfig.serve?.playgroundTitle || 'GraphQL Mesh';
+  }
+  if (!cluster.isWorker && Boolean(fork)) {
+    const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
     for (let i = 0; i < forkNum; i++) {
       const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
@@ -147,23 +140,7 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
 
     const { dispose: stopGraphQLWSServer } = useServer(
       {
-        schema: () => mesh$.then(({ schema }) => schema),
-        onSubscribe: async (_ctx, msg) => {
-          const { schema } = await mesh$;
-          return {
-            schema,
-            operationName: msg.payload.operationName,
-            document: parseWithCache(msg.payload.query),
-            variableValues: msg.payload.variables,
-          };
-        },
-        execute: args =>
-          mesh$.then(({ execute }) => execute(args.document, args.variableValues, args.contextValue, args.rootValue)),
-        subscribe: args =>
-          mesh$.then(({ subscribe }) =>
-            subscribe(args.document, args.variableValues, args.contextValue, args.rootValue)
-          ),
-        context: async ({ connectionParams, extra: { request } }) => {
+        onSubscribe: async ({ connectionParams, extra: { request } }, msg) => {
           // spread connectionParams.headers to upgrade request headers.
           // we completely ignore the root connectionParams because
           // [@graphql-tools/url-loader adds the headers inside the "headers" field](https://github.com/ardatan/graphql-tools/blob/9a13357c4be98038c645f6efb26f0584828177cf/packages/loaders/url/src/index.ts#L597)
@@ -173,9 +150,26 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
               request.headers[key.toLowerCase()] = value;
             }
           }
+          const { getEnveloped } = await mesh$;
+          const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped(request);
 
-          return request;
+          const args = {
+            schema,
+            operationName: msg.payload.operationName,
+            document: parse(msg.payload.query),
+            variableValues: msg.payload.variables,
+            contextValue: await contextFactory(),
+            execute,
+            subscribe,
+          };
+
+          const errors = validate(args.schema, args.document);
+          if (errors.length) return errors;
+
+          return args;
         },
+        execute: (args: any) => args.execute(args),
+        subscribe: (args: any) => args.subscribe(args),
       },
       wsServer
     );
@@ -250,14 +244,15 @@ export async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawCo
       }
     }
 
-    app.use(graphqlPath, graphqlUploadExpress({ maxFileSize, maxFiles }), graphqlHandler(mesh$));
+    app.use(graphqlPath, graphqlHandler(mesh$));
 
     if (typeof playground !== 'undefined' ? playground : env.NODE_ENV?.toLowerCase() !== 'production') {
       const playgroundMiddleware = playgroundMiddlewareFactory({
         baseDir,
         documents,
         graphqlPath,
-        logger: logger,
+        logger,
+        title: playgroundTitle,
       });
       if (!staticFiles) {
         app.get('/', playgroundMiddleware);

@@ -34,11 +34,11 @@ This will serve a GraphiQL interface with your schema, so you'll be able to test
 
 Open your browser in `http://localhost:4000` to start using it.
 
-For example, this following will fetch all page views for Wikipedia.org on the past month:
+For example, the following query will fetch unanswered questions on StackOverflow:
 
 ```graphql
 query ListQuestions {
-  listQuestions(site: "stackoverflow") {
+  listUnansweredQuestions(site: "stackoverflow") {
     items {
       title
       tags

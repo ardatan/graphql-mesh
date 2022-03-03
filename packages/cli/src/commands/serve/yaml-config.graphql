@@ -8,6 +8,10 @@ type Query {
   SDK Configuration
   """
   sdk: SDKConfig
+  """
+  Codegen Configuration
+  """
+  codegen: Any
 }
 
 type ServeConfig @md {
@@ -44,10 +48,6 @@ type ServeConfig @md {
   """
   maxRequestBodySize: RequestBodySize
   """
-  Configuration for GraphQL File Upload
-  """
-  upload: UploadOptions
-  """
   SSL Credentials for HTTPS Server
   If this is provided, Mesh will be served via HTTPS
   """
@@ -66,6 +66,10 @@ type ServeConfig @md {
   With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
   """
   customServerHandler: String
+  """
+  Title of GraphiQL Playground
+  """
+  playgroundTitle: String
 }
 
 union Port = Int | String
@@ -127,17 +131,6 @@ type WebhookHandler {
   Part of the object you want to pass (e.g. `data.messages`)
   """
   payload: String
-}
-
-type UploadOptions {
-  """
-  Maximum File Size for GraphQL Upload (default: `100000000`)
-  """
-  maxFileSize: Int
-  """
-  Maximum number of files for GraphQL Upload (default: `10`)
-  """
-  maxFiles: Int
 }
 
 type HTTPSConfig {

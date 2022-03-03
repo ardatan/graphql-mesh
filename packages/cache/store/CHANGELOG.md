@@ -1,5 +1,95 @@
 # @graphql-mesh/cache-store
 
+## 0.1.43
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/store@0.3.19
+
+## 0.1.42
+
+### Patch Changes
+
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/store@0.3.18
+  - @graphql-mesh/types@0.63.1
+
+## 0.1.41
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/store@0.3.17
+
+## 0.1.40
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/store@0.3.16
+
+## 0.1.39
+
+### Patch Changes
+
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/types@0.62.1
+  - @graphql-mesh/store@0.3.15
+
+## 0.1.38
+
+### Patch Changes
+
+- Updated dependencies [240ec7b38]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/store@0.3.14
+
+## 0.1.37
+
+### Patch Changes
+
+- @graphql-mesh/store@0.3.13
+
+## 0.1.36
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/store@0.3.12
+
+## 0.1.35
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/store@0.3.11
+
+## 0.1.34
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/store@0.3.10
+
+## 0.1.33
+
+### Patch Changes
+
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/types@0.58.0
+  - @graphql-mesh/store@0.3.9
+
 ## 0.1.32
 
 ### Patch Changes

@@ -10,7 +10,7 @@ export async function defaultImportFn(path: string) {
       for (const key in module) {
         normalizedVal[key] = module[key];
       }
-      module = normalizedVal;
+      return normalizedVal;
     }
   }
   return module;

@@ -1,6 +1,5 @@
 import { JsonPointer } from 'json-ptr';
 import { dirname, isAbsolute, join } from 'path';
-import { healJSONSchema } from './healJSONSchema';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import { readFileOrUrl } from '@graphql-mesh/utils';
@@ -94,8 +93,27 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             }).catch(() => {
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
             });
-            externalFile = await healJSONSchema(externalFile);
             externalFileCache.set(externalFilePath, externalFile);
+
+            // Title should not be overwritten by the title given from the reference
+            // Usually Swagger and OpenAPI Schemas have this
+            if (externalFile.definitions) {
+              for (const definitionName in externalFile.definitions) {
+                const definition = externalFile.definitions[definitionName];
+                if (!definition.title) {
+                  definition.title = definitionName;
+                }
+              }
+            }
+
+            if (externalFile.components?.schemas) {
+              for (const definitionName in externalFile.components.schemas) {
+                const definition = externalFile.components.schemas[definitionName];
+                if (!definition.title) {
+                  definition.title = definitionName;
+                }
+              }
+            }
           }
           const result = await dereferenceObject(
             refPath
@@ -134,11 +152,20 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             }
           );
           refMap.set($ref, result);
+          if (result && !result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
+          if ((obj as any).title && !result.title) {
+            result.title = (obj as any).title;
+          }
           return result;
         } else {
           const resolvedObj = resolvePath(refPath, root);
           if (typeof resolvedObj === 'object' && !resolvedObj.$ref) {
             refMap.set($ref, resolvedObj);
+          }
+          if (resolvedObj && !resolvedObj.$resolvedRef) {
+            resolvedObj.$resolvedRef = refPath;
           }
           const result = await dereferenceObject(resolvedObj, {
             cwd,
@@ -148,28 +175,27 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             fetch,
             headers,
           });
-          if (!result.title && (obj as any).title) {
-            result.title = (obj as any).title;
-          }
           refMap.set($ref, result);
+          if (result && !result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
           return result;
         }
       }
     } else {
-      await Promise.all(
-        Object.entries(obj).map(async ([key, val]) => {
-          if (typeof val === 'object') {
-            obj[key] = await dereferenceObject<any>(val, {
-              cwd,
-              externalFileCache,
-              refMap,
-              root,
-              fetch,
-              headers,
-            });
-          }
-        })
-      );
+      for (const key in obj) {
+        const val = obj[key];
+        if (typeof val === 'object') {
+          obj[key] = await dereferenceObject<any>(val, {
+            cwd,
+            externalFileCache,
+            refMap,
+            root,
+            fetch,
+            headers,
+          });
+        }
+      }
     }
   }
   return obj;

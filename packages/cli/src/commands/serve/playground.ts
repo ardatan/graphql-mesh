@@ -2,18 +2,20 @@ import { Request, Response, RequestHandler } from 'express';
 import { Source } from '@graphql-tools/utils';
 import { handleFatalError } from '../../handleFatalError';
 import { Logger } from '@graphql-mesh/types';
-import { playgroundContent } from './playground-content';
+import { renderGraphiQL } from '@graphql-yoga/render-graphiql';
 
 export const playgroundMiddlewareFactory = ({
   baseDir,
   documents,
   graphqlPath,
   logger,
+  title = 'GraphQL Mesh',
 }: {
   baseDir: string;
   documents: Source[];
   graphqlPath: string;
   logger: Logger;
+  title?: string;
 }): RequestHandler => {
   let defaultQuery$: Promise<string>;
 
@@ -36,23 +38,13 @@ export const playgroundMiddlewareFactory = ({
 
     defaultQuery$
       .then(defaultQuery => {
-        res.send(`
-        <html>
-        <head>
-          <title>GraphQL Mesh</title>
-          <link rel="shortcut icon" href="https://www.graphql-mesh.com/img/favicon.ico">
-        </head>
-        <body>
-          <script>
-            window.defaultQuery = ${JSON.stringify(defaultQuery)};
-            window.endpoint = ${JSON.stringify(graphqlPath)};
-          </script>
-          <script>
-            ${playgroundContent}
-          </script>
-        </body>
-      </html>
-      `);
+        res.send(
+          renderGraphiQL({
+            endpoint: graphqlPath,
+            defaultQuery,
+            title,
+          })
+        );
       })
       .catch(e => handleFatalError(e, logger));
   };

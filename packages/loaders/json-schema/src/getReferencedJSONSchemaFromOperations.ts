@@ -1,6 +1,7 @@
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
+import { JSONSchemaOperationResponseConfig } from '.';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata } from './utils';
 
@@ -23,14 +24,74 @@ const anySchema: JSONSchemaObject = {
   ],
 };
 
+async function handleOperationResponseConfig(
+  operationResponseConfig: JSONSchemaOperationResponseConfig,
+  {
+    schemaHeaders,
+    cwd,
+  }: {
+    schemaHeaders: Record<string, any>;
+    cwd: string;
+  }
+): Promise<JSONSchemaObject> {
+  if (operationResponseConfig.responseSchema) {
+    const schema =
+      typeof operationResponseConfig.responseSchema === 'string'
+        ? {
+            $ref: operationResponseConfig.responseSchema,
+            title: operationResponseConfig.responseTypeName,
+          }
+        : operationResponseConfig.responseSchema;
+    if (operationResponseConfig.responseSample) {
+      schema.examples = schema.examples || [operationResponseConfig.responseSample];
+    }
+    return schema;
+  } else if (operationResponseConfig.responseSample) {
+    const sample =
+      typeof operationResponseConfig.responseSample === 'object'
+        ? operationResponseConfig.responseSample
+        : await readFileOrUrl(operationResponseConfig.responseSample, {
+            cwd,
+            headers: schemaHeaders,
+          }).catch((e: any) => {
+            throw new Error(`responseSample - ${e.message}`);
+          });
+    const generatedSchema = toJsonSchema(sample, {
+      required: false,
+      objects: {
+        additionalProperties: false,
+      },
+      strings: {
+        detectFormat: true,
+      },
+      arrays: {
+        mode: 'first',
+      },
+    });
+    generatedSchema.title = operationResponseConfig.responseTypeName;
+    generatedSchema.examples = [sample];
+    return generatedSchema as any;
+  } else {
+    const generatedSchema: JSONSchemaObject = operationResponseConfig.responseTypeName
+      ? {
+          ...anySchema,
+          title: operationResponseConfig.responseTypeName,
+        }
+      : anySchema;
+    return generatedSchema;
+  }
+}
+
 export async function getReferencedJSONSchemaFromOperations({
   operations,
   cwd,
   schemaHeaders,
+  ignoreErrorResponses,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   schemaHeaders?: { [key: string]: string };
+  ignoreErrorResponses?: boolean;
 }) {
   const finalJsonSchema: JSONSchema = {
     type: 'object',
@@ -48,45 +109,43 @@ export async function getReferencedJSONSchemaFromOperations({
       properties: {},
     });
     rootTypeDefinition.properties = rootTypeDefinition.properties || {};
-    if (operationConfig.responseSchema) {
-      rootTypeDefinition.properties[fieldName] =
-        typeof operationConfig.responseSchema === 'string'
-          ? {
-              $ref: operationConfig.responseSchema,
-            }
-          : operationConfig.responseSchema;
-    } else if (operationConfig.responseSample) {
-      const sample =
-        typeof operationConfig.responseSchema === 'object'
-          ? operationConfig.responseSample
-          : await readFileOrUrl(operationConfig.responseSample, {
-              cwd,
-              headers: schemaHeaders,
-            }).catch((e: any) => {
-              throw new Error(`responseSample - ${e.message}`);
-            });
-      const generatedSchema = toJsonSchema(sample, {
-        required: false,
-        objects: {
-          additionalProperties: false,
-        },
-        strings: {
-          detectFormat: true,
-        },
-        arrays: {
-          mode: 'first',
-        },
-      });
-      generatedSchema.title = operationConfig.responseTypeName;
-      rootTypeDefinition.properties[fieldName] = generatedSchema;
+
+    if ('responseByStatusCode' in operationConfig) {
+      rootTypeDefinition.properties[fieldName] = rootTypeDefinition.properties[fieldName] || {};
+      const statusCodeOneOfIndexMap: Record<string, number> = {};
+      const responseSchemas: JSONSchemaObject[] = [];
+      for (const statusCode in operationConfig.responseByStatusCode) {
+        if (ignoreErrorResponses && !statusCode.startsWith('2')) {
+          continue;
+        }
+        const responseOperationConfig = operationConfig.responseByStatusCode[statusCode];
+        const responseOperationSchema = await handleOperationResponseConfig(responseOperationConfig, {
+          cwd,
+          schemaHeaders,
+        });
+        statusCodeOneOfIndexMap[statusCode] = responseSchemas.length;
+        responseOperationSchema.title = responseOperationSchema.title || `${fieldName}_${statusCode}_response`;
+        responseSchemas.push(responseOperationSchema);
+      }
+      if (responseSchemas.length === 1) {
+        rootTypeDefinition.properties[fieldName] = responseSchemas[0];
+      } else if (responseSchemas.length === 0) {
+        rootTypeDefinition.properties[fieldName] = anySchema;
+      } else {
+        rootTypeDefinition.properties[fieldName] = {
+          $comment: `statusCodeOneOfIndexMap:${JSON.stringify(statusCodeOneOfIndexMap)}`,
+          title: fieldName + '_response',
+          oneOf: responseSchemas,
+        };
+      }
     } else {
-      const generatedSchema: JSONSchemaObject = operationConfig.responseTypeName
-        ? {
-            ...anySchema,
-            title: operationConfig.responseTypeName,
-          }
-        : anySchema;
-      rootTypeDefinition.properties[fieldName] = generatedSchema;
+      rootTypeDefinition.properties[fieldName] = await handleOperationResponseConfig(
+        operationConfig as JSONSchemaOperationResponseConfig,
+        {
+          cwd,
+          schemaHeaders,
+        }
+      );
     }
 
     const rootTypeInputPropertyName = operationType + 'Input';
@@ -109,8 +168,13 @@ export async function getReferencedJSONSchemaFromOperations({
         typeof operationConfig.requestSchema === 'string'
           ? {
               $ref: operationConfig.requestSchema,
+              title: operationConfig.requestTypeName,
             }
           : operationConfig.requestSchema;
+      if (operationConfig.requestSample) {
+        rootTypeInputTypeDefinition.properties[fieldName].examples = rootTypeInputTypeDefinition.properties[fieldName]
+          .examples || [operationConfig.requestSample];
+      }
     } else if ('requestSample' in operationConfig) {
       const sample =
         typeof operationConfig.requestSample === 'object'
@@ -134,6 +198,7 @@ export async function getReferencedJSONSchemaFromOperations({
         },
       });
       generatedSchema.title = operationConfig.requestTypeName;
+      generatedSchema.examples = [sample];
       rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
     }
   }

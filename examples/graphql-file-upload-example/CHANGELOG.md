@@ -1,5 +1,160 @@
 # graphql-file-upload-example
 
+## 0.6.147
+
+### Patch Changes
+
+- Updated dependencies [738ed5ce4]
+- Updated dependencies [c84d9e95e]
+- Updated dependencies [c84d9e95e]
+  - @graphql-mesh/cli@0.56.1
+
+## 0.6.146
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+- Updated dependencies [ea4be4b43]
+  - @graphql-mesh/cli@0.56.0
+  - @graphql-mesh/graphql@0.20.24
+
+## 0.6.145
+
+### Patch Changes
+
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/cli@0.55.2
+  - @graphql-mesh/graphql@0.20.23
+
+## 0.6.144
+
+### Patch Changes
+
+- Updated dependencies [f202f53af]
+  - @graphql-mesh/cli@0.55.1
+  - @graphql-mesh/graphql@0.20.22
+
+## 0.6.143
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/cli@0.55.0
+  - @graphql-mesh/graphql@0.20.21
+
+## 0.6.142
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.4
+- @graphql-mesh/graphql@0.20.20
+
+## 0.6.141
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.3
+
+## 0.6.140
+
+### Patch Changes
+
+- Updated dependencies [2bf6930b7]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/cli@0.54.2
+  - @graphql-mesh/graphql@0.20.19
+
+## 0.6.139
+
+### Patch Changes
+
+- @graphql-mesh/graphql@0.20.18
+- @graphql-mesh/cli@0.54.1
+
+## 0.6.138
+
+### Patch Changes
+
+- Updated dependencies [49e9ca808]
+  - @graphql-mesh/cli@0.54.0
+
+## 0.6.137
+
+### Patch Changes
+
+- Updated dependencies [813f6761c]
+  - @graphql-mesh/cli@0.53.2
+
+## 0.6.136
+
+### Patch Changes
+
+- Updated dependencies [080929554]
+  - @graphql-mesh/cli@0.53.1
+
+## 0.6.135
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+- Updated dependencies [900a01355]
+  - @graphql-mesh/cli@0.53.0
+  - @graphql-mesh/graphql@0.20.17
+
+## 0.6.134
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/cli@0.52.0
+  - @graphql-mesh/graphql@0.20.16
+
+## 0.6.133
+
+### Patch Changes
+
+- Updated dependencies [572d0f1ab]
+  - @graphql-mesh/cli@0.51.2
+
+## 0.6.132
+
+### Patch Changes
+
+- @graphql-mesh/graphql@0.20.15
+- @graphql-mesh/cli@0.51.1
+
+## 0.6.131
+
+### Patch Changes
+
+- Updated dependencies [fb63fa534]
+  - @graphql-mesh/cli@0.51.0
+
+## 0.6.130
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/cli@0.50.0
+  - @graphql-mesh/graphql@0.20.14
+
+## 0.6.129
+
+### Patch Changes
+
+- Updated dependencies [6601a949e]
+  - @graphql-mesh/cli@0.49.0
+  - @graphql-mesh/graphql@0.20.13
+
+## 0.6.128
+
+### Patch Changes
+
+- Updated dependencies [2ee6025e2]
+  - @graphql-mesh/cli@0.48.1
+
 ## 0.6.127
 
 ### Patch Changes

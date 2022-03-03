@@ -1,5 +1,222 @@
 # @graphql-mesh/cli
 
+## 0.56.1
+
+### Patch Changes
+
+- 738ed5ce4: fix(cli/serve): bump Yoga to fix upload issue
+- c84d9e95e: enhance(cli): remove graphql-helix dependency
+- c84d9e95e: fix(cli/runtime): print stacktrace of error objects instead of inspecting them
+- Updated dependencies [c84d9e95e]
+  - @graphql-mesh/runtime@0.31.4
+  - @graphql-mesh/config@0.30.4
+
+## 0.56.0
+
+### Minor Changes
+
+- 08b250e04: feat(cli/serve): replace graphql-helix&graphql-upload with graphql-yoga
+
+### Patch Changes
+
+- ea4be4b43: fix(serve): disable maskederrors for now
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/config@0.30.3
+  - @graphql-mesh/runtime@0.31.3
+  - @graphql-mesh/utils@0.27.6
+  - @graphql-mesh/store@0.3.19
+
+## 0.55.2
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/config@0.30.2
+  - @graphql-mesh/runtime@0.31.2
+  - @graphql-mesh/store@0.3.18
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+
+## 0.55.1
+
+### Patch Changes
+
+- f202f53af: fix: bump wrap package and throw better error message in case of missing selectionSet for unmatching return types
+- Updated dependencies [f202f53af]
+- Updated dependencies [f0f2b69a0]
+- Updated dependencies [f0f2b69a0]
+  - @graphql-mesh/runtime@0.31.1
+  - @graphql-mesh/config@0.30.1
+
+## 0.55.0
+
+### Minor Changes
+
+- b6eca9baa: feat(serve): use YogaGraphiQL instead of custom GraphiQL package
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/config@0.30.0
+  - @graphql-mesh/runtime@0.31.0
+  - @graphql-mesh/utils@0.27.4
+  - @graphql-mesh/store@0.3.17
+
+## 0.54.4
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/runtime@0.30.4
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/config@0.29.5
+  - @graphql-mesh/utils@0.27.3
+  - @graphql-mesh/store@0.3.16
+
+## 0.54.3
+
+### Patch Changes
+
+- Updated dependencies [3272bb516]
+  - @graphql-mesh/runtime@0.30.3
+  - @graphql-mesh/config@0.29.4
+
+## 0.54.2
+
+### Patch Changes
+
+- 2bf6930b7: fix(cli/artifacts): ignore tsConfig if compilerOptions not present
+- 447bc3697: fix(types): add missing store dependency
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+  - @graphql-mesh/config@0.29.3
+  - @graphql-mesh/runtime@0.30.2
+  - @graphql-mesh/store@0.3.15
+
+## 0.54.1
+
+### Patch Changes
+
+- Updated dependencies [fcbd12a35]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/utils@0.27.1
+  - @graphql-mesh/runtime@0.30.1
+  - @graphql-mesh/config@0.29.2
+  - @graphql-mesh/store@0.3.14
+
+## 0.54.0
+
+### Minor Changes
+
+- 49e9ca808: feat(cli): skip type check for artifacts
+
+## 0.53.2
+
+### Patch Changes
+
+- 813f6761c: fix(cli): use defaultImportFn if importFn isn't provided
+
+## 0.53.1
+
+### Patch Changes
+
+- 080929554: fix(cli): write schema.graphql with printSchema
+
+## 0.53.0
+
+### Minor Changes
+
+- 900a01355: Support YAML include
+- 900a01355: feat(serve-source): use the same server for serve-source cmd
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+  - @graphql-mesh/runtime@0.30.0
+  - @graphql-mesh/config@0.29.1
+  - @graphql-mesh/store@0.3.13
+
+## 0.52.0
+
+### Minor Changes
+
+- 66ca1a366: feat(cli): ability to provide custom codegen config
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/config@0.29.0
+  - @graphql-mesh/runtime@0.29.3
+  - @graphql-mesh/utils@0.26.4
+  - @graphql-mesh/store@0.3.12
+
+## 0.51.2
+
+### Patch Changes
+
+- 572d0f1ab: fix(cli): do not delete existing artifacts on dev mode
+
+## 0.51.1
+
+### Patch Changes
+
+- @graphql-mesh/config@0.28.1
+- @graphql-mesh/runtime@0.29.2
+- @graphql-mesh/utils@0.26.3
+- @graphql-mesh/store@0.3.11
+
+## 0.51.0
+
+### Minor Changes
+
+- fb63fa534: feat(cli): build TS artifacts in development mode
+
+## 0.50.0
+
+### Minor Changes
+
+- 020431bdc: feat(cli): ignore ts errors in artifacts
+- 020431bdc: feat(cli): built-in typescript support
+- 020431bdc: feat(cli): add field descriptions to InContext SDK
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/config@0.28.0
+  - @graphql-mesh/runtime@0.29.1
+  - @graphql-mesh/utils@0.26.2
+  - @graphql-mesh/store@0.3.10
+
+## 0.49.0
+
+### Minor Changes
+
+- 6601a949e: feat(runtime): export ServeMeshOption for custom server handler
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6601a949e]
+- Updated dependencies [6601a949e]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/runtime@0.29.0
+  - @graphql-mesh/config@0.27.5
+  - @graphql-mesh/store@0.3.9
+
+## 0.48.1
+
+### Patch Changes
+
+- 2ee6025e2: fix(server): fork=1 should spawn 1 child process
+
 ## 0.48.0
 
 ### Minor Changes

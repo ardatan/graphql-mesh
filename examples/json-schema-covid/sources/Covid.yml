@@ -1,0 +1,4 @@
+name: Covid
+handler:
+  graphql:
+    endpoint: https://covid-19-two-rust.vercel.app/api/graphql

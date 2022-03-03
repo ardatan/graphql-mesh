@@ -1,6 +1,6 @@
 import { OperationTypeNode } from 'graphql';
+import type { Readable } from 'stream';
 import { JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig, HTTPMethod } from './types';
-import { FileUpload } from 'graphql-upload';
 
 export function isPubSubOperationConfig(
   operationConfig: JSONSchemaOperationConfig
@@ -56,6 +56,10 @@ export function cleanObject(obj: any) {
   return obj;
 }
 
-export function isFileUpload(obj: any): obj is FileUpload {
-  return 'createReadStream' in obj;
+export function isFileUpload(obj: any): obj is { createReadStream: () => Readable; mimetype: string } {
+  return typeof obj.createReadStream === 'function';
+}
+
+export function isFile(obj: any): obj is File {
+  return typeof obj.arrayBuffer === 'function';
 }

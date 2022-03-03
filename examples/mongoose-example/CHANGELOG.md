@@ -1,5 +1,159 @@
 # mongoose-example
 
+## 0.5.176
+
+### Patch Changes
+
+- Updated dependencies [738ed5ce4]
+- Updated dependencies [c84d9e95e]
+- Updated dependencies [c84d9e95e]
+  - @graphql-mesh/cli@0.56.1
+
+## 0.5.175
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+- Updated dependencies [ea4be4b43]
+  - @graphql-mesh/cli@0.56.0
+  - @graphql-mesh/mongoose@0.10.23
+
+## 0.5.174
+
+### Patch Changes
+
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/cli@0.55.2
+  - @graphql-mesh/mongoose@0.10.22
+
+## 0.5.173
+
+### Patch Changes
+
+- Updated dependencies [f202f53af]
+  - @graphql-mesh/cli@0.55.1
+
+## 0.5.172
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/cli@0.55.0
+  - @graphql-mesh/mongoose@0.10.21
+
+## 0.5.171
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.4
+- @graphql-mesh/mongoose@0.10.20
+
+## 0.5.170
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.3
+
+## 0.5.169
+
+### Patch Changes
+
+- Updated dependencies [2bf6930b7]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/cli@0.54.2
+  - @graphql-mesh/mongoose@0.10.19
+
+## 0.5.168
+
+### Patch Changes
+
+- @graphql-mesh/mongoose@0.10.18
+- @graphql-mesh/cli@0.54.1
+
+## 0.5.167
+
+### Patch Changes
+
+- Updated dependencies [49e9ca808]
+  - @graphql-mesh/cli@0.54.0
+
+## 0.5.166
+
+### Patch Changes
+
+- Updated dependencies [813f6761c]
+  - @graphql-mesh/cli@0.53.2
+
+## 0.5.165
+
+### Patch Changes
+
+- Updated dependencies [080929554]
+  - @graphql-mesh/cli@0.53.1
+
+## 0.5.164
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+- Updated dependencies [900a01355]
+  - @graphql-mesh/cli@0.53.0
+  - @graphql-mesh/mongoose@0.10.17
+
+## 0.5.163
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/cli@0.52.0
+  - @graphql-mesh/mongoose@0.10.16
+
+## 0.5.162
+
+### Patch Changes
+
+- Updated dependencies [572d0f1ab]
+  - @graphql-mesh/cli@0.51.2
+
+## 0.5.161
+
+### Patch Changes
+
+- @graphql-mesh/mongoose@0.10.15
+- @graphql-mesh/cli@0.51.1
+
+## 0.5.160
+
+### Patch Changes
+
+- Updated dependencies [fb63fa534]
+  - @graphql-mesh/cli@0.51.0
+
+## 0.5.159
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/cli@0.50.0
+  - @graphql-mesh/mongoose@0.10.14
+
+## 0.5.158
+
+### Patch Changes
+
+- Updated dependencies [6601a949e]
+  - @graphql-mesh/cli@0.49.0
+  - @graphql-mesh/mongoose@0.10.13
+
+## 0.5.157
+
+### Patch Changes
+
+- Updated dependencies [2ee6025e2]
+  - @graphql-mesh/cli@0.48.1
+
 ## 0.5.156
 
 ### Patch Changes

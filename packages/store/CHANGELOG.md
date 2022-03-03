@@ -1,5 +1,77 @@
 # @graphql-mesh/store
 
+## 0.3.19
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.27.6
+
+## 0.3.18
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/utils@0.27.5
+
+## 0.3.17
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.27.4
+
+## 0.3.16
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.27.3
+
+## 0.3.15
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+  - @graphql-mesh/utils@0.27.2
+
+## 0.3.14
+
+### Patch Changes
+
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/utils@0.27.1
+
+## 0.3.13
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+
+## 0.3.12
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.26.4
+
+## 0.3.11
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.26.3
+
+## 0.3.10
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.26.2
+
+## 0.3.9
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+  - @graphql-mesh/utils@0.26.1
+
 ## 0.3.8
 
 ### Patch Changes

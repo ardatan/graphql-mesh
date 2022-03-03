@@ -240,7 +240,10 @@ export function resolveAdditionalResolvers(
                   }
                   if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
                     throw new Error(
-                      `No type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}`
+                      `No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
+                        `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(
+                          ','
+                        )})}}`
                     );
                   }
                   if (

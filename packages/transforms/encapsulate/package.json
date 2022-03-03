@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-encapsulate",
-  "version": "0.3.8",
+  "version": "0.3.20",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,11 +23,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.57.2",
-    "@graphql-mesh/utils": "0.26.0",
-    "@graphql-tools/delegate": "8.4.3",
-    "@graphql-tools/wrap": "8.3.3",
-    "@graphql-tools/utils": "8.6.1"
+    "@graphql-mesh/types": "0.64.0",
+    "@graphql-mesh/utils": "0.27.6",
+    "@graphql-tools/delegate": "8.5.1",
+    "@graphql-tools/wrap": "8.4.2",
+    "@graphql-tools/utils": "8.6.2"
   },
   "publishConfig": {
     "access": "public",

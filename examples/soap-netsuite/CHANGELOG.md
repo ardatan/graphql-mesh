@@ -1,5 +1,159 @@
 # soap-netsuite
 
+## 0.0.72
+
+### Patch Changes
+
+- Updated dependencies [738ed5ce4]
+- Updated dependencies [c84d9e95e]
+- Updated dependencies [c84d9e95e]
+  - @graphql-mesh/cli@0.56.1
+
+## 0.0.71
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+- Updated dependencies [ea4be4b43]
+  - @graphql-mesh/cli@0.56.0
+  - @graphql-mesh/soap@0.10.20
+
+## 0.0.70
+
+### Patch Changes
+
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/cli@0.55.2
+  - @graphql-mesh/soap@0.10.19
+
+## 0.0.69
+
+### Patch Changes
+
+- Updated dependencies [f202f53af]
+  - @graphql-mesh/cli@0.55.1
+
+## 0.0.68
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/cli@0.55.0
+  - @graphql-mesh/soap@0.10.18
+
+## 0.0.67
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.4
+- @graphql-mesh/soap@0.10.17
+
+## 0.0.66
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.3
+
+## 0.0.65
+
+### Patch Changes
+
+- Updated dependencies [2bf6930b7]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/cli@0.54.2
+  - @graphql-mesh/soap@0.10.16
+
+## 0.0.64
+
+### Patch Changes
+
+- @graphql-mesh/soap@0.10.15
+- @graphql-mesh/cli@0.54.1
+
+## 0.0.63
+
+### Patch Changes
+
+- Updated dependencies [49e9ca808]
+  - @graphql-mesh/cli@0.54.0
+
+## 0.0.62
+
+### Patch Changes
+
+- Updated dependencies [813f6761c]
+  - @graphql-mesh/cli@0.53.2
+
+## 0.0.61
+
+### Patch Changes
+
+- Updated dependencies [080929554]
+  - @graphql-mesh/cli@0.53.1
+
+## 0.0.60
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+- Updated dependencies [900a01355]
+  - @graphql-mesh/cli@0.53.0
+  - @graphql-mesh/soap@0.10.14
+
+## 0.0.59
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/cli@0.52.0
+  - @graphql-mesh/soap@0.10.13
+
+## 0.0.58
+
+### Patch Changes
+
+- Updated dependencies [572d0f1ab]
+  - @graphql-mesh/cli@0.51.2
+
+## 0.0.57
+
+### Patch Changes
+
+- @graphql-mesh/soap@0.10.12
+- @graphql-mesh/cli@0.51.1
+
+## 0.0.56
+
+### Patch Changes
+
+- Updated dependencies [fb63fa534]
+  - @graphql-mesh/cli@0.51.0
+
+## 0.0.55
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/cli@0.50.0
+  - @graphql-mesh/soap@0.10.11
+
+## 0.0.54
+
+### Patch Changes
+
+- Updated dependencies [6601a949e]
+  - @graphql-mesh/cli@0.49.0
+  - @graphql-mesh/soap@0.10.10
+
+## 0.0.53
+
+### Patch Changes
+
+- Updated dependencies [2ee6025e2]
+  - @graphql-mesh/cli@0.48.1
+
 ## 0.0.52
 
 ### Patch Changes

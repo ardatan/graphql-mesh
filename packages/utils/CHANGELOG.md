@@ -1,5 +1,89 @@
 # @graphql-mesh/utils
 
+## 0.27.6
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+
+## 0.27.5
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/types@0.63.1
+
+## 0.27.4
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+
+## 0.27.3
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+
+## 0.27.2
+
+### Patch Changes
+
+- c71b29004: fix(utils): revert unnecessary change
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/types@0.62.1
+
+## 0.27.1
+
+### Patch Changes
+
+- fcbd12a35: fix(utils): normalize module objects with Object.defineProperty not with regular assignment
+- Updated dependencies [240ec7b38]
+  - @graphql-mesh/types@0.62.0
+
+## 0.27.0
+
+### Minor Changes
+
+- 900a01355: Support YAML include
+
+## 0.26.4
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+
+## 0.26.3
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+
+## 0.26.2
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+
+## 0.26.1
+
+### Patch Changes
+
+- 113091148: fix(utils): better error for missing types in incontext sdk
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/types@0.58.0
+
 ## 0.26.0
 
 ### Minor Changes

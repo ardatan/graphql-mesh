@@ -160,7 +160,7 @@ export default class StitchingMerger implements MeshMerger {
       if (wrapTransforms.length) {
         unifiedSchema = wrapSchema({
           schema: unifiedSchema,
-          transforms: wrapTransforms,
+          transforms,
           batch: true,
           executor: jitExecutorFactory(unifiedSchema, 'root-wrapped', this.logger.child('JIT Executor')) as any,
         });

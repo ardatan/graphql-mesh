@@ -1,9 +1,16 @@
 import { getInterpolatedHeadersFactory, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { JSONSchemaObject } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
-import { HTTPMethod, JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from '@omnigraph/json-schema';
+import {
+  HTTPMethod,
+  JSONSchemaHTTPJSONOperationConfig,
+  JSONSchemaOperationConfig,
+  JSONSchemaOperationResponseConfig,
+} from '@omnigraph/json-schema';
 import { env } from 'process';
 import { getFieldNameFromPath } from './utils';
+import { OperationTypeNode } from 'graphql';
+import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
@@ -13,7 +20,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   baseUrl?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
-  respectErrorResponses?: boolean;
+  selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
 }
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions({
@@ -24,8 +31,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   baseUrl,
   schemaHeaders,
   operationHeaders,
-  respectErrorResponses,
+  selectQueryOrMutationField = [],
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
+  const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
+  for (const { fieldName, type } of selectQueryOrMutationField) {
+    fieldTypeMap[fieldName] = type;
+  }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
     typeof oasFilePath === 'string'
@@ -51,10 +62,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
         field: methodObj.operationId,
-        description: methodObj.description,
+        description: methodObj.description || methodObj.summary,
         schemaHeaders,
         operationHeaders,
-      } as JSONSchemaHTTPJSONOperationConfig;
+        responseByStatusCode: {},
+      } as JSONSchemaHTTPJSONOperationConfig & {
+        responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
+      };
       operations.push(operationConfig);
       for (const paramObjIndex in methodObj.parameters) {
         const paramObj = methodObj.parameters[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
@@ -71,6 +85,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               }
               if (!requestSchema.properties[paramObj.name].description) {
                 requestSchema.properties[paramObj.name].description = paramObj.description;
+              }
+              if (requestSchema.properties.__typename) {
+                delete requestSchema.properties.__typename;
+              }
+              if (paramObj.required) {
+                requestSchema.required = requestSchema.required || [];
+                requestSchema.required.push(paramObj.name);
               }
             } else {
               if (!operationConfig.path.includes('?')) {
@@ -114,31 +135,47 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             break;
           }
           case 'body':
-            operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
-              .split('/')
-              .join('~1')}/${method}/parameters/${paramObjIndex}/schema`;
+            if (paramObj.schema) {
+              operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
+                .split('/')
+                .join('~1')}/${method}/parameters/${paramObjIndex}/schema`;
+            }
+            if (paramObj.example) {
+              operationConfig.requestSample = paramObj.example;
+            }
+            if (paramObj.examples) {
+              operationConfig.requestSample = Object.values(paramObj.examples)[0];
+            }
             break;
+        }
+        if (paramObj.required) {
+          operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+          operationConfig.argTypeMap[paramObj.name] = operationConfig.argTypeMap[paramObj.name] || 'ID';
+          operationConfig.argTypeMap[paramObj.name] += '!';
         }
       }
 
       if ('requestBody' in methodObj) {
-        const requestBodyObj = methodObj.requestBody as OpenAPIV3.RequestBodyObject;
-        const contentKey = Object.keys(requestBodyObj.content)[0];
-        operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
-          .split('/')
-          .join('~1')}/${method}/requestBody/content/${contentKey}/schema`;
+        const requestBodyObj = methodObj.requestBody;
+        if ('content' in requestBodyObj) {
+          const contentKey = Object.keys(requestBodyObj.content)[0];
+          const contentSchema = requestBodyObj.content[contentKey]?.schema;
+          if (contentSchema) {
+            operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/requestBody/content/${contentKey?.toString().split('/').join('~1')}/schema`;
+          }
+          const examplesObj = requestBodyObj.content[contentKey]?.examples;
+          if (examplesObj) {
+            operationConfig.requestSample = Object.values(examplesObj)[0];
+          }
+        }
       }
 
-      const responseSchemaUnion = (operationConfig.responseSchema = {
-        oneOf: [],
-      }) as JSONSchemaObject;
+      const responseByStatusCode = operationConfig.responseByStatusCode;
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
-        // Only take successful responses
-        if (!respectErrorResponses && !(responseKey.startsWith('2') || responseKey === 'default')) {
-          continue;
-        }
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
         let schemaObj: JSONSchemaObject;
 
@@ -146,20 +183,36 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           const contentKey = Object.keys(responseObj.content)[0];
           schemaObj = responseObj.content[contentKey].schema as any;
           if (schemaObj) {
-            responseSchemaUnion.oneOf.push({
-              $ref: `${oasFilePath}#/paths/${relativePath
-                .split('/')
-                .join('~1')}/${method}/responses/${responseKey}/content/${contentKey}/schema`,
-            });
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
+              ?.toString()
+              .split('/')
+              .join('~1')}/schema`;
+          }
+          const examplesObj = responseObj.content[contentKey].examples;
+          if (examplesObj) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSample = Object.values(examplesObj)[0];
+          }
+          const example = responseObj.content[contentKey].example;
+          if (example) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSample = example;
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;
           if (schemaObj) {
-            responseSchemaUnion.oneOf.push({
-              $ref: `${oasFilePath}#/paths/${relativePath
-                .split('/')
-                .join('~1')}/${method}/responses/${responseKey}/schema`,
-            });
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
+              .split('/')
+              .join('~1')}/${method}/responses/${responseKey}/schema`;
+          }
+          if (responseObj.examples) {
+            const examples = Object.values(responseObj.examples);
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSample = examples[0];
           }
         }
 
@@ -172,17 +225,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
           operationConfig.requestSchema.title = operationConfig.field + '_request';
         }
-
-        // If we don't need unsuccessful response types, just break the loop to have singular response type
-        if (!respectErrorResponses) {
-          break;
-        }
       }
 
-      // If response types are singular, no need to have unions
-      if (responseSchemaUnion.oneOf.length <= 1) {
-        operationConfig.responseSchema =
-          (responseSchemaUnion.oneOf[0] as JSONSchemaObject)?.$ref || responseSchemaUnion.oneOf[0];
+      if (fieldTypeMap[operationConfig.field]) {
+        operationConfig.type = fieldTypeMap[operationConfig.field] as OperationTypeNode;
       }
     }
   }

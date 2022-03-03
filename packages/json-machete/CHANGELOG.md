@@ -1,5 +1,98 @@
 # json-machete
 
+## 0.5.7
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.27.6
+
+## 0.5.6
+
+### Patch Changes
+
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/utils@0.27.5
+
+## 0.5.5
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.27.4
+
+## 0.5.4
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.27.3
+
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+  - @graphql-mesh/utils@0.27.2
+
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/utils@0.27.1
+
+## 0.5.1
+
+### Patch Changes
+
+- 1c8827604: fix(openapi): respect definition name
+
+## 0.5.0
+
+### Minor Changes
+
+- 49e9ca808: feat(json-machete): trim descriptions
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+
+## 0.4.2
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.26.4
+
+## 0.4.1
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.26.3
+
+## 0.4.0
+
+### Minor Changes
+
+- 020431bdc: enhance(json-machete): do not look for annotated schemas
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.26.2
+
+## 0.3.7
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+  - @graphql-mesh/utils@0.26.1
+
+## 0.3.6
+
+### Patch Changes
+
+- 92d687133: fix(json-machete): respect reference titles while dereferencing
+
 ## 0.3.5
 
 ### Patch Changes

@@ -1,16 +1,53 @@
-import { inspect } from '@graphql-tools/utils';
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
 import { ObjectTypeComposer } from 'graphql-compose';
-import Ajv, { ValidateFunction } from 'ajv';
+import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
 
-export function getTypeResolverFromOutputTCs(ajv: Ajv, outputTypeComposers: ObjectTypeComposer[]) {
-  return function resolveType(data: any, content: any, info: GraphQLResolveInfo) {
+export function getTypeResolverFromOutputTCs(
+  ajv: Ajv,
+  outputTypeComposers: ObjectTypeComposer[],
+  statusCodeOneOfIndexMap?: Record<string, number>
+): GraphQLTypeResolver<any, any> {
+  const statusCodeTypenameMap = new Map<string, string>();
+  for (const statusCode in statusCodeOneOfIndexMap) {
+    statusCodeTypenameMap.set(
+      statusCode.toString(),
+      outputTypeComposers[statusCodeOneOfIndexMap[statusCode]].getTypeName()
+    );
+  }
+  return function resolveType(data: any, context: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       return data.__typename;
     } else if (data.resourceType) {
       return data.resourceType;
     }
-    const errors = new Map<string, string>();
+    if (data.__response && statusCodeOneOfIndexMap) {
+      const responseData: {
+        status: number;
+        url: string;
+        statusText: string;
+      } = data.__response;
+      const typeName =
+        statusCodeTypenameMap.get(responseData.status.toString()) || statusCodeTypenameMap.get('default');
+      if (typeName) {
+        return typeName;
+      } else {
+        const error = new GraphQLError(
+          `HTTP Error: ${responseData.status}`,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          {
+            ...responseData,
+            responseJson: data,
+          }
+        );
+        console.error(error);
+        return error;
+      }
+    }
+    const validationErrors: Record<string, ErrorObject[]> = {};
     for (const outputTypeComposer of outputTypeComposers) {
       const validateFn = outputTypeComposer.getExtension('validateWithJSONSchema') as ValidateFunction;
       if (validateFn) {
@@ -19,14 +56,11 @@ export function getTypeResolverFromOutputTCs(ajv: Ajv, outputTypeComposers: Obje
         if (isValid) {
           return typeName;
         }
-        errors.set(typeName, ajv.errorsText(ajv.errors));
+        validationErrors[typeName] = ajv.errors;
       }
     }
-    throw new AggregateError(
-      errors.values(),
-      `Received data doesn't met the union; \n Data: ${inspect(data)} \n Errors:\n${[...errors.entries()].map(
-        ([typeName, error]) => ` - ${typeName}: \n      ${error}\n`
-      )}`
-    );
+    return new GraphQLError(`Received data doesn't met the union`, null, null, null, null, null, {
+      validationErrors,
+    });
   };
 }

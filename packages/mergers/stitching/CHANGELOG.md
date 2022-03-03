@@ -1,5 +1,117 @@
 # @graphql-mesh/merger-stitching
 
+## 0.15.12
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/utils@0.27.6
+  - @graphql-mesh/store@0.3.19
+
+## 0.15.11
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/store@0.3.18
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+
+## 0.15.10
+
+### Patch Changes
+
+- f202f53af: fix: bump wrap package and throw better error message in case of missing selectionSet for unmatching return types
+
+## 0.15.9
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/utils@0.27.4
+  - @graphql-mesh/store@0.3.17
+
+## 0.15.8
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/utils@0.27.3
+  - @graphql-mesh/store@0.3.16
+
+## 0.15.7
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+  - @graphql-mesh/store@0.3.15
+
+## 0.15.6
+
+### Patch Changes
+
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+  - @graphql-mesh/store@0.3.14
+
+## 0.15.5
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+  - @graphql-mesh/store@0.3.13
+
+## 0.15.4
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/utils@0.26.4
+  - @graphql-mesh/store@0.3.12
+
+## 0.15.3
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/utils@0.26.3
+  - @graphql-mesh/store@0.3.11
+
+## 0.15.2
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/utils@0.26.2
+  - @graphql-mesh/store@0.3.10
+
+## 0.15.1
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+  - @graphql-mesh/store@0.3.9
+
 ## 0.15.0
 
 ### Minor Changes

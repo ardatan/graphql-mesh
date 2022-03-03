@@ -1,5 +1,196 @@
 # @graphql-mesh/config
 
+## 0.30.4
+
+### Patch Changes
+
+- Updated dependencies [c84d9e95e]
+  - @graphql-mesh/runtime@0.31.4
+
+## 0.30.3
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.49
+  - @graphql-mesh/merger-bare@0.13.12
+  - @graphql-mesh/merger-stitching@0.15.12
+  - @graphql-mesh/runtime@0.31.3
+  - @graphql-mesh/utils@0.27.6
+  - @graphql-mesh/store@0.3.19
+
+## 0.30.2
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/merger-bare@0.13.11
+  - @graphql-mesh/merger-stitching@0.15.11
+  - @graphql-mesh/runtime@0.31.2
+  - @graphql-mesh/store@0.3.18
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+  - @graphql-mesh/cache-inmemory-lru@0.5.48
+
+## 0.30.1
+
+### Patch Changes
+
+- f0f2b69a0: fix(config): take correct merger during build
+- f0f2b69a0: fix(config): pass importFn to cache constructor
+- Updated dependencies [f202f53af]
+  - @graphql-mesh/merger-bare@0.13.10
+  - @graphql-mesh/merger-stitching@0.15.10
+  - @graphql-mesh/runtime@0.31.1
+
+## 0.30.0
+
+### Minor Changes
+
+- b6eca9baa: feat(core): Envelop integration
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/runtime@0.31.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.47
+  - @graphql-mesh/merger-bare@0.13.9
+  - @graphql-mesh/merger-stitching@0.15.9
+  - @graphql-mesh/utils@0.27.4
+  - @graphql-mesh/store@0.3.17
+
+## 0.29.5
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/runtime@0.30.4
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/cache-inmemory-lru@0.5.46
+  - @graphql-mesh/merger-bare@0.13.8
+  - @graphql-mesh/merger-stitching@0.15.8
+  - @graphql-mesh/utils@0.27.3
+  - @graphql-mesh/store@0.3.16
+
+## 0.29.4
+
+### Patch Changes
+
+- Updated dependencies [3272bb516]
+  - @graphql-mesh/runtime@0.30.3
+
+## 0.29.3
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+  - @graphql-mesh/cache-inmemory-lru@0.5.45
+  - @graphql-mesh/merger-bare@0.13.7
+  - @graphql-mesh/merger-stitching@0.15.7
+  - @graphql-mesh/runtime@0.30.2
+  - @graphql-mesh/store@0.3.15
+
+## 0.29.2
+
+### Patch Changes
+
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+  - @graphql-mesh/runtime@0.30.1
+  - @graphql-mesh/cache-inmemory-lru@0.5.44
+  - @graphql-mesh/merger-bare@0.13.6
+  - @graphql-mesh/merger-stitching@0.15.6
+  - @graphql-mesh/store@0.3.14
+
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+  - @graphql-mesh/runtime@0.30.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.43
+  - @graphql-mesh/merger-bare@0.13.5
+  - @graphql-mesh/merger-stitching@0.15.5
+  - @graphql-mesh/store@0.3.13
+
+## 0.29.0
+
+### Minor Changes
+
+- 66ca1a366: enhance(config): use print/parse for additionalTypeDefs in artifacts
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.42
+  - @graphql-mesh/merger-bare@0.13.4
+  - @graphql-mesh/merger-stitching@0.15.4
+  - @graphql-mesh/runtime@0.29.3
+  - @graphql-mesh/utils@0.26.4
+  - @graphql-mesh/store@0.3.12
+
+## 0.28.1
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.41
+  - @graphql-mesh/merger-bare@0.13.3
+  - @graphql-mesh/merger-stitching@0.15.3
+  - @graphql-mesh/runtime@0.29.2
+  - @graphql-mesh/utils@0.26.3
+  - @graphql-mesh/store@0.3.11
+
+## 0.28.0
+
+### Minor Changes
+
+- 020431bdc: feat(cli): built-in typescript support
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.40
+  - @graphql-mesh/merger-bare@0.13.2
+  - @graphql-mesh/merger-stitching@0.15.2
+  - @graphql-mesh/runtime@0.29.1
+  - @graphql-mesh/utils@0.26.2
+  - @graphql-mesh/store@0.3.10
+
+## 0.27.5
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+- Updated dependencies [6601a949e]
+- Updated dependencies [6601a949e]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+  - @graphql-mesh/runtime@0.29.0
+  - @graphql-mesh/cache-inmemory-lru@0.5.39
+  - @graphql-mesh/merger-bare@0.13.1
+  - @graphql-mesh/merger-stitching@0.15.1
+  - @graphql-mesh/store@0.3.9
+
 ## 0.27.4
 
 ### Patch Changes

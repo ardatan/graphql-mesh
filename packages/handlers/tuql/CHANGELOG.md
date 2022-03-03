@@ -1,5 +1,79 @@
 # @graphql-mesh/tuql
 
+## 0.4.91
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+
+## 0.4.90
+
+### Patch Changes
+
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/types@0.63.1
+
+## 0.4.89
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+
+## 0.4.88
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+
+## 0.4.87
+
+### Patch Changes
+
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/types@0.62.1
+
+## 0.4.86
+
+### Patch Changes
+
+- Updated dependencies [240ec7b38]
+  - @graphql-mesh/types@0.62.0
+
+## 0.4.85
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+
+## 0.4.84
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+
+## 0.4.83
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+
+## 0.4.82
+
+### Patch Changes
+
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/types@0.58.0
+
 ## 0.4.81
 
 ### Patch Changes

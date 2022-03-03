@@ -10,12 +10,13 @@ By default, GraphQL Mesh provides you an HTTP server. You can see the details in
 
 The following example shows how to replace GraphQL Mesh's default server implementation with [Apollo Server](https://apollographql.com/docs/apollo-server).
 
-`myServerHandler.js`
+`myServerHandler.ts`
 
 ```js
-const { ApolloServer } = require('apollo-server');
+import { ApolloServer } from 'apollo-server';
+import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 
-module.exports = async ({ getBuiltMesh, documents, logger }) => {
+export default async function ({ getBuiltMesh, documents, logger  }: ServeMeshOptions): Promise<void> {
   const { schema } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,
@@ -31,7 +32,7 @@ module.exports = async ({ getBuiltMesh, documents, logger }) => {
 
   const { url } = await apolloServer.listen(4000);
   logger.info(`🚀 Server ready at ${url}`);
-};
+}
 ```
 
 Then add the following line to your configuration file.

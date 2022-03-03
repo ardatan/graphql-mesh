@@ -104,6 +104,7 @@ export default class OpenAPIHandler implements MeshHandler {
             env,
           }),
           fetch,
+          logger: this.logger,
         });
       }
       return Promise.all(asArray(rawSpec).map(singleSpec => getValidOAS3(singleSpec)));
@@ -243,7 +244,7 @@ export default class OpenAPIHandler implements MeshHandler {
               extensions: undefined,
               astNode: undefined,
               deprecationReason: undefined,
-              type: (schema.getType(type) as GraphQLInputType) || GraphQLID,
+              type: (typeof type === 'string' ? (schema.getType(type) as GraphQLInputType) : type) || GraphQLID,
             })
           )
         )

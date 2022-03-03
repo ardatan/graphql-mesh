@@ -57,6 +57,7 @@ export default class Neo4JHandler implements MeshHandler {
         return readFileOrUrl(this.config.typeDefs, {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
+          logger: this.logger,
         });
       } else {
         const { typeDefs } = await inferSchema(this.getDriver(), {

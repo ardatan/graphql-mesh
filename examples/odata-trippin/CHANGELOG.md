@@ -1,5 +1,159 @@
 # odata-trippin-example
 
+## 0.7.172
+
+### Patch Changes
+
+- Updated dependencies [738ed5ce4]
+- Updated dependencies [c84d9e95e]
+- Updated dependencies [c84d9e95e]
+  - @graphql-mesh/cli@0.56.1
+
+## 0.7.171
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+- Updated dependencies [ea4be4b43]
+  - @graphql-mesh/cli@0.56.0
+  - @graphql-mesh/odata@0.16.11
+
+## 0.7.170
+
+### Patch Changes
+
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/cli@0.55.2
+  - @graphql-mesh/odata@0.16.10
+
+## 0.7.169
+
+### Patch Changes
+
+- Updated dependencies [f202f53af]
+  - @graphql-mesh/cli@0.55.1
+
+## 0.7.168
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/cli@0.55.0
+  - @graphql-mesh/odata@0.16.9
+
+## 0.7.167
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.4
+- @graphql-mesh/odata@0.16.8
+
+## 0.7.166
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.54.3
+
+## 0.7.165
+
+### Patch Changes
+
+- Updated dependencies [2bf6930b7]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/cli@0.54.2
+  - @graphql-mesh/odata@0.16.7
+
+## 0.7.164
+
+### Patch Changes
+
+- @graphql-mesh/odata@0.16.6
+- @graphql-mesh/cli@0.54.1
+
+## 0.7.163
+
+### Patch Changes
+
+- Updated dependencies [49e9ca808]
+  - @graphql-mesh/cli@0.54.0
+
+## 0.7.162
+
+### Patch Changes
+
+- Updated dependencies [813f6761c]
+  - @graphql-mesh/cli@0.53.2
+
+## 0.7.161
+
+### Patch Changes
+
+- Updated dependencies [080929554]
+  - @graphql-mesh/cli@0.53.1
+
+## 0.7.160
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+- Updated dependencies [900a01355]
+  - @graphql-mesh/cli@0.53.0
+  - @graphql-mesh/odata@0.16.5
+
+## 0.7.159
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/cli@0.52.0
+  - @graphql-mesh/odata@0.16.4
+
+## 0.7.158
+
+### Patch Changes
+
+- Updated dependencies [572d0f1ab]
+  - @graphql-mesh/cli@0.51.2
+
+## 0.7.157
+
+### Patch Changes
+
+- @graphql-mesh/odata@0.16.3
+- @graphql-mesh/cli@0.51.1
+
+## 0.7.156
+
+### Patch Changes
+
+- Updated dependencies [fb63fa534]
+  - @graphql-mesh/cli@0.51.0
+
+## 0.7.155
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/cli@0.50.0
+  - @graphql-mesh/odata@0.16.2
+
+## 0.7.154
+
+### Patch Changes
+
+- Updated dependencies [6601a949e]
+  - @graphql-mesh/cli@0.49.0
+  - @graphql-mesh/odata@0.16.1
+
+## 0.7.153
+
+### Patch Changes
+
+- Updated dependencies [2ee6025e2]
+  - @graphql-mesh/cli@0.48.1
+
 ## 0.7.152
 
 ### Patch Changes

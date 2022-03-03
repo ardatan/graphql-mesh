@@ -684,7 +684,7 @@ type ExampleObject {
      `.trim()
     );
   });
-  it('should create correct object types from object definition with additionalPropertiez', async () => {
+  it('should create correct object types from object definition with additionalProperties', async () => {
     const title = 'ExampleObject';
     const inputSchema: JSONSchema = {
       title,

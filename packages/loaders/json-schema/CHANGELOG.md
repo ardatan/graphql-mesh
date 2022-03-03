@@ -1,5 +1,168 @@
 # @omnigraph/json-schema
 
+## 0.15.1
+
+### Patch Changes
+
+- c84d9e95e: enhance(json-schema): add a debug message about adding response metadata to the final response object
+
+## 0.15.0
+
+### Minor Changes
+
+- e3f941db5: feat(json-schema): make input argument nonnullable if any of fields is nonnulalble
+
+### Patch Changes
+
+- 12256ec58: fix(json-schema): fix array normalization
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/utils@0.27.6
+  - json-machete@0.5.7
+
+## 0.14.3
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+  - json-machete@0.5.6
+
+## 0.14.2
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/utils@0.27.4
+  - json-machete@0.5.5
+
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/utils@0.27.3
+  - json-machete@0.5.4
+
+## 0.14.0
+
+### Minor Changes
+
+- 15e1f68c5: feat(json-schema): respect given samples in mocks transform
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+  - json-machete@0.5.3
+
+## 0.13.6
+
+### Patch Changes
+
+- 3a21004c9: fix(json-schema): encode query parameters
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+  - json-machete@0.5.2
+
+## 0.13.5
+
+### Patch Changes
+
+- 05ec30255: fix(json-schema): revert breaking change in the API (export getComposerFromJSONSchema)
+
+## 0.13.4
+
+### Patch Changes
+
+- Updated dependencies [1c8827604]
+  - json-machete@0.5.1
+
+## 0.13.3
+
+### Patch Changes
+
+- 49e9ca808: fix(json-schema): use Any scalar for empty responses
+- Updated dependencies [49e9ca808]
+  - json-machete@0.5.0
+
+## 0.13.2
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+  - json-machete@0.4.3
+
+## 0.13.1
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/utils@0.26.4
+  - json-machete@0.4.2
+
+## 0.13.0
+
+### Minor Changes
+
+- a79268b3a: feat(json-schema): handle default error responses correctly
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/utils@0.26.3
+  - json-machete@0.4.1
+
+## 0.12.0
+
+### Minor Changes
+
+- 020431bdc: feat(json-schema/openapi/raml): respect error status codes
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - json-machete@0.4.0
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/utils@0.26.2
+
+## 0.11.2
+
+### Patch Changes
+
+- 6bb4cf673: enhance(json-schema): remove the need of info
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+  - json-machete@0.3.7
+
+## 0.11.1
+
+### Patch Changes
+
+- 92d687133: fix(json-schema): boolean types shouldn't be enums
+- 92d687133: fix(json-schema): handle additionalProperties as a part of the actual type
+- 92d687133: fix(json-machete): respect reference titles while dereferencing
+- Updated dependencies [92d687133]
+  - json-machete@0.3.6
+
 ## 0.11.0
 
 ### Minor Changes

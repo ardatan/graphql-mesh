@@ -15,7 +15,6 @@ import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
 import { hashObject, PubSub } from '@graphql-mesh/utils';
 import { format } from 'date-fns';
-import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 import { cloneSchema } from 'neo4j-graphql-js/node_modules/graphql-tools';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -418,8 +417,6 @@ describe('cache', () => {
 
   describe('Opration-based invalidation', () => {
     it('Should invalidate cache when mutation is done based on key', async () => {
-      const schemaWithHooks = applyResolversHooksToSchema(schema, pubsub, {});
-
       const transform = new CacheTransform({
         apiName: 'test',
         importFn,
@@ -446,7 +443,7 @@ describe('cache', () => {
         baseDir,
       });
 
-      const schemaWithCache = transform.transformSchema(schemaWithHooks);
+      const schemaWithCache = transform.transformSchema(schema);
 
       const expectedCacheKey = `query-user-1`;
 

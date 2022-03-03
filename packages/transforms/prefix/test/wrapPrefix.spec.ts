@@ -219,4 +219,27 @@ describe('wrapPrefix', () => {
     expect(queryFields).toHaveProperty('T_posts');
     expect(queryFields).not.toHaveProperty('posts');
   });
+
+  it('should allow to ignore types', () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new PrefixTransform({
+          config: {
+            value: 'T_',
+            includeRootOperations: true,
+            includeTypes: false,
+          },
+          apiName: '',
+          baseDir,
+          cache,
+          pubsub,
+          importFn: m => import(m),
+        }),
+      ],
+    });
+    expect(newSchema.getType('Query')).toBeDefined();
+    expect(newSchema.getType('T_User')).toBeUndefined();
+    expect(newSchema.getType('User')).toBeDefined();
+  });
 });

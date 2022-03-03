@@ -1,5 +1,84 @@
 # @graphql-mesh/types
 
+## 0.64.0
+
+### Minor Changes
+
+- 08b250e04: feat(cli/serve): replace graphql-helix&graphql-upload with graphql-yoga
+
+### Patch Changes
+
+- @graphql-mesh/store@0.3.19
+
+## 0.63.1
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/store@0.3.18
+
+## 0.63.0
+
+### Minor Changes
+
+- b6eca9baa: feat(serve): use YogaGraphiQL instead of custom GraphiQL package
+- b6eca9baa: feat(core): Envelop integration
+
+### Patch Changes
+
+- @graphql-mesh/store@0.3.17
+
+## 0.62.2
+
+### Patch Changes
+
+- 0d43ecf19: fix(runtime): add mock info if not present
+  - @graphql-mesh/store@0.3.16
+
+## 0.62.1
+
+### Patch Changes
+
+- 447bc3697: fix(types): add missing store dependency
+  - @graphql-mesh/store@0.3.15
+
+## 0.62.0
+
+### Minor Changes
+
+- 240ec7b38: feat(openapi): selectQueryOrMutationField flag to choose what field belongs to what root type
+
+## 0.61.0
+
+### Minor Changes
+
+- 66ca1a366: feat(cli): ability to provide custom codegen config
+
+## 0.60.0
+
+### Minor Changes
+
+- a79268b3a: feat(raml): ability to select operation type by fieldname
+
+### Patch Changes
+
+- a79268b3a: enhance(types): more strict incontext sdk types
+
+## 0.59.0
+
+### Minor Changes
+
+- 020431bdc: feat(json-schema/openapi/raml): respect error status codes
+- 020431bdc: feat(redis): fallback to inmemory cache and support env interpolation
+- 020431bdc: feat(cli): built-in typescript support
+
+## 0.58.0
+
+### Minor Changes
+
+- 6bb4cf673: feat(prefix): allow to prefix only fields
+
 ## 0.57.2
 
 ### Patch Changes

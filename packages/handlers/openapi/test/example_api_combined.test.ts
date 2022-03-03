@@ -7,7 +7,7 @@ import { graphql, parse, validate } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
 import { startServer, stopServer } from './example_api_server';
-import fetch from 'cross-undici-fetch';
+import { fetch } from 'cross-undici-fetch';
 
 const oas = require('./fixtures/example_oas_combined.json');
 const PORT = 3010;

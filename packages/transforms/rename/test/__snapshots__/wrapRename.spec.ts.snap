@@ -37,11 +37,11 @@ exports[`rename should change the name of multiple fields 1`] = `
 }
 
 type MyUser {
-  false: ID!
+  id: ID!
 }
 
 type MyBook {
-  false: ID!
+  id: ID!
 }"
 `;
 
@@ -60,13 +60,28 @@ type Book {
 }"
 `;
 
+exports[`rename should only affect specified type 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_bok: MyBook!
+}
+
+type MyUser {
+  id: ID!
+}
+
+type MyBook {
+  id: ID!
+}"
+`;
+
 exports[`rename should replace all occurrences of a substring in a field 1`] = `
 "type Query {
   user_v1: ApiUserV1Api!
 }
 
 type ApiUserV1Api {
-  false: ID!
+  id: ID!
 }"
 `;
 
@@ -86,7 +101,7 @@ exports[`rename should replace all occurrences of multiple substrings in a field
 }
 
 type ApiUserV1Api {
-  false: ID!
+  id: ID!
 }"
 `;
 
@@ -107,10 +122,10 @@ exports[`rename should replace the first occurrence of a substring in a field 1`
 }
 
 type MyUser {
-  false: ID!
+  id: ID!
 }
 
 type MyBook {
-  false: ID!
+  id: ID!
 }"
 `;

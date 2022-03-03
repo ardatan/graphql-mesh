@@ -1,5 +1,133 @@
 # @graphql-mesh/runtime
 
+## 0.31.4
+
+### Patch Changes
+
+- c84d9e95e: fix(cli/runtime): print stacktrace of error objects instead of inspecting them
+
+## 0.31.3
+
+### Patch Changes
+
+- Updated dependencies [08b250e04]
+  - @graphql-mesh/types@0.64.0
+  - @graphql-mesh/utils@0.27.6
+
+## 0.31.2
+
+### Patch Changes
+
+- 1815865c3: fix: bump fixed graphql-tools
+- Updated dependencies [1815865c3]
+  - @graphql-mesh/types@0.63.1
+  - @graphql-mesh/utils@0.27.5
+
+## 0.31.1
+
+### Patch Changes
+
+- f202f53af: fix: bump wrap package and throw better error message in case of missing selectionSet for unmatching return types
+
+## 0.31.0
+
+### Minor Changes
+
+- b6eca9baa: feat(core): Envelop integration
+
+### Patch Changes
+
+- Updated dependencies [b6eca9baa]
+- Updated dependencies [b6eca9baa]
+  - @graphql-mesh/types@0.63.0
+  - @graphql-mesh/utils@0.27.4
+
+## 0.30.4
+
+### Patch Changes
+
+- 0d43ecf19: fix(runtime): add mock info if not present
+- Updated dependencies [0d43ecf19]
+  - @graphql-mesh/types@0.62.2
+  - @graphql-mesh/utils@0.27.3
+
+## 0.30.3
+
+### Patch Changes
+
+- 3272bb516: fix(runtime): consider noWrap transforms as wrap if the source is wrapped already
+
+## 0.30.2
+
+### Patch Changes
+
+- Updated dependencies [c71b29004]
+- Updated dependencies [447bc3697]
+  - @graphql-mesh/utils@0.27.2
+  - @graphql-mesh/types@0.62.1
+
+## 0.30.1
+
+### Patch Changes
+
+- fcbd12a35: fix(runtime): fallback to a dummy selectionSet if parent return type doesn't have one
+- Updated dependencies [240ec7b38]
+- Updated dependencies [fcbd12a35]
+  - @graphql-mesh/types@0.62.0
+  - @graphql-mesh/utils@0.27.1
+
+## 0.30.0
+
+### Minor Changes
+
+- 900a01355: feat(serve-source): use the same server for serve-source cmd
+
+### Patch Changes
+
+- Updated dependencies [900a01355]
+  - @graphql-mesh/utils@0.27.0
+
+## 0.29.3
+
+### Patch Changes
+
+- Updated dependencies [66ca1a366]
+  - @graphql-mesh/types@0.61.0
+  - @graphql-mesh/utils@0.26.4
+
+## 0.29.2
+
+### Patch Changes
+
+- Updated dependencies [a79268b3a]
+- Updated dependencies [a79268b3a]
+  - @graphql-mesh/types@0.60.0
+  - @graphql-mesh/utils@0.26.3
+
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+- Updated dependencies [020431bdc]
+  - @graphql-mesh/types@0.59.0
+  - @graphql-mesh/utils@0.26.2
+
+## 0.29.0
+
+### Minor Changes
+
+- 6601a949e: enhance(runtime): expose logger in the context and MeshInstance
+- 6601a949e: feat(runtime): export ServeMeshOption for custom server handler
+
+### Patch Changes
+
+- Updated dependencies [113091148]
+- Updated dependencies [6bb4cf673]
+  - @graphql-mesh/utils@0.26.1
+  - @graphql-mesh/types@0.58.0
+
 ## 0.28.0
 
 ### Minor Changes

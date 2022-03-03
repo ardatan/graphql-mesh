@@ -1,7 +1,6 @@
 import {
   KeyValueCache,
   MeshPubSub,
-  RawSourceOutput,
   GraphQLOperation,
   MeshHandler,
   MeshTransform,
@@ -9,10 +8,13 @@ import {
   Logger,
   MeshMerger,
 } from '@graphql-mesh/types';
-import { DocumentNode, GraphQLResolveInfo } from 'graphql';
-import { IResolvers } from '@graphql-tools/utils';
+import { DocumentNode } from 'graphql';
+import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { MeshInstance } from './get-mesh';
+import { envelop } from '@envelop/core';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -24,6 +26,7 @@ export type GetMeshOptions = {
   merger: MeshMerger;
   logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
+  additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
 };
 
 export type MeshResolvedSource<TContext = any> = {
@@ -49,22 +52,16 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   operationName?: string
 ) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
 
-export type APIContextMethodParams = {
-  root?: any;
-  args?: any;
-  context: any;
-  info?: GraphQLResolveInfo;
-  selectionSet?: string;
-};
-
-export type APIContext = {
-  Query: Record<string, (params: APIContextMethodParams) => Promise<any>>;
-  Mutation: Record<string, (params: APIContextMethodParams) => Promise<any>>;
-  Subscription: Record<string, (params: APIContextMethodParams) => AsyncIterable<any>>;
-  rawSource: RawSourceOutput;
-};
-
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
-  [key: string]: APIContext;
-} & { pubsub: MeshPubSub; cache: KeyValueCache };
+} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; liveQueryStore: InMemoryLiveQueryStore };
+
+export interface ServeMeshOptions {
+  baseDir: string;
+  getBuiltMesh: () => Promise<MeshInstance>;
+  logger: Logger;
+  rawConfig: YamlConfig.Config;
+  documents: Source[];
+  argsPort?: number;
+  playgroundTitle?: string;
+}

@@ -19,6 +19,8 @@ sources:
     handler:
       postgraphile:
         connectionString: postgres://postgres:password@localhost/postgres
+        # You can also use environment variables like below
+        # connectionString: postgres://{env.POSTGRES_USER}:{env.POSTGRES_PASSWORD}@localhost/postgres
 ```
 
 > You can check out our example that uses schema stitching with a PostgreSQL datasource.

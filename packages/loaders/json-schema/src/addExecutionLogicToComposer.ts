@@ -1,14 +1,22 @@
-import { SchemaComposer, getComposeTypeName, ObjectTypeComposer } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
 import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
-import { inspect } from '@graphql-tools/utils';
+import { inspect, memoize1 } from '@graphql-tools/utils';
 import { env } from 'process';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
-import { getNamedType, GraphQLError, GraphQLOutputType, isListType, isNonNullType, isScalarType } from 'graphql';
+import {
+  getNamedType,
+  GraphQLError,
+  GraphQLOutputType,
+  isListType,
+  isNonNullType,
+  isScalarType,
+  isUnionType,
+} from 'graphql';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -17,15 +25,14 @@ export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
-  throwOnHttpError?: boolean;
 }
 
-function isListTypeOrNonNullListType(type: GraphQLOutputType) {
+const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
   if (isNonNullType(type)) {
     return isListType(type.ofType);
   }
   return isListType(type);
-}
+});
 
 function createError(message: string, extensions?: any) {
   return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
@@ -40,7 +47,6 @@ export async function addExecutionLogicToComposer(
     operationHeaders,
     baseUrl,
     pubsub: globalPubsub,
-    throwOnHttpError = true,
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(() => `Attaching execution logic to the schema`);
@@ -53,22 +59,6 @@ export async function addExecutionLogicToComposer(
     const rootTypeComposer = schemaComposer[rootTypeName];
 
     const field = rootTypeComposer.getField(fieldName);
-
-    if (operationConfig.requestTypeName) {
-      const tcName = getComposeTypeName(field.args.input.type, schemaComposer);
-      const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
-      if (tcName !== operationConfig.requestTypeName && !schemaComposer.has(operationConfig.requestTypeName)) {
-        tcWithName.setTypeName(operationConfig.requestTypeName);
-      }
-    }
-
-    if (operationConfig.responseTypeName) {
-      const tcName = getComposeTypeName(field.type, schemaComposer);
-      if (tcName !== operationConfig.responseTypeName && !schemaComposer.has(operationConfig.responseTypeName)) {
-        const tcWithName = schemaComposer.getAnyTC(tcName) as ObjectTypeComposer;
-        tcWithName.setTypeName(operationConfig.responseTypeName);
-      }
-    }
 
     if (isPubSubOperationConfig(operationConfig)) {
       field.description = operationConfig.description || `PubSub Topic: ${operationConfig.pubsubTopic}`;
@@ -98,9 +88,9 @@ export async function addExecutionLogicToComposer(
       } else {
         field.description = operationConfig.description;
       }
-      field.resolve = async (root, args, context, info) => {
+      field.resolve = async (root, args, context) => {
         operationLogger.debug(() => `=> Resolving`);
-        const interpolationData = { root, args, context, info, env };
+        const interpolationData = { root, args, context, env };
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
         let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
@@ -149,7 +139,7 @@ export async function addExecutionLogicToComposer(
               case 'OPTIONS':
               case 'TRACE': {
                 fullPath += fullPath.includes('?') ? '&' : '?';
-                fullPath += qsStringify(input, { encode: false });
+                fullPath += qsStringify(input);
                 break;
               }
               case 'POST':
@@ -179,7 +169,7 @@ export async function addExecutionLogicToComposer(
         if (queryString) {
           const queryParams = qsParse(queryString);
           const cleanedQueryParams = cleanObject(queryParams);
-          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { encode: false });
+          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams);
         }
 
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
@@ -203,7 +193,7 @@ export async function addExecutionLogicToComposer(
         try {
           responseJson = JSON.parse(responseText);
         } catch (error) {
-          const returnNamedGraphQLType = getNamedType(info.returnType);
+          const returnNamedGraphQLType = getNamedType(field.type.getType());
           // The result might be defined as scalar
           if (isScalarType(returnNamedGraphQLType)) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
@@ -217,18 +207,21 @@ export async function addExecutionLogicToComposer(
           });
         }
 
-        if (throwOnHttpError && !response.status.toString().startsWith('2')) {
-          return createError(`HTTP Error: ${response.status}`, {
-            url: fullPath,
-            method: httpMethod,
-            ...(response.statusText ? { status: response.statusText } : {}),
-            responseJson,
-          });
+        if (!response.status.toString().startsWith('2')) {
+          const returnNamedGraphQLType = getNamedType(field.type.getType());
+          if (!isUnionType(returnNamedGraphQLType)) {
+            return createError(`HTTP Error: ${response.status}`, {
+              url: fullPath,
+              method: httpMethod,
+              ...(response.statusText ? { status: response.statusText } : {}),
+              responseJson,
+            });
+          }
         }
 
         operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
         // Sometimes API returns an array but the return type is not an array
-        const isListReturnType = isListTypeOrNonNullListType(info.returnType);
+        const isListReturnType = isListTypeOrNonNullListType(field.type.getType());
         const isArrayResponse = Array.isArray(responseJson);
         if (isListReturnType && !isArrayResponse) {
           operationLogger.debug(() => `Response is not array but return type is list. Normalizing the response`);
@@ -238,7 +231,20 @@ export async function addExecutionLogicToComposer(
           operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
           responseJson = responseJson[0];
         }
-        return responseJson;
+
+        const addResponseMetadata = (obj: any) => ({
+          ...obj,
+          __response: {
+            url: fullPath,
+            method: httpMethod,
+            status: response.status,
+            statusText: response.statusText,
+          },
+        });
+        operationLogger.debug(() => `Adding response metadata to the response object`);
+        return Array.isArray(responseJson)
+          ? responseJson.map(obj => addResponseMetadata(obj))
+          : addResponseMetadata(responseJson);
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);

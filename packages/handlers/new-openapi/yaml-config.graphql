@@ -10,4 +10,16 @@ type NewOpenapiHandler {
   baseUrl: String
   schemaHeaders: JSON
   operationHeaders: JSON
+  ignoreErrorResponses: Boolean
+  selectQueryOrMutationField: [OASSelectQueryOrMutationFieldConfig]
+}
+
+enum QueryOrMutation {
+  query
+  mutation
+}
+
+type OASSelectQueryOrMutationFieldConfig {
+  type: QueryOrMutation!
+  fieldName: String!
 }

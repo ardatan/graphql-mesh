@@ -11,17 +11,20 @@ export async function getDereferencedJSONSchemaFromOperations({
   logger,
   fetch,
   schemaHeaders,
+  ignoreErrorResponses,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   logger: Logger;
   fetch: WindowOrWorkerGlobalScope['fetch'];
   schemaHeaders?: Record<string, string>;
+  ignoreErrorResponses?: boolean;
 }): Promise<JSONSchemaObject> {
   const referencedJSONSchema = await getReferencedJSONSchemaFromOperations({
     operations,
     cwd,
     schemaHeaders,
+    ignoreErrorResponses,
   });
   logger.debug(() => `Dereferencing JSON Schema to resolve all $refs`);
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);

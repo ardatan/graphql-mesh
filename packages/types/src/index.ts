@@ -51,9 +51,6 @@ export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = a
 // Hooks
 export type AllHooks = {
   destroy: void;
-  resolverCalled: { resolverData: ResolverData };
-  resolverDone: { resolverData: ResolverData; result: any };
-  resolverError: { resolverData: ResolverData; error: Error };
   [key: string]: any;
 };
 export type HookName = keyof AllHooks & string;
@@ -143,16 +140,36 @@ export type Logger = {
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
 export type SelectionSetParamOrFactory = ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;
 
-export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <
-  TKey,
-  TReturn = TDefaultReturn
->(params: {
-  root?: any;
-  args?: TArgs;
-  context?: TContext;
-  info?: GraphQLResolveInfo;
-  selectionSet?: SelectionSetParamOrFactory;
-  key?: TKey;
-  argsFromKeys?: (keys: TKey[]) => TArgs;
+export type InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn> = {
+  key: TKey;
+  argsFromKeys: (keys: TKey[]) => TArgs;
   valuesFromResults?: (results: TDefaultReturn, keys: TKey[]) => TReturn | TReturn[];
-}) => Promise<TReturn>;
+};
+
+export type InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn> = {
+  args?: TArgs;
+  valuesFromResults?: (results: TDefaultReturn) => TReturn | TReturn[];
+};
+
+export type InContextSdkMethodCustomSelectionSetParams = {
+  // Use this parameter if the selection set of the return type doesn't match
+  selectionSet: SelectionSetParamOrFactory;
+  info?: GraphQLResolveInfo;
+};
+
+export type InContextSdkMethodInfoParams = {
+  info: GraphQLResolveInfo;
+};
+
+export type InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn> = {
+  root?: any;
+  context: TContext;
+} & (InContextSdkMethodCustomSelectionSetParams | InContextSdkMethodInfoParams) &
+  (
+    | InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn>
+    | InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn>
+  );
+
+export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <TKey, TReturn = TDefaultReturn>(
+  params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>
+) => Promise<TReturn>;

@@ -24,6 +24,7 @@ describe('JavaScript Wiki', () => {
     const viewsInPastMonthQuery = await readFile(join(__dirname, '../example-queries/views-in-past-month.graphql'), 'utf8');
     const { execute } = await mesh$;
     const result = await execute(viewsInPastMonthQuery);
+    expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.viewsInPastMonth).toBe('number');
   });
   it('should give correct response for wikipediaMetrics within specific range', async () => {

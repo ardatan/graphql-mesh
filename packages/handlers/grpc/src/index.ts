@@ -59,7 +59,7 @@ ${rootJsonAndDecodedDescriptorSets
   .map(
     ({ name, rootJson, decodedDescriptorSet }) => `
   {
-    name: ${JSON.stringify(name)}
+    name: ${JSON.stringify(name)},
     decodedDescriptorSet: FileDescriptorSet.fromObject(${JSON.stringify(decodedDescriptorSet.toJSON(), null, 2)}),
     rootJson: ${JSON.stringify(rootJson, null, 2)},
   },
