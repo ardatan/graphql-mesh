@@ -19,5 +19,6 @@ module.exports = createServer({
   },
   maskedErrors: false,
   logging: false,
+  hostname: 'localhost',
   port: 3002,
 });

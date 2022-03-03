@@ -52,6 +52,7 @@ module.exports = createServer({
       },
     },
   },
+  hostname: 'localhost',
   port: 3001,
   maskedErrors: false,
   logging: false,

@@ -18,6 +18,8 @@ describe('Upload Example', () => {
   afterAll(async () => {
     await uploadFilesServer.stop()
     await resizeImageServer.stop()
+    const mesh = await mesh$;
+    mesh.destroy();
   });
   it('should give correct response', async () => {
     const { execute } = await mesh$;
