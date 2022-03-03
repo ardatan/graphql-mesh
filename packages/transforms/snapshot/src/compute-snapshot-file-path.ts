@@ -1,4 +1,4 @@
-import { join } from 'path';
+import path from 'path';
 import { hashObject } from '@graphql-mesh/utils';
 import { GraphQLResolveInfo } from 'graphql';
 
@@ -18,5 +18,5 @@ export function computeSnapshotFilePath(options: {
     : options.args;
   const hash = hashObject(hashObj);
   const fileName = [typeName, fieldName, hash].join('_') + '.json';
-  return join(options.outputDir, fileName);
+  return path.join(options.outputDir, fileName);
 }

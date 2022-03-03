@@ -1,4 +1,4 @@
-import { isAbsolute } from 'path';
+import path from 'path';
 import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
@@ -8,6 +8,7 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 import { asArray } from '@graphql-tools/utils';
 
+const { isAbsolute } = path;
 export default class ExtendTransform implements MeshTransform {
   noWrap = true;
   private config: YamlConfig.ExtendTransform;

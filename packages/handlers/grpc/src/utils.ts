@@ -1,12 +1,14 @@
 import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
-import { existsSync } from 'fs';
+import fs from 'fs';
 import { SchemaComposer } from 'graphql-compose';
 import _ from 'lodash';
-import { isAbsolute, join } from 'path';
+import path from 'path';
 import { Root } from 'protobufjs';
 
 import { getGraphQLScalar, isScalarType } from './scalars';
+
+const { isAbsolute, join } = path;
 
 export type ClientMethod = (
   input: unknown,
@@ -35,7 +37,7 @@ export function addIncludePathResolver(root: Root, includePaths: string[]): void
     }
     for (const directory of includePaths) {
       const fullPath: string = join(directory, target);
-      if (existsSync(fullPath)) {
+      if (fs.existsSync(fullPath)) {
         return fullPath;
       }
     }

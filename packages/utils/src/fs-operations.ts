@@ -1,8 +1,9 @@
-import { MakeDirectoryOptions, promises as fsPromises } from 'fs';
-import { dirname, join } from 'path';
+import fs from 'fs';
+import path from 'path';
 import { jsonFlatStringify } from './flat-string';
 
-const { stat, writeFile: fsWriteFile, mkdir: fsMkdir, readdir, unlink, rmdir } = fsPromises || {};
+const { dirname, join } = path;
+const { stat, writeFile: fsWriteFile, mkdir: fsMkdir, readdir, unlink, rmdir } = fs.promises || {};
 
 export async function pathExists(path: string) {
   if (!path) {
@@ -30,7 +31,7 @@ export function writeJSON<T>(
   return writeFile(path, stringified, 'utf-8');
 }
 
-export const writeFile: typeof fsPromises.writeFile = async (path, ...args) => {
+export const writeFile: typeof fs.promises.writeFile = async (path, ...args) => {
   if (typeof path === 'string') {
     const containingDir = dirname(path);
     if (!(await pathExists(containingDir))) {
@@ -40,7 +41,7 @@ export const writeFile: typeof fsPromises.writeFile = async (path, ...args) => {
   return fsWriteFile(path, ...args);
 };
 
-export async function mkdir(path: string, options: MakeDirectoryOptions = { recursive: true }) {
+export async function mkdir(path: string, options: fs.MakeDirectoryOptions = { recursive: true }) {
   const ifExists = await pathExists(path);
   if (!ifExists) {
     await fsMkdir(path, options);

@@ -1,4 +1,4 @@
-import { resolve, join, isAbsolute } from 'path';
+import path from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
@@ -27,6 +27,8 @@ import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { envelop } from '@envelop/core';
+
+const { resolve, join, isAbsolute } = path;
 
 export type ConfigProcessOptions = {
   dir?: string;

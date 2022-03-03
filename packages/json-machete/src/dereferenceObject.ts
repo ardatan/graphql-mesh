@@ -1,8 +1,10 @@
 import { JsonPointer } from 'json-ptr';
-import { dirname, isAbsolute, join } from 'path';
+import path from 'path';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import { readFileOrUrl } from '@graphql-mesh/utils';
+
+const { dirname, isAbsolute, join } = path;
 
 export const resolvePath = (path: string, root: any): any => {
   return JsonPointer.get(root, path);

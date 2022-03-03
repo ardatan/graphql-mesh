@@ -51,7 +51,7 @@ import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithTyp
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { pascalCase } from 'pascal-case';
-import { EventEmitter } from 'events';
+import EventEmitter from 'events';
 import { XMLParser } from 'fast-xml-parser';
 import { ExecutionRequest, pruneSchema, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-undici-fetch';

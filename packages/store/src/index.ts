@@ -1,9 +1,11 @@
-import { promises as fsPromises } from 'fs';
-import { isAbsolute, join } from 'path';
+import fs from 'fs';
+import path from 'path';
 import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
+
+const { isAbsolute, join } = path;
 
 export class ReadonlyStoreError extends Error {}
 
@@ -68,7 +70,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
 
   async delete(key: string): Promise<void> {
     const filePath = this.getWrittenFileName(key);
-    const { unlink } = fsPromises;
+    const { unlink } = fs.promises;
     return unlink(filePath);
   }
 }

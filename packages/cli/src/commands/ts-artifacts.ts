@@ -8,14 +8,16 @@ import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
 import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
-import { isAbsolute, relative, join, normalize } from 'path';
+import path from 'path';
 import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
-import { promises as fsPromises } from 'fs';
+import fs from 'fs';
 import { generateOperations } from './generate-operations';
 import { GraphQLMeshCLIParams } from '..';
 
-const { unlink, rename, readFile } = fsPromises;
+const { isAbsolute, relative, join, normalize } = path;
+
+const { unlink, rename, readFile } = fs.promises;
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -239,7 +241,7 @@ export async function generateTsArtifacts(
               const importCodes = [
                 `import { getMesh } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `import { join, relative, isAbsolute, dirname } from 'path';`,
+                `import path from 'path';`,
                 `import { fileURLToPath } from '@graphql-mesh/utils';`,
               ];
               const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
@@ -259,6 +261,8 @@ export async function generateTsArtifacts(
 
               const meshMethods = `
 ${importCodes.join('\n')}
+
+const { join, relative, isAbsolute, dirname } = path;
 
 const importedModules: Record<string, any> = {
 ${importedModulesCodes.join(',\n')}

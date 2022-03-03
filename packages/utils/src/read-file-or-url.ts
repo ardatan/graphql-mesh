@@ -2,13 +2,14 @@ import { fetchFactory, KeyValueCache } from 'fetchache';
 import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
-import { dirname, isAbsolute, resolve } from 'path';
-import { promises as fsPromises, readdirSync, readFileSync } from 'fs';
+import path from 'path';
+import fs from 'fs';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
 import { memoize1 } from '@graphql-tools/utils';
 
-const { readFile: readFileFromFS } = fsPromises || {};
+const { dirname, isAbsolute, resolve } = path;
+const { readFile: readFileFromFS } = fs.promises || {};
 
 export { isUrl };
 
@@ -48,7 +49,7 @@ function getSchema(filepath: string, logger?: Logger): Schema {
       construct(path: string) {
         const newCwd = dirname(filepath);
         const absoluteFilePath = isAbsolute(path) ? path : resolve(newCwd, path);
-        const content = readFileSync(absoluteFilePath, 'utf8');
+        const content = fs.readFileSync(absoluteFilePath, 'utf8');
         return loadYaml(absoluteFilePath, content, logger);
       },
     }),
@@ -60,10 +61,10 @@ function getSchema(filepath: string, logger?: Logger): Schema {
       construct(path: string) {
         const newCwd = dirname(filepath);
         const absoluteDirPath = isAbsolute(path) ? path : resolve(newCwd, path);
-        const files = readdirSync(absoluteDirPath);
+        const files = fs.readdirSync(absoluteDirPath);
         return files.map(filePath => {
           const absoluteFilePath = resolve(absoluteDirPath, filePath);
-          const fileContent = readFileSync(absoluteFilePath, 'utf8');
+          const fileContent = fs.readFileSync(absoluteFilePath, 'utf8');
           return loadYaml(absoluteFilePath, fileContent, logger);
         });
       },

@@ -29,7 +29,7 @@ import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
 import { Oas2 } from './openapi-to-graphql/types/oas2';
-import { join } from 'path';
+import path from 'path';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
@@ -67,7 +67,7 @@ export default class OpenAPIHandler implements MeshHandler {
           const result = await openapiDiff.diffSpecs({
             sourceSpec: {
               content: jsonFlatStringify(oldOas),
-              location: join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
+              location: path.join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
               format: 'openapi3',
             },
             destinationSpec: {

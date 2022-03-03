@@ -2,8 +2,8 @@ import { findAndParseConfig } from './config';
 import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
-import { isAbsolute, resolve, join } from 'path';
-import { existsSync, readFileSync } from 'fs';
+import path from 'path';
+import fs from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
   writeFile,
@@ -23,6 +23,8 @@ import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
 import { printSchema } from 'graphql';
+
+const { isAbsolute, resolve, join } = path;
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -56,7 +58,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         Promise.all(
           externalModules.map(module => {
             const localModulePath = resolve(baseDir, module);
-            const islocalModule = existsSync(localModulePath);
+            const islocalModule = fs.existsSync(localModulePath);
             return defaultImportFn(islocalModule ? localModulePath : module);
           })
         ),
@@ -71,7 +73,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         } else {
           baseDir = resolve(cwd(), dir);
         }
-        const tsConfigExists = existsSync(join(baseDir, 'tsconfig.json'));
+        const tsConfigExists = fs.existsSync(join(baseDir, 'tsconfig.json'));
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
@@ -84,7 +86,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         });
         if (tsConfigExists) {
           try {
-            const tsConfigStr = readFileSync(join(baseDir, 'tsconfig.json'), 'utf-8');
+            const tsConfigStr = fs.readFileSync(join(baseDir, 'tsconfig.json'), 'utf-8');
             const tsConfig = JSON.parse(tsConfigStr);
             if (tsConfig.compilerOptions?.paths) {
               tsConfigPathsRegister({
@@ -96,7 +98,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
             logger.warn(e);
           }
         }
-        if (existsSync(join(baseDir, '.env'))) {
+        if (fs.existsSync(join(baseDir, '.env'))) {
           dotEnvRegister({
             path: join(baseDir, '.env'),
           });

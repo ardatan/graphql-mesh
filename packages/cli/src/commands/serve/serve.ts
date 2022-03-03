@@ -11,11 +11,11 @@ import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInte
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { join } from 'path';
+import path from 'path';
 import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
-import { promises as fsPromises } from 'fs';
+import fs from 'fs';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
@@ -26,8 +26,7 @@ import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '@graphql-mesh/cli';
 
 dnscache({ enable: true });
-
-const { readFile } = fsPromises;
+const { readFile } = fs.promises;
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -237,7 +236,7 @@ export async function serveMesh(
 
     if (staticFiles) {
       app.use(express.static(staticFiles));
-      const indexPath = join(baseDir, staticFiles, 'index.html');
+      const indexPath = path.join(baseDir, staticFiles, 'index.html');
       if (await pathExists(indexPath)) {
         app.get('/', (_req, res) => res.sendFile(indexPath));
       }

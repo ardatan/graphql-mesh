@@ -11,7 +11,7 @@ import {
 import { Plugin, withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
-import { join } from 'path';
+import path from 'path';
 import { tmpdir } from 'os';
 import { jitExecutorFactory, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
@@ -70,7 +70,7 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const cacheKey = this.name + '_introspection.json';
 
-    const dummyCacheFilePath = join(tmpdir(), cacheKey);
+    const dummyCacheFilePath = path.join(tmpdir(), cacheKey);
     let cachedIntrospection = await this.pgCache.get();
 
     let writeCache: () => Promise<void>;

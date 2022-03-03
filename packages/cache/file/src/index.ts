@@ -1,9 +1,11 @@
 import { ImportFn, KeyValueCache } from '@graphql-mesh/types';
-import { isAbsolute, join } from 'path';
+import path from 'path';
 import _ from 'lodash';
 import DataLoader from 'dataloader';
 import { writeJSON } from '@graphql-mesh/utils';
 import { cwd } from 'process';
+
+const { isAbsolute, join } = path;
 
 export default class FileCache<V = any> implements KeyValueCache<V> {
   json$: Promise<Record<string, V>>;

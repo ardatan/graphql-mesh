@@ -16,12 +16,12 @@ import descriptor from 'protobufjs/ext/descriptor/index.js';
 
 import { ClientMethod, addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils';
 import { GraphQLEnumTypeConfig, specifiedDirectives } from 'graphql';
-import { join, isAbsolute } from 'path';
+import path from 'path';
 import { StoreProxy } from '@graphql-mesh/store';
-import { promises as fsPromises } from 'fs';
+import fs from 'fs';
 import globby from 'globby';
 
-const { readFile } = fsPromises;
+const { readFile } = fs.promises;
 
 const { Root } = protobufjs;
 
@@ -94,13 +94,13 @@ ${rootJsonAndDecodedDescriptorSets
       options = {
         ...this.config.descriptorSetFilePath.load,
         includeDirs: this.config.descriptorSetFilePath.load.includeDirs?.map(includeDir =>
-          isAbsolute(includeDir) ? includeDir : join(this.baseDir, includeDir)
+          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir)
         ),
       };
     } else {
       fileName = this.config.descriptorSetFilePath;
     }
-    const absoluteFilePath = isAbsolute(fileName) ? fileName : join(this.baseDir, fileName);
+    const absoluteFilePath = path.isAbsolute(fileName) ? fileName : path.join(this.baseDir, fileName);
     this.logger.debug(() => `Using the descriptor set from ${absoluteFilePath} `);
     const descriptorSetBuffer = await readFile(absoluteFilePath);
     this.logger.debug(() => `Reading ${absoluteFilePath} `);
@@ -133,7 +133,7 @@ ${rootJsonAndDecodedDescriptorSets
       options = {
         ...this.config.protoFilePath.load,
         includeDirs: this.config.protoFilePath.load.includeDirs?.map(includeDir =>
-          isAbsolute(includeDir) ? includeDir : join(this.baseDir, includeDir)
+          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir)
         ),
       };
       if (options.includeDirs) {
@@ -151,7 +151,7 @@ ${rootJsonAndDecodedDescriptorSets
     });
     this.logger.debug(() => `Loading proto files(${fileGlob}); \n ${fileNames.join('\n')} `);
     protoRoot = await protoRoot.load(
-      fileNames.map(filePath => (isAbsolute(filePath) ? filePath : join(this.baseDir, filePath))),
+      fileNames.map(filePath => (path.isAbsolute(filePath) ? filePath : path.join(this.baseDir, filePath))),
       options
     );
     this.logger.debug(() => `Adding proto content to the root`);
@@ -202,18 +202,18 @@ ${rootJsonAndDecodedDescriptorSets
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`
       );
-      const absolutePrivateKeyPath = isAbsolute(this.config.credentialsSsl.privateKey)
+      const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
-        : join(this.baseDir, this.config.credentialsSsl.privateKey);
-      const absoluteCertChainPath = isAbsolute(this.config.credentialsSsl.certChain)
+        : path.join(this.baseDir, this.config.credentialsSsl.privateKey);
+      const absoluteCertChainPath = path.isAbsolute(this.config.credentialsSsl.certChain)
         ? this.config.credentialsSsl.certChain
-        : join(this.baseDir, this.config.credentialsSsl.certChain);
+        : path.join(this.baseDir, this.config.credentialsSsl.certChain);
 
       const sslFiles = [readFile(absolutePrivateKeyPath), readFile(absoluteCertChainPath)];
       if (this.config.credentialsSsl.rootCA !== 'rootCA') {
-        const absoluteRootCAPath = isAbsolute(this.config.credentialsSsl.rootCA)
+        const absoluteRootCAPath = path.isAbsolute(this.config.credentialsSsl.rootCA)
           ? this.config.credentialsSsl.rootCA
-          : join(this.baseDir, this.config.credentialsSsl.rootCA);
+          : path.join(this.baseDir, this.config.credentialsSsl.rootCA);
         sslFiles.unshift(readFile(absoluteRootCAPath));
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
