@@ -34,10 +34,10 @@
     "http-string-parser": "0.0.6",
     "cross-undici-fetch": "0.1.25",
     "dataloader": "2.0.0",
-    "fast-xml-parser": "4.0.3",
+    "fast-xml-parser": "4.0.4",
     "graphql-compose": "9.0.7",
     "graphql-parse-resolve-info": "4.12.0",
-    "graphql-scalars": "1.14.1",
+    "graphql-scalars": "1.15.0",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1"
   },

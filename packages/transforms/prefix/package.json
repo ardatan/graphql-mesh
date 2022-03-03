@@ -28,7 +28,7 @@
     "@graphql-tools/delegate": "8.5.1",
     "@graphql-tools/wrap": "8.4.2",
     "@graphql-tools/utils": "8.6.2",
-    "graphql-scalars": "1.14.1"
+    "graphql-scalars": "1.15.0"
   },
   "publishConfig": {
     "access": "public",
