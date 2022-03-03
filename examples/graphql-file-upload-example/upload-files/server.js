@@ -1,6 +1,8 @@
 const { createServer } = require('@graphql-yoga/node')
 const { existsSync, mkdirSync } = require('fs');
-const { readdir, readFile, writeFile, unlink } = require('fs/promises');
+const {
+  promises: { readdir, readFile, writeFile, unlink },
+} = require('fs');
 const { join } = require('path');
 
 const FILES_DIR = join(__dirname, 'files');
