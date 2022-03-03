@@ -31,10 +31,10 @@
     "@graphql-tools/batch-delegate": "8.2.4",
     "@graphql-tools/resolvers-composition": "6.4.2",
     "@graphql-tools/schema": "8.3.2",
-    "@graphql-tools/wrap": "8.4.2",
+    "@graphql-tools/wrap": "8.4.3",
     "@graphql-tools/utils": "8.6.2",
-    "@envelop/core": "2.0.0",
-    "@envelop/live-query": "3.0.0"
+    "@envelop/core": "2.1.0",
+    "@envelop/live-query": "3.1.0"
   },
   "publishConfig": {
     "access": "public",
