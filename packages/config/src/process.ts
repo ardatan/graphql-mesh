@@ -1,4 +1,4 @@
-import path from 'path';
+import pathModule from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
@@ -27,8 +27,6 @@ import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { envelop } from '@envelop/core';
-
-const { resolve, join, isAbsolute } = path;
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -65,7 +63,7 @@ function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: stri
         importFn,
       })
     : new InMemoryStoreStorageAdapter();
-  return new MeshStore(resolve(dir, artifactsDir), storeStorageAdapter, {
+  return new MeshStore(pathModule.resolve(dir, artifactsDir), storeStorageAdapter, {
     /**
      * TODO:
      * `mesh start` => { readonly: true, validate: false }
@@ -291,7 +289,7 @@ export async function processConfig(
     const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
     if (typeof additionalResolverDefinition === 'string') {
       importCodes.push(
-        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${join(
+        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule.join(
           '..',
           additionalResolverDefinition
         )}';`
@@ -317,11 +315,13 @@ export async function processConfig(
 
   let additionalEnvelopPlugins = [];
   if (config.additionalEnvelopPlugins) {
-    importCodes.push(`import importedAdditionalEnvelopPlugins from '${join('..', config.additionalEnvelopPlugins)}';`);
+    importCodes.push(
+      `import importedAdditionalEnvelopPlugins from '${pathModule.join('..', config.additionalEnvelopPlugins)}';`
+    );
     const importedAdditionalEnvelopPlugins = await importFn(
-      isAbsolute(config.additionalEnvelopPlugins)
+      pathModule.isAbsolute(config.additionalEnvelopPlugins)
         ? config.additionalEnvelopPlugins
-        : join(dir, config.additionalEnvelopPlugins)
+        : pathModule.join(dir, config.additionalEnvelopPlugins)
     );
     if (typeof importedAdditionalEnvelopPlugins === 'function') {
       const factoryResult = await importedAdditionalEnvelopPlugins(config);

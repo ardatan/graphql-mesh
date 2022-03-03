@@ -68,8 +68,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
 
   async delete(key: string): Promise<void> {
     const filePath = this.getWrittenFileName(key);
-    const { unlink } = fs.promises;
-    return unlink(filePath);
+    return fs.promises.unlink(filePath);
   }
 }
 

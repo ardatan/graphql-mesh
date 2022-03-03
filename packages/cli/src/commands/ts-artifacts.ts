@@ -15,8 +15,6 @@ import fs from 'fs';
 import { generateOperations } from './generate-operations';
 import { GraphQLMeshCLIParams } from '..';
 
-const { unlink, rename, readFile } = fs.promises;
-
 const unifiedContextIdentifier = 'MeshContext';
 
 class CodegenHelpers extends tsBasePlugin.TsVisitor {
@@ -353,7 +351,7 @@ export async function ${
 
     const esmJsFilePath = pathModule.join(artifactsDir, `index.${ext}`);
     if (await pathExists(esmJsFilePath)) {
-      await unlink(esmJsFilePath);
+      await fs.promises.unlink(esmJsFilePath);
     }
 
     if (!tsOnly) {
@@ -362,11 +360,11 @@ export async function ${
 
       if (ext === 'mjs') {
         const mjsFilePath = pathModule.join(artifactsDir, 'index.mjs');
-        await rename(jsFilePath, mjsFilePath);
+        await fs.promises.rename(jsFilePath, mjsFilePath);
       }
 
       logger.info('Deleting index.ts');
-      await unlink(tsFilePath);
+      await fs.promises.unlink(tsFilePath);
     }
   };
 
@@ -375,14 +373,14 @@ export async function ${
     await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
 
     if (await pathExists(jsFilePath)) {
-      await unlink(jsFilePath);
+      await fs.promises.unlink(jsFilePath);
     }
     if (!tsOnly) {
       logger.info('Compiling TS file as CommonJS Module to `index.js`');
       compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
       logger.info('Deleting index.ts');
-      await unlink(tsFilePath);
+      await fs.promises.unlink(tsFilePath);
     }
   };
 
@@ -412,7 +410,7 @@ export async function ${
 
   const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
   if (await pathExists(tsConfigPath)) {
-    const tsConfigStr = await readFile(tsConfigPath, 'utf8');
+    const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf8');
     const tsConfig = JSON.parse(tsConfigStr);
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
       jobs.push(esmJob('js'));

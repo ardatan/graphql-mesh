@@ -21,8 +21,6 @@ import { StoreProxy } from '@graphql-mesh/store';
 import fs from 'fs';
 import globby from 'globby';
 
-const { readFile } = fs.promises;
-
 const { Root } = protobufjs;
 
 interface LoadOptions extends IParseOptions {
@@ -102,7 +100,7 @@ ${rootJsonAndDecodedDescriptorSets
     }
     const absoluteFilePath = path.isAbsolute(fileName) ? fileName : path.join(this.baseDir, fileName);
     this.logger.debug(() => `Using the descriptor set from ${absoluteFilePath} `);
-    const descriptorSetBuffer = await readFile(absoluteFilePath);
+    const descriptorSetBuffer = await fs.promises.readFile(absoluteFilePath);
     this.logger.debug(() => `Reading ${absoluteFilePath} `);
     let decodedDescriptorSet: DecodedDescriptorSet;
     if (absoluteFilePath.endsWith('json')) {
@@ -209,12 +207,12 @@ ${rootJsonAndDecodedDescriptorSets
         ? this.config.credentialsSsl.certChain
         : path.join(this.baseDir, this.config.credentialsSsl.certChain);
 
-      const sslFiles = [readFile(absolutePrivateKeyPath), readFile(absoluteCertChainPath)];
+      const sslFiles = [fs.promises.readFile(absolutePrivateKeyPath), fs.promises.readFile(absoluteCertChainPath)];
       if (this.config.credentialsSsl.rootCA !== 'rootCA') {
         const absoluteRootCAPath = path.isAbsolute(this.config.credentialsSsl.rootCA)
           ? this.config.credentialsSsl.rootCA
           : path.join(this.baseDir, this.config.credentialsSsl.rootCA);
-        sslFiles.unshift(readFile(absoluteRootCAPath));
+        sslFiles.unshift(fs.promises.readFile(absoluteRootCAPath));
       }
       const [rootCA, privateKey, certChain] = await Promise.all(sslFiles);
       return credentials.createSsl(rootCA, privateKey, certChain);

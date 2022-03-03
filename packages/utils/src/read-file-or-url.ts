@@ -8,8 +8,6 @@ import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
 import { memoize1 } from '@graphql-tools/utils';
 
-const { readFile: readFileFromFS } = fs.promises || {};
-
 export { isUrl };
 
 export interface ReadFileOrUrlOptions extends RequestInit {
@@ -87,7 +85,7 @@ export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOption
   if (/js$/.test(actualPath) || /ts$/.test(actualPath)) {
     return importFn(actualPath);
   }
-  const rawResult = await readFileFromFS(actualPath, 'utf-8');
+  const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
   if (/json$/.test(actualPath)) {
     return JSON.parse(rawResult);
   }

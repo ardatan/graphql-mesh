@@ -26,7 +26,6 @@ import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '@graphql-mesh/cli';
 
 dnscache({ enable: true });
-const { readFile } = fs.promises;
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -88,8 +87,8 @@ export async function serveMesh(
 
     if (sslCredentials) {
       const [key, cert] = await Promise.all([
-        readFile(sslCredentials.key, 'utf-8'),
-        readFile(sslCredentials.cert, 'utf-8'),
+        fs.promises.readFile(sslCredentials.key, 'utf-8'),
+        fs.promises.readFile(sslCredentials.cert, 'utf-8'),
       ]);
       httpServer = createHTTPSServer({ key, cert }, app);
     } else {
