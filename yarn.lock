@@ -3432,6 +3432,17 @@
     tslib "~2.3.0"
     value-or-promise "1.0.11"
 
+"@graphql-tools/wrap@8.4.3-alpha-dae587b2.0":
+  version "8.4.3-alpha-dae587b2.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-8.4.3-alpha-dae587b2.0.tgz#fb374afab486333fea4ad91fe9f9503087b9e847"
+  integrity sha512-6EDGXcAAI0HXLuYh4R2iphbknQbAAaRvRq0K25Oa5KbyrEeC42OnGFhSOQEmh+YA120ImCWTlMklqd9qzyaazg==
+  dependencies:
+    "@graphql-tools/delegate" "^8.5.1"
+    "@graphql-tools/schema" "^8.3.2"
+    "@graphql-tools/utils" "^8.6.2"
+    tslib "~2.3.0"
+    value-or-promise "1.0.11"
+
 "@graphql-tools/wrap@^7.0.0", "@graphql-tools/wrap@^7.0.4", "@graphql-tools/wrap@^7.0.6":
   version "7.0.8"
   resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-7.0.8.tgz#ad41e487135ca3ea1ae0ea04bb3f596177fb4f50"

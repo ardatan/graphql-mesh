@@ -6,6 +6,7 @@ import {
   RenameInterfaceFields,
   TransformObjectFields,
   RenameInputObjectFields,
+  RenameObjectFieldArguments,
 } from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
@@ -74,29 +75,30 @@ export default class NamingConventionTransform implements MeshTransform {
         )
       );
     }
-    if (options.config.fieldNames || options.config.fieldArgumentNames) {
+    if (options.config.fieldNames) {
       const fieldNamingConventionFn = options.config.fieldNames
         ? NAMING_CONVENTIONS[options.config.fieldNames]
-        : (s: string) => s;
-      const fieldArgNamingConventionFn = options.config.fieldArgumentNames
-        ? NAMING_CONVENTIONS[options.config.fieldArgumentNames]
         : (s: string) => s;
       this.transforms.push(
         new RenameInputObjectFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName),
         new TransformObjectFields((_, fieldName, fieldConfig) => [
           IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : fieldNamingConventionFn(fieldName) || fieldName,
-          options.config.fieldArgumentNames
-            ? {
-                ...fieldConfig,
-                args: Object.fromEntries(
-                  Object.entries(fieldConfig.args).map(([k, v]) => [fieldArgNamingConventionFn(k), v])
-                ),
-              }
-            : fieldConfig,
+          fieldConfig,
         ]),
         new RenameInterfaceFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName)
       );
     }
+
+    if (options.config.fieldArgumentNames) {
+      const fieldArgNamingConventionFn = options.config.fieldArgumentNames
+        ? NAMING_CONVENTIONS[options.config.fieldArgumentNames]
+        : (s: string) => s;
+
+      this.transforms.push(
+        new RenameObjectFieldArguments((_typeName, _fieldName, argName) => fieldArgNamingConventionFn(argName))
+      );
+    }
+
     if (options.config.enumValues) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.enumValues];
 

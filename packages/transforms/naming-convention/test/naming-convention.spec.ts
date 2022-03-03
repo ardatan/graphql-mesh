@@ -77,6 +77,7 @@ describe('namingConvention', () => {
     let schema = buildSchema(/* GraphQL */ `
       type Query {
         user(input: UserSearchInput): User
+        userById(userId: ID!): User
       }
       type User {
         id: ID
@@ -98,6 +99,9 @@ describe('namingConvention', () => {
             userInput = args?.input;
             return userInput;
           },
+          userById: (root, args, context, info) => {
+            return { id: args.userId, first_name: 'John', last_name: 'Doe' };
+          },
         },
       },
     });
@@ -111,6 +115,7 @@ describe('namingConvention', () => {
           pubsub,
           config: {
             fieldNames: 'camelCase',
+            fieldArgumentNames: 'snakeCase',
           },
           baseDir,
         }),
@@ -137,6 +142,25 @@ describe('namingConvention', () => {
     // Pass transformed output to the client
     expect(result?.data?.user).toEqual({
       id: '0',
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+
+    const result2 = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          userById(user_id: "1") {
+            id
+            firstName
+            lastName
+          }
+        }
+      `),
+    });
+    // Pass transformed output to the client
+    expect(result2.data?.userById).toEqual({
+      id: '1',
       firstName: 'John',
       lastName: 'Doe',
     });
