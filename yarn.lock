@@ -2785,6 +2785,17 @@
     change-case-all "1.0.14"
     tslib "~2.2.0"
 
+"@graphql-codegen/typed-document-node@2.2.5":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typed-document-node/-/typed-document-node-2.2.5.tgz#c07a542f8bf4265cad49f8da81772b64bce7ec70"
+  integrity sha512-JBTiVL2eUemuxx+fxpur0yYN3OF052kTk87h4k+DydCr9mGmRV3elNrXoucr6Q18pvwsTytFPep42J1/GkDkyQ==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "^2.4.0"
+    "@graphql-codegen/visitor-plugin-common" "2.7.1"
+    auto-bind "~4.0.0"
+    change-case-all "1.0.14"
+    tslib "~2.3.0"
+
 "@graphql-codegen/typescript-jit-sdk@2.0.3":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-jit-sdk/-/typescript-jit-sdk-2.0.3.tgz#762d8380350fefa0ca33073d35f297b931b1a86f"

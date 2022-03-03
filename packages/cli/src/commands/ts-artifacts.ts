@@ -7,6 +7,7 @@ import { pascalCase } from 'pascal-case';
 import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
+import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
 import { isAbsolute, relative, join, normalize } from 'path';
 import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
@@ -171,90 +172,92 @@ export async function generateTsArtifacts(
   }
   const codegenOutput =
     '// @ts-nocheck\n' +
-    (await codegen({
-      filename: 'types.ts',
-      documents: sdkConfig?.generateOperations
-        ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
-        : documents,
-      config: {
-        skipTypename: true,
-        flattenGeneratedTypes: flattenTypes,
-        onlyOperationTypes: flattenTypes,
-        preResolveTypes: flattenTypes,
-        namingConvention: 'keep',
-        documentMode: 'documentNode',
-        enumsAsTypes: true,
-        ignoreEnumValuesFromSchema: true,
-        useIndexSignature: true,
-        noSchemaStitching: mergerType !== 'stitching',
-        contextType: unifiedContextIdentifier,
-        federation: mergerType === 'federation',
-        ...codegenConfig,
-      },
-      schemaAst: unifiedSchema,
-      schema: undefined as any, // This is not necessary on codegen.
-      skipDocumentsValidation: true,
-      pluginMap: {
-        typescript: tsBasePlugin,
-        typescriptOperations: tsOperationsPlugin,
-        typescriptJitSdk: tsJitSdkPlugin,
-        resolvers: tsResolversPlugin,
-        contextSdk: {
-          plugin: async () => {
-            const commonTypes = [
-              `import { MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
-              `import { InContextSdkMethod } from '@graphql-mesh/types';`,
-            ];
-            const sdkItems: string[] = [];
-            const contextItems: string[] = [];
-            const results = await Promise.all(
-              rawSources.map(async source => {
-                const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
-                const sourceSchema = sourceMap.get(source);
-                const item = await generateTypesForApi({
-                  schema: sourceSchema,
-                  name: source.name,
-                });
+    (
+      await codegen({
+        filename: 'types.ts',
+        documents: sdkConfig?.generateOperations
+          ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
+          : documents,
+        config: {
+          skipTypename: true,
+          flattenGeneratedTypes: flattenTypes,
+          onlyOperationTypes: flattenTypes,
+          preResolveTypes: flattenTypes,
+          namingConvention: 'keep',
+          documentMode: 'documentNode',
+          enumsAsTypes: true,
+          ignoreEnumValuesFromSchema: true,
+          useIndexSignature: true,
+          noSchemaStitching: mergerType !== 'stitching',
+          contextType: unifiedContextIdentifier,
+          federation: mergerType === 'federation',
+          ...codegenConfig,
+        },
+        schemaAst: unifiedSchema,
+        schema: undefined as any, // This is not necessary on codegen.
+        skipDocumentsValidation: true,
+        pluginMap: {
+          typescript: tsBasePlugin,
+          typescriptOperations: tsOperationsPlugin,
+          typedDocumentNode: typedDocumentNodePlugin,
+          typescriptJitSdk: tsJitSdkPlugin,
+          resolvers: tsResolversPlugin,
+          contextSdk: {
+            plugin: async () => {
+              const commonTypes = [
+                `import { MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
+                `import { InContextSdkMethod } from '@graphql-mesh/types';`,
+              ];
+              const sdkItems: string[] = [];
+              const contextItems: string[] = [];
+              const results = await Promise.all(
+                rawSources.map(async source => {
+                  const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
+                  const sourceSchema = sourceMap.get(source);
+                  const item = await generateTypesForApi({
+                    schema: sourceSchema,
+                    name: source.name,
+                  });
 
-                if (item) {
-                  if (item.sdk) {
-                    sdkItems.push(item.sdk.codeAst);
+                  if (item) {
+                    if (item.sdk) {
+                      sdkItems.push(item.sdk.codeAst);
+                    }
+                    if (item.context) {
+                      contextItems.push(item.context.codeAst);
+                    }
                   }
-                  if (item.context) {
-                    contextItems.push(item.context.codeAst);
-                  }
+                  return item;
+                })
+              );
+
+              const contextType = `export type ${unifiedContextIdentifier} = ${results
+                .map(r => r?.context?.identifier)
+                .filter(Boolean)
+                .join(' & ')} & BaseMeshContext;`;
+
+              const importCodes = [
+                `import { getMesh } from '@graphql-mesh/runtime';`,
+                `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
+                `import { join, relative, isAbsolute, dirname } from 'path';`,
+                `import { fileURLToPath } from '@graphql-mesh/utils';`,
+              ];
+              const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
+                let moduleMapProp = importedModuleName;
+                let importPath = importedModuleName;
+                if (importPath.startsWith('.')) {
+                  importPath = join(baseDir, importPath);
                 }
-                return item;
-              })
-            );
+                if (isAbsolute(importPath)) {
+                  moduleMapProp = relative(baseDir, importedModuleName).split('\\').join('/');
+                  importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
+                }
+                const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
+                importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
+                return `  // @ts-ignore\n  [${JSON.stringify(moduleMapProp)}]: ${importedModuleVariable}`;
+              });
 
-            const contextType = `export type ${unifiedContextIdentifier} = ${results
-              .map(r => r?.context?.identifier)
-              .filter(Boolean)
-              .join(' & ')} & BaseMeshContext;`;
-
-            const importCodes = [
-              `import { getMesh } from '@graphql-mesh/runtime';`,
-              `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-              `import { join, relative, isAbsolute, dirname } from 'path';`,
-              `import { fileURLToPath } from '@graphql-mesh/utils';`,
-            ];
-            const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
-              let moduleMapProp = importedModuleName;
-              let importPath = importedModuleName;
-              if (importPath.startsWith('.')) {
-                importPath = join(baseDir, importPath);
-              }
-              if (isAbsolute(importPath)) {
-                moduleMapProp = relative(baseDir, importedModuleName).split('\\').join('/');
-                importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
-              }
-              const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
-              importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
-              return `  // @ts-ignore\n  [${JSON.stringify(moduleMapProp)}]: ${importedModuleVariable}`;
-            });
-
-            const meshMethods = `
+              const meshMethods = `
 ${importCodes.join('\n')}
 
 const importedModules: Record<string, any> = {
@@ -282,8 +285,8 @@ const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageA
 ${meshConfigCode}
 
 export const documentsInSDL = /*#__PURE__*/ [${documents.map(
-              documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
-            )}];
+                documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
+              )}];
 
 export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
   const meshConfig = await getMeshOptions();
@@ -291,36 +294,43 @@ export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<
 }
 
 export async function ${
-              cliParams.builtMeshSDKFactoryName
-            }<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
+                cliParams.builtMeshSDKFactoryName
+              }<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
   const { schema } = await ${cliParams.builtMeshFactoryName}();
   return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, sdkOptions);
 }`;
 
-            return {
-              content: [...commonTypes, ...sdkItems, ...contextItems, contextType, meshMethods].join('\n\n'),
-            };
+              return {
+                content: [...commonTypes, ...sdkItems, ...contextItems, contextType, meshMethods].join('\n\n'),
+              };
+            },
           },
         },
-      },
-      plugins: [
-        {
-          typescript: {},
-        },
-        {
-          resolvers: {},
-        },
-        {
-          contextSdk: {},
-        },
-        {
-          typescriptOperations: {},
-        },
-        {
-          typescriptJitSdk: {},
-        },
-      ],
-    }));
+        plugins: [
+          {
+            typescript: {},
+          },
+          {
+            resolvers: {},
+          },
+          {
+            contextSdk: {},
+          },
+          {
+            typescriptOperations: {},
+          },
+          {
+            typedDocumentNode: {},
+          },
+          {
+            typescriptJitSdk: {
+              documentMode: 'external',
+              importDocumentNodeExternallyFrom: 'NOWHERE',
+            },
+          },
+        ],
+      })
+    ).replace(`import * as Operations from 'NOWHERE';\n`, '');
 
   const baseUrlAssignmentESM = `const baseDir = join(dirname(fileURLToPath(import.meta.url)), '${relative(
     artifactsDir,
