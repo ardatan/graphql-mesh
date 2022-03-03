@@ -1,4 +1,3 @@
-import fileURLToPath from 'file-uri-to-path';
 export * from './read-file-or-url';
 export * from './string-interpolator';
 export * from './load-from-module-export-expression';
@@ -19,5 +18,4 @@ export * from './logger';
 export * from './parseAndPrintWithCache';
 export * from './defaultImportFn';
 export * from './pubsub';
-
-export { fileURLToPath };
+export * from './fileURLToPath';
