@@ -2,13 +2,12 @@ import { fetchFactory, KeyValueCache } from 'fetchache';
 import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
-import path from 'path';
+import pathModule from 'path';
 import fs from 'fs';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
 import { memoize1 } from '@graphql-tools/utils';
 
-const { dirname, isAbsolute, resolve } = path;
 const { readFile: readFileFromFS } = fs.promises || {};
 
 export { isUrl };
@@ -47,8 +46,8 @@ function getSchema(filepath: string, logger?: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
-        const newCwd = dirname(filepath);
-        const absoluteFilePath = isAbsolute(path) ? path : resolve(newCwd, path);
+        const newCwd = pathModule.dirname(filepath);
+        const absoluteFilePath = pathModule.isAbsolute(path) ? path : pathModule.resolve(newCwd, path);
         const content = fs.readFileSync(absoluteFilePath, 'utf8');
         return loadYaml(absoluteFilePath, content, logger);
       },
@@ -59,11 +58,11 @@ function getSchema(filepath: string, logger?: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
-        const newCwd = dirname(filepath);
-        const absoluteDirPath = isAbsolute(path) ? path : resolve(newCwd, path);
+        const newCwd = pathModule.dirname(filepath);
+        const absoluteDirPath = pathModule.isAbsolute(path) ? path : pathModule.resolve(newCwd, path);
         const files = fs.readdirSync(absoluteDirPath);
         return files.map(filePath => {
-          const absoluteFilePath = resolve(absoluteDirPath, filePath);
+          const absoluteFilePath = pathModule.resolve(absoluteDirPath, filePath);
           const fileContent = fs.readFileSync(absoluteFilePath, 'utf8');
           return loadYaml(absoluteFilePath, fileContent, logger);
         });
@@ -84,7 +83,7 @@ export function loadYaml(filepath: string, content: string, logger?: Logger): an
 
 export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
-  const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
+  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.resolve(cwd || process.cwd(), filePath);
   if (/js$/.test(actualPath) || /ts$/.test(actualPath)) {
     return importFn(actualPath);
   }

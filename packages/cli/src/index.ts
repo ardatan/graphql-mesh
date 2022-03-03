@@ -2,7 +2,7 @@ import { findAndParseConfig } from './config';
 import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
-import path from 'path';
+import pathModule from 'path';
 import fs from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
@@ -23,8 +23,6 @@ import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
 import { printSchema } from 'graphql';
-
-const { isAbsolute, resolve, join } = path;
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -57,7 +55,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       coerce: (externalModules: string[]) =>
         Promise.all(
           externalModules.map(module => {
-            const localModulePath = resolve(baseDir, module);
+            const localModulePath = pathModule.resolve(baseDir, module);
             const islocalModule = fs.existsSync(localModulePath);
             return defaultImportFn(islocalModule ? localModulePath : module);
           })
@@ -68,12 +66,12 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       type: 'string',
       default: baseDir,
       coerce: dir => {
-        if (isAbsolute(dir)) {
+        if (pathModule.isAbsolute(dir)) {
           baseDir = dir;
         } else {
-          baseDir = resolve(cwd(), dir);
+          baseDir = pathModule.resolve(cwd(), dir);
         }
-        const tsConfigExists = fs.existsSync(join(baseDir, 'tsconfig.json'));
+        const tsConfigExists = fs.existsSync(pathModule.join(baseDir, 'tsconfig.json'));
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
@@ -86,7 +84,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         });
         if (tsConfigExists) {
           try {
-            const tsConfigStr = fs.readFileSync(join(baseDir, 'tsconfig.json'), 'utf-8');
+            const tsConfigStr = fs.readFileSync(pathModule.join(baseDir, 'tsconfig.json'), 'utf-8');
             const tsConfig = JSON.parse(tsConfigStr);
             if (tsConfig.compilerOptions?.paths) {
               tsConfigPathsRegister({
@@ -98,9 +96,9 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
             logger.warn(e);
           }
         }
-        if (fs.existsSync(join(baseDir, '.env'))) {
+        if (fs.existsSync(pathModule.join(baseDir, '.env'))) {
           dotEnvRegister({
-            path: join(baseDir, '.env'),
+            path: pathModule.join(baseDir, '.env'),
           });
         }
       },
@@ -115,7 +113,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       },
       async args => {
         try {
-          const outputDir = join(baseDir, cliParams.artifactsDir);
+          const outputDir = pathModule.join(baseDir, cliParams.artifactsDir);
 
           env.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
@@ -126,7 +124,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
           meshInstance$
-            .then(({ schema }) => writeFile(join(outputDir, 'schema.graphql'), printSchema(schema)))
+            .then(({ schema }) => writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchema(schema)))
             .catch(e => {
               logger.error(`An error occured while writing the schema file: ${e.stack || e.message}`);
             });
@@ -201,14 +199,14 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       },
       async args => {
         try {
-          const builtMeshArtifactsPath = join(baseDir, cliParams.artifactsDir);
+          const builtMeshArtifactsPath = pathModule.join(baseDir, cliParams.artifactsDir);
           if (!(await pathExists(builtMeshArtifactsPath))) {
             throw new Error(
               `Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`
             );
           }
           env.NODE_ENV = 'production';
-          const mainModule = join(builtMeshArtifactsPath, 'index');
+          const mainModule = pathModule.join(builtMeshArtifactsPath, 'index');
           const builtMeshArtifacts = await defaultImportFn(mainModule);
           const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
           logger = getMeshOptions.logger;
@@ -247,7 +245,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       async args => {
         let destroy: VoidFunction;
         try {
-          if (!(await pathExists(join(baseDir, cliParams.artifactsDir)))) {
+          if (!(await pathExists(pathModule.join(baseDir, cliParams.artifactsDir)))) {
             throw new Error(
               `You cannot validate artifacts now because you don't have built artifacts yet! You need to build artifacts first with "${cliParams.commandName} build" command!`
             );
@@ -294,7 +292,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       builder => {},
       async args => {
         try {
-          const outputDir = join(baseDir, cliParams.artifactsDir);
+          const outputDir = pathModule.join(baseDir, cliParams.artifactsDir);
 
           logger.info('Cleaning existing artifacts');
           await rmdirs(outputDir);
@@ -345,7 +343,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
 
           logger.info(`Generating the unified schema`);
           const { schema, destroy, rawSources } = await getMesh(meshConfig);
-          await writeFile(join(outputDir, 'schema.graphql'), printSchema(schema));
+          await writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchema(schema));
 
           logger.info(`Generating artifacts`);
           await generateTsArtifacts(

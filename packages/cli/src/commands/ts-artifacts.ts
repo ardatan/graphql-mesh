@@ -8,14 +8,12 @@ import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
 import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
-import path from 'path';
+import pathModule from 'path';
 import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
 import fs from 'fs';
 import { generateOperations } from './generate-operations';
 import { GraphQLMeshCLIParams } from '..';
-
-const { isAbsolute, relative, join, normalize } = path;
 
 const { unlink, rename, readFile } = fs.promises;
 
@@ -165,12 +163,12 @@ export async function generateTsArtifacts(
   },
   cliParams: GraphQLMeshCLIParams
 ) {
-  const artifactsDir = join(baseDir, cliParams.artifactsDir);
+  const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
   logger.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
     const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(rawSource);
     const sdl = printSchemaWithDirectives(transformedSchema);
-    await writeFile(join(artifactsDir, `sources/${rawSource.name}/schema.graphql`), sdl);
+    await writeFile(pathModule.join(artifactsDir, `sources/${rawSource.name}/schema.graphql`), sdl);
   }
   const codegenOutput =
     '// @ts-nocheck\n' +
@@ -241,18 +239,18 @@ export async function generateTsArtifacts(
               const importCodes = [
                 `import { getMesh } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `import path from 'path';`,
+                `import pathModule from 'path';`,
                 `import { fileURLToPath } from '@graphql-mesh/utils';`,
               ];
               const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
                 let moduleMapProp = importedModuleName;
                 let importPath = importedModuleName;
                 if (importPath.startsWith('.')) {
-                  importPath = join(baseDir, importPath);
+                  importPath = pathModule.join(baseDir, importPath);
                 }
-                if (isAbsolute(importPath)) {
-                  moduleMapProp = relative(baseDir, importedModuleName).split('\\').join('/');
-                  importPath = `./${relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
+                if (pathModule.isAbsolute(importPath)) {
+                  moduleMapProp = pathModule.relative(baseDir, importedModuleName).split('\\').join('/');
+                  importPath = `./${pathModule.relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
                 }
                 const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
                 importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
@@ -262,8 +260,6 @@ export async function generateTsArtifacts(
               const meshMethods = `
 ${importCodes.join('\n')}
 
-const { join, relative, isAbsolute, dirname } = path;
-
 const importedModules: Record<string, any> = {
 ${importedModulesCodes.join(',\n')}
 };
@@ -271,7 +267,7 @@ ${importedModulesCodes.join(',\n')}
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn = (moduleId: string) => {
-  const relativeModuleId = (isAbsolute(moduleId) ? relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
+  const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   if (!(relativeModuleId in importedModules)) {
     throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
   }
@@ -336,23 +332,26 @@ export async function ${
       })
     ).replace(`import * as Operations from 'NOWHERE';\n`, '');
 
-  const baseUrlAssignmentESM = `const baseDir = join(dirname(fileURLToPath(import.meta.url)), '${relative(
+  const baseUrlAssignmentESM = `const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
     artifactsDir,
     baseDir
   )}');`;
-  const baseUrlAssignmentCJS = `const baseDir = join(__dirname, '${relative(artifactsDir, baseDir)}');`;
+  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(__dirname, '${pathModule.relative(
+    artifactsDir,
+    baseDir
+  )}');`;
 
-  const tsFilePath = join(artifactsDir, 'index.ts');
+  const tsFilePath = pathModule.join(artifactsDir, 'index.ts');
 
   const jobs: (() => Promise<void>)[] = [];
-  const jsFilePath = join(artifactsDir, 'index.js');
-  const dtsFilePath = join(artifactsDir, 'index.d.ts');
+  const jsFilePath = pathModule.join(artifactsDir, 'index.js');
+  const dtsFilePath = pathModule.join(artifactsDir, 'index.d.ts');
 
   const esmJob = (ext: 'mjs' | 'js') => async () => {
     logger.info('Writing index.ts for ESM to the disk.');
     await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
 
-    const esmJsFilePath = join(artifactsDir, `index.${ext}`);
+    const esmJsFilePath = pathModule.join(artifactsDir, `index.${ext}`);
     if (await pathExists(esmJsFilePath)) {
       await unlink(esmJsFilePath);
     }
@@ -362,7 +361,7 @@ export async function ${
       compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
 
       if (ext === 'mjs') {
-        const mjsFilePath = join(artifactsDir, 'index.mjs');
+        const mjsFilePath = pathModule.join(artifactsDir, 'index.mjs');
         await rename(jsFilePath, mjsFilePath);
       }
 
@@ -388,7 +387,7 @@ export async function ${
   };
 
   const packageJsonJob = () =>
-    writeJSON(join(artifactsDir, 'package.json'), {
+    writeJSON(pathModule.join(artifactsDir, 'package.json'), {
       name: 'mesh-artifacts',
       private: true,
       type: 'commonjs',
@@ -411,7 +410,7 @@ export async function ${
       },
     });
 
-  const tsConfigPath = join(baseDir, 'tsconfig.json');
+  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
   if (await pathExists(tsConfigPath)) {
     const tsConfigStr = await readFile(tsConfigPath, 'utf8');
     const tsConfig = JSON.parse(tsConfigStr);
@@ -449,7 +448,7 @@ export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFileP
 
   const hostWriteFile = host.writeFile.bind(host);
   host.writeFile = (fileName, ...rest) => {
-    if (outputFilePaths.some(f => normalize(f) === normalize(fileName))) {
+    if (outputFilePaths.some(f => pathModule.normalize(f) === pathModule.normalize(fileName))) {
       return hostWriteFile(fileName, ...rest);
     }
   };

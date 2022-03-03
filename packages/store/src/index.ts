@@ -1,11 +1,9 @@
 import fs from 'fs';
-import path from 'path';
+import pathModule from 'path';
 import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
-
-const { isAbsolute, join } = path;
 
 export class ReadonlyStoreError extends Error {}
 
@@ -46,7 +44,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
   private getWrittenFileName(key: string) {
     const jsFileName = `${key}.ts`;
-    return isAbsolute(jsFileName) ? jsFileName : join(this.options.cwd, jsFileName);
+    return pathModule.isAbsolute(jsFileName) ? jsFileName : pathModule.join(this.options.cwd, jsFileName);
   }
 
   async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
@@ -145,14 +143,14 @@ export class MeshStore {
   constructor(public identifier: string, protected storage: StoreStorageAdapter, public flags: StoreFlags) {}
 
   child(childIdentifier: string, flags?: Partial<StoreFlags>): MeshStore {
-    return new MeshStore(join(this.identifier, childIdentifier), this.storage, {
+    return new MeshStore(pathModule.join(this.identifier, childIdentifier), this.storage, {
       ...this.flags,
       ...flags,
     });
   }
 
   proxy<TData>(id: string, options: ProxyOptions<TData>): StoreProxy<TData> {
-    const path = join(this.identifier, id);
+    const path = pathModule.join(this.identifier, id);
     let value: TData | null | undefined;
     let isValueCached = false;
 

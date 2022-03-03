@@ -3,12 +3,10 @@ import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '
 import fs from 'fs';
 import { SchemaComposer } from 'graphql-compose';
 import _ from 'lodash';
-import path from 'path';
+import pathModule from 'path';
 import { Root } from 'protobufjs';
 
 import { getGraphQLScalar, isScalarType } from './scalars';
-
-const { isAbsolute, join } = path;
 
 export type ClientMethod = (
   input: unknown,
@@ -32,11 +30,11 @@ export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string
 export function addIncludePathResolver(root: Root, includePaths: string[]): void {
   const originalResolvePath = root.resolvePath;
   root.resolvePath = (origin: string, target: string) => {
-    if (isAbsolute(target)) {
+    if (pathModule.isAbsolute(target)) {
       return target;
     }
     for (const directory of includePaths) {
-      const fullPath: string = join(directory, target);
+      const fullPath: string = pathModule.join(directory, target);
       if (fs.existsSync(fullPath)) {
         return fullPath;
       }

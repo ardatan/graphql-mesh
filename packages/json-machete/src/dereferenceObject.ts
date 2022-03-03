@@ -1,10 +1,8 @@
 import { JsonPointer } from 'json-ptr';
-import path from 'path';
+import pathModule from 'path';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-
-const { dirname, isAbsolute, join } = path;
 
 export const resolvePath = (path: string, root: any): any => {
   return JsonPointer.get(root, path);
@@ -20,7 +18,7 @@ function isURL(str: string) {
 const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   const [givenExternalFileRelativePath, givenRefPath] = given$ref.split('#');
   if (givenExternalFileRelativePath) {
-    const cwd = isURL(baseFilePath) ? getCwdForUrl(baseFilePath) : dirname(baseFilePath);
+    const cwd = isURL(baseFilePath) ? getCwdForUrl(baseFilePath) : pathModule.dirname(baseFilePath);
     const givenExternalFilePath = getAbsolutePath(givenExternalFileRelativePath, cwd);
     if (givenRefPath) {
       return `${givenExternalFilePath}#${givenRefPath}`;
@@ -47,14 +45,14 @@ export function getAbsolutePath(path: string, cwd: string) {
   if (isURL(cwd)) {
     return normalizeUrl(urlJoin(cwd, path));
   }
-  if (isAbsolute(path)) {
+  if (pathModule.isAbsolute(path)) {
     return path;
   }
-  return join(cwd, path);
+  return pathModule.join(cwd, path);
 }
 
 export function getCwd(path: string) {
-  return isURL(path) ? getCwdForUrl(path) : dirname(path);
+  return isURL(path) ? getCwdForUrl(path) : pathModule.dirname(path);
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types

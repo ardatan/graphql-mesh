@@ -1,18 +1,16 @@
 import { ImportFn, KeyValueCache } from '@graphql-mesh/types';
-import path from 'path';
+import pathModule from 'path';
 import _ from 'lodash';
 import DataLoader from 'dataloader';
 import { writeJSON } from '@graphql-mesh/utils';
 import { cwd } from 'process';
-
-const { isAbsolute, join } = path;
 
 export default class FileCache<V = any> implements KeyValueCache<V> {
   json$: Promise<Record<string, V>>;
   absolutePath: string;
   writeDataLoader: DataLoader<any, any>;
   constructor({ path, importFn }: { path: string; importFn: ImportFn }) {
-    this.absolutePath = isAbsolute(path) ? path : join(cwd(), path);
+    this.absolutePath = pathModule.isAbsolute(path) ? path : pathModule.join(cwd(), path);
     this.json$ = importFn(this.absolutePath);
     this.writeDataLoader = new DataLoader(async keys => {
       const json = await this.json$;
