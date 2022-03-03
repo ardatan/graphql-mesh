@@ -11,6 +11,11 @@ const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   playgroundTitle: 'GraphiQL Mesh',
   builtMeshFactoryName: 'getBuiltMesh',
   builtMeshSDKFactoryName: 'getMeshSDK',
+  devServerCommand: 'dev',
+  prodServerCommand: 'start',
+  buildArtifactsCommand: 'build',
+  sourceServerCommand: 'serve-source',
+  validateCommand: 'validate',
 };
 
 graphqlMesh(DEFAULT_CLI_PARAMS)

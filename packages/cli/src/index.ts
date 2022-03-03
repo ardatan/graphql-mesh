@@ -26,9 +26,6 @@ import { printSchema } from 'graphql';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
-const SERVE_COMMAND_WARNING =
-  '`serve` command has been replaced by `dev` and `start` commands. Check our documentation for new usage';
-
 export interface GraphQLMeshCLIParams {
   commandName: string;
   initialLoggerPrefix: string;
@@ -38,6 +35,11 @@ export interface GraphQLMeshCLIParams {
   playgroundTitle: string;
   builtMeshFactoryName: string;
   builtMeshSDKFactoryName: string;
+  devServerCommand: string;
+  prodServerCommand: string;
+  buildArtifactsCommand: string;
+  sourceServerCommand: string;
+  validateCommand: string;
 }
 
 export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
@@ -101,16 +103,8 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         }
       },
     })
-    .command(
-      'serve',
-      SERVE_COMMAND_WARNING,
-      () => {},
-      () => {
-        logger.error(SERVE_COMMAND_WARNING);
-      }
-    )
     .command<{ port: number; prod: boolean; validate: boolean }>(
-      'dev',
+      cliParams.devServerCommand,
       'Serves a GraphQL server with GraphQL interface by building artifacts on the fly',
       builder => {
         builder.option('port', {
@@ -196,7 +190,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       }
     )
     .command<{ port: number; prod: boolean; validate: boolean }>(
-      'start',
+      cliParams.prodServerCommand,
       'Serves a GraphQL server with GraphQL interface based on your generated artifacts',
       builder => {
         builder.option('port', {
@@ -245,7 +239,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       }
     )
     .command(
-      'validate',
+      cliParams.validateCommand,
       'Validates artifacts',
       builder => {},
       async args => {
@@ -293,7 +287,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       }
     )
     .command(
-      'build',
+      cliParams.buildArtifactsCommand,
       'Builds artifacts',
       builder => {},
       async args => {
@@ -379,7 +373,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
       }
     )
     .command<{ source: string }>(
-      'serve-source <source>',
+      cliParams.sourceServerCommand + ' <source>',
       'Serves specific source in development mode',
       builder => {
         builder.positional('source', {
