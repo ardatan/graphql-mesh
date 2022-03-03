@@ -28,14 +28,14 @@ const makeExecuteSource = (
     let ended = false;
 
     Promise.resolve(mesh$)
-      .then(mesh => {
+      .then((mesh): any => {
         if (ended) return;
         if (operation.kind === 'subscription') {
           return mesh.subscribe(document, variables, context, rootValue, operationName);
         }
         return mesh.execute(document, variables, context, rootValue, operationName);
       })
-      .then((result: ExecutionResult | AsyncIterable<ExecutionResult>) => {
+      .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
           return;
         } else if (!asyncIterator || !result[asyncIterator]) {
