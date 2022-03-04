@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.10.10
+
+### Patch Changes
+
+- dadc1f716: fix(naming-convention): ignore the existing enum value in case of transformation
+
 ## 0.10.9
 
 ### Patch Changes
