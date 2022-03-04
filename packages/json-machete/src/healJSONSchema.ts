@@ -2,7 +2,6 @@ import { inspect } from 'util';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 
 const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
