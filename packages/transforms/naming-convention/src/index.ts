@@ -88,10 +88,16 @@ export default class NamingConventionTransform implements MeshTransform {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.enumValues];
 
       this.transforms.push(
-        new TransformEnumValues((typeName, externalValue, enumValueConfig) => [
-          namingConventionFn(externalValue) || externalValue,
-          enumValueConfig,
-        ])
+        new TransformEnumValues((typeName, externalValue, enumValueConfig) => {
+          const newEnumValue = namingConventionFn(externalValue) || externalValue;
+          return [
+            newEnumValue,
+            {
+              ...enumValueConfig,
+              value: newEnumValue,
+            },
+          ];
+        })
       );
     }
   }
