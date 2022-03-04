@@ -10,6 +10,18 @@ import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
 import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
 
+function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
+  const allTraits: api10.Trait[] = [];
+  for (const traitRef of base.is()) {
+    const traitNode = traitRef.trait();
+    if (traitNode) {
+      allTraits.push(traitNode);
+      allTraits.push(...resolveTraitsByIs(traitNode));
+    }
+  }
+  return allTraits;
+}
+
 /**
  * Generates the options for JSON Schema Loader
  * from RAML Loader options by extracting the JSON Schema references
@@ -81,19 +93,21 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   const commonQueryParameters: api10.TypeDeclaration[] = [];
   for (const traitNode of ramlAPI.traits()) {
     commonQueryParameters.push(...traitNode.queryParameters());
+    const nestedTraits = resolveTraitsByIs(traitNode);
+    for (const nestedTrait of nestedTraits) {
+      commonQueryParameters.push(...nestedTrait.queryParameters());
+    }
   }
   for (const resourceNode of ramlAPI.allResources()) {
     for (const methodNode of resourceNode.methods()) {
       const queryParameters: api10.TypeDeclaration[] = [...commonQueryParameters];
       const bodyNodes: api10.TypeDeclaration[] = [];
       const responses: api10.Response[] = [];
-      for (const traitRef of methodNode.is()) {
-        const traitNode = traitRef.trait();
-        if (traitNode) {
-          queryParameters.push(...traitNode.queryParameters());
-          bodyNodes.push(...traitNode.body());
-          responses.push(...traitNode.responses());
-        }
+      const traits = resolveTraitsByIs(methodNode);
+      for (const traitNode of traits) {
+        queryParameters.push(...traitNode.queryParameters());
+        bodyNodes.push(...traitNode.body());
+        responses.push(...traitNode.responses());
       }
       queryParameters.push(...methodNode.queryParameters());
       bodyNodes.push(...methodNode.body());
