@@ -15,15 +15,16 @@ export async function referenceJSONSchema(schema: JSONSchemaObject) {
           while (`${subSchema.title}${cnt}` in definitions) {
             cnt++;
           }
-          const definitionProp = `${subSchema.title}${cnt}`;
+          const definitionProp = `${subSchema.title}${cnt}`.split(' ').join('_SPACE_');
           definitions[definitionProp] = subSchema;
           const $ref = `#/definitions/${definitionProp}`;
           return {
             $ref,
           };
         } else {
-          definitions[subSchema.title] = subSchema;
-          const $ref = `#/definitions/${subSchema.title}`;
+          const definitionProp = subSchema.title.split(' ').join('_SPACE_');
+          definitions[definitionProp] = subSchema;
+          const $ref = `#/definitions/${definitionProp}`;
           return {
             $ref,
           };

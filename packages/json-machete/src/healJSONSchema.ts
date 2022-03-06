@@ -65,6 +65,9 @@ export async function healJSONSchema(schema: JSONSchema) {
           delete subSchema.items;
           return realSubschema;
         }
+        if (subSchema.properties && subSchema.type !== 'object') {
+          subSchema.type = 'object';
+        }
         if (duplicatedTypeNames.has(subSchema.title)) {
           delete subSchema.title;
         }

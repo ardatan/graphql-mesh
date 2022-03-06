@@ -52,7 +52,13 @@ export function sanitizeNameForGraphQL(unsafeName: string): string {
     const unsanitizedName = sanitizedName;
     sanitizedName = '';
     for (const ch of unsanitizedName) {
-      sanitizedName += /^[_a-zA-Z0-9]*$/.test(ch) ? ch : ch === ' ' ? '_' : `_${getKnownCharacterOrCharCode(ch)}_`;
+      if (/^[_a-zA-Z0-9]$/.test(ch)) {
+        sanitizedName += ch;
+      } else if (ch === ' ' || ch === '-') {
+        sanitizedName += '_';
+      } else {
+        sanitizedName += `_${getKnownCharacterOrCharCode(ch)}_`;
+      }
     }
   }
 
