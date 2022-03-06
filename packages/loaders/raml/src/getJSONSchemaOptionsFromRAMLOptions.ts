@@ -10,6 +10,18 @@ import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
 import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
 
+function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
+  const allTraits: api10.Trait[] = [];
+  for (const traitRef of base.is()) {
+    const traitNode = traitRef.trait();
+    if (traitNode) {
+      allTraits.push(traitNode);
+      allTraits.push(...resolveTraitsByIs(traitNode));
+    }
+  }
+  return allTraits;
+}
+
 /**
  * Generates the options for JSON Schema Loader
  * from RAML Loader options by extracting the JSON Schema references
@@ -78,22 +90,39 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     }
   }
   const cwd = getCwd(ramlAbsolutePath);
-  const commonQueryParameters: api10.TypeDeclaration[] = [];
+  const apiQueryParameters: api10.TypeDeclaration[] = [];
+  const apiBodyNodes: api10.TypeDeclaration[] = [];
+  const apiResponses: api10.Response[] = [];
   for (const traitNode of ramlAPI.traits()) {
-    commonQueryParameters.push(...traitNode.queryParameters());
+    apiQueryParameters.push(...traitNode.queryParameters());
+    apiBodyNodes.push(...traitNode.body());
+    apiResponses.push(...traitNode.responses());
+    const nestedTraits = resolveTraitsByIs(traitNode);
+    for (const nestedTrait of nestedTraits) {
+      apiQueryParameters.push(...nestedTrait.queryParameters());
+      apiBodyNodes.push(...nestedTrait.body());
+      apiResponses.push(...nestedTrait.responses());
+    }
   }
   for (const resourceNode of ramlAPI.allResources()) {
+    const resourceQueryParameters: api10.TypeDeclaration[] = [...apiQueryParameters];
+    const resourceBodyNodes: api10.TypeDeclaration[] = [...apiBodyNodes];
+    const resourceResponses: api10.Response[] = [...apiResponses];
+    const resourceTraits = resolveTraitsByIs(resourceNode);
+    for (const traitNode of resourceTraits) {
+      apiQueryParameters.push(...traitNode.queryParameters());
+      apiBodyNodes.push(...traitNode.body());
+      apiResponses.push(...traitNode.responses());
+    }
     for (const methodNode of resourceNode.methods()) {
-      const queryParameters: api10.TypeDeclaration[] = [...commonQueryParameters];
-      const bodyNodes: api10.TypeDeclaration[] = [];
-      const responses: api10.Response[] = [];
-      for (const traitRef of methodNode.is()) {
-        const traitNode = traitRef.trait();
-        if (traitNode) {
-          queryParameters.push(...traitNode.queryParameters());
-          bodyNodes.push(...traitNode.body());
-          responses.push(...traitNode.responses());
-        }
+      const queryParameters: api10.TypeDeclaration[] = [...resourceQueryParameters];
+      const bodyNodes: api10.TypeDeclaration[] = [...resourceBodyNodes];
+      const responses: api10.Response[] = [...resourceResponses];
+      const traits = resolveTraitsByIs(methodNode);
+      for (const traitNode of traits) {
+        queryParameters.push(...traitNode.queryParameters());
+        bodyNodes.push(...traitNode.body());
+        responses.push(...traitNode.responses());
       }
       queryParameters.push(...methodNode.queryParameters());
       bodyNodes.push(...methodNode.body());
@@ -220,22 +249,36 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       }
       for (const responseNode of responses) {
         const statusCode = responseNode.code().value();
+        const responseNodeDescription = responseNode.description()?.value();
         for (const bodyNode of responseNode.body()) {
           if (bodyNode.name().includes('application/json')) {
             const bodyJson = bodyNode.toJSON();
             if (bodyJson.schemaPath) {
               const schemaPath = bodyJson.schemaPath;
               const typeName = pathTypeMap.get(schemaPath);
-              responseByStatusCode[statusCode] = {
-                responseSchema: schemaPath,
-                responseTypeName: typeName,
-              };
+              if (schemaPath) {
+                responseByStatusCode[statusCode] = {
+                  responseSchema: schemaPath,
+                  responseTypeName: typeName,
+                };
+              }
             } else if (bodyJson.type) {
               const typeName = asArray(bodyJson.type)[0];
               const schemaPath = typePathMap.get(typeName);
+              if (schemaPath) {
+                responseByStatusCode[statusCode] = {
+                  responseSchema: schemaPath,
+                  responseTypeName: typeName,
+                };
+              }
+            }
+            if (!responseByStatusCode[statusCode] && bodyJson.example) {
+              const responseSchema = toJsonSchema(bodyJson.example, {
+                required: false,
+              }) as any;
+              responseSchema.description = responseNodeDescription;
               responseByStatusCode[statusCode] = {
-                responseSchema: schemaPath,
-                responseTypeName: typeName,
+                responseSchema,
               };
             }
           }

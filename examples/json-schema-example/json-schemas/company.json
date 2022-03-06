@@ -9,7 +9,10 @@
           "type": "string"
         },
         "type": {
-          "$ref": "#/definitions/CompanyType"
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/CompanyType"
+          }
         }
       }
     },

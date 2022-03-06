@@ -113,7 +113,7 @@ enum ExampleEnum {
     const outputComposer = result.output as EnumTypeComposer;
     expect(outputComposer.toSDL()).toMatchInlineSnapshot(`
       "enum ExampleEnum {
-        _0_MINUS_foo
+        _0_foo
         _1_PLUS_bar
         _2_RIGHT_PARENTHESIS_qux
       }"
