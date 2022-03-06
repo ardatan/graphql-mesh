@@ -1,5 +1,16 @@
 # @omnigraph/raml
 
+## 0.5.3
+
+### Patch Changes
+
+- ca6bb5ff3: fix(raml): respect nested traits
+- Updated dependencies [ca6bb5ff3]
+- Updated dependencies [ca6bb5ff3]
+  - json-machete@0.5.8
+  - @graphql-mesh/utils@0.27.7
+  - @omnigraph/json-schema@0.16.1
+
 ## 0.5.2
 
 ### Patch Changes

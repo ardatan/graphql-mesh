@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.27.7
+
+### Patch Changes
+
+- ca6bb5ff3: fix(utils): convert minus character to underscore if in the middle
+  - @graphql-mesh/types@0.64.1
+
 ## 0.27.6
 
 ### Patch Changes
