@@ -1,5 +1,11 @@
 # @graphql-mesh/types
 
+## 0.64.1
+
+### Patch Changes
+
+- @graphql-mesh/store@0.3.20
+
 ## 0.64.0
 
 ### Minor Changes

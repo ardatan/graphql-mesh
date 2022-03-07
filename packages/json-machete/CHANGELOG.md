@@ -1,5 +1,13 @@
 # json-machete
 
+## 0.5.8
+
+### Patch Changes
+
+- ca6bb5ff3: fix(json-machete): respect items prop in object type
+- Updated dependencies [ca6bb5ff3]
+  - @graphql-mesh/utils@0.27.7
+
 ## 0.5.7
 
 ### Patch Changes

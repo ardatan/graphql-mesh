@@ -59,6 +59,15 @@ export async function healJSONSchema(schema: JSONSchema) {
     deduplicatedSchema,
     (subSchema, { path }) => {
       if (typeof subSchema === 'object') {
+        // Some JSON Schemas use this broken pattern and refer the type using `items`
+        if (subSchema.type === 'object' && subSchema.items) {
+          const realSubschema = subSchema.items;
+          delete subSchema.items;
+          return realSubschema;
+        }
+        if (subSchema.properties && subSchema.type !== 'object') {
+          subSchema.type = 'object';
+        }
         if (duplicatedTypeNames.has(subSchema.title)) {
           delete subSchema.title;
         }
@@ -88,10 +97,6 @@ export async function healJSONSchema(schema: JSONSchema) {
             subSchema.type = 'array';
           }
         }
-        // Some JSON Schemas use this broken pattern and refer the type using `items`
-        if (subSchema.type !== 'array' && subSchema.items) {
-          subSchema.type = 'array';
-        }
         // If it is an object type but no properties given while example is available
         if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
           const generatedSchema = toJsonSchema(subSchema.example, {
@@ -114,7 +119,7 @@ export async function healJSONSchema(schema: JSONSchema) {
             }
           }
         }
-        if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array') {
+        if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array' && !subSchema.items) {
           const realPath = subSchema.$resolvedRef || path;
           // Try to get definition name if missing
           const splitByDefinitions = realPath.includes('/components/schemas/')

@@ -10,7 +10,15 @@ function shouldRenderGraphiQL(req: IncomingMessage) {
 export const graphqlHandler = (mesh$: Promise<MeshInstance>): RequestHandler => {
   const yoga$ = mesh$.then(mesh =>
     createServer({
-      plugins: [...mesh.plugins, useExtendContext(({ req }) => req)],
+      plugins: [
+        ...mesh.plugins,
+        useExtendContext(({ req, res }) => ({
+          ...req,
+          headers: req.headers,
+          cookies: req.cookies,
+          res,
+        })),
+      ],
       logging: mesh.logger,
       maskedErrors: false,
     })

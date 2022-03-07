@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.56.3
+
+### Patch Changes
+
+- Updated dependencies [ca6bb5ff3]
+  - @graphql-mesh/utils@0.27.7
+  - @graphql-mesh/config@0.30.5
+  - @graphql-mesh/runtime@0.31.5
+  - @graphql-mesh/store@0.3.20
+  - @graphql-mesh/types@0.64.1
+
+## 0.56.2
+
+### Patch Changes
+
+- 9f2423979: fix(serve): expose node request headers, cookies, response object
+
 ## 0.56.1
 
 ### Patch Changes

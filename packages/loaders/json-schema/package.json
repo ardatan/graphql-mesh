@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.15.1",
+  "version": "0.16.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,9 +29,9 @@
   },
   "dependencies": {
     "cross-undici-fetch": "0.1.25",
-    "json-machete": "0.5.7",
-    "@graphql-mesh/types": "0.64.0",
-    "@graphql-mesh/utils": "0.27.6",
+    "json-machete": "0.5.8",
+    "@graphql-mesh/types": "0.64.1",
+    "@graphql-mesh/utils": "0.27.7",
     "@graphql-tools/utils": "8.6.2",
     "to-json-schema": "0.2.5",
     "graphql-compose": "9.0.7",
