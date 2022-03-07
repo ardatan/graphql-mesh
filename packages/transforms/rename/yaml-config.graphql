@@ -30,6 +30,10 @@ type RenameTransformObject @md {
   """
   useRegExpForFields: Boolean
   """
+  Use Regular Expression for field names
+  """
+  useRegExpForArguments: Boolean
+  """
   Flags to use in the Regular Expression
   """
   regExpFlags: String
@@ -38,6 +42,7 @@ type RenameTransformObject @md {
 type RenameConfig {
   type: String
   field: String
+  argument: String
 }
 
 enum RenameTransformMode {

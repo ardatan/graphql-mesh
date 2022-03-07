@@ -4,9 +4,14 @@ exports[`rename should change the name of a field 1`] = `
 "type Query {
   user: MyUser!
   my_book: MyBook!
+  profile(profile_id: ID!): Profile
 }
 
 type MyUser {
+  id: ID!
+}
+
+type Profile {
   id: ID!
 }
 
@@ -19,9 +24,14 @@ exports[`rename should change the name of a type 1`] = `
 "type Query {
   my_user: User!
   my_book: MyBook!
+  profile(profile_id: ID!): Profile
 }
 
 type User {
+  id: ID!
+}
+
+type Profile {
   id: ID!
 }
 
@@ -34,9 +44,14 @@ exports[`rename should change the name of multiple fields 1`] = `
 "type Query {
   user: MyUser!
   book: MyBook!
+  profile(profile_id: ID!): Profile
 }
 
 type MyUser {
+  id: ID!
+}
+
+type Profile {
   id: ID!
 }
 
@@ -49,9 +64,14 @@ exports[`rename should change the name of multiple type names 1`] = `
 "type Query {
   my_user: User!
   my_book: Book!
+  profile(profile_id: ID!): Profile
 }
 
 type User {
+  id: ID!
+}
+
+type Profile {
   id: ID!
 }
 
@@ -60,13 +80,58 @@ type Book {
 }"
 `;
 
+exports[`rename should only affect field argument only if type and field are specified 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_book: MyBook!
+  profile(profile_id: ID!): Profile
+}
+
+type MyUser {
+  id: ID!
+}
+
+type Profile {
+  id: ID!
+}
+
+type MyBook {
+  id: ID!
+}"
+`;
+
+exports[`rename should only affect specified field argument 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_book: MyBook!
+  profile(profileId: ID!): Profile
+}
+
+type MyUser {
+  id: ID!
+}
+
+type Profile {
+  id: ID!
+}
+
+type MyBook {
+  id: ID!
+}"
+`;
+
 exports[`rename should only affect specified type 1`] = `
 "type Query {
   my_user: MyUser!
   my_bok: MyBook!
+  prfile(profile_id: ID!): Profile
 }
 
 type MyUser {
+  id: ID!
+}
+
+type Profile {
   id: ID!
 }
 
@@ -119,9 +184,14 @@ exports[`rename should replace the first occurrence of a substring in a field 1`
 "type Query {
   my_user: MyUser!
   my_bok: MyBook!
+  prfile(profile_id: ID!): Profile
 }
 
 type MyUser {
+  id: ID!
+}
+
+type Profile {
   id: ID!
 }
 

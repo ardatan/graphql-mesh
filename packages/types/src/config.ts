@@ -1355,6 +1355,10 @@ export interface RenameTransformObject {
    */
   useRegExpForFields?: boolean;
   /**
+   * Use Regular Expression for field names
+   */
+  useRegExpForArguments?: boolean;
+  /**
    * Flags to use in the Regular Expression
    */
   regExpFlags?: string;
@@ -1362,10 +1366,12 @@ export interface RenameTransformObject {
 export interface RenameConfig {
   type?: string;
   field?: string;
+  argument?: string;
 }
 export interface RenameConfig1 {
   type?: string;
   field?: string;
+  argument?: string;
 }
 /**
  * Transformer to replace GraphQL field with partial of full config from a different field

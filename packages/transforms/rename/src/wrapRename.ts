@@ -1,6 +1,11 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { RenameTypes, RenameObjectFields, RenameInputObjectFields } from '@graphql-tools/wrap';
+import {
+  RenameTypes,
+  RenameObjectFields,
+  RenameInputObjectFields,
+  RenameObjectFieldArguments,
+} from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
@@ -24,10 +29,11 @@ export default class WrapRename implements MeshTransform {
     const { config } = options;
     for (const change of config.renames) {
       const {
-        from: { type: fromTypeName, field: fromFieldName },
-        to: { type: toTypeName, field: toFieldName },
+        from: { type: fromTypeName, field: fromFieldName, argument: fromArgumentName },
+        to: { type: toTypeName, field: toFieldName, argument: toArgumentName },
         useRegExpForTypes,
         useRegExpForFields,
+        useRegExpForArguments,
       } = change;
 
       const regExpFlags = change.regExpFlags || undefined;
@@ -63,6 +69,32 @@ export default class WrapRename implements MeshTransform {
         }
         this.transforms.push(new RenameObjectFields(replaceFieldNameFn));
         this.transforms.push(new RenameInputObjectFields(replaceFieldNameFn));
+      }
+
+      if (
+        fromTypeName &&
+        fromTypeName === toTypeName &&
+        toFieldName &&
+        fromFieldName === toFieldName &&
+        fromArgumentName &&
+        fromArgumentName !== toArgumentName
+      ) {
+        let replaceArgNameFn: (typeName: string, fieldName: string, argName: string) => string;
+
+        if (useRegExpForArguments) {
+          const argNameRegExp = new RegExp(fromArgumentName, regExpFlags);
+          replaceArgNameFn = (typeName, fieldName, argName) =>
+            typeName === toTypeName && fieldName === toFieldName
+              ? fieldName.replace(argNameRegExp, toArgumentName)
+              : argName;
+        } else {
+          replaceArgNameFn = (typeName, fieldName, argName) =>
+            typeName === toTypeName && fieldName === fromFieldName && argName === fromArgumentName
+              ? toArgumentName
+              : fieldName;
+        }
+
+        this.transforms.push(new RenameObjectFieldArguments(replaceArgNameFn));
       }
     }
   }
