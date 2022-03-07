@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.11
+
+### Patch Changes
+
+- 8b8eb5158: feat(transforms): `rename` support for ObjectFieldArguments
+- Updated dependencies [8b8eb5158]
+- Updated dependencies [8b8eb5158]
+  - @graphql-mesh/types@0.64.2
+  - @graphql-mesh/utils@0.27.8
+
 ## 0.12.10
 
 ### Patch Changes
