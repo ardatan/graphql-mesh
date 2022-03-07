@@ -1,5 +1,16 @@
 # type-merging-batching-example
 
+## 0.0.77
+
+### Patch Changes
+
+- Updated dependencies [e8ac57ff6]
+- Updated dependencies [8b8eb5158]
+  - @graphql-mesh/cli@0.57.0
+  - @graphql-mesh/transform-rename@0.12.11
+  - @graphql-mesh/graphql@0.20.26
+  - @graphql-mesh/transform-type-merging@0.3.21
+
 ## 0.0.76
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # soap-demo
 
+## 0.0.52
+
+### Patch Changes
+
+- Updated dependencies [e8ac57ff6]
+  - @graphql-mesh/cli@0.57.0
+  - @graphql-mesh/soap@0.10.22
+
 ## 0.0.51
 
 ### Patch Changes

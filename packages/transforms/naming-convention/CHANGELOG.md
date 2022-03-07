@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.10.12
+
+### Patch Changes
+
+- 8b8eb5158: feat(naming-convention): add support for `fieldArgumentNames`
+- Updated dependencies [8b8eb5158]
+- Updated dependencies [8b8eb5158]
+  - @graphql-mesh/types@0.64.2
+  - @graphql-mesh/utils@0.27.8
+
 ## 0.10.11
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/types
 
+## 0.64.2
+
+### Patch Changes
+
+- 8b8eb5158: feat(naming-convention): add support for `fieldArgumentNames`
+- 8b8eb5158: feat(transforms): `rename` support for ObjectFieldArguments
+  - @graphql-mesh/store@0.3.21
+
 ## 0.64.1
 
 ### Patch Changes
