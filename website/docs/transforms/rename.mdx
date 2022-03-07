@@ -4,7 +4,10 @@ title: Rename Transform
 sidebar_label: Rename
 ---
 
-The `rename` transform allow you to rename GraphQL types and GraphQL fields easily.
+The `rename` transform allows you to rename:
+- GraphQL types
+- GraphQL fields
+- GraphQL field arguments
 
 <PackageInstall packages="@graphql-mesh/transform-rename" />
 
@@ -17,17 +20,34 @@ transforms:
   - rename:
       mode: bare | wrap
       renames:
+        # rename type
         - from:
             type: ApiUser
           to:
             type: User
+        # rename type fields
         - from:
             type: Query
             field: apiUser
           to:
             type: Query
             field: user
+        # rename field arguments
+        - from:
+            type: Query
+            field: user
+            argument: user_id
+          to:
+            type: Query
+            field: user
+            argument: userId
 ```
+
+> `type` and `field` are mandatory to rename a field argument with `argument`.
+
+
+<br />
+
 
 or you can use regular expressions to rename multiple types, fields or both
 

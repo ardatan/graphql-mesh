@@ -1,8 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`namingConvention should change the name of a type 1`] = `
+exports[`namingConvention should change the name of a types, enums, fields and fieldArguments 1`] = `
 "type Query {
   user: User!
+  userById(user_id: ID!): User!
 }
 
 type User {

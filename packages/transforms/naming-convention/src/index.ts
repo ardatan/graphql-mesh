@@ -2,10 +2,11 @@ import { GraphQLSchema } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import {
   RenameTypes,
-  RenameObjectFields,
-  RenameInputObjectFields,
   TransformEnumValues,
   RenameInterfaceFields,
+  TransformObjectFields,
+  RenameInputObjectFields,
+  RenameObjectFieldArguments,
 } from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
@@ -75,15 +76,29 @@ export default class NamingConventionTransform implements MeshTransform {
       );
     }
     if (options.config.fieldNames) {
-      const namingConventionFn = NAMING_CONVENTIONS[options.config.fieldNames];
+      const fieldNamingConventionFn = options.config.fieldNames
+        ? NAMING_CONVENTIONS[options.config.fieldNames]
+        : (s: string) => s;
       this.transforms.push(
-        new RenameObjectFields((_, fieldName) =>
-          IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : namingConventionFn(fieldName) || fieldName
-        ),
-        new RenameInputObjectFields((_, fieldName) => namingConventionFn(fieldName) || fieldName),
-        new RenameInterfaceFields((_, fieldName) => namingConventionFn(fieldName) || fieldName)
+        new RenameInputObjectFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName),
+        new TransformObjectFields((_, fieldName, fieldConfig) => [
+          IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : fieldNamingConventionFn(fieldName) || fieldName,
+          fieldConfig,
+        ]),
+        new RenameInterfaceFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName)
       );
     }
+
+    if (options.config.fieldArgumentNames) {
+      const fieldArgNamingConventionFn = options.config.fieldArgumentNames
+        ? NAMING_CONVENTIONS[options.config.fieldArgumentNames]
+        : (s: string) => s;
+
+      this.transforms.push(
+        new RenameObjectFieldArguments((_typeName, _fieldName, argName) => fieldArgNamingConventionFn(argName))
+      );
+    }
+
     if (options.config.enumValues) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.enumValues];
 

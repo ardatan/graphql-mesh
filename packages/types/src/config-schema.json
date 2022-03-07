@@ -2550,6 +2550,25 @@
             "lowerCase"
           ],
           "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
+        },
+        "fieldArgumentNames": {
+          "type": "string",
+          "enum": [
+            "camelCase",
+            "capitalCase",
+            "constantCase",
+            "dotCase",
+            "headerCase",
+            "noCase",
+            "paramCase",
+            "pascalCase",
+            "pathCase",
+            "sentenceCase",
+            "snakeCase",
+            "upperCase",
+            "lowerCase"
+          ],
+          "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
         }
       }
     },
@@ -2625,6 +2644,10 @@
           "type": "boolean",
           "description": "Use Regular Expression for field names"
         },
+        "useRegExpForArguments": {
+          "type": "boolean",
+          "description": "Use Regular Expression for field names"
+        },
         "regExpFlags": {
           "type": "string",
           "description": "Flags to use in the Regular Expression"
@@ -2641,6 +2664,9 @@
           "type": "string"
         },
         "field": {
+          "type": "string"
+        },
+        "argument": {
           "type": "string"
         }
       }
