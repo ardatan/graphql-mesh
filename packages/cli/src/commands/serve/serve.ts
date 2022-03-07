@@ -22,6 +22,9 @@ import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
 import { inspect } from '@graphql-tools/utils';
+import dnscache from 'dnscache';
+
+dnscache({ enable: true });
 
 const { readFile } = fsPromises;
 
