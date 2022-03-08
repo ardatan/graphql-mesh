@@ -45,7 +45,7 @@ export function applyResultTransforms(
   transforms: Transform[]
 ) {
   const contextMap: WeakMap<Transform, Record<string, any>> = transformationContext.contextMap;
-  return transforms.reduceRight(
+  return transforms.reduce(
     (result, transform) =>
       'transformResult' in transform
         ? transform.transformResult(result, delegationContext, contextMap.get(transform))
