@@ -1,5 +1,19 @@
 # @omnigraph/json-schema
 
+## 0.17.0
+
+### Minor Changes
+
+- 21de17a3d: feat(json-schema): ability to provide additional request body with requestBaseBody in the config
+
+### Patch Changes
+
+- Updated dependencies [21de17a3d]
+- Updated dependencies [3f4bb09a9]
+  - @graphql-mesh/types@0.65.0
+  - @graphql-mesh/utils@0.27.9
+  - json-machete@0.5.10
+
 ## 0.16.2
 
 ### Patch Changes

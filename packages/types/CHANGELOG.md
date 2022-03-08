@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.65.0
+
+### Minor Changes
+
+- 21de17a3d: feat(json-schema): ability to provide additional request body with requestBaseBody in the config
+
+### Patch Changes
+
+- @graphql-mesh/store@0.3.22
+
 ## 0.64.2
 
 ### Patch Changes
