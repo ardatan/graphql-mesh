@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.27.9
+
+### Patch Changes
+
+- 3f4bb09a9: fix(applyResultTransforms): apply transformers for result in correct order
+- Updated dependencies [21de17a3d]
+  - @graphql-mesh/types@0.65.0
+
 ## 0.27.8
 
 ### Patch Changes
