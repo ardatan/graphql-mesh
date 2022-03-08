@@ -125,16 +125,15 @@ export async function addExecutionLogicToComposer(
           }
           requestInit.body = binaryUpload;
         } else {
-          const rawInput =
-            operationConfig.requestBaseBody != null || args.input != null
-              ? {
-                  ...operationConfig.requestBaseBody,
-                  ...args.input,
-                }
-              : null;
+          if (operationConfig.requestBaseBody != null) {
+            args.input = args.input || {};
+            for (const key in operationConfig.requestBaseBody) {
+              args.input[key] = stringInterpolator.parse(operationConfig.requestBaseBody[key], interpolationData);
+            }
+          }
           // Resolve union input
           const input = resolveDataByUnionInputType(
-            cleanObject(rawInput),
+            cleanObject(args.input),
             field.args?.input?.type?.getType(),
             schemaComposer
           );
