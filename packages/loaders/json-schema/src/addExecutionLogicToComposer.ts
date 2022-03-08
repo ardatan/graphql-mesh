@@ -125,9 +125,16 @@ export async function addExecutionLogicToComposer(
           }
           requestInit.body = binaryUpload;
         } else {
+          const rawInput =
+            operationConfig.requestBaseBody != null || args.input != null
+              ? {
+                  ...operationConfig.requestBaseBody,
+                  ...args.input,
+                }
+              : null;
           // Resolve union input
           const input = resolveDataByUnionInputType(
-            cleanObject(args.input),
+            cleanObject(rawInput),
             field.args?.input?.type?.getType(),
             schemaComposer
           );

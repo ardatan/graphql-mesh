@@ -39,6 +39,7 @@ export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperati
   requestSchema?: string | JSONSchema;
   requestSample?: any;
   requestTypeName?: string;
+  requestBaseBody?: any;
 };
 
 export type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';

@@ -39,6 +39,10 @@ interface JsonSchemaBaseOperation {
   requestSchema: Any
   requestSample: Any
   requestTypeName: String
+  """
+  This body will be merged with the request body sent with the underlying HTTP request
+  """
+  requestBaseBody: Any
 
   responseSchema: Any
   responseSample: Any
@@ -55,6 +59,10 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   requestSchema: Any
   requestSample: Any
   requestTypeName: String
+  """
+  This body will be merged with the request body sent with the underlying HTTP request
+  """
+  requestBaseBody: Any
 
   responseSchema: Any
   responseSample: Any
@@ -82,6 +90,10 @@ type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {
   requestSchema: Any
   requestSample: Any
   requestTypeName: String
+  """
+  This body will be merged with the request body sent with the underlying HTTP request
+  """
+  requestBaseBody: Any
 
   responseSchema: Any
   responseSample: Any
