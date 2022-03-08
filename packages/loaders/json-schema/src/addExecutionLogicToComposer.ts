@@ -17,6 +17,7 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
+import _ from 'lodash';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -125,6 +126,18 @@ export async function addExecutionLogicToComposer(
           }
           requestInit.body = binaryUpload;
         } else {
+          if (operationConfig.requestBaseBody != null) {
+            args.input = args.input || {};
+            for (const key in operationConfig.requestBaseBody) {
+              const configValue = operationConfig.requestBaseBody[key];
+              if (typeof configValue === 'string') {
+                const value = stringInterpolator.parse(configValue, interpolationData);
+                _.set(args.input, key, value);
+              } else {
+                args.input[key] = configValue;
+              }
+            }
+          }
           // Resolve union input
           const input = resolveDataByUnionInputType(
             cleanObject(args.input),

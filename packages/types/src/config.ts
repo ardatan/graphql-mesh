@@ -353,6 +353,10 @@ export interface JsonSchemaHTTPOperation {
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;
+  /**
+   * This body will be merged with the request body sent with the underlying HTTP request
+   */
+  requestBaseBody?: any;
   responseSchema?: any;
   responseSample?: any;
   responseTypeName?: string;
@@ -384,6 +388,10 @@ export interface JsonSchemaPubSubOperation {
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;
+  /**
+   * This body will be merged with the request body sent with the underlying HTTP request
+   */
+  requestBaseBody?: any;
   responseSchema?: any;
   responseSample?: any;
   responseTypeName?: string;

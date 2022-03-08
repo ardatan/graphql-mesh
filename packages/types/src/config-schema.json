@@ -951,6 +951,22 @@
         "requestTypeName": {
           "type": "string"
         },
+        "requestBaseBody": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "This body will be merged with the request body sent with the underlying HTTP request"
+        },
         "responseSchema": {
           "anyOf": [
             {
@@ -1055,6 +1071,22 @@
         },
         "requestTypeName": {
           "type": "string"
+        },
+        "requestBaseBody": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "This body will be merged with the request body sent with the underlying HTTP request"
         },
         "responseSchema": {
           "anyOf": [
