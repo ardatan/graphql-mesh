@@ -1,5 +1,11 @@
 # @omnigraph/openapi
 
+## 0.3.12
+
+### Patch Changes
+
+- c12e30ae5: fix(openapi): correct types for path params
+
 ## 0.3.11
 
 ### Patch Changes
