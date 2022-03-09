@@ -200,7 +200,13 @@ export interface Source {
  * Point to the handler you wish to use, it can either be a predefined handler, or a custom
  */
 export interface Handler {
-  graphql?: GraphQLHandler;
+  /**
+   * Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)
+   */
+  graphql?:
+    | GraphQLHandlerHTTPConfiguration
+    | GraphQLHandlerCodeFirstConfiguration
+    | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
   JsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
@@ -216,10 +222,7 @@ export interface Handler {
   tuql?: TuqlHandler;
   [k: string]: any;
 }
-/**
- * Handler for remote/local/third-party GraphQL schema
- */
-export interface GraphQLHandler {
+export interface GraphQLHandlerHTTPConfiguration {
   /**
    * A url or file path to your remote GraphQL endpoint.
    * If you provide a path to a code file(js or ts),
@@ -263,15 +266,41 @@ export interface GraphQLHandler {
    */
   multipart?: boolean;
   /**
-   * Batch requests
-   */
-  batch?: boolean;
-  /**
    * SSE - Server Sent Events
    * WS - New graphql-ws
    * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)
    */
   subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
+  /**
+   * Retry attempts if fails
+   */
+  retry?: number;
+  /**
+   * Timeout in milliseconds
+   */
+  timeout?: number;
+  /**
+   * Enable/Disable automatic query batching
+   */
+  batch?: boolean;
+}
+export interface GraphQLHandlerCodeFirstConfiguration {
+  /**
+   * A file path to your GraphQL Schema
+   * If you provide a path to a code file(js or ts),
+   * other options will be ignored and the schema exported from the file will be used directly.
+   */
+  schema: any;
+}
+export interface GraphQLHandlerMultipleHTTPConfiguration {
+  /**
+   * HTTP Source Configurations
+   */
+  sources: GraphQLHandlerHTTPConfiguration[];
+  /**
+   * Handling strategy (default: fallback) (Allowed values: fallback, race)
+   */
+  strategy?: 'fallback' | 'race';
 }
 /**
  * Handler for gRPC and Protobuf schemas

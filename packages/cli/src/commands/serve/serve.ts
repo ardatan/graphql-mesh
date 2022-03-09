@@ -11,11 +11,11 @@ import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInte
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { join } from 'path';
+import path from 'path';
 import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
-import { promises as fsPromises } from 'fs';
+import fs from 'fs';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
@@ -23,10 +23,9 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
 import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
+import { GraphQLMeshCLIParams } from '@graphql-mesh/cli';
 
 dnscache({ enable: true });
-
-const { readFile } = fsPromises;
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -36,15 +35,10 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
   }
 }
 
-export async function serveMesh({
-  baseDir,
-  argsPort,
-  getBuiltMesh,
-  logger,
-  rawConfig,
-  documents,
-  playgroundTitle,
-}: ServeMeshOptions) {
+export async function serveMesh(
+  { baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents, playgroundTitle }: ServeMeshOptions,
+  cliParams: GraphQLMeshCLIParams
+) {
   const {
     fork,
     port: configPort,
@@ -63,7 +57,7 @@ export async function serveMesh({
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
   if (!playgroundTitle) {
-    playgroundTitle = rawConfig.serve?.playgroundTitle || 'GraphQL Mesh';
+    playgroundTitle = rawConfig.serve?.playgroundTitle || cliParams.playgroundTitle;
   }
   if (!cluster.isWorker && Boolean(fork)) {
     const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
@@ -71,17 +65,17 @@ export async function serveMesh({
       const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
-    logger.info(`Serving GraphQL Mesh: ${serverUrl} in ${forkNum} forks`);
+    logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
   } else {
-    logger.info(`Generating Mesh schema...`);
+    logger.info(`Generating the unified schema...`);
     let readyFlag = false;
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
       .then(mesh => {
         readyFlag = true;
-        logger.info(`Serving GraphQL Mesh: ${serverUrl}`);
+        logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
         registerTerminateHandler(eventName => {
           const eventLogger = logger.child(`${eventName}💀`);
-          eventLogger.info(`Destroying GraphQL Mesh`);
+          eventLogger.info(`Destroying the server`);
           mesh.destroy();
         });
         return mesh;
@@ -93,8 +87,8 @@ export async function serveMesh({
 
     if (sslCredentials) {
       const [key, cert] = await Promise.all([
-        readFile(sslCredentials.key, 'utf-8'),
-        readFile(sslCredentials.cert, 'utf-8'),
+        fs.promises.readFile(sslCredentials.key, 'utf-8'),
+        fs.promises.readFile(sslCredentials.cert, 'utf-8'),
       ]);
       httpServer = createHTTPSServer({ key, cert }, app);
     } else {
@@ -241,7 +235,7 @@ export async function serveMesh({
 
     if (staticFiles) {
       app.use(express.static(staticFiles));
-      const indexPath = join(baseDir, staticFiles, 'index.html');
+      const indexPath = path.join(baseDir, staticFiles, 'index.html');
       if (await pathExists(indexPath)) {
         app.get('/', (_req, res) => res.sendFile(indexPath));
       }

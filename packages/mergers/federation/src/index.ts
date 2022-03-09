@@ -13,7 +13,6 @@ import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { hashObject, jitExecutorFactory, AggregateError, printWithCache, parseWithCache } from '@graphql-mesh/utils';
 import { asArray, ExecutionRequest } from '@graphql-tools/utils';
-import { env } from 'process';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 
 export default class FederationMerger implements MeshMerger {
@@ -82,7 +81,7 @@ export default class FederationMerger implements MeshMerger {
         };
       },
       logger: this.logger,
-      debug: !!env.DEBUG,
+      debug: !!process.env.DEBUG,
       serviceHealthCheck: true,
     });
     this.logger.debug(() => `Loading gateway`);

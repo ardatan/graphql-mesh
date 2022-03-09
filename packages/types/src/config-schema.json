@@ -466,8 +466,18 @@
       "title": "Handler",
       "properties": {
         "graphql": {
-          "$ref": "#/definitions/GraphQLHandler",
-          "description": "Handler for remote/local/third-party GraphQL schema"
+          "description": "Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQLHandlerHTTPConfiguration"
+            },
+            {
+              "$ref": "#/definitions/GraphQLHandlerCodeFirstConfiguration"
+            },
+            {
+              "$ref": "#/definitions/GraphQLHandlerMultipleHTTPConfiguration"
+            }
+          ]
         },
         "grpc": {
           "$ref": "#/definitions/GrpcHandler",
@@ -683,10 +693,55 @@
       },
       "required": ["field", "invalidate"]
     },
-    "GraphQLHandler": {
+    "GraphQLHandlerMultipleHTTPConfiguration": {
       "additionalProperties": false,
       "type": "object",
-      "title": "GraphQLHandler",
+      "title": "GraphQLHandlerMultipleHTTPConfiguration",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GraphQLHandlerHTTPConfiguration"
+          },
+          "additionalItems": false,
+          "description": "HTTP Source Configurations"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["fallback", "race"],
+          "description": "Handling strategy (default: fallback) (Allowed values: fallback, race)"
+        }
+      },
+      "required": ["sources"]
+    },
+    "GraphQLHandlerCodeFirstConfiguration": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLHandlerCodeFirstConfiguration",
+      "properties": {
+        "schema": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "A file path to your GraphQL Schema\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
+        }
+      },
+      "required": ["schema"]
+    },
+    "GraphQLHandlerHTTPConfiguration": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLHandlerHTTPConfiguration",
       "properties": {
         "endpoint": {
           "type": "string",
@@ -750,14 +805,22 @@
           "type": "boolean",
           "description": "Enable multipart/formdata in order to support file uploads"
         },
-        "batch": {
-          "type": "boolean",
-          "description": "Batch requests"
-        },
         "subscriptionsProtocol": {
           "type": "string",
           "enum": ["SSE", "WS", "LEGACY_WS"],
           "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
+        },
+        "retry": {
+          "type": "integer",
+          "description": "Retry attempts if fails"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout in milliseconds"
+        },
+        "batch": {
+          "type": "boolean",
+          "description": "Enable/Disable automatic query batching"
         }
       },
       "required": ["endpoint"]

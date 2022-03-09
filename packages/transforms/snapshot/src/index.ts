@@ -2,7 +2,7 @@ import { GraphQLSchema } from 'graphql';
 import { YamlConfig, MeshTransform, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
-import { isAbsolute, join } from 'path';
+import path from 'path';
 import { computeSnapshotFilePath } from './compute-snapshot-file-path';
 import { extractResolvers, writeJSON, pathExists } from '@graphql-mesh/utils';
 
@@ -39,9 +39,9 @@ export default class SnapshotTransform implements MeshTransform {
       const resolvers = extractResolvers(schema);
       const resolversComposition: ResolversComposerMapping = {};
 
-      const outputDir = isAbsolute(this.config.outputDir)
+      const outputDir = path.isAbsolute(this.config.outputDir)
         ? this.config.outputDir
-        : join(this.baseDir, this.config.outputDir);
+        : path.join(this.baseDir, this.config.outputDir);
 
       const snapshotComposition: ResolversComposition = next => async (root, args, context, info) => {
         const snapshotFilePath = computeSnapshotFilePath({

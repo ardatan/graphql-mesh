@@ -1,4 +1,4 @@
-import { resolve, join, isAbsolute } from 'path';
+import pathModule from 'path';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
@@ -23,7 +23,6 @@ import {
   resolveLogger,
 } from './utils';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
-import { env } from 'process';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, resolveAdditionalResolvers } from '@graphql-mesh/utils';
@@ -34,6 +33,8 @@ export type ConfigProcessOptions = {
   importFn?: ImportFn;
   store?: MeshStore;
   ignoreAdditionalResolvers?: boolean;
+  configName?: string;
+  artifactsDir?: string;
 };
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
@@ -54,15 +55,15 @@ export type ProcessedConfig = {
   additionalEnvelopPlugins: EnvelopPlugins;
 };
 
-function getDefaultMeshStore(dir: string, importFn: ImportFn) {
-  const isProd = env.NODE_ENV?.toLowerCase() === 'production';
+function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
+  const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
         cwd: dir,
         importFn,
       })
     : new InMemoryStoreStorageAdapter();
-  return new MeshStore(resolve(dir, '.mesh'), storeStorageAdapter, {
+  return new MeshStore(pathModule.resolve(dir, artifactsDir), storeStorageAdapter, {
     /**
      * TODO:
      * `mesh start` => { readonly: true, validate: false }
@@ -80,7 +81,7 @@ export async function processConfig(
   options?: ConfigProcessOptions
 ): Promise<ProcessedConfig> {
   if (config.skipSSLValidation) {
-    env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
 
   const importCodes: string[] = [
@@ -93,7 +94,7 @@ export async function processConfig(
     `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
   ];
 
-  const { dir, importFn = defaultImportFn, store: providedStore } = options || {};
+  const { dir, importFn = defaultImportFn, store: providedStore, artifactsDir } = options || {};
 
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
@@ -102,7 +103,7 @@ export async function processConfig(
     }
   }
 
-  const rootStore = providedStore || getDefaultMeshStore(dir, importFn);
+  const rootStore = providedStore || getDefaultMeshStore(dir, importFn, artifactsDir || '.mesh');
 
   const {
     cache,
@@ -288,7 +289,7 @@ export async function processConfig(
     const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
     if (typeof additionalResolverDefinition === 'string') {
       importCodes.push(
-        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${join(
+        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule.join(
           '..',
           additionalResolverDefinition
         )}';`
@@ -314,11 +315,13 @@ export async function processConfig(
 
   let additionalEnvelopPlugins = [];
   if (config.additionalEnvelopPlugins) {
-    importCodes.push(`import importedAdditionalEnvelopPlugins from '${join('..', config.additionalEnvelopPlugins)}';`);
+    importCodes.push(
+      `import importedAdditionalEnvelopPlugins from '${pathModule.join('..', config.additionalEnvelopPlugins)}';`
+    );
     const importedAdditionalEnvelopPlugins = await importFn(
-      isAbsolute(config.additionalEnvelopPlugins)
+      pathModule.isAbsolute(config.additionalEnvelopPlugins)
         ? config.additionalEnvelopPlugins
-        : join(dir, config.additionalEnvelopPlugins)
+        : pathModule.join(dir, config.additionalEnvelopPlugins)
     );
     if (typeof importedAdditionalEnvelopPlugins === 'function') {
       const factoryResult = await importedAdditionalEnvelopPlugins(config);

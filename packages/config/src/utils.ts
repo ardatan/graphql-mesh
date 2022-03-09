@@ -1,5 +1,5 @@
 import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
-import { resolve } from 'path';
+import path from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
@@ -35,7 +35,7 @@ export async function getPackage<T>({ name, type, importFn, cwd }: GetPackageOpt
   if (name.includes('-')) {
     possibleNames.push(name);
   }
-  const possibleModules = possibleNames.concat(resolve(cwd, name));
+  const possibleModules = possibleNames.concat(path.resolve(cwd, name));
 
   for (const moduleName of possibleModules) {
     try {

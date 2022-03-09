@@ -1,5 +1,5 @@
-import { promises as fsPromises } from 'fs';
-import { isAbsolute, join } from 'path';
+import fs from 'fs';
+import pathModule from 'path';
 import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -43,8 +43,8 @@ export interface FsStoreStorageAdapterOptions {
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
   private getWrittenFileName(key: string) {
-    const jsFileName = `${key}.cjs`;
-    return isAbsolute(jsFileName) ? jsFileName : join(this.options.cwd, jsFileName);
+    const jsFileName = `${key}.ts`;
+    return pathModule.isAbsolute(jsFileName) ? jsFileName : pathModule.join(this.options.cwd, jsFileName);
   }
 
   async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
@@ -68,8 +68,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
 
   async delete(key: string): Promise<void> {
     const filePath = this.getWrittenFileName(key);
-    const { unlink } = fsPromises;
-    return unlink(filePath);
+    return fs.promises.unlink(filePath);
   }
 }
 
@@ -100,23 +99,23 @@ const escapeForTemplateLiteral = (str: string) => str.split('`').join('\\`').spl
 
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
-    codify: v => `module.exports = ${JSON.stringify(v, null, 2)}`,
+    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
     validate: () => null,
   },
   StringWithoutValidation: {
-    codify: v => `module.exports = \`${escapeForTemplateLiteral(v)}\``,
+    codify: v => `export default \`${escapeForTemplateLiteral(v)}\``,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
     codify: (schema, identifier) =>
       `
-const { buildSchema, Source } = require('graphql');
+import { buildSchema, Source } from 'graphql';
 
 const source = new Source(/* GraphQL */\`
 ${escapeForTemplateLiteral(printSchemaWithDirectives(schema))}
 \`, \`${identifier}\`);
 
-module.exports = buildSchema(source, {
+export default buildSchema(source, {
   assumeValid: true,
   assumeValidSDL: true
 });
@@ -143,14 +142,14 @@ export class MeshStore {
   constructor(public identifier: string, protected storage: StoreStorageAdapter, public flags: StoreFlags) {}
 
   child(childIdentifier: string, flags?: Partial<StoreFlags>): MeshStore {
-    return new MeshStore(join(this.identifier, childIdentifier), this.storage, {
+    return new MeshStore(pathModule.join(this.identifier, childIdentifier), this.storage, {
       ...this.flags,
       ...flags,
     });
   }
 
   proxy<TData>(id: string, options: ProxyOptions<TData>): StoreProxy<TData> {
-    const path = join(this.identifier, id);
+    const path = pathModule.join(this.identifier, id);
     let value: TData | null | undefined;
     let isValueCached = false;
 

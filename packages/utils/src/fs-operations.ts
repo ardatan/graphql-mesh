@@ -1,15 +1,13 @@
-import { MakeDirectoryOptions, promises as fsPromises } from 'fs';
-import { dirname, join } from 'path';
+import fs from 'fs';
+import pathModule from 'path';
 import { jsonFlatStringify } from './flat-string';
-
-const { stat, writeFile: fsWriteFile, mkdir: fsMkdir, readdir, unlink, rmdir } = fsPromises || {};
 
 export async function pathExists(path: string) {
   if (!path) {
     return false;
   }
   try {
-    await stat(path);
+    await fs.promises.stat(path);
     return true;
   } catch (e) {
     if (e.toString().includes('ENOENT')) {
@@ -30,33 +28,33 @@ export function writeJSON<T>(
   return writeFile(path, stringified, 'utf-8');
 }
 
-export const writeFile: typeof fsPromises.writeFile = async (path, ...args) => {
+export const writeFile: typeof fs.promises.writeFile = async (path, ...args) => {
   if (typeof path === 'string') {
-    const containingDir = dirname(path);
+    const containingDir = pathModule.dirname(path);
     if (!(await pathExists(containingDir))) {
       await mkdir(containingDir);
     }
   }
-  return fsWriteFile(path, ...args);
+  return fs.promises.writeFile(path, ...args);
 };
 
-export async function mkdir(path: string, options: MakeDirectoryOptions = { recursive: true }) {
+export async function mkdir(path: string, options: fs.MakeDirectoryOptions = { recursive: true }) {
   const ifExists = await pathExists(path);
   if (!ifExists) {
-    await fsMkdir(path, options);
+    await fs.promises.mkdir(path, options);
   }
 }
 
 export async function rmdirs(dir: string) {
   if (await pathExists(dir)) {
-    const entries = await readdir(dir, { withFileTypes: true });
+    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
     const results = await Promise.allSettled(
       entries.map(entry => {
-        const fullPath = join(dir, entry.name);
+        const fullPath = pathModule.join(dir, entry.name);
         if (entry.isDirectory()) {
           return rmdirs(fullPath);
         } else {
-          return unlink(fullPath);
+          return fs.promises.unlink(fullPath);
         }
       })
     );
@@ -65,6 +63,6 @@ export async function rmdirs(dir: string) {
         throw result.reason;
       }
     }
-    await rmdir(dir);
+    await fs.promises.rmdir(dir);
   }
 }

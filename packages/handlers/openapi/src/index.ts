@@ -29,8 +29,7 @@ import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
 import { Oas2 } from './openapi-to-graphql/types/oas2';
-import { join } from 'path';
-import { env } from 'process';
+import path from 'path';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
@@ -68,7 +67,7 @@ export default class OpenAPIHandler implements MeshHandler {
           const result = await openapiDiff.diffSpecs({
             sourceSpec: {
               content: jsonFlatStringify(oldOas),
-              location: join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
+              location: path.join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
               format: 'openapi3',
             },
             destinationSpec: {
@@ -89,7 +88,7 @@ export default class OpenAPIHandler implements MeshHandler {
   private getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3[]> {
     const { source: nonInterpolatedSource } = this.config;
     const source = stringInterpolator.parse(nonInterpolatedSource, {
-      env,
+      env: process.env,
     });
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     return this.oasSchema.getWithSet(async () => {
@@ -101,7 +100,7 @@ export default class OpenAPIHandler implements MeshHandler {
           cwd: this.baseDir,
           fallbackFormat: this.config.sourceFormat,
           headers: schemaHeadersFactory({
-            env,
+            env: process.env,
           }),
           fetch,
           logger: this.logger,
@@ -186,7 +185,7 @@ export default class OpenAPIHandler implements MeshHandler {
       pubsub: this.pubsub,
       logger: this.logger,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
-        const resolverData: ResolverData = { root, args, context, info, env };
+        const resolverData: ResolverData = { root, args, context, info, env: process.env };
         const resolverParams = getResolverParams();
         resolverParams.requestOptions = {
           headers: headersFactory(resolverData),

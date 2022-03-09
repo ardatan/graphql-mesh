@@ -1,6 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { stringInterpolator, hashObject } from '@graphql-mesh/utils';
-import { env } from 'process';
 
 export function computeCacheKey(options: {
   keyStr: string | undefined;
@@ -21,7 +20,7 @@ export function computeCacheKey(options: {
     argsHash,
     fieldNamesHash,
     info: options.info || null,
-    env,
+    env: process.env,
   };
 
   return stringInterpolator.parse(options.keyStr, templateData);

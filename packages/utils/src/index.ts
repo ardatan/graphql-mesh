@@ -18,3 +18,4 @@ export * from './logger';
 export * from './parseAndPrintWithCache';
 export * from './defaultImportFn';
 export * from './pubsub';
+export * from './fileURLToPath';

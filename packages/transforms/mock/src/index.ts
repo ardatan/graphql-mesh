@@ -6,8 +6,6 @@ import { getInterpolatedStringFactory, loadFromModuleExportExpression } from '@g
 
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 
-import { env } from 'process';
-
 export default class MockingTransform implements MeshTransform {
   noWrap = true;
   private config: YamlConfig.MockingConfig;
@@ -77,7 +75,7 @@ export default class MockingTransform implements MeshTransform {
                 }));
                 resolvers[typeName] = resolvers[typeName] || {};
                 resolvers[typeName][fieldName] = (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
-                  const resolverData = { root, args, context, info, random: Date.now().toString(), env };
+                  const resolverData = { root, args, context, info, random: Date.now().toString(), env: process.env };
                   updateStoreFactories.forEach(({ updateStoreConfig, keyFactory, valueFactory }) => {
                     const key = keyFactory(resolverData);
                     const value = valueFactory(resolverData);
@@ -90,7 +88,7 @@ export default class MockingTransform implements MeshTransform {
                 const keyFactory = getInterpolatedStringFactory(fieldConfig.store.key);
                 resolvers[typeName] = resolvers[typeName] || {};
                 resolvers[typeName][fieldName] = (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
-                  const key = keyFactory({ root, args, context, info, env });
+                  const key = keyFactory({ root, args, context, info, env: process.env });
                   return store.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
                 };
               }

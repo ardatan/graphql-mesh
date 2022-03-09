@@ -5,7 +5,37 @@ extend type Handler {
   graphql: GraphQLHandler
 }
 
-type GraphQLHandler @md {
+union GraphQLHandler =
+    GraphQLHandlerHTTPConfiguration
+  | GraphQLHandlerCodeFirstConfiguration
+  | GraphQLHandlerMultipleHTTPConfiguration
+
+type GraphQLHandlerMultipleHTTPConfiguration {
+  """
+  HTTP Source Configurations
+  """
+  sources: [GraphQLHandlerHTTPConfiguration!]!
+  """
+  Handling strategy (default: fallback)
+  """
+  strategy: GraphQLHandlerMultipleHTTPSourceStrategy
+}
+
+enum GraphQLHandlerMultipleHTTPSourceStrategy {
+  fallback
+  race
+}
+
+type GraphQLHandlerCodeFirstConfiguration @md {
+  """
+  A file path to your GraphQL Schema
+  If you provide a path to a code file(js or ts),
+  other options will be ignored and the schema exported from the file will be used directly.
+  """
+  schema: Any!
+}
+
+type GraphQLHandlerHTTPConfiguration {
   """
   A url or file path to your remote GraphQL endpoint.
   If you provide a path to a code file(js or ts),
@@ -47,15 +77,23 @@ type GraphQLHandler @md {
   """
   multipart: Boolean
   """
-  Batch requests
-  """
-  batch: Boolean
-  """
   SSE - Server Sent Events
   WS - New graphql-ws
   LEGACY_WS - Legacy subscriptions-transport-ws
   """
   subscriptionsProtocol: SubscriptionProtocol
+  """
+  Retry attempts if fails
+  """
+  retry: Int
+  """
+  Timeout in milliseconds
+  """
+  timeout: Int
+  """
+  Enable/Disable automatic query batching
+  """
+  batch: Boolean
 }
 
 enum SubscriptionProtocol {

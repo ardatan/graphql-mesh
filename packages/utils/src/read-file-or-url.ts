@@ -2,12 +2,11 @@ import { fetchFactory, KeyValueCache } from 'fetchache';
 import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
-import { dirname, isAbsolute, resolve } from 'path';
-import { promises as fsPromises, readdirSync, readFileSync } from 'fs';
+import pathModule from 'path';
+import fs from 'fs';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
-
-const { readFile: readFileFromFS } = fsPromises || {};
+import { memoize1 } from '@graphql-tools/utils';
 
 export { isUrl };
 
@@ -20,14 +19,14 @@ export interface ReadFileOrUrlOptions extends RequestInit {
   logger?: Logger;
 }
 
-export function getCachedFetch(cache: KeyValueCache): typeof crossFetch {
+export const getCachedFetch = memoize1(function getCachedFetch(cache: KeyValueCache): typeof crossFetch {
   return fetchFactory({
     fetch: crossFetch,
     Request,
     Response,
     cache,
   });
-}
+});
 
 export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileOrUrlOptions): Promise<T> {
   if (isUrl(filePathOrUrl)) {
@@ -45,9 +44,9 @@ function getSchema(filepath: string, logger?: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
-        const newCwd = dirname(filepath);
-        const absoluteFilePath = isAbsolute(path) ? path : resolve(newCwd, path);
-        const content = readFileSync(absoluteFilePath, 'utf8');
+        const newCwd = pathModule.dirname(filepath);
+        const absoluteFilePath = pathModule.isAbsolute(path) ? path : pathModule.resolve(newCwd, path);
+        const content = fs.readFileSync(absoluteFilePath, 'utf8');
         return loadYaml(absoluteFilePath, content, logger);
       },
     }),
@@ -57,12 +56,12 @@ function getSchema(filepath: string, logger?: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
-        const newCwd = dirname(filepath);
-        const absoluteDirPath = isAbsolute(path) ? path : resolve(newCwd, path);
-        const files = readdirSync(absoluteDirPath);
+        const newCwd = pathModule.dirname(filepath);
+        const absoluteDirPath = pathModule.isAbsolute(path) ? path : pathModule.resolve(newCwd, path);
+        const files = fs.readdirSync(absoluteDirPath);
         return files.map(filePath => {
-          const absoluteFilePath = resolve(absoluteDirPath, filePath);
-          const fileContent = readFileSync(absoluteFilePath, 'utf8');
+          const absoluteFilePath = pathModule.resolve(absoluteDirPath, filePath);
+          const fileContent = fs.readFileSync(absoluteFilePath, 'utf8');
           return loadYaml(absoluteFilePath, fileContent, logger);
         });
       },
@@ -82,11 +81,11 @@ export function loadYaml(filepath: string, content: string, logger?: Logger): an
 
 export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
-  const actualPath = isAbsolute(filePath) ? filePath : resolve(cwd || process.cwd(), filePath);
+  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.resolve(cwd || process.cwd(), filePath);
   if (/js$/.test(actualPath) || /ts$/.test(actualPath)) {
     return importFn(actualPath);
   }
-  const rawResult = await readFileFromFS(actualPath, 'utf-8');
+  const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
   if (/json$/.test(actualPath)) {
     return JSON.parse(rawResult);
   }

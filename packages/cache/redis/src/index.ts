@@ -4,10 +4,9 @@ import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
 import DataLoader from 'dataloader';
 import { URL } from 'url';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { env } from 'process';
 
 function interpolateStrWithEnv(str: string): string {
-  return stringInterpolator.parse(str, { env });
+  return stringInterpolator.parse(str, { env: process.env });
 }
 
 export default class RedisCache<V = string> implements KeyValueCache<V> {

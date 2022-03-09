@@ -38,7 +38,6 @@ import { WrapQuery } from '@graphql-tools/wrap';
 import { inspect, isDocumentNode, memoize1, parseSelectionSet } from '@graphql-tools/utils';
 import { envelop, useErrorHandler, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
-import { env } from 'process';
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
 
@@ -324,7 +323,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
             if (liveQueryInvalidationFactoryMap.has(path)) {
               const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
               const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
-                invalidationPathFactory({ ...resolverData, env, result })
+                invalidationPathFactory({ ...resolverData, env: process.env, result })
               );
               await liveQueryStore.invalidate(invalidationPaths);
             }

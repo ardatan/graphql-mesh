@@ -1,9 +1,9 @@
 import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
-import { existsSync } from 'fs';
+import fs from 'fs';
 import { SchemaComposer } from 'graphql-compose';
 import _ from 'lodash';
-import { isAbsolute, join } from 'path';
+import pathModule from 'path';
 import { Root } from 'protobufjs';
 
 import { getGraphQLScalar, isScalarType } from './scalars';
@@ -30,12 +30,12 @@ export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string
 export function addIncludePathResolver(root: Root, includePaths: string[]): void {
   const originalResolvePath = root.resolvePath;
   root.resolvePath = (origin: string, target: string) => {
-    if (isAbsolute(target)) {
+    if (pathModule.isAbsolute(target)) {
       return target;
     }
     for (const directory of includePaths) {
-      const fullPath: string = join(directory, target);
-      if (existsSync(fullPath)) {
+      const fullPath: string = pathModule.join(directory, target);
+      if (fs.existsSync(fullPath)) {
         return fullPath;
       }
     }

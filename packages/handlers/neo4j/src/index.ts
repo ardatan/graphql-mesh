@@ -3,7 +3,6 @@ import neo4j, { Driver } from 'neo4j-driver';
 import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { jitExecutorFactory, readFileOrUrl } from '@graphql-mesh/utils';
-import { env } from 'process';
 import { ExecutionRequest } from '@graphql-tools/utils';
 import { ExecutionResult } from 'graphql';
 
@@ -75,7 +74,7 @@ export default class Neo4JHandler implements MeshHandler {
       typeDefs,
       config: {
         experimental: true,
-        debug: !!env.DEBUG,
+        debug: !!process.env.DEBUG,
       },
       logger: this.logger,
     });

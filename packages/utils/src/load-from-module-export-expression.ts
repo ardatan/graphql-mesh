@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/return-await */
-import { isAbsolute, join } from 'path';
+import path from 'path';
 import { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
 
@@ -26,8 +26,8 @@ export function loadFromModuleExportExpression<T>(
 
 function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
   return importFn(modulePath).catch((e1: Error): any => {
-    if (!isAbsolute(modulePath)) {
-      const absoluteModulePath = isAbsolute(modulePath) ? modulePath : join(cwd, modulePath);
+    if (!path.isAbsolute(modulePath)) {
+      const absoluteModulePath = path.isAbsolute(modulePath) ? modulePath : path.join(cwd, modulePath);
       return importFn(absoluteModulePath);
     }
   });

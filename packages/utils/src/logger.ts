@@ -1,5 +1,4 @@
 import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
-import { env } from 'process';
 import chalk from 'chalk';
 
 type MessageTransformer = (msg: string) => string;
@@ -37,7 +36,7 @@ export class DefaultLogger implements Logger {
   }
 
   debug(lazyMessage: LazyLoggerMessage) {
-    if ((env.DEBUG && env.DEBUG === '1') || this.name.includes(env.DEBUG)) {
+    if ((process.env.DEBUG && process.env.DEBUG === '1') || this.name.includes(process.env.DEBUG)) {
       const message = handleLazyMessage(lazyMessage);
       return this.log(debugColor(message));
     }

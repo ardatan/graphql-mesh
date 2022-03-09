@@ -1,4 +1,4 @@
-import { isAbsolute } from 'path';
+import pathModule from 'path';
 import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
@@ -22,7 +22,7 @@ export default class ExtendTransform implements MeshTransform {
 
   transformSchema(schema: GraphQLSchema) {
     const sources = loadTypedefsSync(this.config.typeDefs, {
-      cwd: isAbsolute(this.config.typeDefs) ? null : this.baseDir,
+      cwd: pathModule.isAbsolute(this.config.typeDefs) ? null : this.baseDir,
       loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
     });
     const typeDefs = sources.map(source => source.document);

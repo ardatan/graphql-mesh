@@ -3,7 +3,6 @@ import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
 import soap from 'soap';
 import { getCachedFetch, getHeadersObject, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { env } from 'process';
 import { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 
 export default class SoapHandler implements MeshHandler {
@@ -99,8 +98,8 @@ export default class SoapHandler implements MeshHandler {
     const schema = await soapGraphqlSchema({
       soapClient,
       logger: this.logger,
-      debug: !!env.DEBUG,
-      warnings: !!env.DEBUG,
+      debug: !!process.env.DEBUG,
+      warnings: !!process.env.DEBUG,
       schemaOptions: {
         includePorts: this.config.includePorts,
         includeServices: this.config.includeServices,
