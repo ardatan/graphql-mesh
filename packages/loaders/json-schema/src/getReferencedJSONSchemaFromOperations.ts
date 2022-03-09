@@ -107,8 +107,10 @@ export async function getReferencedJSONSchemaFromOperations({
       type: 'object',
       title: rootTypeName,
       properties: {},
+      required: [],
     });
     rootTypeDefinition.properties = rootTypeDefinition.properties || {};
+    rootTypeDefinition.required = rootTypeDefinition.required || [];
 
     if ('responseByStatusCode' in operationConfig) {
       rootTypeDefinition.properties[fieldName] = rootTypeDefinition.properties[fieldName] || {};
@@ -147,6 +149,8 @@ export async function getReferencedJSONSchemaFromOperations({
         }
       );
     }
+
+    rootTypeDefinition.required.push(fieldName);
 
     const rootTypeInputPropertyName = operationType + 'Input';
     const rootInputTypeName = rootTypeName + 'Input';
