@@ -1,5 +1,18 @@
 # @omnigraph/openapi
 
+## 0.3.13
+
+### Patch Changes
+
+- 6f07de8fe: fix: do not import process from env
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/utils@0.28.0
+  - @omnigraph/json-schema@0.17.1
+  - json-machete@0.5.11
+
 ## 0.3.12
 
 ### Patch Changes

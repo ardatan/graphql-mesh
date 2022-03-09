@@ -1,5 +1,15 @@
 # json-machete
 
+## 0.5.11
+
+### Patch Changes
+
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/utils@0.28.0
+
 ## 0.5.10
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @graphql-mesh/raml
 
+## 0.1.18
+
+### Patch Changes
+
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/types@0.66.0
+  - @graphql-mesh/utils@0.28.0
+  - @omnigraph/raml@0.5.6
+  - @graphql-mesh/store@0.3.23
+
 ## 0.1.17
 
 ### Patch Changes
