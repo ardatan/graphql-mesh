@@ -25,7 +25,8 @@
     "json-ptr": "3.1.0",
     "@graphql-mesh/utils": "0.27.9",
     "url-join": "4.0.1",
-    "to-json-schema": "0.2.5"
+    "to-json-schema": "0.2.5",
+    "tslib": "^2.3.1"
   },
   "publishConfig": {
     "access": "public",

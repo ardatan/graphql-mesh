@@ -24,7 +24,8 @@
     "@graphql-mesh/transform-filter-schema": "0.14.23",
     "@graphql-mesh/transform-extend": "0.9.22",
     "@graphql-mesh/transform-rename": "0.12.12",
-    "@graphql-mesh/transform-resolvers-composition": "0.12.22"
+    "@graphql-mesh/transform-resolvers-composition": "0.12.22",
+    "tslib": "^2.3.1"
   },
   "publishConfig": {
     "access": "public"
