@@ -98,24 +98,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
                 operationConfig.path += '?';
               }
               operationConfig.path += `${paramObj.name}={args.${paramObj.name}}`;
-              switch (paramObj.schema?.type || (paramObj as any).type) {
-                case 'string':
-                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-                  operationConfig.argTypeMap[paramObj.name] = 'String';
-                  break;
-                case 'integer':
-                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-                  operationConfig.argTypeMap[paramObj.name] = 'Int';
-                  break;
-                case 'number':
-                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-                  operationConfig.argTypeMap[paramObj.name] = 'Float';
-                  break;
-                case 'boolean':
-                  operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-                  operationConfig.argTypeMap[paramObj.name] = 'Boolean';
-                  break;
-              }
             }
             break;
           case 'path':
@@ -146,6 +128,24 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             if (paramObj.examples) {
               operationConfig.requestSample = Object.values(paramObj.examples)[0];
             }
+            break;
+        }
+        switch (paramObj.schema?.type || (paramObj as any).type) {
+          case 'string':
+            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+            operationConfig.argTypeMap[paramObj.name] = 'String';
+            break;
+          case 'integer':
+            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+            operationConfig.argTypeMap[paramObj.name] = 'Int';
+            break;
+          case 'number':
+            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+            operationConfig.argTypeMap[paramObj.name] = 'Float';
+            break;
+          case 'boolean':
+            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+            operationConfig.argTypeMap[paramObj.name] = 'Boolean';
             break;
         }
         if (paramObj.required) {
