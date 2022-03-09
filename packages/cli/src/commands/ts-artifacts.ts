@@ -384,11 +384,11 @@ export async function ${
     }
   };
 
-  const packageJsonJob = () =>
+  const packageJsonJob = (module: string) => () =>
     writeJSON(pathModule.join(artifactsDir, 'package.json'), {
       name: 'mesh-artifacts',
       private: true,
-      type: 'commonjs',
+      type: module,
       main: 'index.js',
       module: 'index.mjs',
       sideEffects: false,
@@ -414,16 +414,21 @@ export async function ${
     const tsConfig = JSON.parse(tsConfigStr);
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
       jobs.push(esmJob('js'));
+      if (!tsOnly) {
+        jobs.push(packageJsonJob('module'));
+      }
     } else {
       jobs.push(cjsJob);
+      if (!tsOnly) {
+        jobs.push(packageJsonJob('commonjs'));
+      }
     }
   } else {
     jobs.push(esmJob('mjs'));
     jobs.push(cjsJob);
-  }
-
-  if (!tsOnly) {
-    jobs.push(packageJsonJob);
+    if (!tsOnly) {
+      jobs.push(packageJsonJob('commonjs'));
+    }
   }
 
   for (const job of jobs) {
