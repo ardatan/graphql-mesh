@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.66.0
+
+### Minor Changes
+
+- 6f07de8fe: feat(graphql): custom fetch strategies
+
+### Patch Changes
+
+- 6f07de8fe: fix: do not import process from env
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/store@0.3.23
+
 ## 0.65.0
 
 ### Minor Changes

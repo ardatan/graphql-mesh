@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.17.1
+
+### Patch Changes
+
+- 6f07de8fe: fix: do not import process from env
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/types@0.66.0
+  - @graphql-mesh/utils@0.28.0
+  - json-machete@0.5.11
+
 ## 0.17.0
 
 ### Minor Changes

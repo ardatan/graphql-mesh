@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-cache
 
+## 0.11.24
+
+### Patch Changes
+
+- 6f07de8fe: fix: do not import process from env
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/types@0.66.0
+  - @graphql-mesh/utils@0.28.0
+
 ## 0.11.23
 
 ### Patch Changes

@@ -1,5 +1,26 @@
 # @graphql-mesh/config
 
+## 0.31.0
+
+### Minor Changes
+
+- 6f07de8fe: feat(cli/config): add customization options to CLI
+
+### Patch Changes
+
+- 6f07de8fe: fix: do not import process from env
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/types@0.66.0
+  - @graphql-mesh/utils@0.28.0
+  - @graphql-mesh/runtime@0.31.8
+  - @graphql-mesh/cache-inmemory-lru@0.5.53
+  - @graphql-mesh/merger-bare@0.13.16
+  - @graphql-mesh/merger-stitching@0.15.16
+  - @graphql-mesh/store@0.3.23
+
 ## 0.30.7
 
 ### Patch Changes

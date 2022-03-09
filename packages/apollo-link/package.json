@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/apollo-link",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/index.js",
@@ -26,7 +26,7 @@
     "@apollo/client": "3.5.9"
   },
   "peerDependencies": {
-    "@graphql-mesh/runtime": "^0.31.3",
+    "@graphql-mesh/runtime": "^0.31.8",
     "graphql": "^15.2.0 || ^16.0.0",
     "@apollo/client": "^3.5.9"
   },

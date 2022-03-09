@@ -1,5 +1,33 @@
 # @graphql-mesh/container
 
+## 0.1.52
+
+### Patch Changes
+
+- b481fbc39: enhance: add tslib to dependencies to reduce bundle size
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [6f07de8fe]
+- Updated dependencies [b481fbc39]
+  - @graphql-mesh/cli@0.58.0
+  - @graphql-mesh/config@0.31.0
+  - @graphql-mesh/graphql@0.21.0
+  - @graphql-mesh/odata@0.16.15
+  - @graphql-mesh/openapi@0.23.18
+  - @graphql-mesh/postgraphile@0.19.8
+  - @graphql-mesh/soap@0.10.24
+  - @graphql-mesh/runtime@0.31.8
+  - @graphql-mesh/transform-cache@0.11.24
+  - @graphql-mesh/transform-mock@0.14.9
+  - @graphql-mesh/grpc@0.19.17
+  - @graphql-mesh/json-schema@0.25.1
+  - @graphql-mesh/transform-encapsulate@0.3.24
+  - @graphql-mesh/transform-extend@0.9.23
+  - @graphql-mesh/transform-filter-schema@0.14.24
+  - @graphql-mesh/transform-prefix@0.11.13
+  - @graphql-mesh/transform-rename@0.12.13
+  - @graphql-mesh/transform-resolvers-composition@0.12.23
+
 ## 0.1.51
 
 ### Patch Changes
