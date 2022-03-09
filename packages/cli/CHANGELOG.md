@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.59.0
+
+### Minor Changes
+
+- 81ee06bae: feat(cli): respect tsconfig for package.json type=module
+
 ## 0.58.0
 
 ### Minor Changes
