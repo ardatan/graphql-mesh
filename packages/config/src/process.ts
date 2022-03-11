@@ -289,10 +289,9 @@ export async function processConfig(
     const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
     if (typeof additionalResolverDefinition === 'string') {
       importCodes.push(
-        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule.join(
-          '..',
-          additionalResolverDefinition
-        )}';`
+        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
+          .join('..', additionalResolverDefinition)
+          .replace('\\', '/')}';`
       );
       codes.push(
         `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
@@ -316,7 +315,9 @@ export async function processConfig(
   let additionalEnvelopPlugins = [];
   if (config.additionalEnvelopPlugins) {
     importCodes.push(
-      `import importedAdditionalEnvelopPlugins from '${pathModule.join('..', config.additionalEnvelopPlugins)}';`
+      `import importedAdditionalEnvelopPlugins from '${pathModule
+        .join('..', config.additionalEnvelopPlugins)
+        .replace('\\', '/')}';`
     );
     const importedAdditionalEnvelopPlugins = await importFn(
       pathModule.isAbsolute(config.additionalEnvelopPlugins)
