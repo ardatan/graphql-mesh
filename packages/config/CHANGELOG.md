@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.31.3
+
+### Patch Changes
+
+- 81a9b9f69: fix(config): fix all path elements on Windows
+
 ## 0.31.2
 
 ### Patch Changes
