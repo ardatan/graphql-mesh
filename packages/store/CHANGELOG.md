@@ -1,5 +1,11 @@
 # @graphql-mesh/store
 
+## 0.3.24
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.28.1
+
 ## 0.3.23
 
 ### Patch Changes

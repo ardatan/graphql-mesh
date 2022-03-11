@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.14.25
+
+### Patch Changes
+
+- 98ff961ff: enhance: New Transform Prune to prune schema outside of handlers and other transforms
+- Updated dependencies [98ff961ff]
+  - @graphql-mesh/types@0.66.1
+  - @graphql-mesh/utils@0.28.1
+
 ## 0.14.24
 
 ### Patch Changes
