@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.28.2
+
+### Patch Changes
+
+- fb876e99c: fix: bump fixed delegate package
+- Updated dependencies [fb876e99c]
+  - @graphql-mesh/types@0.66.2
+
 ## 0.28.1
 
 ### Patch Changes
