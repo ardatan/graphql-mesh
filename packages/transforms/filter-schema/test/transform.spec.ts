@@ -4,6 +4,7 @@ import { PubSub } from '@graphql-mesh/utils';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { ImportFn } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { pruneSchema } from '@graphql-tools/utils';
 
 describe('filter', () => {
   const cache = new InMemoryLRUCache();
@@ -465,7 +466,7 @@ type Query {
     );
   });
 
-  it('should remove type if all fields are filtered out', async () => {
+  it('should remove type with pruning if all fields are filtered out', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type Query {
         foo: String
@@ -490,7 +491,7 @@ type Query {
         }),
       ],
     });
-    expect(printSchema(schema).trim()).toBe(
+    expect(printSchema(pruneSchema(schema)).trim()).toBe(
       /* GraphQL */ `
 type Query {
   foo: String

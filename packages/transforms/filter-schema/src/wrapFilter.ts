@@ -1,7 +1,7 @@
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionResult, pruneSchema, ExecutionRequest } from '@graphql-tools/utils';
+import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import {
   FilterRootFields,
   FilterObjectFields,
@@ -104,19 +104,7 @@ export default class WrapFilter implements MeshTransform {
     subschemaConfig: SubschemaConfig,
     transformedSchema?: GraphQLSchema
   ) {
-    const returnedSchema = applySchemaTransforms(
-      originalWrappingSchema,
-      subschemaConfig,
-      transformedSchema,
-      this.transforms
-    );
-    // TODO: Need a better solution
-    return pruneSchema(returnedSchema, {
-      skipEmptyCompositeTypePruning: false,
-      skipEmptyUnionPruning: true,
-      skipUnimplementedInterfacesPruning: true,
-      skipUnusedTypesPruning: true,
-    });
+    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
   }
 
   transformRequest(

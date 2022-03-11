@@ -1,6 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { MapperKind, mapSchema, pruneSchema } from '@graphql-tools/utils';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { matcher } from 'micromatch';
 
 export default class BareFilter implements MeshTransform {
@@ -90,6 +90,6 @@ export default class BareFilter implements MeshTransform {
       }),
     });
 
-    return pruneSchema(transformedSchema);
+    return transformedSchema;
   }
 }

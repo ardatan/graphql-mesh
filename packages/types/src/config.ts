@@ -1071,6 +1071,7 @@ export interface Transform {
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
+  prune?: PruneTransformConfig;
   /**
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
@@ -1369,6 +1370,31 @@ export interface PrefixTransformConfig {
    * Changes types (default: true)
    */
   includeTypes?: boolean;
+}
+/**
+ * Prune transform
+ */
+export interface PruneTransformConfig {
+  /**
+   * Types to skip pruning
+   */
+  skipPruning?: string[];
+  /**
+   * Set to `true` to skip pruning object types or interfaces with no fields
+   */
+  skipEmptyCompositeTypePruning?: boolean;
+  /**
+   * Set to `true` to skip pruning interfaces that are not implemented by any other types
+   */
+  skipUnimplementedInterfacesPruning?: boolean;
+  /**
+   * Set to `true` to skip pruning empty unions
+   */
+  skipEmptyUnionPruning?: boolean;
+  /**
+   * Set to `true` to skip pruning unused types
+   */
+  skipUnusedTypesPruning?: boolean;
 }
 export interface RenameTransform {
   /**

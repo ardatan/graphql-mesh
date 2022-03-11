@@ -4,7 +4,7 @@ import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';
-import { MapperKind, mapSchema, selectObjectFields, pruneSchema } from '@graphql-tools/utils';
+import { MapperKind, mapSchema, selectObjectFields } from '@graphql-tools/utils';
 
 type ReplaceFieldConfig = YamlConfig.ReplaceFieldConfig &
   Pick<YamlConfig.ReplaceFieldTransformObject, 'scope' | 'composer' | 'name'>;
@@ -117,6 +117,6 @@ export default class ReplaceFieldTransform implements MeshTransform {
       },
     });
 
-    return pruneSchema(transformedSchema);
+    return transformedSchema;
   }
 }

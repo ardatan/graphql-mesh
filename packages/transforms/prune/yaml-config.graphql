@@ -1,0 +1,29 @@
+extend type Transform {
+  """
+  Prune transform
+  """
+  prune: PruneTransformConfig
+}
+
+type PruneTransformConfig @md {
+  """
+  Types to skip pruning
+  """
+  skipPruning: [String!]
+  """
+  Set to `true` to skip pruning object types or interfaces with no fields
+  """
+  skipEmptyCompositeTypePruning: Boolean
+  """
+  Set to `true` to skip pruning interfaces that are not implemented by any other types
+  """
+  skipUnimplementedInterfacesPruning: Boolean
+  """
+  Set to `true` to skip pruning empty unions
+  """
+  skipEmptyUnionPruning: Boolean
+  """
+  Set to `true` to skip pruning unused types
+  """
+  skipUnusedTypesPruning: Boolean
+}
