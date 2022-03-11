@@ -400,6 +400,10 @@
           "$ref": "#/definitions/PrefixTransformConfig",
           "description": "Prefix transform"
         },
+        "prune": {
+          "$ref": "#/definitions/PruneTransformConfig",
+          "description": "Prune transform"
+        },
         "rename": {
           "description": "Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)",
           "anyOf": [
@@ -2696,6 +2700,37 @@
         "includeTypes": {
           "type": "boolean",
           "description": "Changes types (default: true)"
+        }
+      }
+    },
+    "PruneTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PruneTransformConfig",
+      "properties": {
+        "skipPruning": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Types to skip pruning"
+        },
+        "skipEmptyCompositeTypePruning": {
+          "type": "boolean",
+          "description": "Set to `true` to skip pruning object types or interfaces with no fields"
+        },
+        "skipUnimplementedInterfacesPruning": {
+          "type": "boolean",
+          "description": "Set to `true` to skip pruning interfaces that are not implemented by any other types"
+        },
+        "skipEmptyUnionPruning": {
+          "type": "boolean",
+          "description": "Set to `true` to skip pruning empty unions"
+        },
+        "skipUnusedTypesPruning": {
+          "type": "boolean",
+          "description": "Set to `true` to skip pruning unused types"
         }
       }
     },
