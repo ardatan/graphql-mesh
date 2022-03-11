@@ -291,7 +291,8 @@ export async function processConfig(
       importCodes.push(
         `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
           .join('..', additionalResolverDefinition)
-          .replace('\\', '/')}';`
+          .split('\\')
+          .join('/')}';`
       );
       codes.push(
         `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
@@ -317,7 +318,8 @@ export async function processConfig(
     importCodes.push(
       `import importedAdditionalEnvelopPlugins from '${pathModule
         .join('..', config.additionalEnvelopPlugins)
-        .replace('\\', '/')}';`
+        .split('\\')
+        .join('/')}';`
     );
     const importedAdditionalEnvelopPlugins = await importFn(
       pathModule.isAbsolute(config.additionalEnvelopPlugins)
