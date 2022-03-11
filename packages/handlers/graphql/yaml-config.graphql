@@ -35,7 +35,7 @@ type GraphQLHandlerCodeFirstConfiguration @md {
   schema: Any!
 }
 
-type GraphQLHandlerHTTPConfiguration {
+type GraphQLHandlerHTTPConfiguration @md {
   """
   A url or file path to your remote GraphQL endpoint.
   If you provide a path to a code file(js or ts),
