@@ -1,5 +1,13 @@
 # @omnigraph/openapi
 
+## 0.3.14
+
+### Patch Changes
+
+- @omnigraph/json-schema@0.17.2
+- @graphql-mesh/utils@0.28.1
+- json-machete@0.5.12
+
 ## 0.3.13
 
 ### Patch Changes

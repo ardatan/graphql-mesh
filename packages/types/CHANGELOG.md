@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.66.1
+
+### Patch Changes
+
+- 98ff961ff: enhance: New Transform Prune to prune schema outside of handlers and other transforms
+  - @graphql-mesh/store@0.3.24
+
 ## 0.66.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/odata
 
+## 0.16.16
+
+### Patch Changes
+
+- 98ff961ff: enhance: New Transform Prune to prune schema outside of handlers and other transforms
+- Updated dependencies [98ff961ff]
+  - @graphql-mesh/types@0.66.1
+  - @graphql-mesh/utils@0.28.1
+  - @graphql-mesh/store@0.3.24
+
 ## 0.16.15
 
 ### Patch Changes
