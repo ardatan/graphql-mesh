@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.31.2
+
+### Patch Changes
+
+- b9cb28503: fix(config): fix paths for additional envelop plugins and resolvers on Windows
+
 ## 0.31.1
 
 ### Patch Changes
