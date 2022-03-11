@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@ardatan/string-interpolation": "1.2.12",
-    "@graphql-tools/delegate": "8.5.1",
+    "@graphql-tools/delegate": "8.5.2",
     "@graphql-tools/utils": "8.6.2",
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/types": "0.66.1",

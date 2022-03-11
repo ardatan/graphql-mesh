@@ -27,7 +27,7 @@
     "@graphql-tools/stitch": "8.4.4",
     "@graphql-tools/wrap": "8.4.3",
     "@graphql-mesh/utils": "0.28.1",
-    "@graphql-tools/delegate": "8.5.1",
+    "@graphql-tools/delegate": "8.5.2",
     "@graphql-tools/stitching-directives": "2.2.2",
     "@graphql-tools/schema": "8.3.2",
     "@graphql-mesh/store": "0.3.24",

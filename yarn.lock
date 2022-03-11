@@ -2981,10 +2981,10 @@
     is-promise "4.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/delegate@8.5.1", "@graphql-tools/delegate@^8.5.1":
-  version "8.5.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-8.5.1.tgz#3d146cc3bb74935116d3f4bddb3affdf14a9712d"
-  integrity sha512-/YPmVxitt57F8sH50pnfXASzOOjEfaUDkX48eF5q6f16+JBncej2zeu+Zm2c68q8MbIxhPlEGfpd0QZeqTvAxw==
+"@graphql-tools/delegate@8.5.2":
+  version "8.5.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-8.5.2.tgz#96da4b9daa17bb0bc758538de3ebe4e58132220f"
+  integrity sha512-M7d1jY4orPUC7MBoSKZEP21HTVqVGX+mS0AL6UGxg1L7GCRtaYQeopyKXmnnEmBi5FNZ9KduJgHRtxkS4Hc6uA==
   dependencies:
     "@graphql-tools/batch-execute" "^8.3.2"
     "@graphql-tools/schema" "^8.3.2"
@@ -3006,6 +3006,19 @@
     dataloader "2.0.0"
     tslib "~2.2.0"
     value-or-promise "1.0.6"
+
+"@graphql-tools/delegate@^8.5.1":
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-8.5.1.tgz#3d146cc3bb74935116d3f4bddb3affdf14a9712d"
+  integrity sha512-/YPmVxitt57F8sH50pnfXASzOOjEfaUDkX48eF5q6f16+JBncej2zeu+Zm2c68q8MbIxhPlEGfpd0QZeqTvAxw==
+  dependencies:
+    "@graphql-tools/batch-execute" "^8.3.2"
+    "@graphql-tools/schema" "^8.3.2"
+    "@graphql-tools/utils" "^8.6.2"
+    dataloader "2.0.0"
+    graphql-executor "0.0.18"
+    tslib "~2.3.0"
+    value-or-promise "1.0.11"
 
 "@graphql-tools/git-loader@^6", "@graphql-tools/git-loader@^6.2.5":
   version "6.2.6"
