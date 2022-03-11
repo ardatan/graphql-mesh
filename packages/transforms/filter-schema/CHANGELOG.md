@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.14.26
+
+### Patch Changes
+
+- fb876e99c: fix: bump fixed delegate package
+- Updated dependencies [fb876e99c]
+  - @graphql-mesh/types@0.66.2
+  - @graphql-mesh/utils@0.28.2
+
 ## 0.14.25
 
 ### Patch Changes

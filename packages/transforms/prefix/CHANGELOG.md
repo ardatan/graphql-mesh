@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-prefix
 
+## 0.11.15
+
+### Patch Changes
+
+- fb876e99c: fix: bump fixed delegate package
+- Updated dependencies [fb876e99c]
+  - @graphql-mesh/types@0.66.2
+  - @graphql-mesh/utils@0.28.2
+
 ## 0.11.14
 
 ### Patch Changes

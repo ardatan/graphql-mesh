@@ -1,5 +1,12 @@
 # mysql-employees
 
+## 0.5.187
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.59.4
+- @graphql-mesh/mysql@0.14.29
+
 ## 0.5.186
 
 ### Patch Changes
