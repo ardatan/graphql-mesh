@@ -1,5 +1,17 @@
 # @graphql-mesh/json-schema
 
+## 0.25.4
+
+### Patch Changes
+
+- f11d8b9c8: fix: add implicit dependencies
+- Updated dependencies [f11d8b9c8]
+  - @omnigraph/json-schema@0.17.4
+  - @graphql-mesh/store@0.3.26
+  - @graphql-mesh/types@0.66.3
+  - @graphql-mesh/utils@0.28.3
+  - json-machete@0.5.14
+
 ## 0.25.3
 
 ### Patch Changes

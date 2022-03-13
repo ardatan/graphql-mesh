@@ -1,5 +1,13 @@
 # @graphql-mesh/runtime
 
+## 0.31.11
+
+### Patch Changes
+
+- f11d8b9c8: fix: add implicit dependencies
+  - @graphql-mesh/types@0.66.3
+  - @graphql-mesh/utils@0.28.3
+
 ## 0.31.10
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @omnigraph/raml
 
+## 0.5.9
+
+### Patch Changes
+
+- f11d8b9c8: fix: add implicit dependencies
+- Updated dependencies [f11d8b9c8]
+  - @omnigraph/json-schema@0.17.4
+  - @graphql-mesh/utils@0.28.3
+  - json-machete@0.5.14
+
 ## 0.5.8
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/raml
 
+## 0.1.21
+
+### Patch Changes
+
+- Updated dependencies [f11d8b9c8]
+  - @omnigraph/raml@0.5.9
+  - @graphql-mesh/store@0.3.26
+  - @graphql-mesh/types@0.66.3
+  - @graphql-mesh/utils@0.28.3
+
 ## 0.1.20
 
 ### Patch Changes

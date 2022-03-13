@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-extend
 
+## 0.9.26
+
+### Patch Changes
+
+- f11d8b9c8: fix: add implicit dependencies
+  - @graphql-mesh/types@0.66.3
+  - @graphql-mesh/utils@0.28.3
+
 ## 0.9.25
 
 ### Patch Changes

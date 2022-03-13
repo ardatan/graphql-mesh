@@ -1,5 +1,12 @@
 # @graphql-mesh/replace-field
 
+## 0.3.26
+
+### Patch Changes
+
+- @graphql-mesh/types@0.66.3
+- @graphql-mesh/utils@0.28.3
+
 ## 0.3.25
 
 ### Patch Changes
