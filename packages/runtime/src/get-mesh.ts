@@ -171,7 +171,8 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
           for (const fieldName in rootTypeFieldMap) {
             const rootTypeField = rootTypeFieldMap[fieldName];
             const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
-            const shouldHaveSelectionSet = !isLeafType(getNamedType(rootTypeField.type));
+            const namedReturnType = getNamedType(rootTypeField.type);
+            const shouldHaveSelectionSet = !isLeafType(namedReturnType);
             rawSourceContext[rootType.name][fieldName] = async ({
               root,
               args,
@@ -179,14 +180,14 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
               info = {
                 fieldName,
                 fieldNodes: [],
-                returnType: rootTypeField.type,
+                returnType: namedReturnType,
                 parentType: rootType,
                 path: {
                   typename: rootType.name,
                   key: fieldName,
                   prev: undefined,
                 },
-                schema: unifiedSchema,
+                schema: transformedSchema,
                 fragments: {},
                 rootValue: root,
                 operation: {

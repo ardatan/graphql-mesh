@@ -30,7 +30,8 @@
     "@graphql-tools/utils": "8.6.2",
     "graphql-compose": "9.0.7",
     "@omnigraph/json-schema": "0.17.3",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "@json-schema-tools/meta-schema": "1.6.19"
   },
   "publishConfig": {
     "access": "public",

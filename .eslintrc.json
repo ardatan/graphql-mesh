@@ -26,7 +26,8 @@
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/no-floating-promises": "error",
     "no-eval": "off",
-    "no-use-before-define": "off"
+    "no-use-before-define": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] }]
   },
   "env": {
     "es6": true,

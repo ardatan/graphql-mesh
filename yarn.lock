@@ -2902,6 +2902,53 @@
     object-inspect "1.10.3"
     tslib "^2.0.0"
 
+"@graphql-mesh/store@0.3.25":
+  version "0.3.25"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/store/-/store-0.3.25.tgz#40a5957c1238f8848d7919fb03181beef50e3ba9"
+  integrity sha512-Uz++wny1TIC/0D4XoV4jpGyj4fFP9oOHHDFH4nMY0KzmXQxTLdZrKn8Zr+vuxWbDXe01Tuam9QVjpeZqzE+GPA==
+  dependencies:
+    "@graphql-inspector/core" "3.1.1"
+    "@graphql-mesh/utils" "0.28.2"
+    "@graphql-tools/utils" "8.6.2"
+    tslib "^2.3.1"
+
+"@graphql-mesh/types@0.66.2":
+  version "0.66.2"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/types/-/types-0.66.2.tgz#b205d594b62ae4c5bab12a59f296842d247ee469"
+  integrity sha512-KrvpRylhjm03wce/YHs1lyBLVZ1GoxrY/u5Z84OUDnKOCgyfjuFlkSYJjmytJZ5a9nQLwsXIQM1+NBaUFN7v+w==
+  dependencies:
+    "@graphql-mesh/store" "0.3.25"
+    "@graphql-tools/delegate" "8.5.2"
+    "@graphql-tools/utils" "8.6.2"
+    "@graphql-typed-document-node/core" "3.1.1"
+    fetchache "0.1.1"
+    tslib "^2.3.1"
+
+"@graphql-mesh/utils@0.28.2":
+  version "0.28.2"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/utils/-/utils-0.28.2.tgz#5aa6de6bfc40ce5dcbd4dc15d32cb9c02649a17f"
+  integrity sha512-pLEVnlFdCKGGzjmsFcRlUZv9woC2Jppe9CPx4rrz3S+wYB5F8/B3rpegPlstlzBGUJlF/oIIVzuU2hrZgjlaww==
+  dependencies:
+    "@ardatan/string-interpolation" "1.2.12"
+    "@graphql-mesh/types" "0.66.2"
+    "@graphql-tools/delegate" "8.5.2"
+    "@graphql-tools/utils" "8.6.2"
+    "@graphql-typed-document-node/core" "3.1.1"
+    chalk "4.1.2"
+    cross-undici-fetch "0.1.25"
+    date-fns "2.28.0"
+    fetchache "0.1.1"
+    file-uri-to-path "2.0.0"
+    flatstr "1.0.12"
+    graphql-jit "0.7.3"
+    graphql-subscriptions "2.0.0"
+    is-url "1.2.4"
+    js-yaml "4.1.0"
+    lodash "4.17.21"
+    object-hash "3.0.0"
+    tiny-lru "8.0.1"
+    tslib "^2.3.1"
+
 "@graphql-tools/apollo-engine-loader@^6":
   version "6.2.5"
   resolved "https://registry.yarnpkg.com/@graphql-tools/apollo-engine-loader/-/apollo-engine-loader-6.2.5.tgz#b9e65744f522bb9f6ca50651e5622820c4f059a8"
@@ -11474,7 +11521,7 @@ fbjs@^3.0.0:
     setimmediate "^1.0.5"
     ua-parser-js "^0.7.18"
 
-fetchache@0.1.1:
+fetchache@0.1.1, fetchache@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.1.1.tgz#013eef193b4a219a355dea5ca02a720565d8bcdc"
   integrity sha512-ots7Jv408zPDxCaKGTeRajzuiullinmfzzLV/dA+U81BQTtbspCiy/GTHPekIIyWAkKvP/GYP0WVKzF6ljtdEg==

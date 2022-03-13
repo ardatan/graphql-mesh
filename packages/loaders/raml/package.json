@@ -30,7 +30,8 @@
     "to-json-schema": "0.2.5",
     "@graphql-mesh/utils": "0.28.2",
     "@graphql-tools/utils": "8.6.2",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "change-case": "4.1.2"
   },
   "publishConfig": {
     "access": "public",

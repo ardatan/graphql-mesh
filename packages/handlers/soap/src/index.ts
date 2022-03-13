@@ -3,7 +3,7 @@ import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
 import soap from 'soap';
 import { getCachedFetch, getHeadersObject, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
+import type { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 
 export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
