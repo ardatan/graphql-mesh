@@ -3,7 +3,7 @@ import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import pathModule from 'path';
-import fs, { readFileSync } from 'fs';
+import fs from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
   writeFile,
@@ -87,7 +87,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         });
         if (tsConfigExists) {
           try {
-            const tsConfigStr = readFileSync(tsConfigPath, 'utf-8');
+            const tsConfigStr = fs.readFileSync(tsConfigPath, 'utf-8');
             const tsConfigStrWithoutComments = stripJSONComments(tsConfigStr);
             const tsConfig = JSON.parse(tsConfigStrWithoutComments);
             if (tsConfig.compilerOptions?.paths) {
