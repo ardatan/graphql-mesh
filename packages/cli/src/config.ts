@@ -20,6 +20,18 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   const { configName = 'mesh', dir: configDir = '', ...restOptions } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
+    searchPlaces: [
+      'package.json',
+      `.${configName}rc`,
+      `.${configName}rc.json`,
+      `.${configName}rc.yaml`,
+      `.${configName}rc.yml`,
+      `.${configName}rc.js`,
+      `.${configName}rc.ts`,
+      `.${configName}rc.cjs`,
+      `${configName}.config.js`,
+      `${configName}.config.cjs`,
+    ],
     loaders: {
       '.json': customLoader('json', options?.importFn),
       '.yaml': customLoader('yaml', options?.importFn),
