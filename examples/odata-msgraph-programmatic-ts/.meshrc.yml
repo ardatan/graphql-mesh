@@ -6,3 +6,6 @@ sources:
         batch: json
         operationHeaders:
           Authorization: Bearer {context.accessToken}
+
+documents:
+  - './documents/*.graphql'

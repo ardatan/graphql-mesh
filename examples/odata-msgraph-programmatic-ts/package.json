@@ -4,14 +4,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "prestart": "mesh build && graphql-codegen",
+    "prestart": "mesh build",
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "@graphql-codegen/cli": "1.21.4",
-    "@graphql-codegen/typescript": "1.22.0",
-    "@graphql-codegen/typescript-operations": "1.17.16",
-    "@graphql-codegen/typed-document-node": "1.18.5",
     "@graphql-mesh/cli": "0.59.5",
     "@graphql-mesh/config": "0.31.5",
     "@graphql-mesh/runtime": "0.31.11",

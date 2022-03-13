@@ -1,8 +1,0 @@
-schema: ./.mesh/schema.graphql
-documents: ./documents/*.graphql
-generates:
-  ./src/graphql-operations.ts:
-    plugins:
-      - typescript
-      - typescript-operations
-      - typed-document-node
