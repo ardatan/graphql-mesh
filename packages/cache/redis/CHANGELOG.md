@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-redis
 
+## 0.7.17
+
+### Patch Changes
+
+- 7ffa86e84: fix(redis): close redis connection when destroy
+
 ## 0.7.16
 
 ### Patch Changes

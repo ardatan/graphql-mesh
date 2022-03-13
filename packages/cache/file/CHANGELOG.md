@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-file
 
+## 0.7.31
+
+### Patch Changes
+
+- 7ffa86e84: fix(file): write to the file when delete an entry
+
 ## 0.7.30
 
 ### Patch Changes

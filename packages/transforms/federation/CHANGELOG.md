@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-federation
 
+## 0.8.27
+
+### Patch Changes
+
+- ecc6e9a05: initialize field name before use
+
 ## 0.8.26
 
 ### Patch Changes
