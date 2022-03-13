@@ -1,5 +1,15 @@
 # @graphql-mesh/soap
 
+## 0.10.27
+
+### Patch Changes
+
+- f11d8b9c8: fix: add implicit dependencies
+- Updated dependencies [f11d8b9c8]
+  - @graphql-mesh/store@0.3.26
+  - @graphql-mesh/types@0.66.3
+  - @graphql-mesh/utils@0.28.3
+
 ## 0.10.26
 
 ### Patch Changes

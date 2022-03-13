@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/new-openapi",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,10 +23,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.3.25",
-    "@graphql-mesh/types": "0.66.2",
-    "@omnigraph/openapi": "0.3.15",
-    "@graphql-mesh/utils": "0.28.2",
+    "@graphql-mesh/store": "0.3.26",
+    "@graphql-mesh/types": "0.66.3",
+    "@omnigraph/openapi": "0.3.16",
+    "@graphql-mesh/utils": "0.28.3",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 0.31.5
+
+### Patch Changes
+
+- f11d8b9c8: fix: add implicit dependencies
+- Updated dependencies [f11d8b9c8]
+  - @graphql-mesh/runtime@0.31.11
+  - @graphql-mesh/store@0.3.26
+  - @graphql-mesh/merger-stitching@0.15.19
+  - @graphql-mesh/types@0.66.3
+  - @graphql-mesh/cache-inmemory-lru@0.5.56
+  - @graphql-mesh/merger-bare@0.13.19
+  - @graphql-mesh/utils@0.28.3
+
 ## 0.31.4
 
 ### Patch Changes
