@@ -1,8 +1,6 @@
-import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
+import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
 import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
-import DataLoader from 'dataloader';
-import { URL } from 'url';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 
 function interpolateStrWithEnv(str: string): string {
@@ -12,14 +10,13 @@ function interpolateStrWithEnv(str: string): string {
 export default class RedisCache<V = string> implements KeyValueCache<V> {
   private client: Redis.Redis;
 
-  constructor(options: YamlConfig.Transform['redis'] = {}) {
-    let redisClient: Redis.Redis;
-
+  constructor(options: YamlConfig.Transform['redis'] & { pubsub: MeshPubSub }) {
     if (options.url) {
       const redisUrl = new URL(options.url);
 
       redisUrl.searchParams.set('lazyConnect', 'true');
       redisUrl.searchParams.set('enableAutoPipelining', 'true');
+      redisUrl.searchParams.set('enableOfflineQueue', 'true');
 
       if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
         throw new Error('Redis URL must use either redis:// or rediss://');
@@ -28,38 +25,26 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
       const fullUrl = redisUrl.toString();
       const parsedFullUrl = interpolateStrWithEnv(fullUrl);
 
-      redisClient = new Redis(parsedFullUrl);
+      this.client = new Redis(parsedFullUrl);
     } else {
       const parsedHost = interpolateStrWithEnv(options.host);
       const parsedPort = interpolateStrWithEnv(options.port);
       const parsedPassword = interpolateStrWithEnv(options.password);
       if (parsedHost) {
-        redisClient = new Redis({
+        this.client = new Redis({
           host: parsedHost,
           port: parseInt(parsedPort),
           password: parsedPassword,
           lazyConnect: true,
           enableAutoPipelining: true,
+          enableOfflineQueue: true,
         });
       } else {
         return new InMemoryLRUCache() as any;
       }
     }
-
-    const dataLoader = new DataLoader<string[], [any, string]>(async (commands: string[][]) => {
-      const responses = await redisClient.pipeline(commands).exec();
-      return responses.map(([err, data]) => {
-        if (err) {
-          return err;
-        }
-        return data;
-      });
-    });
-    this.client = new Proxy(redisClient, {
-      get:
-        (_, methodName: keyof Redis.Redis) =>
-        (...args: string[]) =>
-          dataLoader.load([methodName, ...args]),
+    options.pubsub.subscribe('destroy', () => {
+      this.client.disconnect(false);
     });
   }
 
