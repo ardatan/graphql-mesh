@@ -3,7 +3,7 @@ import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import pathModule from 'path';
-import fs from 'fs';
+import fs, { readFileSync } from 'fs';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
   writeFile,
@@ -23,6 +23,8 @@ import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
 import { printSchema } from 'graphql';
+import { stripJSONComments } from './utils';
+import { inspect } from 'util';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -71,7 +73,8 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         } else {
           baseDir = pathModule.resolve(cwd(), dir);
         }
-        const tsConfigExists = fs.existsSync(pathModule.join(baseDir, 'tsconfig.json'));
+        const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+        const tsConfigExists = fs.existsSync(tsConfigPath);
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
@@ -84,8 +87,9 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         });
         if (tsConfigExists) {
           try {
-            const tsConfigStr = fs.readFileSync(pathModule.join(baseDir, 'tsconfig.json'), 'utf-8');
-            const tsConfig = JSON.parse(tsConfigStr);
+            const tsConfigStr = readFileSync(tsConfigPath, 'utf-8');
+            const tsConfigStrWithoutComments = stripJSONComments(tsConfigStr);
+            const tsConfig = JSON.parse(tsConfigStrWithoutComments);
             if (tsConfig.compilerOptions?.paths) {
               tsConfigPathsRegister({
                 baseUrl: baseDir,
@@ -93,7 +97,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
               });
             }
           } catch (e) {
-            logger.warn(e);
+            logger.warn(`Unable to read TSConfig file ${tsConfigPath};\n ${e.stack || e.message || inspect(e)}`);
           }
         }
         if (fs.existsSync(pathModule.join(baseDir, '.env'))) {

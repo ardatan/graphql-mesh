@@ -14,6 +14,7 @@ import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
 import fs from 'fs';
 import { generateOperations } from './generate-operations';
 import { GraphQLMeshCLIParams } from '..';
+import { stripJSONComments } from '../utils';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -410,8 +411,8 @@ export async function ${
 
   const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
   if (await pathExists(tsConfigPath)) {
-    const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf8');
-    const tsConfig = JSON.parse(tsConfigStr);
+    const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf-8');
+    const tsConfig = JSON.parse(stripJSONComments(tsConfigStr));
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
       jobs.push(esmJob('js'));
       if (!tsOnly) {
