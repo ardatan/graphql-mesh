@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-stitching
 
+## 0.15.20
+
+### Patch Changes
+
+- d7fac7dc6: fix(merger-stitching): add missing @graphql-tools/utils implicit dependency
+
 ## 0.15.19
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.60.0
+
+### Minor Changes
+
+- d7fac7dc6: feat(cli): strip json5 comments before parsing tsconfig files
+
+### Patch Changes
+
+- 9fad7c250: support `.meshrc.ts` config files
+  - @graphql-mesh/config@0.31.6
+
 ## 0.59.5
 
 ### Patch Changes
