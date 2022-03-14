@@ -125,7 +125,7 @@ export default class StitchingMerger implements MeshMerger {
       subschemas: subschemas as any[],
       typeDefs,
       resolvers,
-      subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],
+      subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer as any],
       typeMergingOptions: {
         validationSettings: {
           validationLevel: ValidationLevel.Off,
