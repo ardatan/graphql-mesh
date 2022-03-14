@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.66.5
+
+### Patch Changes
+
+- 2ffb1f287: fix: json schema reference
+  - @graphql-mesh/store@0.3.28
+
 ## 0.66.4
 
 ### Patch Changes

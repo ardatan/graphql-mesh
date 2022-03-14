@@ -1,5 +1,12 @@
 # mongoose-example
 
+## 0.5.190
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.60.2
+- @graphql-mesh/mongoose@0.10.32
+
 ## 0.5.189
 
 ### Patch Changes
