@@ -81,7 +81,7 @@ export default class GraphQLHandler implements MeshHandler {
     }
     const endpointFactory = getInterpolatedStringFactory(endpoint);
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
-    const executor = await this.urlLoader.getExecutorAsync(endpoint, {
+    const executor = this.urlLoader.getExecutorAsync(endpoint, {
       ...httpSourceConfig,
       subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       customFetch,
@@ -133,7 +133,7 @@ export default class GraphQLHandler implements MeshHandler {
           return buildClientSchema(sdlOrIntrospection);
         }
       } else {
-        const executor = await this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
+        const executor = this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
           ...httpSourceConfig,
           customFetch,
           subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
