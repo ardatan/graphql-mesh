@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-file",
-  "version": "0.7.31",
+  "version": "0.7.32",
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
@@ -23,8 +23,8 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.66.3",
-    "@graphql-mesh/utils": "0.28.3",
+    "@graphql-mesh/types": "0.66.4",
+    "@graphql-mesh/utils": "0.28.4",
     "dataloader": "2.0.0",
     "lodash": "4.17.21",
     "tslib": "^2.3.1"

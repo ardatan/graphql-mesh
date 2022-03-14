@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.66.4
+
+### Patch Changes
+
+- 6d2d46480: bump graphql-tools
+  - @graphql-mesh/store@0.3.27
+
 ## 0.66.3
 
 ### Patch Changes

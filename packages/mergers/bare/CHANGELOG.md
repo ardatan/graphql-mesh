@@ -1,5 +1,14 @@
 # @graphql-mesh/merger-bare
 
+## 0.13.20
+
+### Patch Changes
+
+- 634363331: fix: bump wrap and url-loader packages
+- Updated dependencies [6d2d46480]
+  - @graphql-mesh/types@0.66.4
+  - @graphql-mesh/utils@0.28.4
+
 ## 0.13.19
 
 ### Patch Changes
