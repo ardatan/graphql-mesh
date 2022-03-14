@@ -1,5 +1,15 @@
 # openapi-react-weatherbit
 
+## 0.3.148
+
+### Patch Changes
+
+- @graphql-mesh/cache-localforage@0.5.46
+- @graphql-mesh/new-openapi@0.1.19
+- @graphql-mesh/merger-bare@0.13.21
+- @graphql-mesh/runtime@0.31.13
+- @graphql-mesh/transform-cache@0.11.29
+
 ## 0.3.147
 
 ### Patch Changes
