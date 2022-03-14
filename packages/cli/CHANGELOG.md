@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.60.3
+
+### Patch Changes
+
+- 7523aa78b: fix(cli): remove extra document node import
+
 ## 0.60.2
 
 ### Patch Changes
