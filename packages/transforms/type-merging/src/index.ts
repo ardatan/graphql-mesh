@@ -1,7 +1,7 @@
 import { MeshTransform, MeshTransformOptions, ImportFn, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLSchema } from 'graphql';
 import _ from 'lodash';
-import { MergedTypeConfig, SubschemaConfig } from '@graphql-tools/delegate';
+import { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 export default class TypeMerging implements MeshTransform {

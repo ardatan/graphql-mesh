@@ -105,6 +105,10 @@ export async function processConfig(
 
   const rootStore = providedStore || getDefaultMeshStore(dir, importFn, artifactsDir || '.mesh');
 
+  const { pubsub, importCode: pubsubImportCode, code: pubsubCode } = await resolvePubSub(config.pubsub, importFn, dir);
+  importCodes.push(pubsubImportCode);
+  codes.push(pubsubCode);
+
   const {
     cache,
     importCode: cacheImportCode,
@@ -112,10 +116,6 @@ export async function processConfig(
   } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub);
   importCodes.push(cacheImportCode);
   codes.push(cacheCode);
-
-  const { pubsub, importCode: pubsubImportCode, code: pubsubCode } = await resolvePubSub(config.pubsub, importFn, dir);
-  importCodes.push(pubsubImportCode);
-  codes.push(pubsubCode);
 
   const sourcesStore = rootStore.child('sources');
   codes.push(`const sourcesStore = rootStore.child('sources');`);
