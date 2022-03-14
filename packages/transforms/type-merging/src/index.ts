@@ -8,7 +8,7 @@ export default class TypeMerging implements MeshTransform {
   private config: YamlConfig.Transform['typeMerging'];
   // private baseDir: string;
   importFn: ImportFn;
-  constructor({ config, baseDir, importFn }: MeshTransformOptions<YamlConfig.Transform['typeMerging']>) {
+  constructor({ config, importFn }: MeshTransformOptions<YamlConfig.Transform['typeMerging']>) {
     this.config = config;
     // this.baseDir = baseDir;
     this.importFn = importFn;

@@ -2,7 +2,7 @@ extend type Handler {
   """
   Handler for JSON Schema specification. Source could be a local json file, or a url to it.
   """
-  JsonSchema: JsonSchemaHandler
+  jsonSchema: JsonSchemaHandler
 }
 
 type JsonSchemaHandler @md {

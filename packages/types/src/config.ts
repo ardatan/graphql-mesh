@@ -208,7 +208,7 @@ export interface Handler {
     | GraphQLHandlerCodeFirstConfiguration
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
-  JsonSchema?: JsonSchemaHandler;
+  jsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
