@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.60.1
+
+### Patch Changes
+
+- 634363331: fix: bump wrap and url-loader packages
+- Updated dependencies [6d2d46480]
+- Updated dependencies [634363331]
+  - @graphql-mesh/types@0.66.4
+  - @graphql-mesh/runtime@0.31.12
+  - @graphql-mesh/config@0.31.7
+  - @graphql-mesh/store@0.3.27
+  - @graphql-mesh/utils@0.28.4
+
 ## 0.60.0
 
 ### Minor Changes
