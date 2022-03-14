@@ -72,7 +72,7 @@ export default class NamingConventionTransform implements MeshTransform {
       this.transforms.push(
         new RenameTypes(typeName =>
           IGNORED_TYPE_NAMES.includes(typeName) ? typeName : namingConventionFn(typeName) || typeName
-        )
+        ) as any
       );
     }
     if (options.config.fieldNames) {
@@ -80,12 +80,12 @@ export default class NamingConventionTransform implements MeshTransform {
         ? NAMING_CONVENTIONS[options.config.fieldNames]
         : (s: string) => s;
       this.transforms.push(
-        new RenameInputObjectFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName),
+        new RenameInputObjectFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName) as any,
         new TransformObjectFields((_, fieldName, fieldConfig) => [
           IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : fieldNamingConventionFn(fieldName) || fieldName,
           fieldConfig,
-        ]),
-        new RenameInterfaceFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName)
+        ]) as any,
+        new RenameInterfaceFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName) as any
       );
     }
 
@@ -95,7 +95,7 @@ export default class NamingConventionTransform implements MeshTransform {
         : (s: string) => s;
 
       this.transforms.push(
-        new RenameObjectFieldArguments((_typeName, _fieldName, argName) => fieldArgNamingConventionFn(argName))
+        new RenameObjectFieldArguments((_typeName, _fieldName, argName) => fieldArgNamingConventionFn(argName)) as any
       );
     }
 
@@ -112,7 +112,7 @@ export default class NamingConventionTransform implements MeshTransform {
               value: newEnumValue,
             },
           ];
-        })
+        }) as any
       );
     }
   }

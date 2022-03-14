@@ -52,7 +52,7 @@ export default class WrapRename implements MeshTransform {
               return typeName;
             }
             return replaceTypeNameFn(typeName);
-          })
+          }) as any
         );
       }
 
@@ -67,8 +67,8 @@ export default class WrapRename implements MeshTransform {
           replaceFieldNameFn = (typeName, fieldName) =>
             typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName;
         }
-        this.transforms.push(new RenameObjectFields(replaceFieldNameFn));
-        this.transforms.push(new RenameInputObjectFields(replaceFieldNameFn));
+        this.transforms.push(new RenameObjectFields(replaceFieldNameFn) as any);
+        this.transforms.push(new RenameInputObjectFields(replaceFieldNameFn) as any);
       }
 
       if (
@@ -94,7 +94,7 @@ export default class WrapRename implements MeshTransform {
               : fieldName;
         }
 
-        this.transforms.push(new RenameObjectFieldArguments(replaceArgNameFn));
+        this.transforms.push(new RenameObjectFieldArguments(replaceArgNameFn) as any);
       }
     }
   }

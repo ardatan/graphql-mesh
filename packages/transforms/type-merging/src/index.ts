@@ -1,7 +1,7 @@
 import { MeshTransform, MeshTransformOptions, ImportFn, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLSchema } from 'graphql';
 import _ from 'lodash';
-import { SubschemaConfig } from '@graphql-tools/delegate';
+import { MergedTypeConfig, SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 export default class TypeMerging implements MeshTransform {
@@ -73,7 +73,7 @@ export default class TypeMerging implements MeshTransform {
         fieldDirectiveExtensions.merge = rootFieldConfig;
       }
     }
-    subschemaConfig.merge = stitchingDirectivesTransformer({ schema }).merge;
+    subschemaConfig.merge = stitchingDirectivesTransformer({ schema }).merge as any;
     return schema;
   }
 }

@@ -238,7 +238,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
                 const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
                 const path = [fieldName];
                 const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
-                commonDelegateOptions.transforms = [wrapQueryTransform];
+                commonDelegateOptions.transforms = [wrapQueryTransform as any];
               }
               if (shouldHaveSelectionSet) {
                 let selectionCount = 0;
@@ -277,12 +277,12 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
                 }
               }
               if (key && argsFromKeys) {
-                const batchDelegationOptions: BatchDelegateOptions = {
+                const batchDelegationOptions = {
                   ...commonDelegateOptions,
                   key,
                   argsFromKeys,
                   valuesFromResults,
-                };
+                } as unknown as BatchDelegateOptions;
                 return batchDelegateToSchema(batchDelegationOptions);
               } else {
                 const options: IDelegateToSchemaOptions = {

@@ -28,7 +28,7 @@ export default class WrapFilter implements MeshTransform {
         this.transforms.push(
           new FilterTypes(type => {
             return isTypeMatch(type.name);
-          })
+          }) as any
         );
         continue;
       }
@@ -45,7 +45,7 @@ export default class WrapFilter implements MeshTransform {
         this.transforms.push(
           new FilterTypes(type => {
             return isMatch(type.name);
-          })
+          }) as any
         );
         continue;
       }
@@ -64,7 +64,7 @@ export default class WrapFilter implements MeshTransform {
               return { ...fieldConfig, args: fieldArgs };
             }
             return undefined;
-          })
+          }) as any
         );
         continue;
       }
@@ -76,7 +76,7 @@ export default class WrapFilter implements MeshTransform {
             return isMatch(rootFieldName);
           }
           return true;
-        })
+        }) as any
       );
 
       this.transforms.push(
@@ -85,7 +85,7 @@ export default class WrapFilter implements MeshTransform {
             return isMatch(objectFieldName);
           }
           return true;
-        })
+        }) as any
       );
 
       this.transforms.push(
@@ -94,7 +94,7 @@ export default class WrapFilter implements MeshTransform {
             return isMatch(inputObjectFieldName);
           }
           return true;
-        })
+        }) as any
       );
     }
   }

@@ -30,13 +30,13 @@ export default class EncapsulateTransform implements MeshTransform {
     const applyTo = { ...DEFUALT_APPLY_TO, ...(config?.applyTo || {}) };
 
     if (applyTo.query) {
-      this.transformMap.Query = new WrapType('Query', `${name}Query`, name);
+      this.transformMap.Query = new WrapType('Query', `${name}Query`, name) as any;
     }
     if (applyTo.mutation) {
-      this.transformMap.Mutation = new WrapType('Mutation', `${name}Mutation`, name);
+      this.transformMap.Mutation = new WrapType('Mutation', `${name}Mutation`, name) as any;
     }
     if (applyTo.subscription) {
-      this.transformMap.Subscription = new WrapType('Subscription', `${name}Subscription`, name);
+      this.transformMap.Subscription = new WrapType('Subscription', `${name}Subscription`, name) as any;
     }
   }
 

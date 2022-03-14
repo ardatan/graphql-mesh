@@ -39,7 +39,7 @@ export default class WrapPrefix implements MeshTransform {
 
     if (includeTypes) {
       this.transforms.push(
-        new RenameTypes(typeName => (ignoreList.includes(typeName) ? typeName : `${prefix}${typeName}`))
+        new RenameTypes(typeName => (ignoreList.includes(typeName) ? typeName : `${prefix}${typeName}`)) as any
       );
     }
 
@@ -51,7 +51,7 @@ export default class WrapPrefix implements MeshTransform {
           ignoreList.includes(typeName) || ignoreList.includes(`${typeName}.${fieldName}`)
             ? fieldName
             : `${prefix}${fieldName}`
-        )
+        ) as any
       );
     }
   }

@@ -136,7 +136,7 @@ export default class FederationMerger implements MeshMerger {
       this.logger.debug(() => `Applying root level transforms`);
       remoteSchema = wrapSchema({
         schema: remoteSchema,
-        transforms,
+        transforms: transforms as any[],
         batch: true,
       });
     }
