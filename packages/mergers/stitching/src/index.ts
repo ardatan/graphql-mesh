@@ -8,7 +8,7 @@ import {
   AggregateError,
   jitExecutorFactory,
 } from '@graphql-mesh/utils';
-import { StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
+import { StitchingInfo } from '@graphql-tools/delegate';
 import {
   stitchingDirectives,
   federationToStitchingSDL,
@@ -92,7 +92,7 @@ export default class StitchingMerger implements MeshMerger {
       pathToDirectivesInExtensions: ['directives'],
     });
     this.logger.debug(() => `Checking if any of sources has federation metadata`);
-    const subschemas = (await Promise.all(
+    const subschemas = await Promise.all(
       rawSources.map(async rawSource => {
         let newExecutor = rawSource.executor;
         if (!newExecutor) {
@@ -119,10 +119,10 @@ export default class StitchingMerger implements MeshMerger {
           executor: newExecutor,
         };
       })
-    )) as SubschemaConfig[];
+    );
     this.logger.debug(() => `Stitching the source schemas`);
     let unifiedSchema = stitchSchemas({
-      subschemas,
+      subschemas: subschemas as any[],
       typeDefs,
       resolvers,
       subschemaConfigTransforms: [defaultStitchingDirectives.stitchingDirectivesTransformer],
@@ -160,7 +160,7 @@ export default class StitchingMerger implements MeshMerger {
       if (wrapTransforms.length) {
         unifiedSchema = wrapSchema({
           schema: unifiedSchema,
-          transforms,
+          transforms: transforms as any[],
           batch: true,
           executor: jitExecutorFactory(unifiedSchema, 'root-wrapped', this.logger.child('JIT Executor')) as any,
         });

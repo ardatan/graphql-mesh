@@ -30,7 +30,7 @@
     "@graphql-mesh/utils": "0.28.3",
     "micromatch": "4.0.4",
     "@graphql-tools/wrap": "8.4.4",
-    "@graphql-tools/delegate": "8.5.2",
+    "@graphql-tools/delegate": "8.5.3",
     "@graphql-tools/utils": "8.6.2",
     "tslib": "^2.3.1"
   },
