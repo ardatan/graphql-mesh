@@ -329,7 +329,9 @@ export async function ${
           },
         ],
       })
-    ).replace(`import * as Operations from 'NOWHERE';\n`, '');
+    )
+      .replace(`import * as Operations from 'NOWHERE';\n`, '')
+      .replace(`import { DocumentNode } from 'graphql';`, '');
 
   const baseUrlAssignmentESM = `const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
     artifactsDir,
