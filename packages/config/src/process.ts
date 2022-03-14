@@ -109,7 +109,7 @@ export async function processConfig(
     cache,
     importCode: cacheImportCode,
     code: cacheCode,
-  } = await resolveCache(config.cache, importFn, rootStore, dir);
+  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub);
   importCodes.push(cacheImportCode);
   codes.push(cacheCode);
 

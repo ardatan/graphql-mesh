@@ -77,7 +77,8 @@ export async function resolveCache(
   cacheConfig: YamlConfig.Config['cache'] = { inmemoryLru: {} },
   importFn: ImportFn,
   rootStore: MeshStore,
-  cwd: string
+  cwd: string,
+  pubsub: MeshPubSub
 ): Promise<{
   cache: KeyValueCache;
   importCode: string;
@@ -92,12 +93,14 @@ export async function resolveCache(
     ...config,
     importFn,
     store: rootStore.child('cache'),
+    pubsub,
   });
 
   const code = `const cache = new (MeshCache as any)({
       ...(rawConfig.cache || {}),
       importFn,
       store: rootStore.child('cache'),
+      pubsub,
     } as any)`;
   const importCode = `import MeshCache from '${moduleName}';`;
 
