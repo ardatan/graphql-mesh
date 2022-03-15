@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.29.0
+
+### Minor Changes
+
+- 268db0462: feat: persisted queries
+
+### Patch Changes
+
+- @graphql-mesh/types@0.66.6
+
 ## 0.28.5
 
 ### Patch Changes
