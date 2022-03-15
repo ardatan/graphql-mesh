@@ -62,7 +62,6 @@ export interface ServeMeshOptions {
   getBuiltMesh: () => Promise<MeshInstance>;
   logger: Logger;
   rawConfig: YamlConfig.Config;
-  documents: Source[];
   argsPort?: number;
   playgroundTitle?: string;
 }

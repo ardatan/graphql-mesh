@@ -348,6 +348,13 @@ export async function processConfig(
     codes.push(`const additionalEnvelopPlugins = [];`);
   }
 
+  importCodes.push(`import { parseWithCache } from '@graphql-mesh/utils';`);
+  codes.push(`const documents = documentsInSDL.map((documentSdl: string, i: number) => ({
+              rawSDL: documentSdl,
+              document: parseWithCache(documentSdl),
+              location: \`document_\${i}.graphql\`,
+            }))`);
+
   codes.push(`
   return {
     sources,
@@ -360,6 +367,7 @@ export async function processConfig(
     logger,
     liveQueryInvalidations,
     additionalEnvelopPlugins,
+    documents,
   };
 }`);
   return {

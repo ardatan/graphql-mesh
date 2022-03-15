@@ -332,6 +332,13 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
       errors.forEach(error => logger.error(error.stack || error.message));
     }),
     {
+      onValidate({ params, setResult }) {
+        const sdl = printWithCache(params.documentAST);
+        const cacheKey = `compiled_${sdl}`;
+        if (globalLruCache.has(cacheKey)) {
+          setResult([]);
+        }
+      },
       onParse({ setParseFn }) {
         setParseFn(parseWithCache);
       },

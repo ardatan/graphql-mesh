@@ -293,9 +293,7 @@ export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<
   return getMesh<MeshContext>(meshConfig);
 }
 
-export async function ${
-                cliParams.builtMeshSDKFactoryName
-              }<TContext = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
+export async function ${cliParams.builtMeshSDKFactoryName}<TContext = any>() {
   const { execute } = await ${cliParams.builtMeshFactoryName}();
   return getSdk<TContext>((document, variables, context) => execute(document, variables, context));
 }`;

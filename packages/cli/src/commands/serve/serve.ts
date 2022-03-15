@@ -23,7 +23,7 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import { env, on as processOn } from 'process';
 import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
-import { GraphQLMeshCLIParams } from '@graphql-mesh/cli';
+import { GraphQLMeshCLIParams } from '../..';
 
 dnscache({ enable: true });
 
@@ -36,7 +36,7 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
 }
 
 export async function serveMesh(
-  { baseDir, argsPort, getBuiltMesh, logger, rawConfig, documents, playgroundTitle }: ServeMeshOptions,
+  { baseDir, argsPort, getBuiltMesh, logger, rawConfig, playgroundTitle }: ServeMeshOptions,
   cliParams: GraphQLMeshCLIParams
 ) {
   const {
@@ -246,7 +246,6 @@ export async function serveMesh(
     if (typeof playground !== 'undefined' ? playground : env.NODE_ENV?.toLowerCase() !== 'production') {
       const playgroundMiddleware = playgroundMiddlewareFactory({
         baseDir,
-        documents,
         graphqlPath,
         logger,
         title: playgroundTitle,
