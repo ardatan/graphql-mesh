@@ -6,7 +6,7 @@ import { codegen } from '@graphql-codegen/core';
 import { pascalCase } from 'pascal-case';
 import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
-import * as tsJitSdkPlugin from '@graphql-codegen/typescript-jit-sdk';
+import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
 import pathModule from 'path';
 import ts from 'typescript';
@@ -183,7 +183,8 @@ export async function generateTsArtifacts(
           onlyOperationTypes: flattenTypes,
           preResolveTypes: flattenTypes,
           namingConvention: 'keep',
-          documentMode: 'documentNode',
+          documentMode: 'graphQLTag',
+          gqlImport: '@graphql-mesh/utils#gql',
           enumsAsTypes: true,
           ignoreEnumValuesFromSchema: true,
           useIndexSignature: true,
@@ -199,7 +200,7 @@ export async function generateTsArtifacts(
           typescript: tsBasePlugin,
           typescriptOperations: tsOperationsPlugin,
           typedDocumentNode: typedDocumentNodePlugin,
-          typescriptJitSdk: tsJitSdkPlugin,
+          typescriptGenericSdk,
           resolvers: tsResolversPlugin,
           contextSdk: {
             plugin: async () => {
@@ -294,9 +295,9 @@ export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<
 
 export async function ${
                 cliParams.builtMeshSDKFactoryName
-              }<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
-  const { schema } = await ${cliParams.builtMeshFactoryName}();
-  return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, sdkOptions);
+              }<TContext = any>(sdkOptions?: SdkOptions<TGlobalContext, TGlobalRoot>) {
+  const { execute } = await ${cliParams.builtMeshFactoryName}();
+  return getSdk<TContext>((document, variables, context) => execute(document, variables, context));
 }`;
 
               return {
@@ -322,7 +323,7 @@ export async function ${
             typedDocumentNode: {},
           },
           {
-            typescriptJitSdk: {
+            typescriptGenericSdk: {
               documentMode: 'external',
               importDocumentNodeExternallyFrom: 'NOWHERE',
             },

@@ -8,6 +8,11 @@ import {
   Kind,
   isLeafType,
   getNamedType,
+  getOperationAST,
+  visit,
+  visitWithTypeInfo,
+  TypeInfo,
+  ExecutionResult,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
 import {
@@ -29,6 +34,8 @@ import {
   ResolverDataBasedFactory,
   DefaultLogger,
   parseWithCache,
+  globalLruCache,
+  printWithCache,
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
@@ -38,6 +45,7 @@ import { WrapQuery } from '@graphql-tools/wrap';
 import { inspect, isDocumentNode, memoize1, parseSelectionSet } from '@graphql-tools/utils';
 import { envelop, useErrorHandler, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
+import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
 
@@ -303,6 +311,16 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     })
   );
 
+  if (options.documents?.length) {
+    logger.info(`Compiling operation documents`);
+    for (const documentSource of options.documents || []) {
+      globalLruCache.set(`sdl_${documentSource.rawSDL}`, documentSource.document);
+      const documentJson = JSON.stringify(documentSource.document);
+      globalLruCache.set(`documentJson_${documentJson}`, documentSource.rawSDL);
+      globalLruCache.set(`compiled_${documentSource.rawSDL}`, compileQuery(unifiedSchema, documentSource.document));
+    }
+  }
+
   const plugins: EnvelopPlugins = [
     useSchema(unifiedSchema),
     useExtendContext(() => meshContext),
@@ -317,18 +335,77 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
       onParse({ setParseFn }) {
         setParseFn(parseWithCache);
       },
-      async onResolverCalled(resolverData) {
-        return async (result: any) => {
-          if (resolverData?.info?.parentType && resolverData?.info?.fieldName) {
-            const path = `${resolverData.info.parentType.name}.${resolverData.info.fieldName}`;
-            if (liveQueryInvalidationFactoryMap.has(path)) {
-              const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
-              const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
-                invalidationPathFactory({ ...resolverData, env: process.env, result })
-              );
-              await liveQueryStore.invalidate(invalidationPaths);
-            }
+      onSubscribe({ args: subscriptionArgs, setSubscribeFn }) {
+        const sdl = printWithCache(subscriptionArgs.document);
+        const cacheKey = `compiled_${sdl}`;
+        const compiledQuery = globalLruCache.get(cacheKey) as CompiledQuery | ExecutionResult;
+        if (compiledQuery != null) {
+          logger.debug(
+            () =>
+              `Persisted compiled query found: ${
+                getOperationAST(subscriptionArgs.document, subscriptionArgs.operationName)?.name?.value
+              }`
+          );
+          if (isCompiledQuery(compiledQuery)) {
+            setSubscribeFn(
+              () =>
+                compiledQuery.subscribe(
+                  subscriptionArgs.rootValue,
+                  subscriptionArgs.contextValue,
+                  subscriptionArgs.variableValues
+                ) as any
+            );
           }
+        }
+      },
+      onExecute({ args: executionArgs, setResultAndStopExecution, setExecuteFn }) {
+        const sdl = printWithCache(executionArgs.document);
+        const cacheKey = `compiled_${sdl}`;
+        const compiledQuery = globalLruCache.get(cacheKey) as CompiledQuery | ExecutionResult;
+        if (compiledQuery != null) {
+          logger.debug(
+            () =>
+              `Persisted compiled query found: ${
+                getOperationAST(executionArgs.document, executionArgs.operationName)?.name?.value
+              }`
+          );
+          if (isCompiledQuery(compiledQuery)) {
+            setExecuteFn(() =>
+              compiledQuery.query(executionArgs.rootValue, executionArgs.contextValue, executionArgs.variableValues)
+            );
+          } else {
+            setResultAndStopExecution(compiledQuery as any);
+          }
+        }
+
+        return {
+          async onExecuteDone({ args: executionArgs, result }) {
+            const { schema, document, operationName, rootValue, contextValue } = executionArgs;
+            const operationAST = getOperationAST(document, operationName);
+            if (!operationAST) {
+              throw new Error(`Operation couldn't be found`);
+            }
+            const typeInfo = new TypeInfo(schema);
+            visit(
+              operationAST,
+              visitWithTypeInfo(typeInfo, {
+                Field: () => {
+                  const parentType = typeInfo.getParentType();
+                  const fieldDef = typeInfo.getFieldDef();
+                  const path = `${parentType.name}.${fieldDef.name}`;
+                  if (liveQueryInvalidationFactoryMap.has(path)) {
+                    const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
+                    const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
+                      invalidationPathFactory({ root: rootValue, context: contextValue, env: process.env, result })
+                    );
+                    liveQueryStore
+                      .invalidate(invalidationPaths)
+                      .catch(e => logger.warn(`Invalidation failed for ${path}: ${e.message}`));
+                  }
+                },
+              })
+            );
+          },
         };
       },
     },

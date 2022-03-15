@@ -2708,10 +2708,10 @@
     change-case-all "1.0.14"
     tslib "~2.3.0"
 
-"@graphql-codegen/typescript-jit-sdk@2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-jit-sdk/-/typescript-jit-sdk-2.0.5.tgz#9c4d93ae5ea2b9521ced439635e8b8f18e33f7a5"
-  integrity sha512-+E6LJLxyS4QAUnP7AfWQbkBnrP2F+9E1DD7xLYM7esusPgf2r6GNjrc3yurvrPHZ/L+U8QAlevKzlwxPrz2+xw==
+"@graphql-codegen/typescript-generic-sdk@2.3.6":
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-generic-sdk/-/typescript-generic-sdk-2.3.6.tgz#f542458e6c116717cc5cdbbc0705403070c2092e"
+  integrity sha512-VrLnIOvGPTB1sD2n+bKgEQqcE+JFPYhuaeVem1Ni6Zm4d8DV0r6prMtWh4hIo4n+OcsQkUohu/lxaZd6YV8oiA==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.4.0"
     "@graphql-codegen/visitor-plugin-common" "2.7.3"

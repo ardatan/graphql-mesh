@@ -64,3 +64,6 @@ transforms:
 
 documents:
   - example-query.graphql
+
+serve:
+  playground: true

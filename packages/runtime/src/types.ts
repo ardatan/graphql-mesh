@@ -27,6 +27,7 @@ export type GetMeshOptions = {
   logger?: Logger;
   liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
   additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
+  documents?: Source[];
 };
 
 export type MeshResolvedSource<TContext = any> = {

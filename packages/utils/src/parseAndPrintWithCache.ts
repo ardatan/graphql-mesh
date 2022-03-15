@@ -1,26 +1,34 @@
 import { DocumentNode, parse, print } from 'graphql';
 import { globalLruCache } from './global-lru-cache';
 
-const documentPrintCache = new WeakMap<DocumentNode, string>();
-
 export function parseWithCache(sdl: string): DocumentNode {
-  let document: DocumentNode = globalLruCache.get(sdl);
+  const sdlKey = `sdl_${sdl.trim()}`;
+  let document: DocumentNode = globalLruCache.get(sdlKey);
   if (!document) {
-    document = parse(sdl);
-    globalLruCache.set(sdl, document);
-    documentPrintCache.set(document, sdl);
+    document = parse(sdl, { noLocation: true });
+    globalLruCache.set(sdlKey, document);
+    const stringifedDocumentJson = JSON.stringify(document);
+    const documentJsonKey = `documentJson_${stringifedDocumentJson}`;
+    globalLruCache.set(documentJsonKey, sdl);
   }
   return document;
 }
 
 export function printWithCache(document: DocumentNode): string {
-  let sdl: string = documentPrintCache.get(document);
+  const stringifedDocumentJson = JSON.stringify(document);
+  let sdl: string = globalLruCache.get(stringifedDocumentJson);
   if (!sdl) {
-    sdl = print(document);
-    documentPrintCache.set(document, sdl);
-    if (!globalLruCache.has(sdl)) {
-      globalLruCache.set(sdl, document);
+    sdl = print(document).trim();
+    const documentJsonKey = `documentJson_${stringifedDocumentJson}`;
+    globalLruCache.set(documentJsonKey, sdl);
+    const sdlKey = `sdl_${sdl}`;
+    if (!globalLruCache.has(sdlKey)) {
+      globalLruCache.set(sdlKey, document);
     }
   }
   return sdl;
+}
+
+export function gql([sdl]: [string]) {
+  return parseWithCache(sdl);
 }
