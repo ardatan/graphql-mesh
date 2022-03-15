@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/graphql",
-  "version": "0.21.5",
+  "version": "0.21.6",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,9 +23,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.3.28",
-    "@graphql-mesh/utils": "0.28.5",
-    "@graphql-mesh/types": "0.66.5",
+    "@graphql-mesh/store": "0.3.29",
+    "@graphql-mesh/utils": "0.29.0",
+    "@graphql-mesh/types": "0.66.6",
     "@graphql-tools/url-loader": "7.9.2",
     "@graphql-tools/wrap": "8.4.4",
     "@graphql-tools/delegate": "8.5.3",
