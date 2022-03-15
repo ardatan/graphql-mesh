@@ -43,7 +43,7 @@ import { delegateToSchema, IDelegateToSchemaOptions, SubschemaConfig } from '@gr
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { inspect, isDocumentNode, memoize1, parseSelectionSet } from '@graphql-tools/utils';
-import { envelop, useErrorHandler, useExtendContext, useLogger, useSchema } from '@envelop/core';
+import { enableIf, envelop, useErrorHandler, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 
@@ -57,7 +57,6 @@ export interface MeshInstance<TMeshContext = any> {
   destroy: () => void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
-  liveQueryStore: InMemoryLiveQueryStore;
   logger: Logger;
   meshContext: TMeshContext;
   plugins: EnvelopPlugins;
@@ -130,26 +129,19 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     transforms: options.transforms,
   });
 
-  getMeshLogger.debug(() => `Creating Live Query Store`);
-  const liveQueryStore = new InMemoryLiveQueryStore({
-    includeIdentifierExtension: true,
-  });
+  const liveQueryEnabled = unifiedSchema.getDirective('live') != null;
+
+  if (!liveQueryEnabled && options.liveQueryInvalidations?.length) {
+    getMeshLogger.warn(`You have to add @live directive to additionalTypeDefs to enable Live Queries
+See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
+  }
 
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
-
-  options.liveQueryInvalidations?.forEach(liveQueryInvalidation => {
-    const rawInvalidationPaths = liveQueryInvalidation.invalidate;
-    const factories = rawInvalidationPaths.map(rawInvalidationPath =>
-      getInterpolatedStringFactory(rawInvalidationPath)
-    );
-    liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
-  });
 
   getMeshLogger.debug(() => `Building Mesh Context`);
   const meshContext: Record<string, any> = {
     pubsub,
     cache,
-    liveQueryStore,
     logger,
     [MESH_CONTEXT_SYMBOL]: true,
   };
@@ -324,7 +316,20 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
   const plugins: EnvelopPlugins = [
     useSchema(unifiedSchema),
     useExtendContext(() => meshContext),
-    useLiveQuery({ liveQueryStore }),
+    enableIf(liveQueryEnabled, () => {
+      getMeshLogger.debug(() => `Creating Live Query Store`);
+      const liveQueryStore = new InMemoryLiveQueryStore({
+        includeIdentifierExtension: true,
+      });
+      options.liveQueryInvalidations?.forEach(liveQueryInvalidation => {
+        const rawInvalidationPaths = liveQueryInvalidation.invalidate;
+        const factories = rawInvalidationPaths.map(rawInvalidationPath =>
+          getInterpolatedStringFactory(rawInvalidationPath)
+        );
+        liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
+      });
+      return useLiveQuery({ liveQueryStore });
+    }),
     useLogger({
       logFn: (eventName, args) => logger.child(eventName).debug(() => inspect(args)),
     }),
@@ -381,39 +386,42 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
               compiledQuery.query(executionArgs.rootValue, executionArgs.contextValue, executionArgs.variableValues)
             );
           } else {
-            setResultAndStopExecution(compiledQuery as any);
+            setResultAndStopExecution(compiledQuery);
           }
         }
 
-        return {
-          async onExecuteDone({ args: executionArgs, result }) {
-            const { schema, document, operationName, rootValue, contextValue } = executionArgs;
-            const operationAST = getOperationAST(document, operationName);
-            if (!operationAST) {
-              throw new Error(`Operation couldn't be found`);
-            }
-            const typeInfo = new TypeInfo(schema);
-            visit(
-              operationAST,
-              visitWithTypeInfo(typeInfo, {
-                Field: () => {
-                  const parentType = typeInfo.getParentType();
-                  const fieldDef = typeInfo.getFieldDef();
-                  const path = `${parentType.name}.${fieldDef.name}`;
-                  if (liveQueryInvalidationFactoryMap.has(path)) {
-                    const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
-                    const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
-                      invalidationPathFactory({ root: rootValue, context: contextValue, env: process.env, result })
-                    );
-                    liveQueryStore
-                      .invalidate(invalidationPaths)
-                      .catch(e => logger.warn(`Invalidation failed for ${path}: ${e.message}`));
-                  }
-                },
-              })
-            );
-          },
-        };
+        if (liveQueryEnabled) {
+          return {
+            async onExecuteDone({ args: executionArgs, result }) {
+              const { schema, document, operationName, rootValue, contextValue } = executionArgs;
+              const operationAST = getOperationAST(document, operationName);
+              if (!operationAST) {
+                throw new Error(`Operation couldn't be found`);
+              }
+              const typeInfo = new TypeInfo(schema);
+              visit(
+                operationAST,
+                visitWithTypeInfo(typeInfo, {
+                  Field: () => {
+                    const parentType = typeInfo.getParentType();
+                    const fieldDef = typeInfo.getFieldDef();
+                    const path = `${parentType.name}.${fieldDef.name}`;
+                    if (liveQueryInvalidationFactoryMap.has(path)) {
+                      const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
+                      const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
+                        invalidationPathFactory({ root: rootValue, context: contextValue, env: process.env, result })
+                      );
+                      executionArgs.contextValue.liveQueryStore
+                        .invalidate(invalidationPaths)
+                        .catch((e: Error) => logger.warn(`Invalidation failed for ${path}: ${e.message}`));
+                    }
+                  },
+                })
+              );
+            },
+          };
+        }
+        return {};
       },
     },
     ...additionalEnvelopPlugins,
@@ -471,7 +479,6 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     cache,
     pubsub,
     destroy: () => pubsub.publish('destroy', undefined),
-    liveQueryStore,
     logger,
     meshContext: meshContext as TMeshContext,
     plugins,
