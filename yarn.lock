@@ -150,7 +150,7 @@
     call-me-maybe "^1.0.1"
     z-schema "^4.2.3"
 
-"@apollo/client@3.3.4", "@apollo/client@^3.2.5", "@apollo/client@~3.2.5 || ~3.3.0":
+"@apollo/client@3.3.4", "@apollo/client@~3.2.5 || ~3.3.0":
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.3.4.tgz#fded078222fcd9272d6e3501c7d1d76adb61da79"
   integrity sha512-PnbkSa2gcFD6Qakn2eJCJ1RMYdCzEIlRlaHZGnUNbH+7AKOYwjDVtSVCC03nDtWeS9yWiJ15A8xGMreMKAboQQ==
@@ -169,7 +169,7 @@
     tslib "^1.10.0"
     zen-observable "^0.8.14"
 
-"@apollo/client@3.5.10":
+"@apollo/client@3.5.10", "@apollo/client@^3.2.5":
   version "3.5.10"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.5.10.tgz#43463108a6e07ae602cca0afc420805a19339a71"
   integrity sha512-tL3iSpFe9Oldq7gYikZK1dcYxp1c01nlSwtsMz75382HcI6fvQXyFXUCJTTK3wgO2/ckaBvRGw7VqjFREdVoRw==
@@ -2847,7 +2847,7 @@
     is-promise "4.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/delegate@8.5.3", "@graphql-tools/delegate@^8.5.3":
+"@graphql-tools/delegate@8.5.3", "@graphql-tools/delegate@^8.5.1", "@graphql-tools/delegate@^8.5.3":
   version "8.5.3"
   resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-8.5.3.tgz#3d870ef531ce60e656d996828e8909f0c45e6f20"
   integrity sha512-e65cEmAccodc3tlVskU0JgEbHgJUGB4sbd/dk2v15nOFzjj9izBTsTdvebI1Bm28Mip10vBJj9G0jJcTeOIyhg==
@@ -2872,19 +2872,6 @@
     dataloader "2.0.0"
     tslib "~2.2.0"
     value-or-promise "1.0.6"
-
-"@graphql-tools/delegate@^8.5.1":
-  version "8.5.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-8.5.2.tgz#96da4b9daa17bb0bc758538de3ebe4e58132220f"
-  integrity sha512-M7d1jY4orPUC7MBoSKZEP21HTVqVGX+mS0AL6UGxg1L7GCRtaYQeopyKXmnnEmBi5FNZ9KduJgHRtxkS4Hc6uA==
-  dependencies:
-    "@graphql-tools/batch-execute" "^8.3.2"
-    "@graphql-tools/schema" "^8.3.2"
-    "@graphql-tools/utils" "^8.6.2"
-    dataloader "2.0.0"
-    graphql-executor "0.0.18"
-    tslib "~2.3.0"
-    value-or-promise "1.0.11"
 
 "@graphql-tools/git-loader@^6.2.5":
   version "6.2.6"
@@ -3302,7 +3289,7 @@
     is-promise "4.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/wrap@8.4.4", "@graphql-tools/wrap@^8.4.4":
+"@graphql-tools/wrap@8.4.4", "@graphql-tools/wrap@^8.4.2", "@graphql-tools/wrap@^8.4.4":
   version "8.4.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-8.4.4.tgz#fc0aa1e6fe2ab76fcb40beab9f106cf5488edb16"
   integrity sha512-roBa4FC65QLlpFCtLtmip3SibGRoLnlLUXyQgOSzW5V+lcDpbGu2GIx9A0VerKC8Cf0iqWaYgI7mhGn+mharkg==
@@ -3323,17 +3310,6 @@
     "@graphql-tools/utils" "^7.8.1"
     tslib "~2.2.0"
     value-or-promise "1.0.6"
-
-"@graphql-tools/wrap@^8.4.2":
-  version "8.4.3"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-8.4.3.tgz#cb7d703c41cebe3c32b999d3a28c17e3eac12783"
-  integrity sha512-2bd3GtlqV72idEphLTM8SRiSxEDrMPGE556faW8N5Q2qK7qlCEu9AQK0HNKWKdtEPTHqahndZtIPcdpNN6xGig==
-  dependencies:
-    "@graphql-tools/delegate" "^8.5.1"
-    "@graphql-tools/schema" "^8.3.2"
-    "@graphql-tools/utils" "^8.6.2"
-    tslib "~2.3.0"
-    value-or-promise "1.0.11"
 
 "@graphql-typed-document-node/core@3.1.1", "@graphql-typed-document-node/core@^3.0.0", "@graphql-typed-document-node/core@^3.1.1":
   version "3.1.1"
@@ -5538,15 +5514,15 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@14.14.3", "@types/node@>=12.12.47", "@types/node@>=13.7.0", "@types/node@^14.14.3":
-  version "14.14.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.3.tgz#e1c09064121f894baaad2bd9f12ce4a41bffb274"
-  integrity sha512-33/L34xS7HVUx23e0wOT2V1qPF1IrHgQccdJVm9uXGTB9vFBrrzBtkQymT8VskeKOxjz55MSqMv0xuLq+u98WQ==
-
-"@types/node@16.11.26":
+"@types/node@*", "@types/node@16.11.26", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
   version "16.11.26"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.26.tgz#63d204d136c9916fb4dcd1b50f9740fe86884e47"
   integrity sha512-GZ7bu5A6+4DtG7q9GsoHXy3ALcgeIHP4NnL0Vv2wu0uUB/yQex26v0tf6/na1mm0+bS9Uw+0DFex7aaKr2qawQ==
+
+"@types/node@14.14.3", "@types/node@^14.14.3":
+  version "14.14.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.3.tgz#e1c09064121f894baaad2bd9f12ce4a41bffb274"
+  integrity sha512-33/L34xS7HVUx23e0wOT2V1qPF1IrHgQccdJVm9uXGTB9vFBrrzBtkQymT8VskeKOxjz55MSqMv0xuLq+u98WQ==
 
 "@types/node@^10.0.3", "@types/node@^10.1.0":
   version "10.17.60"
@@ -6418,17 +6394,7 @@ ajv-keywords@^3.1.0, ajv-keywords@^3.4.1, ajv-keywords@^3.5.2:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"
   integrity sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==
 
-ajv@*, ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
-  version "6.12.6"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
-  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
-  dependencies:
-    fast-deep-equal "^3.1.1"
-    fast-json-stable-stringify "^2.0.0"
-    json-schema-traverse "^0.4.1"
-    uri-js "^4.2.2"
-
-ajv@8.10.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0:
+ajv@*, ajv@8.10.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0:
   version "8.10.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.10.0.tgz#e573f719bd3af069017e3b66538ab968d040e54d"
   integrity sha512-bzqAEZOjkrUMl2afH8dknrq5KEk2SrwdBROR+vH1EKVQTqaUbJVPdc/gEdggTMM0Se+s+Ja4ju4TlNcStKl2Hw==
@@ -6436,6 +6402,16 @@ ajv@8.10.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
+    uri-js "^4.2.2"
+
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
+  version "6.12.6"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
+  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    fast-json-stable-stringify "^2.0.0"
+    json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
 algoliasearch-helper@^3.6.2:

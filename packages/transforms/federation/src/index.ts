@@ -6,7 +6,6 @@ import {
   GraphQLNonNull,
   isObjectType,
   GraphQLUnionType,
-  GraphQLResolveInfo,
   isListType,
 } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
@@ -16,7 +15,7 @@ import { addFederationAnnotations } from 'graphql-transform-federation/dist/tran
 import _ from 'lodash';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { SubschemaConfig } from '@graphql-tools/delegate';
+import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
 
 export default class FederationTransform implements MeshTransform {
   private apiName: string;
@@ -45,7 +44,7 @@ export default class FederationTransform implements MeshTransform {
           for (const field of type.config.fields) {
             fields[field.name] = field.config;
             rawSource.merge[type.name].fields = rawSource.merge[type.name].fields || {};
-            rawSource.merge[type.name].fields[field.name] = rawSource.merge[type.name].fields[field.name] || {}
+            rawSource.merge[type.name].fields[field.name] = rawSource.merge[type.name].fields[field.name] || {};
             if (field.config.requires) {
               rawSource.merge[type.name].fields[field.name].computed = true;
               rawSource.merge[type.name].fields[field.name].selectionSet = `{ ${field.config.requires} }`;
@@ -67,7 +66,7 @@ export default class FederationTransform implements MeshTransform {
           }
         }
 
-        let resolveReference: any;
+        let resolveReference: MergedTypeResolver<any>;
         if (type.config?.resolveReference) {
           const resolveReferenceConfig = type.config.resolveReference;
           if (typeof resolveReferenceConfig === 'string') {
@@ -78,13 +77,13 @@ export default class FederationTransform implements MeshTransform {
             });
             resolveReference = (...args: any[]) => fn$.then(fn => fn(...args));
           } else if (typeof resolveReferenceConfig === 'function') {
-            resolveReference = type.config.resolveReference;
+            resolveReference = resolveReferenceConfig;
           } else {
             const queryField = queryTypeFields[resolveReferenceConfig.queryFieldName];
             const keyArg = resolveReferenceConfig.keyArg || queryField.args[0].name;
             const keyField = type.config.keyFields[0];
             const isBatch = isListType(queryField.args.find(arg => arg.name === keyArg));
-            resolveReference = async (root: any, context: any, info: GraphQLResolveInfo) => {
+            resolveReference = async (root, context, info) => {
               const result = await context[this.apiName].Query[queryField.name]({
                 root,
                 ...(isBatch
