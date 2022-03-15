@@ -11,7 +11,6 @@ import {
   rmdirs,
   DefaultLogger,
   loadFromModuleExportExpression,
-  parseWithCache,
   defaultImportFn,
 } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
@@ -173,7 +172,6 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
             getBuiltMesh: () => meshInstance$,
             logger: meshConfig.logger.child('Server'),
             rawConfig: meshConfig.config,
-            documents: meshConfig.documents,
           };
           if (meshConfig.config.serve?.customServerHandler) {
             const customServerHandler = await loadFromModuleExportExpression<any>(
@@ -221,11 +219,6 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
             getBuiltMesh: () => getMesh(getMeshOptions),
             logger: getMeshOptions.logger.child('Server'),
             rawConfig: builtMeshArtifacts.rawConfig,
-            documents: builtMeshArtifacts.documentsInSDL.map((documentSdl: string, i: number) => ({
-              rawSDL: documentSdl,
-              document: parseWithCache(documentSdl),
-              location: `document_${i}.graphql`,
-            })),
           };
           if (rawConfig.serve?.customServerHandler) {
             const customServerHandler = await loadFromModuleExportExpression<any>(rawConfig.serve.customServerHandler, {
@@ -410,7 +403,6 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
           getBuiltMesh: () => meshInstance$,
           logger: meshConfig.logger.child('Server'),
           rawConfig: meshConfig.config,
-          documents: [],
           playgroundTitle: `${args.source} GraphiQL`,
         };
         if (meshConfig.config.serve?.customServerHandler) {

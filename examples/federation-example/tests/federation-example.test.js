@@ -31,6 +31,7 @@ describe('Federation Example', () => {
   it('should give correct response for example queries', async () => {
     const { execute } = await mesh$;
     const result = await execute(exampleQuery);
+    expect(result?.errors).toBeFalsy();
     expect(result?.data).toEqual(exampleResult);
   });
   afterAll(() => {
