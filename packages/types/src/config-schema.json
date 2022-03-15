@@ -36,6 +36,9 @@
       "properties": {
         "max": {
           "type": "integer"
+        },
+        "ttl": {
+          "type": "integer"
         }
       }
     },

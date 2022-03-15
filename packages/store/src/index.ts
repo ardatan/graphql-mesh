@@ -42,15 +42,14 @@ export interface FsStoreStorageAdapterOptions {
 
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
-  private getWrittenFileName(key: string) {
-    const jsFileName = `${key}.ts`;
+  private getAbsolutePath(jsFileName: string) {
     return pathModule.isAbsolute(jsFileName) ? jsFileName : pathModule.join(this.options.cwd, jsFileName);
   }
 
-  async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
-    const filePath = this.getWrittenFileName(key);
+  async read<TData>(key: string): Promise<TData> {
+    const absoluteModulePath = this.getAbsolutePath(key);
     try {
-      return await this.options.importFn(filePath).then(m => m.default || m);
+      return await this.options.importFn(absoluteModulePath).then(m => m.default || m);
     } catch (e) {
       if (e.message.startsWith('Cannot find module')) {
         return undefined;
@@ -61,13 +60,14 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
 
   async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
     const asString = await options.codify(data, key);
-    const filePath = this.getWrittenFileName(key);
-    await writeFile(filePath, flatString(asString));
-    await this.options.importFn(filePath);
+    const modulePath = this.getAbsolutePath(key);
+    const filePath = modulePath + '.ts';
+    await writeFile(filePath, flatString(`// @ts-nocheck\n` + asString));
+    await this.options.importFn(modulePath);
   }
 
   async delete(key: string): Promise<void> {
-    const filePath = this.getWrittenFileName(key);
+    const filePath = this.getAbsolutePath(key) + '.ts';
     return fs.promises.unlink(filePath);
   }
 }
@@ -95,15 +95,13 @@ export enum PredefinedProxyOptionsName {
   GraphQLSchemaWithDiffing = 'GraphQLSchemaWithDiffing',
 }
 
-const escapeForTemplateLiteral = (str: string) => str.split('`').join('\\`').split('$').join('\\$');
-
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
-    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
+    codify: v => `export default JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(v))}'))`,
     validate: () => null,
   },
   StringWithoutValidation: {
-    codify: v => `export default \`${escapeForTemplateLiteral(v)}\``,
+    codify: v => `export default 'decodeURIComponent(${encodeURIComponent(v)}')`,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
@@ -111,9 +109,9 @@ export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOpt
       `
 import { buildSchema, Source } from 'graphql';
 
-const source = new Source(/* GraphQL */\`
-${escapeForTemplateLiteral(printSchemaWithDirectives(schema))}
-\`, \`${identifier}\`);
+const source = new Source(decodeURIComponent('${encodeURIComponent(
+        printSchemaWithDirectives(schema)
+      )}'), \`${identifier}\`);
 
 export default buildSchema(source, {
   assumeValid: true,

@@ -1,3 +1,7 @@
-import lru from 'tiny-lru';
+import lru, { Lru } from 'tiny-lru';
 
-export const globalLruCache = lru();
+export function createLruCache(max?: number, ttl?: number) {
+  return lru(max, ttl);
+}
+
+export type LRUCache = Lru;

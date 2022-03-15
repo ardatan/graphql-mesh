@@ -16,7 +16,7 @@ export default class RAMLHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.fetch = getCachedFetch(cache);
-    this.bundleStoreProxy = store.proxy('raml-bundle.js', PredefinedProxyOptions.JsonWithoutValidation);
+    this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
     this.logger = logger;
   }

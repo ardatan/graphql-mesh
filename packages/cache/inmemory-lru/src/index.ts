@@ -1,10 +1,15 @@
-import { globalLruCache } from '@graphql-mesh/utils';
-import { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
+import { createLruCache, LRUCache } from '@graphql-mesh/utils';
+import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
 
 type CacheEntry<V> = { expiresAt: number; value: V };
 
 export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
   private cacheIdentifier = Date.now();
+  private lruCache: LRUCache;
+
+  constructor(options?: YamlConfig.InMemoryLRUConfig) {
+    this.lruCache = createLruCache(options?.max, options?.ttl);
+  }
 
   private nextTick() {
     // Make sure this is scheduled for next tick because LRU Cache is synchronous
@@ -14,9 +19,9 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
 
   async get(key: string) {
     await this.nextTick();
-    const entry: CacheEntry<V> = globalLruCache.get(`${this.cacheIdentifier}-${key}`);
+    const entry: CacheEntry<V> = this.lruCache.get(`${this.cacheIdentifier}-${key}`);
     if (entry?.expiresAt && Date.now() > entry.expiresAt) {
-      globalLruCache.delete(key);
+      this.lruCache.delete(key);
       return undefined;
     }
     return entry?.value;
@@ -24,7 +29,7 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
     await this.nextTick();
-    globalLruCache.set(`${this.cacheIdentifier}-${key}`, {
+    this.lruCache.set(`${this.cacheIdentifier}-${key}`, {
       expiresAt: options?.ttl ? Date.now() + options.ttl * 1000 : Infinity,
       value,
     });
@@ -32,6 +37,6 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
 
   async delete(key: string) {
     await this.nextTick();
-    globalLruCache.delete(`${this.cacheIdentifier}-${key}`);
+    this.lruCache.delete(`${this.cacheIdentifier}-${key}`);
   }
 }

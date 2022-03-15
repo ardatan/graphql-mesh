@@ -41,7 +41,7 @@ export default class GraphQLHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
-    this.nonExecutableSchema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
+    this.nonExecutableSchema = store.proxy('introspectionSchema', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
     this.importFn = importFn;
   }
 

@@ -24,7 +24,7 @@ export default class OpenAPIHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.fetch = getCachedFetch(cache);
-    this.bundleStoreProxy = store.proxy('oas-bundle.js', PredefinedProxyOptions.JsonWithoutValidation);
+    this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
     this.logger = logger;
   }
