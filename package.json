@@ -20,7 +20,7 @@
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
     "test": "jest --forceExit --no-watchman",
     "test-and-build": "yarn build && yarn test",
-    "prerelease": "yarn build",
+    "prerelease": "yarn install && yarn build",
     "release": "changeset publish",
     "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag $NPM_TAG) || echo Skipping Canary..."
   },
