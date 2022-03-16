@@ -120,6 +120,8 @@ jobs:
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
+      - name: Build Test Artifacts
+        run: build-test-artifacts
       - name: Test
         run: yarn test
         env:

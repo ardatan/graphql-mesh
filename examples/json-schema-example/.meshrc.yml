@@ -1,5 +1,5 @@
 sources:
-  - name: Fake API
+  - name: FakeAPI
     handler:
       jsonSchema:
         baseUrl: https://not-existing-api.com/API

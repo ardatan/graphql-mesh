@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "start": "mesh dev",
+    "build": "mesh build",
+    "pretest": "npm run build",
     "test": "jest"
   },
   "dependencies": {
