@@ -6,6 +6,23 @@ import { wrapSchema } from '@graphql-tools/wrap';
 import { execute, parse } from 'graphql';
 
 describe('Rate Limit Transform', () => {
+  let pubsub: PubSub;
+  let cache: InMemoryLRUCache;
+
+  beforeEach(() => {
+    pubsub = new PubSub();
+    cache = new InMemoryLRUCache({ pubsub });
+  });
+
+  afterEach(() => {
+    pubsub
+      .publish('destroy', {} as any)
+      .catch(e => console.warn(`Error on emitting destroy: ${e.stack || e.message || e}`));
+  });
+
+  const baseDir = process.cwd();
+  const importFn = defaultImportFn;
+  const apiName = 'rate-limit-test';
   it('should throw an error if the rate limit is exceeded', async () => {
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -20,7 +37,7 @@ describe('Rate Limit Transform', () => {
       },
     });
     const rateLimitTransform = new RateLimitTransform({
-      apiName: 'TEST',
+      apiName,
       config: [
         {
           type: 'Query',
@@ -30,10 +47,10 @@ describe('Rate Limit Transform', () => {
           identifier: '{context.userId}',
         },
       ],
-      baseDir: process.cwd(),
-      cache: new InMemoryLRUCache(),
-      pubsub: new PubSub(),
-      importFn: defaultImportFn,
+      baseDir,
+      cache,
+      pubsub,
+      importFn,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -82,7 +99,7 @@ describe('Rate Limit Transform', () => {
       },
     });
     const rateLimitTransform = new RateLimitTransform({
-      apiName: 'TEST',
+      apiName,
       config: [
         {
           type: 'Query',
@@ -92,10 +109,10 @@ describe('Rate Limit Transform', () => {
           identifier: '{context.userId}',
         },
       ],
-      baseDir: process.cwd(),
-      cache: new InMemoryLRUCache(),
-      pubsub: new PubSub(),
-      importFn: defaultImportFn,
+      baseDir,
+      cache,
+      pubsub,
+      importFn,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -143,7 +160,7 @@ describe('Rate Limit Transform', () => {
       },
     });
     const rateLimitTransform = new RateLimitTransform({
-      apiName: 'TEST',
+      apiName,
       config: [
         {
           type: 'Query',
@@ -153,10 +170,10 @@ describe('Rate Limit Transform', () => {
           identifier: '{context.userId}',
         },
       ],
-      baseDir: process.cwd(),
-      cache: new InMemoryLRUCache(),
-      pubsub: new PubSub(),
-      importFn: defaultImportFn,
+      baseDir,
+      cache,
+      pubsub,
+      importFn,
     });
     const wrappedSchema = wrapSchema({
       schema,
