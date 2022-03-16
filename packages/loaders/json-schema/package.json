@@ -32,7 +32,7 @@
     "json-machete": "0.5.17",
     "@graphql-mesh/types": "0.66.6",
     "@graphql-mesh/utils": "0.29.0",
-    "@graphql-tools/utils": "8.6.2",
+    "@graphql-tools/utils": "8.6.3",
     "to-json-schema": "0.2.5",
     "graphql-compose": "9.0.7",
     "graphql-scalars": "1.15.0",
