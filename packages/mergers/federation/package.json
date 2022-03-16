@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.66.6",
-    "@graphql-tools/wrap": "8.4.5",
+    "@graphql-tools/wrap": "8.4.6",
     "@apollo/gateway": "0.48.3",
-    "@graphql-tools/schema": "8.3.2",
+    "@graphql-tools/schema": "8.3.3",
     "@graphql-mesh/utils": "0.29.0",
     "@graphql-tools/utils": "8.6.3",
     "@graphql-mesh/store": "0.3.29",
