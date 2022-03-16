@@ -95,13 +95,15 @@ export enum PredefinedProxyOptionsName {
   GraphQLSchemaWithDiffing = 'GraphQLSchemaWithDiffing',
 }
 
+const escapeForTemplateLiteral = (str: string) => str.split('`').join('\\`').split('$').join('\\$');
+
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
-    codify: v => `export default JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(v))}'))`,
+    codify: v => `export default ${JSON.stringify(v)} as any;`,
     validate: () => null,
   },
   StringWithoutValidation: {
-    codify: v => `export default 'decodeURIComponent(${encodeURIComponent(v)}')`,
+    codify: v => `export default \`${escapeForTemplateLiteral(v)}\``,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
@@ -109,9 +111,9 @@ export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOpt
       `
 import { buildSchema, Source } from 'graphql';
 
-const source = new Source(decodeURIComponent('${encodeURIComponent(
-        printSchemaWithDirectives(schema)
-      )}'), \`${identifier}\`);
+const source = new Source(/* GraphQL */\`
+${escapeForTemplateLiteral(printSchemaWithDirectives(schema))}
+\`, \`${identifier}\`);
 
 export default buildSchema(source, {
   assumeValid: true,
