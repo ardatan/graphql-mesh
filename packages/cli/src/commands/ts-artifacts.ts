@@ -71,7 +71,7 @@ async function generateTypesForApi(options: { schema: GraphQLSchema; name: strin
       ignoreEnumValuesFromSchema: true,
     },
     schemaAst: options.schema,
-    schema: undefined as any, // This is not necessary on codegen.
+    schema: undefined as any, // This is not necessary on codegen. Will be removed later
     skipDocumentsValidation: true,
     plugins: [
       {

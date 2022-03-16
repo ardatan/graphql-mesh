@@ -464,8 +464,17 @@
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
+        },
+        "rateLimit": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RateLimitTransformConfig"
+          },
+          "additionalItems": false,
+          "description": "RateLimit transform"
         }
-      }
+      },
+      "required": ["rateLimit"]
     },
     "Handler": {
       "additionalProperties": true,
@@ -3121,6 +3130,29 @@
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
       }
+    },
+    "RateLimitTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RateLimitTransformConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "max": {
+          "type": "integer"
+        },
+        "ttl": {
+          "type": "integer"
+        },
+        "identifier": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "field", "max", "ttl", "identifier"]
     }
   },
   "title": "Config",

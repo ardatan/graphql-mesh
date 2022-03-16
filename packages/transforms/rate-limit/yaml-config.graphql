@@ -1,0 +1,29 @@
+extend type Transform {
+  """
+  RateLimit transform
+  """
+  rateLimit: [RateLimitTransformConfig!]!
+}
+
+type RateLimitTransformConfig @md {
+  """
+  The type name that the following field belongs to
+  """
+  type: String!
+  """
+  The field of the type that the rate limit is applied to
+  """
+  field: String!
+  """
+  The maximum number of requests that can be made in a given time period
+  """
+  max: Int!
+  """
+  The time period in which the rate limit is applied
+  """
+  ttl: Int!
+  """
+  The identifier expression that determines the identity of the request (e.g. "{context.req.socket.remoteAddress}")
+  """
+  identifier: String!
+}
