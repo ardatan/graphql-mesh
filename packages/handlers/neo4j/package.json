@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.16.34",
+  "version": "0.16.35",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -26,9 +26,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.4.0",
-    "@graphql-mesh/utils": "0.30.0",
-    "@graphql-mesh/types": "0.67.0",
+    "@graphql-mesh/store": "0.4.1",
+    "@graphql-mesh/utils": "0.30.1",
+    "@graphql-mesh/types": "0.67.1",
     "neo4j-driver": "4.4.3",
     "neo4j-graphql-js": "2.19.4",
     "tslib": "^2.3.1",

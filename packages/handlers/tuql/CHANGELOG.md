@@ -1,5 +1,11 @@
 # @graphql-mesh/tuql
 
+## 0.4.103
+
+### Patch Changes
+
+- @graphql-mesh/types@0.67.1
+
 ## 0.4.102
 
 ### Patch Changes

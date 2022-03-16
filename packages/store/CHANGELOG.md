@@ -1,5 +1,13 @@
 # @graphql-mesh/store
 
+## 0.4.1
+
+### Patch Changes
+
+- 4c7b90a87: fix(store): do not use JSON.parse and string to store json artifacts
+  - @graphql-mesh/types@0.67.1
+  - @graphql-mesh/utils@0.30.1
+
 ## 0.4.0
 
 ### Minor Changes
