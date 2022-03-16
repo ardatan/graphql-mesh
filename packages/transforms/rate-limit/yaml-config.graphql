@@ -1,0 +1,14 @@
+extend type Transform {
+  """
+  RateLimit transform
+  """
+  rateLimit: [RateLimitTransformConfig!]!
+}
+
+type RateLimitTransformConfig {
+  type: String!
+  field: String!
+  max: Int!
+  ttl: Int!
+  identifier: String!
+}

@@ -1083,6 +1083,10 @@ export interface Transform {
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
+  /**
+   * RateLimit transform
+   */
+  rateLimit: RateLimitTransformConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1595,6 +1599,13 @@ export interface MergedRootFieldConfig {
    *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
    */
   argsExpr?: string;
+}
+export interface RateLimitTransformConfig {
+  type: string;
+  field: string;
+  max: number;
+  ttl: number;
+  identifier: string;
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;

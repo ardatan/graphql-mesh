@@ -79,7 +79,7 @@ export interface MeshTransformLibrary<Config = any> {
   new (options: MeshTransformOptions<Config>): MeshTransform;
 }
 
-export interface MeshTransform extends Transform {
+export interface MeshTransform<T = any> extends Transform<T> {
   noWrap?: boolean;
 }
 
