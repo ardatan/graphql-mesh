@@ -6,7 +6,7 @@ import { stringInterpolator } from '@graphql-mesh/utils';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();
-  private identifierTokenMap = new Map<string, number>();
+  private tokenMap = new Map<string, number>();
   private timeouts = new Set<NodeJS.Timeout>();
   constructor(options: MeshTransformOptions<YamlConfig.RateLimitTransformConfig[]>) {
     if (options.config) {
@@ -44,14 +44,15 @@ export default class RateLimitTransform implements MeshTransform {
             const fieldDef = typeInfo.getFieldDef();
             const path = `${parentType.name}.${fieldDef.name}`;
             const rateLimitConfig = this.pathRateLimitDef.get(path);
+            const identifier = stringInterpolator.parse(rateLimitConfig.identifier, resolverData);
+            const mapKey = `${identifier}-${path}`;
             if (rateLimitConfig) {
-              const identifier = stringInterpolator.parse(rateLimitConfig.identifier, resolverData);
-              let remainingTokens = this.identifierTokenMap.get(identifier);
+              let remainingTokens = this.tokenMap.get(mapKey);
 
               if (remainingTokens == null) {
                 remainingTokens = rateLimitConfig.max;
                 const timeout = setTimeout(() => {
-                  this.identifierTokenMap.delete(identifier);
+                  this.tokenMap.delete(mapKey);
                   this.timeouts.delete(timeout);
                 }, rateLimitConfig.ttl);
                 this.timeouts.add(timeout);
@@ -63,7 +64,7 @@ export default class RateLimitTransform implements MeshTransform {
                   fieldDef.name,
                 ]);
               } else {
-                this.identifierTokenMap.set(identifier, remainingTokens - 1);
+                this.tokenMap.set(mapKey, remainingTokens - 1);
               }
             }
           },
