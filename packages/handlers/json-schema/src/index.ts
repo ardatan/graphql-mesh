@@ -22,7 +22,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
-    this.jsonSchema = store.proxy('jsonSchema.json', JsonSchemaWithDiff);
+    this.jsonSchema = store.proxy('jsonSchemaBundle', JsonSchemaWithDiff);
     this.logger = logger;
     this.fetch = getCachedFetch(this.cache);
   }

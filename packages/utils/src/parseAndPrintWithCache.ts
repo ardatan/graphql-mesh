@@ -1,33 +1,31 @@
+import { memoize1 } from '@graphql-tools/utils';
 import { DocumentNode, parse, print } from 'graphql';
-import { globalLruCache } from './global-lru-cache';
+import { createLruCache } from './global-lru-cache';
+
+const parseCache = createLruCache(1000, 3600);
+const printCache = createLruCache(1000, 3600);
 
 export function parseWithCache(sdl: string): DocumentNode {
-  const sdlKey = `sdl_${sdl.trim()}`;
-  let document: DocumentNode = globalLruCache.get(sdlKey);
+  const trimmedSdl = sdl.trim();
+  let document: DocumentNode = parseCache.get(trimmedSdl);
   if (!document) {
-    document = parse(sdl, { noLocation: true });
-    globalLruCache.set(sdlKey, document);
-    const stringifedDocumentJson = JSON.stringify(document);
-    const documentJsonKey = `documentJson_${stringifedDocumentJson}`;
-    globalLruCache.set(documentJsonKey, sdl);
+    document = parse(trimmedSdl, { noLocation: true });
+    parseCache.set(trimmedSdl, document);
+    printCache.set(JSON.stringify(document), trimmedSdl);
   }
   return document;
 }
 
-export function printWithCache(document: DocumentNode): string {
+export const printWithCache = memoize1(function printWithCache(document: DocumentNode): string {
   const stringifedDocumentJson = JSON.stringify(document);
-  let sdl: string = globalLruCache.get(stringifedDocumentJson);
+  let sdl: string = printCache.get(stringifedDocumentJson);
   if (!sdl) {
     sdl = print(document).trim();
-    const documentJsonKey = `documentJson_${stringifedDocumentJson}`;
-    globalLruCache.set(documentJsonKey, sdl);
-    const sdlKey = `sdl_${sdl}`;
-    if (!globalLruCache.has(sdlKey)) {
-      globalLruCache.set(sdlKey, document);
-    }
+    printCache.set(stringifedDocumentJson, sdl);
+    parseCache.set(sdl, document);
   }
   return sdl;
-}
+});
 
 export function gql([sdl]: [string]) {
   return parseWithCache(sdl);

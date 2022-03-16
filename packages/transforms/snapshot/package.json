@@ -28,9 +28,9 @@
   "dependencies": {
     "@graphql-mesh/types": "0.66.6",
     "@graphql-mesh/utils": "0.29.0",
-    "@graphql-tools/resolvers-composition": "6.4.2",
-    "@graphql-tools/schema": "8.3.2",
-    "@graphql-tools/utils": "8.6.2",
+    "@graphql-tools/resolvers-composition": "6.4.3",
+    "@graphql-tools/schema": "8.3.3",
+    "@graphql-tools/utils": "8.6.3",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

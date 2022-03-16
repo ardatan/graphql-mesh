@@ -34,7 +34,6 @@ import {
   ResolverDataBasedFactory,
   DefaultLogger,
   parseWithCache,
-  globalLruCache,
   printWithCache,
 } from '@graphql-mesh/utils';
 
@@ -303,13 +302,14 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
     })
   );
 
+  const compiledQueries = new Map<string, CompiledQuery | ExecutionResult>();
   if (options.documents?.length) {
-    logger.info(`Compiling operation documents`);
+    getMeshLogger.debug(() => `Compiling operation documents`);
     for (const documentSource of options.documents || []) {
-      globalLruCache.set(`sdl_${documentSource.rawSDL}`, documentSource.document);
-      const documentJson = JSON.stringify(documentSource.document);
-      globalLruCache.set(`documentJson_${documentJson}`, documentSource.rawSDL);
-      globalLruCache.set(`compiled_${documentSource.rawSDL}`, compileQuery(unifiedSchema, documentSource.document));
+      compiledQueries.set(
+        documentSource.rawSDL || printWithCache(documentSource.document),
+        compileQuery(unifiedSchema, documentSource.document || parseWithCache(documentSource.rawSDL))
+      );
     }
   }
 
@@ -337,20 +337,19 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
       errors.forEach(error => logger.error(error.stack || error.message));
     }),
     {
-      onValidate({ params, setResult }) {
-        const sdl = printWithCache(params.documentAST);
-        const cacheKey = `compiled_${sdl}`;
-        if (globalLruCache.has(cacheKey)) {
-          setResult([]);
-        }
-      },
       onParse({ setParseFn }) {
         setParseFn(parseWithCache);
+      },
+      onValidate({ params, setResult }) {
+        const sdl = printWithCache(params.documentAST).trim();
+        if (compiledQueries.has(sdl)) {
+          setResult([]);
+        }
       },
       onSubscribe({ args: subscriptionArgs, setSubscribeFn }) {
         const sdl = printWithCache(subscriptionArgs.document);
         const cacheKey = `compiled_${sdl}`;
-        const compiledQuery = globalLruCache.get(cacheKey) as CompiledQuery | ExecutionResult;
+        const compiledQuery = compiledQueries.get(cacheKey) as CompiledQuery | ExecutionResult;
         if (compiledQuery != null) {
           logger.debug(
             () =>
@@ -373,7 +372,7 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
       onExecute({ args: executionArgs, setResultAndStopExecution, setExecuteFn }) {
         const sdl = printWithCache(executionArgs.document);
         const cacheKey = `compiled_${sdl}`;
-        const compiledQuery = globalLruCache.get(cacheKey) as CompiledQuery | ExecutionResult;
+        const compiledQuery = compiledQueries.get(cacheKey);
         if (compiledQuery != null) {
           logger.debug(
             () =>

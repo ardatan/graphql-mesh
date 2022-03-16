@@ -1662,6 +1662,7 @@ export interface FileCacheConfig {
 }
 export interface InMemoryLRUConfig {
   max?: number;
+  ttl?: number;
 }
 export interface LocalforageConfig {
   /**
