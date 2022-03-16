@@ -3360,10 +3360,10 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/common@0.2.0-canary-8f38fca.0":
-  version "0.2.0-canary-8f38fca.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-0.2.0-canary-8f38fca.0.tgz#b45695c0d55deb18c2f948b6ae319ebcad499abd"
-  integrity sha512-3MmVzggqLe3e623rnOsyapg+XH2vrMcnQUo1TaASG9rmo48Hxffxykil2A5wYGlcEZhd/wp/miMzeHsC2h6+Jw==
+"@graphql-yoga/common@0.2.0-canary-125bd30.0":
+  version "0.2.0-canary-125bd30.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-0.2.0-canary-125bd30.0.tgz#f6c7d0b4a2278e75206445c03c2cbd37175fe585"
+  integrity sha512-/ItBNV/tNUK4S6Eyfu+mQoA101C4UypJjDijIwzt+7b5kTFCnGc8JH1FKGGE+lUaIilqf50VjDN3sRzL70JQSw==
   dependencies:
     "@envelop/core" "^2.0.0"
     "@envelop/disable-introspection" "^3.0.0"
@@ -3378,14 +3378,14 @@
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/node@0.1.1-canary-8f38fca.0":
-  version "0.1.1-canary-8f38fca.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-0.1.1-canary-8f38fca.0.tgz#866e9457284c4247085d36ff1c5ce24547da4dd6"
-  integrity sha512-Zot16S2bJsaEiblPS0uFLPRxAfYEgDhn0Tlxy+lepf2sHkquBI5Ij/M1aeiPQ8m93VczLu7l7OphtS3tIPwFKg==
+"@graphql-yoga/node@0.1.1-canary-125bd30.0":
+  version "0.1.1-canary-125bd30.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-0.1.1-canary-125bd30.0.tgz#f8aecb5df131c25555c3076252adc75b16f5da5e"
+  integrity sha512-qAvQAwommi0uQfBgYKoIF5XszUhLubt2117m0EQ1r+12oK28hFO/W1xFGEQoFhnRrIf0RnFuswjeHhKs+gl0aw==
   dependencies:
     "@envelop/core" "^2.0.0"
     "@graphql-tools/utils" "^8.6.0"
-    "@graphql-yoga/common" "0.2.0-canary-8f38fca.0"
+    "@graphql-yoga/common" "0.2.0-canary-125bd30.0"
     "@graphql-yoga/subscription" "0.0.1-beta.1"
     cross-undici-fetch "^0.1.25"
     pino "^7.2.0"

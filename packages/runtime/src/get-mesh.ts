@@ -304,7 +304,7 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
 
   const compiledQueries = new Map<string, CompiledQuery | ExecutionResult>();
   if (options.documents?.length) {
-    logger.info(`Compiling operation documents`);
+    getMeshLogger.debug(() => `Compiling operation documents`);
     for (const documentSource of options.documents || []) {
       compiledQueries.set(
         documentSource.rawSDL || printWithCache(documentSource.document),
