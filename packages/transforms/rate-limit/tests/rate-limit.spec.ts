@@ -11,7 +11,7 @@ describe('Rate Limit Transform', () => {
 
   beforeEach(() => {
     pubsub = new PubSub();
-    cache = new InMemoryLRUCache({ pubsub });
+    cache = new InMemoryLRUCache();
   });
 
   afterEach(() => {
