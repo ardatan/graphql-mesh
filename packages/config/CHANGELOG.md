@@ -1,5 +1,20 @@
 # @graphql-mesh/config
 
+## 0.31.10
+
+### Patch Changes
+
+- 01bac6bb5: fix - align graphql-tools versions
+- Updated dependencies [01bac6bb5]
+- Updated dependencies [01bac6bb5]
+  - @graphql-mesh/cache-inmemory-lru@0.6.0
+  - @graphql-mesh/merger-bare@0.13.23
+  - @graphql-mesh/merger-stitching@0.15.24
+  - @graphql-mesh/runtime@0.33.0
+  - @graphql-mesh/store@0.4.0
+  - @graphql-mesh/types@0.67.0
+  - @graphql-mesh/utils@0.30.0
+
 ## 0.31.9
 
 ### Patch Changes

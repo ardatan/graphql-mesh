@@ -1,5 +1,21 @@
 # @graphql-mesh/raml
 
+## 0.2.0
+
+### Minor Changes
+
+- 01bac6bb5: enhance: reduce memory consumption
+
+### Patch Changes
+
+- 01bac6bb5: fix - align graphql-tools versions
+- Updated dependencies [01bac6bb5]
+- Updated dependencies [01bac6bb5]
+  - @omnigraph/raml@0.5.13
+  - @graphql-mesh/store@0.4.0
+  - @graphql-mesh/types@0.67.0
+  - @graphql-mesh/utils@0.30.0
+
 ## 0.1.24
 
 ### Patch Changes

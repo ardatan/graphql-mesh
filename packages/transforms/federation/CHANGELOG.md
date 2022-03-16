@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-federation
 
+## 0.8.31
+
+### Patch Changes
+
+- 01bac6bb5: fix - align graphql-tools versions
+- Updated dependencies [01bac6bb5]
+- Updated dependencies [01bac6bb5]
+  - @graphql-mesh/types@0.67.0
+  - @graphql-mesh/utils@0.30.0
+
 ## 0.8.30
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @omnigraph/json-schema
 
+## 0.17.8
+
+### Patch Changes
+
+- 01bac6bb5: fix - align graphql-tools versions
+- Updated dependencies [01bac6bb5]
+- Updated dependencies [01bac6bb5]
+  - @graphql-mesh/types@0.67.0
+  - @graphql-mesh/utils@0.30.0
+  - json-machete@0.5.18
+
 ## 0.17.7
 
 ### Patch Changes

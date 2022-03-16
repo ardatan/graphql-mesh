@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-prune
 
+## 0.0.7
+
+### Patch Changes
+
+- 01bac6bb5: fix - align graphql-tools versions
+- Updated dependencies [01bac6bb5]
+- Updated dependencies [01bac6bb5]
+  - @graphql-mesh/types@0.67.0
+
 ## 0.0.6
 
 ### Patch Changes

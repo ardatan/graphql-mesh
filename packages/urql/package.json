@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/urql-exchange",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "wonka": "4.0.15"
   },
   "peerDependencies": {
-    "@graphql-mesh/runtime": "^0.32.0",
+    "@graphql-mesh/runtime": "^0.33.0",
     "graphql": "^15.2.0 || ^16.0.0",
     "@urql/core": "^2.4.3",
     "wonka": "^4.0.15"

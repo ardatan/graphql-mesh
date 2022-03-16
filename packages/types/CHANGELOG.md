@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.67.0
+
+### Minor Changes
+
+- 01bac6bb5: enhance: reduce memory consumption
+
+### Patch Changes
+
+- 01bac6bb5: fix - align graphql-tools versions
+- Updated dependencies [01bac6bb5]
+- Updated dependencies [01bac6bb5]
+  - @graphql-mesh/store@0.4.0
+
 ## 0.66.6
 
 ### Patch Changes
