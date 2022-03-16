@@ -1,5 +1,11 @@
 # @graphql-mesh/utils
 
+## 0.30.1
+
+### Patch Changes
+
+- @graphql-mesh/types@0.67.1
+
 ## 0.30.0
 
 ### Minor Changes
