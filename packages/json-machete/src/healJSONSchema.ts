@@ -132,7 +132,11 @@ export async function healJSONSchema(schema: JSONSchema) {
             delete subSchema.format;
           }
         }
-        subSchema.required = asArray(subSchema.required);
+        if (subSchema.required) {
+          if (!Array.isArray(subSchema.required)) {
+            delete subSchema.required;
+          }
+        }
         // If it is an object type but no properties given while example is available
         if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
           const generatedSchema = toJsonSchema(subSchema.example, {
