@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.62.2
+
+### Patch Changes
+
+- afdac7faf: fix artifacts and add tests for artifact usage
+- Updated dependencies [6c318b91a]
+- Updated dependencies [afdac7faf]
+  - @graphql-mesh/types@0.68.0
+  - @graphql-mesh/runtime@0.33.2
+  - @graphql-mesh/config@0.31.12
+  - @graphql-mesh/store@0.4.2
+  - @graphql-mesh/utils@0.30.2
+
 ## 0.62.1
 
 ### Patch Changes
