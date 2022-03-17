@@ -1,6 +1,6 @@
 {
   "name": "json-machete",
-  "version": "0.5.20",
+  "version": "0.6.0",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/index.js",
