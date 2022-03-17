@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.17.11
+
+### Patch Changes
+
+- b45dac0c0: fix(json-schema): handle union response types correctly
+- Updated dependencies [b45dac0c0]
+  - json-machete@0.6.0
+
 ## 0.17.10
 
 ### Patch Changes

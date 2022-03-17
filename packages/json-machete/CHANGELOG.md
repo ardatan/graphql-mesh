@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.6.0
+
+### Minor Changes
+
+- b45dac0c0: feat(json-machete): add missing format if example is provided
+
 ## 0.5.20
 
 ### Patch Changes
