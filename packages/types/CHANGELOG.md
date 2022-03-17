@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.68.0
+
+### Minor Changes
+
+- 6c318b91a: New Rate Limit Transform
+
+### Patch Changes
+
+- @graphql-mesh/store@0.4.2
+
 ## 0.67.1
 
 ### Patch Changes
