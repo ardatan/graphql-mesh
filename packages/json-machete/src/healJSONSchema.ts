@@ -3,6 +3,8 @@ import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
 
+const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
+
 const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
 function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
@@ -98,8 +100,13 @@ export async function healJSONSchema(schema: JSONSchema) {
           }
         }
         if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
-          const { format } = toJsonSchema(subSchema.examples?.[0] || subSchema.example);
-          subSchema.format = format;
+          const examples = asArray(subSchema.examples || subSchema.example || []);
+          if (examples?.length) {
+            const { format } = toJsonSchema(examples[0]);
+            if (format) {
+              subSchema.format = format;
+            }
+          }
         }
         // If it is an object type but no properties given while example is available
         if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
