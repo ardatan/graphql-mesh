@@ -2,7 +2,7 @@ extend type Transform {
   """
   RateLimit transform
   """
-  rateLimit: [RateLimitTransformConfig!]!
+  rateLimit: [RateLimitTransformConfig!]
 }
 
 type RateLimitTransformConfig @md {

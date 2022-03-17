@@ -43,10 +43,26 @@ export interface GraphQLMeshCLIParams {
   validateCommand: string;
 }
 
-export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
-  let baseDir = cwd();
+export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
+  commandName: 'mesh',
+  initialLoggerPrefix: '🕸️',
+  configName: 'mesh',
+  artifactsDir: '.mesh',
+  serveMessage: 'Serving GraphQL Mesh',
+  playgroundTitle: 'GraphiQL Mesh',
+  builtMeshFactoryName: 'getBuiltMesh',
+  builtMeshSDKFactoryName: 'getMeshSDK',
+  devServerCommand: 'dev',
+  prodServerCommand: 'start',
+  buildArtifactsCommand: 'build',
+  sourceServerCommand: 'serve-source',
+  validateCommand: 'validate',
+};
+
+export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin(process.argv), cwdPath = cwd()) {
+  let baseDir = cwdPath;
   let logger = new DefaultLogger(cliParams.initialLoggerPrefix);
-  return yargs(hideBin(process.argv))
+  return yargs(args)
     .help()
     .option('r', {
       alias: 'require',
@@ -70,7 +86,7 @@ export async function graphqlMesh(cliParams: GraphQLMeshCLIParams) {
         if (pathModule.isAbsolute(dir)) {
           baseDir = dir;
         } else {
-          baseDir = pathModule.resolve(cwd(), dir);
+          baseDir = pathModule.resolve(cwdPath, dir);
         }
         const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
         const tsConfigExists = fs.existsSync(tsConfigPath);

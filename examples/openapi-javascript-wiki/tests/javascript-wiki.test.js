@@ -36,5 +36,4 @@ describe('JavaScript Wiki', () => {
     const result = await execute(wikipediaMetricsQuery);
     expect(result).toMatchSnapshot('wikipedia-metrics-result');
   });
-  afterAll(() => mesh$.then(mesh => mesh.destroy()));
 });

@@ -13,6 +13,7 @@ import {
   visitWithTypeInfo,
   TypeInfo,
   ExecutionResult,
+  DocumentNode,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
 import {
@@ -41,7 +42,15 @@ import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { delegateToSchema, IDelegateToSchemaOptions, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
-import { inspect, isDocumentNode, memoize1, parseSelectionSet } from '@graphql-tools/utils';
+import {
+  AggregateError,
+  inspect,
+  isAsyncIterable,
+  isDocumentNode,
+  mapAsyncIterator,
+  memoize1,
+  parseSelectionSet,
+} from '@graphql-tools/utils';
 import { enableIf, envelop, useErrorHandler, useExtendContext, useLogger, useSchema } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
@@ -60,7 +69,16 @@ export interface MeshInstance<TMeshContext = any> {
   meshContext: TMeshContext;
   plugins: EnvelopPlugins;
   getEnveloped: ReturnType<typeof envelop>;
+  sdkRequesterFactory: (globalContext: any) => (document: DocumentNode, variables?: any, operationContext?: any) => any;
 }
+
+const memoizedGetOperationType = memoize1((document: DocumentNode) => {
+  const operationAST = getOperationAST(document, undefined);
+  if (!operationAST) {
+    throw new Error('Must provide document with a valid operation');
+  }
+  return operationAST.operation;
+});
 
 const memoizedGetEnvelopedFactory = memoize1((plugins: EnvelopPlugins) => envelop({ plugins }));
 
@@ -470,6 +488,33 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
     });
   }
 
+  function sdkRequesterFactory(globalContext: any) {
+    return async function meshSdkRequester(document: DocumentNode, variables: any, contextValue: any) {
+      if (memoizedGetOperationType(document) === 'subscription') {
+        const result = await meshSubscribe(document, variables, {
+          ...globalContext,
+          ...contextValue,
+        });
+        if ('errors' in result) {
+          return new AggregateError(result.errors);
+        }
+        if (isAsyncIterable(result)) {
+          return mapAsyncIterator(result, result => result.data);
+        }
+        return result.data;
+      } else {
+        const result = await meshExecute(document, variables, {
+          ...globalContext,
+          ...contextValue,
+        });
+        if ('errors' in result) {
+          return new AggregateError(result.errors);
+        }
+        return result.data;
+      }
+    };
+  }
+
   return {
     execute: meshExecute,
     subscribe: meshSubscribe,
@@ -484,6 +529,7 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
     get getEnveloped() {
       return memoizedGetEnvelopedFactory(plugins);
     },
+    sdkRequesterFactory,
   };
 }
 

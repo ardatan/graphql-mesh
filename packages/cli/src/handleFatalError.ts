@@ -4,5 +4,8 @@ import { DefaultLogger } from '@graphql-mesh/utils';
 
 export function handleFatalError(e: Error, logger: Logger = new DefaultLogger('🕸️')): any {
   logger.error(e.stack || e.message);
-  exit(1);
+  console.log(e);
+  if (process.env.JEST == null) {
+    exit(1);
+  }
 }
