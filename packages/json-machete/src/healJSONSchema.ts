@@ -103,7 +103,7 @@ export async function healJSONSchema(schema: JSONSchema) {
           const examples = asArray(subSchema.examples || subSchema.example || []);
           if (examples?.length) {
             const { format } = toJsonSchema(examples[0]);
-            if (format || format !== 'utc-millisec') {
+            if (format && format !== 'utc-millisec') {
               subSchema.format = format;
             }
           }
