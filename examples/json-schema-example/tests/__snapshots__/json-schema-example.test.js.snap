@@ -22,6 +22,9 @@ input CreateUpdateUserInput {
   lastName: String
 }
 
+\\"\\"\\"Represents date values\\"\\"\\"
+scalar Date
+
 type Foo {
   id: String
 }
@@ -39,6 +42,7 @@ type Query {
 
 \\"\\"\\"Fake User Object\\"\\"\\"
 type User {
+  birthDate: Date
   company: Company
   companyId: String
   firstName: String

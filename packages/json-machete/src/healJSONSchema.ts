@@ -97,6 +97,10 @@ export async function healJSONSchema(schema: JSONSchema) {
             subSchema.type = 'array';
           }
         }
+        if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
+          const { format } = toJsonSchema(subSchema.examples?.[0] || subSchema.example);
+          subSchema.format = format;
+        }
         // If it is an object type but no properties given while example is available
         if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
           const generatedSchema = toJsonSchema(subSchema.example, {
