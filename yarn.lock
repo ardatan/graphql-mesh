@@ -192,23 +192,23 @@
   resolved "https://registry.yarnpkg.com/@apollo/core-schema/-/core-schema-0.2.0.tgz#4eb529ee27553eeb6c18cd27eb0b94f2bd8b22a8"
   integrity sha512-bhzZMIyzP3rynXwtUuEt2ENJIgKd9P/iR98VsuA3tOyYdWPjD5BfsrdWO0oIJXW/pjbbr0oHX5gqutFRKYuwAA==
 
-"@apollo/federation@^0.35.3":
-  version "0.35.3"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.35.3.tgz#3c1bb6f0c23f8dc819e221dd91e2c86effa840af"
-  integrity sha512-UWsgRhhIW2Uvnt0FHqr+pMAwXAsPcIfgajDRLkcTxmCV2/L+SnBY9Pu83BTf5exD9rDQgwJGe9PUuao8aoHYUA==
+"@apollo/federation@^0.35.4":
+  version "0.35.4"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.35.4.tgz#c8bce2b0a319fe2d0fa61aadad2e3334d6f104ea"
+  integrity sha512-mZv9eyte8PmUu4PyRDEob/ub1nah3JZ131PQoOi1B90gj3ni6HOSWCme/W4+0gSdGNIKljqhB7R3j9JJeHa+/A==
   dependencies:
     "@apollo/subgraph" "^0.3.3"
     apollo-server-types "^3.0.2"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.48.3":
-  version "0.48.3"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.48.3.tgz#e990c62109d4bf1b8094bab09ac256f1b983751e"
-  integrity sha512-svEUgdf0I2NTopbljvO+/uKnYnziadA6RgFyiZKKGh4F8vPtiQthCQzmWl/Cv+dG5PzxaFS/fths4LbnKKPCBw==
+"@apollo/gateway@0.49.0":
+  version "0.49.0"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.49.0.tgz#630023b4c604be14e77bc472d567c52125dcfc8e"
+  integrity sha512-6OlSLCVvAphJP5Vr9nzLAAjmgxZLa6fxA83f7TIKen8/aMf051MDKIpt25D7u1TjHBeU7k8TQIFMS+0EqBKOLw==
   dependencies:
     "@apollo/core-schema" "^0.2.0"
-    "@apollo/federation" "^0.35.3"
-    "@apollo/query-planner" "^0.8.2"
+    "@apollo/federation" "^0.35.4"
+    "@apollo/query-planner" "^0.9.0"
     "@josephg/resolvable" "^1.0.1"
     "@opentelemetry/api" "^1.0.1"
     "@types/node-fetch" "2.6.1"
@@ -244,10 +244,10 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-planner@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.8.2.tgz#aa3101feb3b939004f984da335f7dadad1dd7c70"
-  integrity sha512-ql/ZzSP1gi+4X2k134TZDYKW0EPb1XtRgpOui0ALm6ofHJMLmt1luLtbUOLhZ0LYwUdSq1uOwOC3r+aOteaWeQ==
+"@apollo/query-planner@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.9.0.tgz#dfdb430bef660ab66fe1efd9e7f6b3e54d12d121"
+  integrity sha512-ZSWr0qk8TESiXRyo2W3nwKOF0WjETLdAa9a3v+/yPEG2W4yDAj0wjApx+oQNw1vk1IPIF5NvK+l8MSs/v3h//A==
   dependencies:
     chalk "^4.1.0"
     deep-equal "^2.0.5"
@@ -5308,10 +5308,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-string-parser/-/http-string-parser-0.0.30.tgz#a2ec779b2918afb818351342805f2283e8fb2a25"
   integrity sha512-YeB/nirRo6eCsT2QNxwsEhzy2J2k6bA0SQBheTs+9sS5UMtKWsiCaCnckSI1Fm1RAKsk5fKN+XBHfivzTH+z3g==
 
-"@types/ioredis@4.28.8":
-  version "4.28.8"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.8.tgz#a181d6eb70e402a6db670fe54b9c5bb66c0fac17"
-  integrity sha512-mULOyO2smtvkE1zmzRRA4P0+1UjEqusi014kXOL1q3CY0RgqkR5/wKvv+vAJbPw2Q66wPyylKeevUy+m/FaRMg==
+"@types/ioredis@4.28.9":
+  version "4.28.9"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.28.9.tgz#0da19b0be2f806364fbca23c49d610d782d459dc"
+  integrity sha512-0uclpMv1u5MeDohCnAvT8FPvCQt9WprBJRFhAatuaRDJpELzHyDg8bV+MCclFfYz0nAbVNO0xoWsud2/NhOJWg==
   dependencies:
     "@types/node" "*"
 
