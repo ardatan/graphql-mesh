@@ -2,6 +2,12 @@ import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
 import { ObjectTypeComposer, UnionTypeComposer } from 'graphql-compose';
 import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
 
+interface ResponseData {
+  status: number;
+  url: string;
+  statusText: string;
+}
+
 export function getTypeResolverFromOutputTCs(
   ajv: Ajv,
   outputTypeComposers: (ObjectTypeComposer | UnionTypeComposer)[],
@@ -18,11 +24,7 @@ export function getTypeResolverFromOutputTCs(
       return data.resourceType;
     }
     if (data.__response && statusCodeOneOfIndexMap) {
-      const responseData: {
-        status: number;
-        url: string;
-        statusText: string;
-      } = data.__response;
+      const responseData: ResponseData = data.__response;
       const type = statusCodeTypeMap.get(responseData.status.toString()) || statusCodeTypeMap.get('default');
       if (type) {
         if ('getFields' in type) {
@@ -30,21 +32,6 @@ export function getTypeResolverFromOutputTCs(
         } else {
           return type.getResolveType()(data, context, info, type.getType());
         }
-      } else {
-        const error = new GraphQLError(
-          `HTTP Error: ${responseData.status}`,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          {
-            ...responseData,
-            responseJson: data,
-          }
-        );
-        console.error(error);
-        return error;
       }
     }
     const validationErrors: Record<string, ErrorObject[]> = {};
@@ -54,13 +41,36 @@ export function getTypeResolverFromOutputTCs(
         const isValid = validateFn(data);
         const typeName = outputTypeComposer.getTypeName();
         if (isValid) {
-          return typeName;
+          if ('getFields' in outputTypeComposer) {
+            return outputTypeComposer.getTypeName();
+          } else {
+            return outputTypeComposer.getResolveType()(data, context, info, outputTypeComposer.getType());
+          }
         }
-        validationErrors[typeName] = ajv.errors;
+        validationErrors[typeName] = ajv.errors || validateFn.errors;
       }
     }
-    return new GraphQLError(`Received data doesn't met the union`, null, null, null, null, null, {
+    if (data.__response) {
+      const responseData: ResponseData = data.__response;
+      const error = new GraphQLError(
+        `HTTP Error: ${responseData.status}`,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          ...responseData,
+          responseJson: data,
+        }
+      );
+      console.error(error);
+      return error;
+    }
+    const error = new GraphQLError(`Received data doesn't met the union`, null, null, null, null, null, {
       validationErrors,
     });
+    console.error(error);
+    return error;
   };
 }

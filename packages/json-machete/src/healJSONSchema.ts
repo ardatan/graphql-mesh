@@ -7,6 +7,22 @@ const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [val
 
 const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
 
+const JSONSchemaStringFormats = [
+  'date',
+  'hostname',
+  'regex',
+  'json-pointer',
+  'relative-json-pointer',
+  'uri-reference',
+  'uri-template',
+  'date-time',
+  'time',
+  'email',
+  'ipv4',
+  'ipv6',
+  'uri',
+];
+
 function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
   if (typeof schema === 'object' && schema != null) {
     if (!schema.$comment) {
@@ -103,9 +119,17 @@ export async function healJSONSchema(schema: JSONSchema) {
           const examples = asArray(subSchema.examples || subSchema.example || []);
           if (examples?.length) {
             const { format } = toJsonSchema(examples[0]);
-            if (format && format !== 'utc-millisec') {
+            if (format) {
               subSchema.format = format;
             }
+          }
+        }
+        if (subSchema.format === 'dateTime') {
+          subSchema.format = 'date-time';
+        }
+        if (subSchema.format) {
+          if (!JSONSchemaStringFormats.includes(subSchema.format)) {
+            delete subSchema.format;
           }
         }
         // If it is an object type but no properties given while example is available
