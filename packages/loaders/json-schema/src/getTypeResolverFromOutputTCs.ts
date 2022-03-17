@@ -1,18 +1,15 @@
 import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
-import { ObjectTypeComposer } from 'graphql-compose';
+import { ObjectTypeComposer, UnionTypeComposer } from 'graphql-compose';
 import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
 
 export function getTypeResolverFromOutputTCs(
   ajv: Ajv,
-  outputTypeComposers: ObjectTypeComposer[],
+  outputTypeComposers: (ObjectTypeComposer | UnionTypeComposer)[],
   statusCodeOneOfIndexMap?: Record<string, number>
 ): GraphQLTypeResolver<any, any> {
-  const statusCodeTypenameMap = new Map<string, string>();
+  const statusCodeTypeMap = new Map<string, ObjectTypeComposer | UnionTypeComposer>();
   for (const statusCode in statusCodeOneOfIndexMap) {
-    statusCodeTypenameMap.set(
-      statusCode.toString(),
-      outputTypeComposers[statusCodeOneOfIndexMap[statusCode]].getTypeName()
-    );
+    statusCodeTypeMap.set(statusCode.toString(), outputTypeComposers[statusCodeOneOfIndexMap[statusCode]]);
   }
   return function resolveType(data: any, context: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
@@ -26,10 +23,13 @@ export function getTypeResolverFromOutputTCs(
         url: string;
         statusText: string;
       } = data.__response;
-      const typeName =
-        statusCodeTypenameMap.get(responseData.status.toString()) || statusCodeTypenameMap.get('default');
-      if (typeName) {
-        return typeName;
+      const type = statusCodeTypeMap.get(responseData.status.toString()) || statusCodeTypeMap.get('default');
+      if (type) {
+        if ('getFields' in type) {
+          return type.getTypeName();
+        } else {
+          return type.getResolveType()(data, context, info, type.getType());
+        }
       } else {
         const error = new GraphQLError(
           `HTTP Error: ${responseData.status}`,

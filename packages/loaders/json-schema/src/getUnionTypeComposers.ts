@@ -5,7 +5,9 @@ import {
   isSomeInputTypeComposer,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
+  ObjectTypeComposerThunked,
   SchemaComposer,
+  UnionTypeComposer,
 } from 'graphql-compose';
 import { getGenericJSONScalar } from './getGenericJSONScalar';
 import { getTypeResolverFromOutputTCs } from './getTypeResolverFromOutputTCs';
@@ -18,7 +20,7 @@ const ONE_OF_DEFINITION = /* GraphQL */ `
 export interface GetUnionTypeComposersOpts {
   schemaComposer: SchemaComposer;
   ajv: Ajv;
-  typeComposersList: { input?: AnyTypeComposer<any>; output?: ObjectTypeComposer }[];
+  typeComposersList: { input?: AnyTypeComposer<any>; output?: ObjectTypeComposer | UnionTypeComposer }[];
   subSchema: JSONSchemaObject;
   generateInterfaceFromSharedFields: boolean;
   validateWithJSONSchema: (data: any) => boolean;
@@ -42,7 +44,7 @@ export function getUnionTypeComposers({
     return typeComposersList[0];
   }
   const unionInputFields: Record<string, any> = {};
-  const outputTypeComposers: ObjectTypeComposer<any>[] = [];
+  const outputTypeComposers: (ObjectTypeComposer<any> | UnionTypeComposer<any>)[] = [];
   let ableToUseGraphQLUnionType = true;
   typeComposersList.forEach(typeComposers => {
     const { input, output } = typeComposers;
@@ -79,7 +81,7 @@ export function getUnionTypeComposers({
     let sharedFields: Record<string, ObjectTypeComposerFieldConfig<any, any, any>>;
     if (generateInterfaceFromSharedFields) {
       for (const typeComposer of outputTypeComposers) {
-        const fieldMap = typeComposer.getFields();
+        const fieldMap = (typeComposer as any).getFields();
         if (!sharedFields) {
           sharedFields = { ...fieldMap };
         } else {
@@ -112,7 +114,7 @@ export function getUnionTypeComposers({
         resolveType,
       });
       for (const typeComposer of outputTypeComposers) {
-        typeComposer.addInterface(output);
+        (typeComposer as any).addInterface(output);
         // GraphQL removes implementations
         schemaComposer.addSchemaMustHaveType(typeComposer);
       }
@@ -125,7 +127,19 @@ export function getUnionTypeComposers({
           subSchema,
         }),
         description: subSchema.description,
-        types: outputTypeComposers,
+        types: () => {
+          const possibleTypes: ObjectTypeComposerThunked<any, any>[] = [];
+          for (const outputTypeComposer of outputTypeComposers) {
+            if ('getFields' in outputTypeComposer) {
+              possibleTypes.push(outputTypeComposer);
+            } else {
+              for (const possibleType of outputTypeComposer.getTypes()) {
+                possibleTypes.push(possibleType);
+              }
+            }
+          }
+          return possibleTypes;
+        },
         resolveType,
       });
     }
