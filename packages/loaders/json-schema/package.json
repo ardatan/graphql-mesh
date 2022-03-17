@@ -28,7 +28,7 @@
     "@types/qs": "6.9.7"
   },
   "dependencies": {
-    "cross-undici-fetch": "0.1.25",
+    "cross-undici-fetch": "0.1.27",
     "json-machete": "0.6.0",
     "@graphql-mesh/types": "0.68.0",
     "@graphql-mesh/utils": "0.30.2",
