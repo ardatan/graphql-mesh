@@ -82,7 +82,7 @@
     "@types/cookie-parser": "1.4.2",
     "@types/express": "4.17.13",
     "@types/mkdirp": "1.0.2",
-    "@types/yargs": "17.0.9",
+    "@types/yargs": "17.0.10",
     "@types/ws": "8.5.3",
     "@types/rimraf": "3.0.2"
   },
