@@ -17,6 +17,10 @@
         "companyId": {
           "type": "string"
         },
+        "birthDate": {
+          "type": "string",
+          "example": "1993-12-20"
+        },
         "foos": {
           "type": "array",
           "items": {
