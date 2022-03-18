@@ -195,11 +195,11 @@ export default class MySQLHandler implements MeshHandler {
           dateStrings: true,
           trace: !!process.env.DEBUG,
           debug: !!process.env.DEBUG,
-          host: this.config.host && stringInterpolator(this.config.host, { env: process.env }),
-          port: this.config.port && parseInt(stringInterpolator(this.config.port, { env: process.env })),
-          user: this.config.user && stringInterpolator(this.config.user, { env: process.env }),
-          password: this.config.password && stringInterpolator(this.config.password, { env: process.env }),
-          database: this.config.database && stringInterpolator(this.config.database, { env: process.env }),
+          host: this.config.host && stringInterpolator.parse(this.config.host, { env: process.env }),
+          port: this.config.port && parseInt(stringInterpolator.parse(this.config.port, { env: process.env })),
+          user: this.config.user && stringInterpolator.parse(this.config.user, { env: process.env }),
+          password: this.config.password && stringInterpolator.parse(this.config.password, { env: process.env }),
+          database: this.config.database && stringInterpolator.parse(this.config.database, { env: process.env }),
           ...this.config,
         });
 
