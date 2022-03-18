@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rate-limit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
