@@ -518,7 +518,7 @@ export default class MySQLHandler implements MeshHandler {
     return {
       schema,
       async executor(executionRequest: ExecutionRequest) {
-        const mysqlConnection = await getPromisifiedConnection(pool, executionRequest.context || {});
+        const mysqlConnection = await getPromisifiedConnection(executionRequest.context || {}, pool);
         try {
           return await jitExecutor({
             ...executionRequest,
