@@ -11,7 +11,7 @@ import {
 import { Plugin, withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
-import path from 'path';
+import { path } from '@graphql-mesh/cross-helpers';
 import { tmpdir } from 'os';
 import { jitExecutorFactory, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';

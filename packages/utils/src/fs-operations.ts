@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { fs } from '@graphql-mesh/cross-helpers';
 import pathModule from 'path';
 import { jsonFlatStringify } from './flat-string';
 

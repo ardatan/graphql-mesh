@@ -23,6 +23,7 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "0.0.1",
     "@graphql-mesh/types": "0.68.0",
     "@graphql-mesh/store": "0.4.2",
     "@graphql-mesh/utils": "0.30.2",

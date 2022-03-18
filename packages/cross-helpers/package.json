@@ -1,0 +1,29 @@
+{
+  "name": "@graphql-mesh/cross-helpers",
+  "version": "0.0.1",
+  "description": "Cross Platform Helpers for GraphQL Mesh",
+  "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cross-helpers"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "index.js",
+  "browser": "browser.js",
+  "react-native": "react-native.js",
+  "types": "index.d.ts",
+  "dependencies": {
+    "react-native-fs": "2.19.0",
+    "react-native-path": "0.0.5",
+    "react-native-events": "1.0.21",
+    "browserfs": "2.0.0",
+    "path-browserify": "1.0.1",
+    "events-browserify": "npm:events@3.3.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

@@ -11,11 +11,10 @@ import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInte
 import _ from 'lodash';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import path from 'path';
+import { path , fs } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
-import fs from 'fs';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';

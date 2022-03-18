@@ -1,7 +1,7 @@
 import { HookName, AllHooks } from '@graphql-mesh/types';
 import { mapAsyncIterator, withCancel } from '@graphql-tools/utils';
 import { AbortController } from 'cross-undici-fetch';
-import EventEmitter from 'events';
+import { events as EventEmitter } from '@graphql-mesh/cross-helpers';
 
 export class PubSub {
   private eventEmitter: EventEmitter;

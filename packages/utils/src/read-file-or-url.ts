@@ -3,7 +3,7 @@ import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
 import pathModule from 'path';
-import fs from 'fs';
+import { fs } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
 import { memoize1 } from '@graphql-tools/utils';

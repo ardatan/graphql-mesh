@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { fs } from '@graphql-mesh/cross-helpers';
 import pathModule from 'path';
 import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';

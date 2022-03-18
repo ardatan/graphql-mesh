@@ -26,6 +26,7 @@
     "graphql-fields": "2.0.3"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "0.0.1",
     "@graphql-mesh/types": "0.68.0",
     "@graphql-mesh/utils": "0.30.2",
     "@graphql-tools/resolvers-composition": "6.4.3",
