@@ -1,8 +1,8 @@
 import { MeshTransform, MeshTransformOptions, ResolverData, YamlConfig } from '@graphql-mesh/types';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import type { DelegationContext } from '@graphql-tools/delegate';
-import { GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
-import { stringInterpolator } from '@graphql-mesh/utils';
+import { ExecutionResult, GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
+import { AggregateError, stringInterpolator } from '@graphql-mesh/utils';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();
@@ -23,11 +23,12 @@ export default class RateLimitTransform implements MeshTransform {
     }
   }
 
-  transformRequest(
-    executionRequest: ExecutionRequest,
-    { transformedSchema, rootValue, args, context, info }: DelegationContext
-  ): ExecutionRequest {
+  private errors = new WeakMap<DelegationContext, GraphQLError[]>();
+
+  transformRequest(executionRequest: ExecutionRequest, delegationContext: DelegationContext): ExecutionRequest {
+    const { transformedSchema, rootValue, args, context, info } = delegationContext;
     if (transformedSchema) {
+      const errors: GraphQLError[] = [];
       const resolverData: ResolverData = {
         env: process.env,
         root: rootValue,
@@ -36,7 +37,8 @@ export default class RateLimitTransform implements MeshTransform {
         info,
       };
       const typeInfo = new TypeInfo(transformedSchema);
-      visit(
+      let remainingFields = 0;
+      const newDocument = visit(
         executionRequest.document,
         visitWithTypeInfo(typeInfo, {
           Field: () => {
@@ -44,9 +46,9 @@ export default class RateLimitTransform implements MeshTransform {
             const fieldDef = typeInfo.getFieldDef();
             const path = `${parentType.name}.${fieldDef.name}`;
             const rateLimitConfig = this.pathRateLimitDef.get(path);
-            const identifier = stringInterpolator.parse(rateLimitConfig.identifier, resolverData);
-            const mapKey = `${identifier}-${path}`;
             if (rateLimitConfig) {
+              const identifier = stringInterpolator.parse(rateLimitConfig.identifier, resolverData);
+              const mapKey = `${identifier}-${path}`;
               let remainingTokens = this.tokenMap.get(mapKey);
 
               if (remainingTokens == null) {
@@ -59,18 +61,42 @@ export default class RateLimitTransform implements MeshTransform {
               }
 
               if (remainingTokens === 0) {
-                throw new GraphQLError(`Rate limit of exceeded for "${identifier}"`, undefined, undefined, undefined, [
-                  parentType.name,
-                  fieldDef.name,
-                ]);
+                errors.push(new GraphQLError(`Rate limit of "${path}" exceeded for "${identifier}"`));
+                // Remove this field from the selection set
+                return null;
               } else {
                 this.tokenMap.set(mapKey, remainingTokens - 1);
               }
             }
+            remainingFields++;
+            return false;
           },
         })
       );
+      if (remainingFields === 0) {
+        if (errors.length === 1) {
+          throw errors[0];
+        } else if (errors.length > 0) {
+          throw new AggregateError(errors);
+        }
+      }
+      this.errors.set(delegationContext, errors);
+      return {
+        ...executionRequest,
+        document: newDocument,
+      };
     }
     return executionRequest;
+  }
+
+  transformResult(result: ExecutionResult, delegationContext: DelegationContext) {
+    const errors = this.errors.get(delegationContext);
+    if (errors?.length) {
+      return {
+        ...result,
+        errors: [...(result.errors || []), ...errors],
+      };
+    }
+    return result;
   }
 }

@@ -24,6 +24,7 @@ describe('Rate Limit Transform', () => {
   const importFn = defaultImportFn;
   const apiName = 'rate-limit-test';
   it('should throw an error if the rate limit is exceeded', async () => {
+    let numberOfCalls = 0;
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -32,7 +33,10 @@ describe('Rate Limit Transform', () => {
       `,
       resolvers: {
         Query: {
-          foo: () => 'bar',
+          foo: () => {
+            numberOfCalls++;
+            return 'bar';
+          },
         },
       },
     });
@@ -80,10 +84,12 @@ describe('Rate Limit Transform', () => {
     }
     const result = await executeQuery();
 
+    // Resolver shouldn't be called
+    expect(numberOfCalls).toBe(5);
     expect(result.data?.foo).toBeNull();
     const firstError = result.errors?.[0];
-    expect(firstError.message).toBe('Rate limit of exceeded for "1"');
-    expect(firstError.path).toEqual(['Query', 'foo']);
+    expect(firstError.message).toBe('Rate limit of "Query.foo" exceeded for "1"');
+    expect(firstError.path).toEqual(['foo']);
   });
   it('should reset tokens when the ttl is expired', async () => {
     const schema = makeExecutableSchema({
@@ -212,10 +218,67 @@ describe('Rate Limit Transform', () => {
 
       expect(resultFails.data?.foo).toBeNull();
       const firstError = resultFails.errors?.[0];
-      expect(firstError.message).toBe(`Rate limit of exceeded for "User${i}"`);
-      expect(firstError.path).toEqual(['Query', 'foo']);
+      expect(firstError.message).toBe(`Rate limit of "Query.foo" exceeded for "User${i}"`);
+      expect(firstError.path).toEqual(['foo']);
     }
 
     expect.assertions(8);
+  });
+  it('should return other fields even if one of them has fails', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+          bar: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          foo: () => 'FOO',
+          bar: () => 'BAR',
+        },
+      },
+    });
+
+    const rateLimitTransform = new RateLimitTransform({
+      apiName,
+      config: [
+        {
+          type: 'Query',
+          field: 'foo',
+          max: 1,
+          ttl: 1000,
+          identifier: '{context.userId}',
+        },
+      ],
+      baseDir,
+      cache,
+      pubsub,
+      importFn,
+    });
+
+    const wrappedSchema = wrapSchema({
+      schema,
+      transforms: [rateLimitTransform],
+    });
+
+    const executeQuery = () =>
+      execute({
+        schema: wrappedSchema,
+        document: parse(/* GraphQL */ `
+          query TestQuery {
+            foo
+            bar
+          }
+        `),
+        contextValue: {
+          userId: 'MYUSER',
+        },
+      });
+
+    await executeQuery();
+    const result = await executeQuery();
+    expect(result.data.bar).toBe('BAR');
+    expect(result.errors?.[0]?.message).toBe(`Rate limit of "Query.foo" exceeded for "MYUSER"`);
   });
 });
