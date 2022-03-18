@@ -96,7 +96,7 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
-const getPromisifiedConnection = memoize2(async (_context: any, pool: Pool) => {
+async function getPromisifiedConnection(pool: Pool) {
   const getConnection = promisify(pool.getConnection.bind(pool));
 
   const connection = await getConnection();
@@ -128,7 +128,7 @@ const getPromisifiedConnection = memoize2(async (_context: any, pool: Pool) => {
     deleteRow,
     count,
   };
-});
+}
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
@@ -169,7 +169,7 @@ export default class MySQLHandler implements MeshHandler {
           const cacheKey = [methodName, ...args].join('_');
           const cacheProxy = this.store.proxy(cacheKey, PredefinedProxyOptions.JsonWithoutValidation);
           return cacheProxy.getWithSet(async () => {
-            promisifiedConnection$ = promisifiedConnection$ || getPromisifiedConnection({}, pool);
+            promisifiedConnection$ = promisifiedConnection$ || getPromisifiedConnection(pool);
             const promisifiedConnection = await promisifiedConnection$;
             return promisifiedConnection[methodName](...args);
           });
@@ -518,7 +518,7 @@ export default class MySQLHandler implements MeshHandler {
     return {
       schema,
       async executor(executionRequest: ExecutionRequest) {
-        const mysqlConnection = await getPromisifiedConnection(executionRequest.context || {}, pool);
+        const mysqlConnection = await getPromisifiedConnection(pool);
         try {
           return await jitExecutor({
             ...executionRequest,
