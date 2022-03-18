@@ -18,6 +18,12 @@ sources:
   - name: Employees
     handler:
       mysql:
+        # You can use environment variables like
+        # host: "{env.MYSQL_HOST}"
+        # port: "{env.MYSQL_PORT}"
+        # user: "{env.MYSQL_USER}"
+        # password: "{env.MYSQL_PASSWORD}"
+        # database: "{env.MYSQL_DATABASE}"
         host: localhost
         port: 3306
         user: root
