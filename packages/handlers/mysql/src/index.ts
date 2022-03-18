@@ -196,7 +196,8 @@ export default class MySQLHandler implements MeshHandler {
           trace: !!process.env.DEBUG,
           debug: !!process.env.DEBUG,
           host: this.config.host && stringInterpolator.parse(this.config.host, { env: process.env }),
-          port: this.config.port && parseInt(stringInterpolator.parse(this.config.port, { env: process.env })),
+          port:
+            this.config.port && parseInt(stringInterpolator.parse(this.config.port.toString(), { env: process.env })),
           user: this.config.user && stringInterpolator.parse(this.config.user, { env: process.env }),
           password: this.config.password && stringInterpolator.parse(this.config.password, { env: process.env }),
           database: this.config.database && stringInterpolator.parse(this.config.database, { env: process.env }),
