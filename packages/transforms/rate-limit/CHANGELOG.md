@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-rate-limit
 
+## 0.1.1
+
+### Patch Changes
+
+- e23ad8237: fix(rate-limit): do not break the request in case of nested fields
+
 ## 0.1.0
 
 ### Minor Changes
