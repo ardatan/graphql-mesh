@@ -30,7 +30,7 @@ import {
   stringInterpolator,
 } from '@graphql-mesh/utils';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { ExecutionRequest, memoize2 } from '@graphql-tools/utils';
+import { ExecutionRequest } from '@graphql-tools/utils';
 
 const SCALARS = {
   bigint: 'BigInt',
