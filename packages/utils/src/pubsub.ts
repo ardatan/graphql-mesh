@@ -1,6 +1,19 @@
 import { HookName, AllHooks } from '@graphql-mesh/types';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
 
+class PubSubEvent<THook extends HookName> extends Event implements CustomEvent<AllHooks[THook]> {
+  detail: AllHooks[THook];
+  constructor(type: string, eventInitDict?: CustomEventInit<any>) {
+    super(type, eventInitDict);
+    this.detail = eventInitDict?.detail;
+  }
+
+  initCustomEvent(type: string, bubbles?: boolean, cancelable?: boolean, detail?: AllHooks[THook]): void {
+    super.initEvent(type, bubbles, cancelable);
+    this.detail = detail;
+  }
+}
+
 export class PubSub {
   private eventTarget: EventTarget;
   constructor(eventTarget?: EventTarget) {
@@ -12,7 +25,7 @@ export class PubSub {
   }
 
   async publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void> {
-    this.eventTarget.dispatchEvent(new CustomEvent(triggerName, { detail: payload }));
+    this.eventTarget.dispatchEvent(new PubSubEvent(triggerName, { detail: payload }));
   }
 
   private listenerIdMap = new Map<
@@ -25,7 +38,7 @@ export class PubSub {
   >();
 
   subscribe<THook extends HookName>(triggerName: THook, onMessage: (data: AllHooks[THook]) => void): Promise<number> {
-    const eventListener = function eventListener(event: CustomEvent) {
+    const eventListener = function eventListener(event: PubSubEvent<THook>) {
       onMessage(event.detail);
     };
     this.eventTarget.addEventListener(triggerName, eventListener);
