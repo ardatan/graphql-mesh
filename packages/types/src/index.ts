@@ -56,12 +56,12 @@ export type AllHooks = {
 export type HookName = keyof AllHooks & string;
 
 export interface MeshPubSub {
-  publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void> | void;
+  publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void>;
   subscribe<THook extends HookName>(
     triggerName: THook,
     onMessage: (data: AllHooks[THook]) => void,
     options?: any
-  ): Promise<number> | number;
+  ): Promise<number>;
   unsubscribe(subId: number): void;
   asyncIterator<THook extends HookName>(triggers: THook): AsyncIterable<AllHooks[THook]>;
 }

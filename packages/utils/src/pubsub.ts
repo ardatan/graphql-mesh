@@ -19,7 +19,7 @@ export class PubSub implements MeshPubSub {
     }
   }
 
-  publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): void {
+  async publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): Promise<void> {
     this.eventTarget.dispatchEvent(new PubSubEvent(triggerName, { detail }));
   }
 
@@ -31,7 +31,10 @@ export class PubSub implements MeshPubSub {
     }
   >();
 
-  subscribe<THook extends HookName>(triggerName: THook, onMessage: (data: AllHooks[THook]) => void): number {
+  async subscribe<THook extends HookName>(
+    triggerName: THook,
+    onMessage: (data: AllHooks[THook]) => void
+  ): Promise<number> {
     function eventListener(event: PubSubEvent<THook>) {
       onMessage(event.detail);
     }
@@ -52,9 +55,9 @@ export class PubSub implements MeshPubSub {
   asyncIterator<THook extends HookName>(triggerName: THook): AsyncIterable<AllHooks[THook]> {
     return observableToAsyncIterable({
       subscribe: observer => {
-        const subId = this.subscribe(triggerName, data => observer.next(data));
+        const subId$ = this.subscribe(triggerName, data => observer.next(data));
         return {
-          unsubscribe: () => this.unsubscribe(subId),
+          unsubscribe: () => subId$.then(subId => this.unsubscribe(subId)),
         };
       },
     });
