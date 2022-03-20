@@ -3,6 +3,7 @@ sources:
   - name: Weatherbit
     handler:
       newOpenapi:
+        baseUrl: http://api.weatherbit.io/v2.0/
         oasFilePath: https://www.weatherbit.io/static/swagger.json
     transforms:
       - cache:

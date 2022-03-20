@@ -17,7 +17,7 @@
   "dependencies": {
     "react-native-fs": "2.19.0",
     "react-native-path": "0.0.5",
-    "browserfs": "2.0.0",
+    "browserify-fs": "1.0.0",
     "path-browserify": "1.0.1"
   },
   "publishConfig": {

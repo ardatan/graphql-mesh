@@ -1,4 +1,4 @@
 module.exports = {
-  fs: require('browserify/dist/shims/fs.js'),
+  fs: require('browserify-fs'),
   path: require('path-browserify'),
 };
