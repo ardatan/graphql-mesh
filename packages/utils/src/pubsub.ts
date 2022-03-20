@@ -1,55 +1,46 @@
 import { HookName, AllHooks, MeshPubSub } from '@graphql-mesh/types';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
 
-class PubSubEvent<THook extends HookName> extends Event {
-  detail: AllHooks[THook];
-  constructor(type: string, eventInitDict?: CustomEventInit<any>) {
-    super(type, eventInitDict);
-    this.detail = eventInitDict?.detail;
-  }
-}
+type Listener<THookName extends HookName = HookName> = (data: AllHooks[THookName]) => void;
 
 export class PubSub implements MeshPubSub {
-  private eventTarget: EventTarget;
-  constructor(eventTarget?: EventTarget) {
-    if (eventTarget) {
-      this.eventTarget = eventTarget;
-    } else {
-      this.eventTarget = new EventTarget();
-    }
-  }
+  private subIdListenerMap = new Map<number, Listener>();
+  private listenerEventMap = new Map<Listener, HookName>();
+  private eventNameListenersMap = new Map<HookName, Set<Listener>>();
 
   async publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): Promise<void> {
-    this.eventTarget.dispatchEvent(new PubSubEvent(triggerName, { detail }));
+    const eventNameListeners = this.eventNameListenersMap.get(triggerName);
+    if (eventNameListeners) {
+      Promise.allSettled([...eventNameListeners].map(listener => listener(detail))).catch(e => console.error(e));
+    }
   }
 
-  private listenerIdMap = new Map<
-    number,
-    {
-      triggerName: HookName;
-      eventListener: EventListener;
+  async subscribe<THook extends HookName>(triggerName: THook, onMessage: Listener<THook>): Promise<number> {
+    let eventNameListeners = this.eventNameListenersMap.get(triggerName);
+    if (!eventNameListeners) {
+      eventNameListeners = new Set();
+      this.eventNameListenersMap.set(triggerName, eventNameListeners);
     }
-  >();
-
-  async subscribe<THook extends HookName>(
-    triggerName: THook,
-    onMessage: (data: AllHooks[THook]) => void
-  ): Promise<number> {
-    function eventListener(event: PubSubEvent<THook>) {
-      onMessage(event.detail);
-    }
-    this.eventTarget.addEventListener(triggerName, eventListener);
-    const subId = this.listenerIdMap.size;
-    this.listenerIdMap.set(subId, { triggerName, eventListener });
+    const subId = Date.now();
+    eventNameListeners.add(onMessage);
+    this.subIdListenerMap.set(subId, onMessage);
+    this.listenerEventMap.set(onMessage, triggerName);
     return subId;
   }
 
   unsubscribe(subId: number): void {
-    const listenerObj = this.listenerIdMap.get(subId);
-    if (listenerObj) {
-      this.eventTarget.removeEventListener(listenerObj.triggerName, listenerObj.eventListener);
-      this.listenerIdMap.delete(subId);
+    const listener = this.subIdListenerMap.get(subId);
+    if (listener) {
+      this.subIdListenerMap.delete(subId);
+      const eventName = this.listenerEventMap.get(listener);
+      if (eventName) {
+        const eventNameListeners = this.eventNameListenersMap.get(eventName);
+        if (eventNameListeners) {
+          eventNameListeners.delete(listener);
+        }
+      }
     }
+    this.listenerEventMap.delete(listener);
   }
 
   asyncIterator<THook extends HookName>(triggerName: THook): AsyncIterable<AllHooks[THook]> {
