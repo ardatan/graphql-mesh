@@ -22,8 +22,13 @@ import {
   GraphQLUnsignedInt,
   GraphQLUnsignedFloat,
 } from 'graphql-scalars';
-import { ExecutionResult, specifiedDirectives } from 'graphql';
-import { jitExecutorFactory, loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { specifiedDirectives } from 'graphql';
+import {
+  jitExecutorFactory,
+  loadFromModuleExportExpression,
+  sanitizeNameForGraphQL,
+  stringInterpolator,
+} from '@graphql-mesh/utils';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { ExecutionRequest } from '@graphql-tools/utils';
 
@@ -87,9 +92,43 @@ const SCALARS = {
 };
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof MySQLHandler.prototype.getPromisifiedConnection>>;
+type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnection>>;
 
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
+
+async function getPromisifiedConnection(pool: Pool) {
+  const getConnection = promisify(pool.getConnection.bind(pool));
+
+  const connection = await getConnection();
+
+  const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
+  const getTableFields = promisify(connection.fields.bind(connection));
+  const getTableForeigns = promisify(connection.foreign.bind(connection));
+  const getTablePrimaryKeyMetadata = promisify(connection.primary.bind(connection));
+
+  const selectLimit = promisify(connection.selectLimit.bind(connection));
+  const select = promisify(connection.select.bind(connection));
+  const insert = promisify(connection.insert.bind(connection));
+  const update = promisify(connection.update.bind(connection));
+  const deleteRow = promisify(connection.delete.bind(connection));
+  const count = promisify(connection.count.bind(connection));
+  const release = connection.release.bind(connection);
+
+  return {
+    connection,
+    release,
+    getDatabaseTables,
+    getTableFields,
+    getTableForeigns,
+    getTablePrimaryKeyMetadata,
+    selectLimit,
+    select,
+    insert,
+    update,
+    deleteRow,
+    count,
+  };
+}
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
@@ -118,40 +157,6 @@ export default class MySQLHandler implements MeshHandler {
     this.logger = logger;
   }
 
-  async getPromisifiedConnection(pool: Pool) {
-    const getConnection = promisify(pool.getConnection.bind(pool));
-
-    const connection = await getConnection();
-
-    const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
-    const getTableFields = promisify(connection.fields.bind(connection));
-    const getTableForeigns = promisify(connection.foreign.bind(connection));
-    const getTablePrimaryKeyMetadata = promisify(connection.primary.bind(connection));
-
-    const selectLimit = promisify(connection.selectLimit.bind(connection));
-    const select = promisify(connection.select.bind(connection));
-    const insert = promisify(connection.insert.bind(connection));
-    const update = promisify(connection.update.bind(connection));
-    const deleteRow = promisify(connection.delete.bind(connection));
-    const count = promisify(connection.count.bind(connection));
-    const release = connection.release.bind(connection);
-
-    return {
-      connection,
-      release,
-      getDatabaseTables,
-      getTableFields,
-      getTableForeigns,
-      getTablePrimaryKeyMetadata,
-      selectLimit,
-      select,
-      insert,
-      update,
-      deleteRow,
-      count,
-    };
-  }
-
   private getCachedIntrospectionConnection(pool: Pool) {
     let promisifiedConnection$: Promise<MysqlPromisifiedConnection>;
     return new Proxy<MysqlPromisifiedConnection>({} as any, {
@@ -164,7 +169,7 @@ export default class MySQLHandler implements MeshHandler {
           const cacheKey = [methodName, ...args].join('_');
           const cacheProxy = this.store.proxy(cacheKey, PredefinedProxyOptions.JsonWithoutValidation);
           return cacheProxy.getWithSet(async () => {
-            promisifiedConnection$ = promisifiedConnection$ || this.getPromisifiedConnection(pool);
+            promisifiedConnection$ = promisifiedConnection$ || getPromisifiedConnection(pool);
             const promisifiedConnection = await promisifiedConnection$;
             return promisifiedConnection[methodName](...args);
           });
@@ -190,6 +195,12 @@ export default class MySQLHandler implements MeshHandler {
           dateStrings: true,
           trace: !!process.env.DEBUG,
           debug: !!process.env.DEBUG,
+          host: this.config.host && stringInterpolator.parse(this.config.host, { env: process.env }),
+          port:
+            this.config.port && parseInt(stringInterpolator.parse(this.config.port.toString(), { env: process.env })),
+          user: this.config.user && stringInterpolator.parse(this.config.user, { env: process.env }),
+          password: this.config.password && stringInterpolator.parse(this.config.password, { env: process.env }),
+          database: this.config.database && stringInterpolator.parse(this.config.database, { env: process.env }),
           ...this.config,
         });
 
@@ -400,14 +411,11 @@ export default class MySQLHandler implements MeshHandler {
                 type: orderByInputName,
               },
             },
-            resolve: async (root, args, { mysqlConnection }, info) => {
+            resolve: (root, args, { mysqlConnection }, info) => {
               const fieldMap: Record<string, any> = graphqlFields(info);
               const fields: string[] = [];
-              await Promise.all(
-                Object.keys(fieldMap).map(async fieldName => {
-                  if (fieldName === '__typename') {
-                    return;
-                  }
+              for (const fieldName in fieldMap) {
+                if (fieldName !== '__typename') {
                   const subFieldMap = fieldMap[fieldName];
                   if (Object.keys(subFieldMap).length === 0) {
                     fields.push(fieldName);
@@ -416,8 +424,8 @@ export default class MySQLHandler implements MeshHandler {
                       .extensions as TableForeign;
                     fields.push(tableForeign.COLUMN_NAME);
                   }
-                })
-              );
+                }
+              }
               // Generate limit statement
               const limit = [args.limit, args.offset].filter(Boolean);
               if (limit.length) {
@@ -436,9 +444,7 @@ export default class MySQLHandler implements MeshHandler {
                 type: whereInputName,
               },
             },
-            resolve: async (root, args, { mysqlConnection }, info) => {
-              return mysqlConnection.count(tableName, args.where);
-            },
+            resolve: (root, args, { mysqlConnection }, info) => mysqlConnection.count(tableName, args.where),
           },
         });
         schemaComposer.Mutation.addFields({
@@ -490,42 +496,41 @@ export default class MySQLHandler implements MeshHandler {
                 type: whereInputName,
               },
             },
-            resolve: async (root, args, { mysqlConnection }) => {
-              await mysqlConnection.deleteRow(tableName, args.where);
-              return true;
-            },
+            resolve: (root, args, { mysqlConnection }) =>
+              mysqlConnection.deleteRow(tableName, args.where).then(result => !!result?.affectedRows),
           },
         });
       })
     );
-    await this.pubsub.subscribe('destroy', () => pool.end());
+    introspectionConnection.release();
+
+    this.pubsub
+      .subscribe('destroy', () => pool.end())
+      .catch(e => this.logger.error(`Couldn't release pool: ${e.stack || e.message || e}`));
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const schema = schemaComposer.buildSchema();
 
-    introspectionConnection.release();
-
     const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
 
     return {
       schema,
-      executor: async <TResult>(executionRequest: ExecutionRequest) => {
-        const mysqlConnection = await this.getPromisifiedConnection(pool);
+      async executor(executionRequest: ExecutionRequest) {
+        const mysqlConnection = await getPromisifiedConnection(pool);
         try {
-          const result = (await jitExecutor({
+          return await jitExecutor({
             ...executionRequest,
             context: {
               ...executionRequest.context,
               mysqlConnection,
             },
-          })) as ExecutionResult<TResult>;
-          mysqlConnection.release();
-          return result;
+          });
         } catch (e: any) {
+          return e;
+        } finally {
           mysqlConnection.release();
-          throw e;
         }
       },
     };
