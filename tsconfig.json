@@ -22,8 +22,6 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
 
-    "allowJs": true,
-
     "paths": {
       "@graphql-mesh/cli": ["packages/cli/src/index.ts"],
       "@graphql-mesh/runtime": ["packages/runtime/src/index.ts"],
@@ -34,6 +32,7 @@
       "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
       "@graphql-mesh/transform-*": ["packages/transforms/*/src/index.ts"],
       "@graphql-mesh/merger-*": ["packages/mergers/*/src/index.ts"],
+      "@graphql-mesh/cross-helpers": ["packages/cross-helpers/index"],
       "@graphql-mesh/*": ["packages/handlers/*/src/index.ts"],
       "json-machete": ["packages/json-machete/src/index.ts"],
       "@omnigraph/*": ["packages/loaders/*/src/index.ts"]

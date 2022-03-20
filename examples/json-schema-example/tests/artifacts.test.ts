@@ -1,5 +1,5 @@
 import { join } from 'path';
-import fs from 'fs';
+import { fs } from '@graphql-mesh/cross-helpers';
 
 const { readFile } = fs.promises;
 

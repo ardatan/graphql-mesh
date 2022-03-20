@@ -32,6 +32,7 @@
     "@graphql-tools/delegate": "8.5.4",
     "@graphql-tools/utils": "8.6.3",
     "@graphql-typed-document-node/core": "3.1.1",
+    "@graphql-mesh/cross-helpers": "0.0.1",
     "@graphql-mesh/types": "0.68.0",
     "cross-undici-fetch": "0.1.27",
     "chalk": "4.1.2",

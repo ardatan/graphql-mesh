@@ -1,5 +1,5 @@
 import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
-import path from 'path';
+import { path } from '@graphql-mesh/cross-helpers';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';

@@ -2,7 +2,7 @@ import { GraphQLSchema } from 'graphql';
 import { YamlConfig, MeshTransform, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { composeResolvers, ResolversComposerMapping, ResolversComposition } from '@graphql-tools/resolvers-composition';
-import path from 'path';
+import { path } from '@graphql-mesh/cross-helpers';
 import { computeSnapshotFilePath } from './compute-snapshot-file-path';
 import { extractResolvers, writeJSON, pathExists } from '@graphql-mesh/utils';
 

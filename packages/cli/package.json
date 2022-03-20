@@ -44,6 +44,7 @@
     "@graphql-codegen/typed-document-node": "2.2.8",
     "@graphql-mesh/config": "0.31.12",
     "@graphql-codegen/typescript-resolvers": "2.6.1",
+    "@graphql-mesh/cross-helpers": "0.0.1",
     "@graphql-mesh/runtime": "0.33.2",
     "@graphql-mesh/utils": "0.30.2",
     "@graphql-mesh/store": "0.4.2",

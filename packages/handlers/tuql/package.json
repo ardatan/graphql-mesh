@@ -26,6 +26,7 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "0.0.1",
     "@graphql-mesh/types": "0.68.0",
     "tuql": "1.7.0",
     "tslib": "^2.3.1"

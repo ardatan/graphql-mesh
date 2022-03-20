@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/return-await */
-import path from 'path';
+import { path } from '@graphql-mesh/cross-helpers';
 import { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
 

@@ -1,56 +1,56 @@
-import { HookName, AllHooks } from '@graphql-mesh/types';
-import { mapAsyncIterator, withCancel } from '@graphql-tools/utils';
-import { AbortController } from 'cross-undici-fetch';
-import EventEmitter from 'events';
+import { HookName, AllHooks, MeshPubSub } from '@graphql-mesh/types';
+import { observableToAsyncIterable } from '@graphql-tools/utils';
 
-export class PubSub {
-  private eventEmitter: EventEmitter;
-  constructor(eventEmitter?: EventEmitter) {
-    if (eventEmitter) {
-      this.eventEmitter = eventEmitter;
-    } else {
-      this.eventEmitter = new EventEmitter({ captureRejections: true });
-      this.eventEmitter.setMaxListeners(Infinity);
+type Listener<THookName extends HookName = HookName> = (data: AllHooks[THookName]) => void;
+
+export class PubSub implements MeshPubSub {
+  private subIdListenerMap = new Map<number, Listener>();
+  private listenerEventMap = new Map<Listener, HookName>();
+  private eventNameListenersMap = new Map<HookName, Set<Listener>>();
+
+  async publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): Promise<void> {
+    const eventNameListeners = this.eventNameListenersMap.get(triggerName);
+    if (eventNameListeners) {
+      Promise.allSettled([...eventNameListeners].map(listener => listener(detail))).catch(e => console.error(e));
     }
   }
 
-  async publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void> {
-    this.eventEmitter.emit(triggerName, payload);
-  }
-
-  private listenerIdMap = new Map<
-    number,
-    {
-      triggerName: HookName;
-      onMessage: (data: AllHooks[HookName]) => void;
+  async subscribe<THook extends HookName>(triggerName: THook, onMessage: Listener<THook>): Promise<number> {
+    let eventNameListeners = this.eventNameListenersMap.get(triggerName);
+    if (!eventNameListeners) {
+      eventNameListeners = new Set();
+      this.eventNameListenersMap.set(triggerName, eventNameListeners);
     }
-  >();
-
-  subscribe<THook extends HookName>(triggerName: THook, onMessage: (data: AllHooks[THook]) => void): Promise<number> {
-    this.eventEmitter.on(triggerName, onMessage);
-    const subId = this.listenerIdMap.size;
-    this.listenerIdMap.set(subId, { triggerName, onMessage });
-    return Promise.resolve(subId);
+    const subId = Date.now();
+    eventNameListeners.add(onMessage);
+    this.subIdListenerMap.set(subId, onMessage);
+    this.listenerEventMap.set(onMessage, triggerName);
+    return subId;
   }
 
   unsubscribe(subId: number): void {
-    const listenerObj = this.listenerIdMap.get(subId);
-    if (listenerObj) {
-      this.eventEmitter.off(listenerObj.triggerName, listenerObj.onMessage);
-      this.listenerIdMap.delete(subId);
+    const listener = this.subIdListenerMap.get(subId);
+    if (listener) {
+      this.subIdListenerMap.delete(subId);
+      const eventName = this.listenerEventMap.get(listener);
+      if (eventName) {
+        const eventNameListeners = this.eventNameListenersMap.get(eventName);
+        if (eventNameListeners) {
+          eventNameListeners.delete(listener);
+        }
+      }
     }
+    this.listenerEventMap.delete(listener);
   }
 
   asyncIterator<THook extends HookName>(triggerName: THook): AsyncIterable<AllHooks[THook]> {
-    const abortController = new AbortController();
-    return withCancel(
-      mapAsyncIterator(
-        EventEmitter.on(this.eventEmitter, triggerName, {
-          signal: abortController.signal,
-        }),
-        ([value]) => value
-      ),
-      () => abortController.abort()
-    );
+    return observableToAsyncIterable({
+      subscribe: observer => {
+        const subId$ = this.subscribe(triggerName, data => observer.next(data));
+        return {
+          unsubscribe: () => subId$.then(subId => this.unsubscribe(subId)),
+        };
+      },
+    });
   }
 }

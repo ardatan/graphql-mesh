@@ -1,6 +1,6 @@
 import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
-import fs from 'fs';
+import { fs } from '@graphql-mesh/cross-helpers';
 import { SchemaComposer } from 'graphql-compose';
 import _ from 'lodash';
 import pathModule from 'path';

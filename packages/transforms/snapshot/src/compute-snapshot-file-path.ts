@@ -1,4 +1,4 @@
-import path from 'path';
+import { path } from '@graphql-mesh/cross-helpers';
 import { hashObject } from '@graphql-mesh/utils';
 import { GraphQLResolveInfo } from 'graphql';
 
