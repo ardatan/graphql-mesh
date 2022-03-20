@@ -1,5 +1,18 @@
 # @graphql-mesh/mysql
 
+## 0.15.0
+
+### Minor Changes
+
+- 0c872e4ae: feat(mysql): support env interpolation
+
+### Patch Changes
+
+- Updated dependencies [b2c537c2a]
+  - @graphql-mesh/store@0.5.0
+  - @graphql-mesh/utils@0.31.0
+  - @graphql-mesh/types@0.68.1
+
 ## 0.14.36
 
 ### Patch Changes

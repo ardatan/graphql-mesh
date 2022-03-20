@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-bare",
-  "version": "0.13.25",
+  "version": "0.13.26",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,8 +23,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.68.0",
-    "@graphql-mesh/utils": "0.30.2",
+    "@graphql-mesh/types": "0.68.1",
+    "@graphql-mesh/utils": "0.31.0",
     "fetchache": "0.1.1",
     "@graphql-tools/schema": "8.3.3",
     "@graphql-tools/wrap": "8.4.6",

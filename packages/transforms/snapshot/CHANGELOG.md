@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-snapshot
 
+## 0.14.0
+
+### Minor Changes
+
+- b2c537c2a: feat - cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [b2c537c2a]
+  - @graphql-mesh/utils@0.31.0
+  - @graphql-mesh/cross-helpers@0.1.0
+  - @graphql-mesh/types@0.68.1
+
 ## 0.13.32
 
 ### Patch Changes
