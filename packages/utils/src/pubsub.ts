@@ -1,21 +1,18 @@
 import { HookName, AllHooks } from '@graphql-mesh/types';
-import { mapAsyncIterator, withCancel } from '@graphql-tools/utils';
-import { AbortController } from 'cross-undici-fetch';
-import { events as EventEmitter } from '@graphql-mesh/cross-helpers';
+import { observableToAsyncIterable } from '@graphql-tools/utils';
 
 export class PubSub {
-  private eventEmitter: EventEmitter;
-  constructor(eventEmitter?: EventEmitter) {
-    if (eventEmitter) {
-      this.eventEmitter = eventEmitter;
+  private eventTarget: EventTarget;
+  constructor(eventTarget?: EventTarget) {
+    if (eventTarget) {
+      this.eventTarget = eventTarget;
     } else {
-      this.eventEmitter = new EventEmitter({ captureRejections: true });
-      this.eventEmitter.setMaxListeners(Infinity);
+      this.eventTarget = new EventTarget();
     }
   }
 
   async publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): Promise<void> {
-    this.eventEmitter.emit(triggerName, payload);
+    this.eventTarget.dispatchEvent(new CustomEvent(triggerName, { detail: payload }));
   }
 
   private listenerIdMap = new Map<
@@ -23,34 +20,36 @@ export class PubSub {
     {
       triggerName: HookName;
       onMessage: (data: AllHooks[HookName]) => void;
+      eventListener: EventListener;
     }
   >();
 
   subscribe<THook extends HookName>(triggerName: THook, onMessage: (data: AllHooks[THook]) => void): Promise<number> {
-    this.eventEmitter.on(triggerName, onMessage);
+    const eventListener = function eventListener(event: CustomEvent) {
+      onMessage(event.detail);
+    };
+    this.eventTarget.addEventListener(triggerName, eventListener);
     const subId = this.listenerIdMap.size;
-    this.listenerIdMap.set(subId, { triggerName, onMessage });
+    this.listenerIdMap.set(subId, { triggerName, onMessage, eventListener });
     return Promise.resolve(subId);
   }
 
   unsubscribe(subId: number): void {
     const listenerObj = this.listenerIdMap.get(subId);
     if (listenerObj) {
-      this.eventEmitter.off(listenerObj.triggerName, listenerObj.onMessage);
+      this.eventTarget.removeEventListener(listenerObj.triggerName, listenerObj.eventListener);
       this.listenerIdMap.delete(subId);
     }
   }
 
   asyncIterator<THook extends HookName>(triggerName: THook): AsyncIterable<AllHooks[THook]> {
-    const abortController = new AbortController();
-    return withCancel(
-      mapAsyncIterator(
-        EventEmitter.on(this.eventEmitter, triggerName, {
-          signal: abortController.signal,
-        }),
-        ([value]) => value
-      ),
-      () => abortController.abort()
-    );
+    return observableToAsyncIterable({
+      subscribe: observer => {
+        const subId$ = this.subscribe(triggerName, data => observer.next(data));
+        return {
+          unsubscribe: () => subId$.then(subId => this.unsubscribe(subId)),
+        };
+      },
+    });
   }
 }
