@@ -23,7 +23,6 @@
     "events-browserify": "npm:events@3.3.0"
   },
   "publishConfig": {
-    "access": "public",
-    "directory": "dist"
+    "access": "public"
   }
 }
