@@ -1,5 +1,5 @@
 import { JsonPointer } from 'json-ptr';
-import pathModule from 'path';
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import { readFileOrUrl } from '@graphql-mesh/utils';
