@@ -9,7 +9,7 @@ export function getRoutes(): IRoutes {
       },
       'getting-started': {
         $name: 'Getting Started',
-        $routes: ['introduction', 'installation', 'basic-usage'],
+        $routes: ['overview', 'installation', 'your-first-mesh-gateway', 'comparison'],
       },
       recipes: {
         $name: 'Recipes',
