@@ -82,8 +82,8 @@ const AppContent: FC<AppProps> = appProps => {
           {
             children: 'Docs',
             title: 'View examples',
-            href: '/docs/getting-started/introduction',
-            onClick: e => handlePushRoute('/docs/getting-started/introduction', e),
+            href: '/docs/introduction',
+            onClick: e => handlePushRoute('/docs/introduction', e),
           },
           {
             children: 'GitHub',

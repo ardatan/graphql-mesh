@@ -4,6 +4,9 @@ import apiSidebar from './api-sidebar.json';
 export function getRoutes(): IRoutes {
   const Routes: IRoutes = {
     _: {
+      'introduction': {
+        $name: 'Introduction',
+      },
       'getting-started': {
         $name: 'Getting Started',
         $routes: ['introduction', 'installation', 'basic-usage'],

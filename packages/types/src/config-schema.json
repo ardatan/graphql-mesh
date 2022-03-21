@@ -407,6 +407,14 @@
           "$ref": "#/definitions/PruneTransformConfig",
           "description": "Prune transform"
         },
+        "rateLimit": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RateLimitTransformConfig"
+          },
+          "additionalItems": false,
+          "description": "RateLimit transform"
+        },
         "rename": {
           "description": "Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)",
           "anyOf": [
@@ -464,17 +472,8 @@
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
-        },
-        "rateLimit": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RateLimitTransformConfig"
-          },
-          "additionalItems": false,
-          "description": "RateLimit transform"
         }
-      },
-      "required": ["rateLimit"]
+      }
     },
     "Handler": {
       "additionalProperties": true,
@@ -2746,6 +2745,34 @@
         }
       }
     },
+    "RateLimitTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RateLimitTransformConfig",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type name that the following field belongs to"
+        },
+        "field": {
+          "type": "string",
+          "description": "The field of the type that the rate limit is applied to"
+        },
+        "max": {
+          "type": "integer",
+          "description": "The maximum number of requests that can be made in a given time period"
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "The time period in which the rate limit is applied"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "The identifier expression that determines the identity of the request (e.g. \"{context.req.socket.remoteAddress}\")"
+        }
+      },
+      "required": ["type", "field", "max", "ttl", "identifier"]
+    },
     "RenameTransform": {
       "additionalProperties": false,
       "type": "object",
@@ -3130,29 +3157,6 @@
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
       }
-    },
-    "RateLimitTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "RateLimitTransformConfig",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "field": {
-          "type": "string"
-        },
-        "max": {
-          "type": "integer"
-        },
-        "ttl": {
-          "type": "integer"
-        },
-        "identifier": {
-          "type": "string"
-        }
-      },
-      "required": ["type", "field", "max", "ttl", "identifier"]
     }
   },
   "title": "Config",
