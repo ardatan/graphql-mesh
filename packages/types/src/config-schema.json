@@ -391,10 +391,6 @@
             }
           ]
         },
-        "hoistField": {
-          "$ref": "#/definitions/HoistFieldTransformConfig",
-          "description": "Transformer to hoist GraphQL fields"
-        },
         "mock": {
           "$ref": "#/definitions/MockingConfig",
           "description": "Mock configuration for your source"
@@ -442,6 +438,10 @@
             }
           ]
         },
+        "replaceField": {
+          "$ref": "#/definitions/ReplaceFieldTransformConfig",
+          "description": "Transformer to replace GraphQL field with partial of full config from a different field"
+        },
         "resolversComposition": {
           "description": "Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)",
           "anyOf": [
@@ -473,9 +473,9 @@
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
         },
-        "replaceField": {
-          "$ref": "#/definitions/ReplaceFieldTransformConfig",
-          "description": "Transformer to replace GraphQL field with partial of full config from a different field"
+        "hoistField": {
+          "$ref": "#/definitions/HoistFieldTransformConfig",
+          "description": "Transformer to hoist GraphQL fields"
         }
       }
     },
@@ -2489,86 +2489,6 @@
       },
       "required": ["filters"]
     },
-    "HoistFieldTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HoistFieldTransformConfig",
-      "properties": {
-        "mode": {
-          "type": "string",
-          "enum": ["bare", "wrap"],
-          "description": "Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
-        },
-        "fields": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HoistFieldTransformFieldConfigObject"
-          },
-          "additionalItems": false,
-          "description": "Array of hoist field configs"
-        }
-      },
-      "required": ["fields"]
-    },
-    "HoistFieldTransformFieldConfigObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HoistFieldTransformFieldConfigObject",
-      "properties": {
-        "typeName": {
-          "type": "string",
-          "description": "Type name that defines where field should be hoisted to"
-        },
-        "pathConfig": {
-          "type": "array",
-          "items": {
-            "description": "Any of: String, HoistFieldTransformFieldPathConfigObject",
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "$ref": "#/definitions/HoistFieldTransformFieldPathConfigObject"
-              }
-            ]
-          },
-          "additionalItems": false,
-          "description": "Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)"
-        },
-        "newFieldName": {
-          "type": "string",
-          "description": "Name the hoisted field should have when hoisted to the type specified in typeName"
-        },
-        "alias": {
-          "type": "string"
-        },
-        "filterArgsInPath": {
-          "type": "boolean",
-          "description": "Defines if args in path are filtered (default = false)"
-        }
-      },
-      "required": ["typeName", "pathConfig", "newFieldName"]
-    },
-    "HoistFieldTransformFieldPathConfigObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HoistFieldTransformFieldPathConfigObject",
-      "properties": {
-        "fieldName": {
-          "type": "string",
-          "description": "Field name"
-        },
-        "filterArgs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;"
-        }
-      },
-      "required": ["fieldName", "filterArgs"]
-    },
     "MockingConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -2924,6 +2844,89 @@
         }
       }
     },
+    "ReplaceFieldTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldTransformConfig",
+      "properties": {
+        "typeDefs": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Additional type definition to used to replace field types"
+        },
+        "replacements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReplaceFieldTransformObject"
+          },
+          "additionalItems": false,
+          "description": "Array of rules to replace fields"
+        }
+      },
+      "required": ["replacements"]
+    },
+    "ReplaceFieldTransformObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldTransformObject",
+      "properties": {
+        "from": {
+          "$ref": "#/definitions/ReplaceFieldConfig"
+        },
+        "to": {
+          "$ref": "#/definitions/ReplaceFieldConfig"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["config", "hoistValue"],
+          "description": "Allowed values: config, hoistValue"
+        },
+        "composer": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["from", "to"]
+    },
+    "ReplaceFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ReplaceFieldConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "field"]
+    },
     "ResolversCompositionTransform": {
       "additionalProperties": false,
       "type": "object",
@@ -3159,88 +3162,85 @@
         }
       }
     },
-    "ReplaceFieldTransformConfig": {
+    "HoistFieldTransformConfig": {
       "additionalProperties": false,
       "type": "object",
-      "title": "ReplaceFieldTransformConfig",
+      "title": "HoistFieldTransformConfig",
       "properties": {
-        "typeDefs": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Additional type definition to used to replace field types"
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
-        "replacements": {
+        "fields": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ReplaceFieldTransformObject"
+            "$ref": "#/definitions/HoistFieldTransformFieldConfigObject"
           },
           "additionalItems": false,
-          "description": "Array of rules to replace fields"
+          "description": "Array of hoist field configs"
         }
       },
-      "required": ["replacements"]
+      "required": ["fields"]
     },
-    "ReplaceFieldTransformObject": {
+    "HoistFieldTransformFieldConfigObject": {
       "additionalProperties": false,
       "type": "object",
-      "title": "ReplaceFieldTransformObject",
+      "title": "HoistFieldTransformFieldConfigObject",
       "properties": {
-        "from": {
-          "$ref": "#/definitions/ReplaceFieldConfig"
-        },
-        "to": {
-          "$ref": "#/definitions/ReplaceFieldConfig"
-        },
-        "scope": {
+        "typeName": {
           "type": "string",
-          "enum": ["config", "hoistValue"],
-          "description": "Allowed values: config, hoistValue"
+          "description": "Type name that defines where field should be hoisted to"
         },
-        "composer": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
+        "pathConfig": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, HoistFieldTransformFieldPathConfigObject",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/HoistFieldTransformFieldPathConfigObject"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)"
         },
-        "name": {
+        "newFieldName": {
+          "type": "string",
+          "description": "Name the hoisted field should have when hoisted to the type specified in typeName"
+        },
+        "alias": {
           "type": "string"
+        },
+        "filterArgsInPath": {
+          "type": "boolean",
+          "description": "Defines if args in path are filtered (default = false)"
         }
       },
-      "required": ["from", "to"]
+      "required": ["typeName", "pathConfig", "newFieldName"]
     },
-    "ReplaceFieldConfig": {
+    "HoistFieldTransformFieldPathConfigObject": {
       "additionalProperties": false,
       "type": "object",
-      "title": "ReplaceFieldConfig",
+      "title": "HoistFieldTransformFieldPathConfigObject",
       "properties": {
-        "type": {
-          "type": "string"
+        "fieldName": {
+          "type": "string",
+          "description": "Field name"
         },
-        "field": {
-          "type": "string"
+        "filterArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;"
         }
       },
-      "required": ["type", "field"]
+      "required": ["fieldName", "filterArgs"]
     }
   },
   "title": "Config",
