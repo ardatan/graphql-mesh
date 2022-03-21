@@ -474,7 +474,11 @@
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
         },
         "hoistField": {
-          "$ref": "#/definitions/HoistFieldTransformConfig",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HoistFieldTransformConfig"
+          },
+          "additionalItems": false,
           "description": "Transformer to hoist GraphQL fields"
         }
       }
@@ -3166,27 +3170,6 @@
       "additionalProperties": false,
       "type": "object",
       "title": "HoistFieldTransformConfig",
-      "properties": {
-        "mode": {
-          "type": "string",
-          "enum": ["bare", "wrap"],
-          "description": "Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
-        },
-        "fields": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HoistFieldTransformFieldConfigObject"
-          },
-          "additionalItems": false,
-          "description": "Array of hoist field configs"
-        }
-      },
-      "required": ["fields"]
-    },
-    "HoistFieldTransformFieldConfigObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HoistFieldTransformFieldConfigObject",
       "properties": {
         "typeName": {
           "type": "string",

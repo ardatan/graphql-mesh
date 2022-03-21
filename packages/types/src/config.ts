@@ -1087,7 +1087,10 @@ export interface Transform {
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
-  hoistField?: HoistFieldTransformConfig;
+  /**
+   * Transformer to hoist GraphQL fields
+   */
+  hoistField?: HoistFieldTransformConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1623,20 +1626,7 @@ export interface MergedRootFieldConfig {
    */
   argsExpr?: string;
 }
-/**
- * Transformer to hoist GraphQL fields
- */
 export interface HoistFieldTransformConfig {
-  /**
-   * Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
-   */
-  mode?: 'bare' | 'wrap';
-  /**
-   * Array of hoist field configs
-   */
-  fields: HoistFieldTransformFieldConfigObject[];
-}
-export interface HoistFieldTransformFieldConfigObject {
   /**
    * Type name that defines where field should be hoisted to
    */

@@ -2,21 +2,10 @@ extend type Transform {
   """
   Transformer to hoist GraphQL fields
   """
-  hoistField: HoistFieldTransformConfig
+  hoistField: [HoistFieldTransformConfig!]
 }
 
 type HoistFieldTransformConfig @md {
-  """
-  Specify to apply hoist-field-schema transforms to bare schema or by wrapping original schema
-  """
-  mode: FilterSchemaTransformMode
-  """
-  Array of hoist field configs
-  """
-  fields: [HoistFieldTransformFieldConfigObject!]!
-}
-
-type HoistFieldTransformFieldConfigObject @md {
   """
   Type name that defines where field should be hoisted to
   """

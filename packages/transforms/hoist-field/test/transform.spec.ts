@@ -1,13 +1,13 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import { MeshPubSub } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { buildSchema, GraphQLField, GraphQLObjectType, printSchema } from 'graphql';
-import { PubSub } from 'graphql-subscriptions';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 
-import WrapHoistField from '../src/wrapHoistField';
+import HoistFieldTransform from '../src';
 
 describe('hoist', () => {
-  const importFn: ImportFn = m => import(m);
+  const importFn = defaultImportFn;
   const schema = buildSchema(/* GraphQL */ `
     type Query {
       users(limit: Int!, page: Int): UserSearchResult
@@ -36,17 +36,14 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new WrapHoistField({
-          config: {
-            mode: 'wrap',
-            fields: [
-              {
-                typeName: 'Query',
-                pathConfig: ['users', 'results'],
-                newFieldName: 'users',
-              },
-            ],
-          },
+        new HoistFieldTransform({
+          config: [
+            {
+              typeName: 'Query',
+              pathConfig: ['users', 'results'],
+              newFieldName: 'users',
+            },
+          ],
           apiName: '',
           cache,
           pubsub,
@@ -69,23 +66,20 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new WrapHoistField({
-          config: {
-            mode: 'wrap',
-            fields: [
-              {
-                typeName: 'Query',
-                pathConfig: [
-                  {
-                    fieldName: 'users',
-                    filterArgs: [],
-                  },
-                  'results',
-                ],
-                newFieldName: 'users',
-              },
-            ],
-          },
+        new HoistFieldTransform({
+          config: [
+            {
+              typeName: 'Query',
+              pathConfig: [
+                {
+                  fieldName: 'users',
+                  filterArgs: [],
+                },
+                'results',
+              ],
+              newFieldName: 'users',
+            },
+          ],
           apiName: '',
           cache,
           pubsub,
@@ -108,18 +102,15 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new WrapHoistField({
-          config: {
-            mode: 'wrap',
-            fields: [
-              {
-                typeName: 'Query',
-                pathConfig: ['users', 'results'],
-                newFieldName: 'users',
-                filterArgsInPath: true,
-              },
-            ],
-          },
+        new HoistFieldTransform({
+          config: [
+            {
+              typeName: 'Query',
+              pathConfig: ['users', 'results'],
+              newFieldName: 'users',
+              filterArgsInPath: true,
+            },
+          ],
           apiName: '',
           cache,
           pubsub,
@@ -145,23 +136,20 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new WrapHoistField({
-          config: {
-            mode: 'wrap',
-            fields: [
-              {
-                typeName: 'Query',
-                pathConfig: [
-                  {
-                    fieldName: 'users',
-                    filterArgs: ['limit'],
-                  },
-                  'results',
-                ],
-                newFieldName: 'users',
-              },
-            ],
-          },
+        new HoistFieldTransform({
+          config: [
+            {
+              typeName: 'Query',
+              pathConfig: [
+                {
+                  fieldName: 'users',
+                  filterArgs: ['limit'],
+                },
+                'results',
+              ],
+              newFieldName: 'users',
+            },
+          ],
           apiName: '',
           cache,
           pubsub,
@@ -188,24 +176,21 @@ describe('hoist', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
-        new WrapHoistField({
-          config: {
-            mode: 'wrap',
-            fields: [
-              {
-                typeName: 'Query',
-                pathConfig: [
-                  {
-                    fieldName: 'users',
-                    filterArgs: ['limit'],
-                  },
-                  'results',
-                ],
-                newFieldName: 'users',
-                filterArgsInPath: true,
-              },
-            ],
-          },
+        new HoistFieldTransform({
+          config: [
+            {
+              typeName: 'Query',
+              pathConfig: [
+                {
+                  fieldName: 'users',
+                  filterArgs: ['limit'],
+                },
+                'results',
+              ],
+              newFieldName: 'users',
+              filterArgsInPath: true,
+            },
+          ],
           apiName: '',
           cache,
           pubsub,
