@@ -85,6 +85,33 @@ sources:
 
 This example operation definition will generate a root field with `id: ID` argument, then Mesh will interpolate the expression in `path` to get `id` value from `args`.
 
+### From JSON Samples
+
+Mesh can also load JSON samples from a remote service.
+Just create a `json-samples` directory in your project root, and put the JSON samples in there (`responseSample: ./jsons/MyField.response.json` - Create a new folder like `Jsons`).
+By declare the `responseSample`, you can use the JSON sample in the GraphQL schema.
+
+ `Mesh Sample Example - .meshrc.yml file`
+```yml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      jsonSchema:
+        baseUrl: https://some-service-url/endpoint-path/
+        operations:
+          - type: Query
+            field: MyField
+            path: /MyField?id={args.id}
+            method: GET
+            responseSample: ./jsons/MyField.response.json
+            responseTypeName: MyResponseName
+            argsTypeMap:
+              id: String
+```
+ `Mesh Sample Example - ./jsons/MyField.response.json file`
+```yml
+Any JSON sample file can be used.
+```
 
 ## Codesandbox Example
 
