@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.63.0
+
+### Minor Changes
+
+- b2c537c2a: feat - cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [b2c537c2a]
+  - @graphql-mesh/config@0.32.0
+  - @graphql-mesh/store@0.5.0
+  - @graphql-mesh/utils@0.31.0
+  - @graphql-mesh/cross-helpers@0.1.0
+  - @graphql-mesh/types@0.68.1
+  - @graphql-mesh/runtime@0.33.3
+
 ## 0.62.2
 
 ### Patch Changes
