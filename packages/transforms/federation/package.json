@@ -28,9 +28,9 @@
     "@graphql-mesh/utils": "0.32.0",
     "graphql-transform-federation": "2.2.0",
     "lodash": "4.17.21",
-    "@graphql-tools/utils": "8.6.3",
-    "@graphql-tools/stitching-directives": "2.2.4",
-    "@graphql-tools/delegate": "8.5.4",
+    "@graphql-tools/utils": "8.6.4",
+    "@graphql-tools/stitching-directives": "2.2.5",
+    "@graphql-tools/delegate": "8.6.0",
     "tslib": "^2.3.1"
   },
   "publishConfig": {
