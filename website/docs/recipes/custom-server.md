@@ -10,27 +10,32 @@ By default, GraphQL Mesh provides you an HTTP server. You can see the details in
 
 The following example shows how to replace GraphQL Mesh's default server implementation with [Apollo Server](https://apollographql.com/docs/apollo-server).
 
+GraphQL Mesh uses [Envelop](https://envelop.dev) under the hood so you need to check other integrations to see how to use `getEnveloped` with other server frameworks. [Envelop Integrations](https://www.envelop.dev/docs/integrations)
+
 `myServerHandler.ts`
 
 ```js
 import { ApolloServer } from 'apollo-server';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 
-export default async function ({ getBuiltMesh, documents, logger  }: ServeMeshOptions): Promise<void> {
-  const { schema } = await getBuiltMesh();
+export default async function ({ getBuiltMesh, logger, argsPort }: ServeMeshOptions): Promise<void> {
+  const { schema, getEnveloped } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req }) => req,
-    playground: {
-      tabs: documents.map(({ location, rawSDL }) => ({
-        name: location,
-        endpoint: '/graphql',
-        query: rawSDL,
-      })),
+    executor: async requestContext => {
+      const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
+
+      return execute({
+        schema: schema,
+        document: requestContext.document,
+        contextValue: await contextFactory(),
+        variableValues: requestContext.request.variables,
+        operationName: requestContext.operationName,
+      });
     },
   });
 
-  const { url } = await apolloServer.listen(4000);
+  const { url } = await apolloServer.listen(argsPort);
   logger.info(`🚀 Server ready at ${url}`);
 }
 ```
