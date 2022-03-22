@@ -29,7 +29,7 @@ import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
 import { Oas2 } from './openapi-to-graphql/types/oas2';
-import path from 'path';
+import { path } from '@graphql-mesh/cross-helpers';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;

@@ -1,5 +1,20 @@
 # @graphql-mesh/types
 
+## 0.68.2
+
+### Patch Changes
+
+- b1a6df928: Added @graphql-mesh/transform-hoist-field package
+- Updated dependencies [67fb11706]
+  - @graphql-mesh/store@0.6.0
+
+## 0.68.1
+
+### Patch Changes
+
+- Updated dependencies [b2c537c2a]
+  - @graphql-mesh/store@0.5.0
+
 ## 0.68.0
 
 ### Minor Changes

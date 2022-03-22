@@ -1,5 +1,41 @@
 # @graphql-mesh/config
 
+## 0.33.0
+
+### Minor Changes
+
+- 67fb11706: enhance: improve cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [b1a6df928]
+- Updated dependencies [67fb11706]
+  - @graphql-mesh/types@0.68.2
+  - @graphql-mesh/store@0.6.0
+  - @graphql-mesh/utils@0.32.0
+  - @graphql-mesh/cache-inmemory-lru@0.6.4
+  - @graphql-mesh/merger-bare@0.13.27
+  - @graphql-mesh/merger-stitching@0.15.28
+  - @graphql-mesh/runtime@0.33.4
+
+## 0.32.0
+
+### Minor Changes
+
+- b2c537c2a: feat - cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [b2c537c2a]
+  - @graphql-mesh/store@0.5.0
+  - @graphql-mesh/utils@0.31.0
+  - @graphql-mesh/cross-helpers@0.1.0
+  - @graphql-mesh/merger-stitching@0.15.27
+  - @graphql-mesh/types@0.68.1
+  - @graphql-mesh/cache-inmemory-lru@0.6.3
+  - @graphql-mesh/merger-bare@0.13.26
+  - @graphql-mesh/runtime@0.33.3
+
 ## 0.31.12
 
 ### Patch Changes

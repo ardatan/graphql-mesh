@@ -1,5 +1,11 @@
 # @graphql-mesh/website
 
+## 0.8.2
+
+### Patch Changes
+
+- b1a6df928: Added @graphql-mesh/transform-hoist-field package
+
 ## 0.8.1
 
 ### Patch Changes

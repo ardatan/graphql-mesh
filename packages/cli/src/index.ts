@@ -2,8 +2,7 @@ import { findAndParseConfig } from './config';
 import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
-import pathModule from 'path';
-import fs from 'fs';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
   writeFile,

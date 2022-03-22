@@ -407,6 +407,14 @@
           "$ref": "#/definitions/PruneTransformConfig",
           "description": "Prune transform"
         },
+        "rateLimit": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RateLimitTransformConfig"
+          },
+          "additionalItems": false,
+          "description": "RateLimit transform"
+        },
         "rename": {
           "description": "Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)",
           "anyOf": [
@@ -465,16 +473,15 @@
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
         },
-        "rateLimit": {
+        "hoistField": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/RateLimitTransformConfig"
+            "$ref": "#/definitions/HoistFieldTransformConfig"
           },
           "additionalItems": false,
-          "description": "RateLimit transform"
+          "description": "Transformer to hoist GraphQL fields"
         }
-      },
-      "required": ["rateLimit"]
+      }
     },
     "Handler": {
       "additionalProperties": true,
@@ -2746,6 +2753,34 @@
         }
       }
     },
+    "RateLimitTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RateLimitTransformConfig",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type name that the following field belongs to"
+        },
+        "field": {
+          "type": "string",
+          "description": "The field of the type that the rate limit is applied to"
+        },
+        "max": {
+          "type": "integer",
+          "description": "The maximum number of requests that can be made in a given time period"
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "The time period in which the rate limit is applied"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "The identifier expression that determines the identity of the request (e.g. \"{context.req.socket.remoteAddress}\")"
+        }
+      },
+      "required": ["type", "field", "max", "ttl", "identifier"]
+    },
     "RenameTransform": {
       "additionalProperties": false,
       "type": "object",
@@ -3131,28 +3166,64 @@
         }
       }
     },
-    "RateLimitTransformConfig": {
+    "HoistFieldTransformConfig": {
       "additionalProperties": false,
       "type": "object",
-      "title": "RateLimitTransformConfig",
+      "title": "HoistFieldTransformConfig",
       "properties": {
-        "type": {
+        "typeName": {
+          "type": "string",
+          "description": "Type name that defines where field should be hoisted to"
+        },
+        "pathConfig": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, HoistFieldTransformFieldPathConfigObject",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/HoistFieldTransformFieldPathConfigObject"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)"
+        },
+        "newFieldName": {
+          "type": "string",
+          "description": "Name the hoisted field should have when hoisted to the type specified in typeName"
+        },
+        "alias": {
           "type": "string"
         },
-        "field": {
-          "type": "string"
-        },
-        "max": {
-          "type": "integer"
-        },
-        "ttl": {
-          "type": "integer"
-        },
-        "identifier": {
-          "type": "string"
+        "filterArgsInPath": {
+          "type": "boolean",
+          "description": "Defines if args in path are filtered (default = false)"
         }
       },
-      "required": ["type", "field", "max", "ttl", "identifier"]
+      "required": ["typeName", "pathConfig", "newFieldName"]
+    },
+    "HoistFieldTransformFieldPathConfigObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HoistFieldTransformFieldPathConfigObject",
+      "properties": {
+        "fieldName": {
+          "type": "string",
+          "description": "Field name"
+        },
+        "filterArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;"
+        }
+      },
+      "required": ["fieldName", "filterArgs"]
     }
   },
   "title": "Config",

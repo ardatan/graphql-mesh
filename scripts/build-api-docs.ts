@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import { fs } from '@graphql-mesh/cross-helpers';
+import { path } from '@graphql-mesh/cross-helpers';
 import fsPromises from 'fs/promises';
 import rimraf from 'rimraf';
 import * as TypeDoc from 'typedoc';
@@ -78,7 +78,8 @@ title: '${match
 ${match}`
       )
       // Fix links
-      .split('.md').join('')
+      .split('.md')
+      .join('')
       .replace(/\[([^\]]+)]\((\.\.\/(classes|interfaces|enums)\/([^)]+))\)/g, '[$1](/docs/api/$3/$4)');
     await fsPromises.writeFile(filePath, contentsTrimmed);
     console.log('✅ ', chalk.green(path.relative(process.cwd(), filePath)));

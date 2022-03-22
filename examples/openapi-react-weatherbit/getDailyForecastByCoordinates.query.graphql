@@ -1,14 +1,19 @@
+fragment DailyForecast on ForecastDay {
+  city_name
+  country_code
+  data {
+    datetime
+    min_temp
+    max_temp
+  }
+  state_code
+}
 query getDailyForecastByCoordinates($lat: Float!, $lng: Float!, $apiKey: String!) {
   forecastData: forecast_daily_by_lat_by_lon(lat: $lat, lon: $lng, input: { key: $apiKey }) {
-    ... on ForecastDay {
-      city_name
-      country_code
-      data {
-        datetime
-        min_temp
-        max_temp
-      }
-      state_code
+    ...DailyForecast
+    ... on Error {
+      code
+      message
     }
   }
 }

@@ -16,9 +16,9 @@ import descriptor from 'protobufjs/ext/descriptor/index.js';
 
 import { ClientMethod, addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils';
 import { GraphQLEnumTypeConfig, specifiedDirectives } from 'graphql';
-import path from 'path';
+import { path } from '@graphql-mesh/cross-helpers';
 import { StoreProxy } from '@graphql-mesh/store';
-import fs from 'fs';
+import { fs } from '@graphql-mesh/cross-helpers';
 import globby from 'globby';
 
 const { Root } = protobufjs;

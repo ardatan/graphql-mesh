@@ -1,5 +1,4 @@
-import fs from 'fs';
-import pathModule from 'path';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { jsonFlatStringify } from './flat-string';
 
 export async function pathExists(path: string) {

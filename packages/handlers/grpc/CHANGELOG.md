@@ -1,5 +1,33 @@
 # @graphql-mesh/grpc
 
+## 0.21.0
+
+### Minor Changes
+
+- 67fb11706: enhance: improve cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [b1a6df928]
+- Updated dependencies [67fb11706]
+  - @graphql-mesh/types@0.68.2
+  - @graphql-mesh/store@0.6.0
+  - @graphql-mesh/utils@0.32.0
+
+## 0.20.0
+
+### Minor Changes
+
+- b2c537c2a: feat - cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [b2c537c2a]
+  - @graphql-mesh/store@0.5.0
+  - @graphql-mesh/utils@0.31.0
+  - @graphql-mesh/cross-helpers@0.1.0
+  - @graphql-mesh/types@0.68.1
+
 ## 0.19.26
 
 ### Patch Changes

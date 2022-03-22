@@ -1,9 +1,27 @@
-import { inspect } from 'util';
+import { inspect } from '@graphql-tools/utils';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
 
+const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
+
 const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
+
+const JSONSchemaStringFormats = [
+  'date',
+  'hostname',
+  'regex',
+  'json-pointer',
+  'relative-json-pointer',
+  'uri-reference',
+  'uri-template',
+  'date-time',
+  'time',
+  'email',
+  'ipv4',
+  'ipv6',
+  'uri',
+];
 
 function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
   if (typeof schema === 'object' && schema != null) {
@@ -12,7 +30,7 @@ function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
       if (titleReserved) {
         schema.title = undefined;
       }
-      const stringified = inspect(schema, undefined, 3);
+      const stringified = inspect(schema);
       if (titleReserved) {
         schema.title = titleReserved;
       }
@@ -95,6 +113,28 @@ export async function healJSONSchema(schema: JSONSchema) {
           // Items only exist in arrays
           if (subSchema.items) {
             subSchema.type = 'array';
+          }
+        }
+        if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
+          const examples = asArray(subSchema.examples || subSchema.example || []);
+          if (examples?.length) {
+            const { format } = toJsonSchema(examples[0]);
+            if (format) {
+              subSchema.format = format;
+            }
+          }
+        }
+        if (subSchema.format === 'dateTime') {
+          subSchema.format = 'date-time';
+        }
+        if (subSchema.format) {
+          if (!JSONSchemaStringFormats.includes(subSchema.format)) {
+            delete subSchema.format;
+          }
+        }
+        if (subSchema.required) {
+          if (!Array.isArray(subSchema.required)) {
+            delete subSchema.required;
           }
         }
         // If it is an object type but no properties given while example is available

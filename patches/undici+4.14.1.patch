@@ -1,0 +1,18 @@
+diff --git a/node_modules/undici/lib/fetch/index.js b/node_modules/undici/lib/fetch/index.js
+index 0eae43c..10ebdbf 100644
+--- a/node_modules/undici/lib/fetch/index.js
++++ b/node_modules/undici/lib/fetch/index.js
+@@ -1784,11 +1784,12 @@ function httpNetworkFetch (
+       if (aborted) {
+         // 1. Set response’s aborted flag.
+         response.aborted = true
+-
++        /*
+         // 2. If stream is readable, error stream with an "AbortError" DOMException.
+         if (isReadable(stream)) {
+           this.controller.error(new AbortError())
+         }
++        */
+       } else {
+         // 3. Otherwise, if stream is readable, error stream with a TypeError.
+         if (isReadable(stream)) {

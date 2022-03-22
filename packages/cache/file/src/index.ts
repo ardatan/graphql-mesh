@@ -1,5 +1,5 @@
 import { ImportFn, KeyValueCache } from '@graphql-mesh/types';
-import pathModule from 'path';
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import _ from 'lodash';
 import DataLoader from 'dataloader';
 import { writeJSON } from '@graphql-mesh/utils';

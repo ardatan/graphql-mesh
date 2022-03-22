@@ -100,7 +100,7 @@ exports[`SOAP Country Info should give correct response for example queries: Fin
 Object {
   "data": Object {
     "FindPerson": Object {
-      "Age": 21n,
+      "Age": 22n,
       "DOB": "2000-03-20",
       "FavoriteColors": Object {
         "FavoriteColorsItem": Array [

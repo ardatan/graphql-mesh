@@ -1,5 +1,32 @@
 # @omnigraph/json-schema
 
+## 0.17.13
+
+### Patch Changes
+
+- Updated dependencies [b1a6df928]
+- Updated dependencies [67fb11706]
+  - @graphql-mesh/types@0.68.2
+  - json-machete@0.7.0
+  - @graphql-mesh/utils@0.32.0
+
+## 0.17.12
+
+### Patch Changes
+
+- Updated dependencies [b2c537c2a]
+  - @graphql-mesh/utils@0.31.0
+  - @graphql-mesh/types@0.68.1
+  - json-machete@0.6.1
+
+## 0.17.11
+
+### Patch Changes
+
+- b45dac0c0: fix(json-schema): handle union response types correctly
+- Updated dependencies [b45dac0c0]
+  - json-machete@0.6.0
+
 ## 0.17.10
 
 ### Patch Changes

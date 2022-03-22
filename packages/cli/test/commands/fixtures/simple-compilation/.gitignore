@@ -1,5 +1,0 @@
-# These directories are generated (and deleted) by the test code
-# in case they're not auto-delete (due to some error), they should be excluded
-# from version control
-commonjs
-esm

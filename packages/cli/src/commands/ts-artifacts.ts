@@ -8,10 +8,9 @@ import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
-import pathModule from 'path';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
-import fs from 'fs';
 import { generateOperations } from './generate-operations';
 import { GraphQLMeshCLIParams } from '..';
 import { stripJSONComments } from '../utils';
@@ -239,7 +238,7 @@ export async function generateTsArtifacts(
               const importCodes = [
                 `import { getMesh } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `import pathModule from 'path';`,
+                `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
                 `import { fileURLToPath } from '@graphql-mesh/utils';`,
               ];
               const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {

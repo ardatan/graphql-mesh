@@ -1073,6 +1073,10 @@ export interface Transform {
   prefix?: PrefixTransformConfig;
   prune?: PruneTransformConfig;
   /**
+   * RateLimit transform
+   */
+  rateLimit?: RateLimitTransformConfig[];
+  /**
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
   rename?: RenameTransform | any;
@@ -1084,9 +1088,9 @@ export interface Transform {
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
   /**
-   * RateLimit transform
+   * Transformer to hoist GraphQL fields
    */
-  rateLimit: RateLimitTransformConfig[];
+  hoistField?: HoistFieldTransformConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1400,6 +1404,28 @@ export interface PruneTransformConfig {
    */
   skipUnusedTypesPruning?: boolean;
 }
+export interface RateLimitTransformConfig {
+  /**
+   * The type name that the following field belongs to
+   */
+  type: string;
+  /**
+   * The field of the type that the rate limit is applied to
+   */
+  field: string;
+  /**
+   * The maximum number of requests that can be made in a given time period
+   */
+  max: number;
+  /**
+   * The time period in which the rate limit is applied
+   */
+  ttl: number;
+  /**
+   * The identifier expression that determines the identity of the request (e.g. "{context.req.socket.remoteAddress}")
+   */
+  identifier: string;
+}
 export interface RenameTransform {
   /**
    * Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
@@ -1600,12 +1626,34 @@ export interface MergedRootFieldConfig {
    */
   argsExpr?: string;
 }
-export interface RateLimitTransformConfig {
-  type: string;
-  field: string;
-  max: number;
-  ttl: number;
-  identifier: string;
+export interface HoistFieldTransformConfig {
+  /**
+   * Type name that defines where field should be hoisted to
+   */
+  typeName: string;
+  /**
+   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
+   */
+  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
+  /**
+   * Name the hoisted field should have when hoisted to the type specified in typeName
+   */
+  newFieldName: string;
+  alias?: string;
+  /**
+   * Defines if args in path are filtered (default = false)
+   */
+  filterArgsInPath?: boolean;
+}
+export interface HoistFieldTransformFieldPathConfigObject {
+  /**
+   * Field name
+   */
+  fieldName: string;
+  /**
+   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
+   */
+  filterArgs: string[];
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;

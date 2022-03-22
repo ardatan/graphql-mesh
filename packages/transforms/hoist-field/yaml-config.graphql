@@ -1,0 +1,40 @@
+extend type Transform {
+  """
+  Transformer to hoist GraphQL fields
+  """
+  hoistField: [HoistFieldTransformConfig!]
+}
+
+type HoistFieldTransformConfig @md {
+  """
+  Type name that defines where field should be hoisted to
+  """
+  typeName: String!
+  """
+  Array of fieldsNames to reach the field to be hoisted
+  """
+  pathConfig: [HoistFieldTransformFieldPathConfig!]!
+  """
+  Name the hoisted field should have when hoisted to the type specified in typeName
+  """
+  newFieldName: String!
+  alias: String
+
+  """
+  Defines if args in path are filtered (default = false)
+  """
+  filterArgsInPath: Boolean
+}
+
+union HoistFieldTransformFieldPathConfig = String | HoistFieldTransformFieldPathConfigObject
+
+type HoistFieldTransformFieldPathConfigObject @md {
+  """
+  Field name
+  """
+  fieldName: String!
+  """
+  Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
+  """
+  filterArgs: [String!]!
+}

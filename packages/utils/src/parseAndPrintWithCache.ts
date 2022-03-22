@@ -27,6 +27,14 @@ export const printWithCache = memoize1(function printWithCache(document: Documen
   return sdl;
 });
 
-export function gql([sdl]: [string]) {
-  return parseWithCache(sdl);
+export function gql([sdl]: TemplateStringsArray, ...args: (DocumentNode | string)[]) {
+  let result = sdl;
+  for (const arg of args || []) {
+    if (typeof arg === 'string') {
+      result += arg;
+    } else {
+      result += printWithCache(arg);
+    }
+  }
+  return parseWithCache(result);
 }
