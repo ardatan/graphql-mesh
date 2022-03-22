@@ -96,22 +96,28 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (!operationConfig.path.includes('?')) {
                 operationConfig.path += '?';
               }
-              operationConfig.path += `${paramObj.name}={args.${paramObj.name}}`;
+              const argName = sanitizeNameForGraphQL(paramObj.name);
+              operationConfig.path += `${paramObj.name}={args.${argName}}`;
             }
             break;
-          case 'path':
+          case 'path': {
             // If it is in the path, let JSON Schema handler put it
-            operationConfig.path = operationConfig.path.replace(`{${paramObj.name}}`, `{args.${paramObj.name}}`);
+            const argName = sanitizeNameForGraphQL(paramObj.name);
+            operationConfig.path = operationConfig.path.replace(`{${paramObj.name}}`, `{args.${argName}}`);
             break;
-          case 'header':
+          }
+          case 'header': {
             operationConfig.headers = operationConfig.headers || {};
-            operationConfig.headers[paramObj.name] = `{args.${paramObj.name}}`;
+            const argName = sanitizeNameForGraphQL(paramObj.name);
+            operationConfig.headers[paramObj.name] = `{args.${argName}}`;
             break;
+          }
           case 'cookie': {
             operationConfig.headers = operationConfig.headers || {};
             operationConfig.headers.cookie = operationConfig.headers.cookie || '';
             const cookieParams = operationConfig.headers.cookie.split('; ');
-            cookieParams.push(`${paramObj.name}={args.${paramObj.name}}`);
+            const argName = sanitizeNameForGraphQL(paramObj.name);
+            cookieParams.push(`${paramObj.name}={args.${argName}}`);
             operationConfig.headers.cookie = cookieParams.join('; ');
             break;
           }
