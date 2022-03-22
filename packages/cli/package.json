@@ -74,7 +74,7 @@
     "yargs": "17.4.0",
     "typescript": "4.6.2",
     "ts-node": "10.7.0",
-    "tsconfig-paths": "3.14.0",
+    "tsconfig-paths": "3.14.1",
     "ws": "8.5.0",
     "tslib": "^2.3.1"
   },
