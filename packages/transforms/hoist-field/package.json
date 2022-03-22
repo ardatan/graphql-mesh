@@ -25,9 +25,9 @@
   "dependencies": {
     "@graphql-mesh/types": "0.68.3",
     "@graphql-mesh/utils": "0.32.1",
-    "@graphql-tools/delegate": "8.6.0",
-    "@graphql-tools/wrap": "8.4.7",
-    "@graphql-tools/utils": "8.6.4",
+    "@graphql-tools/delegate": "8.6.1",
+    "@graphql-tools/wrap": "8.4.8",
+    "@graphql-tools/utils": "8.6.5",
     "@graphql-mesh/cache-inmemory-lru": "0.6.5"
   },
   "publishConfig": {
