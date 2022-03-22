@@ -30,7 +30,7 @@ function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
       if (titleReserved) {
         schema.title = undefined;
       }
-      const stringified = inspect(schema);
+      const stringified = inspect(schema, undefined, 3);
       if (titleReserved) {
         schema.title = titleReserved;
       }
