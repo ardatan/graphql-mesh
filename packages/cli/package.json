@@ -68,7 +68,7 @@
     "json-bigint-patch": "0.0.4",
     "lodash": "4.17.21",
     "mkdirp": "1.0.4",
-    "open": "7.4.2",
+    "open": "8.4.0",
     "pascal-case": "3.1.2",
     "rimraf": "3.0.2",
     "yargs": "17.4.0",
