@@ -4,12 +4,12 @@ import apiSidebar from './api-sidebar.json';
 export function getRoutes(): IRoutes {
   const Routes: IRoutes = {
     _: {
-      'introduction': {
+      introduction: {
         $name: 'Introduction',
       },
       'getting-started': {
         $name: 'Getting Started',
-        $routes: ['overview', 'installation', 'your-first-mesh-gateway', 'comparison'],
+        $routes: ['overview', 'installation', 'your-first-mesh-gateway', 'cli-commands', 'comparison'],
       },
       recipes: {
         $name: 'Recipes',

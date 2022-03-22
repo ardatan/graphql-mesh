@@ -1073,10 +1073,6 @@ export interface Transform {
   prefix?: PrefixTransformConfig;
   prune?: PruneTransformConfig;
   /**
-   * RateLimit transform
-   */
-  rateLimit?: RateLimitTransformConfig[];
-  /**
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
   rename?: RenameTransform | any;
@@ -1087,6 +1083,10 @@ export interface Transform {
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
+  /**
+   * RateLimit transform
+   */
+  rateLimit: RateLimitTransformConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1400,28 +1400,6 @@ export interface PruneTransformConfig {
    */
   skipUnusedTypesPruning?: boolean;
 }
-export interface RateLimitTransformConfig {
-  /**
-   * The type name that the following field belongs to
-   */
-  type: string;
-  /**
-   * The field of the type that the rate limit is applied to
-   */
-  field: string;
-  /**
-   * The maximum number of requests that can be made in a given time period
-   */
-  max: number;
-  /**
-   * The time period in which the rate limit is applied
-   */
-  ttl: number;
-  /**
-   * The identifier expression that determines the identity of the request (e.g. "{context.req.socket.remoteAddress}")
-   */
-  identifier: string;
-}
 export interface RenameTransform {
   /**
    * Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
@@ -1621,6 +1599,13 @@ export interface MergedRootFieldConfig {
    *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
    */
   argsExpr?: string;
+}
+export interface RateLimitTransformConfig {
+  type: string;
+  field: string;
+  max: number;
+  ttl: number;
+  identifier: string;
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;

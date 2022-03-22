@@ -5,39 +5,6 @@ sidebar_label: CLI commands
 ---
 
 
-## Installation
-
-If you have installed the CLI globally, you can use `mesh` directly from anywhere in the terminal.
-However, please be aware that Global installed CLI versus local CLI does not return the same results in all circumstances.
-
-We recommend installing GraphQL Mesh locally, allowing you to run it as follow:
-
-```bash
-yarn mesh
-```
-
-If you are using npm, you will need to add it to your `package.json` `scripts` as follow:
-
-```json
-{
-  "scripts": {
-    "mesh": "mesh",
-  }
-}
-```
-
-which will allow you to use it as follows:
-
-```bash
-npm run mesh -- # options...
-```
-
-
-
-<p>
-&nbsp;
-</p>
-
 ## Global Options
 
 All commands can take two global optional options.
