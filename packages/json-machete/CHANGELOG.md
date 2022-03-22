@@ -1,5 +1,16 @@
 # json-machete
 
+## 0.7.0
+
+### Minor Changes
+
+- 67fb11706: enhance: improve cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [67fb11706]
+  - @graphql-mesh/utils@0.32.0
+
 ## 0.6.1
 
 ### Patch Changes

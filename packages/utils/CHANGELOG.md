@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.32.0
+
+### Minor Changes
+
+- 67fb11706: enhance: improve cross-platform support
+
+### Patch Changes
+
+- Updated dependencies [b1a6df928]
+  - @graphql-mesh/types@0.68.2
+
 ## 0.31.0
 
 ### Minor Changes
