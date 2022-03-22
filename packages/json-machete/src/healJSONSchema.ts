@@ -1,4 +1,4 @@
-import { inspect } from '@graphql-tools/utils';
+import { inspect } from 'util';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
