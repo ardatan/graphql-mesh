@@ -29,7 +29,7 @@
     "json-machete": "0.7.0",
     "to-json-schema": "0.2.5",
     "@graphql-mesh/utils": "0.32.0",
-    "@graphql-tools/utils": "8.6.3",
+    "@graphql-tools/utils": "8.6.4",
     "tslib": "^2.3.1",
     "change-case": "4.1.2"
   },
