@@ -1,5 +1,14 @@
 # @omnigraph/openapi
 
+## 0.3.26
+
+### Patch Changes
+
+- 3448c3177: fix(openapi): sanitize dynamic argument names
+  - @omnigraph/json-schema@0.17.14
+  - @graphql-mesh/utils@0.32.1
+  - json-machete@0.7.1
+
 ## 0.3.25
 
 ### Patch Changes
