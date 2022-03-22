@@ -55,7 +55,7 @@
     "@graphql-tools/graphql-file-loader": "7.3.6",
     "@graphql-tools/wrap": "8.4.7",
     "@graphql-yoga/render-graphiql": "0.1.0-beta.1",
-    "@graphql-yoga/node": "0.1.1-canary-cabb320.0",
+    "@graphql-yoga/node": "0.1.0-beta.7",
     "body-parser": "1.19.2",
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",
