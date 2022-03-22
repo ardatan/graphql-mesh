@@ -1,5 +1,14 @@
 # @omnigraph/openapi
 
+## 0.3.27
+
+### Patch Changes
+
+- e67f6a621: fix(openapi): handle argTypeMap correctly
+- Updated dependencies [c6f0314ac]
+  - json-machete@0.7.2
+  - @omnigraph/json-schema@0.17.15
+
 ## 0.3.26
 
 ### Patch Changes
