@@ -71,6 +71,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
       operations.push(operationConfig);
       for (const paramObjIndex in methodObj.parameters) {
         const paramObj = methodObj.parameters[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
+        const argName = sanitizeNameForGraphQL(paramObj.name);
         switch (paramObj.in) {
           case 'query':
             if (method.toUpperCase() === 'GET') {
@@ -96,19 +97,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (!operationConfig.path.includes('?')) {
                 operationConfig.path += '?';
               }
-              const argName = sanitizeNameForGraphQL(paramObj.name);
               operationConfig.path += `${paramObj.name}={args.${argName}}`;
             }
             break;
           case 'path': {
             // If it is in the path, let JSON Schema handler put it
-            const argName = sanitizeNameForGraphQL(paramObj.name);
             operationConfig.path = operationConfig.path.replace(`{${paramObj.name}}`, `{args.${argName}}`);
             break;
           }
           case 'header': {
             operationConfig.headers = operationConfig.headers || {};
-            const argName = sanitizeNameForGraphQL(paramObj.name);
             operationConfig.headers[paramObj.name] = `{args.${argName}}`;
             break;
           }
@@ -116,7 +114,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             operationConfig.headers = operationConfig.headers || {};
             operationConfig.headers.cookie = operationConfig.headers.cookie || '';
             const cookieParams = operationConfig.headers.cookie.split('; ');
-            const argName = sanitizeNameForGraphQL(paramObj.name);
             cookieParams.push(`${paramObj.name}={args.${argName}}`);
             operationConfig.headers.cookie = cookieParams.join('; ');
             break;
@@ -138,25 +135,25 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         switch (paramObj.schema?.type || (paramObj as any).type) {
           case 'string':
             operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[paramObj.name] = 'String';
+            operationConfig.argTypeMap[argName] = 'String';
             break;
           case 'integer':
             operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[paramObj.name] = 'Int';
+            operationConfig.argTypeMap[argName] = 'Int';
             break;
           case 'number':
             operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[paramObj.name] = 'Float';
+            operationConfig.argTypeMap[argName] = 'Float';
             break;
           case 'boolean':
             operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[paramObj.name] = 'Boolean';
+            operationConfig.argTypeMap[argName] = 'Boolean';
             break;
         }
         if (paramObj.required) {
           operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-          operationConfig.argTypeMap[paramObj.name] = operationConfig.argTypeMap[paramObj.name] || 'ID';
-          operationConfig.argTypeMap[paramObj.name] += '!';
+          operationConfig.argTypeMap[argName] = operationConfig.argTypeMap[argName] || 'ID';
+          operationConfig.argTypeMap[argName] += '!';
         }
       }
 
