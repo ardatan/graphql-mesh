@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.7.3
+
+### Patch Changes
+
+- c53203723: fix(json-machete): revert old behavior
+
 ## 0.7.2
 
 ### Patch Changes
