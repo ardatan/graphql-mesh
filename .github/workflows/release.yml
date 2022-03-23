@@ -37,7 +37,7 @@ jobs:
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - name: Cache Yarn
-        id: yarn-cache
+        id: yarn-cache-17
         uses: actions/cache@v3
         with:
           path: |
