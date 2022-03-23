@@ -41,6 +41,7 @@ export default class OpenAPIHandler implements MeshHandler {
           type: type.toLowerCase() as any,
           fieldName,
         })),
+        fallbackFormat: this.config.fallbackFormat,
       });
     });
   }
