@@ -52,6 +52,8 @@ export default class OpenAPIHandler implements MeshHandler {
       fetch: this.fetch,
       pubsub: this.pubsub,
       logger: this.logger,
+      baseUrl: this.config.baseUrl,
+      operationHeaders: this.config.operationHeaders,
     });
     return {
       schema,

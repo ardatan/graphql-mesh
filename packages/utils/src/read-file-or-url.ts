@@ -6,6 +6,7 @@ import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
 import { memoize1 } from '@graphql-tools/utils';
+import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
 export { isUrl };
 
@@ -78,12 +79,17 @@ export function loadYaml(filepath: string, content: string, logger?: Logger): an
   });
 }
 
-export async function readFile<T>(filePath: string, config?: ReadFileOrUrlOptions): Promise<T> {
+export async function readFile<T>(fileExpression: string, config?: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
-  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.resolve(cwd || process.cwd(), filePath);
-  if (/js$/.test(actualPath) || /ts$/.test(actualPath)) {
-    return importFn(actualPath);
+  const [filePath] = fileExpression.split('#');
+  if (/js$/.test(filePath) || /ts$/.test(filePath)) {
+    return loadFromModuleExportExpression<T>(fileExpression, {
+      cwd,
+      importFn,
+      defaultExportName: 'default',
+    });
   }
+  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.resolve(cwd || process.cwd(), filePath);
   const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
   if (/json$/.test(actualPath)) {
     return JSON.parse(rawResult);

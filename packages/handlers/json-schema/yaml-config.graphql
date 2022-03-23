@@ -2,7 +2,23 @@ extend type Handler {
   """
   Handler for JSON Schema specification. Source could be a local json file, or a url to it.
   """
-  jsonSchema: JsonSchemaHandler
+  jsonSchema: JsonSchemaHandlerConfig
+}
+
+union JsonSchemaHandlerConfig = JsonSchemaHandler | JsonSchemaHandlerBundle
+
+type JsonSchemaHandlerBundle @md {
+  """
+  Path to the bundle file
+  """
+  bundlePath: Any!
+  """
+  HTTP Headers to receive the bundle
+  """
+  bundleHeaders: JSON
+
+  baseUrl: String
+  operationHeaders: JSON
 }
 
 type JsonSchemaHandler @md {

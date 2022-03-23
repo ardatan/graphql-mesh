@@ -391,6 +391,14 @@
             }
           ]
         },
+        "hoistField": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HoistFieldTransformConfig"
+          },
+          "additionalItems": false,
+          "description": "Transformer to hoist GraphQL fields"
+        },
         "mock": {
           "$ref": "#/definitions/MockingConfig",
           "description": "Mock configuration for your source"
@@ -472,14 +480,6 @@
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
-        },
-        "hoistField": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HoistFieldTransformConfig"
-          },
-          "additionalItems": false,
-          "description": "Transformer to hoist GraphQL fields"
         }
       }
     },
@@ -507,8 +507,15 @@
           "description": "Handler for gRPC and Protobuf schemas"
         },
         "jsonSchema": {
-          "$ref": "#/definitions/JsonSchemaHandler",
-          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
+          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/JsonSchemaHandler"
+            },
+            {
+              "$ref": "#/definitions/JsonSchemaHandlerBundle"
+            }
+          ]
         },
         "mongoose": {
           "$ref": "#/definitions/MongooseHandler"
@@ -949,6 +956,42 @@
           "type": "string"
         }
       }
+    },
+    "JsonSchemaHandlerBundle": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaHandlerBundle",
+      "properties": {
+        "bundlePath": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Path to the bundle file"
+        },
+        "bundleHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "HTTP Headers to receive the bundle"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["bundlePath"]
     },
     "JsonSchemaHandler": {
       "additionalProperties": false,
@@ -2493,6 +2536,65 @@
       },
       "required": ["filters"]
     },
+    "HoistFieldTransformConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HoistFieldTransformConfig",
+      "properties": {
+        "typeName": {
+          "type": "string",
+          "description": "Type name that defines where field should be hoisted to"
+        },
+        "pathConfig": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, HoistFieldTransformFieldPathConfigObject",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/HoistFieldTransformFieldPathConfigObject"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)"
+        },
+        "newFieldName": {
+          "type": "string",
+          "description": "Name the hoisted field should have when hoisted to the type specified in typeName"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "filterArgsInPath": {
+          "type": "boolean",
+          "description": "Defines if args in path are filtered (default = false)"
+        }
+      },
+      "required": ["typeName", "pathConfig", "newFieldName"]
+    },
+    "HoistFieldTransformFieldPathConfigObject": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HoistFieldTransformFieldPathConfigObject",
+      "properties": {
+        "fieldName": {
+          "type": "string",
+          "description": "Field name"
+        },
+        "filterArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;"
+        }
+      },
+      "required": ["fieldName", "filterArgs"]
+    },
     "MockingConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -3165,65 +3267,6 @@
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
       }
-    },
-    "HoistFieldTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HoistFieldTransformConfig",
-      "properties": {
-        "typeName": {
-          "type": "string",
-          "description": "Type name that defines where field should be hoisted to"
-        },
-        "pathConfig": {
-          "type": "array",
-          "items": {
-            "description": "Any of: String, HoistFieldTransformFieldPathConfigObject",
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "$ref": "#/definitions/HoistFieldTransformFieldPathConfigObject"
-              }
-            ]
-          },
-          "additionalItems": false,
-          "description": "Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)"
-        },
-        "newFieldName": {
-          "type": "string",
-          "description": "Name the hoisted field should have when hoisted to the type specified in typeName"
-        },
-        "alias": {
-          "type": "string"
-        },
-        "filterArgsInPath": {
-          "type": "boolean",
-          "description": "Defines if args in path are filtered (default = false)"
-        }
-      },
-      "required": ["typeName", "pathConfig", "newFieldName"]
-    },
-    "HoistFieldTransformFieldPathConfigObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HoistFieldTransformFieldPathConfigObject",
-      "properties": {
-        "fieldName": {
-          "type": "string",
-          "description": "Field name"
-        },
-        "filterArgs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;"
-        }
-      },
-      "required": ["fieldName", "filterArgs"]
     }
   },
   "title": "Config",

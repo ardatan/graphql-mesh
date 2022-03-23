@@ -3,6 +3,7 @@ import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
+import { buildSchema } from 'graphql';
 
 export class ReadonlyStoreError extends Error {}
 
@@ -37,6 +38,7 @@ export class InMemoryStoreStorageAdapter implements StoreStorageAdapter {
 export interface FsStoreStorageAdapterOptions {
   cwd: string;
   importFn: ImportFn;
+  fileType: 'ts' | 'json';
 }
 
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
@@ -58,15 +60,18 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   }
 
   async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
-    const asString = await options.codify(data, key);
+    const asString =
+      this.options.fileType === 'ts'
+        ? `// @ts-nocheck\n` + (await options.codify(data, key))
+        : await options.stringify(data, key);
     const modulePath = this.getAbsolutePath(key);
-    const filePath = modulePath + '.ts';
-    await writeFile(filePath, flatString(`// @ts-nocheck\n` + asString));
+    const filePath = modulePath + '.' + this.options.fileType;
+    await writeFile(filePath, flatString(asString));
     await this.options.importFn(modulePath);
   }
 
   async delete(key: string): Promise<void> {
-    const filePath = this.getAbsolutePath(key) + '.ts';
+    const filePath = this.getAbsolutePath(key) + '.' + this.options.fileType;
     return fs.promises.unlink(filePath);
   }
 }
@@ -80,6 +85,8 @@ export type StoreProxy<TData> = {
 
 export type ProxyOptions<TData> = {
   codify: (value: TData, identifier: string) => string | Promise<string>;
+  parse: (stringifiedData: string, identifier: string) => TData | Promise<TData>;
+  stringify: (value: TData, identifier: string) => string | Promise<string>;
   validate: (oldValue: TData, newValue: TData, identifier: string) => void | Promise<void>;
 };
 
@@ -99,10 +106,14 @@ const escapeForTemplateLiteral = (str: string) => str.split('`').join('\\`').spl
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
     codify: v => `export default ${JSON.stringify(v)} as any;`,
+    parse: v => JSON.parse(v),
+    stringify: v => JSON.stringify(v),
     validate: () => null,
   },
   StringWithoutValidation: {
     codify: v => `export default \`${escapeForTemplateLiteral(v)}\``,
+    parse: v => v,
+    stringify: v => v,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
@@ -119,6 +130,8 @@ export default buildSchema(source, {
   assumeValidSDL: true
 });
     `.trim(),
+    parse: sdl => buildSchema(sdl),
+    stringify: schema => printSchemaWithDirectives(schema),
     validate: async (oldSchema, newSchema) => {
       const changes = await diff(oldSchema, newSchema);
       const errors: string[] = [];

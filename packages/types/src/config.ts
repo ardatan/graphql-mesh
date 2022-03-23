@@ -208,7 +208,10 @@ export interface Handler {
     | GraphQLHandlerCodeFirstConfiguration
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
-  jsonSchema?: JsonSchemaHandler;
+  /**
+   * Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
+   */
+  jsonSchema?: JsonSchemaHandler | JsonSchemaHandlerBundle;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
@@ -355,9 +358,6 @@ export interface GrpcCredentialsSsl {
   certChain?: string;
   privateKey?: string;
 }
-/**
- * Handler for JSON Schema specification. Source could be a local json file, or a url to it.
- */
 export interface JsonSchemaHandler {
   baseUrl?: string;
   operationHeaders?: {
@@ -428,6 +428,22 @@ export interface JsonSchemaPubSubOperation {
     [k: string]: any;
   };
   pubsubTopic: string;
+}
+export interface JsonSchemaHandlerBundle {
+  /**
+   * Path to the bundle file
+   */
+  bundlePath: any;
+  /**
+   * HTTP Headers to receive the bundle
+   */
+  bundleHeaders?: {
+    [k: string]: any;
+  };
+  baseUrl?: string;
+  operationHeaders?: {
+    [k: string]: any;
+  };
 }
 export interface MongooseHandler {
   connectionString?: string;
@@ -1068,6 +1084,10 @@ export interface Transform {
    * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
    */
   filterSchema?: FilterSchemaTransform | any;
+  /**
+   * Transformer to hoist GraphQL fields
+   */
+  hoistField?: HoistFieldTransformConfig[];
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -1087,10 +1107,6 @@ export interface Transform {
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
-  /**
-   * Transformer to hoist GraphQL fields
-   */
-  hoistField?: HoistFieldTransformConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1206,6 +1222,35 @@ export interface FilterSchemaTransform {
    * Array of filter rules
    */
   filters: string[];
+}
+export interface HoistFieldTransformConfig {
+  /**
+   * Type name that defines where field should be hoisted to
+   */
+  typeName: string;
+  /**
+   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
+   */
+  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
+  /**
+   * Name the hoisted field should have when hoisted to the type specified in typeName
+   */
+  newFieldName: string;
+  alias?: string;
+  /**
+   * Defines if args in path are filtered (default = false)
+   */
+  filterArgsInPath?: boolean;
+}
+export interface HoistFieldTransformFieldPathConfigObject {
+  /**
+   * Field name
+   */
+  fieldName: string;
+  /**
+   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
+   */
+  filterArgs: string[];
 }
 /**
  * Mock configuration for your source
@@ -1625,35 +1670,6 @@ export interface MergedRootFieldConfig {
    *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
    */
   argsExpr?: string;
-}
-export interface HoistFieldTransformConfig {
-  /**
-   * Type name that defines where field should be hoisted to
-   */
-  typeName: string;
-  /**
-   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
-   */
-  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
-  /**
-   * Name the hoisted field should have when hoisted to the type specified in typeName
-   */
-  newFieldName: string;
-  alias?: string;
-  /**
-   * Defines if args in path are filtered (default = false)
-   */
-  filterArgsInPath?: boolean;
-}
-export interface HoistFieldTransformFieldPathConfigObject {
-  /**
-   * Field name
-   */
-  fieldName: string;
-  /**
-   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
-   */
-  filterArgs: string[];
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;
