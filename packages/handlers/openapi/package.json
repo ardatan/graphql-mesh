@@ -31,7 +31,7 @@
     "@graphql-mesh/types": "0.68.3",
     "@graphql-mesh/store": "0.6.1",
     "@graphql-mesh/utils": "0.32.1",
-    "@graphql-tools/utils": "8.6.4",
+    "@graphql-tools/utils": "8.6.5",
     "cross-undici-fetch": "0.1.27",
     "deep-equal": "2.0.5",
     "form-urlencoded": "6.0.6",
