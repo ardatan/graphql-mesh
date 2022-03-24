@@ -32,4 +32,4 @@ title: 'MeshTransformLibrary'
 
 #### Defined in
 
-[packages/types/src/index.ts:82](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L82)
+[packages/types/src/index.ts:79](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L79)

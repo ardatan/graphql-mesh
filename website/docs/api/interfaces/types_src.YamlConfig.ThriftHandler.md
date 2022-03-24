@@ -32,7 +32,7 @@ The name of the host to connect to.
 
 #### Defined in
 
-[packages/types/src/config.ts:926](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L926)
+[packages/types/src/config.ts:1008](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1008)
 
 ___
 
@@ -44,7 +44,7 @@ Boolean value indicating whether to use https. Defaults to false.
 
 #### Defined in
 
-[packages/types/src/config.ts:938](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L938)
+[packages/types/src/config.ts:1020](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1020)
 
 ___
 
@@ -56,7 +56,7 @@ Path to IDL file
 
 #### Defined in
 
-[packages/types/src/config.ts:962](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L962)
+[packages/types/src/config.ts:1044](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1044)
 
 ___
 
@@ -72,7 +72,7 @@ JSON object representing the Headers to add to the runtime of the API calls
 
 #### Defined in
 
-[packages/types/src/config.ts:950](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L950)
+[packages/types/src/config.ts:1032](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1032)
 
 ___
 
@@ -84,7 +84,7 @@ The path on which the Thrift service is listening. Defaults to '/thrift'.
 
 #### Defined in
 
-[packages/types/src/config.ts:934](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L934)
+[packages/types/src/config.ts:1016](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1016)
 
 ___
 
@@ -96,7 +96,7 @@ The port number to attach to on the host.
 
 #### Defined in
 
-[packages/types/src/config.ts:930](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L930)
+[packages/types/src/config.ts:1012](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1012)
 
 ___
 
@@ -108,7 +108,7 @@ Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: 
 
 #### Defined in
 
-[packages/types/src/config.ts:942](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L942)
+[packages/types/src/config.ts:1024](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1024)
 
 ___
 
@@ -124,7 +124,7 @@ If you are using a remote URL endpoint to fetch your schema, you can set headers
 
 #### Defined in
 
-[packages/types/src/config.ts:956](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L956)
+[packages/types/src/config.ts:1038](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1038)
 
 ___
 
@@ -136,4 +136,4 @@ The name of your service. Used for logging.
 
 #### Defined in
 
-[packages/types/src/config.ts:946](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L946)
+[packages/types/src/config.ts:1028](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1028)

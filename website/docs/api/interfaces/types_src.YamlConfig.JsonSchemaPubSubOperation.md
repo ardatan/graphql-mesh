@@ -14,6 +14,7 @@ title: 'JsonSchemaPubSubOperation'
 - [description](types_src.YamlConfig.JsonSchemaPubSubOperation#description)
 - [field](types_src.YamlConfig.JsonSchemaPubSubOperation#field)
 - [pubsubTopic](types_src.YamlConfig.JsonSchemaPubSubOperation#pubsubtopic)
+- [requestBaseBody](types_src.YamlConfig.JsonSchemaPubSubOperation#requestbasebody)
 - [requestSample](types_src.YamlConfig.JsonSchemaPubSubOperation#requestsample)
 - [requestSchema](types_src.YamlConfig.JsonSchemaPubSubOperation#requestschema)
 - [requestTypeName](types_src.YamlConfig.JsonSchemaPubSubOperation#requesttypename)
@@ -34,7 +35,7 @@ title: 'JsonSchemaPubSubOperation'
 
 #### Defined in
 
-[packages/types/src/config.ts:394](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L394)
+[packages/types/src/config.ts:427](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L427)
 
 ___
 
@@ -44,7 +45,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:383](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L383)
+[packages/types/src/config.ts:412](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L412)
 
 ___
 
@@ -54,7 +55,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:382](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L382)
+[packages/types/src/config.ts:411](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L411)
 
 ___
 
@@ -64,7 +65,19 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:397](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L397)
+[packages/types/src/config.ts:430](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L430)
+
+___
+
+### requestBaseBody
+
+• `Optional` **requestBaseBody**: `any`
+
+This body will be merged with the request body sent with the underlying HTTP request
+
+#### Defined in
+
+[packages/types/src/config.ts:423](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L423)
 
 ___
 
@@ -74,7 +87,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:389](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L389)
+[packages/types/src/config.ts:418](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L418)
 
 ___
 
@@ -84,7 +97,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:388](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L388)
+[packages/types/src/config.ts:417](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L417)
 
 ___
 
@@ -94,7 +107,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:390](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L390)
+[packages/types/src/config.ts:419](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L419)
 
 ___
 
@@ -104,7 +117,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:392](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L392)
+[packages/types/src/config.ts:425](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L425)
 
 ___
 
@@ -114,7 +127,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:391](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L391)
+[packages/types/src/config.ts:424](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L424)
 
 ___
 
@@ -124,7 +137,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:393](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L393)
+[packages/types/src/config.ts:426](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L426)
 
 ___
 
@@ -136,4 +149,4 @@ Allowed values: Query, Mutation, Subscription
 
 #### Defined in
 
-[packages/types/src/config.ts:387](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L387)
+[packages/types/src/config.ts:416](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L416)

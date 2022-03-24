@@ -16,6 +16,10 @@ title: 'MockingTransform'
 
 - [constructor](transforms_mock_src.MockingTransform#constructor)
 
+### Properties
+
+- [noWrap](transforms_mock_src.MockingTransform#nowrap)
+
 ### Methods
 
 - [transformSchema](transforms_mock_src.MockingTransform#transformschema)
@@ -34,7 +38,21 @@ title: 'MockingTransform'
 
 #### Defined in
 
-[packages/transforms/mock/src/index.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/mock/src/index.ts#L16)
+[packages/transforms/mock/src/index.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/mock/src/index.ts#L15)
+
+## Properties
+
+### noWrap
+
+• **noWrap**: `boolean` = `true`
+
+#### Implementation of
+
+[MeshTransform](/docs/api/interfaces/types_src.MeshTransform).[noWrap](/docs/api/interfaces/types_src.MeshTransform#nowrap)
+
+#### Defined in
+
+[packages/transforms/mock/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/mock/src/index.ts#L10)
 
 ## Methods
 
@@ -58,4 +76,4 @@ MeshTransform.transformSchema
 
 #### Defined in
 
-[packages/transforms/mock/src/index.ts:22](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/mock/src/index.ts#L22)
+[packages/transforms/mock/src/index.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/mock/src/index.ts#L21)

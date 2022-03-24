@@ -28,7 +28,7 @@ formatted as `\"\"\" arg1: "value", arg2: "value" \"\"\"`.
 
 #### Defined in
 
-[packages/types/src/config.ts:1451](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1451)
+[packages/types/src/config.ts:1616](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1616)
 
 ___
 
@@ -43,7 +43,7 @@ Advanced use only; This argument specifies a string expression that allows more 
 
 #### Defined in
 
-[packages/types/src/config.ts:1462](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1462)
+[packages/types/src/config.ts:1627](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1627)
 
 ___
 
@@ -55,7 +55,7 @@ Advanced use only; Allows building a custom key just for the argument from the s
 
 #### Defined in
 
-[packages/types/src/config.ts:1455](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1455)
+[packages/types/src/config.ts:1620](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1620)
 
 ___
 
@@ -67,7 +67,7 @@ Specifies which field argument receives the merge key. This may be omitted for f
 
 #### Defined in
 
-[packages/types/src/config.ts:1446](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1446)
+[packages/types/src/config.ts:1611](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1611)
 
 ___
 
@@ -80,7 +80,7 @@ https://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys
 
 #### Defined in
 
-[packages/types/src/config.ts:1442](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1442)
+[packages/types/src/config.ts:1607](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1607)
 
 ___
 
@@ -90,4 +90,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1437](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1437)
+[packages/types/src/config.ts:1602](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1602)

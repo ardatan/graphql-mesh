@@ -28,7 +28,7 @@ Configuration for CORS
 
 #### Defined in
 
-[packages/types/src/config.ts:118](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L118)
+[packages/types/src/config.ts:128](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L128)
 
 ___
 
@@ -38,7 +38,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:120](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L120)
+[packages/types/src/config.ts:130](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L130)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:119](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L119)
+[packages/types/src/config.ts:129](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L129)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:121](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L121)
+[packages/types/src/config.ts:131](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L131)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:123](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L123)
+[packages/types/src/config.ts:133](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L133)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:117](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L117)
+[packages/types/src/config.ts:127](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L127)
 
 ___
 
@@ -88,4 +88,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:122](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L122)
+[packages/types/src/config.ts:132](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L132)

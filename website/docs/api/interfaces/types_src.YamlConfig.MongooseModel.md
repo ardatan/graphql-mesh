@@ -22,7 +22,7 @@ title: 'MongooseModel'
 
 #### Defined in
 
-[packages/types/src/config.ts:409](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L409)
+[packages/types/src/config.ts:442](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L442)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:411](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L411)
+[packages/types/src/config.ts:444](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L444)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:410](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L410)
+[packages/types/src/config.ts:443](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L443)

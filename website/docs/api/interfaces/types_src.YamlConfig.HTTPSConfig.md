@@ -24,7 +24,7 @@ If this is provided, Mesh will be served via HTTPS
 
 #### Defined in
 
-[packages/types/src/config.ts:176](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L176)
+[packages/types/src/config.ts:173](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L173)
 
 ___
 
@@ -34,4 +34,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:175](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L175)
+[packages/types/src/config.ts:172](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L172)

@@ -30,7 +30,7 @@ title: 'MeshMerger'
 
 #### Defined in
 
-[packages/types/src/index.ts:112](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L112)
+[packages/types/src/index.ts:109](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L109)
 
 ## Methods
 
@@ -50,4 +50,4 @@ title: 'MeshMerger'
 
 #### Defined in
 
-[packages/types/src/index.ts:113](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L113)
+[packages/types/src/index.ts:110](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L110)

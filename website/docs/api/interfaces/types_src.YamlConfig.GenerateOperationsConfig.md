@@ -23,4 +23,4 @@ and let Mesh generate them for you
 
 #### Defined in
 
-[packages/types/src/config.ts:189](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L189)
+[packages/types/src/config.ts:186](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L186)

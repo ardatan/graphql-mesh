@@ -38,7 +38,7 @@ title: 'MeshStore'
 
 #### Defined in
 
-[packages/store/src/index.ts:143](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L143)
+[packages/store/src/index.ts:141](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L141)
 
 ## Properties
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:145](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L145)
+[packages/store/src/index.ts:143](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L143)
 
 ___
 
@@ -98,4 +98,4 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:152](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L152)
+[packages/store/src/index.ts:150](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L150)

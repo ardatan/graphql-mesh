@@ -2,9 +2,15 @@
 title: 'MeshInstance'
 ---
 
-# Interface: MeshInstance
+# Interface: MeshInstance<TMeshContext\>
 
 [runtime/src](../modules/runtime_src).MeshInstance
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `TMeshContext` | `any` |
 
 ## Table of contents
 
@@ -12,17 +18,19 @@ title: 'MeshInstance'
 
 - [cache](runtime_src.MeshInstance#cache)
 - [execute](runtime_src.MeshInstance#execute)
-- [liveQueryStore](runtime_src.MeshInstance#livequerystore)
+- [getEnveloped](runtime_src.MeshInstance#getenveloped)
+- [logger](runtime_src.MeshInstance#logger)
+- [meshContext](runtime_src.MeshInstance#meshcontext)
+- [plugins](runtime_src.MeshInstance#plugins)
 - [pubsub](runtime_src.MeshInstance#pubsub)
 - [rawSources](runtime_src.MeshInstance#rawsources)
 - [schema](runtime_src.MeshInstance#schema)
-- [sdkRequester](runtime_src.MeshInstance#sdkrequester)
 - [subscribe](runtime_src.MeshInstance#subscribe)
 
 ### Methods
 
-- [contextBuilder](runtime_src.MeshInstance#contextbuilder)
 - [destroy](runtime_src.MeshInstance#destroy)
+- [sdkRequesterFactory](runtime_src.MeshInstance#sdkrequesterfactory)
 
 ## Properties
 
@@ -32,7 +40,7 @@ title: 'MeshInstance'
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:53](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L53)
+[packages/runtime/src/get-mesh.ts:67](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L67)
 
 ___
 
@@ -42,17 +50,47 @@ ___
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:46](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L46)
+[packages/runtime/src/get-mesh.ts:61](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L61)
 
 ___
 
-### liveQueryStore
+### getEnveloped
 
-• **liveQueryStore**: `InMemoryLiveQueryStore`
+• **getEnveloped**: `GetEnvelopedFn`<{}\>
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:54](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L54)
+[packages/runtime/src/get-mesh.ts:71](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L71)
+
+___
+
+### logger
+
+• **logger**: [`Logger`](../modules/types_src#logger)
+
+#### Defined in
+
+[packages/runtime/src/get-mesh.ts:68](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L68)
+
+___
+
+### meshContext
+
+• **meshContext**: `TMeshContext`
+
+#### Defined in
+
+[packages/runtime/src/get-mesh.ts:69](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L69)
+
+___
+
+### plugins
+
+• **plugins**: `PluginOrDisabledPlugin`[]
+
+#### Defined in
+
+[packages/runtime/src/get-mesh.ts:70](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L70)
 
 ___
 
@@ -62,7 +100,7 @@ ___
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:52](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L52)
+[packages/runtime/src/get-mesh.ts:66](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L66)
 
 ___
 
@@ -72,7 +110,7 @@ ___
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:49](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L49)
+[packages/runtime/src/get-mesh.ts:64](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L64)
 
 ___
 
@@ -82,17 +120,7 @@ ___
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:48](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L48)
-
-___
-
-### sdkRequester
-
-• **sdkRequester**: [`Requester`](../modules/runtime_src#requester)<`any`\>
-
-#### Defined in
-
-[packages/runtime/src/get-mesh.ts:50](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L50)
+[packages/runtime/src/get-mesh.ts:63](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L63)
 
 ___
 
@@ -102,33 +130,9 @@ ___
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:47](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L47)
+[packages/runtime/src/get-mesh.ts:62](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L62)
 
 ## Methods
-
-### contextBuilder
-
-▸ **contextBuilder**(`ctx`): `Promise`<`any`\>
-
-**`deprecated`**
-contextBuilder has no effect in the provided context anymore.
-It will be removed in the next version
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `ctx` | `any` |
-
-#### Returns
-
-`Promise`<`any`\>
-
-#### Defined in
-
-[packages/runtime/src/get-mesh.ts:60](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L60)
-
-___
 
 ### destroy
 
@@ -140,4 +144,38 @@ ___
 
 #### Defined in
 
-[packages/runtime/src/get-mesh.ts:51](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L51)
+[packages/runtime/src/get-mesh.ts:65](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L65)
+
+___
+
+### sdkRequesterFactory
+
+▸ **sdkRequesterFactory**(`globalContext`): (`document`: `DocumentNode`, `variables?`: `any`, `operationContext?`: `any`) => `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `globalContext` | `any` |
+
+#### Returns
+
+`fn`
+
+▸ (`document`, `variables?`, `operationContext?`): `any`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `document` | `DocumentNode` |
+| `variables?` | `any` |
+| `operationContext?` | `any` |
+
+##### Returns
+
+`any`
+
+#### Defined in
+
+[packages/runtime/src/get-mesh.ts:72](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L72)

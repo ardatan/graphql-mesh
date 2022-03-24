@@ -32,7 +32,7 @@ title: 'InMemoryLRUCache'
 
 ### constructor
 
-• **new InMemoryLRUCache**<`V`\>(`__namedParameters?`)
+• **new InMemoryLRUCache**<`V`\>(`options?`)
 
 #### Type parameters
 
@@ -44,12 +44,11 @@ title: 'InMemoryLRUCache'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.max` | `number` |
+| `options?` | [`InMemoryLRUConfig`](/docs/api/interfaces/types_src.YamlConfig.InMemoryLRUConfig) |
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L8)
+[packages/cache/inmemory-lru/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L10)
 
 ## Methods
 
@@ -73,7 +72,7 @@ title: 'InMemoryLRUCache'
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L26)
+[packages/cache/inmemory-lru/src/index.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L38)
 
 ___
 
@@ -97,7 +96,7 @@ ___
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L10)
+[packages/cache/inmemory-lru/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L20)
 
 ___
 
@@ -123,4 +122,4 @@ ___
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L19)
+[packages/cache/inmemory-lru/src/index.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L30)

@@ -21,7 +21,7 @@ title: 'ExtendTransform'
 
 #### Defined in
 
-[packages/types/src/config.ts:1071](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1071)
+[packages/types/src/config.ts:1162](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1162)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1070](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1070)
+[packages/types/src/config.ts:1161](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1161)

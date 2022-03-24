@@ -20,4 +20,4 @@ title: 'FederationTransform'
 
 #### Defined in
 
-[packages/types/src/config.ts:1074](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1074)
+[packages/types/src/config.ts:1165](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1165)

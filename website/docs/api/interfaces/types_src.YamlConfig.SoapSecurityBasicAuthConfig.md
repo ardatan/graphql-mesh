@@ -26,7 +26,7 @@ Password for Basic Authentication
 
 #### Defined in
 
-[packages/types/src/config.ts:878](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L878)
+[packages/types/src/config.ts:960](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L960)
 
 ___
 
@@ -38,4 +38,4 @@ Username for Basic Authentication
 
 #### Defined in
 
-[packages/types/src/config.ts:874](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L874)
+[packages/types/src/config.ts:956](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L956)

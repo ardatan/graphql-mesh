@@ -14,9 +14,11 @@ and run json-schema-to-typescript to regenerate this file.
 
 ### Properties
 
+- [additionalEnvelopPlugins](types_src.YamlConfig.Config#additionalenvelopplugins)
 - [additionalResolvers](types_src.YamlConfig.Config#additionalresolvers)
 - [additionalTypeDefs](types_src.YamlConfig.Config#additionaltypedefs)
 - [cache](types_src.YamlConfig.Config#cache)
+- [codegen](types_src.YamlConfig.Config#codegen)
 - [documents](types_src.YamlConfig.Config#documents)
 - [liveQueryInvalidations](types_src.YamlConfig.Config#livequeryinvalidations)
 - [logger](types_src.YamlConfig.Config#logger)
@@ -31,6 +33,18 @@ and run json-schema-to-typescript to regenerate this file.
 
 ## Properties
 
+### additionalEnvelopPlugins
+
+• `Optional` **additionalEnvelopPlugins**: `string`
+
+You can provide Envelop plugins
+
+#### Defined in
+
+[packages/types/src/config.ts:67](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L67)
+
+___
+
 ### additionalResolvers
 
 • `Optional` **additionalResolvers**: (`string` \| [`AdditionalStitchingResolverObject`](types_src.YamlConfig.AdditionalStitchingResolverObject) \| [`AdditionalStitchingBatchResolverObject`](types_src.YamlConfig.AdditionalStitchingBatchResolverObject) \| [`AdditionalSubscriptionObject`](types_src.YamlConfig.AdditionalSubscriptionObject))[]
@@ -39,7 +53,7 @@ Additional resolvers, or resolvers overrides you wish to add to the schema mesh 
 
 #### Defined in
 
-[packages/types/src/config.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L27)
+[packages/types/src/config.ts:31](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L31)
 
 ___
 
@@ -51,7 +65,7 @@ Additional type definitions, or type definitions overrides you wish to add to th
 
 #### Defined in
 
-[packages/types/src/config.ts:23](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L23)
+[packages/types/src/config.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L27)
 
 ___
 
@@ -61,7 +75,19 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L33)
+[packages/types/src/config.ts:37](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L37)
+
+___
+
+### codegen
+
+• `Optional` **codegen**: `any`
+
+Codegen Configuration
+
+#### Defined in
+
+[packages/types/src/config.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L14)
 
 ___
 
@@ -72,11 +98,10 @@ ___
 Provide a query or queries for GraphQL Playground, validation and SDK Generation
 The value can be the file path, glob expression for the file paths or the SDL.
 (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
 
 #### Defined in
 
-[packages/types/src/config.ts:52](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L52)
+[packages/types/src/config.ts:55](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L55)
 
 ___
 
@@ -88,7 +113,7 @@ Live Query Invalidations
 
 #### Defined in
 
-[packages/types/src/config.ts:45](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L45)
+[packages/types/src/config.ts:49](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L49)
 
 ___
 
@@ -100,7 +125,7 @@ Logger instance that matches `Console` interface of NodeJS
 
 #### Defined in
 
-[packages/types/src/config.ts:56](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L56)
+[packages/types/src/config.ts:59](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L59)
 
 ___
 
@@ -112,7 +137,7 @@ Merge method
 
 #### Defined in
 
-[packages/types/src/config.ts:37](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L37)
+[packages/types/src/config.ts:41](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L41)
 
 ___
 
@@ -124,7 +149,7 @@ PubSub Implementation (Any of: String, PubSubConfig)
 
 #### Defined in
 
-[packages/types/src/config.ts:41](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L41)
+[packages/types/src/config.ts:45](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L45)
 
 ___
 
@@ -134,7 +159,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L11)
+[packages/types/src/config.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L15)
 
 ___
 
@@ -166,7 +191,7 @@ Allow connections to an SSL endpoint without certificates
 
 #### Defined in
 
-[packages/types/src/config.ts:60](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L60)
+[packages/types/src/config.ts:63](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L63)
 
 ___
 
@@ -178,7 +203,7 @@ Defines the list of your external data sources for your API mesh
 
 #### Defined in
 
-[packages/types/src/config.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L15)
+[packages/types/src/config.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L19)
 
 ___
 
@@ -190,4 +215,4 @@ Transform to apply to the unified mesh schema
 
 #### Defined in
 
-[packages/types/src/config.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L19)
+[packages/types/src/config.ts:23](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L23)

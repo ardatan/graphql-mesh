@@ -41,7 +41,7 @@ title: 'InMemoryStoreStorageAdapter'
 
 #### Defined in
 
-[packages/store/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L33)
+[packages/store/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L32)
 
 ___
 
@@ -65,7 +65,7 @@ StoreStorageAdapter.delete
 
 #### Defined in
 
-[packages/store/src/index.ts:29](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L29)
+[packages/store/src/index.ts:28](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L28)
 
 ___
 
@@ -96,7 +96,7 @@ StoreStorageAdapter.read
 
 #### Defined in
 
-[packages/store/src/index.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L21)
+[packages/store/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L20)
 
 ___
 
@@ -128,4 +128,4 @@ StoreStorageAdapter.write
 
 #### Defined in
 
-[packages/store/src/index.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L25)
+[packages/store/src/index.ts:24](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L24)

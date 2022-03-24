@@ -21,7 +21,7 @@ title: 'ProtoFilePath'
 
 #### Defined in
 
-[packages/types/src/config.ts:315](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L315)
+[packages/types/src/config.ts:343](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L343)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:316](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L316)
+[packages/types/src/config.ts:344](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L344)

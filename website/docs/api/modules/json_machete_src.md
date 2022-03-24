@@ -27,6 +27,8 @@ sidebar_label: "json-machete"
 
 - [compareJSONSchemas](json_machete_src#comparejsonschemas)
 - [dereferenceObject](json_machete_src#dereferenceobject)
+- [getAbsolutePath](json_machete_src#getabsolutepath)
+- [getCwd](json_machete_src#getcwd)
 - [healJSONSchema](json_machete_src#healjsonschema)
 - [referenceJSONSchema](json_machete_src#referencejsonschema)
 - [resolvePath](json_machete_src#resolvepath)
@@ -48,7 +50,7 @@ node_modules/@json-schema-tools/meta-schema/index.d.ts:119
 
 ### FIRST\_VISITED\_PATH
 
-• **FIRST\_VISITED\_PATH**: typeof [`FIRST_VISITED_PATH`](json_machete_src#first_visited_path)
+• `Const` **FIRST\_VISITED\_PATH**: typeof [`FIRST_VISITED_PATH`](json_machete_src#first_visited_path)
 
 #### Defined in
 
@@ -97,9 +99,9 @@ ___
 | `__namedParameters.cwd?` | `string` |
 | `__namedParameters.externalFileCache?` | `Map`<`string`, `any`\> |
 | `__namedParameters.fetch?` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> |
+| `__namedParameters.headers?` | `Record`<`string`, `string`\> |
 | `__namedParameters.refMap?` | `Map`<`string`, `any`\> |
 | `__namedParameters.root?` | `TRoot` |
-| `__namedParameters.importFn?` | (`moduleId`: `string`) => `Promise`<`any`\> |
 
 #### Returns
 
@@ -107,7 +109,48 @@ ___
 
 #### Defined in
 
-[packages/json-machete/src/dereferenceObject.ts:56](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L56)
+[packages/json-machete/src/dereferenceObject.ts:59](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L59)
+
+___
+
+### getAbsolutePath
+
+▸ **getAbsolutePath**(`path`, `cwd`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `path` | `string` |
+| `cwd` | `string` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/json-machete/src/dereferenceObject.ts:41](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L41)
+
+___
+
+### getCwd
+
+▸ **getCwd**(`path`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `path` | `string` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/json-machete/src/dereferenceObject.ts:54](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L54)
 
 ___
 
@@ -127,7 +170,7 @@ ___
 
 #### Defined in
 
-[packages/json-machete/src/healJSONSchema.ts:45](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/healJSONSchema.ts#L45)
+[packages/json-machete/src/healJSONSchema.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/healJSONSchema.ts#L73)
 
 ___
 
@@ -153,7 +196,7 @@ ___
 
 ### resolvePath
 
-▸ `Const` **resolvePath**(`path`, `root`): `any`
+▸ **resolvePath**(`path`, `root`): `any`
 
 #### Parameters
 
@@ -168,7 +211,7 @@ ___
 
 #### Defined in
 
-[packages/json-machete/src/dereferenceObject.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L8)
+[packages/json-machete/src/dereferenceObject.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L7)
 
 ___
 

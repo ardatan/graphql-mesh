@@ -13,6 +13,7 @@ title: 'RenameTransformObject'
 - [from](types_src.YamlConfig.RenameTransformObject#from)
 - [regExpFlags](types_src.YamlConfig.RenameTransformObject#regexpflags)
 - [to](types_src.YamlConfig.RenameTransformObject#to)
+- [useRegExpForArguments](types_src.YamlConfig.RenameTransformObject#useregexpforarguments)
 - [useRegExpForFields](types_src.YamlConfig.RenameTransformObject#useregexpforfields)
 - [useRegExpForTypes](types_src.YamlConfig.RenameTransformObject#useregexpfortypes)
 
@@ -24,7 +25,7 @@ title: 'RenameTransformObject'
 
 #### Defined in
 
-[packages/types/src/config.ts:1281](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1281)
+[packages/types/src/config.ts:1440](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1440)
 
 ___
 
@@ -36,7 +37,7 @@ Flags to use in the Regular Expression
 
 #### Defined in
 
-[packages/types/src/config.ts:1294](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1294)
+[packages/types/src/config.ts:1457](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1457)
 
 ___
 
@@ -46,7 +47,19 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1282](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1282)
+[packages/types/src/config.ts:1441](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1441)
+
+___
+
+### useRegExpForArguments
+
+• `Optional` **useRegExpForArguments**: `boolean`
+
+Use Regular Expression for field names
+
+#### Defined in
+
+[packages/types/src/config.ts:1453](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1453)
 
 ___
 
@@ -58,7 +71,7 @@ Use Regular Expression for field names
 
 #### Defined in
 
-[packages/types/src/config.ts:1290](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1290)
+[packages/types/src/config.ts:1449](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1449)
 
 ___
 
@@ -70,4 +83,4 @@ Use Regular Expression for type names
 
 #### Defined in
 
-[packages/types/src/config.ts:1286](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1286)
+[packages/types/src/config.ts:1445](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1445)

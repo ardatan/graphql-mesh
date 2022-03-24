@@ -20,4 +20,4 @@ title: 'LimitHelperArgsOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:528](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L528)
+[packages/types/src/config.ts:561](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L561)

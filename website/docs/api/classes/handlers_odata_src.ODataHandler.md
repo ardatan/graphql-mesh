@@ -35,7 +35,7 @@ title: 'ODataHandler'
 
 #### Defined in
 
-[packages/handlers/odata/src/index.ts:135](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L135)
+[packages/handlers/odata/src/index.ts:144](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L144)
 
 ## Methods
 
@@ -55,7 +55,7 @@ title: 'ODataHandler'
 
 #### Defined in
 
-[packages/handlers/odata/src/index.ts:153](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L153)
+[packages/handlers/odata/src/index.ts:162](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L162)
 
 ___
 
@@ -73,4 +73,4 @@ ___
 
 #### Defined in
 
-[packages/handlers/odata/src/index.ts:178](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L178)
+[packages/handlers/odata/src/index.ts:179](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L179)

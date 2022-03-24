@@ -16,34 +16,28 @@ Point to the handler you wish to use, it can either be a predefined handler, or 
 
 ### Properties
 
-- [JsonSchema](types_src.YamlConfig.Handler#jsonschema)
 - [graphql](types_src.YamlConfig.Handler#graphql)
 - [grpc](types_src.YamlConfig.Handler#grpc)
+- [jsonSchema](types_src.YamlConfig.Handler#jsonschema)
 - [mongoose](types_src.YamlConfig.Handler#mongoose)
 - [mysql](types_src.YamlConfig.Handler#mysql)
 - [neo4j](types_src.YamlConfig.Handler#neo4j)
+- [newOpenapi](types_src.YamlConfig.Handler#newopenapi)
 - [odata](types_src.YamlConfig.Handler#odata)
 - [openapi](types_src.YamlConfig.Handler#openapi)
 - [postgraphile](types_src.YamlConfig.Handler#postgraphile)
+- [raml](types_src.YamlConfig.Handler#raml)
 - [soap](types_src.YamlConfig.Handler#soap)
 - [thrift](types_src.YamlConfig.Handler#thrift)
 - [tuql](types_src.YamlConfig.Handler#tuql)
 
 ## Properties
 
-### JsonSchema
-
-• `Optional` **JsonSchema**: [`JsonSchemaHandler`](types_src.YamlConfig.JsonSchemaHandler)
-
-#### Defined in
-
-[packages/types/src/config.ts:208](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L208)
-
-___
-
 ### graphql
 
-• `Optional` **graphql**: [`GraphQLHandler`](types_src.YamlConfig.GraphQLHandler)
+• `Optional` **graphql**: [`GraphQLHandlerHTTPConfiguration`](types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)
+
+Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)
 
 #### Defined in
 
@@ -57,7 +51,17 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:207](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L207)
+[packages/types/src/config.ts:210](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L210)
+
+___
+
+### jsonSchema
+
+• `Optional` **jsonSchema**: [`JsonSchemaHandler`](types_src.YamlConfig.JsonSchemaHandler)
+
+#### Defined in
+
+[packages/types/src/config.ts:211](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L211)
 
 ___
 
@@ -67,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:209](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L209)
+[packages/types/src/config.ts:212](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L212)
 
 ___
 
@@ -77,7 +81,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:210](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L210)
+[packages/types/src/config.ts:213](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L213)
 
 ___
 
@@ -87,7 +91,17 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:211](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L211)
+[packages/types/src/config.ts:214](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L214)
+
+___
+
+### newOpenapi
+
+• `Optional` **newOpenapi**: [`NewOpenapiHandler`](types_src.YamlConfig.NewOpenapiHandler)
+
+#### Defined in
+
+[packages/types/src/config.ts:215](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L215)
 
 ___
 
@@ -97,7 +111,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:212](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L212)
+[packages/types/src/config.ts:216](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L216)
 
 ___
 
@@ -107,7 +121,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:213](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L213)
+[packages/types/src/config.ts:217](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L217)
 
 ___
 
@@ -117,7 +131,17 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:214](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L214)
+[packages/types/src/config.ts:218](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L218)
+
+___
+
+### raml
+
+• `Optional` **raml**: [`RAMLHandler`](types_src.YamlConfig.RAMLHandler)
+
+#### Defined in
+
+[packages/types/src/config.ts:219](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L219)
 
 ___
 
@@ -127,7 +151,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:215](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L215)
+[packages/types/src/config.ts:220](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L220)
 
 ___
 
@@ -137,7 +161,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:216](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L216)
+[packages/types/src/config.ts:221](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L221)
 
 ___
 
@@ -147,4 +171,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:217](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L217)
+[packages/types/src/config.ts:222](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L222)

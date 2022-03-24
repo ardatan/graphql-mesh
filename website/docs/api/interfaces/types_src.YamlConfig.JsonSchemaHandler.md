@@ -13,7 +13,7 @@ Handler for JSON Schema specification. Source could be a local json file, or a u
 ### Properties
 
 - [baseUrl](types_src.YamlConfig.JsonSchemaHandler#baseurl)
-- [errorMessage](types_src.YamlConfig.JsonSchemaHandler#errormessage)
+- [ignoreErrorResponses](types_src.YamlConfig.JsonSchemaHandler#ignoreerrorresponses)
 - [operationHeaders](types_src.YamlConfig.JsonSchemaHandler#operationheaders)
 - [operations](types_src.YamlConfig.JsonSchemaHandler#operations)
 - [schemaHeaders](types_src.YamlConfig.JsonSchemaHandler#schemaheaders)
@@ -26,19 +26,17 @@ Handler for JSON Schema specification. Source could be a local json file, or a u
 
 #### Defined in
 
-[packages/types/src/config.ts:334](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L334)
+[packages/types/src/config.ts:362](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L362)
 
 ___
 
-### errorMessage
+### ignoreErrorResponses
 
-• `Optional` **errorMessage**: `string`
-
-Field name of your custom error object (default: 'message')
+• `Optional` **ignoreErrorResponses**: `boolean`
 
 #### Defined in
 
-[packages/types/src/config.ts:348](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L348)
+[packages/types/src/config.ts:373](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L373)
 
 ___
 
@@ -52,7 +50,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:335](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L335)
+[packages/types/src/config.ts:363](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L363)
 
 ___
 
@@ -64,7 +62,7 @@ Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
 
 #### Defined in
 
-[packages/types/src/config.ts:344](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L344)
+[packages/types/src/config.ts:372](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L372)
 
 ___
 
@@ -78,4 +76,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:338](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L338)
+[packages/types/src/config.ts:366](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L366)

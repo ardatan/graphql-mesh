@@ -34,7 +34,7 @@ title: 'FederationTransform'
 
 #### Defined in
 
-[packages/transforms/federation/src/index.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/federation/src/index.ts#L27)
+[packages/transforms/federation/src/index.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/federation/src/index.ts#L26)
 
 ## Methods
 
@@ -59,4 +59,4 @@ MeshTransform.transformSchema
 
 #### Defined in
 
-[packages/transforms/federation/src/index.ts:34](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/federation/src/index.ts#L34)
+[packages/transforms/federation/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/federation/src/index.ts#L33)

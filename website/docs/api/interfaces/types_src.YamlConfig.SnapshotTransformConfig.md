@@ -31,7 +31,7 @@ For example;
 
 #### Defined in
 
-[packages/types/src/config.ts:1373](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1373)
+[packages/types/src/config.ts:1538](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1538)
 
 ___
 
@@ -44,7 +44,7 @@ Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
 
 #### Defined in
 
-[packages/types/src/config.ts:1365](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1365)
+[packages/types/src/config.ts:1530](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1530)
 
 ___
 
@@ -56,7 +56,7 @@ Path to the directory of the generated snapshot files
 
 #### Defined in
 
-[packages/types/src/config.ts:1377](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1377)
+[packages/types/src/config.ts:1542](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1542)
 
 ___
 
@@ -69,4 +69,4 @@ This might be needed for the handlers like Postgraphile or OData that rely on th
 
 #### Defined in
 
-[packages/types/src/config.ts:1382](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1382)
+[packages/types/src/config.ts:1547](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1547)

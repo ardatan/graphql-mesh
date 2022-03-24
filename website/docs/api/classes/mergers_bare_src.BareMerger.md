@@ -23,7 +23,6 @@ title: 'BareMerger'
 ### Methods
 
 - [getUnifiedSchema](mergers_bare_src.BareMerger#getunifiedschema)
-- [handleSingleSource](mergers_bare_src.BareMerger#handlesinglesource)
 
 ## Constructors
 
@@ -39,7 +38,7 @@ title: 'BareMerger'
 
 #### Defined in
 
-[packages/mergers/bare/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L11)
+[packages/mergers/bare/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L10)
 
 ## Properties
 
@@ -53,19 +52,19 @@ title: 'BareMerger'
 
 #### Defined in
 
-[packages/mergers/bare/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L9)
+[packages/mergers/bare/src/index.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L8)
 
 ## Methods
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`mergerContext`): `Promise`<`GraphQLSchema`\>
+▸ **getUnifiedSchema**(`__namedParameters`): `Promise`<`GraphQLSchema`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `mergerContext` | [`MeshMergerContext`](/docs/api/interfaces/types_src.MeshMergerContext) |
+| `__namedParameters` | [`MeshMergerContext`](/docs/api/interfaces/types_src.MeshMergerContext) |
 
 #### Returns
 
@@ -77,24 +76,4 @@ title: 'BareMerger'
 
 #### Defined in
 
-[packages/mergers/bare/src/index.ts:72](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L72)
-
-___
-
-### handleSingleSource
-
-▸ **handleSingleSource**(`__namedParameters`): `GraphQLSchema`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | [`MeshMergerContext`](/docs/api/interfaces/types_src.MeshMergerContext) |
-
-#### Returns
-
-`GraphQLSchema`
-
-#### Defined in
-
-[packages/mergers/bare/src/index.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L15)
+[packages/mergers/bare/src/index.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L14)

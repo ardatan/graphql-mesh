@@ -91,11 +91,11 @@ ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<`Object`\>
+▸ **getMeshSource**(): `Promise`<{ `schema`: `GraphQLSchema`  }\>
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`<{ `schema`: `GraphQLSchema`  }\>
 
 #### Implementation of
 
@@ -103,4 +103,4 @@ ___
 
 #### Defined in
 
-[packages/handlers/json-schema/src/index.ts:50](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/json-schema/src/index.ts#L50)
+[packages/handlers/json-schema/src/index.ts:51](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/json-schema/src/index.ts#L51)

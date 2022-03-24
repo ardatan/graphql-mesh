@@ -36,7 +36,7 @@ title: 'FsStoreStorageAdapter'
 
 #### Defined in
 
-[packages/store/src/index.ts:44](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L44)
+[packages/store/src/index.ts:43](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L43)
 
 ## Methods
 
@@ -60,13 +60,13 @@ StoreStorageAdapter.delete
 
 #### Defined in
 
-[packages/store/src/index.ts:69](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L69)
+[packages/store/src/index.ts:68](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L68)
 
 ___
 
 ### read
 
-▸ **read**<`TData`\>(`key`, `options`): `Promise`<`TData`\>
+▸ **read**<`TData`\>(`key`): `Promise`<`TData`\>
 
 #### Type parameters
 
@@ -79,7 +79,6 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `key` | `string` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`any`\> |
 
 #### Returns
 
@@ -91,7 +90,7 @@ StoreStorageAdapter.read
 
 #### Defined in
 
-[packages/store/src/index.ts:50](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L50)
+[packages/store/src/index.ts:48](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L48)
 
 ___
 
@@ -123,4 +122,4 @@ StoreStorageAdapter.write
 
 #### Defined in
 
-[packages/store/src/index.ts:62](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L62)
+[packages/store/src/index.ts:60](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L60)

@@ -26,4 +26,4 @@ title: 'MeshMergerLibrary'
 
 #### Defined in
 
-[packages/types/src/index.ts:101](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L101)
+[packages/types/src/index.ts:98](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L98)
