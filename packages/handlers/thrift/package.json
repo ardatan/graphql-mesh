@@ -36,7 +36,7 @@
     "@graphql-tools/utils": "8.6.5",
     "fetchache": "0.1.1",
     "graphql-scalars": "1.16.0",
-    "url-join": "4.0.1",
+    "url-join": "5.0.0",
     "thrift": "0.16.0",
     "tslib": "^2.3.1",
     "pascal-case": "3.1.2"

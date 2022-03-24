@@ -41,7 +41,7 @@
     "graphql-scalars": "1.16.0",
     "pluralize": "8.0.0",
     "swagger2openapi": "7.0.8",
-    "url-join": "4.0.1",
+    "url-join": "5.0.0",
     "openapi-types": "10.0.0",
     "tslib": "^2.3.1"
   },

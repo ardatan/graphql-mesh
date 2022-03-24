@@ -26,7 +26,7 @@
     "@graphql-mesh/utils": "0.32.1",
     "@graphql-mesh/cross-helpers": "0.1.0",
     "@graphql-tools/utils": "8.6.5",
-    "url-join": "4.0.1",
+    "url-join": "5.0.0",
     "to-json-schema": "0.2.5",
     "tslib": "^2.3.1"
   },
