@@ -10,6 +10,7 @@ import {
 import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
+import { Logger } from '@graphql-mesh/types';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
@@ -20,6 +21,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
+  logger?: Logger;
 }
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions({
@@ -31,12 +33,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   schemaHeaders,
   operationHeaders,
   selectQueryOrMutationField = [],
+  logger,
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
   const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
     fieldTypeMap[fieldName] = type;
   }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
+  logger?.debug(() => `Fetching OpenAPI Document from ${oasFilePath}`);
   const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
     typeof oasFilePath === 'string'
       ? await readFileOrUrl(oasFilePath, {
@@ -44,6 +48,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           fallbackFormat,
           headers: schemaHeadersFactory({ env: process.env }),
           fetch,
+          logger,
         })
       : oasFilePath;
   const operations: JSONSchemaOperationConfig[] = [];

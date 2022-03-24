@@ -29,8 +29,10 @@ export const getCachedFetch = memoize1(function getCachedFetch(cache: KeyValueCa
 
 export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileOrUrlOptions): Promise<T> {
   if (isUrl(filePathOrUrl)) {
+    config?.logger?.debug(() => `Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
   } else {
+    config?.logger?.debug(() => `Reading ${filePathOrUrl} from the file system`);
     return readFile(filePathOrUrl, config);
   }
 }
@@ -116,6 +118,7 @@ export async function readUrl<T>(path: string, config?: ReadFileOrUrlOptions): P
   const response = await fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
+  config?.logger?.debug(() => `${path} returned "${responseText?.slice(0, 100) + '...'}"`);
   if (/json$/.test(path) || contentType.startsWith('application/json') || fallbackFormat === 'json') {
     return JSON.parse(responseText);
   } else if (
