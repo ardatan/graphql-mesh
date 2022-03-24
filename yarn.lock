@@ -2816,12 +2816,12 @@
     tslib "~2.2.0"
     value-or-promise "1.0.6"
 
-"@graphql-tools/code-file-loader@7.2.7":
-  version "7.2.7"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-7.2.7.tgz#9a1a1979992967abef2d9419771b9fc5ee7f68e7"
-  integrity sha512-bJ1nt0eOIlaNvp1Gi488xR3gLxuIWGGzppLgAhuU22TWhLG4TOixvYa7oCNX04H1EmLZw0n51jS9Y2tdP5yp0w==
+"@graphql-tools/code-file-loader@7.2.8":
+  version "7.2.8"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-7.2.8.tgz#94fb666ed540915fc067b6b99373242ae330eb7c"
+  integrity sha512-e8Z3O3AHBxCfCgd3RB/IOoObHWLzwEZ2HBmKgOEmm+WFjDTAvGHbEs+Qr/HUzgz7DIhyMXZTw2m2od1/YkGlIA==
   dependencies:
-    "@graphql-tools/graphql-tag-pluck" "7.1.9"
+    "@graphql-tools/graphql-tag-pluck" "7.2.0"
     "@graphql-tools/utils" "8.6.5"
     globby "^11.0.3"
     tslib "~2.3.0"
@@ -2922,10 +2922,10 @@
     "@graphql-tools/utils" "^7.0.0"
     tslib "~2.1.0"
 
-"@graphql-tools/graphql-tag-pluck@7.1.9":
-  version "7.1.9"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-7.1.9.tgz#c56b6ef12cb049ef68b5fd759241d5300e180d20"
-  integrity sha512-Ngdb1I805BNvykBDnqQzCjbeSuGjP6W4Ahqcg9krKipxyzgYQCt6ThpSRFC6c/qG+K0AHXqjnM11fATDlmoKzA==
+"@graphql-tools/graphql-tag-pluck@7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-7.2.0.tgz#492cd90dad2a4286ac235854ab8bcecd656a8780"
+  integrity sha512-95eYXNS4s3IC9chizltG15A7DX6lTDnvDvmFckxGbCx7Obbu0YWPN9vW/ZyrzkRz1jvweAoDW5/wQLKBJ0Y2og==
   dependencies:
     "@babel/parser" "^7.16.8"
     "@babel/traverse" "^7.16.8"
@@ -5740,10 +5740,10 @@
   dependencies:
     "@types/react" "^16"
 
-"@types/react@*", "@types/react@17.0.41", "@types/react@^17.0.0", "@types/react@^17.0.15", "@types/react@^17.0.4":
-  version "17.0.41"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.41.tgz#6e179590d276394de1e357b3f89d05d7d3da8b85"
-  integrity sha512-chYZ9ogWUodyC7VUTRBfblysKLjnohhFY9bGLwvnUFFy48+vB9DikmB3lW0qTFmBcKSzmdglcvkHK71IioOlDA==
+"@types/react@*", "@types/react@17.0.42", "@types/react@^17.0.0", "@types/react@^17.0.15", "@types/react@^17.0.4":
+  version "17.0.42"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.42.tgz#8242b9219bf8a911c47f248e327206fea3f4ee5a"
+  integrity sha512-nuab3x3CpJ7VFeNA+3HTUuEkvClYHXqWtWd7Ud6AZYW7Z3NH9WKtgU+tFB0ZLcHq+niB/HnzLcaZPqMJ95+k5Q==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -12292,10 +12292,10 @@ graphql-relay@^0.6.0:
   dependencies:
     prettier "^1.16.0"
 
-graphql-scalars@1.15.0:
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.15.0.tgz#798b9aa12bcbe56be32d62aadc2cd67e22ba63c4"
-  integrity sha512-uLi71egHsfF+A4XmnltPYRUnvy8uBsobRjhW6aBi305gpE/v52xkuKcjygV0CqeqdvRKmFhczh9HRx1lho2MRw==
+graphql-scalars@1.16.0:
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.16.0.tgz#e1c27ea01673d2200e5516a260ab6a1915e1a7cf"
+  integrity sha512-vqL72Ehmb+q9b/dPlr31JqVRz89zvOMQTsVsQNQC0DUNV+bTlUtF7agNLFvGqy0HeOMBzSr+216n8/v4jPzmkw==
   dependencies:
     tslib "~2.3.0"
 
