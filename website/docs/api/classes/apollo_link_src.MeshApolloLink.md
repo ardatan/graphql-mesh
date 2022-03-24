@@ -44,7 +44,7 @@ title: 'MeshApolloLink'
 
 | Name | Type |
 | :------ | :------ |
-| `getBuiltMesh` | () => `Promise`<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`any`\>\> |
+| `getBuiltMesh` | () => `Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`any`>> |
 
 #### Overrides
 
@@ -58,7 +58,7 @@ ApolloLink.constructor
 
 ### mesh$
 
-• **mesh$**: `Promise`<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`any`\>\>
+• **mesh$**: `Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`any`>>
 
 #### Defined in
 
@@ -74,7 +74,7 @@ ApolloLink.constructor
 
 | Name | Type |
 | :------ | :------ |
-| `next` | `ApolloLink` \| `RequestHandler` |
+| `next` | `ApolloLink` | `RequestHandler` |
 
 #### Returns
 
@@ -92,7 +92,7 @@ ___
 
 ### request
 
-▸ **request**(`operation`): `Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ **request**(`operation`): `Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -102,7 +102,7 @@ ___
 
 #### Returns
 
-`Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Overrides
 
@@ -122,7 +122,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `fn` | (`error`: `any`, `observer?`: `Observer`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>) => ``false`` \| `void` |
+| `fn` | (`error`: `any`, `observer?`: `Observer`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>) => ``false`` | `void` |
 
 #### Returns
 
@@ -147,8 +147,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `test` | (`op`: `Operation`) => `boolean` |
-| `left` | `ApolloLink` \| `RequestHandler` |
-| `right?` | `ApolloLink` \| `RequestHandler` |
+| `left` | `ApolloLink` | `RequestHandler` |
+| `right?` | `ApolloLink` | `RequestHandler` |
 
 #### Returns
 
@@ -172,8 +172,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `first` | `ApolloLink` \| `RequestHandler` |
-| `second` | `ApolloLink` \| `RequestHandler` |
+| `first` | `ApolloLink` | `RequestHandler` |
+| `second` | `ApolloLink` | `RequestHandler` |
 
 #### Returns
 
@@ -209,7 +209,7 @@ ___
 
 ### execute
 
-▸ `Static` **execute**(`link`, `operation`): `Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ `Static` **execute**(`link`, `operation`): `Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -220,7 +220,7 @@ ___
 
 #### Returns
 
-`Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Inherited from
 
@@ -240,7 +240,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `links` | (`ApolloLink` \| `RequestHandler`)[] |
+| `links` | (`ApolloLink` | `RequestHandler`)[] |
 
 #### Returns
 
@@ -265,8 +265,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `test` | (`op`: `Operation`) => `boolean` |
-| `left` | `ApolloLink` \| `RequestHandler` |
-| `right?` | `ApolloLink` \| `RequestHandler` |
+| `left` | `ApolloLink` | `RequestHandler` |
+| `right?` | `ApolloLink` | `RequestHandler` |
 
 #### Returns
 

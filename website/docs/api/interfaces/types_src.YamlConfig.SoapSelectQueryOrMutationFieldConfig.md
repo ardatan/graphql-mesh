@@ -23,7 +23,7 @@ title: 'SoapSelectQueryOrMutationFieldConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:995](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L995)
+[packages/types/src/config.ts:999](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L999)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:994](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L994)
+[packages/types/src/config.ts:998](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L998)
 
 ___
 
@@ -43,16 +43,16 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:993](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L993)
+[packages/types/src/config.ts:997](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L997)
 
 ___
 
 ### type
 
-• **type**: ``"query"`` \| ``"mutation"``
+• **type**: ``"query"`` | ``"mutation"``
 
 Allowed values: query, mutation
 
 #### Defined in
 
-[packages/types/src/config.ts:999](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L999)
+[packages/types/src/config.ts:1003](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1003)

@@ -143,7 +143,7 @@ ___
 
 ### type
 
-• **type**: ``"Query"`` \| ``"Mutation"`` \| ``"Subscription"``
+• **type**: ``"Query"`` | ``"Mutation"`` | ``"Subscription"``
 
 Allowed values: Query, Mutation, Subscription
 

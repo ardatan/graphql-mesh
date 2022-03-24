@@ -2,7 +2,7 @@
 title: 'InMemoryLRUCache'
 ---
 
-# Class: InMemoryLRUCache<V\>
+# Class: InMemoryLRUCache\<V>
 
 [cache/inmemory-lru/src](../modules/cache_inmemory_lru_src).InMemoryLRUCache
 
@@ -14,7 +14,7 @@ title: 'InMemoryLRUCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -32,7 +32,7 @@ title: 'InMemoryLRUCache'
 
 ### constructor
 
-• **new InMemoryLRUCache**<`V`\>(`options?`)
+• **new InMemoryLRUCache**\<`V`>(`options?`)
 
 #### Type parameters
 
@@ -54,7 +54,7 @@ title: 'InMemoryLRUCache'
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`void`\>
+▸ **delete**(`key`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -64,7 +64,7 @@ title: 'InMemoryLRUCache'
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -78,7 +78,7 @@ ___
 
 ### get
 
-▸ **get**(`key`): `Promise`<`V`\>
+▸ **get**(`key`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -88,7 +88,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -102,7 +102,7 @@ ___
 
 ### set
 
-▸ **set**(`key`, `value`, `options?`): `Promise`<`void`\>
+▸ **set**(`key`, `value`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -114,7 +114,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

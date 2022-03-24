@@ -21,46 +21,46 @@ Transformer to apply naming convention to GraphQL Types
 
 ### enumValues
 
-• `Optional` **enumValues**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
+• `Optional` **enumValues**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 
 #### Defined in
 
-[packages/types/src/config.ts:1325](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1325)
+[packages/types/src/config.ts:1358](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1358)
 
 ___
 
 ### fieldArgumentNames
 
-• `Optional` **fieldArgumentNames**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
+• `Optional` **fieldArgumentNames**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 
 #### Defined in
 
-[packages/types/src/config.ts:1342](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1342)
+[packages/types/src/config.ts:1375](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1375)
 
 ___
 
 ### fieldNames
 
-• `Optional` **fieldNames**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
+• `Optional` **fieldNames**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 
 #### Defined in
 
-[packages/types/src/config.ts:1308](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1308)
+[packages/types/src/config.ts:1341](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1341)
 
 ___
 
 ### typeNames
 
-• `Optional` **typeNames**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
+• `Optional` **typeNames**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 
 #### Defined in
 
-[packages/types/src/config.ts:1291](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1291)
+[packages/types/src/config.ts:1324](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1324)

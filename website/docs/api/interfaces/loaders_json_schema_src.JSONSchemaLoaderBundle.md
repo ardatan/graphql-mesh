@@ -40,7 +40,7 @@ ___
 
 ### operationHeaders
 
-• `Optional` **operationHeaders**: `Record`<`string`, `string`\>
+• `Optional` **operationHeaders**: `Record`\<`string`, `string`>
 
 #### Defined in
 

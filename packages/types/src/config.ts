@@ -1104,7 +1104,7 @@ export interface CacheTransformConfig {
   field: string;
   /**
    * Cache key to use to store your resolvers responses.
-   * The defualt is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
+   * The default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
    *
    * Available variables:
    * - {args.argName} - use resolver argument
@@ -1139,7 +1139,7 @@ export interface CacheEffectingOperationConfig {
    */
   operation: string;
   /**
-   * Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field.
+   * Cache key to invalidate on successful resolver (no error), see `cacheKey` for list of available options in this field.
    */
   matchKey?: string;
 }
@@ -1277,7 +1277,7 @@ export interface MockingFieldConfig {
   /**
    * Faker.js expression or function
    * Read more (https://github.com/marak/Faker.js/#fakerfake)
-   * Example;
+   * Example:
    * faker: name.firstName
    * faker: "{{ name.firstName }} {{ name.lastName }}"
    */

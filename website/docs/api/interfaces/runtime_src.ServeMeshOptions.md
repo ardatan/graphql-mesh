@@ -74,11 +74,11 @@ ___
 
 ### getBuiltMesh
 
-▸ **getBuiltMesh**(): `Promise`<[`MeshInstance`](runtime_src.MeshInstance)<`any`\>\>
+▸ **getBuiltMesh**(): `Promise`\<[`MeshInstance`](runtime_src.MeshInstance)\<`any`>>
 
 #### Returns
 
-`Promise`<[`MeshInstance`](runtime_src.MeshInstance)<`any`\>\>
+`Promise`\<[`MeshInstance`](runtime_src.MeshInstance)\<`any`>>
 
 #### Defined in
 

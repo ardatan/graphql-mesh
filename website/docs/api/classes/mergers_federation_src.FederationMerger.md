@@ -58,7 +58,7 @@ title: 'FederationMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`__namedParameters`): `Promise`<`GraphQLSchema`\>
+▸ **getUnifiedSchema**(`__namedParameters`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -68,7 +68,7 @@ title: 'FederationMerger'
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 #### Implementation of
 

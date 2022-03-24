@@ -23,7 +23,7 @@ title: 'MeshPubSub'
 
 ### asyncIterator
 
-▸ **asyncIterator**<`THook`\>(`triggers`): `AsyncIterable`<[`AllHooks`](../modules/types_src#allhooks)[`THook`]\>
+▸ **asyncIterator**\<`THook`>(`triggers`): `AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 #### Type parameters
 
@@ -39,7 +39,7 @@ title: 'MeshPubSub'
 
 #### Returns
 
-`AsyncIterable`<[`AllHooks`](../modules/types_src#allhooks)[`THook`]\>
+`AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 #### Defined in
 
@@ -49,7 +49,7 @@ ___
 
 ### publish
 
-▸ **publish**<`THook`\>(`triggerName`, `payload`): `Promise`<`void`\>
+▸ **publish**\<`THook`>(`triggerName`, `payload`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -66,7 +66,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
@@ -76,7 +76,7 @@ ___
 
 ### subscribe
 
-▸ **subscribe**<`THook`\>(`triggerName`, `onMessage`, `options?`): `Promise`<`number`\>
+▸ **subscribe**\<`THook`>(`triggerName`, `onMessage`, `options?`): `Promise`\<`number`>
 
 #### Type parameters
 
@@ -94,7 +94,7 @@ ___
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`>
 
 #### Defined in
 

@@ -25,4 +25,4 @@ Computed field dependencies must be sent into the subservice using an [object ke
 
 #### Defined in
 
-[packages/types/src/config.ts:1599](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1599)
+[packages/types/src/config.ts:1632](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1632)

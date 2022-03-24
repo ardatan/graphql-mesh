@@ -41,7 +41,7 @@ Transformer to apply caching for your data sources
 
 #### Defined in
 
-[packages/types/src/config.ts:1063](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1063)
+[packages/types/src/config.ts:1067](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1067)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1064](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1064)
+[packages/types/src/config.ts:1068](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1068)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1065](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1065)
+[packages/types/src/config.ts:1069](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1069)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1066](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1066)
+[packages/types/src/config.ts:1070](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1070)
 
 ___
 
@@ -83,7 +83,7 @@ Transformer to filter (white/black list) GraphQL types, fields and arguments (An
 
 #### Defined in
 
-[packages/types/src/config.ts:1070](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1070)
+[packages/types/src/config.ts:1074](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1074)
 
 ___
 
@@ -95,7 +95,7 @@ Transformer to hoist GraphQL fields
 
 #### Defined in
 
-[packages/types/src/config.ts:1093](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1093)
+[packages/types/src/config.ts:1078](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1078)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1071](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1071)
+[packages/types/src/config.ts:1079](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1079)
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1072](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1072)
+[packages/types/src/config.ts:1080](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1080)
 
 ___
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1073](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1073)
+[packages/types/src/config.ts:1081](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1081)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1074](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1074)
+[packages/types/src/config.ts:1082](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1082)
 
 ___
 
@@ -147,7 +147,7 @@ RateLimit transform
 
 #### Defined in
 
-[packages/types/src/config.ts:1078](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1078)
+[packages/types/src/config.ts:1086](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1086)
 
 ___
 
@@ -159,7 +159,7 @@ Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
 
 #### Defined in
 
-[packages/types/src/config.ts:1082](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1082)
+[packages/types/src/config.ts:1090](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1090)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1083](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1083)
+[packages/types/src/config.ts:1091](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1091)
 
 ___
 
@@ -181,7 +181,7 @@ Transformer to apply composition to resolvers (Any of: ResolversCompositionTrans
 
 #### Defined in
 
-[packages/types/src/config.ts:1087](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1087)
+[packages/types/src/config.ts:1095](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1095)
 
 ___
 
@@ -191,7 +191,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1088](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1088)
+[packages/types/src/config.ts:1096](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1096)
 
 ___
 
@@ -201,4 +201,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1089](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1089)
+[packages/types/src/config.ts:1097](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1097)

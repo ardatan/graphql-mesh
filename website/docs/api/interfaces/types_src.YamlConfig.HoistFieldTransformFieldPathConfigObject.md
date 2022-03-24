@@ -23,7 +23,7 @@ Field name
 
 #### Defined in
 
-[packages/types/src/config.ts:1652](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1652)
+[packages/types/src/config.ts:1237](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1237)
 
 ___
 
@@ -35,4 +35,4 @@ Match fields based on argument, needs to implement `(arg: GraphQLArgument) => bo
 
 #### Defined in
 
-[packages/types/src/config.ts:1656](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1656)
+[packages/types/src/config.ts:1241](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1241)

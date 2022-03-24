@@ -92,7 +92,7 @@ ___
 
 ### method
 
-• `Optional` **method**: ``"GET"`` \| ``"POST"`` \| ``"DELETE"`` \| ``"PATCH"`` \| ``"HEAD"`` \| ``"PUT"`` \| ``"CONNECT"`` \| ``"OPTIONS"`` \| ``"TRACE"``
+• `Optional` **method**: ``"GET"`` | ``"POST"`` | ``"DELETE"`` | ``"PATCH"`` | ``"HEAD"`` | ``"PUT"`` | ``"CONNECT"`` | ``"OPTIONS"`` | ``"TRACE"``
 
 Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
 
@@ -186,7 +186,7 @@ ___
 
 ### type
 
-• **type**: ``"Query"`` \| ``"Mutation"`` \| ``"Subscription"``
+• **type**: ``"Query"`` | ``"Mutation"`` | ``"Subscription"``
 
 Allowed values: Query, Mutation, Subscription
 

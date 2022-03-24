@@ -23,16 +23,16 @@ Array of filter rules
 
 #### Defined in
 
-[packages/types/src/config.ts:1208](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1208)
+[packages/types/src/config.ts:1212](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1212)
 
 ___
 
 ### mode
 
-• `Optional` **mode**: ``"wrap"`` \| ``"bare"``
+• `Optional` **mode**: ``"wrap"`` | ``"bare"``
 
 Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
 
 #### Defined in
 
-[packages/types/src/config.ts:1204](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1204)
+[packages/types/src/config.ts:1208](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1208)

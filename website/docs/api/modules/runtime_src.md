@@ -27,7 +27,7 @@ sidebar_label: "runtime"
 
 ### ExecuteMeshFn
 
-Ƭ **ExecuteMeshFn**<`TData`, `TVariables`, `TContext`, `TRootValue`\>: (`document`: [`GraphQLOperation`](types_src#graphqloperation)<`TData`, `TVariables`\>, `variables`: `TVariables`, `context?`: `TContext`, `rootValue?`: `TRootValue`, `operationName?`: `string`) => `Promise`<`TData` \| ``null`` \| `undefined`\>
+Ƭ **ExecuteMeshFn**\<`TData`, `TVariables`, `TContext`, `TRootValue`>: (`document`: [`GraphQLOperation`](types_src#graphqloperation)\<`TData`, `TVariables`>, `variables`: `TVariables`, `context?`: `TContext`, `rootValue?`: `TRootValue`, `operationName?`: `string`) => `Promise`\<`TData` | ``null`` | `undefined`>
 
 #### Type parameters
 
@@ -40,13 +40,13 @@ sidebar_label: "runtime"
 
 #### Type declaration
 
-▸ (`document`, `variables`, `context?`, `rootValue?`, `operationName?`): `Promise`<`TData` \| ``null`` \| `undefined`\>
+▸ (`document`, `variables`, `context?`, `rootValue?`, `operationName?`): `Promise`\<`TData` | ``null`` | `undefined`>
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `document` | [`GraphQLOperation`](types_src#graphqloperation)<`TData`, `TVariables`\> |
+| `document` | [`GraphQLOperation`](types_src#graphqloperation)\<`TData`, `TVariables`> |
 | `variables` | `TVariables` |
 | `context?` | `TContext` |
 | `rootValue?` | `TRootValue` |
@@ -54,7 +54,7 @@ sidebar_label: "runtime"
 
 ##### Returns
 
-`Promise`<`TData` \| ``null`` \| `undefined`\>
+`Promise`\<`TData` | ``null`` | `undefined`>
 
 #### Defined in
 
@@ -70,8 +70,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `additionalEnvelopPlugins?` | `Parameters`<typeof `envelop`\>[``0``][``"plugins"``] |
-| `additionalResolvers?` | `IResolvers` \| `IResolvers`[] |
+| `additionalEnvelopPlugins?` | `Parameters`\<typeof `envelop`>[``0``][``"plugins"``] |
+| `additionalResolvers?` | `IResolvers` | `IResolvers`[] |
 | `additionalTypeDefs?` | `DocumentNode`[] |
 | `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) |
 | `documents?` | `Source`[] |
@@ -90,7 +90,7 @@ ___
 
 ### MeshContext
 
-Ƭ **MeshContext**: { `[MESH_CONTEXT_SYMBOL]`: ``true``  } & { `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `liveQueryStore`: `InMemoryLiveQueryStore` ; `logger`: [`Logger`](types_src#logger) ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }
+Ƭ **MeshContext**: \{ `[MESH_CONTEXT_SYMBOL]`: ``true``  } & \{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `liveQueryStore`: `InMemoryLiveQueryStore` ; `logger`: [`Logger`](types_src#logger) ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }
 
 #### Defined in
 
@@ -100,7 +100,7 @@ ___
 
 ### MeshResolvedSource
 
-Ƭ **MeshResolvedSource**<`TContext`\>: `Object`
+Ƭ **MeshResolvedSource**\<`TContext`>: `Object`
 
 #### Type parameters
 
@@ -112,8 +112,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `handler` | [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler)<`TContext`\> |
-| `merge?` | `Record`<`string`, `MergedTypeConfig`\> |
+| `handler` | [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler)\<`TContext`> |
+| `merge?` | `Record`\<`string`, `MergedTypeConfig`> |
 | `name` | `string` |
 | `transforms?` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)[] |
 
@@ -125,7 +125,7 @@ ___
 
 ### SubscribeMeshFn
 
-Ƭ **SubscribeMeshFn**<`TVariables`, `TContext`, `TRootValue`, `TData`\>: (`document`: [`GraphQLOperation`](types_src#graphqloperation)<`TData`, `TVariables`\>, `variables?`: `TVariables`, `context?`: `TContext`, `rootValue?`: `TRootValue`, `operationName?`: `string`) => `Promise`<`TData` \| ``null`` \| `undefined` \| `AsyncIterableIterator`<`TData` \| ``null`` \| `undefined`\>\>
+Ƭ **SubscribeMeshFn**\<`TVariables`, `TContext`, `TRootValue`, `TData`>: (`document`: [`GraphQLOperation`](types_src#graphqloperation)\<`TData`, `TVariables`>, `variables?`: `TVariables`, `context?`: `TContext`, `rootValue?`: `TRootValue`, `operationName?`: `string`) => `Promise`\<`TData` | ``null`` | `undefined` | `AsyncIterableIterator`\<`TData` | ``null`` | `undefined`>>
 
 #### Type parameters
 
@@ -138,13 +138,13 @@ ___
 
 #### Type declaration
 
-▸ (`document`, `variables?`, `context?`, `rootValue?`, `operationName?`): `Promise`<`TData` \| ``null`` \| `undefined` \| `AsyncIterableIterator`<`TData` \| ``null`` \| `undefined`\>\>
+▸ (`document`, `variables?`, `context?`, `rootValue?`, `operationName?`): `Promise`\<`TData` | ``null`` | `undefined` | `AsyncIterableIterator`\<`TData` | ``null`` | `undefined`>>
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `document` | [`GraphQLOperation`](types_src#graphqloperation)<`TData`, `TVariables`\> |
+| `document` | [`GraphQLOperation`](types_src#graphqloperation)\<`TData`, `TVariables`> |
 | `variables?` | `TVariables` |
 | `context?` | `TContext` |
 | `rootValue?` | `TRootValue` |
@@ -152,7 +152,7 @@ ___
 
 ##### Returns
 
-`Promise`<`TData` \| ``null`` \| `undefined` \| `AsyncIterableIterator`<`TData` \| ``null`` \| `undefined`\>\>
+`Promise`\<`TData` | ``null`` | `undefined` | `AsyncIterableIterator`\<`TData` | ``null`` | `undefined`>>
 
 #### Defined in
 
@@ -162,7 +162,7 @@ ___
 
 ### getMesh
 
-▸ **getMesh**<`TMeshContext`\>(`options`): `Promise`<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`TMeshContext`\>\>
+▸ **getMesh**\<`TMeshContext`>(`options`): `Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`TMeshContext`>>
 
 #### Type parameters
 
@@ -178,7 +178,7 @@ ___
 
 #### Returns
 
-`Promise`<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`TMeshContext`\>\>
+`Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`TMeshContext`>>
 
 #### Defined in
 

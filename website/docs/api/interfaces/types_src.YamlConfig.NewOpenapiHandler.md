@@ -13,6 +13,7 @@ Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/sw
 ### Properties
 
 - [baseUrl](types_src.YamlConfig.NewOpenapiHandler#baseurl)
+- [fallbackFormat](types_src.YamlConfig.NewOpenapiHandler#fallbackformat)
 - [ignoreErrorResponses](types_src.YamlConfig.NewOpenapiHandler#ignoreerrorresponses)
 - [oasFilePath](types_src.YamlConfig.NewOpenapiHandler#oasfilepath)
 - [operationHeaders](types_src.YamlConfig.NewOpenapiHandler#operationheaders)
@@ -27,7 +28,19 @@ Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/sw
 
 #### Defined in
 
-[packages/types/src/config.ts:696](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L696)
+[packages/types/src/config.ts:700](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L700)
+
+___
+
+### fallbackFormat
+
+• `Optional` **fallbackFormat**: ``"json"`` | ``"yaml"`` | ``"js"`` | ``"ts"``
+
+Allowed values: json, yaml, js, ts
+
+#### Defined in
+
+[packages/types/src/config.ts:699](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L699)
 
 ___
 
@@ -37,7 +50,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:703](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L703)
+[packages/types/src/config.ts:707](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L707)
 
 ___
 
@@ -61,7 +74,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:700](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L700)
+[packages/types/src/config.ts:704](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L704)
 
 ___
 
@@ -75,7 +88,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:697](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L697)
+[packages/types/src/config.ts:701](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L701)
 
 ___
 
@@ -85,4 +98,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:704](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L704)
+[packages/types/src/config.ts:708](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L708)

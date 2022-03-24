@@ -35,7 +35,7 @@ ___
 
 ### descriptorSetFilePath
 
-• `Optional` **descriptorSetFilePath**: `string` \| [`ProtoFilePath`](types_src.YamlConfig.ProtoFilePath)
+• `Optional` **descriptorSetFilePath**: `string` | [`ProtoFilePath`](types_src.YamlConfig.ProtoFilePath)
 
 Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
 
@@ -75,7 +75,7 @@ ___
 
 ### protoFilePath
 
-• `Optional` **protoFilePath**: `string` \| [`ProtoFilePath`](types_src.YamlConfig.ProtoFilePath)
+• `Optional` **protoFilePath**: `string` | [`ProtoFilePath`](types_src.YamlConfig.ProtoFilePath)
 
 gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)
 

@@ -19,7 +19,7 @@ title: 'WebhookHandler'
 
 ### method
 
-• `Optional` **method**: ``"GET"`` \| ``"POST"`` \| ``"DELETE"`` \| ``"PATCH"``
+• `Optional` **method**: ``"GET"`` | ``"POST"`` | ``"DELETE"`` | ``"PATCH"``
 
 HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
 

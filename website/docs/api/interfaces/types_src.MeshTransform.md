@@ -2,7 +2,7 @@
 title: 'MeshTransform'
 ---
 
-# Interface: MeshTransform<T\>
+# Interface: MeshTransform\<T>
 
 [types/src](../modules/types_src).MeshTransform
 
@@ -14,7 +14,7 @@ title: 'MeshTransform'
 
 ## Hierarchy
 
-- `Transform`<`T`\>
+- `Transform`\<`T`>
 
   ↳ **`MeshTransform`**
 
@@ -57,7 +57,7 @@ ___
 
 ### transformRequest
 
-• `Optional` **transformRequest**: `RequestTransform`<`T`, `Record`<`string`, `any`\>\>
+• `Optional` **transformRequest**: `RequestTransform`\<`T`, `Record`\<`string`, `any`>>
 
 #### Inherited from
 
@@ -71,7 +71,7 @@ ___
 
 ### transformResult
 
-• `Optional` **transformResult**: `ResultTransform`<`T`, `Record`<`string`, `any`\>\>
+• `Optional` **transformResult**: `ResultTransform`\<`T`, `Record`\<`string`, `any`>>
 
 #### Inherited from
 
@@ -85,7 +85,7 @@ ___
 
 ### transformSchema
 
-• `Optional` **transformSchema**: `SchemaTransform`<`Record`<`string`, `any`\>\>
+• `Optional` **transformSchema**: `SchemaTransform`\<`Record`\<`string`, `any`>>
 
 #### Inherited from
 

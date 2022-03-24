@@ -35,7 +35,7 @@ sidebar_label: "cli"
 
 ### findAndParseConfig
 
-▸ **findAndParseConfig**(`options?`): `Promise`<[`ProcessedConfig`](config_src#processedconfig)\>
+▸ **findAndParseConfig**(`options?`): `Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
 #### Parameters
 
@@ -45,7 +45,7 @@ sidebar_label: "cli"
 
 #### Returns
 
-`Promise`<[`ProcessedConfig`](config_src#processedconfig)\>
+`Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
 #### Defined in
 
@@ -55,7 +55,7 @@ ___
 
 ### generateTsArtifacts
 
-▸ **generateTsArtifacts**(`__namedParameters`, `cliParams`): `Promise`<`void`\>
+▸ **generateTsArtifacts**(`__namedParameters`, `cliParams`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -66,7 +66,7 @@ ___
 | `__namedParameters.codegenConfig` | `any` |
 | `__namedParameters.documents` | `Source`[] |
 | `__namedParameters.flattenTypes` | `boolean` |
-| `__namedParameters.importedModulesSet` | `Set`<`string`\> |
+| `__namedParameters.importedModulesSet` | `Set`\<`string`> |
 | `__namedParameters.logger` | [`Logger`](types_src#logger) |
 | `__namedParameters.mergerType` | `string` |
 | `__namedParameters.meshConfigCode` | `string` |
@@ -78,7 +78,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
@@ -88,7 +88,7 @@ ___
 
 ### graphqlMesh
 
-▸ **graphqlMesh**(`cliParams?`, `args?`, `cwdPath?`): `Promise`<{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  } \| { `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  }\>
+▸ **graphqlMesh**(`cliParams?`, `args?`, `cwdPath?`): `Promise`\<\{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  } | \{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  }>
 
 #### Parameters
 
@@ -100,7 +100,7 @@ ___
 
 #### Returns
 
-`Promise`<{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  } \| { `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  }\>
+`Promise`\<\{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  } | \{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  }>
 
 #### Defined in
 
@@ -110,7 +110,7 @@ ___
 
 ### serveMesh
 
-▸ **serveMesh**(`__namedParameters`, `cliParams`): `Promise`<{ `app`: `Express` ; `httpServer`: `Server` ; `logger`: [`Logger`](types_src#logger) = logger; `mesh`: [`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`any`\> ; `readyFlag`: `boolean`  }\>
+▸ **serveMesh**(`__namedParameters`, `cliParams`): `Promise`\<\{ `app`: `Express` ; `httpServer`: `Server` ; `logger`: [`Logger`](types_src#logger) = logger; `mesh`: [`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`any`> ; `readyFlag`: `boolean`  }>
 
 #### Parameters
 
@@ -121,7 +121,7 @@ ___
 
 #### Returns
 
-`Promise`<{ `app`: `Express` ; `httpServer`: `Server` ; `logger`: [`Logger`](types_src#logger) = logger; `mesh`: [`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`any`\> ; `readyFlag`: `boolean`  }\>
+`Promise`\<\{ `app`: `Express` ; `httpServer`: `Server` ; `logger`: [`Logger`](types_src#logger) = logger; `mesh`: [`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`any`> ; `readyFlag`: `boolean`  }>
 
 #### Defined in
 

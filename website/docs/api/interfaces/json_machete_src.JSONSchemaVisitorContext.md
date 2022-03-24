@@ -2,7 +2,7 @@
 title: 'JSONSchemaVisitorContext'
 ---
 
-# Interface: JSONSchemaVisitorContext<T\>
+# Interface: JSONSchemaVisitorContext\<T>
 
 [json-machete/src](../modules/json_machete_src).JSONSchemaVisitorContext
 
@@ -55,7 +55,7 @@ ___
 
 ### visitedSubschemaResultMap
 
-• **visitedSubschemaResultMap**: `WeakMap`<[`JSONSchemaObject`](json_machete_src.JSONSchemaObject), `T`\>
+• **visitedSubschemaResultMap**: `WeakMap`\<[`JSONSchemaObject`](json_machete_src.JSONSchemaObject), `T`>
 
 #### Defined in
 

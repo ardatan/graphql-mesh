@@ -37,7 +37,7 @@ Re-exports [getGraphQLSchemaFromBundle](loaders_json_schema_src#getgraphqlschema
 
 ### createBundle
 
-▸ **createBundle**(`name`, `ramlLoaderOptions`): `Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+▸ **createBundle**(`name`, `ramlLoaderOptions`): `Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 Creates a bundle by downloading and resolving the internal references once
 to load the schema locally later
@@ -51,7 +51,7 @@ to load the schema locally later
 
 #### Returns
 
-`Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+`Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 #### Defined in
 
@@ -61,7 +61,7 @@ ___
 
 ### getJSONSchemaOptionsFromRAMLOptions
 
-▸ **getJSONSchemaOptionsFromRAMLOptions**(`__namedParameters`): `Promise`<{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch?`: `WindowOrWorkerGlobalScope`[``"fetch"``] ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[]  }\>
+▸ **getJSONSchemaOptionsFromRAMLOptions**(`__namedParameters`): `Promise`\<\{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch?`: `WindowOrWorkerGlobalScope`[``"fetch"``] ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[]  }>
 
 Generates the options for JSON Schema Loader
 from RAML Loader options by extracting the JSON Schema references
@@ -75,7 +75,7 @@ from RAML API Document
 
 #### Returns
 
-`Promise`<{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch?`: `WindowOrWorkerGlobalScope`[``"fetch"``] ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[]  }\>
+`Promise`\<\{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch?`: `WindowOrWorkerGlobalScope`[``"fetch"``] ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[]  }>
 
 #### Defined in
 
@@ -85,7 +85,7 @@ ___
 
 ### loadGraphQLSchemaFromRAML
 
-▸ **loadGraphQLSchemaFromRAML**(`name`, `options`): `Promise`<`GraphQLSchema`\>
+▸ **loadGraphQLSchemaFromRAML**(`name`, `options`): `Promise`\<`GraphQLSchema`>
 
 Creates a local GraphQLSchema instance from a RAML API Document.
 Everytime this function is called, the RAML file and its dependencies will be resolved on runtime.
@@ -101,7 +101,7 @@ then load it with `loadGraphQLSchemaFromBundle`.
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 #### Defined in
 

@@ -38,9 +38,9 @@ sidebar_label: "json-machete"
 
 ### JSONSchema
 
-Ƭ **JSONSchema**: [`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject) \| `JSONSchemaBoolean`
+Ƭ **JSONSchema**: [`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject) | `JSONSchemaBoolean`
 
-**`default`** {}
+**`default`** \{}
 
 #### Defined in
 
@@ -60,7 +60,7 @@ node_modules/@json-schema-tools/meta-schema/index.d.ts:119
 
 ### compareJSONSchemas
 
-▸ **compareJSONSchemas**(`oldSchema`, `newSchema`): `Promise`<`void`\>
+▸ **compareJSONSchemas**(`oldSchema`, `newSchema`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -71,7 +71,7 @@ node_modules/@json-schema-tools/meta-schema/index.d.ts:119
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
@@ -81,7 +81,7 @@ ___
 
 ### dereferenceObject
 
-▸ **dereferenceObject**<`T`, `TRoot`\>(`obj`, `__namedParameters?`): `Promise`<`T`\>
+▸ **dereferenceObject**\<`T`, `TRoot`>(`obj`, `__namedParameters?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -97,15 +97,15 @@ ___
 | `obj` | `T` |
 | `__namedParameters` | `Object` |
 | `__namedParameters.cwd?` | `string` |
-| `__namedParameters.externalFileCache?` | `Map`<`string`, `any`\> |
-| `__namedParameters.fetch?` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> |
-| `__namedParameters.headers?` | `Record`<`string`, `string`\> |
-| `__namedParameters.refMap?` | `Map`<`string`, `any`\> |
+| `__namedParameters.externalFileCache?` | `Map`\<`string`, `any`> |
+| `__namedParameters.fetch?` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> |
+| `__namedParameters.headers?` | `Record`\<`string`, `string`> |
+| `__namedParameters.refMap?` | `Map`\<`string`, `any`> |
 | `__namedParameters.root?` | `TRoot` |
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
@@ -156,7 +156,7 @@ ___
 
 ### healJSONSchema
 
-▸ **healJSONSchema**(`schema`): `Promise`<`any`\>
+▸ **healJSONSchema**(`schema`): `Promise`\<`any`>
 
 #### Parameters
 
@@ -166,7 +166,7 @@ ___
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
@@ -176,7 +176,7 @@ ___
 
 ### referenceJSONSchema
 
-▸ **referenceJSONSchema**(`schema`): `Promise`<`any`\>
+▸ **referenceJSONSchema**(`schema`): `Promise`\<`any`>
 
 #### Parameters
 
@@ -186,7 +186,7 @@ ___
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
@@ -217,7 +217,7 @@ ___
 
 ### visitJSONSchema
 
-▸ **visitJSONSchema**<`T`\>(`schema`, `visitorFn`, `__namedParameters?`): `Promise`<`any`\>
+▸ **visitJSONSchema**\<`T`>(`schema`, `visitorFn`, `__namedParameters?`): `Promise`\<`any`>
 
 #### Type parameters
 
@@ -230,12 +230,12 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `schema` | [`JSONSchema`](json_machete_src#jsonschema) |
-| `visitorFn` | (`subSchema`: [`JSONSchema`](json_machete_src#jsonschema), `context`: [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)<`T`\>) => `T` \| `Promise`<`T`\> |
-| `__namedParameters` | [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)<`T`\> |
+| `visitorFn` | (`subSchema`: [`JSONSchema`](json_machete_src#jsonschema), `context`: [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)\<`T`>) => `T` | `Promise`\<`T`> |
+| `__namedParameters` | [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)\<`T`> |
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 

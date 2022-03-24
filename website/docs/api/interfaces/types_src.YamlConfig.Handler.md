@@ -35,7 +35,7 @@ Point to the handler you wish to use, it can either be a predefined handler, or 
 
 ### graphql
 
-• `Optional` **graphql**: [`GraphQLHandlerHTTPConfiguration`](types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)
+• `Optional` **graphql**: [`GraphQLHandlerHTTPConfiguration`](types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) | [`GraphQLHandlerCodeFirstConfiguration`](types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) | [`GraphQLHandlerMultipleHTTPConfiguration`](types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)
 
 Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)
 

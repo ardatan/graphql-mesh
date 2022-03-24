@@ -32,7 +32,7 @@ title: 'Neo4JHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`Neo4JHandler`](/docs/api/interfaces/types_src.YamlConfig.Neo4JHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`Neo4JHandler`](/docs/api/interfaces/types_src.YamlConfig.Neo4JHandler)> |
 
 #### Defined in
 
@@ -42,11 +42,11 @@ title: 'Neo4JHandler'
 
 ### getCachedTypeDefs
 
-▸ **getCachedTypeDefs**(): `Promise`<`string`\>
+▸ **getCachedTypeDefs**(): `Promise`\<`string`>
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`>
 
 #### Defined in
 
@@ -70,11 +70,11 @@ ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<{ `executor`: <TResult\>(`executionRequest`: `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>) => `ExecutionResult`<`TResult`, `ObjMap`<`unknown`\>\> ; `schema`: `GraphQLSchema`  }\>
+▸ **getMeshSource**(): `Promise`\<\{ `executor`: \<TResult>(`executionRequest`: `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>) => `ExecutionResult`\<`TResult`, `ObjMap`\<`unknown`>> ; `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<{ `executor`: <TResult\>(`executionRequest`: `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>) => `ExecutionResult`<`TResult`, `ObjMap`<`unknown`\>\> ; `schema`: `GraphQLSchema`  }\>
+`Promise`\<\{ `executor`: \<TResult>(`executionRequest`: `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>) => `ExecutionResult`\<`TResult`, `ObjMap`\<`unknown`>> ; `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 

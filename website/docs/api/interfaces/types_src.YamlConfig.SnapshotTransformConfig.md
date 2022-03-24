@@ -26,25 +26,25 @@ Configuration for Snapshot extension
 Resolver to be applied
 For example;
   apply:
-      - Query.* <- * will apply this extension to all fields of Query type
+      - Query.* \<- * will apply this extension to all fields of Query type
       - Mutation.someMutationButProbablyYouWontNeedIt
 
 #### Defined in
 
-[packages/types/src/config.ts:1538](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1538)
+[packages/types/src/config.ts:1571](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1571)
 
 ___
 
 ### if
 
-• `Optional` **if**: `string` \| `boolean`
+• `Optional` **if**: `string` | `boolean`
 
 Expression for when to activate this extension.
 Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
 
 #### Defined in
 
-[packages/types/src/config.ts:1530](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1530)
+[packages/types/src/config.ts:1563](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1563)
 
 ___
 
@@ -56,7 +56,7 @@ Path to the directory of the generated snapshot files
 
 #### Defined in
 
-[packages/types/src/config.ts:1542](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1542)
+[packages/types/src/config.ts:1575](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1575)
 
 ___
 
@@ -69,4 +69,4 @@ This might be needed for the handlers like Postgraphile or OData that rely on th
 
 #### Defined in
 
-[packages/types/src/config.ts:1547](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1547)
+[packages/types/src/config.ts:1580](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1580)

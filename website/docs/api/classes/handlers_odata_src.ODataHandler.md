@@ -31,7 +31,7 @@ title: 'ODataHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`ODataHandler`](/docs/api/interfaces/types_src.YamlConfig.ODataHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`ODataHandler`](/docs/api/interfaces/types_src.YamlConfig.ODataHandler)> |
 
 #### Defined in
 
@@ -41,17 +41,17 @@ title: 'ODataHandler'
 
 ### getCachedMetadataJson
 
-▸ **getCachedMetadataJson**(`fetch`): `Promise`<`any`\>
+▸ **getCachedMetadataJson**(`fetch`): `Promise`\<`any`>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `fetch` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> |
+| `fetch` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> |
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
@@ -61,11 +61,11 @@ ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Implementation of
 

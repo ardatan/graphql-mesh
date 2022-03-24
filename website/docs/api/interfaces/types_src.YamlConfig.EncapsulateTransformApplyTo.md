@@ -24,7 +24,7 @@ Allow you to choose which root operations you would like to apply. By default, i
 
 #### Defined in
 
-[packages/types/src/config.ts:1157](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1157)
+[packages/types/src/config.ts:1161](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1161)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1156](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1156)
+[packages/types/src/config.ts:1160](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1160)
 
 ___
 
@@ -44,4 +44,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1158](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1158)
+[packages/types/src/config.ts:1162](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1162)

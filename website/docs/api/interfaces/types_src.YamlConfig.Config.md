@@ -47,7 +47,7 @@ ___
 
 ### additionalResolvers
 
-• `Optional` **additionalResolvers**: (`string` \| [`AdditionalStitchingResolverObject`](types_src.YamlConfig.AdditionalStitchingResolverObject) \| [`AdditionalStitchingBatchResolverObject`](types_src.YamlConfig.AdditionalStitchingBatchResolverObject) \| [`AdditionalSubscriptionObject`](types_src.YamlConfig.AdditionalSubscriptionObject))[]
+• `Optional` **additionalResolvers**: (`string` | [`AdditionalStitchingResolverObject`](types_src.YamlConfig.AdditionalStitchingResolverObject) | [`AdditionalStitchingBatchResolverObject`](types_src.YamlConfig.AdditionalStitchingBatchResolverObject) | [`AdditionalSubscriptionObject`](types_src.YamlConfig.AdditionalSubscriptionObject))[]
 
 Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject)
 
@@ -143,7 +143,7 @@ ___
 
 ### pubsub
 
-• `Optional` **pubsub**: `string` \| [`PubSubConfig`](types_src.YamlConfig.PubSubConfig)
+• `Optional` **pubsub**: `string` | [`PubSubConfig`](types_src.YamlConfig.PubSubConfig)
 
 PubSub Implementation (Any of: String, PubSubConfig)
 

@@ -1,17 +1,15 @@
-import { fs } from '@graphql-mesh/cross-helpers';
-import { path } from '@graphql-mesh/cross-helpers';
-import fsPromises from 'fs/promises';
-import rimraf from 'rimraf';
+import fs, { promises as fsPromises } from 'node:fs';
+import path from 'node:path';
 import * as TypeDoc from 'typedoc';
 import globby from 'globby';
-import workspacePackageJson from '../package.json';
 import chalk from 'chalk';
+import workspacePackageJson from '../package.json';
 
 const MONOREPO = workspacePackageJson.name.replace('-monorepo', '');
-
+const CWD = process.cwd();
 // Where to generate the API docs
-const OUTPUT_PATH = path.join(__dirname, '../website/docs/api');
-const SIDEBAR_PATH = path.join(__dirname, '../website/api-sidebar.json');
+const OUTPUT_PATH = path.join(CWD, 'website/docs/api');
+const SIDEBAR_PATH = path.join(CWD, 'website/api-sidebar.json');
 
 async function buildApiDocs(): Promise<void> {
   // An array of tuples where the first element is the package's name and the
@@ -20,7 +18,7 @@ async function buildApiDocs(): Promise<void> {
   const modules = [];
 
   for (const packageJsonPath of packageJsonFiles) {
-    const packageJsonContent = require(path.join(__dirname, '..', packageJsonPath));
+    const packageJsonContent = require(path.join(CWD, packageJsonPath));
     // Do not include private and large npm package that contains rest
     if (
       !packageJsonPath.includes('./website/') &&
@@ -35,8 +33,8 @@ async function buildApiDocs(): Promise<void> {
     }
   }
 
-  // Delete existing docs
-  rimraf.sync(OUTPUT_PATH);
+  // Delete existing docs directory
+  await fsPromises.rm(OUTPUT_PATH, { recursive: true }).catch(() => null);
 
   // Initialize TypeDoc
   const typeDoc = new TypeDoc.Application();
@@ -49,7 +47,7 @@ async function buildApiDocs(): Promise<void> {
     readme: 'none',
     hideGenerator: true,
     gitRevision: 'master',
-    tsconfig: path.resolve(__dirname, '../tsconfig.build.json'),
+    tsconfig: path.join(CWD, 'tsconfig.build.json'),
     entryPoints: modules.map(([_name, filePath]) => filePath),
     // @ts-ignore -- typedoc-plugin-markdown option
     hideBreadcrumbs: true,
@@ -62,30 +60,32 @@ async function buildApiDocs(): Promise<void> {
   async function patchMarkdownFile(filePath: string): Promise<void> {
     const contents = await fsPromises.readFile(filePath, 'utf-8');
     const contentsTrimmed = contents
-      // Escape angle brackets
-      // .replace(/</g, '&lt;')
-      // .replace(/>/g, '&gt;')
+      // Escape `<` because MDX2 parse him as JSX tags
+      .replace(/</g, '\\<')
+      // Escape `>` is unnecessary
+      .replace(/\\>/g, '>')
+      // Escape of `|` is unnecessary
+      .replace(/\\\|/g, '|')
+      // Escape `{` because MDX2 parse him as expressions
+      // (\\)? is need because some `{` already escaped
+      .replace(/(\\)?{/g, '\\{')
       // Fix title
-      .replace(
-        /^# .+/g,
-        match => `---
-title: '${match
+      .replace(/^# .+/g, match => {
+        const title = match
           .replace('# ', '')
           .replace(/(Class|Interface|Enumeration): /, '')
-          .replace(/<.+/, '')}'
----
-
-${match}`
-      )
+          .replace(/(\\)?<.+/, '');
+        return ['---', `title: '${title}'`, '---', '', match].join('\n');
+      })
       // Fix links
-      .split('.md')
-      .join('')
+      .replace(/\.md/g, '')
       .replace(/\[([^\]]+)]\((\.\.\/(classes|interfaces|enums)\/([^)]+))\)/g, '[$1](/docs/api/$3/$4)');
+
     await fsPromises.writeFile(filePath, contentsTrimmed);
-    console.log('✅ ', chalk.green(path.relative(process.cwd(), filePath)));
+    console.log('✅ ', chalk.green(path.relative(CWD, filePath)));
   }
 
-  async function visitMarkdownFile(filePath: string) {
+  async function visitMarkdownFile(filePath: string): Promise<void> {
     if (!fs.existsSync(filePath)) {
       console.warn(`${filePath} doesn't exist! Ignoring.`);
       return;
@@ -135,6 +135,7 @@ title: "${name}"
 sidebar_label: "${id}"
 ---
 ${necessaryPart}`;
+
       await fsPromises.writeFile(filePath, finalContent);
     })
   );
@@ -144,24 +145,15 @@ ${necessaryPart}`;
     JSON.stringify(
       {
         $name: 'API Reference',
-        _: {
-          modules: {
-            $name: 'Modules',
-            $routes: getSidebarItemsByDirectory('modules'),
-          },
-          classes: {
-            $name: 'Classes',
-            $routes: getSidebarItemsByDirectory('classes'),
-          },
-          interfaces: {
-            $name: 'Interfaces',
-            $routes: getSidebarItemsByDirectory('interfaces'),
-          },
-          enums: {
-            $name: 'Enums',
-            $routes: getSidebarItemsByDirectory('enums'),
-          },
-        },
+        _: Object.fromEntries(
+          ['modules', 'classes', 'interfaces', 'enums'].map(key => [
+            key,
+            {
+              $name: key[0].toUpperCase() + key.slice(1),
+              $routes: getSidebarItemsByDirectory(key),
+            },
+          ])
+        ),
       },
       null,
       2
@@ -190,19 +182,11 @@ ${necessaryPart}`;
     return filesInDirectory
       .flatMap(fileName => {
         const absoluteFilePath = path.join(dirPath, fileName);
-        const fileLstat = fs.lstatSync(absoluteFilePath);
-        return fileLstat.isFile() ? path.parse(fileName).name : getSidebarItemsByDirectory(absoluteFilePath);
+        return fs.lstatSync(absoluteFilePath).isFile()
+          ? path.parse(fileName).name
+          : getSidebarItemsByDirectory(absoluteFilePath);
       })
-      .sort((a, b) => {
-        const aName = a.split('.').pop();
-        const bName = b.split('.').pop();
-        if (aName < bName) {
-          return -1;
-        } else if (aName > bName) {
-          return 1;
-        }
-        return 0;
-      });
+      .sort((a, b) => a.split('.').pop().localeCompare(b.split('.').pop()));
   }
 }
 

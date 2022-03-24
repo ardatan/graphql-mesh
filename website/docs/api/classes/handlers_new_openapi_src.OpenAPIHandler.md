@@ -31,7 +31,7 @@ title: 'OpenAPIHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`NewOpenapiHandler`](/docs/api/interfaces/types_src.YamlConfig.NewOpenapiHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`NewOpenapiHandler`](/docs/api/interfaces/types_src.YamlConfig.NewOpenapiHandler)> |
 
 #### Defined in
 
@@ -41,11 +41,11 @@ title: 'OpenAPIHandler'
 
 ### getDereferencedBundle
 
-▸ **getDereferencedBundle**(): `Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+▸ **getDereferencedBundle**(): `Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 #### Returns
 
-`Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+`Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 #### Defined in
 
@@ -55,11 +55,11 @@ ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Implementation of
 
@@ -67,4 +67,4 @@ ___
 
 #### Defined in
 
-[packages/handlers/new-openapi/src/index.ts:48](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/new-openapi/src/index.ts#L48)
+[packages/handlers/new-openapi/src/index.ts:50](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/new-openapi/src/index.ts#L50)

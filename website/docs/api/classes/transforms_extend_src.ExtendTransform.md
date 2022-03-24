@@ -34,7 +34,7 @@ title: 'ExtendTransform'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`ExtendTransform`](/docs/api/interfaces/types_src.YamlConfig.ExtendTransform)\> |
+| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`ExtendTransform`](/docs/api/interfaces/types_src.YamlConfig.ExtendTransform)> |
 
 #### Defined in
 

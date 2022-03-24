@@ -30,7 +30,7 @@ title: 'PostGraphileHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`PostGraphileHandler`](/docs/api/interfaces/types_src.YamlConfig.PostGraphileHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`PostGraphileHandler`](/docs/api/interfaces/types_src.YamlConfig.PostGraphileHandler)> |
 
 #### Defined in
 
@@ -40,11 +40,11 @@ title: 'PostGraphileHandler'
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Implementation of
 

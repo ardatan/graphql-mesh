@@ -23,16 +23,16 @@ Array of resolver/composer to apply
 
 #### Defined in
 
-[packages/types/src/config.ts:1508](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1508)
+[packages/types/src/config.ts:1541](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1541)
 
 ___
 
 ### mode
 
-• `Optional` **mode**: ``"wrap"`` \| ``"bare"``
+• `Optional` **mode**: ``"wrap"`` | ``"bare"``
 
 Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
 
 #### Defined in
 
-[packages/types/src/config.ts:1504](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1504)
+[packages/types/src/config.ts:1537](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1537)

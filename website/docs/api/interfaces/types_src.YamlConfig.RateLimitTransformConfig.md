@@ -26,7 +26,7 @@ The field of the type that the rate limit is applied to
 
 #### Defined in
 
-[packages/types/src/config.ts:1415](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1415)
+[packages/types/src/config.ts:1448](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1448)
 
 ___
 
@@ -34,11 +34,11 @@ ___
 
 • **identifier**: `string`
 
-The identifier expression that determines the identity of the request (e.g. "{context.req.socket.remoteAddress}")
+The identifier expression that determines the identity of the request (e.g. "\{context.req.socket.remoteAddress}")
 
 #### Defined in
 
-[packages/types/src/config.ts:1427](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1427)
+[packages/types/src/config.ts:1460](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1460)
 
 ___
 
@@ -50,7 +50,7 @@ The maximum number of requests that can be made in a given time period
 
 #### Defined in
 
-[packages/types/src/config.ts:1419](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1419)
+[packages/types/src/config.ts:1452](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1452)
 
 ___
 
@@ -62,7 +62,7 @@ The time period in which the rate limit is applied
 
 #### Defined in
 
-[packages/types/src/config.ts:1423](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1423)
+[packages/types/src/config.ts:1456](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1456)
 
 ___
 
@@ -74,4 +74,4 @@ The type name that the following field belongs to
 
 #### Defined in
 
-[packages/types/src/config.ts:1411](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1411)
+[packages/types/src/config.ts:1444](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1444)

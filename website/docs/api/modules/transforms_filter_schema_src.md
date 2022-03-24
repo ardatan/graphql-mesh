@@ -14,17 +14,17 @@ sidebar_label: "transform-filter-schema"
 
 ### FilterTransform
 
-▸ **FilterTransform**(`options`): `default` \| `default`
+▸ **FilterTransform**(`options`): `default` | `default`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<`any`\> |
+| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<`any`> |
 
 #### Returns
 
-`default` \| `default`
+`default` | `default`
 
 #### Defined in
 

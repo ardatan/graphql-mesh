@@ -25,7 +25,7 @@ title: 'RAMLHandler'
 
 #### Defined in
 
-[packages/types/src/config.ts:879](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L879)
+[packages/types/src/config.ts:883](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L883)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:886](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L886)
+[packages/types/src/config.ts:890](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L890)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:883](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L883)
+[packages/types/src/config.ts:887](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L887)
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:878](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L878)
+[packages/types/src/config.ts:882](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L882)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:880](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L880)
+[packages/types/src/config.ts:884](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L884)
 
 ___
 
@@ -83,4 +83,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:887](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L887)
+[packages/types/src/config.ts:891](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L891)

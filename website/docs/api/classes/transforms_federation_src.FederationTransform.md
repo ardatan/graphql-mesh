@@ -30,7 +30,7 @@ title: 'FederationTransform'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`FederationTransform`](/docs/api/interfaces/types_src.YamlConfig.FederationTransform)\> |
+| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`FederationTransform`](/docs/api/interfaces/types_src.YamlConfig.FederationTransform)> |
 
 #### Defined in
 
@@ -47,7 +47,7 @@ title: 'FederationTransform'
 | Name | Type |
 | :------ | :------ |
 | `schema` | `GraphQLSchema` |
-| `rawSource` | `SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> |
+| `rawSource` | `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> |
 
 #### Returns
 

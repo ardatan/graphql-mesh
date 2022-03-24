@@ -28,7 +28,7 @@ ___
 
 ### responseSchema
 
-• `Optional` **responseSchema**: `string` \| [`JSONSchemaObject`](json_machete_src.JSONSchemaObject)
+• `Optional` **responseSchema**: `string` | [`JSONSchemaObject`](json_machete_src.JSONSchemaObject)
 
 #### Defined in
 

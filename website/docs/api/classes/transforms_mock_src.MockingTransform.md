@@ -34,7 +34,7 @@ title: 'MockingTransform'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`MockingConfig`](/docs/api/interfaces/types_src.YamlConfig.MockingConfig)\> |
+| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`MockingConfig`](/docs/api/interfaces/types_src.YamlConfig.MockingConfig)> |
 
 #### Defined in
 

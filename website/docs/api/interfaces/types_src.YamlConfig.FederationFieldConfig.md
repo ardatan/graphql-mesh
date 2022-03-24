@@ -22,7 +22,7 @@ title: 'FederationFieldConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1185](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1185)
+[packages/types/src/config.ts:1189](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1189)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1186](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1186)
+[packages/types/src/config.ts:1190](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1190)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1187](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1187)
+[packages/types/src/config.ts:1191](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1191)

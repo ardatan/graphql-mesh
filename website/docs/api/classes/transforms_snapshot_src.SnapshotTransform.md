@@ -34,7 +34,7 @@ title: 'SnapshotTransform'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`SnapshotTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.SnapshotTransformConfig)\> |
+| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`SnapshotTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.SnapshotTransformConfig)> |
 
 #### Defined in
 

@@ -2,7 +2,7 @@
 title: 'MeshHandler'
 ---
 
-# Interface: MeshHandler<TContext\>
+# Interface: MeshHandler\<TContext>
 
 [types/src](../modules/types_src).MeshHandler
 
@@ -39,11 +39,11 @@ title: 'MeshHandler'
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`TContext`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`TContext`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`TContext`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`TContext`, `any`>>
 
 #### Defined in
 

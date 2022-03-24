@@ -79,7 +79,7 @@ ___
 
 ### method
 
-• `Optional` **method**: ``"GET"`` \| ``"POST"``
+• `Optional` **method**: ``"GET"`` | ``"POST"``
 
 HTTP method used for GraphQL operations (Allowed values: GET, POST)
 
@@ -144,7 +144,7 @@ ___
 
 ### subscriptionsProtocol
 
-• `Optional` **subscriptionsProtocol**: ``"SSE"`` \| ``"WS"`` \| ``"LEGACY_WS"``
+• `Optional` **subscriptionsProtocol**: ``"SSE"`` | ``"WS"`` | ``"LEGACY_WS"``
 
 SSE - Server Sent Events
 WS - New graphql-ws
