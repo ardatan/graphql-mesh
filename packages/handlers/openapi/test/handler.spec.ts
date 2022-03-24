@@ -10,7 +10,7 @@ describe('openapi', () => {
   it('should create a GraphQL schema from a simple local swagger file', async () => {
     const handler = new OpenAPIHandler({
       baseDir: __dirname,
-      logger: new DefaultLogger(),
+      logger: new DefaultLogger('TEST'),
       importFn: m => import(m),
       name: 'Instagram',
       config: {
@@ -31,7 +31,7 @@ describe('openapi', () => {
   it('should create a GraphQL schema from some complex local swagger file', async () => {
     const handler = new OpenAPIHandler({
       baseDir: __dirname,
-      logger: new DefaultLogger(),
+      logger: new DefaultLogger('TEST'),
       importFn: m => import(m),
       name: 'Kubernetes',
       config: {
@@ -52,7 +52,7 @@ describe('openapi', () => {
   it('should create a GraphQL schema from a simple local openapi file, adding limit arg', async () => {
     const handler = new OpenAPIHandler({
       baseDir: __dirname,
-      logger: new DefaultLogger(),
+      logger: new DefaultLogger('TEST'),
       importFn: m => import(m),
       name: 'Example OAS3',
       config: {
@@ -78,7 +78,7 @@ describe('openapi', () => {
   it('should create a GraphQL schema from a simple local openapi file, without limit arg', async () => {
     const handler = new OpenAPIHandler({
       baseDir: __dirname,
-      logger: new DefaultLogger(),
+      logger: new DefaultLogger('TEST'),
       importFn: m => import(m),
       name: 'Example OAS3',
       config: {
