@@ -22,4 +22,4 @@ SDK Configuration
 
 #### Defined in
 
-[packages/types/src/config.ts:182](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L182)
+[packages/types/src/config.ts:179](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L179)

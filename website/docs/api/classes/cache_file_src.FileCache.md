@@ -56,7 +56,7 @@ title: 'FileCache'
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L12)
+[packages/cache/file/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L11)
 
 ## Properties
 
@@ -66,7 +66,7 @@ title: 'FileCache'
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L10)
+[packages/cache/file/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L9)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L9)
+[packages/cache/file/src/index.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L8)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L11)
+[packages/cache/file/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L10)
 
 ## Methods
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L33)
+[packages/cache/file/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L32)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:22](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L22)
+[packages/cache/file/src/index.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L21)
 
 ___
 
@@ -159,4 +159,4 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L27)
+[packages/cache/file/src/index.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L26)

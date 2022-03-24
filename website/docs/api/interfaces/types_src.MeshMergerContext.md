@@ -23,7 +23,7 @@ title: 'MeshMergerContext'
 
 #### Defined in
 
-[packages/types/src/index.ts:105](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L105)
+[packages/types/src/index.ts:102](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L102)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:107](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L107)
+[packages/types/src/index.ts:104](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L104)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:108](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L108)
+[packages/types/src/index.ts:105](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L105)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:106](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L106)
+[packages/types/src/index.ts:103](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L103)

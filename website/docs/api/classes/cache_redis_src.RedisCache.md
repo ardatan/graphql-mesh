@@ -32,7 +32,7 @@ title: 'RedisCache'
 
 ### constructor
 
-• **new RedisCache**<`V`\>(`options?`)
+• **new RedisCache**<`V`\>(`options`)
 
 #### Type parameters
 
@@ -48,7 +48,7 @@ title: 'RedisCache'
 
 #### Defined in
 
-[packages/cache/redis/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/redis/src/index.ts#L10)
+[packages/cache/redis/src/index.ts:13](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/redis/src/index.ts#L13)
 
 ## Methods
 

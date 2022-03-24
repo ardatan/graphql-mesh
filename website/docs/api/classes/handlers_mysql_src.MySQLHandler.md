@@ -19,7 +19,6 @@ title: 'MySQLHandler'
 ### Methods
 
 - [getMeshSource](handlers_mysql_src.MySQLHandler#getmeshsource)
-- [getPromisifiedConnection](handlers_mysql_src.MySQLHandler#getpromisifiedconnection)
 
 ## Constructors
 
@@ -35,7 +34,7 @@ title: 'MySQLHandler'
 
 #### Defined in
 
-[packages/handlers/mysql/src/index.ts:104](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mysql/src/index.ts#L104)
+[packages/handlers/mysql/src/index.ts:142](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mysql/src/index.ts#L142)
 
 ## Methods
 
@@ -53,24 +52,4 @@ title: 'MySQLHandler'
 
 #### Defined in
 
-[packages/handlers/mysql/src/index.ts:177](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mysql/src/index.ts#L177)
-
-___
-
-### getPromisifiedConnection
-
-▸ **getPromisifiedConnection**(`pool`): `Promise`<`Object`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `pool` | `Pool` |
-
-#### Returns
-
-`Promise`<`Object`\>
-
-#### Defined in
-
-[packages/handlers/mysql/src/index.ts:122](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mysql/src/index.ts#L122)
+[packages/handlers/mysql/src/index.ts:181](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mysql/src/index.ts#L181)

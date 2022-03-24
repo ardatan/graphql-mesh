@@ -23,7 +23,7 @@ title: 'ComposeMongooseInputType'
 
 #### Defined in
 
-[packages/types/src/config.ts:427](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L427)
+[packages/types/src/config.ts:460](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L460)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:428](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L428)
+[packages/types/src/config.ts:461](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L461)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:426](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L426)
+[packages/types/src/config.ts:459](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L459)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:429](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L429)
+[packages/types/src/config.ts:462](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L462)

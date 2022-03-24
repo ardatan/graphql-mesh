@@ -34,7 +34,7 @@ title: 'OpenAPIHandler'
 
 #### Defined in
 
-[packages/handlers/openapi/src/index.ts:44](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L44)
+[packages/handlers/openapi/src/index.ts:43](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L43)
 
 ## Methods
 
@@ -52,4 +52,4 @@ title: 'OpenAPIHandler'
 
 #### Defined in
 
-[packages/handlers/openapi/src/index.ts:110](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L110)
+[packages/handlers/openapi/src/index.ts:113](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L113)

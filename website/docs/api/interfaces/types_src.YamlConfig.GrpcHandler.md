@@ -29,7 +29,7 @@ Handler for gRPC and Protobuf schemas
 
 #### Defined in
 
-[packages/types/src/config.ts:298](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L298)
+[packages/types/src/config.ts:326](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L326)
 
 ___
 
@@ -41,7 +41,7 @@ Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, St
 
 #### Defined in
 
-[packages/types/src/config.ts:292](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L292)
+[packages/types/src/config.ts:320](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L320)
 
 ___
 
@@ -53,7 +53,7 @@ gRPC Endpoint
 
 #### Defined in
 
-[packages/types/src/config.ts:284](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L284)
+[packages/types/src/config.ts:312](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L312)
 
 ___
 
@@ -69,7 +69,7 @@ MetaData
 
 #### Defined in
 
-[packages/types/src/config.ts:306](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L306)
+[packages/types/src/config.ts:334](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L334)
 
 ___
 
@@ -81,7 +81,7 @@ gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, Strin
 
 #### Defined in
 
-[packages/types/src/config.ts:288](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L288)
+[packages/types/src/config.ts:316](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L316)
 
 ___
 
@@ -94,7 +94,7 @@ Default: 200000
 
 #### Defined in
 
-[packages/types/src/config.ts:297](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L297)
+[packages/types/src/config.ts:325](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L325)
 
 ___
 
@@ -106,7 +106,7 @@ Use https instead of http for gRPC connection
 
 #### Defined in
 
-[packages/types/src/config.ts:302](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L302)
+[packages/types/src/config.ts:330](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L330)
 
 ___
 
@@ -118,4 +118,4 @@ Use gRPC reflection to automatically gather the connection
 
 #### Defined in
 
-[packages/types/src/config.ts:312](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L312)
+[packages/types/src/config.ts:340](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L340)

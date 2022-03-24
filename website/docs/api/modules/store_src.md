@@ -54,7 +54,7 @@ sidebar_label: "store"
 
 #### Defined in
 
-[packages/store/src/index.ts:83](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L83)
+[packages/store/src/index.ts:81](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L81)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:88](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L88)
+[packages/store/src/index.ts:86](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L86)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:76](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L76)
+[packages/store/src/index.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L74)
 
 ___
 
@@ -121,14 +121,14 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L12)
+[packages/store/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L11)
 
 ## Variables
 
 ### PredefinedProxyOptions
 
-• **PredefinedProxyOptions**: `Record`<[`PredefinedProxyOptionsName`](/docs/api/enums/store_src.PredefinedProxyOptionsName), [`ProxyOptions`](store_src#proxyoptions)<`any`\>\>
+• `Const` **PredefinedProxyOptions**: `Record`<[`PredefinedProxyOptionsName`](/docs/api/enums/store_src.PredefinedProxyOptionsName), [`ProxyOptions`](store_src#proxyoptions)<`any`\>\>
 
 #### Defined in
 
-[packages/store/src/index.ts:101](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L101)
+[packages/store/src/index.ts:99](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L99)

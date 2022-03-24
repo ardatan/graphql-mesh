@@ -24,7 +24,7 @@ SSL Credentials
 
 #### Defined in
 
-[packages/types/src/config.ts:327](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L327)
+[packages/types/src/config.ts:355](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L355)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:328](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L328)
+[packages/types/src/config.ts:356](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L356)
 
 ___
 
@@ -44,4 +44,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:326](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L326)
+[packages/types/src/config.ts:354](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L354)

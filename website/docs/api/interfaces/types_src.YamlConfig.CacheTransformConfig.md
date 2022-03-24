@@ -36,7 +36,7 @@ Available interpolations:
 
 #### Defined in
 
-[packages/types/src/config.ts:1025](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1025)
+[packages/types/src/config.ts:1116](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1116)
 
 ___
 
@@ -48,7 +48,7 @@ The type and field to apply cache to, you can use wild cards as well, for exampl
 
 #### Defined in
 
-[packages/types/src/config.ts:1009](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1009)
+[packages/types/src/config.ts:1100](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1100)
 
 ___
 
@@ -58,4 +58,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1026](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1026)
+[packages/types/src/config.ts:1117](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1117)

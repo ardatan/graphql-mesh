@@ -24,7 +24,7 @@ title: 'ComposeWithMongooseOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:415](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L415)
+[packages/types/src/config.ts:448](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L448)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:416](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L416)
+[packages/types/src/config.ts:449](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L449)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:417](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L417)
+[packages/types/src/config.ts:450](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L450)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:414](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L414)
+[packages/types/src/config.ts:447](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L447)
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:418](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L418)
+[packages/types/src/config.ts:451](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L451)

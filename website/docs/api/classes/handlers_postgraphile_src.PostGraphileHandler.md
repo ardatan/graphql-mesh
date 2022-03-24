@@ -34,7 +34,7 @@ title: 'PostGraphileHandler'
 
 #### Defined in
 
-[packages/handlers/postgraphile/src/index.ts:29](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/postgraphile/src/index.ts#L29)
+[packages/handlers/postgraphile/src/index.ts:28](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/postgraphile/src/index.ts#L28)
 
 ## Methods
 
@@ -52,4 +52,4 @@ title: 'PostGraphileHandler'
 
 #### Defined in
 
-[packages/handlers/postgraphile/src/index.ts:47](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/postgraphile/src/index.ts#L47)
+[packages/handlers/postgraphile/src/index.ts:46](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/postgraphile/src/index.ts#L46)

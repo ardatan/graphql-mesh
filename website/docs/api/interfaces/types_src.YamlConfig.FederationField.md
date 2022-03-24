@@ -21,7 +21,7 @@ title: 'FederationField'
 
 #### Defined in
 
-[packages/types/src/config.ts:1091](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1091)
+[packages/types/src/config.ts:1182](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1182)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1090](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1090)
+[packages/types/src/config.ts:1181](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1181)

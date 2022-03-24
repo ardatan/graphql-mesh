@@ -1,0 +1,2 @@
+
+* `path` (type: `String`)

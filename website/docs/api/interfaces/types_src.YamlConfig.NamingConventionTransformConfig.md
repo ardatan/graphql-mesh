@@ -13,6 +13,7 @@ Transformer to apply naming convention to GraphQL Types
 ### Properties
 
 - [enumValues](types_src.YamlConfig.NamingConventionTransformConfig#enumvalues)
+- [fieldArgumentNames](types_src.YamlConfig.NamingConventionTransformConfig#fieldargumentnames)
 - [fieldNames](types_src.YamlConfig.NamingConventionTransformConfig#fieldnames)
 - [typeNames](types_src.YamlConfig.NamingConventionTransformConfig#typenames)
 
@@ -26,7 +27,19 @@ Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCas
 
 #### Defined in
 
-[packages/types/src/config.ts:1234](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1234)
+[packages/types/src/config.ts:1325](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1325)
+
+___
+
+### fieldArgumentNames
+
+• `Optional` **fieldArgumentNames**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
+
+Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
+
+#### Defined in
+
+[packages/types/src/config.ts:1342](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1342)
 
 ___
 
@@ -38,7 +51,7 @@ Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCas
 
 #### Defined in
 
-[packages/types/src/config.ts:1217](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1217)
+[packages/types/src/config.ts:1308](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1308)
 
 ___
 
@@ -50,4 +63,4 @@ Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCas
 
 #### Defined in
 
-[packages/types/src/config.ts:1200](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1200)
+[packages/types/src/config.ts:1291](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1291)

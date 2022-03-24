@@ -36,7 +36,7 @@ title: 'NamingConventionTransform'
 
 #### Defined in
 
-[packages/transforms/naming-convention/src/index.ts:55](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L55)
+[packages/transforms/naming-convention/src/index.ts:69](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L69)
 
 ## Methods
 
@@ -62,7 +62,7 @@ MeshTransform.transformRequest
 
 #### Defined in
 
-[packages/transforms/naming-convention/src/index.ts:92](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L92)
+[packages/transforms/naming-convention/src/index.ts:128](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L128)
 
 ___
 
@@ -88,7 +88,7 @@ MeshTransform.transformResult
 
 #### Defined in
 
-[packages/transforms/naming-convention/src/index.ts:100](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L100)
+[packages/transforms/naming-convention/src/index.ts:136](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L136)
 
 ___
 
@@ -114,4 +114,4 @@ MeshTransform.transformSchema
 
 #### Defined in
 
-[packages/transforms/naming-convention/src/index.ts:84](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L84)
+[packages/transforms/naming-convention/src/index.ts:120](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L120)

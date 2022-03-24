@@ -10,10 +10,21 @@ title: 'RenameConfig'
 
 ### Properties
 
+- [argument](types_src.YamlConfig.RenameConfig#argument)
 - [field](types_src.YamlConfig.RenameConfig#field)
 - [type](types_src.YamlConfig.RenameConfig#type)
 
 ## Properties
+
+### argument
+
+• `Optional` **argument**: `string`
+
+#### Defined in
+
+[packages/types/src/config.ts:1462](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1462)
+
+___
 
 ### field
 
@@ -21,7 +32,7 @@ title: 'RenameConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1298](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1298)
+[packages/types/src/config.ts:1461](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1461)
 
 ___
 
@@ -31,4 +42,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1297](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1297)
+[packages/types/src/config.ts:1460](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1460)

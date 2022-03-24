@@ -28,7 +28,7 @@ You can use environment variables expression, for example: `${MOCKING_ENABLED}`
 
 #### Defined in
 
-[packages/types/src/config.ts:1127](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1127)
+[packages/types/src/config.ts:1218](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1218)
 
 ___
 
@@ -40,7 +40,7 @@ The path to the code runs before the store is attached to the schema
 
 #### Defined in
 
-[packages/types/src/config.ts:1140](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1140)
+[packages/types/src/config.ts:1231](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1231)
 
 ___
 
@@ -52,7 +52,7 @@ Mock configurations
 
 #### Defined in
 
-[packages/types/src/config.ts:1136](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1136)
+[packages/types/src/config.ts:1227](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1227)
 
 ___
 
@@ -65,4 +65,4 @@ For example, you can enable this if you don't want to mock entire schema but par
 
 #### Defined in
 
-[packages/types/src/config.ts:1132](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1132)
+[packages/types/src/config.ts:1223](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1223)

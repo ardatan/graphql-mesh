@@ -27,7 +27,7 @@ title: 'MySQLHandler'
 
 #### Defined in
 
-[packages/types/src/config.ts:610](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L610)
+[packages/types/src/config.ts:643](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L643)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:606](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L606)
+[packages/types/src/config.ts:639](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L639)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:609](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L609)
+[packages/types/src/config.ts:642](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L642)
 
 ___
 
@@ -60,7 +60,7 @@ Format: modulePath#exportName
 
 #### Defined in
 
-[packages/types/src/config.ts:615](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L615)
+[packages/types/src/config.ts:648](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L648)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:607](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L607)
+[packages/types/src/config.ts:640](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L640)
 
 ___
 
@@ -82,7 +82,7 @@ Use specific fields of specific tables
 
 #### Defined in
 
-[packages/types/src/config.ts:623](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L623)
+[packages/types/src/config.ts:656](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L656)
 
 ___
 
@@ -94,7 +94,7 @@ Use specific tables for your schema
 
 #### Defined in
 
-[packages/types/src/config.ts:619](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L619)
+[packages/types/src/config.ts:652](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L652)
 
 ___
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:608](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L608)
+[packages/types/src/config.ts:641](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L641)

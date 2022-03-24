@@ -22,7 +22,7 @@ title: 'Source'
 
 #### Defined in
 
-[packages/types/src/config.ts:196](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L196)
+[packages/types/src/config.ts:193](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L193)
 
 ___
 
@@ -34,7 +34,7 @@ The name you wish to set to your remote API, this will be used for building the 
 
 #### Defined in
 
-[packages/types/src/config.ts:195](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L195)
+[packages/types/src/config.ts:192](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L192)
 
 ___
 
@@ -46,4 +46,4 @@ List of transforms to apply to the current API source, before unifying it with t
 
 #### Defined in
 
-[packages/types/src/config.ts:200](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L200)
+[packages/types/src/config.ts:197](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L197)

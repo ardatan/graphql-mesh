@@ -13,4 +13,6 @@ package-lock.json
 .DS_Store
 .mesh
 .parcel-cache
-.idea
+/.idea
+.next
+/website/api-sidebar.json
