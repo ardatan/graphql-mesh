@@ -24,6 +24,7 @@ export async function createBundle(
     schemaHeaders,
     operationHeaders,
     ignoreErrorResponses: openApiLoaderOptions.ignoreErrorResponses,
+    logger: openApiLoaderOptions.logger,
   });
 }
 

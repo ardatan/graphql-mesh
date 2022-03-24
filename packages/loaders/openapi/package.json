@@ -25,6 +25,7 @@
   "dependencies": {
     "@omnigraph/json-schema": "0.17.16",
     "@graphql-mesh/utils": "0.32.1",
+    "@graphql-mesh/types": "0.68.3",
     "json-machete": "0.7.3",
     "openapi-types": "10.0.0",
     "change-case": "4.1.2",

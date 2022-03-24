@@ -693,6 +693,10 @@ export interface Neo4JHandler {
  */
 export interface NewOpenapiHandler {
   oasFilePath: string;
+  /**
+   * Allowed values: json, yaml, js, ts
+   */
+  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   baseUrl?: string;
   schemaHeaders?: {
     [k: string]: any;
@@ -1068,6 +1072,10 @@ export interface Transform {
    * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
    */
   filterSchema?: FilterSchemaTransform | any;
+  /**
+   * Transformer to hoist GraphQL fields
+   */
+  hoistField?: HoistFieldTransformConfig[];
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -1087,10 +1095,6 @@ export interface Transform {
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
-  /**
-   * Transformer to hoist GraphQL fields
-   */
-  hoistField?: HoistFieldTransformConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1206,6 +1210,35 @@ export interface FilterSchemaTransform {
    * Array of filter rules
    */
   filters: string[];
+}
+export interface HoistFieldTransformConfig {
+  /**
+   * Type name that defines where field should be hoisted to
+   */
+  typeName: string;
+  /**
+   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
+   */
+  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
+  /**
+   * Name the hoisted field should have when hoisted to the type specified in typeName
+   */
+  newFieldName: string;
+  alias?: string;
+  /**
+   * Defines if args in path are filtered (default = false)
+   */
+  filterArgsInPath?: boolean;
+}
+export interface HoistFieldTransformFieldPathConfigObject {
+  /**
+   * Field name
+   */
+  fieldName: string;
+  /**
+   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
+   */
+  filterArgs: string[];
 }
 /**
  * Mock configuration for your source
@@ -1625,35 +1658,6 @@ export interface MergedRootFieldConfig {
    *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
    */
   argsExpr?: string;
-}
-export interface HoistFieldTransformConfig {
-  /**
-   * Type name that defines where field should be hoisted to
-   */
-  typeName: string;
-  /**
-   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
-   */
-  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
-  /**
-   * Name the hoisted field should have when hoisted to the type specified in typeName
-   */
-  newFieldName: string;
-  alias?: string;
-  /**
-   * Defines if args in path are filtered (default = false)
-   */
-  filterArgsInPath?: boolean;
-}
-export interface HoistFieldTransformFieldPathConfigObject {
-  /**
-   * Field name
-   */
-  fieldName: string;
-  /**
-   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
-   */
-  filterArgs: string[];
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;
