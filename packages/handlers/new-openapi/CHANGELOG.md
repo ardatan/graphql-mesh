@@ -1,5 +1,20 @@
 # @graphql-mesh/new-openapi
 
+## 0.3.0
+
+### Minor Changes
+
+- f30dba61e: feat(openapi): pass fallbackFormat for the urls that don't have an extension
+- f30dba61e: feat(openapi): add fallbackFormat
+
+### Patch Changes
+
+- Updated dependencies [f30dba61e]
+  - @omnigraph/openapi@0.4.0
+  - @graphql-mesh/types@0.69.0
+  - @graphql-mesh/store@0.6.2
+  - @graphql-mesh/utils@0.32.2
+
 ## 0.2.8
 
 ### Patch Changes

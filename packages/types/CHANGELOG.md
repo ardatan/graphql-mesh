@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.69.0
+
+### Minor Changes
+
+- f30dba61e: feat(openapi): add fallbackFormat
+
+### Patch Changes
+
+- @graphql-mesh/store@0.6.2
+
 ## 0.68.3
 
 ### Patch Changes

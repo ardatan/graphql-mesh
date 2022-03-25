@@ -1,5 +1,19 @@
 # @omnigraph/openapi
 
+## 0.4.0
+
+### Minor Changes
+
+- f30dba61e: feat(openapi): add fallbackFormat
+
+### Patch Changes
+
+- Updated dependencies [f30dba61e]
+  - @graphql-mesh/types@0.69.0
+  - @omnigraph/json-schema@0.17.17
+  - @graphql-mesh/utils@0.32.2
+  - json-machete@0.7.4
+
 ## 0.3.28
 
 ### Patch Changes
