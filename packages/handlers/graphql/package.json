@@ -26,9 +26,9 @@
     "@graphql-mesh/store": "0.6.1",
     "@graphql-mesh/utils": "0.32.1",
     "@graphql-mesh/types": "0.68.3",
-    "@graphql-tools/url-loader": "7.9.6",
-    "@graphql-tools/wrap": "8.4.8",
-    "@graphql-tools/delegate": "8.6.1",
+    "@graphql-tools/url-loader": "7.9.7",
+    "@graphql-tools/wrap": "8.4.9",
+    "@graphql-tools/delegate": "8.7.0",
     "@graphql-tools/utils": "8.6.5",
     "tslib": "^2.3.1"
   },
