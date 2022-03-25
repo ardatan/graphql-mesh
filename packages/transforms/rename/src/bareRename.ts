@@ -8,16 +8,18 @@ export default class BareRename implements MeshTransform {
   noWrap = true;
   typesMap: RenameMapObject;
   fieldsMap: Map<string, RenameMapObject>;
+  argsMap: Map<string, RenameMapObject>;
 
   constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
     const { config } = options;
     this.typesMap = new Map();
     this.fieldsMap = new Map();
+    this.argsMap = new Map();
 
     for (const rename of config.renames) {
       const {
-        from: { type: fromTypeName, field: fromFieldName },
-        to: { type: toTypeName, field: toFieldName },
+        from: { type: fromTypeName, field: fromFieldName, argument: fromArgName },
+        to: { type: toTypeName, field: toFieldName, argument: toArgName },
         useRegExpForTypes,
         useRegExpForFields,
       } = rename;
@@ -31,6 +33,20 @@ export default class BareRename implements MeshTransform {
         const fromName = useRegExpForFields ? new RegExp(fromFieldName, regExpFlags) : fromFieldName;
         const typeMap = this.fieldsMap.get(fromTypeName) || new Map();
         this.fieldsMap.set(fromTypeName, typeMap.set(fromName, toFieldName));
+      }
+      if (
+        fromTypeName &&
+        fromFieldName &&
+        fromArgName &&
+        toTypeName &&
+        toFieldName &&
+        toArgName &&
+        fromArgName !== toArgName
+      ) {
+        const fromName = useRegExpForFields ? new RegExp(fromArgName, regExpFlags) : fromArgName;
+        const key = `${fromTypeName}.${fromFieldName}`;
+        const typeMap = this.argsMap.get(key) || new Map();
+        this.argsMap.set(key, typeMap.set(fromName, toArgName));
       }
     }
   }
@@ -57,23 +73,34 @@ export default class BareRename implements MeshTransform {
     return mapSchema(schema, {
       ...(this.typesMap.size && { [MapperKind.TYPE]: type => this.renameType(type) }),
       ...(this.typesMap.size && { [MapperKind.ROOT_OBJECT]: type => this.renameType(type) }),
-      ...(this.fieldsMap.size && {
+      ...((this.fieldsMap.size || this.argsMap.size) && {
         [MapperKind.COMPOSITE_FIELD]: (
           fieldConfig: GraphQLFieldConfig<any, any>,
           fieldName: string,
           typeName: string
         ) => {
-          const mapType = this.fieldsMap.get(typeName);
-          const newFieldName = mapType && this.matchInMap(mapType, fieldName);
-          if (!newFieldName) return undefined;
+          const typeRules = this.fieldsMap.get(typeName);
+          const fieldRules = this.argsMap.get(`${typeName}.${fieldName}`);
+          const newFieldName = typeRules && this.matchInMap(typeRules, fieldName);
+          if (!newFieldName && !fieldRules) return undefined;
 
           // Rename rules for type might have been emptied by matchInMap, in which case we can cleanup
-          if (!mapType.size) this.fieldsMap.delete(typeName);
+          if (!typeRules?.size) this.fieldsMap.delete(typeName);
 
-          // Fields that don't have a custom resolver will need to map response to old field name
-          if (!fieldConfig.resolve) fieldConfig.resolve = source => source[fieldName];
+          // Renamed fields that don't have a custom resolver will need to map response to old field name
+          if (newFieldName && !fieldConfig.resolve) fieldConfig.resolve = source => source[fieldName];
 
-          return [newFieldName, fieldConfig];
+          if (fieldRules && fieldConfig.args) {
+            fieldConfig.args = Object.entries(fieldConfig.args || {}).reduce(
+              (args, [argName, argConfig]) => ({
+                ...args,
+                [this.matchInMap(fieldRules, argName) || argName]: argConfig,
+              }),
+              {}
+            );
+          }
+
+          return [newFieldName || fieldName, fieldConfig];
         },
       }),
     });
