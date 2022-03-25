@@ -25,7 +25,7 @@
   "dependencies": {
     "fetchache": "0.1.1",
     "@graphql-mesh/store": "0.6.1",
-    "@graphql-tools/delegate": "8.6.1",
+    "@graphql-tools/delegate": "8.7.0",
     "@graphql-tools/utils": "8.6.5",
     "@graphql-typed-document-node/core": "3.1.1",
     "tslib": "^2.3.1"
