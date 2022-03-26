@@ -116,22 +116,40 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
 }
 
 type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {
+  """
+  This Field based on the field name of the URL path. Example: 'https://MyAPIURL.com/FieldNameHere/', so we will set the 'field: FieldNameHere'.
+  """
   field: String!
+  """
+  Your chance to describe the operation! Make sure the description is clear and concise.
+  """
   description: String
+  """
+  Type field is set the opertion type: Query, Mutation or Subscription.
+  """
   type: JsonSchemaOperationType!
-
+  """
+  The request schema name.
+  """
   requestSchema: Any
+  """
+  The path definition of the JSON Schema sample. Example: './jsons/questions.response.json'
+  """
   requestSample: Any
+  """
+  Inset any name for the type of the request body.
+  """
   requestTypeName: String
   """
   This body will be merged with the request body sent with the underlying HTTP request
   """
   requestBaseBody: Any
-
   responseSchema: Any
   responseSample: Any
   responseTypeName: String
-
+  """
+  Mapping the JSON Schema and define the arguments of the operation. Example: 'argTypeMap: ID: String'
+  """
   argTypeMap: JSON
 
   pubsubTopic: String!
