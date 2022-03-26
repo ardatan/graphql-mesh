@@ -37,7 +37,7 @@ ___
 
 ### if
 
-• `Optional` **if**: `string` | `boolean`
+• `Optional` **if**: `string` \| `boolean`
 
 Expression for when to activate this extension.
 Value can be a valid JS expression string or a boolean (Any of: String, Boolean)

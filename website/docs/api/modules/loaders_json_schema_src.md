@@ -48,7 +48,7 @@ Renames and re-exports [loadGraphQLSchemaFromJSONSchemas](loaders_json_schema_sr
 
 ### HTTPMethod
 
-Ƭ **HTTPMethod**: ``"GET"`` | ``"HEAD"`` | ``"POST"`` | ``"PUT"`` | ``"DELETE"`` | ``"CONNECT"`` | ``"OPTIONS"`` | ``"TRACE"`` | ``"PATCH"``
+Ƭ **HTTPMethod**: ``"GET"`` \| ``"HEAD"`` \| ``"POST"`` \| ``"PUT"`` \| ``"DELETE"`` \| ``"CONNECT"`` \| ``"OPTIONS"`` \| ``"TRACE"`` \| ``"PATCH"``
 
 #### Defined in
 
@@ -58,7 +58,7 @@ ___
 
 ### JSONSchemaBaseOperationConfig
 
-Ƭ **JSONSchemaBaseOperationConfig**: \{ `argTypeMap?`: `Record`\<`string`, `string` | `GraphQLInputType`> ; `description?`: `string` ; `field`: `string` ; `type`: `OperationTypeNode`  } & \{ `responseByStatusCode?`: `Record`\<`string`, [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)>  } | [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)
+Ƭ **JSONSchemaBaseOperationConfig**: \{ `argTypeMap?`: `Record`\<`string`, `string` \| `GraphQLInputType`> ; `description?`: `string` ; `field`: `string` ; `type`: `OperationTypeNode`  } & \{ `responseByStatusCode?`: `Record`\<`string`, [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)>  } \| [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)
 
 #### Defined in
 
@@ -68,7 +68,7 @@ ___
 
 ### JSONSchemaBaseOperationConfigWithJSONRequest
 
-Ƭ **JSONSchemaBaseOperationConfigWithJSONRequest**: [`JSONSchemaBaseOperationConfig`](loaders_json_schema_src#jsonschemabaseoperationconfig) & \{ `requestBaseBody?`: `any` ; `requestSample?`: `any` ; `requestSchema?`: `string` | [`JSONSchema`](json_machete_src#jsonschema) ; `requestTypeName?`: `string`  }
+Ƭ **JSONSchemaBaseOperationConfigWithJSONRequest**: [`JSONSchemaBaseOperationConfig`](loaders_json_schema_src#jsonschemabaseoperationconfig) & \{ `requestBaseBody?`: `any` ; `requestSample?`: `any` ; `requestSchema?`: `string` \| [`JSONSchema`](json_machete_src#jsonschema) ; `requestTypeName?`: `string`  }
 
 #### Defined in
 
@@ -108,7 +108,7 @@ ___
 
 ### JSONSchemaOperationConfig
 
-Ƭ **JSONSchemaOperationConfig**: [`JSONSchemaHTTPJSONOperationConfig`](loaders_json_schema_src#jsonschemahttpjsonoperationconfig) | [`JSONSchemaHTTPBinaryConfig`](loaders_json_schema_src#jsonschemahttpbinaryconfig) | [`JSONSchemaPubSubOperationConfig`](loaders_json_schema_src#jsonschemapubsuboperationconfig)
+Ƭ **JSONSchemaOperationConfig**: [`JSONSchemaHTTPJSONOperationConfig`](loaders_json_schema_src#jsonschemahttpjsonoperationconfig) \| [`JSONSchemaHTTPBinaryConfig`](loaders_json_schema_src#jsonschemahttpbinaryconfig) \| [`JSONSchemaPubSubOperationConfig`](loaders_json_schema_src#jsonschemapubsuboperationconfig)
 
 #### Defined in
 

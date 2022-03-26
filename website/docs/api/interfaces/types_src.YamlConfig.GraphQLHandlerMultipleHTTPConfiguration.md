@@ -29,7 +29,7 @@ ___
 
 ### strategy
 
-• `Optional` **strategy**: ``"fallback"`` | ``"race"``
+• `Optional` **strategy**: ``"fallback"`` \| ``"race"``
 
 Handling strategy (default: fallback) (Allowed values: fallback, race)
 

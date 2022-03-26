@@ -64,8 +64,6 @@ async function buildApiDocs(): Promise<void> {
       .replace(/</g, '\\<')
       // Escape `>` is unnecessary
       .replace(/\\>/g, '>')
-      // Escape of `|` is unnecessary
-      .replace(/\\\|/g, '|')
       // Escape `{` because MDX2 parse him as expressions
       // (\\)? is need because some `{` already escaped
       .replace(/(\\)?{/g, '\\{')

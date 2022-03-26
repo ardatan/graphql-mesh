@@ -88,7 +88,7 @@ ___
 
 ### graphqlMesh
 
-▸ **graphqlMesh**(`cliParams?`, `args?`, `cwdPath?`): `Promise`\<\{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  } | \{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  }>
+▸ **graphqlMesh**(`cliParams?`, `args?`, `cwdPath?`): `Promise`\<\{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  } \| \{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  }>
 
 #### Parameters
 
@@ -100,7 +100,7 @@ ___
 
 #### Returns
 
-`Promise`\<\{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  } | \{ `$0`: `string` ; `_`: (`string` | `number`)[] ; `source`: `string`  }>
+`Promise`\<\{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  } \| \{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  }>
 
 #### Defined in
 

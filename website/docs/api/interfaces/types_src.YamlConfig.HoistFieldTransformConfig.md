@@ -54,7 +54,7 @@ ___
 
 ### pathConfig
 
-• **pathConfig**: (`string` | [`HoistFieldTransformFieldPathConfigObject`](types_src.YamlConfig.HoistFieldTransformFieldPathConfigObject))[]
+• **pathConfig**: (`string` \| [`HoistFieldTransformFieldPathConfigObject`](types_src.YamlConfig.HoistFieldTransformFieldPathConfigObject))[]
 
 Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
 

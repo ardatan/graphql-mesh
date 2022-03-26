@@ -32,7 +32,7 @@ title: 'KeyValueCache'
 
 ### delete
 
-▸ **delete**(`key`): `Promise`\<`boolean` | `void`>
+▸ **delete**(`key`): `Promise`\<`boolean` \| `void`>
 
 #### Parameters
 
@@ -42,7 +42,7 @@ title: 'KeyValueCache'
 
 #### Returns
 
-`Promise`\<`boolean` | `void`>
+`Promise`\<`boolean` \| `void`>
 
 #### Defined in
 

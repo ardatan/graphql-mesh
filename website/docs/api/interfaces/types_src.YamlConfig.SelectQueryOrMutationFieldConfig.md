@@ -55,7 +55,7 @@ ___
 
 ### type
 
-• `Optional` **type**: ``"query"`` | ``"mutation"`` | ``"Query"`` | ``"Mutation"``
+• `Optional` **type**: ``"query"`` \| ``"mutation"`` \| ``"Query"`` \| ``"Mutation"``
 
 Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)
 

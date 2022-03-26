@@ -31,7 +31,7 @@ Those commands won't be available in programmatic usage.
 
 ### browser
 
-• `Optional` **browser**: `string` | `boolean`
+• `Optional` **browser**: `string` \| `boolean`
 
 Path to the browser that will be used by `mesh serve` to open a playground window in development mode
 This feature can be disable by passing `false` (Any of: String, Boolean)
@@ -79,7 +79,7 @@ ___
 
 ### fork
 
-• `Optional` **fork**: `number` | `boolean`
+• `Optional` **fork**: `number` \| `boolean`
 
 Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)
 
@@ -91,7 +91,7 @@ ___
 
 ### handlers
 
-• `Optional` **handlers**: ([`WebhookHandler`](types_src.YamlConfig.WebhookHandler) | [`ExpressHandler`](types_src.YamlConfig.ExpressHandler))[]
+• `Optional` **handlers**: ([`WebhookHandler`](types_src.YamlConfig.WebhookHandler) \| [`ExpressHandler`](types_src.YamlConfig.ExpressHandler))[]
 
 Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)
 
@@ -115,7 +115,7 @@ ___
 
 ### maxRequestBodySize
 
-• `Optional` **maxRequestBodySize**: `string` | `number`
+• `Optional` **maxRequestBodySize**: `string` \| `number`
 
 Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
 
@@ -151,7 +151,7 @@ ___
 
 ### port
 
-• `Optional` **port**: `string` | `number`
+• `Optional` **port**: `string` \| `number`
 
 TCP Port to listen (default: `3000`) (Any of: Int, String)
 

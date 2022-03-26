@@ -36,7 +36,7 @@ ___
 
 ### batch
 
-• `Optional` **batch**: ``"json"`` | ``"multipart"``
+• `Optional` **batch**: ``"json"`` \| ``"multipart"``
 
 Enable batching (Allowed values: multipart, json)
 

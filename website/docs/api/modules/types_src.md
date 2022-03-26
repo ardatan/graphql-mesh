@@ -104,7 +104,7 @@ ___
 
 ### GraphQLOperation
 
-Ƭ **GraphQLOperation**\<`TData`, `TVariables`>: `TypedDocumentNode`\<`TData`, `TVariables`> | `string`
+Ƭ **GraphQLOperation**\<`TData`, `TVariables`>: `TypedDocumentNode`\<`TData`, `TVariables`> \| `string`
 
 #### Type parameters
 
@@ -217,7 +217,7 @@ ___
 | :------ | :------ |
 | `key` | `TKey` |
 | `argsFromKeys` | (`keys`: `TKey`[]) => `TArgs` |
-| `valuesFromResults?` | (`results`: `TDefaultReturn`, `keys`: `TKey`[]) => `TReturn` | `TReturn`[] |
+| `valuesFromResults?` | (`results`: `TDefaultReturn`, `keys`: `TKey`[]) => `TReturn` \| `TReturn`[] |
 
 #### Defined in
 
@@ -260,7 +260,7 @@ ___
 
 ### InContextSdkMethodParams
 
-Ƭ **InContextSdkMethodParams**\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`>: \{ `context`: `TContext` ; `root?`: `any`  } & [`InContextSdkMethodCustomSelectionSetParams`](types_src#incontextsdkmethodcustomselectionsetparams) | [`InContextSdkMethodInfoParams`](types_src#incontextsdkmethodinfoparams) & [`InContextSdkMethodBatchingParams`](types_src#incontextsdkmethodbatchingparams)\<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`> | [`InContextSdkMethodRegularParams`](types_src#incontextsdkmethodregularparams)\<`TDefaultReturn`, `TArgs`, `TReturn`>
+Ƭ **InContextSdkMethodParams**\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`>: \{ `context`: `TContext` ; `root?`: `any`  } & [`InContextSdkMethodCustomSelectionSetParams`](types_src#incontextsdkmethodcustomselectionsetparams) \| [`InContextSdkMethodInfoParams`](types_src#incontextsdkmethodinfoparams) & [`InContextSdkMethodBatchingParams`](types_src#incontextsdkmethodbatchingparams)\<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`> \| [`InContextSdkMethodRegularParams`](types_src#incontextsdkmethodregularparams)\<`TDefaultReturn`, `TArgs`, `TReturn`>
 
 #### Type parameters
 
@@ -295,7 +295,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `args?` | `TArgs` |
-| `valuesFromResults?` | (`results`: `TDefaultReturn`) => `TReturn` | `TReturn`[] |
+| `valuesFromResults?` | (`results`: `TDefaultReturn`) => `TReturn` \| `TReturn`[] |
 
 #### Defined in
 
@@ -305,7 +305,7 @@ ___
 
 ### LazyLoggerMessage
 
-Ƭ **LazyLoggerMessage**: () => `string` | `string`
+Ƭ **LazyLoggerMessage**: () => `string` \| `string`
 
 #### Defined in
 
@@ -337,7 +337,7 @@ ___
 
 ### Maybe
 
-Ƭ **Maybe**\<`T`>: ``null`` | `undefined` | `T`
+Ƭ **Maybe**\<`T`>: ``null`` \| `undefined` \| `T`
 
 #### Type parameters
 
@@ -432,7 +432,7 @@ ___
 
 ### SelectionSetParam
 
-Ƭ **SelectionSetParam**: `SelectionSetNode` | `DocumentNode` | `string` | `SelectionSetNode`
+Ƭ **SelectionSetParam**: `SelectionSetNode` \| `DocumentNode` \| `string` \| `SelectionSetNode`
 
 #### Defined in
 
@@ -442,7 +442,7 @@ ___
 
 ### SelectionSetParamOrFactory
 
-Ƭ **SelectionSetParamOrFactory**: (`subtree`: `SelectionSetNode`) => [`SelectionSetParam`](types_src#selectionsetparam) | [`SelectionSetParam`](types_src#selectionsetparam)
+Ƭ **SelectionSetParamOrFactory**: (`subtree`: `SelectionSetNode`) => [`SelectionSetParam`](types_src#selectionsetparam) \| [`SelectionSetParam`](types_src#selectionsetparam)
 
 #### Defined in
 

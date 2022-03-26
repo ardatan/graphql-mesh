@@ -417,7 +417,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `TemplateStringsArray` |
-| `...args` | (`string` | `DocumentNode`)[] |
+| `...args` | (`string` \| `DocumentNode`)[] |
 
 #### Returns
 
@@ -534,7 +534,7 @@ ___
 | :------ | :------ |
 | `data` | `T` |
 | `replacer?` | (`this`: `any`, `key`: `string`, `value`: `any`) => `any` |
-| `space?` | `string` | `number` |
+| `space?` | `string` \| `number` |
 
 #### Returns
 
@@ -560,7 +560,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `expression` | `string` | `T` |
+| `expression` | `string` \| `T` |
 | `options` | `LoadFromModuleExportExpressionOptions` |
 
 #### Returns
@@ -625,7 +625,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `interpolationStrings` | `string`[] |
-| `argTypeMap?` | `Record`\<`string`, `string` | `GraphQLInputType`> |
+| `argTypeMap?` | `Record`\<`string`, `string` \| `GraphQLInputType`> |
 
 #### Returns
 
@@ -633,7 +633,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `args` | `Record`\<`string`, \{ `type`: `string` | `GraphQLInputType`  }> |
+| `args` | `Record`\<`string`, \{ `type`: `string` \| `GraphQLInputType`  }> |
 | `contextVariables` | `string`[] |
 
 #### Defined in
@@ -792,7 +792,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `baseDir` | `string` |
-| `additionalResolvers` | (`string` | [`AdditionalStitchingResolverObject`](/docs/api/interfaces/types_src.YamlConfig.AdditionalStitchingResolverObject) | [`AdditionalStitchingBatchResolverObject`](/docs/api/interfaces/types_src.YamlConfig.AdditionalStitchingBatchResolverObject) | [`AdditionalSubscriptionObject`](/docs/api/interfaces/types_src.YamlConfig.AdditionalSubscriptionObject))[] |
+| `additionalResolvers` | (`string` \| [`AdditionalStitchingResolverObject`](/docs/api/interfaces/types_src.YamlConfig.AdditionalStitchingResolverObject) \| [`AdditionalStitchingBatchResolverObject`](/docs/api/interfaces/types_src.YamlConfig.AdditionalStitchingBatchResolverObject) \| [`AdditionalSubscriptionObject`](/docs/api/interfaces/types_src.YamlConfig.AdditionalSubscriptionObject))[] |
 | `importFn` | [`ImportFn`](types_src#importfn) |
 | `pubsub` | [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub) |
 
@@ -848,7 +848,7 @@ ___
 
 ### withCancel
 
-▸ **withCancel**\<`T`>(`asyncIterable`, `onCancel`): `AsyncIterable`\<`T` | `undefined`>
+▸ **withCancel**\<`T`>(`asyncIterable`, `onCancel`): `AsyncIterable`\<`T` \| `undefined`>
 
 #### Type parameters
 
@@ -865,7 +865,7 @@ ___
 
 #### Returns
 
-`AsyncIterable`\<`T` | `undefined`>
+`AsyncIterable`\<`T` \| `undefined`>
 
 #### Defined in
 
@@ -881,9 +881,9 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `file` | `PathLike` | `FileHandle` |
-| `data` | `string` | `ArrayBufferView` | `Iterable`\<`string` | `ArrayBufferView`> | `AsyncIterable`\<`string` | `ArrayBufferView`> | `Stream` |
-| `options?` | `ObjectEncodingOptions` & \{ `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` | `BufferEncoding` |
+| `file` | `PathLike` \| `FileHandle` |
+| `data` | `string` \| `ArrayBufferView` \| `Iterable`\<`string` \| `ArrayBufferView`> \| `AsyncIterable`\<`string` \| `ArrayBufferView`> \| `Stream` |
+| `options?` | `ObjectEncodingOptions` & \{ `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` \| `BufferEncoding` |
 
 #### Returns
 
@@ -912,7 +912,7 @@ ___
 | `path` | `string` |
 | `data` | `T` |
 | `replacer?` | (`this`: `any`, `key`: `string`, `value`: `any`) => `any` |
-| `space?` | `string` | `number` |
+| `space?` | `string` \| `number` |
 
 #### Returns
 

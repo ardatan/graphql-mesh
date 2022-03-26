@@ -74,7 +74,7 @@ ApolloLink.constructor
 
 | Name | Type |
 | :------ | :------ |
-| `next` | `ApolloLink` | `RequestHandler` |
+| `next` | `ApolloLink` \| `RequestHandler` |
 
 #### Returns
 
@@ -122,7 +122,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `fn` | (`error`: `any`, `observer?`: `Observer`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>) => ``false`` | `void` |
+| `fn` | (`error`: `any`, `observer?`: `Observer`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>) => ``false`` \| `void` |
 
 #### Returns
 
@@ -147,8 +147,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `test` | (`op`: `Operation`) => `boolean` |
-| `left` | `ApolloLink` | `RequestHandler` |
-| `right?` | `ApolloLink` | `RequestHandler` |
+| `left` | `ApolloLink` \| `RequestHandler` |
+| `right?` | `ApolloLink` \| `RequestHandler` |
 
 #### Returns
 
@@ -172,8 +172,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `first` | `ApolloLink` | `RequestHandler` |
-| `second` | `ApolloLink` | `RequestHandler` |
+| `first` | `ApolloLink` \| `RequestHandler` |
+| `second` | `ApolloLink` \| `RequestHandler` |
 
 #### Returns
 
@@ -240,7 +240,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `links` | (`ApolloLink` | `RequestHandler`)[] |
+| `links` | (`ApolloLink` \| `RequestHandler`)[] |
 
 #### Returns
 
@@ -265,8 +265,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `test` | (`op`: `Operation`) => `boolean` |
-| `left` | `ApolloLink` | `RequestHandler` |
-| `right?` | `ApolloLink` | `RequestHandler` |
+| `left` | `ApolloLink` \| `RequestHandler` |
+| `right?` | `ApolloLink` \| `RequestHandler` |
 
 #### Returns
 

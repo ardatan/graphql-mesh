@@ -38,7 +38,7 @@ sidebar_label: "json-machete"
 
 ### JSONSchema
 
-Ƭ **JSONSchema**: [`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject) | `JSONSchemaBoolean`
+Ƭ **JSONSchema**: [`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject) \| `JSONSchemaBoolean`
 
 **`default`** \{}
 
@@ -230,7 +230,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `schema` | [`JSONSchema`](json_machete_src#jsonschema) |
-| `visitorFn` | (`subSchema`: [`JSONSchema`](json_machete_src#jsonschema), `context`: [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)\<`T`>) => `T` | `Promise`\<`T`> |
+| `visitorFn` | (`subSchema`: [`JSONSchema`](json_machete_src#jsonschema), `context`: [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)\<`T`>) => `T` \| `Promise`\<`T`> |
 | `__namedParameters` | [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)\<`T`> |
 
 #### Returns

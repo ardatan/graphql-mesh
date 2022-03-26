@@ -108,7 +108,7 @@ ___
 
 ### fallbackFormat
 
-• `Optional` **fallbackFormat**: ``"json"`` | ``"yaml"`` | ``"js"`` | ``"ts"``
+• `Optional` **fallbackFormat**: ``"json"`` \| ``"yaml"`` \| ``"js"`` \| ``"ts"``
 
 #### Defined in
 

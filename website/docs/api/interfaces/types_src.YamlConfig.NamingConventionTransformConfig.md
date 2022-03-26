@@ -21,7 +21,7 @@ Transformer to apply naming convention to GraphQL Types
 
 ### enumValues
 
-• `Optional` **enumValues**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
+• `Optional` **enumValues**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 
@@ -33,7 +33,7 @@ ___
 
 ### fieldArgumentNames
 
-• `Optional` **fieldArgumentNames**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
+• `Optional` **fieldArgumentNames**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 
@@ -45,7 +45,7 @@ ___
 
 ### fieldNames
 
-• `Optional` **fieldNames**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
+• `Optional` **fieldNames**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 
@@ -57,7 +57,7 @@ ___
 
 ### typeNames
 
-• `Optional` **typeNames**: ``"camelCase"`` | ``"capitalCase"`` | ``"constantCase"`` | ``"dotCase"`` | ``"headerCase"`` | ``"noCase"`` | ``"paramCase"`` | ``"pascalCase"`` | ``"pathCase"`` | ``"sentenceCase"`` | ``"snakeCase"`` | ``"upperCase"`` | ``"lowerCase"``
+• `Optional` **typeNames**: ``"camelCase"`` \| ``"capitalCase"`` \| ``"constantCase"`` \| ``"dotCase"`` \| ``"headerCase"`` \| ``"noCase"`` \| ``"paramCase"`` \| ``"pascalCase"`` \| ``"pathCase"`` \| ``"sentenceCase"`` \| ``"snakeCase"`` \| ``"upperCase"`` \| ``"lowerCase"``
 
 Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
 

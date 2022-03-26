@@ -29,7 +29,7 @@ ___
 
 ### mode
 
-• `Optional` **mode**: ``"wrap"`` | ``"bare"``
+• `Optional` **mode**: ``"wrap"`` \| ``"bare"``
 
 Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
 

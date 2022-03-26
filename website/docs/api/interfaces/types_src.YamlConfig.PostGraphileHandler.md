@@ -61,7 +61,7 @@ ___
 
 ### options
 
-• `Optional` **options**: `string` | \{ `[k: string]`: `any`;  }
+• `Optional` **options**: `string` \| \{ `[k: string]`: `any`;  }
 
 Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information. (Any of: JSON, String)
 

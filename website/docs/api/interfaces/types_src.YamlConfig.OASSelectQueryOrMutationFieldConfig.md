@@ -27,7 +27,7 @@ ___
 
 ### type
 
-• **type**: ``"query"`` | ``"mutation"`` | ``"Query"`` | ``"Mutation"``
+• **type**: ``"query"`` \| ``"mutation"`` \| ``"Query"`` \| ``"Mutation"``
 
 Allowed values: query, mutation, Query, Mutation
 

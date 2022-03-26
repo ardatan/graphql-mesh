@@ -35,7 +35,7 @@ title: 'GraphQLHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`GraphQLHandlerHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) | [`GraphQLHandlerCodeFirstConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) | [`GraphQLHandlerMultipleHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`GraphQLHandlerHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)> |
 
 #### Defined in
 

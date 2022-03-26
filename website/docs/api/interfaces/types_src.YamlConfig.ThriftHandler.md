@@ -102,7 +102,7 @@ ___
 
 ### protocol
 
-• `Optional` **protocol**: ``"json"`` | ``"binary"`` | ``"compact"``
+• `Optional` **protocol**: ``"json"`` \| ``"binary"`` \| ``"compact"``
 
 Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: binary, compact, json)
 

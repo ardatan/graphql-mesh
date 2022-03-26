@@ -191,7 +191,7 @@ ___
 
 ### sourceFormat
 
-• `Optional` **sourceFormat**: ``"json"`` | ``"yaml"``
+• `Optional` **sourceFormat**: ``"json"`` \| ``"yaml"``
 
 Format of the source file (Allowed values: json, yaml)
 

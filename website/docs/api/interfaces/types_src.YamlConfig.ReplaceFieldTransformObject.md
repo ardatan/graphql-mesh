@@ -50,7 +50,7 @@ ___
 
 ### scope
 
-• `Optional` **scope**: ``"config"`` | ``"hoistValue"``
+• `Optional` **scope**: ``"config"`` \| ``"hoistValue"``
 
 Allowed values: config, hoistValue
 

@@ -30,7 +30,7 @@ title: 'TypeConverterResolversOpts'
 
 ### connection
 
-• `Optional` **connection**: `boolean` | \{ `[k: string]`: `any`;  }
+• `Optional` **connection**: `boolean` \| \{ `[k: string]`: `any`;  }
 
 Any of: Boolean, JSON
 
@@ -42,7 +42,7 @@ ___
 
 ### count
 
-• `Optional` **count**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **count**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -54,7 +54,7 @@ ___
 
 ### createMany
 
-• `Optional` **createMany**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **createMany**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -66,7 +66,7 @@ ___
 
 ### createOne
 
-• `Optional` **createOne**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **createOne**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -78,7 +78,7 @@ ___
 
 ### findById
 
-• `Optional` **findById**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **findById**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -90,7 +90,7 @@ ___
 
 ### findByIds
 
-• `Optional` **findByIds**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **findByIds**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -102,7 +102,7 @@ ___
 
 ### findMany
 
-• `Optional` **findMany**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **findMany**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -114,7 +114,7 @@ ___
 
 ### findOne
 
-• `Optional` **findOne**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **findOne**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -126,7 +126,7 @@ ___
 
 ### pagination
 
-• `Optional` **pagination**: `boolean` | [`PaginationResolverOpts`](types_src.YamlConfig.PaginationResolverOpts)
+• `Optional` **pagination**: `boolean` \| [`PaginationResolverOpts`](types_src.YamlConfig.PaginationResolverOpts)
 
 Any of: Boolean, PaginationResolverOpts
 
@@ -138,7 +138,7 @@ ___
 
 ### removeById
 
-• `Optional` **removeById**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **removeById**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -150,7 +150,7 @@ ___
 
 ### removeMany
 
-• `Optional` **removeMany**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **removeMany**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -162,7 +162,7 @@ ___
 
 ### removeOne
 
-• `Optional` **removeOne**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **removeOne**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -174,7 +174,7 @@ ___
 
 ### updateById
 
-• `Optional` **updateById**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **updateById**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -186,7 +186,7 @@ ___
 
 ### updateMany
 
-• `Optional` **updateMany**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **updateMany**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 
@@ -198,7 +198,7 @@ ___
 
 ### updateOne
 
-• `Optional` **updateOne**: `boolean` | [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
+• `Optional` **updateOne**: `boolean` \| [`ComposeWithMongooseResolverOpts`](types_src.YamlConfig.ComposeWithMongooseResolverOpts)
 
 Any of: Boolean, ComposeWithMongooseResolverOpts
 

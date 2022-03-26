@@ -183,7 +183,7 @@ ___
 
 ### fallbackFormat
 
-• **fallbackFormat**: ``"json"`` | ``"yaml"`` | ``"js"`` | ``"ts"``
+• **fallbackFormat**: ``"json"`` \| ``"yaml"`` \| ``"js"`` \| ``"ts"``
 
 #### Defined in
 
@@ -236,7 +236,7 @@ ___
 
 ### ignore
 
-• `Optional` **ignore**: `string` | `string`[]
+• `Optional` **ignore**: `string` \| `string`[]
 
 #### Inherited from
 

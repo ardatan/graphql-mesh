@@ -51,7 +51,7 @@ ___
 
 ### operators
 
-• `Optional` **operators**: `boolean` | \{ `[k: string]`: `any`;  }
+• `Optional` **operators**: `boolean` \| \{ `[k: string]`: `any`;  }
 
 Any of: Boolean, JSON
 

@@ -49,7 +49,7 @@ ___
 
 ### resolveReference
 
-• `Optional` **resolveReference**: `string` | [`ResolveReferenceObject`](types_src.YamlConfig.ResolveReferenceObject)
+• `Optional` **resolveReference**: `string` \| [`ResolveReferenceObject`](types_src.YamlConfig.ResolveReferenceObject)
 
 Any of: String, ResolveReferenceObject
 

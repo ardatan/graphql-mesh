@@ -31,7 +31,7 @@ ___
 
 ### driver
 
-• `Optional` **driver**: (``"WEBSQL"`` | ``"INDEXEDDB"`` | ``"LOCALSTORAGE"``)[]
+• `Optional` **driver**: (``"WEBSQL"`` \| ``"INDEXEDDB"`` \| ``"LOCALSTORAGE"``)[]
 
 Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE
 

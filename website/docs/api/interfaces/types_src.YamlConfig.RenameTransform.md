@@ -17,7 +17,7 @@ title: 'RenameTransform'
 
 ### mode
 
-• `Optional` **mode**: ``"wrap"`` | ``"bare"``
+• `Optional` **mode**: ``"wrap"`` \| ``"bare"``
 
 Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
 

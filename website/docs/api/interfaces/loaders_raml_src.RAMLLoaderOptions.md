@@ -225,7 +225,7 @@ ___
 
 ### ignore
 
-• `Optional` **ignore**: `string` | `string`[]
+• `Optional` **ignore**: `string` \| `string`[]
 
 #### Inherited from
 

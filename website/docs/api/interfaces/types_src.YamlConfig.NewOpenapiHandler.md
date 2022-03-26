@@ -34,7 +34,7 @@ ___
 
 ### fallbackFormat
 
-• `Optional` **fallbackFormat**: ``"json"`` | ``"yaml"`` | ``"js"`` | ``"ts"``
+• `Optional` **fallbackFormat**: ``"json"`` \| ``"yaml"`` \| ``"js"`` \| ``"ts"``
 
 Allowed values: json, yaml, js, ts
 

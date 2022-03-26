@@ -215,7 +215,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `pubsubYamlConfig` | `string` | [`PubSubConfig`](/docs/api/interfaces/types_src.YamlConfig.PubSubConfig) |
+| `pubsubYamlConfig` | `string` \| [`PubSubConfig`](/docs/api/interfaces/types_src.YamlConfig.PubSubConfig) |
 | `importFn` | [`ImportFn`](types_src#importfn) |
 | `cwd` | `string` |
 

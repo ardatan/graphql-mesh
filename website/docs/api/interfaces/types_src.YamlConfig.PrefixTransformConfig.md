@@ -58,7 +58,7 @@ ___
 
 ### mode
 
-• `Optional` **mode**: ``"wrap"`` | ``"bare"``
+• `Optional` **mode**: ``"wrap"`` \| ``"bare"``
 
 Specify to apply prefix transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)
 

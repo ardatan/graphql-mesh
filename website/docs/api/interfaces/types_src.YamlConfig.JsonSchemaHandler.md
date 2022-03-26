@@ -56,7 +56,7 @@ ___
 
 ### operations
 
-• **operations**: ([`JsonSchemaHTTPOperation`](types_src.YamlConfig.JsonSchemaHTTPOperation) | [`JsonSchemaPubSubOperation`](types_src.YamlConfig.JsonSchemaPubSubOperation))[]
+• **operations**: ([`JsonSchemaHTTPOperation`](types_src.YamlConfig.JsonSchemaHTTPOperation) \| [`JsonSchemaPubSubOperation`](types_src.YamlConfig.JsonSchemaPubSubOperation))[]
 
 Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
 

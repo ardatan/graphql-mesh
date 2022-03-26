@@ -49,8 +49,8 @@ sidebar_label: "store"
 
 | Name | Type |
 | :------ | :------ |
-| `codify` | (`value`: `TData`, `identifier`: `string`) => `string` | `Promise`\<`string`> |
-| `validate` | (`oldValue`: `TData`, `newValue`: `TData`, `identifier`: `string`) => `void` | `Promise`\<`void`> |
+| `codify` | (`value`: `TData`, `identifier`: `string`) => `string` \| `Promise`\<`string`> |
+| `validate` | (`oldValue`: `TData`, `newValue`: `TData`, `identifier`: `string`) => `void` \| `Promise`\<`void`> |
 
 #### Defined in
 
@@ -91,7 +91,7 @@ ___
 | :------ | :------ |
 | `delete` | () => `Promise`\<`void`> |
 | `get` | () => `Promise`\<`TData`> |
-| `getWithSet` | (`setterFn`: () => `TData` | `Promise`\<`TData`>) => `Promise`\<`TData`> |
+| `getWithSet` | (`setterFn`: () => `TData` \| `Promise`\<`TData`>) => `Promise`\<`TData`> |
 | `set` | (`value`: `TData`) => `Promise`\<`void`> |
 
 #### Defined in

@@ -49,7 +49,7 @@ ___
 
 ### type
 
-• **type**: ``"query"`` | ``"mutation"``
+• **type**: ``"query"`` \| ``"mutation"``
 
 Allowed values: query, mutation
 

@@ -14,7 +14,7 @@ sidebar_label: "transform-filter-schema"
 
 ### FilterTransform
 
-▸ **FilterTransform**(`options`): `default` | `default`
+▸ **FilterTransform**(`options`): `default` \| `default`
 
 #### Parameters
 
@@ -24,7 +24,7 @@ sidebar_label: "transform-filter-schema"
 
 #### Returns
 
-`default` | `default`
+`default` \| `default`
 
 #### Defined in
 
