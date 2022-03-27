@@ -46,21 +46,6 @@ enum JsonSchemaOperationMethod {
   TRACE
   PATCH
 }
-interface JsonSchemaBaseSample {
-sources:
-  - name: String
-    handler:
-      jsonSchema:
-        baseUrl: String
-        operations:
-          - type: JsonSchemaOperationType
-            field: String!
-            path: String!
-            method: JsonSchemaOperationMethod
-            responseSample: Any
-            responseTypeName: String
-            argsTypeMap: Any
-}
 
 interface JsonSchemaBaseOperation {
   field: String!
@@ -81,8 +66,6 @@ interface JsonSchemaBaseOperation {
 
   argTypeMap: JSON
 }
-
-
 
 type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   field: String!
