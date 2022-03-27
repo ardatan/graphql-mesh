@@ -1,5 +1,12 @@
 # @graphql-mesh/container
 
+## 0.1.74
+
+### Patch Changes
+
+- Updated dependencies [18f68b496]
+  - @graphql-mesh/transform-rename@0.12.27
+
 ## 0.1.73
 
 ### Patch Changes
