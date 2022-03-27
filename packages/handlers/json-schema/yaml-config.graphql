@@ -1,6 +1,7 @@
 extend type Handler {
   """
-  Handler for JSON Schema specification. Source could be a local json file, or a url to it.
+  Handler for JSON Schema specification.
+  Source could be a local json file, or a url to it.
   """
   jsonSchema: JsonSchemaHandlerConfig
 }
@@ -48,13 +49,29 @@ enum JsonSchemaOperationMethod {
 }
 
 interface JsonSchemaBaseOperation {
+  field: String!
+  description: String
+  type: JsonSchemaOperationType!
+  requestSchema: Any
+  requestSample: Any
+  requestTypeName: String
+  requestBaseBody: Any
+  responseSchema: Any
+  responseSample: Any
+  responseTypeName: String
+  argTypeMap: JSON
+}
+
+type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   """
   This Field based on the field name of the URL path.
-  Example: "https://MyAPIURL.com/FieldNameHere/", so we will set the "field: FieldNameHere".
+  Example: "https://MyAPIURL.com/FieldNameHere/",
+  so we will set the "field: FieldNameHere".
   """
   field: String!
   """
-  Your chance to describe the operation! Make sure the description is clear and concise.
+  Your chance to describe the operation!
+  Make sure the description is clear and concise.
   """
   description: String
   """
@@ -62,12 +79,12 @@ interface JsonSchemaBaseOperation {
   """
   type: JsonSchemaOperationType!
   """
-  The request schema name.
+  Your chance to provide request schema name.
   """
   requestSchema: Any
   """
   The path definition of the JSON Schema sample.
-  Example: "./jsons/questions.response.json"
+  Example: "./jsons/questions.response.json".
   """
   requestSample: Any
   """
@@ -75,15 +92,16 @@ interface JsonSchemaBaseOperation {
   """
   requestTypeName: String
   """
-  This body will be merged with the request body sent with the underlying HTTP request
+  This body will be merged with the request body sent with
+  the underlying HTTP request
   """
   requestBaseBody: Any
   """
-  The response schema name.
+  Yay! Now you can provide the response schema name.
   """
   responseSchema: Any
   """
-  The response sample name.
+  Did you use Sample? Provide the respone sample path.
   """
   responseSample: Any
   """
@@ -95,27 +113,6 @@ interface JsonSchemaBaseOperation {
   Example: 'argTypeMap: ID: String'
   """
   argTypeMap: JSON
-}
-
-type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
-  field: String!
-  description: String
-  type: JsonSchemaOperationType!
-
-  requestSchema: Any
-  requestSample: Any
-  requestTypeName: String
-  """
-  This body will be merged with the request body sent with the underlying HTTP request
-  """
-  requestBaseBody: Any
-
-  responseSchema: Any
-  responseSample: Any
-  responseTypeName: String
-
-  argTypeMap: JSON
-
   path: String!
   method: JsonSchemaOperationMethod
   headers: JSON
@@ -136,7 +133,8 @@ type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {
   requestSample: Any
   requestTypeName: String
   """
-  This body will be merged with the request body sent with the underlying HTTP request
+  This body will be merged with the request body sent with
+  the underlying HTTP request
   """
   requestBaseBody: Any
   responseSchema: Any
