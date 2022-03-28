@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.12.26",
+  "version": "0.12.27",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -21,6 +21,9 @@
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
+  },
+  "devDependencies": {
+    "@graphql-mesh/cache-inmemory-lru": "0.6.6"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.69.0",

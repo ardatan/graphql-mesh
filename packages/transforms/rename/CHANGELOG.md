@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.27
+
+### Patch Changes
+
+- 18f68b496: Add feature to rename arguments on Rename Transform 'bare' mode
+
 ## 0.12.26
 
 ### Patch Changes

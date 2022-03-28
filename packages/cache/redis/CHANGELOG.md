@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-redis
 
+## 0.8.0
+
+### Minor Changes
+
+- b8cebb0c6: Bump redis to v5
+
 ## 0.7.27
 
 ### Patch Changes
