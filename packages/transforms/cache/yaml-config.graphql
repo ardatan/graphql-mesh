@@ -12,7 +12,7 @@ type CacheTransformConfig @md {
   field: String!
   """
   Cache key to use to store your resolvers responses.
-  The defualt is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
+  The default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
 
   Available variables:
   - {args.argName} - use resolver argument
@@ -49,7 +49,7 @@ type CacheEffectingOperationConfig {
   """
   operation: String!
   """
-  Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field.
+  Cache key to invalidate on successful resolver (no error), see `cacheKey` for list of available options in this field.
   """
   matchKey: String
 }

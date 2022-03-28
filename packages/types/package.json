@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.68.2",
+  "version": "0.69.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "fetchache": "0.1.1",
-    "@graphql-mesh/store": "0.6.0",
-    "@graphql-tools/delegate": "8.5.4",
-    "@graphql-tools/utils": "8.6.3",
+    "@graphql-mesh/store": "0.6.2",
+    "@graphql-tools/delegate": "8.7.0",
+    "@graphql-tools/utils": "8.6.5",
     "@graphql-typed-document-node/core": "3.1.1",
     "tslib": "^2.3.1"
   },

@@ -21,7 +21,7 @@ title: 'TableField'
 
 #### Defined in
 
-[packages/types/src/config.ts:627](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L627)
+[packages/types/src/config.ts:660](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L660)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:626](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L626)
+[packages/types/src/config.ts:659](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L659)

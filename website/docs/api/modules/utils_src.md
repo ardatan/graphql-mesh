@@ -9,6 +9,7 @@ sidebar_label: "utils"
 ### Classes
 
 - [DefaultLogger](/docs/api/classes/utils_src.DefaultLogger)
+- [PubSub](/docs/api/classes/utils_src.PubSub)
 
 ### Interfaces
 
@@ -16,12 +17,12 @@ sidebar_label: "utils"
 
 ### Type aliases
 
+- [LRUCache](utils_src#lrucache)
 - [ResolverDataBasedFactory](utils_src#resolverdatabasedfactory)
 
 ### Variables
 
 - [AggregateError](utils_src#aggregateerror)
-- [globalLruCache](utils_src#globallrucache)
 - [stringInterpolator](utils_src#stringinterpolator)
 
 ### Functions
@@ -29,20 +30,24 @@ sidebar_label: "utils"
 - [applyRequestTransforms](utils_src#applyrequesttransforms)
 - [applyResultTransforms](utils_src#applyresulttransforms)
 - [applySchemaTransforms](utils_src#applyschematransforms)
+- [createLruCache](utils_src#createlrucache)
 - [defaultImportFn](utils_src#defaultimportfn)
 - [extractResolvers](utils_src#extractresolvers)
+- [fileURLToPath](utils_src#fileurltopath)
 - [flatString](utils_src#flatstring)
 - [getCachedFetch](utils_src#getcachedfetch)
-- [getDocumentNodeAndSDL](utils_src#getdocumentnodeandsdl)
 - [getHeadersObject](utils_src#getheadersobject)
 - [getInterpolatedHeadersFactory](utils_src#getinterpolatedheadersfactory)
 - [getInterpolatedStringFactory](utils_src#getinterpolatedstringfactory)
+- [getInterpolationKeys](utils_src#getinterpolationkeys)
+- [gql](utils_src#gql)
 - [groupTransforms](utils_src#grouptransforms)
 - [hashObject](utils_src#hashobject)
 - [isUrl](utils_src#isurl)
 - [jitExecutorFactory](utils_src#jitexecutorfactory)
 - [jsonFlatStringify](utils_src#jsonflatstringify)
 - [loadFromModuleExportExpression](utils_src#loadfrommoduleexportexpression)
+- [loadYaml](utils_src#loadyaml)
 - [mkdir](utils_src#mkdir)
 - [parseInterpolationStrings](utils_src#parseinterpolationstrings)
 - [parseWithCache](utils_src#parsewithcache)
@@ -60,9 +65,19 @@ sidebar_label: "utils"
 
 ## Type aliases
 
+### LRUCache
+
+Ƭ **LRUCache**: `Lru`
+
+#### Defined in
+
+[packages/utils/src/global-lru-cache.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/global-lru-cache.ts#L7)
+
+___
+
 ### ResolverDataBasedFactory
 
-Ƭ **ResolverDataBasedFactory**<`T`\>: (`data`: [`ResolverData`](types_src#resolverdata)) => `T`
+Ƭ **ResolverDataBasedFactory**\<`T`>: (`data`: [`ResolverData`](types_src#resolverdata)) => `T`
 
 #### Type parameters
 
@@ -86,7 +101,7 @@ sidebar_label: "utils"
 
 #### Defined in
 
-[packages/utils/src/resolver-data-factory.ts:4](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L4)
+[packages/utils/src/resolver-data-factory.ts:5](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L5)
 
 ## Variables
 
@@ -100,19 +115,9 @@ node_modules/@graphql-tools/utils/AggregateError.d.ts:9
 
 ___
 
-### globalLruCache
-
-• **globalLruCache**: `Lru`<`any`\>
-
-#### Defined in
-
-[packages/utils/src/global-lru-cache.ts:3](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/global-lru-cache.ts#L3)
-
-___
-
 ### stringInterpolator
 
-• **stringInterpolator**: `any`
+• `Const` **stringInterpolator**: `any`
 
 #### Defined in
 
@@ -122,20 +127,20 @@ ___
 
 ### applyRequestTransforms
 
-▸ **applyRequestTransforms**(`originalRequest`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+▸ **applyRequestTransforms**(`originalRequest`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalRequest` | `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
-| `transformationContext` | `Record`<`string`, `any`\> |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `originalRequest` | `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
+| `transformationContext` | `Record`\<`string`, `any`> |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+`ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Defined in
 
@@ -145,20 +150,20 @@ ___
 
 ### applyResultTransforms
 
-▸ **applyResultTransforms**(`originalResult`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionResult`<`Record`<`string`, `any`\>\>
+▸ **applyResultTransforms**(`originalResult`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionResult`\<`Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalResult` | `ExecutionResult`<`Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
-| `transformationContext` | `Record`<`string`, `any`\> |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `originalResult` | `ExecutionResult`\<`Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
+| `transformationContext` | `Record`\<`string`, `any`> |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`ExecutionResult`<`Record`<`string`, `any`\>\>
+`ExecutionResult`\<`Record`\<`string`, `any`>>
 
 #### Defined in
 
@@ -175,9 +180,9 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `originalWrappingSchema` | `GraphQLSchema` |
-| `subschemaConfig` | `SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> |
+| `subschemaConfig` | `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> |
 | `transformedSchema` | `GraphQLSchema` |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
@@ -189,9 +194,30 @@ ___
 
 ___
 
+### createLruCache
+
+▸ **createLruCache**(`max?`, `ttl?`): `Lru`\<`any`>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `max?` | `number` |
+| `ttl?` | `number` |
+
+#### Returns
+
+`Lru`\<`any`>
+
+#### Defined in
+
+[packages/utils/src/global-lru-cache.ts:3](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/global-lru-cache.ts#L3)
+
+___
+
 ### defaultImportFn
 
-▸ **defaultImportFn**(`path`): `Promise`<`any`\>
+▸ **defaultImportFn**(`path`): `Promise`\<`any`>
 
 #### Parameters
 
@@ -201,7 +227,7 @@ ___
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
@@ -229,6 +255,26 @@ ___
 
 ___
 
+### fileURLToPath
+
+▸ **fileURLToPath**(`url`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `url` | `string` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/utils/src/fileURLToPath.ts:3](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fileURLToPath.ts#L3)
+
+___
+
 ### flatString
 
 ▸ **flatString**(`str`): `string`
@@ -251,59 +297,40 @@ ___
 
 ### getCachedFetch
 
-▸ **getCachedFetch**(`cache`): typeof `crossFetch`
+▸ **getCachedFetch**(`cache`): (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`any`\> |
+| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`any`> |
 
 #### Returns
 
-typeof `crossFetch`
+`fn`
+
+▸ (`input`, `init?`): `Promise`\<`Response`>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `input` | `RequestInfo` |
+| `init?` | `RequestInit` |
+
+##### Returns
+
+`Promise`\<`Response`>
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:22](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L22)
-
-___
-
-### getDocumentNodeAndSDL
-
-▸ **getDocumentNodeAndSDL**<`TData`, `TVariables`\>(`documentOrSDL`): `Object`
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TData` | `any` |
-| `TVariables` | `any` |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `documentOrSDL` | [`GraphQLOperation`](types_src#graphqloperation)<`TData`, `TVariables`\> |
-
-#### Returns
-
-`Object`
-
-| Name | Type |
-| :------ | :------ |
-| `document` | `TypedDocumentNode`<`TData`, `TVariables`\> |
-| `sdl` | `string` |
-
-#### Defined in
-
-[packages/utils/src/getDocumentNodeAndSDL.ts:5](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/getDocumentNodeAndSDL.ts#L5)
+[packages/utils/src/read-file-or-url.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L21)
 
 ___
 
 ### getHeadersObject
 
-▸ **getHeadersObject**(`headers`): `Record`<`string`, `string`\>
+▸ **getHeadersObject**(`headers`): `Record`\<`string`, `string`>
 
 #### Parameters
 
@@ -313,37 +340,37 @@ ___
 
 #### Returns
 
-`Record`<`string`, `string`\>
+`Record`\<`string`, `string`>
 
 #### Defined in
 
-[packages/utils/src/resolver-data-factory.ts:53](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L53)
+[packages/utils/src/resolver-data-factory.ts:61](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L61)
 
 ___
 
 ### getInterpolatedHeadersFactory
 
-▸ **getInterpolatedHeadersFactory**(`nonInterpolatedHeaders?`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`Record`<`string`, `string`\>\>
+▸ **getInterpolatedHeadersFactory**(`nonInterpolatedHeaders?`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`Record`\<`string`, `string`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `nonInterpolatedHeaders` | `Record`<`string`, `string`\> |
+| `nonInterpolatedHeaders` | `Record`\<`string`, `string`> |
 
 #### Returns
 
-[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`Record`<`string`, `string`\>\>
+[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`Record`\<`string`, `string`>>
 
 #### Defined in
 
-[packages/utils/src/resolver-data-factory.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L38)
+[packages/utils/src/resolver-data-factory.ts:46](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L46)
 
 ___
 
 ### getInterpolatedStringFactory
 
-▸ **getInterpolatedStringFactory**(`nonInterpolatedString`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`string`\>
+▸ **getInterpolatedStringFactory**(`nonInterpolatedString`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`string`>
 
 #### Parameters
 
@@ -353,11 +380,52 @@ ___
 
 #### Returns
 
-[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`string`\>
+[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`string`>
 
 #### Defined in
 
-[packages/utils/src/resolver-data-factory.ts:34](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L34)
+[packages/utils/src/resolver-data-factory.ts:42](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L42)
+
+___
+
+### getInterpolationKeys
+
+▸ **getInterpolationKeys**(...`interpolationStrings`): `any`[]
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...interpolationStrings` | `string`[] |
+
+#### Returns
+
+`any`[]
+
+#### Defined in
+
+[packages/utils/src/resolver-data-factory.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L7)
+
+___
+
+### gql
+
+▸ **gql**(`__namedParameters`, ...`args`): `DocumentNode`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `TemplateStringsArray` |
+| `...args` | (`string` \| `DocumentNode`)[] |
+
+#### Returns
+
+`DocumentNode`
+
+#### Defined in
+
+[packages/utils/src/parseAndPrintWithCache.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L30)
 
 ___
 
@@ -369,7 +437,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)[] |
+| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 
 #### Returns
 
@@ -377,8 +445,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `noWrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)[] |
-| `wrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)[] |
+| `noWrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
+| `wrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 
 #### Defined in
 
@@ -446,13 +514,13 @@ ___
 
 #### Defined in
 
-[packages/utils/src/jitExecute.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/jitExecute.ts#L8)
+[packages/utils/src/jitExecute.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/jitExecute.ts#L12)
 
 ___
 
 ### jsonFlatStringify
 
-▸ **jsonFlatStringify**<`T`\>(`data`, `replacer?`, `space?`): `string`
+▸ **jsonFlatStringify**\<`T`>(`data`, `replacer?`, `space?`): `string`
 
 #### Type parameters
 
@@ -465,7 +533,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `data` | `T` |
-| `replacer?` | (`key`: `string`, `value`: `any`) => `any` |
+| `replacer?` | (`this`: `any`, `key`: `string`, `value`: `any`) => `any` |
 | `space?` | `string` \| `number` |
 
 #### Returns
@@ -480,7 +548,7 @@ ___
 
 ### loadFromModuleExportExpression
 
-▸ **loadFromModuleExportExpression**<`T`\>(`expression`, `options`): `Promise`<`T`\>
+▸ **loadFromModuleExportExpression**\<`T`>(`expression`, `options`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -497,7 +565,7 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
@@ -505,9 +573,31 @@ ___
 
 ___
 
+### loadYaml
+
+▸ **loadYaml**(`filepath`, `content`, `logger?`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `filepath` | `string` |
+| `content` | `string` |
+| `logger?` | [`Logger`](types_src#logger) |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/utils/src/read-file-or-url.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L73)
+
+___
+
 ### mkdir
 
-▸ **mkdir**(`path`, `options?`): `Promise`<`void`\>
+▸ **mkdir**(`path`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -518,11 +608,11 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
-[packages/utils/src/fs-operations.ts:43](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L43)
+[packages/utils/src/fs-operations.ts:40](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L40)
 
 ___
 
@@ -535,7 +625,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `interpolationStrings` | `string`[] |
-| `argTypeMap?` | `Record`<`string`, `string`\> |
+| `argTypeMap?` | `Record`\<`string`, `string` \| `GraphQLInputType`> |
 
 #### Returns
 
@@ -543,12 +633,12 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `args` | `Record`<`string`, `Object`\> |
+| `args` | `Record`\<`string`, \{ `type`: `string` \| `GraphQLInputType`  }> |
 | `contextVariables` | `string`[] |
 
 #### Defined in
 
-[packages/utils/src/resolver-data-factory.ts:6](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L6)
+[packages/utils/src/resolver-data-factory.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolver-data-factory.ts#L14)
 
 ___
 
@@ -568,13 +658,13 @@ ___
 
 #### Defined in
 
-[packages/utils/src/parseAndPrintWithCache.ts:6](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L6)
+[packages/utils/src/parseAndPrintWithCache.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L8)
 
 ___
 
 ### pathExists
 
-▸ **pathExists**(`path`): `Promise`<`boolean`\>
+▸ **pathExists**(`path`): `Promise`\<`boolean`>
 
 #### Parameters
 
@@ -584,11 +674,11 @@ ___
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`>
 
 #### Defined in
 
-[packages/utils/src/fs-operations.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L7)
+[packages/utils/src/fs-operations.ts:4](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L4)
 
 ___
 
@@ -608,13 +698,13 @@ ___
 
 #### Defined in
 
-[packages/utils/src/parseAndPrintWithCache.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L16)
+[packages/utils/src/parseAndPrintWithCache.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L19)
 
 ___
 
 ### readFile
 
-▸ **readFile**<`T`\>(`filePath`, `config?`): `Promise`<`T`\>
+▸ **readFile**\<`T`>(`filePath`, `config?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -631,17 +721,17 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:39](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L39)
+[packages/utils/src/read-file-or-url.ts:83](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L83)
 
 ___
 
 ### readFileOrUrl
 
-▸ **readFileOrUrl**<`T`\>(`filePathOrUrl`, `config?`): `Promise`<`T`\>
+▸ **readFileOrUrl**\<`T`>(`filePathOrUrl`, `config?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -658,17 +748,17 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:31](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L31)
+[packages/utils/src/read-file-or-url.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L30)
 
 ___
 
 ### readUrl
 
-▸ **readUrl**<`T`\>(`path`, `config?`): `Promise`<`T`\>
+▸ **readUrl**\<`T`>(`path`, `config?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -685,17 +775,17 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:67](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L67)
+[packages/utils/src/read-file-or-url.ts:114](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L114)
 
 ___
 
 ### resolveAdditionalResolvers
 
-▸ **resolveAdditionalResolvers**(`baseDir`, `additionalResolvers`, `importFn`, `pubsub`): `Promise`<`IResolvers`[]\>
+▸ **resolveAdditionalResolvers**(`baseDir`, `additionalResolvers`, `importFn`, `pubsub`): `Promise`\<`IResolvers`[]>
 
 #### Parameters
 
@@ -708,7 +798,7 @@ ___
 
 #### Returns
 
-`Promise`<`IResolvers`[]\>
+`Promise`\<`IResolvers`[]>
 
 #### Defined in
 
@@ -718,7 +808,7 @@ ___
 
 ### rmdirs
 
-▸ **rmdirs**(`dir`): `Promise`<`void`\>
+▸ **rmdirs**(`dir`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -728,11 +818,11 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
-[packages/utils/src/fs-operations.ts:50](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L50)
+[packages/utils/src/fs-operations.ts:47](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L47)
 
 ___
 
@@ -758,7 +848,7 @@ ___
 
 ### withCancel
 
-▸ **withCancel**<`T`\>(`asyncIterable`, `onCancel`): `AsyncIterable`<`T` \| `undefined`\>
+▸ **withCancel**\<`T`>(`asyncIterable`, `onCancel`): `AsyncIterable`\<`T` \| `undefined`>
 
 #### Type parameters
 
@@ -770,12 +860,12 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `asyncIterable` | `AsyncIterable`<`T`\> |
+| `asyncIterable` | `AsyncIterable`\<`T`> |
 | `onCancel` | () => `void` |
 
 #### Returns
 
-`AsyncIterable`<`T` \| `undefined`\>
+`AsyncIterable`\<`T` \| `undefined`>
 
 #### Defined in
 
@@ -785,29 +875,29 @@ ___
 
 ### writeFile
 
-▸ `Const` **writeFile**(`file`, `data`, `options?`): `Promise`<`void`\>
+▸ **writeFile**(`file`, `data`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `file` | `PathLike` \| `FileHandle` |
-| `data` | `string` \| `ArrayBufferView` \| `Iterable`<`string` \| `ArrayBufferView`\> \| `AsyncIterable`<`string` \| `ArrayBufferView`\> \| `Stream` |
-| `options?` | `ObjectEncodingOptions` & { `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` \| `BufferEncoding` |
+| `data` | `string` \| `ArrayBufferView` \| `Iterable`\<`string` \| `ArrayBufferView`> \| `AsyncIterable`\<`string` \| `ArrayBufferView`> \| `Stream` |
+| `options?` | `ObjectEncodingOptions` & \{ `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` \| `BufferEncoding` |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
-[packages/utils/src/fs-operations.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L33)
+[packages/utils/src/fs-operations.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L30)
 
 ___
 
 ### writeJSON
 
-▸ **writeJSON**<`T`\>(`path`, `data`, `replacer?`, `space?`): `Promise`<`void`\>
+▸ **writeJSON**\<`T`>(`path`, `data`, `replacer?`, `space?`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -821,13 +911,13 @@ ___
 | :------ | :------ |
 | `path` | `string` |
 | `data` | `T` |
-| `replacer?` | (`key`: `string`, `value`: `any`) => `any` |
+| `replacer?` | (`this`: `any`, `key`: `string`, `value`: `any`) => `any` |
 | `space?` | `string` \| `number` |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
-[packages/utils/src/fs-operations.ts:23](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L23)
+[packages/utils/src/fs-operations.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L20)

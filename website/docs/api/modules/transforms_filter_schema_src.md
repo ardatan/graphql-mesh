@@ -20,7 +20,7 @@ sidebar_label: "transform-filter-schema"
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<`any`\> |
+| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<`any`> |
 
 #### Returns
 

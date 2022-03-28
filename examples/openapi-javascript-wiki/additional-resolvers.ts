@@ -1,5 +1,5 @@
 import moment from 'moment';
-import type { Access5, Agent3, Granularity22, Resolvers } from './.mesh';
+import type { Resolvers } from './.mesh';
 
 export const resolvers: Resolvers = {
   Query: {
@@ -7,12 +7,12 @@ export const resolvers: Resolvers = {
       const result = await context.Wiki.Query.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd({
         root,
         args: {
-          access: 'all-access',
-          agent: 'user',
+          access: 'ALL_ACCESS',
+          agent: 'USER',
           end: moment().format('YYYYMMDD'),
           start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
           project,
-          granularity: 'daily',
+          granularity: 'DAILY',
         },
         context,
         info,

@@ -22,7 +22,7 @@ title: 'PredefinedProxyOptionsName'
 
 #### Defined in
 
-[packages/store/src/index.ts:96](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L96)
+[packages/store/src/index.ts:94](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L94)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:94](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L94)
+[packages/store/src/index.ts:92](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L92)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:95](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L95)
+[packages/store/src/index.ts:93](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L93)

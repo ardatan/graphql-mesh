@@ -14,6 +14,7 @@ Prefix transform
 
 - [ignore](types_src.YamlConfig.PrefixTransformConfig#ignore)
 - [includeRootOperations](types_src.YamlConfig.PrefixTransformConfig#includerootoperations)
+- [includeTypes](types_src.YamlConfig.PrefixTransformConfig#includetypes)
 - [mode](types_src.YamlConfig.PrefixTransformConfig#mode)
 - [value](types_src.YamlConfig.PrefixTransformConfig#value)
 
@@ -27,7 +28,7 @@ List of ignored types
 
 #### Defined in
 
-[packages/types/src/config.ts:1264](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1264)
+[packages/types/src/config.ts:1405](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1405)
 
 ___
 
@@ -35,11 +36,23 @@ ___
 
 • `Optional` **includeRootOperations**: `boolean`
 
-Changes root types and changes the field names
+Changes root types and changes the field names (default: false)
 
 #### Defined in
 
-[packages/types/src/config.ts:1268](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1268)
+[packages/types/src/config.ts:1409](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1409)
+
+___
+
+### includeTypes
+
+• `Optional` **includeTypes**: `boolean`
+
+Changes types (default: true)
+
+#### Defined in
+
+[packages/types/src/config.ts:1413](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1413)
 
 ___
 
@@ -51,7 +64,7 @@ Specify to apply prefix transform to bare schema or by wrapping original schema 
 
 #### Defined in
 
-[packages/types/src/config.ts:1256](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1256)
+[packages/types/src/config.ts:1397](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1397)
 
 ___
 
@@ -63,4 +76,4 @@ The prefix to apply to the schema types. By default it's the API name.
 
 #### Defined in
 
-[packages/types/src/config.ts:1260](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1260)
+[packages/types/src/config.ts:1401](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1401)

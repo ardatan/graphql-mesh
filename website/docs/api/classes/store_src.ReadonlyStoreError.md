@@ -20,6 +20,7 @@ title: 'ReadonlyStoreError'
 
 ### Properties
 
+- [cause](store_src.ReadonlyStoreError#cause)
 - [message](store_src.ReadonlyStoreError#message)
 - [name](store_src.ReadonlyStoreError#name)
 - [stack](store_src.ReadonlyStoreError#stack)
@@ -50,7 +51,38 @@ Error.constructor
 
 node_modules/typescript/lib/lib.es5.d.ts:1028
 
+• **new ReadonlyStoreError**(`message?`, `options?`)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message?` | `string` |
+| `options?` | `ErrorOptions` |
+
+#### Inherited from
+
+Error.constructor
+
+#### Defined in
+
+node_modules/typescript/lib/lib.es2022.error.d.ts:30
+
 ## Properties
+
+### cause
+
+• `Optional` **cause**: `Error`
+
+#### Inherited from
+
+Error.cause
+
+#### Defined in
+
+node_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+___
 
 ### message
 

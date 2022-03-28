@@ -33,6 +33,11 @@ sidebar_label: "types"
 - [HookName](types_src#hookname)
 - [ImportFn](types_src#importfn)
 - [InContextSdkMethod](types_src#incontextsdkmethod)
+- [InContextSdkMethodBatchingParams](types_src#incontextsdkmethodbatchingparams)
+- [InContextSdkMethodCustomSelectionSetParams](types_src#incontextsdkmethodcustomselectionsetparams)
+- [InContextSdkMethodInfoParams](types_src#incontextsdkmethodinfoparams)
+- [InContextSdkMethodParams](types_src#incontextsdkmethodparams)
+- [InContextSdkMethodRegularParams](types_src#incontextsdkmethodregularparams)
 - [LazyLoggerMessage](types_src#lazyloggermessage)
 - [Logger](types_src#logger)
 - [Maybe](types_src#maybe)
@@ -61,14 +66,6 @@ sidebar_label: "types"
 | Name | Type |
 | :------ | :------ |
 | `destroy` | `void` |
-| `resolverCalled` | `Object` |
-| `resolverCalled.resolverData` | [`ResolverData`](types_src#resolverdata) |
-| `resolverDone` | `Object` |
-| `resolverDone.resolverData` | [`ResolverData`](types_src#resolverdata) |
-| `resolverDone.result` | `any` |
-| `resolverError` | `Object` |
-| `resolverError.error` | `Error` |
-| `resolverError.resolverData` | [`ResolverData`](types_src#resolverdata) |
 
 #### Defined in
 
@@ -78,7 +75,7 @@ ___
 
 ### GetMeshSourceOptions
 
-Ƭ **GetMeshSourceOptions**<`THandlerConfig`\>: `Object`
+Ƭ **GetMeshSourceOptions**\<`THandlerConfig`>: `Object`
 
 #### Type parameters
 
@@ -107,7 +104,7 @@ ___
 
 ### GraphQLOperation
 
-Ƭ **GraphQLOperation**<`TData`, `TVariables`\>: `TypedDocumentNode`<`TData`, `TVariables`\> \| `string`
+Ƭ **GraphQLOperation**\<`TData`, `TVariables`>: `TypedDocumentNode`\<`TData`, `TVariables`> \| `string`
 
 #### Type parameters
 
@@ -118,7 +115,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:127](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L127)
+[packages/types/src/index.ts:124](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L124)
 
 ___
 
@@ -128,17 +125,17 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:59](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L59)
+[packages/types/src/index.ts:56](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L56)
 
 ___
 
 ### ImportFn
 
-Ƭ **ImportFn**: <T\>(`moduleId`: `string`) => `Promise`<`T`\>
+Ƭ **ImportFn**: \<T>(`moduleId`: `string`) => `Promise`\<`T`>
 
 #### Type declaration
 
-▸ <`T`\>(`moduleId`): `Promise`<`T`\>
+▸ \<`T`>(`moduleId`): `Promise`\<`T`>
 
 ##### Type parameters
 
@@ -154,17 +151,17 @@ ___
 
 ##### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
-[packages/types/src/index.ts:129](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L129)
+[packages/types/src/index.ts:126](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L126)
 
 ___
 
 ### InContextSdkMethod
 
-Ƭ **InContextSdkMethod**<`TDefaultReturn`, `TArgs`, `TContext`\>: <TKey, TReturn\>(`params`: { `args?`: `TArgs` ; `context?`: `TContext` ; `info?`: `GraphQLResolveInfo` ; `key?`: `TKey` ; `root?`: `any` ; `selectionSet?`: [`SelectionSetParamOrFactory`](types_src#selectionsetparamorfactory) ; `argsFromKeys?`: (`keys`: `TKey`[]) => `TArgs` ; `valuesFromResults?`: (`results`: `TDefaultReturn`, `keys`: `TKey`[]) => `TReturn` \| `TReturn`[]  }) => `Promise`<`TReturn`\>
+Ƭ **InContextSdkMethod**\<`TDefaultReturn`, `TArgs`, `TContext`>: \<TKey, TReturn>(`params`: [`InContextSdkMethodParams`](types_src#incontextsdkmethodparams)\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`>) => `Promise`\<`TReturn`>
 
 #### Type parameters
 
@@ -176,7 +173,7 @@ ___
 
 #### Type declaration
 
-▸ <`TKey`, `TReturn`\>(`params`): `Promise`<`TReturn`\>
+▸ \<`TKey`, `TReturn`>(`params`): `Promise`\<`TReturn`>
 
 ##### Type parameters
 
@@ -189,23 +186,120 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | `Object` |
-| `params.args?` | `TArgs` |
-| `params.context?` | `TContext` |
-| `params.info?` | `GraphQLResolveInfo` |
-| `params.key?` | `TKey` |
-| `params.root?` | `any` |
-| `params.selectionSet?` | [`SelectionSetParamOrFactory`](types_src#selectionsetparamorfactory) |
-| `params.argsFromKeys?` | (`keys`: `TKey`[]) => `TArgs` |
-| `params.valuesFromResults?` | (`results`: `TDefaultReturn`, `keys`: `TKey`[]) => `TReturn` \| `TReturn`[] |
+| `params` | [`InContextSdkMethodParams`](types_src#incontextsdkmethodparams)\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`> |
 
 ##### Returns
 
-`Promise`<`TReturn`\>
+`Promise`\<`TReturn`>
 
 #### Defined in
 
-[packages/types/src/index.ts:146](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L146)
+[packages/types/src/index.ts:173](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L173)
+
+___
+
+### InContextSdkMethodBatchingParams
+
+Ƭ **InContextSdkMethodBatchingParams**\<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`>: `Object`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `TDefaultReturn` |
+| `TArgs` |
+| `TKey` |
+| `TReturn` |
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `key` | `TKey` |
+| `argsFromKeys` | (`keys`: `TKey`[]) => `TArgs` |
+| `valuesFromResults?` | (`results`: `TDefaultReturn`, `keys`: `TKey`[]) => `TReturn` \| `TReturn`[] |
+
+#### Defined in
+
+[packages/types/src/index.ts:143](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L143)
+
+___
+
+### InContextSdkMethodCustomSelectionSetParams
+
+Ƭ **InContextSdkMethodCustomSelectionSetParams**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `info?` | `GraphQLResolveInfo` |
+| `selectionSet` | [`SelectionSetParamOrFactory`](types_src#selectionsetparamorfactory) |
+
+#### Defined in
+
+[packages/types/src/index.ts:154](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L154)
+
+___
+
+### InContextSdkMethodInfoParams
+
+Ƭ **InContextSdkMethodInfoParams**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `info` | `GraphQLResolveInfo` |
+
+#### Defined in
+
+[packages/types/src/index.ts:160](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L160)
+
+___
+
+### InContextSdkMethodParams
+
+Ƭ **InContextSdkMethodParams**\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`>: \{ `context`: `TContext` ; `root?`: `any`  } & [`InContextSdkMethodCustomSelectionSetParams`](types_src#incontextsdkmethodcustomselectionsetparams) \| [`InContextSdkMethodInfoParams`](types_src#incontextsdkmethodinfoparams) & [`InContextSdkMethodBatchingParams`](types_src#incontextsdkmethodbatchingparams)\<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`> \| [`InContextSdkMethodRegularParams`](types_src#incontextsdkmethodregularparams)\<`TDefaultReturn`, `TArgs`, `TReturn`>
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `TDefaultReturn` |
+| `TArgs` |
+| `TContext` |
+| `TKey` |
+| `TReturn` |
+
+#### Defined in
+
+[packages/types/src/index.ts:164](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L164)
+
+___
+
+### InContextSdkMethodRegularParams
+
+Ƭ **InContextSdkMethodRegularParams**\<`TDefaultReturn`, `TArgs`, `TReturn`>: `Object`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `TDefaultReturn` |
+| `TArgs` |
+| `TReturn` |
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `args?` | `TArgs` |
+| `valuesFromResults?` | (`results`: `TDefaultReturn`) => `TReturn` \| `TReturn`[] |
+
+#### Defined in
+
+[packages/types/src/index.ts:149](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L149)
 
 ___
 
@@ -215,7 +309,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:131](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L131)
+[packages/types/src/index.ts:128](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L128)
 
 ___
 
@@ -237,13 +331,13 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:133](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L133)
+[packages/types/src/index.ts:130](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L130)
 
 ___
 
 ### Maybe
 
-Ƭ **Maybe**<`T`\>: ``null`` \| `undefined` \| `T`
+Ƭ **Maybe**\<`T`>: ``null`` \| `undefined` \| `T`
 
 #### Type parameters
 
@@ -253,13 +347,13 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:89](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L89)
+[packages/types/src/index.ts:86](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L86)
 
 ___
 
 ### MeshSource
 
-Ƭ **MeshSource**<`ContextType`, `InitialContext`\>: `Object`
+Ƭ **MeshSource**\<`ContextType`, `InitialContext`>: `Object`
 
 #### Type parameters
 
@@ -295,20 +389,20 @@ ___
 | `contextVariables` | keyof `any`[] |
 | `executor?` | `Executor` |
 | `handler` | [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler) |
-| `merge?` | `Record`<`string`, `MergedTypeConfig`\> |
+| `merge?` | `Record`\<`string`, `MergedTypeConfig`> |
 | `name` | `string` |
 | `schema` | `GraphQLSchema` |
 | `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)[] |
 
 #### Defined in
 
-[packages/types/src/index.ts:116](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L116)
+[packages/types/src/index.ts:113](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L113)
 
 ___
 
 ### ResolverData
 
-Ƭ **ResolverData**<`TParent`, `TArgs`, `TContext`, `TResult`\>: `Object`
+Ƭ **ResolverData**\<`TParent`, `TArgs`, `TContext`, `TResult`>: `Object`
 
 #### Type parameters
 
@@ -325,7 +419,7 @@ ___
 | :------ | :------ |
 | `args?` | `TArgs` |
 | `context?` | `TContext` |
-| `env` | `Record`<`string`, `string`\> |
+| `env` | `Record`\<`string`, `string`> |
 | `info?` | `GraphQLResolveInfo` |
 | `result?` | `TResult` |
 | `root?` | `TParent` |
@@ -342,7 +436,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:143](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L143)
+[packages/types/src/index.ts:140](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L140)
 
 ___
 
@@ -352,13 +446,13 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:144](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L144)
+[packages/types/src/index.ts:141](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L141)
 
 ## Variables
 
 ### jsonSchema
 
-• **jsonSchema**: `any` = `configSchema`
+• `Const` **jsonSchema**: `any` = `configSchema`
 
 #### Defined in
 

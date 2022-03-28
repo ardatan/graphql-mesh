@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.10.38",
+  "version": "0.10.40",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -24,16 +24,16 @@
     "mongoose": "*"
   },
   "devDependencies": {
-    "mongoose": "6.2.7"
+    "mongoose": "6.2.8"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.68.2",
-    "@graphql-mesh/utils": "0.32.0",
+    "@graphql-mesh/types": "0.69.0",
+    "@graphql-mesh/utils": "0.32.2",
     "graphql-compose": "9.0.7",
     "graphql-compose-mongoose": "9.7.1",
     "graphql-compose-connection": "8.2.1",
     "graphql-compose-pagination": "8.3.0",
-    "@graphql-tools/stitching-directives": "2.2.4",
+    "@graphql-tools/stitching-directives": "2.2.7",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

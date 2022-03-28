@@ -2,7 +2,7 @@
 title: 'MeshTransformLibrary'
 ---
 
-# Interface: MeshTransformLibrary<Config\>
+# Interface: MeshTransformLibrary\<Config>
 
 [types/src](../modules/types_src).MeshTransformLibrary
 
@@ -28,8 +28,8 @@ title: 'MeshTransformLibrary'
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshTransformOptions`](types_src.MeshTransformOptions)<`Config`\> |
+| `options` | [`MeshTransformOptions`](types_src.MeshTransformOptions)\<`Config`> |
 
 #### Defined in
 
-[packages/types/src/index.ts:82](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L82)
+[packages/types/src/index.ts:79](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L79)

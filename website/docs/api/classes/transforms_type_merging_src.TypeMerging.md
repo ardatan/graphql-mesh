@@ -34,7 +34,7 @@ title: 'TypeMerging'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`TypeMergingConfig`](/docs/api/interfaces/types_src.YamlConfig.TypeMergingConfig)\> |
+| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`TypeMergingConfig`](/docs/api/interfaces/types_src.YamlConfig.TypeMergingConfig)> |
 
 #### Defined in
 
@@ -61,7 +61,7 @@ title: 'TypeMerging'
 | Name | Type |
 | :------ | :------ |
 | `schema` | `GraphQLSchema` |
-| `subschemaConfig` | `SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> |
+| `subschemaConfig` | `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> |
 
 #### Returns
 

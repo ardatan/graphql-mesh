@@ -31,6 +31,8 @@ sidebar_label: "config"
 
 | Name | Type |
 | :------ | :------ |
+| `artifactsDir?` | `string` |
+| `configName?` | `string` |
 | `dir?` | `string` |
 | `ignoreAdditionalResolvers?` | `boolean` |
 | `importFn?` | [`ImportFn`](types_src#importfn) |
@@ -50,28 +52,29 @@ ___
 
 | Name | Type |
 | :------ | :------ |
+| `additionalEnvelopPlugins` | `any`[] |
 | `additionalResolvers` | `IResolvers`[] |
 | `additionalTypeDefs` | `DocumentNode`[] |
-| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`string`\> |
+| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`string`> |
 | `code` | `string` |
 | `config` | [`Config`](/docs/api/interfaces/types_src.YamlConfig.Config) |
 | `documents` | `Source`[] |
 | `logger` | [`Logger`](types_src#logger) |
 | `merger` | [`MeshMerger`](/docs/api/interfaces/types_src.MeshMerger) |
 | `pubsub` | [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub) |
-| `sources` | [`MeshResolvedSource`](runtime_src#meshresolvedsource)<`any`\>[] |
+| `sources` | [`MeshResolvedSource`](runtime_src#meshresolvedsource)\<`any`>[] |
 | `store` | [`MeshStore`](/docs/api/classes/store_src.MeshStore) |
 | `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)[] |
 
 #### Defined in
 
-[packages/config/src/process.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/process.ts#L38)
+[packages/config/src/process.ts:42](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/process.ts#L42)
 
 ## Functions
 
 ### getPackage
 
-▸ **getPackage**<`T`\>(`__namedParameters`): `Promise`<`ResolvedPackage`<`T`\>\>
+▸ **getPackage**\<`T`>(`__namedParameters`): `Promise`\<`ResolvedPackage`\<`T`>>
 
 #### Type parameters
 
@@ -87,17 +90,17 @@ ___
 
 #### Returns
 
-`Promise`<`ResolvedPackage`<`T`\>\>
+`Promise`\<`ResolvedPackage`\<`T`>>
 
 #### Defined in
 
-[packages/config/src/utils.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L25)
+[packages/config/src/utils.ts:23](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L23)
 
 ___
 
 ### processConfig
 
-▸ **processConfig**(`config`, `options?`): `Promise`<[`ProcessedConfig`](config_src#processedconfig)\>
+▸ **processConfig**(`config`, `options?`): `Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
 #### Parameters
 
@@ -108,17 +111,17 @@ ___
 
 #### Returns
 
-`Promise`<[`ProcessedConfig`](config_src#processedconfig)\>
+`Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
 #### Defined in
 
-[packages/config/src/process.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/process.ts#L74)
+[packages/config/src/process.ts:79](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/process.ts#L79)
 
 ___
 
 ### resolveAdditionalTypeDefs
 
-▸ **resolveAdditionalTypeDefs**(`baseDir`, `additionalTypeDefs`): `Promise`<`DocumentNode`[]\>
+▸ **resolveAdditionalTypeDefs**(`baseDir`, `additionalTypeDefs`): `Promise`\<`DocumentNode`[]>
 
 #### Parameters
 
@@ -129,17 +132,17 @@ ___
 
 #### Returns
 
-`Promise`<`DocumentNode`[]\>
+`Promise`\<`DocumentNode`[]>
 
 #### Defined in
 
-[packages/config/src/utils.ts:65](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L65)
+[packages/config/src/utils.ts:63](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L63)
 
 ___
 
 ### resolveCache
 
-▸ **resolveCache**(`cacheConfig?`, `importFn`, `rootStore`, `cwd`): `Promise`<`Object`\>
+▸ **resolveCache**(`cacheConfig?`, `importFn`, `rootStore`, `cwd`, `pubsub`): `Promise`\<\{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `code`: `string` ; `importCode`: `string`  }>
 
 #### Parameters
 
@@ -149,20 +152,21 @@ ___
 | `importFn` | [`ImportFn`](types_src#importfn) |
 | `rootStore` | [`MeshStore`](/docs/api/classes/store_src.MeshStore) |
 | `cwd` | `string` |
+| `pubsub` | [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub) |
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`\<\{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `code`: `string` ; `importCode`: `string`  }>
 
 #### Defined in
 
-[packages/config/src/utils.ts:78](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L78)
+[packages/config/src/utils.ts:76](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L76)
 
 ___
 
 ### resolveDocuments
 
-▸ **resolveDocuments**(`documentsConfig`, `cwd`): `Promise`<`Source`[]\>
+▸ **resolveDocuments**(`documentsConfig`, `cwd`): `Promise`\<`Source`[]>
 
 #### Parameters
 
@@ -173,17 +177,17 @@ ___
 
 #### Returns
 
-`Promise`<`Source`[]\>
+`Promise`\<`Source`[]>
 
 #### Defined in
 
-[packages/config/src/utils.ts:161](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L161)
+[packages/config/src/utils.ts:159](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L159)
 
 ___
 
 ### resolveLogger
 
-▸ **resolveLogger**(`loggerConfig`, `importFn`, `cwd`): `Promise`<`Object`\>
+▸ **resolveLogger**(`loggerConfig`, `importFn`, `cwd`): `Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `logger`: [`Logger`](types_src#logger)  }>
 
 #### Parameters
 
@@ -195,17 +199,17 @@ ___
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `logger`: [`Logger`](types_src#logger)  }>
 
 #### Defined in
 
-[packages/config/src/utils.ts:172](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L172)
+[packages/config/src/utils.ts:170](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L170)
 
 ___
 
 ### resolvePubSub
 
-▸ **resolvePubSub**(`pubsubYamlConfig`, `importFn`, `cwd`): `Promise`<`Object`\>
+▸ **resolvePubSub**(`pubsubYamlConfig`, `importFn`, `cwd`): `Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }>
 
 #### Parameters
 
@@ -217,8 +221,8 @@ ___
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }>
 
 #### Defined in
 
-[packages/config/src/utils.ts:111](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L111)
+[packages/config/src/utils.ts:114](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L114)

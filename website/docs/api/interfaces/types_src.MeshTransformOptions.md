@@ -2,7 +2,7 @@
 title: 'MeshTransformOptions'
 ---
 
-# Interface: MeshTransformOptions<Config\>
+# Interface: MeshTransformOptions\<Config>
 
 [types/src](../modules/types_src).MeshTransformOptions
 
@@ -31,7 +31,7 @@ title: 'MeshTransformOptions'
 
 #### Defined in
 
-[packages/types/src/index.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L73)
+[packages/types/src/index.ts:70](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L70)
 
 ___
 
@@ -41,17 +41,17 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:75](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L75)
+[packages/types/src/index.ts:72](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L72)
 
 ___
 
 ### cache
 
-• **cache**: [`KeyValueCache`](types_src.KeyValueCache)<`any`\>
+• **cache**: [`KeyValueCache`](types_src.KeyValueCache)\<`any`>
 
 #### Defined in
 
-[packages/types/src/index.ts:76](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L76)
+[packages/types/src/index.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L73)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L74)
+[packages/types/src/index.ts:71](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L71)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:78](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L78)
+[packages/types/src/index.ts:75](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L75)
 
 ___
 
@@ -81,4 +81,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:77](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L77)
+[packages/types/src/index.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L74)

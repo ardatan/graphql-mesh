@@ -18,6 +18,7 @@ Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/sw
 - [genericPayloadArgName](types_src.YamlConfig.OpenapiHandler#genericpayloadargname)
 - [includeHttpDetails](types_src.YamlConfig.OpenapiHandler#includehttpdetails)
 - [operationHeaders](types_src.YamlConfig.OpenapiHandler#operationheaders)
+- [operationIdFieldNames](types_src.YamlConfig.OpenapiHandler#operationidfieldnames)
 - [provideErrorExtensions](types_src.YamlConfig.OpenapiHandler#provideerrorextensions)
 - [qs](types_src.YamlConfig.OpenapiHandler#qs)
 - [schemaHeaders](types_src.YamlConfig.OpenapiHandler#schemaheaders)
@@ -35,7 +36,7 @@ Auto-generate a 'limit' argument for all fields that return lists of objects, in
 
 #### Defined in
 
-[packages/types/src/config.ts:741](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L741)
+[packages/types/src/config.ts:800](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L800)
 
 ___
 
@@ -48,7 +49,7 @@ Overrides the server object in the OAS.
 
 #### Defined in
 
-[packages/types/src/config.ts:723](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L723)
+[packages/types/src/config.ts:782](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L782)
 
 ___
 
@@ -60,7 +61,7 @@ W3 Compatible Fetch Implementation
 
 #### Defined in
 
-[packages/types/src/config.ts:733](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L733)
+[packages/types/src/config.ts:792](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L792)
 
 ___
 
@@ -72,7 +73,7 @@ Set argument name for mutation payload to 'requestBody'. If false, name defaults
 
 #### Defined in
 
-[packages/types/src/config.ts:745](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L745)
+[packages/types/src/config.ts:804](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L804)
 
 ___
 
@@ -84,7 +85,7 @@ Include HTTP Response details to the result object
 
 #### Defined in
 
-[packages/types/src/config.ts:737](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L737)
+[packages/types/src/config.ts:796](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L796)
 
 ___
 
@@ -100,7 +101,23 @@ JSON object representing the Headers to add to the runtime of the API calls
 
 #### Defined in
 
-[packages/types/src/config.ts:710](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L710)
+[packages/types/src/config.ts:769](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L769)
+
+___
+
+### operationIdFieldNames
+
+• `Optional` **operationIdFieldNames**: `boolean`
+
+Field names can only be sanitized operationIds
+
+By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
+
+This option forces OpenAPI handler to only create field names based on the operationId.
+
+#### Defined in
+
+[packages/types/src/config.ts:820](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L820)
 
 ___
 
@@ -112,7 +129,7 @@ Overwrite automatic wrapping of errors into GraphqlErrors
 
 #### Defined in
 
-[packages/types/src/config.ts:753](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L753)
+[packages/types/src/config.ts:812](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L812)
 
 ___
 
@@ -128,7 +145,7 @@ JSON object representing the query search parameters to add to the API calls
 
 #### Defined in
 
-[packages/types/src/config.ts:727](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L727)
+[packages/types/src/config.ts:786](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L786)
 
 ___
 
@@ -144,7 +161,7 @@ If you are using a remote URL endpoint to fetch your schema, you can set headers
 
 #### Defined in
 
-[packages/types/src/config.ts:716](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L716)
+[packages/types/src/config.ts:775](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L775)
 
 ___
 
@@ -156,7 +173,7 @@ Allows to explicitly override the default operation (Query or Mutation) for any 
 
 #### Defined in
 
-[packages/types/src/config.ts:749](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L749)
+[packages/types/src/config.ts:808](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L808)
 
 ___
 
@@ -168,7 +185,7 @@ A pointer to your API source - could be a local file, remote file or url endpoin
 
 #### Defined in
 
-[packages/types/src/config.ts:702](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L702)
+[packages/types/src/config.ts:761](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L761)
 
 ___
 
@@ -180,4 +197,4 @@ Format of the source file (Allowed values: json, yaml)
 
 #### Defined in
 
-[packages/types/src/config.ts:706](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L706)
+[packages/types/src/config.ts:765](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L765)

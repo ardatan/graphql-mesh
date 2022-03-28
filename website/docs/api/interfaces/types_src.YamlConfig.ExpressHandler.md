@@ -24,7 +24,7 @@ Path of the handler's code
 
 #### Defined in
 
-[packages/types/src/config.ts:151](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L151)
+[packages/types/src/config.ts:161](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L161)
 
 ___
 
@@ -36,7 +36,7 @@ HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PA
 
 #### Defined in
 
-[packages/types/src/config.ts:155](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L155)
+[packages/types/src/config.ts:165](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L165)
 
 ___
 
@@ -48,4 +48,4 @@ Path that the handler will control
 
 #### Defined in
 
-[packages/types/src/config.ts:147](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L147)
+[packages/types/src/config.ts:157](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L157)

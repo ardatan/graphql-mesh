@@ -30,21 +30,21 @@ title: 'SoapHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`SoapHandler`](/docs/api/interfaces/types_src.YamlConfig.SoapHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`SoapHandler`](/docs/api/interfaces/types_src.YamlConfig.SoapHandler)> |
 
 #### Defined in
 
-[packages/handlers/soap/src/index.ts:17](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/soap/src/index.ts#L17)
+[packages/handlers/soap/src/index.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/soap/src/index.ts#L16)
 
 ## Methods
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<`Object`\>
+▸ **getMeshSource**(): `Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 
@@ -52,4 +52,4 @@ title: 'SoapHandler'
 
 #### Defined in
 
-[packages/handlers/soap/src/index.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/soap/src/index.ts#L26)
+[packages/handlers/soap/src/index.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/soap/src/index.ts#L25)

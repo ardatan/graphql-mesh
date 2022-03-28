@@ -20,4 +20,4 @@ title: 'FileCacheConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1526](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1526)
+[packages/types/src/config.ts:1724](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1724)

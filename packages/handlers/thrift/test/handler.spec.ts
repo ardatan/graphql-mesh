@@ -21,7 +21,7 @@ describe('thrift', () => {
       pubsub: new PubSub(),
       store: new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), { readonly: false, validate: false }),
       baseDir: __dirname,
-      logger: new DefaultLogger(),
+      logger: new DefaultLogger('TEST'),
       importFn: m => import(m),
     });
     const source = await thriftHandler.getMeshSource();

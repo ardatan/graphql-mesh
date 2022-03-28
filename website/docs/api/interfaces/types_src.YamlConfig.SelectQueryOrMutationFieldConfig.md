@@ -25,7 +25,7 @@ Which method is used for this operation
 
 #### Defined in
 
-[packages/types/src/config.ts:771](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L771)
+[packages/types/src/config.ts:838](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L838)
 
 ___
 
@@ -37,7 +37,7 @@ Operation Path
 
 #### Defined in
 
-[packages/types/src/config.ts:763](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L763)
+[packages/types/src/config.ts:830](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L830)
 
 ___
 
@@ -49,16 +49,16 @@ OAS Title
 
 #### Defined in
 
-[packages/types/src/config.ts:759](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L759)
+[packages/types/src/config.ts:826](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L826)
 
 ___
 
 ### type
 
-• `Optional` **type**: ``"Query"`` \| ``"Mutation"``
+• `Optional` **type**: ``"query"`` \| ``"mutation"`` \| ``"Query"`` \| ``"Mutation"``
 
-Target Root Type for this operation (Allowed values: Query, Mutation)
+Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)
 
 #### Defined in
 
-[packages/types/src/config.ts:767](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L767)
+[packages/types/src/config.ts:834](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L834)

@@ -31,41 +31,41 @@ title: 'ODataHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`ODataHandler`](/docs/api/interfaces/types_src.YamlConfig.ODataHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`ODataHandler`](/docs/api/interfaces/types_src.YamlConfig.ODataHandler)> |
 
 #### Defined in
 
-[packages/handlers/odata/src/index.ts:135](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L135)
+[packages/handlers/odata/src/index.ts:144](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L144)
 
 ## Methods
 
 ### getCachedMetadataJson
 
-▸ **getCachedMetadataJson**(`fetch`): `Promise`<`any`\>
+▸ **getCachedMetadataJson**(`fetch`): `Promise`\<`any`>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `fetch` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> |
+| `fetch` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> |
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
-[packages/handlers/odata/src/index.ts:153](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L153)
+[packages/handlers/odata/src/index.ts:162](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L162)
 
 ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Implementation of
 
@@ -73,4 +73,4 @@ ___
 
 #### Defined in
 
-[packages/handlers/odata/src/index.ts:178](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L178)
+[packages/handlers/odata/src/index.ts:179](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L179)

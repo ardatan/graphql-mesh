@@ -25,7 +25,7 @@ title: 'FilterHelperArgsOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:510](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L510)
+[packages/types/src/config.ts:543](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L543)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:511](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L511)
+[packages/types/src/config.ts:544](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L544)
 
 ___
 
@@ -45,19 +45,19 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:512](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L512)
+[packages/types/src/config.ts:545](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L545)
 
 ___
 
 ### operators
 
-• `Optional` **operators**: `boolean` \| { [k: string]: `any`;  }
+• `Optional` **operators**: `boolean` \| \{ `[k: string]`: `any`;  }
 
 Any of: Boolean, JSON
 
 #### Defined in
 
-[packages/types/src/config.ts:517](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L517)
+[packages/types/src/config.ts:550](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L550)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:522](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L522)
+[packages/types/src/config.ts:555](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L555)
 
 ___
 
@@ -77,4 +77,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:513](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L513)
+[packages/types/src/config.ts:546](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L546)

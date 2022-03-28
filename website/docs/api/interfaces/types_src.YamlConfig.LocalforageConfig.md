@@ -25,7 +25,7 @@ title: 'LocalforageConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1540](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1540)
+[packages/types/src/config.ts:1739](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1739)
 
 ___
 
@@ -37,7 +37,7 @@ Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE
 
 #### Defined in
 
-[packages/types/src/config.ts:1535](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1535)
+[packages/types/src/config.ts:1734](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1734)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1536](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1536)
+[packages/types/src/config.ts:1735](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1735)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1538](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1538)
+[packages/types/src/config.ts:1737](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1737)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1539](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1539)
+[packages/types/src/config.ts:1738](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1738)
 
 ___
 
@@ -77,4 +77,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1537](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1537)
+[packages/types/src/config.ts:1736](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1736)

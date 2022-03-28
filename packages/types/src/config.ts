@@ -693,6 +693,10 @@ export interface Neo4JHandler {
  */
 export interface NewOpenapiHandler {
   oasFilePath: string;
+  /**
+   * Allowed values: json, yaml, js, ts
+   */
+  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   baseUrl?: string;
   schemaHeaders?: {
     [k: string]: any;
@@ -1068,6 +1072,10 @@ export interface Transform {
    * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
    */
   filterSchema?: FilterSchemaTransform | any;
+  /**
+   * Transformer to hoist GraphQL fields
+   */
+  hoistField?: HoistFieldTransformConfig[];
   mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
@@ -1087,10 +1095,6 @@ export interface Transform {
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
-  /**
-   * Transformer to hoist GraphQL fields
-   */
-  hoistField?: HoistFieldTransformConfig[];
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -1100,7 +1104,7 @@ export interface CacheTransformConfig {
   field: string;
   /**
    * Cache key to use to store your resolvers responses.
-   * The defualt is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
+   * The default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
    *
    * Available variables:
    * - {args.argName} - use resolver argument
@@ -1135,7 +1139,7 @@ export interface CacheEffectingOperationConfig {
    */
   operation: string;
   /**
-   * Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field.
+   * Cache key to invalidate on successful resolver (no error), see `cacheKey` for list of available options in this field.
    */
   matchKey?: string;
 }
@@ -1207,6 +1211,35 @@ export interface FilterSchemaTransform {
    */
   filters: string[];
 }
+export interface HoistFieldTransformConfig {
+  /**
+   * Type name that defines where field should be hoisted to
+   */
+  typeName: string;
+  /**
+   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
+   */
+  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
+  /**
+   * Name the hoisted field should have when hoisted to the type specified in typeName
+   */
+  newFieldName: string;
+  alias?: string;
+  /**
+   * Defines if args in path are filtered (default = false)
+   */
+  filterArgsInPath?: boolean;
+}
+export interface HoistFieldTransformFieldPathConfigObject {
+  /**
+   * Field name
+   */
+  fieldName: string;
+  /**
+   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
+   */
+  filterArgs: string[];
+}
 /**
  * Mock configuration for your source
  */
@@ -1244,7 +1277,7 @@ export interface MockingFieldConfig {
   /**
    * Faker.js expression or function
    * Read more (https://github.com/marak/Faker.js/#fakerfake)
-   * Example;
+   * Example:
    * faker: name.firstName
    * faker: "{{ name.firstName }} {{ name.lastName }}"
    */
@@ -1625,35 +1658,6 @@ export interface MergedRootFieldConfig {
    *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
    */
   argsExpr?: string;
-}
-export interface HoistFieldTransformConfig {
-  /**
-   * Type name that defines where field should be hoisted to
-   */
-  typeName: string;
-  /**
-   * Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFieldTransformFieldPathConfigObject)
-   */
-  pathConfig: (string | HoistFieldTransformFieldPathConfigObject)[];
-  /**
-   * Name the hoisted field should have when hoisted to the type specified in typeName
-   */
-  newFieldName: string;
-  alias?: string;
-  /**
-   * Defines if args in path are filtered (default = false)
-   */
-  filterArgsInPath?: boolean;
-}
-export interface HoistFieldTransformFieldPathConfigObject {
-  /**
-   * Field name
-   */
-  fieldName: string;
-  /**
-   * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
-   */
-  filterArgs: string[];
 }
 export interface AdditionalStitchingResolverObject {
   sourceName: string;

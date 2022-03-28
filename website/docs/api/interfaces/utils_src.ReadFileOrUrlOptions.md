@@ -27,6 +27,7 @@ title: 'ReadFileOrUrlOptions'
 - [importFn](utils_src.ReadFileOrUrlOptions#importfn)
 - [integrity](utils_src.ReadFileOrUrlOptions#integrity)
 - [keepalive](utils_src.ReadFileOrUrlOptions#keepalive)
+- [logger](utils_src.ReadFileOrUrlOptions#logger)
 - [method](utils_src.ReadFileOrUrlOptions#method)
 - [mode](utils_src.ReadFileOrUrlOptions#mode)
 - [redirect](utils_src.ReadFileOrUrlOptions#redirect)
@@ -43,7 +44,7 @@ title: 'ReadFileOrUrlOptions'
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L15)
+[packages/utils/src/read-file-or-url.ts:13](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L13)
 
 ___
 
@@ -59,7 +60,7 @@ RequestInit.body
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1468
+node_modules/typescript/lib/lib.dom.d.ts:1498
 
 ___
 
@@ -75,7 +76,7 @@ RequestInit.cache
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1470
+node_modules/typescript/lib/lib.dom.d.ts:1500
 
 ___
 
@@ -91,7 +92,7 @@ RequestInit.credentials
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1472
+node_modules/typescript/lib/lib.dom.d.ts:1502
 
 ___
 
@@ -101,7 +102,7 @@ ___
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:17](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L17)
+[packages/utils/src/read-file-or-url.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L15)
 
 ___
 
@@ -111,17 +112,17 @@ ___
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L16)
+[packages/utils/src/read-file-or-url.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L14)
 
 ___
 
 ### fetch
 
-• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Type declaration
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -132,11 +133,11 @@ ___
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:18](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L18)
+[packages/utils/src/read-file-or-url.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L16)
 
 ___
 
@@ -152,7 +153,7 @@ RequestInit.headers
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1474
+node_modules/typescript/lib/lib.dom.d.ts:1504
 
 ___
 
@@ -162,7 +163,7 @@ ___
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L19)
+[packages/utils/src/read-file-or-url.ts:17](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L17)
 
 ___
 
@@ -178,7 +179,7 @@ RequestInit.integrity
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1476
+node_modules/typescript/lib/lib.dom.d.ts:1506
 
 ___
 
@@ -194,7 +195,17 @@ RequestInit.keepalive
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1478
+node_modules/typescript/lib/lib.dom.d.ts:1508
+
+___
+
+### logger
+
+• `Optional` **logger**: [`Logger`](../modules/types_src#logger)
+
+#### Defined in
+
+[packages/utils/src/read-file-or-url.ts:18](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L18)
 
 ___
 
@@ -210,7 +221,7 @@ RequestInit.method
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1480
+node_modules/typescript/lib/lib.dom.d.ts:1510
 
 ___
 
@@ -226,7 +237,7 @@ RequestInit.mode
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1482
+node_modules/typescript/lib/lib.dom.d.ts:1512
 
 ___
 
@@ -242,7 +253,7 @@ RequestInit.redirect
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1484
+node_modules/typescript/lib/lib.dom.d.ts:1514
 
 ___
 
@@ -258,7 +269,7 @@ RequestInit.referrer
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1486
+node_modules/typescript/lib/lib.dom.d.ts:1516
 
 ___
 
@@ -274,7 +285,7 @@ RequestInit.referrerPolicy
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1488
+node_modules/typescript/lib/lib.dom.d.ts:1518
 
 ___
 
@@ -290,7 +301,7 @@ RequestInit.signal
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1490
+node_modules/typescript/lib/lib.dom.d.ts:1520
 
 ___
 
@@ -306,4 +317,4 @@ RequestInit.window
 
 #### Defined in
 
-node_modules/typescript/lib/lib.dom.d.ts:1492
+node_modules/typescript/lib/lib.dom.d.ts:1522

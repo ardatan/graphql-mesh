@@ -21,7 +21,7 @@ title: 'FsStoreStorageAdapterOptions'
 
 #### Defined in
 
-[packages/store/src/index.ts:39](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L39)
+[packages/store/src/index.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L38)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:40](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L40)
+[packages/store/src/index.ts:39](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L39)

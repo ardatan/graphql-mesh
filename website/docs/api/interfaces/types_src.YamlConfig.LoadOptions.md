@@ -21,7 +21,7 @@ title: 'LoadOptions'
 
 #### Defined in
 
-[packages/types/src/config.ts:319](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L319)
+[packages/types/src/config.ts:347](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L347)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:320](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L320)
+[packages/types/src/config.ts:348](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L348)

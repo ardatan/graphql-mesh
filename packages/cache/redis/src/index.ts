@@ -8,7 +8,7 @@ function interpolateStrWithEnv(str: string): string {
 }
 
 export default class RedisCache<V = string> implements KeyValueCache<V> {
-  private client: Redis.Redis;
+  private client: Redis;
 
   constructor(options: YamlConfig.Transform['redis'] & { pubsub: MeshPubSub }) {
     if (options.url) {

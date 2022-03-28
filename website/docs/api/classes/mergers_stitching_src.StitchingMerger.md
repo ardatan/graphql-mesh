@@ -58,7 +58,7 @@ title: 'StitchingMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`context`): `Promise`<`GraphQLSchema`\>
+▸ **getUnifiedSchema**(`context`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -68,7 +68,7 @@ title: 'StitchingMerger'
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 #### Implementation of
 
@@ -76,4 +76,4 @@ title: 'StitchingMerger'
 
 #### Defined in
 
-[packages/mergers/stitching/src/index.ts:94](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/stitching/src/index.ts#L94)
+[packages/mergers/stitching/src/index.ts:88](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/stitching/src/index.ts#L88)

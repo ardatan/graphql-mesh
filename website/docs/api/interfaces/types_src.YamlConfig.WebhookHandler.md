@@ -25,7 +25,7 @@ HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PA
 
 #### Defined in
 
-[packages/types/src/config.ts:133](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L133)
+[packages/types/src/config.ts:143](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L143)
 
 ___
 
@@ -37,7 +37,7 @@ Path that remote API will ping
 
 #### Defined in
 
-[packages/types/src/config.ts:129](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L129)
+[packages/types/src/config.ts:139](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L139)
 
 ___
 
@@ -49,7 +49,7 @@ Part of the object you want to pass (e.g. `data.messages`)
 
 #### Defined in
 
-[packages/types/src/config.ts:141](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L141)
+[packages/types/src/config.ts:151](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L151)
 
 ___
 
@@ -61,4 +61,4 @@ Name of the topic you want to pass incoming payload
 
 #### Defined in
 
-[packages/types/src/config.ts:137](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L137)
+[packages/types/src/config.ts:147](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L147)

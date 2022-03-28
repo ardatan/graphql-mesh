@@ -28,6 +28,7 @@ title: 'JSONSchemaLoaderOptions'
 - [fetch](loaders_json_schema_src.JSONSchemaLoaderOptions#fetch)
 - [generateInterfaceFromSharedFields](loaders_json_schema_src.JSONSchemaLoaderOptions#generateinterfacefromsharedfields)
 - [ignore](loaders_json_schema_src.JSONSchemaLoaderOptions#ignore)
+- [ignoreErrorResponses](loaders_json_schema_src.JSONSchemaLoaderOptions#ignoreerrorresponses)
 - [logger](loaders_json_schema_src.JSONSchemaLoaderOptions#logger)
 - [noLocation](loaders_json_schema_src.JSONSchemaLoaderOptions#nolocation)
 - [operationHeaders](loaders_json_schema_src.JSONSchemaLoaderOptions#operationheaders)
@@ -109,7 +110,7 @@ ___
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:13](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L13)
+[packages/loaders/json-schema/src/types.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L7)
 
 ___
 
@@ -151,7 +152,7 @@ ___
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:17](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L17)
+[packages/loaders/json-schema/src/types.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L11)
 
 ___
 
@@ -171,11 +172,11 @@ ___
 
 ### fetch
 
-• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Type declaration
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -186,11 +187,11 @@ ___
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L20)
+[packages/loaders/json-schema/src/types.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L14)
 
 ___
 
@@ -200,7 +201,7 @@ ___
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L21)
+[packages/loaders/json-schema/src/types.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L15)
 
 ___
 
@@ -218,13 +219,23 @@ node_modules/@graphql-tools/utils/loaders.d.ts:11
 
 ___
 
+### ignoreErrorResponses
+
+• `Optional` **ignoreErrorResponses**: `boolean`
+
+#### Defined in
+
+[packages/loaders/json-schema/src/types.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L16)
+
+___
+
 ### logger
 
 • `Optional` **logger**: [`Logger`](../modules/types_src#logger)
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:18](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L18)
+[packages/loaders/json-schema/src/types.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L12)
 
 ___
 
@@ -244,11 +255,11 @@ ___
 
 ### operationHeaders
 
-• `Optional` **operationHeaders**: `Record`<`string`, `string`\>
+• `Optional` **operationHeaders**: `Record`\<`string`, `string`>
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L14)
+[packages/loaders/json-schema/src/types.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L8)
 
 ___
 
@@ -258,7 +269,7 @@ ___
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L16)
+[packages/loaders/json-schema/src/types.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L10)
 
 ___
 
@@ -268,14 +279,14 @@ ___
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L19)
+[packages/loaders/json-schema/src/types.ts:13](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L13)
 
 ___
 
 ### schemaHeaders
 
-• `Optional` **schemaHeaders**: `Record`<`string`, `string`\>
+• `Optional` **schemaHeaders**: `Record`\<`string`, `string`>
 
 #### Defined in
 
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L15)
+[packages/loaders/json-schema/src/types.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/types.ts#L9)

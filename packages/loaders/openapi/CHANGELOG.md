@@ -1,5 +1,45 @@
 # @omnigraph/openapi
 
+## 0.4.0
+
+### Minor Changes
+
+- f30dba61e: feat(openapi): add fallbackFormat
+
+### Patch Changes
+
+- Updated dependencies [f30dba61e]
+  - @graphql-mesh/types@0.69.0
+  - @omnigraph/json-schema@0.17.17
+  - @graphql-mesh/utils@0.32.2
+  - json-machete@0.7.4
+
+## 0.3.28
+
+### Patch Changes
+
+- Updated dependencies [c53203723]
+  - json-machete@0.7.3
+  - @omnigraph/json-schema@0.17.16
+
+## 0.3.27
+
+### Patch Changes
+
+- e67f6a621: fix(openapi): handle argTypeMap correctly
+- Updated dependencies [c6f0314ac]
+  - json-machete@0.7.2
+  - @omnigraph/json-schema@0.17.15
+
+## 0.3.26
+
+### Patch Changes
+
+- 3448c3177: fix(openapi): sanitize dynamic argument names
+  - @omnigraph/json-schema@0.17.14
+  - @graphql-mesh/utils@0.32.1
+  - json-machete@0.7.1
+
 ## 0.3.25
 
 ### Patch Changes

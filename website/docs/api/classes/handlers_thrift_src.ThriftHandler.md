@@ -30,21 +30,21 @@ title: 'ThriftHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`ThriftHandler`](/docs/api/interfaces/types_src.YamlConfig.ThriftHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`ThriftHandler`](/docs/api/interfaces/types_src.YamlConfig.ThriftHandler)> |
 
 #### Defined in
 
-[packages/handlers/thrift/src/index.ts:54](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/thrift/src/index.ts#L54)
+[packages/handlers/thrift/src/index.ts:53](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/thrift/src/index.ts#L53)
 
 ## Methods
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<`Object`\>
+▸ **getMeshSource**(): `Promise`\<\{ `contextVariables`: `string`[] ; `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`\<\{ `contextVariables`: `string`[] ; `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 
@@ -52,4 +52,4 @@ title: 'ThriftHandler'
 
 #### Defined in
 
-[packages/handlers/thrift/src/index.ts:60](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/thrift/src/index.ts#L60)
+[packages/handlers/thrift/src/index.ts:59](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/thrift/src/index.ts#L59)

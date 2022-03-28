@@ -30,7 +30,7 @@ title: 'TuqlHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`TuqlHandler`](/docs/api/interfaces/types_src.YamlConfig.TuqlHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`TuqlHandler`](/docs/api/interfaces/types_src.YamlConfig.TuqlHandler)> |
 
 #### Defined in
 
@@ -40,11 +40,11 @@ title: 'TuqlHandler'
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Implementation of
 

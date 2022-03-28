@@ -43,7 +43,7 @@ title: 'DefaultLogger'
 
 #### Defined in
 
-[packages/utils/src/logger.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L21)
+[packages/utils/src/logger.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L20)
 
 ## Properties
 
@@ -77,7 +77,7 @@ Logger.child
 
 #### Defined in
 
-[packages/utils/src/logger.ts:46](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L46)
+[packages/utils/src/logger.ts:45](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L45)
 
 ___
 
@@ -101,7 +101,7 @@ Logger.debug
 
 #### Defined in
 
-[packages/utils/src/logger.ts:39](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L39)
+[packages/utils/src/logger.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L38)
 
 ___
 
@@ -125,7 +125,7 @@ Logger.error
 
 #### Defined in
 
-[packages/utils/src/logger.ts:35](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L35)
+[packages/utils/src/logger.ts:34](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L34)
 
 ___
 
@@ -149,7 +149,7 @@ Logger.info
 
 #### Defined in
 
-[packages/utils/src/logger.ts:31](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L31)
+[packages/utils/src/logger.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L30)
 
 ___
 
@@ -173,7 +173,7 @@ Logger.log
 
 #### Defined in
 
-[packages/utils/src/logger.ts:22](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L22)
+[packages/utils/src/logger.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L21)
 
 ___
 
@@ -197,4 +197,4 @@ Logger.warn
 
 #### Defined in
 
-[packages/utils/src/logger.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L27)
+[packages/utils/src/logger.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L26)

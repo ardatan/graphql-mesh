@@ -6,6 +6,10 @@ title: 'MeshPubSub'
 
 [types/src](../modules/types_src).MeshPubSub
 
+## Implemented by
+
+- [`PubSub`](/docs/api/classes/utils_src.PubSub)
+
 ## Table of contents
 
 ### Methods
@@ -19,7 +23,7 @@ title: 'MeshPubSub'
 
 ### asyncIterator
 
-▸ **asyncIterator**<`THook`\>(`triggers`): `AsyncIterator`<[`AllHooks`](../modules/types_src#allhooks)[`THook`], `any`, `undefined`\>
+▸ **asyncIterator**\<`THook`>(`triggers`): `AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 #### Type parameters
 
@@ -35,17 +39,17 @@ title: 'MeshPubSub'
 
 #### Returns
 
-`AsyncIterator`<[`AllHooks`](../modules/types_src#allhooks)[`THook`], `any`, `undefined`\>
+`AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 #### Defined in
 
-[packages/types/src/index.ts:69](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L69)
+[packages/types/src/index.ts:66](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L66)
 
 ___
 
 ### publish
 
-▸ **publish**<`THook`\>(`triggerName`, `payload`): `Promise`<`void`\>
+▸ **publish**\<`THook`>(`triggerName`, `payload`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -62,17 +66,17 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
-[packages/types/src/index.ts:62](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L62)
+[packages/types/src/index.ts:59](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L59)
 
 ___
 
 ### subscribe
 
-▸ **subscribe**<`THook`\>(`triggerName`, `onMessage`, `options?`): `Promise`<`number`\>
+▸ **subscribe**\<`THook`>(`triggerName`, `onMessage`, `options?`): `Promise`\<`number`>
 
 #### Type parameters
 
@@ -90,11 +94,11 @@ ___
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`>
 
 #### Defined in
 
-[packages/types/src/index.ts:63](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L63)
+[packages/types/src/index.ts:60](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L60)
 
 ___
 
@@ -114,4 +118,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/index.ts:68](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L68)
+[packages/types/src/index.ts:65](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L65)

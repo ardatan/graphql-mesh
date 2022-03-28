@@ -19,11 +19,11 @@ title: 'CacheEffectingOperationConfig'
 
 • `Optional` **matchKey**: `string`
 
-Cache key to invalidate on sucessful resolver (no error), see `cacheKey` for list of available options in this field.
+Cache key to invalidate on successful resolver (no error), see `cacheKey` for list of available options in this field.
 
 #### Defined in
 
-[packages/types/src/config.ts:1049](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1049)
+[packages/types/src/config.ts:1144](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1144)
 
 ___
 
@@ -35,4 +35,4 @@ Path to the operation that could effect it. In a form: Mutation.something. Note 
 
 #### Defined in
 
-[packages/types/src/config.ts:1045](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1045)
+[packages/types/src/config.ts:1140](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1140)

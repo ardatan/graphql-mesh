@@ -22,10 +22,10 @@ Those commands won't be available in programmatic usage.
 - [hostname](types_src.YamlConfig.ServeConfig#hostname)
 - [maxRequestBodySize](types_src.YamlConfig.ServeConfig#maxrequestbodysize)
 - [playground](types_src.YamlConfig.ServeConfig#playground)
+- [playgroundTitle](types_src.YamlConfig.ServeConfig#playgroundtitle)
 - [port](types_src.YamlConfig.ServeConfig#port)
 - [sslCredentials](types_src.YamlConfig.ServeConfig#sslcredentials)
 - [staticFiles](types_src.YamlConfig.ServeConfig#staticfiles)
-- [upload](types_src.YamlConfig.ServeConfig#upload)
 
 ## Properties
 
@@ -38,7 +38,7 @@ This feature can be disable by passing `false` (Any of: String, Boolean)
 
 #### Defined in
 
-[packages/types/src/config.ts:106](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L106)
+[packages/types/src/config.ts:112](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L112)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:79](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L79)
+[packages/types/src/config.ts:86](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L86)
 
 ___
 
@@ -61,7 +61,7 @@ With a custom server handler, you won't be able to use the features of GraphQL M
 
 #### Defined in
 
-[packages/types/src/config.ts:111](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L111)
+[packages/types/src/config.ts:117](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L117)
 
 ___
 
@@ -73,7 +73,7 @@ Path to GraphQL Endpoint (default: /graphql)
 
 #### Defined in
 
-[packages/types/src/config.ts:101](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L101)
+[packages/types/src/config.ts:107](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L107)
 
 ___
 
@@ -85,7 +85,7 @@ Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Bo
 
 #### Defined in
 
-[packages/types/src/config.ts:70](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L70)
+[packages/types/src/config.ts:77](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L77)
 
 ___
 
@@ -97,7 +97,7 @@ Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Ser
 
 #### Defined in
 
-[packages/types/src/config.ts:83](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L83)
+[packages/types/src/config.ts:90](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L90)
 
 ___
 
@@ -109,7 +109,7 @@ The binding hostname (default: `localhost`)
 
 #### Defined in
 
-[packages/types/src/config.ts:78](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L78)
+[packages/types/src/config.ts:85](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L85)
 
 ___
 
@@ -121,7 +121,7 @@ Controls the maximum request body size. If this is a number, then the value spec
 
 #### Defined in
 
-[packages/types/src/config.ts:95](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L95)
+[packages/types/src/config.ts:102](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L102)
 
 ___
 
@@ -133,7 +133,19 @@ Show GraphiQL Playground
 
 #### Defined in
 
-[packages/types/src/config.ts:91](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L91)
+[packages/types/src/config.ts:98](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L98)
+
+___
+
+### playgroundTitle
+
+• `Optional` **playgroundTitle**: `string`
+
+Title of GraphiQL Playground
+
+#### Defined in
+
+[packages/types/src/config.ts:121](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L121)
 
 ___
 
@@ -145,7 +157,7 @@ TCP Port to listen (default: `3000`) (Any of: Int, String)
 
 #### Defined in
 
-[packages/types/src/config.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L74)
+[packages/types/src/config.ts:81](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L81)
 
 ___
 
@@ -155,7 +167,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:97](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L97)
+[packages/types/src/config.ts:103](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L103)
 
 ___
 
@@ -167,14 +179,4 @@ Path to your static files you want to be served with GraphQL Mesh HTTP Server
 
 #### Defined in
 
-[packages/types/src/config.ts:87](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L87)
-
-___
-
-### upload
-
-• `Optional` **upload**: [`UploadOptions`](types_src.YamlConfig.UploadOptions)
-
-#### Defined in
-
-[packages/types/src/config.ts:96](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L96)
+[packages/types/src/config.ts:94](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L94)

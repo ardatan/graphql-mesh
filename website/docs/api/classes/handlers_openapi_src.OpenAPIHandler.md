@@ -30,21 +30,21 @@ title: 'OpenAPIHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`OpenapiHandler`](/docs/api/interfaces/types_src.YamlConfig.OpenapiHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`OpenapiHandler`](/docs/api/interfaces/types_src.YamlConfig.OpenapiHandler)> |
 
 #### Defined in
 
-[packages/handlers/openapi/src/index.ts:44](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L44)
+[packages/handlers/openapi/src/index.ts:43](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L43)
 
 ## Methods
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Implementation of
 
@@ -52,4 +52,4 @@ title: 'OpenAPIHandler'
 
 #### Defined in
 
-[packages/handlers/openapi/src/index.ts:110](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L110)
+[packages/handlers/openapi/src/index.ts:113](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L113)

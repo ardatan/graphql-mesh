@@ -1,5 +1,29 @@
 # json-machete
 
+## 0.7.4
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.32.2
+
+## 0.7.3
+
+### Patch Changes
+
+- c53203723: fix(json-machete): revert old behavior
+
+## 0.7.2
+
+### Patch Changes
+
+- c6f0314ac: fix(json-machete): use util back
+
+## 0.7.1
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.32.1
+
 ## 0.7.0
 
 ### Minor Changes

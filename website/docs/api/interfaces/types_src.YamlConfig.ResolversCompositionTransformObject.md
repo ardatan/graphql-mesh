@@ -24,7 +24,7 @@ Example: ./src/auth.js#authComposer
 
 #### Defined in
 
-[packages/types/src/config.ts:1355](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1355)
+[packages/types/src/config.ts:1553](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1553)
 
 ___
 
@@ -37,4 +37,4 @@ Example: Query.users
 
 #### Defined in
 
-[packages/types/src/config.ts:1350](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1350)
+[packages/types/src/config.ts:1548](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1548)

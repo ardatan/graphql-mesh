@@ -2,7 +2,7 @@
 title: 'FileCache'
 ---
 
-# Class: FileCache<V\>
+# Class: FileCache\<V>
 
 [cache/file/src](../modules/cache_file_src).FileCache
 
@@ -14,7 +14,7 @@ title: 'FileCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -38,7 +38,7 @@ title: 'FileCache'
 
 ### constructor
 
-• **new FileCache**<`V`\>(`__namedParameters`)
+• **new FileCache**\<`V`>(`__namedParameters`)
 
 #### Type parameters
 
@@ -56,7 +56,7 @@ title: 'FileCache'
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L12)
+[packages/cache/file/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L11)
 
 ## Properties
 
@@ -66,33 +66,33 @@ title: 'FileCache'
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L10)
+[packages/cache/file/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L9)
 
 ___
 
 ### json$
 
-• **json$**: `Promise`<`Record`<`string`, `V`\>\>
+• **json$**: `Promise`\<`Record`\<`string`, `V`>>
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L9)
+[packages/cache/file/src/index.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L8)
 
 ___
 
 ### writeDataLoader
 
-• **writeDataLoader**: `DataLoader`<`any`, `any`, `any`\>
+• **writeDataLoader**: `DataLoader`\<`any`, `any`, `any`>
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L11)
+[packages/cache/file/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L10)
 
 ## Methods
 
 ### delete
 
-▸ **delete**(`name`): `Promise`<`void`\>
+▸ **delete**(`name`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -102,7 +102,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -110,13 +110,13 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L33)
+[packages/cache/file/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L32)
 
 ___
 
 ### get
 
-▸ **get**(`name`): `Promise`<`V`\>
+▸ **get**(`name`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -126,7 +126,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -134,13 +134,13 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:22](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L22)
+[packages/cache/file/src/index.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L21)
 
 ___
 
 ### set
 
-▸ **set**(`name`, `value`): `Promise`<`void`\>
+▸ **set**(`name`, `value`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -151,7 +151,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -159,4 +159,4 @@ ___
 
 #### Defined in
 
-[packages/cache/file/src/index.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L27)
+[packages/cache/file/src/index.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L26)

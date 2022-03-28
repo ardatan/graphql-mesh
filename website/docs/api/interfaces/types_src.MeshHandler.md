@@ -2,7 +2,7 @@
 title: 'MeshHandler'
 ---
 
-# Interface: MeshHandler<TContext\>
+# Interface: MeshHandler\<TContext>
 
 [types/src](../modules/types_src).MeshHandler
 
@@ -21,8 +21,10 @@ title: 'MeshHandler'
 - [`MySQLHandler`](/docs/api/classes/handlers_mysql_src.MySQLHandler)
 - [`Neo4JHandler`](/docs/api/classes/handlers_neo4j_src.Neo4JHandler)
 - [`ODataHandler`](/docs/api/classes/handlers_odata_src.ODataHandler)
+- [`OpenAPIHandler`](/docs/api/classes/handlers_new_openapi_src.OpenAPIHandler)
 - [`OpenAPIHandler`](/docs/api/classes/handlers_openapi_src.OpenAPIHandler)
 - [`PostGraphileHandler`](/docs/api/classes/handlers_postgraphile_src.PostGraphileHandler)
+- [`RAMLHandler`](/docs/api/classes/handlers_raml_src.RAMLHandler)
 - [`SoapHandler`](/docs/api/classes/handlers_soap_src.SoapHandler)
 - [`ThriftHandler`](/docs/api/classes/handlers_thrift_src.ThriftHandler)
 - [`TuqlHandler`](/docs/api/classes/handlers_tuql_src.TuqlHandler)
@@ -37,11 +39,11 @@ title: 'MeshHandler'
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`TContext`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`TContext`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`TContext`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`TContext`, `any`>>
 
 #### Defined in
 

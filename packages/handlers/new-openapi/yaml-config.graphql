@@ -7,11 +7,19 @@ extend type Handler {
 
 type NewOpenapiHandler {
   oasFilePath: String!
+  fallbackFormat: FallbackFormat
   baseUrl: String
   schemaHeaders: JSON
   operationHeaders: JSON
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [OASSelectQueryOrMutationFieldConfig]
+}
+
+enum FallbackFormat {
+  json
+  yaml
+  js
+  ts
 }
 
 enum QueryOrMutation {

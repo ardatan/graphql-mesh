@@ -30,7 +30,7 @@ Handler for SOAP
 
 #### Defined in
 
-[packages/types/src/config.ts:822](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L822)
+[packages/types/src/config.ts:908](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L908)
 
 ___
 
@@ -49,7 +49,7 @@ default: false
 
 #### Defined in
 
-[packages/types/src/config.ts:845](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L845)
+[packages/types/src/config.ts:931](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L931)
 
 ___
 
@@ -68,7 +68,7 @@ default: false
 
 #### Defined in
 
-[packages/types/src/config.ts:856](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L856)
+[packages/types/src/config.ts:942](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L942)
 
 ___
 
@@ -84,7 +84,7 @@ JSON object representing the Headers to add to the runtime of the API calls only
 
 #### Defined in
 
-[packages/types/src/config.ts:832](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L832)
+[packages/types/src/config.ts:918](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L918)
 
 ___
 
@@ -97,7 +97,7 @@ You can also provide `.js` or `.ts` file path that exports schemaHeaders as an o
 
 #### Defined in
 
-[packages/types/src/config.ts:828](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L828)
+[packages/types/src/config.ts:914](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L914)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:823](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L823)
+[packages/types/src/config.ts:909](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L909)
 
 ___
 
@@ -119,7 +119,7 @@ Automatically put operations starts with `query` or `get` into the Query type
 
 #### Defined in
 
-[packages/types/src/config.ts:864](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L864)
+[packages/types/src/config.ts:950](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L950)
 
 ___
 
@@ -131,7 +131,7 @@ Allows to explicitly override the default operation (Query or Mutation) for any 
 
 #### Defined in
 
-[packages/types/src/config.ts:860](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L860)
+[packages/types/src/config.ts:946](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L946)
 
 ___
 
@@ -143,4 +143,4 @@ A url to your WSDL
 
 #### Defined in
 
-[packages/types/src/config.ts:821](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L821)
+[packages/types/src/config.ts:907](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L907)

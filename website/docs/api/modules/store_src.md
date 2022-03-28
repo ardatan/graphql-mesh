@@ -37,7 +37,7 @@ sidebar_label: "store"
 
 ### ProxyOptions
 
-Ƭ **ProxyOptions**<`TData`\>: `Object`
+Ƭ **ProxyOptions**\<`TData`>: `Object`
 
 #### Type parameters
 
@@ -49,12 +49,12 @@ sidebar_label: "store"
 
 | Name | Type |
 | :------ | :------ |
-| `codify` | (`value`: `TData`, `identifier`: `string`) => `string` \| `Promise`<`string`\> |
-| `validate` | (`oldValue`: `TData`, `newValue`: `TData`, `identifier`: `string`) => `void` \| `Promise`<`void`\> |
+| `codify` | (`value`: `TData`, `identifier`: `string`) => `string` \| `Promise`\<`string`> |
+| `validate` | (`oldValue`: `TData`, `newValue`: `TData`, `identifier`: `string`) => `void` \| `Promise`\<`void`> |
 
 #### Defined in
 
-[packages/store/src/index.ts:83](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L83)
+[packages/store/src/index.ts:81](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L81)
 
 ___
 
@@ -71,13 +71,13 @@ ___
 
 #### Defined in
 
-[packages/store/src/index.ts:88](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L88)
+[packages/store/src/index.ts:86](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L86)
 
 ___
 
 ### StoreProxy
 
-Ƭ **StoreProxy**<`TData`\>: `Object`
+Ƭ **StoreProxy**\<`TData`>: `Object`
 
 #### Type parameters
 
@@ -89,20 +89,20 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `delete` | () => `Promise`<`void`\> |
-| `get` | () => `Promise`<`TData`\> |
-| `getWithSet` | (`setterFn`: () => `TData` \| `Promise`<`TData`\>) => `Promise`<`TData`\> |
-| `set` | (`value`: `TData`) => `Promise`<`void`\> |
+| `delete` | () => `Promise`\<`void`> |
+| `get` | () => `Promise`\<`TData`> |
+| `getWithSet` | (`setterFn`: () => `TData` \| `Promise`\<`TData`>) => `Promise`\<`TData`> |
+| `set` | (`value`: `TData`) => `Promise`\<`void`> |
 
 #### Defined in
 
-[packages/store/src/index.ts:76](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L76)
+[packages/store/src/index.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L74)
 
 ___
 
 ### StoreStorageAdapter
 
-Ƭ **StoreStorageAdapter**<`TData`, `TKey`\>: `Object`
+Ƭ **StoreStorageAdapter**\<`TData`, `TKey`>: `Object`
 
 #### Type parameters
 
@@ -115,20 +115,20 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `delete` | (`key`: `TKey`) => `Promise`<`void`\> |
-| `read` | (`key`: `TKey`, `options`: [`ProxyOptions`](store_src#proxyoptions)<`TData`\>) => `Promise`<`TData`\> |
-| `write` | (`key`: `TKey`, `data`: `TData`, `options`: [`ProxyOptions`](store_src#proxyoptions)<`TData`\>) => `Promise`<`TData`\> |
+| `delete` | (`key`: `TKey`) => `Promise`\<`void`> |
+| `read` | (`key`: `TKey`, `options`: [`ProxyOptions`](store_src#proxyoptions)\<`TData`>) => `Promise`\<`TData`> |
+| `write` | (`key`: `TKey`, `data`: `TData`, `options`: [`ProxyOptions`](store_src#proxyoptions)\<`TData`>) => `Promise`\<`TData`> |
 
 #### Defined in
 
-[packages/store/src/index.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L12)
+[packages/store/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L11)
 
 ## Variables
 
 ### PredefinedProxyOptions
 
-• **PredefinedProxyOptions**: `Record`<[`PredefinedProxyOptionsName`](/docs/api/enums/store_src.PredefinedProxyOptionsName), [`ProxyOptions`](store_src#proxyoptions)<`any`\>\>
+• `Const` **PredefinedProxyOptions**: `Record`\<[`PredefinedProxyOptionsName`](/docs/api/enums/store_src.PredefinedProxyOptionsName), [`ProxyOptions`](store_src#proxyoptions)\<`any`>>
 
 #### Defined in
 
-[packages/store/src/index.ts:101](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L101)
+[packages/store/src/index.ts:99](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L99)

@@ -1,5 +1,29 @@
 # @graphql-mesh/cache-redis
 
+## 0.8.0
+
+### Minor Changes
+
+- b8cebb0c6: Bump redis to v5
+
+## 0.7.27
+
+### Patch Changes
+
+- Updated dependencies [f30dba61e]
+  - @graphql-mesh/types@0.69.0
+  - @graphql-mesh/cache-inmemory-lru@0.6.6
+  - @graphql-mesh/utils@0.32.2
+
+## 0.7.26
+
+### Patch Changes
+
+- Updated dependencies [be61de529]
+  - @graphql-mesh/types@0.68.3
+  - @graphql-mesh/cache-inmemory-lru@0.6.5
+  - @graphql-mesh/utils@0.32.1
+
 ## 0.7.25
 
 ### Patch Changes

@@ -31,6 +31,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
   async getDereferencedBundle() {
     return this.bundleStoreProxy.getWithSet(() => {
+      this.logger?.debug(() => 'Creating the bundle');
       return createBundle(this.name, {
         ...this.config,
         cwd: this.baseDir,
@@ -41,12 +42,15 @@ export default class OpenAPIHandler implements MeshHandler {
           type: type.toLowerCase() as any,
           fieldName,
         })),
+        fallbackFormat: this.config.fallbackFormat,
       });
     });
   }
 
   async getMeshSource(): Promise<MeshSource> {
+    this.logger?.debug('Getting the bundle');
     const bundle = await this.getDereferencedBundle();
+    this.logger?.debug('Generating GraphQL Schema from bundle');
     const schema = await getGraphQLSchemaFromBundle(bundle, {
       cwd: this.baseDir,
       fetch: this.fetch,

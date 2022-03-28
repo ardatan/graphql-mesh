@@ -29,7 +29,7 @@ Backend cache
 
 #### Defined in
 
-[packages/types/src/config.ts:1519](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1519)
+[packages/types/src/config.ts:1717](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1717)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1520](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1520)
+[packages/types/src/config.ts:1718](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1718)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1521](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1521)
+[packages/types/src/config.ts:1719](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1719)
 
 ___
 
@@ -59,4 +59,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1522](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1522)
+[packages/types/src/config.ts:1720](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1720)

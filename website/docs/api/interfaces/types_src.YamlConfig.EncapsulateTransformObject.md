@@ -23,7 +23,7 @@ Transformer to apply encapsulation to the API source, by creating a field for it
 
 #### Defined in
 
-[packages/types/src/config.ts:1059](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1059)
+[packages/types/src/config.ts:1154](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1154)
 
 ___
 
@@ -35,4 +35,4 @@ Optional, name to use for grouping under the root types. If not specific, the AP
 
 #### Defined in
 
-[packages/types/src/config.ts:1058](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1058)
+[packages/types/src/config.ts:1153](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1153)

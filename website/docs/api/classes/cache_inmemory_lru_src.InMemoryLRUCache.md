@@ -2,7 +2,7 @@
 title: 'InMemoryLRUCache'
 ---
 
-# Class: InMemoryLRUCache<V\>
+# Class: InMemoryLRUCache\<V>
 
 [cache/inmemory-lru/src](../modules/cache_inmemory_lru_src).InMemoryLRUCache
 
@@ -14,7 +14,7 @@ title: 'InMemoryLRUCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -32,7 +32,7 @@ title: 'InMemoryLRUCache'
 
 ### constructor
 
-• **new InMemoryLRUCache**<`V`\>(`__namedParameters?`)
+• **new InMemoryLRUCache**\<`V`>(`options?`)
 
 #### Type parameters
 
@@ -44,18 +44,17 @@ title: 'InMemoryLRUCache'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.max` | `number` |
+| `options?` | [`InMemoryLRUConfig`](/docs/api/interfaces/types_src.YamlConfig.InMemoryLRUConfig) |
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L8)
+[packages/cache/inmemory-lru/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L10)
 
 ## Methods
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`void`\>
+▸ **delete**(`key`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -65,7 +64,7 @@ title: 'InMemoryLRUCache'
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -73,13 +72,13 @@ title: 'InMemoryLRUCache'
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L26)
+[packages/cache/inmemory-lru/src/index.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L38)
 
 ___
 
 ### get
 
-▸ **get**(`key`): `Promise`<`V`\>
+▸ **get**(`key`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -89,7 +88,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -97,13 +96,13 @@ ___
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L10)
+[packages/cache/inmemory-lru/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L20)
 
 ___
 
 ### set
 
-▸ **set**(`key`, `value`, `options?`): `Promise`<`void`\>
+▸ **set**(`key`, `value`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -115,7 +114,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -123,4 +122,4 @@ ___
 
 #### Defined in
 
-[packages/cache/inmemory-lru/src/index.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L19)
+[packages/cache/inmemory-lru/src/index.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/inmemory-lru/src/index.ts#L30)

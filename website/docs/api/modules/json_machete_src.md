@@ -27,6 +27,8 @@ sidebar_label: "json-machete"
 
 - [compareJSONSchemas](json_machete_src#comparejsonschemas)
 - [dereferenceObject](json_machete_src#dereferenceobject)
+- [getAbsolutePath](json_machete_src#getabsolutepath)
+- [getCwd](json_machete_src#getcwd)
 - [healJSONSchema](json_machete_src#healjsonschema)
 - [referenceJSONSchema](json_machete_src#referencejsonschema)
 - [resolvePath](json_machete_src#resolvepath)
@@ -38,7 +40,7 @@ sidebar_label: "json-machete"
 
 Ƭ **JSONSchema**: [`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject) \| `JSONSchemaBoolean`
 
-**`default`** {}
+**`default`** \{}
 
 #### Defined in
 
@@ -48,7 +50,7 @@ node_modules/@json-schema-tools/meta-schema/index.d.ts:119
 
 ### FIRST\_VISITED\_PATH
 
-• **FIRST\_VISITED\_PATH**: typeof [`FIRST_VISITED_PATH`](json_machete_src#first_visited_path)
+• `Const` **FIRST\_VISITED\_PATH**: typeof [`FIRST_VISITED_PATH`](json_machete_src#first_visited_path)
 
 #### Defined in
 
@@ -58,7 +60,7 @@ node_modules/@json-schema-tools/meta-schema/index.d.ts:119
 
 ### compareJSONSchemas
 
-▸ **compareJSONSchemas**(`oldSchema`, `newSchema`): `Promise`<`void`\>
+▸ **compareJSONSchemas**(`oldSchema`, `newSchema`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -69,7 +71,7 @@ node_modules/@json-schema-tools/meta-schema/index.d.ts:119
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
@@ -79,7 +81,7 @@ ___
 
 ### dereferenceObject
 
-▸ **dereferenceObject**<`T`, `TRoot`\>(`obj`, `__namedParameters?`): `Promise`<`T`\>
+▸ **dereferenceObject**\<`T`, `TRoot`>(`obj`, `__namedParameters?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -95,25 +97,66 @@ ___
 | `obj` | `T` |
 | `__namedParameters` | `Object` |
 | `__namedParameters.cwd?` | `string` |
-| `__namedParameters.externalFileCache?` | `Map`<`string`, `any`\> |
-| `__namedParameters.fetch?` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> |
-| `__namedParameters.refMap?` | `Map`<`string`, `any`\> |
+| `__namedParameters.externalFileCache?` | `Map`\<`string`, `any`> |
+| `__namedParameters.fetch?` | (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> |
+| `__namedParameters.headers?` | `Record`\<`string`, `string`> |
+| `__namedParameters.refMap?` | `Map`\<`string`, `any`> |
 | `__namedParameters.root?` | `TRoot` |
-| `__namedParameters.importFn?` | (`moduleId`: `string`) => `Promise`<`any`\> |
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
-[packages/json-machete/src/dereferenceObject.ts:56](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L56)
+[packages/json-machete/src/dereferenceObject.ts:59](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L59)
+
+___
+
+### getAbsolutePath
+
+▸ **getAbsolutePath**(`path`, `cwd`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `path` | `string` |
+| `cwd` | `string` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/json-machete/src/dereferenceObject.ts:41](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L41)
+
+___
+
+### getCwd
+
+▸ **getCwd**(`path`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `path` | `string` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[packages/json-machete/src/dereferenceObject.ts:54](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L54)
 
 ___
 
 ### healJSONSchema
 
-▸ **healJSONSchema**(`schema`): `Promise`<`any`\>
+▸ **healJSONSchema**(`schema`): `Promise`\<`any`>
 
 #### Parameters
 
@@ -123,17 +166,17 @@ ___
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
-[packages/json-machete/src/healJSONSchema.ts:45](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/healJSONSchema.ts#L45)
+[packages/json-machete/src/healJSONSchema.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/healJSONSchema.ts#L73)
 
 ___
 
 ### referenceJSONSchema
 
-▸ **referenceJSONSchema**(`schema`): `Promise`<`any`\>
+▸ **referenceJSONSchema**(`schema`): `Promise`\<`any`>
 
 #### Parameters
 
@@ -143,7 +186,7 @@ ___
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
@@ -153,7 +196,7 @@ ___
 
 ### resolvePath
 
-▸ `Const` **resolvePath**(`path`, `root`): `any`
+▸ **resolvePath**(`path`, `root`): `any`
 
 #### Parameters
 
@@ -168,13 +211,13 @@ ___
 
 #### Defined in
 
-[packages/json-machete/src/dereferenceObject.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L8)
+[packages/json-machete/src/dereferenceObject.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L7)
 
 ___
 
 ### visitJSONSchema
 
-▸ **visitJSONSchema**<`T`\>(`schema`, `visitorFn`, `__namedParameters?`): `Promise`<`any`\>
+▸ **visitJSONSchema**\<`T`>(`schema`, `visitorFn`, `__namedParameters?`): `Promise`\<`any`>
 
 #### Type parameters
 
@@ -187,12 +230,12 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `schema` | [`JSONSchema`](json_machete_src#jsonschema) |
-| `visitorFn` | (`subSchema`: [`JSONSchema`](json_machete_src#jsonschema), `context`: [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)<`T`\>) => `T` \| `Promise`<`T`\> |
-| `__namedParameters` | [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)<`T`\> |
+| `visitorFn` | (`subSchema`: [`JSONSchema`](json_machete_src#jsonschema), `context`: [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)\<`T`>) => `T` \| `Promise`\<`T`> |
+| `__namedParameters` | [`JSONSchemaVisitorContext`](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)\<`T`> |
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 

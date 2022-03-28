@@ -41,13 +41,13 @@ title: 'InMemoryStoreStorageAdapter'
 
 #### Defined in
 
-[packages/store/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L33)
+[packages/store/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L32)
 
 ___
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`void`\>
+▸ **delete**(`key`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -57,7 +57,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -65,13 +65,13 @@ StoreStorageAdapter.delete
 
 #### Defined in
 
-[packages/store/src/index.ts:29](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L29)
+[packages/store/src/index.ts:28](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L28)
 
 ___
 
 ### read
 
-▸ **read**<`TData`\>(`key`, `options`): `Promise`<`TData`\>
+▸ **read**\<`TData`>(`key`, `options`): `Promise`\<`TData`>
 
 #### Type parameters
 
@@ -84,11 +84,11 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `key` | `string` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`any`\> |
+| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)\<`any`> |
 
 #### Returns
 
-`Promise`<`TData`\>
+`Promise`\<`TData`>
 
 #### Implementation of
 
@@ -96,13 +96,13 @@ StoreStorageAdapter.read
 
 #### Defined in
 
-[packages/store/src/index.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L21)
+[packages/store/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L20)
 
 ___
 
 ### write
 
-▸ **write**<`TData`\>(`key`, `data`, `options`): `Promise`<`void`\>
+▸ **write**\<`TData`>(`key`, `data`, `options`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -116,11 +116,11 @@ ___
 | :------ | :------ |
 | `key` | `string` |
 | `data` | `TData` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`any`\> |
+| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)\<`any`> |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -128,4 +128,4 @@ StoreStorageAdapter.write
 
 #### Defined in
 
-[packages/store/src/index.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L25)
+[packages/store/src/index.ts:24](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L24)

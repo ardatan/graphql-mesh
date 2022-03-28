@@ -38,7 +38,7 @@ title: 'FederationMerger'
 
 #### Defined in
 
-[packages/mergers/federation/src/index.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L25)
+[packages/mergers/federation/src/index.ts:24](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L24)
 
 ## Properties
 
@@ -52,13 +52,13 @@ title: 'FederationMerger'
 
 #### Defined in
 
-[packages/mergers/federation/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L20)
+[packages/mergers/federation/src/index.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L19)
 
 ## Methods
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`__namedParameters`): `Promise`<`GraphQLSchema`\>
+▸ **getUnifiedSchema**(`__namedParameters`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -68,7 +68,7 @@ title: 'FederationMerger'
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 #### Implementation of
 
@@ -76,4 +76,4 @@ title: 'FederationMerger'
 
 #### Defined in
 
-[packages/mergers/federation/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L32)
+[packages/mergers/federation/src/index.ts:31](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L31)

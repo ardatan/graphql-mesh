@@ -28,7 +28,7 @@ formatted as `\"\"\" arg1: "value", arg2: "value" \"\"\"`.
 
 #### Defined in
 
-[packages/types/src/config.ts:1451](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1451)
+[packages/types/src/config.ts:1649](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1649)
 
 ___
 
@@ -38,12 +38,12 @@ ___
 
 Advanced use only; This argument specifies a string expression that allows more customization of the input arguments. Rules for evaluation of this argument are as follows:
   - basic object parsing of the input key: `"arg1: $key.arg1, arg2: $key.arg2"`
-  - any expression enclosed by double brackets will be evaluated once for each of the requested keys, and then sent as a list: `"input: { keys: [[$key]] }"`
+  - any expression enclosed by double brackets will be evaluated once for each of the requested keys, and then sent as a list: `"input: \{ keys: [[$key]] }"`
   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
 
 #### Defined in
 
-[packages/types/src/config.ts:1462](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1462)
+[packages/types/src/config.ts:1660](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1660)
 
 ___
 
@@ -55,7 +55,7 @@ Advanced use only; Allows building a custom key just for the argument from the s
 
 #### Defined in
 
-[packages/types/src/config.ts:1455](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1455)
+[packages/types/src/config.ts:1653](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1653)
 
 ___
 
@@ -67,7 +67,7 @@ Specifies which field argument receives the merge key. This may be omitted for f
 
 #### Defined in
 
-[packages/types/src/config.ts:1446](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1446)
+[packages/types/src/config.ts:1644](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1644)
 
 ___
 
@@ -80,7 +80,7 @@ https://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys
 
 #### Defined in
 
-[packages/types/src/config.ts:1442](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1442)
+[packages/types/src/config.ts:1640](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1640)
 
 ___
 
@@ -90,4 +90,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1437](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1437)
+[packages/types/src/config.ts:1635](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1635)
