@@ -29,3 +29,7 @@ aside {
 code {
   margin-top: 15px !important;
 }
+
+article svg {
+  max-width: 100% !important;
+}
