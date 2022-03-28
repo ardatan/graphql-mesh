@@ -2,7 +2,7 @@
 title: 'RedisCache'
 ---
 
-# Class: RedisCache<V\>
+# Class: RedisCache\<V>
 
 [cache/redis/src](../modules/cache_redis_src).RedisCache
 
@@ -14,7 +14,7 @@ title: 'RedisCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -32,7 +32,7 @@ title: 'RedisCache'
 
 ### constructor
 
-• **new RedisCache**<`V`\>(`options`)
+• **new RedisCache**\<`V`>(`options`)
 
 #### Type parameters
 
@@ -54,7 +54,7 @@ title: 'RedisCache'
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`boolean`\>
+▸ **delete**(`key`): `Promise`\<`boolean`>
 
 #### Parameters
 
@@ -64,7 +64,7 @@ title: 'RedisCache'
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`>
 
 #### Implementation of
 
@@ -78,7 +78,7 @@ ___
 
 ### get
 
-▸ **get**(`key`): `Promise`<`V`\>
+▸ **get**(`key`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -88,7 +88,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -102,7 +102,7 @@ ___
 
 ### set
 
-▸ **set**(`key`, `value`, `options?`): `Promise`<`void`\>
+▸ **set**(`key`, `value`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -114,7 +114,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

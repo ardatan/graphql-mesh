@@ -21,7 +21,7 @@ title: 'RAMLSelectQueryOrMutationFieldConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:894](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L894)
+[packages/types/src/config.ts:898](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L898)
 
 ___
 
@@ -33,4 +33,4 @@ Allowed values: query, mutation, Query, Mutation
 
 #### Defined in
 
-[packages/types/src/config.ts:893](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L893)
+[packages/types/src/config.ts:897](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L897)

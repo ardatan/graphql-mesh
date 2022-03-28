@@ -21,7 +21,7 @@ title: 'ReplaceFieldConfig1'
 
 #### Defined in
 
-[packages/types/src/config.ts:1498](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1498)
+[packages/types/src/config.ts:1531](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1531)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1497](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1497)
+[packages/types/src/config.ts:1530](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1530)

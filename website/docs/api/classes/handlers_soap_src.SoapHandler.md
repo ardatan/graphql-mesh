@@ -30,7 +30,7 @@ title: 'SoapHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`SoapHandler`](/docs/api/interfaces/types_src.YamlConfig.SoapHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`SoapHandler`](/docs/api/interfaces/types_src.YamlConfig.SoapHandler)> |
 
 #### Defined in
 
@@ -40,11 +40,11 @@ title: 'SoapHandler'
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<{ `schema`: `GraphQLSchema`  }\>
+▸ **getMeshSource**(): `Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<{ `schema`: `GraphQLSchema`  }\>
+`Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 

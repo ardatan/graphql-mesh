@@ -30,7 +30,7 @@ title: 'ThriftHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`ThriftHandler`](/docs/api/interfaces/types_src.YamlConfig.ThriftHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`ThriftHandler`](/docs/api/interfaces/types_src.YamlConfig.ThriftHandler)> |
 
 #### Defined in
 
@@ -40,11 +40,11 @@ title: 'ThriftHandler'
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<{ `contextVariables`: `string`[] ; `schema`: `GraphQLSchema`  }\>
+▸ **getMeshSource**(): `Promise`\<\{ `contextVariables`: `string`[] ; `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<{ `contextVariables`: `string`[] ; `schema`: `GraphQLSchema`  }\>
+`Promise`\<\{ `contextVariables`: `string`[] ; `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 

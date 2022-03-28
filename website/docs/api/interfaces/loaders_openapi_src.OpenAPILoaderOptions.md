@@ -8,7 +8,7 @@ title: 'OpenAPILoaderOptions'
 
 ## Hierarchy
 
-- `Partial`<[`JSONSchemaLoaderOptions`](loaders_json_schema_src.JSONSchemaLoaderOptions)\>
+- `Partial`\<[`JSONSchemaLoaderOptions`](loaders_json_schema_src.JSONSchemaLoaderOptions)>
 
   ↳ **`OpenAPILoaderOptions`**
 
@@ -25,6 +25,7 @@ title: 'OpenAPILoaderOptions'
 - [cwd](loaders_openapi_src.OpenAPILoaderOptions#cwd)
 - [errorMessage](loaders_openapi_src.OpenAPILoaderOptions#errormessage)
 - [experimentalFragmentVariables](loaders_openapi_src.OpenAPILoaderOptions#experimentalfragmentvariables)
+- [fallbackFormat](loaders_openapi_src.OpenAPILoaderOptions#fallbackformat)
 - [fetch](loaders_openapi_src.OpenAPILoaderOptions#fetch)
 - [generateInterfaceFromSharedFields](loaders_openapi_src.OpenAPILoaderOptions#generateinterfacefromsharedfields)
 - [ignore](loaders_openapi_src.OpenAPILoaderOptions#ignore)
@@ -180,13 +181,23 @@ node_modules/@graphql-tools/utils/Interfaces.d.ts:20
 
 ___
 
+### fallbackFormat
+
+• **fallbackFormat**: ``"json"`` \| ``"yaml"`` \| ``"js"`` \| ``"ts"``
+
+#### Defined in
+
+[packages/loaders/openapi/src/types.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/openapi/src/types.ts#L7)
+
+___
+
 ### fetch
 
-• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Type declaration
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -197,7 +208,7 @@ ___
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Inherited from
 
@@ -291,7 +302,7 @@ ___
 
 ### operationHeaders
 
-• `Optional` **operationHeaders**: `Record`<`string`, `string`\>
+• `Optional` **operationHeaders**: `Record`\<`string`, `string`>
 
 #### Inherited from
 
@@ -333,7 +344,7 @@ ___
 
 ### schemaHeaders
 
-• `Optional` **schemaHeaders**: `Record`<`string`, `string`\>
+• `Optional` **schemaHeaders**: `Record`\<`string`, `string`>
 
 #### Inherited from
 

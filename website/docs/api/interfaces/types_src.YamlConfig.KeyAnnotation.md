@@ -23,4 +23,4 @@ Analogous to the `selectionSet` setting specified in [merged type configuration]
 
 #### Defined in
 
-[packages/types/src/config.ts:1586](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1586)
+[packages/types/src/config.ts:1619](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1619)

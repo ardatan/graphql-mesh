@@ -21,7 +21,7 @@ title: 'InMemoryLRUConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1723](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1723)
+[packages/types/src/config.ts:1727](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1727)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1724](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1724)
+[packages/types/src/config.ts:1728](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1728)

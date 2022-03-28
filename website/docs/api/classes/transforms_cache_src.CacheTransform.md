@@ -34,7 +34,7 @@ title: 'CacheTransform'
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`CacheTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.CacheTransformConfig)[]\> |
+| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`CacheTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.CacheTransformConfig)[]> |
 
 #### Defined in
 

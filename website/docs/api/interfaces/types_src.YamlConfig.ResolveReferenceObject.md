@@ -24,7 +24,7 @@ you need to define which argument should receive the key
 
 #### Defined in
 
-[packages/types/src/config.ts:1198](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1198)
+[packages/types/src/config.ts:1202](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1202)
 
 ___
 
@@ -36,4 +36,4 @@ Name of root field name that resolves the reference
 
 #### Defined in
 
-[packages/types/src/config.ts:1193](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1193)
+[packages/types/src/config.ts:1197](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1197)

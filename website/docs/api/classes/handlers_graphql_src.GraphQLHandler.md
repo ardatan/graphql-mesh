@@ -35,7 +35,7 @@ title: 'GraphQLHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`GraphQLHandlerHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`GraphQLHandlerHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)> |
 
 #### Defined in
 
@@ -45,7 +45,7 @@ title: 'GraphQLHandler'
 
 ### getCodeFirstSource
 
-▸ **getCodeFirstSource**(`__namedParameters`): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getCodeFirstSource**(`__namedParameters`): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Parameters
 
@@ -55,7 +55,7 @@ title: 'GraphQLHandler'
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Defined in
 
@@ -65,7 +65,7 @@ ___
 
 ### getExecutorForHTTPSourceConfig
 
-▸ **getExecutorForHTTPSourceConfig**(`httpSourceConfig`): `Promise`<`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ **getExecutorForHTTPSourceConfig**(`httpSourceConfig`): `Promise`\<`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -75,7 +75,7 @@ ___
 
 #### Returns
 
-`Promise`<`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Promise`\<`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Defined in
 
@@ -85,17 +85,17 @@ ___
 
 ### getFallbackExecutor
 
-▸ **getFallbackExecutor**(`executors`): `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+▸ **getFallbackExecutor**(`executors`): `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `executors` | `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>[] |
+| `executors` | `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
 #### Defined in
 
@@ -105,11 +105,11 @@ ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)<`any`, `any`\>\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)\<`any`, `any`>>
 
 #### Implementation of
 
@@ -123,7 +123,7 @@ ___
 
 ### getNonExecutableSchemaForHTTPSource
 
-▸ **getNonExecutableSchemaForHTTPSource**(`httpSourceConfig`): `Promise`<`GraphQLSchema`\>
+▸ **getNonExecutableSchemaForHTTPSource**(`httpSourceConfig`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -133,7 +133,7 @@ ___
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 #### Defined in
 
@@ -143,17 +143,17 @@ ___
 
 ### getRaceExecutor
 
-▸ **getRaceExecutor**(`executors`): `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+▸ **getRaceExecutor**(`executors`): `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `executors` | `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>[] |
+| `executors` | `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
 #### Defined in
 

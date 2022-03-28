@@ -21,22 +21,22 @@ title: 'CacheTransformConfig'
 • `Optional` **cacheKey**: `string`
 
 Cache key to use to store your resolvers responses.
-The defualt is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
+The default is: \{typeName}-\{fieldName}-\{argsHash}-\{fieldNamesHash}
 
 Available variables:
-- {args.argName} - use resolver argument
-- {typeName} - use name of the type
-- {fieldName} - use name of the field
-- {argsHash} - a hash based on the 'args' object
-- {fieldNamesHash} - a hash based on the field names selected by the client
-- {info} - the GraphQLResolveInfo of the resolver
+- \{args.argName} - use resolver argument
+- \{typeName} - use name of the type
+- \{fieldName} - use name of the field
+- \{argsHash} - a hash based on the 'args' object
+- \{fieldNamesHash} - a hash based on the field names selected by the client
+- \{info} - the GraphQLResolveInfo of the resolver
 
 Available interpolations:
-- {format|date} - returns the current date with a specific format
+- \{format|date} - returns the current date with a specific format
 
 #### Defined in
 
-[packages/types/src/config.ts:1116](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1116)
+[packages/types/src/config.ts:1120](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1120)
 
 ___
 
@@ -48,7 +48,7 @@ The type and field to apply cache to, you can use wild cards as well, for exampl
 
 #### Defined in
 
-[packages/types/src/config.ts:1100](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1100)
+[packages/types/src/config.ts:1104](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1104)
 
 ___
 
@@ -58,4 +58,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1117](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1117)
+[packages/types/src/config.ts:1121](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1121)

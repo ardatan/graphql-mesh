@@ -34,7 +34,7 @@ title: 'PruneTransform'
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`PruneTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.PruneTransformConfig)\> |
+| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`PruneTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.PruneTransformConfig)> |
 
 #### Defined in
 

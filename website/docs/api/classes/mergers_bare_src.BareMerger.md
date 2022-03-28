@@ -58,7 +58,7 @@ title: 'BareMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`__namedParameters`): `Promise`<`GraphQLSchema`\>
+▸ **getUnifiedSchema**(`__namedParameters`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -68,7 +68,7 @@ title: 'BareMerger'
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 #### Implementation of
 

@@ -41,11 +41,11 @@ ___
 
 ### fetch
 
-• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+• `Optional` **fetch**: (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Type declaration
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -56,7 +56,7 @@ ___
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Defined in
 
@@ -76,7 +76,7 @@ ___
 
 ### operationHeaders
 
-• `Optional` **operationHeaders**: `Record`<`string`, `string`\>
+• `Optional` **operationHeaders**: `Record`\<`string`, `string`>
 
 #### Defined in
 

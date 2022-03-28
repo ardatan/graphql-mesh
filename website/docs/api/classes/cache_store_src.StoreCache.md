@@ -2,7 +2,7 @@
 title: 'StoreCache'
 ---
 
-# Class: StoreCache<V\>
+# Class: StoreCache\<V>
 
 [cache/store/src](../modules/cache_store_src).StoreCache
 
@@ -14,7 +14,7 @@ title: 'StoreCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -32,7 +32,7 @@ title: 'StoreCache'
 
 ### constructor
 
-• **new StoreCache**<`V`\>(`__namedParameters`)
+• **new StoreCache**\<`V`>(`__namedParameters`)
 
 #### Type parameters
 
@@ -55,7 +55,7 @@ title: 'StoreCache'
 
 ### delete
 
-▸ **delete**(`name`): `Promise`<`void`\>
+▸ **delete**(`name`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -65,7 +65,7 @@ title: 'StoreCache'
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -79,7 +79,7 @@ ___
 
 ### get
 
-▸ **get**(`name`): `Promise`<`V`\>
+▸ **get**(`name`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -89,7 +89,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -103,7 +103,7 @@ ___
 
 ### set
 
-▸ **set**(`name`, `value`, `options`): `Promise`<`void`\>
+▸ **set**(`name`, `value`, `options`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -115,7 +115,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

@@ -21,7 +21,7 @@ title: 'LiveQueryInvalidation'
 
 #### Defined in
 
-[packages/types/src/config.ts:1748](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1748)
+[packages/types/src/config.ts:1752](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1752)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1749](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1749)
+[packages/types/src/config.ts:1753](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1753)

@@ -77,7 +77,7 @@ ___
 
 ### ResolverDataBasedFactory
 
-Ƭ **ResolverDataBasedFactory**<`T`\>: (`data`: [`ResolverData`](types_src#resolverdata)) => `T`
+Ƭ **ResolverDataBasedFactory**\<`T`>: (`data`: [`ResolverData`](types_src#resolverdata)) => `T`
 
 #### Type parameters
 
@@ -127,20 +127,20 @@ ___
 
 ### applyRequestTransforms
 
-▸ **applyRequestTransforms**(`originalRequest`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+▸ **applyRequestTransforms**(`originalRequest`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalRequest` | `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
-| `transformationContext` | `Record`<`string`, `any`\> |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `originalRequest` | `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
+| `transformationContext` | `Record`\<`string`, `any`> |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+`ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Defined in
 
@@ -150,20 +150,20 @@ ___
 
 ### applyResultTransforms
 
-▸ **applyResultTransforms**(`originalResult`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionResult`<`Record`<`string`, `any`\>\>
+▸ **applyResultTransforms**(`originalResult`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionResult`\<`Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalResult` | `ExecutionResult`<`Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
-| `transformationContext` | `Record`<`string`, `any`\> |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `originalResult` | `ExecutionResult`\<`Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
+| `transformationContext` | `Record`\<`string`, `any`> |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`ExecutionResult`<`Record`<`string`, `any`\>\>
+`ExecutionResult`\<`Record`\<`string`, `any`>>
 
 #### Defined in
 
@@ -180,9 +180,9 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `originalWrappingSchema` | `GraphQLSchema` |
-| `subschemaConfig` | `SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> |
+| `subschemaConfig` | `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> |
 | `transformedSchema` | `GraphQLSchema` |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
@@ -196,7 +196,7 @@ ___
 
 ### createLruCache
 
-▸ **createLruCache**(`max?`, `ttl?`): `Lru`<`any`\>
+▸ **createLruCache**(`max?`, `ttl?`): `Lru`\<`any`>
 
 #### Parameters
 
@@ -207,7 +207,7 @@ ___
 
 #### Returns
 
-`Lru`<`any`\>
+`Lru`\<`any`>
 
 #### Defined in
 
@@ -217,7 +217,7 @@ ___
 
 ### defaultImportFn
 
-▸ **defaultImportFn**(`path`): `Promise`<`any`\>
+▸ **defaultImportFn**(`path`): `Promise`\<`any`>
 
 #### Parameters
 
@@ -227,7 +227,7 @@ ___
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 #### Defined in
 
@@ -297,19 +297,19 @@ ___
 
 ### getCachedFetch
 
-▸ **getCachedFetch**(`cache`): (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+▸ **getCachedFetch**(`cache`): (`input`: `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`any`\> |
+| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`any`> |
 
 #### Returns
 
 `fn`
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -320,7 +320,7 @@ ___
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Defined in
 
@@ -330,7 +330,7 @@ ___
 
 ### getHeadersObject
 
-▸ **getHeadersObject**(`headers`): `Record`<`string`, `string`\>
+▸ **getHeadersObject**(`headers`): `Record`\<`string`, `string`>
 
 #### Parameters
 
@@ -340,7 +340,7 @@ ___
 
 #### Returns
 
-`Record`<`string`, `string`\>
+`Record`\<`string`, `string`>
 
 #### Defined in
 
@@ -350,17 +350,17 @@ ___
 
 ### getInterpolatedHeadersFactory
 
-▸ **getInterpolatedHeadersFactory**(`nonInterpolatedHeaders?`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`Record`<`string`, `string`\>\>
+▸ **getInterpolatedHeadersFactory**(`nonInterpolatedHeaders?`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`Record`\<`string`, `string`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `nonInterpolatedHeaders` | `Record`<`string`, `string`\> |
+| `nonInterpolatedHeaders` | `Record`\<`string`, `string`> |
 
 #### Returns
 
-[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`Record`<`string`, `string`\>\>
+[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`Record`\<`string`, `string`>>
 
 #### Defined in
 
@@ -370,7 +370,7 @@ ___
 
 ### getInterpolatedStringFactory
 
-▸ **getInterpolatedStringFactory**(`nonInterpolatedString`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`string`\>
+▸ **getInterpolatedStringFactory**(`nonInterpolatedString`): [`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`string`>
 
 #### Parameters
 
@@ -380,7 +380,7 @@ ___
 
 #### Returns
 
-[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)<`string`\>
+[`ResolverDataBasedFactory`](utils_src#resolverdatabasedfactory)\<`string`>
 
 #### Defined in
 
@@ -437,7 +437,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[] |
+| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 
 #### Returns
 
@@ -445,8 +445,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `noWrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[] |
-| `wrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[] |
+| `noWrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
+| `wrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 
 #### Defined in
 
@@ -520,7 +520,7 @@ ___
 
 ### jsonFlatStringify
 
-▸ **jsonFlatStringify**<`T`\>(`data`, `replacer?`, `space?`): `string`
+▸ **jsonFlatStringify**\<`T`>(`data`, `replacer?`, `space?`): `string`
 
 #### Type parameters
 
@@ -548,7 +548,7 @@ ___
 
 ### loadFromModuleExportExpression
 
-▸ **loadFromModuleExportExpression**<`T`\>(`expression`, `options`): `Promise`<`T`\>
+▸ **loadFromModuleExportExpression**\<`T`>(`expression`, `options`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -565,7 +565,7 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
@@ -591,13 +591,13 @@ ___
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:71](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L71)
+[packages/utils/src/read-file-or-url.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L73)
 
 ___
 
 ### mkdir
 
-▸ **mkdir**(`path`, `options?`): `Promise`<`void`\>
+▸ **mkdir**(`path`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -608,7 +608,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
@@ -625,7 +625,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `interpolationStrings` | `string`[] |
-| `argTypeMap?` | `Record`<`string`, `string` \| `GraphQLInputType`\> |
+| `argTypeMap?` | `Record`\<`string`, `string` \| `GraphQLInputType`> |
 
 #### Returns
 
@@ -633,7 +633,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `args` | `Record`<`string`, { `type`: `string` \| `GraphQLInputType`  }\> |
+| `args` | `Record`\<`string`, \{ `type`: `string` \| `GraphQLInputType`  }> |
 | `contextVariables` | `string`[] |
 
 #### Defined in
@@ -664,7 +664,7 @@ ___
 
 ### pathExists
 
-▸ **pathExists**(`path`): `Promise`<`boolean`\>
+▸ **pathExists**(`path`): `Promise`\<`boolean`>
 
 #### Parameters
 
@@ -674,7 +674,7 @@ ___
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`>
 
 #### Defined in
 
@@ -704,7 +704,7 @@ ___
 
 ### readFile
 
-▸ **readFile**<`T`\>(`filePath`, `config?`): `Promise`<`T`\>
+▸ **readFile**\<`T`>(`filePath`, `config?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -721,17 +721,17 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:81](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L81)
+[packages/utils/src/read-file-or-url.ts:83](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L83)
 
 ___
 
 ### readFileOrUrl
 
-▸ **readFileOrUrl**<`T`\>(`filePathOrUrl`, `config?`): `Promise`<`T`\>
+▸ **readFileOrUrl**\<`T`>(`filePathOrUrl`, `config?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -748,7 +748,7 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
@@ -758,7 +758,7 @@ ___
 
 ### readUrl
 
-▸ **readUrl**<`T`\>(`path`, `config?`): `Promise`<`T`\>
+▸ **readUrl**\<`T`>(`path`, `config?`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -775,17 +775,17 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
-[packages/utils/src/read-file-or-url.ts:112](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L112)
+[packages/utils/src/read-file-or-url.ts:114](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L114)
 
 ___
 
 ### resolveAdditionalResolvers
 
-▸ **resolveAdditionalResolvers**(`baseDir`, `additionalResolvers`, `importFn`, `pubsub`): `Promise`<`IResolvers`[]\>
+▸ **resolveAdditionalResolvers**(`baseDir`, `additionalResolvers`, `importFn`, `pubsub`): `Promise`\<`IResolvers`[]>
 
 #### Parameters
 
@@ -798,7 +798,7 @@ ___
 
 #### Returns
 
-`Promise`<`IResolvers`[]\>
+`Promise`\<`IResolvers`[]>
 
 #### Defined in
 
@@ -808,7 +808,7 @@ ___
 
 ### rmdirs
 
-▸ **rmdirs**(`dir`): `Promise`<`void`\>
+▸ **rmdirs**(`dir`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -818,7 +818,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
@@ -848,7 +848,7 @@ ___
 
 ### withCancel
 
-▸ **withCancel**<`T`\>(`asyncIterable`, `onCancel`): `AsyncIterable`<`T` \| `undefined`\>
+▸ **withCancel**\<`T`>(`asyncIterable`, `onCancel`): `AsyncIterable`\<`T` \| `undefined`>
 
 #### Type parameters
 
@@ -860,12 +860,12 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `asyncIterable` | `AsyncIterable`<`T`\> |
+| `asyncIterable` | `AsyncIterable`\<`T`> |
 | `onCancel` | () => `void` |
 
 #### Returns
 
-`AsyncIterable`<`T` \| `undefined`\>
+`AsyncIterable`\<`T` \| `undefined`>
 
 #### Defined in
 
@@ -875,19 +875,19 @@ ___
 
 ### writeFile
 
-▸ **writeFile**(`file`, `data`, `options?`): `Promise`<`void`\>
+▸ **writeFile**(`file`, `data`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `file` | `PathLike` \| `FileHandle` |
-| `data` | `string` \| `ArrayBufferView` \| `Iterable`<`string` \| `ArrayBufferView`\> \| `AsyncIterable`<`string` \| `ArrayBufferView`\> \| `Stream` |
-| `options?` | `ObjectEncodingOptions` & { `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` \| `BufferEncoding` |
+| `data` | `string` \| `ArrayBufferView` \| `Iterable`\<`string` \| `ArrayBufferView`> \| `AsyncIterable`\<`string` \| `ArrayBufferView`> \| `Stream` |
+| `options?` | `ObjectEncodingOptions` & \{ `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` \| `BufferEncoding` |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 
@@ -897,7 +897,7 @@ ___
 
 ### writeJSON
 
-▸ **writeJSON**<`T`\>(`path`, `data`, `replacer?`, `space?`): `Promise`<`void`\>
+▸ **writeJSON**\<`T`>(`path`, `data`, `replacer?`, `space?`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -916,7 +916,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Defined in
 

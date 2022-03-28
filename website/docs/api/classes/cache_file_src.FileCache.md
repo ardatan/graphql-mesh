@@ -2,7 +2,7 @@
 title: 'FileCache'
 ---
 
-# Class: FileCache<V\>
+# Class: FileCache\<V>
 
 [cache/file/src](../modules/cache_file_src).FileCache
 
@@ -14,7 +14,7 @@ title: 'FileCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -38,7 +38,7 @@ title: 'FileCache'
 
 ### constructor
 
-• **new FileCache**<`V`\>(`__namedParameters`)
+• **new FileCache**\<`V`>(`__namedParameters`)
 
 #### Type parameters
 
@@ -72,7 +72,7 @@ ___
 
 ### json$
 
-• **json$**: `Promise`<`Record`<`string`, `V`\>\>
+• **json$**: `Promise`\<`Record`\<`string`, `V`>>
 
 #### Defined in
 
@@ -82,7 +82,7 @@ ___
 
 ### writeDataLoader
 
-• **writeDataLoader**: `DataLoader`<`any`, `any`, `any`\>
+• **writeDataLoader**: `DataLoader`\<`any`, `any`, `any`>
 
 #### Defined in
 
@@ -92,7 +92,7 @@ ___
 
 ### delete
 
-▸ **delete**(`name`): `Promise`<`void`\>
+▸ **delete**(`name`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -102,7 +102,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -116,7 +116,7 @@ ___
 
 ### get
 
-▸ **get**(`name`): `Promise`<`V`\>
+▸ **get**(`name`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -126,7 +126,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -140,7 +140,7 @@ ___
 
 ### set
 
-▸ **set**(`name`, `value`): `Promise`<`void`\>
+▸ **set**(`name`, `value`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -151,7 +151,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

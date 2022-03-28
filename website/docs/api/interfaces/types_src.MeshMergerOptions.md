@@ -19,7 +19,7 @@ title: 'MeshMergerOptions'
 
 ### cache
 
-• **cache**: [`KeyValueCache`](types_src.KeyValueCache)<`any`\>
+• **cache**: [`KeyValueCache`](types_src.KeyValueCache)\<`any`>
 
 #### Defined in
 

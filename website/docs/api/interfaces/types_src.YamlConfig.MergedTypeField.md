@@ -21,7 +21,7 @@ title: 'MergedTypeField'
 
 #### Defined in
 
-[packages/types/src/config.ts:1590](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1590)
+[packages/types/src/config.ts:1623](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1623)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1589](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1589)
+[packages/types/src/config.ts:1622](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1622)

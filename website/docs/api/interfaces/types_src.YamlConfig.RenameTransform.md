@@ -23,7 +23,7 @@ Specify to apply rename transforms to bare schema or by wrapping original schema
 
 #### Defined in
 
-[packages/types/src/config.ts:1433](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1433)
+[packages/types/src/config.ts:1466](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1466)
 
 ___
 
@@ -35,4 +35,4 @@ Array of rename rules
 
 #### Defined in
 
-[packages/types/src/config.ts:1437](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1437)
+[packages/types/src/config.ts:1470](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1470)

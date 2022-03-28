@@ -2,7 +2,7 @@
 title: 'MeshInstance'
 ---
 
-# Interface: MeshInstance<TMeshContext\>
+# Interface: MeshInstance\<TMeshContext>
 
 [runtime/src](../modules/runtime_src).MeshInstance
 
@@ -36,7 +36,7 @@ title: 'MeshInstance'
 
 ### cache
 
-• **cache**: [`KeyValueCache`](types_src.KeyValueCache)<`any`\>
+• **cache**: [`KeyValueCache`](types_src.KeyValueCache)\<`any`>
 
 #### Defined in
 
@@ -46,7 +46,7 @@ ___
 
 ### execute
 
-• **execute**: [`ExecuteMeshFn`](../modules/runtime_src#executemeshfn)<`any`, `any`, `any`, `any`\>
+• **execute**: [`ExecuteMeshFn`](../modules/runtime_src#executemeshfn)\<`any`, `any`, `any`, `any`>
 
 #### Defined in
 
@@ -56,7 +56,7 @@ ___
 
 ### getEnveloped
 
-• **getEnveloped**: `GetEnvelopedFn`<{}\>
+• **getEnveloped**: `GetEnvelopedFn`\<\{}>
 
 #### Defined in
 
@@ -126,7 +126,7 @@ ___
 
 ### subscribe
 
-• **subscribe**: [`SubscribeMeshFn`](../modules/runtime_src#subscribemeshfn)<`any`, `any`, `any`, `any`\>
+• **subscribe**: [`SubscribeMeshFn`](../modules/runtime_src#subscribemeshfn)\<`any`, `any`, `any`, `any`>
 
 #### Defined in
 

@@ -30,7 +30,7 @@ Password
 
 #### Defined in
 
-[packages/types/src/config.ts:978](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L978)
+[packages/types/src/config.ts:982](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L982)
 
 ___
 
@@ -42,7 +42,7 @@ Path to the file or URL contains your password
 
 #### Defined in
 
-[packages/types/src/config.ts:990](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L990)
+[packages/types/src/config.ts:994](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L994)
 
 ___
 
@@ -54,7 +54,7 @@ Your private key
 
 #### Defined in
 
-[packages/types/src/config.ts:974](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L974)
+[packages/types/src/config.ts:978](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L978)
 
 ___
 
@@ -66,7 +66,7 @@ Path to the file or URL contains your private key
 
 #### Defined in
 
-[packages/types/src/config.ts:986](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L986)
+[packages/types/src/config.ts:990](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L990)
 
 ___
 
@@ -78,7 +78,7 @@ Your public key
 
 #### Defined in
 
-[packages/types/src/config.ts:970](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L970)
+[packages/types/src/config.ts:974](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L974)
 
 ___
 
@@ -90,4 +90,4 @@ Path to the file or URL contains your public key
 
 #### Defined in
 
-[packages/types/src/config.ts:982](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L982)
+[packages/types/src/config.ts:986](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L986)

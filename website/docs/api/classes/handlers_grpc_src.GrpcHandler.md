@@ -37,7 +37,7 @@ title: 'GrpcHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`GrpcHandler`](/docs/api/interfaces/types_src.YamlConfig.GrpcHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`GrpcHandler`](/docs/api/interfaces/types_src.YamlConfig.GrpcHandler)> |
 
 #### Defined in
 
@@ -47,7 +47,7 @@ title: 'GrpcHandler'
 
 ### getCachedDescriptorSets
 
-▸ **getCachedDescriptorSets**(`creds`): `Promise`<`RootJsonAndDecodedDescriptorSet`[]\>
+▸ **getCachedDescriptorSets**(`creds`): `Promise`\<`RootJsonAndDecodedDescriptorSet`[]>
 
 #### Parameters
 
@@ -57,7 +57,7 @@ title: 'GrpcHandler'
 
 #### Returns
 
-`Promise`<`RootJsonAndDecodedDescriptorSet`[]\>
+`Promise`\<`RootJsonAndDecodedDescriptorSet`[]>
 
 #### Defined in
 
@@ -67,11 +67,11 @@ ___
 
 ### getCredentials
 
-▸ **getCredentials**(): `Promise`<`ChannelCredentials`\>
+▸ **getCredentials**(): `Promise`\<`ChannelCredentials`>
 
 #### Returns
 
-`Promise`<`ChannelCredentials`\>
+`Promise`\<`ChannelCredentials`>
 
 #### Defined in
 
@@ -81,11 +81,11 @@ ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<{ `schema`: `GraphQLSchema`  }\>
+▸ **getMeshSource**(): `Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<{ `schema`: `GraphQLSchema`  }\>
+`Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 
@@ -99,11 +99,11 @@ ___
 
 ### getRootPromiseFromDescriptorFilePath
 
-▸ **getRootPromiseFromDescriptorFilePath**(): `Promise`<`Root`\>
+▸ **getRootPromiseFromDescriptorFilePath**(): `Promise`\<`Root`>
 
 #### Returns
 
-`Promise`<`Root`\>
+`Promise`\<`Root`>
 
 #### Defined in
 
@@ -113,11 +113,11 @@ ___
 
 ### getRootPromiseFromProtoFilePath
 
-▸ **getRootPromiseFromProtoFilePath**(): `Promise`<`Root`\>
+▸ **getRootPromiseFromProtoFilePath**(): `Promise`\<`Root`>
 
 #### Returns
 
-`Promise`<`Root`\>
+`Promise`\<`Root`>
 
 #### Defined in
 
@@ -127,7 +127,7 @@ ___
 
 ### getRootPromisesFromReflection
 
-▸ **getRootPromisesFromReflection**(`creds`): `Promise`<`Promise`<`Root`\>[]\>
+▸ **getRootPromisesFromReflection**(`creds`): `Promise`\<`Promise`\<`Root`>[]>
 
 #### Parameters
 
@@ -137,7 +137,7 @@ ___
 
 #### Returns
 
-`Promise`<`Promise`<`Root`\>[]\>
+`Promise`\<`Promise`\<`Root`>[]>
 
 #### Defined in
 

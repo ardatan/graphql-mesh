@@ -2,7 +2,7 @@
 title: 'MeshTransformOptions'
 ---
 
-# Interface: MeshTransformOptions<Config\>
+# Interface: MeshTransformOptions\<Config>
 
 [types/src](../modules/types_src).MeshTransformOptions
 
@@ -47,7 +47,7 @@ ___
 
 ### cache
 
-• **cache**: [`KeyValueCache`](types_src.KeyValueCache)<`any`\>
+• **cache**: [`KeyValueCache`](types_src.KeyValueCache)\<`any`>
 
 #### Defined in
 

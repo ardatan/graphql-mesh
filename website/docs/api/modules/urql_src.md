@@ -22,7 +22,7 @@ Exchange for executing queries locally on a schema using graphql-js.
 
 | Name | Type |
 | :------ | :------ |
-| `getBuiltMesh` | () => `Promise`<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`any`\>\> |
+| `getBuiltMesh` | () => `Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`any`>> |
 
 #### Returns
 

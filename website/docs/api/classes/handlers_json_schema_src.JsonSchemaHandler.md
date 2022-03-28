@@ -37,7 +37,7 @@ title: 'JsonSchemaHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`JsonSchemaHandler`](/docs/api/interfaces/types_src.YamlConfig.JsonSchemaHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`JsonSchemaHandler`](/docs/api/interfaces/types_src.YamlConfig.JsonSchemaHandler)> |
 
 #### Defined in
 
@@ -47,7 +47,7 @@ title: 'JsonSchemaHandler'
 
 ### cache
 
-• **cache**: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`any`\>
+• **cache**: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`any`>
 
 #### Defined in
 
@@ -57,7 +57,7 @@ ___
 
 ### jsonSchema
 
-• **jsonSchema**: [`StoreProxy`](../modules/store_src#storeproxy)<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)\>
+• **jsonSchema**: [`StoreProxy`](../modules/store_src#storeproxy)\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
 #### Defined in
 
@@ -77,11 +77,11 @@ ___
 
 ### getDereferencedSchema
 
-▸ **getDereferencedSchema**(): `Promise`<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)\>
+▸ **getDereferencedSchema**(): `Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
 #### Returns
 
-`Promise`<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)\>
+`Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
 #### Defined in
 
@@ -91,11 +91,11 @@ ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<{ `schema`: `GraphQLSchema`  }\>
+▸ **getMeshSource**(): `Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<{ `schema`: `GraphQLSchema`  }\>
+`Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 

@@ -36,7 +36,7 @@ title: 'MeshMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`mergerContext`): `GraphQLSchema` \| `Promise`<`GraphQLSchema`\>
+▸ **getUnifiedSchema**(`mergerContext`): `GraphQLSchema` \| `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -46,7 +46,7 @@ title: 'MeshMerger'
 
 #### Returns
 
-`GraphQLSchema` \| `Promise`<`GraphQLSchema`\>
+`GraphQLSchema` \| `Promise`\<`GraphQLSchema`>
 
 #### Defined in
 

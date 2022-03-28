@@ -44,7 +44,7 @@ title: 'MeshApolloLink'
 
 | Name | Type |
 | :------ | :------ |
-| `getBuiltMesh` | () => `Promise`<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`any`\>\> |
+| `getBuiltMesh` | () => `Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`any`>> |
 
 #### Overrides
 
@@ -58,7 +58,7 @@ ApolloLink.constructor
 
 ### mesh$
 
-• **mesh$**: `Promise`<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)<`any`\>\>
+• **mesh$**: `Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)\<`any`>>
 
 #### Defined in
 
@@ -92,7 +92,7 @@ ___
 
 ### request
 
-▸ **request**(`operation`): `Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ **request**(`operation`): `Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -102,7 +102,7 @@ ___
 
 #### Returns
 
-`Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Overrides
 
@@ -122,7 +122,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `fn` | (`error`: `any`, `observer?`: `Observer`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>) => ``false`` \| `void` |
+| `fn` | (`error`: `any`, `observer?`: `Observer`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>) => ``false`` \| `void` |
 
 #### Returns
 
@@ -209,7 +209,7 @@ ___
 
 ### execute
 
-▸ `Static` **execute**(`link`, `operation`): `Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ `Static` **execute**(`link`, `operation`): `Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -220,7 +220,7 @@ ___
 
 #### Returns
 
-`Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Inherited from
 

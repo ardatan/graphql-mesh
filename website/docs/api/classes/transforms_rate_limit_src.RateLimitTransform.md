@@ -31,7 +31,7 @@ title: 'RateLimitTransform'
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`RateLimitTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.RateLimitTransformConfig)[]\> |
+| `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`RateLimitTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.RateLimitTransformConfig)[]> |
 
 #### Defined in
 
@@ -41,18 +41,18 @@ title: 'RateLimitTransform'
 
 ### transformRequest
 
-▸ **transformRequest**(`executionRequest`, `delegationContext`): `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+▸ **transformRequest**(`executionRequest`, `delegationContext`): `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `executionRequest` | `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
+| `executionRequest` | `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
 
 #### Returns
 
-`ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+`ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Implementation of
 
@@ -66,18 +66,18 @@ ___
 
 ### transformResult
 
-▸ **transformResult**(`result`, `delegationContext`): `ExecutionResult`<`ObjMap`<`unknown`\>, `ObjMap`<`unknown`\>\>
+▸ **transformResult**(`result`, `delegationContext`): `ExecutionResult`\<`ObjMap`\<`unknown`>, `ObjMap`\<`unknown`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `result` | `ExecutionResult`<`ObjMap`<`unknown`\>, `ObjMap`<`unknown`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
+| `result` | `ExecutionResult`\<`ObjMap`\<`unknown`>, `ObjMap`\<`unknown`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
 
 #### Returns
 
-`ExecutionResult`<`ObjMap`<`unknown`\>, `ObjMap`<`unknown`\>\>
+`ExecutionResult`\<`ObjMap`\<`unknown`>, `ObjMap`\<`unknown`>>
 
 #### Implementation of
 
