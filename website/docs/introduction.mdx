@@ -31,23 +31,19 @@ Building and serving a unified GraphQL schema as a Gateway has never been easier
 <Graph>
 
 graph TD;
-subgraph AA [Consumers]
+subgraph AA [" "]
 A[Mobile app];
 B[Web app];
 C[Node.js client];
 end
-subgraph BB [Services]
+subgraph BB [" "]
 E[REST API];
 F[GraphQL API];
 G[SOAP API];
 end
-Z[GraphQL API];
-A --> Z;
-B --> Z;
-C --> Z;
-Z --> E;
-Z --> F;
-Z --> G;
+Z[GraphQL Gateway API];
+A & B & C --> Z;
+Z --> E & F & G;
 
 </Graph>
 
