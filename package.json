@@ -91,6 +91,6 @@
     "babel-jest": "27.5.1",
     "jest-runner": "27.5.1",
     "graphql": "16.3.0",
-    "@changesets/apply-release-plan": "5.0.5"
+    "@changesets/apply-release-plan": "6.0.0"
   }
 }
