@@ -1,6 +1,6 @@
 {
   "name": "json-schema-subscriptions",
-  "version": "0.1.151",
+  "version": "0.1.152",
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
@@ -8,7 +8,7 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.64.2",
+    "@graphql-mesh/cli": "0.65.0",
     "@graphql-mesh/json-schema": "0.26.9",
     "graphql": "16.0.1",
     "body-parser": "1.19.0",

@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.65.0
+
+### Minor Changes
+
+- e472a868c: cli(serve): Yoga v2
+
 ## 0.64.2
 
 ### Patch Changes
