@@ -25,7 +25,7 @@ const FeatureTitle: FC<{ imgSrc: string; title: string }> = ({ imgSrc, title }) 
       </HStack>
     </>
   );
-}
+};
 
 export default function Index() {
   return (
@@ -34,10 +34,10 @@ export default function Index() {
         title="GraphQL Mesh"
         description="Query anything, run anywhere."
         link={{
-          href: '/docs/getting-started/introduction',
+          href: '/docs/introduction',
           children: 'View Docs',
           title: 'Get started with GraphQL Mesh',
-          onClick: e => handlePushRoute('/docs/getting-started/introduction', e),
+          onClick: e => handlePushRoute('/docs/introduction', e),
         }}
         version={<NPMBadge name="@graphql-mesh/cli" />}
         colors={['#000', '#1cc8ee']}

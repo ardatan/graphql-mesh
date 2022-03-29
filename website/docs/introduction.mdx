@@ -1,0 +1,60 @@
+---
+id: introduction
+title: Introduction
+sidebar_label: Introduction
+image: https://miro.medium.com/max/1400/1*iZfQ7ST9rd7McrHvvVA-BA@2x.png
+---
+
+GraphQL Mesh is a framework to **build GraphQL Gateways on top of GraphQL and non-GraphQL services** (REST, gRPC, and more).
+
+Many approaches exist to build a GraphQL Gateway:
+
+- creating an Apollo Server with Apollo DataSource to query sub-services
+- creating a GraphQL Gateway from scratch using GraphQL tools (ex: `stitchSchemas()`)
+- use Apollo Federation
+
+However, most of those approaches [require much coding, maintenance or don't support non-GraphQL sub-services](/docs/comparison).
+
+GraphQL Mesh has been built with **productivity and developer experience in mind**.
+
+Building and serving a unified GraphQL schema as a Gateway has never been easier; thanks to many helpful features:
+
+- Consume **many API/Sources types** (SOAP, REST, GRPC, Databases, [and more](/docs/handlers/handlers-introduction))
+- Embedded **performant and extensible GraphQL Server** ([GraphQL Yoga](https://www.graphql-yoga.com/) + [Envelop](https://www.graphql-yoga.com/))
+- **Apply transforms** to the unified schema (ex: naming convention)
+- **Extend** the unified schema with custom resolvers
+- **Caching** strategies
+- Add **mocks** for Schema development
+
+<p>&nbsp;</p>
+
+<Graph>
+
+graph TD;
+subgraph AA [" "]
+A[Mobile app];
+B[Web app];
+C[Node.js client];
+end
+subgraph BB [" "]
+E[REST API];
+F[GraphQL API];
+G[SOAP API];
+end
+Z[GraphQL Gateway API];
+A & B & C --> Z;
+Z --> E & F & G;
+
+</Graph>
+
+
+<p>&nbsp;</p>
+
+Already used in production by community members and [some of our clients](https://www.the-guild.dev/services), GraphQL Mesh is useful for:
+- Build a **unified GraphQL Schema that follows the industry best practices** (schema design, performances)
+- Combine multiple GraphQL services as a **unified Schema with subscriptions support**
+- **Progressively migrate existing non-GraphQL services** under a unified GraphQL API (REST, gRPC, SOAP)
+- **Quickly give a try to GraphQL** by translating an existing REST API to a GraphQL Gateway
+
+
+Get started by learning the GraphQL Mesh [concepts](/docs/getting-started/concepts) and build your first [Gateway](/docs/getting-started/your-first-mesh-gateway)!

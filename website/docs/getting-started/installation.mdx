@@ -6,14 +6,34 @@ sidebar_label: Installation
 
 GraphQL Mesh comes in multiple packages, which you should install according to your needs.
 
-To get started with the basics, install the following:
+
+## Mesh CLI, the core package
+
+
+To get started, let's first install locally the Mesh CLI package (and dependencies):
 
 <PackageInstall packages="graphql @graphql-mesh/cli" />
 
-Then, you need to install a Mesh handler, according to your API needs. You can see the list of [all available built-in handlers in here](/docs/handlers/handlers-introduction).
 
-For example, if you wish to use OpenAPI handler, install the handler that matches you needs:
+_Note: Avoid installing Mesh CLI as a global dependency_
 
-<PackageInstall packages="graphql @graphql-mesh/openapi" />
 
-Then, this handler will be available for you to use in your config file.
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+## Handlers and Transforms packages
+
+As stated previously, Mesh comes in many packages.
+
+Each _Source Handler_ and _Transforms_ are shipped as dedicated packages, for example:
+
+- The _Handler_ to configure a REST API Source requires the `@graphql-mesh/openapi` package
+- The naming convention _Transforms_ requires the `@graphql-mesh/transform-naming-convention` package
+
+
+Mesh will display a helpful error message when using a _Handler_ or _Transforms_ that is not properly installed.
+
+The full list of [Source Handler packages can be found here](/docs/handlers/handlers-introduction), same for [Transforms packages](/transforms/transforms-introduction).

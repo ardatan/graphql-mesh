@@ -1,0 +1,352 @@
+---
+id: your-first-mesh-gateway
+title: Your first Gateway with Mesh
+sidebar_label: Your first Gateway with Mesh
+---
+
+Mesh [being installed](/docs/getting-started/installation), we can now build our first GraphQL Gateway.
+
+Let's say that our ideal GraphQL Gateway Schema design incorporates 3 services: "City", "Population" and "Weather".
+
+
+<Graph>
+
+graph TD;
+subgraph AA [Consumers]
+A[Mobile app];
+B[Web app];
+C[Node.js client];
+end
+subgraph BB [Services]
+E[City REST API];
+F[Population GraphQL API];
+G[Weather REST API];
+end
+Z[Mesh Gateway GraphQL API];
+A --> Z;
+B --> Z;
+C --> Z;
+Z --> E;
+Z --> F;
+Z --> G;
+
+</Graph>
+
+<br />
+<br />
+
+This page will guide you in creating a Mesh configuration to server the Weather REST API as a GraphQL Schema:
+
+
+<Graph>
+
+graph TD;
+subgraph AA [Consumers]
+A[Mobile app];
+B[Web app];
+C[Node.js client];
+end
+subgraph BB [Services]
+G[Weather REST API];
+end
+Z[Mesh Gateway GraphQL API];
+A --> Z;
+B --> Z;
+C --> Z;
+Z --> G;
+
+</Graph>
+
+
+<br />
+<br />
+
+Creating a Mesh Gateway that combines multiple _Sources_ will be covered in the ["Setup a Gateway with many Sources" guide](/docs/guides/combine-many-sources).
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+## Building our Weather GraphQL API
+
+<br />
+
+
+### 1. A closer look at our Weather REST API
+
+For our example, the Weather API will be the [WeatherBit.io](https://weatherBit.io) REST API.
+
+To add WeatherBit's API as a _Source_ of our GraphQL Mesh configuration, we will need to get the API's definition.
+
+Depending on the API type, many definition types will be available; for example, REST API tends to be described using Open API/Swagger or RAML.
+
+Open API is a standard based on JSON Schema (JSON-based files standard) to describe APIs.
+
+<br />
+
+WeatherBit REST API provides an Open API definition on Guru APIs: [https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json](https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json).
+
+We now established that our Weather API will require the `openapi` Mesh _Handler_ with the `@graphql-mesh/openapi` package.
+
+
+<br />
+
+### 2. Creating our Mesh configuration file
+
+At the root of our project, let's create or update the `package.json` file by running the following:
+
+<PackageInstall packages="graphql @graphql-mesh/cli @graphql-mesh/openapi" />
+
+
+- `graphql` is a required peer dependency of GraphQL Mesh
+- `@graphql-mesh/cli` provides everything to parse the configuration, execute the _Handlers_, _Transforms_ and serve the API
+- `@graphql-mesh/openapi` is the _Handler_ of the "Weather" _Source_
+
+<br />
+
+Now, we can create a `.meshrc.yml` file with the following content:
+
+```yml
+sources:
+  - name: Weather
+    handler:
+      openapi:
+        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+```
+
+The configuration is straightforward; we define a _Source_ called "weather" that is configured with the `openapi` _Handler_.
+
+By providing the `source` URL, Mesh will be able to translate the OpenAPI JSON definition to a GraphQL Schema.
+
+<br />
+
+Let's start our GraphQL Gateway by running:
+
+<PackageRun scripts="mesh dev" />
+
+And open your favorite web browser at [http://0.0.0.0:4000/](http://0.0.0.0:4000/)
+
+<br />
+
+As expected, Mesh translated the Weather REST API to a GraphQL Schema, using the following rules:
+- a `GET /api/helloWorld` endpoint becomes a Query similar to: `helloWorld(): String!`
+- a `POST /api/sayHelloAll` endpoint becomes a Mutation similar to: `sayHelloAll(input: [SayHelloAllInput]): String`
+- `PUT` and `DELETE` endpoints are also translated to GraphQL Mutations.
+
+Which gives us the following Weather GraphQL Schema:
+
+![Weather GraphQL Schema](/assets/docs/getting-started/your-first-mesh-gateway/mesh-weather-graphql.png)
+
+
+<br />
+
+### 3. Shaping the Unified Schema
+
+
+We might not want to expose all those Queries in our _Unified Schema_.
+
+
+Let's say that we want to **only keep** the `history(city: String!, country: String!, endDate: String!, key: String!, startDate: String!)` Query and **rename it** to `weatherHistory`.
+
+To achieve such a final Schema design, we will leverage _Transforms_.
+
+<br />
+
+
+**Only keep the `history(...)` Query**
+
+To remove all the queries from the Schema (except `history(...)`), we will install and configure the `filterSchema` _Transform_.
+
+<PackageInstall packages="@graphql-mesh/transform-filter-schema" />
+
+And update our Mesh configuration as follows:
+
+
+```yml
+sources:
+  - name: Weather
+    handler:
+      openapi:
+        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+transforms:
+  - filterSchema:
+      filters:
+        - Query.history
+```
+
+We added a `transforms` key at the root of the configuration.
+
+`transforms` value is an array of named transforms, ex: `filterSchema`.
+
+`filterSchema` takes a `filters` option that accepts an array of filter rules.
+
+By adding `Query.history`, we instruct Mesh to only keep the `history(...)` Query.
+
+<br />
+
+More information on the `filterSchema` _Transform_ on [its dedicated documentation page](/docs/transforms/filter-schema).
+
+
+<p>&nbsp;</p>
+
+
+**Rename the `history(...)` Query to `weatherHistory(...)`**
+
+Finally, let's rename our `history` Query to `weatherHistory` by using the `rename` _Transform_.
+
+<PackageInstall packages="@graphql-mesh/transform-rename" />
+
+And update our Mesh configuration as follows:
+
+```yml
+sources:
+  - name: Weather
+    handler:
+      openapi:
+        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+transforms:
+  - filterSchema:
+      filters:
+        - Query.history
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: history
+          to:
+            type: Query
+            field: weatherHistory
+```
+
+`rename` takes a `renames` option that accepts an array of `from`/`to` pairs.
+
+Here, we indicate that `Query.history` should be renamed `Query.weatherHistory`.
+
+<br />
+
+More information on the `rename` _Transform_ on [its dedicated documentation page](/docs/transforms/rename).
+
+
+
+<p>&nbsp;</p>
+
+Our final _Unified Schema_ is now ready to be used:
+
+![Weather GraphQL Unified Schema](/assets/docs/getting-started/your-first-mesh-gateway/mesh-weather-graphql-unified-schema.png)
+
+
+The power of GraphQL Mesh, on top of providing an extensive range of _Handlers_, is to empower us to create well-designed GraphQL Schema using _Transforms_.
+
+Keep in mind that a good GraphQL Schema design should:
+
+- provides useful queries (not expose unnecessary ones)
+- simplify the usage by providing the proper abstractions (ex: proper naming and hierarchy)
+- provide specialized mutations that represent specific behaviors instead of CRUD mutations directly linked to an underlying data-schema
+
+<br />
+
+### 4. Customizing the server
+
+Our GraphQL Gateway relies on WeatherBit, a usage-based and throttled API.
+
+For this reason, we might want to add caching to avoid over-fetching data.
+
+Let's add cache the `weatherHistory(...)` Query with a 1 hour expiration by using the `cache` _Transform_:
+
+<PackageInstall packages="@graphql-mesh/transform-cache" />
+
+And update our Mesh configuration as follows:
+
+```yml
+sources:
+  - name: Weather
+    handler:
+      openapi:
+        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+transforms:
+  - filterSchema:
+      filters:
+        - Query.history
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: history
+          to:
+            type: Query
+            field: weatherHistory
+  - cache:
+      - field: Query.weatherHistory
+        invalidate:
+          ttl: 3600
+```
+
+<br />
+
+More information on configuring and customizing the Mesh server is available in ["Configuring the Mesh server"](/docs/guides/customize-mesh-server).
+
+
+
+<br />
+
+### Our Weather GraphQL API is ready!
+
+Congratulations! Our Weather REST API is now accessible through our Mesh GraphQL Gateway with:
+- a comprehensive and tailored Schema design
+- caching to avoid rate limiting from WeatherBit's API
+
+You can now start again and play with the GraphQL Schema by running:
+
+<PackageRun scripts="mesh dev" />
+
+And open your favorite web browser at [http://0.0.0.0:4000/](http://0.0.0.0:4000/) and try the following Query:
+
+
+```graphql
+query ParisTemparatures {
+  weatherHistory(
+    city: "Paris",
+    country: "France",
+    endDate: "2022-01-31",
+    key: "<YOUR_WEATHER_BIT_API_KEY>",
+    startDate: "2022-01-01"
+  ) {
+    cityName
+    data {
+      temp
+      datetime
+    }
+  }
+}
+```
+
+You can get your WeatherBit API Key **for free** at https://www.weatherbit.io/account/create.
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+## Going further
+
+We are now familiar with Mesh's concepts of _Sources_, _Handlers_, _Transforms_, and _Unified Schema_.
+
+We provide a set of guides that will help you get started on more realistic scenarios, such as:
+
+- Setup a Gateway with many Sources
+- Handling Sources with no definition
+- Deploying a GraphQL Mesh gateway
+
+As well as some advanced guides for more complex schemas:
+
+- Order of transforms, Sources' Schema, and unified Schema
+- Extending the Unified Schema (`additionalResolvers` guide)
+- Error handling
+- File upload
+- Subscriptions & Live Queries
