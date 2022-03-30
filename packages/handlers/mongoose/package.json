@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.10.40",
+  "version": "0.10.41",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -27,8 +27,8 @@
     "mongoose": "6.2.9"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.0",
+    "@graphql-mesh/utils": "0.33.0",
     "graphql-compose": "9.0.8",
     "graphql-compose-mongoose": "9.7.1",
     "graphql-compose-connection": "8.2.1",

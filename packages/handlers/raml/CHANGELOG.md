@@ -1,5 +1,20 @@
 # @graphql-mesh/raml
 
+## 0.3.0
+
+### Minor Changes
+
+- d567be7b5: feat(json-schema): support bundles from different sources
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - @graphql-mesh/store@0.7.0
+  - @omnigraph/raml@0.5.23
+
 ## 0.2.9
 
 ### Patch Changes
