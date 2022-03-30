@@ -11,14 +11,12 @@ const defaultResolverComposer =
     resolve(
       root,
       // map renamed arguments to their original value
-      {
-        ...(argsMap
-          ? Object.keys(args).reduce((acc, key: string) => ({ ...acc, [argsMap[key] || key]: args[key] }), {})
-          : args),
-      },
+      argsMap
+        ? Object.keys(args).reduce((acc, key: string) => ({ ...acc, [argsMap[key] || key]: args[key] }), {})
+        : args,
       context,
       // map renamed field name to its original value
-      { ...info, ...(originalFieldName && { fieldName: originalFieldName }) }
+      originalFieldName ? { ...info, fieldName: originalFieldName } : info
     );
 
 export default class BareRename implements MeshTransform {
@@ -117,10 +115,8 @@ export default class BareRename implements MeshTransform {
             );
           }
 
-          // Renamed fields that don't have a custom resolver will need to map response to old field name
-          if (newFieldName || argsMap) {
-            fieldConfig.resolve = defaultResolverComposer(fieldConfig.resolve, fieldName, argsMap);
-          }
+          // Wrap resolve fn to handle mapping renamed field name and/or renamed arguments
+          fieldConfig.resolve = defaultResolverComposer(fieldConfig.resolve, fieldName, argsMap);
 
           return [newFieldName || fieldName, fieldConfig];
         },
