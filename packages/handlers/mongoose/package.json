@@ -24,12 +24,12 @@
     "mongoose": "*"
   },
   "devDependencies": {
-    "mongoose": "6.2.8"
+    "mongoose": "6.2.9"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.69.0",
     "@graphql-mesh/utils": "0.32.2",
-    "graphql-compose": "9.0.7",
+    "graphql-compose": "9.0.8",
     "graphql-compose-mongoose": "9.7.1",
     "graphql-compose-connection": "8.2.1",
     "graphql-compose-pagination": "8.3.0",
