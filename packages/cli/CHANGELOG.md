@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.66.0
+
+### Minor Changes
+
+- d567be7b5: feat(cli/store): ability to store artifacts as JSON instead of TS
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - @graphql-mesh/store@0.7.0
+  - @graphql-mesh/config@0.33.3
+  - @graphql-mesh/runtime@0.33.7
+
 ## 0.65.0
 
 ### Minor Changes
