@@ -118,12 +118,12 @@ describe('rename', () => {
             renames: [
               {
                 from: {
-                  type: 'Query',
-                  field: 'my_user',
+                  type: 'MyUser',
+                  field: 'id',
                 },
                 to: {
-                  type: 'Query',
-                  field: 'user',
+                  type: 'MyUser',
+                  field: 'userId',
                 },
               },
             ],
@@ -141,14 +141,14 @@ describe('rename', () => {
       schema: newSchema,
       source: /* GraphQL */ `
         {
-          user {
-            id
+          my_user {
+            userId
           }
         }
       `,
     });
 
-    expect(result.data).toMatchObject({ user: { id: 'userId' } });
+    expect(result.data).toMatchObject({ my_user: { userId: 'userId' } });
   });
 
   it('should change the name of multiple type names', () => {

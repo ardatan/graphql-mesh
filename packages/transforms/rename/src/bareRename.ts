@@ -6,9 +6,9 @@ type RenameMapObject = Map<string | RegExp, string>;
 
 // Resolver composer mapping renamed field and arguments
 const defaultResolverComposer =
-  (resolve = defaultFieldResolver, originalFieldName: string, argsMap: { [key: string]: string }) =>
+  (resolveFn = defaultFieldResolver, originalFieldName: string, argsMap: { [key: string]: string }) =>
   (root: any, args: any, context: any, info: any) =>
-    resolve(
+    resolveFn(
       root,
       // map renamed arguments to their original value
       argsMap
