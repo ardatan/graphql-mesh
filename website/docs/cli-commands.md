@@ -13,13 +13,13 @@ All commands can take two global optional options.
 &nbsp;
 </p>
 
-###  `--r (alias: require)  [array]`
+###  `-r (alias: require)  [array]`
 
 Loads specific require.extensions before running the codegen and reading the configuration.
 
 
 ```bash
-yarn graphql-mesh --r lodash
+yarn graphql-mesh -r lodash
 yarn graphql-mesh --require lodash fluke2
 ```
 
