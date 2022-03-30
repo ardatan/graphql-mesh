@@ -9,7 +9,7 @@ describe('rename', () => {
     type Query {
       my_user: MyUser!
       my_book: MyBook!
-      profile(profile_id: ID!): Profile
+      profile(profile_id: ID!, role: String): Profile
     }
 
     type MyUser {
@@ -432,6 +432,7 @@ describe('rename', () => {
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
     const fieldMap = queryType.getFields();
 
+    expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
   });
@@ -462,6 +463,7 @@ describe('rename', () => {
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
     const fieldMap = queryType.getFields();
 
+    expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeDefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeUndefined();
   });
