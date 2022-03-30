@@ -1,29 +1,35 @@
 import RenameTransform from './../src/index';
-import { buildSchema, GraphQLObjectType } from 'graphql';
+import { buildSchema, graphql, GraphQLObjectType } from 'graphql';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 
 describe('rename', () => {
-  const schema = buildSchema(/* GraphQL */ `
-    type Query {
-      my_user: MyUser!
-      my_book: MyBook!
-      profile(profile_id: ID!, role: String): Profile
-    }
+  const schema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Query {
+        my_user: MyUser!
+        my_book: MyBook!
+        profile(profile_id: ID!, role: String): Profile
+      }
 
-    type MyUser {
-      id: ID!
-    }
+      type MyUser {
+        id: ID!
+      }
 
-    type Profile {
-      id: ID!
-    }
+      type Profile {
+        id: ID!
+      }
 
-    type MyBook {
-      id: ID!
-    }
-  `);
+      type MyBook {
+        id: ID!
+      }
+    `,
+    resolvers: {
+      Query: { my_user: () => ({ id: 'userId' }), profile: (_, args) => ({ id: `profile_${args.profile_id}` }) },
+    },
+  });
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
@@ -92,6 +98,45 @@ describe('rename', () => {
 
     expect(fieldMap.my_user).toBeUndefined();
     expect(fieldMap.user).toBeDefined();
+  });
+
+  it('should resolve correctly renamed field', async () => {
+    const transform = new RenameTransform({
+      config: {
+        mode: 'bare',
+        renames: [
+          {
+            from: {
+              type: 'Query',
+              field: 'my_user',
+            },
+            to: {
+              type: 'Query',
+              field: 'user',
+            },
+          },
+        ],
+      },
+      apiName: '',
+      cache,
+      pubsub,
+      baseDir,
+      importFn,
+    });
+
+    const transformedSchema = transform.transformSchema(schema, {} as any);
+    const result = await graphql({
+      schema: transformedSchema,
+      source: /* GraphQL */ `
+        {
+          user {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(result.data).toMatchObject({ user: { id: 'userId' } });
   });
 
   it('should change the name of multiple type names', () => {
@@ -435,6 +480,47 @@ describe('rename', () => {
     expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
+  });
+
+  it('should resolve correctly field with renamed argument', async () => {
+    const transform = new RenameTransform({
+      config: {
+        mode: 'bare',
+        renames: [
+          {
+            from: {
+              type: 'Query',
+              field: 'profile',
+              argument: 'profile_id',
+            },
+            to: {
+              type: 'Query',
+              field: 'profile',
+              argument: 'profileId',
+            },
+          },
+        ],
+      },
+      apiName: '',
+      cache,
+      pubsub,
+      baseDir,
+      importFn,
+    });
+
+    const transformedSchema = transform.transformSchema(schema, {} as any);
+    const result = await graphql({
+      schema: transformedSchema,
+      source: /* GraphQL */ `
+        {
+          profile(profileId: "abc123") {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(result.data).toMatchObject({ profile: { id: 'profile_abc123' } });
   });
 
   it('should only affect field argument only if type and field are specified', () => {

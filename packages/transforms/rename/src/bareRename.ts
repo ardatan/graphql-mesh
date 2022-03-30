@@ -1,8 +1,25 @@
-import { GraphQLSchema, GraphQLFieldConfig } from 'graphql';
+import { GraphQLSchema, defaultFieldResolver, GraphQLFieldConfig } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 type RenameMapObject = Map<string | RegExp, string>;
+
+// Resolver composer mapping renamed field and arguments
+const defaultResolverComposer =
+  (resolve = defaultFieldResolver, originalFieldName: string, argsMap: { [key: string]: string }) =>
+  (root: any, args: any, context: any, info: any) =>
+    resolve(
+      root,
+      // map renamed arguments to their original value
+      {
+        ...(argsMap
+          ? Object.keys(args).reduce((acc, key: string) => ({ ...acc, [argsMap[key] || key]: args[key] }), {})
+          : args),
+      },
+      context,
+      // map renamed field name to its original value
+      { ...info, ...(originalFieldName && { fieldName: originalFieldName }) }
+    );
 
 export default class BareRename implements MeshTransform {
   noWrap = true;
@@ -82,22 +99,27 @@ export default class BareRename implements MeshTransform {
           const typeRules = this.fieldsMap.get(typeName);
           const fieldRules = this.argsMap.get(`${typeName}.${fieldName}`);
           const newFieldName = typeRules && this.matchInMap(typeRules, fieldName);
+          const argsMap =
+            fieldRules &&
+            Array.from(fieldRules.entries()).reduce((acc, [orName, newName]) => ({ ...acc, [newName]: orName }), {});
           if (!newFieldName && !fieldRules) return undefined;
 
           // Rename rules for type might have been emptied by matchInMap, in which case we can cleanup
           if (!typeRules?.size) this.fieldsMap.delete(typeName);
 
-          // Renamed fields that don't have a custom resolver will need to map response to old field name
-          if (newFieldName && !fieldConfig.resolve) fieldConfig.resolve = source => source[fieldName];
-
           if (fieldRules && fieldConfig.args) {
-            fieldConfig.args = Object.entries(fieldConfig.args || {}).reduce(
+            fieldConfig.args = Object.entries(fieldConfig.args).reduce(
               (args, [argName, argConfig]) => ({
                 ...args,
                 [this.matchInMap(fieldRules, argName) || argName]: argConfig,
               }),
               {}
             );
+          }
+
+          // Renamed fields that don't have a custom resolver will need to map response to old field name
+          if (newFieldName || argsMap) {
+            fieldConfig.resolve = defaultResolverComposer(fieldConfig.resolve, fieldName, argsMap);
           }
 
           return [newFieldName || fieldName, fieldConfig];

@@ -104,7 +104,7 @@ exports[`rename should only affect specified field argument 1`] = `
 "type Query {
   my_user: MyUser!
   my_book: MyBook!
-  profile(profileId: ID!): Profile
+  profile(profileId: ID!, profile: String): Profile
 }
 
 type MyUser {
