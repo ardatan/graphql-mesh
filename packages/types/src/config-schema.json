@@ -507,8 +507,15 @@
           "description": "Handler for gRPC and Protobuf schemas"
         },
         "jsonSchema": {
-          "$ref": "#/definitions/JsonSchemaHandler",
-          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
+          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/JsonSchemaHandler"
+            },
+            {
+              "$ref": "#/definitions/JsonSchemaHandlerBundle"
+            }
+          ]
         },
         "mongoose": {
           "$ref": "#/definitions/MongooseHandler"
@@ -949,6 +956,42 @@
           "type": "string"
         }
       }
+    },
+    "JsonSchemaHandlerBundle": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaHandlerBundle",
+      "properties": {
+        "bundlePath": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Path to the bundle file"
+        },
+        "bundleHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "HTTP Headers to receive the bundle"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["bundlePath"]
     },
     "JsonSchemaHandler": {
       "additionalProperties": false,

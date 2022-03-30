@@ -208,7 +208,10 @@ export interface Handler {
     | GraphQLHandlerCodeFirstConfiguration
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
-  jsonSchema?: JsonSchemaHandler;
+  /**
+   * Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
+   */
+  jsonSchema?: JsonSchemaHandler | JsonSchemaHandlerBundle;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
@@ -355,9 +358,6 @@ export interface GrpcCredentialsSsl {
   certChain?: string;
   privateKey?: string;
 }
-/**
- * Handler for JSON Schema specification. Source could be a local json file, or a url to it.
- */
 export interface JsonSchemaHandler {
   baseUrl?: string;
   operationHeaders?: {
@@ -428,6 +428,22 @@ export interface JsonSchemaPubSubOperation {
     [k: string]: any;
   };
   pubsubTopic: string;
+}
+export interface JsonSchemaHandlerBundle {
+  /**
+   * Path to the bundle file
+   */
+  bundlePath: any;
+  /**
+   * HTTP Headers to receive the bundle
+   */
+  bundleHeaders?: {
+    [k: string]: any;
+  };
+  baseUrl?: string;
+  operationHeaders?: {
+    [k: string]: any;
+  };
 }
 export interface MongooseHandler {
   connectionString?: string;

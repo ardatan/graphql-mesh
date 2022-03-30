@@ -61,6 +61,7 @@ function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: stri
     ? new FsStoreStorageAdapter({
         cwd: dir,
         importFn,
+        fileType: 'ts',
       })
     : new InMemoryStoreStorageAdapter();
   return new MeshStore(pathModule.resolve(dir, artifactsDir), storeStorageAdapter, {

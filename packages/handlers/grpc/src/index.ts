@@ -12,6 +12,7 @@ import protobufjs from 'protobufjs';
 import { promisify } from 'util';
 import grpcReflection from 'grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
+import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 
 import { ClientMethod, addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils';
@@ -66,6 +67,25 @@ ${rootJsonAndDecodedDescriptorSets
   .join('\n')}
 ];
 `.trim(),
+      parse: (str): any => {
+        const rootJsonAndDecodedDescriptorSets: any[] = JSON.parse(str);
+        return rootJsonAndDecodedDescriptorSets.map(({ name, rootJson, decodedDescriptorSet }) => ({
+          name,
+          rootJson,
+          decodedDescriptorSet: FileDescriptorSet.fromObject(decodedDescriptorSet),
+        }));
+      },
+      stringify: rootJsonAndDecodedDescriptorSets => {
+        return JSON.stringify(
+          rootJsonAndDecodedDescriptorSets.map(({ name, rootJson, decodedDescriptorSet }) => {
+            return {
+              name,
+              rootJson,
+              decodedDescriptorSet: decodedDescriptorSet.toJSON(),
+            };
+          })
+        );
+      },
       validate: () => {},
     });
   }
