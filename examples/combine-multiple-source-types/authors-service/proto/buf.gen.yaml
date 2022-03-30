@@ -1,0 +1,20 @@
+version: v1
+# The plugins to run.
+plugins:
+
+    # The name of the plugin.
+    # Required.
+    # By default, buf generate will look for a binary named protoc-gen-NAME on your $PATH.
+  - name: ts
+
+    # The the relative output directory.
+    # Required.
+    out: ../src/proto
+
+    # See "available plugin parameters"
+    # https://github.com/timostamm/protobuf-ts/blob/master/MANUAL.md#the-protoc-plugin
+    opt: generate_dependencies,long_type_string,server_grpc1
+
+    # The custom path to the plugin binary, if not protoc-gen-NAME on your $PATH.
+    # Assuming you have installed @protobuf-ts/plugin in the working directory:
+    path: ../node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts
