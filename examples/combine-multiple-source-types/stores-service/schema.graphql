@@ -1,0 +1,16 @@
+type Store {
+  id: ID!
+  name: String!
+  location: String!
+}
+
+type Sells {
+  bookId: ID!
+  sellsCount: Int!
+  monthYear: String
+}
+
+type Query {
+  stores: [Store!]!
+  bookSells: [Sells!]!
+}
