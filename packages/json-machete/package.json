@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.6.19",
-    "cross-undici-fetch": "0.1.27",
+    "cross-undici-fetch": "0.1.28",
     "json-ptr": "3.1.0",
     "@graphql-mesh/utils": "0.32.2",
     "@graphql-mesh/cross-helpers": "0.1.0",

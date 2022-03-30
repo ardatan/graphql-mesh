@@ -28,14 +28,14 @@
     "@types/qs": "6.9.7"
   },
   "dependencies": {
-    "cross-undici-fetch": "0.1.27",
+    "cross-undici-fetch": "0.1.28",
     "json-machete": "0.7.4",
     "@graphql-mesh/types": "0.69.0",
     "@graphql-mesh/utils": "0.32.2",
     "@graphql-tools/utils": "8.6.5",
     "to-json-schema": "0.2.5",
-    "graphql-compose": "9.0.7",
-    "graphql-scalars": "1.16.0",
+    "graphql-compose": "9.0.8",
+    "graphql-scalars": "1.16.1",
     "ajv": "8.11.0",
     "ajv-formats": "2.1.1",
     "url-join": "4.0.1",
