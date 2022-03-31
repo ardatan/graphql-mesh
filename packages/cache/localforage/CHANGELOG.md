@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-localforage
 
+## 0.5.56
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/types@0.70.1
+
 ## 0.5.55
 
 ### Patch Changes
