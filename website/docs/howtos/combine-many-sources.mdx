@@ -1,13 +1,28 @@
 ---
 id: combine-many-sources
-title: Combine many Sources
-sidebar_label: Combine many Sources
+title: Combine multiple Sources
+sidebar_label: Combine multiple Sources
 ---
 
 
-The getting started "Your first Gateway with Mesh" introduces the configuration of the Weather API Source.
 
-In this page, we will see how to add 2 new sources to achieve the following Unified Schema:
+All the documentation tutorials and guides rely on the "Books", "Authors" and "Stores" example APIs, available in a dedicated repository: [`graphql-mesh-docs-first-gateway`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway):
+
+- Books API (REST API)
+  - `GET /books`
+  - `GET /books/:id`
+  - `GET /categories`
+- Authors API (gRPC API)
+  - `GetAuthor`
+  - `ListAuthors`
+- Stores (GraphQL API)
+  - `stores` Query
+  - `bookSells(storeId: ID!)` Query
+
+
+The getting started ["Your first Gateway with Mesh"](/docs/getting-started/your-first-mesh-gateway) introduced the configuration of the Books API Source.
+
+This guide wil show how to add 2 new sources (Authors and Stores) to achieve the following Gateway setup:
 
 <br />
 
@@ -39,21 +54,350 @@ Z --> G;
 We will go further than just add new Sources by shaping the Unified Schema to accept the following query:
 
 ```graphql
-query getCityWeatherAndPopulation {
-  city(city: "Paris", country: "France") {
-    weatherHistory(
-      endDate: "2022-01-31",
-      key: "<YOUR_WEATHER_BIT_API_KEY>",
-      startDate: "2022-01-01"
-    ) {
-      cityName
-      data {
-        temp
-        datetime
+query bestSellersByStore {
+  stores {
+    id
+    name
+    bookSells {
+      sellsCount
+      book {
+        id
+        title
+        author {
+          id
+          name
+        }
       }
     }
-
-    # population...
   }
 }
 ```
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+
+## 1. Add the "Authors" Source
+
+The "Authors" Source is a gRPC API: [`authors-service`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/authors-service).
+
+We will use the `grpc` Handler with the `@graphql-mesh/grpc` package and configure in our [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) it as follows:
+
+```yaml
+sources:
+  - name: Books
+    handler:
+      openapi:
+        baseUrl: http://localhost:3002/
+        source: ../books-service/openapi3-definition.json
+  - name: Authors
+    handler:
+      grpc:
+        endpoint: localhost:3003
+        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+```
+
+Similar to the "Books" API configuration, we just need to provide the path to the service definition file (here, a Proto file) and the base URL.
+
+<br />
+
+We will "clean" the corresponding "Authors" GraphQL Schema later, at the 3rd step "_Shaping the Unified Schema_".
+
+
+<p> &nbsp;</p>
+
+## 2. Add the "Stores" Source
+
+
+The "Stores" Source is a GraphQL API: [`stores-service`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/stores-service).
+
+We will use the `graphql` Handler with the `@graphql-mesh/graphql` package and configure in our [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) it as follows:
+
+```yaml
+sources:
+  - name: Books
+    handler:
+      openapi:
+        baseUrl: http://localhost:3002/
+        source: ../books-service/openapi3-definition.json
+  - name: Authors
+    handler:
+      grpc:
+        endpoint: localhost:3003
+        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+  - name: Stores
+    handler:
+      graphql:
+        endpoint: http://0.0.0.0:3004/graphql
+```
+
+Since the "Stores" is a GraphQL API, Mesh can leverage introspection to get its schema with just the `endpoint` URL.
+
+
+<p> &nbsp;</p>
+
+## 3. Shaping the Unified Schema
+
+The following Mesh Gateway configuration:
+
+```yaml
+sources:
+  - name: Books
+    handler:
+      openapi:
+        baseUrl: http://localhost:3002/
+        source: ../books-service/openapi3-definition.json
+  - name: Authors
+    handler:
+      grpc:
+        endpoint: localhost:3003
+        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+  - name: Stores
+    handler:
+      graphql:
+        endpoint: http://0.0.0.0:3004/graphql
+```
+
+Will gives us a "raw" GraphQL schema design which contains unwanted GraphQL Queries, badly named types and a lack of hierarchy:
+
+
+![GraphQL Unified Schema with Sources only](/assets/docs/how-tos/combine-multiple-sources/mesh-configuration-sources-only.png)
+
+<br />
+<br />
+
+In order to achieve a clean Unified Schema design that would allow the following Query:
+
+```graphql
+query bestSellersByStore {
+  stores {
+    id
+    name
+    bookSells {
+      sellsCount
+      book {
+        id
+        title
+        author {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+```
+
+
+<p>&nbsp;</p>
+
+We will need to perform multiple transforms:
+
+- Rename the "Authors" queries
+- Remove the non-used root queries: `author`, `book`, `categories`, `bookSells`
+- Setup some hierarchy between the queries
+
+
+<br/>
+
+**If you never configured Transforms before**, we advise you going through the ["Your first Gateway with Mesh"](/docs/getting-started/your-first-mesh-gateway) tutorial first.
+
+<p>&nbsp;</p>
+
+
+### Remove unnecessary Root queries
+
+Also covered in the ["Your first Gateway with Mesh"](/docs/getting-started/your-first-mesh-gateway) tutorial, removing queries from the Unified Schema is achieved with the `@graphql-mesh/transform-filter-schema` transform.
+
+To build a clean Unified Schema, we need to remove unnecessary Queries such as:
+- `Query.authors_v1_AuthorsService_GetAuthor` and `Query.authors_v1_AuthorsService_ListAuthors` from the "Authors" Source
+- the `Query.!authors_v1_AuthorsService_connectivityState` automatically generated by the `grpc` handler of the "Authors" Source
+- `Query.book` from the "Books" Source
+- `Query.bookSells` from the "Stores" Source
+
+
+Our updated [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) is the following:
+
+```yaml
+sources:
+  - name: Books
+    handler:
+      openapi:
+        baseUrl: http://localhost:3002/
+        source: ../books-service/openapi3-definition.json
+  - name: Authors
+    handler:
+      grpc:
+        endpoint: localhost:3003
+        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+  - name: Stores
+    handler:
+      graphql:
+        endpoint: http://0.0.0.0:3004/graphql
+transforms:
+  - filterSchema:
+      filters:
+        - Query.!authors_v1_AuthorsService_connectivityState
+        - Query.!{authors_v1_AuthorsService_GetAuthor, book, bookSells, categories}
+```
+
+
+`filterSchema` takes a `filters` option that accepts an array of filter rules.
+
+By adding `Query.!authors_v1_AuthorsService_connectivityState`, we instruct Mesh to remove the `authors_v1_AuthorsService_connectivityState(...)` Query.
+
+You can notice that the `filterSchema` allows to use a bash-like syntax to avoid repeative configuration with the `{..., ...}` syntax.
+
+Another way to achieve the same result would be to instruct Mesh to only keep the `Query.stores` root query, as follows:
+
+```yaml
+sources:
+  # ...
+transforms:
+  - filterSchema:
+      filters:
+        - Query.stores
+```
+
+
+<br />
+
+More information on the `filterSchema` _Transform_ on [its dedicated documentation page](/docs/transforms/filter-schema).
+
+
+<p>&nbsp;</p>
+
+### Setup hierarchy with nested queries
+
+To support the following Query:
+
+```graphql
+query bestSellersByStore {
+  stores {
+    id
+    name
+    bookSells {
+      sellsCount
+      book {
+        id
+        title
+        author {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+```
+
+We need to ensure that:
+- `Store.bookSells: [Sells!]!` targets `Query.bookSells(storeId: ID!)`
+- `Sells.book: Book` targets `Query.book(id: ID!)`
+- `Book.author: authors_v1_Author` targets `Query.authors_v1_AuthorsService_GetAuthor(input: authors_v1_ListAuthorsRequest_Input!)`
+
+<br />
+
+To achieve this, we will use the `additionalResolvers` and `additionalTypeDefs` configuration from Mesh's `.meshrc.yaml` API.
+
+<p>&nbsp;</p>
+
+First, let's describe the **changes to perform at the Schema definition level** with the `additionalTypeDefs` configuration parameter:
+
+```yaml
+sources:
+  # ...
+transforms:
+  - filterSchema:
+      filters:
+        - Query.stores
+additionalTypeDefs: |
+  extend type Store {
+    bookSells: [Sells!]!
+  }
+  extend type Sells {
+    book: Book
+  }
+  extend type Book {
+    author: authors_v1_Author
+  }
+
+```
+
+Using `additionalTypeDefs` allows to write GraphQL that will be merged with the Unified Schema definition, allowing us to [extend existing types](https://spec.graphql.org/June2018/#sec-Object-Extensions) and queries.
+
+The `additionalTypeDefs` above add type definitions to support:
+- `Store.bookSells: [Sells!]!`
+- `Sells.book: Book`
+- `Book.author: authors_v1_Author`
+
+
+Since most types are generated by the handlers, it might be hard to guess the correct spelling (e.g `authors_v1_Author`).
+A quick way to build a `additionalTypeDefs` is to refer to the generated GraphQL Schema file of each Source that can be found in the [`.mesh/sources`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/sources/) folder.
+
+For example, the GraphQL Schema of the "Authors" Source can be found at [`.mesh/sources/Authors/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/sources/Authors/schema.graphql) file:
+
+```graphql
+schema {
+  query: Query
+}
+
+type Query {
+  authors_v1_AuthorsService_GetAuthor(input: authors_v1_GetAuthorRequest_Input): authors_v1_Author
+  authors_v1_AuthorsService_ListAuthors(input: authors_v1_ListAuthorsRequest_Input): authors_v1_ListAuthorsResponse
+  authors_v1_AuthorsService_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+type authors_v1_Author {
+  id: String
+  name: String
+  editor: String
+}
+
+input authors_v1_GetAuthorRequest_Input {
+  id: String
+}
+
+type authors_v1_ListAuthorsResponse {
+  items: [authors_v1_Author]
+}
+
+scalar authors_v1_ListAuthorsRequest_Input @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+```
+
+Here we find that an author is described with the `authors_v1_Author` GraphQL type.
+
+<br/>
+
+_Note: Try running the Mesh Gateway first if the `.mesh` folder does not exist._
+
+
+
+<p>&nbsp;</p>
+
+Now, let's describe **how Mesh should resolve the data on the newly added type definitions** by providing `additionalResolvers`.
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+## Going further
