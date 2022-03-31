@@ -19,6 +19,11 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/openapi"
+  },
   "devDependencies": {
     "@types/deep-equal": "1.0.1",
     "@types/form-urlencoded": "2.0.1"

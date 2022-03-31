@@ -2,6 +2,11 @@
   "name": "json-machete",
   "version": "0.7.5",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/json-machete"
+  },
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

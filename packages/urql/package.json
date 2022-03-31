@@ -2,6 +2,11 @@
   "name": "@graphql-mesh/urql-exchange",
   "version": "2.0.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/urql"
+  },
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

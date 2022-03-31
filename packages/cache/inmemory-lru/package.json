@@ -2,6 +2,11 @@
   "name": "@graphql-mesh/cache-inmemory-lru",
   "version": "0.6.7",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cache/inmemory-lru"
+  },
   "peerDependencies": {
     "graphql": "*"
   },

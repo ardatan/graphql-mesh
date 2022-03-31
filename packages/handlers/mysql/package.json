@@ -22,6 +22,11 @@
     "input": "./src/index.ts"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/mysql"
+  },
   "peerDependencies": {
     "graphql": "*"
   },

@@ -2,6 +2,11 @@
   "name": "@graphql-mesh/cache-redis",
   "version": "0.8.1",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cache/redis"
+  },
   "peerDependencies": {
     "graphql": "*"
   },

@@ -2,6 +2,11 @@
   "name": "@graphql-mesh/cache-localforage",
   "version": "0.5.55",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cache/localforage"
+  },
   "peerDependencies": {
     "graphql": "*"
   },

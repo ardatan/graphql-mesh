@@ -2,6 +2,11 @@
   "name": "@graphql-mesh/utils",
   "version": "0.33.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/utils"
+  },
   "peerDependencies": {
     "graphql": "*"
   },

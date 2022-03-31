@@ -2,6 +2,11 @@
   "name": "@graphql-mesh/runtime",
   "version": "0.33.7",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/runtime"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
