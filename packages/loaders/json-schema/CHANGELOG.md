@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.17.20
+
+### Patch Changes
+
+- 26e69dbe9: fix(json-schema): stringify arrays without indices
+
 ## 0.17.19
 
 ### Patch Changes
