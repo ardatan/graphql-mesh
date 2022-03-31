@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 0.33.4
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/cache-inmemory-lru@0.6.8
+  - @graphql-mesh/merger-bare@0.13.31
+  - @graphql-mesh/merger-stitching@0.15.32
+  - @graphql-mesh/runtime@0.33.8
+  - @graphql-mesh/store@0.7.1
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
 ## 0.33.3
 
 ### Patch Changes

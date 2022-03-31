@@ -1,5 +1,15 @@
 # @omnigraph/raml
 
+## 0.5.24
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - json-machete@0.7.6
+  - @omnigraph/json-schema@0.17.19
+  - @graphql-mesh/utils@0.33.1
+
 ## 0.5.23
 
 ### Patch Changes

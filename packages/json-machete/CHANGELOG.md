@@ -1,5 +1,13 @@
 # json-machete
 
+## 0.7.6
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/utils@0.33.1
+
 ## 0.7.5
 
 ### Patch Changes

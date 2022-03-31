@@ -1,5 +1,17 @@
 # @graphql-mesh/json-schema
 
+## 0.27.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - json-machete@0.7.6
+  - @omnigraph/json-schema@0.17.19
+  - @graphql-mesh/store@0.7.1
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
 ## 0.27.0
 
 ### Minor Changes

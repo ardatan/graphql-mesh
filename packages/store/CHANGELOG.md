@@ -1,5 +1,14 @@
 # @graphql-mesh/store
 
+## 0.7.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
 ## 0.7.0
 
 ### Minor Changes
