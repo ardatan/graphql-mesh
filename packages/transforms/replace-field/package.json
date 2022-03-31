@@ -27,7 +27,7 @@
     "@graphql-mesh/utils": "0.33.0",
     "@graphql-tools/code-file-loader": "7.2.10",
     "@graphql-tools/graphql-file-loader": "7.3.7",
-    "@graphql-tools/load": "7.5.5",
+    "@graphql-tools/load": "7.5.6",
     "@graphql-tools/utils": "8.6.5",
     "tslib": "^2.3.1"
   },
@@ -37,6 +37,6 @@
   },
   "devDependencies": {
     "@graphql-mesh/cache-inmemory-lru": "^0.6.7",
-    "@graphql-tools/schema": "8.3.5"
+    "@graphql-tools/schema": "8.3.6"
   }
 }

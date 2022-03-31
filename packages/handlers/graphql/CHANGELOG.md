@@ -1,5 +1,12 @@
 # @graphql-mesh/graphql
 
+## 0.23.0
+
+### Minor Changes
+
+- 56fe41f0b: Possible breaking change: no longer available to use code file paths for schema headers
+- 56fe41f0b: enhance(graphql): do not store artifacts if introspection is provided
+
 ## 0.22.7
 
 ### Patch Changes

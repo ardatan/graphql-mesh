@@ -2,7 +2,6 @@ import {
   GetMeshSourceOptions,
   MeshHandler,
   MeshSource,
-  ResolverData,
   YamlConfig,
   KeyValueCache,
   ImportFn,
@@ -26,8 +25,19 @@ import {
   getCachedFetch,
   readFileOrUrl,
 } from '@graphql-mesh/utils';
-import { ExecutionRequest, isDocumentNode, inspect } from '@graphql-tools/utils';
+import { ExecutionRequest, isDocumentNode, inspect, memoize1 } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+
+const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
+  return {
+    root: params.rootValue,
+    args: params.variables,
+    context: params.context,
+    env: process.env,
+  };
+});
+
+type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 export default class GraphQLHandler implements MeshHandler {
   private config: YamlConfig.Handler['graphql'];
@@ -45,9 +55,9 @@ export default class GraphQLHandler implements MeshHandler {
     this.importFn = importFn;
   }
 
-  private getCustomFetchImpl(customFetchConfig: string) {
+  private getCustomFetchImpl(customFetchConfig: string): FetchFn | Promise<FetchFn> {
     return customFetchConfig
-      ? loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(customFetchConfig, {
+      ? loadFromModuleExportExpression<FetchFn>(customFetchConfig, {
           cwd: this.baseDir,
           defaultExportName: 'default',
           importFn: this.importFn,
@@ -58,27 +68,8 @@ export default class GraphQLHandler implements MeshHandler {
   async getExecutorForHTTPSourceConfig(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
   ): Promise<MeshSource['executor']> {
-    const {
-      endpoint,
-      schemaHeaders: configHeaders,
-      customFetch: customFetchConfig,
-      operationHeaders,
-    } = httpSourceConfig;
+    const { endpoint, customFetch: customFetchConfig, operationHeaders } = httpSourceConfig;
     const customFetch = await this.getCustomFetchImpl(customFetchConfig);
-    let schemaHeaders =
-      typeof configHeaders === 'string'
-        ? await loadFromModuleExportExpression(configHeaders, {
-            cwd: this.baseDir,
-            defaultExportName: 'default',
-            importFn: this.importFn,
-          })
-        : configHeaders;
-    if (typeof schemaHeaders === 'function') {
-      schemaHeaders = schemaHeaders();
-    }
-    if (schemaHeaders && 'then' in schemaHeaders) {
-      schemaHeaders = await schemaHeaders;
-    }
     const endpointFactory = getInterpolatedStringFactory(endpoint);
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const executor = this.urlLoader.getExecutorAsync(endpoint, {
@@ -88,12 +79,7 @@ export default class GraphQLHandler implements MeshHandler {
     });
 
     return function meshExecutor(params) {
-      const resolverData: ResolverData = {
-        root: params.rootValue,
-        args: params.variables,
-        context: params.context,
-        env: process.env,
-      };
+      const resolverData = getResolverData(params);
       return executor({
         ...params,
         extensions: {
@@ -108,53 +94,48 @@ export default class GraphQLHandler implements MeshHandler {
   async getNonExecutableSchemaForHTTPSource(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
   ): Promise<GraphQLSchema> {
-    return this.nonExecutableSchema.getWithSet(async () => {
-      const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
-      const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
-      const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch);
-      if (httpSourceConfig.introspection) {
-        const headers = schemaHeadersFactory({
-          env: process.env,
-        });
-        const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(
-          httpSourceConfig.introspection,
-          {
-            cwd: this.baseDir,
-            allowUnknownExtensions: true,
-            fetch: customFetch,
-            headers,
-          }
-        );
-        if (typeof sdlOrIntrospection === 'string') {
-          return buildSchema(sdlOrIntrospection);
-        } else if (isDocumentNode(sdlOrIntrospection)) {
-          return buildASTSchema(sdlOrIntrospection);
-        } else {
-          return buildClientSchema(sdlOrIntrospection);
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
+    const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch);
+    if (httpSourceConfig.introspection) {
+      const headers = schemaHeadersFactory({
+        env: process.env,
+      });
+      const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(
+        httpSourceConfig.introspection,
+        {
+          cwd: this.baseDir,
+          allowUnknownExtensions: true,
+          fetch: customFetch,
+          headers,
         }
-      } else {
-        const executor = this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
-          ...httpSourceConfig,
-          customFetch,
-          subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
-        });
-        return introspectSchema(function meshIntrospectionExecutor(params: ExecutionRequest) {
-          const resolverData: ResolverData = {
-            root: params.rootValue,
-            args: params.variables,
-            context: params.context,
-            env: process.env,
-          };
-          return executor({
-            ...params,
-            extensions: {
-              ...params.extensions,
-              headers: schemaHeadersFactory(resolverData),
-              endpoint: endpointFactory(resolverData),
-            },
-          });
-        });
+      );
+      if (typeof sdlOrIntrospection === 'string') {
+        return buildSchema(sdlOrIntrospection);
+      } else if (isDocumentNode(sdlOrIntrospection)) {
+        return buildASTSchema(sdlOrIntrospection);
+      } else if (sdlOrIntrospection.__schema) {
+        return buildClientSchema(sdlOrIntrospection);
       }
+      throw new Error(`Invalid introspection data: ${inspect(sdlOrIntrospection)}`);
+    }
+    return this.nonExecutableSchema.getWithSet(() => {
+      const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
+      const executor = this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
+        ...httpSourceConfig,
+        customFetch,
+        subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
+      });
+      return introspectSchema(function meshIntrospectionExecutor(params: ExecutionRequest) {
+        const resolverData = getResolverData(params);
+        return executor({
+          ...params,
+          extensions: {
+            ...params.extensions,
+            headers: schemaHeadersFactory(resolverData),
+            endpoint: endpointFactory(resolverData),
+          },
+        });
+      });
     });
   }
 
@@ -175,7 +156,7 @@ export default class GraphQLHandler implements MeshHandler {
       // Loaders logic should be here somehow
       const schemaOrStringOrDocumentNode = await loadFromModuleExportExpression<GraphQLSchema | string | DocumentNode>(
         schemaConfig,
-        { cwd: this.baseDir, defaultExportName: 'default', importFn: this.importFn }
+        { cwd: this.baseDir, defaultExportName: 'schema', importFn: this.importFn }
       );
       let schema: GraphQLSchema;
       if (schemaOrStringOrDocumentNode instanceof GraphQLSchema) {
@@ -236,7 +217,11 @@ export default class GraphQLHandler implements MeshHandler {
         const schemaPromises: Promise<GraphQLSchema>[] = [];
 
         const executorPromises: Promise<MeshSource['executor']>[] = [];
+        let batch = true;
         for (const httpSourceConfig of this.config.sources) {
+          if (httpSourceConfig.batch === false) {
+            batch = false;
+          }
           schemaPromises.push(this.getNonExecutableSchemaForHTTPSource(httpSourceConfig));
           executorPromises.push(this.getExecutorForHTTPSourceConfig(httpSourceConfig));
         }
@@ -248,7 +233,7 @@ export default class GraphQLHandler implements MeshHandler {
         return {
           schema,
           executor,
-          batch: true,
+          batch,
         };
       } else {
         let schema: GraphQLSchema;
@@ -286,7 +271,7 @@ export default class GraphQLHandler implements MeshHandler {
       return {
         schema,
         executor,
-        batch: true,
+        batch: this.config.batch != null ? this.config.batch : true,
       };
     } else if ('schema' in this.config) {
       return this.getCodeFirstSource(this.config);
