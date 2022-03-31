@@ -91,7 +91,7 @@ export default class WrapRename implements MeshTransform {
           replaceArgNameFn = (typeName, fieldName, argName) =>
             typeName === toTypeName && fieldName === fromFieldName && argName === fromArgumentName
               ? toArgumentName
-              : fieldName;
+              : argName;
         }
 
         this.transforms.push(new RenameObjectFieldArguments(replaceArgNameFn) as any);

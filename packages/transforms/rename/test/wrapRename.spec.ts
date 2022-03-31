@@ -12,7 +12,7 @@ describe('rename', () => {
       type Query {
         my_user: MyUser!
         my_book: MyBook!
-        profile(profile_id: ID!, role: String): Profile
+        profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
       }
 
       type MyUser {
@@ -532,6 +532,9 @@ describe('rename', () => {
     // expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
+
+    expect(fieldMap.profile.args.find(a => a.name === 'another_argument')).toBeDefined();
+    expect(fieldMap.profile.args.find(a => a.name === 'some_argument')).toBeDefined();
 
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
