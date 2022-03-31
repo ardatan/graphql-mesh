@@ -16,5 +16,14 @@ export default withBundleAnalyzer(
   withGuildDocs({
     i18n,
     getRoutes,
+    async redirects() {
+      return [
+        {
+          source: '/docs',
+          destination: '/docs/introduction',
+          permanent: true,
+        },
+      ];
+    }
   }),
 );
