@@ -18,7 +18,7 @@ export class AppController {
     return this.appService.listBooks();
   }
 
-  @Get('/books/categories')
+  @Get('/categories')
   @ApiResponse({
     status: 200,
     type: [Category],

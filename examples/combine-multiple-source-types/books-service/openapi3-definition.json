@@ -23,7 +23,7 @@
         "tags": ["books"]
       }
     },
-    "/books/categories": {
+    "/categories": {
       "get": {
         "operationId": "AppController_listBookCategories",
         "parameters": [],

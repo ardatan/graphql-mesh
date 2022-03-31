@@ -1,0 +1,18 @@
+sources:
+  - name: Books
+    handler:
+      openapi:
+        baseUrl: http://localhost:3002/
+        source: ../../books-service/openapi3-definition.json
+transforms:
+  - filterSchema:
+      filters:
+        - Query.!book
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: categories
+          to:
+            type: Query
+            field: booksCategories

@@ -1,0 +1,59 @@
+---
+id: combine-many-sources
+title: Combine many Sources
+sidebar_label: Combine many Sources
+---
+
+
+The getting started "Your first Gateway with Mesh" introduces the configuration of the Weather API Source.
+
+In this page, we will see how to add 2 new sources to achieve the following Unified Schema:
+
+<br />
+
+<Graph>
+
+graph TD;
+subgraph AA [" "]
+A[Mobile app];
+B[Web app];
+C[Node.js client];
+end
+subgraph BB [" "]
+E[Books REST API];
+F[Authors gRPC API];
+G[Stores GraphQL API];
+end
+Z[Mesh Gateway GraphQL API];
+A --> Z;
+B --> Z;
+C --> Z;
+Z --> E;
+Z --> F;
+Z --> G;
+
+</Graph>
+
+<br />
+
+We will go further than just add new Sources by shaping the Unified Schema to accept the following query:
+
+```graphql
+query getCityWeatherAndPopulation {
+  city(city: "Paris", country: "France") {
+    weatherHistory(
+      endDate: "2022-01-31",
+      key: "<YOUR_WEATHER_BIT_API_KEY>",
+      startDate: "2022-01-01"
+    ) {
+      cityName
+      data {
+        temp
+        datetime
+      }
+    }
+
+    # population...
+  }
+}
+```

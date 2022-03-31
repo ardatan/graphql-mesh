@@ -31,7 +31,7 @@ Working with Mesh means dealing with 4 main concepts: _Sources_, _Handlers_, _Tr
         end
       end
     end
-    A111 & A121 & A311-- merges in --> A0
+    A111 & A121 & A311-- merged in --> A0
     subgraph B [Services]
       subgraph B1 [City REST API]
         B11[Swagger definition file]
@@ -43,9 +43,9 @@ Working with Mesh means dealing with 4 main concepts: _Sources_, _Handlers_, _Tr
         B31[RAML definition file]
       end
     end
-    B11--translates to GraphQL Schemas by handler-->A111
-    B21--translates to GraphQL Schemas by handler-->A121
-    B31--translates to GraphQL Schemas by handler-->A311
+    B11--translated to GraphQL Schemas by handler-->A111
+    B21--translated to GraphQL Schemas by handler-->A121
+    B31--translated to GraphQL Schemas by handler-->A311
 
 </Graph>
 

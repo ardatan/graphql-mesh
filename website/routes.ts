@@ -9,21 +9,25 @@ export function getRoutes(): IRoutes {
       },
       'getting-started': {
         $name: 'Getting Started',
-        $routes: ['overview', 'installation', 'your-first-mesh-gateway', 'cli-commands', 'comparison'],
+        $routes: ['overview', 'installation', 'your-first-mesh-gateway', 'comparison'],
       },
-      recipes: {
-        $name: 'Recipes',
-        $routes: [
-          'multiple-apis',
-          'build-mesh-artifacts',
-          'typescript',
-          'as-sdk',
-          'as-gateway',
-          'custom-server',
-          'subscriptions-webhooks',
-          'live-queries',
-        ],
+      howtos: {
+        $name: 'How to',
+        $routes: ['combine-many-sources'],
       },
+      // recipes: {
+      //   $name: 'Recipes',
+      //   $routes: [
+      //     'multiple-apis',
+      //     'build-mesh-artifacts',
+      //     'typescript',
+      //     'as-sdk',
+      //     'as-gateway',
+      //     'custom-server',
+      //     'subscriptions-webhooks',
+      //     'live-queries',
+      //   ],
+      // },
       handlers: {
         $name: 'Source Handlers',
         $routes: [
@@ -66,6 +70,9 @@ export function getRoutes(): IRoutes {
         $routes: ['inmemory-lru', 'file', 'localforage', 'redis'],
       },
       api: apiSidebar,
+      'cli-commands': {
+        $name: 'CLI commands',
+      },
     },
   };
 
