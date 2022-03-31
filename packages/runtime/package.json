@@ -38,8 +38,8 @@
     "@graphql-tools/schema": "8.3.6",
     "@graphql-tools/wrap": "8.4.10",
     "@graphql-tools/utils": "8.6.5",
-    "@envelop/core": "2.1.0",
-    "@envelop/live-query": "3.1.0",
+    "@envelop/core": "2.2.0",
+    "@envelop/live-query": "3.2.0",
     "tslib": "^2.3.1",
     "graphql-jit": "0.7.3"
   },
