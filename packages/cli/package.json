@@ -2,6 +2,11 @@
   "name": "@graphql-mesh/cli",
   "version": "0.66.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cli"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
