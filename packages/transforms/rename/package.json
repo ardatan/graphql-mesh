@@ -23,7 +23,8 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.6.7"
+    "@graphql-mesh/cache-inmemory-lru": "0.6.7",
+    "@graphql-tools/schema": "^8.3.5"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.70.0",
