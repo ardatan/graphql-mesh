@@ -7,13 +7,23 @@ let apolloServer: ApolloServer;
 export default async function createApolloServer() {
   if (apolloServer) return apolloServer;
 
-  const { schema } = await getBuiltMesh();
-
+  const { schema, cache, getEnveloped } = await getBuiltMesh();
   apolloServer = new ApolloServer({
     schema,
     introspection: !isProd,
     playground: !isProd,
-    context: req => req,
+    cache,
+    executor: async requestContext => {
+      const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
+
+      return execute({
+        schema: schema,
+        document: requestContext.document,
+        contextValue: await contextFactory(),
+        variableValues: requestContext.request.variables,
+        operationName: requestContext.operationName,
+      });
+    },
   });
 
   return apolloServer;

@@ -791,7 +791,7 @@
               "additionalItems": true
             }
           ],
-          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection"
         },
         "operationHeaders": {
           "type": "object",

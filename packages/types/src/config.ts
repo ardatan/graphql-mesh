@@ -234,7 +234,6 @@ export interface GraphQLHandlerHTTPConfiguration {
   endpoint: string;
   /**
    * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
-   * You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
    */
   schemaHeaders?: any;
   /**
