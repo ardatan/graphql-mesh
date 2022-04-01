@@ -3135,7 +3135,7 @@
     "@graphql-tools/utils" "6.1.0"
     tslib "~2.0.1"
 
-"@graphql-tools/schema@8.3.6", "@graphql-tools/schema@^8.0.2", "@graphql-tools/schema@^8.1.2", "@graphql-tools/schema@^8.3.1", "@graphql-tools/schema@^8.3.5":
+"@graphql-tools/schema@8.3.6", "@graphql-tools/schema@^8.0.2", "@graphql-tools/schema@^8.1.2", "@graphql-tools/schema@^8.3.1":
   version "8.3.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-8.3.6.tgz#80cfe3eba53eb6390a60a30078d7efbdaa5cc0b7"
   integrity sha512-7tWYRQ8hB/rv2zAtv2LtnQl4UybyJPtRz/VLKRmgi7+F5t8iYBahmmsxMDAYMWMmWMqEDiKk54TvAes+J069rQ==
