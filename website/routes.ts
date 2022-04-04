@@ -13,7 +13,7 @@ export function getRoutes(): IRoutes {
       },
       howtos: {
         $name: 'How to',
-        $routes: ['combine-many-sources'],
+        $routes: ['combine-multiple-sources'],
       },
       // recipes: {
       //   $name: 'Recipes',
