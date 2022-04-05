@@ -9,23 +9,20 @@ export function getRoutes(): IRoutes {
       },
       'getting-started': {
         $name: 'Getting Started',
-        $routes: ['overview', 'installation', 'your-first-mesh-gateway', 'comparison'],
+        $routes: [
+          'overview',
+          'installation',
+          'your-first-mesh-gateway',
+          'combine-multiple-sources',
+          'sources-with-no-definition',
+          'comparison',
+        ],
       },
-      howtos: {
-        $name: 'How to',
-        $routes: ['combine-multiple-sources', 'sources-with-no-definition'],
-      },
-      // recipes: {
-      //   $name: 'Recipes',
+      // guides: {
+      //   $name: 'Guides',
       //   $routes: [
-      //     'multiple-apis',
-      //     'build-mesh-artifacts',
-      //     'typescript',
-      //     'as-sdk',
-      //     'as-gateway',
-      //     'custom-server',
-      //     'subscriptions-webhooks',
-      //     'live-queries',
+      //     'extending-unified-schema',
+      //     'graphql-code-generator'
       //   ],
       // },
       handlers: {
@@ -79,7 +76,7 @@ export function getRoutes(): IRoutes {
   GenerateRoutes({
     Routes,
     folderPattern: 'docs',
-    ignorePaths: ['extend', 'generated-markdown'],
+    ignorePaths: ['extend', 'generated-markdown', 'recipes', 'guides'],
   });
 
   return {
