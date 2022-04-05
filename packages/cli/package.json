@@ -61,7 +61,6 @@
     "@graphql-tools/wrap": "8.4.10",
     "@graphql-yoga/render-graphiql": "2.0.0",
     "@graphql-yoga/node": "2.0.0",
-    "body-parser": "1.20.0",
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",
     "dotenv": "16.0.0",

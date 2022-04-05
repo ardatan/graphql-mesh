@@ -9,9 +9,8 @@ import ws from 'ws';
 import cors from 'cors';
 import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInterpolator } from '@graphql-mesh/utils';
 import _ from 'lodash';
-import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { path , fs } from '@graphql-mesh/cross-helpers';
+import { path, fs } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
@@ -23,8 +22,6 @@ import { env, on as processOn } from 'process';
 import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
-
-dnscache({ enable: true });
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -46,7 +43,6 @@ export async function serveMesh(
     handlers,
     staticFiles,
     playground,
-    maxRequestBodySize = '100kb',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
     browser,
@@ -71,6 +67,23 @@ export async function serveMesh(
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
       .then(mesh => {
         readyFlag = true;
+        dnscache({
+          enable: true,
+          cache: function CacheCtor({ ttl }: { ttl: number }) {
+            return {
+              get: (key: string, callback: CallableFunction) =>
+                mesh.cache
+                  .get(key)
+                  .then(value => callback(null, value))
+                  .catch(e => callback(e)),
+              set: (key: string, value: string, callback: CallableFunction) =>
+                mesh.cache
+                  .set(key, value, { ttl })
+                  .then(() => callback())
+                  .catch(e => callback(e)),
+            };
+          },
+        });
         logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
         registerTerminateHandler(eventName => {
           const eventLogger = logger.child(`${eventName}💀`);
@@ -110,11 +123,6 @@ export async function serveMesh(
       app.use(cors(corsConfig));
     }
 
-    app.use(
-      bodyParser.json({
-        limit: maxRequestBodySize,
-      })
-    );
     app.use(cookieParser());
 
     const wsServer = new ws.Server({
