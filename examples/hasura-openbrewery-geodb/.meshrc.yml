@@ -10,6 +10,3 @@ sources:
             method: GET
             requestSample: ./json-samples/breweriesInput.json
             responseSample: ./json-samples/breweries.json
-
-documents:
-  - example-queries/*.graphql

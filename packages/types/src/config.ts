@@ -96,10 +96,6 @@ export interface ServeConfig {
    * Show GraphiQL Playground
    */
   playground?: boolean;
-  /**
-   * Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
-   */
-  maxRequestBodySize?: number | string;
   sslCredentials?: HTTPSConfig;
   /**
    * Path to GraphQL Endpoint (default: /graphql)

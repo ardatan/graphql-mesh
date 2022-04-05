@@ -26,9 +26,6 @@
     * `method` (type: `String (GET | POST | DELETE | PATCH)`) - HTTP Method that the handler will control
 * `staticFiles` (type: `String`) - Path to your static files you want to be served with GraphQL Mesh HTTP Server
 * `playground` (type: `Boolean`) - Show GraphiQL Playground
-* `maxRequestBodySize` -  - Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. One of: 
-  * `Int`
-  * `String`
 * `sslCredentials` (type: `Object`) - SSL Credentials for HTTPS Server
 If this is provided, Mesh will be served via HTTPS: 
   * `key` (type: `String`, required)
