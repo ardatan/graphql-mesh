@@ -372,22 +372,55 @@ export interface JsonSchemaHandler {
   ignoreErrorResponses?: boolean;
 }
 export interface JsonSchemaHTTPOperation {
+  /**
+   * This Field based on the field name of the URL path.
+   * Example: "https://MyAPIURL.com/FieldNameHere/",
+   * so we will set the "field: FieldNameHere".
+   */
   field: string;
+  /**
+   * Your chance to describe the operation!
+   * Make sure the description is clear and concise.
+   */
   description?: string;
   /**
-   * Allowed values: Query, Mutation, Subscription
+   * Type field is set the opertion type: Query, Mutation or Subscription. (Allowed values: Query, Mutation, Subscription)
    */
   type: 'Query' | 'Mutation' | 'Subscription';
+  /**
+   * Your chance to provide request schema name.
+   */
   requestSchema?: any;
+  /**
+   * The path definition of the JSON Schema sample.
+   * Example: "./jsons/questions.response.json".
+   */
   requestSample?: any;
+  /**
+   * Inset any name for the type of the request body.
+   */
   requestTypeName?: string;
   /**
-   * This body will be merged with the request body sent with the underlying HTTP request
+   * This body will be merged with the request body sent with
+   * the underlying HTTP request
    */
   requestBaseBody?: any;
+  /**
+   * Yay! Now you can provide the response schema name.
+   */
   responseSchema?: any;
+  /**
+   * Did you use Sample? Provide the respone sample path.
+   */
   responseSample?: any;
+  /**
+   * Inset any name for the type of the response body.
+   */
   responseTypeName?: string;
+  /**
+   * Mapping the JSON Schema and define the arguments of the operation.
+   * Example: 'argTypeMap: ID: String'
+   */
   argTypeMap?: {
     [k: string]: any;
   };
@@ -417,7 +450,8 @@ export interface JsonSchemaPubSubOperation {
   requestSample?: any;
   requestTypeName?: string;
   /**
-   * This body will be merged with the request body sent with the underlying HTTP request
+   * This body will be merged with the request body sent with
+   * the underlying HTTP request
    */
   requestBaseBody?: any;
   responseSchema?: any;
