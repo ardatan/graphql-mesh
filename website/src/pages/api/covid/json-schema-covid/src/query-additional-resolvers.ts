@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Resolvers } from '../.mesh';
 export const resolvers: Resolvers = {
   Query: {
@@ -20,7 +21,7 @@ export const resolvers: Resolvers = {
         `,
       });
 
-      const numberPop = worldPop.records[0].fields.value;
+      const numberPop = worldPop!.records![0]!.fields!.value!;
 
       const covidCase = await context.Covid.Query.case({
         root,
@@ -37,8 +38,8 @@ export const resolvers: Resolvers = {
           }
         `,
       });
-      const numberConfirmed = covidCase.confirmed;
-      const numberDeath = covidCase.deaths;
+      const numberConfirmed = covidCase!.confirmed!;
+      const numberDeath = covidCase!.deaths!;
       return {
         confirmedRatio: ((numberConfirmed * 1.0) / numberPop) * 1.0,
         deathRatio: ((numberDeath * 1.0) / numberPop) * 1.0,
