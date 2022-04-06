@@ -86,9 +86,7 @@ import { createServer } from '@graphql-yoga/node';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getBuiltMesh } from './.mesh';
 
-
-
-export default async function apiHandler(req: NextApiRequest, res: NextApiResponse) {
+async function buildServer() {
   // retrieve the mesh instance (with configured Envelop plugins)
   const mesh = await getBuiltMesh();
   // pass the Mesh instance to Yoga and configure GraphiQL
@@ -99,7 +97,15 @@ export default async function apiHandler(req: NextApiRequest, res: NextApiRespon
       title: 'Mesh Gateway',
     },
   });
-  return server.requestListener(req, res);
+
+  return server;
+}
+
+// avoids building the server at each request!
+const server$ = buildServer();
+
+export default async function apiHandler(req: NextApiRequest, res: NextApiResponse) {
+  return server$.requestListener(req, res);
 }
 ```
 
