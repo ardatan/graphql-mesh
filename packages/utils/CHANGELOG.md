@@ -1,5 +1,31 @@
 # @graphql-mesh/utils
 
+## 0.33.2
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+
+## 0.33.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/types@0.70.1
+
+## 0.33.0
+
+### Minor Changes
+
+- d567be7b5: feat(json-schema): support bundles from different sources
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+
 ## 0.32.2
 
 ### Patch Changes

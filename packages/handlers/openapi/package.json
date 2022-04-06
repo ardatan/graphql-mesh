@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.24.3",
+  "version": "0.24.6",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,6 +19,11 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/openapi"
+  },
   "devDependencies": {
     "@types/deep-equal": "1.0.1",
     "@types/form-urlencoded": "2.0.1"
@@ -28,17 +33,17 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.1.0",
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/store": "0.6.2",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/store": "0.7.2",
+    "@graphql-mesh/utils": "0.33.2",
     "@graphql-tools/utils": "8.6.5",
-    "cross-undici-fetch": "0.1.27",
+    "cross-undici-fetch": "0.1.28",
     "deep-equal": "2.0.5",
     "form-urlencoded": "6.0.6",
     "jsonpath-plus": "6.0.1",
     "json-ptr": "2.2.0",
     "openapi-diff": "0.23.5",
-    "graphql-scalars": "1.16.0",
+    "graphql-scalars": "1.17.0",
     "pluralize": "8.0.0",
     "swagger2openapi": "7.0.8",
     "url-join": "4.0.1",

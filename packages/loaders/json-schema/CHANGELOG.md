@@ -1,5 +1,40 @@
 # @omnigraph/json-schema
 
+## 0.17.21
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+- Updated dependencies [114629e47]
+  - @graphql-mesh/types@0.70.2
+  - json-machete@0.7.7
+  - @graphql-mesh/utils@0.33.2
+
+## 0.17.20
+
+### Patch Changes
+
+- 26e69dbe9: fix(json-schema): stringify arrays without indices
+
+## 0.17.19
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - json-machete@0.7.6
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.17.18
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - json-machete@0.7.5
+
 ## 0.17.17
 
 ### Patch Changes

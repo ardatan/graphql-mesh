@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.12.27",
+  "version": "0.12.30",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,19 +19,25 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/rename"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.6.6"
+    "@graphql-mesh/cache-inmemory-lru": "0.6.9",
+    "@graphql-tools/schema": "8.3.6"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
-    "@graphql-tools/delegate": "8.7.0",
-    "@graphql-tools/wrap": "8.4.9",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/utils": "0.33.2",
+    "@graphql-tools/delegate": "8.7.1",
+    "@graphql-tools/wrap": "8.4.10",
     "@graphql-tools/utils": "8.6.5",
-    "graphql-scalars": "1.16.0",
+    "graphql-scalars": "1.17.0",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

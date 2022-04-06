@@ -1,62 +1,71 @@
-import { StoreProxy } from '@graphql-mesh/store';
-import { GetMeshSourceOptions, KeyValueCache, Logger, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
-import { JsonSchemaWithDiff } from './JsonSchemaWithDiff';
-import { dereferenceObject, JSONSchemaObject, referenceJSONSchema } from 'json-machete';
-import {
-  getDereferencedJSONSchemaFromOperations,
-  getGraphQLSchemaFromDereferencedJSONSchema,
-} from '@omnigraph/json-schema';
-import { getCachedFetch } from '@graphql-mesh/utils';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { GetMeshSourceOptions, Logger, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { JSONSchemaLoaderBundle, createBundle, getGraphQLSchemaFromBundle } from '@omnigraph/json-schema';
+import { getCachedFetch, getInterpolatedHeadersFactory, readFileOrUrl } from '@graphql-mesh/utils';
 
 export default class JsonSchemaHandler implements MeshHandler {
-  private config: YamlConfig.JsonSchemaHandler;
+  private name: string;
+  private config: YamlConfig.Handler['jsonSchema'];
+  private bundleStoreProxy: StoreProxy<JSONSchemaLoaderBundle>;
   private baseDir: string;
-  public cache: KeyValueCache<any>;
-  public pubsub: MeshPubSub;
-  public jsonSchema: StoreProxy<JSONSchemaObject>;
   private logger: Logger;
-  private fetch: WindowOrWorkerGlobalScope['fetch'];
+  private fetch: typeof fetch;
+  private pubsub: MeshPubSub;
 
-  constructor({ config, baseDir, cache, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.JsonSchemaHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    cache,
+    store,
+    pubsub,
+    logger,
+  }: GetMeshSourceOptions<YamlConfig.Handler['jsonSchema']>) {
+    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
+    this.fetch = getCachedFetch(cache);
+    this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
-    this.jsonSchema = store.proxy('jsonSchemaBundle', JsonSchemaWithDiff);
     this.logger = logger;
-    this.fetch = getCachedFetch(this.cache);
   }
 
-  async getDereferencedSchema() {
-    const cachedSchema = await this.jsonSchema.get();
-    if (cachedSchema) {
-      return dereferenceObject(cachedSchema, {
+  async getDereferencedBundle() {
+    const config = this.config;
+    if ('bundlePath' in config) {
+      const headersFactory = getInterpolatedHeadersFactory(config.bundleHeaders);
+      const bundle = await readFileOrUrl<JSONSchemaLoaderBundle>(config.bundlePath, {
         cwd: this.baseDir,
         fetch: this.fetch,
-      });
-    } else {
-      const dereferencedSchema = await getDereferencedJSONSchemaFromOperations({
-        operations: this.config.operations as any,
-        cwd: this.baseDir,
         logger: this.logger,
-        fetch: this.fetch,
-        ignoreErrorResponses: this.config.ignoreErrorResponses,
+        headers: headersFactory({
+          env: process.env,
+        }),
+        fallbackFormat: 'json',
       });
-      const referencedSchema = await referenceJSONSchema(dereferencedSchema);
-      await this.jsonSchema.set(referencedSchema);
-      return dereferencedSchema;
+      return bundle;
+    } else {
+      return this.bundleStoreProxy.getWithSet(() => {
+        return createBundle(this.name, {
+          ...config,
+          operations: config.operations as any,
+          cwd: this.baseDir,
+          fetch: this.fetch,
+          logger: this.logger,
+        });
+      });
     }
   }
 
   async getMeshSource() {
-    const fullyDereferencedSchema = await this.getDereferencedSchema();
-    const schema = await getGraphQLSchemaFromDereferencedJSONSchema(fullyDereferencedSchema, {
+    const bundle = await this.getDereferencedBundle();
+    const schema = await getGraphQLSchemaFromBundle(bundle, {
+      cwd: this.baseDir,
       fetch: this.fetch,
-      logger: this.logger,
-      operations: this.config.operations as any,
-      operationHeaders: this.config.operationHeaders,
-      baseUrl: this.config.baseUrl,
       pubsub: this.pubsub,
+      logger: this.logger,
+      baseUrl: this.config.baseUrl,
+      operationHeaders: this.config.operationHeaders,
     });
     return {
       schema,

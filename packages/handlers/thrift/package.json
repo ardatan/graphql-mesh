@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.8.40",
+  "version": "0.8.43",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,6 +19,11 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/thrift"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
@@ -30,12 +35,12 @@
     "@creditkarma/thrift-client": "0.17.2",
     "@creditkarma/thrift-parser": "1.2.0",
     "@creditkarma/thrift-server-core": "0.17.2",
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/store": "0.6.2",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/store": "0.7.2",
+    "@graphql-mesh/utils": "0.33.2",
     "@graphql-tools/utils": "8.6.5",
     "fetchache": "0.1.1",
-    "graphql-scalars": "1.16.0",
+    "graphql-scalars": "1.17.0",
     "url-join": "4.0.1",
     "thrift": "0.16.0",
     "tslib": "^2.3.1",

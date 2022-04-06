@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-filter-schema",
-  "version": "0.14.37",
+  "version": "0.14.40",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,6 +19,11 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/filter-schema"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
@@ -26,11 +31,11 @@
     "@types/micromatch": "4.0.2"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/utils": "0.33.2",
     "micromatch": "4.0.5",
-    "@graphql-tools/wrap": "8.4.9",
-    "@graphql-tools/delegate": "8.7.0",
+    "@graphql-tools/wrap": "8.4.10",
+    "@graphql-tools/delegate": "8.7.1",
     "@graphql-tools/utils": "8.6.5",
     "tslib": "^2.3.1"
   },

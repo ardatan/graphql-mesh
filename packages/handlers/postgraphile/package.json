@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.20.3",
+  "version": "0.20.6",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,14 +19,19 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/postgraphile"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.1.0",
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/store": "0.6.2",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/store": "0.7.2",
+    "@graphql-mesh/utils": "0.33.2",
     "postgraphile-core": "4.12.2",
     "postgraphile": "4.12.9",
     "pg": "^8.6.0",

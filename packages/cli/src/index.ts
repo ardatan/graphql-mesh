@@ -268,6 +268,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             new FsStoreStorageAdapter({
               cwd: baseDir,
               importFn: defaultImportFn,
+              fileType: 'ts',
             }),
             {
               readonly: false,
@@ -298,10 +299,16 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         }
       }
     )
-    .command(
+    .command<{ fileType: 'json' | 'ts' }>(
       cliParams.buildArtifactsCommand,
       'Builds artifacts',
-      builder => {},
+      builder => {
+        builder.option('fileType', {
+          type: 'string',
+          choices: ['json', 'ts'],
+          default: 'ts',
+        });
+      },
       async args => {
         try {
           const outputDir = pathModule.join(baseDir, cliParams.artifactsDir);
@@ -335,6 +342,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             new FsStoreStorageAdapter({
               cwd: baseDir,
               importFn,
+              fileType: args.fileType,
             }),
             {
               readonly: false,

@@ -2,10 +2,10 @@ import { ApolloServer } from 'apollo-server';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 
 export default async function ({ getBuiltMesh, logger, argsPort }: ServeMeshOptions): Promise<void> {
-  const { schema, getEnveloped } = await getBuiltMesh();
+  const { schema, cache, getEnveloped } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req }) => req,
+    cache,
     executor: async requestContext => {
       const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });
 

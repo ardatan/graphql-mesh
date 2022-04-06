@@ -1,5 +1,27 @@
 # json-machete
 
+## 0.7.7
+
+### Patch Changes
+
+- 114629e47: fix(json-machete): respect int64 types
+  - @graphql-mesh/utils@0.33.2
+
+## 0.7.6
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/utils@0.33.1
+
+## 0.7.5
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/utils@0.33.0
+
 ## 0.7.4
 
 ### Patch Changes

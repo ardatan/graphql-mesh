@@ -1,4 +1,4 @@
-import { createRequire } from 'node:module';
+import { createRequire } from 'module';
 import { withGuildDocs } from '@guild-docs/server';
 import nextBundleAnalyzer from '@next/bundle-analyzer';
 import { register } from 'esbuild-register/dist/node.js';
@@ -16,5 +16,14 @@ export default withBundleAnalyzer(
   withGuildDocs({
     i18n,
     getRoutes,
-  }),
+    async redirects() {
+      return [
+        {
+          source: '/docs',
+          destination: '/docs/introduction',
+          permanent: true,
+        },
+      ];
+    },
+  })
 );

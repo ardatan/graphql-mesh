@@ -114,6 +114,12 @@ export async function healJSONSchema(schema: JSONSchema) {
           if (subSchema.items) {
             subSchema.type = 'array';
           }
+          if (subSchema.format === 'int64') {
+            subSchema.type = 'integer';
+          }
+          if (subSchema.format) {
+            subSchema.type = 'string';
+          }
         }
         if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
           const examples = asArray(subSchema.examples || subSchema.example || []);
@@ -127,7 +133,7 @@ export async function healJSONSchema(schema: JSONSchema) {
         if (subSchema.format === 'dateTime') {
           subSchema.format = 'date-time';
         }
-        if (subSchema.format) {
+        if (subSchema.type === 'string' && subSchema.format) {
           if (!JSONSchemaStringFormats.includes(subSchema.format)) {
             delete subSchema.format;
           }

@@ -1,5 +1,50 @@
 # @graphql-mesh/cli
 
+## 0.66.2
+
+### Patch Changes
+
+- b02f5b008: enhance(cli): leave body parsing to yoga and cache dns with mesh caching
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/config@0.33.5
+  - @graphql-mesh/runtime@0.33.9
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+
+## 0.66.1
+
+### Patch Changes
+
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/config@0.33.4
+  - @graphql-mesh/runtime@0.33.8
+  - @graphql-mesh/store@0.7.1
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.66.0
+
+### Minor Changes
+
+- d567be7b5: feat(cli/store): ability to store artifacts as JSON instead of TS
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - @graphql-mesh/store@0.7.0
+  - @graphql-mesh/config@0.33.3
+  - @graphql-mesh/runtime@0.33.7
+
+## 0.65.0
+
+### Minor Changes
+
+- e472a868c: cli(serve): Yoga v2
+
 ## 0.64.2
 
 ### Patch Changes

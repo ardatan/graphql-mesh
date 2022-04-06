@@ -1,5 +1,47 @@
 # @graphql-mesh/raml
 
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+  - @omnigraph/raml@0.5.26
+
+## 0.3.2
+
+### Patch Changes
+
+- @omnigraph/raml@0.5.25
+
+## 0.3.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @omnigraph/raml@0.5.24
+  - @graphql-mesh/store@0.7.1
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.3.0
+
+### Minor Changes
+
+- d567be7b5: feat(json-schema): support bundles from different sources
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - @graphql-mesh/store@0.7.0
+  - @omnigraph/raml@0.5.23
+
 ## 0.2.9
 
 ### Patch Changes

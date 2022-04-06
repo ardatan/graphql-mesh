@@ -1,5 +1,41 @@
 # @graphql-mesh/graphql
 
+## 0.23.2
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+
+## 0.23.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/store@0.7.1
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.23.0
+
+### Minor Changes
+
+- 56fe41f0b: Possible breaking change: no longer available to use code file paths for schema headers
+- 56fe41f0b: enhance(graphql): do not store artifacts if introspection is provided
+
+## 0.22.7
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - @graphql-mesh/store@0.7.0
+
 ## 0.22.6
 
 ### Patch Changes

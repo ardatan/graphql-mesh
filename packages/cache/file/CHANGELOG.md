@@ -1,5 +1,31 @@
 # @graphql-mesh/cache-file
 
+## 0.8.5
+
+### Patch Changes
+
+- 08beda78b: fix(file): create file if not exists and remove lodash dependency
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/utils@0.33.2
+
+## 0.8.4
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.8.3
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+
 ## 0.8.2
 
 ### Patch Changes

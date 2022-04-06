@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.21.2",
+  "version": "0.21.5",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,18 +19,23 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/grpc"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.1.0",
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
-    "@graphql-mesh/store": "0.6.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/utils": "0.33.2",
+    "@graphql-mesh/store": "0.7.2",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "0.6.9",
-    "graphql-scalars": "1.16.0",
-    "graphql-compose": "9.0.7",
+    "graphql-scalars": "1.17.0",
+    "graphql-compose": "9.0.8",
     "grpc-reflection-js": "0.1.2",
     "globby": "11.1.0",
     "long": "4.0.0",

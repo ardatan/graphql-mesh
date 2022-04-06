@@ -1,5 +1,101 @@
 # @graphql-mesh/container
 
+## 0.1.80
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/cli@0.66.2
+  - @graphql-mesh/config@0.33.5
+  - @graphql-mesh/graphql@0.23.2
+  - @graphql-mesh/grpc@0.21.5
+  - @graphql-mesh/json-schema@0.27.3
+  - @graphql-mesh/odata@0.17.6
+  - @graphql-mesh/openapi@0.24.6
+  - @graphql-mesh/postgraphile@0.20.6
+  - @graphql-mesh/soap@0.10.40
+  - @graphql-mesh/runtime@0.33.9
+  - @graphql-mesh/transform-cache@0.11.40
+  - @graphql-mesh/transform-encapsulate@0.3.40
+  - @graphql-mesh/transform-extend@0.10.5
+  - @graphql-mesh/transform-filter-schema@0.14.40
+  - @graphql-mesh/transform-mock@0.14.25
+  - @graphql-mesh/transform-prefix@0.11.29
+  - @graphql-mesh/transform-rename@0.12.30
+  - @graphql-mesh/transform-resolvers-composition@0.12.39
+
+## 0.1.79
+
+### Patch Changes
+
+- @graphql-mesh/json-schema@0.27.2
+
+## 0.1.78
+
+### Patch Changes
+
+- Updated dependencies [2d5c6c72a]
+- Updated dependencies [36f843323]
+- Updated dependencies [6aefe8629]
+  - @graphql-mesh/config@0.33.4
+  - @graphql-mesh/graphql@0.23.1
+  - @graphql-mesh/grpc@0.21.4
+  - @graphql-mesh/json-schema@0.27.1
+  - @graphql-mesh/odata@0.17.5
+  - @graphql-mesh/openapi@0.24.5
+  - @graphql-mesh/postgraphile@0.20.5
+  - @graphql-mesh/soap@0.10.39
+  - @graphql-mesh/runtime@0.33.8
+  - @graphql-mesh/transform-cache@0.11.39
+  - @graphql-mesh/transform-encapsulate@0.3.39
+  - @graphql-mesh/transform-extend@0.10.4
+  - @graphql-mesh/transform-filter-schema@0.14.39
+  - @graphql-mesh/transform-mock@0.14.24
+  - @graphql-mesh/transform-prefix@0.11.28
+  - @graphql-mesh/transform-rename@0.12.29
+  - @graphql-mesh/transform-resolvers-composition@0.12.38
+  - @graphql-mesh/cli@0.66.1
+
+## 0.1.77
+
+### Patch Changes
+
+- Updated dependencies [56fe41f0b]
+- Updated dependencies [56fe41f0b]
+  - @graphql-mesh/graphql@0.23.0
+
+## 0.1.76
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/json-schema@0.27.0
+  - @graphql-mesh/cli@0.66.0
+  - @graphql-mesh/config@0.33.3
+  - @graphql-mesh/graphql@0.22.7
+  - @graphql-mesh/grpc@0.21.3
+  - @graphql-mesh/odata@0.17.4
+  - @graphql-mesh/openapi@0.24.4
+  - @graphql-mesh/postgraphile@0.20.4
+  - @graphql-mesh/soap@0.10.38
+  - @graphql-mesh/runtime@0.33.7
+  - @graphql-mesh/transform-cache@0.11.38
+  - @graphql-mesh/transform-encapsulate@0.3.38
+  - @graphql-mesh/transform-extend@0.10.3
+  - @graphql-mesh/transform-filter-schema@0.14.38
+  - @graphql-mesh/transform-mock@0.14.23
+  - @graphql-mesh/transform-prefix@0.11.27
+  - @graphql-mesh/transform-rename@0.12.28
+  - @graphql-mesh/transform-resolvers-composition@0.12.37
+
+## 0.1.75
+
+### Patch Changes
+
+- Updated dependencies [e472a868c]
+  - @graphql-mesh/cli@0.65.0
+
 ## 0.1.74
 
 ### Patch Changes

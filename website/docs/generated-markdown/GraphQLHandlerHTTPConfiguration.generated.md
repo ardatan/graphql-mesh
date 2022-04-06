@@ -3,7 +3,6 @@
 If you provide a path to a code file(js or ts),
 other options will be ignored and the schema exported from the file will be used directly.
 * `schemaHeaders` (type: `Any`) - JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
-You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
 * `operationHeaders` (type: `JSON`) - JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
 * `useGETForQueries` (type: `Boolean`) - Use HTTP GET for Query operations
 * `method` (type: `String (GET | POST)`) - HTTP method used for GraphQL operations

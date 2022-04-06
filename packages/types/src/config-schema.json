@@ -152,17 +152,6 @@
           "type": "boolean",
           "description": "Show GraphiQL Playground"
         },
-        "maxRequestBodySize": {
-          "description": "Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)",
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
         "sslCredentials": {
           "$ref": "#/definitions/HTTPSConfig",
           "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
@@ -507,8 +496,15 @@
           "description": "Handler for gRPC and Protobuf schemas"
         },
         "jsonSchema": {
-          "$ref": "#/definitions/JsonSchemaHandler",
-          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it."
+          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/JsonSchemaHandler"
+            },
+            {
+              "$ref": "#/definitions/JsonSchemaHandlerBundle"
+            }
+          ]
         },
         "mongoose": {
           "$ref": "#/definitions/MongooseHandler"
@@ -784,7 +780,7 @@
               "additionalItems": true
             }
           ],
-          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection\nYou can also provide `.js` or `.ts` file path that exports schemaHeaders as an object"
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for schema introspection"
         },
         "operationHeaders": {
           "type": "object",
@@ -949,6 +945,42 @@
           "type": "string"
         }
       }
+    },
+    "JsonSchemaHandlerBundle": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "JsonSchemaHandlerBundle",
+      "properties": {
+        "bundlePath": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Path to the bundle file"
+        },
+        "bundleHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "HTTP Headers to receive the bundle"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["bundlePath"]
     },
     "JsonSchemaHandler": {
       "additionalProperties": false,

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.69.0",
+  "version": "0.70.2",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,13 +19,18 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/types"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
     "fetchache": "0.1.1",
-    "@graphql-mesh/store": "0.6.2",
-    "@graphql-tools/delegate": "8.7.0",
+    "@graphql-mesh/store": "0.7.2",
+    "@graphql-tools/delegate": "8.7.1",
     "@graphql-tools/utils": "8.6.5",
     "@graphql-typed-document-node/core": "3.1.1",
     "tslib": "^2.3.1"

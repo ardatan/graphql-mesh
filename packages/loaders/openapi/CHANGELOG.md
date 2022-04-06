@@ -1,5 +1,44 @@
 # @omnigraph/openapi
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+- Updated dependencies [114629e47]
+  - @graphql-mesh/types@0.70.2
+  - json-machete@0.7.7
+  - @omnigraph/json-schema@0.17.21
+  - @graphql-mesh/utils@0.33.2
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [26e69dbe9]
+  - @omnigraph/json-schema@0.17.20
+
+## 0.4.2
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - json-machete@0.7.6
+  - @omnigraph/json-schema@0.17.19
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - @omnigraph/json-schema@0.17.18
+  - json-machete@0.7.5
+
 ## 0.4.0
 
 ### Minor Changes

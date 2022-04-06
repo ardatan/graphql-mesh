@@ -276,6 +276,7 @@ const importFn = (moduleId: string) => {
 const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageAdapter({
   cwd: baseDir,
   importFn,
+  fileType: 'ts',
 }), {
   readonly: true,
   validate: false

@@ -1,7 +1,12 @@
 {
   "name": "@graphql-mesh/cache-store",
-  "version": "0.1.60",
+  "version": "0.1.63",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cache/store"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
@@ -23,8 +28,8 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/store": "0.6.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/store": "0.7.2",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

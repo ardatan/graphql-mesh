@@ -1,5 +1,52 @@
 # @graphql-mesh/json-schema
 
+## 0.27.3
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+- Updated dependencies [114629e47]
+  - @graphql-mesh/types@0.70.2
+  - json-machete@0.7.7
+  - @omnigraph/json-schema@0.17.21
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+
+## 0.27.2
+
+### Patch Changes
+
+- Updated dependencies [26e69dbe9]
+  - @omnigraph/json-schema@0.17.20
+
+## 0.27.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - json-machete@0.7.6
+  - @omnigraph/json-schema@0.17.19
+  - @graphql-mesh/store@0.7.1
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.27.0
+
+### Minor Changes
+
+- d567be7b5: feat(json-schema): support bundles from different sources
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+  - @graphql-mesh/store@0.7.0
+  - @omnigraph/json-schema@0.17.18
+  - json-machete@0.7.5
+
 ## 0.26.9
 
 ### Patch Changes

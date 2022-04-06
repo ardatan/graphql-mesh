@@ -96,10 +96,6 @@ export interface ServeConfig {
    * Show GraphiQL Playground
    */
   playground?: boolean;
-  /**
-   * Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
-   */
-  maxRequestBodySize?: number | string;
   sslCredentials?: HTTPSConfig;
   /**
    * Path to GraphQL Endpoint (default: /graphql)
@@ -208,7 +204,10 @@ export interface Handler {
     | GraphQLHandlerCodeFirstConfiguration
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
-  jsonSchema?: JsonSchemaHandler;
+  /**
+   * Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
+   */
+  jsonSchema?: JsonSchemaHandler | JsonSchemaHandlerBundle;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
@@ -231,7 +230,6 @@ export interface GraphQLHandlerHTTPConfiguration {
   endpoint: string;
   /**
    * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
-   * You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
    */
   schemaHeaders?: any;
   /**
@@ -355,9 +353,6 @@ export interface GrpcCredentialsSsl {
   certChain?: string;
   privateKey?: string;
 }
-/**
- * Handler for JSON Schema specification. Source could be a local json file, or a url to it.
- */
 export interface JsonSchemaHandler {
   baseUrl?: string;
   operationHeaders?: {
@@ -428,6 +423,22 @@ export interface JsonSchemaPubSubOperation {
     [k: string]: any;
   };
   pubsubTopic: string;
+}
+export interface JsonSchemaHandlerBundle {
+  /**
+   * Path to the bundle file
+   */
+  bundlePath: any;
+  /**
+   * HTTP Headers to receive the bundle
+   */
+  bundleHeaders?: {
+    [k: string]: any;
+  };
+  baseUrl?: string;
+  operationHeaders?: {
+    [k: string]: any;
+  };
 }
 export interface MongooseHandler {
   connectionString?: string;

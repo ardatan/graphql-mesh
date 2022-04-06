@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rate-limit",
-  "version": "0.1.5",
+  "version": "0.1.8",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,18 +19,23 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/rate-limit"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/utils": "0.33.2",
     "tslib": "^2.3.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "0.6.6",
-    "@graphql-tools/schema": "8.3.5",
-    "@graphql-tools/wrap": "8.4.9"
+    "@graphql-mesh/cache-inmemory-lru": "0.6.9",
+    "@graphql-tools/schema": "8.3.6",
+    "@graphql-tools/wrap": "8.4.10"
   },
   "publishConfig": {
     "access": "public",

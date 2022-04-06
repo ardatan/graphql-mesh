@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-resolvers-composition",
-  "version": "0.12.36",
+  "version": "0.12.39",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,14 +19,19 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/resolvers-composition"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/utils": "0.33.2",
     "@graphql-tools/resolvers-composition": "6.4.5",
-    "@graphql-tools/schema": "8.3.5",
+    "@graphql-tools/schema": "8.3.6",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

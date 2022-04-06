@@ -1,7 +1,12 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.33.6",
+  "version": "0.33.9",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/runtime"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
@@ -25,16 +30,16 @@
   "dependencies": {
     "@n1ru4l/graphql-live-query": "0.9.0",
     "@n1ru4l/in-memory-live-query-store": "0.9.0",
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
-    "@graphql-tools/delegate": "8.7.0",
-    "@graphql-tools/batch-delegate": "8.2.9",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/utils": "0.33.2",
+    "@graphql-tools/delegate": "8.7.1",
+    "@graphql-tools/batch-delegate": "8.2.10",
     "@graphql-tools/resolvers-composition": "6.4.5",
-    "@graphql-tools/schema": "8.3.5",
-    "@graphql-tools/wrap": "8.4.9",
+    "@graphql-tools/schema": "8.3.6",
+    "@graphql-tools/wrap": "8.4.10",
     "@graphql-tools/utils": "8.6.5",
-    "@envelop/core": "2.1.0",
-    "@envelop/live-query": "3.1.0",
+    "@envelop/core": "2.3.0",
+    "@envelop/live-query": "3.3.0",
     "tslib": "^2.3.1",
     "graphql-jit": "0.7.3"
   },

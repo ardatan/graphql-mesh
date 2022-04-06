@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.16.40",
+  "version": "0.16.43",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -22,13 +22,18 @@
     "input": "./src/index.ts"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/neo4j"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.6.2",
-    "@graphql-mesh/utils": "0.32.2",
-    "@graphql-mesh/types": "0.69.0",
+    "@graphql-mesh/store": "0.7.2",
+    "@graphql-mesh/utils": "0.33.2",
+    "@graphql-mesh/types": "0.70.2",
     "neo4j-driver": "4.4.5",
     "neo4j-graphql-js": "2.19.4",
     "tslib": "^2.3.1",

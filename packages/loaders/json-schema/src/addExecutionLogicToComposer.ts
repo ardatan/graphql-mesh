@@ -151,7 +151,7 @@ export async function addExecutionLogicToComposer(
               case 'OPTIONS':
               case 'TRACE': {
                 fullPath += fullPath.includes('?') ? '&' : '?';
-                fullPath += qsStringify(input);
+                fullPath += qsStringify(input, { indices: false });
                 break;
               }
               case 'POST':
@@ -161,7 +161,7 @@ export async function addExecutionLogicToComposer(
                 const [, contentType] =
                   Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
-                  requestInit.body = qsStringify(input);
+                  requestInit.body = qsStringify(input, { indices: false });
                 } else {
                   requestInit.body = jsonFlatStringify(input);
                 }
@@ -181,7 +181,7 @@ export async function addExecutionLogicToComposer(
         if (queryString) {
           const queryParams = qsParse(queryString);
           const cleanedQueryParams = cleanObject(queryParams);
-          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams);
+          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { indices: false });
         }
 
         operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);

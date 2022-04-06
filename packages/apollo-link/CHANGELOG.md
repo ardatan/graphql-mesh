@@ -1,5 +1,13 @@
 # @graphql-mesh/apollo-link
 
+## 2.0.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/runtime@0.33.8
+
 ## 2.0.0
 
 ### Patch Changes

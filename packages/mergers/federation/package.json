@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-federation",
-  "version": "0.11.41",
+  "version": "0.11.44",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,17 +19,22 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/mergers/federation"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-tools/wrap": "8.4.9",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-tools/wrap": "8.4.10",
     "@apollo/gateway": "0.50.0",
-    "@graphql-tools/schema": "8.3.5",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-tools/schema": "8.3.6",
+    "@graphql-mesh/utils": "0.33.2",
     "@graphql-tools/utils": "8.6.5",
-    "@graphql-mesh/store": "0.6.2",
+    "@graphql-mesh/store": "0.7.2",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

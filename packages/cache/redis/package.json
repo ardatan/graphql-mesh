@@ -1,7 +1,12 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.8.0",
+  "version": "0.8.3",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cache/redis"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
@@ -23,10 +28,10 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-mesh/utils": "0.32.2",
-    "@graphql-mesh/cache-inmemory-lru": "0.6.6",
-    "ioredis": "5.0.1",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-mesh/utils": "0.33.2",
+    "@graphql-mesh/cache-inmemory-lru": "0.6.9",
+    "ioredis": "5.0.3",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

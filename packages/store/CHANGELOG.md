@@ -1,5 +1,34 @@
 # @graphql-mesh/store
 
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/utils@0.33.2
+
+## 0.7.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/types@0.70.1
+  - @graphql-mesh/utils@0.33.1
+
+## 0.7.0
+
+### Minor Changes
+
+- d567be7b5: feat(cli/store): ability to store artifacts as JSON instead of TS
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/types@0.70.0
+  - @graphql-mesh/utils@0.33.0
+
 ## 0.6.2
 
 ### Patch Changes

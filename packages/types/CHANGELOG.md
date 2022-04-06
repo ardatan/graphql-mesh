@@ -1,5 +1,31 @@
 # @graphql-mesh/types
 
+## 0.70.2
+
+### Patch Changes
+
+- b02f5b008: enhance(cli): leave body parsing to yoga and cache dns with mesh caching
+  - @graphql-mesh/store@0.7.2
+
+## 0.70.1
+
+### Patch Changes
+
+- 2d5c6c72a: add Git repository link in package.json
+- Updated dependencies [2d5c6c72a]
+  - @graphql-mesh/store@0.7.1
+
+## 0.70.0
+
+### Minor Changes
+
+- d567be7b5: feat(json-schema): support bundles from different sources
+
+### Patch Changes
+
+- Updated dependencies [d567be7b5]
+  - @graphql-mesh/store@0.7.0
+
 ## 0.69.0
 
 ### Minor Changes

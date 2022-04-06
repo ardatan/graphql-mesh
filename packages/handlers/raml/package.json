@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.2.9",
+  "version": "0.3.3",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,14 +19,19 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/raml"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.6.2",
-    "@graphql-mesh/types": "0.69.0",
-    "@omnigraph/raml": "0.5.22",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/store": "0.7.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@omnigraph/raml": "0.5.26",
+    "@graphql-mesh/utils": "0.33.2",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

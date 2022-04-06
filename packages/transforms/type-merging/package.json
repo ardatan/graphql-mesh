@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-type-merging",
-  "version": "0.3.36",
+  "version": "0.3.39",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,14 +19,19 @@
     }
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/type-merging"
+  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.69.0",
-    "@graphql-tools/stitching-directives": "2.2.7",
-    "@graphql-tools/delegate": "8.7.0",
-    "@graphql-mesh/utils": "0.32.2",
+    "@graphql-mesh/types": "0.70.2",
+    "@graphql-tools/stitching-directives": "2.2.8",
+    "@graphql-tools/delegate": "8.7.1",
+    "@graphql-mesh/utils": "0.33.2",
     "lodash": "4.17.21",
     "tslib": "^2.3.1"
   },
