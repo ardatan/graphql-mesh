@@ -1,5 +1,12 @@
 # json-machete
 
+## 0.7.7
+
+### Patch Changes
+
+- 114629e47: fix(json-machete): respect int64 types
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.7.6
 
 ### Patch Changes

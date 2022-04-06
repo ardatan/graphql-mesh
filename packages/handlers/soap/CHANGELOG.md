@@ -1,5 +1,14 @@
 # @graphql-mesh/soap
 
+## 0.10.40
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.10.39
 
 ### Patch Changes

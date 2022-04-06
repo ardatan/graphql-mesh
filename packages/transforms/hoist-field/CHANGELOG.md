@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-hoist-field
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/cache-inmemory-lru@0.6.9
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.1.4
 
 ### Patch Changes
