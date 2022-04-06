@@ -15,16 +15,18 @@ import { FooterExtended, Header, Subheader } from '@theguild/components';
 import type { LinkProps as NextLinkProps } from 'next/link';
 
 import '../../public/style.css';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 const LinkNewTabIfExternal = (props: LinkProps & NextLinkProps) => {
-  return (
+  return props.href.startsWith('/') ? (
     // @ts-expect-error type incompatibility
-    <Link
-      {...props}
-      isExternal={!props.href.startsWith('/')}
-      color="accentColor"
-      sx={{ '&:hover': { textDecoration: 'none' } }}
-    />
+    <Link {...props} color="accentColor" sx={{ '&:hover': { textDecoration: 'none' } }} />
+  ) : (
+    <>
+      {/* @ts-expect-error type incompatibility */}
+      <Link {...props} isExternal={true} color="accentColor" sx={{ '&:hover': { textDecoration: 'none' } }} />{' '}
+      <ExternalLinkIcon />
+    </>
   );
 };
 
