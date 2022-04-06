@@ -4,7 +4,7 @@ title: "How to: Customize the Mesh server"
 sidebar_label: Customize the Mesh server
 ---
 
-GraphQL Mesh provides a **reliable and production ready server implementation** built with [GraphQL Yoga](https://www.graphql-yoga.com/) and [Envelop](https://www.envelop.dev/) with, out of the box support for:
+GraphQL Mesh provides a **reliable and production-ready server implementation** built with [GraphQL Yoga](https://www.graphql-yoga.com/) and [Envelop](https://www.envelop.dev/) with, out of the box support for:
 - Persisted queries
 - Live queries
 - Files upload
@@ -43,8 +43,8 @@ GraphQL Mesh provides a **reliable and production ready server implementation** 
 
 
 Customizing your GraphQL Mesh Gateway server can be achieved in 2 ways:
-- __Configure and provide Envelop plugins__: to add behaviours such as caching, authentication, tracing to your Gateway
-- __Provide a standalone server implementation__: to complete replace the server used by the Gateway
+- __Configure and provide Envelop plugins__: to add behaviors such as caching, authentication, tracing to your Gateway
+- __Provide a standalone server implementation__: to completely replace the server used by the Gateway
 
 
 
@@ -58,7 +58,7 @@ Customizing your GraphQL Mesh Gateway server can be achieved in 2 ways:
 ## Configure and provide Envelop plugins
 
 
-[Envelop](https://www.envelop.dev/) is a library that helps build GraphQL API faster and in a more flexible way with plugin-based architecture.
+[Envelop](https://www.envelop.dev/) is a library that helps build GraphQL API faster and flexibly with plugin-based architecture.
 
 Similar to Express middlewares allowing you to customize requests' behavior, Envelop applies the same idea to GraphQL requests.
 
@@ -82,7 +82,7 @@ Examples of plugins are:
 
 <br />
 
-The GraphQL Mesh configuration accept a `additionalEnvelopPlugins` parameter that should point to file that exports a list of Envelop plugins, as shown below:
+The GraphQL Mesh configuration accepts a `additionalEnvelopPlugins` parameter that should point to a file that exports a list of Envelop plugins, as shown below:
 
 _`.meshrc.yaml`_
 ```yaml
@@ -114,7 +114,7 @@ const plugins: PluginOrDisabledPlugin = [
 export default plugins
 ```
 
-_Note: The file can also export a factory fuction returning a `PluginOrDisabledPlugin` list_
+_Note: The file can also export a factory function returning a `PluginOrDisabledPlugin` list_
 
 <p>&nbsp;</p>
 
@@ -124,12 +124,12 @@ _Note: The file can also export a factory fuction returning a `PluginOrDisabledP
 
 ## Provide a standalone server implementation
 
-> **Disclaimer:** This section explains how to provide a custom server implementation that will be used by `mesh serve` and `mesh dev`. If you are looking for solutions to __deploy Mesh to Serverless environments__ or __not rely on `mesh serve`__, please refer to the ["How to: Deploy a Mesh Gateway"](/docs/getting-started/deploy-mesh-gateway) guide.
+> **Disclaimer:** This section explains how to provide a custom server implementation used by `mesh serve` and `mesh dev`. If you are looking for solutions to __deploy Mesh to Serverless environments__ or __not rely on `mesh serve`__, please refer to the ["How to: Deploy a Mesh Gateway"](/docs/getting-started/deploy-mesh-gateway) guide.
 
 
 The following example shows how to replace GraphQL Mesh's default server implementation with [Apollo Server](https://apollographql.com/docs/apollo-server).
 
-GraphQL Mesh uses [Envelop](https://envelop.dev) under the hood so you need to check other integrations to see how to use `getEnveloped` with other server frameworks. [Envelop Integrations](https://www.envelop.dev/docs/integrations)
+GraphQL Mesh uses [Envelop](https://envelop.dev) under the hood, so you need to check other integrations to see how to use `getEnveloped` with other server frameworks. [Envelop Integrations](https://www.envelop.dev/docs/integrations)
 
 _`myServerHandler.ts`_
 ```js
@@ -166,4 +166,4 @@ serve:
   customServerHandler: ./myServerHandler
 ```
 
-> When you use custom server handler, you won't be able to use configuration options under `serve`!
+> When you use a custom server handler, you won't be able to use configuration options under `serve`!

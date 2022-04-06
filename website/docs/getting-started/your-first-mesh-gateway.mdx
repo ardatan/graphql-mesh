@@ -19,7 +19,7 @@ All the documentation tutorials and guides rely on the "Books", "Authors" and "S
   - `stores` Query
   - `bookSells(storeId: ID!)` Query
 
-Our goal is to build a Unified GraphQL Schema, through a Mesh Gateway that incorporate our 3 example services as follows:
+Our goal is to build a Unified GraphQL Schema through a Mesh Gateway that incorporates our 3 example services as follows:
 
 <Graph>
 
@@ -47,7 +47,7 @@ Z --> G;
 <br />
 <br />
 
-In this tutorial, **we will first start by creating a Mesh configuration that incorporate the Books REST API**, as follows:
+In this tutorial, **we will first start by creating a Mesh configuration that incorporates the Books REST API**, as follows:
 
 
 <Graph>
@@ -73,7 +73,7 @@ Z --> G;
 <br />
 <br />
 
-Creating the complete Mesh Gateway that combines "Books", "Authors" and "Stores" APIs in a unified Schema will be covered in the ["Setup a Gateway with many Sources" guide](/docs/guides/combine-many-sources).
+Creating the complete Mesh Gateway that combines "Books", "Authors", and "Stores" APIs in a unified Schema will be covered in the ["Setup a Gateway with many Sources" guide](/docs/guides/combine-many-sources).
 
 
 <p>&nbsp;</p>
@@ -152,11 +152,11 @@ As expected, Mesh translated the Books REST API to a GraphQL Schema, using the f
 - a `POST /api/sayHelloAll` endpoint becomes a Mutation similar to: `sayHelloAll(input: [SayHelloAllInput]): String`
 - `PUT` and `DELETE` endpoints are also translated to GraphQL Mutations.
 
-Which gives us the following Books GraphQL Schema:
+This gives us the following Books GraphQL Schema:
 
 ![Books GraphQL Schema](/assets/docs/getting-started/your-first-mesh-gateway/mesh-books-graphql.png)
 
-You can try out the following query:
+You can try out the following Query:
 
 ```gql
 {
@@ -187,7 +187,7 @@ To achieve such a final Schema design, we will leverage _Transforms_.
 
 **Remove the `book(id: ID!)` Query**
 
-To remove a Query from the Unified Schema, we will install and configure the `filterSchema` _Transform_.
+We will install and configure the `filterSchema` _Transform_ to remove a Query from the Unified Schema.
 
 Back to the [`packages/single-source/`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source/) folder, you will find the following package installed: `@graphql-mesh/transform-filter-schema`.
 

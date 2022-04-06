@@ -6,13 +6,13 @@ sidebar_label: Deploy a Mesh Gateway
 
 Thanks to its flexible architecture and embedded server relying on [GraphQL Yoga](https://www.graphql-yoga.com/) and [Envelop](https://www.envelop.dev/), **GraphQL Mesh can be deployed anywhere**!
 
-We already saw that `mesh dev` can be used for local development.
+We already saw that `mesh dev` could be used for local development.
 
-Simirarly, Mesh provides a `mesh start` CLI command for production environments.
+Similarly, Mesh provides a `mesh start` CLI command for production environments.
 
-`mesh start` can be used for all environments that supports starting a webserver (Heroku, Digital Ocean, etc).
+`mesh start` can be used for all environments supporting starting a webserver (Heroku, Digital Ocean, etc).
 
-Setup Mesh on a Serverless environment requires some integration work, detailled below.
+Setup Mesh on a Serverless environment requires some integration work, detailed below.
 
 
 <p>&nbsp;</p>
@@ -24,14 +24,14 @@ Setup Mesh on a Serverless environment requires some integration work, detailled
 
 ## Deploy Mesh with `mesh start`
 
-While `mesh dev` handles the generation of the SDK code, `mesh start` expect to load the Gateway schema and runtime from the `.mesh/` folder.
+While `mesh dev` handles the generation of the SDK code, `mesh start` expects to load the Gateway schema and runtime from the `.mesh/` folder.
 
 This mechanism helps:
 - __reducing the start time of the server__: no build step is required
-- __preventing starting failure if one of the Source is unreachable__: we don't fetch the API definition file at startup, ensuring that the fetched definitions are validated at build time
+- __preventing starting failure if one of the Sources is unreachable__: we don't fetch the API definition file at startup, ensuring that the fetched definitions are validated at build time
 
 
-To deploy a Mesh Gateway, you need to ensure that `mesh build` is called during the deployment, for example with a `prebuild` step:
+To deploy a Mesh Gateway, you need to ensure that `mesh build` is called during the deployment, for example, with a `prebuild` step:
 
 _package.json_
 ```json
@@ -53,7 +53,7 @@ _package.json_
 
 ## Deploy Mesh on Serverless
 
-Serverless deployment require some integration since we cannot keep the `mesh start` server running.
+Serverless deployment requires some integration since we cannot keep the `mesh start` server running.
 
 
 <p>&nbsp;</p>
@@ -62,8 +62,8 @@ Serverless deployment require some integration since we cannot keep the `mesh st
 
 First, let's ensure that `mesh build` will be run during deployment.
 
-Vercel - list most platforms, run `yarn build` for deployment.
-For this reason, we will hook to it with the `prebuild` step:
+Vercel - list most platforms, and run `yarn build` for deployment.
+For this reason, we will add a `prebuild` step:
 
 _package.json_
 ```json
@@ -106,13 +106,13 @@ export default async function apiHandler(req: NextApiRequest, res: NextApiRespon
 
 <br />
 
-A complete example be found at [website/src/pages/api/covid/index.ts](https://github.com/Urigo/graphql-mesh/blob/master/website/src/pages/api/covid/index.ts).
+A complete example is found at [website/src/pages/api/covid/index.ts](https://github.com/Urigo/graphql-mesh/blob/master/website/src/pages/api/covid/index.ts).
 
 <p>&nbsp;</p>
 
 ### Deploy Mesh on AWS Lambda
 
-Simirarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
 
 Then, we can create a Lambda as it follows:
 
@@ -146,7 +146,7 @@ export const handler: Handler = configure({
 
 ### Deploy Mesh on Cloudflare Workers
 
-Simirarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
 
 Then,
 
@@ -179,6 +179,6 @@ server.start()
 
 ## Mesh and Docker
 
-A GraphQL Mesh Gateway should be treated like any Node.js project, while keeping in mind that a `mesh build` step should be added to the deployment steps.
+A GraphQL Mesh Gateway should be treated like any Node.js project while keeping in mind that a `mesh build` step should be added to the deployment steps.
 
 **Any Node.js Docker image is suitable for GraphQL Mesh deployment**: [https://hub.docker.com/_/node](https://hub.docker.com/_/node).
