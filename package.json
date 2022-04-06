@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "postinstall": "patch-package && husky install",
-    "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
-    "deploy:website": "cd website && yarn deploy",
+    "prebuild:website": "yarn build && yarn build:api-docs",
+    "build:website": "cd website && yarn build",
     "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/types/src && ts-node --compiler-options='{\"module\":\"commonjs\"}' scripts/escape-generated-markdown",
     "prebuild": "yarn generate-config-schema",
     "transpile-ts": "tsc --project tsconfig.build.json",
