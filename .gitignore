@@ -16,3 +16,4 @@ package-lock.json
 /.idea
 .next
 /website/api-sidebar.json
+/website/docs/api
