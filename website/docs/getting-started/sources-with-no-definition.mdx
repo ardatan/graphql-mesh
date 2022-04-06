@@ -40,6 +40,7 @@ A `jsonSchema` handler configuration must provide a set of `operations` that def
 
 A standard `jsonSchema` handler configuration will look at it follows:
 
+_Example `.meshrc.yaml`_
 ```yaml
 sources:
   - name: MyApi
@@ -78,6 +79,7 @@ You will find all the source code of the below example in the dedicated reposito
 
 After installing the `@graphql-mesh/json-schema` package, a good starting point of our "Books" REST API `jsonSchema` handler configuration would be the following:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -111,6 +113,7 @@ Which will create the following [`packages/single-source-no-source-definition/sa
 
 We can now provide use this sample file to configure our `Query.book` operation as follows:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -189,6 +192,7 @@ Our `Query.book` `jsonSchema` configuration generates a `query_book` type which 
 
 The `responseTypeName` allows us to provide a type name that we be used for the generated type, as follows:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -229,6 +233,7 @@ The same parameter exists for request: `requestTypeName` (see "_Mutations_").
 
 We saw that `operations[].path` can take arguments using syntax similar to string interpolation:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -253,6 +258,7 @@ We would need the `query` argument to be of type `String` (not `ID`).
 
 To achieve this, we will leverage the `argTypeMap` parameter as follow:
 
+_Example `.meshrc.yaml`_
 ```yaml
 sources:
   - name: Books
@@ -282,6 +288,7 @@ Since Mutations are most likely to rely on `POST` requests, we need to provide b
 
 For example, if our "Books" API exposed a `POST /books`, we could define the following `Mutation.addBook(...)` mutation:
 
+_Example `.meshrc.yaml`_
 ```yaml
 sources:
   - name: Books
@@ -349,7 +356,7 @@ Relying on `curl` to get a sample of all those scenarios is not possible.
 
 In that case, we will to provide a `responseSchema` parameter that will point to a JSON Schema file:
 
-
+_Example `.meshrc.yaml`_
 ```yaml
 sources:
   - name: Books

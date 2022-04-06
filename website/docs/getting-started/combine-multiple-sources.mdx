@@ -89,6 +89,7 @@ The "Authors" Source is a gRPC API: [`authors-service`](https://github.com/charl
 
 We will use the `grpc` Handler with the `@graphql-mesh/grpc` package and configure in our [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) it as follows:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -119,6 +120,7 @@ The "Stores" Source is a GraphQL API: [`stores-service`](https://github.com/char
 
 We will use the `graphql` Handler with the `@graphql-mesh/graphql` package and configure in our [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) it as follows:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -146,6 +148,7 @@ Since the "Stores" is a GraphQL API, Mesh can leverage introspection to get its 
 
 The following Mesh Gateway configuration:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -166,7 +169,7 @@ sources:
 
 Will gives us a "raw" GraphQL schema design which contains unwanted GraphQL Queries, badly named types and a lack of hierarchy:
 
-
+_[`.mesh/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/schema.graphql)_
 ```graphql
 type Query {
   book(id: String!): Book
@@ -243,6 +246,7 @@ To build a clean Unified Schema, we need to remove unnecessary Queries such as:
 
 Our updated [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) is the following:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
 ```yaml
 sources:
   - name: Books
@@ -340,6 +344,7 @@ A quick way to build a `additionalTypeDefs` is to refer to the generated GraphQL
 
 For example, the GraphQL Schema of the "Authors" Source can be found at [`.mesh/sources/Authors/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/sources/Authors/schema.graphql) file:
 
+_[`.mesh/sources/Authors/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/sources/Authors/schema.graphql)_
 ```graphql
 schema {
   query: Query
@@ -384,6 +389,7 @@ _Note: Try running the Mesh Gateway first if the `.mesh` folder does not exist._
 Here we find that an author is described with the `authors_v1_Author` GraphQL type which allows us to add the following `additionalTypeDefs` configuration:
 
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
 ```yaml
 sources:
   # ...
@@ -399,6 +405,7 @@ additionalTypeDefs: |
 
 By applying the same process for `Store.bookSells` and `Sells.book`, we get the following final `additionalTypeDefs` configuration:
 
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
 ```yaml
 sources:
   # ...
@@ -432,6 +439,8 @@ Again, let's start with the `Book.author` field.
 
 We need the `Book.author` field to call the `Query.authors_v1_AuthorsService_GetAuthor(input: authors_v1_GetAuthorRequest_Input): authors_v1_Author` Query by providing the following `additionalResolvers` configuration:
 
+
+_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
 ```yaml
 sources:
   # ...
