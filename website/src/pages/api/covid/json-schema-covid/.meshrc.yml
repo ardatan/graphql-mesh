@@ -25,7 +25,7 @@ additionalResolvers:
     sourceFieldName: population
     sourceArgs:
       country: '{root.countryRegion}'
-  - ./src/query-additional-resolvers.js
+  - ./src/query-additional-resolvers
 
 documents:
   - example-queries/*.graphql

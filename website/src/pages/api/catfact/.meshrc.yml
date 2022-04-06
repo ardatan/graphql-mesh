@@ -1,6 +1,0 @@
-sources:
-  - name: CatFact
-    handler:
-      newOpenapi:
-        baseUrl: https://catfact.ninja/
-        oasFilePath: https://catfact.ninja/docs/api-docs.json

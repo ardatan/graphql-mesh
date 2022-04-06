@@ -1,4 +1,5 @@
-module.exports = {
+import { Resolvers } from '../.mesh';
+export const resolvers: Resolvers = {
   Query: {
     stat: async (root, args, context, info) => {
       const worldPop = await context.WorldPop.Query.population({
