@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
 import './patchLongJs';
 import { GetMeshSourceOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
-import { withCancel } from '@graphql-mesh/utils';
+import { withCancel, stringInterpolator } from '@graphql-mesh/utils';
 import { ChannelCredentials, ClientUnaryCall, Metadata, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
@@ -362,7 +362,12 @@ ${rootJsonAndDecodedDescriptorSets
       if (typeof ServiceClient !== 'function') {
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }
-      const client = new ServiceClient(this.config.endpoint, creds);
+
+      const interpolatedEndpoint: string = this.config.endpoint.includes('env')
+        ? stringInterpolator.parse(this.config.endpoint, { env: process.env })
+        : this.config.endpoint;
+
+      const client = new ServiceClient(interpolatedEndpoint, creds);
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
         const rootFieldName = [...pathWithName, methodName].join('_');
