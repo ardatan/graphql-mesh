@@ -4,7 +4,7 @@ const { resolve, join } = require('path');
 const absoluteExamplesDirPath = resolve(__dirname, '../examples');
 const absoluteGraphqlMeshBinPath = resolve(__dirname, '../packages/cli/dist/bin.js');
 const dir = readdirSync(absoluteExamplesDirPath);
-dir.push(join(__dirname, '../website'))
+dir.push('../website');
 for (const path of dir) {
     const absolutePath = join(absoluteExamplesDirPath, path);
     if (lstatSync(absolutePath).isDirectory()) {
