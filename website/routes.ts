@@ -15,6 +15,7 @@ export function getRoutes(): IRoutes {
           'your-first-mesh-gateway',
           'combine-multiple-sources',
           'sources-with-no-definition',
+          'customize-mesh-server',
           'comparison',
         ],
       },
