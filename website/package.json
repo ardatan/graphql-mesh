@@ -3,7 +3,10 @@
   "version": "0.8.2",
   "private": true,
   "scripts": {
+    "build-mesh": "cd src/pages/api/covid/json-schema-covid && mesh build",
+    "prebuild": "yarn build-mesh",
     "build": "next build",
+    "predev": "yarn build-mesh",
     "dev": "concurrently -r \"next-remote-watch ./docs ./src/pages/_app.tsx ./src/pages/_document.tsx\" \"wait-on -s 1 http://localhost:3000 && open-cli http://localhost:3000\"",
     "next": "next",
     "analyze": "cross-env ANALYZE=true next build"
