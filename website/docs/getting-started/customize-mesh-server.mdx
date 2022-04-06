@@ -42,7 +42,7 @@ GraphQL Mesh provides a **reliable and production ready server implementation** 
 
 
 
-Customizing your GraphQL Mesh Gateway can be achieved in 2 ways:
+Customizing your GraphQL Mesh Gateway server can be achieved in 2 ways:
 - __Configure and provide Envelop plugins__: to add behaviours such as caching, authentication, tracing to your Gateway
 - __Provide a standalone server implementation__: to complete replace the server used by the Gateway
 
@@ -123,6 +123,8 @@ _Note: The file can also export a factory fuction returning a `PluginOrDisabledP
 <p>&nbsp;</p>
 
 ## Provide a standalone server implementation
+
+> **Disclaimer:** This section explains how to provide a custom server implementation that will be used by `mesh serve` and `mesh dev`. If you are looking for solutions to __deploy Mesh to Serverless environments__ or __not rely on `mesh serve`__, please refer to the ["How to: Deploy a Mesh Gateway"](/docs/getting-started/deploy-mesh-gateway) guide.
 
 
 The following example shows how to replace GraphQL Mesh's default server implementation with [Apollo Server](https://apollographql.com/docs/apollo-server).
