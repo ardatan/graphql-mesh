@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.66.2
+
+### Patch Changes
+
+- b02f5b008: enhance(cli): leave body parsing to yoga and cache dns with mesh caching
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/config@0.33.5
+  - @graphql-mesh/runtime@0.33.9
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.66.1
 
 ### Patch Changes

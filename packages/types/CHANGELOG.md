@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.70.2
+
+### Patch Changes
+
+- b02f5b008: enhance(cli): leave body parsing to yoga and cache dns with mesh caching
+  - @graphql-mesh/store@0.7.2
+
 ## 0.70.1
 
 ### Patch Changes

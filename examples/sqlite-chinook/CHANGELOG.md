@@ -1,5 +1,13 @@
 # chinook
 
+## 0.5.200
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/cli@0.66.2
+  - @graphql-mesh/tuql@0.5.6
+
 ## 0.5.199
 
 ### Patch Changes
