@@ -1,6 +1,6 @@
 {
-  "name": "nextjs-apollo-example",
-  "version": "0.1.86",
+  "name": "nextjs-sdk-example",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "prestart": "yarn build:mesh",
