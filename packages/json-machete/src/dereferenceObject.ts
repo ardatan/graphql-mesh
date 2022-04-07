@@ -74,7 +74,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
-  if (typeof obj === 'object') {
+  if (obj != null && typeof obj === 'object') {
     if (isRefObject(obj)) {
       const $ref = obj.$ref;
       if (refMap.has($ref)) {
