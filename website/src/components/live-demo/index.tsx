@@ -62,6 +62,7 @@ const LiveDemo: FC<{ className?: string }> = ({ className }) => {
         ))}
       </select>
       <iframe
+        loading="lazy"
         src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
         css={[tw`w-full h-[500px] rounded pt-8`]}
         title={exampleRepo}

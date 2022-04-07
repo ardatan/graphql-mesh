@@ -396,7 +396,7 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@7.17.9", "@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.1.6", "@babel/core@^7.12.3", "@babel/core@^7.7.2", "@babel/core@^7.7.5", "@babel/core@^7.8.0", "@babel/core@^7.8.4", "@babel/core@^7.9.0":
+"@babel/core@7.17.9", "@babel/core@^7.1.6":
   version "7.17.9"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.17.9.tgz#6bae81a06d95f4d0dec5bb9d74bbc1f58babdcfe"
   integrity sha512-5ug+SfZCpDAkVp9SFIZAzlW18rlzsOcJGaetCjkySnrXXDUw9AR8cDUm1iByTmdWM6yxX6/zycaV76w3YTF2gw==
@@ -417,7 +417,28 @@
     json5 "^2.2.1"
     semver "^6.3.0"
 
-"@babel/generator@^7.12.1", "@babel/generator@^7.12.13", "@babel/generator@^7.17.9", "@babel/generator@^7.5.0", "@babel/generator@^7.7.2":
+"@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.12.3", "@babel/core@^7.7.2", "@babel/core@^7.7.5", "@babel/core@^7.8.0", "@babel/core@^7.8.4", "@babel/core@^7.9.0":
+  version "7.17.8"
+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.17.8.tgz#3dac27c190ebc3a4381110d46c80e77efe172e1a"
+  integrity sha512-OdQDV/7cRBtJHLSOBqqbYNkOcydOgnX59TZx4puf41fzcVtN3e/4yqY8lMQsK+5X2lJtAdmA+6OHqsj1hBJ4IQ==
+  dependencies:
+    "@ampproject/remapping" "^2.1.0"
+    "@babel/code-frame" "^7.16.7"
+    "@babel/generator" "^7.17.7"
+    "@babel/helper-compilation-targets" "^7.17.7"
+    "@babel/helper-module-transforms" "^7.17.7"
+    "@babel/helpers" "^7.17.8"
+    "@babel/parser" "^7.17.8"
+    "@babel/template" "^7.16.7"
+    "@babel/traverse" "^7.17.3"
+    "@babel/types" "^7.17.0"
+    convert-source-map "^1.7.0"
+    debug "^4.1.0"
+    gensync "^1.0.0-beta.2"
+    json5 "^2.1.2"
+    semver "^6.3.0"
+
+"@babel/generator@^7.12.1", "@babel/generator@^7.12.13", "@babel/generator@^7.17.7", "@babel/generator@^7.17.9", "@babel/generator@^7.5.0", "@babel/generator@^7.7.2":
   version "7.17.9"
   resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.17.9.tgz#f4af9fd38fa8de143c29fce3f71852406fc1e2fc"
   integrity sha512-rAdDousTwxbIxbz5I7GEQ3lUip+xVCXooZNbsydCWs3xA7ZsYOv+CFRdzGxRX78BmQHu9B1Eso59AOZQOJDEdQ==
@@ -616,7 +637,7 @@
     "@babel/traverse" "^7.16.8"
     "@babel/types" "^7.16.8"
 
-"@babel/helpers@^7.12.1", "@babel/helpers@^7.17.9":
+"@babel/helpers@^7.12.1", "@babel/helpers@^7.17.8", "@babel/helpers@^7.17.9":
   version "7.17.9"
   resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.17.9.tgz#b2af120821bfbe44f9907b1826e168e819375a1a"
   integrity sha512-cPCt915ShDWUEzEp3+UNRktO2n6v49l5RSnG9M5pS24hA+2FAc5si+Pn1i4VVbQQ+jh+bIZhPFQOJOzbrOYY1Q==
@@ -639,7 +660,12 @@
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.12.16.tgz#cc31257419d2c3189d394081635703f549fc1ed4"
   integrity sha512-c/+u9cqV6F0+4Hpq01jnJO+GLp2DdT63ppz9Xa+6cHaajM9VFzK/iDXiKK65YtpeVwu+ctfS6iqlMqRgQRzeCw==
 
-"@babel/parser@^7.0.0", "@babel/parser@^7.1.0", "@babel/parser@^7.1.6", "@babel/parser@^7.12.13", "@babel/parser@^7.12.3", "@babel/parser@^7.12.5", "@babel/parser@^7.14.7", "@babel/parser@^7.16.7", "@babel/parser@^7.16.8", "@babel/parser@^7.17.9", "@babel/parser@^7.7.0":
+"@babel/parser@^7.0.0", "@babel/parser@^7.1.0", "@babel/parser@^7.12.13", "@babel/parser@^7.12.3", "@babel/parser@^7.12.5", "@babel/parser@^7.14.7", "@babel/parser@^7.16.7", "@babel/parser@^7.16.8", "@babel/parser@^7.7.0":
+  version "7.17.8"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.17.8.tgz#2817fb9d885dd8132ea0f8eb615a6388cca1c240"
+  integrity sha512-BoHhDJrJXqcg+ZL16Xv39H9n+AqJ4pcDrQBGZN+wHxIysrLZ3/ECwCBUch/1zUNhnsXULcONU3Ei5Hmkfk6kiQ==
+
+"@babel/parser@^7.1.6", "@babel/parser@^7.17.8", "@babel/parser@^7.17.9":
   version "7.17.9"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.17.9.tgz#9c94189a6062f0291418ca021077983058e171ef"
   integrity sha512-vqUSBLP8dQHFPdPi9bc5GK9vRkYHJ49fsZdtoJ8EQ8ibpwk5rPKfvNIwChB0KVXcIjcepEBBd2VHC5r9Gy8ueg==
@@ -1051,7 +1077,7 @@
     "@babel/helper-builder-binary-assignment-operator-visitor" "^7.16.7"
     "@babel/helper-plugin-utils" "^7.16.7"
 
-"@babel/plugin-transform-flow-strip-types@7.12.1", "@babel/plugin-transform-flow-strip-types@^7.0.0":
+"@babel/plugin-transform-flow-strip-types@7.12.1":
   version "7.12.1"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.12.1.tgz#8430decfa7eb2aea5414ed4a3fa6e1652b7d77c4"
   integrity sha512-8hAtkmsQb36yMmEtk2JZ9JnVyDSnDOdlB+0nEGzIDLuK4yR3JcEjfuFPYkdEPSh8Id+rAMeBEn+X0iVEyho6Hg==
@@ -1059,7 +1085,7 @@
     "@babel/helper-plugin-utils" "^7.10.4"
     "@babel/plugin-syntax-flow" "^7.12.1"
 
-"@babel/plugin-transform-flow-strip-types@^7.16.7":
+"@babel/plugin-transform-flow-strip-types@^7.0.0", "@babel/plugin-transform-flow-strip-types@^7.16.7":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.16.7.tgz#291fb140c78dabbf87f2427e7c7c332b126964b8"
   integrity sha512-mzmCq3cNsDpZZu9FADYYyfZJIOrSONmHcop2XEKPdBNMa4PDC4eEvcOvzZaCNcjKu72v0XQlA5y1g58aLRXdYg==
@@ -1628,6 +1654,11 @@
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-3.1.0.tgz#8ff71d51053cd5ee4981e5a501d80a536244f7fd"
   integrity sha512-GcIY79elgB+azP74j8vqkiXz8xLFfIzbQJdlwOPisgbKT00tviJQuEghOXSMVxJ00HoYJbGswr4kcllUc4xCcg==
+
+"@builder.io/partytown@0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@builder.io/partytown/-/partytown-0.5.2.tgz#ba40369f7c0fd22169eaf6906325c150d7f77dd0"
+  integrity sha512-DHJPs5WPVFExUuGMsuA6yZQ6OPtVVv/3JJK9pzGrNfvuGNvlip5v7xOhXwZG26HLU9ZrrOFsOGhn5FUT2H7dPw==
 
 "@chakra-ui/accordion@1.4.10":
   version "1.4.10"
@@ -6894,11 +6925,11 @@ amdefine@~0.0.4:
   integrity sha1-NNyMmB5qyzvhhTvvjw7JSjnVW6A=
 
 ansi-align@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-3.0.0.tgz#b536b371cf687caaef236c18d3e21fe3797467cb"
-  integrity sha512-ZpClVKqXN3RGBmKibdfWzqCY4lnjEuoNzU5T0oEFpfd/z5qJHVarukridD4juLO2FXMiwUQxr9WqQtaYa8XRYw==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-3.0.1.tgz#0cdf12e111ace773a86e9a1fad1225c43cb19a59"
+  integrity sha512-IOfwwBF5iczOjp/WeY4YxyjqAFMQoZufdQWDd19SEExbVLNXqvpzSJ/M7Za4/sCPmQ0+GRquoA7bGcINcxew6w==
   dependencies:
-    string-width "^3.0.0"
+    string-width "^4.1.0"
 
 ansi-colors@^3.0.0:
   version "3.2.4"
