@@ -362,12 +362,7 @@ ${rootJsonAndDecodedDescriptorSets
       if (typeof ServiceClient !== 'function') {
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }
-
-      const interpolatedEndpoint: string = this.config.endpoint.includes('env')
-        ? stringInterpolator.parse(this.config.endpoint, { env: process.env })
-        : this.config.endpoint;
-
-      const client = new ServiceClient(interpolatedEndpoint, creds);
+      const client = new ServiceClient(stringInterpolator.parse(this.config.endpoint, { env: process.env }) ?? this.config.endpoint, creds);
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
         const rootFieldName = [...pathWithName, methodName].join('_');
