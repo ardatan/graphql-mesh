@@ -1,0 +1,190 @@
+---
+id: deploy-mesh-gateway
+title: "How to: Deploy a GraphQL Mesh Gateway"
+sidebar_label: Deploy a Mesh Gateway
+---
+
+Thanks to its flexible architecture and embedded server relying on [GraphQL Yoga](https://www.graphql-yoga.com/) and [Envelop](https://www.envelop.dev/), **GraphQL Mesh can be deployed anywhere**!
+
+We already saw that `mesh dev` could be used for local development.
+
+Similarly, Mesh provides a `mesh start` CLI command for production environments.
+
+`mesh start` can be used for all environments supporting starting a webserver (Heroku, Digital Ocean, etc).
+
+Setup Mesh on a Serverless environment requires some integration work, detailed below.
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+## Deploy Mesh with `mesh start`
+
+While `mesh dev` handles the generation of the SDK code, `mesh start` expects to load the Gateway schema and runtime from the `.mesh/` folder.
+
+This mechanism helps:
+- __reducing the start time of the server__: no build step is required
+- __preventing starting failure if one of the Sources is unreachable__: we don't fetch the API definition file at startup, ensuring that the fetched definitions are validated at build time
+
+
+To deploy a Mesh Gateway, you need to ensure that `mesh build` is called during the deployment, for example, with a `prebuild` step:
+
+_package.json_
+```json
+{
+  "scripts": {
+    "start": "mesh start",
+    // will be run during deployment
+    "prebuild": "mesh build"
+  }
+}
+```
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+## Deploy Mesh on Serverless
+
+Serverless deployment requires some integration since we cannot keep the `mesh start` server running.
+
+
+<p>&nbsp;</p>
+
+### Deploy Mesh on Vercel with Next.js API Routes
+
+First, let's ensure that `mesh build` will be run during deployment.
+
+Vercel - list most platforms, and run `yarn build` for deployment.
+For this reason, we will add a `prebuild` step:
+
+_package.json_
+```json
+{
+  "scripts": {
+    "start": "mesh start",
+    // will be run during deployment
+    "prebuild": "mesh build"
+  }
+}
+```
+
+<br />
+
+Now, let's integrate our Mesh Gateway in a Next.js API Routes using GraphQL Yoga:
+
+_website/src/pages/api/graphql/index.ts_
+```ts
+import { createServer } from '@graphql-yoga/node';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { getBuiltMesh } from './.mesh';
+
+async function buildServer() {
+  // retrieve the mesh instance (with configured Envelop plugins)
+  const mesh = await getBuiltMesh();
+  // pass the Mesh instance to Yoga and configure GraphiQL
+  const server = createServer({
+    plugins: mesh.plugins,
+    graphiql: {
+      endpoint: '/api/graphql',
+      title: 'Mesh Gateway',
+    },
+  });
+
+  return server;
+}
+
+// avoids building the server at each request!
+const server$ = buildServer();
+
+export default async function apiHandler(req: NextApiRequest, res: NextApiResponse) {
+  return server$.requestListener(req, res);
+}
+```
+
+
+<br />
+
+A complete example is found at [website/src/pages/api/covid/index.ts](https://github.com/Urigo/graphql-mesh/blob/master/website/src/pages/api/covid/index.ts).
+
+<p>&nbsp;</p>
+
+### Deploy Mesh on AWS Lambda
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+Then, we can create a Lambda as it follows:
+
+_`graphql.ts`_
+```ts
+import type { Handler } from '@aws-cdk/aws-lambda'
+import { createServer } from '@graphql-yoga/node'
+import { configure } from '@vendia/serverless-express'
+import { getBuiltMesh } from './.mesh';
+
+// retrieve the mesh instance (with configured Envelop plugins)
+const mesh = await getBuiltMesh();
+// pass the Mesh instance to Yoga and configure GraphiQL
+const app = createServer({
+  plugins: mesh.plugins,
+  graphiql: {
+    endpoint: '/api/graphql',
+    title: 'Mesh Gateway',
+  },
+});
+
+export const handler: Handler = configure({
+  // Pass Yoga as app
+  app,
+  // Pass Yoga's logger to listen to the logs from Serverless Express as well
+  log: app.logger,
+})
+```
+
+<p>&nbsp;</p>
+
+### Deploy Mesh on Cloudflare Workers
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+Then,
+
+_`listener.mjs`_
+```ts
+import { createServer } from '@graphql-yoga/common'
+
+import { getBuiltMesh } from './.mesh';
+
+// retrieve the mesh instance (with configured Envelop plugins)
+const mesh = await getBuiltMesh();
+// pass the Mesh instance to Yoga and configure GraphiQL
+const server = createServer({
+  plugins: mesh.plugins,
+  graphiql: {
+    endpoint: '/api/graphql',
+    title: 'Mesh Gateway',
+  },
+});
+
+server.start()
+```
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+## Mesh and Docker
+
+A GraphQL Mesh Gateway should be treated like any Node.js project while keeping in mind that a `mesh build` step should be added to the deployment steps.
+
+**Any Node.js Docker image is suitable for GraphQL Mesh deployment**: [https://hub.docker.com/_/node](https://hub.docker.com/_/node).

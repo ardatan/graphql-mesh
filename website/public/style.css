@@ -30,6 +30,15 @@ code {
   margin-top: 15px !important;
 }
 
-article svg {
+article svg:not(.chakra-icon) {
   max-width: 100% !important;
+  margin: 15px 0;
+}
+
+article.fullWidth {
+  max-width: 104ch;
+}
+
+table td {
+  border: #eee 1px solid;
 }

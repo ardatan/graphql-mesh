@@ -1,16 +1,41 @@
 import { FC } from 'react';
 import type { AppProps } from 'next/app';
 import { appWithTranslation } from 'next-i18next';
-import { extendTheme, theme as chakraTheme } from '@chakra-ui/react';
+import { extendTheme, LinkProps, theme as chakraTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
-import { AppSeoProps, CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
+import {
+  AppSeoProps,
+  CombinedThemeProvider,
+  DocsPage,
+  ExtendComponents,
+  handlePushRoute,
+  Link,
+} from '@guild-docs/client';
 import { FooterExtended, Header, Subheader } from '@theguild/components';
+import type { LinkProps as NextLinkProps } from 'next/link';
+
 import '../../public/style.css';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+
+const LinkNewTabIfExternal = (props: LinkProps & NextLinkProps) => {
+  return props.href.startsWith('/') ? (
+    // @ts-expect-error type incompatibility
+    <Link {...props} color="accentColor" sx={{ '&:hover': { textDecoration: 'none' } }} />
+  ) : (
+    <>
+      {/* @ts-expect-error type incompatibility */}
+      <Link {...props} isExternal={true} color="accentColor" sx={{ '&:hover': { textDecoration: 'none' } }} />{' '}
+      <ExternalLinkIcon />
+    </>
+  );
+};
 
 ExtendComponents({
   HelloWorld() {
     return <p>Hello World!</p>;
   },
+  Link: LinkNewTabIfExternal,
+  a: LinkNewTabIfExternal,
 });
 
 const styles: typeof chakraTheme['styles'] = {

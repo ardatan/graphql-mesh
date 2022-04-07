@@ -1,0 +1,57 @@
+---
+id: extending-unified-schema
+title: "Extending the Unified Schema"
+sidebar_label: Extending the Unified Schema
+---
+
+
+We saw on the ["How to: Combine multiple Sources"](/docs/howtos/combine-multiple-sources) guide that `additionalResolvers` can be used to shape and augment the Unified Schema with custom resolvers.
+
+However, the `additionalResolvers` value can also be the path to a JavaScript/TypeScript file that exports the custom resolvers implementation.
+
+In our ["How to: Combine multiple Sources"](/docs/howtos/combine-multiple-sources) Gateway, the `Book.author` custom resolver could have been provided programatically as shown below:
+
+**.meshrc.yaml**
+
+```yaml
+sources:
+  # ...
+transforms:
+  # ...
+additionalTypeDefs: |
+  extend type Book {
+    author: authors_v1_Author
+  }
+additionalResolvers: "./additionalResolvers.ts"
+```
+
+**additionalResolvers.ts**
+```ts
+import { Resolvers } from './mesh'
+
+const resolvers: Resolvers = {
+  Book: {
+    author: async (root, args, context, info) => {
+      return await context.Authors.Query.authors_v1_AuthorsService_GetAuthor({
+        root,
+        args: {
+          id: args.authorId
+        },
+        context,
+        info
+      })
+    }
+  }
+}
+
+export default resolvers
+```
+
+Mesh relies on [GraphQL Code Generator](https://www.graphql-code-generator.com/) to generate the `Resolvers` type that give you access to:
+- fully typed resolvers map
+- fully typed SDK (through the `context`) to fetch data from Sources
+
+<br />
+
+
+__TODO__

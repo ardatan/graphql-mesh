@@ -4,15 +4,17 @@ import { DocsContent, DocsTOC, MDXPage } from '@guild-docs/client';
 import { MDXPaths, MDXProps } from '@guild-docs/server';
 import { getRoutes } from '../../../routes';
 
-export default MDXPage(({ content, TOC, MetaHead, BottomNavigation }) => {
+export default MDXPage(({ content, TOC, MetaHead, BottomNavigation, frontMatter }) => {
   return (
     <>
       <Head>{MetaHead}</Head>
-      <DocsContent>{content}</DocsContent>
-      <DocsTOC>
-        <TOC />
-        <BottomNavigation />
-      </DocsTOC>
+      <DocsContent className={frontMatter.fullWidth ? 'fullWidth' : ''}>{content}</DocsContent>
+      {!frontMatter.fullWidth && (
+        <DocsTOC>
+          <TOC />
+          <BottomNavigation />
+        </DocsTOC>
+      )}
     </>
   );
 });
