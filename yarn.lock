@@ -3396,10 +3396,10 @@
     protobufjs "^6.10.0"
     yargs "^16.2.0"
 
-"@guild-docs/client@2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-2.0.2.tgz#80e25d891966ede2a1e5b80ac02804d00e0d6f3e"
-  integrity sha512-JGb+ro+wxkZy+c9bfsh+k+WxlL9lxfdUY7BY6pB6B1OsLqzg9kfsIFCZj3YdnoQG6hz9TuRJxxneOQgw61J8VQ==
+"@guild-docs/client@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-2.1.1.tgz#1a3b8df7c1fb1da2e9b507695cc7abb0a76221bd"
+  integrity sha512-ikdcOnjeLvwih+V+WvDCKwP6u8752mVtzK1zjm01H7O+EosmiHHgilHPER7lvvwf7DJ/tBjZJJfqTtvSSrw1zQ==
   dependencies:
     "@guild-docs/mdx-remote" "^2.0.1"
     "@guild-docs/types" "^2.0.0"
@@ -3412,7 +3412,7 @@
     react-sticky-box "1.0.2"
     remove-markdown "0.3.0"
     use-immer "0.6.0"
-    zustand "3.7.1"
+    zustand "3.7.2"
 
 "@guild-docs/mdx-remote@^2.0.1":
   version "2.0.1"
@@ -11393,10 +11393,10 @@ eslint-webpack-plugin@^2.1.0:
     normalize-path "^3.0.0"
     schema-utils "^3.0.0"
 
-eslint@8.12.0:
-  version "8.12.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.12.0.tgz#c7a5bd1cfa09079aae64c9076c07eada66a46e8e"
-  integrity sha512-it1oBL9alZg1S8UycLm5YDMAkIhtH6FtAzuZs6YvoGVldWjbS08BkAdb/ymP9LlAyq8koANu32U7Ib/w+UNh8Q==
+eslint@8.13.0:
+  version "8.13.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.13.0.tgz#6fcea43b6811e655410f5626cfcf328016badcd7"
+  integrity sha512-D+Xei61eInqauAyTJ6C0q6x9mx7kTUC1KZ0m0LSEexR0V+e94K12LmWX076ZIsldwfQ2RONdaJe0re0TRGQbRQ==
   dependencies:
     "@eslint/eslintrc" "^1.2.1"
     "@humanwhocodes/config-array" "^0.9.2"
@@ -25925,10 +25925,10 @@ zipkin@^0.15.0:
     base64-js "^1.1.2"
     is-promise "^2.1.0"
 
-zustand@3.7.1:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.7.1.tgz#7388f0a7175a6c2fd9a2880b383a4bf6cdf6b7c6"
-  integrity sha512-wHBCZlKj+bg03/hP+Tzv24YhnqqP8MCeN9ECPDXoF01062SIbnfl3j9O0znkDw1lNTY0a8WN3F///a0UhhaEqg==
+zustand@3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.7.2.tgz#7b44c4f4a5bfd7a8296a3957b13e1c346f42514d"
+  integrity sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA==
 
 zwitch@^2.0.0:
   version "2.0.2"
