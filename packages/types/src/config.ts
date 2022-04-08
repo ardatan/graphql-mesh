@@ -384,6 +384,17 @@ export interface JsonSchemaHTTPOperation {
   responseSchema?: any;
   responseSample?: any;
   responseTypeName?: string;
+  /**
+   * You can define your response schemas by status codes;
+   *
+   * responseByStatusCode:
+   *   200:
+   *     responseSchema: ./someschema.json#/somepath
+   *   404:
+   *     responseSample: ./error-sample.json
+   *     responseTypeName: MyError
+   */
+  responseByStatusCode?: any;
   argTypeMap?: {
     [k: string]: any;
   };

@@ -25,6 +25,7 @@ export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
+  queryParams?: Record<string, string>;
 }
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
@@ -47,6 +48,7 @@ export async function addExecutionLogicToComposer(
     operationHeaders,
     baseUrl,
     pubsub: globalPubsub,
+    queryParams,
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(() => `Attaching execution logic to the schema`);
@@ -54,7 +56,11 @@ export async function addExecutionLogicToComposer(
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
 
-    const interpolationStrings: string[] = [...Object.values(operationHeaders || {}), baseUrl];
+    const interpolationStrings: string[] = [
+      ...Object.values(operationHeaders || {}),
+      ...Object.values(queryParams || {}),
+      baseUrl,
+    ];
 
     const rootTypeComposer = schemaComposer[rootTypeName];
 
@@ -105,6 +111,18 @@ export async function addExecutionLogicToComposer(
           method: httpMethod,
           headers,
         };
+        if (queryParams) {
+          const interpolatedQueryParams: Record<string, any> = {};
+          for (const queryParamName in queryParams) {
+            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
+              queryParams[queryParamName],
+              interpolationData
+            );
+          }
+          const queryParamsString = qsStringify(interpolatedQueryParams, { indices: false });
+          fullPath += fullPath.includes('?') ? '&' : '?';
+          fullPath += queryParamsString;
+        }
         // Handle binary data
         if ('binary' in operationConfig) {
           const binaryUpload = await args.input;
@@ -193,6 +211,10 @@ export async function addExecutionLogicToComposer(
           });
         }
         const response = await fetch(fullPath, requestInit);
+        // If return type is a file
+        if (field.type.getTypeName() === 'File') {
+          return response.blob();
+        }
         const responseText = await response.text();
         operationLogger.debug(
           () =>

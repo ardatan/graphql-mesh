@@ -65,7 +65,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
-        field: methodObj.operationId,
+        field: methodObj.operationId && sanitizeNameForGraphQL(methodObj.operationId),
         description: methodObj.description || methodObj.summary,
         schemaHeaders,
         operationHeaders,
@@ -84,7 +84,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
                 type: 'object',
                 properties: {},
               }) as JSONSchemaObject;
-              requestSchema.properties[paramObj.name] = paramObj.schema || paramObj;
+              requestSchema.properties[paramObj.name] =
+                paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
               if (!requestSchema.properties[paramObj.name].title) {
                 requestSchema.properties[paramObj.name].name = paramObj.name;
               }

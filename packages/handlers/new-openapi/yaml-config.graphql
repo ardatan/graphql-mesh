@@ -13,6 +13,7 @@ type NewOpenapiHandler {
   operationHeaders: JSON
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [OASSelectQueryOrMutationFieldConfig]
+  queryParams: Any
 }
 
 enum FallbackFormat {

@@ -1118,6 +1118,22 @@
         "responseTypeName": {
           "type": "string"
         },
+        "responseByStatusCode": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "You can define your response schemas by status codes;\n\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError"
+        },
         "argTypeMap": {
           "type": "object",
           "properties": {}

@@ -57,8 +57,8 @@ interface TypeComposers {
   description?: string;
 }
 
-const GraphQLUpload = new GraphQLScalarType({
-  name: 'Upload',
+const GraphQLFile = new GraphQLScalarType({
+  name: 'File',
 });
 
 export function getComposerFromJSONSchema(
@@ -406,7 +406,15 @@ export function getComposerFromJSONSchema(
         }
       }
 
-      switch (subSchema.type) {
+      switch (subSchema.type as any) {
+        case 'file': {
+          const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+          };
+        }
         case 'boolean': {
           const typeComposer = schemaComposer.getAnyTC(GraphQLBoolean);
           return {
@@ -503,15 +511,6 @@ export function getComposerFromJSONSchema(
             }
             case 'uri': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-            // Special case for upload
-            case 'upload': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLUpload);
               return {
                 input: typeComposer,
                 output: typeComposer,
@@ -722,6 +721,9 @@ export function getComposerFromJSONSchema(
           const getCorrectInputFieldType = (fieldName: string) => {
             const inputType: InputTypeComposer | ListComposer<InputTypeComposer> = inputFieldMap[fieldName].type();
             const actualInputType = isListTC(inputType) ? inputType.ofType : inputType;
+            if (!actualInputType.getFields) {
+              return actualInputType;
+            }
             const fieldMap = actualInputType.getFields();
             for (const fieldName in fieldMap) {
               const fieldConfig = fieldMap[fieldName];

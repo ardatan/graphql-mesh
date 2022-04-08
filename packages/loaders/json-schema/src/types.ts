@@ -14,6 +14,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   generateInterfaceFromSharedFields?: boolean;
   ignoreErrorResponses?: boolean;
+  queryParams?: Record<string, string>;
 }
 
 export interface JSONSchemaOperationResponseConfig {

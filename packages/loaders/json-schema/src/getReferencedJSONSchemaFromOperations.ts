@@ -158,9 +158,8 @@ export async function getReferencedJSONSchemaFromOperations({
     });
     if ('binary' in operationConfig) {
       const generatedSchema = {
-        title: operationConfig.requestTypeName || 'Upload',
-        type: 'string',
-        format: 'upload',
+        title: operationConfig.requestTypeName || 'File',
+        type: 'file',
       };
       rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
     } else if ('requestSchema' in operationConfig && operationConfig.requestSchema) {

@@ -27,6 +27,7 @@ type JsonSchemaHandler @md {
   schemaHeaders: JSON
   operations: [JsonSchemaOperation!]!
   ignoreErrorResponses: Boolean
+  queryParams: Any
 }
 
 enum JsonSchemaOperationType {
@@ -83,6 +84,18 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   responseSchema: Any
   responseSample: Any
   responseTypeName: String
+
+  """
+  You can define your response schemas by status codes;
+
+  responseByStatusCode:
+    200:
+      responseSchema: ./someschema.json#/somepath
+    404:
+      responseSample: ./error-sample.json
+      responseTypeName: MyError
+  """
+  responseByStatusCode: Any
 
   argTypeMap: JSON
 
