@@ -8,7 +8,7 @@ import {
   AggregateError,
   jitExecutorFactory,
 } from '@graphql-mesh/utils';
-import { StitchingInfo } from '@graphql-tools/delegate';
+import { StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
 import {
   stitchingDirectives,
   federationToStitchingSDL,
@@ -95,7 +95,7 @@ export default class StitchingMerger implements MeshMerger {
     const subschemas = await Promise.all(
       rawSources.map(async rawSource => {
         let newExecutor = rawSource.executor;
-        if (!newExecutor) {
+        if (!newExecutor && !process.env.DISABLE_JIT) {
           newExecutor = jitExecutorFactory(
             rawSource.schema,
             rawSource.name,
@@ -158,12 +158,19 @@ export default class StitchingMerger implements MeshMerger {
       this.logger.debug(() => `Root level transformations are being applied`);
       const { noWrapTransforms, wrapTransforms } = groupTransforms(transforms);
       if (wrapTransforms.length) {
-        unifiedSchema = wrapSchema({
+        const unifiedSubSchema: SubschemaConfig = {
           schema: unifiedSchema,
           transforms: transforms as any[],
           batch: true,
-          executor: jitExecutorFactory(unifiedSchema, 'root-wrapped', this.logger.child('JIT Executor')) as any,
-        });
+        };
+        if (!process.env.DISABLE_JIT) {
+          unifiedSubSchema.executor = jitExecutorFactory(
+            unifiedSchema,
+            'root-wrapped',
+            this.logger.child('JIT Executor')
+          ) as any;
+        }
+        unifiedSchema = wrapSchema(unifiedSubSchema);
       }
       if (noWrapTransforms.length) {
         unifiedSchema = applySchemaTransforms(unifiedSchema, { schema: unifiedSchema }, null, noWrapTransforms);

@@ -321,7 +321,7 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
   );
 
   const compiledQueries = new Map<string, CompiledQuery | ExecutionResult>();
-  if (options.documents?.length) {
+  if (options.documents?.length && !process.env.DISABLE_JIT) {
     getMeshLogger.debug(() => `Compiling operation documents`);
     for (const documentSource of options.documents || []) {
       compiledQueries.set(
