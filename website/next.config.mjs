@@ -25,5 +25,8 @@ export default withBundleAnalyzer(
         },
       ];
     },
+    experimental: {
+      nextScriptWorkers: true,
+    },
   })
 );
