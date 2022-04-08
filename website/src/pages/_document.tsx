@@ -1,5 +1,4 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document';
-import Script from 'next/script';
 import { ColorModeScript } from '@chakra-ui/react';
 
 export default class MyDocument extends Document {
@@ -14,7 +13,7 @@ export default class MyDocument extends Document {
           <ColorModeScript initialColorMode="light" />
           <Main />
           <NextScript />
-          <Script src="https://the-guild.dev/static/crisp.js" strategy="worker" />
+          <script async src="https://the-guild.dev/static/crisp.js" />
         </body>
       </Html>
     );

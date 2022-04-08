@@ -76,7 +76,7 @@ const LiveDemo: FC<{ className?: string }> = ({ className }) => {
           </optgroup>
         ))}
       </select>
-      {visible && (
+      {visible ? (
         <iframe
           loading="lazy"
           src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
@@ -85,6 +85,10 @@ const LiveDemo: FC<{ className?: string }> = ({ className }) => {
           allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
           sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
         />
+      ) : (
+        <div css={[tw`w-full h-[500px] rounded pt-8 flex justify-center items-center`]}>
+          <div>Loading...</div>
+        </div>
       )}
     </div>
   );
