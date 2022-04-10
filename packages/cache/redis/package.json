@@ -31,7 +31,7 @@
     "@graphql-mesh/types": "0.70.2",
     "@graphql-mesh/utils": "0.33.2",
     "@graphql-mesh/cache-inmemory-lru": "0.6.9",
-    "ioredis": "5.0.3",
+    "ioredis": "5.0.4",
     "tslib": "^2.3.1"
   },
   "publishConfig": {
