@@ -25,7 +25,6 @@ export function getRoutes(): IRoutes {
         $routes: [
           'extending-unified-schema',
           'graphql-code-generator',
-          'advanced-transforms',
           'live-queries',
           'subscriptions-webhooks',
           'performances-best-practices',

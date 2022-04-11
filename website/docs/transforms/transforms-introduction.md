@@ -30,57 +30,170 @@ Transforms are specified as a list of objects, and they are executed in order. Y
 
 <p>&nbsp;</p>
 
-## Handler-level transforms
 
-To specify `transforms` over a specific source, add it to your `sources` section under the source you wish to modify.
+## Transforms location and order
 
-The following example prefixes an input source to make it simpler later to merge and avoid conflicts:
+Most of the previous Guides configured Transforms at the root of the `.meshrc.yaml` YAML configuration.
 
+However, Mesh Transforms can be specified at the Source or Root level as follow:
+
+_`.meshrc.yaml`_
 ```yaml
 sources:
-  - name: Wiki
+  - name: Books
     handler:
       openapi:
-        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+        baseUrl: http://localhost:3002/
+        source: ../books-service/openapi3-definition.json
     transforms:
-      - prefix:
-          value: Wiki_
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: categories
+          to:
+            type: Query
+            field: booksCategories
+  - name: Authors
+    handler:
+      grpc:
+        endpoint: localhost:3003
+        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+  - name: Stores
+    handler:
+      graphql:
+        endpoint: http://0.0.0.0:3004/graphql
+transforms:
+  - filterSchema:
+      filters:
+        - Query.stores
 ```
 
+Specifying transforms at the Source level helps to isolate each Source definition better.
 
+**However, be careful; Transforms performed at the Source level or Root level does not result in the same final SDK** (potentially later used in `additionalResolvers`).
+
+The diagram below explains how Mesh process applied when building the final unified Schema and SDK:
+
+<Graph>
+
+  graph LR;
+    subgraph A [GraphQL Mesh server]
+      subgraph A1 [Sources]
+        subgraph A11 [Books Source]
+          A112[Books source GraphQL Schema]
+          A113[Apply source transforms in order]
+          A114[Books source GraphQL Schema]
+          A115[Books SDK]
+        end
+        subgraph A12 [Authors Source]
+          A122[Authors source GraphQL Schema]
+          A123[Apply source transforms in order]
+          A124[Authors source GraphQL Schema]
+          A125[Authors SDK]
+        end
+        subgraph A31 [Stores Source]
+          A312[Stores source GraphQL Schema]
+          A313[Apply source transforms in order]
+          A314[Stores source GraphQL Schema]
+          A315[Stores SDK]
+        end
+      end
+      subgraph A2 [Unified Schema]
+        A23[SDK]
+        A21[Merged GraphQL Schema]
+        A22[Apply root transforms in order]
+      end
+      subgraph A3 [Mesh server]
+        A32[Additional resolvers]
+        A33[Envelop plugins]
+        A34[Unified Schema]
+        A35[Yoga GraphQL Server]
+      end
+    end
+    A112 --> A113 --> A114 --> A115
+    A122 --> A123 --> A124 --> A125
+    A312 --> A313 --> A314 --> A315
+    A115 & A125 & A315 --> A23 --> A32
+    A114 & A124 & A314 --> A21
+    A21 --> A22 --> A34
+    A32 & A33 & A34 --> A35
+
+</Graph>
+
+The above diagram highlights 2 important points when working with transforms:
 
 <p>&nbsp;</p>
 
-------
+### Transforms order is important
 
-<p>&nbsp;</p>
+The sequence diagram shows that Mesh always applies transforms in order, which means a given transformer can impact the following one.
 
-## Root-level transforms
+Given the following `MyService` schema:
 
-To specify `transforms` over unified schema, you should put it in the root of your config file. This could be used if you need access to fields or types from all your data sources, for example, linking two data sources together.
+_`schema.graphql`_
+```graphql
+type Query {
+  books_list: [Book]!
+}
 
-The following example prefixes an input source to make it simpler later to merge and avoid conflicts:
+# ...
 
+```
+
+The following `filterSchema` transforms configuration will fail:
+
+_`.meshrc.yaml`_
 ```yaml
 sources:
-  - name: Users
-    handler: #...
-  - name: Posts
-    handler: #...
-transforms:
-  - cache:
-      - field: Query.user
-        cacheKey: user-{args.id}
-        invalidates:
-          effectingOperations:
-            - operation: Mutation.updateUser
-              matchKey: { args.userIdToUpdate }
+   - name: MyService
+    handler:
+      jsonSchema:
+        # ...
+
+    transforms:
+      - namingConvention:
+              typeNames: pascalCase
+              fieldNames: camelCase
+      - filterSchema:
+          - Query.books_list
 ```
 
-The example above uses the `cache` transform on the root. When someone uses `updateUser` with a specific user id, it will automatically update the data record and invalidate the cache.
+Because Mesh process transforms in the definition order, when `filterSchema` is processed, all types and fields have been transformed to match the configured naming convention.
+The `Query.books_list` does not exist anymore, replaced by the `Query.booksList` query.
 
-You can learn more about caching [in the dedicated docs.](/docs/transforms/cache)
+<br />
 
+_Note: the number of configured transforms does not impact performances (build or runtime) since Mesh processes them in a chained way_
+
+
+<p>&nbsp;</p>
+
+
+### Beware of which transforms are used at the source level
+
+As stated earlier, transforms applied at the source level impact the generated SDK.
+
+For this reason, be careful when using the `filterSchema` transforms at the Source level since it will also remove it from the SDK, which will make it impossible to use it at the additional resolvers level.
+
+For example:
+
+_`.meshrc.yaml`_
+```yaml
+sources:
+   - name: MyService
+    handler:
+      jsonSchema:
+        # ...
+
+    transforms:
+      - filterSchema:
+          - Query.books_list
+```
+
+The above `filterSchema` Transforms will prevent calling the `books_list` Query SDK method from the `additionalResolvers`.
+
+(_The `MyService.Query.books_list()` SDK method won't be generated_)
 
 
 
