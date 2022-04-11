@@ -30,6 +30,7 @@ export function getRoutes(): IRoutes {
           'subscriptions-webhooks',
           'performances-best-practices',
           'error-handling',
+          'file-uploads',
         ],
       },
       handlers: {
