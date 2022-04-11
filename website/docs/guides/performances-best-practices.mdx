@@ -11,7 +11,7 @@ Fortunately, GraphQL Mesh provides a way to batch requests with specific `additi
 
 <p>&nbsp;</p>
 
-## Enable request batching
+## Enable requests batching
 
 Our [`multiple-sources`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources) example Gateway:
 
@@ -39,7 +39,7 @@ Z --> G;
 
 </Graph>
 
-While emit multiple requests to the "Authors" API when resolving the nested `Book.author` field:
+Will emit multiple requests to the "Authors" API when resolving the nested `Book.author` field:
 
 ```graphql
 query bestSellersByStore {

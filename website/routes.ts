@@ -29,6 +29,7 @@ export function getRoutes(): IRoutes {
           'live-queries',
           'subscriptions-webhooks',
           'performances-best-practices',
+          'error-handling',
         ],
       },
       handlers: {
