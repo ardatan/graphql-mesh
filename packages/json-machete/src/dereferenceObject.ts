@@ -8,7 +8,7 @@ export const resolvePath = (path: string, root: any): any => {
   return JsonPointer.get(root, path);
 };
 function isRefObject(obj: any): obj is { $ref: string } {
-  return typeof obj === 'object' && obj && obj.$ref;
+  return obj && typeof obj === 'object' && obj.$ref;
 }
 
 function isURL(str: string) {
