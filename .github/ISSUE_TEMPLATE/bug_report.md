@@ -12,7 +12,7 @@ _Progress of the issue based on the [Contributor Workflow](https://github.com/th
 - [ ] 1. The issue provides a reproduction available on [Github](https://github.com/Urigo/graphql-mesh/tree/master/examples/hello-world), [Stackblitz](https://stackblitz.com/github/Urigo/graphql-mesh/tree/master/examples/hello-world) or [CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/hello-world)
 > Make sure to fork this template and run `yarn generate` in the terminal.
 >
-> Please make sure the Codegen and plugins version under `package.json` matches yours.
+> Please make sure Mesh package versions under `package.json` matches yours.
 - [ ] 2. A failing test has been provided
 - [ ] 3. A local solution has been provided
 - [ ] 4. A pull request is pending review
