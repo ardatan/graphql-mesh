@@ -4,7 +4,7 @@ title: Mock Transform
 sidebar_label: Mock
 ---
 
-The `mock` transform allow you to apply mocking for development usage.
+The `mock` transform allows you to apply mocking for development usage.
 
 To get started with this transform, install it:
 
@@ -57,7 +57,7 @@ module.exports = {
   fullName: () => 'My Static Name'
 };
 ```
-When defined manually, properties can return values either directly, or through a method. This is useful when defining static mocks, because a mock property will be called as many times as there are items, for example in an array.
+When defined manually, properties can return values either directly or through a method. This is useful when defining static mocks because a mock property will be called as many times as there are items in an array.
 Here's an example on how this could be achieved:
 
 in `user-mocks.js` file;
@@ -91,9 +91,7 @@ export const fullName: () => User['fullName'] = () => fullNames.next().value;
 
 ## Mocking the lists
 
-By default, Mesh generates two mocked items if the return type is a list. But this can be configured;
-
-Let's say, you have a schema like below;
+Mesh generates two mocked items by default if the return type is a list. But this can be configured, as shown below:
 
 ```graphql
   type Query {
@@ -105,7 +103,6 @@ Let's say, you have a schema like below;
   }
 ```
 
-Then a configuration like below;
 
 ```yml
 transforms:
@@ -143,7 +140,7 @@ Now `{ users { id fullName } }` query will return 3 of `User` item;
 GraphQL Mesh supports GraphQL Tools's Stateful Mocking feature. So you can have stateful mocking by using the store provided in the context `context.mockStore`;
 
 ### Initialize store
-When having a schema that returns a list, in this case a list of users:
+When having a schema that returns a list, in this case, a list of users:
 ```graphql
 type User {
   id: ID
@@ -153,9 +150,9 @@ type Query {
   users: User
 }
 ```
-Initially populating the list of users can be done by utilizing the `initializeStore` property. The store initialization will happen before the store is attached to the schema.
+Initially, populating the list of users can be done by utilizing the `initializeStore` property. The store initialization will happen before the store is attached to the schema.
 
-In this case there is no need to provide special array mocking definition, like `length`. It will automatically be taken based on the mock data.
+There is no need to provide a particular array mocking definition, like `length`. It will automatically be taken based on the mock data.
 
 
 ```yml
@@ -272,7 +269,7 @@ module.exports = {
 
 ## Codesandbox Example
 
-You can check out our example that uses JSON Schema handler with mock data.
+You can check out our example that uses the JSON Schema handler with mock data.
 
 <iframe
      src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"

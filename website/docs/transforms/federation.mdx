@@ -4,7 +4,7 @@ title: Apollo Federation Transform
 sidebar_label: Apollo Federation
 ---
 
-`federation` transform allows to add the resolvers and directives to conform to the federation specification. Much of the federation sourcecode could be reused ensuring it is compliant to the specification. This transform uses [`graphql-transform-federation`](https://github.com/0xR/graphql-transform-federation) package.
+The `federation` transform allows the resolvers and directives to conform to the federation specification. Much of the federation source code could be reused, ensuring it is compliant with the specification. This transform uses [`graphql-transform-federation`](https://github.com/0xR/graphql-transform-federation) package.
 
 <PackageInstall packages="@graphql-mesh/transform-federation" />
 
@@ -38,7 +38,7 @@ transforms:
 
 ### Add Reference Resolver as a Code File
 
-If you want to add more complex business logic, you can point to a code file that exports a resolver function.
+To add more complex business logic, you can point to a code file that exports a resolver function.
 
 ```yaml
 resolveReference: ./userResolveReference.js
