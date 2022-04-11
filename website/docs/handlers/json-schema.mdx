@@ -5,9 +5,9 @@ sidebar_label: JSON Schema or Samples
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218994-11434880-7e5a-11ea-8594-08185526080f.png)
 
-This handler allows you to load any remote REST service, and describe its request/response using the YAML config.
+This handler allows you to load any remote REST service and describe its request/response using the YAML config.
 
-With this handler, you can easily customize and control the built GraphQL schema.
+You can easily customize and control the built GraphQL schema with this handler.
 
 To get started, install the handler library:
 
@@ -30,7 +30,7 @@ sources:
 ```
 ## Dynamic Values
 
-Mesh can take dynamic values from the GraphQL Context or the environmental variables. If you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
+Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example, if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
 
 The expression inside dynamic values should be as in JS.
 
@@ -83,13 +83,13 @@ sources:
             responseSchema: ./json-schemas/user.json
 ```
 
-This example operation definition will generate a root field with `id: ID` argument, then Mesh will interpolate the expression in `path` to get `id` value from `args`.
+This example operation definition will generate a root field with `id: ID` argument. Mesh will interpolate the expression in `path` to get `id` value from `args`.
 
 ### From JSON Samples
 
 Mesh can also load JSON samples from a remote service.
-Just add a `json-samples` directory in your project root, and put the JSON samples in there (`responseSample: ./jsons/MyField.response.json` - Create a new folder like `Jsons`).
-By declare the `responseSample`, you can use the JSON sample in the GraphQL schema.
+Add a `json-samples` directory in your project root, and put the JSON samples there (`responseSample: ./jsons/MyField.response.json` - Create a new folder like `Jsons`).
+By declaring the `responseSample`, you can use the JSON sample in the GraphQL schema.
 
  `Mesh Sample Example - .meshrc.yml file`
 ```yml
@@ -115,7 +115,7 @@ Any JSON sample file can be used.
 
 ## Codesandbox Example
 
-You can check out our example that uses JSON Schema handler with mock data.
+You can check out our example that uses the JSON Schema handler with mock data.
 
 <iframe
      src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"

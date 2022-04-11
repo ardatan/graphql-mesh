@@ -24,9 +24,9 @@ sources:
 ```
 
 ## Overriding default Query/Mutation operations
-By default, OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option you can manually override this process.
-In order to switch between Query and Mutation operations, and vice versa, you need to define a rule per override, consisting of: OAS title, path of the operation, method of the operation and finally the destination type (e.g. Query or Mutation).
-See example below:
+By default, OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option, you can manually override this process.
+To switch between Query and Mutation operations, and vice versa, you need to define a rule per override, consisting of the OAS title, the path of the operation, the method of the operation and finally, the destination type (e.g., Query or Mutation).
+See the example below:
 
 ```yaml
 sources:
@@ -47,7 +47,7 @@ sources:
 
 ## Dynamic Header Values
 
-Mesh can take dynamic values from the GraphQL Context or the environmental variables. If you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
+Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example, if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
 
 The expression inside dynamic values should be as in JS.
 
@@ -84,13 +84,18 @@ sources:
 
 ## Advanced cookies handling
 
-When building a web application, for security reasons, cookies are often used for authentication. Mobile applications on the other end, tend to use a HTTP header.
+When building a web application, cookies are often used for authentication for security reasons. On the other end, mobile applications tend to use an HTTP header.
 
-This section shows how to configure GraphQL Mesh to accept either, and also how to use GraphQL Mesh to set / unset cookies on the login & logout mutations.
+This section shows how to configure GraphQL Mesh to accept either and use GraphQL Mesh to set/unset cookies on the login & logout mutations.
 
-### Accepting one of cookie, header or context value
+### Accepting one of the cookies, header, or context value
 
-We want to accept one of: an `accessToken` cookie, an `Authorization` header, or an authorization value available in context (e.g. set by a GraphQL auth plugin), and transmit it to the Rest API as a `Authorization` header. GraphQL Mesh does not allow dynamic selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
+We want to accept one of the following:
+- an `accessToken` cookie
+- an `Authorization` header
+- an authorization value available in context (e.g. set by a GraphQL auth plugin)
+
+And transmit it to the Rest API as an `Authorization` header. GraphQL Mesh does not allow dynamic selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
 
 ```yml
 sources:
@@ -105,7 +110,7 @@ sources:
         customFetch: ./src/custom-fetch.js
 ```
 
-Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the header in `Authorization-Header`. Now to introduce the logic needed to generate the proper `Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the `fetch` used by GraphQL Mesh to call the Rest API.
+Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the header in `Authorization-Header`. To introduce the logic needed to generate the proper `Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the `fetch` used by GraphQL Mesh to call the Rest API.
 
 ```js
 const fetch = require('node-fetch')
@@ -127,9 +132,9 @@ Of course, `node-fetch` needs to be added to your project:
 
 ### Setting / Unsetting the cookie
 
-Of course, being able to use GraphQL Mesh as a Gateway for both the mobile application and web application is nice, but there's one thing missing: the setting of the cookie for the web application.
+Of course, using GraphQL Mesh as a Gateway for both the mobile application and web application is excellent. Still, there's one thing missing: the setting of the cookie for the web application.
 
-For that, we need to access the HTTP response that is sent back to the client. Luckily, we can do so in `additionalResolvers`. So we need to create two new resolvers, one for login and one for logout, and manage the cookie in their code.
+We need to access the HTTP response that is sent back to the client. Luckily, we can do so in `additionalResolvers`. So we need to create two new resolvers, one for login and one for logout, and manage the cookie in their code.
 
 The first step is to edit the `meshrc.yaml` file, add this at the end:
 
