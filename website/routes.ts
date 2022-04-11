@@ -20,13 +20,13 @@ export function getRoutes(): IRoutes {
           'comparison',
         ],
       },
-      // guides: {
-      //   $name: 'Guides',
-      //   $routes: [
-      //     'extending-unified-schema',
-      //     'graphql-code-generator'
-      //   ],
-      // },
+      guides: {
+        $name: 'Guides',
+        $routes: [
+          'extending-unified-schema',
+          'graphql-code-generator'
+        ],
+      },
       handlers: {
         $name: 'Source Handlers',
         $routes: [
@@ -78,7 +78,7 @@ export function getRoutes(): IRoutes {
   GenerateRoutes({
     Routes,
     folderPattern: 'docs',
-    ignorePaths: ['extend', 'generated-markdown', 'recipes', 'guides'],
+    ignorePaths: ['extend', 'generated-markdown', 'recipes'],
   });
 
   return {
