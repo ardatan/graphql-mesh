@@ -22,7 +22,13 @@ export function getRoutes(): IRoutes {
       },
       guides: {
         $name: 'Guides',
-        $routes: ['extending-unified-schema', 'graphql-code-generator', 'advanced-transforms', 'live-queries'],
+        $routes: [
+          'extending-unified-schema',
+          'graphql-code-generator',
+          'advanced-transforms',
+          'live-queries',
+          'subscriptions-webhooks',
+        ],
       },
       handlers: {
         $name: 'Source Handlers',

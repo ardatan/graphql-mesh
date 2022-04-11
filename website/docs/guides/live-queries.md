@@ -23,7 +23,7 @@ And you want to update this operation result automatically without manual refres
 
 You only need to add the following to your existing configuration.
 
-```yml
+```yaml
 additionalTypeDefs: |
     directive @live on QUERY
 liveQueryInvalidations:
@@ -45,6 +45,14 @@ query getTodos @live {
 
 This will start a real-time connection between the server and your client. The response of `todos` will get updated whenever `addTodo` is called.
 
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ### ID Based Invalidation
 
 Let's say you have the following query that returns a specific `Todo` entity based on `id` field;
@@ -60,7 +68,7 @@ query getTodo($id: ID!) {
 
 If you update this entity with `editTodo` mutation field on your backend, then you want to invalidate this entity specifically instead of validating all `todo` queries;
 
-```yml
+```yaml
 liveQueryInvalidations:
     - field: Mutation.editTodo
       invalidate:
@@ -69,12 +77,19 @@ liveQueryInvalidations:
 
 In a case where the field resolver resolves null but might resolve to an object type later, e.g., because the visibility got update the field that uses a specific id argument can be invalidated in the following way:
 
-```yml
+```yaml
 liveQueryInvalidations:
     - field: Mutation.editTodo
       invalidate:
         - Query.todo(id:"{args.id}")
 ```
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
 
 
 ### Programmatic Usage
@@ -83,7 +98,7 @@ liveQueryInvalidations:
 
 See [Resolvers Composition](/docs/transforms/resolvers-composition)
 
-```yml
+```yaml
 transforms:
     - resolversComposition:
         - resolver: Mutation.editTodo
