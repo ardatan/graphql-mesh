@@ -10,6 +10,15 @@ To get started with this transform, install it:
 
 <PackageInstall packages="@graphql-mesh/transform-mock" />
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## How to use?
 
 Add the following configuration to your Mesh config file:
@@ -25,6 +34,16 @@ transforms:
 The example above will replace the resolver of `User.firstName` with a mock that uses `faker.js` to generate a random name.
 
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+
 ## Custom mock functions for fields
 
 You can mock a specific field of a type;
@@ -36,6 +55,15 @@ transforms:
         - apply: User.fullName
           custom: ./user-mocks#fullName
 ```
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Custom mock functions for types
 
@@ -89,6 +117,15 @@ const fullNames = generateNames();
 export const fullName: () => User['fullName'] = () => fullNames.next().value;
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Mocking the lists
 
 Mesh generates two mocked items by default if the return type is a list. But this can be configured, as shown below:
@@ -135,6 +172,15 @@ Now `{ users { id fullName } }` query will return 3 of `User` item;
 }
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Stateful mocking
 
 GraphQL Mesh supports GraphQL Tools's Stateful Mocking feature. So you can have stateful mocking by using the store provided in the context `context.mockStore`;
@@ -178,6 +224,11 @@ export default {
 };
 ```
 
+
+
+<p>&nbsp;</p>
+
+
 ### Get from the store
 You can implement the mock query field `*ById` declaratively like below:
 
@@ -197,6 +248,10 @@ transforms:
             type: User
             key: "{args.id}"
 ```
+
+
+<p>&nbsp;</p>
+
 
 ### Mutate data in the store
 
@@ -265,6 +320,13 @@ module.exports = {
 
 
 
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 > Learn more about GraphQL Tools Mocking https://graphql-tools.com/docs/mocking
 
 ## Codesandbox Example
@@ -277,6 +339,15 @@ You can check out our example that uses the JSON Schema handler with mock data.
      title="json-schema-example"
      allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

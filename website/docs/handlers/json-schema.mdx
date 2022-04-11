@@ -5,6 +5,20 @@ sidebar_label: JSON Schema or Samples
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218994-11434880-7e5a-11ea-8594-08185526080f.png)
 
+
+<p>&nbsp;</p>
+
+__For a guided tutorial, please refer to ["How to: Configure Sources with no definition"](/docs/getting-started/sources-with-no-definition)__
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 This handler allows you to load any remote REST service and describe its request/response using the YAML config.
 
 You can easily customize and control the built GraphQL schema with this handler.
@@ -28,11 +42,28 @@ sources:
             method: GET
             responseSchema: ./json-schemas/users.json
 ```
+
+
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Dynamic Values
 
 Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example, if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
 
 The expression inside dynamic values should be as in JS.
+
+
+
+<p>&nbsp;</p>
+
 
 ### From Context (HTTP Header for `mesh dev` or `mesh start`)
 
@@ -49,6 +80,10 @@ sources:
 
 And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-api-token` HTTP header.
 
+
+<p>&nbsp;</p>
+
+
 ### From Environmental Variable
 
 `MY_API_TOKEN` is the name of the environmental variable you have the value.
@@ -64,6 +99,11 @@ sources:
           # You can also access to the cookies like below;
           # Authorization: Bearer {context.cookies.myApiToken}
 ```
+
+
+
+<p>&nbsp;</p>
+
 
 ### From Arguments
 
@@ -84,6 +124,11 @@ sources:
 ```
 
 This example operation definition will generate a root field with `id: ID` argument. Mesh will interpolate the expression in `path` to get `id` value from `args`.
+
+
+
+<p>&nbsp;</p>
+
 
 ### From JSON Samples
 
@@ -113,6 +158,15 @@ sources:
 Any JSON sample file can be used.
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Codesandbox Example
 
 You can check out our example that uses the JSON Schema handler with mock data.
@@ -123,6 +177,15 @@ You can check out our example that uses the JSON Schema handler with mock data.
      title="json-schema-example"
      allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" />
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

@@ -10,6 +10,15 @@ sidebar_label: Extend
 
 > Please DO NOT use this transform unless you know what you're doing! We strongly recommend you to extend the schema using `additionalTypeDefs` and `additionalResolvers` as described in [Extend Schema](/docs/getting-started/multiple-apis) part in this documentation.
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## How to use?
 
 Add the following configuration under the source configuration;
@@ -38,6 +47,15 @@ module.exports = {
   },
 }
 ```
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

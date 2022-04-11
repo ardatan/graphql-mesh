@@ -12,6 +12,15 @@ yarn add @graphql-mesh/transform-hoist-field
 
 > Underneath it leverages the `HoistField` transform from the `@graphql-tools/wrap` package.
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## How to use?
 
 Given the following schema:
@@ -29,6 +38,10 @@ type User {
   id: ID!
 }
 ```
+
+
+
+<p>&nbsp;</p>
 
 ### Simple hoisting
 
@@ -53,6 +66,10 @@ type User {
 }
 ```
 
+
+
+<p>&nbsp;</p>
+
 ### Filtering args via a default for the entire path
 ```yaml
 transforms:
@@ -75,6 +92,11 @@ type User {
   id: ID!
 }
 ```
+
+
+
+<p>&nbsp;</p>
+
 ### Filtering args via on specific levels of the path
 ```yaml
 transforms:
@@ -98,6 +120,15 @@ type User {
   id: ID!
 }
 ```
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

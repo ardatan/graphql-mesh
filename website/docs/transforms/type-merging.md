@@ -264,6 +264,15 @@ sources:
      allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" />
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Config API Reference
 
 {@import ../generated-markdown/TypeMergingConfig.generated.md}

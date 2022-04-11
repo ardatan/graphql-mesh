@@ -26,6 +26,15 @@ sources:
 > You can check out our example that uses schema stitching with a PostgreSQL data source.
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)
 You can add [PostGraphile plugins](https://graphile.org/postgraphile/community-plugins) for example FederationPlugin. You can install it like below:
 
@@ -45,13 +54,28 @@ sources:
 
 [Learn more about PostGraphile plugins](https://graphile.org/postgraphile/extending)
 
+
+
+<p>&nbsp;</p>
+
+
 ### Federation and Automatic Type Merging support
 The Federation plugin converts your Postgraphile schema into a federated schema that can also be recognized by Stitching, which brings Automatic Type Merging. So you can install `@graphile/federation` package like above and add it under `appendPlugins`.
+
+
+
+<p>&nbsp;</p>
+
 
 ### Many-to-Many support
 Suppose you want to have automatic many-to-many mapping across your entities. You can install `@graphile-contrib/pg-many-to-many` and add it under `appendPlugins`.
 
 <PackageInstall packages="@graphile-contrib/pg-many-to-many" />
+
+
+
+<p>&nbsp;</p>
+
 
 ### PostGIS Support
 If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile/postgis` package and add it under `appendPlugins`.
@@ -59,6 +83,15 @@ If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile
 <PackageInstall packages="@graphile/postgis" />
 
 > See more [plugins](https://graphile.org/postgraphile/community-plugins) to improve the experience!
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

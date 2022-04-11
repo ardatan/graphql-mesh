@@ -12,6 +12,15 @@ This is extremely useful when hoisting field values from one subfield to its par
 
 > Note: currently this transform supports `bare` mode only. For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## How to use?
 
 Imagine you have generated your schema from a data source you don't control, and the generated schema looks like this:
@@ -97,6 +106,15 @@ Allowing you to request a GraphQL document like this:
 }
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## How the transform works
 
 Let's understand more about how this transformation works.
@@ -122,6 +140,15 @@ To summarise, with the configuration above, we want the field `books` in type `Q
 
 Finally, since we no longer reference `BooksApiResponse` this becomes a loose type. So the transform will purge it from the GraphQL schema.
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Transform scopes
 
 We explored how to use the transform to replace field Types.
@@ -130,6 +157,11 @@ The transform always replaces the type of the source field with the one of the t
 However, the transform also allows you to pass a scope property, which values can be `config` or `hoistValue`.
 
 We could say that the scope property could also take a `type` value. Still, since it's the minimum requirement to replace the Type, this is considered the default scope and so it wouldn't make sense to pass it when you desire just this behaviour.
+
+
+
+<p>&nbsp;</p>
+
 
 ### scope: config
 
@@ -141,6 +173,11 @@ As you can see, this is very comprehensive as it includes things like arguments 
 
 This can be useful when you have custom resolve functions on your target field. So you are happy to replace the source field entirely.
 However, you should be careful when you fully understand the implications of the behavior for your replaced field.
+
+
+
+<p>&nbsp;</p>
+
 
 ### scope: hoistValue
 
@@ -166,6 +203,15 @@ But the wrapping function applied to the original resolver, when passing `hoistV
   books: [{ title: 'abc', author: 'def' }, { title: 'ghi', author: 'lmn' }]
 }
 ```
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Additional type definitions
 
@@ -211,6 +257,15 @@ type Author {
 }
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Custom composers
 
 Performing value hoisting or replacing the entire field config is powerful, but it might not always fully satisfy custom needs.
@@ -254,6 +309,14 @@ module.exports = {
 ```
 
 Now our `code` field will return a Boolean as per custom logic implemented through the javascript function above.
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
 
 
 ## Renaming fields
@@ -307,6 +370,15 @@ type Author {
   age: Int!
 }
 ```
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 
