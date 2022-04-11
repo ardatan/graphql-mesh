@@ -28,6 +28,7 @@ export function getRoutes(): IRoutes {
           'advanced-transforms',
           'live-queries',
           'subscriptions-webhooks',
+          'performances-best-practices',
         ],
       },
       handlers: {
