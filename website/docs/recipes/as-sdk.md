@@ -23,7 +23,7 @@ In this case we only have `fieldA` and `fieldB` in our result so those are not a
 
 Now, point to those operations in your `.meshrc.yml`;
 
-```yml
+```yaml
 sources: ...
 
 documents:

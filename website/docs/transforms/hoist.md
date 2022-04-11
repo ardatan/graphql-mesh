@@ -32,7 +32,7 @@ type User {
 
 ### Simple hoisting
 
-```yml
+```yaml
 transforms:
   - hoist:
       - typeName: Query
@@ -54,7 +54,7 @@ type User {
 ```
 
 ### Filtering args via a default for the entire path
-```yml
+```yaml
 transforms:
   - hoist:
       - typeName: Query
@@ -76,7 +76,7 @@ type User {
 }
 ```
 ### Filtering args via on specific levels of the path
-```yml
+```yaml
 transforms:
   - hoist:
       - typeName: Query

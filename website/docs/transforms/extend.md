@@ -14,7 +14,7 @@ sidebar_label: Extend
 
 Add the following configuration under the source configuration;
 
-```yml
+```yaml
 transforms:
   - extend:
       typeDefs: ./someTypeDefs.graphql

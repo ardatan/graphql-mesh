@@ -18,7 +18,7 @@ To specify `transforms` over a specific source, add it to your `sources` section
 
 The following example prefixes an input source to make it simpler later to merge and avoid conflicts:
 
-```yml
+```yaml
 sources:
   - name: Wiki
     handler:
@@ -35,7 +35,7 @@ To specify `transforms` over unified schema, you should put it in the root of yo
 
 The following example prefixes an input source to make it simpler later to merge and avoid conflicts:
 
-```yml
+```yaml
 sources:
   - name: Users
     handler: #...

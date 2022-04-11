@@ -6,7 +6,7 @@ sidebar_label: Introduction
 
 GraphQL Mesh can consume different data source types inside GraphQL.
 
-```yml
+```yaml
 sources:
     - name: Name Of My Source
       handler:
