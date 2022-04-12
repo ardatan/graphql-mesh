@@ -40,6 +40,7 @@ export interface GraphQLMeshCLIParams {
   buildArtifactsCommand: string;
   sourceServerCommand: string;
   validateCommand: string;
+  additionalPackagePrefixes: string[];
 }
 
 export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
@@ -56,6 +57,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   buildArtifactsCommand: 'build',
   sourceServerCommand: 'serve-source',
   validateCommand: 'validate',
+  additionalPackagePrefixes: [],
 };
 
 export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin(process.argv), cwdPath = cwd()) {
@@ -138,6 +140,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             dir: baseDir,
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
+            additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
           });
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
@@ -167,6 +170,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
                     dir: baseDir,
                     artifactsDir: ${JSON.stringify(cliParams.artifactsDir)},
                     configName: ${JSON.stringify(cliParams.configName)},
+                    additionalPackagePrefixes: ${JSON.stringify(cliParams.additionalPackagePrefixes)},
                   });
                 }
               `,
@@ -284,6 +288,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             ignoreAdditionalResolvers: true,
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
+            additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
           });
           logger = meshConfig.logger;
 
@@ -358,6 +363,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             ignoreAdditionalResolvers: true,
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
+            additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
           });
           logger = meshConfig.logger;
 
@@ -407,6 +413,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
           dir: baseDir,
           artifactsDir: cliParams.artifactsDir,
           configName: cliParams.configName,
+          additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
         });
         logger = meshConfig.logger;
         const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);

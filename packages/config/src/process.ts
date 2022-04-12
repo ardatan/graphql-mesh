@@ -35,6 +35,7 @@ export type ConfigProcessOptions = {
   ignoreAdditionalResolvers?: boolean;
   configName?: string;
   artifactsDir?: string;
+  additionalPackagePrefixes?: string[];
 };
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
@@ -95,7 +96,13 @@ export async function processConfig(
     `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
   ];
 
-  const { dir, importFn = defaultImportFn, store: providedStore, artifactsDir } = options || {};
+  const {
+    dir,
+    importFn = defaultImportFn,
+    store: providedStore,
+    artifactsDir,
+    additionalPackagePrefixes,
+  } = options || {};
 
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
@@ -106,7 +113,11 @@ export async function processConfig(
 
   const rootStore = providedStore || getDefaultMeshStore(dir, importFn, artifactsDir || '.mesh');
 
-  const { pubsub, importCode: pubsubImportCode, code: pubsubCode } = await resolvePubSub(config.pubsub, importFn, dir);
+  const {
+    pubsub,
+    importCode: pubsubImportCode,
+    code: pubsubCode,
+  } = await resolvePubSub(config.pubsub, importFn, dir, additionalPackagePrefixes);
   importCodes.push(pubsubImportCode);
   codes.push(pubsubCode);
 
@@ -114,14 +125,18 @@ export async function processConfig(
     cache,
     importCode: cacheImportCode,
     code: cacheCode,
-  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub);
+  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, additionalPackagePrefixes);
   importCodes.push(cacheImportCode);
   codes.push(cacheCode);
 
   const sourcesStore = rootStore.child('sources');
   codes.push(`const sourcesStore = rootStore.child('sources');`);
 
-  const { logger, importCode: loggerImportCode, code: loggerCode } = await resolveLogger(config.logger, importFn, dir);
+  const {
+    logger,
+    importCode: loggerImportCode,
+    code: loggerCode,
+  } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes);
   importCodes.push(loggerImportCode);
   codes.push(loggerCode);
 
@@ -139,11 +154,16 @@ export async function processConfig(
         const transformsVariableName = camelCase(`${source.name}_Transforms`);
         codes.push(`const ${transformsVariableName} = [];`);
         const [handler, transforms] = await Promise.all([
-          await getPackage<MeshHandlerLibrary>({ name: handlerName, type: 'handler', importFn, cwd: dir }).then(
-            ({ resolved: HandlerCtor, moduleName }) => {
-              const handlerImportName = pascalCase(handlerName + '_Handler');
-              importCodes.push(`import ${handlerImportName} from '${moduleName}'`);
-              codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
+          await getPackage<MeshHandlerLibrary>({
+            name: handlerName,
+            type: 'handler',
+            importFn,
+            cwd: dir,
+            additionalPrefixes: additionalPackagePrefixes,
+          }).then(({ resolved: HandlerCtor, moduleName }) => {
+            const handlerImportName = pascalCase(handlerName + '_Handler');
+            importCodes.push(`import ${handlerImportName} from '${moduleName}'`);
+            codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
               name: rawConfig.sources[${sourceIndex}].name,
               config: rawConfig.sources[${sourceIndex}].handler[${JSON.stringify(handlerName)}],
               baseDir,
@@ -153,18 +173,17 @@ export async function processConfig(
               logger: logger.child(rawConfig.sources[${sourceIndex}].name),
               importFn
             });`);
-              return new HandlerCtor({
-                name: source.name,
-                config: handlerConfig,
-                baseDir: dir,
-                cache,
-                pubsub,
-                store: sourcesStore.child(source.name),
-                logger: logger.child(source.name),
-                importFn,
-              });
-            }
-          ),
+            return new HandlerCtor({
+              name: source.name,
+              config: handlerConfig,
+              baseDir: dir,
+              cache,
+              pubsub,
+              store: sourcesStore.child(source.name),
+              logger: logger.child(source.name),
+              importFn,
+            });
+          }),
           Promise.all(
             (source.transforms || []).map(async (t, transformIndex) => {
               const transformName = Object.keys(t)[0].toString();
@@ -174,6 +193,7 @@ export async function processConfig(
                 type: 'transform',
                 importFn,
                 cwd: dir,
+                additionalPrefixes: additionalPackagePrefixes,
               });
 
               const transformImportName = pascalCase(transformName + '_Transform');
@@ -225,6 +245,7 @@ export async function processConfig(
           type: 'transform',
           importFn,
           cwd: dir,
+          additionalPrefixes: additionalPackagePrefixes,
         });
 
         const transformImportName = pascalCase(transformName + '_Transform');
@@ -261,24 +282,28 @@ export async function processConfig(
     options?.ignoreAdditionalResolvers
       ? []
       : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
-    getPackage<MeshMergerLibrary>({ name: mergerName, type: 'merger', importFn, cwd: dir }).then(
-      ({ resolved: Merger, moduleName }) => {
-        const mergerImportName = pascalCase(`${mergerName}Merger`);
-        importCodes.push(`import ${mergerImportName} from '${moduleName}';`);
-        codes.push(`const merger = new(${mergerImportName} as any)({
+    getPackage<MeshMergerLibrary>({
+      name: mergerName,
+      type: 'merger',
+      importFn,
+      cwd: dir,
+      additionalPrefixes: additionalPackagePrefixes,
+    }).then(({ resolved: Merger, moduleName }) => {
+      const mergerImportName = pascalCase(`${mergerName}Merger`);
+      importCodes.push(`import ${mergerImportName} from '${moduleName}';`);
+      codes.push(`const merger = new(${mergerImportName} as any)({
         cache,
         pubsub,
         logger: logger.child('${mergerImportName}'),
         store: rootStore.child('${mergerName}Merger')
       })`);
-        return new Merger({
-          cache,
-          pubsub,
-          logger: logger.child(mergerImportName),
-          store: rootStore.child(`${mergerName}Merger`),
-        });
-      }
-    ),
+      return new Merger({
+        cache,
+        pubsub,
+        logger: logger.child(mergerImportName),
+        store: rootStore.child(`${mergerName}Merger`),
+      });
+    }),
     resolveDocuments(config.documents, dir),
   ]);
 

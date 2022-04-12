@@ -18,20 +18,29 @@ interface GetPackageOptions {
   type: string;
   importFn: ImportFn;
   cwd: string;
+  additionalPrefixes?: string[];
 }
 
-export async function getPackage<T>({ name, type, importFn, cwd }: GetPackageOptions): Promise<ResolvedPackage<T>> {
+export async function getPackage<T>({
+  name,
+  type,
+  importFn,
+  cwd,
+  additionalPrefixes = [],
+}: GetPackageOptions): Promise<ResolvedPackage<T>> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
-  const possibleNames = [
-    `@graphql-mesh/${casedName}`,
-    `@graphql-mesh/${casedName}-${casedType}`,
-    `@graphql-mesh/${casedType}-${casedName}`,
-    casedName,
-    `${casedName}-${casedType}`,
-    `${casedType}-${casedName}`,
-    casedType,
-  ];
+  const prefixes = ['@graphql-mesh/', ...additionalPrefixes];
+  const initialPossibleNames = [casedName, `${casedName}-${casedType}`, `${casedType}-${casedName}`, casedType];
+  const possibleNames: string[] = [];
+  for (const prefix of prefixes) {
+    for (const possibleName of initialPossibleNames) {
+      possibleNames.push(`${prefix}${possibleName}`);
+    }
+  }
+  for (const possibleName of initialPossibleNames) {
+    possibleNames.push(possibleName);
+  }
   if (name.includes('-')) {
     possibleNames.push(name);
   }
@@ -78,7 +87,8 @@ export async function resolveCache(
   importFn: ImportFn,
   rootStore: MeshStore,
   cwd: string,
-  pubsub: MeshPubSub
+  pubsub: MeshPubSub,
+  additionalPackagePrefixes: string[]
 ): Promise<{
   cache: KeyValueCache;
   importCode: string;
@@ -87,7 +97,13 @@ export async function resolveCache(
   const cacheName = Object.keys(cacheConfig)[0].toString();
   const config = cacheConfig[cacheName];
 
-  const { moduleName, resolved: Cache } = await getPackage<any>({ name: cacheName, type: 'cache', importFn, cwd });
+  const { moduleName, resolved: Cache } = await getPackage<any>({
+    name: cacheName,
+    type: 'cache',
+    importFn,
+    cwd,
+    additionalPrefixes: additionalPackagePrefixes,
+  });
 
   const cache = new Cache({
     ...config,
@@ -114,7 +130,8 @@ export async function resolveCache(
 export async function resolvePubSub(
   pubsubYamlConfig: YamlConfig.Config['pubsub'],
   importFn: ImportFn,
-  cwd: string
+  cwd: string,
+  additionalPackagePrefixes: string[]
 ): Promise<{
   importCode: string;
   code: string;
@@ -130,7 +147,13 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const { moduleName, resolved: PubSub } = await getPackage<any>({ name: pubsubName, type: 'pubsub', importFn, cwd });
+    const { moduleName, resolved: PubSub } = await getPackage<any>({
+      name: pubsubName,
+      type: 'pubsub',
+      importFn,
+      cwd,
+      additionalPrefixes: additionalPackagePrefixes,
+    });
 
     const pubsub = new PubSub(pubsubConfig);
 
@@ -170,7 +193,8 @@ export async function resolveDocuments(documentsConfig: YamlConfig.Config['docum
 export async function resolveLogger(
   loggerConfig: YamlConfig.Config['logger'],
   importFn: ImportFn,
-  cwd: string
+  cwd: string,
+  additionalPackagePrefixes: string[]
 ): Promise<{
   importCode: string;
   code: string;
@@ -182,6 +206,7 @@ export async function resolveLogger(
       type: 'logger',
       importFn,
       cwd,
+      additionalPrefixes: additionalPackagePrefixes,
     });
     return {
       logger,
