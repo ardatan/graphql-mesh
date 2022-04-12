@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.21.6
+
+### Patch Changes
+
+- 537ae2793: if the endpoint includes the environment, we have to interpolate
+
 ## 0.21.5
 
 ### Patch Changes

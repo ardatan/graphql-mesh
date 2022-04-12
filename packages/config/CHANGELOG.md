@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 0.34.0
+
+### Minor Changes
+
+- 101adc246: Allow custom package prefixes besides @graphql-mesh/\*
+
 ## 0.33.5
 
 ### Patch Changes

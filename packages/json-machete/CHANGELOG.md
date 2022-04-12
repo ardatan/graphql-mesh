@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.7.8
+
+### Patch Changes
+
+- d64c74b75: fix(json-machete): ignore null values in dereferenceObject
+
 ## 0.7.7
 
 ### Patch Changes

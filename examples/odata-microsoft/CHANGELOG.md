@@ -1,5 +1,12 @@
 # odata-microsoft-graph-example
 
+## 0.6.188
+
+### Patch Changes
+
+- Updated dependencies [101adc246]
+  - @graphql-mesh/cli@0.67.0
+
 ## 0.6.187
 
 ### Patch Changes

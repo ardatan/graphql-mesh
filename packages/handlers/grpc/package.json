@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.21.5",
+  "version": "0.21.6",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
