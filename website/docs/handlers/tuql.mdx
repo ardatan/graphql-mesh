@@ -5,7 +5,7 @@ sidebar_label: SQLite / Tuql
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79220131-228d5480-7e5c-11ea-8faa-63083653573b.png)
 
-This handler allows you to use GraphQL schema created by [Tuql](https://github.com/bradleyboy/tuql), based on a SQLite database schema or an SQL dump file.
+This handler allows you to use GraphQL schema created by [Tuql](https://github.com/bradleyboy/tuql), based on an SQLite database schema or an SQL dump file.
 
 To get started, install the handler library:
 
@@ -13,7 +13,7 @@ To get started, install the handler library:
 
 Now, you can use it directly in your Mesh config file:
 
-```yml
+```yaml
 sources:
   - name: MyDb
     handler:
@@ -23,13 +23,22 @@ sources:
 
 And also you can create an in-memory database using an SQL dump file;
 
-```yml
+```yaml
 sources:
   - name: MyDb
     handler:
       tuql:
         infile: path/to/db_dump.sql
 ```
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Codesandbox Example
 
@@ -41,6 +50,16 @@ You can check out our example that uses Tuql Handler.
      title="chinook-example"
      allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
+
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

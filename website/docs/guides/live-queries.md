@@ -4,13 +4,11 @@ title: Live Queries
 sidebar_label: Live Queries
 ---
 
-<img src="https://raw.githubusercontent.com/n1ru4l/graphql-live-query/main/assets/logo.svg" width="300" alt="GraphQL Live Query" style={{ margin: '0 auto' }} />
-
-GraphQL Live Query implementation from [Laurin Quast](https://github.com/n1ru4l) can be used in GraphQL Mesh with a few addition in the configuration.
+GraphQL Live Query implementation from [Laurin Quast](https://github.com/n1ru4l) can be used in GraphQL Mesh with a few additions in the configuration.
 
 ### Basic Usage
 
-Let's say you have a `Query` root field that returns all `Todo` entities from your data source like below.
+You have a `Query` root field that returns all `Todo` entities from your data source like below.
 
 ```graphql
 query getTodos {
@@ -23,14 +21,14 @@ query getTodos {
 
 And you want to update this operation result automatically without manual refresh when `Mutation.addTodo` is called.
 
-The only thing you need is to add the following configuration to your existing configuration.
+You only need to add the following to your existing configuration.
 
-```yml
+```yaml
 additionalTypeDefs: |
     directive @live on QUERY
 liveQueryInvalidations:
     - field: Mutation.addTodo
-      invalidate: 
+      invalidate:
         - Query.todos
 ```
 
@@ -45,11 +43,19 @@ query getTodos @live {
 }
 ```
 
-This will start a real-time connection between server and your client, then the response of `todos` will get updated whenever `addTodo` is called.
+This will start a real-time connection between the server and your client. The response of `todos` will get updated whenever `addTodo` is called.
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ### ID Based Invalidation
 
-Let's say you have the following query that returns specific `Todo` entity based on `id` field;
+Let's say you have the following query that returns a specific `Todo` entity based on `id` field;
 
 ```graphql
 query getTodo($id: ID!) {
@@ -60,18 +66,18 @@ query getTodo($id: ID!) {
 }
 ```
 
-And you update this entity with `editTodo` mutation field on your backend then you want to invalidate this entity specifically instead of validating all `todo` queries;
+If you update this entity with `editTodo` mutation field on your backend, then you want to invalidate this entity specifically instead of validating all `todo` queries;
 
-```yml
+```yaml
 liveQueryInvalidations:
     - field: Mutation.editTodo
-      invalidate: 
+      invalidate:
         - Todo:{args.id}
 ```
 
-In a case where the field resolver resolve null but might resolve to an object type later, e.g. because the visibility got updates the field that uses a specific id argument can be invalidated in the following way:
+In a case where the field resolver resolves null but might resolve to an object type later, e.g., because the visibility got update the field that uses a specific id argument can be invalidated in the following way:
 
-```yml
+```yaml
 liveQueryInvalidations:
     - field: Mutation.editTodo
       invalidate:
@@ -79,13 +85,20 @@ liveQueryInvalidations:
 ```
 
 
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ### Programmatic Usage
 
-`liveQueryStore` is available in GraphQL Context so you can access it in resolvers composition functions that wrap existing resolvers or additional resolvers;
+`liveQueryStore` is available in GraphQL Context, so you can access it in resolvers composition functions that wrap existing resolvers or additional resolvers;
 
 See [Resolvers Composition](/docs/transforms/resolvers-composition)
 
-```yml
+```yaml
 transforms:
     - resolversComposition:
         - resolver: Mutation.editTodo

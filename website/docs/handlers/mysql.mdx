@@ -13,7 +13,7 @@ To get started, install the handler library:
 
 Now, you can use it directly in your Mesh config file:
 
-```yml
+```yaml
 sources:
   - name: Employees
     handler:
@@ -33,7 +33,7 @@ sources:
 
 ### How does `where` work?
 
-Every CRUD operation has `where` field in their input, so you can see all the columns of a table. `where` works like below;
+Every CRUD operation has `where` field in its input, so you can see all the columns of a table. `where` works like below;
 ```graphql
 {
   getProduct(where: {
@@ -62,6 +62,15 @@ SELECT id, name FROM product WHERE id = 5 AND year > '2010' AND (price BETWEEN '
      title="mysql-rfam-example"
      allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

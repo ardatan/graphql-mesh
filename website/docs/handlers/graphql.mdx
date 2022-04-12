@@ -5,7 +5,7 @@ sidebar_label: GraphQL
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79219047-333ccb00-7e5a-11ea-9fce-57ff137ba924.png)
 
-This handler allows you to load remote GraphQL schemas and use it with schema-stitching, based on `graphql-tools`.
+This handler allows you to load remote GraphQL schemas and use them with schema-stitching based on `graphql-tools`.
 
 To get started, install the handler library:
 
@@ -13,7 +13,7 @@ To get started, install the handler library:
 
 Now, you can use it directly in your Mesh config file:
 
-```yml
+```yaml
 sources:
   - name: MyGraphQLApi
     handler:
@@ -21,18 +21,32 @@ sources:
         endpoint: http://my-service-url:3000/graphql
 ```
 
-> You can check out our example that uses schema stitching with a PostgreSQL datasource.
+> You can check out our example that uses schema stitching with a PostgreSQL data source.
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
 
-## Dynamic Header Values (e.g. for Authorization)
 
-Mesh can take dynamic values from the GraphQL Context or the environmental variables. If you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+## Dynamic Header Values (e.g., for Authorization)
+
+Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example, if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
 
 The expression inside dynamic values should be as in JS.
 
+
+
+<p>&nbsp;</p>
+
+
 ### From Context (HTTP Header for `mesh dev` or `mesh start`)
 
-```yml
+```yaml
 sources:
   - name: MyGraphQLApi
     handler:
@@ -47,11 +61,16 @@ sources:
 
 And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-api-token` HTTP header.
 
+
+
+<p>&nbsp;</p>
+
+
 ### From Environmental Variable
 
 `MY_API_TOKEN` is the name of the environmental variable you have the value.
 
-```yml
+```yaml
 sources:
   - name: MyGraphQLApi
     handler:
@@ -60,6 +79,13 @@ sources:
         operationHeaders:
           Authorization: Bearer {env.MY_API_TOKEN}
 ```
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

@@ -64,10 +64,20 @@ Mesh provides a default GraphQL Code Generator configuration, shown below:
 
 ## Customizing the GraphQL Code Generator configuration
 
-The above default configuration can be overrided with the `codegen` root paramter, as shown below:
+The above default configuration can be override with the `codegen` root parameter, as shown below:
 
 ```yaml
 codegen:
   skipTypename: false
   contextType: "./context#MyContextType"
 ```
+
+**Please note**, that the `codegen` parameter allows you to update the configuration passed to the GraphQL Code Generator plugins used by Mesh:
+- [`typescript`](https://www.graphql-code-generator.com/plugins/typescript)
+- [`typescript-operations`](https://www.graphql-code-generator.com/plugins/typescript-operations)
+- [`typescript-resolvers`](https://www.graphql-code-generator.com/plugins/typescript-resolvers)
+- [`typed-document-node`](https://www.graphql-code-generator.com/plugins/typed-document-node)
+- [`typescript-generic-sdk`](https://www.graphql-code-generator.com/plugins/typescript-generic-sdk)
+
+
+**The `codegen` parameter won't allow you to add or remove plugins**.

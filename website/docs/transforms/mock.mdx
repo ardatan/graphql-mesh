@@ -4,17 +4,26 @@ title: Mock Transform
 sidebar_label: Mock
 ---
 
-The `mock` transform allow you to apply mocking for development usage.
+The `mock` transform allows you to apply mocking for development usage.
 
 To get started with this transform, install it:
 
 <PackageInstall packages="@graphql-mesh/transform-mock" />
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## How to use?
 
 Add the following configuration to your Mesh config file:
 
-```yml
+```yaml
 transforms:
   - mock:
       mocks:
@@ -25,11 +34,21 @@ transforms:
 The example above will replace the resolver of `User.firstName` with a mock that uses `faker.js` to generate a random name.
 
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
+
 ## Custom mock functions for fields
 
 You can mock a specific field of a type;
 
-```yml
+```yaml
 transforms:
   - mock:
       mocks:
@@ -37,11 +56,20 @@ transforms:
           custom: ./user-mocks#fullName
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Custom mock functions for types
 
 You can mock types with custom mock functions like below;
 
-```yml
+```yaml
 transforms:
   - mock:
       mocks:
@@ -57,7 +85,7 @@ module.exports = {
   fullName: () => 'My Static Name'
 };
 ```
-When defined manually, properties can return values either directly, or through a method. This is useful when defining static mocks, because a mock property will be called as many times as there are items, for example in an array.
+When defined manually, properties can return values either directly or through a method. This is useful when defining static mocks because a mock property will be called as many times as there are items in an array.
 Here's an example on how this could be achieved:
 
 in `user-mocks.js` file;
@@ -89,11 +117,18 @@ const fullNames = generateNames();
 export const fullName: () => User['fullName'] = () => fullNames.next().value;
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Mocking the lists
 
-By default, Mesh generates two mocked items if the return type is a list. But this can be configured;
-
-Let's say, you have a schema like below;
+Mesh generates two mocked items by default if the return type is a list. But this can be configured, as shown below:
 
 ```graphql
   type Query {
@@ -105,9 +140,8 @@ Let's say, you have a schema like below;
   }
 ```
 
-Then a configuration like below;
 
-```yml
+```yaml
 transforms:
   - mock:
       mocks:
@@ -138,12 +172,21 @@ Now `{ users { id fullName } }` query will return 3 of `User` item;
 }
 ```
 
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 ## Stateful mocking
 
 GraphQL Mesh supports GraphQL Tools's Stateful Mocking feature. So you can have stateful mocking by using the store provided in the context `context.mockStore`;
 
 ### Initialize store
-When having a schema that returns a list, in this case a list of users:
+When having a schema that returns a list, in this case, a list of users:
 ```graphql
 type User {
   id: ID
@@ -153,12 +196,12 @@ type Query {
   users: User
 }
 ```
-Initially populating the list of users can be done by utilizing the `initializeStore` property. The store initialization will happen before the store is attached to the schema.
+Initially, populating the list of users can be done by utilizing the `initializeStore` property. The store initialization will happen before the store is attached to the schema.
 
-In this case there is no need to provide special array mocking definition, like `length`. It will automatically be taken based on the mock data.
+There is no need to provide a particular array mocking definition, like `length`. It will automatically be taken based on the mock data.
 
 
-```yml
+```yaml
 transforms:
   - mock:
       initializeStore: ./myMock#initializeStore
@@ -181,6 +224,11 @@ export default {
 };
 ```
 
+
+
+<p>&nbsp;</p>
+
+
 ### Get from the store
 You can implement the mock query field `*ById` declaratively like below:
 
@@ -190,7 +238,7 @@ type Query {
 }
 ```
 
-```yml
+```yaml
 transforms:
   - mock:
       initializeStore: absolute-path-to-file/myMock#initializeStore
@@ -200,6 +248,10 @@ transforms:
             type: User
             key: "{args.id}"
 ```
+
+
+<p>&nbsp;</p>
+
 
 ### Mutate data in the store
 
@@ -217,7 +269,7 @@ type Mutation {
 }
 ```
 
-```yml
+```yaml
 transforms:
   - mock:
       mocks:
@@ -268,11 +320,18 @@ module.exports = {
 
 
 
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
+
 > Learn more about GraphQL Tools Mocking https://graphql-tools.com/docs/mocking
 
 ## Codesandbox Example
 
-You can check out our example that uses JSON Schema handler with mock data.
+You can check out our example that uses the JSON Schema handler with mock data.
 
 <iframe
      src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
@@ -280,6 +339,15 @@ You can check out our example that uses JSON Schema handler with mock data.
      title="json-schema-example"
      allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
+
+
+
+<p>&nbsp;</p>
+
+------
+
+<p>&nbsp;</p>
+
 
 ## Config API Reference
 

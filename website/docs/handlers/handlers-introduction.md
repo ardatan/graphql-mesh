@@ -2,11 +2,12 @@
 id: handlers-introduction
 title: Source Handlers
 sidebar_label: Introduction
+fullWidth: true
 ---
 
 GraphQL Mesh can consume different data source types inside GraphQL.
 
-```yml
+```yaml
 sources:
     - name: Name Of My Source
       handler:
@@ -22,7 +23,7 @@ sources:
 | `@graphql-mesh/postgraphile` | Available | [PostgreSQL](https://postgresql.org) Database                                                                                                                                              | [docs](/docs/handlers/postgraphile) |
 | `@graphql-mesh/grpc`         | Available | [gRPC](https://grpc.io) and [Protobuf](https://en.wikipedia.org/wiki/Protocol_Buffers) schemas                                                                                             | [docs](/docs/handlers/grpc)         |
 | `@graphql-mesh/soap`         | Available | [SOAP](https://en.wikipedia.org/wiki/SOAP) specification                                                                                                                                   | [docs](/docs/handlers/soap)         |
-| `@graphql-mesh/mongoose`     | Available | [MongoDB](https://mongodb.com) database with [Mongoose](https://mongoosejs.com) schemas based on [`graphql-compose-mongoose`](https://github.com/graphql-compose/graphql-compose-mongoose) | [docs](/docs/handlers/mongoose)     |
+| `@graphql-mesh/mongoose`     | Available | [MongoDB](https://mongodb.com) database with <br/> [Mongoose](https://mongoosejs.com) schemas based on [`graphql-compose-mongoose`](https://github.com/graphql-compose/graphql-compose-mongoose) | [docs](/docs/handlers/mongoose)     |
 | `@graphql-mesh/odata`        | Available | [OData](https://odata.org) specification                                                                                                                                                   | [docs](/docs/handlers/odata)        |
 | `@graphql-mesh/thrift`       | Available | [Apache Thrift](https://thrift.apache.org)                                                                                                                                                 | [docs](/docs/handlers/thrift)       |
 | `@graphql-mesh/tuql`         | Available | [SQLite](https://sqlite.org/index.html) Database                                                                                                                                           | [docs](/docs/handlers/tuql)         |
