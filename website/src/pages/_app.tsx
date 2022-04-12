@@ -83,7 +83,7 @@ const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
 
 const AppContent: FC<AppProps> = appProps => {
   const { Component, pageProps, router } = appProps;
-  const analytics = useGoogleAnalytics({ router, trackingId:"G-TPQZLLF5T5" })
+  const analytics = useGoogleAnalytics({ router, trackingId: "G-TPQZLLF5T5" });
   const isDocs = router.asPath.startsWith('/docs');
 
   return (
