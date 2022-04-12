@@ -26,7 +26,7 @@ export async function getPackage<T>({
   type,
   importFn,
   cwd,
-  additionalPrefixes,
+  additionalPrefixes = [],
 }: GetPackageOptions): Promise<ResolvedPackage<T>> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
