@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import type { AppProps } from 'next/app';
+import Script from 'next/script';
 import { appWithTranslation } from 'next-i18next';
 import { extendTheme, LinkProps, theme as chakraTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
@@ -10,6 +11,7 @@ import {
   ExtendComponents,
   handlePushRoute,
   Link,
+  useGoogleAnalytics,
 } from '@guild-docs/client';
 import { FooterExtended, Header, Subheader } from '@theguild/components';
 import type { LinkProps as NextLinkProps } from 'next/link';
@@ -81,6 +83,7 @@ const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
 
 const AppContent: FC<AppProps> = appProps => {
   const { Component, pageProps, router } = appProps;
+  const analytics = useGoogleAnalytics({ router, trackingId: "G-TPQZLLF5T5" });
   const isDocs = router.asPath.startsWith('/docs');
 
   return (
@@ -126,6 +129,8 @@ const AppContent: FC<AppProps> = appProps => {
           rel: 'noopener noreferrer',
         }}
       />
+      <Script {...analytics.loadScriptProps} />
+      <Script {...analytics.configScriptProps} />
       {isDocs ? (
         <DocsPage appProps={appProps} accentColor={accentColor} mdxRoutes={mdxRoutes} />
       ) : (
