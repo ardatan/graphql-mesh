@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import type { AppProps } from 'next/app';
+import Script from 'next/script';
 import { appWithTranslation } from 'next-i18next';
 import { extendTheme, LinkProps, theme as chakraTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
