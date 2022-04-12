@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.67.0
+
+### Minor Changes
+
+- 101adc246: Allow custom package prefixes besides @graphql-mesh/\*
+
+### Patch Changes
+
+- Updated dependencies [101adc246]
+  - @graphql-mesh/config@0.34.0
+
 ## 0.66.2
 
 ### Patch Changes
