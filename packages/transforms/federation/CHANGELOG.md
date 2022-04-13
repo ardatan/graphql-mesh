@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-federation
 
+## 0.8.41
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.3
+- @graphql-mesh/utils@0.33.3
+
 ## 0.8.40
 
 ### Patch Changes
