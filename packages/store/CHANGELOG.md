@@ -1,5 +1,13 @@
 # @graphql-mesh/store
 
+## 0.7.3
+
+### Patch Changes
+
+- 4fa959de3: fix(store): prevent non-spec compliant schemas to breaking the build
+  - @graphql-mesh/types@0.70.3
+  - @graphql-mesh/utils@0.33.3
+
 ## 0.7.2
 
 ### Patch Changes
