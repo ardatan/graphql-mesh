@@ -101,7 +101,9 @@ export enum PredefinedProxyOptionsName {
   GraphQLSchemaWithDiffing = 'GraphQLSchemaWithDiffing',
 }
 
-const escapeForTemplateLiteral = (str: string) => str.split('`').join('\\`').split('$').join('\\$');
+// Note: escape unsafe \n and \" from string (strings and block strings)
+const escapeForTemplateLiteral = (str: string) =>
+  str.split('`').join('\\`').split('$').join('\\$').split('\\n').join('').split('\\"').join('');
 
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
