@@ -4,8 +4,6 @@
   "ignoreDeps": [
     "typedoc",
     "typedoc-plugin-markdown",
-    "typedoc-plugin-rename-defaults",
-    "@graphql-yoga/render-graphiql",
-    "@graphql-yoga/node"
+    "typedoc-plugin-rename-defaults"
   ]
 }
