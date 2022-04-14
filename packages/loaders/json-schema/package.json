@@ -33,11 +33,11 @@
     "@types/qs": "6.9.7"
   },
   "dependencies": {
-    "cross-undici-fetch": "0.1.28",
+    "cross-undici-fetch": "0.2.5",
     "json-machete": "0.7.9",
     "@graphql-mesh/types": "0.70.3",
     "@graphql-mesh/utils": "0.33.3",
-    "@graphql-tools/utils": "8.6.6",
+    "@graphql-tools/utils": "8.6.7",
     "to-json-schema": "0.2.5",
     "graphql-compose": "9.0.8",
     "graphql-scalars": "1.17.0",

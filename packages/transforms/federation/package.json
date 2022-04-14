@@ -28,14 +28,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/subgraph": "0.4.0",
+    "@apollo/subgraph": "0.4.1",
     "@graphql-mesh/types": "0.70.3",
     "@graphql-mesh/utils": "0.33.3",
     "graphql-transform-federation": "2.2.0",
     "lodash": "4.17.21",
-    "@graphql-tools/utils": "8.6.6",
-    "@graphql-tools/stitching-directives": "2.2.9",
-    "@graphql-tools/delegate": "8.7.2",
+    "@graphql-tools/utils": "8.6.7",
+    "@graphql-tools/stitching-directives": "2.2.11",
+    "@graphql-tools/delegate": "8.7.4",
     "tslib": "^2.3.1"
   },
   "publishConfig": {
