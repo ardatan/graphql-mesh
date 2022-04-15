@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-federation",
-  "version": "0.11.46",
+  "version": "0.11.47",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,13 +28,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.70.3",
+    "@graphql-mesh/types": "0.70.4",
     "@graphql-tools/wrap": "8.4.15",
     "@apollo/gateway": "2.0.1",
     "@graphql-tools/schema": "8.3.8",
-    "@graphql-mesh/utils": "0.33.3",
+    "@graphql-mesh/utils": "0.33.4",
     "@graphql-tools/utils": "8.6.8",
-    "@graphql-mesh/store": "0.7.3",
+    "@graphql-mesh/store": "0.7.4",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

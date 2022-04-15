@@ -1,5 +1,15 @@
 # @graphql-mesh/openapi
 
+## 0.24.8
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/store@0.7.4
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+
 ## 0.24.7
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-hoist-field
 
+## 0.1.7
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+  - @graphql-mesh/cache-inmemory-lru@0.6.11
+
 ## 0.1.6
 
 ### Patch Changes

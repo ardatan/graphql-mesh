@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-snapshot
 
+## 0.14.8
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+
 ## 0.14.7
 
 ### Patch Changes

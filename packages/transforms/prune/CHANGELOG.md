@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-prune
 
+## 0.0.18
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/types@0.70.4
+
 ## 0.0.17
 
 ### Patch Changes

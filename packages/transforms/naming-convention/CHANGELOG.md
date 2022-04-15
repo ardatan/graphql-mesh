@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.10.32
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+
 ## 0.10.31
 
 ### Patch Changes
