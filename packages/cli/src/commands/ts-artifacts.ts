@@ -252,7 +252,7 @@ export async function generateTsArtifacts(
                   importPath = `./${pathModule.relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
                 }
                 const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
-                importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
+                importCodes.push(`import * as ${importedModuleVariable} from '${importPath}';`);
                 return `  // @ts-ignore\n  [${JSON.stringify(moduleMapProp)}]: ${importedModuleVariable}`;
               });
 
