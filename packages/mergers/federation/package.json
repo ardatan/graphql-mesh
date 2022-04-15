@@ -31,7 +31,7 @@
     "@graphql-mesh/types": "0.70.4",
     "@graphql-tools/wrap": "8.4.15",
     "@apollo/gateway": "2.0.1",
-    "@graphql-tools/schema": "8.3.8",
+    "@graphql-tools/schema": "8.3.9",
     "@graphql-mesh/utils": "0.33.4",
     "@graphql-tools/utils": "8.6.8",
     "@graphql-mesh/store": "0.7.4",
