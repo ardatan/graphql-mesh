@@ -1,6 +1,6 @@
 import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { path } from '@graphql-mesh/cross-helpers';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -179,7 +179,10 @@ export async function resolvePubSub(
   }
 }
 
-export async function resolveDocuments(documentsConfig: YamlConfig.Config['documents'], cwd: string) {
+export async function resolveDocuments(
+  documentsConfig: YamlConfig.Config['documents'],
+  cwd: string
+): Promise<Source[]> {
   if (!documentsConfig) {
     return [];
   }
