@@ -8,7 +8,7 @@ This website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern 
 $ yarn --ignore-optional
 ```
 
-`--ignore-engines` is required if you are using node versions greater than `14.0` since the `@apollo/federation` package being used is incompatible with them.
+`--ignore-engines` is required if you are using node versions greater than `14.0` since the `@apollo/subgraph` package being used is incompatible with them.
 
 ## Pre-requisites
 

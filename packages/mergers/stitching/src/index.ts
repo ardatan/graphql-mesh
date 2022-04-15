@@ -69,7 +69,10 @@ export default class StitchingMerger implements MeshMerger {
         const federationSdl = sdlQueryResult.data._service.sdl;
         this.logger.debug(() => `Generating Stitching SDL for ${name}`);
         const stitchingSdl = federationToStitchingSDL(federationSdl, stitchingDirectives);
-        return buildSchema(stitchingSdl);
+        return buildSchema(stitchingSdl, {
+          assumeValid: true,
+          assumeValidSDL: true,
+        });
       });
 
     rawSourceLogger.debug(() => `Adding existing resolvers back to the schema`);
