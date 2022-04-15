@@ -264,13 +264,19 @@ export default class GraphQLHandler implements MeshHandler {
         };
       }
     } else if ('endpoint' in this.config) {
-      const [schema, executor] = await Promise.all([
+      const [schemaResult, executorResult] = await Promise.allSettled([
         this.getNonExecutableSchemaForHTTPSource(this.config),
         this.getExecutorForHTTPSourceConfig(this.config),
       ]);
+      if (schemaResult.status === 'rejected') {
+        throw new Error(`Failed to fetch introspection from ${this.config.endpoint}: ${inspect(schemaResult.reason)}`);
+      }
+      if (executorResult.status === 'rejected') {
+        throw new Error(`Failed to create executor for ${this.config.endpoint}: ${inspect(executorResult.reason)}`);
+      }
       return {
-        schema,
-        executor,
+        schema: schemaResult.value,
+        executor: executorResult.value,
         batch: this.config.batch != null ? this.config.batch : true,
       };
     } else if ('schema' in this.config) {

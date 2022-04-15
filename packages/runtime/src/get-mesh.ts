@@ -124,7 +124,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
           merge: apiSource.merge,
         });
       } catch (e: any) {
-        sourceLogger.error(`Failed to generate the schema ${e.stack || e.message}`);
+        sourceLogger.error(`Failed to generate the schema \n ${e.stack || inspect(e)}`);
         failed = true;
       }
     })
