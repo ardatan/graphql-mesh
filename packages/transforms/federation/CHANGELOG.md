@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-federation
 
+## 0.8.42
+
+### Patch Changes
+
+- 403f4c5e3: Bump Federation packages
+
 ## 0.8.41
 
 ### Patch Changes
