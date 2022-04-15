@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-federation",
-  "version": "0.8.41",
+  "version": "0.8.42",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

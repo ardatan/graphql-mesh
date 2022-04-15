@@ -1,5 +1,11 @@
 # grpc-reflection-example
 
+## 0.5.214
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.2
+
 ## 0.5.213
 
 ### Patch Changes

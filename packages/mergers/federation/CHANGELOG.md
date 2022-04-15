@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-federation
 
+## 0.11.46
+
+### Patch Changes
+
+- 403f4c5e3: Bump Federation packages
+
 ## 0.11.45
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.33.10",
+  "version": "0.33.11",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.23.4
+
+### Patch Changes
+
+- 1dbe6b6c3: Better Error Handling
+
 ## 0.23.3
 
 ### Patch Changes
