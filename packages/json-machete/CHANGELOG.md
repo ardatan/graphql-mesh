@@ -1,5 +1,13 @@
 # json-machete
 
+## 0.7.10
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/utils@0.33.4
+
 ## 0.7.9
 
 ### Patch Changes
