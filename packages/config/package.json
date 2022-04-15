@@ -37,7 +37,7 @@
     "@graphql-mesh/store": "0.7.3",
     "@graphql-mesh/utils": "0.33.3",
     "@graphql-tools/merge": "8.2.8",
-    "@graphql-tools/utils": "8.6.7",
+    "@graphql-tools/utils": "8.6.8",
     "@graphql-tools/load": "7.5.8",
     "@graphql-tools/code-file-loader": "7.2.12",
     "@graphql-tools/graphql-file-loader": "7.3.9",
