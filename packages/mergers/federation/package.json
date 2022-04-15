@@ -30,7 +30,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.70.3",
     "@graphql-tools/wrap": "8.4.13",
-    "@apollo/gateway": "0.50.1",
+    "@apollo/gateway": "2.0.1",
     "@graphql-tools/schema": "8.3.8",
     "@graphql-mesh/utils": "0.33.3",
     "@graphql-tools/utils": "8.6.7",
