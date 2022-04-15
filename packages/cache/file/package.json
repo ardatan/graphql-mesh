@@ -31,7 +31,7 @@
     "@graphql-mesh/types": "0.70.3",
     "@graphql-mesh/utils": "0.33.3",
     "@graphql-mesh/cross-helpers": "0.1.0",
-    "dataloader": "2.0.0",
+    "dataloader": "2.1.0",
     "lodash": "4.17.21",
     "tslib": "^2.3.1"
   },

@@ -26,11 +26,11 @@
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.6.19",
-    "cross-undici-fetch": "0.1.28",
+    "cross-undici-fetch": "0.2.5",
     "json-ptr": "3.1.0",
     "@graphql-mesh/utils": "0.33.3",
     "@graphql-mesh/cross-helpers": "0.1.0",
-    "@graphql-tools/utils": "8.6.6",
+    "@graphql-tools/utils": "8.6.7",
     "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
     "tslib": "^2.3.1"

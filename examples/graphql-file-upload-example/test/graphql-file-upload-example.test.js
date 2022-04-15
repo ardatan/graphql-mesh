@@ -4,7 +4,6 @@ const { File } = require('cross-undici-fetch')
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { join } = require('path');
 const { getMesh } = require('@graphql-mesh/runtime');
-const { printSchema, lexicographicSortSchema } = require('graphql');
 
 const mesh$ = findAndParseConfig({
   dir: join(__dirname, '..'),

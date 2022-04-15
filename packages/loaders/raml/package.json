@@ -28,13 +28,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "cross-undici-fetch": "0.1.28",
+    "cross-undici-fetch": "0.2.5",
     "@omnigraph/json-schema": "0.17.23",
     "@ardatan/raml-1-parser": "1.1.69",
     "json-machete": "0.7.9",
     "to-json-schema": "0.2.5",
     "@graphql-mesh/utils": "0.33.3",
-    "@graphql-tools/utils": "8.6.6",
+    "@graphql-tools/utils": "8.6.7",
     "tslib": "^2.3.1",
     "change-case": "4.1.2"
   },
