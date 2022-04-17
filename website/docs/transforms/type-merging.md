@@ -37,8 +37,8 @@ type Author {
 type Query {
   books(ids: [ID!]): [Book!]!
   book(id: ID!): Book!
-  authorWithBooks(id: ID!): Author!
-  authorsWithBooks(ids: [ID!]): [Author!]!
+  authorWithBooks(id: ID!): AuthorWithBooks!
+  authorsWithBooks(ids: [ID!]): [AuthorWithBooks!]!
 }
 
 type Book {
