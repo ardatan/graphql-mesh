@@ -2,7 +2,12 @@ import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
+import {
+  getHeadersObject,
+  jsonFlatStringify,
+  parseInterpolationStrings,
+  stringInterpolator,
+} from '@graphql-mesh/utils';
 import { inspect, memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
@@ -17,6 +22,7 @@ import {
   isUnionType,
 } from 'graphql';
 import _ from 'lodash';
+import { Headers } from 'cross-undici-fetch';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -86,10 +92,10 @@ export async function addExecutionLogicToComposer(
     } else if (operationConfig.path) {
       if (process.env.DEBUG) {
         field.description = `
-    Original Description: ${operationConfig.description || '(none)'}
-    Method: ${operationConfig.method}
-    baseUrl: ${baseUrl}
-    Path: ${operationConfig.path}
+    ***Original Description***: ${operationConfig.description || '(none)'}
+    ***Method***: ${operationConfig.method}
+    ***Base URL***: ${baseUrl}
+    ***Path***: ${operationConfig.path}
 `;
       } else {
         field.description = operationConfig.description;
@@ -266,15 +272,29 @@ export async function addExecutionLogicToComposer(
           responseJson = responseJson[0];
         }
 
-        const addResponseMetadata = (obj: any) => ({
-          ...obj,
-          __response: {
-            url: fullPath,
-            method: httpMethod,
-            status: response.status,
-            statusText: response.statusText,
-          },
-        });
+        const addResponseMetadata = (obj: any) => {
+          const requestBody = {
+            ...args,
+            ...args.input,
+          };
+          return {
+            ...obj,
+            $url: fullPath,
+            $method: httpMethod,
+            $request: {
+              query: requestBody,
+              path: requestBody,
+              header: requestInit.headers,
+            },
+            $response: {
+              url: fullPath,
+              method: httpMethod,
+              status: response.status,
+              statusText: response.statusText,
+              body: obj,
+            },
+          };
+        };
         operationLogger.debug(() => `Adding response metadata to the response object`);
         return Array.isArray(responseJson)
           ? responseJson.map(obj => addResponseMetadata(obj))
@@ -282,6 +302,64 @@ export async function addExecutionLogicToComposer(
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);
+      if ('links' in operationConfig) {
+        for (const linkName in operationConfig.links) {
+          const linkObj = operationConfig.links[linkName];
+          const typeTC = schemaComposer.getOTC(field.type.getTypeName());
+          typeTC.addFields({
+            [linkName]: () => {
+              const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+              return {
+                ...targetField,
+                args: {},
+                description: linkObj.description || targetField.description,
+                resolve: (root, args, context, info) =>
+                  targetField.resolve(
+                    root,
+                    {
+                      ...linkObj.args,
+                      ...args,
+                    },
+                    context,
+                    info
+                  ),
+              };
+            },
+          });
+        }
+      } else if ('responseByStatusCode' in operationConfig) {
+        const unionTC = schemaComposer.getUTC(field.type.getTypeName());
+        const types = unionTC.getTypes();
+        const statusCodeOneOfIndexMap = unionTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>;
+        for (const statusCode in operationConfig.responseByStatusCode) {
+          const responseConfig = operationConfig.responseByStatusCode[statusCode];
+          for (const linkName in responseConfig.links) {
+            const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode]];
+            const typeTC = schemaComposer.getOTC(typeTCThunked.getTypeName());
+            typeTC.addFields({
+              [linkName]: () => {
+                const linkObj = responseConfig.links[linkName];
+                const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                return {
+                  ...targetField,
+                  args: {},
+                  description: linkObj.description || targetField.description,
+                  resolve: (root, args, context, info) =>
+                    targetField.resolve(
+                      root,
+                      {
+                        ...linkObj.args,
+                        ...args,
+                      },
+                      context,
+                      info
+                    ),
+                };
+              },
+            });
+          }
+        }
+      }
     }
     const { args: globalArgs } = parseInterpolationStrings(interpolationStrings, operationConfig.argTypeMap);
     rootTypeComposer.addFieldArgs(fieldName, globalArgs);

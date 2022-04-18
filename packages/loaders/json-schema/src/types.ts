@@ -21,6 +21,14 @@ export interface JSONSchemaOperationResponseConfig {
   responseSchema?: string | JSONSchemaObject;
   responseSample?: any;
   responseTypeName?: string;
+
+  links?: Record<string, JSONSchemaLinkConfig>;
+}
+
+export interface JSONSchemaLinkConfig {
+  fieldName: string;
+  args?: Record<string, string>;
+  description?: string;
 }
 
 export type JSONSchemaBaseOperationConfig = {

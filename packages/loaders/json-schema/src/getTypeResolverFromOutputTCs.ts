@@ -23,8 +23,8 @@ export function getTypeResolverFromOutputTCs(
     } else if (data.resourceType) {
       return data.resourceType;
     }
-    if (data.__response && statusCodeOneOfIndexMap) {
-      const responseData: ResponseData = data.__response;
+    if (data.$response && statusCodeOneOfIndexMap) {
+      const responseData: ResponseData = data.$response;
       const type = statusCodeTypeMap.get(responseData.status.toString()) || statusCodeTypeMap.get('default');
       if (type) {
         if ('getFields' in type) {
@@ -50,8 +50,8 @@ export function getTypeResolverFromOutputTCs(
         validationErrors[typeName] = ajv.errors || validateFn.errors;
       }
     }
-    if (data.__response) {
-      const responseData: ResponseData = data.__response;
+    if (data.$response) {
+      const responseData: ResponseData = data.$response;
       const error = new GraphQLError(
         `HTTP Error: ${responseData.status}`,
         undefined,

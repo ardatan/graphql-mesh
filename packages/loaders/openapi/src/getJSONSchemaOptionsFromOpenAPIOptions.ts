@@ -1,5 +1,5 @@
 import { getInterpolatedHeadersFactory, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { JSONSchemaObject } from 'json-machete';
+import { JSONSchemaObject, dereferenceObject } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
   HTTPMethod,
@@ -221,6 +221,45 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             const examples = Object.values(responseObj.examples);
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
             responseByStatusCode[responseKey].responseSample = examples[0];
+          }
+        }
+
+        if ('links' in responseObj) {
+          const dereferencedLinkObj = await dereferenceObject(
+            {
+              links: responseObj.links,
+            },
+            {
+              cwd,
+              root: oasOrSwagger,
+              fetch,
+              headers: schemaHeaders,
+            }
+          );
+          responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
+          for (const linkName in dereferencedLinkObj.links) {
+            const linkObj = responseObj.links[linkName];
+            if ('$ref' in linkObj) {
+              throw new Error('Unexpected $ref in dereferenced link object');
+            }
+            const args: Record<string, string> = {};
+            for (const parameterName in linkObj.parameters || {}) {
+              const parameterExp = linkObj.parameters[parameterName];
+              args[parameterName] = parameterExp.startsWith('$') ? `{${parameterExp}}` : parameterExp;
+            }
+            if ('operationRef' in linkObj) {
+              responseByStatusCode[responseKey].links[linkName] = {
+                fieldName: sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, linkObj.operationRef)),
+                args,
+                description: linkObj.description,
+              };
+            } else if ('operationId' in linkObj) {
+              responseByStatusCode[responseKey].links[linkName] = {
+                fieldName: sanitizeNameForGraphQL(linkObj.operationId),
+                args,
+                description: linkObj.description,
+              };
+            }
           }
         }
 
