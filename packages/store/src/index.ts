@@ -1,9 +1,9 @@
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
-import { buildSchema } from 'graphql';
+import { buildASTSchema } from 'graphql';
 
 export class ReadonlyStoreError extends Error {}
 
@@ -101,39 +101,33 @@ export enum PredefinedProxyOptionsName {
   GraphQLSchemaWithDiffing = 'GraphQLSchemaWithDiffing',
 }
 
-// Note: escape unsafe \n and \" from string (strings and block strings)
-const escapeForTemplateLiteral = (str: string) =>
-  str.split('`').join('\\`').split('$').join('\\$').split('\\n').join('').split('\\"').join('');
-
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
-    codify: v => `export default ${JSON.stringify(v)} as any;`,
+    codify: v => `export default ${JSON.stringify(v, null, 2)} as any;`,
     parse: v => JSON.parse(v),
-    stringify: v => JSON.stringify(v),
+    stringify: v => JSON.stringify(v, null, 2),
     validate: () => null,
   },
   StringWithoutValidation: {
-    codify: v => `export default \`${escapeForTemplateLiteral(v)}\``,
+    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
     parse: v => v,
     stringify: v => v,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
-    codify: (schema, identifier) =>
+    codify: schema =>
       `
-import { buildSchema, Source } from 'graphql';
+import { buildASTSchema } from 'graphql';
 
-const source = new Source(/* GraphQL */\`
-${escapeForTemplateLiteral(printSchemaWithDirectives(schema))}
-\`, \`${identifier}\`);
+const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)};
 
-export default buildSchema(source, {
+export default buildASTSchema(schemaAST, {
   assumeValid: true,
   assumeValidSDL: true
 });
     `.trim(),
-    parse: sdl => buildSchema(sdl),
-    stringify: schema => printSchemaWithDirectives(schema),
+    parse: astString => buildASTSchema(JSON.parse(astString), { assumeValid: true, assumeValidSDL: true }),
+    stringify: schema => JSON.stringify(getDocumentNodeFromSchema(schema)),
     validate: async (oldSchema, newSchema) => {
       const changes = await diff(oldSchema, newSchema);
       const errors: string[] = [];
