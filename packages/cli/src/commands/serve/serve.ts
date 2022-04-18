@@ -1,10 +1,9 @@
 /* eslint-disable dot-notation */
 import express, { RequestHandler } from 'express';
 import cluster from 'cluster';
-import { cpus, platform } from 'os';
+import { cpus, platform, release } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
-import { playgroundMiddlewareFactory } from './playground';
 import ws from 'ws';
 import cors from 'cors';
 import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInterpolator } from '@graphql-mesh/utils';
@@ -38,11 +37,15 @@ export async function serveMesh(
   const {
     fork,
     port: configPort,
-    hostname = platform() === 'win32' ? 'localhost' : '0.0.0.0',
+    hostname = platform() === 'win32' ||
+    // is WSL?
+    release().toLowerCase().includes('microsoft')
+      ? '127.0.0.1'
+      : '0.0.0.0',
     cors: corsConfig,
     handlers,
     staticFiles,
-    playground,
+    playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
     browser,
@@ -248,20 +251,15 @@ export async function serveMesh(
       }
     }
 
-    app.use(graphqlPath, graphqlHandler(mesh$));
+    app.use(graphqlPath, graphqlHandler(mesh$, playgroundTitle, playgroundEnabled));
 
-    if (typeof playground !== 'undefined' ? playground : env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playgroundMiddlewareFactory({
-        baseDir,
-        graphqlPath,
-        logger,
-        title: playgroundTitle,
-      });
-      if (!staticFiles) {
-        app.get('/', playgroundMiddleware);
+    app.get('/', (req, res, next) => {
+      if (staticFiles) {
+        next();
+      } else {
+        res.redirect(graphqlPath);
       }
-      app.get(graphqlPath, playgroundMiddleware);
-    }
+    });
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {

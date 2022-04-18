@@ -3371,11 +3371,6 @@
     cross-undici-fetch "^0.2.5"
     tslib "^2.3.1"
 
-"@graphql-yoga/render-graphiql@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/render-graphiql/-/render-graphiql-2.4.0.tgz#d9be9bb85d25fdb6ed85e1b4ae9b8d9e66fb4b83"
-  integrity sha512-5TX0LbXBVM9CpK6zPcgegeMm4sXT1LkB+ZAKQU7r6nLVIvn7JAmdjugVXmac20arEUa9wO0yTHlOZ8GNW4edsg==
-
 "@graphql-yoga/subscription@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/subscription/-/subscription-2.0.0.tgz#8c6d3d78b2938a554efced7fd6c80cfaa80f7b8f"
