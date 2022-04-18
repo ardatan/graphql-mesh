@@ -1,5 +1,15 @@
 # @graphql-mesh/graphql
 
+## 0.23.6
+
+### Patch Changes
+
+- c0387e8ac: Better Error Handling
+- Updated dependencies [decbe5fbb]
+  - @graphql-mesh/store@0.7.5
+  - @graphql-mesh/types@0.70.5
+  - @graphql-mesh/utils@0.33.5
+
 ## 0.23.5
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.67.4
+
+### Patch Changes
+
+- 36d363d2f: fix(cli): improve GraphQL Server
+- Updated dependencies [c0387e8ac]
+- Updated dependencies [decbe5fbb]
+  - @graphql-mesh/runtime@0.33.13
+  - @graphql-mesh/store@0.7.5
+  - @graphql-mesh/config@0.34.4
+  - @graphql-mesh/types@0.70.5
+  - @graphql-mesh/utils@0.33.5
+
 ## 0.67.3
 
 ### Patch Changes
