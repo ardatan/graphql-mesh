@@ -1,4 +1,4 @@
-import { GraphQLSchema, parse, validate } from 'graphql';
+import { GraphQLSchema } from 'graphql';
 import { join } from 'path';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
