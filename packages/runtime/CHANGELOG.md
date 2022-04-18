@@ -1,5 +1,13 @@
 # @graphql-mesh/runtime
 
+## 0.33.13
+
+### Patch Changes
+
+- c0387e8ac: Better Error Handling
+  - @graphql-mesh/types@0.70.5
+  - @graphql-mesh/utils@0.33.5
+
 ## 0.33.12
 
 ### Patch Changes

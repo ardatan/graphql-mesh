@@ -1,5 +1,13 @@
 # @graphql-mesh/store
 
+## 0.7.5
+
+### Patch Changes
+
+- decbe5fbb: fix(store): use JSON instead of string for GraphQL Schemas
+  - @graphql-mesh/types@0.70.5
+  - @graphql-mesh/utils@0.33.5
+
 ## 0.7.4
 
 ### Patch Changes
