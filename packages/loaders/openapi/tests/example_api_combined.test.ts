@@ -9,7 +9,7 @@ const PORT = 3010;
 const oasFilePath = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas_combined.json');
 const baseUrl = `http://localhost:${PORT}/api`;
 
-describe('Example OAS Combined', () => {
+describe('Example API Combined', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
     await startServer(PORT);

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Example OAS Combined should generate correct schema: example_oas_combined-schema 1`] = `
+exports[`Example API Combined should generate correct schema: example_oas_combined-schema 1`] = `
 "schema {
   query: Query
 }
@@ -47,7 +47,7 @@ enum query_getAllCars_items_allOf_0_rating {
 }"
 `;
 
-exports[`Example OAS Combined should handle allOf correctly: example_oas_combined-query-result 1`] = `
+exports[`Example API Combined should handle allOf correctly: example_oas_combined-query-result 1`] = `
 Object {
   "data": Object {
     "getAllCars": Array [
