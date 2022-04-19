@@ -2,12 +2,7 @@ import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import {
-  getHeadersObject,
-  jsonFlatStringify,
-  parseInterpolationStrings,
-  stringInterpolator,
-} from '@graphql-mesh/utils';
+import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
 import { inspect, memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
@@ -15,14 +10,15 @@ import { stringify as qsStringify, parse as qsParse } from 'qs';
 import {
   getNamedType,
   GraphQLError,
+  GraphQLFieldResolver,
   GraphQLOutputType,
+  GraphQLResolveInfo,
   isListType,
   isNonNullType,
   isScalarType,
   isUnionType,
 } from 'graphql';
 import _ from 'lodash';
-import { Headers } from 'cross-undici-fetch';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -43,6 +39,29 @@ const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListTyp
 
 function createError(message: string, extensions?: any) {
   return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
+}
+
+function linkResolver(
+  linkObjArgs: any,
+  actualResolver: GraphQLFieldResolver<any, any>,
+  root: any,
+  args: any,
+  context: any,
+  info: GraphQLResolveInfo
+) {
+  for (const argKey in linkObjArgs) {
+    const argInterpolation = linkObjArgs[argKey];
+    const actualValue = stringInterpolator.parse(argInterpolation, {
+      root,
+      args,
+      context,
+      info,
+      env: process.env,
+    });
+    _.set(args, argKey, actualValue);
+    _.set(args, `input.${argKey}`, actualValue);
+  }
+  return actualResolver(root, args, context, info);
 }
 
 export async function addExecutionLogicToComposer(
@@ -162,11 +181,11 @@ export async function addExecutionLogicToComposer(
             }
           }
           // Resolve union input
-          const input = resolveDataByUnionInputType(
+          const input = (args.input = resolveDataByUnionInputType(
             cleanObject(args.input),
             field.args?.input?.type?.getType(),
             schemaComposer
-          );
+          ));
           if (input != null) {
             switch (httpMethod) {
               case 'GET':
@@ -273,17 +292,16 @@ export async function addExecutionLogicToComposer(
         }
 
         const addResponseMetadata = (obj: any) => {
-          const requestBody = {
-            ...args,
-            ...args.input,
-          };
           return {
             ...obj,
             $url: fullPath,
             $method: httpMethod,
             $request: {
-              query: requestBody,
-              path: requestBody,
+              query: {
+                ...args,
+                ...args.input,
+              },
+              path: args,
               header: requestInit.headers,
             },
             $response: {
@@ -302,6 +320,7 @@ export async function addExecutionLogicToComposer(
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);
+
       if ('links' in operationConfig) {
         for (const linkName in operationConfig.links) {
           const linkObj = operationConfig.links[linkName];
@@ -314,27 +333,20 @@ export async function addExecutionLogicToComposer(
                 args: {},
                 description: linkObj.description || targetField.description,
                 resolve: (root, args, context, info) =>
-                  targetField.resolve(
-                    root,
-                    {
-                      ...linkObj.args,
-                      ...args,
-                    },
-                    context,
-                    info
-                  ),
+                  linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
               };
             },
           });
         }
       } else if ('responseByStatusCode' in operationConfig) {
-        const unionTC = schemaComposer.getUTC(field.type.getTypeName());
-        const types = unionTC.getTypes();
-        const statusCodeOneOfIndexMap = unionTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>;
+        const unionOrSingleTC = schemaComposer.getAnyTC(getNamedType(field.type.getType()));
+        const types = 'getTypes' in unionOrSingleTC ? unionOrSingleTC.getTypes() : [unionOrSingleTC];
+        const statusCodeOneOfIndexMap =
+          (unionOrSingleTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>) || {};
         for (const statusCode in operationConfig.responseByStatusCode) {
           const responseConfig = operationConfig.responseByStatusCode[statusCode];
           for (const linkName in responseConfig.links) {
-            const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode]];
+            const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
             const typeTC = schemaComposer.getOTC(typeTCThunked.getTypeName());
             typeTC.addFields({
               [linkName]: () => {
@@ -345,15 +357,7 @@ export async function addExecutionLogicToComposer(
                   args: {},
                   description: linkObj.description || targetField.description,
                   resolve: (root, args, context, info) =>
-                    targetField.resolve(
-                      root,
-                      {
-                        ...linkObj.args,
-                        ...args,
-                      },
-                      context,
-                      info
-                    ),
+                    linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
                 };
               },
             });

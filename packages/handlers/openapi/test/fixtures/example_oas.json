@@ -1469,7 +1469,6 @@
     },
     "links": {
       "Author": {
-        "$ref": "ThisIsHereAndFormattedThisWayBecauseOfAnIssueWithADependency",
         "operationRef": "Example API 3#/paths/~1authors~1{authorId}/get",
         "parameters": {
           "authorId": "$request.path.username"
@@ -1563,7 +1562,6 @@
         }
       },
       "ReviewsWithOperationRef": {
-        "$ref": "ThisIsHereAndFormattedThisWayBecauseOfAnIssueWithADependency",
         "operationRef": "#/paths/~1products~1{id}~1reviews/get",
         "parameters": {
           "id": "$request.path.product-id",

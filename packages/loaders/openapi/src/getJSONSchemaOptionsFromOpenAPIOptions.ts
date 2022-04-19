@@ -1,5 +1,5 @@
 import { getInterpolatedHeadersFactory, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { JSONSchemaObject, dereferenceObject } from 'json-machete';
+import { JSONSchemaObject, dereferenceObject, resolvePath } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
   HTTPMethod,
@@ -244,15 +244,27 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             }
             const args: Record<string, string> = {};
             for (const parameterName in linkObj.parameters || {}) {
-              const parameterExp = linkObj.parameters[parameterName];
-              args[parameterName] = parameterExp.startsWith('$') ? `{${parameterExp}}` : parameterExp;
+              const parameterExp = linkObj.parameters[parameterName].split('-').join('_') as string;
+              args[sanitizeNameForGraphQL(parameterName)] = parameterExp.startsWith('$')
+                ? `{root.${parameterExp}}`
+                : parameterExp.split('$').join('root.$');
             }
             if ('operationRef' in linkObj) {
-              responseByStatusCode[responseKey].links[linkName] = {
-                fieldName: sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, linkObj.operationRef)),
-                args,
-                description: linkObj.description,
-              };
+              const actualOperation = resolvePath(linkObj.operationRef.split('#')[1], oasOrSwagger);
+              if (!actualOperation) {
+                console.warn(`Skipping external operation reference ${linkObj.operationRef}`);
+              } else {
+                if (actualOperation.operationId) {
+                  const fieldName = sanitizeNameForGraphQL(actualOperation.operationId);
+                  responseByStatusCode[responseKey].links[linkName] = {
+                    fieldName,
+                    args,
+                    description: linkObj.description,
+                  };
+                } else {
+                  console.warn('Missing operationId skipping...');
+                }
+              }
             } else if ('operationId' in linkObj) {
               responseByStatusCode[responseKey].links[linkName] = {
                 fieldName: sanitizeNameForGraphQL(linkObj.operationId),
@@ -264,8 +276,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         }
 
         if (!operationConfig.field) {
+          methodObj.operationId = getFieldNameFromPath(relativePath, method, schemaObj?.$ref);
           // Operation ID might not be avaiable so let's generate field name from path and response type schema
-          operationConfig.field = sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj?.$ref));
+          operationConfig.field = sanitizeNameForGraphQL(methodObj.operationId);
         }
 
         // Give a better name to the request input object

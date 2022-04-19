@@ -1,4 +1,4 @@
-import { Interpolator } from '@ardatan/string-interpolation';
+import { Interpolator } from '@graphql-mesh/string-interpolation';
 import dayjs from 'dayjs';
 import { hashObject } from './hashObject';
 

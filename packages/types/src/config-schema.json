@@ -1016,6 +1016,21 @@
         },
         "ignoreErrorResponses": {
           "type": "boolean"
+        },
+        "queryParams": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       },
       "required": ["operations"]
@@ -1810,6 +1825,21 @@
             "$ref": "#/definitions/OASSelectQueryOrMutationFieldConfig"
           },
           "additionalItems": false
+        },
+        "queryParams": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       },
       "required": ["oasFilePath"]
@@ -2096,6 +2126,21 @@
             "$ref": "#/definitions/RAMLSelectQueryOrMutationFieldConfig"
           },
           "additionalItems": false
+        },
+        "queryParams": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       },
       "required": ["ramlFilePath"]

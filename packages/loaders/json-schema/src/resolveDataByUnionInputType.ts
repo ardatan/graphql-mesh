@@ -23,7 +23,8 @@ export function resolveDataByUnionInputType(data: any, type: GraphQLInputType, s
             const resolvedData = resolveDataByUnionInputType(data[fieldName], field.type, schemaComposer);
             return resolvedData;
           }
-          data[fieldName] = resolveDataByUnionInputType(data[fieldName], field.type, schemaComposer);
+          const realFieldName = (field.extensions?.propertyName as string) || fieldName;
+          data[realFieldName] = resolveDataByUnionInputType(data[fieldName], field.type, schemaComposer);
         }
       }
     }

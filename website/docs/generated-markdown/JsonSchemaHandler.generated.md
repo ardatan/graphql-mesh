@@ -43,3 +43,4 @@ unless you define an explicit Content-Type header
     * `argTypeMap` (type: `JSON`)
     * `pubsubTopic` (type: `String`, required)
 * `ignoreErrorResponses` (type: `Boolean`)
+* `queryParams` (type: `Any`)

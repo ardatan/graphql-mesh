@@ -32,12 +32,14 @@ describe('example_api', () => {
 
   it('should get resource (incl. enum)', async () => {
     // Status is an enum
-    const query = `{
-    getUserByUsername (username: "arlene") {
-      name
-      status
-    }
-  }`;
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          name
+          status
+        }
+      }
+    `;
 
     const result = await execute({
       schema: createdSchema,
@@ -51,12 +53,14 @@ describe('example_api', () => {
 
   // OAS allows you to define response objects with HTTP code with the XX wildcard syntax
   it('should get resource with status code: 2XX', async () => {
-    const query = `{
-    getPapers {
-      name
-      published
-    }
-  }`;
+    const query = /* GraphQL */ `
+      {
+        getPapers {
+          name
+          published
+        }
+      }
+    `;
 
     const result = await execute({
       schema: createdSchema,
@@ -80,9 +84,11 @@ describe('example_api', () => {
    * Some operations do not have a response body.
    */
   it('should get resource with no response schema and status code: 204', async () => {
-    const query = `{
-    getBonuses
-  }`;
+    const query = /* GraphQL */ `
+      {
+        getBonuses
+      }
+    `;
 
     const result = await execute({
       schema: createdSchema,
@@ -91,6 +97,434 @@ describe('example_api', () => {
     expect(result).toEqual({
       data: {
         getBonuses: '',
+      },
+    });
+  });
+
+  // Link objects in the OAS allow OtG to create nested GraphQL objects that resolve on different API calls
+  it('should get nested resource via link $response.body#/...', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          name
+          employerCompany {
+            legalForm
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        getUserByUsername: {
+          name: 'Arlene L McMahon',
+          employerCompany: {
+            legalForm: 'public',
+          },
+        },
+      },
+    });
+  });
+
+  it('should get nested resource via link $request.path#/... and $request.query#/', async () => {
+    const query = /* GraphQL */ `
+      {
+        get_product_with_id(product_id: "123", input: { product_tag: "blah" }) {
+          product_name
+          reviews {
+            text
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        get_product_with_id: {
+          product_name: 'Super Product',
+          reviews: [{ text: 'Great product' }, { text: 'I love it' }],
+        },
+      },
+    });
+  });
+
+  // Both an operationId and an operationRef can be used to create a link object
+  it('should get nested resource via link operationRef', async () => {
+    const query = /* GraphQL */ `
+      {
+        get_product_with_id(product_id: "123", input: { product_tag: "blah" }) {
+          product_name
+          reviewsWithOperationRef {
+            text
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        get_product_with_id: {
+          product_name: 'Super Product',
+          reviewsWithOperationRef: [{ text: 'Great product' }, { text: 'I love it' }],
+        },
+      },
+    });
+  });
+
+  it('should get nested lists of resources', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          name
+          friends {
+            name
+            friends {
+              name
+              friends {
+                name
+              }
+            }
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        getUserByUsername: {
+          name: 'Arlene L McMahon',
+          friends: [
+            {
+              name: 'William B Ropp',
+              friends: [
+                {
+                  name: 'William B Ropp',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+                {
+                  name: 'John C Barnes',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+                {
+                  name: 'Heather J Tate',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'John C Barnes',
+              friends: [
+                {
+                  name: 'William B Ropp',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+                {
+                  name: 'John C Barnes',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+                {
+                  name: 'Heather J Tate',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Heather J Tate',
+              friends: [
+                {
+                  name: 'William B Ropp',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+                {
+                  name: 'John C Barnes',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+                {
+                  name: 'Heather J Tate',
+                  friends: [
+                    {
+                      name: 'William B Ropp',
+                    },
+                    {
+                      name: 'John C Barnes',
+                    },
+                    {
+                      name: 'Heather J Tate',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  it('should get nested lists of resources without specifying a path param for the parent resource', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUsers(input: { limit: 1 }) {
+          name
+          friends {
+            name
+            friends {
+              name
+              friends {
+                name
+              }
+            }
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result).toEqual({
+      data: {
+        getUsers: [
+          {
+            name: 'Arlene L McMahon',
+            friends: [
+              {
+                name: 'William B Ropp',
+                friends: [
+                  {
+                    name: 'William B Ropp',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'John C Barnes',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'Heather J Tate',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: 'John C Barnes',
+                friends: [
+                  {
+                    name: 'William B Ropp',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'John C Barnes',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'Heather J Tate',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: 'Heather J Tate',
+                friends: [
+                  {
+                    name: 'William B Ropp',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'John C Barnes',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                  {
+                    name: 'Heather J Tate',
+                    friends: [
+                      {
+                        name: 'William B Ropp',
+                      },
+                      {
+                        name: 'John C Barnes',
+                      },
+                      {
+                        name: 'Heather J Tate',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     });
   });

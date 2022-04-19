@@ -366,6 +366,7 @@ export interface JsonSchemaHandler {
    */
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
+  queryParams?: any;
 }
 export interface JsonSchemaHTTPOperation {
   field: string;
@@ -728,6 +729,7 @@ export interface NewOpenapiHandler {
   };
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
+  queryParams?: any;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
@@ -911,6 +913,7 @@ export interface RAMLHandler {
   };
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
+  queryParams?: any;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
