@@ -25,6 +25,18 @@ query TestQuery {
       ...Review
       product {
         ...Product
+        reviews {
+          ...Review
+          author {
+            ...User
+            reviews {
+              ...Review
+              product {
+                ...Product
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -34,6 +46,12 @@ query TestQuery {
       ...Review
       author {
         ...User
+        reviews {
+          ...Review
+          product {
+            ...Product
+          }
+        }
       }
     }
   }
