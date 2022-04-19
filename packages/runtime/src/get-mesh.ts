@@ -325,7 +325,7 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
                 if (selectionSet) {
                   const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
                   const path = [fieldName];
-                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, valuesFromResults);
+                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, valuesFromResults || identical);
                   regularDelegateOptions.transforms = [wrapQueryTransform as any];
                 }
                 return delegateToSchema(regularDelegateOptions);
