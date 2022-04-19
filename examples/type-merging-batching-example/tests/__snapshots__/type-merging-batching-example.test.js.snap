@@ -32,6 +32,10 @@ Object {
     "author": Object {
       "books": Array [
         Object {
+          "author": Object {
+            "id": "1",
+            "name": "Jane Doe",
+          },
           "id": "0",
           "title": "Lorem Ipsum",
         },
@@ -50,6 +54,10 @@ Object {
       Object {
         "books": Array [
           Object {
+            "author": Object {
+              "id": "0",
+              "name": "John Doe",
+            },
             "id": "1",
             "title": "Dolor Sit Amet",
           },
@@ -60,6 +68,10 @@ Object {
       Object {
         "books": Array [
           Object {
+            "author": Object {
+              "id": "1",
+              "name": "Jane Doe",
+            },
             "id": "0",
             "title": "Lorem Ipsum",
           },
@@ -77,6 +89,12 @@ Object {
   "data": Object {
     "book": Object {
       "author": Object {
+        "books": Array [
+          Object {
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
         "id": "0",
         "name": "John Doe",
       },

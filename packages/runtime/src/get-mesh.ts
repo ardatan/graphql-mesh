@@ -39,7 +39,7 @@ import {
 } from '@graphql-mesh/utils';
 
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { delegateToSchema, IDelegateToSchemaOptions, SubschemaConfig } from '@graphql-tools/delegate';
+import { delegateToSchema, IDelegateToSchemaOptions, StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
 import {
@@ -172,6 +172,19 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
         rawSource,
         [MESH_API_CONTEXT_SYMBOL]: true,
       };
+      // TODO: Somehow rawSource reference got lost in somewhere
+      let rawSourceSubSchemaConfig: SubschemaConfig;
+      const stitchingInfo = unifiedSchema.extensions.stitchingInfo as StitchingInfo;
+      if (stitchingInfo) {
+        for (const [subschemaConfig, subschema] of stitchingInfo.subschemaMap) {
+          if ((subschemaConfig as any).name === rawSource.name) {
+            rawSourceSubSchemaConfig = subschema;
+            break;
+          }
+        }
+      } else {
+        rawSourceSubSchemaConfig = rawSource;
+      }
       const transformedSchema = sourceMap.get(rawSource);
       const rootTypes: Record<OperationTypeNode, GraphQLObjectType> = {
         query: transformedSchema.getQueryType(),
@@ -190,7 +203,7 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
             const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
             const namedReturnType = getNamedType(rootTypeField.type);
             const shouldHaveSelectionSet = !isLeafType(namedReturnType);
-            rawSourceContext[rootType.name][fieldName] = async ({
+            rawSourceContext[rootType.name][fieldName] = ({
               root,
               args,
               context,
@@ -242,20 +255,17 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
 - key: ${inspect(key)}`
               );
               const commonDelegateOptions: IDelegateToSchemaOptions = {
-                schema: rawSource as SubschemaConfig,
+                schema: rawSourceSubSchemaConfig,
                 rootValue: root,
                 operation: operationType as OperationTypeNode,
                 fieldName,
-                returnType: rootTypeField.type,
                 context,
                 transformedSchema,
                 info,
               };
-              if (selectionSet) {
-                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
-                const path = [fieldName];
-                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
-                commonDelegateOptions.transforms = [wrapQueryTransform as any];
+              // If there isn't an extraction of a value
+              if (typeof selectionSet !== 'function') {
+                commonDelegateOptions.returnType = rootTypeField.type;
               }
               if (shouldHaveSelectionSet) {
                 let selectionCount = 0;
@@ -300,17 +310,25 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
                   argsFromKeys,
                   valuesFromResults,
                 } as unknown as BatchDelegateOptions;
+                if (selectionSet) {
+                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                  const path = [fieldName];
+                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
+                  batchDelegationOptions.transforms = [wrapQueryTransform as any];
+                }
                 return batchDelegateToSchema(batchDelegationOptions);
               } else {
-                const options: IDelegateToSchemaOptions = {
+                const regularDelegateOptions: IDelegateToSchemaOptions = {
                   ...commonDelegateOptions,
                   args,
                 };
-                const result = await delegateToSchema(options);
-                if (valuesFromResults) {
-                  return valuesFromResults(result);
+                if (selectionSet) {
+                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                  const path = [fieldName];
+                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, valuesFromResults || identical);
+                  regularDelegateOptions.transforms = [wrapQueryTransform as any];
                 }
-                return result;
+                return delegateToSchema(regularDelegateOptions);
               }
             };
           }

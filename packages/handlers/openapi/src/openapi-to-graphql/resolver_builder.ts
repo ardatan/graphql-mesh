@@ -627,6 +627,7 @@ export function getResolver<TSource, TContext, TArgs>(
           responseHeaders: headersToObject(response.headers),
           responseBody,
         };
+        console.log(extensions);
         throw graphQLErrorWithExtensions(errorString, extensions);
       } else {
         throw new Error(errorString);

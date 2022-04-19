@@ -8,7 +8,6 @@ const problematicModulePath = join(__dirname, '../../../node_modules/core-js/fea
 const emptyModuleContent = 'module.exports = {};';
 
 const exampleQuery = readFileSync(join(__dirname, '../gateway/example-query.graphql'), 'utf8');
-const exampleResult = require('./federation-example-result.json');
 
 // Fix core-js issue
 mkdirSync(problematicModulePath, { recursive: true });
@@ -32,7 +31,7 @@ describe('Federation Example', () => {
     const { execute } = await mesh$;
     const result = await execute(exampleQuery);
     expect(result?.errors).toBeFalsy();
-    expect(result?.data).toEqual(exampleResult);
+    expect(result?.data).toMatchSnapshot();
   });
   afterAll(() => {
       configAndServices$.then(([config,...services]) => services.map(service => service.stop()))
