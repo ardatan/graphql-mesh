@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-stitching
 
+## 0.15.37
+
+### Patch Changes
+
+- b974d9bd0: fix: get correct subschema for in context sdk and make correct assumptions to apply WrapQuery transform
+
 ## 0.15.36
 
 ### Patch Changes

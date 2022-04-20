@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.67.5
+
+### Patch Changes
+
+- Updated dependencies [b974d9bd0]
+  - @graphql-mesh/runtime@0.33.14
+  - @graphql-mesh/config@0.34.5
+
 ## 0.67.4
 
 ### Patch Changes

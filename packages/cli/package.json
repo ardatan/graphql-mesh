@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.67.4",
+  "version": "0.67.5",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -47,10 +47,10 @@
     "@graphql-codegen/typescript-generic-sdk": "2.3.7",
     "@graphql-codegen/typescript-operations": "2.3.5",
     "@graphql-codegen/typed-document-node": "2.2.8",
-    "@graphql-mesh/config": "0.34.4",
+    "@graphql-mesh/config": "0.34.5",
     "@graphql-codegen/typescript-resolvers": "2.6.1",
     "@graphql-mesh/cross-helpers": "0.1.0",
-    "@graphql-mesh/runtime": "0.33.13",
+    "@graphql-mesh/runtime": "0.33.14",
     "@graphql-mesh/utils": "0.33.5",
     "@graphql-mesh/store": "0.7.5",
     "@graphql-mesh/types": "0.70.5",
