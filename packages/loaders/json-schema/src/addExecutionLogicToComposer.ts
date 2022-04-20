@@ -298,10 +298,14 @@ export async function addExecutionLogicToComposer(
             $method: httpMethod,
             $request: {
               query: {
+                ...obj,
                 ...args,
                 ...args.input,
               },
-              path: args,
+              path: {
+                ...obj,
+                ...args,
+              },
               header: requestInit.headers,
             },
             $response: {

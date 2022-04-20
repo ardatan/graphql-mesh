@@ -252,7 +252,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             if ('operationRef' in linkObj) {
               const actualOperation = resolvePath(linkObj.operationRef.split('#')[1], oasOrSwagger);
               if (!actualOperation) {
-                console.warn(`Skipping external operation reference ${linkObj.operationRef}`);
+                console.warn(
+                  `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
+                );
               } else {
                 if (actualOperation.operationId) {
                   const fieldName = sanitizeNameForGraphQL(actualOperation.operationId);
