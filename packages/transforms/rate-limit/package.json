@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@graphql-mesh/cache-inmemory-lru": "0.6.12",
-    "@graphql-tools/schema": "8.3.9",
-    "@graphql-tools/wrap": "8.4.15"
+    "@graphql-tools/schema": "8.3.10",
+    "@graphql-tools/wrap": "8.4.16"
   },
   "publishConfig": {
     "access": "public",

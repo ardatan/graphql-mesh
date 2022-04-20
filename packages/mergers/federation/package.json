@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.70.5",
-    "@graphql-tools/wrap": "8.4.15",
+    "@graphql-tools/wrap": "8.4.16",
     "@apollo/gateway": "2.0.1",
-    "@graphql-tools/schema": "8.3.9",
+    "@graphql-tools/schema": "8.3.10",
     "@graphql-mesh/utils": "0.33.5",
-    "@graphql-tools/utils": "8.6.8",
+    "@graphql-tools/utils": "8.6.9",
     "@graphql-mesh/store": "0.7.5",
     "tslib": "^2.3.1"
   },
