@@ -32,7 +32,7 @@
     "@graphql-mesh/types": "0.70.5",
     "@graphql-mesh/utils": "0.33.5",
     "@graphql-mesh/store": "0.7.5",
-    "@graphql-tools/utils": "8.6.8",
+    "@graphql-tools/utils": "8.6.9",
     "graphql-compose": "9.0.8",
     "@omnigraph/json-schema": "0.17.25",
     "tslib": "^2.3.1",
