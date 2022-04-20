@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.33.14
+
+### Patch Changes
+
+- b974d9bd0: fix: get correct subschema for in context sdk and make correct assumptions to apply WrapQuery transform
+
 ## 0.33.13
 
 ### Patch Changes
