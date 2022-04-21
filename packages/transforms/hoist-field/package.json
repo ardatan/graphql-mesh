@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-hoist-field",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,12 +28,12 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.70.5",
-    "@graphql-mesh/utils": "0.33.5",
+    "@graphql-mesh/types": "0.70.6",
+    "@graphql-mesh/utils": "0.33.6",
     "@graphql-tools/delegate": "8.7.7",
     "@graphql-tools/wrap": "8.4.16",
     "@graphql-tools/utils": "8.6.9",
-    "@graphql-mesh/cache-inmemory-lru": "0.6.12"
+    "@graphql-mesh/cache-inmemory-lru": "0.6.13"
   },
   "publishConfig": {
     "access": "public",
