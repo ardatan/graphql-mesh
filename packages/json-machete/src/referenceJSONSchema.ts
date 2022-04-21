@@ -3,8 +3,11 @@ import { visitJSONSchema } from './visitJSONSchema';
 
 export async function referenceJSONSchema(schema: JSONSchemaObject) {
   const definitions: Record<string, JSONSchemaObject> = {};
-  const finalSchema = await visitJSONSchema<any>(schema, subSchema => {
+  const finalSchema = await visitJSONSchema<any>(schema, (subSchema, { path }) => {
     if (typeof subSchema === 'object') {
+      if (process.env.DEBUG) {
+        console.log(`Referencing ${path}`);
+      }
       // Remove $id refs
       delete subSchema.$id;
       if (subSchema.$ref) {
@@ -29,6 +32,8 @@ export async function referenceJSONSchema(schema: JSONSchemaObject) {
             $ref,
           };
         }
+      } else if (subSchema.type === 'object') {
+        console.warn(`${path} cannot be referenced because it has no title`);
       }
     }
     return subSchema;

@@ -65,7 +65,7 @@ async function getDeduplicatedTitles(schema: JSONSchema): Promise<Set<string>> {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
-      onCircularReference: OnCircularReference.IGNORE,
+      onCircularReference: process.env.DEBUG ? OnCircularReference.WARN : OnCircularReference.IGNORE,
     }
   );
   return duplicatedTypeNames;
@@ -77,6 +77,9 @@ export async function healJSONSchema(schema: JSONSchema) {
     deduplicatedSchema,
     async function healSubschema(subSchema, { path }) {
       if (typeof subSchema === 'object') {
+        if (process.env.DEBUG) {
+          console.log(`Healing ${path}`);
+        }
         // We don't support following properties
         delete subSchema.readOnly;
         delete subSchema.writeOnly;
@@ -88,9 +91,6 @@ export async function healJSONSchema(schema: JSONSchema) {
         if (typeof subSchema.additionalProperties === 'object') {
           delete subSchema.additionalProperties.readOnly;
           delete subSchema.additionalProperties.writeOnly;
-          if (!subSchema.additionalProperties.type) {
-            console.log(path, Object.keys(subSchema.additionalProperties));
-          }
           if (Object.keys(subSchema.additionalProperties).length === 0) {
             subSchema.additionalProperties = true;
           }
@@ -254,6 +254,10 @@ export async function healJSONSchema(schema: JSONSchema) {
             pathBasedName += '_';
           }
         }
+        if (subSchema.type === 'object' && subSchema.properties && Object.keys(subSchema.properties).length === 0) {
+          delete subSchema.properties;
+          subSchema.additionalProperties = true;
+        }
       }
       return subSchema;
     },
@@ -261,7 +265,7 @@ export async function healJSONSchema(schema: JSONSchema) {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
-      onCircularReference: OnCircularReference.IGNORE,
+      onCircularReference: process.env.DEBUG ? OnCircularReference.WARN : OnCircularReference.IGNORE,
     }
   );
 }
