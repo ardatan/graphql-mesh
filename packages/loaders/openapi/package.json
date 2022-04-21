@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,10 +28,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@omnigraph/json-schema": "0.17.25",
-    "@graphql-mesh/utils": "0.33.5",
-    "@graphql-mesh/types": "0.70.5",
-    "json-machete": "0.7.11",
+    "@omnigraph/json-schema": "0.17.26",
+    "@graphql-mesh/utils": "0.33.6",
+    "@graphql-mesh/types": "0.70.6",
+    "json-machete": "0.7.12",
     "openapi-types": "11.0.0",
     "change-case": "4.1.2",
     "tslib": "^2.3.1"

@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.33.6
+
+### Patch Changes
+
+- Updated dependencies [cf0836a64]
+  - @graphql-mesh/cross-helpers@0.1.1
+  - @graphql-mesh/types@0.70.6
+
 ## 0.33.5
 
 ### Patch Changes

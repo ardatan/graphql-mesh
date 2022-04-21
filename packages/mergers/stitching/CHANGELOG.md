@@ -1,5 +1,13 @@
 # @graphql-mesh/merger-stitching
 
+## 0.15.38
+
+### Patch Changes
+
+- @graphql-mesh/store@0.7.6
+- @graphql-mesh/utils@0.33.6
+- @graphql-mesh/types@0.70.6
+
 ## 0.15.37
 
 ### Patch Changes
