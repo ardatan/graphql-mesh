@@ -25,7 +25,7 @@ describe('Authentication', () => {
   afterAll(async () => {
     await stopServer();
   });
-  it('Get patent using basic auth', async () => {
+  it('should get patent using basic auth', async () => {
     const query = /* GraphQL */ `
       query {
         get_patent_with_id(patent_id: "100", usernameAndPassword: "arlene123:password123") {
@@ -37,7 +37,7 @@ describe('Authentication', () => {
       oasFilePath,
       baseUrl,
       operationHeaders: {
-        Authorization: 'Basic {args.usernameAndPassword|base64}',
+        authorization: 'Basic {args.usernameAndPassword|base64}',
       },
       fetch,
     });
