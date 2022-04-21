@@ -5,7 +5,7 @@ import { JSONSchemaOperationResponseConfig } from '.';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata } from './utils';
 
-const anySchema: JSONSchemaObject = {
+export const anySchema: JSONSchemaObject = {
   title: 'Any',
   anyOf: [
     {

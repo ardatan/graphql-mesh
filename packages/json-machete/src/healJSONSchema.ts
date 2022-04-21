@@ -75,8 +75,48 @@ export async function healJSONSchema(schema: JSONSchema) {
   const duplicatedTypeNames = await getDeduplicatedTitles(deduplicatedSchema);
   return visitJSONSchema<JSONSchema>(
     deduplicatedSchema,
-    (subSchema, { path }) => {
+    async function healSubschema(subSchema, { path }) {
       if (typeof subSchema === 'object') {
+        // We don't support following properties
+        delete subSchema.readOnly;
+        delete subSchema.writeOnly;
+        const keys = Object.keys(subSchema);
+        if (keys.length === 0) {
+          subSchema.type = 'object';
+          subSchema.additionalProperties = true;
+        }
+        if (typeof subSchema.additionalProperties === 'object') {
+          delete subSchema.additionalProperties.readOnly;
+          delete subSchema.additionalProperties.writeOnly;
+          if (!subSchema.additionalProperties.type) {
+            console.log(path, Object.keys(subSchema.additionalProperties));
+          }
+          if (Object.keys(subSchema.additionalProperties).length === 0) {
+            subSchema.additionalProperties = true;
+          }
+        }
+        if (subSchema.allOf != null && subSchema.allOf.length === 1) {
+          const realSubschema = subSchema.allOf[0];
+          delete subSchema.allOf;
+          return realSubschema;
+        }
+        if (subSchema.anyOf != null && subSchema.anyOf.length === 1) {
+          const realSubschema = subSchema.anyOf[0];
+          delete subSchema.anyOf;
+          return realSubschema;
+        }
+        if (subSchema.oneOf != null && subSchema.oneOf.length === 1) {
+          const realSubschema = subSchema.oneOf[0];
+          delete subSchema.oneOf;
+          return realSubschema;
+        }
+        if (subSchema.description != null) {
+          subSchema.description = subSchema.description.trim();
+          if (keys.length === 1) {
+            subSchema.type = 'object';
+            subSchema.additionalProperties = true;
+          }
+        }
         // Some JSON Schemas use this broken pattern and refer the type using `items`
         if (subSchema.type === 'object' && subSchema.items) {
           const realSubschema = subSchema.items;
@@ -88,6 +128,9 @@ export async function healJSONSchema(schema: JSONSchema) {
         }
         if (duplicatedTypeNames.has(subSchema.title)) {
           delete subSchema.title;
+        }
+        if (typeof subSchema.example === 'object' && !subSchema.type) {
+          subSchema.type = 'object';
         }
         // Try to find the type
         if (!subSchema.type) {
@@ -144,7 +187,7 @@ export async function healJSONSchema(schema: JSONSchema) {
           }
         }
         // If it is an object type but no properties given while example is available
-        if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
+        if (((subSchema.type === 'object' && !subSchema.properties) || !subSchema.type) && subSchema.example) {
           const generatedSchema = toJsonSchema(subSchema.example, {
             required: false,
             objects: {
@@ -157,7 +200,9 @@ export async function healJSONSchema(schema: JSONSchema) {
               mode: 'first',
             },
           });
-          subSchema.properties = generatedSchema.properties;
+          const healedGeneratedSchema = await healJSONSchema(generatedSchema as any);
+          subSchema.type = asArray(healedGeneratedSchema.type)[0] as any;
+          subSchema.properties = healedGeneratedSchema.properties;
           // If type for properties is already given, use it
           if (typeof subSchema.additionalProperties === 'object') {
             for (const propertyName in subSchema.properties) {
@@ -208,9 +253,6 @@ export async function healJSONSchema(schema: JSONSchema) {
           if (reservedTypeNames.includes(pathBasedName)) {
             pathBasedName += '_';
           }
-        }
-        if (subSchema.description != null) {
-          subSchema.description = subSchema.description.trim();
         }
       }
       return subSchema;

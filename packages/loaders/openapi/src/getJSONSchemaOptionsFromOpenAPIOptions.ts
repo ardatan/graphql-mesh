@@ -6,7 +6,7 @@ import {
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
-} from '@omnigraph/json-schema';
+ anySchema } from '@omnigraph/json-schema';
 import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
@@ -125,7 +125,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             break;
           }
           case 'body':
-            if (paramObj.schema) {
+            if (paramObj.schema && Object.keys(paramObj.schema).length > 0) {
               operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
                 .split('/')
                 .join('~1')}/${method}/parameters/${paramObjIndex}/schema`;
@@ -168,7 +168,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         if ('content' in requestBodyObj) {
           const contentKey = Object.keys(requestBodyObj.content)[0];
           const contentSchema = requestBodyObj.content[contentKey]?.schema;
-          if (contentSchema) {
+          if (contentSchema && Object.keys(contentSchema).length > 0) {
             operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
               .split('/')
               .join('~1')}/${method}/requestBody/content/${contentKey?.toString().split('/').join('~1')}/schema`;
@@ -184,13 +184,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
+        if (responseKey.toString() === '204') {
+          responseByStatusCode[204] = {
+            responseSchema: anySchema,
+          };
+          continue;
+        }
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
         let schemaObj: JSONSchemaObject;
 
         if ('content' in responseObj) {
           const contentKey = Object.keys(responseObj.content)[0];
           schemaObj = responseObj.content[contentKey].schema as any;
-          if (schemaObj) {
+          if (schemaObj && Object.keys(schemaObj).length > 0) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
             responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
               .split('/')
@@ -211,7 +217,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;
-          if (schemaObj) {
+          if (schemaObj && Object.keys(schemaObj).length > 0) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
             responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
               .split('/')
