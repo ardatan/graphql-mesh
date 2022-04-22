@@ -1,5 +1,22 @@
 # @graphql-mesh/runtime
 
+## 0.34.0
+
+### Minor Changes
+
+- f963b57ce: Improve Logging Experience
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+
 ## 0.33.15
 
 ### Patch Changes

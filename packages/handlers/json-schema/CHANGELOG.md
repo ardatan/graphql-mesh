@@ -1,5 +1,28 @@
 # @graphql-mesh/json-schema
 
+## 0.28.0
+
+### Minor Changes
+
+- 331b62637: feat(json-schema): provide different response schemas for different http status codes
+
+### Patch Changes
+
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - json-machete@0.7.13
+  - @omnigraph/json-schema@0.18.0
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+  - @graphql-mesh/store@0.7.7
+
 ## 0.27.8
 
 ### Patch Changes

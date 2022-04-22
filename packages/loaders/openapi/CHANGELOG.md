@@ -1,5 +1,29 @@
 # @omnigraph/openapi
 
+## 0.5.0
+
+### Minor Changes
+
+- 331b62637: feat(json-schema/openapi): support OpenAPI links and json pointer syntax in string interpolation
+
+### Patch Changes
+
+- 331b62637: fix(openapi): sanitize operationId before settings it as a GraphQL field name in the root type
+- 331b62637: fix(openapi): handle empty responses(204) correctly
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - json-machete@0.7.13
+  - @omnigraph/json-schema@0.18.0
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+
 ## 0.4.9
 
 ### Patch Changes

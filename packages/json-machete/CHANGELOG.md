@@ -1,5 +1,18 @@
 # json-machete
 
+## 0.7.13
+
+### Patch Changes
+
+- 331b62637: fix(json-machete): Heal generated schemas
+- 331b62637: fix(json-machete): if anyOf/oneOf/allOf is singular, use that single value directly
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/utils@0.34.0
+
 ## 0.7.12
 
 ### Patch Changes
