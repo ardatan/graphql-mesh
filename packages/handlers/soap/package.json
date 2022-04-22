@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/soap",
-  "version": "0.10.44",
+  "version": "0.10.45",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,9 +28,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.70.6",
-    "@graphql-mesh/store": "0.7.6",
-    "@graphql-mesh/utils": "0.33.6",
+    "@graphql-mesh/types": "0.71.0",
+    "@graphql-mesh/store": "0.7.7",
+    "@graphql-mesh/utils": "0.34.0",
     "@graphql-tools/utils": "8.6.9",
     "graphql-scalars": "1.17.0",
     "soap": "0.43.0",

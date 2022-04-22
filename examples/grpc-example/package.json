@@ -1,6 +1,6 @@
 {
   "name": "grpc-example",
-  "version": "0.5.218",
+  "version": "0.5.219",
   "author": "Simon Liang",
   "license": "MIT",
   "private": true,
@@ -11,9 +11,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.67.6",
-    "@graphql-mesh/grpc": "0.21.10",
-    "@graphql-mesh/transform-naming-convention": "0.10.34",
+    "@graphql-mesh/cli": "0.68.0",
+    "@graphql-mesh/grpc": "0.21.11",
+    "@graphql-mesh/transform-naming-convention": "0.10.35",
     "@grpc/proto-loader": "0.5.5",
     "google-protobuf": "3.14.0",
     "graphql": "16.0.1",

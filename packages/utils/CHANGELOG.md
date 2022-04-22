@@ -1,5 +1,21 @@
 # @graphql-mesh/utils
 
+## 0.34.0
+
+### Minor Changes
+
+- f963b57ce: Improve Logging Experience
+- 0644f31f2: Use dayjs instead of date-fns for smaller bundle size
+- 331b62637: feat(utils): add base64 modifier to string interpolator
+- 331b62637: feat(json-schema/openapi): support OpenAPI links and json pointer syntax in string interpolation
+- 331b62637: feat: support JSON string as an input for string file pointers
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/types@0.71.0
+
 ## 0.33.6
 
 ### Patch Changes

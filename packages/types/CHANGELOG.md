@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.71.0
+
+### Minor Changes
+
+- f963b57ce: Improve Logging Experience
+- 331b62637: feat(json-schema): provide different response schemas for different http status codes
+
+### Patch Changes
+
+- @graphql-mesh/store@0.7.7
+
 ## 0.70.6
 
 ### Patch Changes

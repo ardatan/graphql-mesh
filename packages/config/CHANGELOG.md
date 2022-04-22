@@ -1,5 +1,27 @@
 # @graphql-mesh/config
 
+## 0.35.0
+
+### Minor Changes
+
+- f963b57ce: Improve Logging Experience
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/runtime@0.34.0
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+  - @graphql-mesh/cache-inmemory-lru@0.6.14
+  - @graphql-mesh/merger-bare@0.13.37
+  - @graphql-mesh/merger-stitching@0.15.39
+  - @graphql-mesh/store@0.7.7
+
 ## 0.34.6
 
 ### Patch Changes
