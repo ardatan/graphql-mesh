@@ -30,7 +30,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.70.6",
     "@graphql-mesh/utils": "0.33.6",
-    "fetchache": "0.1.1",
+    "fetchache": "0.1.2",
     "@graphql-tools/schema": "8.3.10",
     "@graphql-tools/wrap": "8.4.16",
     "@graphql-tools/utils": "8.6.9",
