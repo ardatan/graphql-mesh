@@ -151,6 +151,7 @@ export class Interpolator {
       const transformers = modifiers.map(modifier => modifier && modifier.transform);
       return transformers.reduce((str, transform) => transform ? transform(str, rawData) : str, str);
     } catch (e) {
+      console.error(`An error occurred while applying modifiers to ${str}`, modifiers, e);
       return str;
     }
   }
