@@ -6,7 +6,8 @@ import {
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
- anySchema } from '@omnigraph/json-schema';
+  anySchema,
+} from '@omnigraph/json-schema';
 import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
@@ -258,9 +259,11 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             if ('operationRef' in linkObj) {
               const actualOperation = resolvePath(linkObj.operationRef.split('#')[1], oasOrSwagger);
               if (!actualOperation) {
-                console.warn(
-                  `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
-                );
+                if (process.env.DEBUG) {
+                  console.warn(
+                    `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
+                  );
+                }
               } else {
                 if (actualOperation.operationId) {
                   const fieldName = sanitizeNameForGraphQL(actualOperation.operationId);

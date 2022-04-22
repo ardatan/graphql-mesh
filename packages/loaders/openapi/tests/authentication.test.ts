@@ -45,7 +45,6 @@ describe('Authentication', () => {
       schema: createdSchema,
       document: parse(query),
     });
-
     expect(result).toEqual({
       data: {
         get_patent_with_id: {

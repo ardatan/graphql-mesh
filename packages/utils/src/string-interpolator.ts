@@ -12,4 +12,10 @@ stringInterpolator.addAlias('parentType', 'info.parentType.name');
 stringInterpolator.addAlias('fieldName', 'info.fieldName');
 stringInterpolator.registerModifier('date', (formatStr: string) => dayjs(new Date()).format(formatStr));
 stringInterpolator.registerModifier('hash', (value: any) => hashObject(value));
-stringInterpolator.registerModifier('base64', (value: any) => btoa(value));
+stringInterpolator.registerModifier('base64', (value: any) => {
+  if (globalThis.Buffer.from) {
+    return globalThis.Buffer.from(value).toString('base64');
+  } else {
+    return btoa(value);
+  }
+});
