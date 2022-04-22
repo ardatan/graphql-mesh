@@ -89,7 +89,7 @@ export async function serveMesh(
         });
         logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
         registerTerminateHandler(eventName => {
-          const eventLogger = logger.child(`${eventName}💀`);
+          const eventLogger = logger.child(`${eventName}  💀`);
           eventLogger.info(`Destroying the server`);
           mesh.destroy();
         });
@@ -275,7 +275,7 @@ export async function serveMesh(
       httpServer,
       app,
       readyFlag,
-      logger: logger,
+      logger,
     }));
   }
   return null;

@@ -51,7 +51,7 @@ import {
   memoize1,
   parseSelectionSet,
 } from '@graphql-tools/utils';
-import { enableIf, envelop, useErrorHandler, useExtendContext, useLogger, useSchema } from '@envelop/core';
+import { enableIf, envelop, useErrorHandler, useExtendContext, useSchema } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 
@@ -84,7 +84,7 @@ const memoizedGetEnvelopedFactory = memoize1((plugins: EnvelopPlugins) => envelo
 
 export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Promise<MeshInstance<TMeshContext>> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubsub, cache, logger = new DefaultLogger('🕸️'), additionalEnvelopPlugins = [] } = options;
+  const { pubsub, cache, logger = new DefaultLogger('🕸️  Mesh'), additionalEnvelopPlugins = [] } = options;
 
   const getMeshLogger = logger.child('GetMesh');
   getMeshLogger.debug(() => `Getting subschemas from source handlers`);
@@ -365,9 +365,6 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
         liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
       });
       return useLiveQuery({ liveQueryStore });
-    }),
-    useLogger({
-      logFn: (eventName, args) => logger.child(eventName).debug(() => inspect(args)),
     }),
     useErrorHandler(errors => {
       errors.forEach(error => logger.error(error.stack || error.message));
