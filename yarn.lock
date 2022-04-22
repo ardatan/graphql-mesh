@@ -369,13 +369,6 @@
     yaml-ast-parser "0.0.43"
     z-schema "^5.0.2"
 
-"@ardatan/string-interpolation@1.2.12":
-  version "1.2.12"
-  resolved "https://registry.yarnpkg.com/@ardatan/string-interpolation/-/string-interpolation-1.2.12.tgz#8b86820238a93f716d9b8bc9b8f3178bcada4356"
-  integrity sha512-v5hlEaLrJNmC6aDXTVKsmMmr2wI5Z0VFGqXbXbhhvj8hJ8rCYJ5l1G8oUBf/ypW4PWtS65JwJocBQg1qAfTY+Q==
-  dependencies:
-    lodash "^4.17.21"
-
 "@babel/code-frame@7.10.4":
   version "7.10.4"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.10.4.tgz#168da1a36e90da68ae8d49c0f1b48c7c6249213a"

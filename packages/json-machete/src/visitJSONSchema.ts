@@ -22,7 +22,7 @@ export async function visitJSONSchema<T>(
     visitedSubschemaResultMap: new WeakMap(),
     path: '',
     keepObjectRef: false,
-    onCircularReference: OnCircularReference.IGNORE,
+    onCircularReference: process.env.DEBUG ? OnCircularReference.WARN : OnCircularReference.IGNORE,
   }
 ) {
   if (typeof schema === 'object') {

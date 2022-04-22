@@ -366,6 +366,7 @@ export interface JsonSchemaHandler {
    */
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
+  queryParams?: any;
 }
 export interface JsonSchemaHTTPOperation {
   field: string;
@@ -384,6 +385,17 @@ export interface JsonSchemaHTTPOperation {
   responseSchema?: any;
   responseSample?: any;
   responseTypeName?: string;
+  /**
+   * You can define your response schemas by status codes;
+   *
+   * responseByStatusCode:
+   *   200:
+   *     responseSchema: ./someschema.json#/somepath
+   *   404:
+   *     responseSample: ./error-sample.json
+   *     responseTypeName: MyError
+   */
+  responseByStatusCode?: any;
   argTypeMap?: {
     [k: string]: any;
   };
@@ -717,6 +729,7 @@ export interface NewOpenapiHandler {
   };
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
+  queryParams?: any;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
@@ -900,6 +913,7 @@ export interface RAMLHandler {
   };
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
+  queryParams?: any;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**

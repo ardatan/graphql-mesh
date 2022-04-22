@@ -10,7 +10,9 @@ import { stringify as qsStringify, parse as qsParse } from 'qs';
 import {
   getNamedType,
   GraphQLError,
+  GraphQLFieldResolver,
   GraphQLOutputType,
+  GraphQLResolveInfo,
   isListType,
   isNonNullType,
   isScalarType,
@@ -25,6 +27,7 @@ export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
+  queryParams?: Record<string, string>;
 }
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
@@ -38,6 +41,29 @@ function createError(message: string, extensions?: any) {
   return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
 }
 
+function linkResolver(
+  linkObjArgs: any,
+  actualResolver: GraphQLFieldResolver<any, any>,
+  root: any,
+  args: any,
+  context: any,
+  info: GraphQLResolveInfo
+) {
+  for (const argKey in linkObjArgs) {
+    const argInterpolation = linkObjArgs[argKey];
+    const actualValue = stringInterpolator.parse(argInterpolation, {
+      root,
+      args,
+      context,
+      info,
+      env: process.env,
+    });
+    _.set(args, argKey, actualValue);
+    _.set(args, `input.${argKey}`, actualValue);
+  }
+  return actualResolver(root, args, context, info);
+}
+
 export async function addExecutionLogicToComposer(
   schemaComposer: SchemaComposer,
   {
@@ -47,6 +73,7 @@ export async function addExecutionLogicToComposer(
     operationHeaders,
     baseUrl,
     pubsub: globalPubsub,
+    queryParams,
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(() => `Attaching execution logic to the schema`);
@@ -54,7 +81,11 @@ export async function addExecutionLogicToComposer(
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
 
-    const interpolationStrings: string[] = [...Object.values(operationHeaders || {}), baseUrl];
+    const interpolationStrings: string[] = [
+      ...Object.values(operationHeaders || {}),
+      ...Object.values(queryParams || {}),
+      baseUrl,
+    ];
 
     const rootTypeComposer = schemaComposer[rootTypeName];
 
@@ -80,10 +111,10 @@ export async function addExecutionLogicToComposer(
     } else if (operationConfig.path) {
       if (process.env.DEBUG) {
         field.description = `
-    Original Description: ${operationConfig.description || '(none)'}
-    Method: ${operationConfig.method}
-    baseUrl: ${baseUrl}
-    Path: ${operationConfig.path}
+    ***Original Description***: ${operationConfig.description || '(none)'}
+    ***Method***: ${operationConfig.method}
+    ***Base URL***: ${baseUrl}
+    ***Path***: ${operationConfig.path}
 `;
       } else {
         field.description = operationConfig.description;
@@ -105,6 +136,18 @@ export async function addExecutionLogicToComposer(
           method: httpMethod,
           headers,
         };
+        if (queryParams) {
+          const interpolatedQueryParams: Record<string, any> = {};
+          for (const queryParamName in queryParams) {
+            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
+              queryParams[queryParamName],
+              interpolationData
+            );
+          }
+          const queryParamsString = qsStringify(interpolatedQueryParams, { indices: false });
+          fullPath += fullPath.includes('?') ? '&' : '?';
+          fullPath += queryParamsString;
+        }
         // Handle binary data
         if ('binary' in operationConfig) {
           const binaryUpload = await args.input;
@@ -138,11 +181,11 @@ export async function addExecutionLogicToComposer(
             }
           }
           // Resolve union input
-          const input = resolveDataByUnionInputType(
+          const input = (args.input = resolveDataByUnionInputType(
             cleanObject(args.input),
             field.args?.input?.type?.getType(),
             schemaComposer
-          );
+          ));
           if (input != null) {
             switch (httpMethod) {
               case 'GET':
@@ -193,6 +236,10 @@ export async function addExecutionLogicToComposer(
           });
         }
         const response = await fetch(fullPath, requestInit);
+        // If return type is a file
+        if (field.type.getTypeName() === 'File') {
+          return response.blob();
+        }
         const responseText = await response.text();
         operationLogger.debug(
           () =>
@@ -244,15 +291,32 @@ export async function addExecutionLogicToComposer(
           responseJson = responseJson[0];
         }
 
-        const addResponseMetadata = (obj: any) => ({
-          ...obj,
-          __response: {
-            url: fullPath,
-            method: httpMethod,
-            status: response.status,
-            statusText: response.statusText,
-          },
-        });
+        const addResponseMetadata = (obj: any) => {
+          return {
+            ...obj,
+            $url: fullPath,
+            $method: httpMethod,
+            $request: {
+              query: {
+                ...obj,
+                ...args,
+                ...args.input,
+              },
+              path: {
+                ...obj,
+                ...args,
+              },
+              header: requestInit.headers,
+            },
+            $response: {
+              url: fullPath,
+              method: httpMethod,
+              status: response.status,
+              statusText: response.statusText,
+              body: obj,
+            },
+          };
+        };
         operationLogger.debug(() => `Adding response metadata to the response object`);
         return Array.isArray(responseJson)
           ? responseJson.map(obj => addResponseMetadata(obj))
@@ -260,6 +324,50 @@ export async function addExecutionLogicToComposer(
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);
+
+      if ('links' in operationConfig) {
+        for (const linkName in operationConfig.links) {
+          const linkObj = operationConfig.links[linkName];
+          const typeTC = schemaComposer.getOTC(field.type.getTypeName());
+          typeTC.addFields({
+            [linkName]: () => {
+              const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+              return {
+                ...targetField,
+                args: {},
+                description: linkObj.description || targetField.description,
+                resolve: (root, args, context, info) =>
+                  linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
+              };
+            },
+          });
+        }
+      } else if ('responseByStatusCode' in operationConfig) {
+        const unionOrSingleTC = schemaComposer.getAnyTC(getNamedType(field.type.getType()));
+        const types = 'getTypes' in unionOrSingleTC ? unionOrSingleTC.getTypes() : [unionOrSingleTC];
+        const statusCodeOneOfIndexMap =
+          (unionOrSingleTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>) || {};
+        for (const statusCode in operationConfig.responseByStatusCode) {
+          const responseConfig = operationConfig.responseByStatusCode[statusCode];
+          for (const linkName in responseConfig.links) {
+            const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
+            const typeTC = schemaComposer.getOTC(typeTCThunked.getTypeName());
+            typeTC.addFields({
+              [linkName]: () => {
+                const linkObj = responseConfig.links[linkName];
+                const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                return {
+                  ...targetField,
+                  args: {},
+                  description: linkObj.description || targetField.description,
+                  resolve: (root, args, context, info) =>
+                    linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
+                };
+              },
+            });
+          }
+        }
+      }
     }
     const { args: globalArgs } = parseInterpolationStrings(interpolationStrings, operationConfig.argTypeMap);
     rootTypeComposer.addFieldArgs(fieldName, globalArgs);

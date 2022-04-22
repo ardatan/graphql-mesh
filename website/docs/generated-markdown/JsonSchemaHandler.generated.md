@@ -14,6 +14,14 @@
     * `responseSchema` (type: `Any`)
     * `responseSample` (type: `Any`)
     * `responseTypeName` (type: `String`)
+    * `responseByStatusCode` (type: `Any`) - You can define your response schemas by status codes;
+
+responseByStatusCode:
+  200:
+    responseSchema: ./someschema.json#/somepath
+  404:
+    responseSample: ./error-sample.json
+    responseTypeName: MyError
     * `argTypeMap` (type: `JSON`)
     * `path` (type: `String`, required)
     * `method` (type: `String (GET | HEAD | POST | PUT | DELETE | CONNECT | OPTIONS | TRACE | PATCH)`)
@@ -35,3 +43,4 @@ unless you define an explicit Content-Type header
     * `argTypeMap` (type: `JSON`)
     * `pubsubTopic` (type: `String`, required)
 * `ignoreErrorResponses` (type: `Boolean`)
+* `queryParams` (type: `Any`)

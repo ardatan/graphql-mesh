@@ -98,7 +98,7 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
-      onCircularReference: OnCircularReference.IGNORE,
+      onCircularReference: process.env.DEBUG ? OnCircularReference.WARN : OnCircularReference.IGNORE,
     }
   );
   if (breakingChanges.length > 0) {

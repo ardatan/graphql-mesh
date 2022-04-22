@@ -112,6 +112,9 @@ export function getUnionTypeComposers({
         description: subSchema.description,
         fields: sharedFields,
         resolveType,
+        extensions: {
+          statusCodeOneOfIndexMap,
+        },
       });
       for (const typeComposer of outputTypeComposers) {
         (typeComposer as any).addInterface(output);
@@ -141,6 +144,9 @@ export function getUnionTypeComposers({
           return possibleTypes;
         },
         resolveType,
+        extensions: {
+          statusCodeOneOfIndexMap,
+        },
       });
     }
   } else {

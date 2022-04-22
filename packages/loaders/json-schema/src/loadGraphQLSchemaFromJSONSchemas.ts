@@ -23,6 +23,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     baseUrl: options.baseUrl,
     pubsub: options.pubsub,
     generateInterfaceFromSharedFields: options.generateInterfaceFromSharedFields,
+    queryParams: options.queryParams,
   });
   return graphqlSchema;
 }

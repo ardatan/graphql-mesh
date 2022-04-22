@@ -9,6 +9,7 @@ type RAMLHandler {
   operationHeaders: JSON
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [RAMLSelectQueryOrMutationFieldConfig]
+  queryParams: Any
 }
 
 enum QueryOrMutation {

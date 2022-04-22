@@ -4,7 +4,7 @@ export interface OpenAPILoaderOptions extends Partial<JSONSchemaLoaderOptions> {
   // The URL or FileSystem path to the OpenAPI Document.
   oasFilePath: string;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
-  fallbackFormat: 'json' | 'yaml' | 'js' | 'ts';
+  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
 }
 
 export interface OpenAPILoaderSelectQueryOrMutationFieldConfig {

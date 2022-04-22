@@ -32,6 +32,8 @@ export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileO
   if (isUrl(filePathOrUrl)) {
     config?.logger?.debug(() => `Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
+  } else if (filePathOrUrl.startsWith('{') || filePathOrUrl.startsWith('[')) {
+    return JSON.parse(filePathOrUrl);
   } else {
     config?.logger?.debug(() => `Reading ${filePathOrUrl} from the file system`);
     return readFile(filePathOrUrl, config);
