@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "fetchache": "0.1.1",
+    "fetchache": "0.1.2",
     "@graphql-mesh/store": "0.7.6",
     "@graphql-tools/delegate": "8.7.7",
     "@graphql-tools/utils": "8.6.9",

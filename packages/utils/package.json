@@ -42,7 +42,7 @@
     "cross-undici-fetch": "0.3.0",
     "chalk": "4.1.2",
     "date-fns": "2.28.0",
-    "fetchache": "0.1.1",
+    "fetchache": "0.1.2",
     "flatstr": "1.0.12",
     "graphql-jit": "0.7.3",
     "graphql-subscriptions": "2.0.0",
