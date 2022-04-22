@@ -14,7 +14,7 @@ import {
 import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
 import { hashObject, PubSub } from '@graphql-mesh/utils';
-import { format } from 'date-fns';
+import dayjs from 'dayjs';
 import { cloneSchema } from 'neo4j-graphql-js/node_modules/graphql-tools';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -401,7 +401,7 @@ describe('cache', () => {
     });
 
     it('Should work correctly with date helper', async () => {
-      const expectedHash = `1-${format(new Date(), `yyyy-MM-dd`)}`;
+      const expectedHash = `1-${dayjs(new Date()).format(`yyyy-MM-dd`)}`;
 
       await checkCache(
         [
