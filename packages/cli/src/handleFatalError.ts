@@ -1,7 +1,7 @@
 import { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 
-export function handleFatalError(e: Error, logger: Logger = new DefaultLogger('🕸️')): any {
+export function handleFatalError(e: Error, logger: Logger = new DefaultLogger('🕸️  Mesh')): any {
   logger.error(e.stack || e.message);
   if (process.env.JEST == null) {
     process.exit(1);

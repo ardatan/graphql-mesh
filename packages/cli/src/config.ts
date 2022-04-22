@@ -1,18 +1,23 @@
 import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
 import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, loadYaml } from '@graphql-mesh/utils';
+import { defaultImportFn, loadYaml, DefaultLogger } from '@graphql-mesh/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { path } from '@graphql-mesh/cross-helpers';
 
-export function validateConfig(config: any): asserts config is YamlConfig.Config {
+export function validateConfig(config: any, filepath: string): asserts config is YamlConfig.Config {
   const ajv = new Ajv({
     strict: false,
   } as any);
   jsonSchema.$schema = undefined;
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
-    console.warn(`Configuration is not valid:\n${ajv.errorsText()}`);
+    const logger = new DefaultLogger('🕸️  Mesh - Config');
+    logger.warn(
+      `${filepath} configuration file is not valid:\n${ajv.errorsText(ajv.errors, {
+        separator: '\n',
+      })}\nThis is just a warning! It doesn't have any effects on runtime.`
+    );
   }
 }
 
@@ -48,7 +53,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   }
 
   const config = results.config;
-  validateConfig(config);
+  validateConfig(config, results.filepath);
   return processConfig(config, { dir, ...restOptions });
 }
 

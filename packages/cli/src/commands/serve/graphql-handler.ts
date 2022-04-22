@@ -1,6 +1,6 @@
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { RequestHandler } from 'express';
-import { createServer, useExtendContext } from '@graphql-yoga/node';
+import { createServer, useExtendContext, useLogger } from '@graphql-yoga/node';
 
 export const graphqlHandler = (
   mesh$: Promise<MeshInstance>,
@@ -19,6 +19,14 @@ export const graphqlHandler = (
           cookies: req.cookies,
           res,
         })),
+        useLogger({
+          skipIntrospection: true,
+          logFn: (eventName, { args }) => {
+            if (eventName.endsWith('-start')) {
+              mesh.logger.debug(() => [`\t headers: `, args.contextValue.headers]);
+            }
+          },
+        }),
       ],
       logging: mesh.logger,
       maskedErrors: false,

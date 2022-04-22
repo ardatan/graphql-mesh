@@ -16,7 +16,7 @@ import { handleFatalError } from './handleFatalError';
 import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { YamlConfig } from '@graphql-mesh/types';
+import { Logger, YamlConfig } from '@graphql-mesh/types';
 import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
@@ -45,7 +45,7 @@ export interface GraphQLMeshCLIParams {
 
 export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
-  initialLoggerPrefix: '🕸️',
+  initialLoggerPrefix: '🕸️  Mesh',
   configName: 'mesh',
   artifactsDir: '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
@@ -62,7 +62,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
 
 export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin(process.argv), cwdPath = cwd()) {
   let baseDir = cwdPath;
-  let logger = new DefaultLogger(cliParams.initialLoggerPrefix);
+  let logger: Logger = new DefaultLogger(cliParams.initialLoggerPrefix);
   return yargs(args)
     .help()
     .option('r', {

@@ -217,10 +217,10 @@ export async function resolveLogger(
       code: '',
     };
   }
-  const logger = new DefaultLogger('🕸️');
+  const logger = new DefaultLogger('🕸️  Mesh');
   return {
     logger,
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger('🕸️');`,
+    code: `const logger = new DefaultLogger('🕸️  Mesh');`,
   };
 }
