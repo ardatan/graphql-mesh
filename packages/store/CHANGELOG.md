@@ -1,5 +1,16 @@
 # @graphql-mesh/store
 
+## 0.8.0
+
+### Minor Changes
+
+- 8c8b304e5: enhance(store): improve TS performance by defining types for GraphQL schema artifacts
+
+### Patch Changes
+
+- @graphql-mesh/types@0.71.2
+- @graphql-mesh/utils@0.34.2
+
 ## 0.7.8
 
 ### Patch Changes
