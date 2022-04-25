@@ -31,11 +31,12 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@neo4j/introspector": "^1.0.1",
+    "@neo4j/graphql": "3.1.0",
     "@graphql-mesh/store": "0.7.8",
     "@graphql-mesh/utils": "0.34.1",
     "@graphql-mesh/types": "0.71.1",
     "neo4j-driver": "4.4.5",
-    "neo4j-graphql-js": "2.19.4",
     "tslib": "^2.3.1",
     "@graphql-tools/utils": "8.6.9"
   },

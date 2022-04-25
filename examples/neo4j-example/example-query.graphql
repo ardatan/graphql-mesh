@@ -1,7 +1,7 @@
 query MovieWithActedIn {
-  Movie(first: 2) {
+  movies(options: { limit: 2 }) {
     title
-    persons_acted_in(first: 2) {
+    peopleActedIn(options: { limit: 2 }) {
       name
     }
   }
