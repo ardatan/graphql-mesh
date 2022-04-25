@@ -117,9 +117,9 @@ export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOpt
   GraphQLSchemaWithDiffing: {
     codify: schema =>
       `
-import { buildASTSchema } from 'graphql';
+import { buildASTSchema, DocumentNode } from 'graphql';
 
-const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)};
+const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)} as unknown as DocumentNode;
 
 export default buildASTSchema(schemaAST, {
   assumeValid: true,
