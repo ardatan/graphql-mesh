@@ -4,6 +4,7 @@ import neo4j, { Driver } from 'neo4j-driver';
 import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { readFileOrUrl } from '@graphql-mesh/utils';
+import EventEmitter from 'events';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
@@ -61,6 +62,8 @@ export default class Neo4JHandler implements MeshHandler {
 
     const typeDefs = await this.getCachedTypeDefs(driver);
 
+    const events = new EventEmitter({ captureRejections: true });
+    events.setMaxListeners(Infinity);
     const neo4jGraphQL = new Neo4jGraphQL({
       typeDefs,
       config: {
@@ -69,6 +72,14 @@ export default class Neo4JHandler implements MeshHandler {
         },
         enableDebug: !!process.env.DEBUG,
         skipValidateTypeDefs: true,
+      },
+      plugins: {
+        subscriptions: {
+          events,
+          async publish(eventMeta) {
+            events.emit(eventMeta.event, eventMeta);
+          },
+        },
       },
       driver,
     });

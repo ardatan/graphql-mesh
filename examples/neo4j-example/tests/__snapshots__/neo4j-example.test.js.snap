@@ -67,6 +67,12 @@ type DeleteInfo {
   relationshipsDeleted: Int!
 }
 
+enum EventType {
+  CREATE
+  DELETE
+  UPDATE
+}
+
 type Movie {
   peopleActedIn(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
   peopleActedInAggregate(directed: Boolean = true, where: PersonWhere): MoviePersonPeopleActedInAggregationSelection
@@ -121,12 +127,22 @@ input MovieCreateInput {
   votes: BigInt!
 }
 
+type MovieCreatedEvent {
+  createdMovie: MovieEventPayload!
+  event: EventType!
+}
+
 input MovieDeleteInput {
   peopleActedIn: [MoviePeopleActedInDeleteFieldInput!]
   peopleDirected: [MoviePeopleDirectedDeleteFieldInput!]
   peopleProduced: [MoviePeopleProducedDeleteFieldInput!]
   peopleReviewed: [MoviePeopleReviewedDeleteFieldInput!]
   peopleWrote: [MoviePeopleWroteDeleteFieldInput!]
+}
+
+type MovieDeletedEvent {
+  deletedMovie: MovieEventPayload!
+  event: EventType!
 }
 
 input MovieDisconnectInput {
@@ -140,6 +156,13 @@ input MovieDisconnectInput {
 type MovieEdge {
   cursor: String!
   node: Movie!
+}
+
+type MovieEventPayload {
+  released: BigInt!
+  tagline: String
+  title: String!
+  votes: BigInt!
 }
 
 input MovieOptions {
@@ -892,6 +915,13 @@ input MovieSort {
   votes: SortDirection
 }
 
+input MovieSubscriptionWhere {
+  released: BigInt
+  tagline: String
+  title: String
+  votes: BigInt
+}
+
 input MovieUpdateInput {
   peopleActedIn: [MoviePeopleActedInUpdateFieldInput!]
   peopleDirected: [MoviePeopleDirectedUpdateFieldInput!]
@@ -902,6 +932,12 @@ input MovieUpdateInput {
   tagline: String
   title: String
   votes: BigInt
+}
+
+type MovieUpdatedEvent {
+  event: EventType!
+  previousState: MovieEventPayload!
+  updatedMovie: MovieEventPayload!
 }
 
 input MovieWhere {
@@ -1309,6 +1345,11 @@ input PersonCreateInput {
   wroteMovies: PersonWroteMoviesFieldInput
 }
 
+type PersonCreatedEvent {
+  createdPerson: PersonEventPayload!
+  event: EventType!
+}
+
 input PersonDeleteInput {
   actedInMovies: [PersonActedInMoviesDeleteFieldInput!]
   directedMovies: [PersonDirectedMoviesDeleteFieldInput!]
@@ -1317,6 +1358,11 @@ input PersonDeleteInput {
   producedMovies: [PersonProducedMoviesDeleteFieldInput!]
   reviewedMovies: [PersonReviewedMoviesDeleteFieldInput!]
   wroteMovies: [PersonWroteMoviesDeleteFieldInput!]
+}
+
+type PersonDeletedEvent {
+  deletedPerson: PersonEventPayload!
+  event: EventType!
 }
 
 input PersonDirectedMoviesAggregateInput {
@@ -1497,6 +1543,11 @@ input PersonDisconnectInput {
 type PersonEdge {
   cursor: String!
   node: Person!
+}
+
+type PersonEventPayload {
+  born: BigInt
+  name: String!
 }
 
 input PersonFollowsPeopleAggregateInput {
@@ -2242,6 +2293,11 @@ input PersonSort {
   name: SortDirection
 }
 
+input PersonSubscriptionWhere {
+  born: BigInt
+  name: String
+}
+
 input PersonUpdateInput {
   actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
   born: BigInt
@@ -2252,6 +2308,12 @@ input PersonUpdateInput {
   producedMovies: [PersonProducedMoviesUpdateFieldInput!]
   reviewedMovies: [PersonReviewedMoviesUpdateFieldInput!]
   wroteMovies: [PersonWroteMoviesUpdateFieldInput!]
+}
+
+type PersonUpdatedEvent {
+  event: EventType!
+  previousState: PersonEventPayload!
+  updatedPerson: PersonEventPayload!
 }
 
 input PersonWhere {
@@ -2657,6 +2719,15 @@ type StringAggregateSelectionNonNullable {
 type StringAggregateSelectionNullable {
   longest: String
   shortest: String
+}
+
+type Subscription {
+  movieCreated(where: MovieSubscriptionWhere): MovieCreatedEvent!
+  movieDeleted(where: MovieSubscriptionWhere): MovieDeletedEvent!
+  movieUpdated(where: MovieSubscriptionWhere): MovieUpdatedEvent!
+  personCreated(where: PersonSubscriptionWhere): PersonCreatedEvent!
+  personDeleted(where: PersonSubscriptionWhere): PersonDeletedEvent!
+  personUpdated(where: PersonSubscriptionWhere): PersonUpdatedEvent!
 }
 
 type UpdateInfo {
