@@ -1,4 +1,2 @@
-module.exports = {
-  fs: require('fs'),
-  path: require('path'),
-}
+module.exports.fs = require('fs');
+module.exports.path = require('path');
