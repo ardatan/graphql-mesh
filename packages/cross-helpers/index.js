@@ -1,2 +1,2 @@
-module.exports = require('fs');
-module.exports = require('path');
+module.exports.fs = require('fs');
+module.exports.path = require('path');
