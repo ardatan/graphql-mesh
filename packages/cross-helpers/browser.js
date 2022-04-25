@@ -1,6 +1,4 @@
-module.exports = {
-  fs: {
-    promises: {}
-  },
-  path: require('path-browserify'),
+module.exports.fs = {
+  promises: {}
 };
+module.exports.path = require('path-browserify');
