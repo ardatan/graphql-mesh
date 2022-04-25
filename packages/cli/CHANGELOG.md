@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.68.1
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/config@0.35.1
+  - @graphql-mesh/cross-helpers@0.1.2
+  - @graphql-mesh/runtime@0.34.1
+  - @graphql-mesh/store@0.7.8
+  - @graphql-mesh/types@0.71.1
+  - @graphql-mesh/utils@0.34.1
+
 ## 0.68.0
 
 ### Minor Changes

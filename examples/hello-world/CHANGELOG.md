@@ -1,5 +1,14 @@
 # json-schema-hello-world
 
+## 0.0.167
+
+### Patch Changes
+
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cli@0.68.1
+  - @graphql-mesh/json-schema@0.28.1
+  - @graphql-mesh/transform-mock@0.14.31
+
 ## 0.0.166
 
 ### Patch Changes

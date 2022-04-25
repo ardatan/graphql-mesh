@@ -1,5 +1,11 @@
 # @graphql-mesh/cross-helpers
 
+## 0.1.2
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+
 ## 0.1.1
 
 ### Patch Changes
