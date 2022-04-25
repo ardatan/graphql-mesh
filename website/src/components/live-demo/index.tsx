@@ -47,6 +47,9 @@ const EXAMPLES = {
   gRPC: {
     'Movies Example': 'grpc-example',
   },
+  Neo4J: {
+    'Movies Example': 'neo4j-example',
+  },
 };
 
 const LiveDemo: FC<{ className?: string }> = ({ className }) => {
