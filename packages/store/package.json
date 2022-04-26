@@ -11,7 +11,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "graphql": "16.3.0"
+    "graphql": "16.4.0"
   },
   "sideEffects": false,
   "main": "dist/index.js",
