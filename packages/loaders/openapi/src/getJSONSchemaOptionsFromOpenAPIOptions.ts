@@ -6,7 +6,6 @@ import {
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
-  anySchema,
 } from '@omnigraph/json-schema';
 import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
@@ -185,13 +184,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
-        if (responseKey.toString() === '204') {
-          responseByStatusCode[204] = {
-            responseSchema: anySchema,
-          };
-          continue;
-        }
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
+
         let schemaObj: JSONSchemaObject;
 
         if ('content' in responseObj) {
@@ -224,11 +218,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               .split('/')
               .join('~1')}/${method}/responses/${responseKey}/schema`;
           }
-          if (responseObj.examples) {
-            const examples = Object.values(responseObj.examples);
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSample = examples[0];
-          }
+        } else if ('examples' in responseObj) {
+          const examples = Object.values(responseObj.examples);
+          responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+          responseByStatusCode[responseKey].responseSample = examples[0];
+        } else if (responseKey.toString() === '204') {
+          responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+          responseByStatusCode[responseKey].responseSchema = {
+            type: 'null',
+            description: responseObj.description,
+          };
         }
 
         if ('links' in responseObj) {

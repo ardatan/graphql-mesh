@@ -257,13 +257,16 @@ export async function addExecutionLogicToComposer(
           if (isScalarType(returnNamedGraphQLType)) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
+          } else if (response.status === 204) {
+            responseJson = {};
+          } else {
+            return createError(`Unexpected response`, {
+              url: fullPath,
+              method: httpMethod,
+              responseText,
+              error,
+            });
           }
-          return createError(`Unexpected response`, {
-            url: fullPath,
-            method: httpMethod,
-            responseText,
-            error,
-          });
         }
 
         if (!response.status.toString().startsWith('2')) {
