@@ -392,12 +392,7 @@ export function getComposerFromJSONSchema(
           subSchema.type = validTypes[0];
           // continue with the single type
         } else {
-          const typeComposer = getGenericJSONScalar({
-            schemaComposer,
-            isInput: false,
-            subSchema,
-            validateWithJSONSchema,
-          });
+          const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
           return {
             input: typeComposer,
             output: typeComposer,

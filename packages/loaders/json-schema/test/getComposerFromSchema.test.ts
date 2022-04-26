@@ -6,6 +6,7 @@ import {
   GraphQLInt,
   GraphQLString,
   isListType,
+  isObjectType,
   isScalarType,
   parse,
   printType,
@@ -250,15 +251,6 @@ input ExampleObject_Input {
 }
     `.trim()
     );
-    expect(
-      (result.output as ObjectTypeComposer).toSDL({
-        deep: true,
-      })
-    ).toBe(
-      /* GraphQL */ `
-scalar ExampleOneOf
-    `.trim()
-    );
   });
   it('should generate merged object types from allOf definitions', async () => {
     const inputSchema: JSONSchema = {
@@ -304,7 +296,7 @@ type ExampleAllOf {
     `.trim()
     );
   });
-  it('should generate JSON scalar for allOf definitions that contain scalar types', async () => {
+  it('should generate container types and fields for allOf definitions that contain scalar types', async () => {
     const title = 'ExampleAllOf';
     const inputSchema: JSONSchema = {
       title,
@@ -324,10 +316,11 @@ type ExampleAllOf {
       ],
     };
     const result = await getComposerFromJSONSchema(inputSchema, logger);
-    expect(result.input).toBe(result.output);
-    const outputComposer = result.output as ScalarTypeComposer;
-    expect(isScalarType(outputComposer.getType())).toBeTruthy();
+    const outputComposer = result.output as ObjectTypeComposer;
+    expect(isObjectType(outputComposer.getType())).toBeTruthy();
     expect(outputComposer.getTypeName()).toBe(title);
+    expect(outputComposer.getFieldNames().includes('String')).toBeTruthy();
+    expect(outputComposer.getFieldNames().includes('id')).toBeTruthy();
   });
   it('should generate correct types for anyOf definitions', async () => {
     const inputSchema: JSONSchema = {
@@ -373,7 +366,7 @@ type ExampleAnyOf {
     `.trim()
     );
   });
-  it('should generate JSON scalar for allOf definitions that contain scalar types', async () => {
+  it('should generate container types and fields for anyOf definitions that contain scalar types', async () => {
     const title = 'ExampleAnyOf';
     const inputSchema: JSONSchema = {
       title,
@@ -393,10 +386,11 @@ type ExampleAnyOf {
       ],
     };
     const result = await getComposerFromJSONSchema(inputSchema, logger);
-    expect(result.input).toBe(result.output);
-    const outputComposer = result.output as ScalarTypeComposer;
-    expect(isScalarType(outputComposer.getType())).toBeTruthy();
+    const outputComposer = result.output as ObjectTypeComposer;
+    expect(isObjectType(outputComposer.getType())).toBeTruthy();
     expect(outputComposer.getTypeName()).toBe(title);
+    expect(outputComposer.getFieldNames().includes('String')).toBeTruthy();
+    expect(outputComposer.getFieldNames().includes('id')).toBeTruthy();
   });
   it('should return Boolean for boolean definition', async () => {
     const inputSchema: JSONSchema = {
