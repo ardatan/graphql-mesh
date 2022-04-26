@@ -53,6 +53,7 @@ const isListTC = memoize1(function isListTC(type: any): type is ListComposer {
 const GraphQLVoid = new GraphQLScalarType({
   name: 'Void',
   description: 'Represents empty values',
+  serialize: () => null,
   extensions: {
     codegenScalarType: 'void',
   },
