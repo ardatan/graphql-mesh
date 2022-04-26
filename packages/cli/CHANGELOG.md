@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.68.3
+
+### Patch Changes
+
+- c1a7c1c09: fix(cli): throw import error as promise rejection
+
 ## 0.68.2
 
 ### Patch Changes
