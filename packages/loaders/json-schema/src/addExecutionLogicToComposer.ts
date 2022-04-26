@@ -254,7 +254,7 @@ export async function addExecutionLogicToComposer(
         } catch (error) {
           const returnNamedGraphQLType = getNamedType(field.type.getType());
           // The result might be defined as scalar
-          if (isScalarType(returnNamedGraphQLType)) {
+          if (isScalarType(returnNamedGraphQLType) || response.status === 204) {
             operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           }
