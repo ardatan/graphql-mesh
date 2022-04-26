@@ -4,13 +4,15 @@ const { basename, join } = require('path');
 
 const { printSchema, lexicographicSortSchema } = require('graphql');
 
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(30000);
-
-describe('Neo4j', () => {
+describe.skip('Neo4j', () => {
+  let config$, mesh$;
+  beforeAll(() => {
+    config$ = findAndParseConfig({
+      dir: join(__dirname, '..'),
+    });
+    mesh$ = config$.then(config => getMesh(config));
+  })
+  jest.setTimeout(30000);
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(printSchema(lexicographicSortSchema(schema))).toMatchSnapshot();
