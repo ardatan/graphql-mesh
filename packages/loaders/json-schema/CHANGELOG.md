@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.19.0
+
+### Minor Changes
+
+- 2f395a4b2: feat(openapi): support empty values
+
 ## 0.18.2
 
 ### Patch Changes
