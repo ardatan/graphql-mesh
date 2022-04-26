@@ -29,7 +29,6 @@ import {
   GraphQLJSON,
   GraphQLTime,
   GraphQLURL,
-  GraphQLVoid,
 } from 'graphql-scalars';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -416,8 +415,8 @@ type ExampleAnyOf {
 
     const result = await getComposerFromJSONSchema(inputSchema, logger);
 
-    expect(result.input.getType()).toBe(GraphQLVoid);
-    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLVoid);
+    expect(result.input.getType().name).toBe('Void');
+    expect((result.output as ScalarTypeComposer).getType().name).toBe('Void');
   });
   it('should return BigInt for int64 definition', async () => {
     const inputSchema: JSONSchema = {

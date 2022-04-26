@@ -6,7 +6,6 @@ import {
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
-  anySchema,
 } from '@omnigraph/json-schema';
 import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
@@ -185,13 +184,17 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
+        const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
         if (responseKey.toString() === '204') {
           responseByStatusCode[204] = {
-            responseSchema: anySchema,
+            responseSchema: {
+              type: 'null',
+              description: responseObj.description,
+            },
           };
           continue;
         }
-        const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
+
         let schemaObj: JSONSchemaObject;
 
         if ('content' in responseObj) {
