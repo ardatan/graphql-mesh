@@ -268,7 +268,7 @@ ${BASEDIR_ASSIGNMENT_COMMENT}
 const importFn = (moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   if (!(relativeModuleId in importedModules)) {
-    throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
+    return Promise.reject(new Error(\`Cannot find module '\${relativeModuleId}'.\`));
   }
   return Promise.resolve(importedModules[relativeModuleId]);
 };
