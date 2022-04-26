@@ -1,6 +1,0 @@
-sources:
-  - name: Countries
-    handler:
-      graphql:
-        endpoint: https://countries.trevorblades.com/
-        customFetch: './src/ct-fetch.ts'
