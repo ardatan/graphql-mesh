@@ -1,5 +1,11 @@
 # hasura-openbrewery-geodb
 
+## 0.5.237
+
+### Patch Changes
+
+- @graphql-mesh/json-schema@0.28.3
+
 ## 0.5.236
 
 ### Patch Changes
