@@ -12,6 +12,7 @@ import {
   SchemaComposer,
   ListComposer,
   UnionTypeComposer,
+  isSomeInputTypeComposer,
 } from 'graphql-compose';
 import {
   getNamedType,
@@ -280,12 +281,14 @@ export function getComposerFromJSONSchema(
             },
           });
         } else {
-          inputTypeComposer = getGenericJSONScalar({
-            schemaComposer,
-            isInput: true,
-            subSchema,
-            validateWithJSONSchema,
-          });
+          inputTypeComposer = isSomeInputTypeComposer(outputTypeComposer)
+            ? outputTypeComposer
+            : getGenericJSONScalar({
+                schemaComposer,
+                isInput: true,
+                subSchema,
+                validateWithJSONSchema,
+              });
         }
 
         return {
@@ -295,11 +298,22 @@ export function getComposerFromJSONSchema(
       }
 
       if (subSchema.anyOf && !subSchema.properties) {
+        if (subSchema.title === 'Any') {
+          const genericJSONScalar = getGenericJSONScalar({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+            validateWithJSONSchema,
+          });
+          return {
+            input: genericJSONScalar,
+            output: genericJSONScalar,
+          };
+        }
         // It should not have `required` because it is `anyOf` not `allOf`
         const inputFieldMap: InputTypeComposerFieldConfigMap = {};
         const fieldMap: ObjectTypeComposerFieldConfigMap<any, any> = {};
         let ableToUseGraphQLInputObjectType = true;
-        let ableToUseGraphQLObjectType = true;
         for (const typeComposers of subSchema.anyOf as any) {
           const { input: inputTypeComposer, output: outputTypeComposer } = typeComposers;
           if (inputTypeComposer instanceof ScalarTypeComposer) {
@@ -318,7 +332,11 @@ export function getComposerFromJSONSchema(
           }
 
           if (outputTypeComposer instanceof ScalarTypeComposer) {
-            ableToUseGraphQLObjectType = false;
+            const typeName = outputTypeComposer.getTypeName();
+            fieldMap[typeName] = {
+              type: outputTypeComposer,
+              resolve: root => root,
+            };
           } else {
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
@@ -331,30 +349,21 @@ export function getComposerFromJSONSchema(
           }
         }
 
-        let inputTypeComposer, outputTypeComposer;
-        if (ableToUseGraphQLObjectType) {
-          outputTypeComposer = schemaComposer.createObjectTC({
-            name: getValidTypeName({
-              schemaComposer,
-              isInput: false,
-              subSchema,
-            }),
-            description: subSchema.description,
-            fields: fieldMap,
-            extensions: {
-              validateWithJSONSchema,
-              examples: subSchema.examples,
-              default: subSchema.default,
-            },
-          });
-        } else {
-          outputTypeComposer = getGenericJSONScalar({
+        let inputTypeComposer;
+        const outputTypeComposer = schemaComposer.createObjectTC({
+          name: getValidTypeName({
             schemaComposer,
             isInput: false,
             subSchema,
+          }),
+          description: subSchema.description,
+          fields: fieldMap,
+          extensions: {
             validateWithJSONSchema,
-          });
-        }
+            examples: subSchema.examples,
+            default: subSchema.default,
+          },
+        });
 
         if (ableToUseGraphQLInputObjectType) {
           inputTypeComposer = schemaComposer.createInputTC({
@@ -371,14 +380,14 @@ export function getComposerFromJSONSchema(
             },
           });
         } else {
-          inputTypeComposer = ableToUseGraphQLObjectType
-            ? getGenericJSONScalar({
+          inputTypeComposer = isSomeInputTypeComposer(outputTypeComposer)
+            ? outputTypeComposer
+            : getGenericJSONScalar({
                 schemaComposer,
                 isInput: true,
                 subSchema,
                 validateWithJSONSchema,
-              })
-            : outputTypeComposer;
+              });
         }
 
         return {

@@ -12,22 +12,33 @@ describe('Multiple Responses Swagger', () => {
 
       type Query {
         \\"\\"\\"Optional extended description in Markdown.\\"\\"\\"
-        users: users_response
+        foo_by_id: foo_by_id_response
       }
 
-      union users_response = Void_container | Error
+      union foo_by_id_response = Foo | Error
+
+      type Foo {
+        id: String
+      }
+
+      type Error {
+        message: String
+        stack: String
+      }
+
+      type Mutation {
+        \\"\\"\\"Optional extended description in Markdown.\\"\\"\\"
+        post: post_response
+      }
+
+      union post_response = Void_container | Error
 
       type Void_container {
         Void: Void
       }
 
       \\"\\"\\"Represents empty values\\"\\"\\"
-      scalar Void
-
-      type Error {
-        message: String
-        stack: String
-      }"
+      scalar Void"
     `);
   });
 });

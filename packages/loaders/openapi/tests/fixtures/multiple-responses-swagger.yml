@@ -8,19 +8,35 @@ basePath: /v1
 schemes:
   - https
 paths:
-  /users:
+  /{id}:
     get:
-      summary: Returns a list of users.
+      summary: Return a valid response.
+      description: Optional extended description in Markdown.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Foo'
+        500:
+          description: Failed
+          schema:
+            $ref: '#/definitions/Error'
+  /:
+    post:
+      summary: Return a valid response.
       description: Optional extended description in Markdown.
       produces:
         - application/json
       responses:
         204:
-          description: Succesful response -- an update has been processed
-        400:
+          description: Successful response
+        500:
           description: Failed
           schema:
             $ref: '#/definitions/Error'
+
 definitions:
   Error:
     type: object
@@ -28,4 +44,9 @@ definitions:
       message:
         type: string
       stack:
+        type: string
+  Foo:
+    type: object
+    properties:
+      id:
         type: string
