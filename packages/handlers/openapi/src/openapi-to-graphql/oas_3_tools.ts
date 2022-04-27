@@ -35,7 +35,7 @@ import { InternalOptions } from './types/options';
 // Imports:
 import * as Swagger2OpenAPI from 'swagger2openapi';
 import { handleWarning, MitigationTypes } from './utils';
-import * as jsonptr from 'json-ptr';
+import jsonPointer from 'json-pointer';
 import pluralize from 'pluralize';
 import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
@@ -219,7 +219,7 @@ export function countOperationsWithPayload(oas: Oas3): number {
  * Resolves the given reference in the given object.
  */
 export function resolveRef(ref: string, oas: Oas3): any {
-  return jsonptr.JsonPointer.get(oas, ref);
+  return jsonPointer.get(oas, ref);
 }
 
 /**
@@ -540,7 +540,7 @@ export function getRequestSchemaAndNames(path: string, operation: OperationObjec
       }
 
       payloadSchema = {
-        description: description,
+        description,
         type: 'string',
       };
     }
@@ -652,7 +652,7 @@ export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
       }
 
       responseSchema = {
-        description: description,
+        description,
         type: 'string',
       };
     }

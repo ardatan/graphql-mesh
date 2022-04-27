@@ -1,7 +1,7 @@
 import { defaultOptions } from './statics/DefaultOptions';
 import _ from 'lodash';
 import { defaultModifiers } from './modifiers';
-import { JsonPointer } from 'json-ptr';
+import JsonPointer from 'json-pointer';
 
 export class Interpolator {
   constructor(options = defaultOptions) {
