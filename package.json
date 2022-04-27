@@ -88,8 +88,6 @@
     ]
   },
   "resolutions": {
-    "babel-jest": "28.0.1",
-    "jest-runner": "28.0.1",
     "graphql": "16.4.0",
     "@changesets/apply-release-plan": "6.0.0"
   }
