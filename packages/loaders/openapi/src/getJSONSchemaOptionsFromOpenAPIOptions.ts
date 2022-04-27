@@ -256,14 +256,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
                 : parameterExp.split('$').join('root.$');
             }
             if ('operationRef' in linkObj) {
-              const actualOperation = resolvePath(linkObj.operationRef.split('#')[1], oasOrSwagger);
-              if (!actualOperation) {
+              const [externalPath, ref] = linkObj.operationRef.split('#');
+              if (externalPath) {
                 if (process.env.DEBUG) {
                   console.warn(
                     `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
                   );
                 }
               } else {
+                const actualOperation = resolvePath(ref, oasOrSwagger);
                 if (actualOperation.operationId) {
                   const fieldName = sanitizeNameForGraphQL(actualOperation.operationId);
                   responseByStatusCode[responseKey].links[linkName] = {
