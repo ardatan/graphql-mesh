@@ -1,7 +1,7 @@
 import { JSONSchema } from './types';
-import JsonPointer from 'json-pointer';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import { AggregateError } from '@graphql-mesh/utils';
+import { resolvePath } from './dereferenceObject';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {
   const breakingChanges: string[] = [];
@@ -9,7 +9,7 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
     oldSchema,
     (oldSubSchema, { path }) => {
       if (typeof newSchema === 'object') {
-        const newSubSchema = JsonPointer.get(newSchema, path);
+        const newSubSchema = resolvePath(path, newSchema);
         if (typeof oldSubSchema === 'boolean') {
           if (newSubSchema !== oldSubSchema) {
             breakingChanges.push(`${path} is changed from ${oldSubSchema} to ${newSubSchema}`);

@@ -29,7 +29,10 @@ describe('compareJSONSchemas', () => {
       await compareJSONSchemas(oldSchema, newSchema);
       expect(true).toBe(false);
     } catch (e) {
+      console.log(e);
+      expect(e.errors).toBeDefined();
       const errors = [...e.errors];
+      expect(errors).toHaveLength(2);
       expect(errors[0].message).toBe(`/properties/bar/type is changed from string to undefined`);
       expect(errors[1].message).toBe(`/properties doesn't have bar`);
     }

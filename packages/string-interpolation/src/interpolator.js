@@ -137,7 +137,14 @@ export class Interpolator {
     const [prop, ptr] = key.split('#');
     const propData = _.get(data, prop);
     if (ptr) {
-      return JsonPointer.get(propData, ptr);
+      try {
+          return JsonPointer.get(propData, ptr);
+      } catch (e) {
+        if (e.message.startsWith('Invalid reference')) {
+          return undefined;
+        }
+        throw e;
+      }
     }
     return propData;
   }

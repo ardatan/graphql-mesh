@@ -219,7 +219,14 @@ export function countOperationsWithPayload(oas: Oas3): number {
  * Resolves the given reference in the given object.
  */
 export function resolveRef(ref: string, oas: Oas3): any {
-  return JsonPointer.get(oas, ref.replace('#/', '/'));
+  try {
+    return JsonPointer.get(oas, ref.replace('#/', '/'));
+  } catch (e) {
+    if (e.message.startsWith('Invalid reference')) {
+      return undefined;
+    }
+    throw e;
+  }
 }
 
 /**
