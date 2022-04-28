@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,9 +28,9 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.71.2",
-    "@graphql-mesh/utils": "0.34.2",
-    "@graphql-mesh/cache-inmemory-lru": "0.6.16",
+    "@graphql-mesh/types": "0.71.3",
+    "@graphql-mesh/utils": "0.34.3",
+    "@graphql-mesh/cache-inmemory-lru": "0.6.17",
     "ioredis": "5.0.4",
     "tslib": "^2.3.1"
   },

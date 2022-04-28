@@ -1,5 +1,19 @@
 # @graphql-mesh/openapi
 
+## 0.25.0
+
+### Minor Changes
+
+- 2e9addd80: Use platform agnostic json-pointer instead of json-ptr
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/store@0.8.1
+  - @graphql-mesh/types@0.71.3
+
 ## 0.24.13
 
 ### Patch Changes

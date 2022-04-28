@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.34.3
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/string-interpolation@0.1.0
+  - @graphql-mesh/types@0.71.3
+
 ## 0.34.2
 
 ### Patch Changes

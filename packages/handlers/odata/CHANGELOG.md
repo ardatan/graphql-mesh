@@ -1,5 +1,15 @@
 # @graphql-mesh/odata
 
+## 0.17.14
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/store@0.8.1
+  - @graphql-mesh/types@0.71.3
+
 ## 0.17.13
 
 ### Patch Changes

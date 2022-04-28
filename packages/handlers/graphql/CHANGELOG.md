@@ -1,5 +1,18 @@
 # @graphql-mesh/graphql
 
+## 0.24.0
+
+### Minor Changes
+
+- 2e9addd80: Bump Url Loader to have Node 18 support
+
+### Patch Changes
+
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/store@0.8.1
+  - @graphql-mesh/types@0.71.3
+
 ## 0.23.10
 
 ### Patch Changes
