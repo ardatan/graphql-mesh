@@ -1,11 +1,18 @@
-import { JsonPointer } from 'json-ptr';
+import JsonPointer from 'json-pointer';
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 
 export const resolvePath = (path: string, root: any): any => {
-  return JsonPointer.get(root, path);
+  try {
+    return JsonPointer.get(root, path);
+  } catch (e) {
+    if (e.message?.startsWith('Invalid reference')) {
+      return undefined;
+    }
+    throw e;
+  }
 };
 function isRefObject(obj: any): obj is { $ref: string } {
   return typeof obj === 'object' && obj.$ref;
