@@ -10,14 +10,14 @@ import {
   OperationResult,
   getOperationName,
 } from '@urql/core';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
 import { DocumentNode } from 'graphql';
 
 const asyncIterator = typeof Symbol !== 'undefined' ? Symbol.asyncIterator : null;
 
 const makeExecuteSource = (
   operation: Operation,
-  mesh$: Promise<MeshInstance>,
+  options: MeshExchangeOptions,
   document: DocumentNode,
   variables: Record<string, any>,
   context: Record<string, any>,
@@ -27,13 +27,13 @@ const makeExecuteSource = (
   return make<OperationResult>(observer => {
     let ended = false;
 
-    Promise.resolve(mesh$)
-      .then((mesh): any => {
+    Promise.resolve()
+      .then((): any => {
         if (ended) return;
         if (operation.kind === 'subscription') {
-          return mesh.subscribe(document, variables, context, rootValue, operationName);
+          return options.subscribe(document, variables, context, rootValue, operationName);
         }
-        return mesh.execute(document, variables, context, rootValue, operationName);
+        return options.execute(document, variables, context, rootValue, operationName);
       })
       .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
@@ -77,11 +77,15 @@ const makeExecuteSource = (
   });
 };
 
+export interface MeshExchangeOptions {
+  execute: ExecuteMeshFn;
+  subscribe?: SubscribeMeshFn;
+}
+
 /** Exchange for executing queries locally on a schema using graphql-js. */
 export const meshExchange =
-  (getBuiltMesh: () => Promise<MeshInstance>): Exchange =>
+  (options: MeshExchangeOptions): Exchange =>
   ({ forward }) => {
-    const mesh$ = getBuiltMesh();
     return ops$ => {
       const sharedOps$ = share(ops$);
 
@@ -100,7 +104,7 @@ export const meshExchange =
           return pipe(
             makeExecuteSource(
               operation,
-              mesh$,
+              options,
               operation.query,
               operation.variables,
               {},

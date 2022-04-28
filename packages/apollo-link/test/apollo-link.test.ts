@@ -11,7 +11,7 @@ describe('GraphApolloLink', () => {
   beforeEach(async () => {
     mesh = await getTestMesh();
     client = new ApolloClient({
-      link: new MeshApolloLink(async () => mesh),
+      link: new MeshApolloLink(mesh),
       cache: new InMemoryCache(),
     });
   });

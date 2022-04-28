@@ -236,7 +236,7 @@ export async function generateTsArtifacts(
                 .join(' & ')} & BaseMeshContext;`;
 
               const importCodes = [
-                `import { getMesh } from '@graphql-mesh/runtime';`,
+                `import { getMesh, ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
                 `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
                 `import { fileURLToPath } from '@graphql-mesh/utils';`,
@@ -300,6 +300,10 @@ export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshCo
 export const execute: ExecuteMeshFn = (...args) => ${
                 cliParams.builtMeshFactoryName
               }().then(({ execute }) => execute(...args));
+
+export const subscribe: SubscribeMeshFn = (...args) => ${
+                cliParams.builtMeshFactoryName
+              }().then(({ subscribe }) => subscribe(...args));
 
 export function ${
                 cliParams.builtMeshSDKFactoryName

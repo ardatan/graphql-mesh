@@ -1,12 +1,15 @@
 import { ApolloLink, FetchResult, Observable, Operation } from '@apollo/client/core';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
 import { getOperationAST } from 'graphql';
 
+export interface MeshApolloLinkOptions {
+  execute: ExecuteMeshFn;
+  subscribe?: SubscribeMeshFn;
+}
+
 export class MeshApolloLink extends ApolloLink {
-  mesh$: Promise<MeshInstance>;
-  constructor(getBuiltMesh: () => Promise<MeshInstance>) {
+  constructor(private options: MeshApolloLinkOptions) {
     super();
-    this.mesh$ = getBuiltMesh();
   }
 
   request(operation: Operation): Observable<FetchResult> {
@@ -17,10 +20,9 @@ export class MeshApolloLink extends ApolloLink {
     return new Observable(observer => {
       Promise.resolve()
         .then(async () => {
-          const mesh = await this.mesh$;
           try {
             if (operationAst.operation === 'subscription') {
-              const subscriptionResult = await mesh.subscribe(
+              const subscriptionResult = await this.options.subscribe(
                 operation.query,
                 operation.variables,
                 operation.getContext(),
@@ -37,7 +39,7 @@ export class MeshApolloLink extends ApolloLink {
                 observer.complete();
               }
             } else {
-              const result = await mesh.execute(
+              const result = await this.options.execute(
                 operation.query,
                 operation.variables,
                 operation.getContext(),
