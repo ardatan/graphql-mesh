@@ -1,5 +1,16 @@
 # @omnigraph/raml
 
+## 0.5.36
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+- Updated dependencies [2e9addd80]
+  - json-machete@0.8.0
+  - @omnigraph/json-schema@0.19.1
+  - @graphql-mesh/utils@0.34.3
+
 ## 0.5.35
 
 ### Patch Changes

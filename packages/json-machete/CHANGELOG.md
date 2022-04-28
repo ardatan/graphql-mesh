@@ -1,5 +1,17 @@
 # json-machete
 
+## 0.8.0
+
+### Minor Changes
+
+- 2e9addd80: Use platform agnostic json-pointer instead of json-ptr
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+
 ## 0.7.15
 
 ### Patch Changes

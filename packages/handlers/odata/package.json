@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/odata",
-  "version": "0.17.13",
+  "version": "0.17.14",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -33,9 +33,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.1.2",
-    "@graphql-mesh/types": "0.71.2",
-    "@graphql-mesh/store": "0.8.0",
-    "@graphql-mesh/utils": "0.34.2",
+    "@graphql-mesh/types": "0.71.3",
+    "@graphql-mesh/store": "0.8.1",
+    "@graphql-mesh/utils": "0.34.3",
     "@graphql-tools/utils": "8.6.9",
     "http-string-parser": "0.0.6",
     "cross-undici-fetch": "0.3.1",
