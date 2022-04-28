@@ -18,7 +18,7 @@ import { getMeshSdk } from './.mesh';
 
 async function test() {
   // Load mesh config and get the sdkClient from it
-  const sdk = await getMeshSdk();
+  const sdk = getMeshSdk();
 
   // Execute `myQuery` and get a type-safe result
   // Variables and result are typed: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] }

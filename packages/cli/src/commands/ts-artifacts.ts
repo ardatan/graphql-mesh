@@ -288,16 +288,26 @@ export const documentsInSDL = /*#__PURE__*/ [${documents.map(
                 documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
               )}];
 
-export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
-  const meshConfig = await getMeshOptions();
-  return getMesh<MeshContext>(meshConfig);
+let meshInstance$: Promise<MeshInstance<MeshContext>>;
+
+export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
+  if (meshInstance$ == null) {
+    meshInstance$ = getMeshOptions().then(meshOptions => getMesh<MeshContext>(meshOptions));
+  }
+  return meshInstance$;
 }
 
-export async function ${
+export const execute: ExecuteMeshFn = (...args) => ${
+                cliParams.builtMeshFactoryName
+              }().then(({ execute }) => execute(...args));
+
+export function ${
                 cliParams.builtMeshSDKFactoryName
               }<TGlobalContext = any, TOperationContext = any>(globalContext?: TGlobalContext) {
-  const { sdkRequesterFactory } = await ${cliParams.builtMeshFactoryName}();
-  return getSdk<TOperationContext>(sdkRequesterFactory(globalContext));
+  const sdkRequester$ = ${
+    cliParams.builtMeshFactoryName
+  }().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
+  return getSdk<TOperationContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }`;
 
               return {

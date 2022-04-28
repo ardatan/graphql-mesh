@@ -1,12 +1,10 @@
 import * as React from 'react';
 import './App.css';
-import { useMeshSdk } from './useMeshSdk';
-import { DailyForecastFragment } from '../.mesh';
+import { getMeshSDK } from '../.mesh';
 
 function App() {
   const [forecastData, setForecastData] = React.useState<DailyForecastFragment>();
-
-  const sdk = useMeshSdk();
+  const sdk = getMeshSDK();
 
   React.useEffect(() => {
     sdk

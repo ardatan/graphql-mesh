@@ -1,7 +1,6 @@
 import Head from 'next/head';
-import { ListPetsQuery } from '../.mesh';
+import { ListPetsQuery, getMeshSDK } from '../.mesh';
 import styles from '../styles/Home.module.css';
-import { getSharedSdk } from '../utils/get-sdk';
 
 export default function Home(props: { petsData: ListPetsQuery }) {
   return (
@@ -24,7 +23,7 @@ export default function Home(props: { petsData: ListPetsQuery }) {
 }
 
 export async function getServerSideProps() {
-  const sdk = await getSharedSdk();
+  const sdk = getMeshSDK();
   return {
     props: {
       petsData: await sdk.ListPets(),
