@@ -18,6 +18,6 @@
     "graphql": "16.4.0"
   },
   "devDependencies": {
-    "jest": "28.0.1"
+    "jest": "28.0.2"
   }
 }
