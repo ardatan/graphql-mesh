@@ -3002,17 +3002,17 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.9.15":
-  version "7.9.15"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.9.15.tgz#a33a76465e1cbddda088b5ef9787417b48fcdd45"
-  integrity sha512-WwYtsy4nEUYPOKgrCjhOdLNebnbLS4Rqv++TRlV3Pd4Zi+qVNsEQVwlfVEQZK4qelEhWNqessZILu/jx5B6Vng==
+"@graphql-tools/url-loader@7.9.16":
+  version "7.9.16"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.9.16.tgz#f0f0e0612da58c3c0f80ecd9c1aaa5451b462e39"
+  integrity sha512-HQOoNJ2hh5Sl7OFMpqt3TTrgfP5IvTjwEPULaGDvRu3RIhGfeXzswovld36GlQDzgi18Wld1Thsm60xri+hiDA==
   dependencies:
     "@graphql-tools/delegate" "8.7.7"
     "@graphql-tools/utils" "8.6.9"
     "@graphql-tools/wrap" "8.4.16"
     "@n1ru4l/graphql-live-query" "^0.9.0"
     "@types/ws" "^8.0.0"
-    cross-undici-fetch "^0.3.0"
+    cross-undici-fetch "^0.3.1"
     dset "^3.1.0"
     extract-files "^11.0.0"
     graphql-ws "^5.4.1"
@@ -5888,15 +5888,15 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@14.14.3", "@types/node@>=12.12.47", "@types/node@>=13.7.0", "@types/node@^14.14.3":
-  version "14.14.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.3.tgz#e1c09064121f894baaad2bd9f12ce4a41bffb274"
-  integrity sha512-33/L34xS7HVUx23e0wOT2V1qPF1IrHgQccdJVm9uXGTB9vFBrrzBtkQymT8VskeKOxjz55MSqMv0xuLq+u98WQ==
-
-"@types/node@16.11.31":
+"@types/node@*", "@types/node@16.11.31", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
   version "16.11.31"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.31.tgz#1dad8138efee6808809bb80f9e66bbe3e46c9277"
   integrity sha512-wh/d0pcu/Ie2mqTIqh4tjd0mLAB4JWxOjHQtLN20HS7sjMHiV4Afr+90hITTyZcxowwha5wjv32jGEn1zkEFMg==
+
+"@types/node@14.14.3", "@types/node@^14.14.3":
+  version "14.14.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.3.tgz#e1c09064121f894baaad2bd9f12ce4a41bffb274"
+  integrity sha512-33/L34xS7HVUx23e0wOT2V1qPF1IrHgQccdJVm9uXGTB9vFBrrzBtkQymT8VskeKOxjz55MSqMv0xuLq+u98WQ==
 
 "@types/node@^10.0.3", "@types/node@^10.1.0":
   version "10.17.60"
@@ -6793,17 +6793,7 @@ ajv-keywords@^3.1.0, ajv-keywords@^3.4.1, ajv-keywords@^3.5.2:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"
   integrity sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==
 
-ajv@*, ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
-  version "6.12.6"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
-  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
-  dependencies:
-    fast-deep-equal "^3.1.1"
-    fast-json-stable-stringify "^2.0.0"
-    json-schema-traverse "^0.4.1"
-    uri-js "^4.2.2"
-
-ajv@8.11.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0, ajv@^8.6.2:
+ajv@*, ajv@8.11.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0, ajv@^8.6.2:
   version "8.11.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.0.tgz#977e91dd96ca669f54a11e23e378e33b884a565f"
   integrity sha512-wGgprdCvMalC0BztXvitD2hC04YffAvtsUn93JbGXYLAtCUO4xd17mCCZQxUOItiBwZvJScWo8NIvQMQ71rdpg==
@@ -6811,6 +6801,16 @@ ajv@8.11.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0, ajv@^8.6.2:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
+    uri-js "^4.2.2"
+
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
+  version "6.12.6"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
+  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    fast-json-stable-stringify "^2.0.0"
+    json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
 algoliasearch-helper@^3.6.2:
@@ -9312,10 +9312,10 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-undici-fetch@0.3.0, cross-undici-fetch@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.3.0.tgz#d03764f0a1bcb745855bba8464c231d46ee14cfa"
-  integrity sha512-as3gHg3EJrc4QMS11/GdHtyY+m3LnIf8GrziHQRe/dGxSHqEP4RcONJ/3UVaPeA1j687aYvwzWMPWKgqsdXbtA==
+cross-undici-fetch@0.3.1, cross-undici-fetch@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.3.1.tgz#e8fc572822b192215b5e4ff21c0c6657497d533f"
+  integrity sha512-WMo0uGuTIeGw5y/aUEBwvMROJTsaCRyCxTFToERnd8RqJxRH8QgL42KzV++xmUIS9X1j6PqJHUWMPH2pn6M9mw==
   dependencies:
     abort-controller "^3.0.0"
     form-data-encoder "^1.7.1"

@@ -39,7 +39,7 @@
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/cross-helpers": "0.1.2",
     "@graphql-mesh/types": "0.71.2",
-    "cross-undici-fetch": "0.3.0",
+    "cross-undici-fetch": "0.3.1",
     "chalk": "4.1.2",
     "dayjs": "1.11.1",
     "fetchache": "0.1.2",
