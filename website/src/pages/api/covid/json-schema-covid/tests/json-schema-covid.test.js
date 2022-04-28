@@ -25,7 +25,6 @@ describe('JSON Schema Covid', () => {
     const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');
     const { execute } = await mesh$;
     const result = await execute(getDataStep1Query);
-    result.errors?.forEach(error => console.log(error));
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(result?.data?.case?.countryRegion).toBe('France');
