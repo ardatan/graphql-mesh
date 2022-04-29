@@ -83,12 +83,14 @@ const LiveDemo: FC<{ className?: string }> = ({ className }) => {
         <iframe
           loading="lazy"
           src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
+          /* @ts-ignore */
           css={[tw`w-full h-[500px] rounded pt-8`]}
           title={exampleRepo}
           allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
           sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
         />
       ) : (
+        /* @ts-ignore */
         <div css={[tw`w-full h-[500px] rounded pt-8 flex justify-center items-center`]}>
           <div>Loading...</div>
         </div>
