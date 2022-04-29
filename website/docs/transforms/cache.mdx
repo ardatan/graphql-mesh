@@ -14,10 +14,9 @@ To get started with this transform, install it:
 
 <PackageInstall packages="@graphql-mesh/transform-cache" />
 
-> GraphQL Mesh uses a default in-memory LRU cache, but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/inmemory-lru) for more info.
+> GraphQL Mesh uses a default localforage cache(it is fallbacked to LRU cache in NodeJS), but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/localforage) for more info.
 
 > We'd recommend this transform be used on the root level, not the handler level. It might not work as expected if you use it on a handler level.
-
 
 
 <p>&nbsp;</p>

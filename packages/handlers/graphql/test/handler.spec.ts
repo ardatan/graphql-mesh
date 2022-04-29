@@ -1,4 +1,4 @@
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import GraphQLHandler from '../src';
 import { PubSub, defaultImportFn, DefaultLogger } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';

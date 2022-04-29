@@ -1,8 +1,0 @@
-type Cache {
-  inmemoryLRU: InMemoryLRUConfig
-}
-
-type InMemoryLRUConfig @md {
-  max: Int
-  ttl: Int
-}

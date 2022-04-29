@@ -1,10 +1,11 @@
 import { ImportFn, KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
+import { createLruCache, defaultImportFn } from '@graphql-mesh/utils';
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   private localforage$: Promise<typeof import('localforage')>;
-  constructor(config: YamlConfig.LocalforageConfig & { importFn: ImportFn }) {
+  constructor(config?: YamlConfig.LocalforageConfig & { importFn: ImportFn }) {
     if (!globalThis.localStorage) {
-      const storage = new Map();
+      const storage = createLruCache();
       globalThis.localStorage = {
         get length() {
           return storage.size;
@@ -16,8 +17,8 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
         setItem: (key, value) => storage.set(key, value),
       };
     }
-    this.localforage$ = config
-      .importFn('localforage')
+    const importFn = config?.importFn ?? defaultImportFn;
+    this.localforage$ = importFn('localforage')
       .then(localforage => localforage.default || localforage)
       .then(localforage => {
         const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE'];

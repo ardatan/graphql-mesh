@@ -1,4 +1,4 @@
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';

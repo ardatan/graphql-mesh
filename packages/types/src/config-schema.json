@@ -8,9 +8,6 @@
         "file": {
           "$ref": "#/definitions/FileCacheConfig"
         },
-        "inmemoryLRU": {
-          "$ref": "#/definitions/InMemoryLRUConfig"
-        },
         "localforage": {
           "$ref": "#/definitions/LocalforageConfig"
         },
@@ -26,19 +23,6 @@
       "properties": {
         "path": {
           "type": "string"
-        }
-      }
-    },
-    "InMemoryLRUConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "InMemoryLRUConfig",
-      "properties": {
-        "max": {
-          "type": "integer"
-        },
-        "ttl": {
-          "type": "integer"
         }
       }
     },

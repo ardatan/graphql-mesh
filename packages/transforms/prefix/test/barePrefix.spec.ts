@@ -1,6 +1,6 @@
 import PrefixTransform from '../src';
 import { buildSchema, printSchema, GraphQLSchema, GraphQLObjectType } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';

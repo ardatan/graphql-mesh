@@ -83,7 +83,7 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
 }
 
 export async function resolveCache(
-  cacheConfig: YamlConfig.Config['cache'] = { inmemoryLru: {} },
+  cacheConfig: YamlConfig.Config['cache'] = { localforage: {} },
   importFn: ImportFn,
   rootStore: MeshStore,
   cwd: string,

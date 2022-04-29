@@ -1,6 +1,6 @@
 import { MeshPubSub, KeyValueCache, Logger } from '@graphql-mesh/types';
 import { printSchema, GraphQLInterfaceType, parse, ExecutionResult } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { addMock, resetMocks, MockResponse as Response, mockFetch } from './custom-fetch';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';

@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.71.4",
+    "@graphql-mesh/utils": "0.34.4",
     "localforage": "1.10.0",
     "tslib": "^2.3.1"
   },
