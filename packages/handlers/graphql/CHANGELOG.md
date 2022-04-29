@@ -1,5 +1,18 @@
 # @graphql-mesh/graphql
 
+## 0.25.0
+
+### Minor Changes
+
+- ac2f700bf: Highest Value strategy
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - @graphql-mesh/store@0.8.2
+  - @graphql-mesh/types@0.71.4
+
 ## 0.24.0
 
 ### Minor Changes
