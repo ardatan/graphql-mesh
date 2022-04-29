@@ -83,7 +83,11 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
 }
 
 export async function resolveCache(
-  cacheConfig: YamlConfig.Config['cache'] = { localforage: {} },
+  cacheConfig: YamlConfig.Config['cache'] = {
+    localforage: {
+      driver: ['WEBSQL', 'INDEXEDDB', 'LOCALSTORAGE'],
+    },
+  },
   importFn: ImportFn,
   rootStore: MeshStore,
   cwd: string,

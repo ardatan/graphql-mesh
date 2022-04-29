@@ -20,7 +20,7 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
     const importFn = config?.importFn ?? defaultImportFn;
     this.localforage$ = importFn('localforage')
       .then(localforage => localforage.default || localforage)
-      .then(localforage => {
+      .then((localforage: typeof import('localforage')) => {
         const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE'];
         const runtimeConfig = {
           ...config,
