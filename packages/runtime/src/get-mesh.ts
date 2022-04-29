@@ -510,22 +510,27 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
           ...globalContext,
           ...contextValue,
         });
-        if ('errors' in result) {
+        if (isAsyncIterable(result)) {
+          return mapAsyncIterator(result, result => {
+            if (result?.errors?.length) {
+              return new AggregateError(result.errors);
+            }
+            return result?.data;
+          });
+        }
+        if (result?.errors?.length) {
           return new AggregateError(result.errors);
         }
-        if (isAsyncIterable(result)) {
-          return mapAsyncIterator(result, result => result.data);
-        }
-        return result.data;
+        return result?.data;
       } else {
         const result = await meshExecute(document, variables, {
           ...globalContext,
           ...contextValue,
         });
-        if ('errors' in result) {
+        if (result?.errors?.length) {
           return new AggregateError(result.errors);
         }
-        return result.data;
+        return result?.data;
       }
     };
   }

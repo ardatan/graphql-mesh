@@ -8,7 +8,7 @@ import {
   Logger,
   MeshMerger,
 } from '@graphql-mesh/types';
-import { DocumentNode } from 'graphql';
+import { DocumentNode, ExecutionResult } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
@@ -43,7 +43,7 @@ export type ExecuteMeshFn<TData = any, TVariables = any, TContext = any, TRootVa
   context?: TContext,
   rootValue?: TRootValue,
   operationName?: string
-) => Promise<TData | null | undefined>;
+) => Promise<ExecutionResult<TData>>;
 
 export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, TData = any> = (
   document: GraphQLOperation<TData, TVariables>,
@@ -51,7 +51,7 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   context?: TContext,
   rootValue?: TRootValue,
   operationName?: string
-) => Promise<TData | null | undefined | AsyncIterableIterator<TData | null | undefined>>;
+) => Promise<ExecutionResult<TData> | AsyncIterable<ExecutionResult<TData>>>;
 
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;

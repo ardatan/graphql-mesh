@@ -12,8 +12,7 @@ import {
 } from '@urql/core';
 import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
 import { DocumentNode } from 'graphql';
-
-const asyncIterator = typeof Symbol !== 'undefined' ? Symbol.asyncIterator : null;
+import { isAsyncIterable } from '@graphql-tools/utils';
 
 const makeExecuteSource = (
   operation: Operation,
@@ -24,26 +23,19 @@ const makeExecuteSource = (
   operationName: string,
   rootValue: any
 ): Source<OperationResult> => {
+  const operationFn = operation.kind === 'subscription' ? options.subscribe : options.execute;
   return make<OperationResult>(observer => {
     let ended = false;
-
-    Promise.resolve()
-      .then((): any => {
-        if (ended) return;
-        if (operation.kind === 'subscription') {
-          return options.subscribe(document, variables, context, rootValue, operationName);
-        }
-        return options.execute(document, variables, context, rootValue, operationName);
-      })
+    operationFn(document, variables, context, rootValue, operationName)
       .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
           return;
-        } else if (!asyncIterator || !result[asyncIterator]) {
-          observer.next(makeResult(operation, result as ExecutionResult));
+        } else if (!isAsyncIterable(result)) {
+          observer.next(makeResult(operation, result));
           return;
         }
 
-        const iterator: AsyncIterator<ExecutionResult> = result[asyncIterator!]();
+        const iterator: AsyncIterator<ExecutionResult> = result[Symbol.asyncIterator]();
         let prevResult: OperationResult | null = null;
 
         function next({ done, value }: { done?: boolean; value: ExecutionResult }): any {
@@ -56,8 +48,8 @@ const makeExecuteSource = (
           if (!done && !ended) {
             return iterator.next().then(next);
           }
-          if (ended) {
-            iterator.return && iterator.return();
+          if (ended && iterator.return != null) {
+            return iterator.return();
           }
         }
 

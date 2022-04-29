@@ -1,54 +1,42 @@
-import { ApolloLink, FetchResult, Observable, Operation } from '@apollo/client/core';
+import { ApolloLink, FetchResult, Observable, Operation, RequestHandler } from '@apollo/client/core';
 import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import { getOperationAST } from 'graphql';
 
-export interface MeshApolloLinkOptions {
+export interface MeshApolloRequestHandlerOptions {
   execute: ExecuteMeshFn;
   subscribe?: SubscribeMeshFn;
 }
 
-export class MeshApolloLink extends ApolloLink {
-  constructor(private options: MeshApolloLinkOptions) {
-    super();
-  }
-
-  request(operation: Operation): Observable<FetchResult> {
+function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions): RequestHandler {
+  return function meshApolloRequestHandler(operation: Operation): Observable<FetchResult> {
     const operationAst = getOperationAST(operation.query, operation.operationName);
     if (!operationAst) {
       throw new Error('GraphQL operation not found');
     }
+    const operationFn = operationAst.operation === 'subscription' ? options.subscribe : options.execute;
     return new Observable(observer => {
       Promise.resolve()
         .then(async () => {
           try {
-            if (operationAst.operation === 'subscription') {
-              const subscriptionResult = await this.options.subscribe(
-                operation.query,
-                operation.variables,
-                operation.getContext(),
-                {},
-                operation.operationName
-              );
-              if (Symbol.asyncIterator in subscriptionResult) {
-                for await (const result of subscriptionResult) {
-                  if (observer.closed) {
-                    return;
-                  }
-                  observer.next(result);
+            const results = await operationFn(
+              operation.query,
+              operation.variables,
+              operation.getContext(),
+              {},
+              operation.operationName
+            );
+            if (isAsyncIterable(results)) {
+              for await (const result of results) {
+                if (observer.closed) {
+                  return;
                 }
-                observer.complete();
-              }
-            } else {
-              const result = await this.options.execute(
-                operation.query,
-                operation.variables,
-                operation.getContext(),
-                {},
-                operation.operationName
-              );
-
-              if (!observer.closed) {
                 observer.next(result);
+              }
+              observer.complete();
+            } else {
+              if (!observer.closed) {
+                observer.next(results);
                 observer.complete();
               }
             }
@@ -64,5 +52,11 @@ export class MeshApolloLink extends ApolloLink {
           }
         });
     });
+  };
+}
+
+export class MeshApolloLink extends ApolloLink {
+  constructor(options: MeshApolloRequestHandlerOptions) {
+    super(createMeshApolloRequestHandler(options));
   }
 }
