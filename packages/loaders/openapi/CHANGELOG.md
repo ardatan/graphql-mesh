@@ -1,5 +1,15 @@
 # @omnigraph/openapi
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - json-machete@0.8.1
+  - @omnigraph/json-schema@0.19.2
+  - @graphql-mesh/types@0.71.4
+
 ## 0.6.1
 
 ### Patch Changes

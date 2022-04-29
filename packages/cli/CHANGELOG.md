@@ -1,5 +1,20 @@
 # @graphql-mesh/cli
 
+## 0.69.0
+
+### Minor Changes
+
+- ac2f700bf: SDK Factory function no longer returns promise and export execute in artifacts
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - @graphql-mesh/config@0.35.4
+  - @graphql-mesh/runtime@0.34.4
+  - @graphql-mesh/store@0.8.2
+  - @graphql-mesh/types@0.71.4
+
 ## 0.68.4
 
 ### Patch Changes

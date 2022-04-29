@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.34.4
+
+### Patch Changes
+
+- ddbbec8a8: Supress dynamic import warnings in Vite
+  - @graphql-mesh/types@0.71.4
+
 ## 0.34.3
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/urql-exchange
 
+## 3.1.0
+
+### Minor Changes
+
+- ac2f700bf: Improve options
+
+### Patch Changes
+
+- @graphql-mesh/runtime@0.34.4
+
 ## 3.0.1
 
 ### Patch Changes
