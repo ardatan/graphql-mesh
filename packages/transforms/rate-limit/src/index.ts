@@ -15,11 +15,10 @@ export default class RateLimitTransform implements MeshTransform {
       });
     }
     if (options.pubsub) {
-      options.pubsub
-        .subscribe('destroy', () => {
-          this.timeouts.forEach(timeout => clearTimeout(timeout));
-        })
-        .catch(e => console.warn(`Error cleaning up rate limit transform: ${e.stack || e.message || e}`));
+      const id$ = options.pubsub.subscribe('destroy', () => {
+        this.timeouts.forEach(timeout => clearTimeout(timeout));
+        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      });
     }
   }
 

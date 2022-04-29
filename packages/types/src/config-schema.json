@@ -727,11 +727,29 @@
         },
         "strategy": {
           "type": "string",
-          "enum": ["fallback", "race"],
-          "description": "Handling strategy (default: fallback) (Allowed values: fallback, race)"
+          "enum": ["fallback", "race", "highestValue"],
+          "description": "Handling strategy (default: fallback) (Allowed values: fallback, race, highestValue)"
+        },
+        "strategyConfig": {
+          "$ref": "#/definitions/GraphQLHandlerhighestValueStrategyConfig",
+          "description": "Handling strategy configuration"
         }
       },
       "required": ["sources"]
+    },
+    "GraphQLHandlerhighestValueStrategyConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLHandlerhighestValueStrategyConfig",
+      "properties": {
+        "selectionSet": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["selectionSet", "value"]
     },
     "GraphQLHandlerCodeFirstConfiguration": {
       "additionalProperties": false,

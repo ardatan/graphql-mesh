@@ -292,7 +292,13 @@ let meshInstance$: Promise<MeshInstance<MeshContext>>;
 
 export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
   if (meshInstance$ == null) {
-    meshInstance$ = getMeshOptions().then(meshOptions => getMesh<MeshContext>(meshOptions));
+    meshInstance$ = getMeshOptions().then(meshOptions => getMesh<MeshContext>(meshOptions)).then(mesh => {
+      const id$ = mesh.pubsub.subscribe('destroy', () => {
+        meshInstance$ = undefined;
+        id$.then(id => mesh.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      });
+      return mesh;
+    });
   }
   return meshInstance$;
 }

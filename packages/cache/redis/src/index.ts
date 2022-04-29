@@ -10,7 +10,7 @@ function interpolateStrWithEnv(str: string): string {
 export default class RedisCache<V = string> implements KeyValueCache<V> {
   private client: Redis;
 
-  constructor(options: YamlConfig.Transform['redis'] & { pubsub: MeshPubSub }) {
+  constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub }) {
     if (options.url) {
       const redisUrl = new URL(options.url);
 
@@ -43,9 +43,15 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         return new InMemoryLRUCache() as any;
       }
     }
-    options.pubsub.subscribe('destroy', () => {
-      this.client.disconnect(false);
-    });
+    const id$ = options.pubsub
+      .subscribe('destroy', () => {
+        this.client.disconnect(false);
+        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      })
+      .catch(err => {
+        console.error(err);
+        return 0;
+      });
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {

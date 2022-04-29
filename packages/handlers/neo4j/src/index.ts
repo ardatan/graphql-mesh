@@ -46,19 +46,18 @@ export default class Neo4JHandler implements MeshHandler {
       },
     });
 
-    this.pubsub
-      .subscribe('destroy', () => {
-        this.logger.debug(() => 'Closing Neo4j');
-        driver
-          .close()
-          .then(() => {
-            this.logger.debug(() => 'Neo4j has been closed');
-          })
-          .catch(error => {
-            this.logger.debug(() => `Neo4j couldn't be closed: ${error.message}`);
-          });
-      })
-      .catch(e => this.logger.error(e));
+    const id$ = this.pubsub.subscribe('destroy', () => {
+      this.logger.debug(() => 'Closing Neo4j');
+      driver
+        .close()
+        .then(() => {
+          this.logger.debug(() => 'Neo4j has been closed');
+        })
+        .catch(error => {
+          this.logger.debug(() => `Neo4j couldn't be closed: ${error.message}`);
+        });
+      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
+    });
 
     const typeDefs = await this.getCachedTypeDefs(driver);
 
