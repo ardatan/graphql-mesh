@@ -8,6 +8,7 @@ export interface MeshApolloRequestHandlerOptions {
   subscribe?: SubscribeMeshFn;
 }
 
+const ROOT_VALUE = {};
 function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions): RequestHandler {
   return function meshApolloRequestHandler(operation: Operation): Observable<FetchResult> {
     const operationAst = getOperationAST(operation.query, operation.operationName);
@@ -23,7 +24,7 @@ function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions
               operation.query,
               operation.variables,
               operation.getContext(),
-              {},
+              ROOT_VALUE,
               operation.operationName
             );
             if (isAsyncIterable(results)) {

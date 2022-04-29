@@ -11,22 +11,15 @@ import {
   getOperationName,
 } from '@urql/core';
 import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
-import { DocumentNode } from 'graphql';
 import { isAsyncIterable } from '@graphql-tools/utils';
 
-const makeExecuteSource = (
-  operation: Operation,
-  options: MeshExchangeOptions,
-  document: DocumentNode,
-  variables: Record<string, any>,
-  context: Record<string, any>,
-  operationName: string,
-  rootValue: any
-): Source<OperationResult> => {
+const ROOT_VALUE = {};
+const makeExecuteSource = (operation: Operation, options: MeshExchangeOptions): Source<OperationResult> => {
   const operationFn = operation.kind === 'subscription' ? options.subscribe : options.execute;
+  const operationName = getOperationName(operation.query);
   return make<OperationResult>(observer => {
     let ended = false;
-    operationFn(document, variables, context, rootValue, operationName)
+    operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE, operationName)
       .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
           return;
@@ -93,18 +86,7 @@ export const meshExchange =
             filter(op => op.kind === 'teardown' && op.key === key)
           );
 
-          return pipe(
-            makeExecuteSource(
-              operation,
-              options,
-              operation.query,
-              operation.variables,
-              {},
-              getOperationName(operation.query)!,
-              {}
-            ),
-            takeUntil(teardown$)
-          );
+          return pipe(makeExecuteSource(operation, options), takeUntil(teardown$));
         })
       );
 
