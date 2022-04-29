@@ -19,31 +19,25 @@ function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions
     return new Observable(observer => {
       Promise.resolve()
         .then(async () => {
-          try {
-            const results = await operationFn(
-              operation.query,
-              operation.variables,
-              operation.getContext(),
-              ROOT_VALUE,
-              operation.operationName
-            );
-            if (isAsyncIterable(results)) {
-              for await (const result of results) {
-                if (observer.closed) {
-                  return;
-                }
-                observer.next(result);
+          const results = await operationFn(
+            operation.query,
+            operation.variables,
+            operation.getContext(),
+            ROOT_VALUE,
+            operation.operationName
+          );
+          if (isAsyncIterable(results)) {
+            for await (const result of results) {
+              if (observer.closed) {
+                return;
               }
-              observer.complete();
-            } else {
-              if (!observer.closed) {
-                observer.next(results);
-                observer.complete();
-              }
+              observer.next(result);
             }
-          } catch (error) {
+            observer.complete();
+          } else {
             if (!observer.closed) {
-              observer.error(error);
+              observer.next(results);
+              observer.complete();
             }
           }
         })
