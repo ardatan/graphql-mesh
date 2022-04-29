@@ -2,7 +2,7 @@ import { getMeshSDK } from '../.mesh';
 
 async function testSdk(city: string) {
   console.log(`Loading Mesh SDK...`);
-  const sdk = await getMeshSDK();
+  const sdk = getMeshSDK();
   try {
     console.log(`Running query, looking for GitHub developers from ${city}...`);
     const result = await sdk.citiesAndDevelopers({ city });

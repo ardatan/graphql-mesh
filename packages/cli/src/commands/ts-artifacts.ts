@@ -236,7 +236,7 @@ export async function generateTsArtifacts(
                 .join(' & ')} & BaseMeshContext;`;
 
               const importCodes = [
-                `import { getMesh } from '@graphql-mesh/runtime';`,
+                `import { getMesh, ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
                 `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
                 `import { fileURLToPath } from '@graphql-mesh/utils';`,
@@ -288,16 +288,36 @@ export const documentsInSDL = /*#__PURE__*/ [${documents.map(
                 documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
               )}];
 
-export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
-  const meshConfig = await getMeshOptions();
-  return getMesh<MeshContext>(meshConfig);
+let meshInstance$: Promise<MeshInstance<MeshContext>>;
+
+export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
+  if (meshInstance$ == null) {
+    meshInstance$ = getMeshOptions().then(meshOptions => getMesh<MeshContext>(meshOptions)).then(mesh => {
+      const id$ = mesh.pubsub.subscribe('destroy', () => {
+        meshInstance$ = undefined;
+        id$.then(id => mesh.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      });
+      return mesh;
+    });
+  }
+  return meshInstance$;
 }
 
-export async function ${
+export const execute: ExecuteMeshFn = (...args) => ${
+                cliParams.builtMeshFactoryName
+              }().then(({ execute }) => execute(...args));
+
+export const subscribe: SubscribeMeshFn = (...args) => ${
+                cliParams.builtMeshFactoryName
+              }().then(({ subscribe }) => subscribe(...args));
+
+export function ${
                 cliParams.builtMeshSDKFactoryName
               }<TGlobalContext = any, TOperationContext = any>(globalContext?: TGlobalContext) {
-  const { sdkRequesterFactory } = await ${cliParams.builtMeshFactoryName}();
-  return getSdk<TOperationContext>(sdkRequesterFactory(globalContext));
+  const sdkRequester$ = ${
+    cliParams.builtMeshFactoryName
+  }().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
+  return getSdk<TOperationContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }`;
 
               return {

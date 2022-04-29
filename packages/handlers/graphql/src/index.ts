@@ -16,6 +16,7 @@ import {
   IntrospectionQuery,
   buildClientSchema,
   ExecutionResult,
+  SelectionNode,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
 import {
@@ -25,8 +26,17 @@ import {
   getCachedFetch,
   readFileOrUrl,
 } from '@graphql-mesh/utils';
-import { ExecutionRequest, isDocumentNode, inspect, memoize1 } from '@graphql-tools/utils';
+import {
+  ExecutionRequest,
+  isDocumentNode,
+  inspect,
+  memoize1,
+  getOperationASTFromRequest,
+  parseSelectionSet,
+  isAsyncIterable,
+} from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import _ from 'lodash';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -234,6 +244,57 @@ export default class GraphQLHandler implements MeshHandler {
           schema,
           executor,
           batch,
+        };
+      } else if (this.config.strategy === 'highestValue') {
+        if (this.config.strategyConfig == null) {
+          throw new Error(`You must configure 'highestValue' strategy`);
+        }
+        let schema: GraphQLSchema;
+        const executorPromises: Promise<MeshSource['executor']>[] = [];
+        let error: Error;
+        for (const httpSourceConfig of this.config.sources) {
+          executorPromises.push(this.getExecutorForHTTPSourceConfig(httpSourceConfig));
+          if (schema == null) {
+            try {
+              schema = await this.getNonExecutableSchemaForHTTPSource(httpSourceConfig);
+            } catch (e) {
+              error = e;
+            }
+          }
+        }
+        if (schema == null) {
+          throw error;
+        }
+
+        const executors = await Promise.all(executorPromises);
+        const parsedSelectionSet = parseSelectionSet(this.config.strategyConfig.selectionSet);
+        const valuePath = this.config.strategyConfig.value;
+        const highestValueExecutor = async function highestValueExecutor(executionRequest: ExecutionRequest) {
+          const operationAST = getOperationASTFromRequest(executionRequest);
+          (operationAST.selectionSet.selections as SelectionNode[]).push(...parsedSelectionSet.selections);
+          const results = await Promise.all(executors.map(executor => executor(executionRequest)));
+          let highestValue = -Infinity;
+          let resultWithHighestResult = results[0];
+          for (const result of results) {
+            if (isAsyncIterable(result)) {
+              console.warn('Incremental delivery is not supported currently');
+              return result;
+            } else if (result.data != null) {
+              const currentValue = _.get(result.data, valuePath);
+              if (currentValue > highestValue) {
+                resultWithHighestResult = result;
+                highestValue = currentValue;
+              }
+            }
+          }
+          return resultWithHighestResult;
+        };
+
+        return {
+          schema,
+          executor: highestValueExecutor,
+          // Batching doesn't make sense with fallback strategy
+          batch: false,
         };
       } else {
         let schema: GraphQLSchema;

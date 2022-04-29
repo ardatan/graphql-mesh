@@ -504,9 +504,10 @@ export default class MySQLHandler implements MeshHandler {
     );
     introspectionConnection.release();
 
-    this.pubsub
-      .subscribe('destroy', () => pool.end())
-      .catch(e => this.logger.error(`Couldn't release pool: ${e.stack || e.message || e}`));
+    const id$ = this.pubsub.subscribe('destroy', () => {
+      pool.end();
+      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
+    });
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));

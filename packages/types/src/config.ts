@@ -296,9 +296,17 @@ export interface GraphQLHandlerMultipleHTTPConfiguration {
    */
   sources: GraphQLHandlerHTTPConfiguration[];
   /**
-   * Handling strategy (default: fallback) (Allowed values: fallback, race)
+   * Handling strategy (default: fallback) (Allowed values: fallback, race, highestValue)
    */
-  strategy?: 'fallback' | 'race';
+  strategy?: 'fallback' | 'race' | 'highestValue';
+  strategyConfig?: GraphQLHandlerhighestValueStrategyConfig;
+}
+/**
+ * Handling strategy configuration
+ */
+export interface GraphQLHandlerhighestValueStrategyConfig {
+  selectionSet: string;
+  value: string;
 }
 /**
  * Handler for gRPC and Protobuf schemas

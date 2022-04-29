@@ -1,7 +1,6 @@
-import { getBuiltMesh, fetchRecentEmailsDocument } from '../.mesh';
+import { execute, fetchRecentEmailsDocument } from '../.mesh';
 
 async function main() {
-  const { execute } = await getBuiltMesh();
   const result = await execute(
     fetchRecentEmailsDocument,
     {},
