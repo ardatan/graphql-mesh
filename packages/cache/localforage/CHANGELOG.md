@@ -1,5 +1,17 @@
 # @graphql-mesh/cache-localforage
 
+## 0.6.0
+
+### Minor Changes
+
+- fa2542468: Use Localforage by default and drop inmemory-lru
+
+### Patch Changes
+
+- Updated dependencies [fa2542468]
+  - @graphql-mesh/types@0.72.0
+  - @graphql-mesh/utils@0.34.5
+
 ## 0.5.66
 
 ### Patch Changes
