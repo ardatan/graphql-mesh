@@ -453,7 +453,7 @@
     json5 "^2.2.1"
     semver "^6.3.0"
 
-"@babel/generator@^7.12.1", "@babel/generator@^7.17.10", "@babel/generator@^7.5.0", "@babel/generator@^7.7.2":
+"@babel/generator@^7.12.1", "@babel/generator@^7.17.10", "@babel/generator@^7.17.9", "@babel/generator@^7.5.0", "@babel/generator@^7.7.2":
   version "7.17.10"
   resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.17.10.tgz#c281fa35b0c349bbe9d02916f4ae08fc85ed7189"
   integrity sha512-46MJZZo9y3o4kmhBVc7zW7i8dtR1oIK/sdO5NcfcZRhTGYi+KKJRtHNgsU6c4VUcJmUNV/LQdebD/9Dlv4K+Tg==
@@ -477,7 +477,7 @@
     "@babel/helper-explode-assignable-expression" "^7.16.7"
     "@babel/types" "^7.16.7"
 
-"@babel/helper-compilation-targets@^7.12.1", "@babel/helper-compilation-targets@^7.13.0", "@babel/helper-compilation-targets@^7.16.7", "@babel/helper-compilation-targets@^7.17.10":
+"@babel/helper-compilation-targets@^7.12.1", "@babel/helper-compilation-targets@^7.13.0", "@babel/helper-compilation-targets@^7.16.7", "@babel/helper-compilation-targets@^7.17.10", "@babel/helper-compilation-targets@^7.17.7":
   version "7.17.10"
   resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.17.10.tgz#09c63106d47af93cf31803db6bc49fef354e2ebe"
   integrity sha512-gh3RxjWbauw/dFiU/7whjd0qN9K6nPJMqe6+Er7rOavFh0CQUSwhAE3IcTho2rywPJFxej6TUUHDkWcYI6gGqQ==
@@ -670,7 +670,7 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/parser@^7.0.0", "@babel/parser@^7.1.0", "@babel/parser@^7.1.6", "@babel/parser@^7.12.3", "@babel/parser@^7.12.5", "@babel/parser@^7.14.7", "@babel/parser@^7.16.7", "@babel/parser@^7.16.8", "@babel/parser@^7.17.10", "@babel/parser@^7.7.0":
+"@babel/parser@^7.0.0", "@babel/parser@^7.1.0", "@babel/parser@^7.1.6", "@babel/parser@^7.12.3", "@babel/parser@^7.12.5", "@babel/parser@^7.14.7", "@babel/parser@^7.16.7", "@babel/parser@^7.16.8", "@babel/parser@^7.17.10", "@babel/parser@^7.17.9", "@babel/parser@^7.7.0":
   version "7.17.10"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.17.10.tgz#873b16db82a8909e0fbd7f115772f4b739f6ce78"
   integrity sha512-n2Q6i+fnJqzOaq2VkdXxy2TCPCWQZHiCo0XqmrCvDWcZQKRyZzYi4Z0yxlBuN0w+r2ZHmre+Q087DSrw3pbJDQ==
@@ -8089,7 +8089,7 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001230, caniuse-lite@^1.0.30001283, caniuse-lite@^1.0.30001332:
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001230, caniuse-lite@^1.0.30001283, caniuse-lite@^1.0.30001312, caniuse-lite@^1.0.30001332:
   version "1.0.30001334"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001334.tgz#892e9965b35285033fc2b8a8eff499fe02f13d8b"
   integrity sha512-kbaCEBRRVSoeNs74sCuq92MJyGrMtjWVfhltoHUCW4t4pXFvGjUBrfo47weBRViHkiV3eBYyIsfl956NtHGazw==
@@ -10293,6 +10293,11 @@ electron-to-chromium@^1.3.564, electron-to-chromium@^1.4.118:
   version "1.4.127"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.127.tgz#4ef19d5d920abe2676d938f4170729b44f7f423a"
   integrity sha512-nhD6S8nKI0O2MueC6blNOEZio+/PWppE/pevnf3LOlQA/fKPCrDp2Ao4wx4LFwmIkJpVdFdn2763YWLy9ENIZg==
+
+electron-to-chromium@^1.4.71:
+  version "1.4.129"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.129.tgz#c675793885721beefff99da50f57c6525c2cd238"
+  integrity sha512-GgtN6bsDtHdtXJtlMYZWGB/uOyjZWjmRDumXTas7dGBaB9zUyCjzHet1DY2KhyHN8R0GLbzZWqm4efeddqqyRQ==
 
 elliptic@^6.5.3:
   version "6.5.4"
@@ -17842,7 +17847,7 @@ node-releases@^1.1.61:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.77.tgz#50b0cfede855dd374e7585bf228ff34e57c1c32e"
   integrity sha512-rB1DUFUNAN4Gn9keO2K1efO35IDK7yKHCdCaIMvFO7yUYmmZYeDjnGKle26G4rwj+LKRQpjyUUvMkPglwGCYNQ==
 
-node-releases@^2.0.3:
+node-releases@^2.0.2, node-releases@^2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.4.tgz#f38252370c43854dc48aa431c766c6c398f40476"
   integrity sha512-gbMzqQtTtDz/00jQzZ21PQzdI9PyLYqUSvD0p3naOhX4odFji0ZxYdnVwPTxmSwkmxhcFImpozceidSG+AgoPQ==

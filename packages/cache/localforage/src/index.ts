@@ -1,65 +1,50 @@
-import { ImportFn, KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
-import { createLruCache, defaultImportFn } from '@graphql-mesh/utils';
+import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
+import { createInMemoryLRUDriver } from './InMemoryLRUDriver';
+import LocalForage from 'localforage';
+
+let INMEMORY_LRU_DEFINITION$: Promise<void>;
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
-  private localforage$: Promise<typeof import('localforage')>;
-  constructor(config?: YamlConfig.LocalforageConfig & { importFn: ImportFn }) {
-    if (!globalThis.localStorage) {
-      const storage = createLruCache();
-      globalThis.localStorage = {
-        get length() {
-          return storage.size;
-        },
-        clear: () => storage.clear(),
-        getItem: key => storage.get(key),
-        key: index => storage.keys()[index],
-        removeItem: key => storage.delete(key),
-        setItem: (key, value) => storage.set(key, value),
-      };
+  private localforage: LocalForage;
+  constructor(config?: YamlConfig.LocalforageConfig) {
+    const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE', 'INMEMORY_LRU'];
+    if (INMEMORY_LRU_DEFINITION$ == null) {
+      INMEMORY_LRU_DEFINITION$ = LocalForage.defineDriver(createInMemoryLRUDriver());
     }
-    const importFn = config?.importFn ?? defaultImportFn;
-    this.localforage$ = importFn('localforage')
-      .then(localforage => localforage.default || localforage)
-      .then((localforage: typeof import('localforage')) => {
-        const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE'];
-        const runtimeConfig = {
-          ...config,
-          driver: driverNames.map(driverName => localforage[driverName]),
-        };
-        localforage.config(runtimeConfig);
-        return localforage;
+    this.ready$ = INMEMORY_LRU_DEFINITION$.then(() => {
+      this.localforage = LocalForage.createInstance({
+        name: config?.name,
+        storeName: config?.storeName,
+        driver: driverNames.map(driverName => LocalForage[driverName] ?? driverName),
       });
+    });
+    if (config?.cleanOnStart) {
+      this.ready$ = this.ready$.then(() => this.localforage.clear());
+    }
   }
 
-  private nextTick() {
-    // Make sure this is scheduled for next tick because LRU Cache is synchronous
-    // This helps for testing multiple Mesh instances pointing to the same cache
-    return new Promise(resolve => setTimeout(resolve));
-  }
+  private ready$: Promise<void>;
 
   async get(key: string) {
-    await this.nextTick();
-    const localforage = await this.localforage$;
-    const expiresAt = await localforage.getItem<number>(`${key}.expiresAt`);
+    await this.ready$;
+    const expiresAt = await this.localforage.getItem<number>(`${key}.expiresAt`);
     if (expiresAt && Date.now() > expiresAt) {
-      await localforage.removeItem(key);
+      await this.localforage.removeItem(key);
     }
-    return localforage.getItem<V>(key.toString());
+    return this.localforage.getItem<V>(key.toString());
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
-    await this.nextTick();
-    const localforage = await this.localforage$;
-    const jobs: Promise<any>[] = [localforage.setItem<V>(key, value)];
+    await this.ready$;
+    const jobs: Promise<any>[] = [this.localforage.setItem<V>(key, value)];
     if (options?.ttl) {
-      jobs.push(localforage.setItem(`${key}.expiresAt`, Date.now() + options.ttl * 1000));
+      jobs.push(this.localforage.setItem(`${key}.expiresAt`, Date.now() + options.ttl * 1000));
     }
     await Promise.all(jobs);
   }
 
   async delete(key: string) {
-    await this.nextTick();
-    const localforage = await this.localforage$;
-    return localforage.removeItem(key);
+    await this.ready$;
+    return this.localforage.removeItem(key);
   }
 }
