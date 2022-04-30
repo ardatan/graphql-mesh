@@ -1748,17 +1748,12 @@ export interface AdditionalSubscriptionObject {
  */
 export interface Cache {
   file?: FileCacheConfig;
-  inmemoryLRU?: InMemoryLRUConfig;
   localforage?: LocalforageConfig;
   redis?: RedisConfig;
   [k: string]: any;
 }
 export interface FileCacheConfig {
   path?: string;
-}
-export interface InMemoryLRUConfig {
-  max?: number;
-  ttl?: number;
 }
 export interface LocalforageConfig {
   /**

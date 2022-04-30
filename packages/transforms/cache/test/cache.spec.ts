@@ -1,5 +1,5 @@
 import { YamlConfig, MeshPubSub, KeyValueCache, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import {
   GraphQLSchema,
@@ -150,7 +150,10 @@ describe('cache', () => {
       resolvers: spies,
     });
 
-    cache = new InMemoryLRUCache();
+    cache = new LocalforageCache({
+      cleanOnStart: true,
+      importFn,
+    });
     pubsub = new PubSub();
 
     spies.Query.user.mockClear();

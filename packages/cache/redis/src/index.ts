@@ -1,7 +1,7 @@
 import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
 import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -40,7 +40,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
           enableOfflineQueue: true,
         });
       } else {
-        return new InMemoryLRUCache() as any;
+        return new LocalforageCache(options as any) as any;
       }
     }
     const id$ = options.pubsub

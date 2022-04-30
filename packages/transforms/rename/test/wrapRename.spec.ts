@@ -1,7 +1,7 @@
 import RenameTransform from './../src/index';
 import { buildSchema, graphql, GraphQLObjectType, printSchema } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';

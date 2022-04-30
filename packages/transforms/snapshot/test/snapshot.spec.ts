@@ -2,7 +2,7 @@ import SnapshotTransform from '../src';
 import { computeSnapshotFilePath } from '../src/compute-snapshot-file-path';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { graphql, GraphQLResolveInfo } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';

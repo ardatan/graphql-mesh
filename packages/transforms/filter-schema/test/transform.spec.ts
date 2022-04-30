@@ -1,7 +1,7 @@
 import { buildSchema, printSchema } from 'graphql';
 import FilterSchemaTransform from '../src';
 import { PubSub } from '@graphql-mesh/utils';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { pruneSchema } from '@graphql-tools/utils';
