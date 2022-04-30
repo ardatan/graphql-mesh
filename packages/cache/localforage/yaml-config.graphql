@@ -9,7 +9,6 @@ type LocalforageConfig @md {
   size: Int
   storeName: String
   description: String
-  cleanOnStart: Boolean
 }
 
 enum LocalforageDriver {
