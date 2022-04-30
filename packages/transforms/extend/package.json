@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-extend",
-  "version": "0.10.14",
+  "version": "0.10.15",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,8 +28,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.71.4",
-    "@graphql-mesh/utils": "0.34.4",
+    "@graphql-mesh/types": "0.72.0",
+    "@graphql-mesh/utils": "0.34.5",
     "@graphql-tools/load": "7.5.10",
     "@graphql-tools/code-file-loader": "7.2.14",
     "@graphql-tools/graphql-file-loader": "7.3.11",

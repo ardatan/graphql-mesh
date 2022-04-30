@@ -1,5 +1,13 @@
 # @graphql-mesh/urql-exchange
 
+## 3.1.1
+
+### Patch Changes
+
+- efe797ff9: Fix typing issues and improve Urql and Apollo packages
+- Updated dependencies [efe797ff9]
+  - @graphql-mesh/runtime@0.34.5
+
 ## 3.1.0
 
 ### Minor Changes
