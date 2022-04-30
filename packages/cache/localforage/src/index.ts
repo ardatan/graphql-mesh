@@ -31,7 +31,14 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
       });
   }
 
+  private nextTick() {
+    // Make sure this is scheduled for next tick because LRU Cache is synchronous
+    // This helps for testing multiple Mesh instances pointing to the same cache
+    return new Promise(resolve => setTimeout(resolve));
+  }
+
   async get(key: string) {
+    await this.nextTick();
     const localforage = await this.localforage$;
     const expiresAt = await localforage.getItem<number>(`${key}.expiresAt`);
     if (expiresAt && Date.now() > expiresAt) {
@@ -41,6 +48,7 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
+    await this.nextTick();
     const localforage = await this.localforage$;
     const jobs: Promise<any>[] = [localforage.setItem<V>(key, value)];
     if (options?.ttl) {
@@ -50,6 +58,7 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   }
 
   async delete(key: string) {
+    await this.nextTick();
     const localforage = await this.localforage$;
     return localforage.removeItem(key);
   }
