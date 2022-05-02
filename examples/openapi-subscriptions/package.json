@@ -12,6 +12,6 @@
     "graphql": "16.0.1",
     "body-parser": "1.19.0",
     "express": "4.17.1",
-    "cross-undici-fetch": "0.3.1"
+    "cross-undici-fetch": "^0.3.5"
   }
 }
