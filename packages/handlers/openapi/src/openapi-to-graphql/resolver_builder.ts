@@ -598,6 +598,8 @@ export function getResolver<TSource, TContext, TArgs>(
         `request body: ${options.body}`
     );
 
+    options.method = options.method.toUpperCase();
+
     let response: Response;
     try {
       response = await fetchFn(urlObject.href, options, ctx);
