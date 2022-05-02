@@ -1,5 +1,15 @@
 # @omnigraph/raml
 
+## 0.5.39
+
+### Patch Changes
+
+- b9beacca2: Bump cross-undici-fetch for Node 14 compatibility and performance improvements
+- Updated dependencies [b9beacca2]
+  - json-machete@0.8.3
+  - @omnigraph/json-schema@0.19.4
+  - @graphql-mesh/utils@0.34.6
+
 ## 0.5.38
 
 ### Patch Changes

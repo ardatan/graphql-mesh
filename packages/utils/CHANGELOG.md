@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.34.6
+
+### Patch Changes
+
+- b9beacca2: Bump cross-undici-fetch for Node 14 compatibility and performance improvements
+  - @graphql-mesh/types@0.72.1
+
 ## 0.34.5
 
 ### Patch Changes
