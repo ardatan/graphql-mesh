@@ -1,5 +1,13 @@
 # json-machete
 
+## 0.8.3
+
+### Patch Changes
+
+- b9beacca2: Bump cross-undici-fetch for Node 14 compatibility and performance improvements
+- Updated dependencies [b9beacca2]
+  - @graphql-mesh/utils@0.34.6
+
 ## 0.8.2
 
 ### Patch Changes
