@@ -59,7 +59,7 @@
     "@graphql-tools/load": "7.5.10",
     "@graphql-tools/graphql-file-loader": "7.3.11",
     "@graphql-tools/wrap": "8.4.16",
-    "@graphql-yoga/node": "2.3.0",
+    "@graphql-yoga/node": "^2.4.0",
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",
     "dotenv": "16.0.0",

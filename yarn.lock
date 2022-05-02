@@ -3066,10 +3066,10 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/common@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.3.0.tgz#29fa754d42bf01337facc1bca803ccf8a0186013"
-  integrity sha512-EPKK97953c8E1FiaLHMMGqLKtoAN5H9qHr0AiAzMlruJHn0JcbMf2qFTUXklCsuk6UEwNtxeHX42zim11O/E1g==
+"@graphql-yoga/common@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.4.0.tgz#f95706ebe2b317a348942cfc940cbdfb1aa4b704"
+  integrity sha512-R9EYH9s8Gw9hZe7zoGpIWfHT+nmDy3T0DvVJkBFnZbroniVtp1SXLYGjbXzfz03i2eUi+Voj3f3mRvStmQ+Kug==
   dependencies:
     "@envelop/core" "^2.0.0"
     "@envelop/disable-introspection" "^3.0.0"
@@ -3079,20 +3079,20 @@
     "@graphql-tools/utils" "^8.6.0"
     "@graphql-typed-document-node/core" "^3.1.1"
     "@graphql-yoga/subscription" "2.0.0"
-    cross-undici-fetch "^0.2.5"
+    cross-undici-fetch "^0.3.0"
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/node@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.3.0.tgz#e22f29f179707a07a720507b7af3c44ad65499b5"
-  integrity sha512-uofEmKIDYthJuCcdhbgU0VW5i2cCqZVKIiEW/xbwvCOBJt439k46D+M6youiQYJ1miaA/m0btbuZ1sAo/TLjdQ==
+"@graphql-yoga/node@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.4.0.tgz#cf2bdba78e6fba74c11c9387a24ec0a8c6493ec8"
+  integrity sha512-GkhovdpAeD18oi+FePZIyi+T3Ju1dDTo0FIIUyvFoEqzMqOexFGjkXOFdiMrM6kfesh3fhUGU0DXcIjhtxUILg==
   dependencies:
     "@envelop/core" "^2.0.0"
     "@graphql-tools/utils" "^8.6.0"
-    "@graphql-yoga/common" "2.3.0"
+    "@graphql-yoga/common" "2.4.0"
     "@graphql-yoga/subscription" "2.0.0"
-    cross-undici-fetch "^0.2.5"
+    cross-undici-fetch "^0.3.0"
     tslib "^2.3.1"
 
 "@graphql-yoga/subscription@2.0.0":
@@ -5602,19 +5602,19 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@17.0.33", "@types/react@>=16", "@types/react@^17.0.15", "@types/react@^17.0.4":
-  version "17.0.33"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.33.tgz#e01ae3de7613dac1094569880bb3792732203ad5"
-  integrity sha512-pLWntxXpDPaU+RTAuSGWGSEL2FRTNyRQOjSWDke/rxRg14ncsZvx8AKWMWZqvc1UOaJIAoObdZhAWvRaHFi5rw==
+"@types/react@*", "@types/react@18.0.8", "@types/react@>=16":
+  version "18.0.8"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.8.tgz#a051eb380a9fbcaa404550543c58e1cf5ce4ab87"
+  integrity sha512-+j2hk9BzCOrrOSJASi5XiOyBbERk9jG5O73Ya4M0env5Ixi6vUNli4qy994AINcEF+1IEHISYFfIT4zwr++LKw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@18.0.8":
-  version "18.0.8"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.8.tgz#a051eb380a9fbcaa404550543c58e1cf5ce4ab87"
-  integrity sha512-+j2hk9BzCOrrOSJASi5XiOyBbERk9jG5O73Ya4M0env5Ixi6vUNli4qy994AINcEF+1IEHISYFfIT4zwr++LKw==
+"@types/react@17.0.33", "@types/react@^17.0.15", "@types/react@^17.0.4":
+  version "17.0.33"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.33.tgz#e01ae3de7613dac1094569880bb3792732203ad5"
+  integrity sha512-pLWntxXpDPaU+RTAuSGWGSEL2FRTNyRQOjSWDke/rxRg14ncsZvx8AKWMWZqvc1UOaJIAoObdZhAWvRaHFi5rw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -6428,17 +6428,7 @@ ajv-keywords@^3.1.0, ajv-keywords@^3.4.1, ajv-keywords@^3.5.2:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"
   integrity sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==
 
-ajv@*, ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
-  version "6.12.6"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
-  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
-  dependencies:
-    fast-deep-equal "^3.1.1"
-    fast-json-stable-stringify "^2.0.0"
-    json-schema-traverse "^0.4.1"
-    uri-js "^4.2.2"
-
-ajv@8.11.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0, ajv@^8.6.2:
+ajv@*, ajv@8.11.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0, ajv@^8.6.2:
   version "8.11.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.0.tgz#977e91dd96ca669f54a11e23e378e33b884a565f"
   integrity sha512-wGgprdCvMalC0BztXvitD2hC04YffAvtsUn93JbGXYLAtCUO4xd17mCCZQxUOItiBwZvJScWo8NIvQMQ71rdpg==
@@ -6446,6 +6436,16 @@ ajv@8.11.0, ajv@^8.0.0, ajv@^8.0.1, ajv@^8.6.0, ajv@^8.6.2:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
+    uri-js "^4.2.2"
+
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
+  version "6.12.6"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
+  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    fast-json-stable-stringify "^2.0.0"
+    json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
 algoliasearch-helper@^3.6.2:
@@ -8930,19 +8930,7 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-undici-fetch@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.2.5.tgz#0dd5bb3809a2fc4524fc777f1e6eb052203a6b68"
-  integrity sha512-6IR+JN6o2UMNj2f3fu0ZVkZeP0h22DRKzq78SiMenkqyBYyGIT1AkZjHkItvh0A80LdsAlWENHUpvapapePucw==
-  dependencies:
-    abort-controller "^3.0.0"
-    form-data-encoder "^1.7.1"
-    formdata-node "^4.3.1"
-    node-fetch "^2.6.7"
-    undici "^5.0.0"
-    web-streams-polyfill "^3.2.0"
-
-cross-undici-fetch@^0.3.5:
+cross-undici-fetch@^0.3.0, cross-undici-fetch@^0.3.5:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.3.5.tgz#36e3219a9b0a8ba30c3d0ea9838c2c0d6eb1be52"
   integrity sha512-z1IpxDnhK3ohQH0kE3Fu8xoAC3Dkpziu90HqE7IKP/FRKiEUvimWhTmAJ7EAuoOIbyAZZi2WXuUTXfHO9D6C1A==
@@ -23654,7 +23642,7 @@ undici@4.16.0:
   resolved "https://registry.yarnpkg.com/undici/-/undici-4.16.0.tgz#469bb87b3b918818d3d7843d91a1d08da357d5ff"
   integrity sha512-tkZSECUYi+/T1i4u+4+lwZmQgLXd4BLGlrc7KZPcLIW7Jpq99+Xpc30ONv7nS6F5UNOxp/HBZSSL9MafUrvJbw==
 
-undici@^5.0.0, undici@^5.1.0:
+undici@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/undici/-/undici-5.1.0.tgz#923833e5b56912848ddc5c87dad3fc8c4d05127b"
   integrity sha512-S+Vy6GGLHmW0uNLyCOpma6qCEoX6Pw/Mga34UFeqNaMnfDMgeJhPdHwb9FDPC/gWnNhLxhE9Lis6yBDHtcJCqw==

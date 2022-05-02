@@ -48,6 +48,7 @@ export default class SoapHandler implements MeshHandler {
               ...requestObj.headers,
               ...(isWsdlRequest ? schemaHeaders : this.config.operationHeaders),
             };
+            delete headers.Connection;
             const res = await fetch(requestObj.url, {
               headers,
               method: requestObj.method,
