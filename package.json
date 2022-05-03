@@ -34,7 +34,7 @@
     "@changesets/cli": "2.21.1",
     "@parcel/packager-raw-url": "2.5.0",
     "@parcel/transformer-webmanifest": "2.5.0",
-    "@types/jest": "27.4.1",
+    "@types/jest": "27.5.0",
     "@types/node": "16.11.33",
     "@typescript-eslint/eslint-plugin": "5.22.0",
     "@typescript-eslint/parser": "5.22.0",
