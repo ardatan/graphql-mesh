@@ -3083,7 +3083,7 @@
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/node@^2.4.0":
+"@graphql-yoga/node@2.4.0", "@graphql-yoga/node@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.4.0.tgz#cf2bdba78e6fba74c11c9387a24ec0a8c6493ec8"
   integrity sha512-GkhovdpAeD18oi+FePZIyi+T3Ju1dDTo0FIIUyvFoEqzMqOexFGjkXOFdiMrM6kfesh3fhUGU0DXcIjhtxUILg==
