@@ -1,0 +1,1524 @@
+[
+  {
+    "objectID": "mesh-cache",
+    "headings": ["How to use?", "Cache Invalidation", "Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "The Cache Key",
+                "anchor": "the-cache-key"
+              }
+            ],
+            "title": "Simple caching",
+            "anchor": "simple-caching"
+          }
+        ],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Operation-based",
+                "anchor": "operation-based"
+              },
+              {
+                "children": [],
+                "title": "Programmatic",
+                "anchor": "programmatic"
+              }
+            ],
+            "title": "TTL",
+            "anchor": "ttl"
+          }
+        ],
+        "title": "Cache Invalidation",
+        "anchor": "cache-invalidation"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/cache",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Cache Transform"],
+    "source": "Mesh",
+    "title": "Cache Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-combine-multiple-sources",
+    "headings": [
+      "1. Add the \"Authors\" Source",
+      "2. Add the \"Stores\" Source",
+      "3. Shaping the Unified Schema",
+      "Going further"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "1. Add the \"Authors\" Source",
+        "anchor": "1-add-the-authors-source"
+      },
+      {
+        "children": [],
+        "title": "2. Add the \"Stores\" Source",
+        "anchor": "2-add-the-stores-source"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Setup hierarchy with nested queries",
+                "anchor": "setup-hierarchy-with-nested-queries"
+              }
+            ],
+            "title": "Remove unnecessary Root queries",
+            "anchor": "remove-unnecessary-root-queries"
+          }
+        ],
+        "title": "3. Shaping the Unified Schema",
+        "anchor": "3-shaping-the-unified-schema"
+      },
+      {
+        "children": [],
+        "title": "Going further",
+        "anchor": "going-further"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/combine-multiple-sources",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Getting Started", "How to: Combine multiple Sources"],
+    "source": "Mesh",
+    "title": "How to: Combine multiple Sources",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-comparison",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/comparison",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": [
+      "Mesh",
+      "Getting Started",
+      "What is the difference between Mesh, Federation, Hasura, and GraphQL Tools?"
+    ],
+    "source": "Mesh",
+    "title": "What is the difference between Mesh, Federation, Hasura, and GraphQL Tools?",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-customize-mesh-server",
+    "headings": [
+      "Configure and provide Envelop plugins",
+      "Provide a standalone server implementation",
+      "Configuration: `serve` reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Configure and provide Envelop plugins",
+        "anchor": "configure-and-provide-envelop-plugins"
+      },
+      {
+        "children": [],
+        "title": "Provide a standalone server implementation",
+        "anchor": "provide-a-standalone-server-implementation"
+      },
+      {
+        "children": [],
+        "title": "Configuration: `serve` reference",
+        "anchor": "configuration-serve-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/customize-mesh-server",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Getting Started", "How to: Customize the Mesh server"],
+    "source": "Mesh",
+    "title": "How to: Customize the Mesh server",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-deploy-mesh-gateway",
+    "headings": ["Deploy Mesh with `mesh start`", "Deploy Mesh on Serverless", "Mesh and Docker"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Deploy Mesh with `mesh start`",
+        "anchor": "deploy-mesh-with-mesh-start"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Deploy Mesh on AWS Lambda",
+                "anchor": "deploy-mesh-on-aws-lambda"
+              },
+              {
+                "children": [],
+                "title": "Deploy Mesh on Cloudflare Workers",
+                "anchor": "deploy-mesh-on-cloudflare-workers"
+              }
+            ],
+            "title": "Deploy Mesh on Vercel with Next.js API Routes",
+            "anchor": "deploy-mesh-on-vercel-with-nextjs-api-routes"
+          }
+        ],
+        "title": "Deploy Mesh on Serverless",
+        "anchor": "deploy-mesh-on-serverless"
+      },
+      {
+        "children": [],
+        "title": "Mesh and Docker",
+        "anchor": "mesh-and-docker"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/deploy-mesh-gateway",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Getting Started", "How to: Deploy a GraphQL Mesh Gateway"],
+    "source": "Mesh",
+    "title": "How to: Deploy a GraphQL Mesh Gateway",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs/cli-commands",
+    "headings": ["Global Options", "List of Commands"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "`--dir  [string]`",
+                "anchor": "--dir--string"
+              }
+            ],
+            "title": "`-r (alias: require)  [array]`",
+            "anchor": "-r-alias-require--array"
+          }
+        ],
+        "title": "Global Options",
+        "anchor": "global-options"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "`mesh build`",
+                "anchor": "mesh-build"
+              },
+              {
+                "children": [],
+                "title": "`mesh validate`",
+                "anchor": "mesh-validate"
+              },
+              {
+                "children": [],
+                "title": "`mesh start`",
+                "anchor": "mesh-start"
+              },
+              {
+                "children": [],
+                "title": "`mesh serve-source`",
+                "anchor": "mesh-serve-source"
+              }
+            ],
+            "title": "`mesh dev`",
+            "anchor": "mesh-dev"
+          }
+        ],
+        "title": "List of Commands",
+        "anchor": "list-of-commands"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/cli-commands",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "CLI commands"],
+    "source": "Mesh",
+    "title": "CLI commands",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs/introduction",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/introduction",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Introduction"],
+    "source": "Mesh",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-encapsulate",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/encapsulate",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Encapsulate Transform"],
+    "source": "Mesh",
+    "title": "Encapsulate Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-error-handling",
+    "headings": ["Enabling Errors masking", "Custom resolvers error handling"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Custom error formatting",
+            "anchor": "custom-error-formatting"
+          }
+        ],
+        "title": "Enabling Errors masking",
+        "anchor": "enabling-errors-masking"
+      },
+      {
+        "children": [],
+        "title": "Custom resolvers error handling",
+        "anchor": "custom-resolvers-error-handling"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/guides/error-handling",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "Error handling"],
+    "source": "Mesh",
+    "title": "Error handling",
+    "type": "Guide"
+  },
+  {
+    "objectID": "mesh-extend",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/extend",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Extend Transform (experimental)"],
+    "source": "Mesh",
+    "title": "Extend Transform (experimental)",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-extending-unified-schema",
+    "headings": ["Programatic `additionalResolvers`", "Going further"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Using the SDK to fetch Sources",
+            "anchor": "using-the-sdk-to-fetch-sources"
+          }
+        ],
+        "title": "Programatic `additionalResolvers`",
+        "anchor": "programatic-additionalresolvers"
+      },
+      {
+        "children": [],
+        "title": "Going further",
+        "anchor": "going-further"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/guides/extending-unified-schema",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "Extending the Unified Schema"],
+    "source": "Mesh",
+    "title": "Extending the Unified Schema",
+    "type": "Guide"
+  },
+  {
+    "objectID": "mesh-federation",
+    "headings": ["How to use?"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Add Reference Resolver as a Code File",
+            "anchor": "add-reference-resolver-as-a-code-file"
+          }
+        ],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/federation",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Apollo Federation Transform"],
+    "source": "Mesh",
+    "title": "Apollo Federation Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-file",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/cache/file",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Cache", "File Cache"],
+    "source": "Mesh",
+    "title": "File Cache",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-file-uploads",
+    "headings": ["Sources file uploads", "Custom resolvers file uploads"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Sources file uploads",
+        "anchor": "sources-file-uploads"
+      },
+      {
+        "children": [],
+        "title": "Custom resolvers file uploads",
+        "anchor": "custom-resolvers-file-uploads"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/guides/file-uploads",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "File uploads"],
+    "source": "Mesh",
+    "title": "File uploads",
+    "type": "Guide"
+  },
+  {
+    "objectID": "mesh-filter-schema",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/filter-schema",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Filter Schema Transform"],
+    "source": "Mesh",
+    "title": "Filter Schema Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-graphql",
+    "headings": ["Dynamic Header Values (e.g., for Authorization)", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "From Environmental Variable",
+                "anchor": "from-environmental-variable"
+              }
+            ],
+            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
+            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+          }
+        ],
+        "title": "Dynamic Header Values (e.g., for Authorization)",
+        "anchor": "dynamic-header-values-eg-for-authorization"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/graphql",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "GraphQL"],
+    "source": "Mesh",
+    "title": "GraphQL",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-graphql-code-generator",
+    "headings": [
+      "GraphQL Code Generator default configuration",
+      "Customizing the GraphQL Code Generator configuration"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "GraphQL Code Generator default configuration",
+        "anchor": "graphql-code-generator-default-configuration"
+      },
+      {
+        "children": [],
+        "title": "Customizing the GraphQL Code Generator configuration",
+        "anchor": "customizing-the-graphql-code-generator-configuration"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/guides/graphql-code-generator",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "Configure GraphQL Code Generator"],
+    "source": "Mesh",
+    "title": "Configure GraphQL Code Generator",
+    "type": "Guide"
+  },
+  {
+    "objectID": "mesh-grpc",
+    "headings": ["Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/grpc",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "gRPC / Protobuf"],
+    "source": "Mesh",
+    "title": "gRPC / Protobuf",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-handlers-introduction",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/handlers-introduction",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "Source Handlers"],
+    "source": "Mesh",
+    "title": "Source Handlers",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-hoist",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Filtering args via a default for the entire path",
+                "anchor": "filtering-args-via-a-default-for-the-entire-path"
+              },
+              {
+                "children": [],
+                "title": "Filtering args via on specific levels of the path",
+                "anchor": "filtering-args-via-on-specific-levels-of-the-path"
+              }
+            ],
+            "title": "Simple hoisting",
+            "anchor": "simple-hoisting"
+          }
+        ],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/hoist",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Hoist Field Transform"],
+    "source": "Mesh",
+    "title": "Hoist Field Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-installation",
+    "headings": ["Mesh CLI, the core package", "Handlers and Transforms packages"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Mesh CLI, the core package",
+        "anchor": "mesh-cli-the-core-package"
+      },
+      {
+        "children": [],
+        "title": "Handlers and Transforms packages",
+        "anchor": "handlers-and-transforms-packages"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/installation",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Getting Started", "Installation"],
+    "source": "Mesh",
+    "title": "Installation",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-json-schema",
+    "headings": ["Dynamic Values", "Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "From Environmental Variable",
+                "anchor": "from-environmental-variable"
+              },
+              {
+                "children": [],
+                "title": "From Arguments",
+                "anchor": "from-arguments"
+              },
+              {
+                "children": [],
+                "title": "From JSON Samples",
+                "anchor": "from-json-samples"
+              }
+            ],
+            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
+            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+          }
+        ],
+        "title": "Dynamic Values",
+        "anchor": "dynamic-values"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/json-schema",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "JSON Schema or Samples"],
+    "source": "Mesh",
+    "title": "JSON Schema or Samples",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-live-queries",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/guides/live-queries",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "Live Queries"],
+    "source": "Mesh",
+    "title": "Live Queries",
+    "type": "Guide"
+  },
+  {
+    "objectID": "mesh-localforage",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/cache/localforage",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Cache", "LocalForage"],
+    "source": "Mesh",
+    "title": "LocalForage",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-mock",
+    "headings": [
+      "How to use?",
+      "Custom mock functions for fields",
+      "Custom mock functions for types",
+      "Mocking the lists",
+      "Stateful mocking",
+      "Codesandbox Example",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for fields",
+        "anchor": "custom-mock-functions-for-fields"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for types",
+        "anchor": "custom-mock-functions-for-types"
+      },
+      {
+        "children": [],
+        "title": "Mocking the lists",
+        "anchor": "mocking-the-lists"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Get from the store",
+                "anchor": "get-from-the-store"
+              },
+              {
+                "children": [],
+                "title": "Mutate data in the store",
+                "anchor": "mutate-data-in-the-store"
+              }
+            ],
+            "title": "Initialize store",
+            "anchor": "initialize-store"
+          }
+        ],
+        "title": "Stateful mocking",
+        "anchor": "stateful-mocking"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/mock",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Mock Transform"],
+    "source": "Mesh",
+    "title": "Mock Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-mongoose",
+    "headings": ["Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/mongoose",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "MongoDB / Mongoose"],
+    "source": "Mesh",
+    "title": "MongoDB / Mongoose",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-mysql",
+    "headings": ["Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/mysql",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "MySQL"],
+    "source": "Mesh",
+    "title": "MySQL",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-naming-convention",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/naming-convention",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Naming Convention Transform"],
+    "source": "Mesh",
+    "title": "Naming Convention Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-neo4j",
+    "headings": ["Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/neo4j",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "Neo4j"],
+    "source": "Mesh",
+    "title": "Neo4j",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-odata",
+    "headings": ["Dynamic Header Values", "Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "From Environmental Variable",
+                "anchor": "from-environmental-variable"
+              }
+            ],
+            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
+            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+          }
+        ],
+        "title": "Dynamic Header Values",
+        "anchor": "dynamic-header-values"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/odata",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "OData / Microsoft Graph"],
+    "source": "Mesh",
+    "title": "OData / Microsoft Graph",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-openapi",
+    "headings": [
+      "Overriding default Query/Mutation operations",
+      "Dynamic Header Values",
+      "Advanced cookies handling",
+      "Examples",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Overriding default Query/Mutation operations",
+        "anchor": "overriding-default-querymutation-operations"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "From Environmental Variable",
+                "anchor": "from-environmental-variable"
+              }
+            ],
+            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
+            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+          }
+        ],
+        "title": "Dynamic Header Values",
+        "anchor": "dynamic-header-values"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Setting / Unsetting the cookie",
+                "anchor": "setting--unsetting-the-cookie"
+              }
+            ],
+            "title": "Accepting one of the cookies, header, or context value",
+            "anchor": "accepting-one-of-the-cookies-header-or-context-value"
+          }
+        ],
+        "title": "Advanced cookies handling",
+        "anchor": "advanced-cookies-handling"
+      },
+      {
+        "children": [],
+        "title": "Examples",
+        "anchor": "examples"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/openapi",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "OpenAPI / Swagger"],
+    "source": "Mesh",
+    "title": "OpenAPI / Swagger",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-overview",
+    "headings": [],
+    "toc": [],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/overview",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Getting Started", "Overview"],
+    "source": "Mesh",
+    "title": "Overview",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-performances-best-practices",
+    "headings": ["Enable requests batching"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Enable requests batching",
+        "anchor": "enable-requests-batching"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/guides/performances-best-practices",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "Performances best practices"],
+    "source": "Mesh",
+    "title": "Performances best practices",
+    "type": "Guide"
+  },
+  {
+    "objectID": "mesh-postgraphile",
+    "headings": ["External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Many-to-Many support",
+                "anchor": "many-to-many-support"
+              },
+              {
+                "children": [],
+                "title": "PostGIS Support",
+                "anchor": "postgis-support"
+              }
+            ],
+            "title": "Federation and Automatic Type Merging support",
+            "anchor": "federation-and-automatic-type-merging-support"
+          }
+        ],
+        "title": "External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)",
+        "anchor": "external-plugins-eg-federationplugin-pgmanytomanyplugin-postgisplugin"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/postgraphile",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "PostgreSQL / PostGraphile"],
+    "source": "Mesh",
+    "title": "PostgreSQL / PostGraphile",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-prefix",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/prefix",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Prefix Transform"],
+    "source": "Mesh",
+    "title": "Prefix Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-redis",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/cache/redis",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Cache", "Redis Cache"],
+    "source": "Mesh",
+    "title": "Redis Cache",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-rename",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/rename",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Rename Transform"],
+    "source": "Mesh",
+    "title": "Rename Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-replace-field",
+    "headings": [
+      "How to use?",
+      "How the transform works",
+      "Transform scopes",
+      "Additional type definitions",
+      "Custom composers",
+      "Renaming fields",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "How the transform works",
+        "anchor": "how-the-transform-works"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "scope: hoistValue",
+                "anchor": "scope-hoistvalue"
+              }
+            ],
+            "title": "scope: config",
+            "anchor": "scope-config"
+          }
+        ],
+        "title": "Transform scopes",
+        "anchor": "transform-scopes"
+      },
+      {
+        "children": [],
+        "title": "Additional type definitions",
+        "anchor": "additional-type-definitions"
+      },
+      {
+        "children": [],
+        "title": "Custom composers",
+        "anchor": "custom-composers"
+      },
+      {
+        "children": [],
+        "title": "Renaming fields",
+        "anchor": "renaming-fields"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/replace-field",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Replace Field"],
+    "source": "Mesh",
+    "title": "Replace Field",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-resolvers-composition",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/resolvers-composition",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Resolvers Composition Transform"],
+    "source": "Mesh",
+    "title": "Resolvers Composition Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-snapshot",
+    "headings": ["How to use?", "Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/snapshot",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Snapshot Transform"],
+    "source": "Mesh",
+    "title": "Snapshot Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-soap",
+    "headings": ["Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/soap",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "SOAP"],
+    "source": "Mesh",
+    "title": "SOAP",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-sources-with-no-definition",
+    "headings": ["An overview of the `jsonSchema` handler", "Configuring our \"Books\" REST API", "Going further"],
+    "toc": [
+      {
+        "children": [],
+        "title": "An overview of the `jsonSchema` handler",
+        "anchor": "an-overview-of-the-jsonschema-handler"
+      },
+      {
+        "children": [],
+        "title": "Configuring our \"Books\" REST API",
+        "anchor": "configuring-our-books-rest-api"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Queries/Mutations arguments",
+                "anchor": "queriesmutations-arguments"
+              },
+              {
+                "children": [],
+                "title": "Mutations",
+                "anchor": "mutations"
+              },
+              {
+                "children": [],
+                "title": "Query/Mutation with multiple response shapes",
+                "anchor": "querymutation-with-multiple-response-shapes"
+              }
+            ],
+            "title": "Rename generated types",
+            "anchor": "rename-generated-types"
+          }
+        ],
+        "title": "Going further",
+        "anchor": "going-further"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/sources-with-no-definition",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Getting Started", "How to: Configure Sources with no definition"],
+    "source": "Mesh",
+    "title": "How to: Configure Sources with no definition",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-subscriptions-webhooks",
+    "headings": ["Add a new Subscription field", "Handle Webhook HTTP Requests"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Use JSON Schema Handler instead",
+            "anchor": "use-json-schema-handler-instead"
+          }
+        ],
+        "title": "Add a new Subscription field",
+        "anchor": "add-a-new-subscription-field"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Custom Handler in Code",
+                "anchor": "custom-handler-in-code"
+              }
+            ],
+            "title": "Using Declarative API",
+            "anchor": "using-declarative-api"
+          }
+        ],
+        "title": "Handle Webhook HTTP Requests",
+        "anchor": "handle-webhook-http-requests"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/guides/subscriptions-webhooks",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "Handle Webhooks with GraphQL Subscriptions"],
+    "source": "Mesh",
+    "title": "Handle Webhooks with GraphQL Subscriptions",
+    "type": "Guide"
+  },
+  {
+    "objectID": "mesh-thrift",
+    "headings": ["Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/thrift",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "Apache Thrift"],
+    "source": "Mesh",
+    "title": "Apache Thrift",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-transforms-introduction",
+    "headings": ["Introduction to Transforms", "Transforms location and order", "Two different modes"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Introduction to Transforms",
+        "anchor": "introduction-to-transforms"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Beware of which transforms are used at the source level",
+                "anchor": "beware-of-which-transforms-are-used-at-the-source-level"
+              }
+            ],
+            "title": "Transforms order is important",
+            "anchor": "transforms-order-is-important"
+          }
+        ],
+        "title": "Transforms location and order",
+        "anchor": "transforms-location-and-order"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Bare",
+                "anchor": "bare"
+              },
+              {
+                "children": [],
+                "title": "Modes support",
+                "anchor": "modes-support"
+              }
+            ],
+            "title": "Wrap",
+            "anchor": "wrap"
+          }
+        ],
+        "title": "Two different modes",
+        "anchor": "two-different-modes"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/transforms-introduction",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Schema Transformation"],
+    "source": "Mesh",
+    "title": "Schema Transformation",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-tuql",
+    "headings": ["Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/handlers/tuql",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Source Handlers", "SQLite / Tuql"],
+    "source": "Mesh",
+    "title": "SQLite / Tuql",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-type-merging",
+    "headings": ["What is Type Merging?", "Using the Type Merging Transform", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Prevent N+1 problem with Type Merging",
+            "anchor": "prevent-n1-problem-with-type-merging"
+          }
+        ],
+        "title": "What is Type Merging?",
+        "anchor": "what-is-type-merging"
+      },
+      {
+        "children": [],
+        "title": "Using the Type Merging Transform",
+        "anchor": "using-the-type-merging-transform"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/transforms/type-merging",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Type Merging Transform"],
+    "source": "Mesh",
+    "title": "Type Merging Transform",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-your-first-mesh-gateway",
+    "headings": ["Add the Books REST API to our GraphQL Gateway", "Going further"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "2. Creating our Mesh configuration file",
+                "anchor": "2-creating-our-mesh-configuration-file"
+              },
+              {
+                "children": [],
+                "title": "3. Shaping the Unified Schema",
+                "anchor": "3-shaping-the-unified-schema"
+              },
+              {
+                "children": [],
+                "title": "Our GraphQL Gateway API is ready!",
+                "anchor": "our-graphql-gateway-api-is-ready"
+              }
+            ],
+            "title": "1. A closer look at our Books REST API",
+            "anchor": "1-a-closer-look-at-our-books-rest-api"
+          }
+        ],
+        "title": "Add the Books REST API to our GraphQL Gateway",
+        "anchor": "add-the-books-rest-api-to-our-graphql-gateway"
+      },
+      {
+        "children": [],
+        "title": "Going further",
+        "anchor": "going-further"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com//docs/getting-started/your-first-mesh-gateway",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Getting Started", "Your first Gateway with Mesh"],
+    "source": "Mesh",
+    "title": "Your first Gateway with Mesh",
+    "type": "Documentation"
+  }
+]
