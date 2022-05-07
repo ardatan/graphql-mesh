@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.20.17",
+  "version": "0.20.18",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
