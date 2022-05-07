@@ -902,7 +902,7 @@ export interface PostGraphileHandler {
       }
     | string;
   /**
-   * A function that returns postgraphile context options. It can either be an object or a string pointing to the object's path (e.g. "./my-config#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information. (Any of: JSON, String)
+   * A function which takes context as a paramter and returns postgraphile context options. It can either be a function or a string pointing to the function's path (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information. (Any of: Function, String)
    */
   contextOptions?: (context: any) => {
      jwtToken?: string;
