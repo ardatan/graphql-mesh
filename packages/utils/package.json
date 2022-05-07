@@ -41,7 +41,7 @@
     "@graphql-mesh/types": "0.72.1",
     "cross-undici-fetch": "^0.4.0",
     "chalk": "4.1.2",
-    "dayjs": "1.11.1",
+    "dayjs": "1.11.2",
     "fetchache": "0.1.2",
     "flatstr": "1.0.12",
     "graphql-jit": "0.7.3",
