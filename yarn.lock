@@ -3027,17 +3027,17 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.9.19":
-  version "7.9.19"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.9.19.tgz#6f848b71c72d0371582aac11272a759d95c0ef8b"
-  integrity sha512-2jLr3gx2VvUjZGnHqfeDk8tp4mJ5/df9pMHj7NTRMh8Hp9WpIpTdxWSYg8SyJZIMbY8IlpPn5EFwZAz5okkrEw==
+"@graphql-tools/url-loader@7.9.20":
+  version "7.9.20"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.9.20.tgz#3cbee69dac284fe238a853201031e072322a0368"
+  integrity sha512-APsYjsCuEAEK3mNZ7wYO0oOzDLdGzmAc9Mma9Ys8Eraxk7Y3NuS+A8r/naIM8oUq8207IRyek96fbhMqHCBGmg==
   dependencies:
     "@graphql-tools/delegate" "8.7.7"
     "@graphql-tools/utils" "8.6.9"
     "@graphql-tools/wrap" "8.4.16"
     "@n1ru4l/graphql-live-query" "^0.9.0"
     "@types/ws" "^8.0.0"
-    cross-undici-fetch "^0.3.5"
+    cross-undici-fetch "^0.4.0"
     dset "^3.1.0"
     extract-files "^11.0.0"
     graphql-ws "^5.4.1"
