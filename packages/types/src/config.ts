@@ -902,6 +902,18 @@ export interface PostGraphileHandler {
       }
     | string;
   /**
+   * A function that returns postgraphile context options. It can either be an object or a string pointing to the object's path (e.g. "./my-config#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information. (Any of: JSON, String)
+   */
+  contextOptions?: (context: any) => {
+     jwtToken?: string;
+     jwtSecret?: string;
+     jwtAudiences?: string;
+     jwtRole?: string;
+     jwtVerifyOptions?: any;
+     pgDefaultRole?: string;
+     pgSettings?: {}
+  } | string;
+  /**
    * Enable GraphQL websocket transport support for subscriptions (default: true)
    */
   subscriptions?: boolean;

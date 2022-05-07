@@ -125,6 +125,12 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
 
+    const contextOptions = await loadFromModuleExportExpression<any>(this.config.contextOptions, {
+      cwd: this.baseDir,
+      importFn: this.importFn,
+      defaultExportName: 'default',
+    });
+
     return {
       schema,
       executor: ({ document, variables, context: meshContext, rootValue, operationName, extensions }) =>
@@ -134,6 +140,7 @@ export default class PostGraphileHandler implements MeshHandler {
             queryDocumentAst: document,
             operationName,
             variables,
+            ...contextOptions(meshContext),
           },
           pgContext =>
             jitExecutor({
