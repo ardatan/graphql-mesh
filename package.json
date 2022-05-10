@@ -36,8 +36,8 @@
     "@parcel/transformer-webmanifest": "2.5.0",
     "@types/jest": "27.5.0",
     "@types/node": "16.11.33",
-    "@typescript-eslint/eslint-plugin": "5.22.0",
-    "@typescript-eslint/parser": "5.22.0",
+    "@typescript-eslint/eslint-plugin": "5.23.0",
+    "@typescript-eslint/parser": "5.23.0",
     "babel-jest": "28.1.0",
     "bob-the-bundler": "1.7.1",
     "eslint": "8.15.0",
@@ -48,7 +48,7 @@
     "eslint-plugin-promise": "6.0.0",
     "eslint-plugin-standard": "4.1.0",
     "globby": "11.1.0",
-    "graphql": "16.4.0",
+    "graphql": "16.5.0",
     "husky": "7.0.4",
     "jest": "28.1.0",
     "lint-staged": "12.4.1",
@@ -90,7 +90,7 @@
   "resolutions": {
     "babel-jest": "28.1.0",
     "jest-runner": "28.1.0",
-    "graphql": "16.4.0",
+    "graphql": "16.5.0",
     "@changesets/apply-release-plan": "6.0.0"
   }
 }
