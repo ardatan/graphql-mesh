@@ -15,9 +15,12 @@ import {
 } from '@guild-docs/client';
 import { FooterExtended, Header, Subheader } from '@theguild/components';
 import type { LinkProps as NextLinkProps } from 'next/link';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+
+import '@algolia/autocomplete-theme-classic';
+import '@theguild/components/dist/static/css/SearchBarV2.css';
 
 import '../../public/style.css';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 const LinkNewTabIfExternal = (props: LinkProps & NextLinkProps) => {
   return props.href.startsWith('/') ? (
@@ -83,12 +86,12 @@ const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
 
 const AppContent: FC<AppProps> = appProps => {
   const { Component, pageProps, router } = appProps;
-  const analytics = useGoogleAnalytics({ router, trackingId: "G-TPQZLLF5T5" });
+  const analytics = useGoogleAnalytics({ router, trackingId: 'G-TPQZLLF5T5' });
   const isDocs = router.asPath.startsWith('/docs');
 
   return (
     <>
-      <Header accentColor={accentColor} activeLink="/open-source" themeSwitch />
+      <Header accentColor={accentColor} activeLink="/open-source" themeSwitch searchBarProps={{ version: 'v2' }} />
       <Subheader
         activeLink={router.asPath}
         product={{

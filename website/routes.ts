@@ -71,7 +71,7 @@ export function getRoutes(): IRoutes {
       },
       cache: {
         $name: 'Cache',
-        $routes: ['inmemory-lru', 'file', 'localforage', 'redis'],
+        $routes: ['file', 'localforage', 'redis'],
       },
       api: apiSidebar,
       'cli-commands': {

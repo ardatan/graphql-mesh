@@ -1,8 +1,9 @@
 {
-  "name": "@graphql-mesh/website",
+  "name": "website",
   "version": "0.8.2",
   "private": true,
   "scripts": {
+    "algolia-sync": "node scripts/algolia-ci.mjs",
     "build-mesh": "cd src/pages/api/covid/json-schema-covid && mesh build",
     "prebuild": "yarn build-mesh",
     "build": "next build",
@@ -43,10 +44,11 @@
     ]
   },
   "devDependencies": {
+    "@guild-docs/algolia": "0.0.4",
     "@next/bundle-analyzer": "12.1.6",
     "@types/node": "16.11.33",
-    "@types/react": "18.0.9",
-    "@types/react-dom": "18.0.3",
+    "@types/react": "17.0.9",
+    "@types/react-dom": "17.0.3",
     "concurrently": "7.1.0",
     "cross-env": "7.0.3",
     "esbuild": "0.14.38",
