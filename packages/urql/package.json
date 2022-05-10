@@ -25,7 +25,7 @@
     }
   },
   "dependencies": {
-    "@graphql-tools/utils": "8.6.9",
+    "@graphql-tools/utils": "8.6.10",
     "tslib": "2.4.0"
   },
   "devDependencies": {

@@ -29,7 +29,7 @@
     "mongoose": "*"
   },
   "devDependencies": {
-    "mongoose": "6.3.2"
+    "mongoose": "6.3.3"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.72.1",
@@ -38,7 +38,7 @@
     "graphql-compose-mongoose": "9.7.1",
     "graphql-compose-connection": "8.2.1",
     "graphql-compose-pagination": "8.3.0",
-    "@graphql-tools/stitching-directives": "2.2.14",
+    "@graphql-tools/stitching-directives": "2.2.15",
     "tslib": "^2.3.1"
   },
   "publishConfig": {
