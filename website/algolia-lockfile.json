@@ -54,7 +54,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/cache",
+    "url": "https://www.graphql-mesh.com/docs/transforms/cache",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Cache Transform"],
     "source": "Mesh",
@@ -104,19 +104,19 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/combine-multiple-sources",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/combine-multiple-sources",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Getting Started", "How to: Combine multiple Sources"],
     "source": "Mesh",
     "title": "How to: Combine multiple Sources",
-    "type": "Documentation"
+    "type": "Guide"
   },
   {
     "objectID": "mesh-comparison",
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/comparison",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/comparison",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": [
       "Mesh",
@@ -152,12 +152,12 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/customize-mesh-server",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/customize-mesh-server",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Getting Started", "How to: Customize the Mesh server"],
     "source": "Mesh",
     "title": "How to: Customize the Mesh server",
-    "type": "Documentation"
+    "type": "Guide"
   },
   {
     "objectID": "mesh-deploy-mesh-gateway",
@@ -197,12 +197,12 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/deploy-mesh-gateway",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Getting Started", "How to: Deploy a GraphQL Mesh Gateway"],
     "source": "Mesh",
     "title": "How to: Deploy a GraphQL Mesh Gateway",
-    "type": "Documentation"
+    "type": "Guide"
   },
   {
     "objectID": "mesh-docs/cli-commands",
@@ -259,7 +259,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/cli-commands",
+    "url": "https://www.graphql-mesh.com/docs/cli-commands",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "CLI commands"],
     "source": "Mesh",
@@ -271,7 +271,7 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/introduction",
+    "url": "https://www.graphql-mesh.com/docs/introduction",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Introduction"],
     "source": "Mesh",
@@ -294,7 +294,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/encapsulate",
+    "url": "https://www.graphql-mesh.com/docs/transforms/encapsulate",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Encapsulate Transform"],
     "source": "Mesh",
@@ -323,7 +323,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/guides/error-handling",
+    "url": "https://www.graphql-mesh.com/docs/guides/error-handling",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Guides", "Error handling"],
     "source": "Mesh",
@@ -346,7 +346,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/extend",
+    "url": "https://www.graphql-mesh.com/docs/transforms/extend",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Extend Transform (experimental)"],
     "source": "Mesh",
@@ -375,7 +375,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/guides/extending-unified-schema",
+    "url": "https://www.graphql-mesh.com/docs/guides/extending-unified-schema",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Guides", "Extending the Unified Schema"],
     "source": "Mesh",
@@ -399,7 +399,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/federation",
+    "url": "https://www.graphql-mesh.com/docs/transforms/federation",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Apollo Federation Transform"],
     "source": "Mesh",
@@ -422,7 +422,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/cache/file",
+    "url": "https://www.graphql-mesh.com/docs/cache/file",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Cache", "File Cache"],
     "source": "Mesh",
@@ -445,7 +445,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/guides/file-uploads",
+    "url": "https://www.graphql-mesh.com/docs/guides/file-uploads",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Guides", "File uploads"],
     "source": "Mesh",
@@ -468,7 +468,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/filter-schema",
+    "url": "https://www.graphql-mesh.com/docs/transforms/filter-schema",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Filter Schema Transform"],
     "source": "Mesh",
@@ -503,7 +503,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/graphql",
+    "url": "https://www.graphql-mesh.com/docs/handlers/graphql",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "GraphQL"],
     "source": "Mesh",
@@ -529,7 +529,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/guides/graphql-code-generator",
+    "url": "https://www.graphql-mesh.com/docs/guides/graphql-code-generator",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Guides", "Configure GraphQL Code Generator"],
     "source": "Mesh",
@@ -547,7 +547,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/grpc",
+    "url": "https://www.graphql-mesh.com/docs/handlers/grpc",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "gRPC / Protobuf"],
     "source": "Mesh",
@@ -559,7 +559,7 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/handlers-introduction",
+    "url": "https://www.graphql-mesh.com/docs/handlers/handlers-introduction",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "Source Handlers"],
     "source": "Mesh",
@@ -599,7 +599,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/hoist",
+    "url": "https://www.graphql-mesh.com/docs/transforms/hoist",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Hoist Field Transform"],
     "source": "Mesh",
@@ -622,7 +622,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/installation",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/installation",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Getting Started", "Installation"],
     "source": "Mesh",
@@ -672,7 +672,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/json-schema",
+    "url": "https://www.graphql-mesh.com/docs/handlers/json-schema",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "JSON Schema or Samples"],
     "source": "Mesh",
@@ -684,7 +684,7 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/guides/live-queries",
+    "url": "https://www.graphql-mesh.com/docs/guides/live-queries",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Guides", "Live Queries"],
     "source": "Mesh",
@@ -707,7 +707,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/cache/localforage",
+    "url": "https://www.graphql-mesh.com/docs/cache/localforage",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Cache", "LocalForage"],
     "source": "Mesh",
@@ -780,7 +780,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/mock",
+    "url": "https://www.graphql-mesh.com/docs/transforms/mock",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Mock Transform"],
     "source": "Mesh",
@@ -798,7 +798,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/mongoose",
+    "url": "https://www.graphql-mesh.com/docs/handlers/mongoose",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "MongoDB / Mongoose"],
     "source": "Mesh",
@@ -816,7 +816,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/mysql",
+    "url": "https://www.graphql-mesh.com/docs/handlers/mysql",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "MySQL"],
     "source": "Mesh",
@@ -839,7 +839,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/naming-convention",
+    "url": "https://www.graphql-mesh.com/docs/transforms/naming-convention",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Naming Convention Transform"],
     "source": "Mesh",
@@ -857,7 +857,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/neo4j",
+    "url": "https://www.graphql-mesh.com/docs/handlers/neo4j",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "Neo4j"],
     "source": "Mesh",
@@ -897,7 +897,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/odata",
+    "url": "https://www.graphql-mesh.com/docs/handlers/odata",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "OData / Microsoft Graph"],
     "source": "Mesh",
@@ -965,7 +965,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/openapi",
+    "url": "https://www.graphql-mesh.com/docs/handlers/openapi",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "OpenAPI / Swagger"],
     "source": "Mesh",
@@ -977,7 +977,7 @@
     "headings": [],
     "toc": [],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/overview",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/overview",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Getting Started", "Overview"],
     "source": "Mesh",
@@ -995,7 +995,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/guides/performances-best-practices",
+    "url": "https://www.graphql-mesh.com/docs/guides/performances-best-practices",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Guides", "Performances best practices"],
     "source": "Mesh",
@@ -1035,7 +1035,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/postgraphile",
+    "url": "https://www.graphql-mesh.com/docs/handlers/postgraphile",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "PostgreSQL / PostGraphile"],
     "source": "Mesh",
@@ -1058,7 +1058,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/prefix",
+    "url": "https://www.graphql-mesh.com/docs/transforms/prefix",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Prefix Transform"],
     "source": "Mesh",
@@ -1081,7 +1081,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/cache/redis",
+    "url": "https://www.graphql-mesh.com/docs/cache/redis",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Cache", "Redis Cache"],
     "source": "Mesh",
@@ -1104,7 +1104,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/rename",
+    "url": "https://www.graphql-mesh.com/docs/transforms/rename",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Rename Transform"],
     "source": "Mesh",
@@ -1172,7 +1172,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/replace-field",
+    "url": "https://www.graphql-mesh.com/docs/transforms/replace-field",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Replace Field"],
     "source": "Mesh",
@@ -1195,7 +1195,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/resolvers-composition",
+    "url": "https://www.graphql-mesh.com/docs/transforms/resolvers-composition",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Resolvers Composition Transform"],
     "source": "Mesh",
@@ -1223,7 +1223,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/snapshot",
+    "url": "https://www.graphql-mesh.com/docs/transforms/snapshot",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Snapshot Transform"],
     "source": "Mesh",
@@ -1246,7 +1246,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/soap",
+    "url": "https://www.graphql-mesh.com/docs/handlers/soap",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "SOAP"],
     "source": "Mesh",
@@ -1296,12 +1296,12 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/sources-with-no-definition",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/sources-with-no-definition",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Getting Started", "How to: Configure Sources with no definition"],
     "source": "Mesh",
     "title": "How to: Configure Sources with no definition",
-    "type": "Documentation"
+    "type": "Guide"
   },
   {
     "objectID": "mesh-subscriptions-webhooks",
@@ -1337,7 +1337,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/guides/subscriptions-webhooks",
+    "url": "https://www.graphql-mesh.com/docs/guides/subscriptions-webhooks",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Guides", "Handle Webhooks with GraphQL Subscriptions"],
     "source": "Mesh",
@@ -1355,7 +1355,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/thrift",
+    "url": "https://www.graphql-mesh.com/docs/handlers/thrift",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "Apache Thrift"],
     "source": "Mesh",
@@ -1412,7 +1412,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/transforms-introduction",
+    "url": "https://www.graphql-mesh.com/docs/transforms/transforms-introduction",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Schema Transformation"],
     "source": "Mesh",
@@ -1435,7 +1435,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/handlers/tuql",
+    "url": "https://www.graphql-mesh.com/docs/handlers/tuql",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Source Handlers", "SQLite / Tuql"],
     "source": "Mesh",
@@ -1469,7 +1469,7 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/transforms/type-merging",
+    "url": "https://www.graphql-mesh.com/docs/transforms/type-merging",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Transforms", "Type Merging Transform"],
     "source": "Mesh",
@@ -1514,11 +1514,11 @@
       }
     ],
     "content": "-",
-    "url": "https://www.graphql-mesh.com//docs/getting-started/your-first-mesh-gateway",
+    "url": "https://www.graphql-mesh.com/docs/getting-started/your-first-mesh-gateway",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Mesh", "Getting Started", "Your first Gateway with Mesh"],
     "source": "Mesh",
     "title": "Your first Gateway with Mesh",
-    "type": "Documentation"
+    "type": "Tutorial"
   }
 ]
