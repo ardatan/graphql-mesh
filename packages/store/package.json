@@ -11,7 +11,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "graphql": "16.4.0"
+    "graphql": "16.5.0"
   },
   "sideEffects": false,
   "main": "dist/index.js",
@@ -34,7 +34,7 @@
     "@graphql-inspector/core": "3.1.2",
     "@graphql-mesh/cross-helpers": "0.1.2",
     "@graphql-mesh/utils": "0.34.6",
-    "@graphql-tools/utils": "8.6.9",
+    "@graphql-tools/utils": "8.6.10",
     "@graphql-mesh/types": "0.72.1",
     "tslib": "^2.3.1"
   },
