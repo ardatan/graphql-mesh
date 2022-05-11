@@ -1,5 +1,6 @@
 module.exports.fs = require('react-native-fs');
-module.exports.path = require('path-browserify');
+module.exports.path = require('react-native-path');
+module.exports.path.join = (...args) => module.exports.path.normalize(args.filter(x => !!x).join('/'))
 
 Promise.allSettled =
   Promise.allSettled ||

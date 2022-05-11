@@ -48,7 +48,10 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   }
 
   async read<TData, TJSONData = any>(key: string, options: ProxyOptions<TData, TJSONData>): Promise<TData> {
-    const absoluteModulePath = this.getAbsolutePath(key);
+    let absoluteModulePath = this.getAbsolutePath(key);
+    if (this.options.fileType !== 'ts') {
+      absoluteModulePath += '.' + this.options.fileType;
+    }
     try {
       const importedData = await this.options.importFn(absoluteModulePath).then(m => m.default || m);
       if (this.options.fileType === 'json') {
@@ -75,7 +78,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
     const modulePath = this.getAbsolutePath(key);
     const filePath = modulePath + '.' + this.options.fileType;
     await writeFile(filePath, flatString(asString));
-    await this.options.importFn(modulePath);
+    await this.options.importFn(this.options.fileType !== 'ts' ? filePath : modulePath);
   }
 
   async delete(key: string): Promise<void> {

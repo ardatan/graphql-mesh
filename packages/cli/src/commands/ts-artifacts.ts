@@ -449,9 +449,11 @@ export function ${
     }
   } else {
     jobs.push(esmJob('mjs'));
-    jobs.push(cjsJob);
-    if (fileType !== 'ts') {
+    if (fileType === 'json') {
+      jobs.push(cjsJob);
       jobs.push(packageJsonJob('commonjs'));
+    } else if (fileType === 'js') {
+      jobs.push(packageJsonJob('module'));
     }
   }
 
