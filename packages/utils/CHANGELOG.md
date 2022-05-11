@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.34.8
+
+### Patch Changes
+
+- 31efa964e: Fix ESM support
+  - @graphql-mesh/types@0.72.3
+
 ## 0.34.7
 
 ### Patch Changes
