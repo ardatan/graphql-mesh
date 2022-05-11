@@ -38,7 +38,7 @@ export class InMemoryStoreStorageAdapter implements StoreStorageAdapter {
 export interface FsStoreStorageAdapterOptions {
   cwd: string;
   importFn: ImportFn;
-  fileType: 'ts' | 'json';
+  fileType: 'ts' | 'json' | 'js';
 }
 
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
@@ -47,7 +47,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
     return pathModule.isAbsolute(jsFileName) ? jsFileName : pathModule.join(this.options.cwd, jsFileName);
   }
 
-  async read<TData>(key: string): Promise<TData> {
+  async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
     const absoluteModulePath = this.getAbsolutePath(key);
     try {
       return await this.options.importFn(absoluteModulePath).then(m => m.default || m);
@@ -61,9 +61,9 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
 
   async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
     const asString =
-      this.options.fileType === 'ts'
-        ? `// @ts-nocheck\n` + (await options.codify(data, key))
-        : await options.stringify(data, key);
+      this.options.fileType === 'json'
+        ? await options.stringify(data, key)
+        : `// @ts-nocheck\n` + (await options.codify(data, key));
     const modulePath = this.getAbsolutePath(key);
     const filePath = modulePath + '.' + this.options.fileType;
     await writeFile(filePath, flatString(asString));
@@ -103,7 +103,7 @@ export enum PredefinedProxyOptionsName {
 
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
-    codify: v => `export default ${JSON.stringify(v, null, 2)} as any;`,
+    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
     parse: v => JSON.parse(v),
     stringify: v => JSON.stringify(v, null, 2),
     validate: () => null,
@@ -117,9 +117,9 @@ export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOpt
   GraphQLSchemaWithDiffing: {
     codify: schema =>
       `
-import { buildASTSchema, DocumentNode } from 'graphql';
+import { buildASTSchema } from 'graphql';
 
-const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)} as unknown as DocumentNode;
+const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)};
 
 export default buildASTSchema(schemaAST, {
   assumeValid: true,

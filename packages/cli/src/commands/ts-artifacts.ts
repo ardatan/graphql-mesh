@@ -143,7 +143,7 @@ export async function generateTsArtifacts(
     meshConfigCode,
     logger,
     sdkConfig,
-    tsOnly = true,
+    fileType,
     codegenConfig = {},
   }: {
     unifiedSchema: GraphQLSchema;
@@ -156,7 +156,7 @@ export async function generateTsArtifacts(
     meshConfigCode: string;
     logger: Logger;
     sdkConfig: YamlConfig.SDKConfig;
-    tsOnly: boolean;
+    fileType: 'ts' | 'json' | 'js';
     codegenConfig: any;
   },
   cliParams: GraphQLMeshCLIParams
@@ -276,7 +276,7 @@ const importFn = (moduleId: string) => {
 const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageAdapter({
   cwd: baseDir,
   importFn,
-  fileType: 'ts',
+  fileType: ${JSON.stringify(fileType)},
 }), {
   readonly: true,
   validate: false
@@ -358,7 +358,7 @@ export function ${
     artifactsDir,
     baseDir
   )}');`;
-  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : module.id, '${pathModule.relative(
+  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
     artifactsDir,
     baseDir
   )}');`;
@@ -378,7 +378,7 @@ export function ${
       await fs.promises.unlink(esmJsFilePath);
     }
 
-    if (!tsOnly) {
+    if (fileType !== 'ts') {
       logger.info(`Compiling TS file as ES Module to "index.${ext}"`);
       compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
 
@@ -399,7 +399,7 @@ export function ${
     if (await pathExists(jsFilePath)) {
       await fs.promises.unlink(jsFilePath);
     }
-    if (!tsOnly) {
+    if (fileType !== 'ts') {
       logger.info('Compiling TS file as CommonJS Module to `index.js`');
       compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
@@ -438,19 +438,19 @@ export function ${
     const tsConfig = JSON.parse(stripJSONComments(tsConfigStr));
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
       jobs.push(esmJob('js'));
-      if (!tsOnly) {
+      if (fileType !== 'ts') {
         jobs.push(packageJsonJob('module'));
       }
     } else {
       jobs.push(cjsJob);
-      if (!tsOnly) {
+      if (fileType !== 'ts') {
         jobs.push(packageJsonJob('commonjs'));
       }
     }
   } else {
     jobs.push(esmJob('mjs'));
     jobs.push(cjsJob);
-    if (!tsOnly) {
+    if (fileType !== 'ts') {
       jobs.push(packageJsonJob('commonjs'));
     }
   }
