@@ -47,12 +47,12 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
     return pathModule.isAbsolute(jsFileName) ? jsFileName : pathModule.join(this.options.cwd, jsFileName);
   }
 
-  async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
+  async read<TData, TJSONData = any>(key: string, options: ProxyOptions<TData, TJSONData>): Promise<TData> {
     const absoluteModulePath = this.getAbsolutePath(key);
     try {
       const importedData = await this.options.importFn(absoluteModulePath).then(m => m.default || m);
       if (this.options.fileType === 'json') {
-        return options.toJSON(importedData, key);
+        return await options.fromJSON(importedData, key);
       }
       return importedData;
     } catch (e) {
@@ -63,10 +63,14 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
     }
   }
 
-  async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
+  async write<TData, TJSONData = any>(
+    key: string,
+    data: TData,
+    options: ProxyOptions<TData, TJSONData>
+  ): Promise<void> {
     const asString =
       this.options.fileType === 'json'
-        ? await options.toJSON(data, key)
+        ? JSON.stringify(await options.toJSON(data, key))
         : `// @ts-nocheck\n` + (await options.codify(data, key));
     const modulePath = this.getAbsolutePath(key);
     const filePath = modulePath + '.' + this.options.fileType;
