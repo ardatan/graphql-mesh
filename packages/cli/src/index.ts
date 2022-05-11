@@ -304,13 +304,13 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         }
       }
     )
-    .command<{ fileType: 'json' | 'ts' }>(
+    .command<{ fileType: 'json' | 'ts' | 'js' }>(
       cliParams.buildArtifactsCommand,
       'Builds artifacts',
       builder => {
         builder.option('fileType', {
           type: 'string',
-          choices: ['json', 'ts'],
+          choices: ['json', 'ts', 'js'],
           default: 'ts',
         });
       },
@@ -347,7 +347,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             new FsStoreStorageAdapter({
               cwd: baseDir,
               importFn,
-              fileType: args.fileType,
+              fileType: args.fileType === 'js' ? 'json' : args.fileType,
             }),
             {
               readonly: false,
@@ -384,7 +384,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
               meshConfigCode: meshConfig.code,
               logger,
               sdkConfig: meshConfig.config.sdk,
-              tsOnly: true,
+              tsOnly: args.fileType !== 'js',
               codegenConfig: meshConfig.config.codegen,
             },
             cliParams
