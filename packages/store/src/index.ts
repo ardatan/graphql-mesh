@@ -50,7 +50,11 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   async read<TData>(key: string, options: ProxyOptions<any>): Promise<TData> {
     const absoluteModulePath = this.getAbsolutePath(key);
     try {
-      return await this.options.importFn(absoluteModulePath).then(m => m.default || m);
+      const importedData = await this.options.importFn(absoluteModulePath).then(m => m.default || m);
+      if (this.options.fileType === 'json') {
+        return options.toJSON(importedData, key);
+      }
+      return importedData;
     } catch (e) {
       if (e.message.startsWith('Cannot find module')) {
         return undefined;
@@ -62,7 +66,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
     const asString =
       this.options.fileType === 'json'
-        ? await options.stringify(data, key)
+        ? await options.toJSON(data, key)
         : `// @ts-nocheck\n` + (await options.codify(data, key));
     const modulePath = this.getAbsolutePath(key);
     const filePath = modulePath + '.' + this.options.fileType;
@@ -83,10 +87,10 @@ export type StoreProxy<TData> = {
   delete(): Promise<void>;
 };
 
-export type ProxyOptions<TData> = {
+export type ProxyOptions<TData, TJSONData = any> = {
   codify: (value: TData, identifier: string) => string | Promise<string>;
-  parse: (stringifiedData: string, identifier: string) => TData | Promise<TData>;
-  stringify: (value: TData, identifier: string) => string | Promise<string>;
+  fromJSON: (jsonData: TJSONData, identifier: string) => TData | Promise<TData>;
+  toJSON: (value: TData, identifier: string) => TJSONData | Promise<TJSONData>;
   validate: (oldValue: TData, newValue: TData, identifier: string) => void | Promise<void>;
 };
 
@@ -104,14 +108,14 @@ export enum PredefinedProxyOptionsName {
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
     codify: v => `export default ${JSON.stringify(v, null, 2)}`,
-    parse: v => JSON.parse(v),
-    stringify: v => JSON.stringify(v, null, 2),
+    fromJSON: v => v,
+    toJSON: v => v,
     validate: () => null,
   },
   StringWithoutValidation: {
     codify: v => `export default ${JSON.stringify(v, null, 2)}`,
-    parse: v => v,
-    stringify: v => v,
+    fromJSON: v => v,
+    toJSON: v => v,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
@@ -126,8 +130,8 @@ export default buildASTSchema(schemaAST, {
   assumeValidSDL: true
 });
     `.trim(),
-    parse: astString => buildASTSchema(JSON.parse(astString), { assumeValid: true, assumeValidSDL: true }),
-    stringify: schema => JSON.stringify(getDocumentNodeFromSchema(schema)),
+    fromJSON: schemaAST => buildASTSchema(schemaAST, { assumeValid: true, assumeValidSDL: true }),
+    toJSON: schema => getDocumentNodeFromSchema(schema),
     validate: async (oldSchema, newSchema) => {
       const changes = await diff(oldSchema, newSchema);
       const errors: string[] = [];
