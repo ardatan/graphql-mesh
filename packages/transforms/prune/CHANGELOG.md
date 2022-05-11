@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-prune
 
+## 0.0.29
+
+### Patch Changes
+
+- @graphql-mesh/types@0.72.3
+
 ## 0.0.28
 
 ### Patch Changes
