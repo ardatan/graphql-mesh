@@ -1,5 +1,13 @@
 # json-machete
 
+## 0.8.4
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cross-helpers@0.1.3
+  - @graphql-mesh/utils@0.34.7
+
 ## 0.8.3
 
 ### Patch Changes

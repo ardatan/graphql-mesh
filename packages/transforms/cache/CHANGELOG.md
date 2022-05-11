@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-cache
 
+## 0.12.7
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.34.7
+- @graphql-mesh/types@0.72.2
+
 ## 0.12.6
 
 ### Patch Changes

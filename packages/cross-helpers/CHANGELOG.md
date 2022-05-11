@@ -1,5 +1,11 @@
 # @graphql-mesh/cross-helpers
 
+## 0.1.3
+
+### Patch Changes
+
+- 66b9b3ddc: Fixes for JSON handling and react native
+
 ## 0.1.2
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @graphql-mesh/cli
 
+## 0.70.1
+
+### Patch Changes
+
+- 66b9b3ddc: Prefer JS while loading modules from TS files
+- 66b9b3ddc: Avoid \_\_dirname if possible
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cross-helpers@0.1.3
+  - @graphql-mesh/store@0.8.5
+  - @graphql-mesh/config@0.36.2
+  - @graphql-mesh/utils@0.34.7
+  - @graphql-mesh/types@0.72.2
+  - @graphql-mesh/runtime@0.34.7
+
 ## 0.70.0
 
 ### Minor Changes
