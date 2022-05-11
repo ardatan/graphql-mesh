@@ -94,7 +94,6 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
-          preferTsExts: true,
           dir: baseDir,
           require: ['graphql-import-node/register'],
           compilerOptions: {
