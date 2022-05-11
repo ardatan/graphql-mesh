@@ -2635,10 +2635,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@envelop/core@2.3.1", "@envelop/core@^2.0.0":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-2.3.1.tgz#77d502db2aa97846573d7c2e87a00bde840c7ebb"
-  integrity sha512-AnYUci7EGyA8flml881lDvVDl6n/u6GQpVIOTsZVO29d4/rPqSJ2KFguDD3mjDL406doTTLNuDI4ndxfJl6fmQ==
+"@envelop/core@2.3.2", "@envelop/core@^2.0.0":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-2.3.2.tgz#b5cc5a2f7a3c0ea4ac2492589190bb19c6126ca0"
+  integrity sha512-NTVY7bajznZyE0S/yzwIu5aimcM8JLqdeWkWUmwmrAHZdE6zjrvOuVCwq1kMIHzgV3bmLdPg2F7534Nxad/HLg==
   dependencies:
     "@envelop/types" "2.2.0"
 
@@ -2647,10 +2647,10 @@
   resolved "https://registry.yarnpkg.com/@envelop/disable-introspection/-/disable-introspection-3.0.0.tgz#beb8a534e7c3dd2c8d141c56ad162bbecef17bd5"
   integrity sha512-ypYwiEbwSe+uyYp6CEwJ2oDRUk51chvSSlncZmt3gutpJyuNeWygcFOngxtbzCKqkjgEfag3AM2HrCFJxJZ7gw==
 
-"@envelop/live-query@3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-3.3.1.tgz#2918eb40edf18796cfdeafca3283964f40345934"
-  integrity sha512-hRAFpgZYOqYMEsB8Mjch9/OelPnmxaro+9yHcaOXQdJSgxgcZrcEJLG0yGmJiKfZ/LdHSa8YTaWuRBB4zk+mWw==
+"@envelop/live-query@3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-3.3.2.tgz#5bdc8fa0f91e41b3a35c3fbfd91341082487c211"
+  integrity sha512-cLZEz+plu3l8z8VwLEZvn8WDqusZXIhGh2QJFiLWT/CI46Jp3KLsq+XdHpKC1FNiFYbN4OphtMxOWYiC6orNMg==
   dependencies:
     "@graphql-tools/utils" "^8.6.1"
     "@n1ru4l/graphql-live-query" "^0.9.0"
