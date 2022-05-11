@@ -14,7 +14,7 @@
     "build:api-docs": "ts-node --compiler-options='{\"module\":\"commonjs\"}' scripts/build-api-docs",
     "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
     "fix-bin": "node scripts/fix-bin.js",
-    "postbuild": "yarn copy-config-schema && yarn fix-bin",
+    "postbuild": "node scripts/fix-import.js && yarn copy-config-schema && yarn fix-bin",
     "lint": "eslint --ext .ts \"./packages/**/src/*.ts\"",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",

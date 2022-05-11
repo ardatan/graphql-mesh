@@ -94,7 +94,6 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
-          preferTsExts: true,
           dir: baseDir,
           require: ['graphql-import-node/register'],
           compilerOptions: {
@@ -176,7 +175,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
               `,
                   logger,
                   sdkConfig: meshConfig.config.sdk,
-                  tsOnly: true,
+                  fileType: 'ts',
                   codegenConfig: meshConfig.config.codegen,
                 },
                 cliParams
@@ -347,7 +346,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             new FsStoreStorageAdapter({
               cwd: baseDir,
               importFn,
-              fileType: args.fileType === 'js' ? 'json' : args.fileType,
+              fileType: args.fileType,
             }),
             {
               readonly: false,
@@ -384,7 +383,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
               meshConfigCode: meshConfig.code,
               logger,
               sdkConfig: meshConfig.config.sdk,
-              tsOnly: args.fileType !== 'js',
+              fileType: args.fileType,
               codegenConfig: meshConfig.config.codegen,
             },
             cliParams

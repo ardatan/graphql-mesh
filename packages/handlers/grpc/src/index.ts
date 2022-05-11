@@ -67,24 +67,21 @@ ${rootJsonAndDecodedDescriptorSets
   .join('\n')}
 ];
 `.trim(),
-      parse: (str): any => {
-        const rootJsonAndDecodedDescriptorSets: any[] = JSON.parse(str);
-        return rootJsonAndDecodedDescriptorSets.map(({ name, rootJson, decodedDescriptorSet }) => ({
+      fromJSON: jsonData => {
+        return jsonData.map(({ name, rootJson, decodedDescriptorSet }: any) => ({
           name,
           rootJson,
           decodedDescriptorSet: FileDescriptorSet.fromObject(decodedDescriptorSet),
         }));
       },
-      stringify: rootJsonAndDecodedDescriptorSets => {
-        return JSON.stringify(
-          rootJsonAndDecodedDescriptorSets.map(({ name, rootJson, decodedDescriptorSet }) => {
-            return {
-              name,
-              rootJson,
-              decodedDescriptorSet: decodedDescriptorSet.toJSON(),
-            };
-          })
-        );
+      toJSON: rootJsonAndDecodedDescriptorSets => {
+        return rootJsonAndDecodedDescriptorSets.map(({ name, rootJson, decodedDescriptorSet }) => {
+          return {
+            name,
+            rootJson,
+            decodedDescriptorSet: decodedDescriptorSet.toJSON(),
+          };
+        });
       },
       validate: () => {},
     });
@@ -362,7 +359,10 @@ ${rootJsonAndDecodedDescriptorSets
       if (typeof ServiceClient !== 'function') {
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }
-      const client = new ServiceClient(stringInterpolator.parse(this.config.endpoint, { env: process.env }) ?? this.config.endpoint, creds);
+      const client = new ServiceClient(
+        stringInterpolator.parse(this.config.endpoint, { env: process.env }) ?? this.config.endpoint,
+        creds
+      );
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
         const rootFieldName = [...pathWithName, methodName].join('_');
