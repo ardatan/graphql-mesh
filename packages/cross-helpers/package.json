@@ -16,7 +16,6 @@
   "types": "index.d.ts",
   "dependencies": {
     "react-native-fs": "2.20.0",
-    "react-native-path": "0.0.5",
     "path-browserify": "1.0.1"
   },
   "publishConfig": {
