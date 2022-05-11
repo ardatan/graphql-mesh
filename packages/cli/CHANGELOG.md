@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.70.0
+
+### Minor Changes
+
+- f7dda8637: Enable JS output
+
 ## 0.69.2
 
 ### Patch Changes
