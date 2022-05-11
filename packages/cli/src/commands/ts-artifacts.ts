@@ -358,7 +358,7 @@ export function ${
     artifactsDir,
     baseDir
   )}');`;
-  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : process.cwd(), '${pathModule.relative(
+  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : module.id, '${pathModule.relative(
     artifactsDir,
     baseDir
   )}');`;
