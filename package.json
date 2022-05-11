@@ -35,7 +35,7 @@
     "@parcel/packager-raw-url": "2.5.0",
     "@parcel/transformer-webmanifest": "2.5.0",
     "@types/jest": "27.5.0",
-    "@types/node": "16.11.33",
+    "@types/node": "16.11.34",
     "@typescript-eslint/eslint-plugin": "5.23.0",
     "@typescript-eslint/parser": "5.23.0",
     "babel-jest": "28.1.0",
