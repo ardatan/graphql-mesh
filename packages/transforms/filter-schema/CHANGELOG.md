@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.14.52
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.34.7
+- @graphql-mesh/types@0.72.2
+
 ## 0.14.51
 
 ### Patch Changes

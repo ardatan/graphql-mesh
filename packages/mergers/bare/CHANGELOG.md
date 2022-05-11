@@ -1,5 +1,12 @@
 # @graphql-mesh/merger-bare
 
+## 0.13.44
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.34.7
+- @graphql-mesh/types@0.72.2
+
 ## 0.13.43
 
 ### Patch Changes

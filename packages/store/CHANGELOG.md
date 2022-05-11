@@ -1,5 +1,15 @@
 # @graphql-mesh/store
 
+## 0.8.5
+
+### Patch Changes
+
+- 66b9b3ddc: Fixes for JSON handling and react native
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cross-helpers@0.1.3
+  - @graphql-mesh/utils@0.34.7
+  - @graphql-mesh/types@0.72.2
+
 ## 0.8.4
 
 ### Patch Changes
