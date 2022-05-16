@@ -276,6 +276,9 @@ export async function processConfig(
           parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
         )}] as any[];`
       );
+      if (additionalTypeDefs?.length) {
+        importCodes.push(`import { parse } from 'graphql';`);
+      }
       return additionalTypeDefs;
     }),
     options?.ignoreAdditionalResolvers
