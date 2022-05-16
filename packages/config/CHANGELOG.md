@@ -1,5 +1,20 @@
 # @graphql-mesh/config
 
+## 0.36.4
+
+### Patch Changes
+
+- 55ad5ea44: Cleanup generated artifacts
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cache-localforage@0.6.4
+  - @graphql-mesh/cross-helpers@0.1.4
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/store@0.8.7
+  - @graphql-mesh/merger-bare@0.13.46
+  - @graphql-mesh/merger-stitching@0.15.48
+  - @graphql-mesh/runtime@0.34.9
+  - @graphql-mesh/types@0.72.4
+
 ## 0.36.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-hoist-field
 
+## 0.1.19
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/types@0.72.4
+
 ## 0.1.18
 
 ### Patch Changes

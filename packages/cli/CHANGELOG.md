@@ -1,5 +1,19 @@
 # @graphql-mesh/cli
 
+## 0.70.3
+
+### Patch Changes
+
+- 55ad5ea44: Cleanup generated artifacts
+- Updated dependencies [55ad5ea44]
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/config@0.36.4
+  - @graphql-mesh/cross-helpers@0.1.4
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/store@0.8.7
+  - @graphql-mesh/runtime@0.34.9
+  - @graphql-mesh/types@0.72.4
+
 ## 0.70.2
 
 ### Patch Changes
