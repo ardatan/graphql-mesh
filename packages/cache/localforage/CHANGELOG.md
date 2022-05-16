@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-localforage
 
+## 0.6.4
+
+### Patch Changes
+
+- 55ad5ea44: Fix browser support
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/types@0.72.4
+
 ## 0.6.3
 
 ### Patch Changes

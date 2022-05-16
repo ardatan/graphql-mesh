@@ -1,6 +1,6 @@
 {
   "name": "soap-netsuite",
-  "version": "0.0.117",
+  "version": "0.0.118",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -11,8 +11,8 @@
     "start": "yarn debug"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.70.2",
-    "@graphql-mesh/soap": "0.10.53",
+    "@graphql-mesh/cli": "0.70.3",
+    "@graphql-mesh/soap": "0.10.54",
     "graphql": "16.0.1"
   },
   "devDependencies": {

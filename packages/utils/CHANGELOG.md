@@ -1,5 +1,14 @@
 # @graphql-mesh/utils
 
+## 0.34.9
+
+### Patch Changes
+
+- 55ad5ea44: Fix browser support
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cross-helpers@0.1.4
+  - @graphql-mesh/types@0.72.4
+
 ## 0.34.8
 
 ### Patch Changes

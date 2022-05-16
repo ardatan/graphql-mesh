@@ -1,5 +1,11 @@
 # @graphql-mesh/cross-helpers
 
+## 0.1.4
+
+### Patch Changes
+
+- 55ad5ea44: Fix browser support
+
 ## 0.1.3
 
 ### Patch Changes
