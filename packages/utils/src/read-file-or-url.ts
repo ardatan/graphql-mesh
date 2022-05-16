@@ -8,8 +8,6 @@ import { defaultImportFn } from './defaultImportFn';
 import { memoize1 } from '@graphql-tools/utils';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
-export { isUrl };
-
 export interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';

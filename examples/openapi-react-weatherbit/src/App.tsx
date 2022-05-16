@@ -20,7 +20,7 @@ function App() {
           console.error('No forecast data received', forecastData);
         }
       });
-  }, [sdk]);
+  }, []);
 
   return (
     <div className="App">

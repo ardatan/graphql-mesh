@@ -89,7 +89,6 @@ export async function processConfig(
   const importCodes: string[] = [
     `import { GetMeshOptions } from '@graphql-mesh/runtime';`,
     `import { YamlConfig } from '@graphql-mesh/types';`,
-    `import { parse } from 'graphql';`,
   ];
   const codes: string[] = [
     `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)} as any`,

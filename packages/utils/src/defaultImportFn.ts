@@ -1,6 +1,5 @@
 export async function defaultImportFn(path: string) {
-  /* @vite-ignore */
-  let module = await import(path);
+  let module = await import(/* @vite-ignore */ path);
   if (module.default != null) {
     module = module.default;
   }

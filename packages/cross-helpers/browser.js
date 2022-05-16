@@ -1,4 +1,7 @@
-module.exports.fs = {
+import path from 'path-browserify';
+
+export const fs = {
   promises: {}
 };
-module.exports.path = require('path-browserify');
+
+export { path };

@@ -11,8 +11,8 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   constructor(config?: YamlConfig.LocalforageConfig) {
     const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE', 'INMEMORY_LRU'];
     this.localforage = LocalForage.createInstance({
-      name: config?.name,
-      storeName: config?.storeName,
+      name: config?.name || 'graphql-mesh-cache',
+      storeName: config?.storeName || 'graphql-mesh-cache-store',
       driver: driverNames.map(driverName => LocalForage[driverName] ?? driverName),
     });
   }
