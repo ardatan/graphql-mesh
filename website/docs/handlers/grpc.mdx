@@ -23,7 +23,37 @@ sources:
 > You can check out our example that uses gRPC Handler.
 [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example)
 
+## Use Reflection instead of proto files
 
+If you have configured reflection in your gRPC server, you can use `useReflection` flag to load the schema from reflection instead of loading proto files.
+
+```yaml
+sources:
+  - name: gRPC Example
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        useReflection: true
+```
+
+> You can check out our example that uses gRPC Handler with reflection.
+[Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-reflection-example)
+
+## Custom Metadata for Authorization
+
+Here you can use `metaData` field to pass some custom metadata from the context.
+
+```yaml
+sources:
+  - name: MyGrpcApi
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        protoFilePath: grpc/proto/Example.proto
+        metaData:
+          authorization: "{req.headers.authorization}"
+          someStaticValue: "MyStaticValue"
+```
 
 <p>&nbsp;</p>
 

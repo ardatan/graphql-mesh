@@ -1,4 +1,4 @@
-import { jsonFlatStringify } from '@graphql-mesh/utils';
+import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
 import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { SchemaComposer } from 'graphql-compose';
@@ -60,9 +60,14 @@ export function addMetaDataToCall(
         // Extract data from context
         metaValue = _.get(context, value);
       }
+
       // Ensure that the metadata is compatible with what node-grpc expects
       if (typeof metaValue !== 'string' && !(metaValue instanceof Buffer)) {
         metaValue = jsonFlatStringify(metaValue);
+      }
+
+      if (typeof metaValue === 'string') {
+        metaValue = stringInterpolator.parse(metaValue, context);
       }
 
       meta.add(key, metaValue as MetadataValue);
