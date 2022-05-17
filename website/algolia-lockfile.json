@@ -538,8 +538,18 @@
   },
   {
     "objectID": "mesh-grpc",
-    "headings": ["Config API Reference"],
+    "headings": ["Use Reflection instead of proto files", "Custom Metadata for Authorization", "Config API Reference"],
     "toc": [
+      {
+        "children": [],
+        "title": "Use Reflection instead of proto files",
+        "anchor": "use-reflection-instead-of-proto-files"
+      },
+      {
+        "children": [],
+        "title": "Custom Metadata for Authorization",
+        "anchor": "custom-metadata-for-authorization"
+      },
       {
         "children": [],
         "title": "Config API Reference",
