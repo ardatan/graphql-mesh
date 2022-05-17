@@ -32,7 +32,7 @@
     "@graphql-mesh/utils": "0.34.9",
     "@graphql-mesh/types": "0.72.4",
     "json-machete": "0.8.6",
-    "openapi-types": "11.0.0",
+    "openapi-types": "11.0.1",
     "change-case": "4.1.2",
     "tslib": "^2.3.1"
   },

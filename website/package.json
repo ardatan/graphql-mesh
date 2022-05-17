@@ -46,7 +46,7 @@
   "devDependencies": {
     "@guild-docs/algolia": "0.0.4",
     "@next/bundle-analyzer": "12.1.6",
-    "@types/node": "16.11.35",
+    "@types/node": "16.11.36",
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
     "concurrently": "7.2.0",
