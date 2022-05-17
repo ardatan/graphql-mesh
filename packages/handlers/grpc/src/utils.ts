@@ -1,16 +1,11 @@
-import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
-import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
+import { jsonFlatStringify, stringInterpolator, withCancel } from '@graphql-mesh/utils';
+import { ClientDuplexStream, ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { SchemaComposer } from 'graphql-compose';
 import _ from 'lodash';
 import { Root } from 'protobufjs';
 
 import { getGraphQLScalar, isScalarType } from './scalars';
-
-export type ClientMethod = (
-  input: unknown,
-  metaData?: Metadata
-) => Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>>;
 
 export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string[] | undefined, isInput: boolean) {
   if (pathWithName?.length) {
@@ -46,12 +41,21 @@ export function addIncludePathResolver(root: Root, includePaths: string[]): void
   };
 }
 
+function isBlob(input: any): input is Blob {
+  return input != null && input.stream instanceof Function;
+}
+
 export function addMetaDataToCall(
-  call: ClientMethod,
-  input: unknown,
+  callFn: any,
+  input: any,
   context: Record<string, unknown>,
-  metaData: Record<string, string | string[] | Buffer>
+  metaData: Record<string, string | string[] | Buffer>,
+  isResponseStream = false
 ) {
+  const callFnArguments: any[] = [];
+  if (!isBlob(input)) {
+    callFnArguments.push(input);
+  }
   if (metaData) {
     const meta = new Metadata();
     for (const [key, value] of Object.entries(metaData)) {
@@ -72,8 +76,30 @@ export function addMetaDataToCall(
 
       meta.add(key, metaValue as MetadataValue);
     }
-
-    return call(input, meta);
+    callFnArguments.push(meta);
   }
-  return call(input);
+  return new Promise((resolve, reject) => {
+    const call: ClientDuplexStream<any, any> = callFn(
+      ...callFnArguments,
+      (error: Error, response: ClientUnaryCall | ClientReadableStream<unknown>) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(response);
+      }
+    );
+    if (isResponseStream) {
+      let isCancelled = false;
+      const responseStreamWithCancel = withCancel(call, () => {
+        if (!isCancelled) {
+          call.call?.cancelWithStatus(0, 'Cancelled by GraphQL Mesh');
+          isCancelled = true;
+        }
+      });
+      resolve(responseStreamWithCancel);
+      if (isBlob(input)) {
+        input.stream().pipe(call);
+      }
+    }
+  });
 }

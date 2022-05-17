@@ -1,21 +1,20 @@
 /* eslint-disable import/no-duplicates */
 import './patchLongJs';
 import { GetMeshSourceOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
-import { withCancel, stringInterpolator } from '@graphql-mesh/utils';
-import { ChannelCredentials, ClientUnaryCall, Metadata, credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import { stringInterpolator } from '@graphql-mesh/utils';
+import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt, GraphQLVoid, GraphQLJSON } from 'graphql-scalars';
 import _ from 'lodash';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import protobufjs from 'protobufjs';
-import { promisify } from 'util';
 import grpcReflection from 'grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 
-import { ClientMethod, addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils';
+import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils';
 import { GraphQLEnumTypeConfig, specifiedDirectives } from 'graphql';
 import { path } from '@graphql-mesh/cross-helpers';
 import { StoreProxy } from '@graphql-mesh/store';
@@ -379,6 +378,9 @@ ${rootJsonAndDecodedDescriptorSets
         };
         fieldConfig.args = {
           input: () => {
+            if (method.requestStream) {
+              return 'File';
+            }
             const baseRequestTypePath = method.requestType?.split('.');
             if (baseRequestTypePath) {
               const requestTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseRequestTypePath);
@@ -389,27 +391,15 @@ ${rootJsonAndDecodedDescriptorSets
           },
         };
         if (method.responseStream) {
-          const clientMethod: any = (input: unknown = {}, metaData: Metadata) => {
-            const responseStream = client[methodName](input, metaData);
-            let isCancelled = false;
-            const responseStreamWithCancel = withCancel(responseStream, () => {
-              if (!isCancelled) {
-                responseStream.call?.cancelWithStatus(0, 'Cancelled by GraphQL Mesh');
-                isCancelled = true;
-              }
-            });
-            return responseStreamWithCancel;
-          };
           this.schemaComposer.Subscription.addFields({
             [rootFieldName]: {
               ...fieldConfig,
               subscribe: (__, args: Record<string, unknown>, context: Record<string, unknown>) =>
-                addMetaDataToCall(clientMethod, args.input, context, this.config.metaData),
+                addMetaDataToCall(client[methodName].bind(client), args.input, context, this.config.metaData, true),
               resolve: (payload: unknown) => payload,
             },
           });
         } else {
-          const clientMethod = promisify<ClientUnaryCall>(client[methodName].bind(client) as ClientMethod);
           const methodNameLowerCased = methodName.toLowerCase();
           const rootTypeComposer = QUERY_METHOD_PREFIXES.some(prefix => methodNameLowerCased.startsWith(prefix))
             ? this.schemaComposer.Query
@@ -418,7 +408,7 @@ ${rootJsonAndDecodedDescriptorSets
             [rootFieldName]: {
               ...fieldConfig,
               resolve: (_, args: Record<string, unknown>, context: Record<string, unknown>) =>
-                addMetaDataToCall(clientMethod, args.input, context, this.config.metaData),
+                addMetaDataToCall(client[methodName].bind(client), args.input, context, this.config.metaData),
             },
           });
         }
