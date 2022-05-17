@@ -1,5 +1,12 @@
 # @graphql-mesh/grpc
 
+## 0.22.0
+
+### Minor Changes
+
+- d4c3facb2: feat(grpc): support stream inputs
+- f12dcb309: feat(grpc): support interpolation syntax in metaData definitions
+
 ## 0.21.20
 
 ### Patch Changes
