@@ -86,17 +86,13 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
       }, subscriptionInterval * (Movies.length + 1));
     },
   });
-  server.bindAsync(
-    '0.0.0.0:50051',
-    ServerCredentials.createInsecure(),
-    (error, port) => {
-      if (error) {
-        throw error;
-      }
-      server.start();
-
-      console.log('gRPC Server started, listening: 0.0.0.0:' + port);
+  server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {
+    if (error) {
+      throw error;
     }
-  );
+    server.start();
+
+    console.log('gRPC Server started, listening: 0.0.0.0:' + port);
+  });
   return server;
-}
+};

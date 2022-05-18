@@ -11,7 +11,7 @@ describe.skip('Neo4j', () => {
       dir: join(__dirname, '..'),
     });
     mesh$ = config$.then(config => getMesh(config));
-  })
+  });
   jest.setTimeout(30000);
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;

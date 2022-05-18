@@ -522,27 +522,23 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
         reject(err);
       }
     })
-      .then(
-        (data: number): Buffer => {
-          const result: IAdd__ResultArgs = { success: data };
-          output.writeMessageBegin('add', thrift.MessageType.REPLY, requestId);
-          Add__ResultCodec.encode(result, output);
-          output.writeMessageEnd();
-          return output.flush();
-        }
-      )
-      .catch(
-        (err: Error): Buffer => {
-          const result: thrift.TApplicationException = new thrift.TApplicationException(
-            thrift.TApplicationExceptionType.UNKNOWN,
-            err.message
-          );
-          output.writeMessageBegin('add', thrift.MessageType.EXCEPTION, requestId);
-          thrift.TApplicationExceptionCodec.encode(result, output);
-          output.writeMessageEnd();
-          return output.flush();
-        }
-      );
+      .then((data: number): Buffer => {
+        const result: IAdd__ResultArgs = { success: data };
+        output.writeMessageBegin('add', thrift.MessageType.REPLY, requestId);
+        Add__ResultCodec.encode(result, output);
+        output.writeMessageEnd();
+        return output.flush();
+      })
+      .catch((err: Error): Buffer => {
+        const result: thrift.TApplicationException = new thrift.TApplicationException(
+          thrift.TApplicationExceptionType.UNKNOWN,
+          err.message
+        );
+        output.writeMessageBegin('add', thrift.MessageType.EXCEPTION, requestId);
+        thrift.TApplicationExceptionCodec.encode(result, output);
+        output.writeMessageEnd();
+        return output.flush();
+      });
   }
   public process_subtract(
     requestId: number,
@@ -559,26 +555,22 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
         reject(err);
       }
     })
-      .then(
-        (data: number): Buffer => {
-          const result: ISubtract__ResultArgs = { success: data };
-          output.writeMessageBegin('subtract', thrift.MessageType.REPLY, requestId);
-          Subtract__ResultCodec.encode(result, output);
-          output.writeMessageEnd();
-          return output.flush();
-        }
-      )
-      .catch(
-        (err: Error): Buffer => {
-          const result: thrift.TApplicationException = new thrift.TApplicationException(
-            thrift.TApplicationExceptionType.UNKNOWN,
-            err.message
-          );
-          output.writeMessageBegin('subtract', thrift.MessageType.EXCEPTION, requestId);
-          thrift.TApplicationExceptionCodec.encode(result, output);
-          output.writeMessageEnd();
-          return output.flush();
-        }
-      );
+      .then((data: number): Buffer => {
+        const result: ISubtract__ResultArgs = { success: data };
+        output.writeMessageBegin('subtract', thrift.MessageType.REPLY, requestId);
+        Subtract__ResultCodec.encode(result, output);
+        output.writeMessageEnd();
+        return output.flush();
+      })
+      .catch((err: Error): Buffer => {
+        const result: thrift.TApplicationException = new thrift.TApplicationException(
+          thrift.TApplicationExceptionType.UNKNOWN,
+          err.message
+        );
+        output.writeMessageBegin('subtract', thrift.MessageType.EXCEPTION, requestId);
+        thrift.TApplicationExceptionCodec.encode(result, output);
+        output.writeMessageEnd();
+        return output.flush();
+      });
   }
 }

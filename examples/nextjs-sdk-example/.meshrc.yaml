@@ -6,4 +6,4 @@ sources:
         oasFilePath: https://petstore.swagger.io/v2/swagger.json
 
 documents:
-  - "./list-pets.graphql"
+  - './list-pets.graphql'

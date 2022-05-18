@@ -12,14 +12,11 @@ This is extremely useful when hoisting field values from one subfield to its par
 
 > Note: currently this transform supports `bare` mode only. For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## How to use?
 
@@ -106,14 +103,11 @@ Allowing you to request a GraphQL document like this:
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## How the transform works
 
@@ -140,14 +134,11 @@ To summarise, with the configuration above, we want the field `books` in type `Q
 
 Finally, since we no longer reference `BooksApiResponse` this becomes a loose type. So the transform will purge it from the GraphQL schema.
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Transform scopes
 
@@ -158,10 +149,7 @@ However, the transform also allows you to pass a scope property, which values ca
 
 We could say that the scope property could also take a `type` value. Still, since it's the minimum requirement to replace the Type, this is considered the default scope and so it wouldn't make sense to pass it when you desire just this behaviour.
 
-
-
 <p>&nbsp;</p>
-
 
 ### scope: config
 
@@ -174,10 +162,7 @@ As you can see, this is very comprehensive as it includes things like arguments 
 This can be useful when you have custom resolve functions on your target field. So you are happy to replace the source field entirely.
 However, you should be careful when you fully understand the implications of the behavior for your replaced field.
 
-
-
 <p>&nbsp;</p>
-
 
 ### scope: hoistValue
 
@@ -198,20 +183,20 @@ Taking into account the original schema shared above, originally, `Query.books` 
 
 But the wrapping function applied to the original resolver, when passing `hoistValue` scope, will change the value above to this:
 
-```js
+```json5
 {
-  books: [{ title: 'abc', author: 'def' }, { title: 'ghi', author: 'lmn' }]
+  books: [
+    { title: 'abc', author: 'def' },
+    { title: 'ghi', author: 'lmn' }
+  ]
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Additional type definitions
 
@@ -257,14 +242,11 @@ type Author {
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Custom composers
 
@@ -302,22 +284,19 @@ transforms:
 module.exports = {
   isAvailable: next => async (root, args, context, info) => {
     // 'next' is the field resolve function
-    const code = await next(root, args, context, info);
-    return Boolean(code);
-  },
-};
+    const code = await next(root, args, context, info)
+    return Boolean(code)
+  }
+}
 ```
 
 Now our `code` field will return a Boolean as per custom logic implemented through the javascript function above.
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Renaming fields
 
@@ -371,14 +350,11 @@ type Author {
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Config API Reference
 

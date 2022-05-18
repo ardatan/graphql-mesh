@@ -15,9 +15,7 @@ jest.setTimeout(30000);
 describe('Mongoose', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema))
-    ).toMatchSnapshot();
+    expect(printSchema(lexicographicSortSchema(schema))).toMatchSnapshot();
   });
   afterAll(() => mesh$.then(mesh => mesh.destroy()));
 });

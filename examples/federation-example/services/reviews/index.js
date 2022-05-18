@@ -1,5 +1,5 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { buildSubgraphSchema } = require("@apollo/subgraph");
+const { ApolloServer, gql } = require('apollo-server');
+const { buildSubgraphSchema } = require('@apollo/subgraph');
 
 const typeDefs = gql`
   type Review @key(fields: "id") {
@@ -24,8 +24,8 @@ const typeDefs = gql`
 const resolvers = {
   Review: {
     author(review) {
-      return { __typename: "User", id: review.authorID };
-    }
+      return { __typename: 'User', id: review.authorID };
+    },
   },
   User: {
     reviews(user) {
@@ -37,22 +37,22 @@ const resolvers = {
     username(user) {
       const found = usernames.find(username => username.id === user.id);
       return found ? found.username : null;
-    }
+    },
   },
   Product: {
     reviews(product) {
       return reviews.filter(review => review.product.upc === product.upc);
-    }
-  }
+    },
+  },
 };
 
 const server = new ApolloServer({
   schema: buildSubgraphSchema([
     {
       typeDefs,
-      resolvers
-    }
-  ])
+      resolvers,
+    },
+  ]),
 });
 
 module.exports = server.listen({ port: 9874 }).then(({ url }) => {
@@ -63,32 +63,32 @@ module.exports = server.listen({ port: 9874 }).then(({ url }) => {
 });
 
 const usernames = [
-  { id: "1", username: "@ada" },
-  { id: "2", username: "@complete" }
+  { id: '1', username: '@ada' },
+  { id: '2', username: '@complete' },
 ];
 const reviews = [
   {
-    id: "1",
-    authorID: "1",
-    product: { upc: "1" },
-    body: "Love it!"
+    id: '1',
+    authorID: '1',
+    product: { upc: '1' },
+    body: 'Love it!',
   },
   {
-    id: "2",
-    authorID: "1",
-    product: { upc: "2" },
-    body: "Too expensive."
+    id: '2',
+    authorID: '1',
+    product: { upc: '2' },
+    body: 'Too expensive.',
   },
   {
-    id: "3",
-    authorID: "2",
-    product: { upc: "3" },
-    body: "Could be better."
+    id: '3',
+    authorID: '2',
+    product: { upc: '3' },
+    body: 'Could be better.',
   },
   {
-    id: "4",
-    authorID: "2",
-    product: { upc: "1" },
-    body: "Prefer something else."
-  }
+    id: '4',
+    authorID: '2',
+    product: { upc: '1' },
+    body: 'Prefer something else.',
+  },
 ];

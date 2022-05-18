@@ -1,7 +1,7 @@
 const { readFileSync, writeFileSync } = require('fs');
 const { join } = require('path');
 
-const filePath = join(__dirname, '../packages/utils/dist/index.js')
+const filePath = join(__dirname, '../packages/utils/dist/index.js');
 const fileContent = readFileSync(filePath, 'utf-8');
 const fileContentReplaced = fileContent.replace(
   `new Promise(function (resolve) { resolve(_interopNamespace(require(path))); })`,

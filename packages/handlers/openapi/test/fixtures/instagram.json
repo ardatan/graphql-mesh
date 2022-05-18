@@ -1325,14 +1325,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": [
-                "follow",
-                "unfollow",
-                "block",
-                "unblock",
-                "approve",
-                "ignore"
-              ]
+              "enum": ["follow", "unfollow", "block", "unblock", "approve", "ignore"]
             }
           }
         ],

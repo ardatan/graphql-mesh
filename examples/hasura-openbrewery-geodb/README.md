@@ -32,10 +32,13 @@ docker run -d -p 8080:8080 \
 
 We need to have `yarn` and Node.js on our computer to run GraphQL Mesh locally.
 Run the following command to create a new project on an empty directory;
+
 ```bash
 yarn init
 ```
+
 Answer the questions of `yarn` about our new project, then install GraphQL Mesh dependencies;
+
 ```bash
 yarn add graphql @graphql-mesh/cli @graphql-mesh/json-schema
 ```
@@ -102,6 +105,7 @@ sources:
 ### Run GraphQL Mesh
 
 Run our new GraphQL Mesh instance with the following command;
+
 ```bash
 yarn mesh dev
 ```
@@ -128,7 +132,7 @@ Go to [GraphiQL](http://localhost:8080/console/api-explorer) and make a query li
 
 ```graphql
 {
-  city(where: {name: {_eq: "New York"}}) {
+  city(where: { name: { _eq: "New York" } }) {
     name
     breweries {
       name

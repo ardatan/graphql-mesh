@@ -1,4 +1,4 @@
-const { createServer } = require('@graphql-yoga/node')
+const { createServer } = require('@graphql-yoga/node');
 const { existsSync, mkdirSync } = require('fs');
 const {
   promises: { readdir, readFile, writeFile, unlink },
@@ -37,7 +37,7 @@ module.exports = createServer({
           const buffer = Buffer.from(arrayBuffer);
           try {
             await writeFile(join(FILES_DIR, filename), buffer);
-          } catch(e) {
+          } catch (e) {
             console.error(`Error writing ${filename}`, e);
           }
           return { filename };

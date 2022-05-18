@@ -4,30 +4,24 @@ title: CLI commands
 sidebar_label: CLI commands
 ---
 
-
 ## Global Options
 
 All commands can take two global optional options.
 
-<p>
-&nbsp;
-</p>
+<p>&nbsp;</p>
 
-###  `-r (alias: require)  [array]`
+### `-r (alias: require) [array]`
 
 Loads specific require.extensions before running the codegen and reading the configuration.
-
 
 ```bash
 yarn graphql-mesh -r lodash
 yarn graphql-mesh --require lodash fluke2
 ```
 
-<p>
-&nbsp;
-</p>
+<p>&nbsp;</p>
 
-### `--dir  [string]`
+### `--dir [string]`
 
 Used to modify the base directory for looking for a `.meshrc` config file.
 
@@ -35,10 +29,7 @@ Used to modify the base directory for looking for a `.meshrc` config file.
 yarn graphql-mesh --dir ./mystuff/meshproject
 ```
 
-<p>
-&nbsp;
-</p>
-
+<p>&nbsp;</p>
 
 ## List of Commands
 
@@ -50,7 +41,6 @@ Can have an optional `--port` argument.
 
 > GraphQL Mesh does not currently support hot reloading.
 
-
 **Options**
 
 **`--port [number]`**
@@ -59,16 +49,11 @@ The system port on which graphql-mesh will be made available.
 
 This should be one of the normal system ports [1-65386] not currently used by any other service.
 
-
 ```bash
 yarn graphql-mesh dev --port 4002
 ```
 
-<p>
-&nbsp;
-</p>
-
-
+<p>&nbsp;</p>
 
 ### `mesh build`
 
@@ -76,24 +61,20 @@ Builds artifacts required to use `mesh start` for a gateway (production) server.
 
 More information about this on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
 
-<p>
-&nbsp;
-</p>
-
+<p>&nbsp;</p>
 
 ### `mesh validate`
 
 Validate the built artifacts (`mesh build`) required to use `mesh start` for a gateway (production) server.
 The validation will check the following:
+
 - presence of the `.mesh/` folder
 - validation of the mesh configuration (see [`packages/types/src/config-schema.json`](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config-schema.json))
 - configured sources are valid
 
 More information about this on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
 
-<p>
-&nbsp;
-</p>
+<p>&nbsp;</p>
 
 ### `mesh start`
 
@@ -114,14 +95,11 @@ The system port on which graphql-mesh will be made available.
 
 This should be one of the normal system ports [1-65386] not currently used by any other service.
 
-
 ```bash
 yarn graphql-mesh start --port 4002
 ```
 
-<p>
-&nbsp;
-</p>
+<p>&nbsp;</p>
 
 ### `mesh serve-source`
 
@@ -167,6 +145,4 @@ yarn graphql-mesh serve-source Weather
 
 Then, Mesh will serve a GraphQL API only exposing the "Weather" source.
 
-<p>
-&nbsp;
-</p>
+<p>&nbsp;</p>

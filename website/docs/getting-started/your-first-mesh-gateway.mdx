@@ -50,7 +50,6 @@ Z --> G;
 
 In this tutorial, **we will first start by creating a Mesh configuration that incorporates the Books REST API**, as follows:
 
-
 <Graph>
 
 graph TD;
@@ -70,16 +69,14 @@ Z --> G;
 
 </Graph>
 
-
 <br />
 <br />
 
 Creating the complete Mesh Gateway that combines "Books", "Authors", and "Stores" APIs in a unified Schema will be covered in the ["Setup a Gateway with many Sources" guide](/docs/guides/combine-many-sources).
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
 
@@ -87,9 +84,7 @@ Creating the complete Mesh Gateway that combines "Books", "Authors", and "Stores
 
 <br />
 
-
 ### 1. A closer look at our Books REST API
-
 
 To add the Books API as a _Source_ of our GraphQL Mesh configuration, we will need to get the API's definition.
 
@@ -102,14 +97,15 @@ Open API is a standard based on JSON Schema (JSON-based files standard) to descr
 Our Books REST API provides an Open API definition file: [`packages/books-service/openapi3-definition.json`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/books-service/openapi3-definition.json).
 
 The `openapi3-definition.json` file describes the available endpoints along with their arguments and responses shape:
-  - `GET /books`
-  - `GET /books/:id`
-  - `GET /categories`
+
+- `GET /books`
+- `GET /books/:id`
+- `GET /categories`
 
 We now established that our Books API will require the `openapi` Mesh _Handler_ with the `@graphql-mesh/openapi` package.
 
-
-<br /><br />
+<br />
+<br />
 
 ### 2. Creating our Mesh configuration file
 
@@ -138,7 +134,7 @@ By providing the `source` document path, Mesh will be able to translate the Open
 
 <br />
 
-**Let's first start our Books API**  and **our GraphQL Gateway** by running at the root of the project:
+**Let's first start our Books API** and **our GraphQL Gateway** by running at the root of the project:
 
 ```
 yarn start-single-source
@@ -149,6 +145,7 @@ And open your favorite web browser at [http://0.0.0.0:4000/](http://0.0.0.0:4000
 <br />
 
 As expected, Mesh translated the Books REST API to a GraphQL Schema, using the following rules:
+
 - a `GET /api/helloWorld` endpoint becomes a Query similar to: `helloWorld(): String!`
 - a `POST /api/sayHelloAll` endpoint becomes a Mutation similar to: `sayHelloAll(input: [SayHelloAllInput]): String`
 - `PUT` and `DELETE` endpoints are also translated to GraphQL Mutations.
@@ -170,21 +167,18 @@ You can try out the following Query:
 }
 ```
 
-
-<br /><br />
+<br />
+<br />
 
 ### 3. Shaping the Unified Schema
 
-
 We might not want to expose all those Queries in our _Unified Schema_.
-
 
 Let's say that we want to **remove** the `book(id: ID!)` Query and **rename** the `categories` Query to `booksCategories`.
 
 To achieve such a final Schema design, we will leverage _Transforms_.
 
 <br />
-
 
 **Remove the `book(id: ID!)` Query**
 
@@ -194,8 +188,8 @@ Back to the [`packages/single-source/`](https://github.com/charlypoly/graphql-me
 
 And update our Mesh configuration as follows:
 
-
 _[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source/.meshrc.yaml)_
+
 ```yaml
 sources:
   - name: Books
@@ -221,21 +215,18 @@ By adding `Query.!book`, we instruct Mesh to remove the `book(...)` Query.
 
 More information on the `filterSchema` _Transform_ on [its dedicated documentation page](/docs/transforms/filter-schema).
 
-
 <p>&nbsp;</p>
-
 
 **Rename the `categories(...)` Query to `booksCategories(...)`**
 
 Finally, let's rename our `categories(...)` Query to `booksCategories(...)` by using the `rename` _Transform_.
 
-
 Again in the [`packages/single-source/`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source/) folder, you will find the following package installed: `@graphql-mesh/transform-rename`.
 
 And update our Mesh configuration as follows:
 
-
 _[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source/.meshrc.yaml)_
+
 ```yaml
 sources:
   - name: Books
@@ -265,14 +256,11 @@ Here, we indicate that `Query.categories` should be renamed `Query.booksCategori
 
 More information on the `rename` _Transform_ on [its dedicated documentation page](/docs/transforms/rename).
 
-
-
 <p>&nbsp;</p>
 
 Our final _Unified Schema_ is now ready to be used:
 
 ![Books GraphQL Unified Schema](/assets/docs/getting-started/your-first-mesh-gateway/mesh-books-graphql-unified-schema.png)
-
 
 The power of GraphQL Mesh, on top of providing an extensive range of _Handlers_, is to empower us to create well-designed GraphQL Schema using _Transforms_.
 
@@ -282,9 +270,8 @@ Keep in mind that a good GraphQL Schema design should:
 - simplify the usage by providing the proper abstractions (ex: proper naming and hierarchy)
 - provide specialized mutations that represent specific behaviors instead of CRUD mutations directly linked to an underlying data-schema
 
-
-
-<br /><br />
+<br />
+<br />
 
 ### Our GraphQL Gateway API is ready!
 
@@ -292,14 +279,11 @@ Congratulations! Our Books REST API is now accessible through our Mesh GraphQL G
 
 You can now start again and play with the GraphQL Schema by running:
 
-
 ```
 yarn start-single-source
 ```
 
-
 And open your favorite web browser at [http://0.0.0.0:4000/](http://0.0.0.0:4000/) and try the following Query:
-
 
 ```graphql
 {
@@ -315,13 +299,11 @@ And open your favorite web browser at [http://0.0.0.0:4000/](http://0.0.0.0:4000
 }
 ```
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Going further
 

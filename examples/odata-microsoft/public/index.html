@@ -1,111 +1,122 @@
 <html>
-
-<head>
-  <title>MSGraphQL Demo</title>
-  <style>
-    body {
-      margin-top: 5%;
-      margin-left: 5%;
-      padding: 10px;
-      font-family: 'HelveticaNeue', 'Arial', sans-serif;
-      width: 25%;
-      text-align: left;
-    }
-
-    body>div {
-      padding: 10px;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px;
-    }
-
-    .hidden {
-      visibility: hidden
-    }
-
-    .visible {
-      visibility: visible
-    }
-
-    .response {
-      padding: 0px;
-      margin: 10px;
-    }
-  </style>
-</head>
-
-<body>
-  <script type="text/javascript" src="https://alcdn.msftauth.net/lib/1.3.0/js/msal.js" class='pre'></script>
-
-  <div>
-    <h2>Microsoft Graph GraphQL Demo</h2>
-    <div id='label'>Sign-in with org or personal account</div>
-    <button id='auth' onclick='login()'>Login</button>
-  </div>
-
-  <pre class='response'></pre>
-
-  <script class='pre'>
-    const applicationConfig = {
-      auth: {
-        clientId: '58503fd3-6d1d-4eb2-a3e7-f2c1a761480b',
-        // authority: "Enter_the_Cloud_Instance_Id_HereEnter_the_Tenant_Info_Here",
-        redirectUri: location.href,
-      },
-      cache: {
-        cacheLocation: "localStorage", // This configures where your cache will be stored
-        storeAuthStateInCookie: true, // Set this to "true" if you are having issues on IE11 or Edge
-      },
-    };
-    
-    const tokenRequest = {
-      scopes: ['openid', 'profile', 'User.ReadWrite',
-        'User.Read', 'Sites.ReadWrite.All', 'Contacts.ReadWrite',
-        'Calendars.Read', 'Mail.Read', 'Device.Read',
-        'Files.Read.All', 'Mail.Read.Shared', 'People.Read',
-        'People.Read', 'Notes.Read.All', 'Tasks.Read', 'Mail.ReadWrite'],
-    };
-    
-    const clientApplication = new Msal.UserAgentApplication(applicationConfig);
-    async function login() {
-      let idToken, tokenResponse;
-      try {
-        idToken = await clientApplication.loginPopup(tokenRequest);
-      } catch(e) {
-        logMessage('Error during login:\n' + e);
-        return;
+  <head>
+    <title>MSGraphQL Demo</title>
+    <style>
+      body {
+        margin-top: 5%;
+        margin-left: 5%;
+        padding: 10px;
+        font-family: 'HelveticaNeue', 'Arial', sans-serif;
+        width: 25%;
+        text-align: left;
       }
-      try {
-        tokenResponse = await clientApplication.acquireTokenSilent(tokenRequest);
-      } catch(e) {
+
+      body > div {
+        padding: 10px;
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 10px;
+      }
+
+      .hidden {
+        visibility: hidden;
+      }
+
+      .visible {
+        visibility: visible;
+      }
+
+      .response {
+        padding: 0px;
+        margin: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script type="text/javascript" src="https://alcdn.msftauth.net/lib/1.3.0/js/msal.js" class="pre"></script>
+
+    <div>
+      <h2>Microsoft Graph GraphQL Demo</h2>
+      <div id="label">Sign-in with org or personal account</div>
+      <button id="auth" onclick="login()">Login</button>
+    </div>
+
+    <pre class="response"></pre>
+
+    <script class="pre">
+      const applicationConfig = {
+        auth: {
+          clientId: '58503fd3-6d1d-4eb2-a3e7-f2c1a761480b',
+          // authority: "Enter_the_Cloud_Instance_Id_HereEnter_the_Tenant_Info_Here",
+          redirectUri: location.href,
+        },
+        cache: {
+          cacheLocation: 'localStorage', // This configures where your cache will be stored
+          storeAuthStateInCookie: true, // Set this to "true" if you are having issues on IE11 or Edge
+        },
+      };
+
+      const tokenRequest = {
+        scopes: [
+          'openid',
+          'profile',
+          'User.ReadWrite',
+          'User.Read',
+          'Sites.ReadWrite.All',
+          'Contacts.ReadWrite',
+          'Calendars.Read',
+          'Mail.Read',
+          'Device.Read',
+          'Files.Read.All',
+          'Mail.Read.Shared',
+          'People.Read',
+          'People.Read',
+          'Notes.Read.All',
+          'Tasks.Read',
+          'Mail.ReadWrite',
+        ],
+      };
+
+      const clientApplication = new Msal.UserAgentApplication(applicationConfig);
+      async function login() {
+        let idToken, tokenResponse;
         try {
-          tokenResponse = await clientApplication.acquireTokenPopup(tokenRequest)
-        }catch(e) {
-          logMessage('Error acquiring the popup:\n' + e);
+          idToken = await clientApplication.loginPopup(tokenRequest);
+        } catch (e) {
+          logMessage('Error during login:\n' + e);
           return;
         }
-      }
-      
-      updateUI(tokenResponse);
-    }
-    function updateUI(tokenResponse) {
-      const userName = clientApplication.getAccount().name;
-      const authButton = document.getElementById('auth');
-      authButton.innerHTML = 'logout';
-      authButton.setAttribute('onclick', 'logout();');
-      const label = document.getElementById('label');
-      document.cookie = `accessToken=${tokenResponse.accessToken};expires=${tokenResponse.expiresOn.toUTCString()}`;
-      window.location.href = 'graphql/';
-    }
-    function logout() {
-      clientApplication.logout();
-    }
-    function logMessage(s) {
-      document.body.querySelector('.response').appendChild(document.createTextNode('\n' + s));
-    }
-  </script>
-</body>
+        try {
+          tokenResponse = await clientApplication.acquireTokenSilent(tokenRequest);
+        } catch (e) {
+          try {
+            tokenResponse = await clientApplication.acquireTokenPopup(tokenRequest);
+          } catch (e) {
+            logMessage('Error acquiring the popup:\n' + e);
+            return;
+          }
+        }
 
+        updateUI(tokenResponse);
+      }
+      function updateUI(tokenResponse) {
+        const userName = clientApplication.getAccount().name;
+        const authButton = document.getElementById('auth');
+        authButton.innerHTML = 'logout';
+        authButton.setAttribute('onclick', 'logout();');
+        const label = document.getElementById('label');
+        document.cookie = `accessToken=${tokenResponse.accessToken};expires=${tokenResponse.expiresOn.toUTCString()}`;
+        window.location.href = 'graphql/';
+      }
+      function logout() {
+        clientApplication.logout();
+      }
+      function logMessage(s) {
+        document.body.querySelector('.response').appendChild(document.createTextNode('\n' + s));
+      }
+    </script>
+  </body>
 </html>

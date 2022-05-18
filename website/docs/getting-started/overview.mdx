@@ -6,7 +6,6 @@ image: https://miro.medium.com/max/1400/1*iZfQ7ST9rd7McrHvvVA-BA@2x.png
 fullWidth: true
 ---
 
-
 Working with Mesh means dealing with 4 main concepts: _Sources_, _Handlers_, _Transforms_ and _Unified Schema_:
 
 - In Mesh, a sub-service (GraphQL API, REST API) is called a _Source_.
@@ -14,43 +13,43 @@ Working with Mesh means dealing with 4 main concepts: _Sources_, _Handlers_, _Tr
 - All Sources' GraphQL Schema are merged into a final _Unified Schema_.
 - Finally, if applicable, configured transformations, called _Transforms_, are applied to the _Unified Schema_.
 
-
 <Graph>
 
-  graph LR;
-    subgraph A [GraphQL Mesh server]
-      A0[Unified Schema]
-      subgraph A1 [Configured sources]
-        subgraph A11 [City Source]
-          A111[City Source GraphQL Schema]
-        end
-        subgraph A12 [Population Source]
-          A121[Population GraphQL Schema]
-        end
-        subgraph A31 [Weather Source]
-          A311[Weather GraphQL Schema]
-        end
-      end
-    end
-    A111 & A121 & A311-- merged in --> A0
-    subgraph B [Services]
-      subgraph B1 [City REST API]
-        B11[Swagger definition file]
-      end
-      subgraph B2 [Population GraphQL API]
-        B21[GraphQL Schema]
-      end
-      subgraph B3 [Weather REST API]
-        B31[RAML definition file]
-      end
-    end
-    B11--translated to GraphQL Schemas by handler-->A111
-    B21--translated to GraphQL Schemas by handler-->A121
-    B31--translated to GraphQL Schemas by handler-->A311
+graph LR;
+subgraph A [GraphQL Mesh server]
+A0[Unified Schema]
+subgraph A1 [Configured sources]
+subgraph A11 [City Source]
+A111[City Source GraphQL Schema]
+end
+subgraph A12 [Population Source]
+A121[Population GraphQL Schema]
+end
+subgraph A31 [Weather Source]
+A311[Weather GraphQL Schema]
+end
+end
+end
+A111 & A121 & A311-- merged in --> A0
+subgraph B [Services]
+subgraph B1 [City REST API]
+B11[Swagger definition file]
+end
+subgraph B2 [Population GraphQL API]
+B21[GraphQL Schema]
+end
+subgraph B3 [Weather REST API]
+B31[RAML definition file]
+end
+end
+B11--translated to GraphQL Schemas by handler-->A111
+B21--translated to GraphQL Schemas by handler-->A121
+B31--translated to GraphQL Schemas by handler-->A311
 
 </Graph>
 
 The above GraphQL Mesh Gateway has 3 configured _Sources_:
+
 - The "City" _Source_ configured with the `@graphql-mesh/openapi` _Handler_.
 - The "Population" _Source_ configured with the `@graphql-mesh/graphql` _Handler_.
 - The "Weather" _Source_ configured with the `@graphql-mesh/raml` _Handler_.
@@ -58,6 +57,7 @@ The above GraphQL Mesh Gateway has 3 configured _Sources_:
 <br />
 
 _Sources_, _Handlers_, _Transforms_ are configured in a `.mesh.yaml` (or `.json`, `.js`) configuration file that defines:
+
 - How to fetch the definition of the sub-services (GraphQL API, REST API, and more)
 - What transformations should be applied to the unified schema (_optional_)
 - The path to the declaration of custom resolvers (_optional_)

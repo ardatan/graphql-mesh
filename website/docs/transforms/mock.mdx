@@ -10,14 +10,11 @@ To get started with this transform, install it:
 
 <PackageInstall packages="@graphql-mesh/transform-mock" />
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## How to use?
 
@@ -33,16 +30,11 @@ transforms:
 
 The example above will replace the resolver of `User.firstName` with a mock that uses `faker.js` to generate a random name.
 
-
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
-
 
 ## Custom mock functions for fields
 
@@ -56,14 +48,11 @@ transforms:
           custom: ./user-mocks#fullName
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Custom mock functions for types
 
@@ -83,63 +72,63 @@ in `user-mocks.js` file;
 ```js
 module.exports = {
   fullName: () => 'My Static Name'
-};
+}
 ```
+
 When defined manually, properties can return values either directly or through a method. This is useful when defining static mocks because a mock property will be called as many times as there are items in an array.
 Here's an example on how this could be achieved:
 
 in `user-mocks.js` file;
+
 ```js
 function* generateNames() {
   while (true) {
-    yield "John Doe";
-    yield "John Snow";
+    yield 'John Doe'
+    yield 'John Snow'
   }
 }
 
-const fullNames = generateNames();
+const fullNames = generateNames()
 
-export const fullName = () => fullNames.next().value;
+export const fullName = () => fullNames.next().value
 ```
+
 and in case you are using [typescript](https://graphql-mesh.com/docs/recipes/typescript) in `user-mocks.ts` file:
+
 ```ts
-import { User } from './types/mesh';
+import { User } from './types/mesh'
 
 function* generateNames(): Generator<string> {
   while (true) {
-    yield "John Doe";
-    yield "John Snow";
+    yield 'John Doe'
+    yield 'John Snow'
   }
 }
 
-const fullNames = generateNames();
+const fullNames = generateNames()
 
-export const fullName: () => User['fullName'] = () => fullNames.next().value;
+export const fullName: () => User['fullName'] = () => fullNames.next().value
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Mocking the lists
 
 Mesh generates two mocked items by default if the return type is a list. But this can be configured, as shown below:
 
 ```graphql
-  type Query {
-    users: [User]
-  }
-  type User {
-    id: ID
-    fullName: String
-  }
+type Query {
+  users: [User]
+}
+type User {
+  id: ID
+  fullName: String
+}
 ```
-
 
 ```yaml
 transforms:
@@ -172,21 +161,20 @@ Now `{ users { id fullName } }` query will return 3 of `User` item;
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Stateful mocking
 
 GraphQL Mesh supports GraphQL Tools's Stateful Mocking feature. So you can have stateful mocking by using the store provided in the context `context.mockStore`;
 
 ### Initialize store
+
 When having a schema that returns a list, in this case, a list of users:
+
 ```graphql
 type User {
   id: ID
@@ -196,10 +184,10 @@ type Query {
   users: User
 }
 ```
+
 Initially, populating the list of users can be done by utilizing the `initializeStore` property. The store initialization will happen before the store is attached to the schema.
 
 There is no need to provide a particular array mocking definition, like `length`. It will automatically be taken based on the mock data.
-
 
 ```yaml
 transforms:
@@ -208,33 +196,32 @@ transforms:
 ```
 
 In the `./myMock.js`:
+
 ```ts
-const users = [{id: 'uuid', name: 'John Snow'}]
+const users = [{ id: 'uuid', name: 'John Snow' }]
 
 export default {
-  initializeStore: (store) => {
+  initializeStore: store => {
     // Set individual users data in the store so that they can be queried as individuals later on
-    users.forEach((user) => {
-      store.set('User', user.id, user);
-    });
+    users.forEach(user => {
+      store.set('User', user.id, user)
+    })
 
     // Populate the `users` query on the root with data
-    store.set('Query', 'ROOT', 'users', users);
-  },
-};
+    store.set('Query', 'ROOT', 'users', users)
+  }
+}
 ```
-
-
 
 <p>&nbsp;</p>
 
-
 ### Get from the store
+
 You can implement the mock query field `*ById` declaratively like below:
 
 ```graphql
 type Query {
-  user(id:ID): User
+  user(id: ID): User
 }
 ```
 
@@ -246,12 +233,10 @@ transforms:
         - apply: Query.user
           store:
             type: User
-            key: "{args.id}"
+            key: '{args.id}'
 ```
 
-
 <p>&nbsp;</p>
-
 
 ### Mutate data in the store
 
@@ -279,14 +264,14 @@ transforms:
         - apply: Mutation.addUser
           updateStore:
             type: User
-            key: "{random}"
+            key: '{random}'
             fieldName: name
-            value: "{args.name}"
+            value: '{args.name}'
 
           # return created user
           store:
             type: User
-            key: "{random}"
+            key: '{random}'
 
         - apply: Mutation.updateUser
           custom: ./mocks#updateUser
@@ -294,38 +279,35 @@ transforms:
           # or you can do the following
           updateStore:
             type: User
-            key: "{args.id}"
+            key: '{args.id}'
             fieldName: name
-            value: "{args.name}"
+            value: '{args.name}'
           # return updated user
           store:
             type: User
-            key: "{args.id}"
+            key: '{args.id}'
 ```
 
 In the code:
+
 ```js
 module.exports = {
   changeMyName: (_, { newName }, { mockStore }) => {
-    mockStore.set('Query', 'ROOT', 'me', { name: newName });
-    return mockStore.get('Query', 'ROOT', 'me');
+    mockStore.set('Query', 'ROOT', 'me', { name: newName })
+    return mockStore.get('Query', 'ROOT', 'me')
   },
   updateUser: (_, { id, name }, { mockStore }) => {
-    mockStore.set('User', id, { name });
-    return mockStore.get('User', id);
+    mockStore.set('User', id, { name })
+    return mockStore.get('User', id)
   }
 }
 ```
 
-
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 > Learn more about GraphQL Tools Mocking https://graphql-tools.com/docs/mocking
 
@@ -334,20 +316,18 @@ module.exports = {
 You can check out our example that uses the JSON Schema handler with mock data.
 
 <iframe
-     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
-     title="json-schema-example"
-     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
-
-
-
-<p>&nbsp;</p>
-
-------
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
+  title="json-schema-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
 
 <p>&nbsp;</p>
 
+---
+
+<p>&nbsp;</p>
 
 ## Config API Reference
 

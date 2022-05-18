@@ -337,12 +337,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "currently_due",
-          "eventually_due",
-          "past_due",
-          "pending_verification"
-        ],
+        "required": ["currently_due", "eventually_due", "past_due", "pending_verification"],
         "title": "AccountCapabilityRequirements",
         "type": "object",
         "x-expandableFields": []
@@ -549,13 +544,7 @@
         "required": ["branding", "card_payments", "dashboard", "payments"],
         "title": "AccountSettings",
         "type": "object",
-        "x-expandableFields": [
-          "branding",
-          "card_payments",
-          "dashboard",
-          "payments",
-          "payouts"
-        ]
+        "x-expandableFields": ["branding", "card_payments", "dashboard", "payments", "payouts"]
       },
       "account_tos_acceptance": {
         "properties": {
@@ -708,16 +697,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "fingerprint",
-          "id",
-          "livemode",
-          "object",
-          "reusable",
-          "used",
-          "username"
-        ],
+        "required": ["created", "fingerprint", "id", "livemode", "object", "reusable", "used", "username"],
         "title": "AlipayAccount",
         "type": "object",
         "x-expandableFields": ["customer"],
@@ -795,12 +775,7 @@
         "required": ["type"],
         "title": "APIErrors",
         "type": "object",
-        "x-expandableFields": [
-          "payment_intent",
-          "payment_method",
-          "setup_intent",
-          "source"
-        ]
+        "x-expandableFields": ["payment_intent", "payment_method", "setup_intent", "source"]
       },
       "apple_pay_domain": {
         "properties": {
@@ -1688,15 +1663,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "bitcoin_amount",
-          "created",
-          "currency",
-          "id",
-          "object",
-          "receiver"
-        ],
+        "required": ["amount", "bitcoin_amount", "created", "currency", "id", "object", "receiver"],
         "title": "BitcoinTransaction",
         "type": "object",
         "x-expandableFields": [],
@@ -1748,13 +1715,7 @@
           },
           "status": {
             "description": "The status of the capability. Can be `active`, `inactive`, `pending`, or `unrequested`.",
-            "enum": [
-              "active",
-              "disabled",
-              "inactive",
-              "pending",
-              "unrequested"
-            ],
+            "enum": ["active", "disabled", "inactive", "pending", "unrequested"],
             "type": "string"
           }
         },
@@ -1976,16 +1937,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "brand",
-          "exp_month",
-          "exp_year",
-          "funding",
-          "id",
-          "last4",
-          "metadata",
-          "object"
-        ],
+        "required": ["brand", "exp_month", "exp_year", "funding", "id", "last4", "metadata", "object"],
         "title": "Card",
         "type": "object",
         "x-expandableFields": ["account", "customer", "recipient"],
@@ -2646,24 +2598,7 @@
           },
           "locale": {
             "description": "The IETF language tag of the locale Checkout is displayed in. If blank or `auto`, the browser's locale is used.",
-            "enum": [
-              "auto",
-              "da",
-              "de",
-              "en",
-              "es",
-              "fi",
-              "fr",
-              "it",
-              "ja",
-              "ms",
-              "nb",
-              "nl",
-              "pl",
-              "pt",
-              "sv",
-              "zh"
-            ],
+            "enum": ["auto", "da", "de", "en", "es", "fi", "fr", "it", "ja", "ms", "nb", "nl", "pl", "pt", "sv", "zh"],
             "nullable": true,
             "type": "string",
             "x-stripeBypassValidation": true
@@ -2759,23 +2694,10 @@
             "type": "string"
           }
         },
-        "required": [
-          "cancel_url",
-          "id",
-          "livemode",
-          "object",
-          "payment_method_types",
-          "success_url"
-        ],
+        "required": ["cancel_url", "id", "livemode", "object", "payment_method_types", "success_url"],
         "title": "Session",
         "type": "object",
-        "x-expandableFields": [
-          "customer",
-          "display_items",
-          "payment_intent",
-          "setup_intent",
-          "subscription"
-        ],
+        "x-expandableFields": ["customer", "display_items", "payment_intent", "setup_intent", "subscription"],
         "x-resourceId": "checkout.session"
       },
       "checkout_session_custom_display_item_description": {
@@ -2883,14 +2805,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "currency",
-          "destination",
-          "id",
-          "livemode",
-          "object"
-        ],
+        "required": ["amount", "currency", "destination", "id", "livemode", "object"],
         "title": "ConnectCollectionTransfer",
         "type": "object",
         "x-expandableFields": ["destination"]
@@ -3084,16 +2999,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "created",
-          "duration",
-          "id",
-          "livemode",
-          "metadata",
-          "object",
-          "times_redeemed",
-          "valid"
-        ],
+        "required": ["created", "duration", "id", "livemode", "metadata", "object", "times_redeemed", "valid"],
         "title": "Coupon",
         "type": "object",
         "x-expandableFields": [],
@@ -3212,12 +3118,7 @@
           },
           "reason": {
             "description": "Reason for issuing this credit note, one of `duplicate`, `fraudulent`, `order_change`, or `product_unsatisfactory`",
-            "enum": [
-              "duplicate",
-              "fraudulent",
-              "order_change",
-              "product_unsatisfactory"
-            ],
+            "enum": ["duplicate", "fraudulent", "order_change", "product_unsatisfactory"],
             "nullable": true,
             "type": "string"
           },
@@ -3275,12 +3176,7 @@
         ],
         "title": "CreditNote",
         "type": "object",
-        "x-expandableFields": [
-          "customer",
-          "customer_balance_transaction",
-          "invoice",
-          "refund"
-        ],
+        "x-expandableFields": ["customer", "customer_balance_transaction", "invoice", "refund"],
         "x-resourceId": "credit_note"
       },
       "customer": {
@@ -3715,17 +3611,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "customer",
-          "ending_balance",
-          "id",
-          "livemode",
-          "object",
-          "type"
-        ],
+        "required": ["amount", "created", "currency", "customer", "ending_balance", "id", "livemode", "object", "type"],
         "title": "CustomerBalanceTransaction",
         "type": "object",
         "x-expandableFields": ["credit_note", "customer", "invoice"],
@@ -4534,13 +4420,7 @@
         ],
         "title": "Dispute",
         "type": "object",
-        "x-expandableFields": [
-          "balance_transactions",
-          "charge",
-          "evidence",
-          "evidence_details",
-          "payment_intent"
-        ],
+        "x-expandableFields": ["balance_transactions", "charge", "evidence", "evidence_details", "payment_intent"],
         "x-resourceId": "dispute"
       },
       "dispute_evidence": {
@@ -4976,15 +4856,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "data",
-          "id",
-          "livemode",
-          "object",
-          "pending_webhooks",
-          "type"
-        ],
+        "required": ["created", "data", "id", "livemode", "object", "pending_webhooks", "type"],
         "title": "NotificationEvent",
         "type": "object",
         "x-expandableFields": ["data", "request"],
@@ -5133,15 +5005,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "fee",
-          "id",
-          "metadata",
-          "object"
-        ],
+        "required": ["amount", "created", "currency", "fee", "id", "metadata", "object"],
         "title": "FeeRefund",
         "type": "object",
         "x-expandableFields": ["balance_transaction", "fee"],
@@ -5298,15 +5162,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "expired",
-          "file",
-          "id",
-          "livemode",
-          "metadata",
-          "object"
-        ],
+        "required": ["created", "expired", "file", "id", "livemode", "metadata", "object"],
         "title": "FileLink",
         "type": "object",
         "x-expandableFields": ["file"],
@@ -5794,14 +5650,7 @@
           },
           "status": {
             "description": "The status of the invoice, one of `draft`, `open`, `paid`, `uncollectible`, or `void`. [Learn more](https://stripe.com/docs/billing/invoices/workflow#workflow-overview)",
-            "enum": [
-              "deleted",
-              "draft",
-              "open",
-              "paid",
-              "uncollectible",
-              "void"
-            ],
+            "enum": ["deleted", "draft", "open", "paid", "uncollectible", "void"],
             "nullable": true,
             "type": "string"
           },
@@ -6247,31 +6096,14 @@
         ],
         "title": "InvoiceItem",
         "type": "object",
-        "x-expandableFields": [
-          "customer",
-          "invoice",
-          "period",
-          "plan",
-          "subscription",
-          "tax_rates"
-        ],
+        "x-expandableFields": ["customer", "invoice", "period", "plan", "subscription", "tax_rates"],
         "x-resourceId": "invoiceitem"
       },
       "invoices_resource_invoice_tax_id": {
         "properties": {
           "type": {
             "description": "The type of the tax ID, one of `au_abn`, `ch_vat`, `eu_vat`, `in_gst`, `mx_rfc`, `no_vat`, `nz_gst`, `unknown`, or `za_vat`",
-            "enum": [
-              "au_abn",
-              "ch_vat",
-              "eu_vat",
-              "in_gst",
-              "mx_rfc",
-              "no_vat",
-              "nz_gst",
-              "unknown",
-              "za_vat"
-            ],
+            "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "unknown", "za_vat"],
             "type": "string"
           },
           "value": {
@@ -6692,13 +6524,7 @@
         ],
         "title": "IssuingCard",
         "type": "object",
-        "x-expandableFields": [
-          "authorization_controls",
-          "cardholder",
-          "pin",
-          "replacement_for",
-          "shipping"
-        ],
+        "x-expandableFields": ["authorization_controls", "cardholder", "pin", "replacement_for", "shipping"],
         "x-resourceId": "issuing.card"
       },
       "issuing.card_details": {
@@ -6730,14 +6556,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "card",
-          "cvc",
-          "exp_month",
-          "exp_year",
-          "number",
-          "object"
-        ],
+        "required": ["card", "cvc", "exp_month", "exp_year", "number", "object"],
         "title": "IssuingCardDetails",
         "type": "object",
         "x-expandableFields": ["card"],
@@ -6876,13 +6695,7 @@
         ],
         "title": "IssuingCardholder",
         "type": "object",
-        "x-expandableFields": [
-          "authorization_controls",
-          "billing",
-          "company",
-          "individual",
-          "requirements"
-        ],
+        "x-expandableFields": ["authorization_controls", "billing", "company", "individual", "requirements"],
         "x-resourceId": "issuing.cardholder"
       },
       "issuing.dispute": {
@@ -7221,14 +7034,7 @@
           },
           "type": {
             "description": "The nature of the transaction.",
-            "enum": [
-              "capture",
-              "cash_withdrawal",
-              "dispute",
-              "dispute_loss",
-              "refund",
-              "refund_reversal"
-            ],
+            "enum": ["capture", "cash_withdrawal", "dispute", "dispute_loss", "refund", "refund_reversal"],
             "type": "string"
           }
         },
@@ -7296,15 +7102,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "card",
-          "created",
-          "expires_at",
-          "id",
-          "object",
-          "scope",
-          "verification_method"
-        ],
+        "required": ["card", "created", "expires_at", "id", "object", "scope", "verification_method"],
         "title": "IssuingVerification",
         "type": "object",
         "x-expandableFields": [],
@@ -7458,12 +7256,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "address_line1_check",
-          "address_zip_check",
-          "authentication",
-          "cvc_check"
-        ],
+        "required": ["address_line1_check", "address_zip_check", "authentication", "cvc_check"],
         "title": "IssuingAuthorizationVerificationData",
         "type": "object",
         "x-expandableFields": []
@@ -7477,13 +7270,7 @@
           },
           "name": {
             "description": "Name of the authorization control. One of `allowed_categories`, `blocked_categories`, `max_amount`, `max_approvals`, or `spending_limits`.",
-            "enum": [
-              "allowed_categories",
-              "blocked_categories",
-              "max_amount",
-              "max_approvals",
-              "spending_limits"
-            ],
+            "enum": ["allowed_categories", "blocked_categories", "max_amount", "max_approvals", "spending_limits"],
             "type": "string"
           }
         },
@@ -8155,14 +7942,7 @@
           },
           "status": {
             "description": "The delivery status of the card.",
-            "enum": [
-              "canceled",
-              "delivered",
-              "failure",
-              "pending",
-              "returned",
-              "shipped"
-            ],
+            "enum": ["canceled", "delivered", "failure", "pending", "returned", "shipped"],
             "nullable": true,
             "type": "string"
           },
@@ -8495,14 +8275,7 @@
           },
           "interval": {
             "description": "The time interval or event with which to apply this spending limit towards.",
-            "enum": [
-              "all_time",
-              "daily",
-              "monthly",
-              "per_authorization",
-              "weekly",
-              "yearly"
-            ],
+            "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
             "type": "string"
           }
         },
@@ -9595,14 +9368,7 @@
           },
           "interval": {
             "description": "The time interval or event with which to apply this spending limit towards.",
-            "enum": [
-              "all_time",
-              "daily",
-              "monthly",
-              "per_authorization",
-              "weekly",
-              "yearly"
-            ],
+            "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
             "type": "string"
           }
         },
@@ -9802,12 +9568,7 @@
         },
         "title": "LegalEntityCompany",
         "type": "object",
-        "x-expandableFields": [
-          "address",
-          "address_kana",
-          "address_kanji",
-          "verification"
-        ]
+        "x-expandableFields": ["address", "address_kana", "address_kanji", "verification"]
       },
       "legal_entity_company_verification": {
         "properties": {
@@ -10583,17 +10344,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "id",
-          "items",
-          "livemode",
-          "metadata",
-          "object",
-          "status"
-        ],
+        "required": ["amount", "created", "currency", "id", "items", "livemode", "metadata", "object", "status"],
         "title": "Order",
         "type": "object",
         "x-expandableFields": [
@@ -10740,15 +10491,7 @@
             }
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "id",
-          "items",
-          "livemode",
-          "object"
-        ],
+        "required": ["amount", "created", "currency", "id", "items", "livemode", "object"],
         "title": "OrderReturn",
         "type": "object",
         "x-expandableFields": ["items", "order", "refund"],
@@ -11294,25 +11037,10 @@
             "x-stripeBypassValidation": true
           }
         },
-        "required": [
-          "billing_details",
-          "created",
-          "id",
-          "livemode",
-          "metadata",
-          "object",
-          "type"
-        ],
+        "required": ["billing_details", "created", "id", "livemode", "metadata", "object", "type"],
         "title": "PaymentMethod",
         "type": "object",
-        "x-expandableFields": [
-          "billing_details",
-          "card",
-          "card_present",
-          "customer",
-          "ideal",
-          "sepa_debit"
-        ],
+        "x-expandableFields": ["billing_details", "card", "card_present", "customer", "ideal", "sepa_debit"],
         "x-resourceId": "payment_method"
       },
       "payment_method_card": {
@@ -11392,12 +11120,7 @@
         "required": ["brand", "exp_month", "exp_year", "funding", "last4"],
         "title": "payment_method_card",
         "type": "object",
-        "x-expandableFields": [
-          "checks",
-          "generated_from",
-          "three_d_secure_usage",
-          "wallet"
-        ]
+        "x-expandableFields": ["checks", "generated_from", "three_d_secure_usage", "wallet"]
       },
       "payment_method_card_checks": {
         "properties": {
@@ -11477,14 +11200,7 @@
           },
           "type": {
             "description": "The type of the card wallet, one of `amex_express_checkout`, `apple_pay`, `google_pay`, `masterpass`, `samsung_pay`, or `visa_checkout`. An additional hash is included on the Wallet subhash with a name matching this value. It contains additional information specific to the card wallet type.",
-            "enum": [
-              "amex_express_checkout",
-              "apple_pay",
-              "google_pay",
-              "masterpass",
-              "samsung_pay",
-              "visa_checkout"
-            ],
+            "enum": ["amex_express_checkout", "apple_pay", "google_pay", "masterpass", "samsung_pay", "visa_checkout"],
             "type": "string"
           },
           "visa_checkout": {
@@ -11889,12 +11605,7 @@
         },
         "title": "payment_method_details_card",
         "type": "object",
-        "x-expandableFields": [
-          "checks",
-          "installments",
-          "three_d_secure",
-          "wallet"
-        ]
+        "x-expandableFields": ["checks", "installments", "three_d_secure", "wallet"]
       },
       "payment_method_details_card_checks": {
         "properties": {
@@ -12121,14 +11832,7 @@
           },
           "type": {
             "description": "The type of the card wallet, one of `amex_express_checkout`, `apple_pay`, `google_pay`, `masterpass`, `samsung_pay`, or `visa_checkout`. An additional hash is included on the Wallet subhash with a name matching this value. It contains additional information specific to the card wallet type.",
-            "enum": [
-              "amex_express_checkout",
-              "apple_pay",
-              "google_pay",
-              "masterpass",
-              "samsung_pay",
-              "visa_checkout"
-            ],
+            "enum": ["amex_express_checkout", "apple_pay", "google_pay", "masterpass", "samsung_pay", "visa_checkout"],
             "type": "string"
           },
           "visa_checkout": {
@@ -12809,11 +12513,7 @@
         ],
         "title": "Payout",
         "type": "object",
-        "x-expandableFields": [
-          "balance_transaction",
-          "destination",
-          "failure_balance_transaction"
-        ],
+        "x-expandableFields": ["balance_transaction", "destination", "failure_balance_transaction"],
         "x-resourceId": "payout"
       },
       "period": {
@@ -13044,12 +12744,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "currently_due",
-          "eventually_due",
-          "past_due",
-          "pending_verification"
-        ],
+        "required": ["currently_due", "eventually_due", "past_due", "pending_verification"],
         "title": "PersonRequirements",
         "type": "object",
         "x-expandableFields": []
@@ -13391,17 +13086,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "id",
-          "images",
-          "livemode",
-          "metadata",
-          "name",
-          "object",
-          "type",
-          "updated"
-        ],
+        "required": ["created", "id", "images", "livemode", "metadata", "name", "object", "type", "updated"],
         "title": "Product",
         "type": "object",
         "x-expandableFields": ["package_dimensions"],
@@ -13457,15 +13142,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "actionable",
-          "charge",
-          "created",
-          "fraud_type",
-          "id",
-          "livemode",
-          "object"
-        ],
+        "required": ["actionable", "charge", "created", "fraud_type", "id", "livemode", "object"],
         "title": "RadarEarlyFraudWarning",
         "type": "object",
         "x-expandableFields": ["charge"],
@@ -13612,15 +13289,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "created_by",
-          "id",
-          "livemode",
-          "object",
-          "value",
-          "value_list"
-        ],
+        "required": ["created", "created_by", "id", "livemode", "object", "value", "value_list"],
         "title": "RadarListListItem",
         "type": "object",
         "x-expandableFields": [],
@@ -13843,13 +13512,7 @@
         "required": ["created", "id", "livemode", "metadata", "object", "type"],
         "title": "TransferRecipient",
         "type": "object",
-        "x-expandableFields": [
-          "active_account",
-          "cards",
-          "default_card",
-          "migrated_to",
-          "rolled_back_from"
-        ],
+        "x-expandableFields": ["active_account", "cards", "default_card", "migrated_to", "rolled_back_from"],
         "x-resourceId": "recipient"
       },
       "refund": {
@@ -14033,14 +13696,7 @@
             }
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "id",
-          "metadata",
-          "object"
-        ],
+        "required": ["amount", "created", "currency", "id", "metadata", "object"],
         "title": "Refund",
         "type": "object",
         "x-expandableFields": [
@@ -14109,15 +13765,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "created",
-          "id",
-          "livemode",
-          "object",
-          "parameters",
-          "report_type",
-          "status"
-        ],
+        "required": ["created", "id", "livemode", "object", "parameters", "report_type", "status"],
         "title": "reporting_report_run",
         "type": "object",
         "x-expandableFields": ["parameters", "result"],
@@ -14169,15 +13817,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "data_available_end",
-          "data_available_start",
-          "id",
-          "name",
-          "object",
-          "updated",
-          "version"
-        ],
+        "required": ["data_available_end", "data_available_start", "id", "name", "object", "updated", "version"],
         "title": "reporting_report_type",
         "type": "object",
         "x-expandableFields": [],
@@ -14325,23 +13965,10 @@
             "nullable": true
           }
         },
-        "required": [
-          "created",
-          "id",
-          "livemode",
-          "object",
-          "open",
-          "opened_reason",
-          "reason"
-        ],
+        "required": ["created", "id", "livemode", "object", "open", "opened_reason", "reason"],
         "title": "RadarReview",
         "type": "object",
-        "x-expandableFields": [
-          "charge",
-          "ip_address_location",
-          "payment_intent",
-          "session"
-        ],
+        "x-expandableFields": ["charge", "ip_address_location", "payment_intent", "session"],
         "x-resourceId": "review"
       },
       "rule": {
@@ -14668,15 +14295,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "id",
-          "livemode",
-          "object",
-          "payment_method_types",
-          "status",
-          "usage"
-        ],
+        "required": ["created", "id", "livemode", "object", "payment_method_types", "status", "usage"],
         "title": "SetupIntent",
         "type": "object",
         "x-expandableFields": [
@@ -15111,25 +14730,10 @@
             "$ref": "#/components/schemas/source_type_wechat"
           }
         },
-        "required": [
-          "client_secret",
-          "created",
-          "flow",
-          "id",
-          "livemode",
-          "object",
-          "status",
-          "type"
-        ],
+        "required": ["client_secret", "created", "flow", "id", "livemode", "object", "status", "type"],
         "title": "Source",
         "type": "object",
-        "x-expandableFields": [
-          "code_verification",
-          "owner",
-          "receiver",
-          "redirect",
-          "source_order"
-        ],
+        "x-expandableFields": ["code_verification", "owner", "receiver", "redirect", "source_order"],
         "x-resourceId": "source"
       },
       "source_code_verification_flow": {
@@ -15200,16 +14804,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "id",
-          "livemode",
-          "object",
-          "reason",
-          "source",
-          "status",
-          "type"
-        ],
+        "required": ["created", "id", "livemode", "object", "reason", "source", "status", "type"],
         "title": "SourceMandateNotification",
         "type": "object",
         "x-expandableFields": ["bacs_debit", "sepa_debit", "source"],
@@ -15524,17 +15119,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "id",
-          "livemode",
-          "object",
-          "source",
-          "status",
-          "type"
-        ],
+        "required": ["amount", "created", "currency", "id", "livemode", "object", "source", "status", "type"],
         "title": "SourceTransaction",
         "type": "object",
         "x-expandableFields": [
@@ -16630,15 +16215,7 @@
           },
           "status": {
             "description": "Possible values are `incomplete`, `incomplete_expired`, `trialing`, `active`, `past_due`, `canceled`, or `unpaid`. \n\nFor `collection_method=charge_automatically` a subscription moves into `incomplete` if the initial payment attempt fails. A subscription in this state can only have metadata and default_source updated. Once the first invoice is paid, the subscription moves into an `active` state. If the first invoice is not paid within 23 hours, the subscription transitions to `incomplete_expired`. This is a terminal state, the open invoice will be voided and no further invoices will be generated. \n\nA subscription that is currently in a trial period is `trialing` and moves to `active` when the trial period is over. \n\nIf subscription `collection_method=charge_automatically` it becomes `past_due` when payment to renew it fails and `canceled` or `unpaid` (depending on your subscriptions settings) when Stripe has exhausted all payment retry attempts. \n\nIf subscription `collection_method=send_invoice` it becomes `past_due` when its invoice is not paid by the due date, and `canceled` or `unpaid` if it is still not paid by an additional deadline after that. Note that when a subscription has a status of `unpaid`, no subsequent invoices will be attempted (invoices will be created, but then immediately automatically closed). After receiving updated payment information from a customer, you may choose to reopen and pay their closed invoices.",
-            "enum": [
-              "active",
-              "canceled",
-              "incomplete",
-              "incomplete_expired",
-              "past_due",
-              "trialing",
-              "unpaid"
-            ],
+            "enum": ["active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid"],
             "type": "string"
           },
           "tax_percent": {
@@ -16763,14 +16340,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "created",
-          "id",
-          "metadata",
-          "object",
-          "plan",
-          "subscription"
-        ],
+        "required": ["created", "id", "metadata", "object", "plan", "subscription"],
         "title": "SubscriptionItem",
         "type": "object",
         "x-expandableFields": ["billing_thresholds", "plan", "tax_rates"],
@@ -16910,13 +16480,7 @@
           },
           "status": {
             "description": "The present status of the subscription schedule. Possible values are `not_started`, `active`, `completed`, `released`, and `canceled`. You can read more about the different states in our [behavior guide](https://stripe.com/docs/billing/subscriptions/subscription-schedules).",
-            "enum": [
-              "active",
-              "canceled",
-              "completed",
-              "not_started",
-              "released"
-            ],
+            "enum": ["active", "canceled", "completed", "not_started", "released"],
             "type": "string"
           },
           "subscription": {
@@ -16953,13 +16517,7 @@
         ],
         "title": "SubscriptionSchedule",
         "type": "object",
-        "x-expandableFields": [
-          "current_phase",
-          "customer",
-          "default_settings",
-          "phases",
-          "subscription"
-        ],
+        "x-expandableFields": ["current_phase", "customer", "default_settings", "phases", "subscription"],
         "x-resourceId": "subscription_schedule"
       },
       "subscription_schedule_configuration_item": {
@@ -17201,11 +16759,7 @@
         },
         "title": "SubscriptionSchedulesResourceDefaultSettings",
         "type": "object",
-        "x-expandableFields": [
-          "billing_thresholds",
-          "default_payment_method",
-          "invoice_settings"
-        ]
+        "x-expandableFields": ["billing_thresholds", "default_payment_method", "invoice_settings"]
       },
       "tax_deducted_at_source": {
         "properties": {
@@ -17235,13 +16789,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "id",
-          "object",
-          "period_end",
-          "period_start",
-          "tax_deduction_account_number"
-        ],
+        "required": ["id", "object", "period_end", "period_start", "tax_deduction_account_number"],
         "title": "TaxDeductedAtSource",
         "type": "object",
         "x-expandableFields": []
@@ -17294,17 +16842,7 @@
           },
           "type": {
             "description": "Type of the tax ID, one of `au_abn`, `ch_vat`, `eu_vat`, `in_gst`, `mx_rfc`, `no_vat`, `nz_gst`, `za_vat`, or `unknown`",
-            "enum": [
-              "au_abn",
-              "ch_vat",
-              "eu_vat",
-              "in_gst",
-              "mx_rfc",
-              "no_vat",
-              "nz_gst",
-              "unknown",
-              "za_vat"
-            ],
+            "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "unknown", "za_vat"],
             "type": "string"
           },
           "value": {
@@ -17316,16 +16854,7 @@
             "$ref": "#/components/schemas/tax_id_verification"
           }
         },
-        "required": [
-          "created",
-          "customer",
-          "id",
-          "livemode",
-          "object",
-          "type",
-          "value",
-          "verification"
-        ],
+        "required": ["created", "customer", "id", "livemode", "object", "type", "value", "verification"],
         "title": "tax_id",
         "type": "object",
         "x-expandableFields": ["customer", "verification"],
@@ -17488,14 +17017,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "address",
-          "display_name",
-          "id",
-          "livemode",
-          "metadata",
-          "object"
-        ],
+        "required": ["address", "display_name", "id", "livemode", "metadata", "object"],
         "title": "TerminalLocationLocation",
         "type": "object",
         "x-expandableFields": ["address"],
@@ -17565,15 +17087,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "device_type",
-          "id",
-          "label",
-          "livemode",
-          "metadata",
-          "object",
-          "serial_number"
-        ],
+        "required": ["device_type", "id", "label", "livemode", "metadata", "object", "serial_number"],
         "title": "TerminalReaderReader",
         "type": "object",
         "x-expandableFields": [],
@@ -17627,17 +17141,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "authenticated",
-          "card",
-          "created",
-          "currency",
-          "id",
-          "livemode",
-          "object",
-          "status"
-        ],
+        "required": ["amount", "authenticated", "card", "created", "currency", "id", "livemode", "object", "status"],
         "title": "ThreeDSecure",
         "type": "object",
         "x-expandableFields": ["card"],
@@ -17827,17 +17331,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "id",
-          "livemode",
-          "metadata",
-          "object",
-          "source",
-          "status"
-        ],
+        "required": ["amount", "created", "currency", "id", "livemode", "metadata", "object", "source", "status"],
         "title": "Topup",
         "type": "object",
         "x-expandableFields": ["balance_transaction", "source"],
@@ -18182,23 +17676,10 @@
             }
           }
         },
-        "required": [
-          "amount",
-          "created",
-          "currency",
-          "id",
-          "metadata",
-          "object",
-          "transfer"
-        ],
+        "required": ["amount", "created", "currency", "id", "metadata", "object", "transfer"],
         "title": "TransferReversal",
         "type": "object",
-        "x-expandableFields": [
-          "balance_transaction",
-          "destination_payment_refund",
-          "source_refund",
-          "transfer"
-        ],
+        "x-expandableFields": ["balance_transaction", "destination_payment_refund", "source_refund", "transfer"],
         "x-resourceId": "transfer_reversal"
       },
       "transfer_schedule": {
@@ -18275,14 +17756,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "id",
-          "livemode",
-          "object",
-          "quantity",
-          "subscription_item",
-          "timestamp"
-        ],
+        "required": ["id", "livemode", "object", "quantity", "subscription_item", "timestamp"],
         "title": "UsageRecord",
         "type": "object",
         "x-expandableFields": [],
@@ -18323,14 +17797,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "id",
-          "livemode",
-          "object",
-          "period",
-          "subscription_item",
-          "total_usage"
-        ],
+        "required": ["id", "livemode", "object", "period", "subscription_item", "total_usage"],
         "title": "UsageRecordSummary",
         "type": "object",
         "x-expandableFields": ["period"],
@@ -18393,15 +17860,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "created",
-          "enabled_events",
-          "id",
-          "livemode",
-          "object",
-          "status",
-          "url"
-        ],
+        "required": ["created", "enabled_events", "id", "livemode", "object", "status", "url"],
         "title": "NotificationWebhookEndpoint",
         "type": "object",
         "x-expandableFields": [],
@@ -19228,12 +18687,7 @@
                   "requested_capabilities": {
                     "description": "The set of capabilities you want to unlock for this account. Each capability will be inactive until you have provided its specific requirements and Stripe has verified them. An account may have some of its requested capabilities be active and some be inactive.",
                     "items": {
-                      "enum": [
-                        "card_issuing",
-                        "card_payments",
-                        "legacy_payments",
-                        "transfers"
-                      ],
+                      "enum": ["card_issuing", "card_payments", "legacy_payments", "transfers"],
                       "maxLength": 5000,
                       "type": "string",
                       "x-stripeBypassValidation": true
@@ -19321,12 +18775,7 @@
                                 ]
                               },
                               "interval": {
-                                "enum": [
-                                  "daily",
-                                  "manual",
-                                  "monthly",
-                                  "weekly"
-                                ],
+                                "enum": ["daily", "manual", "monthly", "weekly"],
                                 "maxLength": 5000,
                                 "type": "string",
                                 "x-stripeBypassValidation": true
@@ -19335,15 +18784,7 @@
                                 "type": "integer"
                               },
                               "weekly_anchor": {
-                                "enum": [
-                                  "friday",
-                                  "monday",
-                                  "saturday",
-                                  "sunday",
-                                  "thursday",
-                                  "tuesday",
-                                  "wednesday"
-                                ],
+                                "enum": ["friday", "monday", "saturday", "sunday", "thursday", "tuesday", "wednesday"],
                                 "maxLength": 5000,
                                 "type": "string"
                               }
@@ -23354,12 +22795,7 @@
                   "requested_capabilities": {
                     "description": "The set of capabilities you want to unlock for this account. Each capability will be inactive until you have provided its specific requirements and Stripe has verified them. An account may have some of its requested capabilities be active and some be inactive.",
                     "items": {
-                      "enum": [
-                        "card_issuing",
-                        "card_payments",
-                        "legacy_payments",
-                        "transfers"
-                      ],
+                      "enum": ["card_issuing", "card_payments", "legacy_payments", "transfers"],
                       "maxLength": 5000,
                       "type": "string",
                       "x-stripeBypassValidation": true
@@ -23447,12 +22883,7 @@
                                 ]
                               },
                               "interval": {
-                                "enum": [
-                                  "daily",
-                                  "manual",
-                                  "monthly",
-                                  "weekly"
-                                ],
+                                "enum": ["daily", "manual", "monthly", "weekly"],
                                 "maxLength": 5000,
                                 "type": "string",
                                 "x-stripeBypassValidation": true
@@ -23461,15 +22892,7 @@
                                 "type": "integer"
                               },
                               "weekly_anchor": {
-                                "enum": [
-                                  "friday",
-                                  "monday",
-                                  "saturday",
-                                  "sunday",
-                                  "thursday",
-                                  "tuesday",
-                                  "wednesday"
-                                ],
+                                "enum": ["friday", "monday", "saturday", "sunday", "thursday", "tuesday", "wednesday"],
                                 "maxLength": 5000,
                                 "type": "string"
                               }
@@ -24219,12 +23642,7 @@
                   "requested_capabilities": {
                     "description": "The set of capabilities you want to unlock for this account. Each capability will be inactive until you have provided its specific requirements and Stripe has verified them. An account may have some of its requested capabilities be active and some be inactive.",
                     "items": {
-                      "enum": [
-                        "card_issuing",
-                        "card_payments",
-                        "legacy_payments",
-                        "transfers"
-                      ],
+                      "enum": ["card_issuing", "card_payments", "legacy_payments", "transfers"],
                       "maxLength": 5000,
                       "type": "string",
                       "x-stripeBypassValidation": true
@@ -24312,12 +23730,7 @@
                                 ]
                               },
                               "interval": {
-                                "enum": [
-                                  "daily",
-                                  "manual",
-                                  "monthly",
-                                  "weekly"
-                                ],
+                                "enum": ["daily", "manual", "monthly", "weekly"],
                                 "maxLength": 5000,
                                 "type": "string",
                                 "x-stripeBypassValidation": true
@@ -24326,15 +23739,7 @@
                                 "type": "integer"
                               },
                               "weekly_anchor": {
-                                "enum": [
-                                  "friday",
-                                  "monday",
-                                  "saturday",
-                                  "sunday",
-                                  "thursday",
-                                  "tuesday",
-                                  "wednesday"
-                                ],
+                                "enum": ["friday", "monday", "saturday", "sunday", "thursday", "tuesday", "wednesday"],
                                 "maxLength": 5000,
                                 "type": "string"
                               }
@@ -31189,11 +30594,7 @@
                     "type": "string"
                   },
                   "reason": {
-                    "enum": [
-                      "duplicate",
-                      "fraudulent",
-                      "requested_by_customer"
-                    ],
+                    "enum": ["duplicate", "fraudulent", "requested_by_customer"],
                     "maxLength": 5000,
                     "type": "string"
                   },
@@ -31409,11 +30810,7 @@
                     "type": "string"
                   },
                   "reason": {
-                    "enum": [
-                      "duplicate",
-                      "fraudulent",
-                      "requested_by_customer"
-                    ],
+                    "enum": ["duplicate", "fraudulent", "requested_by_customer"],
                     "maxLength": 5000,
                     "type": "string"
                   },
@@ -31931,11 +31328,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "cancel_url",
-                  "payment_method_types",
-                  "success_url"
-                ],
+                "required": ["cancel_url", "payment_method_types", "success_url"],
                 "type": "object"
               }
             }
@@ -32870,12 +32263,7 @@
                   },
                   "reason": {
                     "description": "Reason for issuing this credit note, one of `duplicate`, `fraudulent`, `order_change`, or `product_unsatisfactory`",
-                    "enum": [
-                      "duplicate",
-                      "fraudulent",
-                      "order_change",
-                      "product_unsatisfactory"
-                    ],
+                    "enum": ["duplicate", "fraudulent", "order_change", "product_unsatisfactory"],
                     "type": "string"
                   },
                   "refund": {
@@ -33010,12 +32398,7 @@
             "name": "reason",
             "required": false,
             "schema": {
-              "enum": [
-                "duplicate",
-                "fraudulent",
-                "order_change",
-                "product_unsatisfactory"
-              ],
+              "enum": ["duplicate", "fraudulent", "order_change", "product_unsatisfactory"],
               "type": "string"
             },
             "style": "form"
@@ -33704,16 +33087,7 @@
                     "items": {
                       "properties": {
                         "type": {
-                          "enum": [
-                            "au_abn",
-                            "ch_vat",
-                            "eu_vat",
-                            "in_gst",
-                            "mx_rfc",
-                            "no_vat",
-                            "nz_gst",
-                            "za_vat"
-                          ],
+                          "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "za_vat"],
                           "maxLength": 5000,
                           "type": "string",
                           "x-stripeBypassValidation": true
@@ -37442,11 +36816,7 @@
                   },
                   "payment_behavior": {
                     "description": "Use `allow_incomplete` to create subscriptions with `status=incomplete` if the first invoice cannot be paid. Creating subscriptions with this status allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.\n\nUse `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not create a subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.",
-                    "enum": [
-                      "allow_incomplete",
-                      "error_if_incomplete",
-                      "pending_if_incomplete"
-                    ],
+                    "enum": ["allow_incomplete", "error_if_incomplete", "pending_if_incomplete"],
                     "type": "string"
                   },
                   "pending_invoice_item_interval": {
@@ -37937,11 +37307,7 @@
                   },
                   "payment_behavior": {
                     "description": "Use `allow_incomplete` to create subscriptions with `status=incomplete` if the first invoice cannot be paid. Creating subscriptions with this status allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.\n\nUse `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not create a subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.",
-                    "enum": [
-                      "allow_incomplete",
-                      "error_if_incomplete",
-                      "pending_if_incomplete"
-                    ],
+                    "enum": ["allow_incomplete", "error_if_incomplete", "pending_if_incomplete"],
                     "type": "string"
                   },
                   "pending_invoice_item_interval": {
@@ -38339,16 +37705,7 @@
                   },
                   "type": {
                     "description": "Type of the tax ID, one of `au_abn`, `ch_vat`, `eu_vat`, `in_gst`, `mx_rfc`, `no_vat`, `nz_gst`, or `za_vat`",
-                    "enum": [
-                      "au_abn",
-                      "ch_vat",
-                      "eu_vat",
-                      "in_gst",
-                      "mx_rfc",
-                      "no_vat",
-                      "nz_gst",
-                      "za_vat"
-                    ],
+                    "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "za_vat"],
                     "maxLength": 5000,
                     "type": "string",
                     "x-stripeBypassValidation": true
@@ -44837,14 +44194,7 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": [
-                                "all_time",
-                                "daily",
-                                "monthly",
-                                "per_authorization",
-                                "weekly",
-                                "yearly"
-                              ],
+                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
                               "type": "string"
                             }
                           },
@@ -46052,14 +45402,7 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": [
-                                "all_time",
-                                "daily",
-                                "monthly",
-                                "per_authorization",
-                                "weekly",
-                                "yearly"
-                              ],
+                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
                               "type": "string"
                             }
                           },
@@ -47411,14 +46754,7 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": [
-                                "all_time",
-                                "daily",
-                                "monthly",
-                                "per_authorization",
-                                "weekly",
-                                "yearly"
-                              ],
+                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
                               "type": "string"
                             }
                           },
@@ -48578,14 +47914,7 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": [
-                                "all_time",
-                                "daily",
-                                "monthly",
-                                "per_authorization",
-                                "weekly",
-                                "yearly"
-                              ],
+                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
                               "type": "string"
                             }
                           },
@@ -48623,13 +47952,7 @@
                   },
                   "status": {
                     "description": "Whether authorizations can be approved on this card.",
-                    "enum": [
-                      "active",
-                      "canceled",
-                      "inactive",
-                      "lost",
-                      "stolen"
-                    ],
+                    "enum": ["active", "canceled", "inactive", "lost", "stolen"],
                     "type": "string"
                   }
                 },
@@ -50980,13 +50303,7 @@
                   },
                   "status": {
                     "description": "Current order status. One of `created`, `paid`, `canceled`, `fulfilled`, or `returned`. More detail in the [Orders Guide](https://stripe.com/docs/orders/guide#understanding-order-statuses).",
-                    "enum": [
-                      "canceled",
-                      "created",
-                      "fulfilled",
-                      "paid",
-                      "returned"
-                    ],
+                    "enum": ["canceled", "created", "fulfilled", "paid", "returned"],
                     "maxLength": 5000,
                     "type": "string"
                   }
@@ -52105,12 +51422,7 @@
                 "properties": {
                   "cancellation_reason": {
                     "description": "Reason for canceling this PaymentIntent. Possible values are `duplicate`, `fraudulent`, `requested_by_customer`, or `abandoned`",
-                    "enum": [
-                      "abandoned",
-                      "duplicate",
-                      "fraudulent",
-                      "requested_by_customer"
-                    ],
+                    "enum": ["abandoned", "duplicate", "fraudulent", "requested_by_customer"],
                     "maxLength": 5000,
                     "type": "string",
                     "x-stripeBypassValidation": true
@@ -56899,11 +56211,7 @@
                     "type": "string"
                   },
                   "reason": {
-                    "enum": [
-                      "duplicate",
-                      "fraudulent",
-                      "requested_by_customer"
-                    ],
+                    "enum": ["duplicate", "fraudulent", "requested_by_customer"],
                     "maxLength": 5000,
                     "type": "string"
                   },
@@ -59562,12 +58870,7 @@
                   },
                   "flow": {
                     "description": "The authentication `flow` of the source to create. `flow` is one of `redirect`, `receiver`, `code_verification`, `none`. It is generally inferred unless a type supports multiple flows.",
-                    "enum": [
-                      "code_verification",
-                      "none",
-                      "receiver",
-                      "redirect"
-                    ],
+                    "enum": ["code_verification", "none", "receiver", "redirect"],
                     "maxLength": 5000,
                     "type": "string"
                   },
@@ -59611,12 +58914,7 @@
                             "type": "object"
                           },
                           "status": {
-                            "enum": [
-                              "accepted",
-                              "pending",
-                              "refused",
-                              "revoked"
-                            ],
+                            "enum": ["accepted", "pending", "refused", "revoked"],
                             "maxLength": 5000,
                             "type": "string"
                           },
@@ -59654,13 +58952,7 @@
                         "type": "string"
                       },
                       "notification_method": {
-                        "enum": [
-                          "deprecated_none",
-                          "email",
-                          "manual",
-                          "none",
-                          "stripe_email"
-                        ],
+                        "enum": ["deprecated_none", "email", "manual", "none", "stripe_email"],
                         "maxLength": 5000,
                         "type": "string"
                       }
@@ -60068,12 +59360,7 @@
                             "type": "object"
                           },
                           "status": {
-                            "enum": [
-                              "accepted",
-                              "pending",
-                              "refused",
-                              "revoked"
-                            ],
+                            "enum": ["accepted", "pending", "refused", "revoked"],
                             "maxLength": 5000,
                             "type": "string"
                           },
@@ -60111,13 +59398,7 @@
                         "type": "string"
                       },
                       "notification_method": {
-                        "enum": [
-                          "deprecated_none",
-                          "email",
-                          "manual",
-                          "none",
-                          "stripe_email"
-                        ],
+                        "enum": ["deprecated_none", "email", "manual", "none", "stripe_email"],
                         "maxLength": 5000,
                         "type": "string"
                       }
@@ -60856,11 +60137,7 @@
                   },
                   "payment_behavior": {
                     "description": "Use `allow_incomplete` to create subscriptions with `status=incomplete` if the first invoice cannot be paid. Creating subscriptions with this status allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.\n\nUse `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not create a subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.",
-                    "enum": [
-                      "allow_incomplete",
-                      "error_if_incomplete",
-                      "pending_if_incomplete"
-                    ],
+                    "enum": ["allow_incomplete", "error_if_incomplete", "pending_if_incomplete"],
                     "type": "string"
                   },
                   "plan": {
@@ -61147,11 +60424,7 @@
                   },
                   "payment_behavior": {
                     "description": "Use `allow_incomplete` to create subscriptions with `status=incomplete` if the first invoice cannot be paid. Creating subscriptions with this status allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.\n\nUse `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not create a subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.",
-                    "enum": [
-                      "allow_incomplete",
-                      "error_if_incomplete",
-                      "pending_if_incomplete"
-                    ],
+                    "enum": ["allow_incomplete", "error_if_incomplete", "pending_if_incomplete"],
                     "type": "string"
                   },
                   "plan": {
@@ -62975,11 +62248,7 @@
                   },
                   "payment_behavior": {
                     "description": "Use `allow_incomplete` to create subscriptions with `status=incomplete` if the first invoice cannot be paid. Creating subscriptions with this status allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.\n\nUse `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not create a subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.",
-                    "enum": [
-                      "allow_incomplete",
-                      "error_if_incomplete",
-                      "pending_if_incomplete"
-                    ],
+                    "enum": ["allow_incomplete", "error_if_incomplete", "pending_if_incomplete"],
                     "type": "string"
                   },
                   "pending_invoice_item_interval": {
@@ -63438,11 +62707,7 @@
                   },
                   "payment_behavior": {
                     "description": "Use `allow_incomplete` to create subscriptions with `status=incomplete` if the first invoice cannot be paid. Creating subscriptions with this status allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.\n\nUse `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not create a subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.",
-                    "enum": [
-                      "allow_incomplete",
-                      "error_if_incomplete",
-                      "pending_if_incomplete"
-                    ],
+                    "enum": ["allow_incomplete", "error_if_incomplete", "pending_if_incomplete"],
                     "type": "string"
                   },
                   "pending_invoice_item_interval": {

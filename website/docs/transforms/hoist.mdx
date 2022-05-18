@@ -12,18 +12,16 @@ yarn add @graphql-mesh/transform-hoist-field
 
 > Underneath it leverages the `HoistField` transform from the `@graphql-tools/wrap` package.
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## How to use?
 
 Given the following schema:
+
 ```graphql
 type Query {
   users(limit: Int!, page: Int): UserSearchResult
@@ -38,8 +36,6 @@ type User {
   id: ID!
 }
 ```
-
-
 
 <p>&nbsp;</p>
 
@@ -56,6 +52,7 @@ transforms:
 ```
 
 Will transform the given schema to:
+
 ```graphql
 type Query {
   users(limit: Int!, page: Int): [User!]!
@@ -66,11 +63,10 @@ type User {
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
 ### Filtering args via a default for the entire path
+
 ```yaml
 transforms:
   - hoist:
@@ -80,9 +76,10 @@ transforms:
           - results
         newFieldName: users
         filterArgsInPath: true # This flag sets the default for the entire path
-
 ```
+
 Will transform the given schema to:
+
 ```graphql
 type Query {
   users: [User!]!
@@ -93,11 +90,10 @@ type User {
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
 ### Filtering args via on specific levels of the path
+
 ```yaml
 transforms:
   - hoist:
@@ -108,9 +104,10 @@ transforms:
               - limit
           - results
         newFieldName: users
-
 ```
+
 Will transform the given schema to:
+
 ```graphql
 type Query {
   users(page: Int): [User!]!
@@ -121,14 +118,11 @@ type User {
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Config API Reference
 

@@ -1,6 +1,6 @@
 const uploadFilesServer = require('../upload-files/server');
 const resizeImageServer = require('../resize-image/server');
-const { File } = require('cross-undici-fetch')
+const { File } = require('cross-undici-fetch');
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { join } = require('path');
 const { getMesh } = require('@graphql-mesh/runtime');
@@ -11,12 +11,12 @@ const mesh$ = findAndParseConfig({
 
 describe('Upload Example', () => {
   beforeAll(async () => {
-    await uploadFilesServer.start()
-    await resizeImageServer.start()
+    await uploadFilesServer.start();
+    await resizeImageServer.start();
   });
   afterAll(async () => {
-    await uploadFilesServer.stop()
-    await resizeImageServer.stop()
+    await uploadFilesServer.stop();
+    await resizeImageServer.stop();
     const mesh = await mesh$;
     mesh.destroy();
   });
@@ -36,5 +36,5 @@ describe('Upload Example', () => {
       }
     );
     expect(result?.data?.uploadFile?.filename).toBe('test.txt');
-  })
+  });
 });
