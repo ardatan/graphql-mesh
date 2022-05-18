@@ -7,6 +7,7 @@ import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 import configSchema from './config-schema.json';
+import type { Plugin } from '@envelop/core';
 
 export const jsonSchema: any = configSchema;
 
@@ -109,6 +110,12 @@ export interface MeshMerger {
   name: string;
   getUnifiedSchema(mergerContext: MeshMergerContext): GraphQLSchema | Promise<GraphQLSchema>;
 }
+
+export type MeshPluginOptions<TConfig> = TConfig & {
+  logger: Logger;
+};
+
+export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;
 
 export type RawSourceOutput = {
   name: string;

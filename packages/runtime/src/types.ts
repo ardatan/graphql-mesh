@@ -25,7 +25,6 @@ export type GetMeshOptions = {
   pubsub: MeshPubSub;
   merger: MeshMerger;
   logger?: Logger;
-  liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
   additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
   documents?: Source[];
 };

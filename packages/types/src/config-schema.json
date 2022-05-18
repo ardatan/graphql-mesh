@@ -537,6 +537,16 @@
         }
       }
     },
+    "Plugin": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Plugin",
+      "properties": {
+        "liveQuery": {
+          "$ref": "#/definitions/LiveQueryConfig"
+        }
+      }
+    },
     "AdditionalStitchingResolverObject": {
       "additionalProperties": false,
       "type": "object",
@@ -681,24 +691,6 @@
         }
       },
       "required": ["name"]
-    },
-    "LiveQueryInvalidation": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LiveQueryInvalidation",
-      "properties": {
-        "field": {
-          "type": "string"
-        },
-        "invalidate": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      },
-      "required": ["field", "invalidate"]
     },
     "GraphQLHandlerMultipleHTTPConfiguration": {
       "additionalProperties": false,
@@ -2032,6 +2024,39 @@
           "description": "Which method is used for this operation"
         }
       }
+    },
+    "LiveQueryConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryConfig",
+      "properties": {
+        "liveQueryInvalidations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LiveQueryInvalidation"
+          },
+          "additionalItems": false,
+          "description": "Live Query Invalidations"
+        }
+      }
+    },
+    "LiveQueryInvalidation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryInvalidation",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "invalidate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["field", "invalidate"]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,
@@ -3439,14 +3464,6 @@
         }
       ]
     },
-    "liveQueryInvalidations": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/LiveQueryInvalidation"
-      },
-      "additionalItems": false,
-      "description": "Live Query Invalidations"
-    },
     "documents": {
       "type": "array",
       "items": {
@@ -3478,6 +3495,13 @@
     "additionalEnvelopPlugins": {
       "type": "string",
       "description": "You can provide Envelop plugins"
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Plugin"
+      },
+      "additionalItems": false
     }
   },
   "additionalProperties": false

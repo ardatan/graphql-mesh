@@ -81,6 +81,7 @@
       "./packages/handlers/*",
       "./packages/transforms/*",
       "./packages/mergers/*",
+      "./packages/plugins/*",
       "./examples/*",
       "./examples/federation-example/*",
       "./examples/graphql-file-upload-example/frontend",
