@@ -22,8 +22,12 @@ jobs:
 
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines && git checkout yarn.lock
+
       - name: Lint
         run: yarn lint
+
+      - name: 🧹 Prettier Check
+        run: yarn prettier:check
   typecheck:
     name: TypeScript Type Checking
     runs-on: ubuntu-latest
