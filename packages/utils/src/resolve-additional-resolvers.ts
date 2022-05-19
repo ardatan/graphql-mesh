@@ -9,7 +9,6 @@ import {
   getNamedType,
   isAbstractType,
   GraphQLType,
-  GraphQLNamedType,
   isInterfaceType,
   isObjectType,
 } from 'graphql';
