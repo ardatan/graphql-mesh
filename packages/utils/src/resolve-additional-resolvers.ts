@@ -9,6 +9,9 @@ import {
   getNamedType,
   isAbstractType,
   GraphQLType,
+  GraphQLNamedType,
+  isInterfaceType,
+  isObjectType,
 } from 'graphql';
 import { withFilter } from 'graphql-subscriptions';
 import _ from 'lodash';
@@ -47,7 +50,7 @@ function generateSelectionSetFactory(
     // If result path provided without a selectionSet
   } else if (additionalResolver.result) {
     const resultPath = _.toPath(additionalResolver.result);
-    let abstractResultType: string;
+    let abstractResultTypeName: string;
 
     const sourceType = schema.getType(additionalResolver.sourceTypeName) as GraphQLObjectType;
     const sourceTypeFields = sourceType.getFields();
@@ -56,26 +59,26 @@ function generateSelectionSetFactory(
 
     if (isAbstractType(resultFieldType)) {
       if (additionalResolver.resultType) {
-        abstractResultType = additionalResolver.resultType;
+        abstractResultTypeName = additionalResolver.resultType;
       } else {
         const targetType = schema.getType(additionalResolver.targetTypeName) as GraphQLObjectType;
         const targetTypeFields = targetType.getFields();
         const targetField = targetTypeFields[additionalResolver.targetFieldName];
         const targetFieldType = getNamedType(targetField.type);
-        abstractResultType = targetFieldType?.name;
+        abstractResultTypeName = targetFieldType?.name;
       }
-      const possibleTypes = schema.getPossibleTypes(resultFieldType);
-      if (
-        !possibleTypes.some(possibleType => possibleType.name === abstractResultType) &&
-        abstractResultType !== resultFieldType.name
-      ) {
-        throw new Error(
-          `${additionalResolver.sourceTypeName}.${additionalResolver.sourceFieldName}.${resultPath.join(
-            '.'
-          )} doesn't implement ${abstractResultType}. Please specify one of the following types as "returnType"; ${possibleTypes.map(
-            t => t.name
-          )}`
-        );
+      if (abstractResultTypeName !== resultFieldType.name) {
+        const abstractResultType = schema.getType(abstractResultTypeName);
+        if (
+          (isInterfaceType(abstractResultType) || isObjectType(abstractResultType)) &&
+          !schema.isSubType(resultFieldType, abstractResultType)
+        ) {
+          throw new Error(
+            `${additionalResolver.sourceTypeName}.${additionalResolver.sourceFieldName}.${resultPath.join(
+              '.'
+            )} doesn't implement ${abstractResultTypeName}.}`
+          );
+        }
       }
     }
 
@@ -86,7 +89,7 @@ function generateSelectionSetFactory(
       for (const pathElem of resultPathReversed) {
         // Ensure the path elem is not array index
         if (Number.isNaN(parseInt(pathElem))) {
-          if (isLastResult && abstractResultType) {
+          if (isLastResult && abstractResultTypeName) {
             finalSelectionSet = {
               kind: Kind.SELECTION_SET,
               selections: [
@@ -96,7 +99,7 @@ function generateSelectionSetFactory(
                     kind: Kind.NAMED_TYPE,
                     name: {
                       kind: Kind.NAME,
-                      value: abstractResultType,
+                      value: abstractResultTypeName,
                     },
                   },
                   selectionSet: finalSelectionSet,
