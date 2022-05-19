@@ -11,18 +11,19 @@ import {
   GraphQLType,
   isInterfaceType,
   isObjectType,
+  GraphQLNamedType,
 } from 'graphql';
 import { withFilter } from 'graphql-subscriptions';
 import _ from 'lodash';
 import { stringInterpolator } from './string-interpolator';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
-function getTypeByPath(type: GraphQLType, path: string[]): GraphQLType {
+function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {
-    return getTypeByPath(type.ofType, path);
+    return getTypeByPath(getNamedType(type), path);
   }
   if (path.length === 0) {
-    return type;
+    return getNamedType(type);
   }
   if (!('getFields' in type)) {
     throw new Error(`${type} cannot have a path ${path.join('.')}`);
@@ -88,7 +89,7 @@ function generateSelectionSetFactory(
       for (const pathElem of resultPathReversed) {
         // Ensure the path elem is not array index
         if (Number.isNaN(parseInt(pathElem))) {
-          if (isLastResult && abstractResultTypeName) {
+          if (isLastResult && abstractResultTypeName && abstractResultTypeName !== resultFieldType.name) {
             finalSelectionSet = {
               kind: Kind.SELECTION_SET,
               selections: [
