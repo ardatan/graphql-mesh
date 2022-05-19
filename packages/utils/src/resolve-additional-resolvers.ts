@@ -65,7 +65,10 @@ function generateSelectionSetFactory(
         abstractResultType = targetFieldType?.name;
       }
       const possibleTypes = schema.getPossibleTypes(resultFieldType);
-      if (!possibleTypes.some(possibleType => possibleType.name === abstractResultType)) {
+      if (
+        !possibleTypes.some(possibleType => possibleType.name === abstractResultType) &&
+        abstractResultType !== resultFieldType.name
+      ) {
         throw new Error(
           `${additionalResolver.sourceTypeName}.${additionalResolver.sourceFieldName}.${resultPath.join(
             '.'
