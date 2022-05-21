@@ -120,6 +120,26 @@ type MyBook {
 }"
 `;
 
+exports[`rename should only affect specified field match argument 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_book: MyBook!
+  profile(profileId: ID!, role: String, some_argument: String, another_argument: Int): Profile
+}
+
+type MyUser {
+  id: ID!
+}
+
+type Profile {
+  id: ID!
+}
+
+type MyBook {
+  id: ID!
+}"
+`;
+
 exports[`rename should only affect specified match type and match field argument 1`] = `
 "type Query {
   my_user: MyUser!

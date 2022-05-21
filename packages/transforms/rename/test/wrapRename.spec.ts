@@ -539,6 +539,52 @@ describe('rename', () => {
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
+  it('should only affect specified field match argument', () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new RenameTransform({
+          apiName: '',
+          importFn: m => import(m),
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  type: 'Query',
+                  field: 'profile',
+                  argument: '(profile)_(id)',
+                },
+                to: {
+                  type: 'Query',
+                  field: 'profile',
+                  argument: '$1Id',
+                },
+                useRegExpForArguments: true
+              },
+            ],
+          },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    const fieldMap = queryType.getFields();
+
+    // TODO: uncomment following line once #3778 is fixed
+    // expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
+    expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
+    expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
+
+    expect(fieldMap.profile.args.find(a => a.name === 'another_argument')).toBeDefined();
+    expect(fieldMap.profile.args.find(a => a.name === 'some_argument')).toBeDefined();
+
+    expect(printSchema(newSchema)).toMatchSnapshot();
+  });
+
   it('should only affect specified match type and match field argument', () => {
     const newSchema = wrapSchema({
       schema,
