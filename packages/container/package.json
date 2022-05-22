@@ -1,7 +1,7 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.1.101",
+  "version": "0.1.102",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -24,7 +24,7 @@
     "@graphql-mesh/postgraphile": "0.20.20",
     "@graphql-mesh/transform-mock": "0.14.39",
     "@graphql-mesh/transform-prefix": "0.11.43",
-    "@graphql-mesh/transform-encapsulate": "0.3.54",
+    "@graphql-mesh/transform-encapsulate": "0.3.55",
     "@graphql-mesh/transform-cache": "0.12.9",
     "@graphql-mesh/transform-filter-schema": "0.14.54",
     "@graphql-mesh/transform-extend": "0.10.19",

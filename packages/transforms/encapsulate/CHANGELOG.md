@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-encapsulate
 
+## 0.3.55
+
+### Patch Changes
+
+- 5c8f46ab9: Use nonnull types instead of nullables
+
 ## 0.3.54
 
 ### Patch Changes
