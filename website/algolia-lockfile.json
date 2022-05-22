@@ -214,12 +214,12 @@
             "children": [
               {
                 "children": [],
-                "title": "`--dir  [string]`",
-                "anchor": "--dir--string"
+                "title": "`--dir [string]`",
+                "anchor": "--dir-string"
               }
             ],
-            "title": "`-r (alias: require)  [array]`",
-            "anchor": "-r-alias-require--array"
+            "title": "`-r (alias: require) [array]`",
+            "anchor": "-r-alias-require-array"
           }
         ],
         "title": "Global Options",
