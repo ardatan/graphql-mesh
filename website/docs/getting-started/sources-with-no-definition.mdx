@@ -1,6 +1,6 @@
 ---
 id: sources-with-no-definition
-title: "How to: Configure Sources with no definition"
+title: 'How to: Configure Sources with no definition'
 sidebar_label: Configure Sources with no definition
 type: Guide
 ---
@@ -27,11 +27,9 @@ Z --> G;
 
 </Graph>
 
-
 Once again, GraphQL Mesh gots you covered with the `@graphql-mesh/json-schema` handler that will help provide a definition of the API.
 
 <p>&nbsp;</p>
-
 
 ## An overview of the `jsonSchema` handler
 
@@ -42,6 +40,7 @@ A `jsonSchema` handler configuration must provide a set of `operations` that def
 A standard `jsonSchema` handler configuration will look at the following:
 
 _Example `.meshrc.yaml`_
+
 ```yaml
 sources:
   - name: MyApi
@@ -66,13 +65,11 @@ By using the `responseSample` file, GraphQL Mesh will be able to generate a Grap
 
 Let's put it in practice with our "Books" REST API `GET /book/:id` endpoint.
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Configuring our "Books" REST API
 
@@ -81,6 +78,7 @@ You will find all the source code of the below example in the dedicated reposito
 After installing the `@graphql-mesh/json-schema` package, a good starting point for our "Books" REST API `jsonSchema` handler configuration would be the following:
 
 _[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
+
 ```yaml
 sources:
   - name: Books
@@ -109,12 +107,13 @@ curl --location --request GET 'http://localhost:3002/books/1' > packages/single-
 Which will create the following [`packages/single-source-no-source-definition/samples/book-1.json`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/samples/book-1.json) file:
 
 ```json
-{"id":"1","title":"Dune","authorId":"0","categorieId":"0"}
+{ "id": "1", "title": "Dune", "authorId": "0", "categorieId": "0" }
 ```
 
 We can now provide use this sample file to configure our `Query.book` operation as follows:
 
 _[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
+
 ```yaml
 sources:
   - name: Books
@@ -153,10 +152,10 @@ type query_book {
   categorieId: String
 }
 ```
+
 _Note: The `query_book` type has been generated thanks to our `packages/single-source-no-source-definition/samples/book-1.json` sample file._
 
 <br />
-
 
 We can open the browser at and http://0.0.0.0:4000 try the following Query with GraphiQL:
 
@@ -172,20 +171,15 @@ We can open the browser at and http://0.0.0.0:4000 try the following Query with 
 
 We successfully added a Source without definition! 🎉
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Going further
 
-
 <p>&nbsp;</p>
-
 
 ### Rename generated types
 
@@ -194,6 +188,7 @@ Our `Query.book` `jsonSchema` configuration generates a `query_book` type which 
 The `responseTypeName` allows us to provide a type name that we will be used for the generated type, as follows:
 
 _[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
+
 ```yaml
 sources:
   - name: Books
@@ -223,18 +218,19 @@ type Book {
   categorieId: String
 }
 ```
+
 <br />
 
 The same parameter exists for request: `requestTypeName` (see "_Mutations_").
 
 <p>&nbsp;</p>
 
-
 ### Queries/Mutations arguments
 
 We saw that `operations[].path` can take arguments using syntax similar to string interpolation:
 
 _[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml)_
+
 ```yaml
 sources:
   - name: Books
@@ -260,6 +256,7 @@ We would need the `query` argument to be of type `String` (not `ID`).
 To achieve this, we will leverage the `argTypeMap` parameter as follow:
 
 _Example `.meshrc.yaml`_
+
 ```yaml
 sources:
   - name: Books
@@ -280,7 +277,6 @@ Now, GraphQL Mesh knows that the type definition of our search query is:
 
 `Query.search(query: String!, categoryId: ID)`.
 
-
 <p>&nbsp;</p>
 
 ### Mutations
@@ -290,6 +286,7 @@ Since Mutations are most likely to rely on `POST` requests, we need to provide b
 For example, if our "Books" API exposed a `POST /books`, we could define the following `Mutation.addBook(...)` mutation:
 
 _Example `.meshrc.yaml`_
+
 ```yaml
 sources:
   - name: Books
@@ -331,7 +328,7 @@ For example, our previous `POST /books` endpoint could return a totally differen
 **Unauthorized response**
 
 ```json
-{"error": "Unauthorized"}
+{ "error": "Unauthorized" }
 ```
 
 <br />
@@ -354,10 +351,10 @@ For example, our previous `POST /books` endpoint could return a totally differen
 
 Relying on `curl` to get a sample of all those scenarios is impossible.
 
-
 In that case, we will to provide a `responseSchema` parameter that will point to a JSON Schema file:
 
 _Example `.meshrc.yaml`_
+
 ```yaml
 sources:
   - name: Books
@@ -403,9 +400,7 @@ Our `./schema/add-book-response.json` would look as follows:
     "Book": {
       "title": "Book",
       "type": "object",
-      "required": [
-        "id"
-      ],
+      "required": ["id"],
       "properties": {
         "id": {
           "type": "string"
@@ -424,9 +419,7 @@ Our `./schema/add-book-response.json` would look as follows:
     "AddBookOutputUnauthorized": {
       "title": "AddBookOutputUnauthorized",
       "type": "object",
-      "required": [
-        "error"
-      ],
+      "required": ["error"],
       "properties": {
         "error": {
           "type": "string"
@@ -436,10 +429,7 @@ Our `./schema/add-book-response.json` would look as follows:
     "AddBookOutputDuplicate": {
       "title": "AddBookOutputDuplicate",
       "type": "object",
-      "required": [
-        "error",
-        "duplicateOf"
-      ],
+      "required": ["error", "duplicateOf"],
       "properties": {
         "error": {
           "type": "string"
@@ -480,7 +470,6 @@ type AddBookOutputDuplicate {
   duplicateOf: Book!
 }
 ```
-
 
 <br />
 

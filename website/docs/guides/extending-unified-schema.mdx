@@ -1,35 +1,29 @@
 ---
 id: extending-unified-schema
-title: "Extending the Unified Schema"
+title: 'Extending the Unified Schema'
 sidebar_label: Extending the Unified Schema
 type: Guide
 ---
-
 
 We saw on the ["How to: Combine multiple Sources"](/docs/howtos/combine-multiple-sources) guide that `additionalResolvers` could be used to shape and augment the Unified Schema with custom resolvers.
 
 However, the `additionalResolvers` value can also be the path to a JavaScript/TypeScript file that exports the custom resolvers implementation.
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
-
 
 ## Programatic `additionalResolvers`
 
-
 In our ["How to: Combine multiple Sources"](/docs/howtos/combine-multiple-sources) Gateway, the `additionalResolvers` could have been provided programatically as shown in the [`multiple-sources-prog-resolvers`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources-prog-resolvers) example.
 
-
 The below `meshrc.yaml` configuration add the following fields:
+
 - `Store.bookSells: [Sells!]!`: to get the selling from a given store
 - `Sells.book: Book`: to get the book of a given store selling record
 - `Book.author: authors_v1_Author`: to get the author of a book
-
 
 [_.meshrc.yaml_](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources-prog-resolvers/.meshrc.yaml)
 
@@ -50,41 +44,42 @@ additionalTypeDefs: |
   }
 
 additionalResolvers:
-    - "./resolvers"
+  - './resolvers'
 ```
 
-[__`resolvers.ts`__](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources-prog-resolvers/resolvers.ts)
+[**`resolvers.ts`**](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources-prog-resolvers/resolvers.ts)
+
 ```ts
 import { Resolvers } from './.mesh'
 
 const resolvers: Resolvers = {
   Book: {
     author: {
-      selectionSet: /* GraphQL */`
-      {
-        authorId
-      }
+      selectionSet: /* GraphQL */ `
+        {
+          authorId
+        }
       `,
       resolve: async (root, _args, context, info) => {
         return await context.Authors.Query.authors_v1_AuthorsService_GetAuthor({
           root,
           args: {
             input: {
-              id: root.authorId,
+              id: root.authorId
             }
           },
           context,
-          info,
+          info
         })
       }
     }
   },
   Store: {
     bookSells: {
-      selectionSet: /* GraphQL */`
-      {
-        id
-      }
+      selectionSet: /* GraphQL */ `
+        {
+          id
+        }
       `,
       resolve: async (root, _args, context, info) => {
         return await context.Stores.Query.bookSells({
@@ -100,10 +95,10 @@ const resolvers: Resolvers = {
   },
   Sells: {
     book: {
-      selectionSet: /* GraphQL */`
-      {
-        bookId
-      }
+      selectionSet: /* GraphQL */ `
+        {
+          bookId
+        }
       `,
       resolve: async (root, _args, context, info) => {
         return await context.Books.Query.book({
@@ -123,6 +118,7 @@ export default resolvers
 ```
 
 Mesh relies on [GraphQL Code Generator](https://www.graphql-code-generator.com/) to generate the `Resolvers` type that gives you access to:
+
 - fully typed resolvers map
 - fully typed SDK (through the `context`) to fetch data from Sources
 
@@ -139,11 +135,11 @@ await context.Authors.Query.authors_v1_AuthorsService_GetAuthor({
   root,
   args: {
     input: {
-      id: root.authorId,
+      id: root.authorId
     }
   },
   context,
-  info,
+  info
 })
 ```
 
@@ -156,19 +152,14 @@ Any SDK method take the following arguments:
 - `selectionSet`: allows to specify a selection on the Query/Mutation to fetch nested data
 - `valuesFromResults`: allows to provide a function to transform the results (if the result is an array, the function will be mapped to each element)
 
-
 _Note: `valuesFromResults`, compared to `selectionSet` helps to "flatten"/"unnest" data from results_
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Going further
-
 
 Transforms such as ["Resolvers composition"](/docs/transforms/resolvers-composition), [Extend"](/docs//transforms/extend) and ["Hoist Field"](/docs/transforms/hoist) also helps in shaping and extending the Unified Schema.

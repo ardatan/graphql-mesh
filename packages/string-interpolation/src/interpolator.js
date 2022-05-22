@@ -37,7 +37,7 @@ export class Interpolator {
       return new Error('Modifiers must have a transformer. Transformers must be a function that returns a value.');
     }
 
-    this.modifiers.push({key: key.toLowerCase(), transform});
+    this.modifiers.push({ key: key.toLowerCase(), transform });
     return this;
   }
 
@@ -51,21 +51,23 @@ export class Interpolator {
   }
 
   extractRules(matches) {
-    return matches.map((match) => {
+    return matches.map(match => {
       const alternativeText = this.getAlternativeText(match);
       const modifiers = this.getModifiers(match);
       return {
         key: this.getKeyFromMatch(match),
         replace: match,
         modifiers,
-        alternativeText
-      }
-    })
+        alternativeText,
+      };
+    });
   }
 
   getKeyFromMatch(match) {
     const removeReservedSymbols = [':', '|'];
-    return this.removeDelimiter(removeReservedSymbols.reduce((val, sym) => val.indexOf(sym) > 0 ? this.removeAfter(val, sym) : val, match));
+    return this.removeDelimiter(
+      removeReservedSymbols.reduce((val, sym) => (val.indexOf(sym) > 0 ? this.removeAfter(val, sym) : val), match)
+    );
   }
 
   removeDelimiter(val) {
@@ -138,7 +140,7 @@ export class Interpolator {
     const propData = _.get(data, prop);
     if (ptr) {
       try {
-          return JsonPointer.get(propData, ptr);
+        return JsonPointer.get(propData, ptr);
       } catch (e) {
         if (e.message.startsWith('Invalid reference')) {
           return undefined;
@@ -156,7 +158,7 @@ export class Interpolator {
   applyModifiers(modifiers, str, rawData) {
     try {
       const transformers = modifiers.map(modifier => modifier && modifier.transform);
-      return transformers.reduce((str, transform) => transform ? transform(str, rawData) : str, str);
+      return transformers.reduce((str, transform) => (transform ? transform(str, rawData) : str), str);
     } catch (e) {
       console.error(`An error occurred while applying modifiers to ${str}`, modifiers, e);
       return str;
@@ -164,8 +166,8 @@ export class Interpolator {
   }
 
   addAlias(key, ref) {
-    if (typeof ref === 'function'){
-      this.aliases.push({key, ref: ref() });
+    if (typeof ref === 'function') {
+      this.aliases.push({ key, ref: ref() });
     } else {
       this.aliases.push({ key, ref });
     }

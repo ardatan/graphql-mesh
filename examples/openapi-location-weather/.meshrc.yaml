@@ -36,10 +36,10 @@ transforms:
           ttl: 3600
 
 additionalTypeDefs: |
-      extend type PopulatedPlaceSummary {
-        dailyForecast: [Forecast]
-        todayForecast: Forecast
-      }
+  extend type PopulatedPlaceSummary {
+    dailyForecast: [Forecast]
+    todayForecast: Forecast
+  }
 additionalResolvers:
   - targetTypeName: PopulatedPlaceSummary
     targetFieldName: dailyForecast
@@ -52,8 +52,8 @@ additionalResolvers:
     sourceTypeName: Query
     sourceFieldName: getForecastDailyLatequalToLatLonLon
     sourceArgs:
-      lat: "{root.latitude}"
-      lon: "{root.longitude}"
+      lat: '{root.latitude}'
+      lon: '{root.longitude}'
       key: 971a693de7ff47a89127664547988be5
     result: data
   - targetTypeName: PopulatedPlaceSummary
@@ -67,8 +67,8 @@ additionalResolvers:
     sourceTypeName: Query
     sourceFieldName: getForecastDailyLatequalToLatLonLon
     sourceArgs:
-      lat: "{root.latitude}"
-      lon: "{root.longitude}"
+      lat: '{root.latitude}'
+      lon: '{root.longitude}'
       days: 1
       key: 971a693de7ff47a89127664547988be5
     result: data[0]

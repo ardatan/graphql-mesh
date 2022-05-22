@@ -4,14 +4,11 @@ title: Schema Transformation
 sidebar_label: Introduction
 ---
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Introduction to Transforms
 
@@ -21,15 +18,11 @@ Each transformer can manipulate the schema the way it needs and return the modif
 
 Transforms are specified as a list of objects, and they are executed in order. You can apply them over a specific input source or over the unified schema (after merging all sources).
 
-
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Transforms location and order
 
@@ -38,6 +31,7 @@ Most of the previous Guides configured Transforms at the root of the `.meshrc.ya
 However, Mesh Transforms can be specified at the Source or Root level as follow:
 
 _`.meshrc.yaml`_
+
 ```yaml
 sources:
   - name: Books
@@ -77,47 +71,47 @@ The diagram below explains how Mesh process applied when building the final unif
 
 <Graph>
 
-  graph LR;
-    subgraph A [GraphQL Mesh server]
-      subgraph A1 [Sources]
-        subgraph A11 [Books Source]
-          A112[Books source GraphQL Schema]
-          A113[Apply source transforms in order]
-          A114[Books source GraphQL Schema]
-          A115[Books SDK]
-        end
-        subgraph A12 [Authors Source]
-          A122[Authors source GraphQL Schema]
-          A123[Apply source transforms in order]
-          A124[Authors source GraphQL Schema]
-          A125[Authors SDK]
-        end
-        subgraph A31 [Stores Source]
-          A312[Stores source GraphQL Schema]
-          A313[Apply source transforms in order]
-          A314[Stores source GraphQL Schema]
-          A315[Stores SDK]
-        end
-      end
-      subgraph A2 [Unified Schema]
-        A23[SDK]
-        A21[Merged GraphQL Schema]
-        A22[Apply root transforms in order]
-      end
-      subgraph A3 [Mesh server]
-        A32[Additional resolvers]
-        A33[Envelop plugins]
-        A34[Unified Schema]
-        A35[Yoga GraphQL Server]
-      end
-    end
-    A112 --> A113 --> A114 --> A115
-    A122 --> A123 --> A124 --> A125
-    A312 --> A313 --> A314 --> A315
-    A115 & A125 & A315 --> A23 --> A32
-    A114 & A124 & A314 --> A21
-    A21 --> A22 --> A34
-    A32 & A33 & A34 --> A35
+graph LR;
+subgraph A [GraphQL Mesh server]
+subgraph A1 [Sources]
+subgraph A11 [Books Source]
+A112[Books source GraphQL Schema]
+A113[Apply source transforms in order]
+A114[Books source GraphQL Schema]
+A115[Books SDK]
+end
+subgraph A12 [Authors Source]
+A122[Authors source GraphQL Schema]
+A123[Apply source transforms in order]
+A124[Authors source GraphQL Schema]
+A125[Authors SDK]
+end
+subgraph A31 [Stores Source]
+A312[Stores source GraphQL Schema]
+A313[Apply source transforms in order]
+A314[Stores source GraphQL Schema]
+A315[Stores SDK]
+end
+end
+subgraph A2 [Unified Schema]
+A23[SDK]
+A21[Merged GraphQL Schema]
+A22[Apply root transforms in order]
+end
+subgraph A3 [Mesh server]
+A32[Additional resolvers]
+A33[Envelop plugins]
+A34[Unified Schema]
+A35[Yoga GraphQL Server]
+end
+end
+A112 --> A113 --> A114 --> A115
+A122 --> A123 --> A124 --> A125
+A312 --> A313 --> A314 --> A315
+A115 & A125 & A315 --> A23 --> A32
+A114 & A124 & A314 --> A21
+A21 --> A22 --> A34
+A32 & A33 & A34 --> A35
 
 </Graph>
 
@@ -132,18 +126,19 @@ The sequence diagram shows that Mesh always applies transforms in order, which m
 Given the following `MyService` schema:
 
 _`schema.graphql`_
+
 ```graphql
 type Query {
   books_list: [Book]!
 }
 
 # ...
-
 ```
 
 The following `filterSchema` transforms configuration will fail:
 
 _`.meshrc.yaml`_
+
 ```yaml
 sources:
    - name: MyService
@@ -166,9 +161,7 @@ The `Query.books_list` does not exist anymore, replaced by the `Query.booksList`
 
 _Note: the number of configured transforms does not impact performances (build or runtime) since Mesh processes them in a chained way_
 
-
 <p>&nbsp;</p>
-
 
 ### Beware of which transforms are used at the source level
 
@@ -179,6 +172,7 @@ For this reason, be careful when using the `filterSchema` transforms at the Sour
 For example:
 
 _`.meshrc.yaml`_
+
 ```yaml
 sources:
    - name: MyService
@@ -195,11 +189,9 @@ The above `filterSchema` Transforms will prevent calling the `books_list` Query 
 
 (_The `MyService.Query.books_list()` SDK method won't be generated_)
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
 
@@ -209,9 +201,7 @@ By default, most transform manipulating schemas work by wrapping the original sc
 Although both `bare` and `wrap` modes apparently achieve the same result, their behaviors are very different.
 Let's take a look at how they operate.
 
-
 <p>&nbsp;</p>
-
 
 ### Wrap
 
@@ -219,10 +209,7 @@ The wrap mode applies transformations by adding a wrapping layer to the original
 schema and passes it to the transform. When in "wrap" mode, the transform receives this schema. Rather than updating it, it will apply a layer on top of it, with the scope of serving your transformations as an addition to the original schema generated by the handler.
 This approach is safe as we have used it extensively in `graphql-tools`; however, be mindful of the implications below.
 
-
-
 <p>&nbsp;</p>
-
 
 #### Implications
 
@@ -287,9 +274,6 @@ transforms:
 
 > ProTip: When you want to use "wrap", you can omit the "mode" property since this is already applied by default.
 
-
-
-
 <p>&nbsp;</p>
 
 ### Bare
@@ -297,8 +281,6 @@ transforms:
 Bare is a recent addition and works by replacing the original schema. The handler generates a GraphQL schema and passes it to the transform. When in "bare" mode, the transform, receives the schema generated by your handler, applies the transform rules defined and finally returns an updated version of the original schema.
 This means that the transformed schema replaces the original schema from the handler and so Mesh deals with the latter schema only, as opposed to an original schema plus one or more wrapping layers.
 Bare mode does remove all the [implications of "wrap" mode](#implications), however, be mindful of the restrictions below.
-
-
 
 <p>&nbsp;</p>
 
@@ -352,8 +334,6 @@ transforms:
             field: code
 ```
 
-
-
 <p>&nbsp;</p>
 
 ### Modes support
@@ -363,15 +343,15 @@ If you have use cases for which you would require to introduce either "bare" or 
 
 | Transform             | Bare | Wrap |                      Docs                      |
 | --------------------- | :--: | :--: | :--------------------------------------------: |
-| Cache                 |  ✅  |  ❌  | [docs](/docs/transforms/cache)                 |
-| Encapsulate           |  ❌  |  ✅  | [docs](/docs/transforms/encapsulate)           |
-| Extend                |  ✅  |  ❌  | [docs](/docs/transforms/extend)                |
-| Federation            |  ❌  |  ✅  | [docs](/docs/transforms/federation)            |
-| Filter Schema         |  ✅  |  ✅  | [docs](/docs/transforms/filter-schema)         |
-| Mock                  |  ❌  |  ✅  | [docs](/docs/transforms/mock)                  |
-| Naming Convention     |  ❌  |  ✅  | [docs](/docs/transforms/naming-convention)     |
-| Prefix                |  ✅  |  ✅  | [docs](/docs/transforms/prefix)                |
-| Rename                |  ✅  |  ✅  | [docs](/docs/transforms/rename)                |
-| Replace Field         |  ✅  |  ❌  | [docs](/docs/transforms/replace-field)         |
+| Cache                 |  ✅  |  ❌  |         [docs](/docs/transforms/cache)         |
+| Encapsulate           |  ❌  |  ✅  |      [docs](/docs/transforms/encapsulate)      |
+| Extend                |  ✅  |  ❌  |        [docs](/docs/transforms/extend)         |
+| Federation            |  ❌  |  ✅  |      [docs](/docs/transforms/federation)       |
+| Filter Schema         |  ✅  |  ✅  |     [docs](/docs/transforms/filter-schema)     |
+| Mock                  |  ❌  |  ✅  |         [docs](/docs/transforms/mock)          |
+| Naming Convention     |  ❌  |  ✅  |   [docs](/docs/transforms/naming-convention)   |
+| Prefix                |  ✅  |  ✅  |        [docs](/docs/transforms/prefix)         |
+| Rename                |  ✅  |  ✅  |        [docs](/docs/transforms/rename)         |
+| Replace Field         |  ✅  |  ❌  |     [docs](/docs/transforms/replace-field)     |
 | Resolvers Composition |  ✅  |  ✅  | [docs](/docs/transforms/resolvers-composition) |
-| Snapshot              |  ✅  |  ❌  | [docs](/docs/transforms/snapshot)              |
+| Snapshot              |  ✅  |  ❌  |       [docs](/docs/transforms/snapshot)        |

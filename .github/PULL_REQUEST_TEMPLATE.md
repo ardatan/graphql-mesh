@@ -1,6 +1,6 @@
 🚨 **IMPORTANT: Please do not create a Pull Request without creating an issue first.**
 
-*Any change needs to be discussed before proceeding. Failure to do so may result in the rejection of the pull request.*
+_Any change needs to be discussed before proceeding. Failure to do so may result in the rejection of the pull request._
 
 ## Description
 
@@ -29,6 +29,7 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] Test B
 
 **Test Environment**:
+
 - OS:
 - `@graphql-mesh/...`:
 - NodeJS:

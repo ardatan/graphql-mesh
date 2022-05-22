@@ -260,9 +260,7 @@
         "watchers": 1,
         "forks": 1,
         "subscribers": 1,
-        "sources": [
-          "https://github.com/dasmoose/tundra/blob/44bea73bb96d3501e8c3f97666d823041d48f348/lib/constants.rb"
-        ]
+        "sources": ["https://github.com/dasmoose/tundra/blob/44bea73bb96d3501e8c3f97666d823041d48f348/lib/constants.rb"]
       },
       {
         "repository": "fplatten/wuapi",
@@ -641,16 +639,7 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "full",
-                "city",
-                "state",
-                "country",
-                "country_iso3166",
-                "latitude",
-                "longitude",
-                "elevation"
-              ]
+              "required": ["full", "city", "state", "country", "country_iso3166", "latitude", "longitude", "elevation"]
             },
             "estimated": {
               "type": "object",
@@ -935,15 +924,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "period",
-                      "icon",
-                      "icon_url",
-                      "title",
-                      "fcttext",
-                      "fcttext_metric",
-                      "pop"
-                    ]
+                    "required": ["period", "icon", "icon_url", "title", "fcttext", "fcttext_metric", "pop"]
                   }
                 }
               },

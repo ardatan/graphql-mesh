@@ -5,7 +5,6 @@ sidebar_label: Comparison
 fullWidth: true
 ---
 
-
 As stated in the introduction page, many approaches exist to build a GraphQL Gateway:
 
 - creating an Apollo Server with Apollo DataSource to query sub-services
@@ -21,10 +20,8 @@ The comparison table below evaluates all those solutions based on 3 criteria:
 2. Is the solution provides all the features to build a **well-designed Unified GraphQL Schema**? (comprehensive, simplified abstraction of a set of sub-services)
 3. Which **sub services types** the solution supports?
 
-
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-
 
 <table cellpadding="10">
   <thead>
@@ -38,131 +35,120 @@ The comparison table below evaluates all those solutions based on 3 criteria:
   <tbody>
     <tr valign="top">
       <td width="150px">
-        <strong>
-          GraphQL Mesh
-        </strong>
+        <strong>GraphQL Mesh</strong>
       </td>
       <td>
         🟢
-        <br/>
-        <br/>
-        Packages with a server, caching, Envelop plugins, and large sub-service types support. <br/>
+        <br />
+        <br />
+        Packages with a server, caching, Envelop plugins, and large sub-service types support. <br />
         Configuration-based with custom resolvers.
       </td>
       <td>
         🟢
-        <br/>
-        <br/>
+        <br />
+        <br />
         Flexible Schema design with Transforms and custom resolvers support.
       </td>
       <td>
         🟢
-        <br/>
-        <br/>
+        <br />
+        <br />
         Support for a large range of types of sub-service and databases.
       </td>
     </tr>
     <tr valign="top">
       <td width="150px">
-        <strong>
-          GraphQL Tools
-        </strong>
+        <strong>GraphQL Tools</strong>
       </td>
       <td>
         🟠
-        <br/>
-        <br/>
+        <br />
+        <br />
         Programmatic approach at the Gateway level.
-        <br/>
-        Type merging makes it easier to deal with sub-services
-        conflicts.
+        <br />
+        Type merging makes it easier to deal with sub-services conflicts.
       </td>
       <td>
         🟢
-        <br/>
-        <br/>
+        <br />
+        <br />
         Access to all GraphQL Schema building libraries.
       </td>
       <td>
         🟠
-        <br/>
-        <br/>
-        Only supports GraphQL sub-services out of the box. Other sub-service types can be supported with
-        Schema extensions at the Gateway level.
+        <br />
+        <br />
+        Only supports GraphQL sub-services out of the box. Other sub-service types can be supported with Schema extensions
+        at the Gateway level.
       </td>
     </tr>
     <tr valign="top">
       <td width="150px">
-        <strong>
-          ApolloServer with DataSources
-        </strong>
-    </td>
+        <strong>ApolloServer with DataSources</strong>
+      </td>
       <td>
         🔴
-        <br/>
-        <br/>
+        <br />
+        <br />
         Requires a lot of coding and maintenance work at the DataSources level.
       </td>
       <td>
         🟢
-        <br/>
-        <br/>
+        <br />
+        <br />
         Access to all GraphQL Schema building libraries.
       </td>
       <td>
         🟠
-        <br/>
-        <br/>
+        <br />
+        <br />
         Integrating with some type of sub-services might require some extra work.
-        </td>
+      </td>
     </tr>
     <tr valign="top">
       <td width="150px">
-        <strong>
-          Apollo Federation
-        </strong>
-    </td>
+        <strong>Apollo Federation</strong>
+      </td>
       <td>
         🟢
-        <br/>
-        <br/>
+        <br />
+        <br />
         Rover CLI and Apollo Studio. Only the Apollo Gateway needs maintenance.
       </td>
       <td>
         🟢
-        <br/>
-        <br/>
+        <br />
+        <br />
         Access to all GraphQL Schema building libraries.
       </td>
       <td>
         🔴
-        <br/>
-        <br/>
+        <br />
+        <br />
         Only supports “Federation compliant” GraphQL sub-services.
       </td>
     </tr>
     <tr valign="top">
       <td width="150px">
-        <strong>
-          Hasura
-        </strong>
+        <strong>Hasura</strong>
       </td>
       <td>
         🟢
-        <br/>
-        <br/>
+        <br />
+        <br />
         Plug and play solution. Configuration-based with custom resolvers.
       </td>
       <td>
         🟠
-        <br/>
-        <br/>
+        <br />
+        <br />
         The Unified Schema is directly linked to the underlying database schema or sub-services design.
       </td>
       <td>
         🟠
-        <br/>
-        <br/>
+        <br />
+        <br />
         Only supports GraphQL and REST sub-services and, a set of databases.
       </td>
     </tr>

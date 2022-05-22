@@ -99,19 +99,15 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
         readFile(join(__dirname, './certs/server.crt')),
         readFile(join(__dirname, './certs/server.key')),
       ]);
-      server.bindAsync(
-        '0.0.0.0:50051',
-        ServerCredentials.createInsecure(),
-        (error, port) => {
-          if (error) {
-            reject(error);
-          }
-          server.start();
-
-          logger('Server started, listening: 0.0.0.0:' + port);
-          resolve(server);
+      server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {
+        if (error) {
+          reject(error);
         }
-      );
+        server.start();
+
+        logger('Server started, listening: 0.0.0.0:' + port);
+        resolve(server);
+      });
     } catch (e) {
       reject(e);
     }

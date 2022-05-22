@@ -3,6 +3,7 @@ id: openapi
 title: OpenAPI / Swagger
 sidebar_label: 'OpenAPI / Swagger'
 ---
+
 ![image](https://user-images.githubusercontent.com/20847995/79218686-7ba7b900-7e59-11ea-8a5e-676a83b9f86e.png)
 
 This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io) schemas. Based on [OpenAPI-to-GraphQL](https://developer.ibm.com/open/projects/openapi-to-graphql).
@@ -23,16 +24,14 @@ sources:
         source: ./my-schema.json
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Overriding default Query/Mutation operations
+
 By default, OpenAPI-to-GraphQL will place all GET operations into Query fields and all other operations into Mutation fields; with this option, you can manually override this process.
 To switch between Query and Mutation operations, and vice versa, you need to define a rule per override, consisting of the OAS title, the path of the operation, the method of the operation and finally, the destination type (e.g., Query or Mutation).
 See the example below:
@@ -44,25 +43,21 @@ sources:
       openapi:
         source: ./my-schema.json
         selectQueryOrMutationField:
-          - title: "Weather Service v1" # OAS title
+          - title: 'Weather Service v1' # OAS title
             path: /weather/current # operation path
             method: post
             type: Query # switch method POST from default Mutation into Query
-          - title: "Weather Service v1" # OAS title
+          - title: 'Weather Service v1' # OAS title
             path: /weather/forecast # operation path
             method: get
             type: Mutation # switch method GET from default Query into Mutation
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
-
 
 ## Dynamic Header Values
 
@@ -70,10 +65,7 @@ Mesh can take dynamic values from the GraphQL Context or the environmental varia
 
 The expression inside dynamic values should be as in JS.
 
-
-
 <p>&nbsp;</p>
-
 
 ### From Context (HTTP Header for `mesh dev` or `mesh start`)
 
@@ -92,10 +84,7 @@ sources:
 
 And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-api-token` HTTP header.
 
-
-
 <p>&nbsp;</p>
-
 
 ### From Environmental Variable
 
@@ -111,14 +100,11 @@ sources:
           Authorization: Bearer {env.MY_API_TOKEN}
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Advanced cookies handling
 
@@ -126,14 +112,12 @@ When building a web application, cookies are often used for authentication for s
 
 This section shows how to configure GraphQL Mesh to accept either and use GraphQL Mesh to set/unset cookies on the login & logout mutations.
 
-
-
 <p>&nbsp;</p>
-
 
 ### Accepting one of the cookies, header, or context value
 
 We want to accept one of the following:
+
 - an `accessToken` cookie
 - an `Authorization` header
 - an authorization value available in context (e.g. set by a GraphQL auth plugin)
@@ -146,9 +130,9 @@ sources:
     handler:
       openapi:
         source: ./openapi.yaml
-        baseUrl: "{env.REST_URL}/api/"
+        baseUrl: '{env.REST_URL}/api/'
         operationHeaders:
-          Authorization-Header: "{context.headers.authorization}"
+          Authorization-Header: '{context.headers.authorization}'
           Authorization-Cookie: Bearer {context.cookies.accessToken}
         customFetch: ./src/custom-fetch.js
 ```
@@ -160,10 +144,11 @@ const fetch = require('node-fetch')
 
 module.exports = (url, args, context) => {
   // Set Authorization header dynamically to context value, or input cookie, or input header
-  args.headers['authorization'] = context.authorization || args.headers['authorization-cookie'] || args.headers['authorization-header'];
+  args.headers['authorization'] =
+    context.authorization || args.headers['authorization-cookie'] || args.headers['authorization-header']
   // Clean up headers forwarded to the Rest API
-  delete args.headers['authorization-cookie'];
-  delete args.headers['authorization-header'];
+  delete args.headers['authorization-cookie']
+  delete args.headers['authorization-header']
   // Execute the fetch with the new headers
   return fetch(url, args)
 }
@@ -173,10 +158,7 @@ Of course, `node-fetch` needs to be added to your project:
 
 <PackageInstall packages="node-fetch" />
 
-
-
 <p>&nbsp;</p>
-
 
 ### Setting / Unsetting the cookie
 
@@ -225,25 +207,23 @@ const resolvers = {
       res.set('Set-Cookie', `accessToken=logout; Path=/; Secure; HttpOnly; Expires=Thu, 1 Jan 1970 00:00:00 GMT;`)
 
       return true
-    },
-  },
+    }
+  }
 }
 
 module.exports = { resolvers }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Examples
 
 We have a lot of examples for OpenAPI Handler;
+
 - [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
 - [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather)
 - [StackExchange](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-stackexchange)
@@ -251,13 +231,11 @@ We have a lot of examples for OpenAPI Handler;
 - [Subscriptions Example with Webhooks](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-subscriptions)
 - [Youtrack](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-youtrack)
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Config API Reference
 

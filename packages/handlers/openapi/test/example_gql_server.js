@@ -3,20 +3,20 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-'use strict'
+'use strict';
 
-const express = require('express')
-const graphql = require('graphql')
-const graphqlHTTP = require('express-graphql')
-const app = express()
-const openAPIToGraphQL = require('../src/openapi-to-graphql/index')
+const express = require('express');
+const graphql = require('graphql');
+const graphqlHTTP = require('express-graphql');
+const app = express();
+const openAPIToGraphQL = require('../src/openapi-to-graphql/index');
 
 // const oas = require('./fixtures/example_oas.json')
 // const oas2 = require('./fixtures/example_oas2.json')
 // const oas3 = require('./fixtures/example_oas3.json')
 // const oas4 = require('./fixtures/example_oas4.json')
 // const oas5 = require('./fixtures/example_oas5.json')
-const oas6 = require('./fixtures/example_oas6.json')
+const oas6 = require('./fixtures/example_oas6.json');
 
 // const oas = require('./fixtures/github.json')
 // const oas = require('./fixtures/instagram.json')
@@ -33,20 +33,20 @@ const oas6 = require('./fixtures/example_oas6.json')
 openAPIToGraphQL
   .createGraphQLSchema(oas6)
   .then(({ schema, report }) => {
-    console.log(JSON.stringify(report, null, 2))
+    console.log(JSON.stringify(report, null, 2));
 
     app.use(
       '/graphql',
       graphqlHTTP({
         schema: schema,
-        graphiql: true
+        graphiql: true,
       })
-    )
+    );
 
     app.listen(3000, () => {
-      console.log('GraphQL accessible at: http://localhost:3000/graphql')
-    })
+      console.log('GraphQL accessible at: http://localhost:3000/graphql');
+    });
   })
   .catch(err => {
-    console.log(err)
-  })
+    console.log(err);
+  });

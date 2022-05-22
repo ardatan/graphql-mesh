@@ -13,10 +13,10 @@ You have a `Query` root field that returns all `Todo` entities from your data so
 
 ```graphql
 query getTodos {
-    todos {
-        id
-        content
-    }
+  todos {
+    id
+    content
+  }
 }
 ```
 
@@ -26,33 +26,31 @@ You only need to add the following to your existing configuration.
 
 ```yaml
 additionalTypeDefs: |
-    directive @live on QUERY
+  directive @live on QUERY
 liveQueryInvalidations:
-    - field: Mutation.addTodo
-      invalidate:
-        - Query.todos
+  - field: Mutation.addTodo
+    invalidate:
+      - Query.todos
 ```
 
 Then you can send a live query with `@live` directive.
 
 ```graphql
 query getTodos @live {
-    todos {
-        id
-        content
-    }
+  todos {
+    id
+    content
+  }
 }
 ```
 
 This will start a real-time connection between the server and your client. The response of `todos` will get updated whenever `addTodo` is called.
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ### ID Based Invalidation
 
@@ -60,10 +58,10 @@ Let's say you have the following query that returns a specific `Todo` entity bas
 
 ```graphql
 query getTodo($id: ID!) {
-    todo(id: $id) {
-        id
-        content
-    }
+  todo(id: $id) {
+    id
+    content
+  }
 }
 ```
 
@@ -71,27 +69,25 @@ If you update this entity with `editTodo` mutation field on your backend, then y
 
 ```yaml
 liveQueryInvalidations:
-    - field: Mutation.editTodo
-      invalidate:
-        - Todo:{args.id}
+  - field: Mutation.editTodo
+    invalidate:
+      - Todo:{args.id}
 ```
 
 In a case where the field resolver resolves null but might resolve to an object type later, e.g., because the visibility got update the field that uses a specific id argument can be invalidated in the following way:
 
 ```yaml
 liveQueryInvalidations:
-    - field: Mutation.editTodo
-      invalidate:
-        - Query.todo(id:"{args.id}")
+  - field: Mutation.editTodo
+    invalidate:
+      - Query.todo(id:"{args.id}")
 ```
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ### Programmatic Usage
 
@@ -101,20 +97,20 @@ See [Resolvers Composition](/docs/transforms/resolvers-composition)
 
 ```yaml
 transforms:
-    - resolversComposition:
-        - resolver: Mutation.editTodo
-          composer: invalidate-todo#invalidateTodo
+  - resolversComposition:
+      - resolver: Mutation.editTodo
+        composer: invalidate-todo#invalidateTodo
 ```
 
 And in this code file;
 
 ```js
 module.exports = {
-    invalidateTodo: next => async (root, args, context, info) => {
-        const result = await next(root, args, context, info);
-        context.liveQueryStore.invalidate(`Todo:${args.id}`);
-        return result;
-    }
+  invalidateTodo: next => async (root, args, context, info) => {
+    const result = await next(root, args, context, info)
+    context.liveQueryStore.invalidate(`Todo:${args.id}`)
+    return result
+  }
 }
 ```
 
@@ -123,8 +119,9 @@ module.exports = {
 > You can check out our example that uses live queries
 
 <iframe
-     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-subscriptions?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
-     title="json-schema-subscriptions"
-     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" />
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-subscriptions?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
+  title="json-schema-subscriptions"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>

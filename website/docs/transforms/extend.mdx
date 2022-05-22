@@ -10,14 +10,11 @@ sidebar_label: Extend
 
 > Please DO NOT use this transform unless you know what you're doing! We strongly recommend you to extend the schema using `additionalTypeDefs` and `additionalResolvers` as described in [Extend Schema](/docs/getting-started/multiple-apis) part in this documentation.
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## How to use?
 
@@ -43,19 +40,16 @@ And define resolvers for those types;
 ```js
 module.exports = {
   User: {
-    fullName: user => `${user.firstName} ${user.lastName}`, // e.g. `user` is the raw result returned by your data source
-  },
+    fullName: user => `${user.firstName} ${user.lastName}` // e.g. `user` is the raw result returned by your data source
+  }
 }
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Config API Reference
 

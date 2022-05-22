@@ -1,5 +1,5 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { buildSubgraphSchema } = require("@apollo/subgraph");
+const { ApolloServer, gql } = require('apollo-server');
+const { buildSubgraphSchema } = require('@apollo/subgraph');
 
 const typeDefs = gql`
   extend type Query {
@@ -21,22 +21,22 @@ const resolvers = {
         ...object,
         ...products.find(product => product.upc === object.upc),
       };
-    }
+    },
   },
   Query: {
     topProducts(_, args) {
       return products.slice(0, args.first);
-    }
-  }
+    },
+  },
 };
 
 const server = new ApolloServer({
   schema: buildSubgraphSchema([
     {
       typeDefs,
-      resolvers
-    }
-  ])
+      resolvers,
+    },
+  ]),
 });
 
 module.exports = server.listen({ port: 9873 }).then(({ url }) => {
@@ -48,21 +48,21 @@ module.exports = server.listen({ port: 9873 }).then(({ url }) => {
 
 const products = [
   {
-    upc: "1",
-    name: "Table",
+    upc: '1',
+    name: 'Table',
     price: 899,
-    weight: 100
+    weight: 100,
   },
   {
-    upc: "2",
-    name: "Couch",
+    upc: '2',
+    name: 'Couch',
     price: 1299,
-    weight: 1000
+    weight: 1000,
   },
   {
-    upc: "3",
-    name: "Chair",
+    upc: '3',
+    name: 'Chair',
     price: 54,
-    weight: 50
-  }
+    weight: 50,
+  },
 ];

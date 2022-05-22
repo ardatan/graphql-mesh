@@ -9,20 +9,15 @@ Thanks to its server based on [GraphQL Yoga](https://www.graphql-yoga.com/), Gra
 
 Similarly, just a few configuration changes will be necessary to forward file uploads to Sources.
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
-
 
 ## Sources file uploads
 
-
 The following Gateway integrates a "UploadFiles" Source that has file upload capabilities:
-
 
 <Graph>
 
@@ -37,38 +32,35 @@ Z --> F;
 
 </Graph>
 
-
 To support forwarding file uploads to the "UploadFiles" Source, we will need to add the `maxRequestBodySize` to the `serve` configuration:
 
 _[`.meshrc.yaml`](https://github.com/Urigo/graphql-mesh/tree/master/examples/graphql-file-upload-example/.meshrc.yml)_
+
 ```yaml
 # ...
 
 serve:
   maxRequestBodySize: 10mb
-
 ```
 
 <br />
 
 You will find the complete example in [`examples/graphql-file-upload-example/.meshrc.yml`](https://github.com/Urigo/graphql-mesh/tree/master/examples/graphql-file-upload-example/.meshrc.yml).
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Custom resolvers file uploads
-
 
 Custom resolvers, programmatically provided by `additionalResolvers`, can also support File uploads (ex: upload to S3).
 
 For this, the only configuration step would be to define the `File` scalar to enable file uploads and our file upload Mutation:
 
 _`.meshrc.yaml`_
+
 ```yaml
 sources:
   # ...
@@ -82,27 +74,28 @@ additionalTypeDefs: |
   }
 
 additionalResolvers:
-    - "./resolvers"
+  - './resolvers'
 ```
 
 Then the resolvers would look as follow:
 
-__`resolvers.ts`__
+**`resolvers.ts`**
+
 ```ts
 import { Resolvers } from './.mesh'
 
 const resolvers: Resolvers = {
   Mutation: {
     uploadFile: async (_, { upload }) => {
-      const filename = upload.name;
-      const arrayBuffer = await upload.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+      const filename = upload.name
+      const arrayBuffer = await upload.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
 
       // upload file to S3...
 
-      return { filename };
-    },
-  },
+      return { filename }
+    }
+  }
 }
 
 export default resolvers

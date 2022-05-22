@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer, gql } = require('apollo-server');
 
 const typeDefs = gql`
   type Query {
@@ -24,8 +24,8 @@ const resolvers = {
     },
     user(root, args, context) {
       return context.users.find(user => user.id === args.id);
-    }
-  }
+    },
+  },
 };
 
 const server = new ApolloServer({
@@ -34,19 +34,19 @@ const server = new ApolloServer({
   context: {
     users: [
       {
-        id: "1",
-        name: "Ada Lovelace",
-        birthDate: "1815-12-10",
-        username: "@ada"
+        id: '1',
+        name: 'Ada Lovelace',
+        birthDate: '1815-12-10',
+        username: '@ada',
       },
       {
-        id: "2",
-        name: "Alan Turing",
-        birthDate: "1912-06-23",
-        username: "@complete"
-      }
-    ]
-  }
+        id: '2',
+        name: 'Alan Turing',
+        birthDate: '1912-06-23',
+        username: '@complete',
+      },
+    ],
+  },
 });
 
 module.exports = server.listen({ port: 9871 }).then(({ url }) => {

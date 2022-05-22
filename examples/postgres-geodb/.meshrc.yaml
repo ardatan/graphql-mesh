@@ -20,9 +20,9 @@ sources:
           includeRootOperations: true
 
 additionalTypeDefs: |
-      extend type GeoCity {
-        developers(limit: Int = 10): [GithubUser]
-      }
+  extend type GeoCity {
+    developers(limit: Int = 10): [GithubUser]
+  }
 
 additionalResolvers:
   - targetTypeName: GeoCity
@@ -37,7 +37,7 @@ additionalResolvers:
     sourceArgs:
       type: USER
       query: location:{root.name}
-      first: "{args.limit}"
+      first: '{args.limit}'
     result: nodes
 
 documents:

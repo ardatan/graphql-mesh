@@ -18,13 +18,11 @@ To get started with this transform, install it:
 
 > We'd recommend this transform be used on the root level, not the handler level. It might not work as expected if you use it on a handler level.
 
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## How to use?
 
@@ -48,10 +46,7 @@ transforms:
       - field: Query.posts
 ```
 
-
-
 <p>&nbsp;</p>
-
 
 ### The Cache Key
 
@@ -68,14 +63,11 @@ transforms:
         cacheKey: user-{args.id}-{yyyy-mm-dd | date}
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Cache Invalidation
 
@@ -91,10 +83,7 @@ transforms:
           ttl: 3600 # 1 hour
 ```
 
-
-
 <p>&nbsp;</p>
-
 
 ### Operation-based
 
@@ -149,50 +138,42 @@ transforms:
 
 This way, when someone uses `updateUser` with a specific user id, it will automatically update the data record and then invalidate the cache
 
-
-
 <p>&nbsp;</p>
-
 
 ### Programmatic
 
 The `getBuiltMesh` method of GraphQL Mesh artifacts returns the general key=>value cache it uses at the moment, so you can easily access it and invalidate records according to your needs:
 
 ```ts
-const { getBuiltMesh } = require('./.mesh');
-const { schema, execute, cache } = getBuiltMesh();
+const { getBuiltMesh } = require('./.mesh')
+const { schema, execute, cache } = getBuiltMesh()
 
-cache.delete(SOME_KEY);
+cache.delete(SOME_KEY)
 ```
 
-
-
 <p>&nbsp;</p>
 
-------
+---
 
 <p>&nbsp;</p>
-
 
 ## Codesandbox Example
 
 You can check the ["Location Weather" example](https://github.com/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather/) that uses OpenAPI handler with cache transform;
 
 <iframe
-     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
-     title="typescript-location-weather-example"
-     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
-
-
-
-<p>&nbsp;</p>
-
-------
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
+  title="typescript-location-weather-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
 
 <p>&nbsp;</p>
 
+---
+
+<p>&nbsp;</p>
 
 ## Config API Reference
 

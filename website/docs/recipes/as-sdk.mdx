@@ -61,15 +61,15 @@ yarn mesh build
 Now, instead of using `execute` manually, you can use the generated `getSdk` method with your GraphQL Mesh client, and use the functions that are generated based on your operations:
 
 ```ts
-import { getMeshSdk } from './.mesh';
+import { getMeshSdk } from './.mesh'
 
 async function test() {
   // Load mesh config and get the sdkClient from it
-  const sdk = getMeshSdk();
+  const sdk = getMeshSdk()
 
   // Execute `myQuery` and get a type-safe result
   // Variables and result are typed: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] }
-  const { getSomething } = await sdk.myQuery({ someVar: 'foo' });
+  const { getSomething } = await sdk.myQuery({ someVar: 'foo' })
 }
 ```
 

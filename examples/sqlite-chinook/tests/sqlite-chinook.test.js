@@ -20,9 +20,7 @@ describe('SQLite Chinook', () => {
     ).toMatchSnapshot('sqlite-chinook-schema');
   });
   it('should give correct response for example queries', async () => {
-    const {
-      documents,
-    } = await config$;
+    const { documents } = await config$;
     const { execute } = await mesh$;
     for (const source of documents) {
       const result = await execute(source.document);

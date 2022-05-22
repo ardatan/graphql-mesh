@@ -6,7 +6,7 @@ const { join } = require('path');
 const { printSchema, lexicographicSortSchema } = require('graphql');
 
 const mesh$ = findAndParseConfig({
-  dir: join(__dirname, '..')
+  dir: join(__dirname, '..'),
 }).then(config => getMesh(config));
 
 describe('JSON Schema Example', () => {

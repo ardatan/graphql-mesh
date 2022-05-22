@@ -1,0 +1,6 @@
+/.changeset/*.md
+/website/docs/generated-markdown/
+.next/
+dist/
+.mesh/
+/.husky/_/
