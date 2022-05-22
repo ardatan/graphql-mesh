@@ -34,7 +34,7 @@
     "json-machete": "0.8.6",
     "to-json-schema": "0.2.5",
     "@graphql-mesh/utils": "0.34.9",
-    "@graphql-tools/utils": "8.6.10",
+    "@graphql-tools/utils": "8.6.12",
     "tslib": "^2.3.1",
     "change-case": "4.1.2"
   },
