@@ -59,7 +59,7 @@ describe('encapsulate', () => {
 
     expect(newSchema.getMutationType().getFields().test).toBeDefined();
     expect(newSchema.getMutationType().getFields().notify).not.toBeDefined();
-    expect(newSchema.getMutationType().getFields().test.type.toString()).toBe('testMutation');
+    expect(newSchema.getMutationType().getFields().test.type.toString()).toBe('testMutation!');
   });
 
   it('should wrap the schema and group Subscription correctly', async () => {
@@ -79,7 +79,7 @@ describe('encapsulate', () => {
 
     expect(newSchema.getSubscriptionType().getFields().test).toBeDefined();
     expect(newSchema.getSubscriptionType().getFields().getSomething).not.toBeDefined();
-    expect(newSchema.getSubscriptionType().getFields().test.type.toString()).toBe('testSubscription');
+    expect(newSchema.getSubscriptionType().getFields().test.type.toString()).toBe('testSubscription!');
   });
 
   it('should wrap the schema and group Query correctly', async () => {
@@ -99,7 +99,7 @@ describe('encapsulate', () => {
 
     expect(newSchema.getQueryType().getFields().test).toBeDefined();
     expect(newSchema.getQueryType().getFields().getSomething).not.toBeDefined();
-    expect(newSchema.getQueryType().getFields().test.type.toString()).toBe('testQuery');
+    expect(newSchema.getQueryType().getFields().test.type.toString()).toBe('testQuery!');
   });
 
   it('should execute queries the same way and preserve execution flow', async () => {
