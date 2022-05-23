@@ -1,5 +1,13 @@
 # hello-world-esm
 
+## 0.0.4
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.4
+- @graphql-mesh/json-schema@0.28.11
+- @graphql-mesh/transform-mock@0.14.40
+
 ## 0.0.3
 
 ### Patch Changes

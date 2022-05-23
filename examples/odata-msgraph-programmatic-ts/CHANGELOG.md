@@ -1,5 +1,14 @@
 # odata-msgraph-programmatic-ts
 
+## 0.0.124
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.4
+- @graphql-mesh/config@0.36.5
+- @graphql-mesh/odata@0.17.21
+- @graphql-mesh/runtime@0.34.10
+
 ## 0.0.123
 
 ### Patch Changes

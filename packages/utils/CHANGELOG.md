@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.34.10
+
+### Patch Changes
+
+- 43eb3d2c2: fix(additionalResolvers): check if result type matches the abstract source type by respecting interface inheritance
+  - @graphql-mesh/types@0.72.5
+
 ## 0.34.9
 
 ### Patch Changes
