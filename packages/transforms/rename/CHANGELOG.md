@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.45
+
+### Patch Changes
+
+- 242b969cd: Regex now supported for Types and Fields on arguments renaming
+- Updated dependencies [43eb3d2c2]
+  - @graphql-mesh/utils@0.34.10
+  - @graphql-mesh/types@0.72.5
+
 ## 0.12.44
 
 ### Patch Changes
