@@ -141,12 +141,16 @@ ${rootJsonAndDecodedDescriptorSets
     this.logger.debug(() => `Using proto file(s)`);
     let protoRoot = new Root();
     let fileGlob: string;
-    let options: LoadOptions = {};
+    let options: LoadOptions = {
+      keepCase: true,
+      alternateCommentMode: true,
+    };
     if (typeof this.config.protoFilePath === 'object') {
       fileGlob = this.config.protoFilePath.file;
       options = {
+        ...options,
         ...this.config.protoFilePath.load,
-        includeDirs: this.config.protoFilePath.load.includeDirs?.map(includeDir =>
+        includeDirs: this.config.protoFilePath.load?.includeDirs?.map(includeDir =>
           path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir)
         ),
       };
