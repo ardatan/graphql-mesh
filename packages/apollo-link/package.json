@@ -29,7 +29,7 @@
     "tslib": "2.4.0"
   },
   "devDependencies": {
-    "@apollo/client": "3.6.4"
+    "@apollo/client": "3.6.5"
   },
   "peerDependencies": {
     "@graphql-mesh/runtime": "^0.34.5",
