@@ -125,12 +125,12 @@ const resolvers: Resolvers = {
         if (!result) {
           throw new GraphQLError({
             message: `Author with id '${root.authorId}' not found.`,
-            extensions:  {
+            extensions: {
               code: 'AUTHOR_NOT_FOUND',
               // complex values
               bookId: root.id,
-              authorId: root.authorId,
-            },
+              authorId: root.authorId
+            }
           })
         } else {
           return result
