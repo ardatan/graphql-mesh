@@ -37,7 +37,6 @@ import * as Swagger2OpenAPI from 'swagger2openapi';
 import { handleWarning, MitigationTypes } from './utils';
 import JsonPointer from 'json-pointer';
 import pluralize from 'pluralize';
-import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 
 // Type definitions & exports:

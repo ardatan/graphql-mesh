@@ -36,6 +36,7 @@
     "cross-undici-fetch": "^0.4.0",
     "json-machete": "0.8.7",
     "@graphql-mesh/types": "0.72.5",
+    "@graphql-mesh/string-interpolation": "0.1.0",
     "@graphql-mesh/utils": "0.34.10",
     "@graphql-tools/utils": "8.6.12",
     "to-json-schema": "0.2.5",

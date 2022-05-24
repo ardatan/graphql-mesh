@@ -1,12 +1,7 @@
 import { Logger, MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
-import {
-  groupTransforms,
-  applySchemaTransforms,
-  extractResolvers,
-  AggregateError,
-} from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms, extractResolvers } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import {
   stitchingDirectives,
@@ -16,7 +11,7 @@ import {
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { buildSchema, ExecutionResult, GraphQLSchema, parse } from 'graphql';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { Executor } from '@graphql-tools/utils';
+import { AggregateError, Executor } from '@graphql-tools/utils';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
   query __ApolloGetServiceDefinition__ {

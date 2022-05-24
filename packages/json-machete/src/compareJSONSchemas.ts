@@ -1,6 +1,6 @@
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
-import { AggregateError } from '@graphql-mesh/utils';
+import { AggregateError } from '@graphql-tools/utils';
 import { resolvePath } from './dereferenceObject';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {

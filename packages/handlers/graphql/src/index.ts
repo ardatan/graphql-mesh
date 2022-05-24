@@ -19,13 +19,7 @@ import {
   SelectionNode,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import {
-  getInterpolatedHeadersFactory,
-  loadFromModuleExportExpression,
-  getInterpolatedStringFactory,
-  getCachedFetch,
-  readFileOrUrl,
-} from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, getCachedFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   ExecutionRequest,
   isDocumentNode,
@@ -37,6 +31,7 @@ import {
 } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import _ from 'lodash';
+import { getInterpolatedHeadersFactory, getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {

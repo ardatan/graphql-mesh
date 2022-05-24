@@ -24,12 +24,7 @@ import {
 } from '@graphql-mesh/types';
 
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
-import {
-  applySchemaTransforms,
-  groupTransforms,
-  DefaultLogger,
-  parseWithCache,
-} from '@graphql-mesh/utils';
+import { applySchemaTransforms, groupTransforms, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 
 import { delegateToSchema, IDelegateToSchemaOptions, StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
@@ -328,7 +323,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     {
       onParse({ setParseFn }) {
         setParseFn(parseWithCache);
-      }
+      },
     },
     ...additionalEnvelopPlugins,
   ];

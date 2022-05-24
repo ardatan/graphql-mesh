@@ -2,7 +2,6 @@ import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
 import { inspect, memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
@@ -19,6 +18,7 @@ import {
   isUnionType,
 } from 'graphql';
 import _ from 'lodash';
+import { stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/string-interpolation';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;

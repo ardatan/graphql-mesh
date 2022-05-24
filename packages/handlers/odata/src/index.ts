@@ -1,20 +1,18 @@
 import {
   YamlConfig,
-  ResolverData,
   MeshHandler,
   GetMeshSourceOptions,
   MeshSource,
   KeyValueCache,
   ImportFn,
 } from '@graphql-mesh/types';
+import { readFileOrUrl, getCachedFetch, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import {
-  parseInterpolationStrings,
   getInterpolatedHeadersFactory,
-  readFileOrUrl,
-  getCachedFetch,
-  loadFromModuleExportExpression,
-} from '@graphql-mesh/utils';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+  parseInterpolationStrings,
+  ResolverData,
+  stringInterpolator,
+} from '@graphql-mesh/string-interpolation';
 import urljoin from 'url-join';
 import {
   SchemaComposer,
@@ -138,14 +136,7 @@ export default class ODataHandler implements MeshHandler {
     preserveOrder: false,
   });
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    cache,
-    store,
-    importFn,
-  }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({ name, config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;

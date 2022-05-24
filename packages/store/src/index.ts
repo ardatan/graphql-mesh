@@ -1,7 +1,7 @@
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import { writeFile, AggregateError } from '@graphql-mesh/utils';
+import { writeFile } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
-import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { getDocumentNodeFromSchema, AggregateError } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
 import { buildASTSchema } from 'graphql';
 

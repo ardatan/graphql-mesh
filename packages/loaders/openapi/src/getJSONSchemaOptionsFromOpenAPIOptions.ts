@@ -1,4 +1,4 @@
-import { getInterpolatedHeadersFactory, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { JSONSchemaObject, dereferenceObject, resolvePath } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
@@ -11,6 +11,7 @@ import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
 import { Logger } from '@graphql-mesh/types';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
