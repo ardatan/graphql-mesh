@@ -44,10 +44,6 @@ export interface Config {
    */
   pubsub?: string | PubSubConfig;
   /**
-   * Live Query Invalidations
-   */
-  liveQueryInvalidations?: LiveQueryInvalidation[];
-  /**
    * Provide a query or queries for GraphQL Playground, validation and SDK Generation
    * The value can be the file path, glob expression for the file paths or the SDL.
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
@@ -65,6 +61,7 @@ export interface Config {
    * You can provide Envelop plugins
    */
   additionalEnvelopPlugins?: string;
+  plugins?: Plugin[];
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
@@ -1780,6 +1777,16 @@ export interface RedisConfig {
 export interface PubSubConfig {
   name: string;
   config?: any;
+}
+export interface Plugin {
+  liveQuery?: LiveQueryConfig;
+  [k: string]: any;
+}
+export interface LiveQueryConfig {
+  /**
+   * Live Query Invalidations
+   */
+  liveQueryInvalidations?: LiveQueryInvalidation[];
 }
 export interface LiveQueryInvalidation {
   field: string;

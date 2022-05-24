@@ -34,6 +34,7 @@
       "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
       "@graphql-mesh/transform-*": ["packages/transforms/*/src/index.ts"],
       "@graphql-mesh/merger-*": ["packages/mergers/*/src/index.ts"],
+      "@graphql-mesh/plugin-*": ["packages/plugins/*/src/index.ts"],
       "@graphql-mesh/cross-helpers": ["packages/cross-helpers/index"],
       "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index"],
       "@graphql-mesh/*": ["packages/handlers/*/src/index.ts"],

@@ -560,7 +560,7 @@ describe('rename', () => {
                   field: 'profile',
                   argument: '$1Id',
                 },
-                useRegExpForArguments: true
+                useRegExpForArguments: true,
               },
             ],
           },

@@ -7,6 +7,8 @@ type: Guide
 
 GraphQL Live Query implementation from [Laurin Quast](https://github.com/n1ru4l) can be used in GraphQL Mesh with a few additions in the configuration.
 
+<PackageInstall packages="@graphql-mesh/plugin-live-query" />
+
 ### Basic Usage
 
 You have a `Query` root field that returns all `Todo` entities from your data source like below.
@@ -26,11 +28,13 @@ You only need to add the following to your existing configuration.
 
 ```yaml
 additionalTypeDefs: |
-  directive @live on QUERY
-liveQueryInvalidations:
-  - field: Mutation.addTodo
-    invalidate:
-      - Query.todos
+    directive @live on QUERY
+plugins:
+    - liveQuery:
+        liveQueryInvalidations:
+            - field: Mutation.addTodo
+            invalidate:
+                - Query.todos
 ```
 
 Then you can send a live query with `@live` directive.

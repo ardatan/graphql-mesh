@@ -1,0 +1,15 @@
+extend type Plugin {
+  liveQuery: LiveQueryConfig
+}
+
+type LiveQueryConfig {
+  """
+  Live Query Invalidations
+  """
+  liveQueryInvalidations: [LiveQueryInvalidation]
+}
+
+type LiveQueryInvalidation {
+  field: String!
+  invalidate: [String!]!
+}

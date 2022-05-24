@@ -9,9 +9,6 @@ import {
   isLeafType,
   getNamedType,
   getOperationAST,
-  visit,
-  visitWithTypeInfo,
-  TypeInfo,
   ExecutionResult,
   DocumentNode,
 } from 'graphql';
@@ -30,15 +27,12 @@ import {
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
 import {
   applySchemaTransforms,
-  getInterpolatedStringFactory,
   groupTransforms,
-  ResolverDataBasedFactory,
   DefaultLogger,
   parseWithCache,
   printWithCache,
 } from '@graphql-mesh/utils';
 
-import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { delegateToSchema, IDelegateToSchemaOptions, StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { WrapQuery } from '@graphql-tools/wrap';
@@ -51,8 +45,7 @@ import {
   memoize1,
   parseSelectionSet,
 } from '@graphql-tools/utils';
-import { enableIf, envelop, useErrorHandler, useExtendContext, useSchema } from '@envelop/core';
-import { useLiveQuery } from '@envelop/live-query';
+import { envelop, useErrorHandler, useExtendContext, useSchema } from '@envelop/core';
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
@@ -146,15 +139,6 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     transforms: options.transforms,
   });
 
-  const liveQueryEnabled = unifiedSchema.getDirective('live') != null;
-
-  if (!liveQueryEnabled && options.liveQueryInvalidations?.length) {
-    getMeshLogger.warn(`You have to add @live directive to additionalTypeDefs to enable Live Queries
-See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
-  }
-
-  const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
-
   getMeshLogger.debug(() => `Building Mesh Context`);
   const meshContext: Record<string, any> = {
     pubsub,
@@ -162,7 +146,7 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
     logger,
     [MESH_CONTEXT_SYMBOL]: true,
   };
-  getMeshLogger.debug(() => `Attaching in-context SDK, pubsub, cache and liveQueryStore to the context`);
+  getMeshLogger.debug(() => `Attaching in-context SDK, pubsub and cache to the context`);
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   await Promise.all(
     rawSources.map(async rawSource => {
@@ -352,20 +336,6 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
   const plugins: EnvelopPlugins = [
     useSchema(unifiedSchema),
     useExtendContext(() => meshContext),
-    enableIf(liveQueryEnabled, () => {
-      getMeshLogger.debug(() => `Creating Live Query Store`);
-      const liveQueryStore = new InMemoryLiveQueryStore({
-        includeIdentifierExtension: true,
-      });
-      options.liveQueryInvalidations?.forEach(liveQueryInvalidation => {
-        const rawInvalidationPaths = liveQueryInvalidation.invalidate;
-        const factories = rawInvalidationPaths.map(rawInvalidationPath =>
-          getInterpolatedStringFactory(rawInvalidationPath)
-        );
-        liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
-      });
-      return useLiveQuery({ liveQueryStore });
-    }),
     useErrorHandler(errors => {
       errors.forEach(error => logger.error(error.stack || error.message));
     }),
@@ -422,37 +392,6 @@ See more at https://www.graphql-mesh.com/docs/recipes/live-queries`);
           }
         }
 
-        if (liveQueryEnabled) {
-          return {
-            async onExecuteDone({ args: executionArgs, result }) {
-              const { schema, document, operationName, rootValue, contextValue } = executionArgs;
-              const operationAST = getOperationAST(document, operationName);
-              if (!operationAST) {
-                throw new Error(`Operation couldn't be found`);
-              }
-              const typeInfo = new TypeInfo(schema);
-              visit(
-                operationAST,
-                visitWithTypeInfo(typeInfo, {
-                  Field: () => {
-                    const parentType = typeInfo.getParentType();
-                    const fieldDef = typeInfo.getFieldDef();
-                    const path = `${parentType.name}.${fieldDef.name}`;
-                    if (liveQueryInvalidationFactoryMap.has(path)) {
-                      const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
-                      const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
-                        invalidationPathFactory({ root: rootValue, context: contextValue, env: process.env, result })
-                      );
-                      executionArgs.contextValue.liveQueryStore
-                        .invalidate(invalidationPaths)
-                        .catch((e: Error) => logger.warn(`Invalidation failed for ${path}: ${e.message}`));
-                    }
-                  },
-                })
-              );
-            },
-          };
-        }
         return {};
       },
     },

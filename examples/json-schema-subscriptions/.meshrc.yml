@@ -35,7 +35,9 @@ documents:
 additionalTypeDefs: |
   directive @live on QUERY
 
-liveQueryInvalidations:
-  - field: Mutation.addTodo
-    invalidate:
-      - Query.todos
+plugins:
+  - liveQuery:
+      liveQueryInvalidations:
+        - field: Mutation.addTodo
+          invalidate:
+            - Query.todos

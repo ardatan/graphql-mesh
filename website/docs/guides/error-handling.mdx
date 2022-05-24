@@ -94,12 +94,12 @@ All errors will be hidden from the end-user when error masking is enabled.
 
 However, some might want to throw specific visible errors.
 
-To make an error visible, leverage the `GraphQLYogaError` Yoga error class as follows:
+To make an error visible, leverage the `GraphQLError` error class as follows:
 
 **`additionalResolvers.ts`**
 
 ```ts
-import { GraphQLYogaError } from '@graphql-yoga/node'
+import { GraphQLError } from 'graphql'
 
 import { Resolvers } from './.mesh'
 
@@ -123,16 +123,15 @@ const resolvers: Resolvers = {
           info
         })
         if (!result) {
-          throw new GraphQLYogaError(
-            `Author with id '${root.authorId}' not found.`,
-            // error extensions
-            {
+          throw new GraphQLError({
+            message: `Author with id '${root.authorId}' not found.`,
+            extensions: {
               code: 'AUTHOR_NOT_FOUND',
               // complex values
               bookId: root.id,
               authorId: root.authorId
             }
-          )
+          })
         } else {
           return result
         }
