@@ -15,7 +15,7 @@ import {
 } from 'graphql';
 import { withFilter } from 'graphql-subscriptions';
 import _ from 'lodash';
-import { stringInterpolator } from './string-interpolator';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {

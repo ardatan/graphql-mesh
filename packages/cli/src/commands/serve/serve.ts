@@ -6,7 +6,7 @@ import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
 import cors from 'cors';
-import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInterpolator } from '@graphql-mesh/utils';
+import { defaultImportFn, loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
 import _ from 'lodash';
 import cookieParser from 'cookie-parser';
 import { path, fs } from '@graphql-mesh/cross-helpers';
@@ -21,6 +21,7 @@ import { env, on as processOn } from 'process';
 import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 

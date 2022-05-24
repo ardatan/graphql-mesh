@@ -13,8 +13,10 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
 import { path } from '@graphql-mesh/cross-helpers';
 import { tmpdir } from 'os';
-import { jitExecutorFactory, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { createDefaultExecutor  } from '@graphql-tools/delegate'
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -123,7 +125,7 @@ export default class PostGraphileHandler implements MeshHandler {
       await this.pgCache.set(cachedIntrospection);
     }
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+    const executor = createDefaultExecutor(schema);
 
     return {
       schema,
@@ -136,7 +138,7 @@ export default class PostGraphileHandler implements MeshHandler {
             variables,
           },
           pgContext =>
-            jitExecutor({
+            executor({
               document,
               variables,
               context: {

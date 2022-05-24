@@ -206,7 +206,7 @@ export async function addExecutionLogicToComposer(
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
                   requestInit.body = qsStringify(input, { indices: false });
                 } else {
-                  requestInit.body = jsonFlatStringify(input);
+                  requestInit.body = JSON.stringify(input);
                 }
                 break;
               }

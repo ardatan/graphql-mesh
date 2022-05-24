@@ -6,7 +6,6 @@ import {
   applySchemaTransforms,
   extractResolvers,
   AggregateError,
-  jitExecutorFactory,
 } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import {
@@ -100,13 +99,6 @@ export default class StitchingMerger implements MeshMerger {
         if (rawSource.batch == null) {
           rawSource.batch = true;
         }
-        if (rawSource.executor == null) {
-          rawSource.executor = jitExecutorFactory(
-            rawSource.schema,
-            rawSource.name,
-            this.logger.child(`${rawSource.name} - JIT Executor`)
-          );
-        }
         if (this.isFederatedSchema(rawSource.schema)) {
           this.logger.debug(() => `${rawSource.name} has federated schema.`);
           rawSource.schema = await this.replaceFederationSDLWithStitchingSDL(
@@ -161,7 +153,6 @@ export default class StitchingMerger implements MeshMerger {
           schema: unifiedSchema,
           transforms: transforms as any[],
           batch: true,
-          executor: jitExecutorFactory(unifiedSchema, 'root-wrapped', this.logger.child('JIT Executor')) as any,
         });
       }
       if (noWrapTransforms.length) {

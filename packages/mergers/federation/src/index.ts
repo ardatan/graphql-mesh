@@ -9,9 +9,9 @@ import {
 } from '@graphql-mesh/types';
 import { GraphQLSchema, extendSchema, DocumentNode, parse, execute, ExecutionResult } from 'graphql';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
+import { ApolloGateway, LocalGraphQLDataSource, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { hashObject, jitExecutorFactory, AggregateError, printWithCache, parseWithCache } from '@graphql-mesh/utils';
+import { hashObject, AggregateError, printWithCache } from '@graphql-mesh/utils';
 import { asArray, ExecutionRequest } from '@graphql-tools/utils';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 
@@ -58,27 +58,13 @@ export default class FederationMerger implements MeshMerger {
       })
     );
     this.logger.debug(() => `Creating ApolloGateway`);
-    const rootValue = {};
     const gateway = new ApolloGateway({
       localServiceList,
       buildService: ({ name }) => {
         this.logger.debug(() => `Building federation service: ${name}`);
         const rawSource = rawSourceMap.get(name);
         const transformedSchema = sourceMap.get(rawSource);
-        const jitExecute = jitExecutorFactory(transformedSchema, name, this.logger.child('JIT Executor'));
-        return {
-          async process({ request: { query, variables, operationName, extensions }, context }) {
-            const document = parseWithCache(query);
-            return jitExecute({
-              document,
-              variables,
-              operationName,
-              extensions,
-              context,
-              rootValue,
-            }) as ExecutionResult;
-          },
-        };
+        return new LocalGraphQLDataSource(transformedSchema)
       },
       logger: this.logger,
       debug: !!process.env.DEBUG,

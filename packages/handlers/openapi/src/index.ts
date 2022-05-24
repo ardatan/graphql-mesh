@@ -6,7 +6,6 @@ import {
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
   getCachedFetch,
-  jsonFlatStringify,
   stringInterpolator,
 } from '@graphql-mesh/utils';
 import { asArray } from '@graphql-tools/utils';
@@ -66,12 +65,12 @@ export default class OpenAPIHandler implements MeshHandler {
           const newOas = newOass[index];
           const result = await openapiDiff.diffSpecs({
             sourceSpec: {
-              content: jsonFlatStringify(oldOas),
+              content: JSON.stringify(oldOas),
               location: path.join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
               format: 'openapi3',
             },
             destinationSpec: {
-              content: jsonFlatStringify(newOas),
+              content: JSON.stringify(newOas),
               location: config.source,
               format: 'openapi3',
             },

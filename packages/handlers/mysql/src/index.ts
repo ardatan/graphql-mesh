@@ -5,7 +5,6 @@ import {
   MeshSource,
   YamlConfig,
   ImportFn,
-  Logger,
 } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
@@ -24,13 +23,13 @@ import {
 } from 'graphql-scalars';
 import { specifiedDirectives } from 'graphql';
 import {
-  jitExecutorFactory,
   loadFromModuleExportExpression,
   sanitizeNameForGraphQL,
-  stringInterpolator,
 } from '@graphql-mesh/utils';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { ExecutionRequest } from '@graphql-tools/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -131,13 +130,11 @@ async function getPromisifiedConnection(pool: Pool) {
 }
 
 export default class MySQLHandler implements MeshHandler {
-  private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
   private store: MeshStore;
   private importFn: ImportFn;
-  private logger: Logger;
 
   constructor({
     name,
@@ -148,13 +145,11 @@ export default class MySQLHandler implements MeshHandler {
     importFn,
     logger,
   }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
-    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.store = store;
     this.importFn = importFn;
-    this.logger = logger;
   }
 
   private getCachedIntrospectionConnection(pool: Pool) {
@@ -514,14 +509,14 @@ export default class MySQLHandler implements MeshHandler {
 
     const schema = schemaComposer.buildSchema();
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+    const executor = createDefaultExecutor(schema);
 
     return {
       schema,
       async executor(executionRequest: ExecutionRequest) {
         const mysqlConnection = await getPromisifiedConnection(pool);
         try {
-          return await jitExecutor({
+          return await executor({
             ...executionRequest,
             context: {
               ...executionRequest.context,

@@ -1043,7 +1043,7 @@ export function storeSaneName(
  */
 export function trim(str: string, length: number): string {
   if (typeof str !== 'string') {
-    str = jsonFlatStringify(str);
+    str = JSON.stringify(str);
   }
 
   if (str && str.length > length) {

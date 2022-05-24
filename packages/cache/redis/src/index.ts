@@ -1,6 +1,6 @@
 import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
-import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 
 function interpolateStrWithEnv(str: string): string {
@@ -55,7 +55,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
-    const stringifiedValue = jsonFlatStringify(value);
+    const stringifiedValue = JSON.stringify(value);
     if (options?.ttl) {
       await this.client.set(key, stringifiedValue, 'EX', options.ttl);
     } else {

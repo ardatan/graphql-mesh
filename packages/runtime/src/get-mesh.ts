@@ -9,7 +9,6 @@ import {
   isLeafType,
   getNamedType,
   getOperationAST,
-  ExecutionResult,
   DocumentNode,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
@@ -30,7 +29,6 @@ import {
   groupTransforms,
   DefaultLogger,
   parseWithCache,
-  printWithCache,
 } from '@graphql-mesh/utils';
 
 import { delegateToSchema, IDelegateToSchemaOptions, StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
@@ -46,7 +44,6 @@ import {
   parseSelectionSet,
 } from '@graphql-tools/utils';
 import { envelop, useErrorHandler, useExtendContext, useSchema } from '@envelop/core';
-import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
 
@@ -322,17 +319,6 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     })
   );
 
-  const compiledQueries = new Map<string, CompiledQuery | ExecutionResult>();
-  if (options.documents?.length) {
-    getMeshLogger.debug(() => `Compiling operation documents`);
-    for (const documentSource of options.documents || []) {
-      compiledQueries.set(
-        documentSource.rawSDL || printWithCache(documentSource.document),
-        compileQuery(unifiedSchema, documentSource.document || parseWithCache(documentSource.rawSDL))
-      );
-    }
-  }
-
   const plugins: EnvelopPlugins = [
     useSchema(unifiedSchema),
     useExtendContext(() => meshContext),
@@ -342,58 +328,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     {
       onParse({ setParseFn }) {
         setParseFn(parseWithCache);
-      },
-      onValidate({ params, setResult }) {
-        const sdl = printWithCache(params.documentAST).trim();
-        if (compiledQueries.has(sdl)) {
-          setResult([]);
-        }
-      },
-      onSubscribe({ args: subscriptionArgs, setSubscribeFn }) {
-        const sdl = printWithCache(subscriptionArgs.document);
-        const cacheKey = `compiled_${sdl}`;
-        const compiledQuery = compiledQueries.get(cacheKey) as CompiledQuery | ExecutionResult;
-        if (compiledQuery != null) {
-          logger.debug(
-            () =>
-              `Persisted compiled query found: ${
-                getOperationAST(subscriptionArgs.document, subscriptionArgs.operationName)?.name?.value
-              }`
-          );
-          if (isCompiledQuery(compiledQuery)) {
-            setSubscribeFn(
-              () =>
-                compiledQuery.subscribe(
-                  subscriptionArgs.rootValue,
-                  subscriptionArgs.contextValue,
-                  subscriptionArgs.variableValues
-                ) as any
-            );
-          }
-        }
-      },
-      onExecute({ args: executionArgs, setResultAndStopExecution, setExecuteFn }) {
-        const sdl = printWithCache(executionArgs.document);
-        const cacheKey = `compiled_${sdl}`;
-        const compiledQuery = compiledQueries.get(cacheKey);
-        if (compiledQuery != null) {
-          logger.debug(
-            () =>
-              `Persisted compiled query found: ${
-                getOperationAST(executionArgs.document, executionArgs.operationName)?.name?.value
-              }`
-          );
-          if (isCompiledQuery(compiledQuery)) {
-            setExecuteFn(() =>
-              compiledQuery.query(executionArgs.rootValue, executionArgs.contextValue, executionArgs.variableValues)
-            );
-          } else {
-            setResultAndStopExecution(compiledQuery);
-          }
-        }
-
-        return {};
-      },
+      }
     },
     ...additionalEnvelopPlugins,
   ];

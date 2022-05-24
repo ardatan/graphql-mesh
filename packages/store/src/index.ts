@@ -1,5 +1,5 @@
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
+import { writeFile, AggregateError } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
 import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
@@ -77,7 +77,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
         : `// @ts-nocheck\n` + (await options.codify(data, key));
     const modulePath = this.getAbsolutePath(key);
     const filePath = modulePath + '.' + this.options.fileType;
-    await writeFile(filePath, flatString(asString));
+    await writeFile(filePath, JSON.stringify(asString));
     await this.options.importFn(this.options.fileType !== 'ts' ? filePath : modulePath);
   }
 
