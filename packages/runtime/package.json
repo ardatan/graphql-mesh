@@ -40,7 +40,7 @@
     "@envelop/core": "2.3.2",
     "@envelop/live-query": "3.3.2",
     "tslib": "^2.3.1",
-    "graphql-jit": "0.7.3"
+    "graphql-jit": "0.7.4"
   },
   "publishConfig": {
     "access": "public",

@@ -44,7 +44,7 @@
     "dayjs": "1.11.2",
     "fetchache": "0.1.2",
     "flatstr": "1.0.12",
-    "graphql-jit": "0.7.3",
+    "graphql-jit": "0.7.4",
     "graphql-subscriptions": "2.0.0",
     "lodash": "4.17.21",
     "is-url": "1.2.4",
