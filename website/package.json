@@ -13,7 +13,7 @@
     "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
-    "@graphql-yoga/node": "2.6.0",
+    "@graphql-yoga/node": "2.6.1",
     "@chakra-ui/icons": "2.0.0",
     "@chakra-ui/react": "2.1.0",
     "@chakra-ui/theme-tools": "2.0.0",
