@@ -13,8 +13,9 @@ import {
 } from 'graphql';
 import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
-import { hashObject, PubSub } from '@graphql-mesh/utils';
+import { PubSub } from '@graphql-mesh/utils';
 import dayjs from 'dayjs';
+import { hashObject } from '@graphql-mesh/string-interpolation';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const importFn: ImportFn = m => import(m);
@@ -150,10 +151,7 @@ describe('cache', () => {
       resolvers: spies,
     });
 
-    cache = new LocalforageCache({
-      cleanOnStart: true,
-      importFn,
-    });
+    cache = new LocalforageCache();
     pubsub = new PubSub();
 
     spies.Query.user.mockClear();

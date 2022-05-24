@@ -77,7 +77,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
         : `// @ts-nocheck\n` + (await options.codify(data, key));
     const modulePath = this.getAbsolutePath(key);
     const filePath = modulePath + '.' + this.options.fileType;
-    await writeFile(filePath, JSON.stringify(asString));
+    await writeFile(filePath, asString);
     await this.options.importFn(this.options.fileType !== 'ts' ? filePath : modulePath);
   }
 

@@ -1,6 +1,6 @@
 import { useLiveQuery } from '@envelop/live-query';
 import { MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { getInterpolatedStringFactory, ResolverDataBasedFactory } from '@graphql-mesh/utils';
+import { getInterpolatedStringFactory, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { useEnvelop, envelop, Plugin } from '@envelop/core';
 import { getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
