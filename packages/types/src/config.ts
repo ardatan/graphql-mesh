@@ -115,6 +115,11 @@ export interface ServeConfig {
    * Title of GraphiQL Playground
    */
   playgroundTitle?: string;
+  /**
+   * Configure Express Proxy Handling
+   * [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
+   */
+  trustProxy?: string;
 }
 /**
  * Configuration for CORS

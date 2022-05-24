@@ -66,6 +66,11 @@ type ServeConfig @md {
   Title of GraphiQL Playground
   """
   playgroundTitle: String
+  """
+  Configure Express Proxy Handling
+  [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
+  """
+  trustProxy: String
 }
 
 union Port = Int | String

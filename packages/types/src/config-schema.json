@@ -162,6 +162,10 @@
         "playgroundTitle": {
           "type": "string",
           "description": "Title of GraphiQL Playground"
+        },
+        "trustProxy": {
+          "type": "string",
+          "description": "Configure Express Proxy Handling\n[Learn more](https://expressjs.com/en/guide/behind-proxies.html)"
         }
       }
     },

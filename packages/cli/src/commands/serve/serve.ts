@@ -49,6 +49,7 @@ export async function serveMesh(
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
     browser,
+    trustProxy = 'loopback',
   } = rawConfig.serve || {};
   const port = argsPort || parseInt(env.PORT) || configPort || 4000;
 
@@ -97,7 +98,7 @@ export async function serveMesh(
       })
       .catch(e => handleFatalError(e, logger));
     const app = express();
-    app.set('trust proxy', 'loopback');
+    app.set('trust proxy', trustProxy);
     let httpServer: Server;
 
     if (sslCredentials) {
