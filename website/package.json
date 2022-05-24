@@ -17,7 +17,7 @@
     "@chakra-ui/icons": "2.0.0",
     "@chakra-ui/react": "2.1.0",
     "@chakra-ui/theme-tools": "2.0.0",
-    "@guild-docs/client": "2.1.1",
+    "@guild-docs/client": "3.1.0",
     "@guild-docs/server": "3.0.1",
     "@theguild/components": "1.11.8",
     "classnames": "2.3.1",
