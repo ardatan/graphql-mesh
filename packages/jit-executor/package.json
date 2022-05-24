@@ -29,9 +29,9 @@
   },
   "dependencies": {
     "@graphql-tools/utils": "8.6.12",
-"graphql-jit": "0.7.3",
-"@graphql-mesh/utils": "0.34.9",
-"@graphql-mesh/types": "0.72.5",
+    "graphql-jit": "0.7.3",
+    "@graphql-mesh/utils": "0.34.9",
+    "@graphql-mesh/types": "0.72.5",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

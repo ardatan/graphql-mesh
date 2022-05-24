@@ -1,11 +1,4 @@
-import {
-  GetMeshSourceOptions,
-  MeshPubSub,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  ImportFn,
-} from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -22,10 +15,7 @@ import {
   GraphQLUnsignedFloat,
 } from 'graphql-scalars';
 import { specifiedDirectives } from 'graphql';
-import {
-  loadFromModuleExportExpression,
-  sanitizeNameForGraphQL,
-} from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { ExecutionRequest } from '@graphql-tools/utils';

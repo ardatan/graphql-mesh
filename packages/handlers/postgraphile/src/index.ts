@@ -16,7 +16,7 @@ import { tmpdir } from 'os';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import { createDefaultExecutor  } from '@graphql-tools/delegate'
+import { createDefaultExecutor } from '@graphql-tools/delegate';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
