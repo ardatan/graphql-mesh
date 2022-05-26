@@ -6,7 +6,8 @@ import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/gr
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt, GraphQLVoid, GraphQLJSON } from 'graphql-scalars';
-import _ from 'lodash';
+import lodashGet from 'lodash/get';
+import lodashHas from 'lodash/has';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import protobufjs from 'protobufjs';
 import grpcReflection from 'grpc-reflection-js';
@@ -246,7 +247,7 @@ ${rootJsonAndDecodedDescriptorSets
 
   walkToFindTypePath(rootJson: protobufjs.INamespace, pathWithName: string[], baseTypePath: string[]) {
     const currentWalkingPath = [...pathWithName];
-    while (!_.has(rootJson.nested, currentWalkingPath.concat(baseTypePath).join('.nested.'))) {
+    while (!lodashHas(rootJson.nested, currentWalkingPath.concat(baseTypePath).join('.nested.'))) {
       if (!currentWalkingPath.length) {
         break;
       }
@@ -358,7 +359,7 @@ ${rootJsonAndDecodedDescriptorSets
       }
     } else if ('methods' in nested) {
       const objPath = pathWithName.join('.');
-      const ServiceClient = _.get(grpcObject, objPath);
+      const ServiceClient = lodashGet(grpcObject, objPath);
       if (typeof ServiceClient !== 'function') {
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }

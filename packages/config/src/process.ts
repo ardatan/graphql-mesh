@@ -102,8 +102,8 @@ export async function processConfig(
   }
 
   const importCodes: string[] = [
-    `import { GetMeshOptions } from '@graphql-mesh/runtime';`,
-    `import { YamlConfig } from '@graphql-mesh/types';`,
+    `import type { GetMeshOptions } from '@graphql-mesh/runtime';`,
+    `import type { YamlConfig } from '@graphql-mesh/types';`,
   ];
   const codes: string[] = [
     `export const rawServeConfig: YamlConfig.Config['serve'] = ${JSON.stringify(config.serve)} as any`,
@@ -385,33 +385,37 @@ export async function processConfig(
     ]);
 
   if (options.generateCode) {
-    importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
+    if (config.additionalResolvers?.length) {
+      importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
 
-    codes.push(`const additionalResolversRawConfig = [];`);
+      codes.push(`const additionalResolversRawConfig = [];`);
 
-    for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
-      const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
-      if (typeof additionalResolverDefinition === 'string') {
-        importCodes.push(
-          `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
-            .join('..', additionalResolverDefinition)
-            .split('\\')
-            .join('/')}';`
-        );
-        codes.push(
-          `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
-        );
-      } else {
-        codes.push(`additionalResolversRawConfig.push(${JSON.stringify(additionalResolverDefinition)});`);
+      for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
+        const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
+        if (typeof additionalResolverDefinition === 'string') {
+          importCodes.push(
+            `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
+              .join('..', additionalResolverDefinition)
+              .split('\\')
+              .join('/')}';`
+          );
+          codes.push(
+            `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
+          );
+        } else {
+          codes.push(`additionalResolversRawConfig.push(${JSON.stringify(additionalResolverDefinition)});`);
+        }
       }
-    }
 
-    codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
+      codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
       baseDir,
       additionalResolversRawConfig,
       importFn,
       pubsub
   )`);
+    } else {
+      codes.push(`const additionalResolvers = [] as any[]`);
+    }
   }
 
   if (config.additionalEnvelopPlugins) {
@@ -457,25 +461,16 @@ export async function processConfig(
   if (options.generateCode) {
     importCodes.push(`import { printWithCache } from '@graphql-mesh/utils';`);
     const documentVariableNames: string[] = [];
-    const allDocumentNodes: DocumentNode = concatAST(
-      documents.map(document => document.document || parseWithCache(document.rawSDL))
-    );
-    visit(allDocumentNodes, {
-      OperationDefinition(node) {
-        documentVariableNames.push(pascalCase(node.name.value + '_Document'));
-      },
-    });
-    codes.push(`const documents = [
-      ${documentVariableNames
-        .map(
-          documentVarName => `{
-        document: ${documentVarName},
-        rawSDL: printWithCache(${documentVarName}),
-        location: '${documentVarName}.graphql'
-      }`
-        )
-        .join(',')}
-    ]`);
+    if (documents?.length) {
+      const allDocumentNodes: DocumentNode = concatAST(
+        documents.map(document => document.document || parseWithCache(document.rawSDL))
+      );
+      visit(allDocumentNodes, {
+        OperationDefinition(node) {
+          documentVariableNames.push(pascalCase(node.name.value + '_Document'));
+        },
+      });
+    }
 
     codes.push(`
   return {
@@ -488,7 +483,21 @@ export async function processConfig(
     merger,
     logger,
     additionalEnvelopPlugins,
-    documents,
+    get documents() {
+      return [
+      ${documentVariableNames
+        .map(
+          documentVarName => `{
+        document: ${documentVarName},
+        get rawSDL() {
+          return printWithCache(${documentVarName});
+        },
+        location: '${documentVarName}.graphql'
+      }`
+        )
+        .join(',')}
+    ];
+    },
   };
 }`);
   }

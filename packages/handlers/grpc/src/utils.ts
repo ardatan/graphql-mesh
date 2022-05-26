@@ -3,7 +3,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ClientDuplexStream, ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { SchemaComposer } from 'graphql-compose';
-import _ from 'lodash';
+import lodashGet from 'lodash/get';
 import { Root } from 'protobufjs';
 
 import { getGraphQLScalar, isScalarType } from './scalars';
@@ -63,7 +63,7 @@ export function addMetaDataToCall(
       let metaValue: unknown = value;
       if (Array.isArray(value)) {
         // Extract data from context
-        metaValue = _.get(context, value);
+        metaValue = lodashGet(context, value);
       }
 
       // Ensure that the metadata is compatible with what node-grpc expects

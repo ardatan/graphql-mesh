@@ -32,7 +32,8 @@ export default class SnapshotTransform implements MeshTransform {
       'if' in this.config
         ? typeof this.config.if === 'boolean'
           ? this.config.if
-          : this.config.if && eval(this.config.if)
+          : // eslint-disable-next-line no-new-func
+            this.config.if && new Function(`return ${this.config.if}`)()
         : true;
 
     if (configIf) {

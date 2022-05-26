@@ -7,7 +7,7 @@ const fileContentReplaced = fileContent.replace(
   `new Promise(function (resolve) { resolve(_interopNamespace(require(path))); })`,
   `new Promise(function (resolve) { resolve(_interopNamespace(require(path))); }).catch(e => {
     if (e.message.includes('Must use import to load ES Module')) {
-      return eval(\`import(\${JSON.stringify(path)})\`);
+      return new Function(\`return import(\${JSON.stringify(path)})\`)();
     }
     throw e;
   })`

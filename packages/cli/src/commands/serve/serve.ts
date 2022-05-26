@@ -7,7 +7,7 @@ import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
 import cors from 'cors';
 import { defaultImportFn, loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
-import _ from 'lodash';
+import lodashGet from 'lodash/get';
 import cookieParser from 'cookie-parser';
 import { path, fs } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
@@ -223,7 +223,7 @@ export async function serveMesh(
             let payload = req.body;
             handlerLogger.debug(() => `Payload received; ${inspect(payload)}`);
             if (handlerConfig.payload) {
-              payload = _.get(payload, handlerConfig.payload);
+              payload = lodashGet(payload, handlerConfig.payload);
               handlerLogger.debug(() => `Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
             }
             const interpolationData = {

@@ -25,7 +25,6 @@
   "dependencies": {
     "json-pointer": "0.6.2",
     "dayjs": "1.11.2",
-    "object-hash": "3.0.0",
     "lodash": "^4.17.21"
   },
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",

@@ -1,9 +1,10 @@
 import { Interpolator } from './interpolator';
 import dayjs from 'dayjs';
-import objectHash from 'object-hash';
+
+const hashCode = (s: string) => s.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
 
 export function hashObject(value: any): string {
-  return objectHash(value, { ignoreUnknown: true }).toString();
+  return hashCode(JSON.stringify(value)).toString();
 }
 
 export { Interpolator };

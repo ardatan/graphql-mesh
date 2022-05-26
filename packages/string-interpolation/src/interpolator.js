@@ -1,5 +1,5 @@
 import { defaultOptions } from './statics/DefaultOptions';
-import _ from 'lodash';
+import lodashGet from 'lodash/get';
 import { defaultModifiers } from './modifiers';
 import JsonPointer from 'json-pointer';
 
@@ -137,7 +137,7 @@ export class Interpolator {
 
   applyData(key, data) {
     const [prop, ptr] = key.split('#');
-    const propData = _.get(data, prop);
+    const propData = lodashGet(data, prop);
     if (ptr) {
       try {
         return JsonPointer.get(propData, ptr);
