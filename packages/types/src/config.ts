@@ -1779,8 +1779,13 @@ export interface PubSubConfig {
   config?: any;
 }
 export interface Plugin {
+  maskedErrors?: MaskedErrorsPluginConfig;
+  immediateIntrospection?: any;
   liveQuery?: LiveQueryConfig;
   [k: string]: any;
+}
+export interface MaskedErrorsPluginConfig {
+  errorMessage?: string;
 }
 export interface LiveQueryConfig {
   /**

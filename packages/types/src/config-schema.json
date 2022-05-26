@@ -542,8 +542,36 @@
       "type": "object",
       "title": "Plugin",
       "properties": {
+        "maskedErrors": {
+          "$ref": "#/definitions/MaskedErrorsPluginConfig"
+        },
+        "immediateIntrospection": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
+        }
+      }
+    },
+    "MaskedErrorsPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MaskedErrorsPluginConfig",
+      "properties": {
+        "errorMessage": {
+          "type": "string"
         }
       }
     },
