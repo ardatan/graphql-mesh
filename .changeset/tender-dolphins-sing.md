@@ -1,7 +1,7 @@
 ---
 "@graphql-mesh/grpc": patch
 "@graphql-mesh/string-interpolation": patch
-"@graphql-mesh/snapshot": patch
+"@graphql-mesh/transform-snapshot": patch
 "@graphql-mesh/utils": patch
 ---
 
