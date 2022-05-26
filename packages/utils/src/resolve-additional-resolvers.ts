@@ -14,8 +14,10 @@ import {
   GraphQLNamedType,
 } from 'graphql';
 import { withFilter } from 'graphql-subscriptions';
-import _ from 'lodash';
-import { stringInterpolator } from './string-interpolator';
+import lodashGet from 'lodash.get';
+import lodashSet from 'lodash.set';
+import toPath from 'lodash.topath';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
@@ -49,7 +51,7 @@ function generateSelectionSetFactory(
     return () => parseSelectionSet(additionalResolver.sourceSelectionSet);
     // If result path provided without a selectionSet
   } else if (additionalResolver.result) {
-    const resultPath = _.toPath(additionalResolver.result);
+    const resultPath = toPath(additionalResolver.result);
     let abstractResultTypeName: string;
 
     const sourceType = schema.getType(additionalResolver.sourceTypeName) as GraphQLObjectType;
@@ -136,7 +138,7 @@ function generateValuesFromResults(resultExpression: string): (result: any) => a
     if (Array.isArray(result)) {
       return result.map(valuesFromResults);
     }
-    return _.get(result, resultExpression);
+    return lodashGet(result, resultExpression);
   };
 }
 
@@ -183,7 +185,8 @@ export function resolveAdditionalResolvers(
                     return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
                   },
                   (root, args, context, info) => {
-                    return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
+                    // eslint-disable-next-line no-new-func
+                    return additionalResolver.filterBy ? new Function(`return ${additionalResolver.filterBy}`)() : true;
                   }
                 ),
                 resolve: (payload: any) => {
@@ -207,7 +210,7 @@ export function resolveAdditionalResolvers(
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.additionalArgs || {}) {
-                    _.set(
+                    lodashSet(
                       targetArgs,
                       argPath,
                       stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
@@ -220,11 +223,11 @@ export function resolveAdditionalResolvers(
                     info,
                     argsFromKeys: (keys: string[]) => {
                       const args: any = {};
-                      _.set(args, additionalResolver.keysArg, keys);
+                      lodashSet(args, additionalResolver.keysArg, keys);
                       Object.assign(args, targetArgs);
                       return args;
                     },
-                    key: _.get(root, additionalResolver.keyField),
+                    key: lodashGet(root, additionalResolver.keyField),
                   };
                   return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
                     additionalResolver.sourceFieldName
@@ -267,7 +270,7 @@ export function resolveAdditionalResolvers(
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.sourceArgs) {
-                    _.set(
+                    lodashSet(
                       targetArgs,
                       argPath,
                       stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)

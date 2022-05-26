@@ -19,9 +19,13 @@
       "import": "./dist/*.mjs"
     }
   },
+  "peerDependencies": {
+    "graphql": "*"
+  },
   "dependencies": {
     "json-pointer": "0.6.2",
-    "lodash": "^4.17.21"
+    "dayjs": "1.11.2",
+    "lodash.get": "4.4.2"
   },
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "repository": {

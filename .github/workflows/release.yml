@@ -34,7 +34,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install --ignore-engines --frozen-lockfile --immutable
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1

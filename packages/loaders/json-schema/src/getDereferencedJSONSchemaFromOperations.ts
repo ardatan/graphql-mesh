@@ -2,7 +2,7 @@ import { JSONSchemaOperationConfig } from './types';
 import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations';
 import { dereferenceObject, healJSONSchema, JSONSchemaObject } from 'json-machete';
 import { Logger } from '@graphql-mesh/types';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/utils';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 
 export async function getDereferencedJSONSchemaFromOperations({
   operations,

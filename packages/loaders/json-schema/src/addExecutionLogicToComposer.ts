@@ -2,7 +2,6 @@ import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
 import { inspect, memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
@@ -18,7 +17,8 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
-import _ from 'lodash';
+import lodashSet from 'lodash.set';
+import { stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/string-interpolation';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -58,8 +58,8 @@ function linkResolver(
       info,
       env: process.env,
     });
-    _.set(args, argKey, actualValue);
-    _.set(args, `input.${argKey}`, actualValue);
+    lodashSet(args, argKey, actualValue);
+    lodashSet(args, `input.${argKey}`, actualValue);
   }
   return actualResolver(root, args, context, info);
 }
@@ -174,7 +174,7 @@ export async function addExecutionLogicToComposer(
               const configValue = operationConfig.requestBaseBody[key];
               if (typeof configValue === 'string') {
                 const value = stringInterpolator.parse(configValue, interpolationData);
-                _.set(args.input, key, value);
+                lodashSet(args.input, key, value);
               } else {
                 args.input[key] = configValue;
               }
@@ -206,7 +206,7 @@ export async function addExecutionLogicToComposer(
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
                   requestInit.body = qsStringify(input, { indices: false });
                 } else {
-                  requestInit.body = jsonFlatStringify(input);
+                  requestInit.body = JSON.stringify(input);
                 }
                 break;
               }

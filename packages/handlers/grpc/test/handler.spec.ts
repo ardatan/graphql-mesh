@@ -6,7 +6,7 @@ import { PubSub } from '@graphql-mesh/utils';
 import GrpcHandler from '../src';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
 
 describe.each<[string, string]>([
   ['Movie', 'movie.proto'],

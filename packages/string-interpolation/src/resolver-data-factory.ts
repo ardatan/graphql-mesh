@@ -1,7 +1,14 @@
-import { stringInterpolator } from './string-interpolator';
-import { ResolverData } from '@graphql-mesh/types';
-import { GraphQLInputType } from 'graphql';
+import { stringInterpolator } from './index';
+import { GraphQLInputType, GraphQLResolveInfo } from 'graphql';
 
+export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {
+  root?: TParent;
+  args?: TArgs;
+  context?: TContext;
+  info?: GraphQLResolveInfo;
+  result?: TResult;
+  env: Record<string, string>;
+};
 export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
 
 export function getInterpolationKeys(...interpolationStrings: string[]) {
@@ -56,12 +63,4 @@ export function getInterpolatedHeadersFactory(
     }
     return headers;
   };
-}
-
-export function getHeadersObject(headers: Headers): Record<string, string> {
-  const headersObj: Record<string, string> = {};
-  headers.forEach((value, key) => {
-    headersObj[key] = value;
-  });
-  return headersObj;
 }

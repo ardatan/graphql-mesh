@@ -1,21 +1,10 @@
-import {
-  readFileOrUrl,
-  parseInterpolationStrings,
-  getInterpolatedHeadersFactory,
-  getInterpolatedStringFactory,
-  ResolverDataBasedFactory,
-  loadFromModuleExportExpression,
-  getCachedFetch,
-  jsonFlatStringify,
-  stringInterpolator,
-} from '@graphql-mesh/utils';
+import { readFileOrUrl, loadFromModuleExportExpression, getCachedFetch } from '@graphql-mesh/utils';
 import { asArray } from '@graphql-tools/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
 import {
   MeshHandler,
   YamlConfig,
-  ResolverData,
   GetMeshSourceOptions,
   MeshSource,
   KeyValueCache,
@@ -30,6 +19,14 @@ import openapiDiff from 'openapi-diff';
 import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
 import { Oas2 } from './openapi-to-graphql/types/oas2';
 import { path } from '@graphql-mesh/cross-helpers';
+import {
+  stringInterpolator,
+  getInterpolatedHeadersFactory,
+  ResolverDataBasedFactory,
+  getInterpolatedStringFactory,
+  ResolverData,
+  parseInterpolationStrings,
+} from '@graphql-mesh/string-interpolation';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
@@ -66,12 +63,12 @@ export default class OpenAPIHandler implements MeshHandler {
           const newOas = newOass[index];
           const result = await openapiDiff.diffSpecs({
             sourceSpec: {
-              content: jsonFlatStringify(oldOas),
+              content: JSON.stringify(oldOas),
               location: path.join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
               format: 'openapi3',
             },
             destinationSpec: {
-              content: jsonFlatStringify(newOas),
+              content: JSON.stringify(newOas),
               location: config.source,
               format: 'openapi3',
             },

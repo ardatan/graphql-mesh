@@ -1,6 +1,5 @@
 import { MeshTransform, MeshTransformOptions, ImportFn, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLSchema } from 'graphql';
-import _ from 'lodash';
 import { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 

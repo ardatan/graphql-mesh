@@ -1,5 +1,4 @@
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import { jsonFlatStringify } from './flat-string';
 
 export async function pathExists(path: string) {
   if (!path) {
@@ -23,7 +22,7 @@ export function writeJSON<T>(
   replacer?: (this: any, key: string, value: any) => any,
   space?: string | number
 ) {
-  const stringified = jsonFlatStringify(data, replacer, space);
+  const stringified = JSON.stringify(data, replacer, space);
   return writeFile(path, stringified, 'utf-8');
 }
 

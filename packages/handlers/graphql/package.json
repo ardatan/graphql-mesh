@@ -29,13 +29,14 @@
   },
   "dependencies": {
     "@graphql-mesh/store": "0.8.8",
+    "@graphql-mesh/string-interpolation": "0.1.0",
     "@graphql-mesh/utils": "0.34.10",
     "@graphql-mesh/types": "0.72.5",
     "@graphql-tools/url-loader": "7.9.23",
     "@graphql-tools/wrap": "8.4.19",
     "@graphql-tools/delegate": "8.7.10",
     "@graphql-tools/utils": "8.6.12",
-    "lodash": "4.17.21",
+    "lodash.get": "4.4.2",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

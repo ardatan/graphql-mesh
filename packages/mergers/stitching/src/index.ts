@@ -1,13 +1,7 @@
 import { Logger, MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { wrapSchema } from '@graphql-tools/wrap';
-import {
-  groupTransforms,
-  applySchemaTransforms,
-  extractResolvers,
-  AggregateError,
-  jitExecutorFactory,
-} from '@graphql-mesh/utils';
+import { groupTransforms, applySchemaTransforms, extractResolvers } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import {
   stitchingDirectives,
@@ -17,7 +11,7 @@ import {
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { buildSchema, ExecutionResult, GraphQLSchema, parse } from 'graphql';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { Executor } from '@graphql-tools/utils';
+import { AggregateError, Executor } from '@graphql-tools/utils';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
   query __ApolloGetServiceDefinition__ {
@@ -100,13 +94,6 @@ export default class StitchingMerger implements MeshMerger {
         if (rawSource.batch == null) {
           rawSource.batch = true;
         }
-        if (rawSource.executor == null) {
-          rawSource.executor = jitExecutorFactory(
-            rawSource.schema,
-            rawSource.name,
-            this.logger.child(`${rawSource.name} - JIT Executor`)
-          );
-        }
         if (this.isFederatedSchema(rawSource.schema)) {
           this.logger.debug(() => `${rawSource.name} has federated schema.`);
           rawSource.schema = await this.replaceFederationSDLWithStitchingSDL(
@@ -161,7 +148,6 @@ export default class StitchingMerger implements MeshMerger {
           schema: unifiedSchema,
           transforms: transforms as any[],
           batch: true,
-          executor: jitExecutorFactory(unifiedSchema, 'root-wrapped', this.logger.child('JIT Executor')) as any,
         });
       }
       if (noWrapTransforms.length) {

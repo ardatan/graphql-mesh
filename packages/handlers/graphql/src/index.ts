@@ -19,13 +19,7 @@ import {
   SelectionNode,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import {
-  getInterpolatedHeadersFactory,
-  loadFromModuleExportExpression,
-  getInterpolatedStringFactory,
-  getCachedFetch,
-  readFileOrUrl,
-} from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, getCachedFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   ExecutionRequest,
   isDocumentNode,
@@ -36,7 +30,8 @@ import {
   isAsyncIterable,
 } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import _ from 'lodash';
+import lodashGet from 'lodash.get';
+import { getInterpolatedHeadersFactory, getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -280,7 +275,7 @@ export default class GraphQLHandler implements MeshHandler {
               console.warn('Incremental delivery is not supported currently');
               return result;
             } else if (result.data != null) {
-              const currentValue = _.get(result.data, valuePath);
+              const currentValue = lodashGet(result.data, valuePath);
               if (currentValue > highestValue) {
                 resultWithHighestResult = result;
                 highestValue = currentValue;

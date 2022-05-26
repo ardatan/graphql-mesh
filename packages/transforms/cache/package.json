@@ -30,6 +30,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.72.5",
     "@graphql-mesh/utils": "0.34.10",
+    "@graphql-mesh/string-interpolation": "0.1.0",
     "dayjs": "1.11.2",
     "@graphql-tools/resolvers-composition": "6.4.12",
     "@graphql-tools/schema": "8.3.13",

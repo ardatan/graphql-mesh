@@ -1,4 +1,4 @@
-import { YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
 import { buildOperationNodeForField, getRootTypeMap, parseGraphQLSDL, Source } from '@graphql-tools/utils';
 import { GraphQLSchema, print } from 'graphql';
 

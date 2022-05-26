@@ -21,7 +21,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install --ignore-engines --frozen-lockfile --immutable
 
       - name: Lint
         run: yarn lint
@@ -43,7 +43,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install --ignore-engines --frozen-lockfile --immutable
       - name: Type Checking
         run: yarn transpile-ts --noEmit # We need build for playground
 
@@ -92,7 +92,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+        run: yarn install --ignore-engines --frozen-lockfile --immutable
       - name: Cache Jest
         uses: actions/cache@v3
         with:

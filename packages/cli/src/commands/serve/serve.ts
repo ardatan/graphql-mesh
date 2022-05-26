@@ -6,8 +6,8 @@ import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
 import cors from 'cors';
-import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInterpolator } from '@graphql-mesh/utils';
-import _ from 'lodash';
+import { defaultImportFn, loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
+import lodashGet from 'lodash.get';
 import cookieParser from 'cookie-parser';
 import { path, fs } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
@@ -21,6 +21,7 @@ import { env, on as processOn } from 'process';
 import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -31,7 +32,7 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
 }
 
 export async function serveMesh(
-  { baseDir, argsPort, getBuiltMesh, logger, rawConfig, playgroundTitle }: ServeMeshOptions,
+  { baseDir, argsPort, getBuiltMesh, logger, rawServeConfig = {}, playgroundTitle }: ServeMeshOptions,
   cliParams: GraphQLMeshCLIParams
 ) {
   const {
@@ -50,13 +51,13 @@ export async function serveMesh(
     endpoint: graphqlPath = '/graphql',
     browser,
     trustProxy = 'loopback',
-  } = rawConfig.serve || {};
+  } = rawServeConfig;
   const port = argsPort || parseInt(env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
   if (!playgroundTitle) {
-    playgroundTitle = rawConfig.serve?.playgroundTitle || cliParams.playgroundTitle;
+    playgroundTitle = rawServeConfig?.playgroundTitle || cliParams.playgroundTitle;
   }
   if (!cluster.isWorker && Boolean(fork)) {
     const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
@@ -222,7 +223,7 @@ export async function serveMesh(
             let payload = req.body;
             handlerLogger.debug(() => `Payload received; ${inspect(payload)}`);
             if (handlerConfig.payload) {
-              payload = _.get(payload, handlerConfig.payload);
+              payload = lodashGet(payload, handlerConfig.payload);
               handlerLogger.debug(() => `Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
             }
             const interpolationData = {

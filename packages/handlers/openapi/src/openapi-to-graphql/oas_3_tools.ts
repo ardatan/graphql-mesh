@@ -37,7 +37,6 @@ import * as Swagger2OpenAPI from 'swagger2openapi';
 import { handleWarning, MitigationTypes } from './utils';
 import JsonPointer from 'json-pointer';
 import pluralize from 'pluralize';
-import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 
 // Type definitions & exports:
@@ -1043,7 +1042,7 @@ export function storeSaneName(
  */
 export function trim(str: string, length: number): string {
   if (typeof str !== 'string') {
-    str = jsonFlatStringify(str);
+    str = JSON.stringify(str);
   }
 
   if (str && str.length > length) {

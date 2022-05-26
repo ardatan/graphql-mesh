@@ -5,9 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    process: JSON.stringify({
-      env: {},
-      platform: 'linux',
+    'process.env': JSON.stringify({
+      DEBUG: 1,
+      NODE_ENV: 'development',
     }),
   },
 });
