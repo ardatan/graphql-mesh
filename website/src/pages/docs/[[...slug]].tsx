@@ -4,7 +4,7 @@ import { DocsContent, DocsTOC, MDXPage } from '@guild-docs/client';
 import { MDXPaths, MDXProps } from '@guild-docs/server';
 import { getRoutes } from '../../../routes';
 
-export default MDXPage(({ content, TOC, MetaHead, BottomNavigation, frontMatter }) => {
+export default MDXPage(({ content, TOC, MetaHead, frontMatter }) => {
   return (
     <>
       <Head>{MetaHead}</Head>
@@ -12,7 +12,6 @@ export default MDXPage(({ content, TOC, MetaHead, BottomNavigation, frontMatter 
       {!frontMatter.fullWidth && (
         <DocsTOC>
           <TOC />
-          <BottomNavigation />
         </DocsTOC>
       )}
     </>

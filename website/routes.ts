@@ -67,6 +67,7 @@ export function getRoutes(): IRoutes {
           'type-merging',
           'federation',
           'extend',
+          'prune',
         ],
       },
       cache: {
