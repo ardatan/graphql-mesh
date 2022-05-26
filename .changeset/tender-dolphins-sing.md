@@ -5,4 +5,4 @@
 "@graphql-mesh/utils": patch
 ---
 
-Use deeper lodash imports to have better treeshaking
+Use deeper lodash imports to have better treeshaking and avoid using eval
