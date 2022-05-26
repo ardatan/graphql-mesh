@@ -7,7 +7,7 @@ import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
 import cors from 'cors';
 import { defaultImportFn, loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
-import lodashGet from 'lodash/get';
+import lodashGet from 'lodash.get';
 import cookieParser from 'cookie-parser';
 import { path, fs } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';

@@ -14,9 +14,9 @@ import {
   GraphQLNamedType,
 } from 'graphql';
 import { withFilter } from 'graphql-subscriptions';
-import lodashGet from 'lodash/get';
-import lodashSet from 'lodash/set';
-import toPath from 'lodash/toPath';
+import lodashGet from 'lodash.get';
+import lodashSet from 'lodash.set';
+import toPath from 'lodash.topath';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 

@@ -30,7 +30,7 @@ import {
   isAsyncIterable,
 } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import lodashGet from 'lodash/get';
+import lodashGet from 'lodash.get';
 import { getInterpolatedHeadersFactory, getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {

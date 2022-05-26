@@ -17,7 +17,7 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
-import _ from 'lodash';
+import lodashSet from 'lodash.set';
 import { stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/string-interpolation';
 
 export interface AddExecutionLogicToComposerOptions {
@@ -58,8 +58,8 @@ function linkResolver(
       info,
       env: process.env,
     });
-    _.set(args, argKey, actualValue);
-    _.set(args, `input.${argKey}`, actualValue);
+    lodashSet(args, argKey, actualValue);
+    lodashSet(args, `input.${argKey}`, actualValue);
   }
   return actualResolver(root, args, context, info);
 }
@@ -174,7 +174,7 @@ export async function addExecutionLogicToComposer(
               const configValue = operationConfig.requestBaseBody[key];
               if (typeof configValue === 'string') {
                 const value = stringInterpolator.parse(configValue, interpolationData);
-                _.set(args.input, key, value);
+                lodashSet(args.input, key, value);
               } else {
                 args.input[key] = configValue;
               }

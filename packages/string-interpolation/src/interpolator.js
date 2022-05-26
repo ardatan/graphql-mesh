@@ -1,5 +1,5 @@
 import { defaultOptions } from './statics/DefaultOptions';
-import lodashGet from 'lodash/get';
+import lodashGet from 'lodash.get';
 import { defaultModifiers } from './modifiers';
 import JsonPointer from 'json-pointer';
 

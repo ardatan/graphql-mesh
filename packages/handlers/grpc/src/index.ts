@@ -6,8 +6,8 @@ import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/gr
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt, GraphQLVoid, GraphQLJSON } from 'graphql-scalars';
-import lodashGet from 'lodash/get';
-import lodashHas from 'lodash/has';
+import lodashGet from 'lodash.get';
+import lodashHas from 'lodash.has';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import protobufjs from 'protobufjs';
 import grpcReflection from 'grpc-reflection-js';

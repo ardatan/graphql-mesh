@@ -70,7 +70,7 @@
     "graphql-ws": "5.8.2",
     "change-case": "4.1.2",
     "json-bigint-patch": "0.0.8",
-    "lodash": "4.17.21",
+    "lodash.get": "4.4.2",
     "mkdirp": "1.0.4",
     "open": "7.4.2",
     "pascal-case": "3.1.2",
@@ -89,7 +89,8 @@
     "@types/mkdirp": "1.0.2",
     "@types/yargs": "17.0.10",
     "@types/ws": "8.5.3",
-    "@types/rimraf": "3.0.2"
+    "@types/rimraf": "3.0.2",
+    "@types/lodash.get": "4.4.7"
   },
   "publishConfig": {
     "access": "public",

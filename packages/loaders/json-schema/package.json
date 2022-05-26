@@ -47,7 +47,7 @@
     "url-join": "4.0.1",
     "qs": "6.10.3",
     "pascal-case": "3.1.2",
-    "lodash": "4.17.21",
+    "lodash.set": "4.3.2",
     "tslib": "^2.3.1",
     "@json-schema-tools/meta-schema": "1.6.19"
   },

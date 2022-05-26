@@ -3,7 +3,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ClientDuplexStream, ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { SchemaComposer } from 'graphql-compose';
-import lodashGet from 'lodash/get';
+import lodashGet from 'lodash.get';
 import { Root } from 'protobufjs';
 
 import { getGraphQLScalar, isScalarType } from './scalars';

@@ -12,7 +12,6 @@ import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@grap
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
 import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
-import _ from 'lodash';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
