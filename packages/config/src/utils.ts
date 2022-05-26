@@ -48,7 +48,7 @@ export async function getPackage<T>({
 
   for (const moduleName of possibleModules) {
     try {
-      const exported = await importFn(moduleName);
+      const exported = await importFn(moduleName, true);
       const resolved = exported.default || (exported as T);
       return {
         moduleName,
@@ -115,12 +115,12 @@ export async function resolveCache(
   });
 
   const code = `const cache = new (MeshCache as any)({
-      ...(rawConfig.cache || {}),
+      ...(${JSON.stringify(config)} as any),
       importFn,
       store: rootStore.child('cache'),
       pubsub,
     } as any)`;
-  const importCode = `import MeshCache from '${moduleName}';`;
+  const importCode = `import MeshCache from ${JSON.stringify(moduleName)};`;
 
   return {
     cache,
@@ -159,8 +159,8 @@ export async function resolvePubSub(
 
     const pubsub = new PubSub(pubsubConfig);
 
-    const importCode = `import PubSub from '${moduleName}'`;
-    const code = `const pubsub = new PubSub(rawConfig.pubsub);`;
+    const importCode = `import PubSub from ${JSON.stringify(moduleName)}`;
+    const code = `const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
 
     return {
       importCode,
@@ -215,7 +215,7 @@ export async function resolveLogger(
     });
     return {
       logger,
-      importCode: `import logger from '${moduleName}';`,
+      importCode: `import logger from ${JSON.stringify(moduleName)};`,
       code: '',
     };
   }

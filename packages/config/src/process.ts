@@ -14,7 +14,7 @@ import {
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { KeyValueCache } from 'fetchache';
-import { DocumentNode, print } from 'graphql';
+import { concatAST, DocumentNode, print, visit } from 'graphql';
 import {
   getPackage,
   resolveAdditionalTypeDefs,
@@ -26,7 +26,7 @@ import {
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
-import { defaultImportFn, resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { envelop, useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
@@ -50,6 +50,7 @@ export type ConfigProcessOptions = {
   configName?: string;
   artifactsDir?: string;
   additionalPackagePrefixes?: string[];
+  generateCode?: boolean;
 };
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
@@ -105,7 +106,7 @@ export async function processConfig(
     `import { YamlConfig } from '@graphql-mesh/types';`,
   ];
   const codes: string[] = [
-    `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)} as any`,
+    `export const rawServeConfig: YamlConfig.Config['serve'] = ${JSON.stringify(config.serve)} as any`,
     `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
   ];
 
@@ -176,18 +177,20 @@ export async function processConfig(
               cwd: dir,
               additionalPrefixes: additionalPackagePrefixes,
             }).then(({ resolved: HandlerCtor, moduleName }) => {
-              const handlerImportName = pascalCase(handlerName + '_Handler');
-              importCodes.push(`import ${handlerImportName} from '${moduleName}'`);
-              codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
-              name: rawConfig.sources[${sourceIndex}].name,
-              config: rawConfig.sources[${sourceIndex}].handler[${JSON.stringify(handlerName)}],
+              if (options.generateCode) {
+                const handlerImportName = pascalCase(handlerName + '_Handler');
+                importCodes.push(`import ${handlerImportName} from ${JSON.stringify(moduleName)}`);
+                codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
+              name: ${JSON.stringify(source.name)},
+              config: ${JSON.stringify(handlerConfig)},
               baseDir,
               cache,
               pubsub,
-              store: sourcesStore.child(rawConfig.sources[${sourceIndex}].name),
-              logger: logger.child(rawConfig.sources[${sourceIndex}].name),
+              store: sourcesStore.child(${JSON.stringify(source.name)}),
+              logger: logger.child(${JSON.stringify(source.name)}),
               importFn
             });`);
+              }
               return new HandlerCtor({
                 name: source.name,
                 config: handlerConfig,
@@ -211,20 +214,20 @@ export async function processConfig(
                   additionalPrefixes: additionalPackagePrefixes,
                 });
 
-                const transformImportName = pascalCase(transformName + '_Transform');
-                importCodes.push(`import ${transformImportName} from '${moduleName}';`);
-                codes.push(`${transformsVariableName}.push(
+                if (options.generateCode) {
+                  const transformImportName = pascalCase(transformName + '_Transform');
+                  importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
+                  codes.push(`${transformsVariableName}.push(
                 new ${transformImportName}({
-                  apiName: rawConfig.sources[${sourceIndex}].name,
-                  config: rawConfig.sources[${sourceIndex}].transforms[${transformIndex}][${JSON.stringify(
-                  transformName
-                )}],
+                  apiName: ${JSON.stringify(source.name)},
+                  config: ${JSON.stringify(transformConfig)},
                   baseDir,
                   cache,
                   pubsub,
                   importFn
                 })
               );`);
+                }
 
                 return new TransformCtor({
                   apiName: source.name,
@@ -238,11 +241,13 @@ export async function processConfig(
             ),
           ]);
 
-          codes.push(`sources.push({
+          if (options.generateCode) {
+            codes.push(`sources.push({
           name: '${source.name}',
           handler: ${handlerVariableName},
           transforms: ${transformsVariableName}
         })`);
+          }
 
           return {
             name: source.name,
@@ -263,19 +268,21 @@ export async function processConfig(
             additionalPrefixes: additionalPackagePrefixes,
           });
 
-          const transformImportName = pascalCase(transformName + '_Transform');
-          importCodes.push(`import ${transformImportName} from '${moduleName}';`);
+          if (options.generateCode) {
+            const transformImportName = pascalCase(transformName + '_Transform');
+            importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
 
-          codes.push(`transforms.push(
+            codes.push(`transforms.push(
           new (${transformImportName} as any)({
             apiName: '',
-            config: rawConfig.transforms[${transformIndex}][${JSON.stringify(transformName)}],
+            config: ${JSON.stringify(transformConfig)},
             baseDir,
             cache,
             pubsub,
             importFn
           })
         )`);
+          }
           return new TransformLibrary({
             apiName: '',
             config: transformConfig,
@@ -292,10 +299,10 @@ export async function processConfig(
           const pluginConfig = p[pluginName];
           if (ENVELOP_CORE_PLUGINS_MAP[pluginName] != null) {
             const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
-            importCodes.push(`import { ${importName} } from '${moduleName}';`);
-            codes.push(
-              `additionalEnvelopPlugins.push(rawConfig.plugins[${pluginIndex}][${JSON.stringify(pluginName)}])`
-            );
+            if (options.generateCode) {
+              importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+              codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}))`);
+            }
             return pluginFactory(pluginConfig);
           }
           let importName: string;
@@ -309,22 +316,22 @@ export async function processConfig(
           let pluginFactory: MeshPluginFactory<YamlConfig.Plugin[keyof YamlConfig.Plugin]>;
           if (typeof possiblePluginFactory === 'function') {
             pluginFactory = possiblePluginFactory;
-            importName = pascalCase('use_' + pluginName);
-            importCodes.push(`import ${importName} from '${moduleName}';`);
-            codes.push(`additionalEnvelopPlugins.push(${importName}({
-          ...(rawConfig.plugins[${pluginIndex}][${JSON.stringify(pluginName)}] || {}),
+            if (options.generateCode) {
+              importName = pascalCase('use_' + pluginName);
+              importCodes.push(`import ${importName} from ${JSON.stringify(moduleName)};`);
+              codes.push(`additionalEnvelopPlugins.push(${importName}({
+          ...(${JSON.stringify(pluginConfig)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
         }))`);
+            }
           } else {
             Object.keys(possiblePluginFactory).forEach(key => {
               if (key.toString().startsWith('use') && typeof possiblePluginFactory[key] === 'function') {
                 pluginFactory = possiblePluginFactory[key];
-                importCodes.push(`import { ${importName} } from '${moduleName}';`);
-                codes.push(
-                  `additionalEnvelopPlugins.push(${importName}(rawConfig.plugins[${pluginIndex}][${JSON.stringify(
-                    pluginName
-                  )}])`
-                );
+                if (options.generateCode) {
+                  importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+                  codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}])`);
+                }
               }
             });
           }
@@ -335,13 +342,15 @@ export async function processConfig(
         }) || []
       ),
       resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
-        codes.push(
-          `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
-            parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
-          )}] as any[];`
-        );
-        if (additionalTypeDefs?.length) {
-          importCodes.push(`import { parse } from 'graphql';`);
+        if (options.generateCode) {
+          codes.push(
+            `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
+              parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
+            )}] as any[];`
+          );
+          if (additionalTypeDefs?.length) {
+            importCodes.push(`import { parse } from 'graphql';`);
+          }
         }
         return additionalTypeDefs;
       }),
@@ -355,53 +364,55 @@ export async function processConfig(
         cwd: dir,
         additionalPrefixes: additionalPackagePrefixes,
       }).then(({ resolved: Merger, moduleName }) => {
-        const mergerImportName = pascalCase(`${mergerName}Merger`);
-        importCodes.push(`import ${mergerImportName} from '${moduleName}';`);
-        codes.push(`const merger = new(${mergerImportName} as any)({
+        if (options.generateCode) {
+          const mergerImportName = pascalCase(`${mergerName}Merger`);
+          importCodes.push(`import ${mergerImportName} from ${JSON.stringify(moduleName)};`);
+          codes.push(`const merger = new(${mergerImportName} as any)({
         cache,
         pubsub,
-        logger: logger.child('${mergerImportName}'),
+        logger: logger.child('${mergerName}Merger'),
         store: rootStore.child('${mergerName}Merger')
       })`);
+        }
         return new Merger({
           cache,
           pubsub,
-          logger: logger.child(mergerImportName),
+          logger: logger.child(`${mergerName}Merger`),
           store: rootStore.child(`${mergerName}Merger`),
         });
       }),
       resolveDocuments(config.documents, dir),
     ]);
 
-  importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
+  if (options.generateCode) {
+    importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
 
-  codes.push(`const additionalResolversRawConfig = [];`);
+    codes.push(`const additionalResolversRawConfig = [];`);
 
-  for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
-    const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
-    if (typeof additionalResolverDefinition === 'string') {
-      importCodes.push(
-        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
-          .join('..', additionalResolverDefinition)
-          .split('\\')
-          .join('/')}';`
-      );
-      codes.push(
-        `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
-      );
-    } else {
-      codes.push(
-        `additionalResolversRawConfig.push(rawConfig.additionalResolvers[${additionalResolverDefinitionIndex}]);`
-      );
+    for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
+      const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
+      if (typeof additionalResolverDefinition === 'string') {
+        importCodes.push(
+          `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
+            .join('..', additionalResolverDefinition)
+            .split('\\')
+            .join('/')}';`
+        );
+        codes.push(
+          `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
+        );
+      } else {
+        codes.push(`additionalResolversRawConfig.push(${JSON.stringify(additionalResolverDefinition)});`);
+      }
     }
-  }
 
-  codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
+    codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
       baseDir,
       additionalResolversRawConfig,
       importFn,
       pubsub
   )`);
+  }
 
   if (config.additionalEnvelopPlugins) {
     importCodes.push(
@@ -418,31 +429,55 @@ export async function processConfig(
     if (typeof importedAdditionalEnvelopPlugins === 'function') {
       const factoryResult = await importedAdditionalEnvelopPlugins(config);
       if (Array.isArray(factoryResult)) {
-        codes.push(`additionalEnvelopPlugins.push(...(await importedAdditionalEnvelopPlugins(rawConfig)));`);
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(...(await importedAdditionalEnvelopPlugins()));`);
+        }
         additionalEnvelopPlugins.push(...factoryResult);
       } else {
-        codes.push(`additionalEnvelopPlugins.push(await importedAdditionalEnvelopPlugins(rawConfig));`);
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(await importedAdditionalEnvelopPlugins());`);
+        }
         additionalEnvelopPlugins.push(factoryResult);
       }
     } else {
       if (Array.isArray(importedAdditionalEnvelopPlugins)) {
-        codes.push(`additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins)`);
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins)`);
+        }
         additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins);
       } else {
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins)`);
+        }
         additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins);
-        codes.push(`additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins)`);
       }
     }
   }
 
-  importCodes.push(`import { parseWithCache } from '@graphql-mesh/utils';`);
-  codes.push(`const documents = documentsInSDL.map((documentSdl: string, i: number) => ({
-              rawSDL: documentSdl,
-              document: parseWithCache(documentSdl),
-              location: \`document_\${i}.graphql\`,
-            }))`);
+  if (options.generateCode) {
+    importCodes.push(`import { printWithCache } from '@graphql-mesh/utils';`);
+    const documentVariableNames: string[] = [];
+    const allDocumentNodes: DocumentNode = concatAST(
+      documents.map(document => document.document || parseWithCache(document.rawSDL))
+    );
+    visit(allDocumentNodes, {
+      OperationDefinition(node) {
+        documentVariableNames.push(pascalCase(node.name.value + '_Document'));
+      },
+    });
+    codes.push(`const documents = [
+      ${documentVariableNames
+        .map(
+          documentVarName => `{
+        document: ${documentVarName},
+        rawSDL: printWithCache(${documentVarName}),
+        location: '${documentVarName}.graphql'
+      }`
+        )
+        .join(',')}
+    ]`);
 
-  codes.push(`
+    codes.push(`
   return {
     sources,
     transforms,
@@ -456,6 +491,7 @@ export async function processConfig(
     documents,
   };
 }`);
+  }
   return {
     sources,
     transforms,

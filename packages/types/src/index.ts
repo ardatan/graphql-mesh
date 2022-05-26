@@ -121,7 +121,7 @@ export type RawSourceOutput = {
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
-export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
+export type ImportFn = <T = any>(moduleId: string, noCache?: boolean) => Promise<T>;
 
 export type LazyLoggerMessage = (() => any | any[]) | any;
 

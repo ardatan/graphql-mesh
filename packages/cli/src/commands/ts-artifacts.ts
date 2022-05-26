@@ -309,10 +309,6 @@ const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageA
 
 ${meshConfigCode}
 
-export const documentsInSDL = /*#__PURE__*/ [${documents.map(
-                documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
-              )}];
-
 let meshInstance$: Promise<MeshInstance<MeshContext>>;
 
 export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {

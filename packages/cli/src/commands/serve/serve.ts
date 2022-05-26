@@ -32,7 +32,7 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
 }
 
 export async function serveMesh(
-  { baseDir, argsPort, getBuiltMesh, logger, rawConfig, playgroundTitle }: ServeMeshOptions,
+  { baseDir, argsPort, getBuiltMesh, logger, rawServeConfig = {}, playgroundTitle }: ServeMeshOptions,
   cliParams: GraphQLMeshCLIParams
 ) {
   const {
@@ -51,13 +51,13 @@ export async function serveMesh(
     endpoint: graphqlPath = '/graphql',
     browser,
     trustProxy = 'loopback',
-  } = rawConfig.serve || {};
+  } = rawServeConfig;
   const port = argsPort || parseInt(env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
   if (!playgroundTitle) {
-    playgroundTitle = rawConfig.serve?.playgroundTitle || cliParams.playgroundTitle;
+    playgroundTitle = rawServeConfig?.playgroundTitle || cliParams.playgroundTitle;
   }
   if (!cluster.isWorker && Boolean(fork)) {
     const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;

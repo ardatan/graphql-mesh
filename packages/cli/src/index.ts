@@ -189,7 +189,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             argsPort: args.port,
             getBuiltMesh: () => meshInstance$,
             logger: meshConfig.logger.child('Server'),
-            rawConfig: meshConfig.config,
+            rawServeConfig: meshConfig.config.serve,
           };
           if (meshConfig.config.serve?.customServerHandler) {
             const customServerHandler = await loadFromModuleExportExpression<any>(
@@ -230,16 +230,16 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
           const builtMeshArtifacts = await defaultImportFn(mainModule);
           const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
           logger = getMeshOptions.logger;
-          const rawConfig: YamlConfig.Config = builtMeshArtifacts.rawConfig;
+          const rawServeConfig: YamlConfig.Config['serve'] = builtMeshArtifacts.rawServeConfig;
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
             getBuiltMesh: () => getMesh(getMeshOptions),
             logger: getMeshOptions.logger.child('Server'),
-            rawConfig: builtMeshArtifacts.rawConfig,
+            rawServeConfig,
           };
-          if (rawConfig.serve?.customServerHandler) {
-            const customServerHandler = await loadFromModuleExportExpression<any>(rawConfig.serve.customServerHandler, {
+          if (rawServeConfig?.customServerHandler) {
+            const customServerHandler = await loadFromModuleExportExpression<any>(rawServeConfig.customServerHandler, {
               defaultExportName: 'default',
               cwd: baseDir,
               importFn: defaultImportFn,
@@ -322,7 +322,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
 
           const importedModulesSet = new Set<string>();
           const importPromises: Promise<any>[] = [];
-          const importFn = (moduleId: string) => {
+          const importFn = (moduleId: string, noCache: boolean) => {
             const importPromise = defaultImportFn(moduleId)
               .catch(e => {
                 if (e.message.includes('getter')) {
@@ -332,7 +332,9 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
                 }
               })
               .then(m => {
-                importedModulesSet.add(moduleId);
+                if (!noCache) {
+                  importedModulesSet.add(moduleId);
+                }
                 return m;
               });
             importPromises.push(importPromise.catch(() => {}));
@@ -363,6 +365,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+            generateCode: true,
           });
           logger = meshConfig.logger;
 
@@ -431,7 +434,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
           argsPort: 4000 + sourceIndex + 1,
           getBuiltMesh: () => meshInstance$,
           logger: meshConfig.logger.child('Server'),
-          rawConfig: meshConfig.config,
+          rawServeConfig: meshConfig.config.serve,
           playgroundTitle: `${args.source} GraphiQL`,
         };
         if (meshConfig.config.serve?.customServerHandler) {
