@@ -1076,6 +1076,29 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-prune",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com/docs/transforms/prune",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Transforms", "Prune Transform"],
+    "source": "Mesh",
+    "title": "Prune Transform",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-redis",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
