@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-mock
 
+## 0.14.41
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+
 ## 0.14.40
 
 ### Patch Changes

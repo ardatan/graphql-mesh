@@ -1,5 +1,21 @@
 # @graphql-mesh/new-openapi
 
+## 0.4.21
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @omnigraph/openapi@0.6.9
+  - @graphql-mesh/store@0.8.9
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+
 ## 0.4.20
 
 ### Patch Changes

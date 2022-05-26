@@ -1,5 +1,16 @@
 # json-machete
 
+## 0.8.8
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/utils@0.35.0
+  - @graphql-mesh/cross-helpers@0.1.5
+
 ## 0.8.7
 
 ### Patch Changes

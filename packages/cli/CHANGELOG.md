@@ -1,5 +1,34 @@
 # @graphql-mesh/cli
 
+## 0.71.0
+
+### Minor Changes
+
+- 19a99c055: feat(cli/serve): Now you can configure proxy handling settings
+- 974e703e2: Generate more readable code and cleanup the artifacts
+
+  No more export `documentsInSDL`, use `documents` array instead coming from `MeshInstance`
+  No more export `rawConfig` but instead `rawServeConfig` to expose `ServeConfig`
+
+- 974e703e2: No longer import entire lodash library but instead individual smaller packages
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/runtime@0.35.0
+  - @graphql-mesh/store@0.8.9
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+  - @graphql-mesh/config@0.37.0
+  - @graphql-mesh/cross-helpers@0.1.5
+
 ## 0.70.4
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @graphql-mesh/tuql
 
+## 0.5.22
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/cross-helpers@0.1.5
+
 ## 0.5.21
 
 ### Patch Changes

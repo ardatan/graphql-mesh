@@ -1,5 +1,25 @@
 # @graphql-mesh/utils
 
+## 0.35.0
+
+### Minor Changes
+
+- 974e703e2: No longer import entire lodash library but instead individual smaller packages
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- 974e703e2: Use deeper lodash imports to have better treeshaking and avoid using eval
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/cross-helpers@0.1.5
+
 ## 0.34.10
 
 ### Patch Changes

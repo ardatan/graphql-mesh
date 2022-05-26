@@ -1,5 +1,18 @@
 # @omnigraph/raml
 
+## 0.5.44
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+  - json-machete@0.8.8
+  - @omnigraph/json-schema@0.20.0
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/utils@0.35.0
+
 ## 0.5.43
 
 ### Patch Changes
