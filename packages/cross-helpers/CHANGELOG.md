@@ -1,5 +1,11 @@
 # @graphql-mesh/cross-helpers
 
+## 0.1.5
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+
 ## 0.1.4
 
 ### Patch Changes

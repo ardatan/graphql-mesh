@@ -1,5 +1,23 @@
 # @graphql-mesh/transform-federation
 
+## 0.9.0
+
+### Minor Changes
+
+- 974e703e2: No longer import entire lodash library but instead individual smaller packages
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+
 ## 0.8.56
 
 ### Patch Changes

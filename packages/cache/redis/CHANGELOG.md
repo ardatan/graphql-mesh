@@ -1,5 +1,21 @@
 # @graphql-mesh/cache-redis
 
+## 0.9.6
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+  - @graphql-mesh/cache-localforage@0.6.6
+
 ## 0.9.5
 
 ### Patch Changes

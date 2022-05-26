@@ -1,5 +1,34 @@
 # @graphql-mesh/config
 
+## 0.37.0
+
+### Minor Changes
+
+- 974e703e2: Generate more readable code and cleanup the artifacts
+
+  No more export `documentsInSDL`, use `documents` array instead coming from `MeshInstance`
+  No more export `rawConfig` but instead `rawServeConfig` to expose `ServeConfig`
+
+- 893d526ab: POC: Mesh Declarative Plugin System
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/merger-stitching@0.15.50
+  - @graphql-mesh/runtime@0.35.0
+  - @graphql-mesh/store@0.8.9
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+  - @graphql-mesh/cache-localforage@0.6.6
+  - @graphql-mesh/cross-helpers@0.1.5
+  - @graphql-mesh/merger-bare@0.13.48
+
 ## 0.36.5
 
 ### Patch Changes

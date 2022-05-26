@@ -1,5 +1,22 @@
 # @omnigraph/openapi
 
+## 0.6.9
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - json-machete@0.8.8
+  - @omnigraph/json-schema@0.20.0
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+
 ## 0.6.8
 
 ### Patch Changes
