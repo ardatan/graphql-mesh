@@ -5,3 +5,6 @@
 ---
 
 Generate more readable code and cleanup the artifacts
+
+No more export `documentsInSDL`, use `documents` array instead coming from `MeshInstance`
+No more export `rawConfig` but instead `rawServeConfig` to expose `ServeConfig`
