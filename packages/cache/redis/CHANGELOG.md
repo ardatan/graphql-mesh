@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-redis
 
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies [abe9fcc41]
+  - @graphql-mesh/utils@0.35.1
+  - @graphql-mesh/cache-localforage@0.6.7
+  - @graphql-mesh/types@0.73.1
+
 ## 0.9.6
 
 ### Patch Changes

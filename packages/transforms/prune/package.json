@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-prune",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.73.0",
+    "@graphql-mesh/types": "0.73.1",
     "@graphql-tools/utils": "8.6.12",
     "tslib": "^2.3.1"
   },

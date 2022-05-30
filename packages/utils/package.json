@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.35.0",
+  "version": "0.35.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "@graphql-tools/utils": "8.6.12",
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/cross-helpers": "0.1.5",
-    "@graphql-mesh/types": "0.73.0",
+    "@graphql-mesh/types": "0.73.1",
     "cross-undici-fetch": "^0.4.0",
     "chalk": "4.1.2",
     "fetchache": "0.1.2",
