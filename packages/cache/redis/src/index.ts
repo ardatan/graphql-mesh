@@ -2,6 +2,7 @@ import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '
 import Redis from 'ioredis';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });

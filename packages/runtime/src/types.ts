@@ -12,7 +12,6 @@ import { DocumentNode, ExecutionResult } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants';
 import { MergedTypeConfig } from '@graphql-tools/delegate';
-import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { MeshInstance } from './get-mesh';
 import { envelop } from '@envelop/core';
 
@@ -22,7 +21,7 @@ export type GetMeshOptions = {
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers | IResolvers[];
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub?: MeshPubSub;
   merger: MeshMerger;
   logger?: Logger;
   additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
@@ -54,7 +53,7 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
 
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
-} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; liveQueryStore: InMemoryLiveQueryStore };
+} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; };
 
 export interface ServeMeshOptions {
   baseDir: string;

@@ -31,7 +31,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
   async getDereferencedBundle() {
     return this.bundleStoreProxy.getWithSet(() => {
-      this.logger?.debug(() => 'Creating the bundle');
+      this.logger?.debug('Creating the bundle');
       return createBundle(this.name, {
         ...this.config,
         cwd: this.baseDir,

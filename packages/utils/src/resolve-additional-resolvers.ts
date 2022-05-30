@@ -19,6 +19,7 @@ import lodashSet from 'lodash.set';
 import toPath from 'lodash.topath';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {

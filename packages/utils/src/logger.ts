@@ -1,6 +1,6 @@
 import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
-import { inspect } from '@graphql-tools/utils';
 import chalk from 'chalk';
+import { process, util } from '@graphql-mesh/cross-helpers';
 
 type MessageTransformer = (msg: string) => string;
 
@@ -23,7 +23,17 @@ function handleLazyMessage(...lazyArgs: LazyLoggerMessage[]) {
 function getLoggerMessage(...args: any[]) {
   return args
     .flat(Infinity)
-    .map(arg => (typeof arg === 'string' ? arg : inspect(arg)))
+    .map(arg => {
+      if (typeof arg === 'string') {
+        if (arg.length > 100) {
+          return arg.slice(0, 100) + '...';
+        }
+        return arg;
+      } else if (arg.stack != null) {
+        return arg.stack;
+      }
+      return util.inspect(arg);
+    })
     .join(` `);
 }
 

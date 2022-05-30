@@ -1,7 +1,8 @@
-import { inspect } from 'util';
+import { util } from '@graphql-mesh/cross-helpers';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
+import { process } from '@graphql-mesh/cross-helpers';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 
@@ -30,7 +31,7 @@ function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
       if (titleReserved) {
         schema.title = undefined;
       }
-      const stringified = inspect(schema, undefined, 3);
+      const stringified = util.inspect(schema, undefined, 3);
       if (titleReserved) {
         schema.title = titleReserved;
       }

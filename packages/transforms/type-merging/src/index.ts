@@ -24,9 +24,7 @@ export default class TypeMerging implements MeshTransform {
       });
       if (typeof additionalConfiguration !== 'object' || additionalConfiguration == null) {
         throw new Error(
-          `Invalid additional type merging configuration provided in ${this.config.additionalConfiguration}: ${inspect(
-            additionalConfiguration
-          )}`
+          `Invalid additional type merging configuration provided in ${this.config.additionalConfiguration}`
         );
       }
       subschemaConfig.merge = subschemaConfig.merge || {};

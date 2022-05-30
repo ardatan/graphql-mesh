@@ -1,7 +1,7 @@
 import { SoapOperation } from '../soap2graphql/soap-endpoint';
 import { SoapCaller, SoapCallInput } from '../soap2graphql/soap-caller';
 import { NodeSoapClient } from './node-soap';
-import { inspect, promisify } from 'util';
+import { util } from '@graphql-mesh/cross-helpers';
 import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
 /**
@@ -11,9 +11,9 @@ export class NodeSoapCaller implements SoapCaller {
   constructor(protected soapClient: NodeSoapClient, protected logger: Logger) {}
 
   async call(input: SoapCallInput): Promise<any> {
-    this.debug(() => `call operation '${input.operation.name()}' with args '${inspect(input.graphqlArgs, false, 5)}'`);
+    this.debug(() => [`call operation '${input.operation.name()}' with args '`, input.graphqlArgs]);
 
-    const requestFunction = promisify(this.requestFunctionForOperation(input.operation), this);
+    const requestFunction = util.promisify(this.requestFunctionForOperation(input.operation), this);
 
     const requestMessage: any = await this.createSoapRequestMessage(input);
 
@@ -57,7 +57,7 @@ export class NodeSoapCaller implements SoapCaller {
   }
 
   protected async createGraphqlResult(input: SoapCallInput, result: any): Promise<any> {
-    this.debug(() => `operation '${input.operation.name()}' returned '${inspect(result, false, 5)}'`);
+    this.debug(() => [`operation '${input.operation.name()}' returned `, result]);
 
     if (!input.operation.resultField()) {
       // void operation

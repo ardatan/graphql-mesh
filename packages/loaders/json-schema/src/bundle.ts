@@ -41,7 +41,7 @@ export async function createBundle(
     ignoreErrorResponses = false,
   }: JSONSchemaLoaderBundleOptions
 ): Promise<JSONSchemaLoaderBundle> {
-  logger.debug(() => `Creating the dereferenced schema from operations config`);
+  logger.debug(`Creating the dereferenced schema from operations config`);
   const dereferencedSchema = await getDereferencedJSONSchemaFromOperations({
     operations,
     cwd,
@@ -50,10 +50,10 @@ export async function createBundle(
     schemaHeaders,
     ignoreErrorResponses,
   });
-  logger.debug(() => `Creating references from dereferenced schema`);
+  logger.debug(`Creating references from dereferenced schema`);
   const referencedSchema = await referenceJSONSchema(dereferencedSchema);
 
-  logger.debug(() => `Bundle generation finished`);
+  logger.debug(`Bundle generation finished`);
   return {
     name,
     baseUrl,

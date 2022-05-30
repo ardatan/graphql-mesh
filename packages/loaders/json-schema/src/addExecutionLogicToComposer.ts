@@ -19,6 +19,7 @@ import {
 } from 'graphql';
 import lodashSet from 'lodash.set';
 import { stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -76,7 +77,7 @@ export async function addExecutionLogicToComposer(
     queryParams,
   }: AddExecutionLogicToComposerOptions
 ) {
-  logger.debug(() => `Attaching execution logic to the schema`);
+  logger.debug(`Attaching execution logic to the schema`);
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
@@ -100,11 +101,11 @@ export async function addExecutionLogicToComposer(
         }
         const interpolationData = { root, args, context, info, env: process.env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
-        operationLogger.debug(() => `=> Subscribing to pubSubTopic: ${pubsubTopic}`);
+        operationLogger.debug(`=> Subscribing to pubSubTopic: ${pubsubTopic}`);
         return pubsub.asyncIterator(pubsubTopic);
       };
       field.resolve = root => {
-        operationLogger.debug(() => `Received ${inspect(root)} from ${operationConfig.pubsubTopic}`);
+        operationLogger.debug('Received ', root, ' from ', operationConfig.pubsubTopic);
         return root;
       };
       interpolationStrings.push(operationConfig.pubsubTopic);
@@ -120,7 +121,7 @@ export async function addExecutionLogicToComposer(
         field.description = operationConfig.description;
       }
       field.resolve = async (root, args, context) => {
-        operationLogger.debug(() => `=> Resolving`);
+        operationLogger.debug(`=> Resolving`);
         const interpolationData = { root, args, context, env: process.env };
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
@@ -227,7 +228,7 @@ export async function addExecutionLogicToComposer(
           fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { indices: false });
         }
 
-        operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
+        operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
           return createError(`You should have fetch defined in either the config or the context!`, {
@@ -241,13 +242,10 @@ export async function addExecutionLogicToComposer(
           return response.blob();
         }
         const responseText = await response.text();
-        operationLogger.debug(
-          () =>
-            `=> Received ${inspect({
-              headers: response.headers,
-              text: responseText,
-            })}`
-        );
+        operationLogger.debug(`=> Received`, {
+          headers: response.headers,
+          text: responseText,
+        });
         let responseJson: any;
         try {
           responseJson = JSON.parse(responseText);
@@ -255,7 +253,7 @@ export async function addExecutionLogicToComposer(
           const returnNamedGraphQLType = getNamedType(field.type.getType());
           // The result might be defined as scalar
           if (isScalarType(returnNamedGraphQLType)) {
-            operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
+            operationLogger.debug(` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
           } else if (response.status === 204) {
             responseJson = {};
@@ -281,16 +279,16 @@ export async function addExecutionLogicToComposer(
           }
         }
 
-        operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
+        operationLogger.debug(`Returning `, responseJson);
         // Sometimes API returns an array but the return type is not an array
         const isListReturnType = isListTypeOrNonNullListType(field.type.getType());
         const isArrayResponse = Array.isArray(responseJson);
         if (isListReturnType && !isArrayResponse) {
-          operationLogger.debug(() => `Response is not array but return type is list. Normalizing the response`);
+          operationLogger.debug(`Response is not array but return type is list. Normalizing the response`);
           responseJson = [responseJson];
         }
         if (!isListReturnType && isArrayResponse) {
-          operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
+          operationLogger.debug(`Response is array but return type is not list. Normalizing the response`);
           responseJson = responseJson[0];
         }
 
@@ -320,7 +318,7 @@ export async function addExecutionLogicToComposer(
             },
           };
         };
-        operationLogger.debug(() => `Adding response metadata to the response object`);
+        operationLogger.debug(`Adding response metadata to the response object`);
         return Array.isArray(responseJson)
           ? responseJson.map(obj => addResponseMetadata(obj))
           : addResponseMetadata(responseJson);
@@ -376,6 +374,6 @@ export async function addExecutionLogicToComposer(
     rootTypeComposer.addFieldArgs(fieldName, globalArgs);
   }
 
-  logger.debug(() => `Building the executable schema.`);
+  logger.debug(`Building the executable schema.`);
   return schemaComposer;
 }

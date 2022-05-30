@@ -1,5 +1,6 @@
 import { JSONSchemaObject } from './types';
 import { visitJSONSchema } from './visitJSONSchema';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export async function referenceJSONSchema(schema: JSONSchemaObject) {
   const definitions: Record<string, JSONSchemaObject> = {};

@@ -17,7 +17,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryParams,
   }: AddExecutionLogicToComposerOptions & { generateInterfaceFromSharedFields?: boolean }
 ) {
-  logger.debug(() => `Generating GraphQL Schema from the bundled JSON Schema`);
+  logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema(
     fullyDeferencedSchema,
     logger,

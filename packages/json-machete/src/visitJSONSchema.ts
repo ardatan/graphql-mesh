@@ -1,4 +1,5 @@
 import { JSONSchemaObject, JSONSchema } from './types';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export enum OnCircularReference {
   WARN = 'WARN',

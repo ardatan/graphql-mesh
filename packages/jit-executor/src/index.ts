@@ -13,11 +13,11 @@ export function createJITExecutor(schema: GraphQLSchema, prefix: string, logger:
   return function jitExecutor<TReturn>(request: ExecutionRequest) {
     const { document, variables, context, operationName, rootValue } = request;
     const documentStr = printWithCache(document);
-    logger.debug(() => `Executing ${documentStr}`);
+    logger.debug(`Executing ${documentStr}`);
     const cacheKey = [prefix, documentStr, operationName].join('_');
     let compiledQueryFn: CompiledQuery['query'] | CompiledQuery['subscribe'] = lruCache.get(cacheKey);
     if (!compiledQueryFn) {
-      logger.debug(() => `Compiling ${documentStr}`);
+      logger.debug(`Compiling ${documentStr}`);
       const compiledQuery = compileQuery(schema, document, operationName);
       if (isCompiledQuery(compiledQuery)) {
         const { operation } = getOperationASTFromRequest(request);
@@ -31,7 +31,7 @@ export function createJITExecutor(schema: GraphQLSchema, prefix: string, logger:
       }
       lruCache.set(cacheKey, compiledQueryFn);
     } else {
-      logger.debug(() => `Compiled version found for ${documentStr}`);
+      logger.debug(`Compiled version found for ${documentStr}`);
     }
     return compiledQueryFn(rootValue, context, variables) as ExecutionResult<TReturn>;
   };

@@ -12,6 +12,7 @@ import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
 import { Logger } from '@graphql-mesh/types';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
@@ -41,7 +42,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
     fieldTypeMap[fieldName] = type;
   }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
-  logger?.debug(() => `Fetching OpenAPI Document from ${oasFilePath}`);
+  logger?.debug(`Fetching OpenAPI Document from ${oasFilePath}`);
   const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
     typeof oasFilePath === 'string'
       ? await readFileOrUrl(oasFilePath, {

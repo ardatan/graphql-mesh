@@ -2,6 +2,7 @@ import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import { AggregateError } from '@graphql-tools/utils';
 import { resolvePath } from './dereferenceObject';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {
   const breakingChanges: string[] = [];

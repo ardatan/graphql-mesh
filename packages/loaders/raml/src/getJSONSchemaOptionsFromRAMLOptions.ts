@@ -9,6 +9,7 @@ import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
 import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
   const allTraits: api10.Trait[] = [];

@@ -3,6 +3,7 @@ import { AggregateError, ExecutionRequest } from '@graphql-tools/utils';
 import type { DelegationContext } from '@graphql-tools/delegate';
 import { ExecutionResult, GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();

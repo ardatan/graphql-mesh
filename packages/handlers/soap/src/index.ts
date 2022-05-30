@@ -4,6 +4,7 @@ import soap from 'soap';
 import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import type { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function getHeadersObject(headers: Headers): Record<string, string> {
   const headersObj: Record<string, string> = {};

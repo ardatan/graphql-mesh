@@ -9,7 +9,7 @@ import cors from 'cors';
 import { defaultImportFn, loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
 import lodashGet from 'lodash.get';
 import cookieParser from 'cookie-parser';
-import { path, fs } from '@graphql-mesh/cross-helpers';
+import { path, fs, process } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
@@ -17,8 +17,6 @@ import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { env, on as processOn } from 'process';
-import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -27,7 +25,7 @@ const terminateEvents = ['SIGINT', 'SIGTERM'];
 
 function registerTerminateHandler(callback: (eventName: string) => void) {
   for (const eventName of terminateEvents) {
-    processOn(eventName, () => callback(eventName));
+    process.on(eventName, () => callback(eventName));
   }
 }
 
@@ -52,7 +50,7 @@ export async function serveMesh(
     browser,
     trustProxy = 'loopback',
   } = rawServeConfig;
-  const port = argsPort || parseInt(env.PORT) || configPort || 4000;
+  const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
@@ -114,12 +112,12 @@ export async function serveMesh(
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(() => `Stopping HTTP Server`);
+      eventLogger.debug(`Stopping HTTP Server`);
       httpServer.close(error => {
         if (error) {
-          eventLogger.debug(() => `HTTP Server couldn't be stopped: ${error.message}`);
+          eventLogger.debug(`HTTP Server couldn't be stopped: `, error);
         } else {
-          eventLogger.debug(() => `HTTP Server has been stopped`);
+          eventLogger.debug(`HTTP Server has been stopped`);
         }
       });
     });
@@ -137,12 +135,12 @@ export async function serveMesh(
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(() => `Stopping WebSocket Server`);
+      eventLogger.debug(`Stopping WebSocket Server`);
       wsServer.close(error => {
         if (error) {
-          eventLogger.debug(() => `WebSocket Server couldn't be stopped: ${error.message}`);
+          eventLogger.debug(`WebSocket Server couldn't be stopped: `, error);
         } else {
-          eventLogger.debug(() => `WebSocket Server has been stopped`);
+          eventLogger.debug(`WebSocket Server has been stopped`);
         }
       });
     });
@@ -185,14 +183,14 @@ export async function serveMesh(
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(() => `Stopping GraphQL WS`);
+      eventLogger.debug(`Stopping GraphQL WS`);
       Promise.resolve()
         .then(() => stopGraphQLWSServer())
         .then(() => {
-          eventLogger.debug(() => `GraphQL WS has been stopped`);
+          eventLogger.debug(`GraphQL WS has been stopped`);
         })
         .catch(error => {
-          eventLogger.debug(() => `GraphQL WS couldn't be stopped: ${error.message}`);
+          eventLogger.debug(`GraphQL WS couldn't be stopped: `, error);
         });
     });
 
@@ -201,8 +199,7 @@ export async function serveMesh(
         .then(({ pubsub }) => {
           req['pubsub'] = pubsub;
           next();
-        })
-        .catch(e => handleFatalError(e, logger));
+        });
     };
     app.use(pubSubHandler);
 
@@ -221,20 +218,20 @@ export async function serveMesh(
         } else if ('pubsubTopic' in handlerConfig) {
           handlerFn = (req: any, res: any) => {
             let payload = req.body;
-            handlerLogger.debug(() => `Payload received; ${inspect(payload)}`);
+            handlerLogger.debug(`Payload received;`, payload);
             if (handlerConfig.payload) {
               payload = lodashGet(payload, handlerConfig.payload);
-              handlerLogger.debug(() => `Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
+              handlerLogger.debug([`Extracting ${handlerConfig.payload};`, payload]);
             }
             const interpolationData = {
               req,
               res,
               payload,
             };
-            handlerLogger.debug(() => `Interpolating ${handlerConfig.pubsubTopic} with ${inspect(interpolationData)}`);
+            handlerLogger.debug(`Interpolating ${handlerConfig.pubsubTopic} with `, interpolationData);
             const pubsubTopic = stringInterpolator.parse(handlerConfig.pubsubTopic, interpolationData);
             req['pubsub'].publish(pubsubTopic, payload);
-            handlerLogger.debug(() => `Payload sent to ${pubsubTopic}`);
+            handlerLogger.debug(`Payload sent to ${pubsubTopic}`);
             res.end();
           };
         }
@@ -265,7 +262,7 @@ export async function serveMesh(
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
-        const shouldntOpenBrowser = env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
+        const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
           open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
         }

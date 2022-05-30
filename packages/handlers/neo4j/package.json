@@ -33,6 +33,7 @@
   "dependencies": {
     "@neo4j/introspector": "^1.0.1",
     "@neo4j/graphql": "3.3.0",
+    "@graphql-mesh/cross-helpers": "0.1.5",
     "@graphql-mesh/store": "0.8.10",
     "@graphql-mesh/utils": "0.35.1",
     "@graphql-mesh/types": "0.73.1",

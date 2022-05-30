@@ -23,7 +23,6 @@ import { loadFromModuleExportExpression, getCachedFetch, readFileOrUrl } from '@
 import {
   ExecutionRequest,
   isDocumentNode,
-  inspect,
   memoize1,
   getOperationASTFromRequest,
   parseSelectionSet,
@@ -32,6 +31,7 @@ import {
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import lodashGet from 'lodash.get';
 import { getInterpolatedHeadersFactory, getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
+import { process, util } from '@graphql-mesh/cross-helpers';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -121,7 +121,7 @@ export default class GraphQLHandler implements MeshHandler {
       } else if (sdlOrIntrospection.__schema) {
         return buildClientSchema(sdlOrIntrospection);
       }
-      throw new Error(`Invalid introspection data: ${inspect(sdlOrIntrospection)}`);
+      throw new Error(`Invalid introspection data: ${util.inspect(sdlOrIntrospection)}`);
     }
     return this.nonExecutableSchema.getWithSet(() => {
       const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
@@ -175,7 +175,7 @@ export default class GraphQLHandler implements MeshHandler {
         schema = buildASTSchema(schemaOrStringOrDocumentNode);
       } else {
         throw new Error(
-          `Provided file '${schemaConfig} exports an unknown type: ${inspect(
+          `Provided file '${schemaConfig} exports an unknown type: ${util.inspect(
             schemaOrStringOrDocumentNode
           )}': expected GraphQLSchema, SDL or DocumentNode.`
         );
@@ -325,10 +325,10 @@ export default class GraphQLHandler implements MeshHandler {
         this.getExecutorForHTTPSourceConfig(this.config),
       ]);
       if (schemaResult.status === 'rejected') {
-        throw new Error(`Failed to fetch introspection from ${this.config.endpoint}: ${inspect(schemaResult.reason)}`);
+        throw new Error(`Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(schemaResult.reason)}`);
       }
       if (executorResult.status === 'rejected') {
-        throw new Error(`Failed to create executor for ${this.config.endpoint}: ${inspect(executorResult.reason)}`);
+        throw new Error(`Failed to create executor for ${this.config.endpoint}: ${util.inspect(executorResult.reason)}`);
       }
       return {
         schema: schemaResult.value,
@@ -339,6 +339,6 @@ export default class GraphQLHandler implements MeshHandler {
       return this.getCodeFirstSource(this.config);
     }
 
-    throw new Error(`Unexpected config: ${inspect(this.config)}`);
+    throw new Error(`Unexpected config: ${util.inspect(this.config)}`);
   }
 }

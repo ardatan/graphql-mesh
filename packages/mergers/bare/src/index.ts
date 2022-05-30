@@ -13,7 +13,7 @@ export default class BareMerger implements MeshMerger {
 
   async getUnifiedSchema({ rawSources, typeDefs, resolvers, transforms }: MeshMergerContext) {
     const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
-    this.logger.debug(() => `Applying transforms for each source`);
+    this.logger.debug(`Applying transforms for each source`);
     const schemas = rawSources.map(source => {
       let schema = source.schema;
       let sourceLevelSchema = source.schema;
@@ -38,7 +38,7 @@ export default class BareMerger implements MeshMerger {
       return schema;
     });
 
-    this.logger.debug(() => `Merging sources`);
+    this.logger.debug(`Merging sources`);
     let unifiedSchema =
       schemas.length === 1 && !typeDefs?.length && !resolvers
         ? schemas[0]
@@ -48,7 +48,7 @@ export default class BareMerger implements MeshMerger {
             resolvers,
           });
 
-    this.logger.debug(() => `Handling root level transforms`);
+    this.logger.debug(`Handling root level transforms`);
     const rootLevelTransformGroups = groupTransforms(transforms || []);
 
     if (rootLevelTransformGroups.wrapTransforms.length > 0) {
@@ -66,7 +66,7 @@ export default class BareMerger implements MeshMerger {
       );
     }
 
-    this.logger.debug(() => `Attaching sources to the unified schema`);
+    this.logger.debug(`Attaching sources to the unified schema`);
     unifiedSchema.extensions = unifiedSchema.extensions || {};
     Object.defineProperty(unifiedSchema.extensions, 'sourceMap', {
       get: () => sourceMap,

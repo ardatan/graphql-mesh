@@ -52,6 +52,7 @@ import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-undici-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { process } from '@graphql-mesh/cross-helpers';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
