@@ -407,9 +407,9 @@ export default class MySQLHandler implements MeshHandler {
                   COLUMN_NAME: foreignColumnName,
                 },
                 resolve: (root, args, { mysqlConnection }, info) => {
-                  args.where = {
+                  const where = {
                     [columnName]: root[foreignColumnName],
-                    ...args.where,
+                    ...args?.where,
                   };
                   const fieldMap: Record<string, any> = graphqlFields(info);
                   const fields: string[] = [];
@@ -428,9 +428,9 @@ export default class MySQLHandler implements MeshHandler {
                   // Generate limit statement
                   const limit = [args.limit, args.offset].filter(Boolean);
                   if (limit.length) {
-                    return mysqlConnection.selectLimit(tableName, fields, limit, args.where, args?.orderBy);
+                    return mysqlConnection.selectLimit(tableName, fields, limit, where, args?.orderBy);
                   } else {
-                    return mysqlConnection.select(tableName, fields, args.where, args?.orderBy);
+                    return mysqlConnection.select(tableName, fields, where, args?.orderBy);
                   }
                 },
               },
