@@ -14,7 +14,7 @@ import {
   GraphQLUnsignedInt,
   GraphQLUnsignedFloat,
 } from 'graphql-scalars';
-import { specifiedDirectives } from 'graphql';
+import { GraphQLResolveInfo, specifiedDirectives } from 'graphql';
 import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
@@ -117,6 +117,13 @@ async function getPromisifiedConnection(pool: Pool) {
     deleteRow,
     count,
   };
+}
+
+function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
+  const fieldMap: Record<string, any> = graphqlFields(info);
+  return Object.keys(fieldMap).filter(
+    fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
+  );
 }
 
 export default class MySQLHandler implements MeshHandler {
@@ -258,13 +265,16 @@ export default class MySQLHandler implements MeshHandler {
           extensions: table,
           fields: {},
         });
-        const primaryKeyMetadata = await introspectionConnection.getTablePrimaryKeyMetadata(tableName);
+        const primaryKeys = new Set<string>();
         const fields = await introspectionConnection.getTableFields(tableName);
         const fieldNames =
           this.config.tableFields?.find(({ table }) => table === tableName)?.fields || Object.keys(fields);
         await Promise.all(
           fieldNames.map(async fieldName => {
             const tableField = fields[fieldName];
+            if (tableField.Key === 'PRI') {
+              primaryKeys.add(fieldName);
+            }
             const typePattern = tableField.Type;
             const [realTypeNameCased, restTypePattern] = typePattern.split('(');
             const [typeDetails] = restTypePattern?.split(')') || [];
@@ -327,8 +337,9 @@ export default class MySQLHandler implements MeshHandler {
           })
         );
         const tableForeigns = await introspectionConnection.getTableForeigns(tableName);
+        const tableForeignNames = Object.keys(tableForeigns);
         await Promise.all(
-          Object.keys(tableForeigns).map(async foreignName => {
+          tableForeignNames.map(async foreignName => {
             const tableForeign = tableForeigns[foreignName];
             const columnName = tableForeign.COLUMN_NAME;
             if (!fieldNames.includes(columnName)) {
@@ -359,20 +370,67 @@ export default class MySQLHandler implements MeshHandler {
                 },
                 extensions: tableForeign,
                 resolve: async (root, args, { mysqlConnection }, info) => {
-                  const fieldMap: Record<string, any> = graphqlFields(info);
-                  const fields = Object.keys(fieldMap).filter(
-                    fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
-                  );
                   const where = {
                     [foreignColumnName]: root[columnName],
                     ...args?.where,
                   };
                   // Generate limit statement
                   const limit: number[] = [args.limit, args.offset].filter(Boolean);
+                  const fields = getFieldsFromResolveInfo(info);
                   if (limit.length) {
                     return mysqlConnection.selectLimit(foreignTableName, fields, limit, where, args?.orderBy);
                   } else {
                     return mysqlConnection.select(foreignTableName, fields, where, args?.orderBy);
+                  }
+                },
+              },
+            });
+            const foreignOTC = schemaComposer.getOTC(foreignObjectTypeName);
+            foreignOTC.addFields({
+              [tableName]: {
+                type: '[' + objectTypeName + ']',
+                args: {
+                  limit: {
+                    type: 'Int',
+                  },
+                  offset: {
+                    type: 'Int',
+                  },
+                  where: {
+                    type: whereInputName,
+                  },
+                  orderBy: {
+                    type: orderByInputName,
+                  },
+                },
+                extensions: {
+                  COLUMN_NAME: foreignColumnName,
+                },
+                resolve: (root, args, { mysqlConnection }, info) => {
+                  const where = {
+                    [columnName]: root[foreignColumnName],
+                    ...args?.where,
+                  };
+                  const fieldMap: Record<string, any> = graphqlFields(info);
+                  const fields: string[] = [];
+                  for (const fieldName in fieldMap) {
+                    if (fieldName !== '__typename') {
+                      const subFieldMap = fieldMap[fieldName];
+                      if (Object.keys(subFieldMap).length === 0) {
+                        fields.push(fieldName);
+                      } else {
+                        const tableForeign = schemaComposer.getOTC(objectTypeName).getField(fieldName)
+                          .extensions as TableForeign;
+                        fields.push(tableForeign.COLUMN_NAME);
+                      }
+                    }
+                  }
+                  // Generate limit statement
+                  const limit = [args.limit, args.offset].filter(Boolean);
+                  if (limit.length) {
+                    return mysqlConnection.selectLimit(tableName, fields, limit, where, args?.orderBy);
+                  } else {
+                    return mysqlConnection.select(tableName, fields, where, args?.orderBy);
                   }
                 },
               },
@@ -443,13 +501,11 @@ export default class MySQLHandler implements MeshHandler {
             resolve: async (root, args, { mysqlConnection }, info) => {
               const input = args[tableName];
               const { recordId } = await mysqlConnection.insert(tableName, input);
-              const fieldMap: Record<string, any> = graphqlFields(info);
-              const fields = Object.keys(fieldMap).filter(
-                fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
-              );
-              const where: any = {};
-              const primaryColumnName = primaryKeyMetadata.Column_name;
-              where[primaryColumnName] = input[primaryColumnName] || recordId;
+              const fields = getFieldsFromResolveInfo(info);
+              const where: Record<string, any> = {};
+              for (const primaryColumnName of primaryKeys) {
+                where[primaryColumnName] = input[primaryColumnName] || recordId;
+              }
               const result = await mysqlConnection.select(tableName, fields, where, {});
               return result[0];
             },
@@ -466,10 +522,7 @@ export default class MySQLHandler implements MeshHandler {
             },
             resolve: async (root, args, { mysqlConnection }, info) => {
               await mysqlConnection.update(tableName, args[tableName], args.where);
-              const fieldMap: Record<string, any> = graphqlFields(info);
-              const fields = Object.keys(fieldMap).filter(
-                fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
-              );
+              const fields = getFieldsFromResolveInfo(info);
               const result = await mysqlConnection.select(tableName, fields, args.where, {});
               return result[0];
             },
