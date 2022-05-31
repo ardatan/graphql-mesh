@@ -385,83 +385,56 @@ export default class MySQLHandler implements MeshHandler {
                 },
               },
             });
-            const fieldInRelationTable = fields[columnName];
-            if (fieldInRelationTable.Key === 'PRI') {
-              const foreignTC = schemaComposer.getOTC(foreignObjectTypeName);
-              for (const otherForeignName of tableForeignNames) {
-                if (otherForeignName !== foreignName) {
-                  const otherTableForeign = tableForeigns[otherForeignName];
-                  const otherColumnName = otherTableForeign.COLUMN_NAME;
-
-                  const otherForeignTableName = otherTableForeign.REFERENCED_TABLE_NAME;
-                  const otherForeignColumnName = otherTableForeign.REFERENCED_COLUMN_NAME;
-
-                  const otherForeignObjectTypeName = sanitizeNameForGraphQL(otherForeignTableName);
-                  const otherForeignWhereInputName = sanitizeNameForGraphQL(otherForeignTableName + '_WhereInput');
-                  const otherForeignOrderByInputName = sanitizeNameForGraphQL(otherForeignTableName + '_OrderByInput');
-                  foreignTC.addFields({
-                    [otherForeignTableName]: {
-                      type: '[' + otherForeignObjectTypeName + ']',
-                      args: {
-                        where: {
-                          type: otherForeignWhereInputName,
-                        },
-                        orderBy: {
-                          type: otherForeignOrderByInputName,
-                        },
-                        limit: {
-                          type: 'Int',
-                        },
-                        offset: {
-                          type: 'Int',
-                        },
-                      },
-                      extensions: {
-                        COLUMN_NAME: foreignColumnName,
-                      },
-                      resolve: async (root, args, context, info) => {
-                        const fields = getFieldsFromResolveInfo(info);
-                        let sql = /* SQL */ `
-                          SELECT ${fields.map(field => `${otherForeignTableName}.${field}`).join(', ')}
-                          FROM ${otherForeignTableName}, ${tableName}
-                          WHERE ${tableName}.${columnName} = ?
-                          AND ${otherForeignTableName}.${otherForeignColumnName} = ${tableName}.${otherColumnName}
-                        `;
-                        const values = [root[columnName]];
-                        if (args.where) {
-                          for (const whereColumnName in args.where) {
-                            sql += `AND ${otherForeignTableName}.${whereColumnName} = ?\n`;
-                            values.push(args.where[whereColumnName]);
-                          }
-                        }
-                        if (args.limit) {
-                          sql += `LIMIT ?\n`;
-                          values.push(args.limit);
-                        }
-                        if (args.offset) {
-                          sql += `OFFSET ?\n`;
-                          values.push(args.offset);
-                        }
-                        if (args.orderBy) {
-                          for (const orderByColumnName in args.orderBy) {
-                            sql += `ORDER BY ${otherForeignTableName}.${orderByColumnName} ${args.orderBy[orderByColumnName]}\n`;
-                          }
-                        }
-                        return new Promise((resolve, reject) => {
-                          context.mysqlConnection.connection.query(sql, values, (err, results) => {
-                            if (err) {
-                              reject(err);
-                            } else {
-                              resolve(results);
-                            }
-                          });
-                        });
-                      },
-                    },
-                  });
-                }
-              }
-            }
+            const foreignOTC = schemaComposer.getOTC(foreignObjectTypeName);
+            foreignOTC.addFields({
+              [tableName]: {
+                type: '[' + objectTypeName + ']',
+                args: {
+                  limit: {
+                    type: 'Int',
+                  },
+                  offset: {
+                    type: 'Int',
+                  },
+                  where: {
+                    type: whereInputName,
+                  },
+                  orderBy: {
+                    type: orderByInputName,
+                  },
+                },
+                extensions: {
+                  COLUMN_NAME: foreignColumnName,
+                },
+                resolve: (root, args, { mysqlConnection }, info) => {
+                  args.where = {
+                    [columnName]: root[foreignColumnName],
+                    ...args.where,
+                  };
+                  const fieldMap: Record<string, any> = graphqlFields(info);
+                  const fields: string[] = [];
+                  for (const fieldName in fieldMap) {
+                    if (fieldName !== '__typename') {
+                      const subFieldMap = fieldMap[fieldName];
+                      if (Object.keys(subFieldMap).length === 0) {
+                        fields.push(fieldName);
+                      } else {
+                        const tableForeign = schemaComposer.getOTC(objectTypeName).getField(fieldName)
+                          .extensions as TableForeign;
+                        fields.push(tableForeign.COLUMN_NAME);
+                      }
+                    }
+                  }
+                  // Generate limit statement
+                  const limit = [args.limit, args.offset].filter(Boolean);
+                  if (limit.length) {
+                    return mysqlConnection.selectLimit(tableName, fields, limit, args.where, args?.orderBy);
+                  } else {
+                    return mysqlConnection.select(tableName, fields, args.where, args?.orderBy);
+                  }
+                },
+              },
+            });
           })
         );
         schemaComposer.Query.addFields({

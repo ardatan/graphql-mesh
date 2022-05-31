@@ -108,6 +108,8 @@ input current_dept_emp_WhereInput {
 }
 
 type departments {
+  dept_emp(limit: Int, offset: Int, orderBy: dept_emp_OrderByInput, where: dept_emp_WhereInput): [dept_emp]
+  dept_manager(limit: Int, offset: Int, orderBy: dept_manager_OrderByInput, where: dept_manager_WhereInput): [dept_manager]
   dept_name: String!
   dept_no: String!
 }
@@ -243,11 +245,15 @@ input dept_manager_WhereInput {
 
 type employees {
   birth_date: Date!
+  dept_emp(limit: Int, offset: Int, orderBy: dept_emp_OrderByInput, where: dept_emp_WhereInput): [dept_emp]
+  dept_manager(limit: Int, offset: Int, orderBy: dept_manager_OrderByInput, where: dept_manager_WhereInput): [dept_manager]
   emp_no: Int!
   first_name: String!
   gender: employees_gender!
   hire_date: Date!
   last_name: String!
+  salaries(limit: Int, offset: Int, orderBy: salaries_OrderByInput, where: salaries_WhereInput): [salaries]
+  titles(limit: Int, offset: Int, orderBy: titles_OrderByInput, where: titles_WhereInput): [titles]
 }
 
 input employees_InsertInput {
@@ -466,6 +472,20 @@ Object {
       Object {
         "__typename": "employees",
         "birth_date": "1953-09-02",
+        "dept_emp": Array [
+          Object {
+            "departments": Array [
+              Object {
+                "dept_name": "Development",
+                "dept_no": "d005",
+              },
+            ],
+            "dept_no": "d005",
+            "emp_no": 10001,
+            "from_date": "1986-06-26",
+            "to_date": "9999-01-01",
+          },
+        ],
         "emp_no": 10001,
         "first_name": "Georgi",
         "gender": "M",
@@ -475,6 +495,20 @@ Object {
       Object {
         "__typename": "employees",
         "birth_date": "1964-06-02",
+        "dept_emp": Array [
+          Object {
+            "departments": Array [
+              Object {
+                "dept_name": "Development",
+                "dept_no": "d005",
+              },
+            ],
+            "dept_no": "d005",
+            "emp_no": 10001,
+            "from_date": "1986-06-26",
+            "to_date": "9999-01-01",
+          },
+        ],
         "emp_no": 10002,
         "first_name": "Bezalel",
         "gender": "F",
@@ -484,6 +518,20 @@ Object {
       Object {
         "__typename": "employees",
         "birth_date": "1959-12-03",
+        "dept_emp": Array [
+          Object {
+            "departments": Array [
+              Object {
+                "dept_name": "Development",
+                "dept_no": "d005",
+              },
+            ],
+            "dept_no": "d005",
+            "emp_no": 10001,
+            "from_date": "1986-06-26",
+            "to_date": "9999-01-01",
+          },
+        ],
         "emp_no": 10003,
         "first_name": "Parto",
         "gender": "M",
@@ -493,6 +541,20 @@ Object {
       Object {
         "__typename": "employees",
         "birth_date": "1954-05-01",
+        "dept_emp": Array [
+          Object {
+            "departments": Array [
+              Object {
+                "dept_name": "Development",
+                "dept_no": "d005",
+              },
+            ],
+            "dept_no": "d005",
+            "emp_no": 10001,
+            "from_date": "1986-06-26",
+            "to_date": "9999-01-01",
+          },
+        ],
         "emp_no": 10004,
         "first_name": "Chirstian",
         "gender": "M",
@@ -502,6 +564,20 @@ Object {
       Object {
         "__typename": "employees",
         "birth_date": "1955-01-21",
+        "dept_emp": Array [
+          Object {
+            "departments": Array [
+              Object {
+                "dept_name": "Development",
+                "dept_no": "d005",
+              },
+            ],
+            "dept_no": "d005",
+            "emp_no": 10001,
+            "from_date": "1986-06-26",
+            "to_date": "9999-01-01",
+          },
+        ],
         "emp_no": 10005,
         "first_name": "Kyoichi",
         "gender": "M",
